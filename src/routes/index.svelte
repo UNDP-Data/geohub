@@ -1,2 +1,14 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+import Map from '../components/Map.svelte';
+</script>
+
+<div class="app">
+	<Map lat={-1.26} lon={36.784} zoom={9}/>
+</div>
+
+<style>
+    .app {
+        text-align: center;
+				height: 500px;
+    }
+</style>
