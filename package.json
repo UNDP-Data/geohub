@@ -17,7 +17,10 @@
   "devDependencies": {
     "@mdi/js": "^6.5.95",
     "@smui/button": "^6.0.0-beta.13",
+    "@smui/drawer": "^6.0.0-beta.13",
     "@smui/icon-button": "^6.0.0-beta.13",
+    "@smui/layout-grid": "^6.0.0-beta.13",
+    "@smui/list": "^6.0.0-beta.13",
     "@smui/top-app-bar": "^6.0.0-beta.13",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
