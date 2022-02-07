@@ -18,7 +18,7 @@
     active = value;
   }
 </script>
-<div>
+
   <Drawer variant="dismissible" bind:open anchor="right">
     <Header>
       <Title>Layers</Title>
@@ -74,7 +74,7 @@
       <pre class="status">Active: {active}</pre>
     </main>
   </AppContent>
-</div>
+
 
 
 

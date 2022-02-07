@@ -11,9 +11,9 @@
 </script>
 
 <Header bind:drawerCollapsed ></Header>
-<div>
-  <Content bind:open={drawerCollapsed} ></Content>
-</div>
+
+<Content bind:open={drawerCollapsed} ></Content>
+
 
 
 
