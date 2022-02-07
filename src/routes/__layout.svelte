@@ -65,8 +65,8 @@
     </Row>
   </TopAppBar>
   <slot />
-  <AutoAdjust {topAppBar}>
+  <!-- <AutoAdjust {topAppBar}>
     
-  </AutoAdjust>
+  </AutoAdjust> -->
   
  
