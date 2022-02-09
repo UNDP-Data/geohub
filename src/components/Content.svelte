@@ -19,7 +19,7 @@
   }
 </script>
 <div class="drawer-container">
-  <Drawer variant="dismissible" bind:open anchor="right">
+  <Drawer variant="dismissible" bind:open >
     <Header>
       <Title>Layers</Title>
       <Subtitle>Operations with Layers</Subtitle>
@@ -67,18 +67,13 @@
 
   <!-- Todo: Create a component for the following -->
   <AppContent class="app-content">
-    <main class="main-content">
-      <h1>Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-      </h1>
-      <pre class="status">Active: {active}</pre>
-    </main>
+    
+    <pre class="status">Active: {active}</pre>
+
+
+    
+    <slot></slot>
+    <p>bottom drawer comes herer as well</p>
   </AppContent>
   <!-- Todo: Create a component for the following -->
 </div>
@@ -91,7 +86,7 @@
   .drawer-container {
     position: relative;
     display: flex;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 65px);
     width: 100%;
     /*border: 1px solid;*/
     overflow: hidden;

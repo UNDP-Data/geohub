@@ -12,7 +12,9 @@
 
 <Header bind:drawerCollapsed ></Header>
 
-<Content bind:open={drawerCollapsed} ></Content>
+<Content bind:open={drawerCollapsed} >
+  Map Component goes here
+</Content>
 
 
 
