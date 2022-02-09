@@ -5,14 +5,15 @@
   
   let drawerCollapsed: boolean = false ;
   $: updateDrawer = drawerCollapsed;
-  
+  let panelCollapsed: boolean = false
 
   
 </script>
 
-<Header bind:drawerCollapsed ></Header>
+<Header bind:drawerCollapsed bind:panelCollapsed ></Header>
 
-<Content bind:open={drawerCollapsed} >
+<Content bind:open={drawerCollapsed} bind:expanded={panelCollapsed} >
+  
 </Content>
 
 

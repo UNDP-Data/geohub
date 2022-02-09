@@ -34,6 +34,7 @@
     panel.expanded = true;
   }
   let panel;
+  
 </script>
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open anchor="right">
@@ -85,6 +86,7 @@
   <!-- Todo: Create a component for the following -->
   <AppContent class="app-content">
     <main class="main-content">
+      <slot></slot>
       <pre class="status">Active: {active}</pre>
       <h1>Map Area Map Area Map Area Map Area Map Area Map Area Map Area
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
@@ -95,29 +97,28 @@
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area
       </h1>
 
-      <!-- Start here -->
-      <!-- End Here -->
-      <div class="bottom-drawer" bind:this={panel} class:expanded>
-        <div class="bottom-drawer-header">
-          <slot name=heading {expanded}>
-            <IconButton on:click={toggle} toggle bind:pressed={initialOff}>
-              <Icon icon="mdi:expand-all-outline" color="white" />
-            </IconButton>
+      
+      
+    </main>
+    <div class="bottom-drawer" bind:this={panel} class:expanded>
+      <!-- <div class="bottom-drawer-header">
+        <slot name=heading {expanded}>
+          <IconButton on:click={toggle} toggle bind:pressed={initialOff}>
+            <Icon icon="mdi:expand-all-outline" color="white" />
+          </IconButton>
+        </slot>
+      </div> -->
+      {#if expanded}
+        <div class="expandable">
+          <slot>
+            <div class="content-for-bottom-drawer">
+              <h3 class="example-text">One Control</h3>
+              <h3 class="example-text">Two Control</h3>
+            </div>
           </slot>
         </div>
-        {#if expanded}
-          <div class="expandable">
-            <slot>
-              <div class="content-for-bottom-drawer">
-                <h3 class="example-text">One Control</h3>
-                <h3 class="example-text">Two Control</h3>
-              </div>
-            </slot>
-          </div>
-        {/if}
-      </div>
-    </main>
-
+      {/if}
+    </div>
   </AppContent>
   <!-- Todo: Create a component for the following -->
 </div>
@@ -130,7 +131,7 @@
   .drawer-container {
     position: relative;
     display: flex;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 65px);
     width: 100%;
     /*border: 1px solid;*/
     overflow: hidden;
@@ -153,10 +154,11 @@
   .bottom-drawer{
     position: absolute;
     bottom: 0;
-    left: 25%;
+    left: 0%;
     background-color: dodgerblue;
-    width: 50%;
-    border-radius: 5px 50px 50px 5px;
+    width: 100%;
+
+    /* border-radius: 5px 50px 50px 5px; */
   }
   .bottom-drawer-header{
     display: inline-flex;
@@ -166,9 +168,9 @@
     height: 150px;
     position: absolute;
     bottom: 0;
-    left: 15%;
+    left: 0%;
     background-color: dodgerblue;
-    width: 70%;
+    width: 100%;
   }
 
   /* Todo: Declare styles for a non-expanded drawer here*/

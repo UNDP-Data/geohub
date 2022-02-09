@@ -11,13 +11,15 @@
 
     
     import { Icon } from '@smui/button';
+    // import Icon from '@iconify/svelte';
     import IconButton from '@smui/icon-button';
     import {Svg} from '@smui/common/elements'    
     import { mdiWeatherSunny, mdiWeatherNight} from '@mdi/js';
   
     let topAppBar: TopAppBarComponentDev;
-    let darkTheme: Boolean | undefined = false;
-    export let drawerCollapsed: Boolean = true;
+    let darkTheme: boolean | undefined = false;
+    export let drawerCollapsed: boolean = true;
+    export let panelCollapsed: boolean = true;
 
     onMount(() => {
         window.matchMedia('(prefers-color-scheme: light)')
@@ -53,7 +55,10 @@
       <Title>GeoHub</Title>
     </Section>
     
+    
     <Section align="end">
+      <IconButton class="material-icons" on:click={() => (panelCollapsed = !panelCollapsed)}>bookmark_border</IconButton>
+
       <IconButton class="material-icons" on:click={() => (drawerCollapsed = !drawerCollapsed)}>menu</IconButton>
       <IconButton on:click={() => (darkTheme = !darkTheme)}>
         <Icon component={Svg} viewBox="0 0 24 24" >
