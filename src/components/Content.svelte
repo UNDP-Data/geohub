@@ -110,12 +110,7 @@
       </div> -->
       {#if expanded}
         <div class="expandable">
-          <slot>
-            <div class="content-for-bottom-drawer">
-              <h3 class="example-text">One Control</h3>
-              <h3 class="example-text">Two Control</h3>
-            </div>
-          </slot>
+          Nice
         </div>
       {/if}
     </div>
