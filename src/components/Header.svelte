@@ -57,7 +57,7 @@
       <IconButton class="material-icons" on:click={() => (drawerCollapsed = !drawerCollapsed)}>menu</IconButton>
       <IconButton on:click={() => (darkTheme = !darkTheme)}>
         <Icon component={Svg} viewBox="0 0 24 24" >
-          <path fill="currentColor" d={darkTheme ? mdiWeatherSunny : mdiWeatherNight } />
+          <path fill="currentColor" d={darkTheme ? mdiWeatherSunny : mdiWeatherNight }></path>
         </Icon>
       </IconButton>
     </Section>

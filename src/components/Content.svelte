@@ -7,7 +7,7 @@
     Title,
     Subtitle,
   } from '@smui/drawer';
-  
+
   import Button, { Label } from '@smui/button';
   import List, { Item, Text } from '@smui/list';
 
@@ -18,11 +18,11 @@
     active = value;
   }
 </script>
-
+<div class="drawer-container">
   <Drawer variant="dismissible" bind:open anchor="right">
     <Header>
       <Title>Layers</Title>
-      <Subtitle>...opartions with laye</Subtitle>
+      <Subtitle>Operations with Layers</Subtitle>
     </Header>
     <Content>
       <List>
@@ -65,19 +65,50 @@
     </Content>
   </Drawer>
 
+  <!-- Todo: Create a component for the following -->
   <AppContent class="app-content">
     <main class="main-content">
-      <!-- <Button on:click={() => (open = !open)}
-        ><Label>Toggle Drawer</Label></Button
-      >
-      <br /> -->
+      <h1>Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
+      </h1>
       <pre class="status">Active: {active}</pre>
     </main>
   </AppContent>
-
+  <!-- Todo: Create a component for the following -->
+</div>
 
 
 
 <style>
- 
+  /* These classes are only needed because the
+      drawer is in a container on the page. */
+  .drawer-container {
+    position: relative;
+    display: flex;
+    height: calc(100vh - 80px);
+    width: 100%;
+    /*border: 1px solid;*/
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  * :global(.app-content) {
+    flex: auto;
+    overflow: auto;
+    position: relative;
+    flex-grow: 1;
+  }
+
+  .main-content {
+    overflow: auto;
+    padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
+  }
 </style>
