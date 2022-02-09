@@ -8,15 +8,32 @@
     Subtitle,
   } from '@smui/drawer';
 
-  import Button, { Label } from '@smui/button';
+  //import OpenInFullIcon from '@mui/icons-material/OpenInFull';
   import List, { Item, Text } from '@smui/list';
 
+  import IconButton from '@smui/icon-button'
+  export let expanded = false;
   export let open = false;
+
+  import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
+  let toggleClicked;
+  let initialOff;
+
 
   function setActive(value: string) {
     active = value;
   }
+  function toggle() {
+    expanded = !expanded;
+  }
+  function collapse(){
+    panel.expanded = false;
+  }
+  function expand(){
+    panel.expanded = true;
+  }
+  let panel;
 </script>
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open anchor="right">
@@ -68,6 +85,7 @@
   <!-- Todo: Create a component for the following -->
   <AppContent class="app-content">
     <main class="main-content">
+      <pre class="status">Active: {active}</pre>
       <h1>Map Area Map Area Map Area Map Area Map Area Map Area Map Area
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area
@@ -75,10 +93,31 @@
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
         Map Area Map Area Map Area Map Area Map Area Map Area Map Area
-        Map Area Map Area Map Area Map Area Map Area Map Area Map Area Map Area
       </h1>
-      <pre class="status">Active: {active}</pre>
+
+      <!-- Start here -->
+      <!-- End Here -->
+      <div class="bottom-drawer" bind:this={panel} class:expanded>
+        <div class="bottom-drawer-header">
+          <slot name=heading {expanded}>
+          <IconButton on:click={toggle} toggle bind:pressed={initialOff}>
+            <Icon icon="mdi:expand-all-outline" color="white" />
+          </IconButton>
+          </slot>
+        </div>
+        {#if expanded}
+          <div class="expandable">
+            <slot>
+              <div class="content-for-bottom-drawer">
+                <h3 class="example-text">One Control</h3>
+                <h3 class="example-text">Two Control</h3>
+              </div>
+            </slot>
+          </div>
+        {/if}
+      </div>
     </main>
+
   </AppContent>
   <!-- Todo: Create a component for the following -->
 </div>
@@ -106,9 +145,45 @@
   }
 
   .main-content {
-    overflow: auto;
+    overflow: hidden;
     padding: 16px;
     height: 100%;
     box-sizing: border-box;
+  }
+  .bottom-drawer{
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    background-color: dodgerblue;
+    width: 50%;
+    border-radius: 5px 50px 50px 5px;
+  }
+  .bottom-drawer-header{
+    display: inline-flex;
+  }
+
+  .expanded{
+    height: 150px;
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    background-color: dodgerblue;
+    width: 70%;
+  }
+
+  /* Todo: Declare styles for a non-expanded drawer here*/
+
+  #expand-icon{
+    position: absolute;
+    right: 0;
+  }
+  .example-text{
+    color: white;
+    font-family: "Bodoni MT",serif;
+    padding-left: 50px;
+  }
+
+  .content-for-bottom-drawer{
+    height: 100%;
   }
 </style>

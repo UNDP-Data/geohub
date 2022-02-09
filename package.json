@@ -15,7 +15,9 @@
     "prepare": "npm run smui-theme-light && npm run smui-theme-dark"
   },
   "devDependencies": {
+    "@iconify/svelte": "^2.1.2",
     "@mdi/js": "^6.5.95",
+    "@smui-extra/accordion": "^6.0.0-beta.13",
     "@smui/button": "^6.0.0-beta.13",
     "@smui/drawer": "^6.0.0-beta.13",
     "@smui/icon-button": "^6.0.0-beta.13",
@@ -38,5 +40,10 @@
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.4.1"
+  }
 }
