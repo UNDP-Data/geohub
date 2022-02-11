@@ -20,11 +20,8 @@
   </Content>
 
 
-
+  <slot></slot>
 
  
 
- <style>
-   
-
- </style>
+ 
