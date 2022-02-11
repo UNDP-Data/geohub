@@ -23,6 +23,8 @@
     "@smui/icon-button": "^6.0.0-beta.13",
     "@smui/layout-grid": "^6.0.0-beta.13",
     "@smui/list": "^6.0.0-beta.13",
+    "@smui/tab": "^6.0.0-beta.13",
+    "@smui/tab-bar": "^6.0.0-beta.13",
     "@smui/top-app-bar": "^6.0.0-beta.13",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
