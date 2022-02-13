@@ -19,10 +19,9 @@
   import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
   let activeTab= 'Load...';
-  import Tab, { Label } from '@smui/tab';
+  //import Tab, { Label } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
-
-
+  import { Tabs, TabList, TabPanel, Tab } from './tabs.ts';
   function setActive(value: string) {
     active = value;
   }
@@ -39,14 +38,35 @@
     
     <Content>
       <div>
-        <TabBar tabs={['Load', 'Analyze', 'Docs']} let:tab bind:activeTab >
-          <Tab {tab}>
-            <Label>{tab}</Label>
-             
-             
-          </Tab>
-        </TabBar>
+<!--        <TabBar tabs={['Load', 'Analyze', 'Docs']} let:tab bind:activeTab >-->
+<!--          <Tab {tab}>-->
+<!--            <Label>{tab}</Label>-->
+<!--          </Tab>-->
+<!--        </TabBar>-->
 
+        <Tabs>
+          <TabList>
+            <Tab>one</Tab>
+            <Tab>two</Tab>
+            <Tab>three</Tab>
+          </TabList>
+
+          <TabPanel>
+            <h2>First panel</h2>
+            <p>This is the first tab's content</p>
+            <input id="color-input" type="color">
+            <label for="color-input">Pick a color</label>
+            <input style="background: #007dcf; border: 1px solid #007dcf; color: #ffffff" id="submit-color" type="submit">
+          </TabPanel>
+
+          <TabPanel>
+            <h2>Second panel</h2>
+          </TabPanel>
+
+          <TabPanel>
+            <h2>Third panel</h2>
+          </TabPanel>
+        </Tabs>
       </div>
       <!-- <List>
         <Item

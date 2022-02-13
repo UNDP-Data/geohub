@@ -7,11 +7,11 @@
 <!-- Todo: This styles are set to ensure that the Map Content moves together with the drawer opening-->
 <style global>
     .mdc-drawer{
-        width:500px;
+        width:256px;
     }
 
     .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing)+.mdc-drawer-app-content{
-        margin-left: 500px;
+        margin-left: 256px;
         margin-right: 0;
     }
 </style>
