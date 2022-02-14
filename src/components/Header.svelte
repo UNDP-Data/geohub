@@ -18,14 +18,30 @@
   
     let topAppBar: TopAppBarComponentDev;
     let darkTheme: boolean | undefined = false;
-    export let drawerCollapsed: boolean = true;
-    export let panelCollapsed: boolean = true;
+    export let drawerOpen: boolean = true;
+    export let panelOpen: boolean = true;
 
     onMount(() => {
         window.matchMedia('(prefers-color-scheme: light)')
     });
 
-    
+    function smartToggle() {
+      
+      console.log('before');
+      console.log(`panelOpen ${panelOpen}`);
+      console.log(`drawerOpen ${drawerOpen}`);
+      panelOpen = ! panelOpen;
+      if (panelOpen && !drawerOpen) {
+        drawerOpen = !drawerOpen;
+      } 
+      
+
+      console.log(`after`);
+      console.log(`panelOpen ${panelOpen}`)
+      console.log(`drawerOpen ${drawerOpen}`)
+
+    }
+
   </script>
 
 
@@ -57,9 +73,12 @@
     
     
     <Section align="end">
-      <IconButton class="material-icons" on:click={() => (panelCollapsed = !panelCollapsed)}>bookmark_border</IconButton>
+      <!-- <IconButton class="material-icons" on:click={() => (panelOpen
+   = !panelOpen
+  )}>bookmark_border</IconButton> -->
+      <IconButton class="material-icons" on:click={smartToggle}>bookmark_border</IconButton>
 
-      <IconButton class="material-icons" on:click={() => (drawerCollapsed = !drawerCollapsed)}>menu</IconButton>
+      <IconButton class="material-icons" on:click={() => (drawerOpen = !drawerOpen)}>menu</IconButton>
       <IconButton on:click={() => (darkTheme = !darkTheme)}>
         <Icon component={Svg} viewBox="0 0 24 24" >
           <path fill="currentColor" d={darkTheme ? mdiWeatherSunny : mdiWeatherNight }></path>

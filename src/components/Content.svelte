@@ -13,15 +13,23 @@
   import Paper from '@smui/paper';
   import List, { Item, Text } from '@smui/list';
   import IconButton from '@smui/icon-button'
-  export let expanded = false;
+  export let expanded = true;
   export let open = false;
-
+  
   import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
-  let activeTab= 'Load...';
+  
+ 
+  
+
+  
+  
+
+
   //import Tab, { Label } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
-  import { Tabs, TabList, TabPanel, Tab } from './tabs.ts';
+  import { Tabs, TabList, TabPanel, Tab } from '../components/tabs';
+
   function setActive(value: string) {
     active = value;
   }
@@ -38,12 +46,6 @@
     
     <Content>
       <div>
-<!--        <TabBar tabs={['Load', 'Analyze', 'Docs']} let:tab bind:activeTab >-->
-<!--          <Tab {tab}>-->
-<!--            <Label>{tab}</Label>-->
-<!--          </Tab>-->
-<!--        </TabBar>-->
-
         <Tabs>
           <TabList>
             <Tab>Load data</Tab>
@@ -113,19 +115,31 @@
         </Item>
       </List> -->
     </Content>
+    
+      <Accordion class="expanded">
+        <Panel bind:open={expanded} color="primary" square>
+          <AccHeader>Info Panel</AccHeader>
+          <AccContent>
+           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae modi natus adipisci ut, ab voluptates accusamus, veniam quam id corporis nisi earum at nemo libero quod iure sequi nihil ullam.
+          </AccContent>
+        </Panel>
+        
+      </Accordion>
+    
   </Drawer>
 
   <!-- Todo: Create a component for the following -->
-  <AppContent class="app-content">
+  <AppContent class="app-content " >
     <main class="main-content">
-      <!-- <slot></slot> -->
-      <pre class="status">Active: {active}</pre>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consequuntur ratione tenetur quas minima obcaecati recusandae illo eum nemo, excepturi maiores repellat dicta corporis porro, culpa id omnis, nisi alias vitae. Natus fuga eius sint veniam! Reiciendis alias, veniam quidem sunt optio fugiat qui est obcaecati odio, praesentium aspernatur quia nam soluta facere voluptates deleniti voluptate provident, nisi dicta? Voluptate laborum eum corporis quae consequatur perspiciatis quasi, culpa perferendis quo repudiandae in quis dolores amet aut laudantium dolorum architecto. Ipsam, ea quibusdam? Numquam nemo non rerum dolorum enim? Enim similique minima, perferendis impedit non distinctio maiores officiis consequatur eos? Id ipsam placeat, inventore earum doloribus ex velit quos vel illo neque eveniet laboriosam perferendis reprehenderit autem quaerat! Cumque delectus hic, aliquam ratione unde ut harum quae debitis error facilis, minima quasi inventore! Molestiae, libero, recusandae at optio hic illum, similique ratione esse dignissimos odit placeat nisi fugiat. Laudantium autem neque natus quibusdam esse placeat sed quod magni libero tempore. Voluptate, minus. Nobis omnis at vitae voluptas id excepturi magnam impedit tempore perferendis, sit corporis expedita nisi delectus ea itaque! Eligendi doloremque voluptates eveniet commodi aut voluptatum debitis rem, eos maiores asperiores cum facilis id sapiente similique vel neque, reiciendis eius unde ipsam veniam deleniti est temporibus impedit saepe? Blanditiis nulla, officiis nisi, in autem enim eligendi ex sint provident dolore voluptatem expedita. Excepturi, dolorem molestiae velit facere alias sapiente ipsum modi nam sint non, necessitatibus dignissimos praesentium omnis. Soluta exercitationem ullam debitis doloribus et vel placeat porro error quidem. Nemo asperiores cumque repellendus eius recusandae eaque earum impedit sit? Quia dolores voluptatibus, magni sunt hic veniam dolor odio debitis omnis quidem eaque quos nulla architecto consequatur quis minus sapiente ratione! Adipisci, blanditiis veniam quos enim modi dicta. Harum numquam laborum quia voluptates vitae aperiam voluptate sunt aut nostrum a reprehenderit quod, excepturi quaerat, labore aliquam consequatur. Nemo hic architecto quo excepturi ducimus nesciunt, vitae qui totam similique, nobis, temporibus distinctio? Quia expedita maiores, aliquid ipsa ullam dicta nisi blanditiis? Cumque consequatur dolor eveniet blanditiis, quo sequi ad corporis ipsum aliquam, totam quaerat deserunt, nulla dolores. Explicabo, corporis! Error porro explicabo vero, excepturi in et necessitatibus culpa at doloremque facere id quibusdam inventore illum, rerum, nihil totam! Laborum, animi? Veritatis aspernatur voluptatibus dolorum fugit magni veniam sequi exercitationem nulla quaerat alias voluptatem, tenetur fuga dolorem hic suscipit qui fugiat totam vitae soluta facere ab? Provident totam aliquam laborum distinctio odit consequatur aperiam, asperiores obcaecati dignissimos commodi neque quae eaque magni. Soluta dolorem illum itaque, id nisi iure fugit, odio adipisci pariatur dolorum distinctio eum cum nulla dolor obcaecati incidunt laboriosam cupiditate non animi neque nam molestias quidem. Velit cupiditate sed ab? Animi dicta nemo eum voluptatibus debitis aspernatur blanditiis incidunt minus rem recusandae, necessitatibus ducimus a aliquam voluptate earum optio consequuntur. Eius laboriosam sapiente veritatis a non placeat voluptate nam minima sed rem necessitatibus, consequatur obcaecati praesentium id earum nisi dolor aspernatur corporis voluptatibus, et, eaque atque doloremque facilis accusamus. Odio fugit commodi reiciendis quia mollitia deleniti quis dolorem vel. Asperiores eveniet rerum rem officiis omnis harum dolor! Quo praesentium deleniti ipsa doloremque recusandae consectetur exercitationem consequatur totam aperiam iste pariatur, eos molestias enim assumenda nobis nesciunt, et quibusdam asperiores perferendis quis vitae, explicabo aliquam. Nostrum, eos facere? Soluta expedita nulla ipsum nobis non ea quia fuga natus, pariatur illo quo voluptatibus exercitationem dolores, id quos provident assumenda? Fugit, perspiciatis? Vel rem quos repellat praesentium fugiat possimus officia sequi asperiores perspiciatis repudiandae ratione modi vitae placeat quidem velit nihil tempore, veniam reiciendis, dolorum doloremque consectetur consequuntur quasi autem! Eaque modi delectus illo nisi aliquam necessitatibus vitae, odit sit molestiae commodi doloremque temporibus nulla consequuntur cupiditate id veritatis est nesciunt dicta mollitia eos minima fuga tempora quasi quidem. Ipsum saepe aut, qui labore, cupiditate laborum, amet unde possimus odit perspiciatis exercitationem tenetur dignissimos impedit ab suscipit error eius ratione totam. Voluptatum mollitia sapiente architecto odio cumque nemo eveniet deleniti illum tempore? Error ipsum quo soluta esse, facere beatae earum sequi rem corporis, necessitatibus sunt consectetur corrupti perferendis eveniet ad est deserunt sint ullam. Provident, fugit quo blanditiis, soluta corporis explicabo, rerum libero nam facilis illum architecto nobis sunt voluptate officiis ab. Atque cum dolores, molestias aliquid dolorem vel, iure iste, inventore placeat quia pariatur? Aut rem qui fuga a tempora omnis voluptate laudantium laboriosam sequi debitis totam libero inventore mollitia at dolor quidem, soluta quos sit corporis error. Quod explicabo alias facilis dolore perferendis labore temporibus veritatis? Numquam laboriosam a nam, at hic labore nesciunt. Eos beatae doloremque, earum nostrum adipisci eius enim magnam possimus porro modi animi quia necessitatibus iste odio voluptas quidem mollitia ipsum! Dolorem labore esse earum adipisci assumenda culpa quos, eius laudantium aut nesciunt aliquam ex quasi temporibus corporis, accusantium aperiam, quis rerum modi exercitationem! Voluptatum iure temporibus blanditiis? Reiciendis, magni facere impedit odit debitis quae voluptas mollitia. Similique magnam a cum impedit facilis inventore et quis repudiandae distinctio illo dolore deleniti porro iusto architecto culpa eius, totam in odio, quia ex laboriosam non! Amet tempore nesciunt inventore odio enim ipsam! Ducimus illum perferendis atque enim sapiente deleniti quo, quaerat, doloremque excepturi iste, voluptatibus veritatis animi sunt et ut? Minus harum consequatur rem qui nihil, eligendi repellat sint alias officia sequi! Aspernatur soluta excepturi asperiores explicabo, dolore quas corporis vitae debitis incidunt voluptate inventore laboriosam earum optio beatae nulla accusantium iure qui quo reprehenderit sequi accusamus eveniet aperiam omnis. Alias autem, id et repudiandae ratione fugit consequatur, accusantium modi error deserunt laborum cumque provident unde? Adipisci quisquam vitae enim sit reprehenderit quam quibusdam ea eaque? Facere quaerat reiciendis cumque nesciunt dolores iusto ipsa, reprehenderit amet architecto? At blanditiis ratione reprehenderit cum voluptates quia sequi, unde quis deleniti, ipsa debitis dicta quisquam labore fuga molestiae officiis nobis. Velit, ad recusandae. Facere et repellendus at magnam culpa nostrum necessitatibus blanditiis possimus ea dolore distinctio natus ducimus iusto, sapiente exercitationem obcaecati molestias ipsum aliquam temporibus, quam explicabo soluta suscipit beatae similique! Deserunt quae eligendi ipsum nulla dolorum, eius aperiam ipsa quasi praesentium modi ipsam in quidem quis totam nobis amet vero est.
       
+      <slot></slot>
 
+    
     </main>
-
-    <div class="bottom-drawer" bind:this={panel} class:expanded>
+    <!-- a LARGE  bottom ionfo panel covering the map
+    use as an alternative to placing the info panel in the side bar
+    -->
+    <!-- <div  bind:this={panel} class:expanded>
       
       {#if expanded}
       <div class="accordion-container">
@@ -140,7 +154,7 @@
         </Accordion>
       </div>
       {/if}
-    </div>
+    </div> -->
     
   </AppContent>
   <!-- Todo: Create a component for the following -->
@@ -158,26 +172,35 @@
     height: calc(100vh - 64px);
     /* height:100vh; */
     width: 100%;
-    border: 0px solid; 
+    
     /* overflow: hidden; */
     z-index: 0;
     flex-grow: 1;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
   }
 
-  /* .app-content {
+  .acordion-container {
+    max-height: 350px;
+    overflow: auto;
+  }
+
+  * :global(.app-content) {
     flex: auto;
     overflow: auto;
     position: relative;
     flex-grow: 1;
-  } */
-
+  }
   .main-content {
     overflow: hidden;
-    /* padding: 66px; */
+    display: flex;
     height: 100%;
-    box-sizing: border-box;
-    border: 0px solid;
+    /* box-sizing: border-box; */
+    /* border: 30px  whitesmoke; */
+    flex-grow: 1;
+    z-index: -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+
   }
   .bottom-drawer{
     position: absolute;
@@ -188,20 +211,27 @@
     height: 100%;
     /* border-radius: 5px 50px 50px 5px; */
     flex-grow: 1;
-    overflow: auto
+    overflow: auto;
+    
+    
   }
   
 
 
-  .expanded{
+  :global(.expanded){
     display :inline-block;
-    max-height: 250px;
+    max-height: 300px;
+    min-height: au;
     /* height: 150px; */
     position: absolute;
     bottom: 0;
     left: 0%;
-    /* background-color: dodgerblue; */
+    color: red;
     width: 100%;
+    text-align: center;
+    overflow:auto;
+
+
     
   }
 
