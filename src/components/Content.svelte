@@ -47,6 +47,7 @@
         <Tabs>
           <TabList>
             <Tab>Load data</Tab>
+            <Tab>Layers</Tab>
             <Tab>Analyze</Tab>
             
           </TabList>
@@ -58,11 +59,19 @@
             <label for="color-input">Pick a color</label>
             <input style="background: #007dcf; border: 1px solid #007dcf; color: #ffffff" id="submit-color" type="submit">
           </TabPanel>
+          
+
+          
+          <TabPanel>
+            Available layers
+          </TabPanel>
+          
+
 
           <TabPanel>
             <p>Create vrt layers and band based map algebra</p>
           </TabPanel>
-
+          
           
         </Tabs>
       </div>
