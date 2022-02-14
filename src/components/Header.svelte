@@ -27,19 +27,19 @@
 
     function smartToggle() {
       
-      console.log('before');
-      console.log(`panelOpen ${panelOpen}`);
-      console.log(`drawerOpen ${drawerOpen}`);
-      panelOpen = ! panelOpen;
-      if (panelOpen && !drawerOpen) {
+      if (!drawerOpen){
+        
         drawerOpen = !drawerOpen;
-      } 
+        if (!panelOpen){
+          panelOpen = ! panelOpen
+        }
+      }
+      else{
+        
+          panelOpen = ! panelOpen
+        
+      }
       
-
-      console.log(`after`);
-      console.log(`panelOpen ${panelOpen}`)
-      console.log(`drawerOpen ${drawerOpen}`)
-
     }
 
   </script>

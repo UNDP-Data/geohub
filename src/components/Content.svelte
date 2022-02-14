@@ -65,7 +65,7 @@
 
           
           <TabPanel>
-            Available layers
+            <p>Available layers</p>
           </TabPanel>
           
 
