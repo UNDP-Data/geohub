@@ -31,10 +31,10 @@
 </script>
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open >
-    <Header>
+    
+    <!-- <Header>
       <Title>Layers</Title>
-      <Subtitle>Operations with Layers</Subtitle>
-    </Header>
+    </Header> -->
     
     <Content>
       <div>
@@ -46,13 +46,13 @@
 
         <Tabs>
           <TabList>
-            <Tab>one</Tab>
-            <Tab>two</Tab>
-            <Tab>three</Tab>
+            <Tab>Load data</Tab>
+            <Tab>Analyze</Tab>
+            
           </TabList>
 
           <TabPanel>
-            <h2>First panel</h2>
+            
             <p>This is the first tab's content</p>
             <input id="color-input" type="color">
             <label for="color-input">Pick a color</label>
@@ -60,12 +60,10 @@
           </TabPanel>
 
           <TabPanel>
-            <h2>Second panel</h2>
+            <p>Create vrt layers and band based map algebra</p>
           </TabPanel>
 
-          <TabPanel>
-            <h2>Third panel</h2>
-          </TabPanel>
+          
         </Tabs>
       </div>
       <!-- <List>

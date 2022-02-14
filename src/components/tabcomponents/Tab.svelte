@@ -16,15 +16,26 @@
         border-radius: 0;
         margin-left: 10px;
         color: #ccc;
-        width: 25%;
+        width: auto;
         font-weight: bold;
-        font-size: larger;
+        /* font-size: larger; */
+        
+    }
+    button {
+        transition-duration: 0.4s;
+    }
+
+    button:hover {
+        
+        cursor: pointer;
     }
 
     .selected {
         border-bottom: 2px solid dodgerblue;
         color: dodgerblue;
+        cursor: pointer;
     }
+
 </style>
 
 <button class:selected="{$selectedTab === tab}" on:click="{() => selectTab(tab)}">
