@@ -9,6 +9,8 @@
     Subtitle,
   } from '@smui/drawer';
 
+  import LoadData from "./LoadData.svelte"
+
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
   import Paper from '@smui/paper';
   import List, { Item, Text } from '@smui/list';
@@ -55,11 +57,7 @@
           </TabList>
 
           <TabPanel>
-            
-            <p>This is the first tab's content</p>
-            <input id="color-input" type="color">
-            <label for="color-input">Pick a color</label>
-            <input style="background: #007dcf; border: 1px solid #007dcf; color: #ffffff" id="submit-color" type="submit">
+            <LoadData/>
           </TabPanel>
           
 
