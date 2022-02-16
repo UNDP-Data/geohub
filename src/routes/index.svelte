@@ -1,42 +1,39 @@
 <script context="module">
-    export const load = async({fetch}) => {
-        const res = await fetch("list_blobs_in_container.json")
+    
+    export async function load({fetch}) {
+        
+        const res = await fetch("azstorage.json")
 
         const tree = await res.json()
-        console.log("Data", tree)
+        console.log(`fetched ${tree}`, tree)
         return {
            props: {
                tree
            }
         }
     }
+    
 </script>
 
 <script lang="ts">
+    import {wtree}  from '../stores/stores'
     import TreeView from './TreeView.svelte'
-    //import tree from './tree'
-    export let tree
+    
+    export let tree = undefined;
+
+    console.log($wtree);
+    wtree.update(t=>tree);
+    
+    
+
 </script>
 
-<div>
-<!--    <select class="select-data">-->
-<!--        {#each data as d}-->
-<!--        <option class="data-option">{d}</option>-->
-<!--        {/each}-->
-<!--    </select>-->
-    <TreeView {tree}/>
+    <div>
+        No of children in tree  is {$wtree.tree.children.length}
+        
+        <TreeView bind:tree={$wtree.tree} />
 
-    <!--<div>{data.children}</div>-->
-</div>
+    </div>
 <style>
-    .select-data{
-        height: 40px;
-    }
-    .data-option{
-        font-size: larger;
-        font-family: sans-serif;
-        background-color: white;
-        color: cadetblue;
-        font-style: italic;
-    }
+    
 </style>
