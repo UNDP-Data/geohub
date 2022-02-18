@@ -17,11 +17,37 @@
         return res;
     };
 
+    /*
+    
+    Update the JSON based data structure that power the tree view (this) component
+    The general idea of the update is:
+    0. the tree is initialized with data, and is destructured into its mains props
+       Very imp, the variables that are created in the descructuring are reactive:
+
+            let label, children, path, url, isRaster;
+            $: ({ label, children, path, url, isRaster } = tree)
+
+    1. User clicks on a tree node
+    2. toggleExpansion is called:
+        a) id the ndoe has children nothing happens, else the fucntion continues
+        b) the current node path prop is used to fethc the children for the current node from the endpoint
+            this cretaes an identical node with the current one with exception that its children are fetched
+        c) a new copy of the tree is is created by descructuring the old tree
+        d) the copy is updated  inside updateTree 
+        e) the updated copy is wriiten into the store so  other componnets are notified
+        f) the parent component updates the current
+        g) the TreeView componnet 
+            let label, children, path, url, isRaster;
+            $: ({ label, children, path, url, isRaster } = tree)
+
+
+    
+    */
     
     const updateTree = ( oldTree:any, child:any) => {
         //split the current path (where user clicked into subpaths ) /a/b/c => ['a','b','c']
         let subpaths:[] = path.split('/').slice(0,-1);
-        //fethc the alt tree and set it to root 
+        //fetch the old tree and set it to root 
         let root = oldTree.tree
         //iterate over 
         subpaths.forEach(element => {
@@ -96,13 +122,8 @@
                 let treeToUpdate = {...$wtree};
                 
                 updateTree(treeToUpdate,newTree);
-
-                
                 
                 wtree.set(treeToUpdate) ;
-                
-                
-                
                 
             }
         }

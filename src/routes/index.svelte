@@ -24,7 +24,7 @@
     
     wtree.update(t=>tree);
     
-    $: mtree = $wtree;
+    
 
 
 </script>
@@ -32,7 +32,7 @@
     <div>
         
         
-        <TreeView tree={mtree.tree} />
+        <TreeView tree={$wtree.tree} />
         
 
     </div>

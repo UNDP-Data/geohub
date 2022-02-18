@@ -45,7 +45,7 @@ export const get1 = () => {
 const isRasterExtension = (name:string) => {
     let splitAt = name.lastIndexOf('.');
     let ext = name.slice(splitAt, name.length);
-    let extensions = ['.tif', '.tiff', '.vrt', '.jpg', '.jpeg', '.img' ];
+    let extensions = ['.tif', '.tiff', '.vrt', '.jpg', '.jpeg', '.img', '.nc' ];
     let v = extensions.includes(ext.toLowerCase());
     //console.log(name, ext, v);
     return v;
@@ -86,7 +86,6 @@ const listContainer = async (containerName:string, relPath:string) =>{
     for await (const item of cclient.listBlobsByHierarchy('/', {'prefix':relPath}  )) {
         let childLabel;
         
-    
         let path = `${containerName}/${item.name}`
         if (item.kind === "prefix") {
 
@@ -122,7 +121,7 @@ const listContainer = async (containerName:string, relPath:string) =>{
             else{
                 childLabel = label;
             }
-            //console.log(item.name, childLabel);
+            
 
             if (childLabel == 'metadata.json'){
                 let splitAt = blobServiceClient.url.lastIndexOf('/');
