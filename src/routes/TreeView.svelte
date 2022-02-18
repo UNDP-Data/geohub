@@ -192,7 +192,7 @@
         padding-left: 1.2rem;
         user-select: none;
     }
-    .no-arrow { padding-left: 1.0rem; }
+    
     .arrow {
         cursor: pointer;
         display: inline-block;
