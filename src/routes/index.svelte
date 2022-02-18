@@ -5,7 +5,7 @@
         const res = await fetch("azstorage.json")
 
         const tree = await res.json()
-        console.log(`fetched ${tree}`, tree)
+        
         return {
            props: {
                tree
@@ -21,19 +21,22 @@
     
     export let tree = undefined;
 
-    console.log($wtree);
+    
     wtree.update(t=>tree);
     
-    
+    $: mtree = $wtree;
+
 
 </script>
 
     <div>
-        No of children in tree  is {$wtree.tree.children.length}
         
-        <TreeView bind:tree={$wtree.tree} />
+        
+        <TreeView tree={mtree.tree} />
+        
 
     </div>
+    
 <style>
     
 </style>

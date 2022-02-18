@@ -10,17 +10,46 @@
 
     import {wtree} from '../stores/stores'
     
-    const fetchTree = async(prefix:string) => { 
-        let url = `azstorage.json?prefix=${prefix}`;
+    const fetchTree = async(path:string) => { 
+        let url = `azstorage.json?path=${path}`;
         let res = await fetch(url).then((resp) => resp.json())
 
         return res;
     };
 
-    const updateTree = (oldTree:any, newTree:any) => {
-        console.log(oldTree.label, newTree.label);
-        
+    
+    const updateTree = ( oldTree:any, child:any) => {
+        //split the current path (where user clicked into subpaths ) /a/b/c => ['a','b','c']
+        let subpaths:[] = path.split('/').slice(0,-1);
+        //fethc the alt tree and set it to root 
+        let root = oldTree.tree
+        //iterate over 
+        subpaths.forEach(element => {
+            //fetch children
+            let echildren = [...root.children];
+            // extract cpath property from children into an array
+            let paths = echildren.map(item => { return item.path});
+            // check if the global path (where user clicked) equals the new child tree's path  
+            
+            if (path == child.tree.path){ // this is the root subpath where the new child should be inserted into roots children                
+                let updatedChildren  = echildren.map(
+                             item => { return item.path == child.tree.path ? child.tree : item }
+                        );
+                //replace old children with updated
+                root.children = updatedChildren;        
+            }
+            //set ne root for next level of iteration
+            let nextRoot = echildren.filter(item => item.label == element).pop();
+            // if (!nextRoot){
+            //     return;
+            // }
+            
+            
+            root = nextRoot;
 
+            
+        });
+        
     };
 
     
@@ -28,46 +57,52 @@
     
     //	import { slide } from 'svelte/transition'
     export let tree:any;
-    // $:mtree = tree;
-    const {label, children, path} = tree;
+    
+    let label, children, path, url, isRaster;
+    $: ({ label, children, path, url, isRaster } = tree)
+
+    // const {label, children, path} = tree;
     
 
     let expanded = _expansionState[label] || false;
 
     let icon = '&#43';
     
-    const loadLayer = (label:string, path:string) => {
+    const loadLayer = () => {
         if (!checked){
-            console.log('load layer ', label, path);
+            console.log('load layer ', label, url);
         }
         else {
             console.log('remove layer', label)
         }
     };
 
-    const toggleExpansion = async (tree:any) => {
+    const toggleExpansion = async () => {
+            
             expanded = _expansionState[label] = !expanded;
-            // console.log(label, path, tree.children.length);
-        
+            
+            
             if (tree.children.length> 0){
-                console.log(`Nothing to do on ${label}`);
-                
+                // console.log(`Nothing to do on ${label}`);
+                return;
                 
             }
             else {
-                
-                
-
-                console.log('before', tree);
+                // fetch 
+                // console.log('before', tree);
                 let newTree = await fetchTree(tree.path);
-                console.log('after', newTree.tree);
+                // console.log('after', newTree.tree);
                 
-                //test
+                let treeToUpdate = {...$wtree};
+                
+                updateTree(treeToUpdate,newTree);
 
-                //$wtree = {...$wtree.children, ...newTree.tree }
-                //console.log(uptree);
-                $wtree = newTree;
-                console.log($wtree);
+                
+                
+                wtree.set(treeToUpdate) ;
+                
+                
+                
                 
             }
         }
@@ -79,20 +114,35 @@
     $: arrowDown = expanded;
     $: icon = expanded ? '&#8722':'&#43';
     let checked: boolean = false;
+    
+    
+    
+        
+    
+    
+    
 </script>
 
 <ul><!-- transition:slide -->
     <li>
         {#if children}
-			<span on:click={() => toggleExpansion(tree)}>
+        
+
+
+			<span on:click={() => toggleExpansion()}>
+                
+                <span alt="Vector tile layer" style="color: lime;">{#if url}{@html '&#10070'}{/if}</span> 
+
+                
 			<!-- <span on:click={() => {tree = toggleExpansion(tree)}}> -->
 				<!-- <span class="arrow" class:arrowDown>&#x25b6</span> -->
 				<span class="arrow" class:arrowDown > {@html icon} </span>
-                {label}
+                {label}{#if url} - <a href="{url}">web url</a>{/if}
 			</span>
             {#if expanded}
                 {#each children as child}
                     <svelte:self tree={child} />
+                    <!-- <svelte:self bind:tree={child} /> -->
                 {/each}
             {/if}
         {:else}
@@ -100,8 +150,11 @@
                 
             
 			<span >
+                <span data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);">{#if isRaster}{@html '&#9638'}{/if}</span>
+                <!-- <a href="" data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);" >{#if isRaster}{@html '&#10070'}{/if}</a> -->
 				<!-- <span class="no-arrow" on:click={() => toggleExpansion(label)}>{label}</span> -->
-                <input style="padding:0px, margin:0px" type=checkbox on:change={()=>loadLayer(label, path)} bind:checked /> {label}
+                <input style="padding:0px, margin:0px" type=checkbox on:change={()=>loadLayer()} bind:checked />
+                {label}
                 
                 
                 <!-- <a href="{path}">{label}</a> -->
