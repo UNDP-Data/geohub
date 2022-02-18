@@ -54,7 +54,7 @@
 
     "@azure/identity": "^2.0.2",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.14.21"
+    "esbuild": "^0.14.21",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.4.1"

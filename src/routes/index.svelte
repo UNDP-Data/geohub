@@ -16,7 +16,7 @@
     
 </script>
 
-<script lang="ts">
+<!-- <script lang="ts">
     import {wtree}  from '../stores/stores'
     import TreeView from './TreeView.svelte'
     
@@ -27,16 +27,15 @@
     
     
 
-
 </script>
 
-    <div>
-        
-        
-        <TreeView tree={$wtree.tree} />
-        
+<div>
+    
+    
+    <TreeView tree={$wtree.tree} />
+    
 
-    </div>
+</div> -->
     
 
 <!-- Todo: This styles are set to ensure that the Map Content moves together with the drawer opening-->

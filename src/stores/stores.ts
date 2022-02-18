@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store';
 
-export const wtree = writable({});
+export const wtree = writable(Symbol());
