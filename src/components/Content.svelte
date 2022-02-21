@@ -17,7 +17,6 @@
   import IconButton from '@smui/icon-button'
   export let expanded = true;
   export let open = false;
-  import BottomDrawer from "./BottomDrawer.svelte"
 
   import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
