@@ -9,7 +9,7 @@
     Subtitle,
   } from '@smui/drawer';
 
-  import LoadData from "./LoadData.svelte"
+  //import LoadData from "./LoadData.svelte"
 
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
   import Paper from '@smui/paper';
@@ -18,25 +18,32 @@
   export let expanded = true;
   export let open = false;
   
+  
   import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
-  
-  
+  let rlabel;
+  let expandedt;
  
 
   
   
 
 
-  //import Tab, { Label } from '@smui/tab';
+  import Tab, { Label } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
-  import { Tabs, TabList, TabPanel, Tab } from '../components/tabs';
+  // import { Tabs, TabList, TabPanel, Tab } from '../components/tabs';
 
-  function setActive(value: string) {
-    active = value;
-  }
+  // function setActive(value: string) {
+  //   active = value;
+  // }
   
   let panel;
+
+
+  import {wtree}  from '../stores/stores'
+  import TreeView from './TreeView.svelte'
+  
+  
   
 </script>
 <div class="drawer-container">
@@ -47,8 +54,21 @@
     </Header> -->
     
     <Content>
-      <div>
-        <Tabs>
+      <TabBar tabs={['Load...', 'Layers', 'Analyze']}   let:tab bind:active>
+        <!-- Note: the `tab` property is required! -->
+        <Tab {tab} class="tab">
+          <Label  >{tab}</Label>
+        </Tab>
+      </TabBar>
+      {#if active == 'Load...'}
+          <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expandedt={expanded} />
+      {:else if active =='Layers'}
+        Layers
+      {:else if active=='Analyze'}
+        Analyze
+      {/if}
+      
+        <!-- <Tabs>
           <TabList>
             <Tab>Load data</Tab>
             <Tab>Layers</Tab>
@@ -57,7 +77,11 @@
           </TabList>
 
           <TabPanel>
-            <LoadData/>
+            
+            <div class="expand">
+              <TreeView tree={$wtree.tree} />
+            </div>
+            
           </TabPanel>
           
 
@@ -73,8 +97,8 @@
           </TabPanel>
           
           
-        </Tabs>
-      </div>
+        </Tabs> -->
+      
       <!-- <List>
         <Item
                 href="javascript:void(0)"
@@ -114,7 +138,7 @@
       </List> -->
     </Content>
     
-      <Accordion class="expanded">
+      <!-- <Accordion class="expanded">
         <Panel bind:open={expanded} color="primary" square>
           <AccHeader>Info Panel</AccHeader>
           <AccContent>
@@ -122,7 +146,7 @@
           </AccContent>
         </Panel>
         
-      </Accordion>
+      </Accordion> -->
     
   </Drawer>
 
@@ -161,6 +185,15 @@
 
 
 <style>
+  .tab {
+    height:8px;
+    font-size: 12pt;
+  }
+  .expand {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+  }
   
   /* These classes are only needed because the
       drawer is in a container on the page. */
@@ -170,7 +203,7 @@
     height: calc(100vh - 64px);
     /* height:100vh; */
     width: 100%;
-    
+    overflow: auto;
     /* overflow: hidden; */
     z-index: 0;
     flex-grow: 1;
@@ -219,7 +252,7 @@
   :global(.expanded){
     display :inline-block;
     max-height: 300px;
-    min-height: au;
+    min-height: auto;
     /* height: 150px; */
     position: absolute;
     bottom: 0;

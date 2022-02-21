@@ -4,6 +4,8 @@
 
 <style>
     .tab-list {
-        /*border-bottom: 1px solid dodgerblue;*/
+        border-bottom: 0px solid dodgerblue;
+
     }
+    
 </style>
