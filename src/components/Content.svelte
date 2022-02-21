@@ -17,15 +17,13 @@
   import IconButton from '@smui/icon-button'
   export let expanded = true;
   export let open = false;
-  
-  
+  import BottomDrawer from "./BottomDrawer.svelte"
+
   import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
   let rlabel;
   let expandedt;
- 
-
-  
+  const tabs = ['Load...', "Layers", 'Analyze']
   
 
 
@@ -39,12 +37,9 @@
   
   let panel;
 
-
   import {wtree}  from '../stores/stores'
   import TreeView from './TreeView.svelte'
-  
-  
-  
+
 </script>
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open >
@@ -53,110 +48,40 @@
       <Title>Layers</Title>
     </Header> -->
     
-    <Content>
-      <TabBar tabs={['Load...', 'Layers', 'Analyze']}   let:tab bind:active>
+    <Content class="{expanded ? 'contracted-browser' : 'expanded-browser'}">
+      <TabBar tabs={tabs}   let:tab bind:active>
         <!-- Note: the `tab` property is required! -->
         <Tab {tab} class="tab">
-          <Label  >{tab}</Label>
+          <Label>{tab}</Label>
         </Tab>
       </TabBar>
-      {#if active == 'Load...'}
+      {#if active === 'Load...'}
           <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expandedt={expanded} />
-      {:else if active =='Layers'}
+      {:else if active === "Layers"}
         Layers
-      {:else if active=='Analyze'}
+      {:else if active==='Analyze'}
         Analyze
       {/if}
-      
-        <!-- <Tabs>
-          <TabList>
-            <Tab>Load data</Tab>
-            <Tab>Layers</Tab>
-            <Tab>Analyze</Tab>
-            
-          </TabList>
-
-          <TabPanel>
-            
-            <div class="expand">
-              <TreeView tree={$wtree.tree} />
-            </div>
-            
-          </TabPanel>
-          
-
-          
-          <TabPanel>
-            <p>Available layers</p>
-          </TabPanel>
-          
-
-
-          <TabPanel>
-            <p>Create vrt layers and band based map algebra</p>
-          </TabPanel>
-          
-          
-        </Tabs> -->
-      
-      <!-- <List>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('Vector tiles')}
-                activated={active === 'Vector tiles'}
-        >
-          <Text>Vector tiles</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('A Space Rocket')}
-                activated={active === 'A Space Rocket'}
-        >
-          <Text>A Space Rocket</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('100 Pounds of Gravel')}
-                activated={active === '100 Pounds of Gravel'}
-        >
-          <Text>100 Pounds of Gravel</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('All of the Shrimp')}
-                activated={active === 'All of the Shrimp'}
-        >
-          <Text>All of the Shrimp</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('A Planet with a Mall')}
-                activated={active === 'A Planet with a Mall'}
-        >
-          <Text>A Planet with a Mall</Text>
-        </Item>
-      </List> -->
     </Content>
-    
-      <!-- <Accordion class="expanded">
+    <br/>
+    <div>
+      <Accordion class="expanded">
         <Panel bind:open={expanded} color="primary" square>
           <AccHeader>Info Panel</AccHeader>
           <AccContent>
-           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae modi natus adipisci ut, ab voluptates accusamus, veniam quam id corporis nisi earum at nemo libero quod iure sequi nihil ullam.
+            <div>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium eos et, hic illo itaque iure, libero magnam neque quidem tempore voluptas voluptate, voluptatem! Amet dignissimos illum quam ratione recusandae, repellendus?
+            </div>
           </AccContent>
         </Panel>
-        
-      </Accordion> -->
-    
+      </Accordion>
+    </div>
   </Drawer>
 
   <!-- Todo: Create a component for the following -->
   <AppContent class="app-content " >
     <main class="main-content">
-      
       <slot></slot>
-
-    
     </main>
     <!-- a LARGE  bottom ionfo panel covering the map
     use as an alternative to placing the info panel in the side bar
@@ -182,12 +107,18 @@
   <!-- Todo: Create a component for the following -->
 </div>
 
-
-
 <style>
-  .tab {
-    height:8px;
-    font-size: 12pt;
+  :global(.mdc-tab){
+    font-size: 0.6rem;
+    height: 20px;
+  }
+
+  :global(.s-k9Xq-arq2lfR){
+    font-family: Calibri,serif;
+  }
+
+  :global(.smui-accordion__header){
+    height: 20px;
   }
   .expand {
     overflow-x: auto;
@@ -221,6 +152,7 @@
     position: relative;
     flex-grow: 1;
   }
+
   .main-content {
     overflow: hidden;
     display: flex;
@@ -231,23 +163,30 @@
     z-index: -1;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+/* Tip
+Toggle between .mdc_drawer__content height == 380px and height == 100%
+When the bottom drawer expanded == True, .mdc_drawer__content height == 380
+When the bottom drawer expanded == False, mdc_drawer__content height == 100%
+Create a class in the component that checks for the expanded state*/
 
+  :global(.contracted-browser){
+    height: 380px;
+  }
+  :global(.expanded-browser){
+    height: 100%;
   }
   .bottom-drawer{
     position: absolute;
     bottom: 0;
-    left: 0%;
+    left: 0;
     /* background-color: dodgerblue; */
     width: 100%;
     height: 100%;
     /* border-radius: 5px 50px 50px 5px; */
     flex-grow: 1;
     overflow: auto;
-    
-    
   }
-  
-
 
   :global(.expanded){
     display :inline-block;
@@ -256,16 +195,19 @@
     /* height: 150px; */
     position: absolute;
     bottom: 0;
-    left: 0%;
-    color: red;
+    left: 0;
     width: 100%;
     text-align: center;
     overflow:auto;
-
-
-    
   }
 
+  /*:global(.mdc-drawer__content){*/
+  /*  height: 380px;*/
+  /*}*/
 
-  
+  /* Todo: The following styles are when the bottom drawer is contracted*/
+
+  /*.expanded-browser{*/
+  /*  height: 100%;*/
+  /*}*/
 </style>

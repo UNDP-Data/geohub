@@ -190,25 +190,19 @@
     
 </script>
 
-
 <ul><!-- transition:slide -->
     <li>
         {#if children}
-
-        
-			<span on:click={() => toggleExpansion()}>
-            
+            <span class="this" on:click={() => toggleExpansion()}>
 				<span class="arrow" class:arrowDown > {@html '&#9658;'} </span>
                 {label}
-                
 			</span>
             <span alt="Vector tile layer" style="color: lime;">
                 {#if url}
                     {@html '&#10070'}
                     <input style="padding:0px, margin:0px" type=checkbox on:change={()=>loadLayer()} bind:checked />
                 {/if}
-            </span> 
-            
+            </span>
             {#if expanded}
                 {#each children as child}
                     <svelte:self tree={child} />
@@ -216,10 +210,7 @@
                 {/each}
             {/if}
         {:else}
-            
-                
-            
-			<span >
+			<span>
                 <span data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);">
                     {#if isRaster}
                         {@html '&#9638'}
@@ -230,17 +221,12 @@
 				<!-- <span class="no-arrow" on:click={() => toggleExpansion(label)}>{label}</span> -->
                 
                 {label}
-                
-            
-                
 			</span>
         {/if}
     </li>
 </ul>
-
 <style>
     ul {
-        margin: 0;
         list-style: none;
         padding-left: 1.2rem;
         user-select: none;
@@ -251,5 +237,7 @@
         display: inline-block;
         /* transition: transform 200ms; */
     }
-    .arrowDown { transform: rotate(90deg); }
+    .arrowDown {
+        transform: rotate(90deg);
+    }
 </style>

@@ -9,10 +9,6 @@ import {
 import * as dotenv from "dotenv";
 dotenv.config();
 
-
-
-
-
 //set creds
 const account = process.env.AZURE_STORAGE_ACCOUNT || "";
 const accountKey = process.env.AZURE_STORAGE_ACCESS_KEY || "";

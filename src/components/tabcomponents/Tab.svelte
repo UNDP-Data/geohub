@@ -19,7 +19,6 @@
         width: auto;
         font-weight: bold;
         /* font-size: larger; */
-        
     }
     button {
         transition-duration: 0.4s;
