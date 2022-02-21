@@ -16,9 +16,10 @@
     
 </script>
 
-<!-- <script lang="ts">
+<script lang="ts">
+    console.log('client in index')
     import {wtree}  from '../stores/stores'
-    import TreeView from './TreeView.svelte'
+    // import TreeView from './TreeView.svelte'
     
     export let tree = undefined;
 
@@ -28,7 +29,8 @@
     
 
 </script>
-
+say whaaat
+<!--
 <div>
     
     
@@ -36,16 +38,17 @@
     
 
 </div> -->
+
     
 
 <!-- Todo: This styles are set to ensure that the Map Content moves together with the drawer opening-->
 <style global>
     .mdc-drawer{
-        width:250px;
+        width:300px;
     }
 
     .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing)+.mdc-drawer-app-content{
-        margin-left: 250px;
+        margin-left: 300px;
         margin-right: 0;
     }
 </style>

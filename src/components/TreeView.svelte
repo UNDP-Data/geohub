@@ -1,4 +1,5 @@
 <script context="module" lang="ts">
+	
     // retain module scoped expansion state for each tree node
     const _expansionState = {
         /* treeNodeId: expanded <boolean> */
@@ -7,8 +8,10 @@
 
 </script>
 <script lang="ts">
+    import { onMount } from 'svelte';
 
     import {wtree} from '../stores/stores'
+    import { map } from '../stores/mapstore';
     
     const fetchTree = async(path:string) => { 
         let url = `azstorage.json?path=${path}`;
@@ -64,11 +67,8 @@
                 //replace old children with updated
                 root.children = updatedChildren;        
             }
-            //set ne root for next level of iteration
+            //set  root for next level of iteration
             let nextRoot = echildren.filter(item => item.label == element).pop();
-            // if (!nextRoot){
-            //     return;
-            // }
             
             
             root = nextRoot;
@@ -78,25 +78,71 @@
         
     };
 
+
+    onMount( () => {
+        
+		console.log('Mounting TW')
+
+    
+	});
     
     import Checkbox from '@smui/checkbox';
     
-    //	import { slide } from 'svelte/transition'
-    export let tree:any;
+    $:mmap = $map;
     
-    let label, children, path, url, isRaster;
+    export let tree;
+    
+    
+    export let label, children, path, url, isRaster;
     $: ({ label, children, path, url, isRaster } = tree)
 
     // const {label, children, path} = tree;
     
-
-    let expanded = _expansionState[label] || false;
-
+    export let expanded;
+    $:expanded = _expansionState[label] || false;
+    
     let icon = '&#43';
     
     const loadLayer = () => {
         if (!checked){
             console.log('load layer ', label, url);
+            if (!isRaster){
+                
+                
+                const lid = path.replace(/\//g,'_');
+                const lSrc = {
+                            'type': 'vector',
+                            'tiles': [url],
+                            'minzoom': 0,
+                            'maxzoom': 12
+                        };
+                mmap.addSource(lid,lSrc);
+                const lDef = {
+                    'id': lid, // Layer ID
+                    'type': 'line',
+                    'source': lid, // ID of the tile source created above
+                    'source-layer': label,
+                    'layout': {
+                            'line-cap': 'round',
+                            'line-join': 'round'
+                            },
+                    'paint': {
+                    // 'line-opacity': 0,
+                    'line-color': 'rgb(53, 175, 109)',
+                    'line-width': 2
+                    }
+
+                };
+
+                mmap.addLayer( lDef);
+
+            }
+            
+            const tilesLoaded = mmap.areTilesLoaded();
+
+            console.log('map ', mmap.getStyle().layers[mmap.getStyle().layers.length-1], tilesLoaded);
+
+            
         }
         else {
             console.log('remove layer', label)
@@ -144,22 +190,25 @@
     
 </script>
 
+
 <ul><!-- transition:slide -->
     <li>
         {#if children}
+
         
-
-
 			<span on:click={() => toggleExpansion()}>
+            
+				<span class="arrow" class:arrowDown > {@html '&#9658;'} </span>
+                {label}
                 
-                <span alt="Vector tile layer" style="color: lime;">{#if url}{@html '&#10070'}{/if}</span> 
-
-                
-			<!-- <span on:click={() => {tree = toggleExpansion(tree)}}> -->
-				<!-- <span class="arrow" class:arrowDown>&#x25b6</span> -->
-				<span class="arrow" class:arrowDown > {@html icon} </span>
-                {label}{#if url} - <a href="{url}">web url</a>{/if}
 			</span>
+            <span alt="Vector tile layer" style="color: lime;">
+                {#if url}
+                    {@html '&#10070'}
+                    <input style="padding:0px, margin:0px" type=checkbox on:change={()=>loadLayer()} bind:checked />
+                {/if}
+            </span> 
+            
             {#if expanded}
                 {#each children as child}
                     <svelte:self tree={child} />
@@ -171,14 +220,18 @@
                 
             
 			<span >
-                <span data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);">{#if isRaster}{@html '&#9638'}{/if}</span>
+                <span data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);">
+                    {#if isRaster}
+                        {@html '&#9638'}
+                        <input style="padding:0px, margin:0px" type=checkbox on:change={()=>loadLayer()} bind:checked />
+                    {/if}
+                </span>
                 <!-- <a href="" data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);" >{#if isRaster}{@html '&#10070'}{/if}</a> -->
 				<!-- <span class="no-arrow" on:click={() => toggleExpansion(label)}>{label}</span> -->
-                <input style="padding:0px, margin:0px" type=checkbox on:change={()=>loadLayer()} bind:checked />
+                
                 {label}
                 
-                
-                <!-- <a href="{path}">{label}</a> -->
+            
                 
 			</span>
         {/if}
@@ -198,5 +251,5 @@
         display: inline-block;
         /* transition: transform 200ms; */
     }
-    .arrowDown { transform: rotate(180deg); }
+    .arrowDown { transform: rotate(90deg); }
 </style>

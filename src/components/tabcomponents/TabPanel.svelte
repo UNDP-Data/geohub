@@ -9,5 +9,10 @@
 </script>
 
 {#if $selectedPanel === panel}
+    
     <slot></slot>
 {/if}
+
+
+    
+    
