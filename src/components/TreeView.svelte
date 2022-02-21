@@ -194,7 +194,7 @@
     <li>
         {#if children}
             <span class="this" on:click={() => toggleExpansion()}>
-				<span class="arrow" class:arrowDown > {@html '&#9658;'} </span>
+				<span class="arrow" class:arrowDown > {@html icon} </span>
                 {label}
 			</span>
             <span alt="Vector tile layer" style="color: lime;">
@@ -238,6 +238,6 @@
         /* transition: transform 200ms; */
     }
     .arrowDown {
-        transform: rotate(90deg);
+        transform: rotate(180deg);
     }
 </style>
