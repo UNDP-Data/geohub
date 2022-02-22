@@ -210,7 +210,7 @@
         
 			<span on:click={() => toggleExpansion()}>
             
-				<span class="arrow" class:arrowDown > {@html '&#9658;'} </span>
+				<span class="arrow" class:arrowDown > {@html icon} </span>
                 {label}
                 
 			</span>
@@ -263,5 +263,5 @@
         display: inline-block;
         /* transition: transform 200ms; */
     }
-    .arrowDown { transform: rotate(90deg); }
+    .arrowDown { transform: rotate(180deg); }
 </style>
