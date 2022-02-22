@@ -4,7 +4,9 @@
     const _expansionState = {
         /* treeNodeId: expanded <boolean> */
     };
-    
+   
+   
+
 
 </script>
 <script lang="ts">
@@ -12,6 +14,9 @@
     import { v4 as uuidv4 } from 'uuid';
     import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
+    import {variables} from '../stores/variables';
+    //set creds
+    const TITILER_ENDPOINT = variables.titilerEndPoint || "";
     
     const fetchTree = async(path:string) => { 
         let url = `azstorage.json?path=${path}`;
@@ -108,12 +113,13 @@
     
     const loadLayer = () => {
         const srcId = path.replace(/\//g,'_');
-        const lName  = path.split('/')[path.split('/').length-2]; 
+        
         const lid = uuidv4();
         if (!checked){
-            console.log('load layer ', label, url);
+            
             if (!isRaster){
-                
+                const lName  = path.split('/')[path.split('/').length-2]; 
+                console.log('load vector layer ', label, url);
 
                 const lSrc = {
                             'type': 'vector',
@@ -141,13 +147,37 @@
 
                 };
                 console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef}]);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'vector'}]);
                 console.log($layerList);
                 //mmap.addLayer( lDef);
 
             }
-            else{
+            else{ //
+                const lName  = path.split('/')[path.split('/').length-1]; 
+                console.log('load raster layer', label, url)//https://undp.livedata.link/hrea/tiles/{z}/{x}/{y}.png
+                const encodedRasterURL = encodeURI(`url=${url}`);
+                
+                const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${encodedRasterURL}&expression=b1&colormap_name=viridis`;
+                console.log('tit', TITILER_ENDPOINT);
+                const lSrc = {
+                    'type': 'raster',
+                    'tiles': [tilejsonURL],         
+                    'tileSize': 256,
+                    'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
+                };
+                const lDef = {
+                    
+                        'id': lid,
+                        'type': 'raster',
+                        'source': label,
+                        'minzoom': 0,
+                        'maxzoom': 22
 
+                };
+
+                console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
+                console.log($layerList);
             }
             
             

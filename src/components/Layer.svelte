@@ -10,8 +10,8 @@
 
     
     export let layerCfg;
-    export let lName, lSrc, lDef;
-    $: ({lName, lSrc, lDef} = layerCfg);
+    export let lName, lSrc, lDef, lType;
+    $: ({lName, lSrc, lDef, lType} = layerCfg);
     $:mmap = $map;
     let selected:boolean = false;
 
