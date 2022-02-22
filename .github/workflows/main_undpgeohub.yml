@@ -21,6 +21,14 @@ jobs:
         with:
           node-version: '16.x'
 
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          file_name: .env
+          fail_on_empty: false
+
       - name: npm install, build, and test
         run: |
           npm install
