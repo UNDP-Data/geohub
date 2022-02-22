@@ -21,7 +21,7 @@
   
   
   import Icon from '@iconify/svelte';
-  let active = 'Load data';
+  let active = 'Load';
   let rlabel;
   let expandedt;
  
@@ -59,11 +59,11 @@
     
     <Content>
       
-      {#if active === 'Load data'}
+      {#if active == 'Load data'}
           <TreeView tree={$wtree.tree}   />
-      {:else if active === 'Layers'}
+      {:else if active == 'Layers'}
         <LayerList></LayerList>
-      {:else if active === 'Analyze'}
+      {:else if active == 'Analyze'}
         Analyze
       {/if}
       
