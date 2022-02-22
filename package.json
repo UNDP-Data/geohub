@@ -9,9 +9,29 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
-    "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
+    "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
+    "smui-theme-light": "smui-theme compile static/smui.css -i src/theme",
+    "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/theme/dark",
+    "prepare": "npm run smui-theme-light && npm run smui-theme-dark"
   },
   "devDependencies": {
+    "@azure/storage-blob": "^12.8.0",
+    "@iconify/svelte": "^2.1.2",
+    "@mdi/js": "^6.5.95",
+    "@smui-extra/accordion": "^6.0.0-beta.13",
+    "@smui/button": "^6.0.0-beta.13",
+    "@smui/checkbox": "^6.0.0-beta.14",
+    "@smui/drawer": "^6.0.0-beta.13",
+    "@smui/form-field": "^6.0.0-beta.14",
+    "@smui/icon-button": "^6.0.0-beta.13",
+    "@smui/layout-grid": "^6.0.0-beta.13",
+    "@smui/list": "^6.0.0-beta.13",
+    "@smui/ripple": "^6.0.0-beta.14",
+    "@smui/switch": "^6.0.0-beta.14",
+    "@smui/tab": "^6.0.0-beta.13",
+    "@smui/tab-bar": "^6.0.0-beta.13",
+    "@smui/tooltip": "^6.0.0-beta.14",
+    "@smui/top-app-bar": "^6.0.0-beta.13",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/adapter-static": "^1.0.0-next.28",
     "@sveltejs/kit": "next",
@@ -20,13 +40,26 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
+    "maplibre-gl": "^2.1.6",
     "prettier": "^2.4.1",
     "prettier-plugin-svelte": "^2.4.0",
+    "smui-theme": "^6.0.0-beta.13",
     "svelte": "^3.44.0",
+    "svelte-body": "^1.3.6",
     "svelte-check": "^2.2.6",
     "svelte-preprocess": "^4.9.4",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@azure/identity": "^2.0.2",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.4.1",
+    "dotenv": "^16.0.0",
+    "esbuild": "^0.14.21",
+    "svelte-collapsible": "^0.2.1",
+    "uuid": "^8.3.2"
+  }
 }
