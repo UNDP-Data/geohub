@@ -75,10 +75,6 @@
    = !panelOpen
   )}>bookmark_border</IconButton>
       <!--<IconButton class="material-icons" on:click={smartToggle}>bookmark_border</IconButton>-->
-        <IconButton>
-            <Icon component={Svg} viewBox="0 0 24 24" >
-            <path fill="currentColor" d={darkTheme ? mdiWeatherSunny : mdiWeatherNight }></path>
-        </Icon></IconButton>
       <IconButton class="material-icons" on:click={() => (drawerOpen = !drawerOpen)}>menu</IconButton>
       <IconButton on:click={() => (darkTheme = !darkTheme)}>
         <Icon component={Svg} viewBox="0 0 24 24" >

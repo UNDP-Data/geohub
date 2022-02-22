@@ -23,8 +23,7 @@
   let rlabel;
   let expandedt;
   const tabs = ['Load...', "Layers", 'Analyze']
-  
-
+  let infoICon = expandedt ? '&#9650;':'&#9660;';
 
   import Tab, { Label } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
@@ -42,39 +41,37 @@
 </script>
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open >
-    
-    <!-- <Header>
-      <Title>Layers</Title>
-    </Header> -->
-    
-    <Content class="{expanded ? 'contracted-browser' : 'expanded-browser'}">
-      <TabBar tabs={tabs}   let:tab bind:active>
+    <Header>
+      <TabBar class="tab-header" tabs={tabs}   let:tab bind:active>
         <!-- Note: the `tab` property is required! -->
         <Tab {tab} class="tab">
           <Label>{tab}</Label>
         </Tab>
       </TabBar>
+    </Header>
+    
+    <Content class="{expanded ? 'contracted-browser' : 'expanded-browser'}">
+
       {#if active === 'Load...'}
-          <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expandedt={expanded} />
+          <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expanded={expandedt} />
       {:else if active === "Layers"}
         Layers
       {:else if active==='Analyze'}
         Analyze
       {/if}
+      <div>
+        <Accordion class="expanded">
+          <Panel bind:open={expanded} color="primary" square>
+            <AccHeader>{@html infoICon}</AccHeader>
+            <AccContent>
+              <div>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium eos et, hic illo itaque iure, libero magnam neque quidem tempore voluptas voluptate, voluptatem! Amet dignissimos illum quam ratione recusandae, repellendus?
+              </div>
+            </AccContent>
+          </Panel>
+        </Accordion>
+      </div>
     </Content>
-    <br/>
-    <div>
-      <Accordion class="expanded">
-        <Panel bind:open={expanded} color="primary" square>
-          <AccHeader>Info Panel</AccHeader>
-          <AccContent>
-            <div>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium eos et, hic illo itaque iure, libero magnam neque quidem tempore voluptas voluptate, voluptatem! Amet dignissimos illum quam ratione recusandae, repellendus?
-            </div>
-          </AccContent>
-        </Panel>
-      </Accordion>
-    </div>
   </Drawer>
 
   <!-- Todo: Create a component for the following -->
@@ -107,24 +104,35 @@
 </div>
 
 <style>
-  :global(.mdc-tab){
-    font-size: 0.6rem;
-    height: 20px;
-  }
+  /*:global(.mdc-tab){*/
+  /*  font-size: 0.6rem;*/
+  /*  height: 20px;*/
+  /*}*/
 
   :global(.s-k9Xq-arq2lfR){
     font-family: Calibri,serif;
   }
 
-  :global(.smui-accordion__header){
-    height: 20px;
+  .tab-header{
+    font-size: 2rem;
+    height: 30px;
   }
+  /*:global(.smui-accordion__header){*/
+  /*  height: 40px;*/
+  /*  width: 40px;*/
+  /*  margin: 0 auto;*/
+  /*  background: none;*/
+  /*}*/
   .expand {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
   }
-  
+
+  .tab{
+    border: 1px solid rebeccapurple;
+    margin: 0;
+  }
   /* These classes are only needed because the
       drawer is in a container on the page. */
   .drawer-container {
@@ -170,7 +178,7 @@ When the bottom drawer expanded == False, mdc_drawer__content height == 100%
 Create a class in the component that checks for the expanded state*/
 
   :global(.contracted-browser){
-    height: 380px;
+    height: 60%;
   }
   :global(.expanded-browser){
     height: 100%;
@@ -189,7 +197,7 @@ Create a class in the component that checks for the expanded state*/
 
   :global(.expanded){
     display :inline-block;
-    max-height: 300px;
+    max-height: 40%;
     min-height: auto;
     /* height: 150px; */
     position: absolute;

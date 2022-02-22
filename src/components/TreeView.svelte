@@ -228,7 +228,7 @@
 <style>
     ul {
         list-style: none;
-        padding-left: 1.2rem;
+        padding-left: 1rem;
         user-select: none;
     }
     
