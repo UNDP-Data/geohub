@@ -9,8 +9,8 @@
 </script>
 <script lang="ts">
     import { onMount } from 'svelte';
-
-    import {wtree} from '../stores/stores'
+    import { v4 as uuidv4 } from 'uuid';
+    import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
     
     const fetchTree = async(path:string) => { 
@@ -79,14 +79,10 @@
     };
 
 
-    onMount( () => {
-        
-		console.log('Mounting TW')
-
     
-	});
     
     import Checkbox from '@smui/checkbox';
+    import Accordion from '@smui-extra/accordion/src/Accordion.svelte';
     
     $:mmap = $map;
     
@@ -101,26 +97,37 @@
     export let expanded;
     $:expanded = _expansionState[label] || false;
     
+    onMount( () => {
+        
+		//console.log('Mounting TW', _expansionState);
+        
+
+    
+	});
     let icon = '&#43';
     
     const loadLayer = () => {
+        const srcId = path.replace(/\//g,'_');
+        const lName  = path.split('/')[path.split('/').length-2]; 
+        const lid = uuidv4();
         if (!checked){
             console.log('load layer ', label, url);
             if (!isRaster){
                 
-                
-                const lid = path.replace(/\//g,'_');
+
                 const lSrc = {
                             'type': 'vector',
                             'tiles': [url],
                             'minzoom': 0,
                             'maxzoom': 12
                         };
-                mmap.addSource(lid,lSrc);
+
+                //mmap.addSource(lid,lSrc);
                 const lDef = {
+
                     'id': lid, // Layer ID
                     'type': 'line',
-                    'source': lid, // ID of the tile source created above
+                    'source': srcId, // ID of the tile source created above
                     'source-layer': label,
                     'layout': {
                             'line-cap': 'round',
@@ -129,23 +136,28 @@
                     'paint': {
                     // 'line-opacity': 0,
                     'line-color': 'rgb(53, 175, 109)',
-                    'line-width': 2
+                    'line-width': 0.5
                     }
 
                 };
+                console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef}]);
+                console.log($layerList);
+                //mmap.addLayer( lDef);
 
-                mmap.addLayer( lDef);
+            }
+            else{
 
             }
             
-            const tilesLoaded = mmap.areTilesLoaded();
-
-            console.log('map ', mmap.getStyle().layers[mmap.getStyle().layers.length-1], tilesLoaded);
+            
 
             
         }
         else {
-            console.log('remove layer', label)
+            //mmap.removeLayer(lid);
+            //mmap.removeSource(lid);
+            console.log('removed layer', label)
         }
     };
 

@@ -2,12 +2,15 @@ import {
     BlobServiceClient, 
     StorageSharedKeyCredential, 
     generateBlobSASQueryParameters,
-    BlobSASPermissions, 
-    ContainerClient}
+    BlobSASPermissions,}
  from "@azure/storage-blob"
+
+import azure  from "@azure/storage-blob";
 // Load the .env file if it exists
 import * as dotenv from "dotenv";
 dotenv.config();
+
+
 
 
 
@@ -61,6 +64,24 @@ const listContainer = async (containerName:string, relPath:string) =>{
         sharedKeyCredential
     );
 
+    //generate account SAS token for vector tiles. This is needed because the 
+    // blob level SAS tokens have the blob name encoded inside the SAS token and the
+    // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
+     
+    
+    const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
+        new Date(new Date().valueOf() + 86400000),
+        azure.AccountSASPermissions.parse("r"),
+       "o"
+    
+    );
+    const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI);
+
+    
+
+
+
+
 
     let treeLabel:string = containerName;
     if (Boolean(relPath)){
@@ -100,14 +121,14 @@ const listContainer = async (containerName:string, relPath:string) =>{
             }
 
 
-            containerChildren.push({'label':childLabel, 'children':[], 'path':path, 'url':null})
+            containerChildren.push({'label':childLabel, 'children':[], 'path':path, 'url':null, 'isRaster':false})
 
         } else {
             const blockBlobClient = cclient.getBlockBlobClient(item.name);
             const sasToken = generateBlobSASQueryParameters({
                 containerName: containerName,
                 blobName: item.name,
-                expiresOn: new Date(new Date().valueOf() + 86400),
+                expiresOn: new Date(new Date().valueOf() + 86400000),
                 permissions: BlobSASPermissions.parse("r")
             }, sharedKeyCredential);
             
@@ -127,7 +148,7 @@ const listContainer = async (containerName:string, relPath:string) =>{
                 let splitAt = blobServiceClient.url.lastIndexOf('/');
 
                 
-                const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}?${sasToken}`;
+                const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`;
 
                 tree.url = rurl
 
@@ -166,11 +187,11 @@ const listContainers = async( prefix:string = '/' ) => {
         sharedKeyCredential
     );
     
-    let tree = {'label':'GeoHub Azure Storage', 'children':[], 'path':prefix, 'url':null};
+    let tree = {'label':'GeoHub Azure Storage', 'children':[], 'path':prefix, 'url':null, 'isRaster':false, };
     
     
     for await (const container of blobServiceClient.listContainers()) {
-        let containerItem = {'label':container.name, 'children':[], 'path':`${container.name}/`, 'url':null}
+        let containerItem = {'label':container.name, 'children':[], 'path':`${container.name}/`, 'url':null, 'isRaster':false}
         tree.children.push(containerItem);        
         
     }

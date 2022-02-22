@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import LayerList from './LayerList.svelte';
 	import { mdiWeatherSunny } from '@mdi/js';
   import Drawer, {
     AppContent,
@@ -40,102 +41,76 @@
   let panel;
 
 
-  import {wtree}  from '../stores/stores'
-  import TreeView from './TreeView.svelte'
-  
+  import {wtree}  from '../stores/stores';
+  import TreeView from './TreeView.svelte';
+  import LayerList from './LayerList.svelte';
   
   
 </script>
+
 <div class="drawer-container">
+  
   <Drawer variant="dismissible" bind:open >
     
-    <!-- <Header>
-      <Title>Layers</Title>
-    </Header> -->
-    
-    <Content>
+    <Header>
       <TabBar tabs={['Load...', 'Layers', 'Analyze']}   let:tab bind:active>
         <!-- Note: the `tab` property is required! -->
         <Tab {tab} class="tab">
           <Label  >{tab}</Label>
         </Tab>
       </TabBar>
+    </Header>
+    
+    <Content>
+      
       {#if active == 'Load...'}
-          <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expandedt={expanded} />
+          <TreeView tree={$wtree.tree}   />
       {:else if active =='Layers'}
-        Layers
+        <LayerList></LayerList>
+        <!-- <List>
+          <Item
+                  href="javascript:void(0)"
+                  on:click={() => setActive('Vector tiles')}
+                  activated={active === 'Vector tiles'}
+          >
+            <Text>Vector tiles</Text>
+          </Item>
+          <Item
+                  href="javascript:void(0)"
+                  on:click={() => setActive('A Space Rocket')}
+                  activated={active === 'A Space Rocket'}
+          >
+            <Text>A Space Rocket</Text>
+          </Item>
+          <Item
+                  href="javascript:void(0)"
+                  on:click={() => setActive('100 Pounds of Gravel')}
+                  activated={active === '100 Pounds of Gravel'}
+          >
+            <Text>100 Pounds of Gravel</Text>
+          </Item>
+          <Item
+                  href="javascript:void(0)"
+                  on:click={() => setActive('All of the Shrimp')}
+                  activated={active === 'All of the Shrimp'}
+          >
+            <Text>All of the Shrimp</Text>
+          </Item>
+          <Item
+                  href="javascript:void(0)"
+                  on:click={() => setActive('A Planet with a Mall')}
+                  activated={active === 'A Planet with a Mall'}
+          >
+            <Text>A Planet with a Mall</Text>
+          </Item>
+      </List> -->
       {:else if active=='Analyze'}
         Analyze
       {/if}
       
-        <!-- <Tabs>
-          <TabList>
-            <Tab>Load data</Tab>
-            <Tab>Layers</Tab>
-            <Tab>Analyze</Tab>
-            
-          </TabList>
-
-          <TabPanel>
-            
-            <div class="expand">
-              <TreeView tree={$wtree.tree} />
-            </div>
-            
-          </TabPanel>
-          
-
-          
-          <TabPanel>
-            <p>Available layers</p>
-          </TabPanel>
-          
-
-
-          <TabPanel>
-            <p>Create vrt layers and band based map algebra</p>
-          </TabPanel>
-          
-          
-        </Tabs> -->
+       
       
-      <!-- <List>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('Vector tiles')}
-                activated={active === 'Vector tiles'}
-        >
-          <Text>Vector tiles</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('A Space Rocket')}
-                activated={active === 'A Space Rocket'}
-        >
-          <Text>A Space Rocket</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('100 Pounds of Gravel')}
-                activated={active === '100 Pounds of Gravel'}
-        >
-          <Text>100 Pounds of Gravel</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('All of the Shrimp')}
-                activated={active === 'All of the Shrimp'}
-        >
-          <Text>All of the Shrimp</Text>
-        </Item>
-        <Item
-                href="javascript:void(0)"
-                on:click={() => setActive('A Planet with a Mall')}
-                activated={active === 'A Planet with a Mall'}
-        >
-          <Text>A Planet with a Mall</Text>
-        </Item>
-      </List> -->
+      
     </Content>
     
       <!-- <Accordion class="expanded">
@@ -156,9 +131,7 @@
       
       <slot></slot>
 
-    
-    </main>
-    <!-- a LARGE  bottom ionfo panel covering the map
+      <!-- a LARGE  bottom info panel covering the map
     use as an alternative to placing the info panel in the side bar
     -->
     <!-- <div  bind:this={panel} class:expanded>
@@ -176,7 +149,9 @@
         </Accordion>
       </div>
       {/if}
-    </div> -->
+    </div>
+    </main> -->
+    
     
   </AppContent>
   <!-- Todo: Create a component for the following -->
@@ -200,7 +175,7 @@
   .drawer-container {
     position: absolute;
     display: flex;
-    height: calc(100vh - 64px);
+    height: calc(100vh - calc(64px+48px));
     /* height:100vh; */
     width: 100%;
     overflow: auto;
@@ -213,6 +188,7 @@
   .acordion-container {
     max-height: 350px;
     overflow: auto;
+    z-index: inherit;
   }
 
   * :global(.app-content) {
