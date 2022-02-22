@@ -47,19 +47,19 @@
   
   
 </script>
-<TabBar tabs={['Load...', 'Layers', 'Analyze']}   let:tab bind:active>
-  <!-- Note: the `tab` property is required! -->
-  <Tab {tab} class="tab">
-    <Label  >{tab}</Label>
-  </Tab>
-</TabBar>
+
 <div class="drawer-container">
   
   <Drawer variant="dismissible" bind:open >
     
-    <!-- <Header>
-      <Title>Layers</Title>
-    </Header> -->
+    <Header>
+      <TabBar tabs={['Load...', 'Layers', 'Analyze']}   let:tab bind:active>
+        <!-- Note: the `tab` property is required! -->
+        <Tab {tab} class="tab">
+          <Label  >{tab}</Label>
+        </Tab>
+      </TabBar>
+    </Header>
     
     <Content>
       
@@ -113,7 +113,7 @@
       
     </Content>
     
-      <Accordion class="expanded">
+      <!-- <Accordion class="expanded">
         <Panel bind:open={expanded} color="primary" square>
           <AccHeader>Info Panel</AccHeader>
           <AccContent>
@@ -121,7 +121,7 @@
           </AccContent>
         </Panel>
         
-      </Accordion>
+      </Accordion> -->
     
   </Drawer>
 

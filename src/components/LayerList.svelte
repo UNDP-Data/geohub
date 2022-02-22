@@ -1,22 +1,39 @@
 <script lang="ts">
 	import { layerList } from '../stores/stores';
     import Layer from './Layer.svelte';
-    import Accordion from '@smui-extra/accordion/src/Accordion.svelte';
+    import { Accordion } from 'svelte-collapsible';
+    import List from '@smui/list';
     
 
 </script>
 
 
-
-<p>
-    LayerList
-</p>
-
-<Accordion multiple>
-    {#each $layerList as layerCfg}
-
+{#each $layerList as layerCfg}
     <Layer {layerCfg}></Layer>
 {/each}
 
-</Accordion>
+<!-- <List>
+    {#each $layerList as layerCfg}
+        <Layer {layerCfg}></Layer>
+    {/each}
 
+</List> -->
+<!-- <Accordion>
+    {#each $layerList as layerCfg}
+        <Layer {layerCfg}></Layer>
+    {/each}
+
+</Accordion> -->
+
+
+<style>
+    .accordion {
+		width: 100%;
+		max-width: 450px;
+		margin: 0 auto;
+	}
+	
+	
+
+	
+</style>

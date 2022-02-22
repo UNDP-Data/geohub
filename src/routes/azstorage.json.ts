@@ -147,7 +147,7 @@ const listContainer = async (containerName:string, relPath:string) =>{
             if (childLabel == 'metadata.json'){
                 let splitAt = blobServiceClient.url.lastIndexOf('/');
 
-                console.log(ACCOUNT_SAS_TOKEN_URL.searchParams.get('se'));
+                
                 const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`;
 
                 tree.url = rurl
