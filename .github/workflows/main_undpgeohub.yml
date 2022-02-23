@@ -47,10 +47,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         # if: ${{ github.ref == 'refs/heads/main' }}
-        env:
-          MY_HOST_VARIABLE: undpgeohub.azurewebsites.net
-          MY_PORT_VARIABLE: 8080
-          MY_ORIGINURL: http://undpgeohub.azurewebsites.net
         with:
           app-name: 'undpgeohub'
           slot-name: 'Production'
