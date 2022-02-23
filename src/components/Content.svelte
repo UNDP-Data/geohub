@@ -1,18 +1,21 @@
-
 <script lang="ts">
+	import { mdiWeatherSunny } from '@mdi/js';
   import Drawer, {
     AppContent,
     Content,
     Header,
   } from '@smui/drawer';
 
-    import LayerList from './LayerList.svelte';
-    import Layer from './Layer.svelte';
+  import LayerList from './LayerList.svelte';
+  import Layer from './Layer.svelte';
 
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
   export let expanded = true;
   export let open = false;
-  let active = 'Vector tiles';
+  
+  
+  import Icon from '@iconify/svelte';
+  let active = 'Load';
   let rlabel;
   let expandedt;
   const tabs = ['Load...', "Layers", 'Analyze']
@@ -28,10 +31,13 @@
   import TreeView from './TreeView.svelte'
 
 </script>
+
 <div class="drawer-container">
+  
   <Drawer variant="dismissible" bind:open >
+    
     <Header>
-      <TabBar class="tab-header" tabs={tabs}   let:tab bind:active>
+      <TabBar tabs={['Load data', 'Layers', 'Analyze']}   let:tab bind:active>
         <!-- Note: the `tab` property is required! -->
         <Tab {tab} class="tab">
           <Label>{tab}</Label>
@@ -39,27 +45,17 @@
       </TabBar>
     </Header>
     
-    <Content class="{expanded ? 'contracted-browser' : 'expanded-browser'}">
-
-      {#if active === 'Load...'}
-      <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expanded={expandedt} />
-    {:else if active === "Layers"}
-      <LayerList/>
-    {:else if active==='Analyze'}
-      Analyze
-    {/if}
-      <!-- <div>
-        <Accordion class="expanded">
-          <Panel bind:open={expanded} color="primary" square>
-            <AccHeader>{@html infoICon}</AccHeader>
-            <AccContent>
-              <div>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium eos et, hic illo itaque iure, libero magnam neque quidem tempore voluptas voluptate, voluptatem! Amet dignissimos illum quam ratione recusandae, repellendus?
-              </div>
-            </AccContent>
-          </Panel>
-        </Accordion>
-      </div> -->
+    <Content>
+      
+      {#if active == 'Load data'}
+          <TreeView tree={$wtree.tree}   />
+      {:else if active == 'Layers'}
+        <LayerList></LayerList>
+      {:else if active == 'Analyze'}
+        Analyze
+      {/if}
+      
+      
     </Content>
   </Drawer>
 
@@ -86,7 +82,9 @@
         </Accordion>
       </div>
       {/if}
-    </div> -->
+    </div>
+    </main> -->
+    
     
   </AppContent>
   <!-- Todo: Create a component for the following -->
@@ -127,7 +125,7 @@
   .drawer-container {
     position: absolute;
     display: flex;
-    height: calc(100vh - 64px);
+    height: calc(100vh - calc(64px+48px));
     /* height:100vh; */
     width: 100%;
     overflow: auto;
@@ -140,6 +138,7 @@
   .acordion-container {
     max-height: 350px;
     overflow: auto;
+    z-index: inherit;
   }
 
   * :global(.app-content) {

@@ -22,6 +22,7 @@
     "@smui/button": "^6.0.0-beta.13",
     "@smui/checkbox": "^6.0.0-beta.14",
     "@smui/chips": "^6.0.0-beta.14",
+    "@smui/dialog": "^6.0.0-beta.14",
     "@smui/drawer": "^6.0.0-beta.13",
     "@smui/form-field": "^6.0.0-beta.14",
     "@smui/icon-button": "^6.0.0-beta.13",

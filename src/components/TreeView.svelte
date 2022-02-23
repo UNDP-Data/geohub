@@ -4,6 +4,8 @@
     const _expansionState = {
         /* treeNodeId: expanded <boolean> */
     };
+   
+   
 
 
 </script>
@@ -12,6 +14,9 @@
     import { v4 as uuidv4 } from 'uuid';
     import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
+    import Dialog, { Title, Content, Actions } from '@smui/dialog';
+    import Button, { Label } from '@smui/button';
+
     const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
 
     const fetchTree = async(path:string) => {
@@ -109,7 +114,7 @@
 
     const loadLayer = () => {
         const srcId = path.replace(/\//g,'_');
-        
+        console.log(path, srcId);
         const lid = uuidv4();
         if (!checked){
             
@@ -122,13 +127,18 @@
                             'minzoom': 0,
                             'maxzoom': 12
                         };
-                //mmap.addSource(lid,lSrc);
+                if(! (srcId in mmap.getStyle().sources)){
+                    $map.addSource(srcId,lSrc);
+                }
+                
                 const lDef = {
+
                     'id': lid, // Layer ID
                     'type': 'line',
                     'source': srcId, // ID of the tile source created above
                     'source-layer': label,
                     'layout': {
+                            'visibility':'visible',
                             'line-cap': 'round',
                             'line-join': 'round'
                             },
@@ -138,10 +148,18 @@
                     'line-width': 0.5
                     }
                 };
+                let lNames = $layerList.map(item => { return item.lName});
+
+                if (lNames.includes(lName)){
+
+                    dialogOpen = true;
+
+
+                }
                 console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'vector'}]);
-                console.log($layerList);
-                //mmap.addLayer( lDef);
+                layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
+                console.log($layerList);    
+                //$map.addLayer( lDef);
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
@@ -156,6 +174,11 @@
                     'tileSize': 256,
                     'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
                 };
+                console.log( mmap.getStyle().sources);
+                if(! (srcId in mmap.getStyle().sources)){
+                    mmap.addSource(srcId,lSrc);
+                }
+                console.log( mmap.getStyle().sources);
                 const lDef = {
                     
                         'id': lid,
@@ -163,20 +186,28 @@
                         'source': label,
                         'minzoom': 0,
                         'maxzoom': 22
+
                 };
-                console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
+
+                let lNames = $layerList.map(item => { return item.lName});
+                if (lNames.includes(lName)){
+
+                    alert('Are you sure you wnat to add');
+
+
+                }
+                //console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
                 console.log($layerList);
             }
             
             
             
         }
-        else {
-            //mmap.removeLayer(lid);
-            //mmap.removeSource(lid);
-            console.log('removed layer', label)
-        }
+        // else {
+        //     //nothing to do here
+        //     //console.log('removed layer', label)
+        // }
     };
     const toggleExpansion = async () => {
 
@@ -213,7 +244,8 @@
 
 
 
-
+    let dialogOpen = false;
+    let confirmValue = 'Nothing yet.'
 
 
 
@@ -226,7 +258,6 @@
 
 
 			<span on:click={() => toggleExpansion()}>
-
 				<span class="arrow" class:arrowDown > {@html icon} </span>
                 {label}
 
@@ -266,6 +297,7 @@
         {/if}
     </li>
 </ul>
+
 
 <style>
     ul {

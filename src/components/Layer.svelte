@@ -4,25 +4,34 @@
     import LayerOptions from "./LayerOptions.svelte"
     import { Icon } from '@smui/tab';
     export let layerCfg;
-    export let lName, lSrc, lDef;
-    $: ({lName, lSrc, lDef} = layerCfg);
-    $:mmap = $map;
-    let selected:boolean = false;
+    //let lName, lDef, lType;
+    //$: ({lName,  lDef, lType} = layerCfg);
+    let lName,  lDef, lType;
+    ({lName,lDef,lType} = layerCfg);
+
+    let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
+    $: visibility = selected ? 'visible' : 'none';
+    const srcId = lDef.source;
+    const lId = lDef.id;
+
     const handleChange = () => {
-        const srcId = lDef.source;
-        const lId = lDef.id;
+        console.log($map.getStyle().sources);
+        console.log($map.getStyle().layers.length);
+        // console.log('handling',srcId, lId, selected, visibility);
 
-        if (selected) {
-
-            $map.addSource(srcId,lSrc);
+        if (! $map.getLayer(lId)){
+            console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
-
-
-        } else{
-            $map.removeLayer(lId);
-            $map.removeSource(srcId);
-
         }
+        // console.log(`setting visibility to ${visibility} for layer ${lId}`);
+
+        $map.setLayoutProperty(lId, 'visibility', visibility);
+
+        // console.log($map.getStyle().layers.length);
+        // console.log($map.getStyle().layers);
+
+
+
 
     };
 
@@ -45,7 +54,7 @@
     <div  class="layer-header" style="display: flex; margin-bottom: 0; height: 20px; align-items: center;">
         <Icon class="material-icons">layers</Icon>
         <h4 class="layer-name" on:click="{() => (show = !show)}">{lName}</h4>
-        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} value="{lDef.lid}" on:change={handleChange}>
+        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} on:change={handleChange}>
     </div>
 
     {#if show}

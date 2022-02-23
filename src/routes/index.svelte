@@ -17,14 +17,14 @@
 </script>
 
 <script lang="ts">
-    console.log('client in index')
+    
     import {wtree}  from '../stores/stores'
     // import TreeView from './TreeView.svelte'
     
     export let tree = undefined;
-
+    console.log('client in index', tree)
     
-    wtree.update(t=>tree);
+    wtree.set(tree);
     
     
 
