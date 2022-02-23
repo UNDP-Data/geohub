@@ -1,24 +1,17 @@
 
 <script lang="ts">
-	import { mdiWeatherSunny } from '@mdi/js';
   import Drawer, {
     AppContent,
     Content,
     Header,
-    Title,
-    Subtitle,
   } from '@smui/drawer';
 
-  //import LoadData from "./LoadData.svelte"
+    import LayerList from './LayerList.svelte';
+    import Layer from './Layer.svelte';
 
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
-  import Paper from '@smui/paper';
-  import List, { Item, Text } from '@smui/list';
-  import IconButton from '@smui/icon-button'
   export let expanded = true;
   export let open = false;
-
-  import Icon from '@iconify/svelte';
   let active = 'Vector tiles';
   let rlabel;
   let expandedt;
@@ -27,11 +20,7 @@
 
   import Tab, { Label } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
-  // import { Tabs, TabList, TabPanel, Tab } from '../components/tabs';
 
-  // function setActive(value: string) {
-  //   active = value;
-  // }
   
   let panel;
 
@@ -55,7 +44,7 @@
       {#if active === 'Load...'}
           <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expanded={expandedt} />
       {:else if active === "Layers"}
-        Layers
+        <LayerList/>
       {:else if active==='Analyze'}
         Analyze
       {/if}
