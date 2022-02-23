@@ -12,6 +12,7 @@
     import { v4 as uuidv4 } from 'uuid';
     import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
+    const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
 
     const fetchTree = async(path:string) => {
         let url = `azstorage.json?path=${path}`;
@@ -108,51 +109,68 @@
 
     const loadLayer = () => {
         const srcId = path.replace(/\//g,'_');
-        const lName  = path.split('/')[path.split('/').length-2];
+        
         const lid = uuidv4();
         if (!checked){
-            console.log('load layer ', label, url);
+            
             if (!isRaster){
-
-
+                const lName  = path.split('/')[path.split('/').length-2]; 
+                console.log('load vector layer ', label, url);
                 const lSrc = {
-                    'type': 'vector',
-                    'tiles': [url],
-                    'minzoom': 0,
-                    'maxzoom': 12
-                };
-
+                            'type': 'vector',
+                            'tiles': [url],
+                            'minzoom': 0,
+                            'maxzoom': 12
+                        };
                 //mmap.addSource(lid,lSrc);
                 const lDef = {
-
                     'id': lid, // Layer ID
                     'type': 'line',
                     'source': srcId, // ID of the tile source created above
                     'source-layer': label,
                     'layout': {
-                        'line-cap': 'round',
-                        'line-join': 'round'
-                    },
+                            'line-cap': 'round',
+                            'line-join': 'round'
+                            },
                     'paint': {
-                        // 'line-opacity': 0,
-                        'line-color': 'rgb(53, 175, 109)',
-                        'line-width': 0.5
+                    // 'line-opacity': 0,
+                    'line-color': 'rgb(53, 175, 109)',
+                    'line-width': 0.5
                     }
-
                 };
                 console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef}]);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'vector'}]);
                 console.log($layerList);
                 //mmap.addLayer( lDef);
-
             }
-            else{
-
+            else{ //
+                const lName  = path.split('/')[path.split('/').length-1]; 
+                console.log('load raster layer', label, url)//https://undp.livedata.link/hrea/tiles/{z}/{x}/{y}.png
+                const encodedRasterURL = encodeURI(`url=${url}`);
+                
+                const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${encodedRasterURL}&expression=b1&colormap_name=viridis`;
+                console.log('tit', TITILER_ENDPOINT);
+                const lSrc = {
+                    'type': 'raster',
+                    'tiles': [tilejsonURL],         
+                    'tileSize': 256,
+                    'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
+                };
+                const lDef = {
+                    
+                        'id': lid,
+                        'type': 'raster',
+                        'source': label,
+                        'minzoom': 0,
+                        'maxzoom': 22
+                };
+                console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
+                console.log($layerList);
             }
-
-
-
-
+            
+            
+            
         }
         else {
             //mmap.removeLayer(lid);
@@ -160,7 +178,6 @@
             console.log('removed layer', label)
         }
     };
-
     const toggleExpansion = async () => {
 
         expanded = _expansionState[label] = !expanded;

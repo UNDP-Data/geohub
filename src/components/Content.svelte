@@ -48,7 +48,7 @@
       {:else if active==='Analyze'}
         Analyze
       {/if}
-      <div>
+      <!-- <div>
         <Accordion class="expanded">
           <Panel bind:open={expanded} color="primary" square>
             <AccHeader>{@html infoICon}</AccHeader>
@@ -59,7 +59,7 @@
             </AccContent>
           </Panel>
         </Accordion>
-      </div>
+      </div> -->
     </Content>
   </Drawer>
 
