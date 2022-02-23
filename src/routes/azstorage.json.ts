@@ -3,7 +3,7 @@ import {
     StorageSharedKeyCredential,
     generateBlobSASQueryParameters,
     BlobSASPermissions,}
-    from "@azure/storage-blob"
+from "@azure/storage-blob"
 
 import azure  from "@azure/storage-blob";
 // Load the .env file if it exists
@@ -146,7 +146,6 @@ const listContainer = async (containerName:string, relPath:string) =>{
 
             if (childLabel == 'metadata.json'){
                 let splitAt = blobServiceClient.url.lastIndexOf('/');
-
 
                 const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`;
 

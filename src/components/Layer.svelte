@@ -74,7 +74,6 @@
       <Meta>
         <Checkbox bind:checked={selected} value="{lDef.lid}" on:change={handleChange} />
     </Meta>
-
 </Item> -->
 
 
