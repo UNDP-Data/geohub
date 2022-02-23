@@ -157,7 +157,7 @@
 
                 }
                 console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
+                layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
                 console.log($layerList);    
                 $map.addLayer( lDef);
             }
@@ -203,7 +203,7 @@
 
                 }
                 //console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
+                layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster'}, ...$layerList ]);
                 console.log($layerList);
                 $map.addLayer(lDef);
             }
