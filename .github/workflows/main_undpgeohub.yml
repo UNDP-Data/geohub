@@ -44,7 +44,7 @@ jobs:
         run: |
           cp package.json build/,
           cp package-lock.json build/.
-          cp entrypoint.sh build/.
+          cp -r node_modules build/.
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
