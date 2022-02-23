@@ -9,8 +9,8 @@
 </script>
 <script lang="ts">
     import { onMount } from 'svelte';
-
-    import {wtree} from '../stores/stores'
+    import { v4 as uuidv4 } from 'uuid';
+    import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
 
     const fetchTree = async(path:string) => {
@@ -62,8 +62,8 @@
 
             if (path == child.tree.path){ // this is the root subpath where the new child should be inserted into roots children
                 let updatedChildren  = echildren.map(
-                             item => { return item.path == child.tree.path ? child.tree : item }
-                        );
+                    item => { return item.path == child.tree.path ? child.tree : item }
+                );
                 //replace old children with updated
                 root.children = updatedChildren;
             }
@@ -79,14 +79,10 @@
     };
 
 
-    onMount( () => {
 
-		console.log('Mounting TW')
-
-
-	});
 
     import Checkbox from '@smui/checkbox';
+    import Accordion from '@smui-extra/accordion/src/Accordion.svelte';
 
     $:mmap = $map;
 
@@ -101,76 +97,94 @@
     export let expanded;
     $:expanded = _expansionState[label] || false;
 
+    onMount( () => {
+
+        //console.log('Mounting TW', _expansionState);
+
+
+
+    });
     let icon = '&#43';
 
     const loadLayer = () => {
+        const srcId = path.replace(/\//g,'_');
+        const lName  = path.split('/')[path.split('/').length-2];
+        const lid = uuidv4();
         if (!checked){
             console.log('load layer ', label, url);
             if (!isRaster){
-                const lid = path.replace(/\//g,'_');
+
+
                 const lSrc = {
-                            'type': 'vector',
-                            'tiles': [url],
-                            'minzoom': 0,
-                            'maxzoom': 12
-                        };
-                mmap.addSource(lid,lSrc);
+                    'type': 'vector',
+                    'tiles': [url],
+                    'minzoom': 0,
+                    'maxzoom': 12
+                };
+
+                //mmap.addSource(lid,lSrc);
                 const lDef = {
+
                     'id': lid, // Layer ID
                     'type': 'line',
-                    'source': lid, // ID of the tile source created above
+                    'source': srcId, // ID of the tile source created above
                     'source-layer': label,
                     'layout': {
-                            'line-cap': 'round',
-                            'line-join': 'round'
-                            },
+                        'line-cap': 'round',
+                        'line-join': 'round'
+                    },
                     'paint': {
-                    // 'line-opacity': 0,
-                    'line-color': 'rgb(53, 175, 109)',
-                    'line-width': 2
+                        // 'line-opacity': 0,
+                        'line-color': 'rgb(53, 175, 109)',
+                        'line-width': 0.5
                     }
 
                 };
+                console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef}]);
+                console.log($layerList);
+                //mmap.addLayer( lDef);
 
-                mmap.addLayer(lDef);
+            }
+            else{
 
             }
 
-            const tilesLoaded = mmap.areTilesLoaded();
 
-            console.log('map ', mmap.getStyle().layers[mmap.getStyle().layers.length-1], tilesLoaded);
 
 
         }
         else {
-            console.log('remove layer', label)
+            //mmap.removeLayer(lid);
+            //mmap.removeSource(lid);
+            console.log('removed layer', label)
         }
     };
 
     const toggleExpansion = async () => {
 
-            expanded = _expansionState[label] = !expanded;
+        expanded = _expansionState[label] = !expanded;
 
 
-            if (tree.children.length> 0){
-                // console.log(`Nothing to do on ${label}`);
-                return;
+        if (tree.children.length> 0){
+            // console.log(`Nothing to do on ${label}`);
+            return;
 
-            }
-            else {
-                // fetch
-                // console.log('before', tree);
-                let newTree = await fetchTree(tree.path);
-                // console.log('after', newTree.tree);
-
-                let treeToUpdate = {...$wtree};
-
-                updateTree(treeToUpdate,newTree);
-
-                wtree.set(treeToUpdate) ;
-
-            }
         }
+        else {
+            // fetch
+            // console.log('before', tree);
+            let newTree = await fetchTree(tree.path);
+            // console.log('after', newTree.tree);
+
+            let treeToUpdate = {...$wtree};
+
+            updateTree(treeToUpdate,newTree);
+
+            wtree.set(treeToUpdate) ;
+
+        }
+    }
 
 
 
@@ -188,12 +202,17 @@
 
 </script>
 
+
 <ul><!-- transition:slide -->
     <li>
         {#if children}
-            <span class="this" on:click={() => toggleExpansion()}>
+
+
+			<span on:click={() => toggleExpansion()}>
+
 				<span class="arrow" class:arrowDown > {@html icon} </span>
                 {label}
+
 			</span>
             <span alt="Vector tile layer" style="color: lime;">
                 {#if url}
@@ -201,6 +220,7 @@
                     <input style="padding:0px; margin:0px" type=checkbox on:change={()=>loadLayer()} bind:checked />
                 {/if}
             </span>
+
             {#if expanded}
                 {#each children as child}
                     <svelte:self tree={child} />
@@ -208,7 +228,10 @@
                 {/each}
             {/if}
         {:else}
-			<span>
+
+
+
+			<span >
                 <span data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);">
                     {#if isRaster}
                         {@html '&#9638'}
@@ -216,17 +239,22 @@
                     {/if}
                 </span>
                 <!-- <a href="" data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);" >{#if isRaster}{@html '&#10070'}{/if}</a> -->
-				<!-- <span class="no-arrow" on:click={() => toggleExpansion(label)}>{label}</span> -->
+                <!-- <span class="no-arrow" on:click={() => toggleExpansion(label)}>{label}</span> -->
 
                 {label}
+
+
+
 			</span>
         {/if}
     </li>
 </ul>
+
 <style>
     ul {
+        margin: 0;
         list-style: none;
-        padding-left: 1rem;
+        padding-left: 1.2rem;
         user-select: none;
     }
 
@@ -235,7 +263,5 @@
         display: inline-block;
         /* transition: transform 200ms; */
     }
-    .arrowDown {
-        transform: rotate(180deg);
-    }
+    .arrowDown { transform: rotate(180deg); }
 </style>
