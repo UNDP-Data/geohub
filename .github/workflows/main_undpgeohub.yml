@@ -41,6 +41,7 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+          cp package.json build/package.json
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
