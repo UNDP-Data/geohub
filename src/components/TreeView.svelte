@@ -188,7 +188,7 @@
                         'maxzoom': 22
 
                 };
-<<<<<<< HEAD
+
                 let lNames = $layerList.map(item => { return item.lName});
                 if (lNames.includes(lName)){
 
@@ -198,11 +198,6 @@
                 }
                 //console.log($layerList);
                 layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
-=======
-
-                console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
->>>>>>> 57f8dc11769e491989b48b7960540d6d4804e8b3
                 console.log($layerList);
             }
             
