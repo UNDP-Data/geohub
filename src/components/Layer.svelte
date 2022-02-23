@@ -3,26 +3,34 @@
     import {map} from '../stores/mapstore'
 
     export let layerCfg;
-    export let lName, lSrc, lDef;
-    $: ({lName, lSrc, lDef} = layerCfg);
-    $:mmap = $map;
-    let selected:boolean = false;
+    //let lName, lDef, lType;
+    //$: ({lName,  lDef, lType} = layerCfg);
+    let lName,  lDef, lType;
+    ({lName,lDef,lType} = layerCfg);
+
+    let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
+    $: visibility = selected ? 'visible' : 'none'; 
+    const srcId = lDef.source;
+    const lId = lDef.id;
 
     const handleChange = () => {
-        const srcId = lDef.source;
-        const lId = lDef.id;
-
-        if (selected) {
-
-            $map.addSource(srcId,lSrc);
+        console.log($map.getStyle().sources);
+        console.log($map.getStyle().layers.length);
+        // console.log('handling',srcId, lId, selected, visibility);
+        
+        if (! $map.getLayer(lId)){
+            console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
-
-
-        } else{
-            $map.removeLayer(lId);
-            $map.removeSource(srcId);
-
         }
+        console.log(`setting visibility to ${visibility} for layer ${lId}`);
+        
+        $map.setLayoutProperty(lId, 'visibility', visibility);
+        
+        // console.log($map.getStyle().layers.length);
+        console.log($map.getStyle().layers);
+           
+
+        
 
     };
 

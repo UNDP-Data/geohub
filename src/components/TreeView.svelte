@@ -109,7 +109,7 @@
 
     const loadLayer = () => {
         const srcId = path.replace(/\//g,'_');
-        
+        console.log(path, srcId);
         const lid = uuidv4();
         if (!checked){
             
@@ -122,13 +122,17 @@
                             'minzoom': 0,
                             'maxzoom': 12
                         };
-                //mmap.addSource(lid,lSrc);
+                if(! (srcId in mmap.getStyle().sources)){
+                    $map.addSource(srcId,lSrc);
+                }
+                
                 const lDef = {
                     'id': lid, // Layer ID
                     'type': 'line',
                     'source': srcId, // ID of the tile source created above
                     'source-layer': label,
                     'layout': {
+                            'visibility':'visible',
                             'line-cap': 'round',
                             'line-join': 'round'
                             },
@@ -139,9 +143,9 @@
                     }
                 };
                 console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'vector'}]);
+                layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
                 console.log($layerList);
-                //mmap.addLayer( lDef);
+                $map.addLayer( lDef);
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
@@ -149,34 +153,38 @@
                 const encodedRasterURL = encodeURI(`url=${url}`);
                 
                 const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${encodedRasterURL}&expression=b1&colormap_name=viridis`;
-                console.log('tit', TITILER_ENDPOINT);
+                
                 const lSrc = {
                     'type': 'raster',
                     'tiles': [tilejsonURL],         
                     'tileSize': 256,
                     'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
                 };
+                console.log( mmap.getStyle().sources);
+                if(! (srcId in mmap.getStyle().sources)){
+                    mmap.addSource(srcId,lSrc);
+                }
+                console.log( mmap.getStyle().sources);
                 const lDef = {
                     
                         'id': lid,
                         'type': 'raster',
-                        'source': label,
+                        'source': srcId,
                         'minzoom': 0,
                         'maxzoom': 22
                 };
-                console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
+                //console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
                 console.log($layerList);
             }
             
             
             
         }
-        else {
-            //mmap.removeLayer(lid);
-            //mmap.removeSource(lid);
-            console.log('removed layer', label)
-        }
+        // else {
+        //     //nothing to do here
+        //     //console.log('removed layer', label)
+        // }
     };
     const toggleExpansion = async () => {
 

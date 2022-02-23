@@ -12,7 +12,7 @@
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
   export let expanded = true;
   export let open = false;
-  let active = 'Vector tiles';
+  let active = 'Vec';
   let rlabel;
   let expandedt;
   const tabs = ['Load...', "Layers", 'Analyze']
