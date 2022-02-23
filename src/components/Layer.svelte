@@ -6,7 +6,7 @@
     export let layerCfg;
     //let lName, lDef, lType;
     //$: ({lName,  lDef, lType} = layerCfg);
-    let lName,  lDef, lType;
+    export let lName,  lDef, lType;
     ({lName,lDef,lType} = layerCfg);
 
     let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
@@ -29,10 +29,6 @@
 
         // console.log($map.getStyle().layers.length);
         // console.log($map.getStyle().layers);
-
-
-
-
     };
 
     let show = false;

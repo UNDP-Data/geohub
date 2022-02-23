@@ -47,11 +47,11 @@
     
     <Content>
       
-      {#if active == 'Load data'}
+      {#if active === 'Load data'}
           <TreeView tree={$wtree.tree}   />
-      {:else if active == 'Layers'}
-        <LayerList></LayerList>
-      {:else if active == 'Analyze'}
+      {:else if active === 'Layers'}
+        <LayerList/>
+      {:else if active === 'Analyze'}
         Analyze
       {/if}
       

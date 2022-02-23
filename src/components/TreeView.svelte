@@ -156,9 +156,9 @@
 
 
                 }
-                console.log($layerList);
+                // console.log($layerList);
                 layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
-                console.log($layerList);    
+                // console.log($layerList);
                 //$map.addLayer( lDef);
             }
             else{ //
