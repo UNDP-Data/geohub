@@ -25,12 +25,14 @@
     "@smui/form-field": "^6.0.0-beta.14",
     "@smui/icon-button": "^6.0.0-beta.13",
     "@smui/layout-grid": "^6.0.0-beta.13",
-    "@smui/list": "^6.0.0-beta.13",
+    "@smui/list": "^6.0.0-beta.13",  
+    "@smui/switch": "^6.0.0-beta.14",
     "@smui/tab": "^6.0.0-beta.13",
     "@smui/tab-bar": "^6.0.0-beta.13",
     "@smui/tooltip": "^6.0.0-beta.14",
     "@smui/top-app-bar": "^6.0.0-beta.13",
     "@sveltejs/adapter-auto": "next",
+    "@sveltejs/adapter-static": "^1.0.0-next.28",
     "@sveltejs/kit": "next",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
@@ -57,6 +59,7 @@
     "@mui/material": "^5.4.1",
     "dotenv": "^16.0.0",
     "esbuild": "^0.14.21",
+    "svelte-collapsible": "^0.2.1",
     "uuid": "^8.3.2"
   }
 }

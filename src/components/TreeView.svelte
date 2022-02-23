@@ -4,6 +4,8 @@
     const _expansionState = {
         /* treeNodeId: expanded <boolean> */
     };
+   
+   
 
 
 </script>
@@ -127,6 +129,7 @@
                 }
                 
                 const lDef = {
+
                     'id': lid, // Layer ID
                     'type': 'line',
                     'source': srcId, // ID of the tile source created above
@@ -153,7 +156,7 @@
                 const encodedRasterURL = encodeURI(`url=${url}`);
                 
                 const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${encodedRasterURL}&expression=b1&colormap_name=viridis`;
-                
+                console.log('tit', TITILER_ENDPOINT);
                 const lSrc = {
                     'type': 'raster',
                     'tiles': [tilejsonURL],         
@@ -169,12 +172,14 @@
                     
                         'id': lid,
                         'type': 'raster',
-                        'source': srcId,
+                        'source': label,
                         'minzoom': 0,
                         'maxzoom': 22
+
                 };
-                //console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
+
+                console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
                 console.log($layerList);
             }
             
@@ -234,7 +239,6 @@
 
 
 			<span on:click={() => toggleExpansion()}>
-
 				<span class="arrow" class:arrowDown > {@html icon} </span>
                 {label}
 
