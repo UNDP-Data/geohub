@@ -37,4 +37,13 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
+If you want to change host name, port number, etc, use environmental variables to run the server as follows
+
+```
+MY_HOST_VARIABLE=127.0.0.1 \
+MY_PORT_VARIABLE=4000 \
+MY_ORIGINURL=https://my.site \
+node build
+```
+
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.

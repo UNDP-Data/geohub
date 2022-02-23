@@ -33,7 +33,7 @@
     "@smui/tab-bar": "^6.0.0-beta.13",
     "@smui/tooltip": "^6.0.0-beta.14",
     "@smui/top-app-bar": "^6.0.0-beta.13",
-    "@sveltejs/adapter-auto": "next",
+    "@sveltejs/adapter-node": "^1.0.0-next.69",
     "@sveltejs/kit": "next",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
