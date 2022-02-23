@@ -1,13 +1,20 @@
-import { 
-    BlobServiceClient, 
-    StorageSharedKeyCredential, 
+import {
+    BlobServiceClient,
+    StorageSharedKeyCredential,
     generateBlobSASQueryParameters,
-    BlobSASPermissions, 
-    ContainerClient}
- from "@azure/storage-blob"
+    BlobSASPermissions,}
+    from "@azure/storage-blob"
+
+import azure  from "@azure/storage-blob";
 // Load the .env file if it exists
 import * as dotenv from "dotenv";
 dotenv.config();
+
+
+
+
+
+
 
 //set creds
 const account = process.env.AZURE_STORAGE_ACCOUNT || "";
@@ -22,13 +29,13 @@ interface TreeNode {
     label: string;
     children?: TreeNode[];
     new(label:string): TreeNode;
-  }
-  
+}
+
 interface ITree<P> {
     label: P;
     children?: ITree<P>[];
-  }
-  
+}
+
 
 export const get1 = () => {
     return{
@@ -50,12 +57,30 @@ const isRasterExtension = (name:string) => {
 
 const listContainer = async (containerName:string, relPath:string) =>{
 
-    
-     // create storage container
+
+    // create storage container
     const blobServiceClient = new BlobServiceClient(
-        `https://${account}.blob.core.windows.net`, 
+        `https://${account}.blob.core.windows.net`,
         sharedKeyCredential
     );
+
+    //generate account SAS token for vector tiles. This is needed because the
+    // blob level SAS tokens have the blob name encoded inside the SAS token and the
+    // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
+
+
+    const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
+        new Date(new Date().valueOf() + 86400000),
+        azure.AccountSASPermissions.parse("r"),
+        "o"
+
+    );
+    const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI);
+
+
+
+
+
 
 
     let treeLabel:string = containerName;
@@ -64,76 +89,76 @@ const listContainer = async (containerName:string, relPath:string) =>{
     }
     let treePath = `${containerName}/${relPath}`
 
-    if(treeLabel.endsWith('/')){treeLabel = treeLabel.slice(0,-1)}; 
+    if(treeLabel.endsWith('/')){treeLabel = treeLabel.slice(0,-1)};
 
     if (treeLabel.includes('/')){
-          
+
         treeLabel = treeLabel.split('/').pop();
     }
 
     // else{
     //     childLabel = label;
     // }
-    
+
     let tree = {'label':treeLabel, 'children':[], 'path':treePath, 'url':null};
     let cclient = blobServiceClient.getContainerClient(containerName);
-    let containerChildren = []; 
+    let containerChildren = [];
     //console.log('listing container',containerName, relPath, 'labelPath', labelPath );
     for await (const item of cclient.listBlobsByHierarchy('/', {'prefix':relPath}  )) {
         let childLabel;
-        
+
         let path = `${containerName}/${item.name}`
         if (item.kind === "prefix") {
 
             let label = item.name.slice(0, -1);
             if (label.includes('/')){
-            
+
                 childLabel = label.split('/').pop();
             }
-    
+
             else{
                 childLabel = label;
             }
 
 
-            containerChildren.push({'label':childLabel, 'children':[], 'path':path, 'url':null})
+            containerChildren.push({'label':childLabel, 'children':[], 'path':path, 'url':null, 'isRaster':false})
 
         } else {
             const blockBlobClient = cclient.getBlockBlobClient(item.name);
             const sasToken = generateBlobSASQueryParameters({
                 containerName: containerName,
                 blobName: item.name,
-                expiresOn: new Date(new Date().valueOf() + 86400),
+                expiresOn: new Date(new Date().valueOf() + 86400000),
                 permissions: BlobSASPermissions.parse("r")
             }, sharedKeyCredential);
-            
+
             const sasUrl = `${blockBlobClient.url}?${sasToken}`;
             let label = item.name;
             if (label.includes('/')){
-            
+
                 childLabel = label.split('/').pop();
             }
-    
+
             else{
                 childLabel = label;
             }
-            
+
 
             if (childLabel == 'metadata.json'){
                 let splitAt = blobServiceClient.url.lastIndexOf('/');
 
-                
-                const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}?${sasToken}`;
+
+                const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`;
 
                 tree.url = rurl
 
             }
-            
+
             let israster = isRasterExtension(childLabel);
-            
+
             containerChildren.push({'label':childLabel, 'path':path, 'url':sasUrl, 'isRaster': israster })
         }
-        
+
 
     }
     tree.children = containerChildren;
@@ -148,37 +173,37 @@ const listContainer = async (containerName:string, relPath:string) =>{
 /*
     List containers from GeoHub Azure Storage account
         @param @type {string}
-    
+
     */
 
 const listContainers = async( prefix:string = '/' ) => {
-    
-     
+
+
 
 
     // create storage container
     const blobServiceClient = new BlobServiceClient(
-        `https://${account}.blob.core.windows.net`, 
+        `https://${account}.blob.core.windows.net`,
         sharedKeyCredential
     );
-    
-    let tree = {'label':'GeoHub Azure Storage', 'children':[], 'path':prefix, 'url':null};
-    
-    
+
+    let tree = {'label':'GeoHub Azure Storage', 'children':[], 'path':prefix, 'url':null, 'isRaster':false, };
+
+
     for await (const container of blobServiceClient.listContainers()) {
-        let containerItem = {'label':container.name, 'children':[], 'path':`${container.name}/`, 'url':null}
-        tree.children.push(containerItem);        
-        
+        let containerItem = {'label':container.name, 'children':[], 'path':`${container.name}/`, 'url':null, 'isRaster':false}
+        tree.children.push(containerItem);
+
     }
 
-    return{    
+    return{
         tree
     }
 };
 
 export async function get( query) {
-    
-    
+
+
     let  path = '/';
     if (query.url.searchParams.has('path')){
         path = query.url.searchParams.get('path');
@@ -186,39 +211,39 @@ export async function get( query) {
             path = `${path}/`
         }
 
-        
-    } 
+
+    }
     // let 
     let tree  = undefined;
     if (path == '/' ){
-       
-       tree = await listContainers();
+
+        tree = await listContainers();
     }
     else {
         let containerName, containerPath;
-        
 
-        [containerName, ...containerPath]  = path.split('/'); 
-        
+
+        [containerName, ...containerPath]  = path.split('/');
+
         if (Array.isArray(containerPath) && containerPath.length && containerPath[0] != "" ){
             containerPath = `${containerPath.join('/')}`;
         }
         else {
             containerPath = '';
         }
-        
-        
+
+
 
         tree = await listContainer(containerName, containerPath);
     }
-    
-        
-    
-    
+
+
+
+
     return {
-        
+
         body: tree
-  };
+    };
 }
 
 
