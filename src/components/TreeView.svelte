@@ -186,7 +186,12 @@
                         'type': 'raster',
                         'source': srcId,
                         'minzoom': 0,
-                        'maxzoom': 22
+                        'maxzoom': 22,
+                        'layout': {
+                            'visibility':'visible'
+                            
+                            },
+
 
                 };
 
