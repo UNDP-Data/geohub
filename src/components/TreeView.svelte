@@ -14,9 +14,9 @@
     import { v4 as uuidv4 } from 'uuid';
     import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
-    import {variables} from '../stores/variables';
-    //set creds
-    const TITILER_ENDPOINT = variables.titilerEndPoint || "";
+    
+    
+    const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
     
     const fetchTree = async(path:string) => { 
         let url = `azstorage.json?path=${path}`;
