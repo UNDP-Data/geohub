@@ -42,7 +42,7 @@ jobs:
       - name: copy entrypoint.sh to build folder
         # if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          cp package.json build/,
+          cp package.json build/.
           cp package-lock.json build/.
           cp -r node_modules build/.
 
