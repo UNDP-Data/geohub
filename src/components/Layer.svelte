@@ -15,17 +15,16 @@
     const lId = lDef.id;
 
     const handleChange = () => {
-        console.log($map.getStyle().sources);
-        console.log($map.getStyle().layers.length);
-        // console.log('handling',srcId, lId, selected, visibility);
 
         if (! $map.getLayer(lId)){
             console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
         }
-        // console.log(`setting visibility to ${visibility} for layer ${lId}`);
+
 
         $map.setLayoutProperty(lId, 'visibility', visibility);
+
+
 
         // console.log($map.getStyle().layers.length);
         // console.log($map.getStyle().layers);
@@ -62,19 +61,7 @@
         <br/>
     {/if}
 </div>
-<!-- <AccordionItem key={lDef.lid}>
-    <h5 slot='header'>{lName} </h5>
-    <div slot='body'>
 
-    </div>
-</AccordionItem> -->
-<!-- <Item>
-    <Label>{lName}</Label>
-      <Meta>
-        <Checkbox bind:checked={selected} value="{lDef.lid}" on:change={handleChange} />
-    </Meta>
-
-</Item> -->
 
 
 <style>
