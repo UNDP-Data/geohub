@@ -22,12 +22,12 @@
             console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
         }
-        console.log(`setting visibility to ${visibility} for layer ${lId}`);
+        // console.log(`setting visibility to ${visibility} for layer ${lId}`);
         
         $map.setLayoutProperty(lId, 'visibility', visibility);
         
         // console.log($map.getStyle().layers.length);
-        console.log($map.getStyle().layers);
+        // console.log($map.getStyle().layers);
            
 
         
@@ -52,7 +52,7 @@
 <div class="layer-item">
     <div  class="layer-header" style="display: flex; margin-bottom: 0; height: 20px; align-items: center;">
         <h4 class="layer-name" on:click="{() => (show = !show)}">{lName}</h4>
-        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} value="{lDef.lid}" on:change={handleChange}>
+        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} on:change={handleChange}>
     </div>
 
     {#if show}
