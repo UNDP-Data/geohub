@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { layerList } from '../stores/stores';
+	import { layerList } from '../stores/stores';
     import Layer from './Layer.svelte';
-
-
+    import { Accordion } from 'svelte-collapsible';
+    import List from '@smui/list';
+    
 
 </script>
 
 
 {#each $layerList as layerCfg}
-    <Layer {layerCfg}/>
+    <Layer {layerCfg}></Layer>
 {/each}
 
 <!-- <List>
