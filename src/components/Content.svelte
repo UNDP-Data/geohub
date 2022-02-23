@@ -37,7 +37,7 @@
   <Drawer variant="dismissible" bind:open >
     
     <Header>
-      <TabBar tabs={['Load data', 'Layers', 'Analyze']}   let:tab bind:active>
+      <TabBar tabs={['Load data', 'Layers']}   let:tab bind:active>
         <!-- Note: the `tab` property is required! -->
         <Tab {tab} class="tab">
           <Label>{tab}</Label>

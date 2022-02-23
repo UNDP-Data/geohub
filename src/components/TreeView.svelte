@@ -159,15 +159,16 @@
                 console.log($layerList);
                 layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
                 console.log($layerList);    
-                //$map.addLayer( lDef);
+                $map.addLayer( lDef);
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
                 console.log('load raster layer', label, url)//https://undp.livedata.link/hrea/tiles/{z}/{x}/{y}.png
-                const encodedRasterURL = encodeURI(`url=${url}`);
+                const encodedRasterURL = `url=${encodeURI(url)}`;
                 
-                const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${encodedRasterURL}&expression=b1&colormap_name=viridis`;
-                console.log('tit', TITILER_ENDPOINT);
+                const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+                
+                console.log('tit', tilejsonURL);
                 const lSrc = {
                     'type': 'raster',
                     'tiles': [tilejsonURL],         
@@ -183,7 +184,7 @@
                     
                         'id': lid,
                         'type': 'raster',
-                        'source': label,
+                        'source': srcId,
                         'minzoom': 0,
                         'maxzoom': 22
 
@@ -192,13 +193,14 @@
                 let lNames = $layerList.map(item => { return item.lName});
                 if (lNames.includes(lName)){
 
-                    alert('Are you sure you wnat to add');
+                    let cntin = confirm(`Are you sure you want to add ${lName} `);
 
 
                 }
                 //console.log($layerList);
                 layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
                 console.log($layerList);
+                $map.addLayer(lDef);
             }
             
             
