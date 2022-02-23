@@ -42,12 +42,12 @@
     <Content class="{expanded ? 'contracted-browser' : 'expanded-browser'}">
 
       {#if active === 'Load...'}
-          <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expanded={expandedt} />
-      {:else if active === "Layers"}
-        <LayerList/>
-      {:else if active==='Analyze'}
-        Analyze
-      {/if}
+      <TreeView tree={$wtree.tree} bind:label={rlabel} bind:expanded={expandedt} />
+    {:else if active === "Layers"}
+      <LayerList/>
+    {:else if active==='Analyze'}
+      Analyze
+    {/if}
       <!-- <div>
         <Accordion class="expanded">
           <Panel bind:open={expanded} color="primary" square>
