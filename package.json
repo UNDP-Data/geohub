@@ -38,6 +38,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
+    "esbuild": "^0.14.23",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
@@ -60,7 +61,6 @@
     "@mui/material": "^5.4.1",
     "@smui/touch-target": "^6.0.0-beta.14",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.14.21",
     "uuid": "^8.3.2"
   }
 }

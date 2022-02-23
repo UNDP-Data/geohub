@@ -40,7 +40,7 @@
     2. toggleExpansion is called:
         a) id the ndoe has children nothing happens, else the fucntion continues
         b) the current node path prop is used to fethc the children for the current node from the endpoint
-            this cretaes an identical node with the current one with exception that its children are fetched
+            this cretaestree an identical node with the current one with exception that its children are fetched
         c) a new copy of the tree is is created by descructuring the old tree
         d) the copy is updated  inside updateTree
         e) the updated copy is wriiten into the store so  other componnets are notified
