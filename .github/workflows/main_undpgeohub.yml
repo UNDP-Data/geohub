@@ -25,14 +25,6 @@ jobs:
         with:
           node-version: '16.x'
 
-      # - name: Make envfile
-      #   uses: SpicyPizza/create-envfile@v1.3
-      #   with:
-      #     envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-      #     envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-      #     file_name: .env
-      #     fail_on_empty: false
-
       - name: npm install, build, and test
         run: |
           npm install
@@ -40,7 +32,7 @@ jobs:
           npm run test --if-present
 
       - name: copy entrypoint.sh to build folder
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cp package.json build/.
           cp package-lock.json build/.
@@ -49,7 +41,7 @@ jobs:
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           app-name: 'undpgeohub'
           slot-name: 'Production'
