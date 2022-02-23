@@ -5,8 +5,9 @@ name: Build and deploy Node.js app to Azure Web App - undpgeohub
 
 on:
   push:
-    # branches:
-    #   - main
+    branches:
+      - main
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -37,13 +38,17 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+
+      - name: copy dependencies to build folder
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
           cp -r node_modules build/.
           cp package.json build/.
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           app-name: 'undpgeohub'
           slot-name: 'Production'
