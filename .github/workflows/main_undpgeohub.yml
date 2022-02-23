@@ -39,11 +39,10 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-      - name: copy dependencies to build folder
+      - name: copy entrypoint.sh to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          cp -r node_modules build/.
-          cp package.json build/.
+          cp entrypoint.sh build/.
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
