@@ -1,7 +1,8 @@
 <script lang="ts">
     let panel1Open = false;
     import {map} from '../stores/mapstore'
-
+    import LayerOptions from "./LayerOptions.svelte"
+    import { Icon } from '@smui/tab';
     export let layerCfg;
     //let lName, lDef, lType;
     //$: ({lName,  lDef, lType} = layerCfg);
@@ -9,7 +10,7 @@
     ({lName,lDef,lType} = layerCfg);
 
     let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
-    $: visibility = selected ? 'visible' : 'none'; 
+    $: visibility = selected ? 'visible' : 'none';
     const srcId = lDef.source;
     const lId = lDef.id;
 
@@ -17,20 +18,20 @@
         console.log($map.getStyle().sources);
         console.log($map.getStyle().layers.length);
         // console.log('handling',srcId, lId, selected, visibility);
-        
+
         if (! $map.getLayer(lId)){
             console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
         }
-        console.log(`setting visibility to ${visibility} for layer ${lId}`);
-        
-        $map.setLayoutProperty(lId, 'visibility', visibility);
-        
-        // console.log($map.getStyle().layers.length);
-        console.log($map.getStyle().layers);
-           
+        // console.log(`setting visibility to ${visibility} for layer ${lId}`);
 
-        
+        $map.setLayoutProperty(lId, 'visibility', visibility);
+
+        // console.log($map.getStyle().layers.length);
+        // console.log($map.getStyle().layers);
+
+
+
 
     };
 
@@ -51,16 +52,18 @@
 <!--	</div>-->
 <div class="layer-item">
     <div  class="layer-header" style="display: flex; margin-bottom: 0; height: 20px; align-items: center;">
+        <Icon class="material-icons">layers</Icon>
         <h4 class="layer-name" on:click="{() => (show = !show)}">{lName}</h4>
-        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} value="{lDef.lid}" on:change={handleChange}>
+        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} on:change={handleChange}>
     </div>
 
     {#if show}
-        <div style="margin-top:0;" class="detail-div">
-            Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-            Lorem Ipsum Lorem IpsumLorem Ipsum Lorem IpsumLorem Ipsum Lorem IpsumLorem Ipsum Lorem IpsumLorem Ipsum Lorem IpsumLorem Ipsum Lorem Ipsum
+        <div style="align-items: center" class="detail-div">
+            <LayerOptions/>
         </div>
+        <br/>
     {:else}
+        <br/>
     {/if}
 </div>
 <!-- <AccordionItem key={lDef.lid}>
@@ -74,6 +77,7 @@
       <Meta>
         <Checkbox bind:checked={selected} value="{lDef.lid}" on:change={handleChange} />
     </Meta>
+
 </Item> -->
 
 
@@ -91,19 +95,19 @@
 
     .layer-name:hover{
         color: rebeccapurple;
-        font-family: Calibri;
+        font-family: Roboto,serif;
     }
     .layer-name{
         cursor:pointer;
         margin-left: 5px;
-        font-family: Rockwell,serif;
-        width: 80%;
+        font-family: Roboto,serif;
+        width: 20%;
     }
     .detail-div{
         /* This is the div where the layers are being placed */
-        border: 1px solid grey;
+        /*border: 1px solid grey;*/
         background: transparent;
-        box-shadow: grey;
+        /*box-shadow: grey;*/
         transition: height 5s;
     }
     .layer-button:hover{

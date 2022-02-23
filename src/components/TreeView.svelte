@@ -14,6 +14,9 @@
     import { v4 as uuidv4 } from 'uuid';
     import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
+    import Dialog, { Title, Content, Actions } from '@smui/dialog';
+    import Button, { Label } from '@smui/button';
+
     const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
 
     const fetchTree = async(path:string) => {
@@ -145,10 +148,18 @@
                     'line-width': 0.5
                     }
                 };
+                let lNames = $layerList.map(item => { return item.lName});
+
+                if (lNames.includes(lName)){
+
+                    dialogOpen = true;
+
+
+                }
                 console.log($layerList);
                 layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
-                console.log($layerList);
-                $map.addLayer( lDef);
+                console.log($layerList);    
+                //$map.addLayer( lDef);
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
@@ -178,8 +189,15 @@
 
                 };
 
-                console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lSrc':lSrc, 'lDef':lDef, 'lType':'raster'}]);
+                let lNames = $layerList.map(item => { return item.lName});
+                if (lNames.includes(lName)){
+
+                    alert('Are you sure you wnat to add');
+
+
+                }
+                //console.log($layerList);
+                layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
                 console.log($layerList);
             }
             
@@ -226,7 +244,8 @@
 
 
 
-
+    let dialogOpen = false;
+    let confirmValue = 'Nothing yet.'
 
 
 
@@ -278,6 +297,7 @@
         {/if}
     </li>
 </ul>
+
 
 <style>
     ul {

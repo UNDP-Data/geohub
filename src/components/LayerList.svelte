@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { layerList } from '../stores/stores';
     import Layer from './Layer.svelte';
-    import { Accordion } from 'svelte-collapsible';
     import List from '@smui/list';
     
 
