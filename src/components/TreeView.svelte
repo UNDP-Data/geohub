@@ -1,4 +1,5 @@
 <script context="module" lang="ts">
+	import { Map } from 'maplibre-gl';
 
     // retain module scoped expansion state for each tree node
     const _expansionState = {
@@ -204,8 +205,15 @@
                 }
                 //console.log($layerList);
                 layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster'}, ...$layerList ]);
+                let firstSymbolId = undefined;
+                for (const layer of $map.getStyle().layers) {
+                    if (layer.type === 'symbol') {
+                        firstSymbolId = layer.id;
+                        break;
+                    }
+                }
                 console.log($layerList);
-                $map.addLayer(lDef);
+                $map.addLayer(lDef, firstSymbolId);
             }
             
             
