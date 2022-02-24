@@ -17,9 +17,13 @@ import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY} from '$lib/variables';
 
 
 //set creds
-// const account = AZURE_STORAGE_ACCOUNT;
-// const accountKey = AZURE_STORAGE_ACCESS_KEY;
-const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+let account = AZURE_STORAGE_ACCOUNT;
+let accountKey = AZURE_STORAGE_ACCESS_KEY;
+if (process.env.NODE_ENV === 'production') {
+    account = process.env.AZURE_STORAGE_ACCOUNT;
+    accountKey = process.env.AZURE_STORAGE_ACCESS_KEY;
+}
+const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey);
 
 
 
@@ -60,7 +64,7 @@ const listContainer = async (containerName:string, relPath:string) =>{
 
     // create storage container
     const blobServiceClient = new BlobServiceClient(
-        `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+        `https://${account}.blob.core.windows.net`,
         sharedKeyCredential
     );
 
@@ -182,7 +186,7 @@ const listContainers = async( prefix:string = '/' ) => {
 
     // create storage container
     const blobServiceClient = new BlobServiceClient(
-        `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+        `https://${account}.blob.core.windows.net`,
         sharedKeyCredential
     );
 

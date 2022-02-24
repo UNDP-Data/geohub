@@ -17,7 +17,11 @@
     import { map } from '../stores/mapstore';
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import Button, { Label } from '@smui/button';
-    import { TITILER_ENDPOINT} from '$lib/variables';
+    import { TITILER_ENDPOINT as VITE_TITILER_ENDPOINT} from '$lib/variables';
+    let TITILER_ENDPOINT = VITE_TITILER_ENDPOINT;
+    if (process.env.NODE_ENV === 'production') {
+        TITILER_ENDPOINT = process.env.VITE_TITILER_ENDPOINT;
+    }
     // const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
 
     const fetchTree = async(path:string) => {

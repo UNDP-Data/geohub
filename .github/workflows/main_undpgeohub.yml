@@ -38,16 +38,16 @@ jobs:
           cp package-lock.json build/.
           cp -r node_modules build/.
 
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
-        # if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          envkey_VITE_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_VITE_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
-          file_name: .env
-          directory: build
-          fail_on_empty: false
+      # - name: Make envfile
+      #   uses: SpicyPizza/create-envfile@v1.3
+      #   # if: ${{ github.ref == 'refs/heads/main' }}
+      #   with:
+      #     envkey_VITE_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+      #     envkey_VITE_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+      #     envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
+      #     file_name: .env
+      #     directory: build
+      #     fail_on_empty: false
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp

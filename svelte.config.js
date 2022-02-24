@@ -19,7 +19,12 @@ const config = {
 					protocol: 'MY_PROTOCOL_HEADER',
 					host: 'MY_HOST_HEADER'
 				}
-			}
+			},
+			vite: {
+				define: {
+					'process.env': process.env,
+				},
+			},
 		})
 	}
 };

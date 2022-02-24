@@ -32,7 +32,16 @@ npm run dev -- --open
 To create a production version of your app:
 
 ```bash
+cp .env.example .env
 npm run build
+```
+
+Note. for development, please set the following environmental variables in .env. Svelte will use VITE, so some variables' prefix is different from production.
+
+```
+VITE_AZURE_STORAGE_ACCOUNT=
+VITE_AZURE_STORAGE_ACCESS_KEY=
+VITE_TITILER_ENDPOINT=
 ```
 
 You can preview the production build with `npm run preview`.
@@ -43,7 +52,12 @@ If you want to change host name, port number, etc, use environmental variables t
 MY_HOST_VARIABLE=127.0.0.1 \
 MY_PORT_VARIABLE=4000 \
 MY_ORIGINURL=https://my.site \
-node build
+AZURE_STORAGE_ACCOUNT={YOUR ACCOUNT} \
+AZURE_STORAGE_ACCESS_KEY={YOUR ACCOUNT KEY} \
+VITE_TITILER_ENDPOINT={TITER_ENDPOINT} \
+npm run preview
 ```
+
+For production, `.env` will not work on Azure, so please directly set variables on Azure. Don't put `VITE_` prefix for `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.
