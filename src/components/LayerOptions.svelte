@@ -30,10 +30,11 @@
 <style>
 
     :global(.layer-tab){
+        padding: 0;
         height: 30px;
         width: 5px;
         border: none;
-        font-size: 10px;
+        font-size: 10pt;
     }
 
 </style>

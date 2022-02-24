@@ -1,8 +1,10 @@
 <script lang="ts">
     let panel1Open = false;
     import {map} from '../stores/mapstore'
+    import {layerList} from '../stores/stores'
     import LayerOptions from "./LayerOptions.svelte"
     import { Icon } from '@smui/tab';
+    import IconButton, { Icon as IIcon } from '@smui/icon-button';
     export let layerCfg;
     //let lName, lDef, lType;
     //$: ({lName,  lDef, lType} = layerCfg);
@@ -10,6 +12,7 @@
     ({lName,lDef,lType} = layerCfg);
 
     let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
+    console.log(`selected initial value ${selected}`)
     $: visibility = selected ? 'visible' : 'none';
     const srcId = lDef.source;
     const lId = lDef.id;
@@ -28,7 +31,6 @@
 
     };
 
-    
     let show = false;
     const isShowed = () => {
 
@@ -36,6 +38,16 @@
         show = !show
         return show
     }
+
+
+    const removeLayer = () => {
+        console.log(`removing ${lId}`)
+        $map.removeLayer(lId);
+        
+        //TODO remove the layer source as well if none of the layers reference it 
+        $layerList  = $layerList.filter((item) => item.lDef.id != lId );
+
+    };
 
 </script>
 <!--	<div class="layer-item">-->
@@ -45,10 +57,21 @@
 <!--		</div>-->
 <!--	</div>-->
 <div class="layer-item">
-    <div  class="layer-header" style="display: flex; margin-bottom: 0; height: 20px; align-items: center;">
-        <Icon class="material-icons">layers</Icon>
-        <h4 class="layer-name" on:click="{() => (show = !show)}">{lName}</h4>
-        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} on:change={handleChange}>
+    <div  class="layer-header" >
+        <!-- <input  type="checkbox" bind:checked={selected} on:change={handleChange}> -->
+
+        
+        <IconButton class="material-icons" on:click="{() => (show = !show)}" >settings</IconButton>
+        <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
+        
+        <IconButton on:click={() => handleChange()} toggle bind:pressed={selected} >
+            <Icon class="material-icons" on>visibility</Icon>
+            <Icon class="material-icons">visibility_off</Icon>
+        </IconButton>
+        <IconButton class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+           
+        
+        
     </div>
 
     {#if show}
@@ -64,34 +87,44 @@
 
 
 <style>
-    /* TODO: Change these classes according to a click of the button. The classes should be  */
-    .shown{
-        background-color: chartreuse;
+    .layer-header {
+        display: flex; 
+        flex-direction: row;
+        height: auto; 
+        justify-content:space-evenly;
+        border-bottom: 3px solid;
     }
-    .hidden{
-        background-color: saddlebrown;
-    }
-    .layer-item{
+    
 
-    }
+
 
     .layer-name:hover{
         color: rebeccapurple;
         font-family: Roboto,serif;
     }
     .layer-name{
+        display: flex;
+        border: 0px solid black;
         cursor:pointer;
-        margin-left: 5px;
         font-family: Roboto,serif;
-        width: 20%;
+        width: 150px;
+        
+        /* overflow-wrap: break-word; */
+        word-break:break-all;
+        align-self:center;
+        /* justify-content: cente; */
+
+        
+        
+        
     }
     .detail-div{
+        padding-top: 0rem;
         /* This is the div where the layers are being placed */
         /*border: 1px solid grey;*/
-        background: transparent;
+        background: white;
         /*box-shadow: grey;*/
         transition: height 5s;
     }
-    .layer-button:hover{
-    }
+    
 </style>
