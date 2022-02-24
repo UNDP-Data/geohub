@@ -32,7 +32,7 @@ jobs:
           npm run test --if-present
 
       - name: copy entrypoint.sh to build folder
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cp package.json build/.
           cp package-lock.json build/.
@@ -41,7 +41,7 @@ jobs:
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
-        # if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           app-name: 'undpgeohub'
           slot-name: 'Production'
