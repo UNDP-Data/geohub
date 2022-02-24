@@ -1,21 +1,15 @@
-
 <script lang="ts">
-	import LayerList from './LayerList.svelte';
 	import { mdiWeatherSunny } from '@mdi/js';
   import Drawer, {
     AppContent,
     Content,
     Header,
-    Title,
-    Subtitle,
   } from '@smui/drawer';
 
-  //import LoadData from "./LoadData.svelte"
+  import LayerList from './LayerList.svelte';
+  import Layer from './Layer.svelte';
 
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
-  import Paper from '@smui/paper';
-  import List, { Item, Text } from '@smui/list';
-  import IconButton from '@smui/icon-button'
   export let expanded = true;
   export let open = false;
   
@@ -24,24 +18,18 @@
   let active = 'Load';
   let rlabel;
   let expandedt;
- 
-
-  
-  
-
+  const tabs = ['Load...', "Layers", 'Analyze']
+  let infoICon = expandedt ? '&#9650;':'&#9660;';
 
   import Tab, { Label } from '@smui/tab';
   import TabBar from '@smui/tab-bar';
-  
+
   
   let panel;
 
+  import {wtree}  from '../stores/stores'
+  import TreeView from './TreeView.svelte'
 
-  import {wtree}  from '../stores/stores';
-  import TreeView from './TreeView.svelte';
-  
-  
-  
 </script>
 
 <div class="drawer-container">
@@ -49,10 +37,10 @@
   <Drawer variant="dismissible" bind:open >
     
     <Header>
-      <TabBar tabs={['Load data', 'Layers', 'Analyze']}   let:tab bind:active>
+      <TabBar tabs={['Load data', 'Layers']}   let:tab bind:active>
         <!-- Note: the `tab` property is required! -->
         <Tab {tab} class="tab">
-          <Label  >{tab}</Label>
+          <Label>{tab}</Label>
         </Tab>
       </TabBar>
     </Header>
@@ -69,26 +57,14 @@
       
       
     </Content>
-    
-      <!-- <Accordion class="expanded">
-        <Panel bind:open={expanded} color="primary" square>
-          <AccHeader>Info Panel</AccHeader>
-          <AccContent>
-           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae modi natus adipisci ut, ab voluptates accusamus, veniam quam id corporis nisi earum at nemo libero quod iure sequi nihil ullam.
-          </AccContent>
-        </Panel>
-        
-      </Accordion> -->
-    
   </Drawer>
 
   <!-- Todo: Create a component for the following -->
   <AppContent class="app-content " >
     <main class="main-content">
-      
       <slot></slot>
-
-      <!-- a LARGE  bottom info panel covering the map
+    </main>
+    <!-- a LARGE  bottom ionfo panel covering the map
     use as an alternative to placing the info panel in the side bar
     -->
     <!-- <div  bind:this={panel} class:expanded>
@@ -114,19 +90,36 @@
   <!-- Todo: Create a component for the following -->
 </div>
 
-
-
 <style>
-  .tab {
-    height:8px;
-    font-size: 12pt;
+  /*:global(.mdc-tab){*/
+  /*  font-size: 0.6rem;*/
+  /*  height: 20px;*/
+  /*}*/
+
+  :global(.s-k9Xq-arq2lfR){
+    font-family: Calibri,serif;
   }
+
+  .tab-header{
+    font-size: 2rem;
+    height: 30px;
+  }
+  /*:global(.smui-accordion__header){*/
+  /*  height: 40px;*/
+  /*  width: 40px;*/
+  /*  margin: 0 auto;*/
+  /*  background: none;*/
+  /*}*/
   .expand {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
   }
-  
+
+  .tab{
+    border: 1px solid rebeccapurple;
+    margin: 0;
+  }
   /* These classes are only needed because the
       drawer is in a container on the page. */
   .drawer-container {
@@ -154,6 +147,7 @@
     position: relative;
     flex-grow: 1;
   }
+
   .main-content {
     overflow: hidden;
     display: flex;
@@ -164,41 +158,51 @@
     z-index: -1;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+/* Tip
+Toggle between .mdc_drawer__content height == 380px and height == 100%
+When the bottom drawer expanded == True, .mdc_drawer__content height == 380
+When the bottom drawer expanded == False, mdc_drawer__content height == 100%
+Create a class in the component that checks for the expanded state*/
 
+  :global(.contracted-browser){
+    height: 60%;
+  }
+  :global(.expanded-browser){
+    height: 100%;
   }
   .bottom-drawer{
     position: absolute;
     bottom: 0;
-    left: 0%;
+    left: 0;
     /* background-color: dodgerblue; */
     width: 100%;
     height: 100%;
     /* border-radius: 5px 50px 50px 5px; */
     flex-grow: 1;
     overflow: auto;
-    
-    
   }
-  
-
 
   :global(.expanded){
     display :inline-block;
-    max-height: 300px;
+    max-height: 40%;
     min-height: auto;
     /* height: 150px; */
     position: absolute;
     bottom: 0;
-    left: 0%;
-    color: red;
+    left: 0;
     width: 100%;
     text-align: center;
     overflow:auto;
-
-
-    
   }
 
+  /*:global(.mdc-drawer__content){*/
+  /*  height: 380px;*/
+  /*}*/
 
-  
+  /* Todo: The following styles are when the bottom drawer is contracted*/
+
+  /*.expanded-browser{*/
+  /*  height: 100%;*/
+  /*}*/
 </style>

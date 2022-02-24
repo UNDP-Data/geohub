@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { layerList } from '../stores/stores';
     import Layer from './Layer.svelte';
-    import { Accordion } from 'svelte-collapsible';
     import List from '@smui/list';
     
 
@@ -28,12 +27,12 @@
 
 <style>
     .accordion {
-		width: 100%;
-		max-width: 450px;
-		margin: 0 auto;
-	}
-	
-	
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
+    }
 
-	
+
+
+
 </style>

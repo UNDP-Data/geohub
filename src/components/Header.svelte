@@ -35,9 +35,7 @@
         }
       }
       else{
-        
           panelOpen = ! panelOpen
-        
       }
       
     }
@@ -73,11 +71,10 @@
     
     
     <Section align="end">
-      <!-- <IconButton class="material-icons" on:click={() => (panelOpen
+      <IconButton class="material-icons" on:click={() => (panelOpen
    = !panelOpen
-  )}>bookmark_border</IconButton> -->
-      <IconButton class="material-icons" on:click={smartToggle}>bookmark_border</IconButton>
-
+  )}>bookmark_border</IconButton>
+      <!--<IconButton class="material-icons" on:click={smartToggle}>bookmark_border</IconButton>-->
       <IconButton class="material-icons" on:click={() => (drawerOpen = !drawerOpen)}>menu</IconButton>
       <IconButton on:click={() => (darkTheme = !darkTheme)}>
         <Icon component={Svg} viewBox="0 0 24 24" >

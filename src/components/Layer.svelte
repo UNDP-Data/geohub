@@ -1,86 +1,96 @@
 <script lang="ts">
-    import List, { Item, Meta, Label } from '@smui/list';
-    import { Accordion, AccordionItem, CollapsibleCard } from 'svelte-collapsible'
-    import Checkbox from '@smui/checkbox';
-    import Switch from '@smui/switch';
-    import FormField from '@smui/form-field';
-
+    let panel1Open = false;
     import {map} from '../stores/mapstore'
-    import List from '@smui/list/src/List.svelte';
-
-    
+    import LayerOptions from "./LayerOptions.svelte"
+    import { Icon } from '@smui/tab';
     export let layerCfg;
-    export let lName, lSrc, lDef, lType;
-    $: ({lName, lSrc, lDef, lType} = layerCfg);
-    $:mmap = $map;
-    let selected:boolean = false;
+    //let lName, lDef, lType;
+    //$: ({lName,  lDef, lType} = layerCfg);
+    let lName,  lDef, lType;
+    ({lName,lDef,lType} = layerCfg);
+
+    let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
+    $: visibility = selected ? 'visible' : 'none';
+    const srcId = lDef.source;
+    const lId = lDef.id;
 
     const handleChange = () => {
-        const srcId = lDef.source;
-        const lId = lDef.id;
-
-        if (selected) {
-            
-            $map.addSource(srcId,lSrc);
+        
+        if (! $map.getLayer(lId)){
+            console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
-
-
-        } else{
-            $map.removeLayer(lId);
-            $map.removeSource(srcId);
-
         }
 
-    };
+
+        $map.setLayoutProperty(lId, 'visibility', visibility);
+
     
+
+    };
+
+    let show = false;
+    const isShowed = () => {
+
+        console.log("Clicked!!!")
+        show = !show
+        return show
+    }
 
 </script>
-
-<CollapsibleCard>
-	<h5 slot='header' class='header'>{lName}</h5>
-	<div slot='body' class='body'>
-		<Checkbox bind:checked={selected} value="{lDef.lid}" on:change={handleChange} />
+<!--	<div class="layer-item">-->
+<!--		<button on:click={()=>!show}>{lName}</button>-->
+<!--		<div class={isShowed ? "shown":"hidden"}>-->
+<!--			<Checkbox class="select-layer" bind:checked={selected} value="{lDef.lid}" on:change={handleChange} />-->
+<!--		</div>-->
+<!--	</div>-->
+<div class="layer-item">
+    <div  class="layer-header" style="display: flex; margin-bottom: 0; height: 20px; align-items: center;">
+        <Icon class="material-icons">layers</Icon>
+        <h4 class="layer-name" on:click="{() => (show = !show)}">{lName}</h4>
+        <input style="position: absolute; right: 0;" type="checkbox" bind:checked={selected} on:change={handleChange}>
     </div>
-</CollapsibleCard>
 
-<!-- <AccordionItem key={lDef.lid}>
-    <h5 slot='header'>{lName} </h5>
-    <div slot='body'>
-       
-    </div> 
-</AccordionItem> -->
-<!-- <Item>
-    <Label>{lName}</Label>
-      <Meta>
-        <Checkbox bind:checked={selected} value="{lDef.lid}" on:change={handleChange} />
-    </Meta>
-    
-</Item> -->
+    {#if show}
+        <div style="align-items: center" class="detail-div">
+            <LayerOptions/>
+        </div>
+        <br/>
+    {:else}
+        <br/>
+    {/if}
+</div>
+
 
 
 <style>
-    .accordion-item {
-		border-bottom: 1px solid rgb(100, 120, 140);
-	}
-    .header {
-		display: flex;
-		align-items: center;
-		padding: 0.5em;
-	}
-	
-	.header h {
-		margin: 0;
-		padding: 0;
-	}
-	
-	.header p {
-		font-size: 18px;
-		margin: 0;
-	}
-	
-	.body {
-		padding: 0.5em;
-		margin: 0;
-		font-size: 18px;
-	}
+    /* TODO: Change these classes according to a click of the button. The classes should be  */
+    .shown{
+        background-color: chartreuse;
+    }
+    .hidden{
+        background-color: saddlebrown;
+    }
+    .layer-item{
+
+    }
+
+    .layer-name:hover{
+        color: rebeccapurple;
+        font-family: Roboto,serif;
+    }
+    .layer-name{
+        cursor:pointer;
+        margin-left: 5px;
+        font-family: Roboto,serif;
+        width: 20%;
+    }
+    .detail-div{
+        /* This is the div where the layers are being placed */
+        /*border: 1px solid grey;*/
+        background: transparent;
+        /*box-shadow: grey;*/
+        transition: height 5s;
+    }
+    .layer-button:hover{
+    }
 </style>
