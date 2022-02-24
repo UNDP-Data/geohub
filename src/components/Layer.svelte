@@ -148,6 +148,15 @@
         <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
     </Paper>
 
+        <IconButton class="material-icons"  on:click="{() => (show = !show)}" >settings</IconButton>
+        <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
+
+        <IconButton on:click={() => handleChange()} toggle bind:pressed={selected} >
+            <Icon class="material-icons" on>visibility</Icon>
+            <Icon class="material-icons">visibility_off</Icon>
+        </IconButton>
+        <IconButton class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+
 <TabBar class="settings-tab" tabs={tabs} let:tab bind:active>
     <!-- Note: the `tab` property is required! -->
 <!--    <Tab class="button-tab" tab={tab}>-->
