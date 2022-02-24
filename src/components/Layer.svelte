@@ -61,7 +61,7 @@
         <!-- <input  type="checkbox" bind:checked={selected} on:change={handleChange}> -->
 
         
-        <IconButton class="material-icons" on:click="{() => (show = !show)}" >settings</IconButton>
+        <IconButton class="material-icons"  on:click="{() => (show = !show)}" >settings</IconButton>
         <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
         
         <IconButton on:click={() => handleChange()} toggle bind:pressed={selected} >
