@@ -36,11 +36,11 @@ cp .env.example .env
 npm run build
 ```
 
-Note. for development, please set the following environmental variables in .env. Svelte will use VITE, so some variables' prefix is different from production.
+Note. for development, please set the following environmental variables in .env.
 
 ```
-VITE_AZURE_STORAGE_ACCOUNT=
-VITE_AZURE_STORAGE_ACCESS_KEY=
+AZURE_STORAGE_ACCOUNT=
+AZURE_STORAGE_ACCESS_KEY=
 VITE_TITILER_ENDPOINT=
 ```
 
@@ -58,6 +58,6 @@ VITE_TITILER_ENDPOINT={TITER_ENDPOINT} \
 npm run preview
 ```
 
-For production, `.env` will not work on Azure, so please directly set variables on Azure. Don't put `VITE_` prefix for `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`.
+For production, `.env` will not work on Azure, so please directly set variables on Azure.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.

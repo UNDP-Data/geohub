@@ -7,8 +7,6 @@ from "@azure/storage-blob"
 
 import azure  from "@azure/storage-blob";
 // // Load the .env file if it exists
-// import * as dotenv from "dotenv";
-// dotenv.config();
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY} from '$lib/variables';
 
 
@@ -17,12 +15,8 @@ import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY} from '$lib/variables';
 
 
 //set creds
-let account = AZURE_STORAGE_ACCOUNT;
-let accountKey = AZURE_STORAGE_ACCESS_KEY;
-if (process.env.NODE_ENV === 'production') {
-    account = process.env.AZURE_STORAGE_ACCOUNT;
-    accountKey = process.env.AZURE_STORAGE_ACCESS_KEY;
-}
+const account = AZURE_STORAGE_ACCOUNT;
+const accountKey = AZURE_STORAGE_ACCESS_KEY;
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey);
 
 

@@ -17,12 +17,13 @@
     import { map } from '../stores/mapstore';
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import Button, { Label } from '@smui/button';
-    import { TITILER_ENDPOINT as VITE_TITILER_ENDPOINT} from '$lib/variables';
-    let TITILER_ENDPOINT = VITE_TITILER_ENDPOINT;
-    if (process.env.NODE_ENV === 'production') {
-        TITILER_ENDPOINT = process.env.VITE_TITILER_ENDPOINT;
-    }
-    // const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
+    let TITILER_ENDPOINT;
+
+    const fetchTitilerConfig = async() => {
+        let url = `titiler.json`;
+        let res = await fetch(url).then((resp) => resp.json())
+        return res.TITILER_ENDPOINT;
+    };
 
     const fetchTree = async(path:string) => {
         let url = `azstorage.json?path=${path}`;
@@ -108,12 +109,10 @@
     export let expanded;
     $:expanded = _expansionState[label] || false;
 
-    onMount( () => {
+    onMount( async() => {
 
         //console.log('Mounting TW', _expansionState);
-
-
-
+        TITILER_ENDPOINT = await fetchTitilerConfig()
     });
     let icon = '&#43';
 
