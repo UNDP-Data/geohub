@@ -40,7 +40,7 @@
     2. toggleExpansion is called:
         a) id the ndoe has children nothing happens, else the fucntion continues
         b) the current node path prop is used to fethc the children for the current node from the endpoint
-            this cretaes an identical node with the current one with exception that its children are fetched
+            this cretaestree an identical node with the current one with exception that its children are fetched
         c) a new copy of the tree is is created by descructuring the old tree
         d) the copy is updated  inside updateTree
         e) the updated copy is wriiten into the store so  other componnets are notified
@@ -156,12 +156,10 @@
 
 
                 }
-                // console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName,  'lDef':lDef, 'lType':'vector'}]);
+                console.log($layerList);
+                layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
                 console.log($layerList);    
                 $map.addLayer( lDef);
-                // console.log($layerList);
-                //$map.addLayer( lDef);
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
@@ -169,7 +167,7 @@
                 const encodedRasterURL = `url=${encodeURI(url)}`;
                 
                 const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-
+                
                 console.log('tit', tilejsonURL);
                 const lSrc = {
                     'type': 'raster',
@@ -191,7 +189,7 @@
                         'maxzoom': 22,
                         'layout': {
                             'visibility':'visible'
-
+                            
                             },
 
 
@@ -205,7 +203,7 @@
 
                 }
                 //console.log($layerList);
-                layerList.set([...$layerList, {'lName':lName, 'lDef':lDef, 'lType':'raster'}]);
+                layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster'}, ...$layerList ]);
                 console.log($layerList);
                 $map.addLayer(lDef);
             }
