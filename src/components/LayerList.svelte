@@ -2,8 +2,6 @@
 	import { layerList } from '../stores/stores';
     import Layer from './Layer.svelte';
     import List from '@smui/list';
-    
-
 </script>
 
 
