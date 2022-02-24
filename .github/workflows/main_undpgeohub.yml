@@ -42,8 +42,8 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         # if: ${{ github.ref == 'refs/heads/main' }}
         with:
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_VITE_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_VITE_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
           envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
           file_name: .env
           directory: build

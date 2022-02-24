@@ -17,8 +17,8 @@
     import { map } from '../stores/mapstore';
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import Button, { Label } from '@smui/button';
-
-    const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
+    import { TITILER_ENDPOINT} from '$lib/variables';
+    // const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT || "";
 
     const fetchTree = async(path:string) => {
         let url = `azstorage.json?path=${path}`;

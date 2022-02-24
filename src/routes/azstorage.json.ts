@@ -6,20 +6,15 @@ import {
 from "@azure/storage-blob"
 
 import azure  from "@azure/storage-blob";
-// Load the .env file if it exists
-import * as dotenv from "dotenv";
-dotenv.config();
-
-
-
-
-
-
+// // Load the .env file if it exists
+// import * as dotenv from "dotenv";
+// dotenv.config();
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY} from '$lib/variables';
 
 //set creds
-const account = process.env.AZURE_STORAGE_ACCOUNT || "";
-const accountKey = process.env.AZURE_STORAGE_ACCESS_KEY || "";
-const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey);
+// const account = process.env.AZURE_STORAGE_ACCOUNT || "";
+// const accountKey = process.env.AZURE_STORAGE_ACCESS_KEY || "";
+const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 
 
 
@@ -60,7 +55,7 @@ const listContainer = async (containerName:string, relPath:string) =>{
 
     // create storage container
     const blobServiceClient = new BlobServiceClient(
-        `https://${account}.blob.core.windows.net`,
+        `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
         sharedKeyCredential
     );
 
@@ -182,7 +177,7 @@ const listContainers = async( prefix:string = '/' ) => {
 
     // create storage container
     const blobServiceClient = new BlobServiceClient(
-        `https://${account}.blob.core.windows.net`,
+        `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
         sharedKeyCredential
     );
 
