@@ -51,6 +51,7 @@
 			zoom,
 		});
         new_map.addControl(new maplibregl.NavigationControl({}), 'top-right');
+		new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left');
 		//setMap(new_map);
 		map.update(m=>new_map);
 
