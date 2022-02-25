@@ -49,6 +49,7 @@
 			//style: 'https://demotiles.maplibre.org/style.json',
 			center: [lon, lat],
 			zoom,
+			hash: true,
 		});
         
 		//setMap(new_map);
