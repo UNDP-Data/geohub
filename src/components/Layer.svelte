@@ -5,6 +5,8 @@
     import TabBar from '@smui/tab-bar';
     import Paper from "@smui/paper"
     import MenuSurface, { MenuSurfaceComponentDev } from '@smui/menu-surface';
+    import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
+
     let surface: MenuSurfaceComponentDev;
 
     //const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
@@ -15,7 +17,8 @@
     export let lName,  lDef, lType;
     ({lName,lDef,lType} = layerCfg);
 
-    let selected:boolean = lDef.layout.visibility == 'visible' ? true : false;
+    let selected = false;
+    //let selected:boolean = lDef.layout.visibility === 'visible';
     console.log(`selected initial value ${selected}`)
     $: visibility = selected ? 'visible' : 'none';
     const srcId = lDef.source;
@@ -96,8 +99,6 @@
         // map.getStyle().sources[srcId].reload();
     }
 
-
-
     import Dialog, { Title, Content, InitialFocus } from '@smui/dialog';
     import Slider from '@smui/slider';
     import FormField from '@smui/form-field';
@@ -115,31 +116,56 @@
         $map.setPaintProperty(
             layer[0]["id"],
             'raster-opacity',
-            parseInt(layerOpacity) / 100
+            parseInt(String(layerOpacity)) / 100
         );
     }
 </script>
-    <Paper variant="unelevated" square class="mdc-ripple-surface" color="cream" style="padding: 0">
 
-        <div  class="control-icons">
-            <IconButton color="primary" on:click="{() => {tabExpand('Colors')}}" size="mini" class="material-icons">palette</IconButton>
-            <IconButton on:click="{() => {tabExpand('Symbology')}}" size="mini" class="material-icons">legend_toggle</IconButton>
-<!--            <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={querySelected} >-->
-<!--                <Icon color="primary" class="material-icons" on>toggle_off</Icon>-->
-<!--                <Icon class="material-icons">toggle_on</Icon>-->
+
+<div class="accordion-container">
+    <Accordion style="margin-top: 0">
+        <Panel>
+            <div style="display: flex; align-items: center; width: 100%; justify-content: space-around;">
+            <Header>
+                <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
+            </Header>
+                <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected}>
+                    <Icon class="material-icons">visibility_off</Icon>
+                    <Icon color="primary" class="material-icons" on>visibility</Icon>
+                </IconButton>
+                <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+            </div>
+            <Content>
+                <div style="justify-content: center">
+                    <IconButton color="primary" on:click="{() => {tabExpand('Colors')}}" size="mini" class="material-icons">palette</IconButton>
+                    <IconButton on:click="{() => {tabExpand('Symbology')}}" size="mini" class="material-icons">legend_toggle</IconButton>
+                    <IconButton bind:disabled size="mini" class="material-icons" on:click={() => (disabled = !disabled)}>info</IconButton>
+                    <IconButton size="mini" class="material-icons" on:click={() => surface.setOpen(true)} >opacity
+                    </IconButton>
+                </div>
+
+                <MenuSurface style="width: 100%; height: 50px" tab bind:this={surface} anchorCorner="TOP_MIDDLE">
+                    <div style="height: 50px; justify-content: space-around">
+                        <FormField style="display: flex; flex-direction: column-reverse;">
+                            <input on:change={setLayerOpacity} bind:value={layerOpacity} type="range" min="0" max="100">
+                            <span slot="label">Layer Opacity: {layerOpacity}</span>
+                        </FormField>
+                    </div>
+                </MenuSurface>
+            </Content>
+        </Panel>
+    </Accordion>
+</div>
+<!--    <Paper variant="unelevated" square class="mdc-ripple-surface" color="cream" style="padding: 0">-->
+<!--        <div  class="control-icons">-->
+<!--            <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected}>-->
+<!--                <Icon class="material-icons">visibility_off</Icon>-->
+<!--                <Icon color="primary" class="material-icons" on>visibility</Icon>-->
 <!--            </IconButton>-->
-            <IconButton bind:disabled size="mini" class="material-icons" on:click={() => (disabled = !disabled)}>info</IconButton>
-            <IconButton size="mini" class="material-icons" on:click={() => surface.setOpen(true)} >opacity
-            </IconButton>
-            <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected} >
-                <Icon color="primary" class="material-icons" on>visibility</Icon>
-                <Icon class="material-icons">visibility_off</Icon>
-            </IconButton>
-            <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
-        </div>
-
-        <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
-    </Paper>
+<!--            <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>-->
+<!--        </div>-->
+<!--        <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>-->
+<!--    </Paper>-->
 
 <TabBar class="settings-tab" tabs={tabs} let:tab bind:active>
 </TabBar>
@@ -161,24 +187,18 @@
 {/if}
 
 
-<MenuSurface style="width: 100%; height: 50px" tab bind:this={surface} anchorCorner="TOP_MIDDLE">
-    <div style="height: 50px; justify-content: space-around">
-        <FormField style="display: flex; flex-direction: column-reverse;">
-            <input on:change={setLayerOpacity} bind:value={layerOpacity} type="range" min="0" max="100">
-            <span slot="label">Layer Opacity: {layerOpacity}</span>
-        </FormField>
-    </div>
-</MenuSurface>
+
 
 <style>
 
     .layer-name{
-        text-align: center;
+        text-align: left;
         display: block;
         cursor:pointer;
         font-family: Roboto,serif;
         width: 100%;
         height: auto;
+        font-size: .9rem;
 
     }
 
@@ -186,5 +206,9 @@
         display: flex;
         flex-direction: row;
         justify-content:space-evenly;
+    }
+
+    :global(.smui-accordion__panel){
+        width: 100%;
     }
 </style>
