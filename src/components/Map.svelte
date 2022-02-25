@@ -3,6 +3,8 @@
 	import { map } from '../stores/mapstore';
 	
 	import maplibregl, {Map} from 'maplibre-gl' ;
+	import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/maplibre-gl-export";
+	import '@watergis/maplibre-gl-export/css/styles.css';
 
 	// set the context here...
 
@@ -53,6 +55,15 @@
 		});
         new_map.addControl(new maplibregl.NavigationControl({}), 'top-right');
 		new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left');
+		// @ts-ignore
+		new_map.addControl(new MaplibreExportControl({
+			PageSize: Size.A4,
+			PageOrientation: PageOrientation.Landscape,
+			Format: Format.PNG,
+			DPI: DPI[96],
+			Crosshair: true,
+			PrintableArea: true
+		}), 'top-right');
 		//setMap(new_map);
 		map.update(m=>new_map);
 
