@@ -164,10 +164,20 @@
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
-                console.log('load raster layer', label, url)//https://undp.livedata.link/hrea/tiles/{z}/{x}/{y}.png
-                const encodedRasterURL = `url=${encodeURI(url)}`;
+                console.log('load raster layer', label, url)
+                let tilejsonURL;
+                if (true){
+
+                    let base, sign;
+                    [base,sign] = url.split('?');
+                    tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
                 
-                const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+                } else {
+                    const encodedRasterURL = `url=${encodeURI(url)}`;
+                    tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+                
+                }
+                
                 
                 console.log('tit', tilejsonURL);
                 const lSrc = {
