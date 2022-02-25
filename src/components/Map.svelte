@@ -49,6 +49,7 @@
 			//style: 'https://demotiles.maplibre.org/style.json',
 			center: [lon, lat],
 			zoom,
+			hash: true,
 		});
         new_map.addControl(new maplibregl.NavigationControl({}), 'top-right');
 		new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left');
