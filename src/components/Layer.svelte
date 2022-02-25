@@ -53,8 +53,8 @@
     const removeLayer = () => {
         console.log(`removing ${lId}`)
         $map.removeLayer(lId);
-        
-        //TODO remove the layer source as well if none of the layers reference it 
+
+        //TODO remove the layer source as well if none of the layers reference it
         $layerList  = $layerList.filter((item) => item.lDef.id != lId );
     };
 

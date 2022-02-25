@@ -8,7 +8,7 @@
 
 
 {#each $layerList as layerCfg}
-    <Layer {layerCfg}/>
+    <Layer {layerCfg}></Layer>
 {/each}
 
 <!-- <List>
