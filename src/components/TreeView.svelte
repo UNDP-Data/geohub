@@ -118,7 +118,7 @@
         console.log(path, srcId);
         const lid = uuidv4();
         if (!checked){
-            
+
             if (!isRaster){
                 const lName  = path.split('/')[path.split('/').length-2]; 
                 console.log('load vector layer ', label, url);
