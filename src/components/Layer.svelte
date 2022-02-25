@@ -1,15 +1,9 @@
 <script lang="ts">
-    let panel1Open = false;
     import {map} from '../stores/mapstore'
     import {layerList} from '../stores/stores'
-    import LayerOptions from "./LayerOptions.svelte"
-    import { Icon } from '@smui/tab';
-    import IconButton, { Icon as IIcon } from '@smui/icon-button';
-    import Tab, {Label} from '@smui/tab';
+    import IconButton, { Icon } from '@smui/icon-button';
     import TabBar from '@smui/tab-bar';
     import Paper from "@smui/paper"
-    import Ripple from '@smui/ripple';
-    import {tree} from "../stores/stores"
     //const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
     export let layerCfg;
     //export const srcId = lDef.source;
@@ -87,13 +81,8 @@
 
     }
 
-    import Slider from '@smui/slider';
-
-    import MenuSurface, { MenuSurfaceComponentDev } from '@smui/menu-surface';
     import SegmentedButton, { Segment } from '@smui/segmented-button';
-    let surface: MenuSurfaceComponentDev;
     let disabled : boolean = false;
-    import FormField from '@smui/form-field';
 
     let choices = ['viridis', 'plasma', 'inferno', 'magma', 'cividis'];
     let chosen = 'viridis';
@@ -117,8 +106,7 @@
         // map.getStyle().sources[srcId].reload();
     }
 
-    import Dialog, { Title, Content, Actions, InitialFocus } from '@smui/dialog';
-    import Button, { Label } from '@smui/button';
+    import Dialog, { Title, Content, InitialFocus } from '@smui/dialog';
     import Slider from '@smui/slider';
     import FormField from '@smui/form-field';
 
