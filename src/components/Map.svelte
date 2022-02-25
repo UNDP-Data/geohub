@@ -3,7 +3,6 @@
 	import { map } from '../stores/mapstore';
 	
 	import maplibregl, {Map} from 'maplibre-gl' ;
-	import { MaplibreExportControl, Size, PageOrientation, Format, DPI} from "@watergis/maplibre-gl-export";
 	import '@watergis/maplibre-gl-export/css/styles.css';
 
 	// set the context here...
@@ -41,7 +40,7 @@
         
 	
 
-    onMount( () => {
+    onMount( async() => {
         
 		const new_map = new Map({
 			container,
@@ -55,6 +54,7 @@
 		});
         new_map.addControl(new maplibregl.NavigationControl({}), 'top-right');
 		new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left');
+		const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import("@watergis/maplibre-gl-export");
 		// @ts-ignore
 		new_map.addControl(new MaplibreExportControl({
 			PageSize: Size.A4,
