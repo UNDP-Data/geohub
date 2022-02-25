@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { map } from '../stores/mapstore';
 	
-	import {Map} from 'maplibre-gl' ;
+	import maplibregl, {Map} from 'maplibre-gl' ;
 
 	// set the context here...
 
@@ -41,7 +41,7 @@
 
     onMount( () => {
         
-		let new_map = new Map({
+		const new_map = new Map({
 			container,
 			//container:"map",
 			style: 'https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
@@ -49,8 +49,10 @@
 			//style: 'https://demotiles.maplibre.org/style.json',
 			center: [lon, lat],
 			zoom,
+			hash: true,
 		});
-        
+        new_map.addControl(new maplibregl.NavigationControl({}), 'top-right');
+		new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left');
 		//setMap(new_map);
 		map.update(m=>new_map);
 
