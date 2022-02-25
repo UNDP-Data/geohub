@@ -36,7 +36,7 @@
     "@smui/tooltip": "^6.0.0-beta.14",
     "@smui/top-app-bar": "^6.0.0-beta.13",
     "@sveltejs/adapter-node": "^1.0.0-next.69",
-    "@sveltejs/kit": "next",
+    "@sveltejs/kit": "^1.0.0-next.283",
     "@types/colormap": "^2.3.1",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
