@@ -12,7 +12,7 @@
     {#if active === 'Symbology'}
         Symbology
     {:else if active === "Colors"}
-        ColorRamps
+        <ColorRamps />
     {/if}
 
 </div>
@@ -20,6 +20,8 @@
 <script lang="ts">
     import Tab, { Label, Icon } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
+    import ColorRamps from "./ColorRamps.svelte"
+
     let active = 'Home';
     const layertabs = {
         names:['Symbology', 'Colors'],
@@ -30,10 +32,11 @@
 <style>
 
     :global(.layer-tab){
+        padding: 0;
         height: 30px;
         width: 5px;
         border: none;
-        font-size: 10px;
+        font-size: 10pt;
     }
 
 </style>
