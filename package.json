@@ -63,6 +63,7 @@
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.4.1",
     "@smui/touch-target": "^6.0.0-beta.14",
+    "@watergis/maplibre-gl-export": "^1.2.15",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
     "uuid": "^8.3.2"
