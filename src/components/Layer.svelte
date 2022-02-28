@@ -7,8 +7,6 @@
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import SegmentedButton, { Segment } from '@smui/segmented-button';
 
-    
-
 
     export let layerCfg;
     export let lName,  lDef, lType;
@@ -26,8 +24,6 @@
             console.log(`adding ${lId} to map`);
             $map.addLayer(lDef);
         }
-
-
         $map.setLayoutProperty(lId, 'visibility', visibility);
     };
 
@@ -50,7 +46,6 @@
         if($map.getLayer(lId)){
             $map.removeLayer(lId);
         }
-
         //TODO remove the layer source as well if none of the layers reference it
         $layerList  = $layerList.filter((item) => item.lDef.id !== lId );
     };
@@ -75,7 +70,6 @@
         }
     }
 
-    
     let disabled : boolean = false;
 
     let choices = ['viridis', 'plasma', 'inferno', 'magma', 'cividis'];
@@ -94,7 +88,6 @@
         console.log($map.getStyle().sources[srcId])//.reload();
     }
 
-    
 
     let open = false;
     let showLayerInfo = false
@@ -111,7 +104,7 @@
             $map.setPaintProperty(
                 lId,
                 'raster-opacity',
-                layerOpacity / 100
+                layerOpacity
             );
         }
         else
@@ -159,13 +152,11 @@
         );
     }
 
-    
 </script>
-
 
 <div class="accordion-container">
     <Accordion >
-        <Panel variant='unelevated' square color="primary">
+        <Panel style="padding: 0" variant='unelevated' square>
             <div class="layer-header" >
 
                 <div class="layer-header-name">
@@ -188,7 +179,6 @@
                 
                 {#if lType === "raster" }
                     <div style="justify-content: center">
-                        
                         <IconButton color="primary" on:click="{() => {tabExpand('Colors')}}" size="mini" class="material-icons">palette</IconButton>
                         <IconButton on:click="{() => {tabExpand('Symbology')}}" size="mini" class="material-icons">legend_toggle</IconButton>
                         <IconButton bind:disabled size="mini" class="material-icons" on:click={() => (disabled = !disabled)}>info</IconButton>
@@ -233,7 +223,7 @@
 
 {:else if active === "Opacity"}
     {#if show}
-        <div style="margin:0; display:flex; flex-direction:row; justify-content: space-around; border:1px solid red">
+        <div style="margin:0; display:flex; flex-direction:row; justify-content: space-around;">
             <span>Layer Opacity: {layerOpacity}</span>
             <input on:change={setLayerOpacity} bind:value={layerOpacity} type="range" min="0" max="1" step="0.01">
                 
@@ -249,11 +239,8 @@
 {/if}
 
 
-
-
 <style>
     .layer-header {
-        
         overflow-wrap:break-word;
         display: flex;
         flex-direction: row;
@@ -267,7 +254,6 @@
     .layer-header-name {
         align-self:center;
         flex: 0 0 200px;
-        
     }
 
     .layer-header-icons{
@@ -278,7 +264,6 @@
         /* align-content: flex-start; */
     }
     .layer-name{
-        
         /* text-align: left; */
         display: flex;
         cursor:pointer;
@@ -288,10 +273,10 @@
         font-size: 12pt;
         justify-content: center;
         align-items: center;
-
     }
 
-    
 
-    
+    :global(.smui-paper__content){
+        padding: 0!important;
+    }
 </style>
