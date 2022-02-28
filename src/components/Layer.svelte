@@ -156,11 +156,7 @@
 
 <div class="accordion-container">
     <Accordion >
-<<<<<<< HEAD
         <Panel variant='unelevated' square color="white">
-=======
-        <Panel style="padding: 0" variant='unelevated' square>
->>>>>>> 0717dd37ce0d799718ec2bc34be9244eb054f8eb
             <div class="layer-header" >
 
                 <div class="layer-header-name">
