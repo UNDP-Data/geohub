@@ -4,21 +4,19 @@
     import IconButton, { Icon } from '@smui/icon-button';
     import TabBar from '@smui/tab-bar';
     import Paper from "@smui/paper"
-    import MenuSurface, { MenuSurfaceComponentDev } from '@smui/menu-surface';
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
+    import Menu, { MenuComponentDev } from '@smui/menu';
+    import FormField from '@smui/form-field';
 
-    let surface: MenuSurfaceComponentDev;
 
-    //const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+    let menu: MenuComponentDev;
+
+
     export let layerCfg;
-    //export const srcId = lDef.source;
-    //let lName, lDef, lType;
-    //$: ({lName,  lDef, lType} = layerCfg);
     export let lName,  lDef, lType;
     ({lName,lDef,lType} = layerCfg);
 
     let selected = false;
-    //let selected:boolean = lDef.layout.visibility === 'visible';
     console.log(`selected initial value ${selected}`)
     $: visibility = selected ? 'visible' : 'none';
     const srcId = lDef.source;
@@ -34,8 +32,6 @@
 
 
         $map.setLayoutProperty(lId, 'visibility', visibility);
-        // console.log($map.getStyle().layers.length);
-        // console.log($map.getStyle().layers);
     };
 
     let show = false;
@@ -55,10 +51,13 @@
 
     const removeLayer = () => {
         console.log(`removing ${lId}`)
-        $map.removeLayer(lId);
+
+        if($map.getLayer(lId)){
+            $map.removeLayer(lId);
+        }
 
         //TODO remove the layer source as well if none of the layers reference it
-        $layerList  = $layerList.filter((item) => item.lDef.id != lId );
+        $layerList = $layerList.filter((item) => item.lDef.id !== lId);
     };
 
     const openOpacity = () => {
@@ -99,9 +98,6 @@
         // map.getStyle().sources[srcId].reload();
     }
 
-    import Dialog, { Title, Content, InitialFocus } from '@smui/dialog';
-    import Slider from '@smui/slider';
-    import FormField from '@smui/form-field';
 
     let open = false;
     let showLayerInfo = false
@@ -136,22 +132,25 @@
                 <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
             </div>
             <Content>
+                {#if lType === "raster" }
                 <div style="justify-content: center">
                     <IconButton color="primary" on:click="{() => {tabExpand('Colors')}}" size="mini" class="material-icons">palette</IconButton>
                     <IconButton on:click="{() => {tabExpand('Symbology')}}" size="mini" class="material-icons">legend_toggle</IconButton>
                     <IconButton bind:disabled size="mini" class="material-icons" on:click={() => (disabled = !disabled)}>info</IconButton>
-                    <IconButton size="mini" class="material-icons" on:click={() => surface.setOpen(true)} >opacity
+                    <IconButton size="mini" class="material-icons" on:click={() => menu.setOpen(true)} >opacity
                     </IconButton>
                 </div>
-
-                <MenuSurface style="width: 100%; height: 50px" tab bind:this={surface} anchorCorner="TOP_MIDDLE">
+                    {:else if lType === "vector"}
+                    This Layer is a Vector
+                    {/if}
+                <Menu bind:this={menu}>
                     <div style="height: 50px; justify-content: space-around">
                         <FormField style="display: flex; flex-direction: column-reverse;">
                             <input on:change={setLayerOpacity} bind:value={layerOpacity} type="range" min="0" max="100">
                             <span slot="label">Layer Opacity: {layerOpacity}</span>
                         </FormField>
                     </div>
-                </MenuSurface>
+                </Menu>
             </Content>
         </Panel>
     </Accordion>
@@ -198,7 +197,7 @@
         font-family: Roboto,serif;
         width: 100%;
         height: auto;
-        font-size: .9rem;
+        font-size: .7rem;
 
     }
 

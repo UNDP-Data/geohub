@@ -50,7 +50,7 @@
       {#if active == 'Load data'}
           <TreeView tree={$wtree.tree}   />
       {:else if active == 'Layers'}
-        <LayerList></LayerList>
+        <LayerList/>
       {:else if active == 'Analyze'}
         Analyze
       {/if}
