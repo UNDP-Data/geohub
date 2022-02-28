@@ -147,9 +147,8 @@
                             'line-join': 'round'
                             },
                     'paint': {
-                    // 'line-opacity': 0,
-                    'line-color': 'rgb(53, 175, 109)',
-                    'line-width': 0.5
+                        'line-color': 'rgb(53, 175, 109)',
+                        'line-width': 0.5
                     }
                 };
                 let lNames = $layerList.map(item => { return item.lName});

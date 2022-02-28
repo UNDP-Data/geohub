@@ -67,7 +67,7 @@
     "@smui/touch-target": "^6.0.0-beta.14",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
-    "esbuild-windows-64": "^0.14.23",
+    "esbuild": "^0.14.23",
     "uuid": "^8.3.2"
   }
 }
