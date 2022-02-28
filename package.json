@@ -18,6 +18,7 @@
     "@azure/storage-blob": "^12.8.0",
     "@iconify/svelte": "^2.1.2",
     "@mdi/js": "^6.5.95",
+    "@mui/icons-material": "^5.4.4",
     "@smui-extra/accordion": "^6.0.0-beta.13",
     "@smui/button": "^6.0.0-beta.13",
     "@smui/checkbox": "^6.0.0-beta.14",
@@ -28,6 +29,7 @@
     "@smui/icon-button": "^6.0.0-beta.13",
     "@smui/layout-grid": "^6.0.0-beta.13",
     "@smui/list": "^6.0.0-beta.13",
+    "@smui/menu": "^6.0.0-beta.14",
     "@smui/menu-surface": "^6.0.0-beta.14",
     "@smui/segmented-button": "^6.0.0-beta.14",
     "@smui/slider": "^6.0.0-beta.14",
@@ -65,6 +67,7 @@
     "@smui/touch-target": "^6.0.0-beta.14",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
+    "esbuild-windows-64": "^0.14.23",
     "uuid": "^8.3.2"
   }
 }
