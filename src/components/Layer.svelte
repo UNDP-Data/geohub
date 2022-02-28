@@ -112,7 +112,7 @@
             $map.setPaintProperty(
                 lId,
                 'raster-opacity',
-                layerOpacity / 100
+                layerOpacity
             );
         }
         else
@@ -166,7 +166,7 @@
 
 <div class="accordion-container">
     <Accordion >
-        <Panel variant='unelevated' square color="primary">
+        <Panel variant='unelevated' square color="white">
             <div class="layer-header" >
 
                 <div class="layer-header-name">
@@ -208,46 +208,51 @@
                         <h6>Polygon Options</h6>
                     {/if}
                 {/if}
+
+
+                <TabBar class="settings-tab" tabs={tabs} let:tab bind:active>
+                </TabBar>
+                {#if active === 'Symbology'}
+                    {#if show}
+                        Legend
+                    {/if}
+                {:else if active === "Colors"}
+                {#if show}
+                    <Paper style="padding: 0" variant="unelevated">
+                        <SegmentedButton style="width: 100%" segments={choices} let:segment singleSelect bind:chosen>
+                            <!-- Note: the `segment` property is required! -->
+                            <Segment bind:chosen style="width: 25%" {segment} on:click={()=>{handleUrlChange(segment)}}>
+                                {segment}
+                            </Segment>
+                        </SegmentedButton>
+                    </Paper>
+                {/if}
+                
+                {:else if active === "Opacity"}
+                    {#if show}
+                        <div style="margin:0; display:flex; flex-direction:row; justify-content: space-even;">
+                            <span>Opacity: </span>
+                            <input on:change={setLayerOpacity} bind:value={layerOpacity} color="primary" type="range" min="0" max="1" step="0.01">
+                            <span> {layerOpacity}</span>
+                        </div>
+                    {/if}
+                {:else if active === "Linewidth"}
+                    {#if show}
+                        <div style="display:flex; flex-direction:row; justify-content: space-around">
+                            <span>Line Width: </span>
+                            <input on:change={setLineWidth} bind:value={layerWidth} type="range" min="0" max="5" step=".1">
+                            <span> {layerWidth}</span>
+                        </div>
+                    {/if}
+                {/if}
+                
+
             </Content>
         </Panel>
     </Accordion>
 </div>
 
 
-<TabBar class="settings-tab" tabs={tabs} let:tab bind:active>
-</TabBar>
-{#if active === 'Symbology'}
-    {#if show}
-        Legend
-    {/if}
-{:else if active === "Colors"}
-{#if show}
-    <Paper style="padding: 0" variant="unelevated">
-        <SegmentedButton style="width: 100%" segments={choices} let:segment singleSelect bind:chosen>
-            <!-- Note: the `segment` property is required! -->
-            <Segment bind:chosen style="width: 25%" {segment} on:click={()=>{handleUrlChange(segment)}}>
-                {segment}
-            </Segment>
-        </SegmentedButton>
-    </Paper>
-{/if}
-
-{:else if active === "Opacity"}
-    {#if show}
-        <div style="margin:0; display:flex; flex-direction:row; justify-content: space-around; border:1px solid red">
-            <span>Layer Opacity: {layerOpacity}</span>
-            <input on:change={setLayerOpacity} bind:value={layerOpacity} type="range" min="0" max="1" step="0.01">
-                
-        </div>
-    {/if}
-{:else if active === "Linewidth"}
-    {#if show}
-        <div style="display:flex; flex-direction:row; justify-content: space-around">
-            <span>Line Width: {layerWidth}</span>
-            <input on:change={setLineWidth} bind:value={layerWidth} type="range" min="0" max="5" step=".1">
-        </div>
-    {/if}
-{/if}
 
 
 
