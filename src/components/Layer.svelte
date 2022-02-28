@@ -58,7 +58,7 @@
         $map.removeLayer(lId);
 
         //TODO remove the layer source as well if none of the layers reference it
-        $layerList  = $layerList.filter((item) => item.lDef.id != lId );
+        $layerList  = $layerList.filter((item) => item.lDef.id !== lId );
     };
 
     const openOpacity = () => {
@@ -99,9 +99,10 @@
         // map.getStyle().sources[srcId].reload();
     }
 
-    import Dialog, { Title, Content, InitialFocus } from '@smui/dialog';
+    import Dialog, { Title, Content as DialogContent, InitialFocus } from '@smui/dialog';
     import Slider from '@smui/slider';
     import FormField from '@smui/form-field';
+import { mdiFormatLetterStartsWith } from '@mdi/js';
 
     let open = false;
     let showLayerInfo = false
@@ -119,23 +120,42 @@
             parseInt(String(layerOpacity)) / 100
         );
     }
+
+    
 </script>
 
 
 <div class="accordion-container">
-    <Accordion style="margin-top: 0">
-        <Panel>
-            <div style="display: flex; align-items: center; width: 100%; justify-content: space-around;">
-            <Header>
-                <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
-            </Header>
-                <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected}>
-                    <Icon class="material-icons">visibility_off</Icon>
-                    <Icon color="primary" class="material-icons" on>visibility</Icon>
-                </IconButton>
-                <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+    <Accordion style="margin-top: 0" >
+        <Panel variant='unelevated' square color="white">
+            <div class="layer-header" >
+
+                <div class="layer-header-name">
+                    <Header style="">
+                        <span class="layer-name" on:click="{() => (show = !show)}" >{lName} </span>
+                        <!-- {#if lName ==- 'admin2'}
+                            <span class="layer-name" on:click="{() => (show = !show)}" >{lName} </span>
+                        {:else if lName =="admin1"}
+                            <span class="layer-name" on:click="{() => (show = !show)}" >{lName} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis voluptas saepe sequi dolore ab neque? </span>
+                        
+                        {:else}
+                            <span class="layer-name" on:click="{() => (show = !show)}" >{lName} </span>
+                        {/if} -->
+                    </Header>
+                </div>
+                <div class="layer-header-icons">
+                    <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected}>
+                        <Icon class="material-icons">visibility_off</Icon>
+                        <Icon color="primary" class="material-icons" on>visibility</Icon>
+                    </IconButton>
+                    <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+                </div>
+               
+                    
             </div>
             <Content>
+                <!-- <RasterLayerOptions></RasterLayerOptions>
+                <VectorLayeroptions></VectorLayeroptions> -->
                 <div style="justify-content: center">
                     <IconButton color="primary" on:click="{() => {tabExpand('Colors')}}" size="mini" class="material-icons">palette</IconButton>
                     <IconButton on:click="{() => {tabExpand('Symbology')}}" size="mini" class="material-icons">legend_toggle</IconButton>
@@ -190,25 +210,46 @@
 
 
 <style>
-
-    .layer-name{
-        text-align: left;
-        display: block;
-        cursor:pointer;
-        font-family: Roboto,serif;
-        width: 100%;
-        height: auto;
-        font-size: .9rem;
-
-    }
-
-    .control-icons{
+    .layer-header {
+        
+        overflow-wrap:break-word;
         display: flex;
         flex-direction: row;
+        flex-grow: 1;
+        flex-wrap: nowrap;
+        align-items: center; 
+        width: 100%; 
         justify-content:space-evenly;
     }
 
-    :global(.smui-accordion__panel){
-        width: 100%;
+    .layer-header-name {
+        align-self:center;
+        flex: 0 0 200px;
+        
     }
+
+    .layer-header-icons{
+        display: flex;
+        flex-direction: row;
+        /* justify-content:space-around; */
+        align-self: flex-start;
+        /* align-content: flex-start; */
+    }
+    .layer-name{
+        
+        /* text-align: left; */
+        display: flex;
+        cursor:pointer;
+        font-family: Roboto,serif;
+        width: 100%;
+        height: 2rem;
+        font-size: 11pt;
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    
+
+    
 </style>
