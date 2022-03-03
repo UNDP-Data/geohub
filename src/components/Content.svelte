@@ -57,8 +57,8 @@
           <TreeView tree={$wtree.tree}   />
       {:else if active == 'Layers'}
         <LayerList/>
-        <CombinedLayers/>
-        <button>Add selected</button>
+        <!-- <CombinedLayers/> -->
+        <!-- <button>Add selected</button> -->
       {:else if active == 'Analyze'}
         Analyze
       {/if}

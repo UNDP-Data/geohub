@@ -1,66 +1,31 @@
-<script lang="ts" context="module">
-	
-    const _layerState = {
-        /* treeNodeId: expanded <boolean> */
-    };
-    const _sectionState = {
-        /* treeNodeId: expanded <boolean> */
-    };
-</script>
+<Dialog
+  bind:open
+  aria-labelledby="large-scroll-title"
+  aria-describedby="large-scroll-content"
+  surface$style="width: 850px; max-width: calc(100vw - 32px);"
+>
+  <Title id="large-scroll-title">Create a new combined/dynamic layer</Title>
+  <Content id="large-scroll-content">
+    {#each Array(3) as _item}
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora, labore.
+    {/each}
+  </Content>
+  <Actions>
+    <Button action="accept">
+      <Label>Done</Label>
+    </Button>
+  </Actions>
+</Dialog>
+<div style="display:flex, align-self:center">
+    <Button on:click={() => (open = true)}>
+        <Label>New layer from selection..</Label>
+      </Button>
+      
+</div>
 
 <script lang="ts">
-	
-    import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-    export let panelOpen:boolean = false;
+  import Dialog, { Title, Content, Actions } from '@smui/dialog';
+  import Button, { Label } from '@smui/button';
+  
+  let open = false;
 </script>
-
-<Accordion>
-    <Panel variant='unelevated' color="primary" bind:open={panelOpen}>
-        <Header style="padding:5px">
-            DynamicLayer
-        </Header>
-        
-        <Content>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Molestias, quis?
-        </Content>
-    </Panel>
-</Accordion>
-
-
-<style>
-    .layer-header-name {
-        display: flex;
-        align-self:center;
-        flex: 0 0 1; 
-        /* width: 100%; */
-        justify-content: center;
-        /* flex-wrap: nowrap;
-        overflow-wrap:anywhere; */
-    }
-    .layer-name{
-        
-        display: flex;
-        cursor:pointer;
-        font-family: Roboto,serif;
-        width: 100%;
-        min-height: 2.5rem;
-        height:auto;
-        font-size: 16pt;
-        font-weight: bold;
-        justify-content: center;
-        align-items: center;
-        width: fit-content;
-        
-        
-    }
-
-
-    :global(.smui-accordion__header){
-        padding: 0!important;
-    }
-    :global(.smui-accordion__panel){
-        padding: 0!important;
-    }
-    
-</style>
-

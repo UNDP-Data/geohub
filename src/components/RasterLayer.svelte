@@ -24,7 +24,6 @@
     import Checkbox from '@smui/checkbox';
 	
 
-
     export let layerCfg;
     let lName,  lDef, lType;
     ({lName,lDef,lType} = layerCfg);
@@ -90,13 +89,26 @@
 
     };
 
+    export let showDynamicButton = false;
 
     const setDynamicLayerState = () => {
         _dynamicLayerState[layerId] = inDynamic;
         console.log(JSON.stringify(_dynamicLayerState), );
-        if(Object.keys(_dynamicLayerState).length > 1 ){
-            //layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
+        let ntrue = 0;
+        for (const [key, value] of Object.entries(_dynamicLayerState)) {
+            console.log(`${key}:${value}`);
+            if(value){
+                ++ntrue;
+            };
+            if (ntrue>=2){
+                showDynamicButton = true;
+                break;
+            } else{
+                showDynamicButton = false;
+            }
 
+            console.log(`${key}:${value} ${ntrue}`);
+            
         }
 
     }
@@ -238,18 +250,7 @@
                           </TooltipContent>
                         </Tooltip>
                     </Wrapper>
-                    <Wrapper>
-                        <button on:click={()=> {layerSelected(layerId)}}>Select</button>
-<!--                        <IconButton on:click={()=>console.log("Addeed===", added)} size="mini"  toggle bind:pressed={added}>-->
-<!--                            <Icon class="material-icons">check_box_outline_blank</Icon>-->
-<!--                            <Icon color="primary" class="material-icons" on>check_box</Icon>-->
-<!--                        </IconButton>-->
-<!--                        <Tooltip color="primary" >-->
-<!--                            <TooltipContent>-->
-<!--                                Select Layer-->
-<!--                            </TooltipContent>-->
-<!--                        </Tooltip>-->
-                    </Wrapper>
+                   
                 </div>
 
             {#if activeSection === 'color'}
