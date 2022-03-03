@@ -1,8 +1,10 @@
 <script lang="ts" context="module">
-    const _activeSection = {
+    const _layerState = {
         /* treeNodeId: expanded <boolean> */
     };
-   
+    const _sectionState = {
+        /* treeNodeId: expanded <boolean> */
+    };
 </script>
 <script lang="ts">
 	
@@ -14,6 +16,8 @@
     import Tooltip, {Wrapper,Content as TooltipContent,Link,RichActions} from '@smui/tooltip';
 
     import Slider from '@smui/slider';
+
+	
 
 
     export let layerCfg;
@@ -28,10 +32,11 @@
 
     let queryEnabled:boolean = true;
 
-    let activeSection:string = '';
+    export let activeSection:string = _sectionState[layerId] || '';
     let layerOpacity = 1;
-   
+    export let panelOpen:boolean = _layerState[layerId] || false;
 
+    console.log('PO', panelOpen)
     const toggleVisibility = () => {
 
         if (! $map.getLayer(layerId)){
@@ -44,6 +49,11 @@
         $map.removeLayer(layerId);
         //TODO remove the layer source as well if none of the layers reference it
         $layerList  = $layerList.filter((item) => item.lDef.id !== layerId );
+        //update state vars
+
+        delete _layerState[layerId];
+        delete _sectionState[layerId]
+
 
     };
 
@@ -51,27 +61,44 @@
             
             $map.setPaintProperty(layerId,'raster-opacity',layerOpacity);
     };
-    let panelBorderWidth = 2;
-    const test = () => {
+    
+    const setLayerState = () => {
         
-        panelBorderWidth = panelOpen ? 2 : 0;
-        console.log(`${layerId} ${panelOpen} ${panelBorderWidth}`);
+        
+        // console.log(` before ${layerId} ${panelOpen} ${JSON.stringify(_layerState)}`);
+        
+        _layerState[layerId] = panelOpen;
+        
+        
+
+    };
+
+    const setSectionState = () => {
+        
+        
+        // console.log(` before ${layerId} ${activeSection} ${JSON.stringify(_sectionState)}`);
+        
+        _sectionState[layerId] = activeSection;
+        
+        // console.log(`after ${layerId} ${activeSection} ${JSON.stringify(_sectionState)}`);
+
     };
 
     $: layerOpacity, setLayerOpacity();
     
-    let panelOpen:boolean = false;
-
-    $: panelBorderWidth = panelOpen ? 2 : 0;;
-
     
+
+    $: panelOpen, setLayerState();
+    $: panelOpen = _layerState[layerId] || false;
+    $: activeSection, setSectionState();
+    $: activeSection = _sectionState[layerId] || '';
     
 
 </script>
 
 
 <Accordion >
-    <Panel variant='unelevated' color="primary" bind:open={panelOpen}>
+    <Panel variant='unelevated' color="white" bind:open={panelOpen}>
         <div class="layer-header" >
             <div class="layer-header-name">
                 <Header >
@@ -90,8 +117,8 @@
                       </TooltipContent>
                     </Tooltip>
                 </Wrapper>
-                
-                <Wrapper>
+
+                <Wrapper >
                     <IconButton size="mini" class="material-icons" on:click={() => removeLayer()} >delete</IconButton>
                     <Tooltip  >
                       <TooltipContent>
@@ -107,7 +134,7 @@
         <Content>
             
 
-            <div style="display:flex; justify-content: space-around; border-bottom:{{panelBorderWidth}}px solid red;">
+            <div style="display:flex; justify-content: space-around; border-bottom:0px solid red;">
                 <Wrapper>
                     <IconButton size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
                     <Tooltip  >
