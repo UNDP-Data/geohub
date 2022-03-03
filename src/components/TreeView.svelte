@@ -18,7 +18,7 @@
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import Button, { Label } from '@smui/button';
     let TITILER_ENDPOINT;
-
+    
     const fetchTitilerConfig = async() => {
         let url = `titiler.json`;
         let res = await fetch(url).then((resp) => resp.json())
@@ -172,8 +172,9 @@
 
                     let base, sign;
                     [base,sign] = url.split('?');
+                    console.log(`${base}?${btoa(sign)}`);
                     tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-                
+                    
                 } else {
                     const encodedRasterURL = `url=${encodeURI(url)}`;
                     tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
