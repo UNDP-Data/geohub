@@ -1,13 +1,15 @@
 <script lang="ts">
 	
+	
 	import RasterLayer from './RasterLayer.svelte';
     import VectorLayer from './VectorLayer.svelte';
 	import { layerList } from '../stores/stores';
     // import Layer from './Layer.svelte';
-    
+    import DynamicLayer from './DynamicLayer.svelte'
 
 </script>
 
+<!-- <DynamicLayer></DynamicLayer> -->
 
 {#each $layerList as layerCfg(layerCfg.lDef.id)}
     <!-- <Layer layerCfg={layerCfg}></Layer> -->

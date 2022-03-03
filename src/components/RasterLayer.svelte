@@ -5,6 +5,11 @@
     const _sectionState = {
         /* treeNodeId: expanded <boolean> */
     };
+
+    const _dynamicLayerState = {
+        /* treeNodeId: expanded <boolean> */
+    };
+
 </script>
 <script lang="ts">
 	
@@ -16,7 +21,7 @@
     import Tooltip, {Wrapper,Content as TooltipContent,Link,RichActions} from '@smui/tooltip';
 
     import Slider from '@smui/slider';
-
+    import Checkbox from '@smui/checkbox';
 	
 
 
@@ -35,8 +40,8 @@
     export let activeSection:string = _sectionState[layerId] || '';
     let layerOpacity = 1;
     export let panelOpen:boolean = _layerState[layerId] || false;
+    export let inDynamic:boolean = _dynamicLayerState[layerId] || false
 
-    console.log('PO', panelOpen)
     const toggleVisibility = () => {
 
         if (! $map.getLayer(layerId)){
@@ -52,7 +57,8 @@
         //update state vars
 
         delete _layerState[layerId];
-        delete _sectionState[layerId]
+        delete _sectionState[layerId];
+        delete _dynamicLayerState[layerId];
 
 
     };
@@ -84,6 +90,17 @@
 
     };
 
+
+    const setDynamicLayerState = () => {
+        _dynamicLayerState[layerId] = inDynamic;
+        console.log(JSON.stringify(_dynamicLayerState), );
+        if(Object.keys(_dynamicLayerState).length > 1 ){
+            //layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
+
+        }
+
+    }
+
     $: layerOpacity, setLayerOpacity();
     
     
@@ -92,6 +109,12 @@
     $: panelOpen = _layerState[layerId] || false;
     $: activeSection, setSectionState();
     $: activeSection = _sectionState[layerId] || '';
+
+
+    $: inDynamic, setDynamicLayerState();
+    $: inDynamic = _dynamicLayerState[layerId] || false;
+
+
 
 
     // Set initial state of the selected variable and the selected layers ids Array
@@ -168,6 +191,7 @@
                       </TooltipContent>
                     </Tooltip>
                 </Wrapper>
+                <Checkbox bind:checked={inDynamic} />
             </div>
             
                 
@@ -257,7 +281,7 @@
     }
     .layer-header-name {
         align-self:center;
-        flex: 0 0 212px;
+        flex: 0 0 160px;
         max-width: 80%;
         flex-wrap: nowrap;
         overflow-wrap:anywhere;
