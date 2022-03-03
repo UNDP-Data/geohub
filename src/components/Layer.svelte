@@ -137,50 +137,62 @@
         }
     }
 
-    const allLayers = $map.getStyle().layers
-    const layerF = allLayers.filter((item) => item.id == lId).pop()
-    let index = allLayers.indexOf(layerF)
+
+    let allLayers = $map.getStyle().layers
+    let layer = allLayers.filter((item) => item.id == lId).pop()
+    let index = allLayers.indexOf(layer)
 
 
     const hierachyUp = (layerID) => {
-        const layer = allLayers.filter((item) => item.id== layerID).pop()
-        const currentIndex = allLayers.indexOf(layer)
-        const newIndex = currentIndex - 1
-        if(newIndex<0){
+        const newIndex = index - 1
 
+        if(newIndex<0){
         }
+
         else{
-            // $layerList.splice(currentIndex, 1)
-            // $layerList.splice(newIndex, 0, layer)
             $map.moveLayer(layerID, allLayers[newIndex].id)
-            index = allLayers.indexOf(layer)
+            index = newIndex
             $map.triggerRepaint();
         }
     };
 
 
-    // Todo: The hierachyDown function has a bug. It doesn't work
-    function hierachyDown(layerID) {
-        const layer = allLayers.filter((item) => item.id== layerID).pop()
-        const currentIndex = allLayers.indexOf(layer)
 
-        // To get the index of the last element
-        // Array Length - 1
-        const newIndex = currentIndex + 1
-        console.log(allLayers.length-1)
-        if(newIndex > allLayers.length-1){
-            console.log(newIndex)
+    const hierachyDown = (layerID) => {
+        const newIndex = index + 1
+
+        if(newIndex>allLayers.length-1){
         }
         else{
-
-            // $layerList.splice(currentIndex, 1)
-            // $layerList.splice(newIndex, 0, layer)
             $map.moveLayer(layerID, allLayers[newIndex].id)
-            index = allLayers.indexOf(layer)
-            console.log(allLayers[newIndex])
+            index = newIndex
             $map.triggerRepaint();
         }
-    }
+    };
+    // function hierachyDown(layerID) {
+    //
+    //     console.log(layerID)
+    //     $map.getStyle().layers.indexOf(layerID)
+    //     let layer = allLayers.filter((item) => item.id== layerID).pop()
+    //     const currentIndex = allLayers.indexOf(layer)
+    //
+    //     // To get the index of the last element
+    //     // Array Length - 1
+    //     const newIndex = currentIndex + 1
+    //     console.log(allLayers.length-1)
+    //     if(newIndex > allLayers.length-1){
+    //         console.log(newIndex)
+    //     }
+    //     else{
+    //
+    //         // $layerList.splice(currentIndex, 1)
+    //         // $layerList.splice(newIndex, 0, layer)
+    //         $map.moveLayer(layerID, allLayers[newIndex].id)
+    //         index = allLayers.indexOf(layer)
+    //         console.log(allLayers[newIndex])
+    //         $map.triggerRepaint();
+    //     }
+    // }
     let layerWidth = 1;
     let setLineWidth = () => {
         let lSrc = $map.getSource(srcId);
@@ -203,11 +215,12 @@
     <Panel variant='unelevated' square color="white">
         <div class="layer-header" >
             <div style="" class="layer-header-name">
-                <Header style="">
-                    <span class="layer-name" on:click="{() => (show = !show)}" >{lName}<Badge style="height: auto">{index}</Badge></span>
+                <Header style="display: flex; align-items: center">
+                    <span class="layer-name" on:click="{() => (show = !show)}" >{lName}</span>
+                    <Badge style="height: auto">{index}</Badge>
                 </Header>
             </div>
-            <h5>{index}</h5>
+<!--            <h5>{index}</h5>-->
             <div style="width: 20%" class="layer-header-icons">
                 <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected}>
                     <Icon class="material-icons">visibility_off</Icon>
@@ -281,8 +294,6 @@
                     </div>
                 {/if}
             {/if}
-            
-
         </Content>
     </Panel>
 </Accordion>
@@ -306,7 +317,8 @@
         display: flex;
         align-items: center;
         justify-content: space-evenly;
-        margin: auto
+        margin: auto;
+        padding: 0!important;
     }
     .layer-header-name {
         align-self:center;
@@ -334,6 +346,7 @@
         font-size: 12pt;
         justify-content: center;
         align-items: center;
+        padding: 0!important;
     }
     :global(.smui-paper__content){
         padding: 0!important;
