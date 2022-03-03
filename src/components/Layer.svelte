@@ -7,7 +7,7 @@
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import SegmentedButton, { Segment } from '@smui/segmented-button';
     import Badge from '@smui-extra/badge';
-
+    import Checkbox from '@smui/checkbox';
 
     export let layerCfg;
     export let lName,  lDef, lType;
@@ -206,6 +206,9 @@
         );
     }
 
+    let checked = false;
+    let combinedLayers= [];
+
 
 
 </script>
@@ -227,6 +230,8 @@
                     <Icon color="primary" class="material-icons" on>visibility</Icon>
                 </IconButton>
                 <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+                <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
+                <h5>Hello</h5>
             </div>
         </div>
         <Content>
@@ -241,6 +246,7 @@
                     </IconButton>
                     <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(lId)}}">keyboard_double_arrow_down
                     </IconButton>
+
                 </div>
             {:else if lType === "vector"}
                 {#if lDef.type === "line" }

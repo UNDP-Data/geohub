@@ -8,7 +8,7 @@
 
   import LayerList from './LayerList.svelte';
   import Layer from './Layer.svelte';
-
+  import CombinedLayers from "./CombineLayers.svelte"
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
   export let expanded = true;
   export let open = false;
@@ -57,11 +57,12 @@
           <TreeView tree={$wtree.tree}   />
       {:else if active == 'Layers'}
         <LayerList/>
+        <CombinedLayers/>
+        <button>Add selected</button>
       {:else if active == 'Analyze'}
         Analyze
       {/if}
-      
-      
+
     </Content>
   </Drawer>
 

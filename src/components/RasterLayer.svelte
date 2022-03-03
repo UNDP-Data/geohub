@@ -9,7 +9,7 @@
 <script lang="ts">
 	
     import {map} from '../stores/mapstore';
-    import {layerList} from '../stores/stores';
+    import {layerList, selectedLayerList} from '../stores/stores';
     import IconButton, { Icon } from '@smui/icon-button';
     import Paper from "@smui/paper";
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
@@ -92,7 +92,49 @@
     $: panelOpen = _layerState[layerId] || false;
     $: activeSection, setSectionState();
     $: activeSection = _sectionState[layerId] || '';
-    
+
+
+    // Set initial state of the selected variable and the selected layers ids Array
+    let added : boolean = false;
+    let selectedLayersIds = [];
+    console.log("Added==", added)
+    console.log("Selected Layer List====", selectedLayersIds)
+
+    /*
+    This function will listen for the value of selected and if the value is true:
+    The layer associated will be added to the selectedLayersIds array. If the value is false
+    and the item exists in the array, the item will be removed from the array.
+    */
+    const layerSelected = (layerID) => {
+        added = !added
+
+        if(added===true){
+            console.log("added is true. checking if the layer exists........")
+            if($selectedLayerList.includes(layerID)){
+                console.log("Layer exists. So we are not going to add it!!!!!")
+            }
+            else{
+                console.log("Layer does not exist. Adding it........")
+                $selectedLayerList.push(layerID)
+            }
+        }else{
+            console.log("Added is false. Checking if layer exists to remove it.......")
+            if($selectedLayerList.indexOf(layerID) > -1){
+                console.log("Layer exists and added is false. Removing the layer.....")
+                const index = $selectedLayerList.indexOf(layerID)
+                console.log("INDEX", index)
+                $selectedLayerList.splice(index, 1)
+            }
+            else{
+                console.log("How did you get here. This wasn't intended to be invoked....")
+            }
+        }
+
+
+        // $layerList.forEach((l)=>console.log(l.lDef.id))
+
+        //console.log($selectedLayerList)
+    }
 
 </script>
 
@@ -126,7 +168,6 @@
                       </TooltipContent>
                     </Tooltip>
                 </Wrapper>
-                
             </div>
             
                 
@@ -173,19 +214,26 @@
                           </TooltipContent>
                         </Tooltip>
                     </Wrapper>
+                    <Wrapper>
+                        <button on:click={()=> {layerSelected(layerId)}}>Select</button>
+<!--                        <IconButton on:click={()=>console.log("Addeed===", added)} size="mini"  toggle bind:pressed={added}>-->
+<!--                            <Icon class="material-icons">check_box_outline_blank</Icon>-->
+<!--                            <Icon color="primary" class="material-icons" on>check_box</Icon>-->
+<!--                        </IconButton>-->
+<!--                        <Tooltip color="primary" >-->
+<!--                            <TooltipContent>-->
+<!--                                Select Layer-->
+<!--                            </TooltipContent>-->
+<!--                        </Tooltip>-->
+                    </Wrapper>
                 </div>
-    
-    
-            
 
-                        
-            
             {#if activeSection === 'color'}
                  <p>Color</p>
             {:else if activeSection === 'band'}
                 <p>B</p>
                  
-            {:else if activeSection == 'opacity'}
+            {:else if activeSection === 'opacity'}
                 <div class="layer-header">
                     <div>Opacity:</div>
                     <div class="layer-header-name"><Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity"/></div>
