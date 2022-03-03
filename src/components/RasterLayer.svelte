@@ -133,50 +133,52 @@
         </div>
         <Content>
             
-
-            <div style="display:flex; justify-content: space-around; border-bottom:0px solid red;">
-                <Wrapper>
-                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
-                    <Tooltip  >
-                      <TooltipContent>
-                        Set layer color
-                      </TooltipContent>
-                    </Tooltip>
-                </Wrapper>
-                
-                
-                <Wrapper>
-                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="band"}} >legend_toggle</IconButton>
-                    <Tooltip  >
-                      <TooltipContent>
-                        Define/filter layer
-                      </TooltipContent>
-                    </Tooltip>
-                </Wrapper>
-                
-                <Wrapper>
-                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="opacity"}}>opacity</IconButton>
-                    <Tooltip >
-                      <TooltipContent>
-                        Set layer opacity/transparency
-                      </TooltipContent>
-                    </Tooltip>
-                </Wrapper>
-                
-                <Wrapper  >
-                    <IconButton size="mini"  toggle bind:pressed={queryEnabled} >
-                        <Icon class="material-icons">indeterminate_check_box</Icon>
-                        <Icon color="primary" class="material-icons" on>check_box</Icon>
-                    </IconButton>
-                    <Tooltip color="primary" >
-                      <TooltipContent>
-                        Turn querying ON/OFF
-                      </TooltipContent>
-                    </Tooltip>
-                </Wrapper>
-            </div>
-
+                <div style="display:flex; justify-content: center; border-bottom:1px solid;">
+                    <Wrapper>
+                        <IconButton size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
+                        <Tooltip  >
+                          <TooltipContent>
+                            Set layer color
+                          </TooltipContent>
+                        </Tooltip>
+                    </Wrapper>
+                    
+                    
+                    <Wrapper>
+                        <IconButton size="mini" class="material-icons" on:click={() => {activeSection="band"}} >legend_toggle</IconButton>
+                        <Tooltip  >
+                          <TooltipContent>
+                            Define/filter layer
+                          </TooltipContent>
+                        </Tooltip>
+                    </Wrapper>
+                    
+                    <Wrapper>
+                        <IconButton size="mini" class="material-icons" on:click={() => {activeSection="opacity"}}>opacity</IconButton>
+                        <Tooltip >
+                          <TooltipContent>
+                            Set layer opacity/transparency
+                          </TooltipContent>
+                        </Tooltip>
+                    </Wrapper>
+                    
+                    <Wrapper  >
+                        <IconButton size="mini"  toggle bind:pressed={queryEnabled} >
+                            <Icon class="material-icons">indeterminate_check_box</Icon>
+                            <Icon color="primary" class="material-icons" on>check_box</Icon>
+                        </IconButton>
+                        <Tooltip color="primary" >
+                          <TooltipContent>
+                            Turn querying ON/OFF
+                          </TooltipContent>
+                        </Tooltip>
+                    </Wrapper>
+                </div>
+    
+    
             
+
+                        
             
             {#if activeSection === 'color'}
                  <p>Color</p>
@@ -213,6 +215,7 @@
         overflow-wrap:anywhere;
     }
     .layer-header-icons{
+        
         display: flex;
         flex-direction: row;
         /* justify-content:space-around; */
