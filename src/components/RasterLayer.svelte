@@ -23,7 +23,6 @@
     import Checkbox from '@smui/checkbox';
 	
 
-
     export let layerCfg;
     let lName,  lDef, lType;
     ({lName,lDef,lType} = layerCfg);
@@ -89,12 +88,25 @@
 
     };
 
+    export let disabled;
 
     const setDynamicLayerState = () => {
         _dynamicLayerState[layerId] = inDynamic;
         console.log(JSON.stringify(_dynamicLayerState), );
-        if(Object.keys(_dynamicLayerState).length > 1 ){
-            //layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
+        let ntrue = 0;
+        for (const [key, value] of Object.entries(_dynamicLayerState)) {
+            console.log(`${key}:${value}`);
+            if(value){
+                ++ntrue;
+            };
+            if (ntrue>=2){
+                disabled = false;
+                break;
+            } else{
+                disabled = true;
+            }
+
+            console.log(`${key}:${value} ${ntrue}`);
 
         }
 
@@ -127,44 +139,46 @@
     The layer associated will be added to the selectedLayersIds array. If the value is false
     and the item exists in the array, the item will be removed from the array.
     */
-
-
-    const layerSelected = (layerID) => {
-        added = !added
-
-        if(added===true){
-            console.log("added is true. checking if the layer exists........")
-            if($selectedLayerList.includes(layerID)){
-                console.log("Layer exists. So we are not going to add it!!!!!")
-            }
-            else{
-                console.log("Layer does not exist. Adding it........")
-                $selectedLayerList.push(layerID)
-            }
-        }else{
-            console.log("Added is false. Checking if layer exists to remove it.......")
-            if($selectedLayerList.indexOf(layerID) > -1){
-                console.log("Layer exists and added is false. Removing the layer.....")
-                const index = $selectedLayerList.indexOf(layerID)
-                console.log("INDEX", index)
-                $selectedLayerList.splice(index, 1)
-            }
-            else{
-                console.log("How did you get here. This wasn't intended to be invoked....")
-            }
-        }
-
-
-        // $layerList.forEach((l)=>console.log(l.lDef.id))
-
-        //console.log($selectedLayerList)
-    }
-
-    $: added, layerSelected(layerId);
-
+    //
+    //
+    // const layerSelected = (layerID) => {
+    //     added = !added
+    //
+    //     if(added===true){
+    //         console.log("added is true. checking if the layer exists........")
+    //         if($selectedLayerList.includes(layerID)){
+    //             console.log("Layer exists. So we are not going to add it!!!!!")
+    //         }
+    //         else{
+    //             console.log("Layer does not exist. Adding it........")
+    //             $selectedLayerList.push(layerID)
+    //         }
+    //     }else{
+    //         console.log("Added is false. Checking if layer exists to remove it.......")
+    //         if($selectedLayerList.indexOf(layerID) > -1){
+    //             console.log("Layer exists and added is false. Removing the layer.....")
+    //             const index = $selectedLayerList.indexOf(layerID)
+    //             console.log("INDEX", index)
+    //             $selectedLayerList.splice(index, 1)
+    //         }
+    //         else{
+    //             console.log("How did you get here. This wasn't intended to be invoked....")
+    //         }
+    //     }
+    //
+    //
+    //     // $layerList.forEach((l)=>console.log(l.lDef.id))
+    //
+    //     //console.log($selectedLayerList)
+    // }
+    //
+    // $: added, layerSelected(layerId);
+    //
     let allLayers = $map.getStyle().layers
     let layer = allLayers.filter((item) => item.id == layerId).pop()
     let index = allLayers.indexOf(layer)
+    let len = allLayers.length
+
     const hierachyUp = (layerID) => {
         const newIndex = index - 1
 
@@ -199,9 +213,8 @@
     <Panel variant='unelevated' color="white" bind:open={panelOpen}>
         <div class="layer-header" >
             <div class="layer-header-name">
-                <Header >
-                    <span class="layer-name">{lName}<Badge style="height: auto">{index}</Badge></span>
-
+                <Header>
+                    <span class="layer-name">{lName}<Badge position="inset" align="top-end"  aria-label="unread count">{index}/{len}</Badge></span>
                 </Header>
             </div>
             <div class="layer-header-icons">
@@ -282,7 +295,7 @@
                         </Tooltip>
                     </Wrapper>
                     <Wrapper>
-                        <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(lId)}}">keyboard_double_arrow_down
+                        <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(layerId)}}">keyboard_double_arrow_down
                         </IconButton>
                         <Tooltip color="primary" >
                             <TooltipContent>
@@ -290,18 +303,6 @@
                             </TooltipContent>
                         </Tooltip>
                     </Wrapper>
-                    <Wrapper  >
-                        <IconButton size="mini" toggle bind:pressed={added} >
-                            <Icon class="material-icons">check_box_outline_blank</Icon>
-                            <Icon color="primary" class="material-icons" on>check_box</Icon>
-                        </IconButton>
-                        <Tooltip color="primary" >
-                            <TooltipContent>
-                                Turn querying ON/OFF
-                            </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
-<!--                     <button on:click={()=> {layerSelected(layerId)}}>Select</button>-->
                 </div>
 
             {#if activeSection === 'color'}
