@@ -89,7 +89,7 @@
 
     };
 
-    export let showDynamicButton = false;
+    export let disabled = false;
 
     const setDynamicLayerState = () => {
         _dynamicLayerState[layerId] = inDynamic;
@@ -101,10 +101,10 @@
                 ++ntrue;
             };
             if (ntrue>=2){
-                showDynamicButton = true;
+                disabled = true;
                 break;
             } else{
-                showDynamicButton = false;
+                disabled = false;
             }
 
             console.log(`${key}:${value} ${ntrue}`);

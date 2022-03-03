@@ -16,16 +16,11 @@
     </Button>
   </Actions>
 </Dialog>
-<div style="display:flex, align-self:center">
-    <Button on:click={() => (open = true)}>
-        <Label>New layer from selection..</Label>
-      </Button>
-      
-</div>
+
 
 <script lang="ts">
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   
-  let open = false;
+  export let open = false;
 </script>
