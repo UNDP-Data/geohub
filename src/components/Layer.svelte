@@ -6,7 +6,8 @@
     import Paper from "@smui/paper";
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import SegmentedButton, { Segment } from '@smui/segmented-button';
-    
+    import Badge from '@smui-extra/badge';
+
 
     export let layerCfg;
     export let lName,  lDef, lType;
@@ -86,6 +87,7 @@
     }
 
 
+    // let layerIndex = allLayers.indexOf()
     let open = false;
     let showLayerInfo = false
     let layerOpacity = 1;
@@ -133,9 +135,52 @@
             )
         }
         }
-
     }
 
+    const allLayers = $map.getStyle().layers
+    const layerF = allLayers.filter((item) => item.id == lId).pop()
+    let index = allLayers.indexOf(layerF)
+
+
+    const hierachyUp = (layerID) => {
+        const layer = allLayers.filter((item) => item.id== layerID).pop()
+        const currentIndex = allLayers.indexOf(layer)
+        const newIndex = currentIndex - 1
+        if(newIndex<0){
+
+        }
+        else{
+            // $layerList.splice(currentIndex, 1)
+            // $layerList.splice(newIndex, 0, layer)
+            $map.moveLayer(layerID, allLayers[newIndex].id)
+            index = allLayers.indexOf(layer)
+            $map.triggerRepaint();
+        }
+    };
+
+
+    // Todo: The hierachyDown function has a bug. It doesn't work
+    function hierachyDown(layerID) {
+        const layer = allLayers.filter((item) => item.id== layerID).pop()
+        const currentIndex = allLayers.indexOf(layer)
+
+        // To get the index of the last element
+        // Array Length - 1
+        const newIndex = currentIndex + 1
+        console.log(allLayers.length-1)
+        if(newIndex > allLayers.length-1){
+            console.log(newIndex)
+        }
+        else{
+
+            // $layerList.splice(currentIndex, 1)
+            // $layerList.splice(newIndex, 0, layer)
+            $map.moveLayer(layerID, allLayers[newIndex].id)
+            index = allLayers.indexOf(layer)
+            console.log(allLayers[newIndex])
+            $map.triggerRepaint();
+        }
+    }
     let layerWidth = 1;
     let setLineWidth = () => {
         let lSrc = $map.getSource(srcId);
@@ -149,31 +194,29 @@
         );
     }
 
+
+
 </script>
 
 
 <Accordion >
     <Panel variant='unelevated' square color="white">
         <div class="layer-header" >
-
-            <div class="layer-header-name">
-                <Header >
-                    <span class="layer-name" on:click="{() => (show = !show)}" >{lName} </span>
-                    
+            <div style="" class="layer-header-name">
+                <Header style="">
+                    <span class="layer-name" on:click="{() => (show = !show)}" >{lName}<Badge style="height: auto">{index}</Badge></span>
                 </Header>
             </div>
-            <div class="layer-header-icons">
+            <h5>{index}</h5>
+            <div style="width: 20%" class="layer-header-icons">
                 <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={selected}>
                     <Icon class="material-icons">visibility_off</Icon>
                     <Icon color="primary" class="material-icons" on>visibility</Icon>
                 </IconButton>
                 <IconButton size="mini" class="material-icons"  on:click={() => removeLayer()} >delete</IconButton>
             </div>
-            
-                
         </div>
         <Content>
-            
             {#if lType === "raster" }
                 <div style="justify-content: center">
                     <IconButton color="primary" on:click="{() => {tabExpand('Colors')}}" size="mini" class="material-icons">palette</IconButton>
@@ -181,12 +224,20 @@
                     <IconButton bind:disabled size="mini" class="material-icons" on:click={() => (disabled = !disabled)}>info</IconButton>
                     <IconButton size="mini" class="material-icons" on:click="{() => {tabExpand('Opacity')}}">opacity
                     </IconButton>
+                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyUp(lId)}}">keyboard_double_arrow_up
+                    </IconButton>
+                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(lId)}}">keyboard_double_arrow_down
+                    </IconButton>
                 </div>
             {:else if lType === "vector"}
                 {#if lDef.type === "line" }
                     <IconButton size="mini" class="material-icons" on:click={() => {tabExpand('Linewidth')}} >circle
                     </IconButton>
                     <IconButton size="mini" class="material-icons" on:click="{() => {tabExpand('Opacity')}}">opacity
+                    </IconButton>
+                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyUp(lId)}}">build
+                    </IconButton>
+                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(lId)}}">keyboard_double_arrow_up
                     </IconButton>
                 {:else if lDef.type === "point"}
                     <h6>Point Options</h6>
@@ -213,10 +264,9 @@
                     </SegmentedButton>
                 </Paper>
             {/if}
-            
             {:else if active === "Opacity"}
                 {#if show}
-                    <div style="margin:0; display:flex; flex-direction:row; justify-content: space-even;">
+                    <div style="margin:0; display:flex; flex-direction:row; justify-content: space-evenly;">
                         <span>Opacity: </span>
                         <input on:change={setLayerOpacity} bind:value={layerOpacity} color="primary" type="range" min="0" max="1" step="0.01">
                         <span> {layerOpacity}</span>
@@ -241,19 +291,30 @@
 
 
 <style>
-    .layer-header {
-        overflow-wrap:break-word;
+    /*.layer-header {*/
+    /*    overflow-wrap:break-word;*/
+    /*    display: flex;*/
+    /*    flex-direction: row;*/
+    /*    flex-grow: 1;*/
+    /*    flex-wrap: nowrap;*/
+    /*    align-items: center; */
+    /*    width: 100%; */
+    /*    justify-content:space-evenly;*/
+    /*}*/
+
+    .layer-header{
         display: flex;
-        flex-direction: row;
-        flex-grow: 1;
-        flex-wrap: nowrap;
-        align-items: center; 
-        width: 100%; 
-        justify-content:space-evenly;
+        align-items: center;
+        justify-content: space-evenly;
+        margin: auto
     }
     .layer-header-name {
         align-self:center;
         flex: 0 0 200px;
+        max-width: 80%;
+        flex-wrap: nowrap;
+        overflow-wrap: anywhere;
+
     }
     .layer-header-icons{
         display: flex;
@@ -268,7 +329,8 @@
         cursor:pointer;
         font-family: Roboto,serif;
         width: 100%;
-        height: 2rem;
+        min-height: 2rem;
+        height:auto;
         font-size: 12pt;
         justify-content: center;
         align-items: center;
