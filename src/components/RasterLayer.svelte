@@ -89,7 +89,7 @@
 
     };
 
-    export let disabled = false;
+    export let disabled;
 
     const setDynamicLayerState = () => {
         _dynamicLayerState[layerId] = inDynamic;
@@ -101,10 +101,10 @@
                 ++ntrue;
             };
             if (ntrue>=2){
-                disabled = true;
+                disabled = false;
                 break;
             } else{
-                disabled = false;
+                disabled = true;
             }
 
             console.log(`${key}:${value} ${ntrue}`);
