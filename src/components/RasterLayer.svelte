@@ -52,11 +52,17 @@
         $map.removeLayer(layerId);
         //TODO remove the layer source as well if none of the layers reference it
         $layerList  = $layerList.filter((item) => item.lDef.id !== layerId );
+        
+        //update dynamic
+        inDynamic = false;
+        setDynamicLayerState();
+        
         //update state vars
 
         delete _layerState[layerId];
         delete _sectionState[layerId];
         delete _dynamicLayerState[layerId];
+        
 
 
     };
