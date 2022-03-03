@@ -17,6 +17,7 @@
   "devDependencies": {
     "@azure/storage-blob": "^12.8.0",
     "@iconify/svelte": "^2.1.2",
+    "@material/elevation": "^13.0.0",
     "@mdi/js": "^6.5.95",
     "@mui/icons-material": "^5.4.4",
     "@smui-extra/accordion": "^6.0.0-beta.13",
@@ -34,6 +35,7 @@
     "@smui/menu-surface": "^6.0.0-beta.14",
     "@smui/segmented-button": "^6.0.0-beta.14",
     "@smui/slider": "^6.0.0-beta.14",
+    "@smui/switch": "^6.0.0-beta.14",
     "@smui/tab": "^6.0.0-beta.13",
     "@smui/tab-bar": "^6.0.0-beta.13",
     "@smui/tooltip": "^6.0.0-beta.14",
@@ -44,7 +46,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
-    "esbuild": "^0.14.23",
+    "esbuild": "^0.14.24",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
@@ -69,8 +71,6 @@
     "@watergis/maplibre-gl-export": "^1.2.15",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.14.23",
-    "esbuild-windows-64": "^0.14.23",
     "uuid": "^8.3.2"
   }
 }

@@ -29,7 +29,7 @@
 
   import {wtree}  from '../stores/stores'
   import TreeView from './TreeView.svelte'
-
+  let combine:boolean = false;
 </script>
 
 <div class="drawer-container">
@@ -46,8 +46,14 @@
     </Header>
     
     <Content>
-      
+
       {#if active == 'Load data'}
+          <!-- <div style="position:fixed, top:0, left:0, width:100%; border: 1px solid red">
+            <label>
+              <input  title="Combine??" type=checkbox bind:checked={combine}>
+              Combine layers???
+            </label>
+          </div> -->
           <TreeView tree={$wtree.tree}   />
       {:else if active == 'Layers'}
         <LayerList/>

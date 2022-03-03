@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import { Map } from 'maplibre-gl';
+	
 
     // retain module scoped expansion state for each tree node
     const _expansionState = {
@@ -275,7 +275,7 @@
     let confirmValue = 'Nothing yet.'
 
 
-
+    
 </script>
 
 
