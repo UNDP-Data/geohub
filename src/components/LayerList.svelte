@@ -10,13 +10,15 @@
     let disabled:boolean = true;
     let open:boolean = false
 </script>
+{#if !disabled}
+    <div style="display:flex, justify-content:center; flex-direction:row">
+        <Button on:click={() => (open = true)} bind:disabled> 
+            <Label>Combined layer from selection..</Label>
+        </Button>
+        
+    </div>
+{/if}
 
-<div style="display:flex, align-self:center">
-    <Button on:click={() => (open = true)} bind:disabled> 
-        <Label>New layer from selection..</Label>
-    </Button>
-      
-</div>
 
     <DynamicLayer bind:open ></DynamicLayer>
 
