@@ -8,7 +8,6 @@
 
   import LayerList from './LayerList.svelte';
   import Layer from './Layer.svelte';
-  import CombinedLayers from "./CombineLayers.svelte"
   import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
   export let expanded = true;
   export let open = false;
@@ -47,7 +46,7 @@
     
     <Content>
 
-      {#if active == 'Load data'}
+      {#if active === 'Load data'}
           <!-- <div style="position:fixed, top:0, left:0, width:100%; border: 1px solid red">
             <label>
               <input  title="Combine??" type=checkbox bind:checked={combine}>
@@ -55,11 +54,10 @@
             </label>
           </div> -->
           <TreeView tree={$wtree.tree}   />
-      {:else if active == 'Layers'}
+      {:else if active === 'Layers'}
         <LayerList/>
-        <CombinedLayers/>
         <button>Add selected</button>
-      {:else if active == 'Analyze'}
+      {:else if active === 'Analyze'}
         Analyze
       {/if}
 

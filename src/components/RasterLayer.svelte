@@ -16,10 +16,9 @@
     import {map} from '../stores/mapstore';
     import {layerList, selectedLayerList} from '../stores/stores';
     import IconButton, { Icon } from '@smui/icon-button';
-    import Paper from "@smui/paper";
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import Tooltip, {Wrapper,Content as TooltipContent,Link,RichActions} from '@smui/tooltip';
-
+    import Badge from '@smui-extra/badge';
     import Slider from '@smui/slider';
     import Checkbox from '@smui/checkbox';
 	
@@ -118,7 +117,7 @@
 
 
     // Set initial state of the selected variable and the selected layers ids Array
-    let added : boolean = false;
+    let added : boolean = true;
     let selectedLayersIds = [];
     console.log("Added==", added)
     console.log("Selected Layer List====", selectedLayersIds)
@@ -128,6 +127,8 @@
     The layer associated will be added to the selectedLayersIds array. If the value is false
     and the item exists in the array, the item will be removed from the array.
     */
+
+
     const layerSelected = (layerID) => {
         added = !added
 
@@ -159,6 +160,38 @@
         //console.log($selectedLayerList)
     }
 
+    $: added, layerSelected(layerId);
+
+    let allLayers = $map.getStyle().layers
+    let layer = allLayers.filter((item) => item.id == layerId).pop()
+    let index = allLayers.indexOf(layer)
+    const hierachyUp = (layerID) => {
+        const newIndex = index - 1
+
+        if(newIndex<0){
+        }
+
+        else{
+            $map.moveLayer(layerID, allLayers[newIndex].id)
+            index = newIndex
+            $map.triggerRepaint();
+        }
+    };
+
+
+
+    const hierachyDown = (layerID) => {
+        const newIndex = index + 1
+
+        if(newIndex>allLayers.length-1){
+        }
+        else{
+            $map.moveLayer(layerID, allLayers[newIndex].id)
+            index = newIndex
+            $map.triggerRepaint();
+        }
+    };
+
 </script>
 
 
@@ -167,7 +200,8 @@
         <div class="layer-header" >
             <div class="layer-header-name">
                 <Header >
-                    <span class="layer-name"> {lName}</span>
+                    <span class="layer-name">{lName}<Badge style="height: auto">{index}</Badge></span>
+
                 </Header>
             </div>
             <div class="layer-header-icons">
@@ -226,7 +260,7 @@
                           </TooltipContent>
                         </Tooltip>
                     </Wrapper>
-                    
+
                     <Wrapper  >
                         <IconButton size="mini"  toggle bind:pressed={queryEnabled} >
                             <Icon class="material-icons">indeterminate_check_box</Icon>
@@ -239,17 +273,35 @@
                         </Tooltip>
                     </Wrapper>
                     <Wrapper>
-                        <button on:click={()=> {layerSelected(layerId)}}>Select</button>
-<!--                        <IconButton on:click={()=>console.log("Addeed===", added)} size="mini"  toggle bind:pressed={added}>-->
-<!--                            <Icon class="material-icons">check_box_outline_blank</Icon>-->
-<!--                            <Icon color="primary" class="material-icons" on>check_box</Icon>-->
-<!--                        </IconButton>-->
-<!--                        <Tooltip color="primary" >-->
-<!--                            <TooltipContent>-->
-<!--                                Select Layer-->
-<!--                            </TooltipContent>-->
-<!--                        </Tooltip>-->
+                        <IconButton size="mini" class="material-icons" on:click="{() => {hierachyUp(layerId)}}">keyboard_double_arrow_up
+                        </IconButton>
+                        <Tooltip color="primary" >
+                            <TooltipContent>
+                                Promote Layer
+                            </TooltipContent>
+                        </Tooltip>
                     </Wrapper>
+                    <Wrapper>
+                        <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(lId)}}">keyboard_double_arrow_down
+                        </IconButton>
+                        <Tooltip color="primary" >
+                            <TooltipContent>
+                                Demote Layer
+                            </TooltipContent>
+                        </Tooltip>
+                    </Wrapper>
+                    <Wrapper  >
+                        <IconButton size="mini" toggle bind:pressed={added} >
+                            <Icon class="material-icons">check_box_outline_blank</Icon>
+                            <Icon color="primary" class="material-icons" on>check_box</Icon>
+                        </IconButton>
+                        <Tooltip color="primary" >
+                            <TooltipContent>
+                                Turn querying ON/OFF
+                            </TooltipContent>
+                        </Tooltip>
+                    </Wrapper>
+<!--                     <button on:click={()=> {layerSelected(layerId)}}>Select</button>-->
                 </div>
 
             {#if activeSection === 'color'}
