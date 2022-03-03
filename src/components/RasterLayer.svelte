@@ -140,46 +140,7 @@
     console.log("Added==", added)
     console.log("Selected Layer List====", selectedLayersIds)
 
-    /*
-    This function will listen for the value of selected and if the value is true:
-    The layer associated will be added to the selectedLayersIds array. If the value is false
-    and the item exists in the array, the item will be removed from the array.
-    */
-    //
-    //
-    // const layerSelected = (layerID) => {
-    //     added = !added
-    //
-    //     if(added===true){
-    //         console.log("added is true. checking if the layer exists........")
-    //         if($selectedLayerList.includes(layerID)){
-    //             console.log("Layer exists. So we are not going to add it!!!!!")
-    //         }
-    //         else{
-    //             console.log("Layer does not exist. Adding it........")
-    //             $selectedLayerList.push(layerID)
-    //         }
-    //     }else{
-    //         console.log("Added is false. Checking if layer exists to remove it.......")
-    //         if($selectedLayerList.indexOf(layerID) > -1){
-    //             console.log("Layer exists and added is false. Removing the layer.....")
-    //             const index = $selectedLayerList.indexOf(layerID)
-    //             console.log("INDEX", index)
-    //             $selectedLayerList.splice(index, 1)
-    //         }
-    //         else{
-    //             console.log("How did you get here. This wasn't intended to be invoked....")
-    //         }
-    //     }
-    //
-    //
-    //     // $layerList.forEach((l)=>console.log(l.lDef.id))
-    //
-    //     //console.log($selectedLayerList)
-    // }
-    //
-    // $: added, layerSelected(layerId);
-    //
+
     let allLayers = $map.getStyle().layers
     let layer = allLayers.filter((item) => item.id == layerId).pop()
     let index = allLayers.indexOf(layer)
