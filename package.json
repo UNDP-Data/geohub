@@ -33,6 +33,7 @@
     "@smui/menu-surface": "^6.0.0-beta.14",
     "@smui/segmented-button": "^6.0.0-beta.14",
     "@smui/slider": "^6.0.0-beta.14",
+    "@smui/switch": "^6.0.0-beta.14",
     "@smui/tab": "^6.0.0-beta.13",
     "@smui/tab-bar": "^6.0.0-beta.13",
     "@smui/tooltip": "^6.0.0-beta.14",

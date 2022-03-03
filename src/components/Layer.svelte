@@ -6,7 +6,7 @@
     import Paper from "@smui/paper";
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import SegmentedButton, { Segment } from '@smui/segmented-button';
-
+    
 
     export let layerCfg;
     export let lName,  lDef, lType;
