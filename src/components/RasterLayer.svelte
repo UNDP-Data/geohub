@@ -14,7 +14,7 @@
 <script lang="ts">
 	
     import {map} from '../stores/mapstore';
-    import {layerList, selectedLayerList} from '../stores/stores';
+    import {layerList, dynamicLayers} from '../stores/stores';
     import IconButton, { Icon } from '@smui/icon-button';
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import Tooltip, {Wrapper,Content as TooltipContent,Link,RichActions} from '@smui/tooltip';
@@ -98,10 +98,12 @@
 
     const setDynamicLayerState = () => {
         _dynamicLayerState[layerId] = inDynamic;
-        console.log(JSON.stringify(_dynamicLayerState), );
+        //console.log(JSON.stringify(_dynamicLayerState), );
+        dynamicLayers.set(_dynamicLayerState);
+        //console.log('DLL', JSON.stringify($dynamicLayerList), );
         let ntrue = 0;
         for (const [key, value] of Object.entries(_dynamicLayerState)) {
-            console.log(`${key}:${value}`);
+            // console.log(`${key}:${value}`);
             if(value){
                 ++ntrue;
             };
@@ -112,7 +114,7 @@
                 disabled = true;
             }
 
-            console.log(`${key}:${value} ${ntrue}`);
+            // console.log(`${key}:${value} ${ntrue}`);
 
         }
 

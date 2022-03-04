@@ -4,4 +4,4 @@ export const wtree = writable({});
 export const layerList = writable([]);
 
 // The selectedLayerList will contain a list of all the layer ids
-export const selectedLayerList = writable([]);
+export const dynamicLayers = writable({});

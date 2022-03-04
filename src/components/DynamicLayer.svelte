@@ -1,26 +1,49 @@
+<script lang="ts">
+  import {map} from '../stores/mapstore';
+  import Dialog, { Title, Content, Actions } from '@smui/dialog';
+  import Button, { Label } from '@smui/button';
+  import {layerList} from '../stores/stores';
+  import Chip, { Set, Text } from '@smui/chips';
+  import Paper, { Title as PTitle, Subtitle, Content as PContent } from '@smui/paper';
+
+ 
+  
+  export let open = false;
+
+  export let choices = [];
+  let selected:Array<string> = [];
+
+  
+
+  //console.log('Choices in D ', JSON.stringify(choices));
+</script>
+
+<!-- 
 <Dialog
   bind:open
   aria-labelledby="large-scroll-title"
   aria-describedby="large-scroll-content"
-  surface$style="width: 850px; max-width: calc(100vw - 32px);"
+  surface$style="width: 600px; max-width: calc(100vw - 32px);"
 >
   <Title id="large-scroll-title">Create a new combined/dynamic layer</Title>
   <Content id="large-scroll-content">
-    {#each Array(3) as _item}
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora, labore.
-    {/each}
+    <span>We have {choices.length} layers</span>
+    <Set chips={choices} let:chip filter bind:selected>
+      <Chip {chip} touch>
+        <Text>{chip}</Text>
+      </Chip>
+    </Set>
   </Content>
   <Actions>
     <Button action="accept">
-      <Label>Done</Label>
+      <Label>Create</Label>
     </Button>
   </Actions>
 </Dialog>
+ -->
 
-
-<script lang="ts">
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
-  import Button, { Label } from '@smui/button';
-  
-  export let open = false;
-</script>
+<Paper variant="outlined">
+    <PTitle>Outlined Paper</PTitle>
+    <Subtitle>This is an outlined sheet of paper.</Subtitle>
+    <PContent><span>We have {choices.length} layers</span></PContent>
+</Paper>
