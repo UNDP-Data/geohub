@@ -5,7 +5,9 @@ import preprocess from 'svelte-preprocess';
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
-	preprocess: preprocess(),
+	preprocess: preprocess({
+    replace: [[/process\.env\.VITE_TITILER_ENDPOINT/g, JSON.stringify(process.env.VITE_TITILER_ENDPOINT)]],
+  }),
 
 	kit: {
 		adapter: adapter({
