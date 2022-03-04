@@ -38,6 +38,7 @@
     "@smui/switch": "^6.0.0-beta.14",
     "@smui/tab": "^6.0.0-beta.13",
     "@smui/tab-bar": "^6.0.0-beta.13",
+    "@smui/textfield": "^6.0.0-beta.15",
     "@smui/tooltip": "^6.0.0-beta.14",
     "@smui/top-app-bar": "^6.0.0-beta.13",
     "@sveltejs/adapter-node": "^1.0.0-next.69",

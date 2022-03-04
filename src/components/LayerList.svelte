@@ -9,10 +9,11 @@
     import DynamicLayer from './DynamicLayer.svelte'
     let disabled:boolean = true;
     let open:boolean = false
+
 </script>
 {#if !disabled}
-    <div style="display:flex, justify-content:center; flex-direction:row">
-        <Button on:click={() => (open = true)} bind:disabled> 
+    <div style="display:flex; justify-content:center; flex-direction:row">
+        <Button on:click={()=>open=true} bind:disabled>
             <Label>Combined layer from selection..</Label>
         </Button>
         
@@ -37,7 +38,7 @@
 <style>
     
     :global(.smui-paper__content){
-        padding: 5!important;
+        padding: 5px!important;
     }
 
 

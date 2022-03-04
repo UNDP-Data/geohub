@@ -146,7 +146,7 @@
     let index = allLayers.indexOf(layer)
     let len = allLayers.length
 
-    const hierachyUp = (layerID) => {
+    const hierachyDown = (layerID) => {
         const newIndex = index - 1
 
         if(newIndex<0){
@@ -161,7 +161,7 @@
 
 
 
-    const hierachyDown = (layerID) => {
+    const hierachyUp = (layerID) => {
         const newIndex = index + 1
 
         if(newIndex>allLayers.length-1){
@@ -181,7 +181,7 @@
         <div class="layer-header" >
             <div class="layer-header-name">
                 <Header>
-                    <span class="layer-name">{lName}<Badge position="inset" align="top-end"  aria-label="unread count">{index}/{len}</Badge></span>
+                    <span class="layer-name">{lName}<Badge position="inset" align="bottom-end"  aria-label="unread count">{index}/{len}</Badge></span>
                 </Header>
             </div>
             <div class="layer-header-icons">
@@ -310,9 +310,7 @@
         
         display: flex;
         flex-direction: row;
-        /* justify-content:space-around; */
         align-self: flex-start;
-        /* align-content: flex-start; */
     }
     .layer-name{
         
