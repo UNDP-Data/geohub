@@ -7,7 +7,6 @@
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import SegmentedButton, { Segment } from '@smui/segmented-button';
     import Badge from '@smui-extra/badge';
-    import Checkbox from '@smui/checkbox';
 
     export let layerCfg;
     export let lName,  lDef, lType;
@@ -35,11 +34,6 @@
         return show
     }
 
-    // let lSrc = $map.getSource(srcId);
-    // $map.removeSource(srcId);
-    // lSrc.tiles[0] = newUrl;
-    // $map.addSource(srcId,lSrc);
-    // map.getStyle().sources[srcId].reload();
 
     const removeLayer = () => {
         $map.removeLayer(lId);
@@ -169,30 +163,7 @@
             $map.triggerRepaint();
         }
     };
-    // function hierachyDown(layerID) {
-    //
-    //     console.log(layerID)
-    //     $map.getStyle().layers.indexOf(layerID)
-    //     let layer = allLayers.filter((item) => item.id== layerID).pop()
-    //     const currentIndex = allLayers.indexOf(layer)
-    //
-    //     // To get the index of the last element
-    //     // Array Length - 1
-    //     const newIndex = currentIndex + 1
-    //     console.log(allLayers.length-1)
-    //     if(newIndex > allLayers.length-1){
-    //         console.log(newIndex)
-    //     }
-    //     else{
-    //
-    //         // $layerList.splice(currentIndex, 1)
-    //         // $layerList.splice(newIndex, 0, layer)
-    //         $map.moveLayer(layerID, allLayers[newIndex].id)
-    //         index = allLayers.indexOf(layer)
-    //         console.log(allLayers[newIndex])
-    //         $map.triggerRepaint();
-    //     }
-    // }
+
     let layerWidth = 1;
     let setLineWidth = () => {
         let lSrc = $map.getSource(srcId);

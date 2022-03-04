@@ -1,33 +1,29 @@
 <script lang="ts">
-	import { mdiWeatherSunny } from '@mdi/js';
   import Drawer, {
     AppContent,
     Content,
     Header,
   } from '@smui/drawer';
-
   import LayerList from './LayerList.svelte';
-  import Layer from './Layer.svelte';
-  import Accordion, { Panel, Header as AccHeader, Content as AccContent } from '@smui-extra/accordion';
+  import Tab, { Label } from '@smui/tab';
+  import TabBar from '@smui/tab-bar';
+  import {wtree}  from '../stores/stores'
+  import TreeView from './TreeView.svelte'
+
   export let expanded = true;
   export let open = false;
-  
-  
-  import Icon from '@iconify/svelte';
   let active = 'Load';
   let rlabel;
   let expandedt;
   const tabs = ['Load...', "Layers", 'Analyze']
   let infoICon = expandedt ? '&#9650;':'&#9660;';
 
-  import Tab, { Label } from '@smui/tab';
-  import TabBar from '@smui/tab-bar';
+
 
   
   let panel;
 
-  import {wtree}  from '../stores/stores'
-  import TreeView from './TreeView.svelte'
+
   let combine:boolean = false;
 </script>
 
@@ -57,7 +53,7 @@
       {:else if active === 'Layers'}
         <LayerList/>
       {:else if active === 'Analyze'}
-      {:else if active == 'Analyze'}
+      <!--{:else if active === 'Analyze'}-->
         Analyze
       {/if}
 
@@ -96,30 +92,12 @@
 </div>
 
 <style>
-  /*:global(.mdc-tab){*/
-  /*  font-size: 0.6rem;*/
-  /*  height: 20px;*/
-  /*}*/
 
   :global(.s-k9Xq-arq2lfR){
     font-family: Calibri,serif;
   }
 
-  .tab-header{
-    font-size: 2rem;
-    height: 30px;
-  }
-  /*:global(.smui-accordion__header){*/
-  /*  height: 40px;*/
-  /*  width: 40px;*/
-  /*  margin: 0 auto;*/
-  /*  background: none;*/
-  /*}*/
-  .expand {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-  }
+
 
   .tab{
     border: 1px solid rebeccapurple;
@@ -131,20 +109,14 @@
     position: absolute;
     display: flex;
     height: calc(100vh - calc(64px+48px));
-    /* height:100vh; */
+
     width: 100%;
     overflow: auto;
-    /* overflow: hidden; */
     z-index: 0;
     flex-grow: 1;
     /* box-sizing: border-box; */
   }
 
-  .acordion-container {
-    max-height: 350px;
-    overflow: auto;
-    z-index: inherit;
-  }
 
   * :global(.app-content) {
     flex: auto;
@@ -157,8 +129,6 @@
     overflow: hidden;
     display: flex;
     height: 100%;
-    /* box-sizing: border-box; */
-    /* border: 30px  whitesmoke; */
     flex-grow: 1;
     z-index: -1;
     flex-direction: row;
@@ -176,23 +146,12 @@ Create a class in the component that checks for the expanded state*/
   :global(.expanded-browser){
     height: 100%;
   }
-  .bottom-drawer{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    /* background-color: dodgerblue; */
-    width: 100%;
-    height: 100%;
-    /* border-radius: 5px 50px 50px 5px; */
-    flex-grow: 1;
-    overflow: auto;
-  }
 
   :global(.expanded){
     display :inline-block;
     max-height: 40%;
     min-height: auto;
-    /* height: 150px; */
+
     position: absolute;
     bottom: 0;
     left: 0;
@@ -201,13 +160,4 @@ Create a class in the component that checks for the expanded state*/
     overflow:auto;
   }
 
-  /*:global(.mdc-drawer__content){*/
-  /*  height: 380px;*/
-  /*}*/
-
-  /* Todo: The following styles are when the bottom drawer is contracted*/
-
-  /*.expanded-browser{*/
-  /*  height: 100%;*/
-  /*}*/
 </style>
