@@ -5,8 +5,8 @@
     const _expansionState = {
         /* treeNodeId: expanded <boolean> */
     };
-   
-   
+
+
 
 
 </script>
@@ -17,13 +17,8 @@
     import { map } from '../stores/mapstore';
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import Button, { Label } from '@smui/button';
-    let TITILER_ENDPOINT;
-
-    const fetchTitilerConfig = async() => {
-        let url = `titiler.json`;
-        let res = await fetch(url).then((resp) => resp.json())
-        return res.TITILER_ENDPOINT;
-    };
+    import { environmentVariables } from '$lib/env';
+    const TITILER_ENDPOINT = environmentVariables.apiTilerUrl
 
     const fetchTree = async(path:string) => {
         let url = `azstorage.json?path=${path}`;
@@ -109,11 +104,6 @@
     export let expanded;
     $:expanded = _expansionState[label] || false;
 
-    onMount( async() => {
-
-        //console.log('Mounting TW', _expansionState);
-        TITILER_ENDPOINT = await fetchTitilerConfig()
-    });
     let icon = '&#43';
 
     const loadLayer = () => {
@@ -123,7 +113,7 @@
         if (!checked){
 
             if (!isRaster){
-                const lName  = path.split('/')[path.split('/').length-2]; 
+                const lName  = path.split('/')[path.split('/').length-2];
                 console.log('load vector layer ', label, url);
                 const lSrc = {
                             'type': 'vector',
@@ -134,7 +124,7 @@
                 if(! (srcId in mmap.getStyle().sources)){
                     $map.addSource(srcId,lSrc);
                 }
-                
+
                 const lDef = {
 
                     'id': lid, // Layer ID
@@ -162,11 +152,11 @@
                 }
                 console.log($layerList);
                 layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
-                console.log($layerList);    
+                console.log($layerList);
                 $map.addLayer( lDef);
             }
             else{ //
-                const lName  = path.split('/')[path.split('/').length-1]; 
+                const lName  = path.split('/')[path.split('/').length-1];
                 console.log('load raster layer', label, url)
                 let tilejsonURL;
                 if (true){
@@ -174,18 +164,18 @@
                     let base, sign;
                     [base,sign] = url.split('?');
                     tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-                
+
                 } else {
                     const encodedRasterURL = `url=${encodeURI(url)}`;
                     tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-                
+
                 }
-                
-                
+
+
                 console.log('tit', tilejsonURL);
                 const lSrc = {
                     'type': 'raster',
-                    'tiles': [tilejsonURL],         
+                    'tiles': [tilejsonURL],
                     'tileSize': 256,
                     'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
                 };
@@ -195,7 +185,7 @@
                 }
                 console.log( mmap.getStyle().sources);
                 const lDef = {
-                    
+
                         'id': lid,
                         'type': 'raster',
                         'source': srcId,
@@ -203,7 +193,7 @@
                         'maxzoom': 22,
                         'layout': {
                             'visibility':'visible'
-                            
+
                             },
 
 
@@ -228,9 +218,9 @@
                 console.log($layerList);
                 $map.addLayer(lDef, firstSymbolId);
             }
-            
-            
-            
+
+
+
         }
         // else {
         //     //nothing to do here
