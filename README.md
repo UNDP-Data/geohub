@@ -61,3 +61,15 @@ npm run preview
 For production, `.env` will not work on Azure, so please directly set variables on Azure.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.
+
+### Run GitHub Actions Locally
+
+GeoHub uses [GitHub Actions](https://docs.github.com/en/actions`) to simplify deployment to Azure. To test the workflow locally, follow instructions to install [act](https://github.com/nektos/act).
+
+```
+# run in dry-run mode
+act  --secret-file .env -n
+
+# run default mode
+act --secret-file .env
+```
