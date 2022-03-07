@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable } from 'svelte/store'
 
-export const wtree = writable({});
-export const layerList = writable([]);
+export const wtree = writable({})
+export const layerList = writable([])
