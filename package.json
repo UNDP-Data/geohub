@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "UNLICENSED",
   "scripts": {
+    "start": "svelte-kit dev --open",
     "dev": "svelte-kit dev --open",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
