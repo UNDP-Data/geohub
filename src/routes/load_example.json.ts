@@ -1,9 +1,9 @@
-const x = "something";
+const x = 'something'
 
 export const get = () => {
-    return{
-        body:{
-            x:"something"
-        },
-    }
-};
+  return {
+    body: {
+      x: 'something',
+    },
+  }
+}
