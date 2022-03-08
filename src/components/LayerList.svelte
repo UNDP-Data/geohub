@@ -8,37 +8,19 @@
     import DynamicLayer from './DynamicLayer.svelte'
     let disabled:boolean = true;
     let open:boolean = false
-    let choices:Array<string> = [];
-    let v = '';
-    const onClick =  () => {
-        open = true;
-        console.log('mounting');
-        for (const [key, value] of Object.entries($dynamicLayers)) {
-                console.log(`KV: ${key}:${value}`);
-                if(value && !choices.includes(key)){
-
-                choices.push(key);
-                };
-                
-
-                console.log(choices);
-
-            }
-        v = JSON.stringify(choices);
-        console.log('Choices ', v);
-  };
+    
   
 
 </script>
 {#if !disabled}
     <div style="display:flex; justify-content:center; flex-direction:row">
-        <Button on:click={onClick} bind:disabled>
+        <Button on:click={() => open = true} bind:disabled>
             <Label>Combined layer from selection..</Label>
         </Button>
         
     </div>
     
-    <DynamicLayer bind:open choices={choices} ></DynamicLayer>
+    <DynamicLayer bind:open  ></DynamicLayer>
 {/if}
 
 
@@ -59,7 +41,7 @@
 <style>
     
     :global(.smui-paper__content){
-        padding: 5px!important;
+        padding: 0px!important;
     }
 
 

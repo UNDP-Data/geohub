@@ -52,6 +52,7 @@
         $map.removeLayer(layerId);
         //TODO remove the layer source as well if none of the layers reference it
         $layerList  = $layerList.filter((item) => item.lDef.id !== layerId );
+        //$dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
         
         //update dynamic
         inDynamic = false;
@@ -99,8 +100,13 @@
     const setDynamicLayerState = () => {
         _dynamicLayerState[layerId] = inDynamic;
         //console.log(JSON.stringify(_dynamicLayerState), );
-        dynamicLayers.set(_dynamicLayerState);
-        //console.log('DLL', JSON.stringify($dynamicLayerList), );
+        if (inDynamic){
+            dynamicLayers.set([...$dynamicLayers, layerId]);
+        }else{
+            $dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
+        }
+        
+        console.log('DLL', JSON.stringify($dynamicLayers), );
         let ntrue = 0;
         for (const [key, value] of Object.entries(_dynamicLayerState)) {
             // console.log(`${key}:${value}`);
