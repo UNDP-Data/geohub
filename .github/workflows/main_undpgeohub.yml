@@ -19,11 +19,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '16'
+          cache: 'yarn'
 
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1.3
@@ -32,18 +31,19 @@ jobs:
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+      - run: yarn install
+      - run: yarn build
 
-      - name: copy dependencies to build folder
+      - name: copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cp package.json build/.
-          cp package-lock.json build/.
+          cp yarn.lock build/.
           mv node_modules build/.
+
+      #- name: copy node_modules to build folder
+        # if: ${{ github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[update-node-modules]') }}
+       # run: mv node_modules build/.
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
