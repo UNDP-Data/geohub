@@ -18,13 +18,12 @@
   //console.log('Choices in D ', JSON.stringify(choices));
 </script>
 
-<!-- 
 <Dialog
   bind:open
   aria-labelledby="large-scroll-title"
   aria-describedby="large-scroll-content"
-  surface$style="width: 600px; max-width: calc(100vw - 32px);"
->
+  surface$style="width: 600px; max-width: calc(100vw - 32px);">
+
   <Title id="large-scroll-title">Create a new combined/dynamic layer</Title>
   <Content id="large-scroll-content">
     <span>We have {choices.length} layers</span>
@@ -40,10 +39,9 @@
     </Button>
   </Actions>
 </Dialog>
- -->
 
-<Paper variant="outlined">
-    <PTitle>Outlined Paper</PTitle>
-    <Subtitle>This is an outlined sheet of paper.</Subtitle>
-    <PContent><span>We have {choices.length} layers</span></PContent>
-</Paper>
+<!--<Paper variant="outlined">-->
+<!--    <PTitle>Outlined Paper</PTitle>-->
+<!--    <Subtitle>This is an outlined sheet of paper.</Subtitle>-->
+<!--    <PContent><span>We have {choices.length} layers</span></PContent>-->
+<!--</Paper>-->

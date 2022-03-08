@@ -10,6 +10,7 @@
     let open:boolean = false
     let choices:Array<string> = [];
     let v = '';
+
     const onClick =  () => {
         open = true;
         console.log('mounting');
@@ -18,7 +19,8 @@
                 if(value && !choices.includes(key)){
 
                 choices.push(key);
-                };
+
+                }
                 
 
                 console.log(choices);
@@ -37,8 +39,8 @@
         </Button>
         
     </div>
-    
-    <DynamicLayer bind:open choices={choices} ></DynamicLayer>
+
+    <DynamicLayer bind:open choices={choices}/>
 {/if}
 
 

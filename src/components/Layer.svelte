@@ -142,7 +142,6 @@
 
         if(newIndex<0){
         }
-
         else{
             $map.moveLayer(layerID, allLayers[newIndex].id)
             index = newIndex
