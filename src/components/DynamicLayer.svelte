@@ -99,13 +99,12 @@
   
 </script>
 
-
 <Dialog
   bind:open
   aria-labelledby="large-scroll-title"
   aria-describedby="large-scroll-content"
-  surface$style="width: 600px; max-width: calc(100vw - 32px);"
->
+  surface$style="width: 600px; max-width: calc(100vw - 32px);">
+
   <Title id="large-scroll-title">Create a new combined/dynamic layer</Title>
   <Content >
 

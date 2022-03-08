@@ -25,6 +25,12 @@
         return res.TITILER_ENDPOINT;
     };
 
+    const fetchLayerStats = async(url) => {
+
+        let res = await fetch(url).then((response) => response.json());
+        return res;
+    }
+
     const fetchTree = async(path:string) => {
         let url = `azstorage.json?path=${path}`;
         let res = await fetch(url).then((resp) => resp.json())
@@ -90,12 +96,6 @@
 
     };
 
-
-
-
-    import Checkbox from '@smui/checkbox';
-    import Accordion from '@smui-extra/accordion/src/Accordion.svelte';
-
     $:mmap = $map;
 
     export let tree;
@@ -116,7 +116,7 @@
     });
     let icon = '&#43';
 
-    const loadLayer = () => {
+    const loadLayer = async() => {
         const srcId = path.replace(/\//g,'_');
         console.log(path, srcId);
         const lid = uuidv4();
@@ -174,8 +174,14 @@
                     [base,sign] = url.split('?');
                     let b64_encoded_url  = `${base}?${btoa(sign)}`;
                     console.log(`${b64_encoded_url}`);
+                    let statUrl = `${TITILER_ENDPOINT}/statistics?url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&max_size=1024&categorical=false&p=5&p=95&p=98&p=2`
                     //tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-                    tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+                    let lStats = await fetchLayerStats(statUrl);
+
+                    let lMin = lStats["1"]["min"]
+                    let lMax = lStats["1"]["max"]
+                    console.log(`Stats ${lMax} ${lMin}`);
+                    tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&colormap_name=inferno&return_mask=true`;
                     
                 } else {
                     const encodedRasterURL = `url=${encodeURI(url)}`;
