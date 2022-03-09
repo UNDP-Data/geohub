@@ -1,14 +1,14 @@
 <script lang="ts">
 	
     import Button from '@smui/button/src/Button.svelte';
-import Label from '@smui/list/src/Label.svelte';
+    
     import SegmentedButton, { Segment, Icon, Label } from '@smui/segmented-button';
    
   
     
     
     export let expression;
-    export let clickedLayer;
+    export const clickedLayer:string = '';
     
     
     const arithmeticOperators = ['+', '-', '*', '/'];

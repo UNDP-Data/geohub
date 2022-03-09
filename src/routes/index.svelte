@@ -22,7 +22,7 @@
     // import TreeView from './TreeView.svelte'
     
     export let tree = undefined;
-    console.log('client in index', tree)
+    //console.log('client in index', tree)
     
     wtree.set(tree);
     

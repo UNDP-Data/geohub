@@ -31,6 +31,12 @@
         return res;
     }
 
+    const fetchLayerBounds = async(url) => {
+
+        return await fetch(url).then((response) => response.json());
+        
+}
+
     const fetchTree = async(path:string) => {
         let url = `azstorage.json?path=${path}`;
         let res = await fetch(url).then((resp) => resp.json())
@@ -118,8 +124,10 @@
 
     const loadLayer = async() => {
         const srcId = path.replace(/\//g,'_');
-        console.log(path, srcId);
+        //console.log(path, srcId);
         const lid = uuidv4();
+        let lStats = {};
+        let lBounds = [];
         if (!checked){
 
             if (!isRaster){
@@ -160,48 +168,49 @@
 
                 }
                 console.log($layerList);
-                layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector'},...$layerList ]);
+                layerList.set([{'lName':lName,  'lDef':lDef, 'lType':'vector', 'lStats':{}},...$layerList ]);
                 console.log($layerList);    
                 $map.addLayer( lDef);
             }
             else{ //
                 const lName  = path.split('/')[path.split('/').length-1]; 
-                console.log('load raster layer', label, url)
+                //console.log('load raster layer', label, url)
                 let tilejsonURL;
-                if (true){
+                
 
-                    let base, sign;
-                    [base,sign] = url.split('?');
-                    let b64_encoded_url  = `${base}?${btoa(sign)}`;
-                    console.log(`${b64_encoded_url}`);
-                    let statUrl = `${TITILER_ENDPOINT}/statistics?url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&max_size=1024&categorical=false&p=5&p=95&p=98&p=2`
-                    //tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-                    let lStats = await fetchLayerStats(statUrl);
+                let base, sign;
+                [base,sign] = url.split('?');
+                let b64_encoded_url  = `${base}?${btoa(sign)}`;
+                //console.log(`${b64_encoded_url}`);
+                let statUrl = `${TITILER_ENDPOINT}/statistics?url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&max_size=1024&categorical=false&p=5&p=95&p=98&p=2`
+                let boundsUrl = `${TITILER_ENDPOINT}/bounds?url=${b64_encoded_url}`
+                
+                //tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+                lStats = await fetchLayerStats(statUrl);
+                lBounds = await fetchLayerBounds(boundsUrl);
+                //console.log(lBounds['bounds']);
 
-                    let lMin = lStats["1"]["min"]
-                    let lMax = lStats["1"]["max"]
-                    console.log(`Stats ${lMax} ${lMin}`);
-                    tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&colormap_name=inferno&return_mask=true`;
-                    
-                } else {
-                    const encodedRasterURL = `url=${encodeURI(url)}`;
-                    tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
+                let lMin = lStats["1"]["min"]
+                let lMax = lStats["1"]["max"]
+                //console.log(`Stats ${lMax} ${lMin}`);
+                tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&colormap_name=viridis&return_mask=true`;
                 
-                }
+            
                 
                 
-                console.log('tit', tilejsonURL);
+                //console.log('tit', tilejsonURL);
                 const lSrc = {
                     'type': 'raster',
                     'tiles': [tilejsonURL],         
                     'tileSize': 256,
+                    'bounds':lBounds['bounds'],
                     'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
                 };
-                console.log( mmap.getStyle().sources);
+                //console.log( mmap.getStyle().sources);
                 if(! (srcId in mmap.getStyle().sources)){
                     mmap.addSource(srcId,lSrc);
                 }
-                console.log( mmap.getStyle().sources);
+                //console.log( mmap.getStyle().sources);
                 const lDef = {
                     
                         'id': lid,
@@ -220,12 +229,12 @@
                 let lNames = $layerList.map(item => { return item.lName});
                 if (lNames.includes(lName)){
 
-                    let cntin = confirm(`Are you sure you want to add ${lName} `);
+                    let contin = confirm(`Are you sure you want to add ${lName} `);
 
 
                 }
                 //console.log($layerList);
-                layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster'}, ...$layerList ]);
+                layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster', 'lStats':lStats}, ...$layerList ]);
                 let firstSymbolId = undefined;
                 for (const layer of $map.getStyle().layers) {
                     if (layer.type === 'symbol') {
@@ -233,7 +242,7 @@
                         break;
                     }
                 }
-                console.log($layerList);
+                console.log(`LL: ${JSON.stringify($layerList, null, '\t')}`);
                 $map.addLayer(lDef, firstSymbolId);
             }
             
