@@ -21,7 +21,8 @@
     import Badge from '@smui-extra/badge';
     import Slider from '@smui/slider';
     import Checkbox from '@smui/checkbox';
-    import Select, { Option } from '@smui/select';
+    import Colormaps from "./Colormaps.svelte"
+
 
     export let layerCfg;
     let lName,  lDef, lType;
@@ -29,6 +30,7 @@
     
     const srcId = lDef.source;
     const layerId = lDef.id;
+
 
 
     //layera re turned on by default so the active visibility icons should be OFF
@@ -97,6 +99,8 @@
 
     };
 
+
+
     export let disabled;
 
     const setDynamicLayerState = () => {
@@ -142,20 +146,12 @@
     $: inDynamic = _dynamicLayerState[layerId] || false;
 
 
-
-    // Set initial state of the selected variable and the selected layers ids Array
-    let added : boolean = true;
-    let selectedLayersIds = [];
-    console.log("Added==", added)
-    console.log("Selected Layer List====", selectedLayersIds)
-
-
     let allLayers = $map.getStyle().layers
     let layer = allLayers.filter((item) => item.id == layerId).pop()
     let index = allLayers.indexOf(layer)
     let len = allLayers.length
-    const colormaps = ['accent', 'accent_r', 'afmhot', 'afmhot_r', 'autumn', 'autumn_r', 'binary', 'binary_r', 'blues', 'blues_r', 'bone', 'bone_r', 'brbg', 'brbg_r', 'brg', 'brg_r', 'bugn', 'bugn_r', 'bupu', 'bupu_r', 'bwr', 'bwr_r', 'cfastie', 'cividis', 'cividis_r', 'cmrmap', 'cmrmap_r', 'cool', 'cool_r', 'coolwarm', 'coolwarm_r', 'copper', 'copper_r', 'cubehelix', 'cubehelix_r', 'dark2', 'dark2_r', 'flag', 'flag_r', 'gist_earth', 'gist_earth_r', 'gist_gray', 'gist_gray_r', 'gist_heat', 'gist_heat_r', 'gist_ncar', 'gist_ncar_r', 'gist_rainbow', 'gist_rainbow_r', 'gist_stern', 'gist_stern_r', 'gist_yarg', 'gist_yarg_r', 'gnbu', 'gnbu_r', 'gnuplot', 'gnuplot2', 'gnuplot2_r', 'gnuplot_r', 'gray', 'gray_r', 'greens', 'greens_r', 'greys', 'greys_r', 'hot', 'hot_r', 'hsv', 'hsv_r', 'inferno', 'inferno_r', 'jet', 'jet_r', 'magma', 'magma_r', 'nipy_spectral', 'nipy_spectral_r', 'ocean', 'ocean_r', 'oranges', 'oranges_r', 'orrd', 'orrd_r', 'paired', 'paired_r', 'pastel1', 'pastel1_r', 'pastel2', 'pastel2_r', 'pink', 'pink_r', 'piyg', 'piyg_r', 'plasma', 'plasma_r', 'prgn', 'prgn_r', 'prism', 'prism_r', 'pubu', 'pubu_r', 'pubugn', 'pubugn_r', 'puor', 'puor_r', 'purd', 'purd_r', 'purples', 'purples_r', 'rainbow', 'rainbow_r', 'rdbu', 'rdbu_r', 'rdgy', 'rdgy_r', 'rdpu', 'rdpu_r', 'rdylbu', 'rdylbu_r', 'rdylgn', 'rdylgn_r', 'reds', 'reds_r', 'rplumbo', 'schwarzwald', 'seismic', 'seismic_r', 'set1', 'set1_r', 'set2', 'set2_r', 'set3', 'set3_r', 'spectral', 'spectral_r', 'spring', 'spring_r', 'summer', 'summer_r', 'tab10', 'tab10_r', 'tab20', 'tab20_r', 'tab20b', 'tab20b_r', 'tab20c', 'tab20c_r', 'terrain', 'terrain_r', 'twilight', 'twilight_r', 'twilight_shifted', 'twilight_shifted_r', 'viridis', 'viridis_r', 'winter', 'winter_r', 'wistia', 'wistia_r', 'ylgn', 'ylgn_r', 'ylgnbu', 'ylgnbu_r', 'ylorbr', 'ylorbr_r', 'ylorrd', 'ylorrd_r'];
-    let colorMapName;
+
+
     const hierachyDown = (layerID) => {
         const newIndex = index - 1
 
@@ -183,6 +179,7 @@
         }
     };
 
+    let colorMapName;
     $: colorMapName, selectColorMap();
 
     const selectColorMap = () => {
@@ -202,9 +199,7 @@
             $map.style.sourceCaches[layerS].update($map.transform);
             $map.triggerRepaint();
         }
-
-
-    }
+    };
 
 </script>
 
@@ -306,27 +301,10 @@
                 </div>
 
             {#if activeSection === 'color'}
-
-<!--                        <select class="select-colormap" bind:value={colorMapName} label="Select Menu">-->
-<!--                            {#each colormaps as color}-->
-<!--                                <option class="colormap" value="{color}">{color}</option>-->
-<!--                            {/each}-->
-<!--                        </select>-->
-<!--                        <pre class="status">Selected: {colorMapName}</pre>-->
-
-                <div class="columns margins" style="justify-content: flex-start;">
-                    <div>
-                        <Select bind:value={colorMapName} label="Choose new colormap">
-                            {#each colormaps as color}
-                                <Option value={color}>{color}</Option>
-                            {/each}
-                        </Select>
-                        <h5 class="status">Selected: {colorMapName}</h5>
-                    </div>
-                </div>
+                <Colormaps bind:colorMapName/>
             {:else if activeSection === 'band'}
                 <p>B</p>
-                 
+
             {:else if activeSection === 'opacity'}
                 <div class="layer-header">
                     <div>Opacity:</div>
@@ -383,13 +361,19 @@
         background-color: black;
 
     }
-    .select-colormap{
-        width: 100%;
-        height: auto;
-        border: none;
+
+    :global(.smui-accordion){
+        z-index: 0;
     }
 
-    .colormap{
-        font-family:"Roboto Light",serif;
+    :global(.mdc-deprecated-list){
+        z-index: 1;
+    }
+
+    :global(.mdc-deprecated-list-item){
+        /*margin: 2px!important;*/
+        height: auto!important;
+        width: auto;
+        color: mintcream!important;
     }
 </style>

@@ -1,6 +1,5 @@
 <script lang="ts">
-	
-	import { base } from '/work/js/geohub/.svelte-kit/runtime/paths.js';
+
   import {map} from '../stores/mapstore';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
