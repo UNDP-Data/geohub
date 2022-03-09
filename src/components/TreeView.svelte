@@ -15,8 +15,7 @@
     import { v4 as uuidv4 } from 'uuid';
     import {wtree,  layerList} from '../stores/stores'
     import { map } from '../stores/mapstore';
-    import Dialog, { Title, Content, Actions } from '@smui/dialog';
-    import Button, { Label } from '@smui/button';
+    
     let TITILER_ENDPOINT;
     
     const fetchTitilerConfig = async() => {

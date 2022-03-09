@@ -18,6 +18,10 @@
   let lNames;
   let expression:string = '';
 
+
+  
+
+
   const initialize = () => {
     
     lNames = $layerList.filter(item => {
@@ -85,8 +89,23 @@
     
     console.log(`inside processCombinedLayer ${action}`);
     if (action == true){
-      //build the complex URL
+      
+      let combinedURL = '';
+      $dynamicLayers.forEach((lid) => {
+        console.log(`processing ${lid}`);
+        let inLayer =  $layerList.filter(item => item.lDef.id === lid).pop();
+        
+        let lSrc = $map.getSource(inLayer.lDef.source);
+        let tileurl = lSrc.tiles[0];
+        let tURL = new URL(tileurl);
+        let lurl = tURL.searchParams.get('url');
+        let base, sign;
+        [base,sign] = lurl.split('?');
 
+        console.log(lurl);
+      });
+
+      
 
     }
 
