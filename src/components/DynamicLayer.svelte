@@ -1,6 +1,4 @@
 <script lang="ts">
-	
-	
   import {map} from '../stores/mapstore';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
