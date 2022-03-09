@@ -51,7 +51,7 @@
         <textarea bind:value={expression} style="width:95%; min-height:45pt" ></textarea>
     </div>
     <div class="one">
-        <Button on:click={() => expression = ''}><Label>Clear</Label></Button>
+        <Button on:click={() => {expression = ''}}><Label>Clear</Label></Button>
     </div>
     <div class="cwrapper">
         <div>

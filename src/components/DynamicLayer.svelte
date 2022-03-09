@@ -39,6 +39,7 @@
   };
   
   const setLayerExpression = () => {
+    
     if (clickedLayer){
       
       console.clear();
@@ -66,7 +67,7 @@
       // lSliderProps.end = end + (lSliderProps.max - end) % lSliderProps.step;
       // lSliderProps.start = start- (start - lSliderProps.min) % lSliderProps.step;
       //console.log('AFTER', JSON.stringify(lSliderProps, null, '\t'));
-      let inputLayerIdx = $layerList.indexOf(inputLayer)+1;
+      let inputLayerIdx = $dynamicLayers.indexOf(clickedLayer)+1;
   
       expression += `b${inputLayerIdx}`;
 
@@ -77,18 +78,7 @@
 
 
   const processSliderClick = () => {
-    
-    console.log(`old val is ${expression} ${oldSValue}`);
-    console.log(`val to add ${lSliderValue}`);
-    
-    if(expression.includes(oldSValue)){
-      expression = expression.split(oldSValue)[1];
-    } 
-    
-    oldSValue = expression;
     expression += `${lSliderValue}`;
-    
-
   }
 
   const processCombinedLayer = (action:boolean) => {
@@ -112,7 +102,7 @@
   let lMax=10;
   let lStep = 0;
   let lSliderValue=0;
-  let oldSValue = undefined;
+  
   
   $: open, initialize();
   
@@ -133,10 +123,13 @@
   
   let clickedLayer:any = undefined;
   let clickedLayerIndex = undefined;
-  $:clickedLayer, setLayerExpression();
-
   
 
+  
+  const setClickedLayer = (l) => {
+    clickedLayer = l;
+    setLayerExpression();
+  }
 
 
   
@@ -171,7 +164,7 @@
 
           <List style="max-width:300px">
             {#each $dynamicLayers as l }
-              <Item on:SMUI:action={() => (clickedLayer = l)} >
+              <Item on:SMUI:action={() => {setClickedLayer(l)}} >
                 
                 <LText>{lNames[$dynamicLayers.indexOf(l)]}</LText>
                 
@@ -185,15 +178,20 @@
         {#if clickedLayer != undefined}
         <div class="onecol">
         
-          <div>Min: {lMin}} </div>
-          <Slider discrete on:SMUISlider:change={()=>{processSliderClick()}} bind:value={lSliderValue} min={lMin} max={lMax} step={lStep} style="width:300px" input$aria-label="Layer opacity"/>
-          <span>{lMax} :Max</span>
+          <div>{lMin} </div>
+          <Slider discrete  bind:value={lSliderValue} min={lMin} max={lMax} step={lStep} style="width:300px" input$aria-label="Layer opacity"/>
+          <div>{lMax}</div>
+          <div>
+            <Button on:click={() => processSliderClick()}>
+              <Label>USE</Label>
+            </Button>
+          </div>
         </div>
-        <div class="expr">
+        <!-- <div class="expr">
           <pre class="status">Value: {lSliderValue}</pre>
-        </div>
+        </div> -->
           <div class='expr'>
-            <Calculator bind:expression bind:clickedLayer></Calculator>
+            <Calculator bind:expression bind:clickedLayer ></Calculator>
           </div>   
         {/if}
         
@@ -290,6 +288,7 @@
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin: auto
+  margin: auto;
+  border: 1px solid red;
 }
 </style>

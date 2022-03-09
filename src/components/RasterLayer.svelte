@@ -105,15 +105,19 @@
     export let disabled;
 
     const setDynamicLayerState = () => {
+        console.log('DLL before', JSON.stringify($dynamicLayers), );
         _dynamicLayerState[layerId] = inDynamic;
         //console.log(JSON.stringify(_dynamicLayerState), );
-        if (inDynamic){
-            dynamicLayers.set([...$dynamicLayers, layerId]);
+        if (inDynamic == true){
+            if (!$dynamicLayers.includes(layerId)){
+                dynamicLayers.set([layerId, ...$dynamicLayers]);
+            }
+                
         }else{
             $dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
         }
         
-        console.log('DLL', JSON.stringify($dynamicLayers), );
+        console.log('DLL after', JSON.stringify($dynamicLayers), );
         let ntrue = 0;
         for (const [key, value] of Object.entries(_dynamicLayerState)) {
             // console.log(`${key}:${value}`);
@@ -142,9 +146,10 @@
     $: activeSection, setSectionState();
     $: activeSection = _sectionState[layerId] || '';
 
-
-    $: inDynamic, setDynamicLayerState();
     $: inDynamic = _dynamicLayerState[layerId] || false;
+    console.log(`${layerId} ${inDynamic}`)
+    $: inDynamic, setDynamicLayerState();
+    
 
 
     let allLayers = $map.getStyle().layers
@@ -363,18 +368,18 @@
 
     }
 
-    :global(.smui-accordion){
+     :global(.smui-accordion){
         z-index: 0;
     }
-
+    
     :global(.mdc-deprecated-list){
         z-index: 1;
     }
 
     :global(.mdc-deprecated-list-item){
-        /*margin: 2px!important;*/
+        
         height: auto!important;
         width: auto;
-        color: mintcream!important;
+        /* color: mintcream!important; */
     }
 </style>
