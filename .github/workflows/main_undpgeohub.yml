@@ -42,8 +42,8 @@ jobs:
           mv node_modules build/.
 
       #- name: copy node_modules to build folder
-        # if: ${{ github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[update-node-modules]') }}
-       # run: mv node_modules build/.
+      # if: ${{ github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[update-node-modules]') }}
+      # run: mv node_modules build/.
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp

@@ -4,18 +4,16 @@
   import IconButton, { Icon } from '@smui/icon-button'
   import TabBar from '@smui/tab-bar'
   import Paper from '@smui/paper'
-  import MenuSurface, { MenuSurfaceComponentDev } from '@smui/menu-surface'
-  let surface: MenuSurfaceComponentDev
+  import MenuSurface from '@smui/menu-surface'
+  let surface: any
 
-  //const tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-  export let layerCfg
-  //export const srcId = lDef.source;
-  //let lName, lDef, lType;
-  //$: ({lName,  lDef, lType} = layerCfg);
-  export let lName, lDef, lType
+  export let layerCfg: any
+  export let lName = ''
+  export let lDef: any = undefined
+  export let lType = ''
   ;({ lName, lDef, lType } = layerCfg)
 
-  let selected: boolean = lDef.layout.visibility == 'visible' ? true : false
+  let selected: boolean = lDef.layout.visibility === 'visible' ? true : false
   console.log(`selected initial value ${selected}`)
   $: visibility = selected ? 'visible' : 'none'
   const srcId = lDef.source
@@ -34,11 +32,11 @@
   }
 
   let show = false
-  const isShowed = () => {
-    console.log('Clicked!!!')
-    show = !show
-    return show
-  }
+  // const isShowed = () => {
+  //   console.log('Clicked!!!')
+  //   show = !show
+  //   return show
+  // }
 
   // let lSrc = $map.getSource(srcId);
   // $map.removeSource(srcId);
@@ -54,11 +52,11 @@
     $layerList = $layerList.filter((item) => item.lDef.id != lId)
   }
 
-  const openOpacity = () => {}
-  let querySelected: boolean = true
+  // const openOpacity = () => {}
+  // let querySelected: boolean = true
   let active = ''
 
-  const tabExpand = (tabName) => {
+  const tabExpand = (tabName: string) => {
     if (show) {
       if (active != tabName) {
         active = tabName
@@ -72,37 +70,38 @@
   }
 
   import SegmentedButton, { Segment } from '@smui/segmented-button'
-  let disabled: boolean = false
+  let disabled = false
 
   let choices = ['viridis', 'plasma', 'inferno', 'magma', 'cividis']
   let chosen = 'viridis'
-  let value = 50
+  // let value = 50
 
-  const handleUrlChange = (colorMap) => {
+  const handleUrlChange = (colorMap: any) => {
     // Need to reconstruct the url. Need to reload the map
     // The reconstruction:
     // lSrc.tiles[0] = newUrl;
     // $map.addSource(srcId,lSrc);
     // map.getStyle().sources[srcId].reload();
+    console.log(colorMap)
   }
 
-  import Dialog, { Title, Content, InitialFocus } from '@smui/dialog'
-  import Slider from '@smui/slider'
+  // import Dialog, { Title, Content, InitialFocus } from '@smui/dialog'
+  // import Slider from '@smui/slider'
   import FormField from '@smui/form-field'
 
-  let open = false
-  let showLayerInfo = false
+  // let open = false
+  // let showLayerInfo = false
   let layerOpacity = 100
 
   const setLayerOpacity = () => {
     let lSrc = $map.getSource(srcId)
     let layerList = $map.getStyle().layers
 
-    const layer = layerList.filter((layer) => {
+    const layer = layerList.filter((layer: any) => {
       return layer.source === lSrc.id
     })
     console.log(layer[0]['id'])
-    $map.setPaintProperty(layer[0]['id'], 'raster-opacity', parseInt(layerOpacity) / 100)
+    $map.setPaintProperty(layer[0]['id'], 'raster-opacity', layerOpacity / 100)
   }
 </script>
 
@@ -166,7 +165,7 @@
   {/if}
 {/if}
 
-<MenuSurface style="width: 100%; height: 50px" tab bind:this={surface} anchorCorner="TOP_MIDDLE">
+<MenuSurface style="width: 100%; height: 50px" tab bind:this={surface} anchorCorner="TOP_LEFT">
   <div style="height: 50px; justify-content: space-around">
     <FormField style="display: flex; flex-direction: column-reverse;">
       <input on:change={setLayerOpacity} bind:value={layerOpacity} type="range" min="0" max="100" />

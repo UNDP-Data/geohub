@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  import { Map } from 'maplibre-gl'
+  // import { Map } from 'maplibre-gl'
 
   // retain module scoped expansion state for each tree node
   const _expansionState = {
@@ -8,12 +8,12 @@
 </script>
 
 <script lang="ts">
-  import { onMount } from 'svelte'
+  // import { onMount } from 'svelte'
   import { v4 as uuidv4 } from 'uuid'
   import { wtree, layerList } from '../stores/stores'
   import { map } from '../stores/mapstore'
-  import Dialog, { Title, Content, Actions } from '@smui/dialog'
-  import Button, { Label } from '@smui/button'
+  // import Dialog, { Title, Content, Actions } from '@smui/dialog'
+  // import Button, { Label } from '@smui/button'
 
   const fetchTree = async (path: string) => {
     let url = `azstorage.json?path=${path}`
@@ -51,7 +51,7 @@
 
   const updateTree = (oldTree: any, child: any) => {
     //split the current path (where user clicked into subpaths ) /a/b/c => ['a','b','c']
-    let subpaths: [] = path.split('/').slice(0, -1)
+    let subpaths = path.split('/').slice(0, -1)
     //fetch the old tree and set it to root
     let root = oldTree.tree
     //iterate over
@@ -59,51 +59,58 @@
       //fetch children
       let echildren = [...root.children]
       // extract cpath property from children into an array
-      let paths = echildren.map((item) => {
-        return item.path
-      })
+      // let paths = echildren.map((item) => {
+      //   return item.path
+      // })
       // check if the global path (where user clicked) equals the new child tree's path
 
-      if (path == child.tree.path) {
+      if (path === child.tree.path) {
         // this is the root subpath where the new child should be inserted into roots children
         let updatedChildren = echildren.map((item) => {
-          return item.path == child.tree.path ? child.tree : item
+          return item.path === child.tree.path ? child.tree : item
         })
         //replace old children with updated
         root.children = updatedChildren
       }
       //set  root for next level of iteration
-      let nextRoot = echildren.filter((item) => item.label == element).pop()
+      let nextRoot = echildren.filter((item) => item.label === element).pop()
 
       root = nextRoot
     })
   }
 
-  import Checkbox from '@smui/checkbox'
-  import Accordion from '@smui-extra/accordion/src/Accordion.svelte'
+  // import Checkbox from '@smui/checkbox'
+  // import Accordion from '@smui-extra/accordion/src/Accordion.svelte'
 
   $: mmap = $map
 
-  export let tree
+  export let tree = {
+    label: 'GeoHub Azure Storage',
+    children: [],
+    path: '/',
+    url: null,
+    isRaster: false,
+  }
 
-  export let label, children, path, url, isRaster
+  //export let label: string, children: Array<TreeNode>, path: string, url: string, isRaster: boolean
   $: ({ label, children, path, url, isRaster } = tree)
 
   // const {label, children, path} = tree;
+  // let dialogOpen = false
 
-  export let expanded
+  // export let expanded: boolean
   $: expanded = _expansionState[label] || false
 
   let icon = '&#43'
 
   const loadLayer = () => {
     const srcId = path.replace(/\//g, '_')
-    console.log(path, srcId)
+    //     console.log(path, srcId)
     const lid = uuidv4()
     if (!checked) {
       if (!isRaster) {
         const lName = path.split('/')[path.split('/').length - 2]
-        console.log('load vector layer ', label, url)
+        // console.log('load vector layer ', label, url)
         const lSrc = {
           type: 'vector',
           tiles: [url],
@@ -130,35 +137,35 @@
             'line-width': 0.5,
           },
         }
-        let lNames = $layerList.map((item) => {
-          return item.lName
-        })
+        // let lNames = $layerList.map((item) => {
+        //   return item.lName
+        // })
 
-        if (lNames.includes(lName)) {
-          dialogOpen = true
-        }
-        console.log($layerList)
+        // if (lNames.includes(lName)) {
+        //   dialogOpen = true
+        // }
+        // console.log($layerList)
         layerList.set([{ lName: lName, lDef: lDef, lType: 'vector' }, ...$layerList])
-        console.log($layerList)
+        // console.log($layerList)
         $map.addLayer(lDef)
       } else {
         //
         const lName = path.split('/')[path.split('/').length - 1]
-        console.log('load raster layer', label, url)
+        // console.log('load raster layer', label, url)
         const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
-        let tilejsonURL
-        if (true) {
-          let base, sign
-          ;[base, sign] = url.split('?')
-          tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(
-            sign,
-          )}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`
-        } else {
-          const encodedRasterURL = `url=${encodeURI(url)}`
-          tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`
-        }
+        let tilejsonURL: string
+        //if (true) {
+        let base: string, sign: string
+        ;[base, sign] = url.split('?')
+        tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(
+          sign,
+        )}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`
+        // } else {
+        //   const encodedRasterURL = `url=${encodeURI(url)}`
+        //   tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&${encodedRasterURL}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`
+        // }
 
-        console.log('tit', tilejsonURL)
+        // console.log('tit', tilejsonURL)
         const lSrc = {
           type: 'raster',
           tiles: [tilejsonURL],
@@ -166,11 +173,11 @@
           attribution:
             'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
         }
-        console.log(mmap.getStyle().sources)
+        //         console.log(mmap.getStyle().sources)
         if (!(srcId in mmap.getStyle().sources)) {
           mmap.addSource(srcId, lSrc)
         }
-        console.log(mmap.getStyle().sources)
+        //         console.log(mmap.getStyle().sources)
         const lDef = {
           id: lid,
           type: 'raster',
@@ -182,12 +189,12 @@
           },
         }
 
-        let lNames = $layerList.map((item) => {
-          return item.lName
-        })
-        if (lNames.includes(lName)) {
-          let cntin = confirm(`Are you sure you want to add ${lName} `)
-        }
+        // let lNames = $layerList.map((item) => {
+        //   return item.lName
+        // })
+        // if (lNames.includes(lName)) {
+        //   let cntin = confirm(`Are you sure you want to add ${lName} `)
+        // }
         //console.log($layerList);
         layerList.set([{ lName: lName, lDef: lDef, lType: 'raster' }, ...$layerList])
         let firstSymbolId = undefined
@@ -197,7 +204,7 @@
             break
           }
         }
-        console.log($layerList)
+        // console.log($layerList)
         $map.addLayer(lDef, firstSymbolId)
       }
     }
@@ -228,10 +235,9 @@
 
   $: arrowDown = expanded
   $: icon = expanded ? '&#8722' : '&#43'
-  let checked: boolean = false
+  let checked = false
 
-  let dialogOpen = false
-  let confirmValue = 'Nothing yet.'
+  // let confirmValue = 'Nothing yet.'
 </script>
 
 <ul>

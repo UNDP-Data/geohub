@@ -14,32 +14,20 @@ const account = AZURE_STORAGE_ACCOUNT
 const accountKey = AZURE_STORAGE_ACCESS_KEY
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
 
-const x = 'something'
-
-interface TreeNode {
-  label: string
-  children?: TreeNode[]
-  new (label: string): TreeNode
-}
-
-interface ITree<P> {
-  label: P
-  children?: ITree<P>[]
-}
-
-export const get1 = () => {
-  return {
-    body: {
-      x: x,
-    },
-  }
+export interface TreeNode {
+  label?: string
+  children?: Array<TreeNode>
+  path?: string
+  prefix?: string
+  url?: string
+  isRaster?: boolean
 }
 
 const isRasterExtension = (name: string) => {
-  let splitAt = name.lastIndexOf('.')
-  let ext = name.slice(splitAt, name.length)
-  let extensions = ['.tif', '.tiff', '.vrt', '.jpg', '.jpeg', '.img', '.nc']
-  let v = extensions.includes(ext.toLowerCase())
+  const splitAt = name.lastIndexOf('.')
+  const ext = name.slice(splitAt, name.length)
+  const extensions = ['.tif', '.tiff', '.vrt', '.jpg', '.jpeg', '.img', '.nc']
+  const v = extensions.includes(ext.toLowerCase())
   //console.log(name, ext, v);
   return v
 }
@@ -60,10 +48,10 @@ const listContainer = async (containerName: string, relPath: string) => {
   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
 
   let treeLabel: string = containerName
-  if (Boolean(relPath)) {
+  if (relPath) {
     treeLabel = relPath
   }
-  let treePath = `${containerName}/${relPath}`
+  const treePath = `${containerName}/${relPath}`
 
   if (treeLabel.endsWith('/')) {
     treeLabel = treeLabel.slice(0, -1)
@@ -73,20 +61,16 @@ const listContainer = async (containerName: string, relPath: string) => {
     treeLabel = treeLabel.split('/').pop()
   }
 
-  // else{
-  //     childLabel = label;
-  // }
-
-  let tree = { label: treeLabel, children: [], path: treePath, url: null }
-  let cclient = blobServiceClient.getContainerClient(containerName)
-  let containerChildren = []
+  const tree = { label: treeLabel, children: [], path: treePath, url: null }
+  const cclient = blobServiceClient.getContainerClient(containerName)
+  const containerChildren: Array<TreeNode> = []
   //console.log('listing container',containerName, relPath, 'labelPath', labelPath );
   for await (const item of cclient.listBlobsByHierarchy('/', { prefix: relPath })) {
-    let childLabel
+    let childLabel: string
 
-    let path = `${containerName}/${item.name}`
+    const path = `${containerName}/${item.name}`
     if (item.kind === 'prefix') {
-      let label = item.name.slice(0, -1)
+      const label = item.name.slice(0, -1)
       if (label.includes('/')) {
         childLabel = label.split('/').pop()
       } else {
@@ -107,24 +91,18 @@ const listContainer = async (containerName: string, relPath: string) => {
       )
 
       const sasUrl = `${blockBlobClient.url}?${sasToken}`
-      let label = item.name
+      const label = item.name
       if (label.includes('/')) {
         childLabel = label.split('/').pop()
       } else {
         childLabel = label
       }
 
-      if (childLabel == 'metadata.json') {
-        let splitAt = blobServiceClient.url.lastIndexOf('/')
-
-        const rurl = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
-
-        tree.url = rurl
+      if (childLabel === 'metadata.json') {
+        tree.url = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
       }
 
-      let israster = isRasterExtension(childLabel)
-
-      containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: israster })
+      containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRasterExtension(childLabel) })
     }
   }
   tree.children = containerChildren
@@ -134,21 +112,18 @@ const listContainer = async (containerName: string, relPath: string) => {
   }
 }
 
-/*
-    List containers from GeoHub Azure Storage account
-        @param @type {string}
-
-    */
-
-const listContainers = async (prefix: string = '/') => {
-  // create storage container
+const listContainers = async (prefix = '/') => {
   const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
-
-  let tree = { label: 'GeoHub Azure Storage', children: [], path: prefix, url: null, isRaster: false }
+  const tree: TreeNode = {
+    label: 'GeoHub Azure Storage',
+    children: <TreeNode[]>[],
+    path: prefix,
+    url: null,
+    isRaster: false,
+  }
 
   for await (const container of blobServiceClient.listContainers()) {
-    let containerItem = { label: container.name, children: [], path: `${container.name}/`, url: null, isRaster: false }
-    tree.children.push(containerItem)
+    tree.children.push({ label: container.name, children: [], path: `${container.name}/`, url: null, isRaster: false })
   }
 
   return {
@@ -159,26 +134,19 @@ const listContainers = async (prefix: string = '/') => {
 export async function get(query) {
   let path = '/'
   if (query.url.searchParams.has('path')) {
-    path = query.url.searchParams.get('path')
-    if (!path.endsWith('/')) {
-      path = `${path}/`
-    }
+    path = !path.endsWith('/') ? `${path}/` : query.url.searchParams.get('path')
   }
-  // let
-  let tree = undefined
-  if (path == '/') {
+
+  let tree
+
+  if (path === '/') {
     tree = await listContainers()
   } else {
-    let containerName, containerPath
-    ;[containerName, ...containerPath] = path.split('/')
-
-    if (Array.isArray(containerPath) && containerPath.length && containerPath[0] != '') {
-      containerPath = `${containerPath.join('/')}`
-    } else {
-      containerPath = ''
-    }
-
-    tree = await listContainer(containerName, containerPath)
+    const [containerName, ...containerPath] = path.split('/')
+    tree = await listContainer(
+      containerName,
+      Array.isArray(containerPath) && !!containerPath[0] ? containerPath.join('/') : '',
+    )
   }
 
   return {

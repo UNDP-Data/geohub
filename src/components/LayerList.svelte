@@ -1,7 +1,7 @@
 <script lang="ts">
   import { layerList } from '../stores/stores'
   import Layer from './Layer.svelte'
-  import List from '@smui/list'
+  // import List from '@smui/list'
 </script>
 
 {#each $layerList as layerCfg}
@@ -21,10 +21,10 @@
     {/each}
 
 </Accordion> -->
-<style>
+<!-- <style>
   .accordion {
     width: 100%;
     max-width: 450px;
     margin: 0 auto;
   }
-</style>
+</style> -->

@@ -1,9 +1,7 @@
 <script context="module">
   export async function load({ fetch }) {
     const res = await fetch('azstorage.json')
-
     const tree = await res.json()
-
     return {
       props: {
         tree,
@@ -14,24 +12,19 @@
 
 <script lang="ts">
   import { wtree } from '../stores/stores'
-  // import TreeView from './TreeView.svelte'
-
-  export let tree = undefined
+  export let tree = {
+    tree: {
+      label: 'GeoHub Azure Storage',
+      children: [],
+      path: '/',
+      url: null,
+      isRaster: false,
+    },
+  }
   console.log('client in index', tree)
-
   wtree.set(tree)
 </script>
 
-<!--
-<div>
-    
-    
-    <TreeView tree={$wtree.tree} />
-    
-
-</div> -->
-
-<!-- Todo: This styles are set to ensure that the Map Content moves together with the drawer opening-->
 <style global>
   .mdc-drawer {
     width: 300px;

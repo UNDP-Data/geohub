@@ -10,3 +10,5 @@ node_modules
 env.ts
 yarn.lock
 static/
+.vscode/
+.prettierrc

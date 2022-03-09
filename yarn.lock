@@ -1198,9 +1198,9 @@
     "@smui/common" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
-"@smui/top-app-bar@^6.0.0-beta.13":
+"@smui/top-app-bar@^6.0.0-beta.15":
   version "6.0.0-beta.15"
-  resolved "https://registry.npmjs.org/@smui/top-app-bar/-/top-app-bar-6.0.0-beta.15.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/top-app-bar/-/top-app-bar-6.0.0-beta.15.tgz#125d3c1181617f5ab0c03c444e8400323a9a3687"
   integrity sha512-XVVtRH0hbOZbR9Vf8XTVQWqd/tGjx1kGHz37YLskYNd7DA9aaBnr+EMd31lKbB6msO8AC1BiPyFQSRDINhWzCw==
   dependencies:
     "@material/feature-targeting" "^13.0.0"

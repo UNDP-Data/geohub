@@ -7,31 +7,31 @@
 
   // set the context here...
 
-  export let lat: number = 0
-  export let lon: number = 0
-  export let zoom: number = 3
+  export let lat = 0
+  export let lon = 0
+  export let zoom = 3
 
-  let container: any
+  let container: HTMLDivElement
 
-  const style = {
-    version: 8,
-    sources: {
-      osm: {
-        type: 'vector',
-        tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        attribution: '&copy; OpenStreetMap Contributors',
-        maxzoom: 19,
-      },
-    },
-    layers: [
-      {
-        id: 'osm',
-        type: 'vector',
-        source: 'osm', // This must match the source key above
-      },
-    ],
-  }
+  // const style = {
+  //   version: 8,
+  //   sources: {
+  //     osm: {
+  //       type: 'vector',
+  //       tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+  //       tileSize: 256,
+  //       attribution: '&copy; OpenStreetMap Contributors',
+  //       maxzoom: 19,
+  //     },
+  //   },
+  //   layers: [
+  //     {
+  //       id: 'osm',
+  //       type: 'vector',
+  //       source: 'osm', // This must match the source key above
+  //     },
+  //   ],
+  // }
 
   onMount(async () => {
     const new_map = new Map({
@@ -44,11 +44,15 @@
       zoom,
       hash: true,
     })
+
     new_map.addControl(new maplibregl.NavigationControl({}), 'top-right')
     new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
+
     const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
-    // @ts-ignore
+
     new_map.addControl(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       new MaplibreExportControl({
         PageSize: Size.A4,
         PageOrientation: PageOrientation.Landscape,
@@ -59,8 +63,9 @@
       }),
       'top-right',
     )
+
     //setMap(new_map);
-    map.update((m) => new_map)
+    map.update(() => new_map)
   })
 </script>
 

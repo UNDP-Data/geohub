@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tab, { Label, Icon } from '@smui/tab'
+  import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
   import ColorRamps from './ColorRamps.svelte'
 

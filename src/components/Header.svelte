@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import TopAppBar, { Row, Section, Title, AutoAdjust, TopAppBarComponentDev } from '@smui/top-app-bar'
+  import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
 
   import { Icon } from '@smui/button'
   // import Icon from '@iconify/svelte';
@@ -8,25 +8,25 @@
   import { Svg } from '@smui/common/elements'
   import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
 
-  let topAppBar: TopAppBarComponentDev
-  let darkTheme: boolean | undefined = false
-  export let drawerOpen: boolean = true
-  export let panelOpen: boolean = true
+  let topAppBar: any
+  let darkTheme: boolean
+  export let drawerOpen = true
+  export let panelOpen = true
 
   onMount(() => {
     window.matchMedia('(prefers-color-scheme: light)')
   })
 
-  function smartToggle() {
-    if (!drawerOpen) {
-      drawerOpen = !drawerOpen
-      if (!panelOpen) {
-        panelOpen = !panelOpen
-      }
-    } else {
-      panelOpen = !panelOpen
-    }
-  }
+  // function smartToggle() {
+  //   if (!drawerOpen) {
+  //     drawerOpen = !drawerOpen
+  //     if (!panelOpen) {
+  //       panelOpen = !panelOpen
+  //     }
+  //   } else {
+  //     panelOpen = !panelOpen
+  //   }
+  // }
 </script>
 
 <!-- set up color theme -->

@@ -39,7 +39,7 @@
     "@smui/tab": "^6.0.0-beta.13",
     "@smui/tab-bar": "^6.0.0-beta.13",
     "@smui/tooltip": "^6.0.0-beta.14",
-    "@smui/top-app-bar": "^6.0.0-beta.13",
+    "@smui/top-app-bar": "^6.0.0-beta.15",
     "@sveltejs/adapter-node": "^1.0.0-next.69",
     "@sveltejs/kit": "^1.0.0-next.283",
     "@types/colormap": "^2.3.1",
