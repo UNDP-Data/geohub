@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "UNLICENSED",
   "scripts": {
+    "start": "svelte-kit dev --open",
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
@@ -17,7 +18,7 @@
     "prettifile": "prettier --ignore-path .prettierignore --write",
     "smui-theme-light": "smui-theme compile static/smui.css -i src/theme",
     "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/theme/dark",
-    "prepare": "npm run smui-theme-light && npm run smui-theme-dark"
+    "prepare": "npm run smui-theme-light && npm run smui-theme-dark && husky install"
   },
   "devDependencies": {
     "@azure/storage-blob": "^12.8.0",
@@ -50,6 +51,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
+    "husky": "^7.0.0",
     "maplibre-gl": "^2.1.6",
     "prettier": "^2.4.1",
     "prettier-plugin-svelte": "^2.4.0",

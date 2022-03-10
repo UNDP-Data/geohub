@@ -2,6 +2,7 @@
   // retain module scoped expansion state for each tree node
   const _expansionState = {}
 </script>
+
 <script lang="ts">
   /*
     Update the JSON based data structure that power the tree view (this) component

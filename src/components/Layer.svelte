@@ -13,7 +13,6 @@
   export let lName = ''
   export let lDef: any = undefined
   export let lType = ''
-
   ;({ lName, lDef, lType } = layerCfg)
   let surface: any
   let selected: boolean = lDef.layout.visibility === 'visible' ? true : false
