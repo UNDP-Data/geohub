@@ -3,9 +3,8 @@
   import Content from '../components/Content.svelte'
   import Map from '../components/Map.svelte'
 
-  let drawerOpen: boolean = true
-  $: updateDrawer = drawerOpen
-  let panelOpen: boolean = false
+  let drawerOpen = true
+  let panelOpen = false
   import { style } from 'svelte-body'
 </script>
 
@@ -13,7 +12,7 @@
 
 <Header bind:drawerOpen bind:panelOpen />
 
-<Content bind:open={drawerOpen} bind:expanded={panelOpen}>
+<Content bind:open={drawerOpen}>
   <Map />
 </Content>
 

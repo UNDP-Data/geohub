@@ -12,6 +12,7 @@ Make sure you have `node`, `nvm`, `yarn` installed before you get to these comma
 - `yarn start` // to start the SvelteKit on `localhost:3000`
 
 Copy and update the environment variables file by running this command and contacting the project manager to obtain the values:
+
 ```bash
 cp .env.example .env
 ```
@@ -23,12 +24,12 @@ VITE_TITILER_ENDPOINT=
 ```
 
 GeoHub uses [SvelteKit](https://kit.svelte.dev/) and it is recommended to use [Visual Studio Code](https://code.visualstudio.com/) for development coding purposes. Install the following VS Code extensions for the optimal GeoHub developer experience:
-* [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-* [LintLens](https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens)
-* [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-* [Statusbar error](https://marketplace.visualstudio.com/items?itemName=JoeBerria.statusbarerror)
-* [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [LintLens](https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Statusbar error](https://marketplace.visualstudio.com/items?itemName=JoeBerria.statusbarerror)
+- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
 ### Run GitHub Actions Locally
 
