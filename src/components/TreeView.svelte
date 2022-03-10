@@ -27,17 +27,12 @@
     */
 
   import { v4 as uuidv4 } from 'uuid'
+  import type { Tree } from '../lib/types'
+  import { TreeNodeInitialValues } from '../lib/constants'
   import { wtree, layerList } from '../stores/stores'
   import { map } from '../stores/mapstore'
 
-  export let tree = {
-    label: 'GeoHub Azure Storage',
-    children: [],
-    path: '/',
-    url: null,
-    isRaster: false,
-  }
-
+  export let tree = TreeNodeInitialValues
   let icon = '&#43'
   let checked = false
 
@@ -54,7 +49,7 @@
     return res
   }
 
-  const updateTree = (oldTree: any, child: any) => {
+  const updateTree = (oldTree: Tree, child: Tree) => {
     let subpaths = path.split('/').slice(0, -1)
     let root = oldTree.tree
 

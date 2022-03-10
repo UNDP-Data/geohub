@@ -12,14 +12,10 @@
 
 <script lang="ts">
   import { wtree } from '../stores/stores'
+  import { TreeNodeInitialValues } from '../lib/constants'
+
   export let tree = {
-    tree: {
-      label: 'GeoHub Azure Storage',
-      children: [],
-      path: '/',
-      url: null,
-      isRaster: false,
-    },
+    tree: TreeNodeInitialValues
   }
   console.log('client in index', tree)
   wtree.set(tree)

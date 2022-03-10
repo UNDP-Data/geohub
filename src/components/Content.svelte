@@ -6,20 +6,16 @@
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { wtree } from '../stores/stores'
+  import { TabNames } from '../lib/constants'
 
   export let open = false
-
   let active = 'Load'
-
-  const TAB_LABEL_LOAD_DATA = 'Load data'
-  const TAB_LABEL_LAYERS = 'Layers'
-  const TAB_LABEL_ANALYZE = 'Analyze'
 </script>
 
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open>
     <Header>
-      <TabBar tabs={[TAB_LABEL_LOAD_DATA, TAB_LABEL_LAYERS]} let:tab bind:active>
+      <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active>
         <Tab {tab} class="tab">
           <Label>{tab}</Label>
         </Tab>
@@ -27,17 +23,17 @@
     </Header>
 
     <Content>
-      {#if active === TAB_LABEL_LOAD_DATA}
+      {#if active === TabNames.LoadData}
         <TreeView tree={$wtree.tree} />
-      {:else if active === TAB_LABEL_LAYERS}
+      {:else if active === TabNames.Layers}
         <LayerList />
-      {:else if active === TAB_LABEL_ANALYZE}
+      {:else if active === TabNames.Analyze}
         Analyze
       {/if}
     </Content>
   </Drawer>
 
-  <AppContent class="app-content ">
+  <AppContent class="app-content">
     <main class="main-content">
       <slot />
     </main>
