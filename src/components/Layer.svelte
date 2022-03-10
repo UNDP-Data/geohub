@@ -24,7 +24,6 @@
   let chosen = 'viridis'
   let layerOpacity = 100
 
-
   $: visibility = selected ? 'visible' : 'none'
 
   const srcId = lDef.source

@@ -6,20 +6,12 @@ import {
 } from '@azure/storage-blob'
 
 import azure from '@azure/storage-blob'
+import type { Tree, TreeNode } from '../lib/types'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
 
 const account = AZURE_STORAGE_ACCOUNT
 const accountKey = AZURE_STORAGE_ACCESS_KEY
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
-
-export interface TreeNode {
-  label?: string
-  children?: Array<TreeNode>
-  path?: string
-  prefix?: string
-  url?: string
-  isRaster?: boolean
-}
 
 const isRasterExtension = (name: string) => {
   const splitAt = name.lastIndexOf('.')
@@ -111,7 +103,7 @@ const listContainer = async (containerName: string, relPath: string) => {
 const listContainers = async (prefix = '/') => {
   const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
   const tree: TreeNode = {
-    label: 'GeoHub Azure Storage',
+    label: 'GeoHub Storage',
     children: <TreeNode[]>[],
     path: prefix,
     url: null,
@@ -133,7 +125,7 @@ export async function get(query) {
     path = !path.endsWith('/') ? `${path}/` : query.url.searchParams.get('path')
   }
 
-  let tree
+  let tree:Tree
 
   if (path === '/') {
     tree = await listContainers()
