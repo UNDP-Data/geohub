@@ -27,33 +27,18 @@
     }
 
     $map.setLayoutProperty(lId, 'visibility', visibility)
-    // console.log($map.getStyle().layers.length);
-    // console.log($map.getStyle().layers);
   }
 
   let show = false
-  // const isShowed = () => {
-  //   console.log('Clicked!!!')
-  //   show = !show
-  //   return show
-  // }
-
-  // let lSrc = $map.getSource(srcId);
-  // $map.removeSource(srcId);
-  // lSrc.tiles[0] = newUrl;
-  // $map.addSource(srcId,lSrc);
-  // map.getStyle().sources[srcId].reload();
 
   const removeLayer = () => {
     console.log(`removing ${lId}`)
     $map.removeLayer(lId)
 
-    //TODO remove the layer source as well if none of the layers reference it
+    // TODO: remove the layer source as well if none of the layers reference it
     $layerList = $layerList.filter((item) => item.lDef.id != lId)
   }
 
-  // const openOpacity = () => {}
-  // let querySelected: boolean = true
   let active = ''
 
   const tabExpand = (tabName: string) => {
@@ -74,23 +59,13 @@
 
   let choices = ['viridis', 'plasma', 'inferno', 'magma', 'cividis']
   let chosen = 'viridis'
-  // let value = 50
 
   const handleUrlChange = (colorMap: any) => {
-    // Need to reconstruct the url. Need to reload the map
-    // The reconstruction:
-    // lSrc.tiles[0] = newUrl;
-    // $map.addSource(srcId,lSrc);
-    // map.getStyle().sources[srcId].reload();
     console.log(colorMap)
   }
 
-  // import Dialog, { Title, Content, InitialFocus } from '@smui/dialog'
-  // import Slider from '@smui/slider'
   import FormField from '@smui/form-field'
 
-  // let open = false
-  // let showLayerInfo = false
   let layerOpacity = 100
 
   const setLayerOpacity = () => {
@@ -122,10 +97,6 @@
       size="mini"
       class="material-icons">legend_toggle</IconButton
     >
-    <!--            <IconButton size="mini" on:click={() => handleChange()} toggle bind:pressed={querySelected} >-->
-    <!--                <Icon color="primary" class="material-icons" on>toggle_off</Icon>-->
-    <!--                <Icon class="material-icons">toggle_on</Icon>-->
-    <!--            </IconButton>-->
     <IconButton bind:disabled size="mini" class="material-icons" on:click={() => (disabled = !disabled)}
       >info</IconButton
     >
@@ -149,7 +120,6 @@
   {#if show}
     <Paper style="padding: 0" variant="unelevated">
       <SegmentedButton style="width: 100%" segments={choices} let:segment singleSelect bind:chosen>
-        <!-- Note: the `segment` property is required! -->
         <Segment
           bind:chosen
           style="width: 25%"

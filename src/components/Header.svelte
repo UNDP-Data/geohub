@@ -3,7 +3,6 @@
   import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
 
   import { Icon } from '@smui/button'
-  // import Icon from '@iconify/svelte';
   import IconButton from '@smui/icon-button'
   import { Svg } from '@smui/common/elements'
   import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
@@ -16,21 +15,7 @@
   onMount(() => {
     window.matchMedia('(prefers-color-scheme: light)')
   })
-
-  // function smartToggle() {
-  //   if (!drawerOpen) {
-  //     drawerOpen = !drawerOpen
-  //     if (!panelOpen) {
-  //       panelOpen = !panelOpen
-  //     }
-  //   } else {
-  //     panelOpen = !panelOpen
-  //   }
-  // }
 </script>
-
-<!-- set up color theme -->
-
 <svelte:head>
   {#if darkTheme === undefined}
     <link rel="stylesheet" href="/smui.css" media="(prefers-color-scheme: light)" />

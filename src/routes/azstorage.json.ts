@@ -6,10 +6,8 @@ import {
 } from '@azure/storage-blob'
 
 import azure from '@azure/storage-blob'
-// // Load the .env file if it exists
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
 
-//set creds
 const account = AZURE_STORAGE_ACCOUNT
 const accountKey = AZURE_STORAGE_ACCESS_KEY
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
@@ -28,7 +26,6 @@ const isRasterExtension = (name: string) => {
   const ext = name.slice(splitAt, name.length)
   const extensions = ['.tif', '.tiff', '.vrt', '.jpg', '.jpeg', '.img', '.nc']
   const v = extensions.includes(ext.toLowerCase())
-  //console.log(name, ext, v);
   return v
 }
 
@@ -36,7 +33,7 @@ const listContainer = async (containerName: string, relPath: string) => {
   // create storage container
   const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
 
-  //generate account SAS token for vector tiles. This is needed because the
+  // generate account SAS token for vector tiles. This is needed because the
   // blob level SAS tokens have the blob name encoded inside the SAS token and the
   // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
 
@@ -64,7 +61,6 @@ const listContainer = async (containerName: string, relPath: string) => {
   const tree = { label: treeLabel, children: [], path: treePath, url: null }
   const cclient = blobServiceClient.getContainerClient(containerName)
   const containerChildren: Array<TreeNode> = []
-  //console.log('listing container',containerName, relPath, 'labelPath', labelPath );
   for await (const item of cclient.listBlobsByHierarchy('/', { prefix: relPath })) {
     let childLabel: string
 
