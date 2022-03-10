@@ -17,7 +17,6 @@
     import {layerList, dynamicLayers} from '../stores/stores';
     import IconButton, { Icon } from '@smui/icon-button';
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-    import Tooltip, {Wrapper,Content as TooltipContent,Link,RichActions} from '@smui/tooltip';
     import Badge from '@smui-extra/badge';
     import Slider from '@smui/slider';
     import Checkbox from '@smui/checkbox';
@@ -219,26 +218,15 @@
                 </Header>
             </div>
             <div class="layer-header-icons">
-                <Wrapper>
-                    <IconButton size="mini" on:click={() => toggleVisibility()} toggle bind:pressed={visSelected} >
-                        <Icon class="material-icons">visibility_off</Icon>
-                        <Icon color="primary" class="material-icons" on>visibility</Icon>
-                    </IconButton>
-                    <Tooltip  >
-                      <TooltipContent>
-                        Toggle visibility
-                      </TooltipContent>
-                    </Tooltip>
-                </Wrapper>
-
-                <Wrapper >
-                    <IconButton size="mini" class="material-icons" on:click={() => removeLayer()} >delete</IconButton>
-                    <Tooltip  >
-                      <TooltipContent>
-                        Remove layer from list
-                      </TooltipContent>
-                    </Tooltip>
-                </Wrapper>
+                
+                <IconButton size="mini" on:click={() => toggleVisibility()} toggle bind:pressed={visSelected} >
+                    <Icon class="material-icons">visibility_off</Icon>
+                    <Icon color="primary" class="material-icons" on>visibility</Icon>
+                </IconButton>
+            
+            
+                <IconButton size="mini" class="material-icons" on:click={() => removeLayer()} >delete</IconButton>
+                    
                 <Checkbox bind:checked={inDynamic} />
             </div>
             
@@ -247,63 +235,30 @@
         <Content>
             
                 <div style="display:flex; justify-content: center;">
-                    <Wrapper>
-                        <IconButton size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
-                        <Tooltip  >
-                          <TooltipContent>
-                            Set layer color
-                          </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
                     
-                    
-                    <Wrapper>
-                        <IconButton size="mini" class="material-icons" on:click={() => {activeSection="band"}} >legend_toggle</IconButton>
-                        <Tooltip  >
-                          <TooltipContent>
-                            Define/filter layer
-                          </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
-                    
-                    <Wrapper>
-                        <IconButton size="mini" class="material-icons" on:click={() => {activeSection="opacity"}}>opacity</IconButton>
-                        <Tooltip >
-                          <TooltipContent>
-                            Set layer opacity/transparency
-                          </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
+                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
+                
+                
+                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="band"}} >legend_toggle</IconButton>
+                
+                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="opacity"}}>opacity</IconButton>
+                
+                
+                    <IconButton size="mini"  toggle bind:pressed={queryEnabled} >
+                        <Icon class="material-icons">indeterminate_check_box</Icon>
+                        <Icon color="primary" class="material-icons" on>check_box</Icon>
+                    </IconButton>
 
-                    <Wrapper  >
-                        <IconButton size="mini"  toggle bind:pressed={queryEnabled} >
-                            <Icon class="material-icons">indeterminate_check_box</Icon>
-                            <Icon color="primary" class="material-icons" on>check_box</Icon>
-                        </IconButton>
-                        <Tooltip color="primary" >
-                          <TooltipContent>
-                            Turn querying ON/OFF
-                          </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
-                    <Wrapper>
-                        <IconButton size="mini" class="material-icons" on:click="{() => {hierachyUp(layerId)}}">keyboard_double_arrow_up
-                        </IconButton>
-                        <Tooltip color="primary" >
-                            <TooltipContent>
-                                Promote Layer
-                            </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
-                    <Wrapper>
-                        <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(layerId)}}">keyboard_double_arrow_down
-                        </IconButton>
-                        <Tooltip color="primary" >
-                            <TooltipContent>
-                                Demote Layer
-                            </TooltipContent>
-                        </Tooltip>
-                    </Wrapper>
+                
+                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyUp(layerId)}}">keyboard_double_arrow_up
+                    </IconButton>
+
+                
+
+                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(layerId)}}">keyboard_double_arrow_down
+                    </IconButton>
+                    
+                    
                 </div>
 
             {#if activeSection === 'color'}
