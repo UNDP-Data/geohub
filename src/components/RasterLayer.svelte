@@ -262,7 +262,7 @@
                 </div>
 
             {#if activeSection === 'color'}
-                <Colormaps bind:colorMapName/>
+                <Colormaps bind:colorMapName bind:layerCfg/>
             {:else if activeSection === 'band'}
                 <p>B</p>
 

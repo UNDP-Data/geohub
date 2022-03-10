@@ -1,16 +1,34 @@
 <script lang="ts">
-    import Select, { Option } from '@smui/select';
     import Chip, { Set, Text } from '@smui/chips';
-    import Paper, { Content } from '@smui/paper';
     import Button from '@smui/button';
+    import Slider from '@smui/slider';
+    import { layerList } from "../stores/stores"
 
     const colorMapTypes : Array<string> = ["Sequential", "Diverging", "Cyclic"];
     let selectedColorMapType : string = "";
     export let colorMapName;
+    export let layerCfg;
 
+    let lName,  lDef, lType, lInfo;
+    ({lName,lDef,lType, lInfo} = layerCfg);
+    const layerId = lDef.id;
 
+    const layer = $layerList.filter((item)=>item.lDef.id === layerId)
+
+    console.log("Layer: ", layer)
+    let valueStart = 1;
+    let valueEnd = 4;
 </script>
 <div class="paper-container">
+    <Slider
+            range
+            bind:start={valueStart}
+            bind:end={valueEnd}
+            min={0}
+            max={10}
+            step={0.1}
+            input$aria-label="Range slider"
+    />
     <Set chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
         <Chip {chip}>
             <Text>{chip}</Text>
