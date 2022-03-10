@@ -11,13 +11,8 @@
 </script>
 
 <div>
-  <!--
-      Note: tabs must be unique. (They cannot === each other.)
-    -->
   <TabBar tabs={layertabs.names} let:tab bind:active>
-    <!-- Note: the `tab` property is required! -->
     <Tab class="layer-tab" {tab}>
-      <!--            <Icon class="material-icons">palette</Icon>-->
       <Label>{tab}</Label>
     </Tab>
   </TabBar>

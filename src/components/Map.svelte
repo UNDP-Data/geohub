@@ -5,41 +5,16 @@
   import maplibregl, { Map } from 'maplibre-gl'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
-  // set the context here...
-
   export let lat = 0
   export let lon = 0
   export let zoom = 3
 
   let container: HTMLDivElement
 
-  // const style = {
-  //   version: 8,
-  //   sources: {
-  //     osm: {
-  //       type: 'vector',
-  //       tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
-  //       tileSize: 256,
-  //       attribution: '&copy; OpenStreetMap Contributors',
-  //       maxzoom: 19,
-  //     },
-  //   },
-  //   layers: [
-  //     {
-  //       id: 'osm',
-  //       type: 'vector',
-  //       source: 'osm', // This must match the source key above
-  //     },
-  //   ],
-  // }
-
   onMount(async () => {
     const new_map = new Map({
       container,
-      //container:"map",
       style: 'https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-
-      //style: 'https://demotiles.maplibre.org/style.json',
       center: [lon, lat],
       zoom,
       hash: true,
@@ -64,12 +39,10 @@
       'top-right',
     )
 
-    //setMap(new_map);
     map.update(() => new_map)
   })
 </script>
 
-<!-- this special element will be explained in a later section -->
 <svelte:head>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
 </svelte:head>
@@ -84,6 +57,5 @@
   :global(.maplibregl-map) {
     height: 100%;
     width: 100%;
-    /* // sometimes mapbox objects don't render as expected; troubleshoot by changing the height/width to px */
   }
 </style>
