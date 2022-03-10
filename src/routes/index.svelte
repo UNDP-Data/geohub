@@ -15,7 +15,7 @@
   import { TreeNodeInitialValues } from '../lib/constants'
 
   export let tree = {
-    tree: TreeNodeInitialValues
+    tree: TreeNodeInitialValues,
   }
   console.log('client in index', tree)
   wtree.set(tree)

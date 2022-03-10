@@ -16,6 +16,7 @@
     window.matchMedia('(prefers-color-scheme: light)')
   })
 </script>
+
 <svelte:head>
   {#if darkTheme === undefined}
     <link rel="stylesheet" href="/smui.css" media="(prefers-color-scheme: light)" />

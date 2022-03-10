@@ -125,7 +125,7 @@ export async function get(query) {
     path = !path.endsWith('/') ? `${path}/` : query.url.searchParams.get('path')
   }
 
-  let tree:Tree
+  let tree: Tree
 
   if (path === '/') {
     tree = await listContainers()
