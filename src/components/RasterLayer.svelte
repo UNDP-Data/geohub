@@ -25,8 +25,8 @@
 
 
     export let layerCfg;
-    let lName,  lDef, lType, lStats;
-    ({lName,lDef,lType, lStats} = layerCfg);
+    let lName,  lDef, lType, lInfo;
+    ({lName,lDef,lType, lInfo} = layerCfg);
     
     
     const srcId = lDef.source;

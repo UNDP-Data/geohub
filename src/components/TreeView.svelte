@@ -125,7 +125,7 @@
         const srcId = path.replace(/\//g,'_');
         //console.log(path, srcId);
         const lid = uuidv4();
-        let lStats = {};
+        let lInfo = {};
         let lBounds = [];
         if (!checked){
 
@@ -181,18 +181,19 @@
                 [base,sign] = url.split('?');
                 let b64_encoded_url  = `${base}?${btoa(sign)}`;
                 //console.log(`${b64_encoded_url}`);
-                let statUrl = `${TITILER_ENDPOINT}/statistics?url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&max_size=1024&categorical=false&p=5&p=95&p=98&p=2`
-                let boundsUrl = `${TITILER_ENDPOINT}/bounds?url=${b64_encoded_url}`
+                
+                let infoUrl = `${TITILER_ENDPOINT}/info?url=${b64_encoded_url}`
                 
                 //tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${base}&url_params=${btoa(sign)}&bidx=1&unscale=false&resampling=nearest&rescale=0,1&colormap_name=inferno&return_mask=true`;
-                lStats = await fetchLayerStats(statUrl);
-                lBounds = await fetchLayerBounds(boundsUrl);
-                //console.log(lBounds['bounds']);
+                lInfo = await fetchLayerStats(infoUrl);
+                lBounds = lInfo['bounds'];
+                //console.log(JSON.stringify(info, null, '\t'));
 
-                let lMin = lStats["1"]["min"]
-                let lMax = lStats["1"]["max"]
-                //console.log(`Stats ${lMax} ${lMin}`);
-                tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&colormap_name=viridis&return_mask=true`;
+                let lMin = lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
+                let lMax = lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+                
+                
+                tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&return_mask=true&colormap=%5B%5B%5B0.9%2C+3%5D%2C+%5B228%2C+26%2C+28%2C+255%5D%5D%2C+%5B%5B3%2C+6%5D%2C+%5B55%2C+126%2C+184%2C+255%5D%5D%2C+%5B%5B6%2C+8.31%5D%2C+%5B77%2C+175%2C+74%2C+255%5D%5D%5D`;
                 
             
                 
@@ -233,7 +234,7 @@
 
                 }
                 //console.log($layerList);
-                layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster', 'lStats':lStats}, ...$layerList ]);
+                layerList.set([{'lName':lName, 'lDef':lDef, 'lType':'raster', 'lInfo':lInfo}, ...$layerList ]);
                 let firstSymbolId = undefined;
                 for (const layer of $map.getStyle().layers) {
                     if (layer.type === 'symbol') {
@@ -241,7 +242,7 @@
                         break;
                     }
                 }
-                console.log(`LL: ${JSON.stringify($layerList, null, '\t')}`);
+                //console.log(`LL: ${JSON.stringify($layerList, null, '\t')}`);
                 $map.addLayer(lDef, firstSymbolId);
             }
             
