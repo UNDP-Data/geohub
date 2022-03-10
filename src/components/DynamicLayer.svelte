@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readFileSync } from 'fs';
   import {map} from '../stores/mapstore';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
@@ -53,8 +54,8 @@
       // console.log(JSON.stringify(inputLayer.lDef, null, '\t'));
       // console.log(JSON.stringify(inputLayer.lStats, null, '\t'));
 
-      lMin = parseFloat(inputLayer.lStats["1"]["min"].toFixed(2));
-      lMax = parseFloat(inputLayer.lStats["1"]["max"].toFixed(2));
+      lMin = parseFloat(inputLayer.Info['band_metadata'][0][1]['STATISTICS_MINIMUM'].toFixed(2));
+      lMax = parseFloat(inputLayer.Info['band_metadata'][0][1]['STATISTICS_MINIMUM'].toFixed(2));
       lStep  = (lMax-lMin) *1e-2;
       lStep = parseFloat(lStep.toFixed(2));
 
@@ -84,28 +85,84 @@
   const processSliderClick = () => {
     expression += `${lSliderValue}`;
   }
-
+  
+  
   const processCombinedLayer = (action:boolean) => {
-    
+    //#TODO: use env var to set the endpoint 
     console.log(`inside processCombinedLayer ${action}`);
     if (action == true){
-      
-      let combinedURL = '';
-      $dynamicLayers.forEach((lid) => {
+      let combinedurl:string = '';
+      let bounds = []
+      $dynamicLayers.forEach((lid, i) => {
         console.log(`processing ${lid}`);
         let inLayer =  $layerList.filter(item => item.lDef.id === lid).pop();
         
         let lSrc = $map.getSource(inLayer.lDef.source);
         let tileurl = lSrc.tiles[0];
+        
         let tURL = new URL(tileurl);
+        // console.log(tURL);
+        
         let lurl = tURL.searchParams.get('url');
-        let base, sign;
-        [base,sign] = lurl.split('?');
+        if (combinedurl == ''){
+          combinedurl = `${tURL.protocol}/${tURL.host}${decodeURI(tURL.pathname)}?scale=1&TileMatrixSetId=WebMercatorQuad`;
+          bounds = lSrc.bounds;
+          
+        } 
+        combinedurl += `&url=${lurl}`
+        
+        
+        
+        
 
-        console.log(lurl);
       });
 
+      combinedurl += `&unscale=false&resampling=nearest&rescale=0,1&colormap_name=viridis&return_mask=true`
+
       
+      
+
+      //console.log(combinedurl);
+      const lSrc = {
+                    'type': 'raster',
+                    'tiles': [combinedurl],         
+                    'tileSize': 256,
+                    'bounds':bounds,
+                    'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
+      };
+
+      console.log(JSON.stringify(lSrc));
+
+      const srcID = uuidv4();
+      if(! (srcID in $map.getStyle().sources)){
+        $map.addSource(srcID,lSrc);
+      }
+      const lDef = {
+                    
+                    'id': newLayerId || 'test',
+                    'type': 'raster',
+                    'source': srcID,
+                    'minzoom': 0,
+                    'maxzoom': 22,
+                    'layout': {
+                        'visibility':'visible'
+                        
+                        },
+
+
+      };
+
+      layerList.set([{'lName':newLayerName || 'test', 'lDef':lDef, 'lType':'raster', 'lInfo':{}}, ...$layerList ]);
+      let firstSymbolId = undefined;
+      for (const layer of $map.getStyle().layers) {
+          if (layer.type === 'symbol') {
+              firstSymbolId = layer.id;
+              break;
+          }
+      }
+      
+      //console.log(`LL: ${JSON.stringify($layerList, null, '\t')}`);
+      $map.addLayer(lDef, firstSymbolId);
 
     }
 
