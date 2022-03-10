@@ -59,7 +59,6 @@
     position: relative;
     flex-grow: 1;
   }
-
   .main-content {
     overflow: hidden;
     display: flex;
@@ -79,7 +78,7 @@
     display: inline-block;
     max-height: 40%;
     min-height: auto;
-    /* height: 150px; */
+
     position: absolute;
     bottom: 0;
     left: 0;
