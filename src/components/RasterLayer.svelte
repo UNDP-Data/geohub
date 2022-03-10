@@ -14,11 +14,14 @@
   import Checkbox from '@smui/checkbox'
   import Colormaps from './Colormaps.svelte'
 
-  export let layerCfg: any
+  import type { Layer, LayerDefinition } from '../lib/types'
+  import { LayerInitialValues } from '../lib/constants'
 
-  let lName: string, lDef: any
-  ;({ lName, lDef } = layerCfg)
-  const layerId = lDef.id
+  export let layerConfig: Layer = LayerInitialValues
+
+  let name: string, definition: LayerDefinition
+  ;({ name, definition } = layerConfig)
+  const layerId = definition.id
 
   export let activeSection: string = _sectionState[layerId] || ''
   export let panelOpen: boolean = _layerState[layerId] || false
@@ -27,7 +30,7 @@
 
   let allLayers = $map.getStyle().layers
   let colorMapName = ''
-  let layer = allLayers.filter((item: any) => item.id == layerId).pop()
+  let layer = allLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
   let len = allLayers.length
   let index = allLayers.indexOf(layer)
   let layerOpacity = 1
@@ -46,7 +49,7 @@
 
   const toggleVisibility = () => {
     if (!$map.getLayer(layerId)) {
-      $map.addLayer(lDef)
+      $map.addLayer(definition)
     }
     $map.setLayoutProperty(layerId, 'visibility', visibility)
   }
@@ -54,7 +57,7 @@
   const removeLayer = () => {
     $map.removeLayer(layerId)
     //TODO remove the layer source as well if none of the layers reference it
-    $layerList = $layerList.filter((item) => item.lDef.id !== layerId)
+    $layerList = $layerList.filter((item) => item.definition.id !== layerId)
     //$dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
 
     //update dynamic
@@ -81,7 +84,6 @@
   }
 
   const setDynamicLayerState = () => {
-    console.log('DLL before', JSON.stringify($dynamicLayers))
     _dynamicLayerState[layerId] = inDynamic
     if (inDynamic == true) {
       if (!$dynamicLayers.includes(layerId)) {
@@ -127,19 +129,15 @@
 
   const selectColorMap = () => {
     if (colorMapName) {
-      let layerS = allLayers.filter((item: any) => item.id === layerId).pop()['source']
-      const layerSource = $map.getSource(layerS)
-      let old_url = layerSource.tiles[0]
-
-      // console.log(old_url)
-      let oldUrl = new URL(old_url)
+      let layers = allLayers.filter((item: LayerDefinition) => item.id === layerId).pop()['source']
+      const layerSource = $map.getSource(layers)
+      const oldUrl = new URL(layerSource.tiles[0])
       oldUrl.searchParams.set('colormap_name', colorMapName)
       let newUrl = oldUrl.toString()
 
-      // console.log(newUrl);
-      $map.getSource(layerS).tiles = [decodeURI(newUrl)]
-      $map.style.sourceCaches[layerS].clearTiles()
-      $map.style.sourceCaches[layerS].update($map.transform)
+      $map.getSource(layers).tiles = [decodeURI(newUrl)]
+      $map.style.sourceCaches[layers].clearTiles()
+      $map.style.sourceCaches[layers].update($map.transform)
       $map.triggerRepaint()
     }
   }
@@ -151,7 +149,7 @@
       <div class="layer-header-name">
         <Header>
           <span class="layer-name"
-            >{lName}<Badge position="inset" align="bottom-end" aria-label="unread count">{index}/{len}</Badge></span
+            >{name}<Badge position="inset" align="bottom-end" aria-label="unread count">{index}/{len}</Badge></span
           >
         </Header>
       </div>

@@ -9,13 +9,13 @@
   import { TabNames } from '../lib/constants'
 
   export let open = false
-  let active = 'Load'
+  let activeTab = TabNames.LoadData
 </script>
 
 <div class="drawer-container">
   <Drawer variant="dismissible" bind:open>
     <Header>
-      <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active>
+      <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active={activeTab}>
         <Tab {tab} class="tab">
           <Label>{tab}</Label>
         </Tab>
@@ -23,11 +23,11 @@
     </Header>
 
     <Content>
-      {#if active === TabNames.LoadData}
+      {#if activeTab === TabNames.LoadData}
         <TreeView tree={$wtree.tree} />
-      {:else if active === TabNames.Layers}
+      {:else if activeTab === TabNames.Layers}
         <LayerList />
-      {:else if active === TabNames.Analyze}
+      {:else if activeTab === TabNames.Analyze}
         Analyze
       {/if}
     </Content>

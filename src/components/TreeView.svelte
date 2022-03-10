@@ -25,7 +25,7 @@
           $: ({ label, children, path, url, isRaster } = tree)
   */
   import { v4 as uuidv4 } from 'uuid'
-  import type { Tree } from '../lib/types'
+  import type { Tree, LayerDefinition, LayerInfo } from '../lib/types'
   import { TreeNodeInitialValues } from '../lib/constants'
   import { wtree, layerList } from '../stores/stores'
   import { map } from '../stores/mapstore'
@@ -71,28 +71,28 @@
   }
 
   const loadLayer = async () => {
-    const srcId = path.replace(/\//g, '_')
-    const lid = uuidv4()
-    let lInfo = {}
+    const tileSourceId = path.replace(/\//g, '_')
+    const layerId = uuidv4()
+    let layerInfo: LayerInfo = {}
 
     if (!checked) {
       if (!isRaster) {
-        const lName = path.split('/')[path.split('/').length - 2]
+        const layerName = path.split('/')[path.split('/').length - 2]
         console.log('load vector layer ', label, url)
-        const lSrc = {
+        const layerSource = {
           type: 'vector',
           tiles: [url],
           minzoom: 0,
           maxzoom: 12,
         }
-        if (!(srcId in mmap.getStyle().sources)) {
-          $map.addSource(srcId, lSrc)
+        if (!(tileSourceId in mmap.getStyle().sources)) {
+          $map.addSource(tileSourceId, layerSource)
         }
 
-        const lDef = {
-          id: lid, // Layer ID
+        const layerDefinition: LayerDefinition = {
+          id: layerId,
           type: 'line',
-          source: srcId, // ID of the tile source created above
+          source: tileSourceId,
           'source-layer': label,
           layout: {
             visibility: 'visible',
@@ -105,45 +105,50 @@
           },
         }
 
-        layerList.set([{ lName: lName, lDef: lDef, lType: 'vector', lStats: {} }, ...$layerList])
-        $map.addLayer(lDef)
+        layerList.set([{ name: layerName, definition: layerDefinition, type: 'vector' }, ...$layerList])
+        $map.addLayer(layerDefinition)
       } else {
-        const lName = path.split('/')[path.split('/').length - 1]
+        const layerName = path.split('/')[path.split('/').length - 1]
         let tilejsonURL: string
 
         let base: string, sign: string
         ;[base, sign] = url.split('?')
         let b64_encoded_url = `${base}?${btoa(sign)}`
         let infoUrl = `${TITILER_ENDPOINT}/info?url=${b64_encoded_url}`
-        lInfo = await fetchLayerInfo(infoUrl)
+        layerInfo = await fetchLayerInfo(infoUrl)
 
-        let lMin = lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-        let lMax = lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+        console.log(layerInfo)
+
+        let lMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
+        let lMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
 
         tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&return_mask=true&colormap_name=viridis`
 
-        const lSrc = {
+        const layerSource = {
           type: 'raster',
           tiles: [tilejsonURL],
           tileSize: 256,
-          bounds: lInfo['bounds'],
+          bounds: layerInfo['bounds'],
           attribution:
             'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
         }
-        if (!(srcId in mmap.getStyle().sources)) {
-          mmap.addSource(srcId, lSrc)
+        if (!(tileSourceId in mmap.getStyle().sources)) {
+          mmap.addSource(tileSourceId, layerSource)
         }
-        const lDef = {
-          id: lid,
+        const layerDefinition: LayerDefinition = {
+          id: layerId,
           type: 'raster',
-          source: srcId,
+          source: tileSourceId,
           minzoom: 0,
           maxzoom: 22,
           layout: {
             visibility: 'visible',
           },
         }
-        layerList.set([{ lName: lName, lDef: lDef, lType: 'raster', lInfo: lInfo }, ...$layerList])
+        layerList.set([
+          { name: layerName, definition: layerDefinition, type: 'raster', info: layerInfo },
+          ...$layerList,
+        ])
         let firstSymbolId = undefined
         for (const layer of $map.getStyle().layers) {
           if (layer.type === 'symbol') {
@@ -151,7 +156,7 @@
             break
           }
         }
-        $map.addLayer(lDef, firstSymbolId)
+        $map.addLayer(layerDefinition, firstSymbolId)
       }
     }
   }
@@ -160,18 +165,11 @@
     expanded = _expansionState[label] = !expanded
 
     if (tree.children.length > 0) {
-      // console.log(`Nothing to do on ${label}`);
       return
     } else {
-      // fetch
-      // console.log('before', tree);
       let newTree = await fetchTree(tree.path)
-      // console.log('after', newTree.tree);
-
       let treeToUpdate = { ...$wtree }
-
       updateTree(treeToUpdate, newTree)
-
       wtree.set(treeToUpdate)
     }
   }

@@ -13,3 +13,10 @@ export const TreeNodeInitialValues = {
   url: null,
   isRaster: false,
 }
+
+export const LayerInitialValues = {
+  name: '',
+  definition: {},
+  type: '',
+  info: {},
+}

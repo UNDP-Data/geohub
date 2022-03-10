@@ -3,7 +3,6 @@
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
 
   export let expression = ''
-  export const clickedLayer = ''
 
   const arithmeticOperators = ['+', '-', '*', '/']
   const compOperators = ['==', '!=', '<', '<=', '>', '>=']
@@ -12,7 +11,7 @@
   const operators = [...arithmeticOperators, ...compOperators, ...logicalOperators, ...parantheses]
   let operator = undefined
   const fuctions = ['where(cond,true,false)', 'sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs']
-  let func
+  let func = ''
 
   $: operator, setOperator()
 
@@ -25,7 +24,6 @@
 
   const setFunc = () => {
     if (func) {
-      console.log(`func is ${func}`)
       expression += ` ${func} `
     }
   }

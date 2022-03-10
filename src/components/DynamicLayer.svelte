@@ -29,8 +29,8 @@
 
   let newLayerName = ''
   let newLayerId = ''
-  let clickedLayer: any = undefined
-  let lNames
+  let clickedLayer = ''
+  let lNames = []
   let expression = ''
 
   $: if (newLayerName != '') {
@@ -40,18 +40,18 @@
   const initialize = () => {
     lNames = $layerList
       .filter((item) => {
-        return $dynamicLayers.includes(item.lDef.id)
+        return $dynamicLayers.includes(item.definition.id)
       })
       .map((item) => {
-        return item.lName
+        return item.name
       })
   }
 
   const setLayerExpression = () => {
     if (clickedLayer) {
-      let inputLayer = $layerList.filter((item) => item.lDef.id === clickedLayer).pop()
-      lMin = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
-      lMax = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
+      let inputLayer = $layerList.filter((item) => item.definition.id === clickedLayer).pop()
+      lMin = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
+      lMax = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
 
       lStep = (lMax - lMin) * 1e-2
       lStep = parseFloat(lStep.toFixed(2))
@@ -73,9 +73,9 @@
       let bounds = []
       $dynamicLayers.forEach((lid) => {
         console.log(`processing ${lid}`)
-        let inLayer = $layerList.filter((item) => item.lDef.id === lid).pop()
+        let inLayer = $layerList.filter((item) => item.definition.id === lid).pop()
 
-        let lSrc = $map.getSource(inLayer.lDef.source)
+        let lSrc = $map.getSource(inLayer.definition.source)
         let tileurl = lSrc.tiles[0]
         let tURL = new URL(tileurl)
 
@@ -104,7 +104,7 @@
       if (!(srcID in $map.getStyle().sources)) {
         $map.addSource(srcID, lSrc)
       }
-      const lDef = {
+      const layerDefinition = {
         id: newLayerId || 'test',
         type: 'raster',
         source: srcID,
@@ -115,7 +115,7 @@
         },
       }
 
-      layerList.set([{ lName: newLayerName || 'test', lDef: lDef, lType: 'raster', lInfo: {} }, ...$layerList])
+      layerList.set([{ name: newLayerName || 'test', definition: layerDefinition, type: 'raster' }, ...$layerList])
       let firstSymbolId = undefined
       for (const layer of $map.getStyle().layers) {
         if (layer.type === 'symbol') {
@@ -123,15 +123,15 @@
           break
         }
       }
-      $map.addLayer(lDef, firstSymbolId)
+      $map.addLayer(layerDefinition, firstSymbolId)
     }
 
     expression = ''
     clickedLayer = undefined
   }
 
-  const setClickedLayer = (l) => {
-    clickedLayer = l
+  const setClickedLayer = (layer: string) => {
+    clickedLayer = layer
     setLayerExpression()
   }
 </script>
@@ -154,12 +154,6 @@
         {/if}
       </div>
       <div>
-        <!-- <Select bind:value={clickedLayer} label="Define layer">
-            {#each $dynamicLayers as l}
-              <Option value={l}>{lNames[$dynamicLayers.indexOf(l)]}</Option>
-            {/each}
-          </Select> -->
-
         <List style="max-width:300px">
           {#each $dynamicLayers as l}
             <Item
@@ -192,11 +186,8 @@
             </Button>
           </div>
         </div>
-        <!-- <div class="expr">
-          <pre class="status">Value: {lSliderValue}</pre>
-        </div> -->
         <div class="expr">
-          <Calculator bind:expression bind:clickedLayer />
+          <Calculator bind:expression />
         </div>
       {/if}
 
@@ -216,12 +207,9 @@
         </Set>
       </div>
 
-      {#if expression != ''}
+      {#if expression !== ''}
         <div class="expr">
           {@html expression}
-          <!-- {#each Object.entries(expression) as [lname, lexpr]}
-              {lname} - {lexpr}
-            {/each}  -->
         </div>
       {/if}
     </div>
@@ -236,11 +224,6 @@
   </Actions>
 </Dialog>
 
-<!-- <Paper variant="outlined">
-    <PTitle>Outlined Paper</PTitle>
-    <Subtitle>This is an outlined sheet of paper.</Subtitle>
-    <PContent><span>We have {$dynamicLayers.length} layers</span></PContent>
-</Paper> -->
 <style>
   .wrapper {
     border: 0px solid;

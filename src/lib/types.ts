@@ -10,3 +10,52 @@ export interface TreeNode {
   url?: string
   isRaster?: boolean
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface LayerList extends Array<Layer> {}
+
+export interface Layer {
+  name: string
+  definition: LayerDefinition
+  type?: string
+  info?: LayerInfo
+}
+
+export interface LayerDefinition {
+  id?: string
+  type?: string
+  source?: string
+  minzoom?: number
+  maxzoom?: number
+  layout?: LayerVisibility
+  'source-layer'?: string
+  paint?: LayerPaint
+}
+
+export interface LayerVisibility {
+  visibility: string
+  'line-cap'?: string
+  'line-join'?: string
+}
+
+export interface LayerPaint {
+  'line-color': string
+  'line-width': number
+}
+
+export interface LayerInfo {
+  band_descriptions?: string[]
+  band_metadata?: string[]
+  bounds?: []
+  colorinterp?: []
+  count?: number
+  driver?: string
+  dtype?: string
+  height?: number
+  maxzoom?: number
+  minzoom?: number
+  nodata_type?: string
+  nodata_value?: number
+  overviews?: []
+  width?: number
+}

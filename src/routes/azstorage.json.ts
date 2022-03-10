@@ -119,7 +119,7 @@ const listContainers = async (prefix = '/') => {
   }
 }
 
-export async function get(query) {
+export async function get(query: any) {
   let path = '/'
   if (query.url.searchParams.has('path')) {
     path = !path.endsWith('/') ? `${path}/` : query.url.searchParams.get('path')
