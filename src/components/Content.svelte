@@ -1,7 +1,11 @@
 <script lang="ts">
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
+  import Tab, { Label } from '@smui/tab'
+  import TabBar from '@smui/tab-bar'
 
   import LayerList from './LayerList.svelte'
+  import TreeView from './TreeView.svelte'
+  import { wtree } from '../stores/stores'
 
   export let open = false
 
@@ -10,14 +14,6 @@
   const TAB_LABEL_LOAD_DATA = 'Load data'
   const TAB_LABEL_LAYERS = 'Layers'
   const TAB_LABEL_ANALYZE = 'Analyze'
-
-  import Tab, { Label } from '@smui/tab'
-  import TabBar from '@smui/tab-bar'
-
-  // let panel
-
-  import { wtree } from '../stores/stores'
-  import TreeView from './TreeView.svelte'
 </script>
 
 <div class="drawer-container">

@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { map } from '../stores/mapstore'
-
   import maplibregl, { Map } from 'maplibre-gl'
   import '@watergis/maplibre-gl-export/css/styles.css'
+  import { map } from '../stores/mapstore'
 
   export let lat = 0
   export let lon = 0

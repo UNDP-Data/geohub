@@ -1,9 +1,7 @@
 <script context="module" lang="ts">
   // retain module scoped expansion state for each tree node
-  const _expansionState = {
-  }
+  const _expansionState = {}
 </script>
-
 <script lang="ts">
   /*
     Update the JSON based data structure that power the tree view (this) component
@@ -32,6 +30,23 @@
   import { wtree, layerList } from '../stores/stores'
   import { map } from '../stores/mapstore'
 
+  export let tree = {
+    label: 'GeoHub Azure Storage',
+    children: [],
+    path: '/',
+    url: null,
+    isRaster: false,
+  }
+
+  let icon = '&#43'
+  let checked = false
+
+  $: arrowDown = expanded
+  $: expanded = _expansionState[label] || false
+  $: icon = expanded ? '&#8722' : '&#43'
+  $: mmap = $map
+  $: ({ label, children, path, url, isRaster } = tree)
+
   const fetchTree = async (path: string) => {
     let url = `azstorage.json?path=${path}`
     let res = await fetch(url).then((resp) => resp.json())
@@ -57,21 +72,6 @@
       root = nextRoot
     })
   }
-
-  $: mmap = $map
-
-  export let tree = {
-    label: 'GeoHub Azure Storage',
-    children: [],
-    path: '/',
-    url: null,
-    isRaster: false,
-  }
-
-  $: ({ label, children, path, url, isRaster } = tree)
-  $: expanded = _expansionState[label] || false
-
-  let icon = '&#43'
 
   const loadLayer = () => {
     const srcId = path.replace(/\//g, '_')
@@ -152,6 +152,7 @@
       }
     }
   }
+
   const toggleExpansion = async () => {
     expanded = _expansionState[label] = !expanded
 
@@ -165,10 +166,6 @@
       wtree.set(treeToUpdate)
     }
   }
-
-  $: arrowDown = expanded
-  $: icon = expanded ? '&#8722' : '&#43'
-  let checked = false
 </script>
 
 <ul>
@@ -211,7 +208,6 @@
     padding-left: 1.2rem;
     user-select: none;
   }
-
   .arrow {
     cursor: pointer;
     display: inline-block;
