@@ -1,25 +1,36 @@
 <script lang="ts">
-  import { map } from '../stores/mapstore'
-  import { layerList } from '../stores/stores'
+  import FormField from '@smui/form-field'
   import IconButton, { Icon } from '@smui/icon-button'
-  import TabBar from '@smui/tab-bar'
   import Paper from '@smui/paper'
   import MenuSurface from '@smui/menu-surface'
-  let surface: any
+  import TabBar from '@smui/tab-bar'
+  import SegmentedButton, { Segment } from '@smui/segmented-button'
+
+  import { map } from '../stores/mapstore'
+  import { layerList } from '../stores/stores'
 
   export let layerCfg: any
   export let lName = ''
   export let lDef: any = undefined
   export let lType = ''
-  ;({ lName, lDef, lType } = layerCfg)
 
+  ;({ lName, lDef, lType } = layerCfg)
+  let surface: any
   let selected: boolean = lDef.layout.visibility === 'visible' ? true : false
-  console.log(`selected initial value ${selected}`)
+  let show = false
+  let active = ''
+  let disabled = false
+  let choices = ['viridis', 'plasma', 'inferno', 'magma', 'cividis']
+  let chosen = 'viridis'
+  let layerOpacity = 100
+
+
   $: visibility = selected ? 'visible' : 'none'
+
   const srcId = lDef.source
   const lId = lDef.id
-
   const tabs = ['Colors', 'Symbology', 'Filter']
+
   const handleChange = () => {
     if (!$map.getLayer(lId)) {
       console.log(`adding ${lId} to map`)
@@ -29,8 +40,6 @@
     $map.setLayoutProperty(lId, 'visibility', visibility)
   }
 
-  let show = false
-
   const removeLayer = () => {
     console.log(`removing ${lId}`)
     $map.removeLayer(lId)
@@ -38,8 +47,6 @@
     // TODO: remove the layer source as well if none of the layers reference it
     $layerList = $layerList.filter((item) => item.lDef.id != lId)
   }
-
-  let active = ''
 
   const tabExpand = (tabName: string) => {
     if (show) {
@@ -54,19 +61,9 @@
     }
   }
 
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
-  let disabled = false
-
-  let choices = ['viridis', 'plasma', 'inferno', 'magma', 'cividis']
-  let chosen = 'viridis'
-
   const handleUrlChange = (colorMap: any) => {
     console.log(colorMap)
   }
-
-  import FormField from '@smui/form-field'
-
-  let layerOpacity = 100
 
   const setLayerOpacity = () => {
     let lSrc = $map.getSource(srcId)
