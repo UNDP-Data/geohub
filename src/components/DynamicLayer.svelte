@@ -1,36 +1,36 @@
 <script lang="ts">
-  import { readFileSync } from 'fs';
+  // import { readFileSync } from 'fs';
   import {map} from '../stores/mapstore';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import {layerList,dynamicLayers} from '../stores/stores';
-  import Chip, { Set, TrailingAction, Text } from '@smui/chips';
-  import Paper, { Title as PTitle, Subtitle, Content as PContent } from '@smui/paper';
-  import List, { Item, Separator, Text as LText, Meta, Label as LLabel } from '@smui/list';
+  import Chip, { Set, Text } from '@smui/chips';
+  // import Paper, { Title as PTitle, Subtitle, Content as PContent } from '@smui/paper';
+  import List, { Item, Text as LText, Meta, Label as LLabel } from '@smui/list';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
   import HelperText from '@smui/textfield/helper-text';
   import { v4 as uuidv4 } from 'uuid';
   import Calculator from './raster/Calculator.svelte'
   import Slider from '@smui/slider';
-  
+
 
 
   let lNames;
   let expression:string = '';
 
 
-  
+
 
 
   const initialize = () => {
-    
+
     lNames = $layerList.filter(item => {
-      return $dynamicLayers.includes(item.lDef.id); 
+      return $dynamicLayers.includes(item.lDef.id);
     }).map(item => {
       return item.lName;
     });
-    
+
 
     //$dynamicLayers.map(item=> {expression[item] = ''});
     // console.log(`expr ${JSON.stringify(expression)}`);
@@ -42,11 +42,11 @@
     console.log('legend type change');
 
   };
-  
+
   const setLayerExpression = () => {
-    
+
     if (clickedLayer){
-      
+
       console.clear();
       console.log(`setting expression ${expression} ${clickedLayer}`)
       // console.log(`fetching stats for ${clickedLayer}`)
@@ -56,9 +56,9 @@
 
       lMin = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2));
       lMax = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2));
-      
-     
-      
+
+
+
 
 
 
@@ -79,11 +79,11 @@
       // lSliderProps.start = start- (start - lSliderProps.min) % lSliderProps.step;
       //console.log('AFTER', JSON.stringify(lSliderProps, null, '\t'));
       let inputLayerIdx = $dynamicLayers.indexOf(clickedLayer)+1;
-  
+
       expression += `b${inputLayerIdx}`;
 
     }
-    
+
 
   };
 
@@ -91,10 +91,10 @@
   const processSliderClick = () => {
     expression += `${lSliderValue}`;
   }
-  
-  
+
+
   const processCombinedLayer = (action:boolean) => {
-    //#TODO: use env var to set the endpoint 
+    //#TODO: use env var to set the endpoint
     console.log(`inside processCombinedLayer ${action}`);
     if (action == true){
       let combinedurl:string = '';
@@ -102,36 +102,36 @@
       $dynamicLayers.forEach((lid, i) => {
         console.log(`processing ${lid}`);
         let inLayer =  $layerList.filter(item => item.lDef.id === lid).pop();
-        
+
         let lSrc = $map.getSource(inLayer.lDef.source);
         let tileurl = lSrc.tiles[0];
-        
+
         let tURL = new URL(tileurl);
         // console.log(tURL);
-        
+
         let lurl = tURL.searchParams.get('url');
         if (combinedurl == ''){
           combinedurl = `${tURL.protocol}/${tURL.host}${decodeURI(tURL.pathname)}?scale=1&TileMatrixSetId=WebMercatorQuad`;
           bounds = lSrc.bounds;
-          
-        } 
+
+        }
         combinedurl += `&url=${lurl}`
-        
-        
-        
-        
+
+
+
+
 
       });
 
       combinedurl += `&unscale=false&resampling=nearest&rescale=0,1&colormap_name=viridis&return_mask=true`
 
-      
-      
+
+
 
       //console.log(combinedurl);
       const lSrc = {
                     'type': 'raster',
-                    'tiles': [combinedurl],         
+                    'tiles': [combinedurl],
                     'tileSize': 256,
                     'bounds':bounds,
                     'attribution':'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
@@ -144,7 +144,7 @@
         $map.addSource(srcID,lSrc);
       }
       const lDef = {
-                    
+
                     'id': newLayerId || 'test',
                     'type': 'raster',
                     'source': srcID,
@@ -152,7 +152,7 @@
                     'maxzoom': 22,
                     'layout': {
                         'visibility':'visible'
-                        
+
                         },
 
 
@@ -166,7 +166,7 @@
               break;
           }
       }
-      
+
       //console.log(`LL: ${JSON.stringify($layerList, null, '\t')}`);
       $map.addLayer(lDef, firstSymbolId);
 
@@ -174,7 +174,7 @@
 
     expression = '';
     clickedLayer = undefined;
-    
+
 
   }
 
@@ -184,14 +184,14 @@
   let lMax=10;
   let lStep = 0;
   let lSliderValue=0;
-  
-  
+
+
   $: open, initialize();
-  
+
   let selectedRes = 'highest';
   let resChoices = ['highest', 'lowest', 'average']
 
- 
+
   let legendTypes = ['continuous', 'bucketed'];
   let selectedLegendType = '';
 
@@ -202,20 +202,20 @@
 		newLayerId = uuidv4();
 	}
 
-  
+
   let clickedLayer:any = undefined;
   let clickedLayerIndex = undefined;
-  
 
-  
+
+
   const setClickedLayer = (l) => {
     clickedLayer = l;
     setLayerExpression();
   }
 
 
-  
-  
+
+
 </script>
 
 <Dialog
@@ -247,19 +247,19 @@
           <List style="max-width:300px">
             {#each $dynamicLayers as l }
               <Item on:SMUI:action={() => {setClickedLayer(l)}} >
-                
+
                 <LText>{lNames[$dynamicLayers.indexOf(l)]}</LText>
-                
+
               </Item>
             {/each}
           </List>
 
-            
+
         </div>
-        
+
         {#if clickedLayer != undefined}
         <div class="onecol">
-        
+
           <div>{lMin} </div>
           <Slider discrete  bind:value={lSliderValue} min={lMin} max={lMax} step={lStep} style="width:300px" input$aria-label="Layer opacity"/>
           <div>{lMax}</div>
@@ -274,10 +274,10 @@
         </div> -->
           <div class='expr'>
             <Calculator bind:expression bind:clickedLayer ></Calculator>
-          </div>   
+          </div>
         {/if}
-        
-        
+
+
         <div >
 
             <Select bind:value={selectedLegendType} label="Select legend type">
@@ -285,9 +285,9 @@
                 <Option value={legendType}>{legendType}</Option>
               {/each}
             </Select>
-          
+
         </div>
-        
+
         <div>
           <Set chips={resChoices} let:chip choice bind:selected={selectedRes}>
             <Chip {chip} touch>
@@ -306,18 +306,18 @@
 
           </div>
         {/if}
-        
-    
-    
-        
+
+
+
+
 
       </div>
 
-      
-        
-        
 
-    
+
+
+
+
 
 
   </Content>
@@ -330,7 +330,7 @@
     </Button>
   </Actions>
 </Dialog>
- 
+
 
 <!-- <Paper variant="outlined">
     <PTitle>Outlined Paper</PTitle>
@@ -346,7 +346,7 @@
   gap: 5px 5px;
   align-items: center;
   justify-items: center;
-  
+
 }
 .wrapper > div {
   background-color: rgba(255, 255, 255, 0.8);
@@ -354,7 +354,7 @@
   border: 0px solid blue;
   align-items: stretch ;
   grid-auto-rows: 1fr;
-  
+
 }
 .expr {
   grid-column: 1/-1;

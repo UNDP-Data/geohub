@@ -8,4 +8,7 @@ node_modules
 !.env.example
 .idea
 env.ts
+yarn.lock
+static/
 .vscode/
+.prettierrc

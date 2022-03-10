@@ -42,7 +42,7 @@
 
     };
 
-    
+
     let querySelected : boolean = true;
     let active = "";
 
@@ -110,7 +110,7 @@
                     layerOpacity
                 )
             }
-            
+
         if(layer.type==="symbol"){
 
             // console.log("Layer is a point")
@@ -274,21 +274,7 @@
     </Panel>
 </Accordion>
 
-
-
-
 <style>
-    /*.layer-header {*/
-    /*    overflow-wrap:break-word;*/
-    /*    display: flex;*/
-    /*    flex-direction: row;*/
-    /*    flex-grow: 1;*/
-    /*    flex-wrap: nowrap;*/
-    /*    align-items: center; */
-    /*    width: 100%; */
-    /*    justify-content:space-evenly;*/
-    /*}*/
-
     .layer-header{
         display: flex;
         align-items: center;

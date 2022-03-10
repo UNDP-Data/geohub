@@ -1,42 +1,21 @@
-# create-svelte
+# UNDP GeoHub
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit](https://kit.svelte.dev/).
 
-## Creating a project
+## Installation
 
-If you're seeing this, you've probably already done this step. Congrats!
+You'll need a basic development environment prepared before you can install and run `geohub` on your machine.
+Make sure you have `node`, `nvm`, `yarn` installed before you get to these commands:
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
+- `nvm use` // to set the needed node version from .nvmrc
+- `yarn install` // to install dependencies
+- `yarn start` // to start the SvelteKit on `localhost:3000`
 
-# create a new project in my-app
-npm init svelte@next my-app
-```
-
-> Note: the `@next` is temporary
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+Copy and update the environment variables file by running this command and contacting the project manager to obtain the values:
 
 ```bash
 cp .env.example .env
-npm run build
 ```
-
-Note. for development, please set the following environmental variables in .env.
 
 ```
 AZURE_STORAGE_ACCOUNT=
@@ -44,20 +23,22 @@ AZURE_STORAGE_ACCESS_KEY=
 VITE_TITILER_ENDPOINT=
 ```
 
-You can preview the production build with `npm run preview`.
+GeoHub uses [SvelteKit](https://kit.svelte.dev/) and it is recommended to use [Visual Studio Code](https://code.visualstudio.com/) for development coding purposes. Install the following VS Code extensions for the optimal GeoHub developer experience:
 
-If you want to change host name, port number, etc, use environmental variables to run the server as follows
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [LintLens](https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Statusbar error](https://marketplace.visualstudio.com/items?itemName=JoeBerria.statusbarerror)
+- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+
+### Run GitHub Actions Locally
+
+GeoHub uses [GitHub Actions](https://docs.github.com/en/actions`) to simplify deployment to Azure. To test the workflow locally, follow instructions to install [act](https://github.com/nektos/act).
 
 ```
-MY_HOST_VARIABLE=127.0.0.1 \
-MY_PORT_VARIABLE=4000 \
-MY_ORIGINURL=https://my.site \
-AZURE_STORAGE_ACCOUNT={YOUR ACCOUNT} \
-AZURE_STORAGE_ACCESS_KEY={YOUR ACCOUNT KEY} \
-VITE_TITILER_ENDPOINT={TITER_ENDPOINT} \
-npm run preview
+# run in dry-run mode
+act  --secret-file .env -n
+
+# run default mode
+act --secret-file .env
 ```
-
-For production, `.env` will not work on Azure, so please directly set variables on Azure.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.
