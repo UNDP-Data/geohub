@@ -54,8 +54,14 @@
       // console.log(JSON.stringify(inputLayer.lDef, null, '\t'));
       // console.log(JSON.stringify(inputLayer.lStats, null, '\t'));
 
-      lMin = parseFloat(inputLayer.Info['band_metadata'][0][1]['STATISTICS_MINIMUM'].toFixed(2));
-      lMax = parseFloat(inputLayer.Info['band_metadata'][0][1]['STATISTICS_MINIMUM'].toFixed(2));
+      lMin = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2));
+      lMax = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2));
+      
+     
+      
+
+
+
       lStep  = (lMax-lMin) *1e-2;
       lStep = parseFloat(lStep.toFixed(2));
 

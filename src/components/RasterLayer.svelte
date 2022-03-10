@@ -109,7 +109,7 @@
         //console.log(JSON.stringify(_dynamicLayerState), );
         if (inDynamic == true){
             if (!$dynamicLayers.includes(layerId)){
-                dynamicLayers.set([layerId, ...$dynamicLayers]);
+                dynamicLayers.set([...$dynamicLayers, layerId]);
             }
                 
         }else{
@@ -219,13 +219,13 @@
             </div>
             <div class="layer-header-icons">
                 
-                <IconButton size="mini" on:click={() => toggleVisibility()} toggle bind:pressed={visSelected} >
+                <IconButton title="Toggle visibility" size="mini" on:click={() => toggleVisibility()} toggle bind:pressed={visSelected} >
                     <Icon class="material-icons">visibility_off</Icon>
                     <Icon color="primary" class="material-icons" on>visibility</Icon>
                 </IconButton>
             
             
-                <IconButton size="mini" class="material-icons" on:click={() => removeLayer()} >delete</IconButton>
+                <IconButton title="Remove layer" size="mini" class="material-icons" on:click={() => removeLayer()} >delete</IconButton>
                     
                 <Checkbox bind:checked={inDynamic} />
             </div>
@@ -236,26 +236,26 @@
             
                 <div style="display:flex; justify-content: center;">
                     
-                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
+                    <IconButton title="Color palette" size="mini" class="material-icons" on:click={() => {activeSection="color"}}>palette</IconButton>
                 
                 
-                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="band"}} >legend_toggle</IconButton>
+                    <IconButton title="Define/filter" size="mini" class="material-icons" on:click={() => {activeSection="band"}} >legend_toggle</IconButton>
                 
-                    <IconButton size="mini" class="material-icons" on:click={() => {activeSection="opacity"}}>opacity</IconButton>
+                    <IconButton title="Set transparency/opacity" size="mini" class="material-icons" on:click={() => {activeSection="opacity"}}>opacity</IconButton>
                 
                 
-                    <IconButton size="mini"  toggle bind:pressed={queryEnabled} >
+                    <IconButton title="Toggle querying/info" size="mini"  toggle bind:pressed={queryEnabled} >
                         <Icon class="material-icons">indeterminate_check_box</Icon>
                         <Icon color="primary" class="material-icons" on>check_box</Icon>
                     </IconButton>
 
                 
-                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyUp(layerId)}}">keyboard_double_arrow_up
+                    <IconButton title="Move layer up (in map)" size="mini" class="material-icons" on:click="{() => {hierachyUp(layerId)}}">keyboard_double_arrow_up
                     </IconButton>
 
                 
 
-                    <IconButton size="mini" class="material-icons" on:click="{() => {hierachyDown(layerId)}}">keyboard_double_arrow_down
+                    <IconButton title="Move layer down (in map)" size="mini" class="material-icons" on:click="{() => {hierachyDown(layerId)}}">keyboard_double_arrow_down
                     </IconButton>
                     
                     
@@ -317,11 +317,7 @@
         
     }
 
-    :global(.mdc-tooltip, .mdc-tooltip__content) {
-        color: whitesmoke;
-        background-color: black;
-
-    }
+    
 
      :global(.smui-accordion){
         z-index: 0;
