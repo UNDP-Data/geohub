@@ -15,49 +15,34 @@
 
     const layer = $layerList.filter((item)=>item.lDef.id === layerId).pop()
 
-    let lMin = Math.round(parseFloat(layer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']));
-    let lMax = Math.round(parseFloat(layer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']));
+    let lMin = parseFloat(layer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']);
+    let lMax = parseFloat(layer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']);
+    const diffValue = (lMax - lMin) * 0.5;
+    let lMinScaling = Math.floor((lMin - diffValue));
+    let lMaxScaling = Math.ceil((lMax + diffValue));
+    
+    let scalingValueStart = Math.floor(lMin * 10) / 10;
+    let scalingValueEnd = Math.ceil(lMax * 10) / 10;
 
-
-    // program to find the HCF or GCD of two integers
-
-    let hcf;
-
-    // looping from 1 to number1 and number2
-    for (let i = 1; i <= lMin && i <= lMax; i++) {
-
-        // check if is factor of both integers
-        if( lMin % i == 0 && lMax % i == 0) {
-            hcf = i;
-        }
+    export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`;
+    const setScalingValueRwange = () =>{
+        scalingValueRange = `${scalingValueStart},${scalingValueEnd}`;
     }
-
-    const setMin = () =>{
-        // Todo: Min will be based on the start value NOT min
-
-    }
-
-    const setMax = () => {
-        // Todo: Max will be based on the end value NOT max
-    }
-
-    // $:min, setMin()
-    // $:max, setMax()
-    let valueStart = 1;
-    let valueEnd = 4;
+    $: scalingValueStart, setScalingValueRwange();
+    $: scalingValueEnd, setScalingValueRwange();
 </script>
 <div class="paper-container">
     <Slider
             range
-            bind:start={valueStart}
-            bind:end={valueEnd}
-            min={0}
-            max={10}
+            bind:start={scalingValueStart}
+            bind:end={scalingValueEnd}
+            min={lMinScaling}
+            max={lMaxScaling}
             step={0.1}
             input$aria-label="Range slider"
     />
 
-    <span>   Image scaling: {lMax}, {lMin}</span>
+    <span>   Image scaling: {scalingValueStart}, {scalingValueEnd}</span>
     <Set chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
         <Chip {chip}>
             <Text>{chip}</Text>

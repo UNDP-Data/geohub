@@ -184,27 +184,38 @@
         }
     };
 
+    const updateParamsInURL = (params) => {
+        let layerS = allLayers.filter((item)=>item.id===layerId).pop()['source']
+        const layerSource = $map.getSource(layerS)
+        let old_url = layerSource.tiles[0]
+
+        let oldUrl = new URL(old_url)
+        Object.keys(params).forEach(key=>{
+            oldUrl.searchParams.set(key, params[key])
+        })
+        let newUrl = oldUrl.toString();
+
+        $map.getSource(layerS).tiles = [decodeURI(newUrl)];
+        $map.style.sourceCaches[layerS].clearTiles();
+        $map.style.sourceCaches[layerS].update($map.transform);
+        $map.triggerRepaint();
+    }
+
     let colorMapName;
     $: colorMapName, selectColorMap();
 
     const selectColorMap = () => {
-        if(colorMapName){
-            let layerS = allLayers.filter((item)=>item.id===layerId).pop()['source']
-            const layerSource = $map.getSource(layerS)
-            let old_url = layerSource.tiles[0]
-
-            // console.log(old_url)
-            let oldUrl = new URL(old_url)
-            oldUrl.searchParams.set("colormap_name", colorMapName)
-            let newUrl = oldUrl.toString();
-
-            // console.log(newUrl);
-            $map.getSource(layerS).tiles = [decodeURI(newUrl)];
-            $map.style.sourceCaches[layerS].clearTiles();
-            $map.style.sourceCaches[layerS].update($map.transform);
-            $map.triggerRepaint();
-        }
+        if (!colorMapName) return;
+        updateParamsInURL({ colormap_name: colorMapName })
     };
+
+    let scalingValueRange;
+    $: scalingValueRange, selectScaling();
+
+    const selectScaling = () => {
+        if (!scalingValueRange) return;
+        updateParamsInURL({ rescale: scalingValueRange })
+    }
 
 </script>
 
@@ -262,7 +273,7 @@
                 </div>
 
             {#if activeSection === 'color'}
-                <Colormaps bind:colorMapName bind:layerCfg/>
+                <Colormaps bind:colorMapName bind:layerCfg bind:scalingValueRange/>
             {:else if activeSection === 'band'}
                 <p>B</p>
 
