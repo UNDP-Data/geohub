@@ -29,13 +29,15 @@
   export let disabled = false
 
   let allLayers = $map.getStyle().layers
-  let colorMapName = ''
+  let colorMapName = 'viridis'
   let layer = allLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
   let len = allLayers.length
   let index = allLayers.indexOf(layer)
   let layerOpacity = 1
   let queryEnabled = true
   let visSelected = false
+  let reverseColorMap = false
+  let scalingValueRange
 
   $: activeSection, setSectionState()
   $: activeSection = _sectionState[layerId] || ''
@@ -46,6 +48,9 @@
   $: panelOpen, setLayerState()
   $: panelOpen = _layerState[layerId] || false
   $: visibility = visSelected ? 'visible' : 'none'
+  $: colorMapName, selectColorMap()
+  $: reverseColorMap, selectColorMap()
+  $: scalingValueRange, selectScaling()
 
   const toggleVisibility = () => {
     if (!$map.getLayer(layerId)) {
@@ -127,19 +132,31 @@
     }
   }
 
+  const updateParamsInURL = (params) => {
+    let layerS = allLayers.filter((item) => item.id === layerId).pop()['source']
+    const layerSource = $map.getSource(layerS)
+    let old_url = layerSource.tiles[0]
+    let oldUrl = new URL(old_url)
+    Object.keys(params).forEach((key) => {
+      oldUrl.searchParams.set(key, params[key])
+    })
+    let newUrl = oldUrl.toString()
+    $map.getSource(layerS).tiles = [decodeURI(newUrl)]
+    $map.style.sourceCaches[layerS].clearTiles()
+    $map.style.sourceCaches[layerS].update($map.transform)
+    $map.triggerRepaint()
+  }
   const selectColorMap = () => {
-    if (colorMapName) {
-      let layers = allLayers.filter((item: LayerDefinition) => item.id === layerId).pop()['source']
-      const layerSource = $map.getSource(layers)
-      const oldUrl = new URL(layerSource.tiles[0])
-      oldUrl.searchParams.set('colormap_name', colorMapName)
-      let newUrl = oldUrl.toString()
-
-      $map.getSource(layers).tiles = [decodeURI(newUrl)]
-      $map.style.sourceCaches[layers].clearTiles()
-      $map.style.sourceCaches[layers].update($map.transform)
-      $map.triggerRepaint()
+    if (!colorMapName) return
+    let name = colorMapName
+    if (reverseColorMap) {
+      name = `${name}_r`
     }
+    updateParamsInURL({ colormap_name: name })
+  }
+  const selectScaling = () => {
+    if (!scalingValueRange) return
+    updateParamsInURL({ rescale: scalingValueRange })
   }
 </script>
 
@@ -228,7 +245,7 @@
       </div>
 
       {#if activeSection === 'color'}
-        <Colormaps bind:colorMapName />
+        <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
       {:else if activeSection === 'band'}
         <p>B</p>
       {:else if activeSection === 'opacity'}
