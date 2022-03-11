@@ -13,9 +13,36 @@
     ({lName,lDef,lType, lInfo} = layerCfg);
     const layerId = lDef.id;
 
-    const layer = $layerList.filter((item)=>item.lDef.id === layerId)
+    const layer = $layerList.filter((item)=>item.lDef.id === layerId).pop()
 
-    console.log("Layer: ", layer)
+    let lMin = Math.round(parseFloat(layer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']));
+    let lMax = Math.round(parseFloat(layer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']));
+
+
+    // program to find the HCF or GCD of two integers
+
+    let hcf;
+
+    // looping from 1 to number1 and number2
+    for (let i = 1; i <= lMin && i <= lMax; i++) {
+
+        // check if is factor of both integers
+        if( lMin % i == 0 && lMax % i == 0) {
+            hcf = i;
+        }
+    }
+
+    const setMin = () =>{
+        // Todo: Min will be based on the start value NOT min
+
+    }
+
+    const setMax = () => {
+        // Todo: Max will be based on the end value NOT max
+    }
+
+    // $:min, setMin()
+    // $:max, setMax()
     let valueStart = 1;
     let valueEnd = 4;
 </script>
@@ -29,6 +56,8 @@
             step={0.1}
             input$aria-label="Range slider"
     />
+
+    <span>   Image scaling: {lMax}, {lMin}</span>
     <Set chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
         <Chip {chip}>
             <Text>{chip}</Text>

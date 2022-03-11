@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { readFileSync } from 'fs';
   import {map} from '../stores/mapstore';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import {layerList,dynamicLayers} from '../stores/stores';
   import Chip, { Set, TrailingAction, Text } from '@smui/chips';
-  import Paper, { Title as PTitle, Subtitle, Content as PContent } from '@smui/paper';
   import List, { Item, Separator, Text as LText, Meta, Label as LLabel } from '@smui/list';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
@@ -56,18 +54,13 @@
 
       lMin = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2));
       lMax = Number(Number(inputLayer.lInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2));
-      
-     
-      
-
-
 
       lStep  = (lMax-lMin) *1e-2;
       lStep = parseFloat(lStep.toFixed(2));
 
       lSliderValue = lMin + lStep * 50 ;
       // the computaions below are necessary to set the Range slider
-      //console.log(lMin, lMax, lStep, lSliderValue);
+      // console.log(lMin, lMax, lStep, lSliderValue);
       // let factor = 1e2;
       // lSliderProps.min =  Math.round( lMin * factor + Number.EPSILON ) / factor;
       // lSliderProps.max =  Math.round( lMax * factor + Number.EPSILON ) / factor;
@@ -77,7 +70,7 @@
       // lSliderProps.step  = (lSliderProps.max-lSliderProps.min ) *1e-2;
       // lSliderProps.end = end + (lSliderProps.max - end) % lSliderProps.step;
       // lSliderProps.start = start- (start - lSliderProps.min) % lSliderProps.step;
-      //console.log('AFTER', JSON.stringify(lSliderProps, null, '\t'));
+      // console.log('AFTER', JSON.stringify(lSliderProps, null, '\t'));
       let inputLayerIdx = $dynamicLayers.indexOf(clickedLayer)+1;
   
       expression += `b${inputLayerIdx}`;
