@@ -1448,10 +1448,10 @@
   dependencies:
     tiny-glob "^0.2.9"
 
-"@sveltejs/kit@^1.0.0-next.283":
-  version "1.0.0-next.294"
-  resolved "https://registry.npmjs.org/@sveltejs/kit/-/kit-1.0.0-next.294.tgz"
-  integrity sha512-whTYeri/oaV672KErlhCAvAawlsnd8iu/MQmjdu85TApDYolLe8FDTg6GQ55+0IJbx1N7dOer/HopWzKudPgFA==
+"@sveltejs/kit@^1.0.0-next.295":
+  version "1.0.0-next.295"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.295.tgz#2874cf4f6eb172124b050242d8a30099b3c3aa70"
+  integrity sha512-4pO/swXByhU+7bhNikTjh1d4QxAMP9TZ74p7sdPuyJf5cg7Zrfk1nBtaMt0R+8+5j1xfC/XWRcxa3WnhT9bQMA==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^1.0.0-next.32"
     sade "^1.7.4"
