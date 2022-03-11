@@ -78,7 +78,6 @@
     if (!checked) {
       if (!isRaster) {
         const layerName = path.split('/')[path.split('/').length - 2]
-        console.log('load vector layer ', label, url)
         const layerSource = {
           type: 'vector',
           tiles: [url],
@@ -116,9 +115,6 @@
         let b64_encoded_url = `${base}?${btoa(sign)}`
         let infoUrl = `${TITILER_ENDPOINT}/info?url=${b64_encoded_url}`
         layerInfo = await fetchLayerInfo(infoUrl)
-
-        console.log(layerInfo)
-
         let lMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
         let lMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
 

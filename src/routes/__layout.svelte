@@ -12,7 +12,7 @@
 
 <Header bind:drawerOpen bind:panelOpen />
 
-<Content bind:open={drawerOpen}>
+<Content bind:drawerOpen>
   <Map />
 </Content>
 
