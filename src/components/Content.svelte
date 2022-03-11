@@ -47,7 +47,7 @@
   .drawer-container {
     position: absolute;
     display: flex;
-    height: calc(100vh - calc(64px + 48px));
+    height: calc(100vh - 64px);
     width: 100%;
     overflow: auto;
     z-index: 0;
