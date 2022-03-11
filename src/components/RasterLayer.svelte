@@ -133,18 +133,19 @@
   }
 
   const updateParamsInURL = (params) => {
-    let layerS = allLayers.filter((item) => item.id === layerId).pop()['source']
-    const layerSource = $map.getSource(layerS)
-    let old_url = layerSource.tiles[0]
-    let oldUrl = new URL(old_url)
-    Object.keys(params).forEach((key) => {
-      oldUrl.searchParams.set(key, params[key])
-    })
-    let newUrl = oldUrl.toString()
-    $map.getSource(layerS).tiles = [decodeURI(newUrl)]
-    $map.style.sourceCaches[layerS].clearTiles()
-    $map.style.sourceCaches[layerS].update($map.transform)
-    $map.triggerRepaint()
+    let layers = allLayers.filter((item) => item.id === layerId).pop()['source']
+    const layerSource = $map.getSource(layers)
+
+    if (layerSource.tiles) {
+      const oldUrl = new URL(layerSource.tiles[0])
+      Object.keys(params).forEach((key) => {
+        oldUrl.searchParams.set(key, params[key])
+      })
+      $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
+      $map.style.sourceCaches[layers].clearTiles()
+      $map.style.sourceCaches[layers].update($map.transform)
+      $map.triggerRepaint()
+    }
   }
   const selectColorMap = () => {
     if (!colorMapName) return
