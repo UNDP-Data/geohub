@@ -1,12 +1,14 @@
 <script lang="ts">
     import Chip, { Set, Text } from '@smui/chips';
     import Button from '@smui/button';
+    import Checkbox from '@smui/checkbox';
+    import FormField from '@smui/form-field';
     import Slider from '@smui/slider';
     import { layerList } from "../stores/stores"
 
     const colorMapTypes : Array<string> = ["Sequential", "Diverging", "Cyclic"];
     let selectedColorMapType : string = "";
-    export let colorMapName;
+    export let colorMapName = 'viridis';
     export let layerCfg;
 
     let lName,  lDef, lType, lInfo;
@@ -30,6 +32,8 @@
     }
     $: scalingValueStart, setScalingValueRwange();
     $: scalingValueEnd, setScalingValueRwange();
+
+    export let reverseColorMap = false;
 </script>
 <div class="paper-container">
     <Slider
@@ -43,6 +47,12 @@
     />
 
     <span>   Image scaling: {scalingValueStart}, {scalingValueEnd}</span>
+    <div>
+        <FormField>
+            <Checkbox bind:checked={reverseColorMap} />
+            <span>Reverse color</span>
+        </FormField>
+    </div>
     <Set chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
         <Chip {chip}>
             <Text>{chip}</Text>

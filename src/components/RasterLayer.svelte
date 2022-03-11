@@ -201,12 +201,17 @@
         $map.triggerRepaint();
     }
 
-    let colorMapName;
+    let colorMapName, reverseColorMap;
     $: colorMapName, selectColorMap();
+    $: reverseColorMap, selectColorMap();
 
     const selectColorMap = () => {
         if (!colorMapName) return;
-        updateParamsInURL({ colormap_name: colorMapName })
+        let name = colorMapName;
+        if (reverseColorMap) {
+            name = `${name}_r`
+        }
+        updateParamsInURL({ colormap_name: name })
     };
 
     let scalingValueRange;
@@ -273,7 +278,7 @@
                 </div>
 
             {#if activeSection === 'color'}
-                <Colormaps bind:colorMapName bind:layerCfg bind:scalingValueRange/>
+                <Colormaps bind:colorMapName bind:layerCfg bind:scalingValueRange bind:reverseColorMap/>
             {:else if activeSection === 'band'}
                 <p>B</p>
 
