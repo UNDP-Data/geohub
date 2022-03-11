@@ -9,78 +9,71 @@
   import HelperText from '@smui/textfield/helper-text'
   import { v4 as uuidv4 } from 'uuid'
 
-  import Calculator from './raster/Calculator.svelte'
   import { map } from '../stores/mapstore'
   import { layerList, dynamicLayers } from '../stores/stores'
+  import Calculator from './raster/Calculator.svelte'
 
   export let open = false
-  let lMin = 0
-  let lMax = 10
-  let lStep = 0
-  let lSliderValue = 0
-
-  $: open, initialize()
-
+  let layerMinimum = 0
+  let layerMaximum = 10
+  let layerStep = 0
+  let layerSliderValue = 0
   let selectedRes = 'highest'
   let resChoices = ['highest', 'lowest', 'average']
-
   let legendTypes = ['continuous', 'bucketed']
   let selectedLegendType = ''
-
   let newLayerName = ''
   let newLayerId = ''
-  let clickedLayer = ''
-  let lNames = []
+  let clickedLayer = undefined
+  let layerNames = []
   let expression = ''
 
-  $: if (newLayerName != '') {
+  $: open, initialize()
+  $: if (newLayerName !== '') {
     newLayerId = uuidv4()
   }
 
   const initialize = () => {
-    lNames = $layerList
-      .filter((item) => {
-        return $dynamicLayers.includes(item.definition.id)
+    layerNames = $layerList
+      .filter((layer) => {
+        return $dynamicLayers.includes(layer.definition.id)
       })
-      .map((item) => {
-        return item.name
+      .map((layer) => {
+        return layer.name
       })
   }
 
   const setLayerExpression = () => {
     if (clickedLayer) {
-      let inputLayer = $layerList.filter((item) => item.definition.id === clickedLayer).pop()
-      lMin = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
-      lMax = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
+      let inputLayer = $layerList.filter((layer) => layer.definition.id === clickedLayer).pop()
+      layerMinimum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
+      layerMaximum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
 
-      lStep = (lMax - lMin) * 1e-2
-      lStep = parseFloat(lStep.toFixed(2))
-
-      lSliderValue = lMin + lStep * 50
+      layerStep = (layerMaximum - layerMinimum) * 1e-2
+      layerStep = parseFloat(layerStep.toFixed(2))
+      layerSliderValue = layerMinimum + layerStep * 50
       let inputLayerIdx = $dynamicLayers.indexOf(clickedLayer) + 1
+
       expression += `b${inputLayerIdx}`
     }
   }
 
   const processSliderClick = () => {
-    expression += `${lSliderValue}`
+    expression += `${layerSliderValue}`
   }
 
   const processCombinedLayer = (action: boolean) => {
-    //#TODO: use env var to set the endpoint
-    if (action == true) {
+    if (action === true) {
       let combinedurl = ''
       let bounds = []
-      $dynamicLayers.forEach((lid) => {
-        console.log(`processing ${lid}`)
-        let inLayer = $layerList.filter((item) => item.definition.id === lid).pop()
+      $dynamicLayers.forEach((layerId) => {
+        let inLayer = $layerList.filter((item) => item.definition.id === layerId).pop()
 
         let lSrc = $map.getSource(inLayer.definition.source)
         let tileurl = lSrc.tiles[0]
         let tURL = new URL(tileurl)
-
         let lurl = tURL.searchParams.get('url')
-        if (combinedurl == '') {
+        if (combinedurl === '') {
           combinedurl = `${tURL.protocol}/${tURL.host}${decodeURI(
             tURL.pathname,
           )}?scale=1&TileMatrixSetId=WebMercatorQuad`
@@ -104,7 +97,8 @@
       if (!(srcID in $map.getStyle().sources)) {
         $map.addSource(srcID, lSrc)
       }
-      const layerDefinition = {
+
+      const definition = {
         id: newLayerId || 'test',
         type: 'raster',
         source: srcID,
@@ -115,7 +109,7 @@
         },
       }
 
-      layerList.set([{ name: newLayerName || 'test', definition: layerDefinition, type: 'raster' }, ...$layerList])
+      layerList.set([{ name: newLayerName || 'test', definition: definition, type: 'raster', info: {} }, ...$layerList])
       let firstSymbolId = undefined
       for (const layer of $map.getStyle().layers) {
         if (layer.type === 'symbol') {
@@ -123,15 +117,16 @@
           break
         }
       }
-      $map.addLayer(layerDefinition, firstSymbolId)
+
+      $map.addLayer(definition, firstSymbolId)
     }
 
     expression = ''
     clickedLayer = undefined
   }
 
-  const setClickedLayer = (layer: string) => {
-    clickedLayer = layer
+  const setClickedLayer = (l) => {
+    clickedLayer = l
     setLayerExpression()
   }
 </script>
@@ -161,25 +156,25 @@
                 setClickedLayer(l)
               }}
             >
-              <LText>{lNames[$dynamicLayers.indexOf(l)]}</LText>
+              <LText>{layerNames[$dynamicLayers.indexOf(l)]}</LText>
             </Item>
           {/each}
         </List>
       </div>
 
-      {#if clickedLayer != undefined}
+      {#if clickedLayer !== undefined}
         <div class="onecol">
-          <div>{lMin}</div>
+          <div>{layerMinimum}</div>
           <Slider
             discrete
-            bind:value={lSliderValue}
-            min={lMin}
-            max={lMax}
-            step={lStep}
+            bind:value={layerSliderValue}
+            min={layerMinimum}
+            max={layerMaximum}
+            step={layerStep}
             style="width:300px"
             input$aria-label="Layer opacity"
           />
-          <div>{lMax}</div>
+          <div>{layerMaximum}</div>
           <div>
             <Button on:click={() => processSliderClick()}>
               <Label>USE</Label>

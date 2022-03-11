@@ -42,9 +42,9 @@
 </script>
 
 <div class="content-container">
-  <Drawer variant="dismissible" bind:open={drawerOpen} style="width: {drawerWidth}px;" on:op>
+  <Drawer variant="dismissible" bind:open={drawerOpen} style="width: {drawerWidth}px; max-width: {drawerWidth}px;">
     <div class="drawer-container">
-      <div class="drawer-content" style="width: {drawerWidth}px;">
+      <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Header>
           <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">
