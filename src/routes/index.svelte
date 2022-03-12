@@ -22,6 +22,11 @@
 </script>
 
 <style global>
+  body,
+  html {
+    font-family: ProximaNova, sans-serif;
+    font-size: 13px;
+  }
   .mdc-drawer {
     width: 300px;
   }

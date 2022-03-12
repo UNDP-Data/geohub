@@ -82,7 +82,8 @@
 
 <style>
   :global(.s-k9Xq-arq2lfR) {
-    font-family: Calibri, serif;
+    font-family: ProximaNova, sans-serif;
+    font-size: 13px;
   }
   .content-container {
     position: absolute;

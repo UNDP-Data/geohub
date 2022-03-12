@@ -32,7 +32,7 @@
 <TopAppBar bind:this={topAppBar} variant="fixed">
   <Row>
     <Section>
-      <Title>GeoHub</Title>
+      <Title style="font-family: ProximaNova, sans-serif">GeoHub</Title>
     </Section>
 
     <Section align="end">

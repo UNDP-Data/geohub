@@ -285,11 +285,11 @@
   .layer-name {
     display: flex;
     cursor: pointer;
-    font-family: Roboto, serif;
+    font-family: ProximaNova, sans-serif;
     width: 100%;
     min-height: 2.5rem;
     height: auto;
-    font-size: 12pt;
+    font-size: 13px;
     justify-content: center;
     align-items: center;
     width: fit-content;

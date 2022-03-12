@@ -24,6 +24,7 @@
           let label, children, path, url, isRaster;
           $: ({ label, children, path, url, isRaster } = tree)
   */
+  import { Icon } from '@smui/icon-button'
   import { v4 as uuidv4 } from 'uuid'
   import type { Tree, LayerDefinition, LayerInfo } from '../lib/types'
   import { TreeNodeInitialValues } from '../lib/constants'
@@ -35,12 +36,9 @@
 
   const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
   let checked = false
-  let icon = '&#43'
 
   $: ({ label, children, path, url, isRaster } = tree)
-  $: arrowDown = expanded
   $: expanded = _expansionState[label] || false
-  $: icon = expanded ? '&#8722' : '&#43'
   $: mmap = $map
 
   const fetchLayerInfo = async (url: string) => {
@@ -171,11 +169,15 @@
   }
 </script>
 
-<ul>
+<ul style="padding-top: 5px;">
   <li>
     {#if children}
-      <span on:click={() => toggleExpansion()}>
-        <span class="arrow" class:arrowDown> {@html icon} </span>
+      <span on:click={() => toggleExpansion()} class="node-label">
+        {#if !expanded}
+          <Icon color="primary" class="material-icons" on>chevron_right</Icon>
+        {:else}
+          <Icon color="primary" class="material-icons" on style="transform: rotate(90deg);">chevron_right</Icon>
+        {/if}
         {label}
       </span>
       <span alt="Vector tile layer" style="color: lime;">
@@ -191,7 +193,7 @@
         {/each}
       {/if}
     {:else}
-      <span>
+      <span class="long-and-truncated">
         <span data-tooltip="Vector tile layer" style="color: rgb(52, 152, 219);">
           {#if isRaster}
             {@html '&#9638'}
@@ -212,11 +214,15 @@
     user-select: none;
   }
 
-  .arrow {
-    cursor: pointer;
-    display: inline-block;
+  .long-and-truncated {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .arrowDown {
-    transform: rotate(180deg);
+
+  .node-label {
+    display: flex;
+    justify-content: left;
+    align-items: center;
   }
 </style>
