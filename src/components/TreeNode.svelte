@@ -3,9 +3,8 @@
   const expansionState = {}
 </script>
 
-<script lang="ts">
-  /*
-  Update the JSON based data structure that power the tree view (this) component
+<!--
+   Update the JSON based data structure that power the tree view (this) component
   The general idea of the update is:
   0. the tree is initialized with data, and is destructured into its mains props
       Very imp, the variables that are created in the descructuring are reactive:
@@ -23,7 +22,8 @@
       g) the TreeView componnet
           let label, children, path, url, isRaster;
           $: ({ label, children, path, url, isRaster } = tree)
-  */
+ -->
+<script lang="ts">
   import { Icon } from '@smui/icon-button'
   import { v4 as uuidv4 } from 'uuid'
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
@@ -166,33 +166,35 @@
   }
 </script>
 
-<li style="padding-left:{level * 1}rem; padding-top: 5px;">
-  {#if children}
-    <span on:click={() => toggleExpansion()} class="node-label">
-      {#if !expanded}
-        <Icon color="primary" class="material-icons" on>chevron_right</Icon>
-      {:else}
-        <Icon color="primary" class="material-icons" on style="transform: rotate(90deg);">chevron_right</Icon>
-      {/if}
-      {label}
-    </span>
-    {#if url}
-      <span alt="Vector" style="color: rgb(0,255,0)">
-        {@html '&#10070'}
-        <input style="padding:0px; margin:0px" type="checkbox" on:change={() => loadLayer()} bind:checked />
+<li style="padding-left:{level * 1}rem;">
+  <div style=" padding-top: 5px;">
+    {#if children}
+      <span on:click={() => toggleExpansion()} class="node-label">
+        {#if !expanded}
+          <Icon color="primary" class="material-icons" on>chevron_right</Icon>
+        {:else}
+          <Icon color="primary" class="material-icons" on style="transform: rotate(90deg);">chevron_right</Icon>
+        {/if}
+        {label}
       </span>
-    {/if}
-  {:else}
-    <span class="long-and-truncated">
-      {#if isRaster}
-        <span alt="Raster" style="color: rgb(52, 152, 219);">
-          {@html '&#9638'}
+      {#if url}
+        <span alt="Vector" style="color: rgb(0,255,0)">
+          {@html '&#10070'}
           <input style="padding:0px; margin:0px" type="checkbox" on:change={() => loadLayer()} bind:checked />
         </span>
       {/if}
-      {label}
-    </span>
-  {/if}
+    {:else}
+      <span class="long-and-truncated">
+        {#if isRaster}
+          <span alt="Raster" style="color: rgb(52, 152, 219);">
+            {@html '&#9638'}
+            <input style="padding:0px; margin:0px" type="checkbox" on:change={() => loadLayer()} bind:checked />
+          </span>
+        {/if}
+        {label}
+      </span>
+    {/if}
+  </div>
 </li>
 
 {#if expanded && children}

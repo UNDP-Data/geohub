@@ -22,37 +22,47 @@
   let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const diffValue = (lMax - lMin) * 0.5
+
   let lMinScaling = Math.floor(lMin - diffValue)
   let lMaxScaling = Math.ceil(lMax + diffValue)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
+
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
   $: scalingValueStart, setScalingValueRwange()
   $: scalingValueEnd, setScalingValueRwange()
   export let reverseColorMap = false
 </script>
 
 <div class="paper-container">
-  <Slider
-    discrete
-    range
-    bind:start={scalingValueStart}
-    bind:end={scalingValueEnd}
-    min={lMinScaling}
-    max={lMaxScaling}
-    step={0.1}
-    input$aria-label="Range slider" />
+  <div style="display: flex; align-items: center;">
+    <h6 style="width: 10%;">Rescale:</h6>
+    <div style="width: 90%;">
+      <Slider
+        discrete
+        range
+        bind:start={scalingValueStart}
+        bind:end={scalingValueEnd}
+        min={lMinScaling}
+        max={lMaxScaling}
+        step={0.1}
+        input$aria-label="Range slider"
+        label="Set the min and max" />
+    </div>
+  </div>
 
-  <div>
+  <div style="display: flex; align-items: center; justify-content: center">
     <FormField>
       <Checkbox bind:checked={reverseColorMap} />
       <span>Reverse color</span>
     </FormField>
   </div>
-  <Set chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
+  <Set class="colormap-chips" chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
     <Chip {chip}>
       <Text>{chip}</Text>
     </Chip>
@@ -60,6 +70,7 @@
   <div>
     {#if selectedColorMapType === 'Sequential'}
       <span>Current colormap: {colorMapName}</span>
+
       <div class="colormaps-group">
         {#each sequentialColormaps as btn}
           <div
@@ -74,9 +85,11 @@
       <div class="colormaps-group">
         {#each divergingColorMaps as btn}
           <div
-            title={btn.name}
             class="colormap-div"
-            on:click={() => (colorMapName = btn['name'])}
+            title={btn.name}
+            on:click={() => {
+              colorMapName = btn['name']
+            }}
             style={btn.background} />
         {/each}
       </div>
@@ -97,17 +110,22 @@
 
 <style lang="scss">
   * :global(.colormap-div) {
-    width: 10%;
+    width: 15px;
     height: 100px;
-    margin: 2px;
+    margin: 1px;
     cursor: pointer;
     border-radius: 5px;
   }
+
   * :global(.colormaps-group) {
     margin: auto;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+
+  * :global(.colormap-chips) {
     justify-content: space-evenly;
   }
 </style>
