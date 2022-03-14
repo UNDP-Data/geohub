@@ -14,7 +14,6 @@
   let activeTab = TabNames.LoadData
   let isResizingDrawer = false
   let drawerWidth = 300
-  let testValue
 
   $: {
     if (drawerOpen) {
