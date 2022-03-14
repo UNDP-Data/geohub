@@ -22,13 +22,12 @@
   let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const diffValue = (lMax - lMin) * 0.5
-  // lMin = Math.floor(lMin);
-  // lMax = Math.ceil(lMax);
+
   let lMinScaling = Math.floor(lMin - diffValue)
   let lMaxScaling = Math.ceil(lMax + diffValue)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
-  let selectedCmap : boolean = false;
+
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
 
   const setScalingValueRwange = () => {
@@ -45,15 +44,15 @@
     <h6 style="width: 10%;">Rescale:</h6>
     <div style="width: 90%;">
       <Slider
-              discrete
-              range
-              bind:start={scalingValueStart}
-              bind:end={scalingValueEnd}
-              min={lMinScaling}
-              max={lMaxScaling}
-              step={0.1}
-              input$aria-label="Range slider"
-              label="Set the min and max"
+        discrete
+        range
+        bind:start={scalingValueStart}
+        bind:end={scalingValueEnd}
+        min={lMinScaling}
+        max={lMaxScaling}
+        step={0.1}
+        input$aria-label="Range slider"
+        label="Set the min and max"
       />
     </div>
   </div>
@@ -79,19 +78,22 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}>
-          </div>
+            style={btn.background}
+          />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Diverging'}
       <span>Current colormap: {colorMapName}</span>
       <div class="colormaps-group">
         {#each divergingColorMaps as btn}
-            <div
-               class="colormap-div"
-               title={btn.name}
-               on:click={() => {colorMapName = btn['name']; selectedCmap = true}}
-               style="{btn.background}"></div>
+          <div
+            class="colormap-div"
+            title={btn.name}
+            on:click={() => {
+              colorMapName = btn['name']
+            }}
+            style={btn.background}
+          />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Cyclic'}
@@ -102,7 +104,8 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}></div>
+            style={btn.background}
+          />
         {/each}
       </div>
     {/if}
@@ -126,8 +129,7 @@
     justify-content: space-evenly;
   }
 
-
-  * :global(.colormap-chips){
+  * :global(.colormap-chips) {
     justify-content: space-evenly;
   }
 </style>
