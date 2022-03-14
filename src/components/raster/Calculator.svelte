@@ -37,8 +37,7 @@
   <Button
     on:click={() => {
       expression = ''
-    }}><Label>Clear</Label></Button
-  >
+    }}><Label>Clear</Label></Button>
 </div>
 <div class="cwrapper">
   <div>

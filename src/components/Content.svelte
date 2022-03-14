@@ -7,6 +7,7 @@
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { wtree } from '../stores/stores'
+  import { layerList } from '../stores/stores'
   import { TabNames } from '../lib/constants'
 
   export let drawerOpen = false
@@ -34,7 +35,6 @@
     drawerWidth = e.clientX
     setContentContainerMargin(drawerWidth)
   }
-
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
   const setContentContainerMargin = (margin: number) =>
@@ -48,7 +48,12 @@
         <Header>
           <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">
-              <Label>{tab}</Label>
+              <Label>
+                {tab}
+                {#if tab === TabNames.Layers}
+                  ({$layerList.length})
+                {/if}
+              </Label>
             </Tab>
           </TabBar>
         </Header>
@@ -66,8 +71,7 @@
         class="drawer-divider"
         on:mousedown={handleMousedown}
         on:mousemove={handleMousemove}
-        on:mouseup={handleMouseup}
-      >
+        on:mouseup={handleMouseup}>
         <div class="custom-handle">||</div>
       </div>
     </div>

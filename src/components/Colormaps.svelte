@@ -44,8 +44,7 @@
     min={lMinScaling}
     max={lMaxScaling}
     step={0.1}
-    input$aria-label="Range slider"
-  />
+    input$aria-label="Range slider" />
 
   <div>
     <FormField>
@@ -67,8 +66,7 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}
-          />
+            style={btn.background} />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Diverging'}
@@ -79,8 +77,7 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}
-          />
+            style={btn.background} />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Cyclic'}
@@ -91,8 +88,7 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}
-          />
+            style={btn.background} />
         {/each}
       </div>
     {/if}
