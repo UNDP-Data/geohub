@@ -40,7 +40,6 @@
 </script>
 
 <div class="paper-container">
-
   <div style="display: flex; align-items: center;">
     <h6 style="width: 10%;">Rescale:</h6>
     <div style="width: 90%;">
@@ -53,12 +52,9 @@
         max={lMaxScaling}
         step={0.1}
         input$aria-label="Range slider"
-        label="Set the min and max"
-      />
+        label="Set the min and max" />
     </div>
   </div>
-
-  
 
   <div style="display: flex; align-items: center; justify-content: center">
     <FormField>
@@ -90,14 +86,11 @@
         {#each divergingColorMaps as btn}
           <div
             class="colormap-div"
-
             title={btn.name}
             on:click={() => {
               colorMapName = btn['name']
             }}
-            style={btn.background}
-          />
-
+            style={btn.background} />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Cyclic'}
