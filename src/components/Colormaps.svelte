@@ -99,7 +99,7 @@
   </div>
 </div>
 
-<style>
+<style lang="scss">
   * :global(.colormap-div) {
     width: 10%;
     height: 100px;

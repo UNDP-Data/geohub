@@ -80,11 +80,24 @@
   </AppContent>
 </div>
 
-<style>
-  :global(.s-k9Xq-arq2lfR) {
-    font-family: ProximaNova, sans-serif;
-    font-size: 13px;
+<style lang="scss">
+  :global(.app-content) {
+    flex: auto;
+    overflow: auto;
+    position: relative;
+    flex-grow: 1;
+
+    .main-content {
+      overflow: hidden;
+      display: flex;
+      height: 100%;
+      flex-grow: 1;
+      z-index: -1;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
   }
+
   .content-container {
     position: absolute;
     display: flex;
@@ -93,62 +106,33 @@
     overflow: auto;
     z-index: 0;
     flex-grow: 1;
-  }
-  :global(.app-content) {
-    flex: auto;
-    overflow: auto;
-    position: relative;
-    flex-grow: 1;
-  }
-  .main-content {
-    overflow: hidden;
-    display: flex;
-    height: 100%;
-    flex-grow: 1;
-    z-index: -1;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  :global(.contracted-browser) {
-    height: 60%;
-  }
-  :global(.expanded-browser) {
-    height: 100%;
-  }
-  :global(.expanded) {
-    display: inline-block;
-    max-height: 40%;
-    min-height: auto;
 
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    overflow: auto;
-  }
-  .drawer-content {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 100%;
-    flex: 1;
-  }
-  .drawer-divider {
-    width: 9px;
-    background-color: #f4f7f9;
-    cursor: ew-resize;
-  }
-  .drawer-container {
-    display: flex;
-    height: calc(100vh - 64px);
-  }
-  .custom-handle {
-    position: relative;
-    width: 8px;
-    height: 100%;
-    left: 25%;
-    display: flex;
-    align-items: center;
-    pointer-events: none;
+    .drawer-container {
+      display: flex;
+      height: calc(100vh - 64px);
+
+      .drawer-content {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 100%;
+        flex: 1;
+      }
+
+      .drawer-divider {
+        width: 9px;
+        background-color: #f4f7f9;
+        cursor: ew-resize;
+      }
+
+      .custom-handle {
+        position: relative;
+        width: 8px;
+        height: 100%;
+        left: 25%;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+      }
+    }
   }
 </style>

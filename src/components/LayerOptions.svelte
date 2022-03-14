@@ -23,7 +23,7 @@
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   :global(.layer-tab) {
     padding: 0;
     height: 30px;

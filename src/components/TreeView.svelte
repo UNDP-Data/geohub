@@ -206,23 +206,23 @@
   </li>
 </ul>
 
-<style>
+<style lang="scss">
   ul {
     margin: 0;
     list-style: none;
     padding-left: 1.2rem;
     user-select: none;
-  }
 
-  .long-and-truncated {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    .node-label {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+    }
 
-  .node-label {
-    display: flex;
-    justify-content: left;
-    align-items: center;
+    .long-and-truncated {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 </style>
