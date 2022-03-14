@@ -1,5 +1,5 @@
 export interface Tree {
-  tree: TreeNode
+  tree?: TreeNode
 }
 
 export interface TreeNode {
