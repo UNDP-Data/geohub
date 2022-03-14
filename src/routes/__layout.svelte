@@ -17,3 +17,19 @@
 </Content>
 
 <slot />
+
+<style global>
+  body,
+  html {
+    font-family: ProximaNova, sans-serif;
+    font-size: 13px;
+  }
+  .mdc-drawer {
+    width: 300px;
+  }
+
+  .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
+    margin-left: 300px;
+    margin-right: 0;
+  }
+</style>

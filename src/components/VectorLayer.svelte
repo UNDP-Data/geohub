@@ -3,5 +3,5 @@
 
 <p>VectorLayer</p>
 
-<style>
+<style lang="scss">
 </style>

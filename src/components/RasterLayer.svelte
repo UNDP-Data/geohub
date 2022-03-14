@@ -255,57 +255,44 @@
           <div class="layer-header-name">
             <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
           </div>
-          <!-- <div>{layerOpacity}</div> -->
-          <!-- <Slider on:SMUISlider:change={setLayerOpacity}  bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity"/> -->
         </div>
       {/if}
     </Content>
   </Panel>
 </Accordion>
 
-<style>
+<style lang="scss">
   .layer-header {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     margin: auto;
-  }
-  .layer-header-name {
-    align-self: center;
-    flex: 0 0 160px;
-    max-width: 80%;
-    flex-wrap: nowrap;
-    overflow-wrap: anywhere;
-  }
-  .layer-header-icons {
-    display: flex;
-    flex-direction: row;
-    align-self: flex-start;
-  }
-  .layer-name {
-    display: flex;
-    cursor: pointer;
-    font-family: ProximaNova, sans-serif;
-    width: 100%;
-    min-height: 2.5rem;
-    height: auto;
-    font-size: 13px;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-  }
 
-  :global(.smui-accordion) {
-    z-index: 0;
-  }
+    .layer-header-name {
+      align-self: center;
+      flex: 0 0 160px;
+      max-width: 80%;
+      flex-wrap: nowrap;
+      overflow-wrap: anywhere;
 
-  :global(.mdc-deprecated-list) {
-    z-index: 1;
-  }
+      .layer-name {
+        display: flex;
+        cursor: pointer;
+        font-family: ProximaNova, sans-serif;
+        width: 100%;
+        min-height: 2.5rem;
+        height: auto;
+        font-size: 13px;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+      }
 
-  :global(.mdc-deprecated-list-item) {
-    height: auto !important;
-    width: auto;
-    /* color: mintcream!important; */
+      .layer-header-icons {
+        display: flex;
+        flex-direction: row;
+        align-self: flex-start;
+      }
+    }
   }
 </style>

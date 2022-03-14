@@ -52,7 +52,7 @@
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   :global(.maplibregl-map) {
     height: 100%;
     width: 100%;

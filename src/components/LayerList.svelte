@@ -26,7 +26,7 @@
   {/if}
 {/each}
 
-<style>
+<style type="scss">
   :global(.smui-paper__content) {
     padding: 0px !important;
   }
