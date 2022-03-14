@@ -14,6 +14,7 @@
   let activeTab = TabNames.LoadData
   let isResizingDrawer = false
   let drawerWidth = 300
+  let testValue
 
   $: {
     if (drawerOpen) {
@@ -30,9 +31,12 @@
     document.addEventListener('mouseup', handleMouseup)
   })
 
-  const handleMousemove = (e: MouseEvent) => {
+  const handleMousemove = (e: MouseEvent | TouchEvent) => {
     if (!isResizingDrawer) return
-    drawerWidth = e.clientX
+
+    if (e instanceof MouseEvent) drawerWidth = e.clientX
+    if (e instanceof TouchEvent) drawerWidth = e.touches?.[0].pageX
+
     setContentContainerMargin(drawerWidth)
   }
   const handleMousedown = () => (isResizingDrawer = true)
@@ -70,8 +74,11 @@
       <div
         class="drawer-divider"
         on:mousedown={handleMousedown}
+        on:touchstart={handleMousedown}
         on:mousemove={handleMousemove}
-        on:mouseup={handleMouseup}>
+        on:touchmove={handleMousemove}
+        on:mouseup={handleMouseup}
+        on:touchend={handleMouseup}>
         <div class="custom-handle">||</div>
       </div>
     </div>
@@ -102,10 +109,16 @@
     }
   }
 
+  $height: calc(100vh - 64px);
+
+  @media (max-width: 768px) {
+    $height: calc(100vh - 184px);
+  }
+
   .content-container {
     position: absolute;
     display: flex;
-    height: calc(100vh - 64px);
+    height: $height;
     width: 100%;
     overflow: auto;
     z-index: 0;
@@ -113,7 +126,7 @@
 
     .drawer-container {
       display: flex;
-      height: calc(100vh - 64px);
+      height: $height;
 
       .drawer-content {
         display: flex;
@@ -124,6 +137,10 @@
 
       .drawer-divider {
         width: 9px;
+        @media only screen and (max-width: 760px) {
+          width: 15px;
+        }
+
         background-color: #f4f7f9;
         cursor: ew-resize;
       }
@@ -136,6 +153,7 @@
         display: flex;
         align-items: center;
         pointer-events: none;
+        color: black;
       }
     }
   }
