@@ -6,7 +6,6 @@
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { wtree } from '../stores/stores'
   import { layerList } from '../stores/stores'
   import { TabNames } from '../lib/constants'
 
@@ -62,7 +61,7 @@
         </Header>
         <Content>
           {#if activeTab === TabNames.LoadData}
-            <TreeView tree={$wtree.tree} />
+            <TreeView />
           {:else if activeTab === TabNames.Layers}
             <LayerList />
           {:else if activeTab === TabNames.Analyze}
