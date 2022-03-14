@@ -7,6 +7,7 @@
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { wtree } from '../stores/stores'
+  import { layerList } from '../stores/stores'
   import { TabNames } from '../lib/constants'
 
   export let drawerOpen = false
@@ -29,12 +30,14 @@
     document.addEventListener('mouseup', handleMouseup)
   })
 
-  const handleMousemove = (e: MouseEvent) => {
+  const handleMousemove = (e: MouseEvent | TouchEvent) => {
     if (!isResizingDrawer) return
-    drawerWidth = e.clientX
+
+    if (e instanceof MouseEvent) drawerWidth = e.clientX
+    if (e instanceof TouchEvent) drawerWidth = e.touches?.[0].pageX
+
     setContentContainerMargin(drawerWidth)
   }
-
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
   const setContentContainerMargin = (margin: number) =>
@@ -48,7 +51,12 @@
         <Header>
           <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">
-              <Label>{tab}</Label>
+              <Label>
+                {tab}
+                {#if tab === TabNames.Layers}
+                  ({$layerList.length})
+                {/if}
+              </Label>
             </Tab>
           </TabBar>
         </Header>
@@ -65,9 +73,11 @@
       <div
         class="drawer-divider"
         on:mousedown={handleMousedown}
+        on:touchstart={handleMousedown}
         on:mousemove={handleMousemove}
+        on:touchmove={handleMousemove}
         on:mouseup={handleMouseup}
-      >
+        on:touchend={handleMouseup}>
         <div class="custom-handle">||</div>
       </div>
     </div>
@@ -98,10 +108,16 @@
     }
   }
 
+  $height: calc(100vh - 64px);
+
+  @media (max-width: 768px) {
+    $height: calc(100vh - 184px);
+  }
+
   .content-container {
     position: absolute;
     display: flex;
-    height: calc(100vh - 64px);
+    height: $height;
     width: 100%;
     overflow: auto;
     z-index: 0;
@@ -109,7 +125,7 @@
 
     .drawer-container {
       display: flex;
-      height: calc(100vh - 64px);
+      height: $height;
 
       .drawer-content {
         display: flex;
@@ -120,6 +136,10 @@
 
       .drawer-divider {
         width: 9px;
+        @media only screen and (max-width: 760px) {
+          width: 15px;
+        }
+
         background-color: #f4f7f9;
         cursor: ew-resize;
       }
@@ -132,6 +152,7 @@
         display: flex;
         align-items: center;
         pointer-events: none;
+        color: black;
       }
     }
   }

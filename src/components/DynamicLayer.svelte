@@ -135,8 +135,7 @@
   bind:open
   aria-labelledby="large-scroll-title"
   aria-describedby="large-scroll-content"
-  surface$style="width: 600px; max-width: calc(100vw - 32px);"
->
+  surface$style="width: 600px; max-width: calc(100vw - 32px);">
   <Title id="large-scroll-title">Create a new combined/dynamic layer</Title>
   <Content>
     <div class="wrapper">
@@ -154,8 +153,7 @@
             <Item
               on:SMUI:action={() => {
                 setClickedLayer(l)
-              }}
-            >
+              }}>
               <LText>{layerNames[$dynamicLayers.indexOf(l)]}</LText>
             </Item>
           {/each}
@@ -172,8 +170,7 @@
             max={layerMaximum}
             step={layerStep}
             style="width:300px"
-            input$aria-label="Layer opacity"
-          />
+            input$aria-label="Layer opacity" />
           <div>{layerMaximum}</div>
           <div>
             <Button on:click={() => processSliderClick()}>

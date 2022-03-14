@@ -40,6 +40,7 @@
 </script>
 
 <div class="paper-container">
+
   <div style="display: flex; align-items: center;">
     <h6 style="width: 10%;">Rescale:</h6>
     <div style="width: 90%;">
@@ -56,6 +57,8 @@
       />
     </div>
   </div>
+
+  
 
   <div style="display: flex; align-items: center; justify-content: center">
     <FormField>
@@ -78,8 +81,7 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}
-          />
+            style={btn.background} />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Diverging'}
@@ -88,12 +90,14 @@
         {#each divergingColorMaps as btn}
           <div
             class="colormap-div"
+
             title={btn.name}
             on:click={() => {
               colorMapName = btn['name']
             }}
             style={btn.background}
           />
+
         {/each}
       </div>
     {:else if selectedColorMapType === 'Cyclic'}
@@ -104,8 +108,7 @@
             title={btn.name}
             class="colormap-div"
             on:click={() => (colorMapName = btn['name'])}
-            style={btn.background}
-          />
+            style={btn.background} />
         {/each}
       </div>
     {/if}

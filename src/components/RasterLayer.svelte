@@ -167,8 +167,7 @@
       <div class="layer-header-name">
         <Header>
           <span class="layer-name"
-            >{name}<Badge position="inset" align="bottom-end" aria-label="unread count">{index}/{len}</Badge></span
-          >
+            >{name}<Badge position="inset" align="bottom-end" aria-label="unread count">{index}/{len}</Badge></span>
         </Header>
       </div>
       <div class="layer-header-icons">
@@ -177,15 +176,13 @@
           size="mini"
           on:click={() => toggleVisibility()}
           toggle
-          bind:pressed={visSelected}
-        >
+          bind:pressed={visSelected}>
           <Icon class="material-icons">visibility_off</Icon>
           <Icon color="primary" class="material-icons" on>visibility</Icon>
         </IconButton>
 
         <IconButton title="Remove layer" size="mini" class="material-icons" on:click={() => removeLayer()}
-          >delete</IconButton
-        >
+          >delete</IconButton>
 
         <Checkbox bind:checked={inDynamic} />
       </div>
@@ -198,8 +195,7 @@
           class="material-icons"
           on:click={() => {
             activeSection = 'color'
-          }}>palette</IconButton
-        >
+          }}>palette</IconButton>
 
         <IconButton
           title="Define/filter"
@@ -207,8 +203,7 @@
           class="material-icons"
           on:click={() => {
             activeSection = 'band'
-          }}>legend_toggle</IconButton
-        >
+          }}>legend_toggle</IconButton>
 
         <IconButton
           title="Set transparency/opacity"
@@ -216,8 +211,7 @@
           class="material-icons"
           on:click={() => {
             activeSection = 'opacity'
-          }}>opacity</IconButton
-        >
+          }}>opacity</IconButton>
 
         <IconButton title="Toggle querying/info" size="mini" toggle bind:pressed={queryEnabled}>
           <Icon class="material-icons">indeterminate_check_box</Icon>
