@@ -27,7 +27,6 @@
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
 
-
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
 
   const setScalingValueRwange = () => {
