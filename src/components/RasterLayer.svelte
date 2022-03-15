@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
-  const _layerState = {}
-  const _sectionState = {}
-  const _dynamicLayerState = {}
+  const layerState = {}
+  const sectionState = {}
+  const dynamicLayerState = {}
 </script>
 
 <script lang="ts">
@@ -23,20 +23,21 @@
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
 
-  export let activeSection: string = _sectionState[layerId] || ''
-  export let panelOpen: boolean = _layerState[layerId] || false
-  export let inDynamic: boolean = _dynamicLayerState[layerId] || false
+  export let activeSection: string = sectionState[layerId] || ''
+  export let panelOpen: boolean = layerState[layerId] || false
+  export let inDynamic: boolean = dynamicLayerState[layerId] || false
   export let disabled = false
 
-  let allLayers = $map.getStyle().layers
+  let mapLayers = $map.getStyle().layers
   let colorMapName = 'viridis'
-  let layer = allLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
-  let len = allLayers.length
-  let index = allLayers.indexOf(layer)
+  let layer = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+  let len = mapLayers.length
+  let index = mapLayers.indexOf(layer)
   let layerOpacity = 1
   let queryEnabled = true
   let visSelected = false
   let reverseColorMap = false
+
   let scalingValueRange
 
   const setSectionState = () => {
@@ -45,6 +46,7 @@
 
   const setDynamicLayerState = () => {
     _dynamicLayerState[layerId] = inDynamic
+
     if (inDynamic == true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
@@ -54,7 +56,9 @@
     }
 
     let ntrue = 0
+
     for (const [value] of Object.entries(_dynamicLayerState)) {
+
       if (value) {
         ++ntrue
       }
@@ -68,7 +72,9 @@
   }
 
   const setLayerState = () => {
+
     _layerState[layerId] = panelOpen
+
   }
 
   const selectColorMap = () => {
@@ -90,6 +96,7 @@
   }
 
   $: activeSection, setSectionState()
+
   $: activeSection = _sectionState[layerId] || ''
   $: colorMapName, selectColorMap()
   $: inDynamic = _dynamicLayerState[layerId] || false
@@ -97,6 +104,7 @@
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
   $: panelOpen = _layerState[layerId] || false
+
   $: visibility = visSelected ? 'visible' : 'none'
   $: colorMapName, selectColorMap()
   $: reverseColorMap, selectColorMap()
@@ -124,13 +132,14 @@
     delete _layerState[layerId]
     delete _sectionState[layerId]
     delete _dynamicLayerState[layerId]
+
   }
 
   const hierachyDown = (layerID: string) => {
     const newIndex = index - 1
 
     if (newIndex >= 0) {
-      $map.moveLayer(layerID, allLayers[newIndex].id)
+      $map.moveLayer(layerID, mapLayers[newIndex].id)
       index = newIndex
       $map.triggerRepaint()
     }
@@ -139,15 +148,15 @@
   const hierachyUp = (layerID: string) => {
     const newIndex = index + 1
 
-    if (newIndex <= allLayers.length - 1) {
-      $map.moveLayer(layerID, allLayers[newIndex].id)
+    if (newIndex <= mapLayers.length - 1) {
+      $map.moveLayer(layerID, mapLayers[newIndex].id)
       index = newIndex
       $map.triggerRepaint()
     }
   }
 
   const updateParamsInURL = (params) => {
-    let layers = allLayers.filter((item) => item.id === layerId).pop()['source']
+    let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
     const layerSource = $map.getSource(layers)
 
     if (layerSource.tiles) {
