@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import maplibregl, { Map } from 'maplibre-gl'
+
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { map } from '../stores/mapstore'
+  import { indicatorProgress } from '../stores/indicatorProgressStore'
 
   export let lat = 0
   export let lon = 0
@@ -37,6 +39,19 @@
       }),
       'top-right',
     )
+
+    const indicatorProgressEvents = {
+      true: ['zoomstart', 'touchmove', 'mousedown'],
+      false: ['zoomend', 'touchend', 'mouseup'],
+    }
+
+    Object.keys(indicatorProgressEvents).forEach((state) => {
+      indicatorProgressEvents[state].forEach((event: any) => {
+        new_map.on(event, () => {
+          $indicatorProgress = state === 'true'
+        })
+      })
+    })
 
     map.update(() => new_map)
   })
