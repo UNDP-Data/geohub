@@ -18,34 +18,41 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      # checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # setup Node
+      - name: Install Node
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
           cache: 'yarn'
 
-      - name: Make envfile
+      # install dependencies
+      - name: Create environment file
         uses: SpicyPizza/create-envfile@v1.3
         with:
           envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
 
-      - run: yarn install
-      - run: yarn build
+      # install dependencies
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      - name: copy package.json / lock files to build folder
+      # build app
+      - name: Build application
+        run: yarn build
+
+      - name: Copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cp package.json build/.
           cp yarn.lock build/.
           mv node_modules build/.
 
-      #- name: copy node_modules to build folder
-      # if: ${{ github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[update-node-modules]') }}
-      # run: mv node_modules build/.
-
-      - name: 'Deploy to Azure Web App'
+      - name: 'Deploy to Azure'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/main'}}
