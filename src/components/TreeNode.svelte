@@ -24,6 +24,8 @@
           $: ({ label, children, path, url, isRaster } = tree)
  -->
 <script lang="ts">
+  import { onMount } from 'svelte'
+  import { slide } from 'svelte/transition'
   import Checkbox from '@smui/checkbox'
   import { Icon } from '@smui/icon-button'
   import { v4 as uuidv4 } from 'uuid'
@@ -37,13 +39,17 @@
   export let node = TreeNodeInitialValues
   export let level = 0
 
-  const TITILER_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
+  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   let checked = false
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
+
+  onMount(() => {
+    if (level === 0) toggleExpansion()
+  })
 
   const toggleExpansion = () => {
     expanded = expansionState[label] = !expanded
@@ -126,12 +132,12 @@
         let base: string, sign: string
         ;[base, sign] = url.split('?')
         let b64_encoded_url = `${base}?${btoa(sign)}`
-        let infoUrl = `${TITILER_ENDPOINT}/info?url=${b64_encoded_url}`
+        let infoUrl = `${titilerApiUrl}/info?url=${b64_encoded_url}`
         layerInfo = await fetchLayerInfo(infoUrl)
         let lMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
         let lMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
 
-        tilejsonURL = `${TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&return_mask=true&colormap_name=viridis`
+        tilejsonURL = `${titilerApiUrl}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&return_mask=true&colormap_name=viridis`
 
         const layerSource = {
           type: 'raster',
@@ -176,10 +182,13 @@
   }
 </script>
 
-<li style="padding-left:{level * 1}rem;">
+<li style="padding-left:{level * 0.75}rem;">
   <div style=" padding-top: 5px;">
     {#if children}
-      <div on:click={() => toggleExpansion()} class="node-container">
+      <div
+        on:click={() => toggleExpansion()}
+        class="node-container"
+        transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon">
           {#if !expanded}
             <Icon color="primary" class="material-icons" on>chevron_right</Icon>
@@ -189,9 +198,9 @@
         </div>
 
         {#if url}
-          <div class="icon vector">
+          <!-- <div class="icon vector">
             {@html '&#10070'}
-          </div>
+          </div> -->
 
           <div alt="Vector" class="checkbox">
             <Checkbox
@@ -201,26 +210,27 @@
           </div>
         {/if}
 
-        <div class="name">
+        <div class={url ? 'name vector' : 'name'}>
           {label}
         </div>
       </div>
     {:else}
       <div class="node-container">
         {#if isRaster}
-          <div class="icon raster">
+          <!-- <div class="icon raster">
             {@html '&#9638'}
-          </div>
+          </div> -->
 
           <div alt="Raster" class="checkbox">
             <Checkbox
               bind:checked
               on:change={() => loadLayer()}
+              value={path}
               style="background-color: transparent; --mdc-ripple-fg-size:0;"
               id={label} />
           </div>
         {/if}
-        <div class="name">
+        <div class={isRaster ? 'name raster' : 'name'}>
           {label}
         </div>
       </div>
@@ -235,30 +245,42 @@
 {/if}
 
 <style lang="scss">
-  .checkbox {
-    transform: scale(0.75);
-  }
-
   .node-container {
     display: flex;
     justify-content: left;
     align-items: center;
-    height: 20px;
-  }
+    height: 22px;
 
-  .icon {
-    &.raster {
-      color: rgb(52, 152, 219);
+    .checkbox {
+      transform: scale(0.75);
     }
 
-    &.vector {
-      color: rgb(0, 255, 0);
-    }
-  }
+    // .icon {
+    //   &.raster {
+    //     color: rgb(52, 152, 219);
+    //   }
 
-  .name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //   &.vector {
+    //     color: rgb(0, 255, 0);
+    //   }
+    // }
+
+    .name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 3.5px;
+      padding-left: 5px;
+
+      &.raster {
+        background: rgb(52, 152, 219);
+        background: linear-gradient(90deg, rgba(52, 152, 219, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+      }
+
+      &.vector {
+        background: rgb(0, 255, 0);
+        background: linear-gradient(90deg, rgba(0, 255, 0, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+      }
+    }
   }
 </style>

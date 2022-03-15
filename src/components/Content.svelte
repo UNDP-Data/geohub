@@ -67,7 +67,7 @@
             </Tab>
           </TabBar>
         </Header>
-        <Content>
+        <Content style="padding-right: 15px;">
           {#if activeTab === TabNames.LoadData}
             <TreeView />
           {:else if activeTab === TabNames.Layers}

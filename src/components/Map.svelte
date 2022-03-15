@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import maplibregl, { Map } from 'maplibre-gl'
+
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { map } from '../stores/mapstore'
+  import { indicatorProgress } from '../stores/indicatorProgressStore'
 
   export let lat = 0
   export let lon = 0
@@ -11,7 +13,7 @@
   let container: HTMLDivElement
 
   onMount(async () => {
-    const new_map = new Map({
+    const newMap = new Map({
       container,
       style: 'https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
       center: [lon, lat],
@@ -19,12 +21,12 @@
       hash: true,
     })
 
-    new_map.addControl(new maplibregl.NavigationControl({}), 'top-right')
-    new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
+    newMap.addControl(new maplibregl.NavigationControl({}), 'top-right')
+    newMap.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
 
     const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
 
-    new_map.addControl(
+    newMap.addControl(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       new MaplibreExportControl({
@@ -38,7 +40,20 @@
       'top-right',
     )
 
-    map.update(() => new_map)
+    const indicatorProgressEvents = {
+      true: ['zoomstart', 'touchmove', 'mousedown'],
+      false: ['zoomend', 'touchend', 'mouseup'],
+    }
+
+    Object.keys(indicatorProgressEvents).forEach((state) => {
+      indicatorProgressEvents[state].forEach((event: any) => {
+        newMap.on(event, () => {
+          $indicatorProgress = state === 'true'
+        })
+      })
+    })
+
+    map.update(() => newMap)
   })
 </script>
 
