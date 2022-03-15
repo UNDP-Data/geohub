@@ -41,11 +41,11 @@
   let scalingValueRange
 
   const setSectionState = () => {
-    _sectionState[layerId] = activeSection
+    sectionState[layerId] = activeSection
   }
 
   const setDynamicLayerState = () => {
-    _dynamicLayerState[layerId] = inDynamic
+    dynamicLayerState[layerId] = inDynamic
 
     if (inDynamic == true) {
       if (!$dynamicLayers.includes(layerId)) {
@@ -57,8 +57,7 @@
 
     let ntrue = 0
 
-    for (const [value] of Object.entries(_dynamicLayerState)) {
-
+    for (const [value] of Object.entries(dynamicLayerState)) {
       if (value) {
         ++ntrue
       }
@@ -72,9 +71,7 @@
   }
 
   const setLayerState = () => {
-
-    _layerState[layerId] = panelOpen
-
+    layerState[layerId] = panelOpen
   }
 
   const selectColorMap = () => {
@@ -97,13 +94,13 @@
 
   $: activeSection, setSectionState()
 
-  $: activeSection = _sectionState[layerId] || ''
+  $: activeSection = sectionState[layerId] || ''
   $: colorMapName, selectColorMap()
-  $: inDynamic = _dynamicLayerState[layerId] || false
+  $: inDynamic = dynamicLayerState[layerId] || false
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  $: panelOpen = _layerState[layerId] || false
+  $: panelOpen = layerState[layerId] || false
 
   $: visibility = visSelected ? 'visible' : 'none'
   $: colorMapName, selectColorMap()
@@ -129,10 +126,9 @@
 
     //update state vars
 
-    delete _layerState[layerId]
-    delete _sectionState[layerId]
-    delete _dynamicLayerState[layerId]
-
+    delete layerState[layerId]
+    delete sectionState[layerId]
+    delete dynamicLayerState[layerId]
   }
 
   const hierachyDown = (layerID: string) => {
