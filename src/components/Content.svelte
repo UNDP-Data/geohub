@@ -19,6 +19,9 @@
 
   $: hideLinearProgress = !$indicatorProgress
 
+  const setContentContainerMargin = (margin: number) =>
+          (document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`)
+
   $: {
     if (drawerOpen) {
       try {
@@ -44,8 +47,7 @@
   }
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
-  const setContentContainerMargin = (margin: number) =>
-    (document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`)
+
 </script>
 
 <div class="content-container">
