@@ -26,7 +26,7 @@
   export let activeSection: string = sectionState[layerId] || ''
   export let panelOpen: boolean = layerState[layerId] || false
   export let inDynamic: boolean = dynamicLayerState[layerId] || false
-  export let disabled = false
+  export let disabled = true
 
   let mapLayers = $map.getStyle().layers
   let colorMapName = 'viridis'
@@ -57,7 +57,7 @@
 
     let ntrue = 0
 
-    for (const [value] of Object.entries(dynamicLayerState)) {
+    for (const [key, value] of Object.entries(dynamicLayerState)) {
       if (value) {
         ++ntrue
       }
@@ -122,7 +122,7 @@
 
     //update dynamic
     inDynamic = false
-    setDynamicLayerState()
+    //setDynamicLayerState()
 
     //update state vars
 

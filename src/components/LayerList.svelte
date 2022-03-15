@@ -6,11 +6,13 @@
   import DynamicLayer from './DynamicLayer.svelte'
   let disabled = true
   let open = false
+
+  console.log('Disabled is: ', disabled)
 </script>
 
 {#if !disabled}
   <div style="display:flex; justify-content:center; flex-direction:row">
-    <Button on:click={() => (open = true)} bind:disabled>
+    <Button on:click={() => (open = true)}>
       <Label>Combined layer from selection..</Label>
     </Button>
   </div>
