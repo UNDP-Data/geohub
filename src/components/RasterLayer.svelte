@@ -37,8 +37,7 @@
   let queryEnabled = true
   let visSelected = false
   let reverseColorMap = false
-  let scalingValueRange
-
+  let scalingValueRange;
 
   const setSectionState = () => {
     _sectionState[layerId] = activeSection
@@ -90,7 +89,6 @@
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
 
-
   $: activeSection, setSectionState()
   $: activeSection = _sectionState[layerId] || ''
   $: colorMapName, selectColorMap()
@@ -128,12 +126,6 @@
     delete _dynamicLayerState[layerId]
   }
 
-
-
-
-
-
-
   const hierachyDown = (layerID: string) => {
     const newIndex = index - 1
 
@@ -169,10 +161,6 @@
       $map.triggerRepaint()
     }
   }
-
-
-
-
 </script>
 
 <Accordion>
