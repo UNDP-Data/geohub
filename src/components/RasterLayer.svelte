@@ -13,6 +13,7 @@
   import Slider from '@smui/slider'
   import Checkbox from '@smui/checkbox'
   import Colormaps from './Colormaps.svelte'
+  import Legend from './Legend.svelte'
 
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
@@ -26,7 +27,7 @@
   export let activeSection: string = sectionState[layerId] || ''
   export let panelOpen: boolean = layerState[layerId] || false
   export let inDynamic: boolean = dynamicLayerState[layerId] || false
-  export let disabled = false
+  export let disabled = true
 
   let mapLayers = $map.getStyle().layers
   let colorMapName = 'viridis'
@@ -57,7 +58,7 @@
 
     let ntrue = 0
 
-    for (const [value] of Object.entries(dynamicLayerState)) {
+    for (const [key, value] of Object.entries(dynamicLayerState)) {
       if (value) {
         ++ntrue
       }
@@ -122,7 +123,7 @@
 
     //update dynamic
     inDynamic = false
-    setDynamicLayerState()
+    //setDynamicLayerState()
 
     //update state vars
 
@@ -166,6 +167,10 @@
       $map.triggerRepaint()
     }
   }
+
+  let l = $layerList.filter((item) => item.definition.id === layerId).pop()
+  let lMin = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  let lMax = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
 </script>
 
 <Accordion>
@@ -249,7 +254,7 @@
       {#if activeSection === 'color'}
         <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
       {:else if activeSection === 'band'}
-        <p>B</p>
+        <Legend {colorMapName} {lMax} {lMin} />
       {:else if activeSection === 'opacity'}
         <div class="layer-header">
           <div>Opacity:</div>
