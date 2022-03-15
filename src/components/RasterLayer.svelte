@@ -39,6 +39,58 @@
   let reverseColorMap = false
   let scalingValueRange = ''
 
+
+  const setSectionState = () => {
+    _sectionState[layerId] = activeSection
+  }
+
+  const setDynamicLayerState = () => {
+    _dynamicLayerState[layerId] = inDynamic
+    if (inDynamic == true) {
+      if (!$dynamicLayers.includes(layerId)) {
+        dynamicLayers.set([...$dynamicLayers, layerId])
+      }
+    } else {
+      $dynamicLayers = $dynamicLayers.filter((item) => item !== layerId)
+    }
+
+    let ntrue = 0
+    for (const [value] of Object.entries(_dynamicLayerState)) {
+      if (value) {
+        ++ntrue
+      }
+      if (ntrue >= 2) {
+        disabled = false
+        break
+      } else {
+        disabled = true
+      }
+    }
+  }
+
+  const setLayerState = () => {
+    _layerState[layerId] = panelOpen
+  }
+
+  const selectColorMap = () => {
+    if (!colorMapName) return
+    let name = colorMapName
+    if (reverseColorMap) {
+      name = `${name}_r`
+    }
+    updateParamsInURL({ colormap_name: name })
+  }
+
+  const selectScaling = () => {
+    if (!scalingValueRange) return
+    updateParamsInURL({ rescale: scalingValueRange })
+  }
+
+  const setLayerOpacity = () => {
+    $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
+  }
+
+
   $: activeSection, setSectionState()
   $: activeSection = sectionState[layerId] || ''
   $: colorMapName, selectColorMap()
@@ -76,41 +128,6 @@
     delete dynamicLayerState[layerId]
   }
 
-  const setLayerOpacity = () => {
-    $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
-  }
-
-  const setLayerState = () => {
-    layerState[layerId] = panelOpen
-  }
-
-  const setSectionState = () => {
-    sectionState[layerId] = activeSection
-  }
-
-  const setDynamicLayerState = () => {
-    dynamicLayerState[layerId] = inDynamic
-    if (inDynamic == true) {
-      if (!$dynamicLayers.includes(layerId)) {
-        dynamicLayers.set([...$dynamicLayers, layerId])
-      }
-    } else {
-      $dynamicLayers = $dynamicLayers.filter((item) => item !== layerId)
-    }
-
-    let ntrue = 0
-    for (const [value] of Object.entries(dynamicLayerState)) {
-      if (value) {
-        ++ntrue
-      }
-      if (ntrue >= 2) {
-        disabled = false
-        break
-      } else {
-        disabled = true
-      }
-    }
-  }
 
   const hierachyDown = (layerID: string) => {
     const newIndex = index - 1
@@ -147,18 +164,10 @@
       $map.triggerRepaint()
     }
   }
-  const selectColorMap = () => {
-    if (!colorMapName) return
-    let name = colorMapName
-    if (reverseColorMap) {
-      name = `${name}_r`
-    }
-    updateParamsInURL({ colormap_name: name })
-  }
-  const selectScaling = () => {
-    if (!scalingValueRange) return
-    updateParamsInURL({ rescale: scalingValueRange })
-  }
+
+
+
+
 </script>
 
 <Accordion>
