@@ -182,7 +182,7 @@
   }
 </script>
 
-<li style="padding-left:{level * 1}rem;">
+<li style="padding-left:{level * 0.75}rem;">
   <div style=" padding-top: 5px;">
     {#if children}
       <div
@@ -198,9 +198,9 @@
         </div>
 
         {#if url}
-          <div class="icon vector">
+          <!-- <div class="icon vector">
             {@html '&#10070'}
-          </div>
+          </div> -->
 
           <div alt="Vector" class="checkbox">
             <Checkbox
@@ -210,26 +210,27 @@
           </div>
         {/if}
 
-        <div class="name">
+        <div class={url ? 'name vector' : 'name'}>
           {label}
         </div>
       </div>
     {:else}
       <div class="node-container">
         {#if isRaster}
-          <div class="icon raster">
+          <!-- <div class="icon raster">
             {@html '&#9638'}
-          </div>
+          </div> -->
 
           <div alt="Raster" class="checkbox">
             <Checkbox
               bind:checked
               on:change={() => loadLayer()}
+              value={path}
               style="background-color: transparent; --mdc-ripple-fg-size:0;"
               id={label} />
           </div>
         {/if}
-        <div class="name">
+        <div class={isRaster ? 'name raster' : 'name'}>
           {label}
         </div>
       </div>
@@ -248,26 +249,38 @@
     display: flex;
     justify-content: left;
     align-items: center;
-    height: 20px;
+    height: 22px;
 
     .checkbox {
       transform: scale(0.75);
     }
 
-    .icon {
-      &.raster {
-        color: rgb(52, 152, 219);
-      }
+    // .icon {
+    //   &.raster {
+    //     color: rgb(52, 152, 219);
+    //   }
 
-      &.vector {
-        color: rgb(0, 255, 0);
-      }
-    }
+    //   &.vector {
+    //     color: rgb(0, 255, 0);
+    //   }
+    // }
 
     .name {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding: 3.5px;
+      padding-left: 5px;
+
+      &.raster {
+        background: rgb(52, 152, 219);
+        background: linear-gradient(90deg, rgba(52, 152, 219, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+      }
+
+      &.vector {
+        background: rgb(0, 255, 0);
+        background: linear-gradient(90deg, rgba(0, 255, 0, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+      }
     }
   }
 </style>
