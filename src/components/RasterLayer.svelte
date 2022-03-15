@@ -37,7 +37,7 @@
   let queryEnabled = true
   let visSelected = false
   let reverseColorMap = false
-  let scalingValueRange;
+  let scalingValueRange
 
   const setSectionState = () => {
     _sectionState[layerId] = activeSection
