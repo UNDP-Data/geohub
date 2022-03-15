@@ -39,13 +39,12 @@
   let reverseColorMap = false
   let scalingValueRange = ''
 
-
   const setSectionState = () => {
-    _sectionState[layerId] = activeSection
+    sectionState[layerId] = activeSection
   }
 
   const setDynamicLayerState = () => {
-    _dynamicLayerState[layerId] = inDynamic
+    dynamicLayerState[layerId] = inDynamic
     if (inDynamic == true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
@@ -55,7 +54,7 @@
     }
 
     let ntrue = 0
-    for (const [value] of Object.entries(_dynamicLayerState)) {
+    for (const [value] of Object.entries(dynamicLayerState)) {
       if (value) {
         ++ntrue
       }
@@ -69,7 +68,7 @@
   }
 
   const setLayerState = () => {
-    _layerState[layerId] = panelOpen
+    layerState[layerId] = panelOpen
   }
 
   const selectColorMap = () => {
@@ -89,7 +88,6 @@
   const setLayerOpacity = () => {
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
-
 
   $: activeSection, setSectionState()
   $: activeSection = sectionState[layerId] || ''
@@ -122,7 +120,6 @@
     delete sectionState[layerId]
     delete dynamicLayerState[layerId]
   }
-
 
   const hierachyDown = (layerID: string) => {
     const newIndex = index - 1
@@ -159,10 +156,6 @@
       $map.triggerRepaint()
     }
   }
-
-
-
-
 </script>
 
 <Accordion>
