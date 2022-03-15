@@ -41,11 +41,24 @@
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   let checked = false
+  let nodeLayerId = ''
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
+
+  $: {
+    // remove layer from map and layer list store
+    if (checked === false && $layerList.length > 0) {
+      const layer = $layerList.find((item) => item.definition.id === nodeLayerId)
+
+      if (layer) {
+        $layerList = $layerList.filter((item) => item.definition.id !== nodeLayerId)
+        $map.removeLayer(nodeLayerId)
+      }
+    }
+  }
 
   onMount(() => {
     if (level === 0) toggleExpansion()
@@ -92,6 +105,7 @@
     $indicatorProgress = true
     const tileSourceId = path.replace(/\//g, '_')
     const layerId = uuidv4()
+    nodeLayerId = layerId
     let layerInfo: LayerInfo = {}
 
     if (checked) {

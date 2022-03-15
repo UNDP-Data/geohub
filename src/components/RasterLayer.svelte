@@ -28,11 +28,11 @@
   export let inDynamic: boolean = dynamicLayerState[layerId] || false
   export let disabled = false
 
-  let allLayers = $map.getStyle().layers
+  let mapLayers = $map.getStyle().layers
   let colorMapName = 'viridis'
-  let layer = allLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
-  let len = allLayers.length
-  let index = allLayers.indexOf(layer)
+  let layer = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+  let len = mapLayers.length
+  let index = mapLayers.indexOf(layer)
   let layerOpacity = 1
   let queryEnabled = true
   let visSelected = false
@@ -59,17 +59,12 @@
     $map.setLayoutProperty(layerId, 'visibility', visibility)
   }
 
-  const removeLayer = () => {
-    $map.removeLayer(layerId)
-    //TODO remove the layer source as well if none of the layers reference it
+  const removeLayer = (nodeLayerId = '') => {
+    $map.removeLayer(nodeLayerId ? nodeLayerId : layerId)
     $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-    //$dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
 
-    //update dynamic
     inDynamic = false
     setDynamicLayerState()
-
-    //update state vars
 
     delete layerState[layerId]
     delete sectionState[layerId]
@@ -116,7 +111,7 @@
     const newIndex = index - 1
 
     if (newIndex >= 0) {
-      $map.moveLayer(layerID, allLayers[newIndex].id)
+      $map.moveLayer(layerID, mapLayers[newIndex].id)
       index = newIndex
       $map.triggerRepaint()
     }
@@ -125,15 +120,15 @@
   const hierachyUp = (layerID: string) => {
     const newIndex = index + 1
 
-    if (newIndex <= allLayers.length - 1) {
-      $map.moveLayer(layerID, allLayers[newIndex].id)
+    if (newIndex <= mapLayers.length - 1) {
+      $map.moveLayer(layerID, mapLayers[newIndex].id)
       index = newIndex
       $map.triggerRepaint()
     }
   }
 
   const updateParamsInURL = (params) => {
-    let layers = allLayers.filter((item) => item.id === layerId).pop()['source']
+    let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
     const layerSource = $map.getSource(layers)
 
     if (layerSource.tiles) {

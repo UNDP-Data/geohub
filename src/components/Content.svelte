@@ -66,13 +66,12 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px;">
-          {#if activeTab === TabNames.LoadData}
+          <div class={activeTab === TabNames.LoadData ? 'active' : 'inactive'}>
             <TreeView />
-          {:else if activeTab === TabNames.Layers}
+          </div>
+          <div class={activeTab === TabNames.Layers ? 'active' : 'inactive'}>
             <LayerList />
-          {:else if activeTab === TabNames.Analyze}
-            Analyze
-          {/if}
+          </div>
         </Content>
       </div>
       <div
@@ -127,6 +126,14 @@
     overflow: auto;
     z-index: 0;
     flex-grow: 1;
+
+    .active {
+      display: block;
+    }
+
+    .inactive {
+      display: none;
+    }
 
     .drawer-container {
       display: flex;
