@@ -3,7 +3,7 @@
   import { wtree } from '../stores/stores'
 </script>
 
-<ul style="padding-top: 5px;">
+<ul>
   <TreeNode bind:node={$wtree.tree} />
 </ul>
 
@@ -13,5 +13,6 @@
     list-style: none;
     padding-left: 1.2rem;
     user-select: none;
+    padding-top: 5px;
   }
 </style>

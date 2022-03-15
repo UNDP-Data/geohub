@@ -30,6 +30,7 @@
   import { TreeNodeInitialValues } from '../lib/constants'
   import { wtree, layerList } from '../stores/stores'
   import { map } from '../stores/mapstore'
+  import Checkbox from '@smui/checkbox'
 
   export let node = TreeNodeInitialValues
   export let level = 0
@@ -79,7 +80,7 @@
     const layerId = uuidv4()
     let layerInfo: LayerInfo = {}
 
-    if (!checked) {
+    if (checked) {
       if (!isRaster) {
         const layerName = path.split('/')[path.split('/').length - 2]
         const layerSource = {
@@ -169,30 +170,51 @@
 <li style="padding-left:{level * 1}rem;">
   <div style=" padding-top: 5px;">
     {#if children}
-      <span on:click={() => toggleExpansion()} class="node-label">
-        {#if !expanded}
-          <Icon color="primary" class="material-icons" on>chevron_right</Icon>
-        {:else}
-          <Icon color="primary" class="material-icons" on style="transform: rotate(90deg);">chevron_right</Icon>
+      <div on:click={() => toggleExpansion()} class="node-container">
+        <div class="tree-icon">
+          {#if !expanded}
+            <Icon color="primary" class="material-icons" on>chevron_right</Icon>
+          {:else}
+            <Icon color="primary" class="material-icons" on style="transform: rotate(90deg);">chevron_right</Icon>
+          {/if}
+        </div>
+
+        {#if url}
+          <div class="icon vector">
+            {@html '&#10070'}
+          </div>
+
+          <div alt="Vector" class="checkbox">
+            <Checkbox
+              bind:checked
+              on:change={() => loadLayer()}
+              style="background-color: transparent; --mdc-ripple-fg-size:0;" />
+          </div>
         {/if}
-        {label}
-      </span>
-      {#if url}
-        <span alt="Vector" style="color: rgb(0,255,0)">
-          {@html '&#10070'}
-          <input style="padding:0px; margin:0px" type="checkbox" on:change={() => loadLayer()} bind:checked />
-        </span>
-      {/if}
+
+        <div class="name">
+          {label}
+        </div>
+      </div>
     {:else}
-      <span class="long-and-truncated">
+      <div class="node-container">
         {#if isRaster}
-          <span alt="Raster" style="color: rgb(52, 152, 219);">
+          <div class="icon raster">
             {@html '&#9638'}
-            <input style="padding:0px; margin:0px" type="checkbox" on:change={() => loadLayer()} bind:checked />
-          </span>
+          </div>
+
+          <div alt="Raster" class="checkbox">
+            <Checkbox
+              bind:checked
+              on:change={() => loadLayer()}
+              style="background-color: transparent; --mdc-ripple-fg-size:0;"
+              id={label} />
+          </div>
         {/if}
-        {label}
-      </span>
+        <div class="name">
+          {label}
+        </div>
+      </div>
     {/if}
   </div>
 </li>
@@ -204,13 +226,28 @@
 {/if}
 
 <style lang="scss">
-  .node-label {
+  .checkbox {
+    transform: scale(0.75);
+  }
+
+  .node-container {
     display: flex;
     justify-content: left;
     align-items: center;
+    height: 20px;
   }
 
-  .long-and-truncated {
+  .icon {
+    &.raster {
+      color: rgb(52, 152, 219);
+    }
+
+    &.vector {
+      color: rgb(0, 255, 0);
+    }
+  }
+
+  .name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
