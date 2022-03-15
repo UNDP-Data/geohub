@@ -21,10 +21,9 @@
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
   let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
-  const diffValue = (lMax - lMin) * 0.5
 
-  let lMinScaling = Math.floor(lMin - diffValue)
-  let lMaxScaling = Math.ceil(lMax + diffValue)
+  let sliderMin = Math.floor(lMin)
+  let sliderMax = Math.ceil(lMax)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
 
@@ -48,8 +47,8 @@
         range
         bind:start={scalingValueStart}
         bind:end={scalingValueEnd}
-        min={lMinScaling}
-        max={lMaxScaling}
+        min={sliderMin}
+        max={sliderMax}
         step={0.1}
         input$aria-label="Range slider"
         label="Set the min and max" />
