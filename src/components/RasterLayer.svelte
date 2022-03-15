@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
-  const _layerState = {}
-  const _sectionState = {}
-  const _dynamicLayerState = {}
+  const layerState = {}
+  const sectionState = {}
+  const dynamicLayerState = {}
 </script>
 
 <script lang="ts">
@@ -23,9 +23,9 @@
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
 
-  export let activeSection: string = _sectionState[layerId] || ''
-  export let panelOpen: boolean = _layerState[layerId] || false
-  export let inDynamic: boolean = _dynamicLayerState[layerId] || false
+  export let activeSection: string = sectionState[layerId] || ''
+  export let panelOpen: boolean = layerState[layerId] || false
+  export let inDynamic: boolean = dynamicLayerState[layerId] || false
   export let disabled = false
 
   let allLayers = $map.getStyle().layers
@@ -37,16 +37,16 @@
   let queryEnabled = true
   let visSelected = false
   let reverseColorMap = false
-  let scalingValueRange
+  let scalingValueRange = ''
 
   $: activeSection, setSectionState()
-  $: activeSection = _sectionState[layerId] || ''
+  $: activeSection = sectionState[layerId] || ''
   $: colorMapName, selectColorMap()
-  $: inDynamic = _dynamicLayerState[layerId] || false
+  $: inDynamic = dynamicLayerState[layerId] || false
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  $: panelOpen = _layerState[layerId] || false
+  $: panelOpen = layerState[layerId] || false
   $: visibility = visSelected ? 'visible' : 'none'
   $: colorMapName, selectColorMap()
   $: reverseColorMap, selectColorMap()
@@ -71,9 +71,9 @@
 
     //update state vars
 
-    delete _layerState[layerId]
-    delete _sectionState[layerId]
-    delete _dynamicLayerState[layerId]
+    delete layerState[layerId]
+    delete sectionState[layerId]
+    delete dynamicLayerState[layerId]
   }
 
   const setLayerOpacity = () => {
@@ -81,15 +81,15 @@
   }
 
   const setLayerState = () => {
-    _layerState[layerId] = panelOpen
+    layerState[layerId] = panelOpen
   }
 
   const setSectionState = () => {
-    _sectionState[layerId] = activeSection
+    sectionState[layerId] = activeSection
   }
 
   const setDynamicLayerState = () => {
-    _dynamicLayerState[layerId] = inDynamic
+    dynamicLayerState[layerId] = inDynamic
     if (inDynamic == true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
@@ -99,7 +99,7 @@
     }
 
     let ntrue = 0
-    for (const [value] of Object.entries(_dynamicLayerState)) {
+    for (const [value] of Object.entries(dynamicLayerState)) {
       if (value) {
         ++ntrue
       }

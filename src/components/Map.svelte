@@ -13,7 +13,7 @@
   let container: HTMLDivElement
 
   onMount(async () => {
-    const new_map = new Map({
+    const newMap = new Map({
       container,
       style: 'https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
       center: [lon, lat],
@@ -21,12 +21,12 @@
       hash: true,
     })
 
-    new_map.addControl(new maplibregl.NavigationControl({}), 'top-right')
-    new_map.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
+    newMap.addControl(new maplibregl.NavigationControl({}), 'top-right')
+    newMap.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
 
     const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
 
-    new_map.addControl(
+    newMap.addControl(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       new MaplibreExportControl({
@@ -47,13 +47,13 @@
 
     Object.keys(indicatorProgressEvents).forEach((state) => {
       indicatorProgressEvents[state].forEach((event: any) => {
-        new_map.on(event, () => {
+        newMap.on(event, () => {
           $indicatorProgress = state === 'true'
         })
       })
     })
 
-    map.update(() => new_map)
+    map.update(() => newMap)
   })
 </script>
 
