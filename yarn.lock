@@ -660,6 +660,19 @@
     "@material/theme" "^13.0.0"
     tslib "^2.1.0"
 
+"@material/linear-progress@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/linear-progress/-/linear-progress-13.0.0.tgz#a1c12140c2074018029425365d121013a70f3ec6"
+  integrity sha512-FJpP6flSME5QRPfkB616uA5bk9aMKJBqkklrHk6dSMZaTKbiHRmc6faxMIZ4w9W49JFMXaSwzC39y96tQTiRQg==
+  dependencies:
+    "@material/animation" "^13.0.0"
+    "@material/base" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/progress-indicator" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/list@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/list/-/list-13.0.0.tgz"
@@ -717,6 +730,13 @@
     "@material/rtl" "^13.0.0"
     "@material/shape" "^13.0.0"
     "@material/theme" "^13.0.0"
+    tslib "^2.1.0"
+
+"@material/progress-indicator@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/progress-indicator/-/progress-indicator-13.0.0.tgz#8097208c5fa3dd6753d8b7bf141c28beb0938c23"
+  integrity sha512-IfhAMn03gWg/Rl0Bg26Q1g+DrMnaULllz+ZJeIY7BXZC5qFYq1fLq4+RiQmfPGlJfURUjrWNLcI1VDVyXUHHzg==
+  dependencies:
     tslib "^2.1.0"
 
 "@material/ripple@^13.0.0":
@@ -1232,6 +1252,15 @@
   integrity sha512-BVn7pDIkl/6RFfN2HBSM2MYiTZddJ08f2D74sL/D3SIO4MpfBgeBsxMKEUwSc5OpfD+FYZmGyBhNIcDrPPC4PQ==
   dependencies:
     "@material/line-ripple" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.15"
+    svelte2tsx "^0.4.14"
+
+"@smui/linear-progress@^6.0.0-beta.15":
+  version "6.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@smui/linear-progress/-/linear-progress-6.0.0-beta.15.tgz#af65e53778f85916c191728ca895e3223ea121c4"
+  integrity sha512-V+UjNgIZChIKJaqmFkI1IPdrmJJkx+VwnHV4+ZoqPuKRbzIZc6ljEl+szOGLa9qyFUEetM0P8lV9Rea1iSkz3g==
+  dependencies:
+    "@material/linear-progress" "^13.0.0"
     "@smui/common" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 

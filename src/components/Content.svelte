@@ -1,18 +1,23 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
+  import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { layerList } from '../stores/stores'
+  import { indicatorProgress } from '../stores/indicatorProgressStore'
   import { TabNames } from '../lib/constants'
 
   export let drawerOpen = false
   let activeTab = TabNames.LoadData
   let isResizingDrawer = false
   let drawerWidth = 300
+  let hideLinearProgress = true
+
+  $: hideLinearProgress = !$indicatorProgress
 
   $: {
     if (drawerOpen) {
@@ -47,6 +52,7 @@
   <Drawer variant="dismissible" bind:open={drawerOpen} style="width: {drawerWidth}px; max-width: {drawerWidth}px;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
+        <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header>
           <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">

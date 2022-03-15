@@ -24,13 +24,15 @@
           $: ({ label, children, path, url, isRaster } = tree)
  -->
 <script lang="ts">
+  import Checkbox from '@smui/checkbox'
   import { Icon } from '@smui/icon-button'
   import { v4 as uuidv4 } from 'uuid'
+
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { TreeNodeInitialValues } from '../lib/constants'
   import { wtree, layerList } from '../stores/stores'
   import { map } from '../stores/mapstore'
-  import Checkbox from '@smui/checkbox'
+  import { indicatorProgress } from '../stores/indicatorProgressStore'
 
   export let node = TreeNodeInitialValues
   export let level = 0
@@ -46,9 +48,14 @@
   const toggleExpansion = () => {
     expanded = expansionState[label] = !expanded
     if (tree?.children.length === 0) updateTreeStore()
+
+    setTimeout(() => {
+      if ($indicatorProgress === true) $indicatorProgress = false
+    }, 2000)
   }
 
   const updateTreeStore = async () => {
+    $indicatorProgress = true
     let newTreeData = await fetchTree(tree.path)
     let subpaths = path.split('/').slice(0, -1)
 
@@ -76,6 +83,7 @@
   }
 
   const loadLayer = async () => {
+    $indicatorProgress = true
     const tileSourceId = path.replace(/\//g, '_')
     const layerId = uuidv4()
     let layerInfo: LayerInfo = {}
@@ -160,6 +168,7 @@
         $map.addLayer(layerDefinition, firstSymbolId)
       }
     }
+    $indicatorProgress = false
   }
 
   const fetchLayerInfo = async (url: string) => {

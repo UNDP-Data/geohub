@@ -35,6 +35,7 @@
     "@smui/form-field": "^6.0.0-beta.14",
     "@smui/icon-button": "^6.0.0-beta.13",
     "@smui/layout-grid": "^6.0.0-beta.13",
+    "@smui/linear-progress": "^6.0.0-beta.15",
     "@smui/list": "^6.0.0-beta.13",
     "@smui/menu": "^6.0.0-beta.14",
     "@smui/menu-surface": "^6.0.0-beta.14",
