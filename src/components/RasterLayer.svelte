@@ -37,14 +37,16 @@
   let queryEnabled = true
   let visSelected = false
   let reverseColorMap = false
-  let scalingValueRange = ''
+
+  let scalingValueRange
 
   const setSectionState = () => {
-    sectionState[layerId] = activeSection
+    _sectionState[layerId] = activeSection
   }
 
   const setDynamicLayerState = () => {
-    dynamicLayerState[layerId] = inDynamic
+    _dynamicLayerState[layerId] = inDynamic
+
     if (inDynamic == true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
@@ -54,7 +56,9 @@
     }
 
     let ntrue = 0
-    for (const [value] of Object.entries(dynamicLayerState)) {
+
+    for (const [value] of Object.entries(_dynamicLayerState)) {
+
       if (value) {
         ++ntrue
       }
@@ -68,7 +72,9 @@
   }
 
   const setLayerState = () => {
-    layerState[layerId] = panelOpen
+
+    _layerState[layerId] = panelOpen
+
   }
 
   const selectColorMap = () => {
@@ -90,13 +96,15 @@
   }
 
   $: activeSection, setSectionState()
-  $: activeSection = sectionState[layerId] || ''
+
+  $: activeSection = _sectionState[layerId] || ''
   $: colorMapName, selectColorMap()
-  $: inDynamic = dynamicLayerState[layerId] || false
+  $: inDynamic = _dynamicLayerState[layerId] || false
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  $: panelOpen = layerState[layerId] || false
+  $: panelOpen = _layerState[layerId] || false
+
   $: visibility = visSelected ? 'visible' : 'none'
   $: colorMapName, selectColorMap()
   $: reverseColorMap, selectColorMap()
@@ -109,16 +117,22 @@
     $map.setLayoutProperty(layerId, 'visibility', visibility)
   }
 
-  const removeLayer = (nodeLayerId = '') => {
-    $map.removeLayer(nodeLayerId ? nodeLayerId : layerId)
+  const removeLayer = () => {
+    $map.removeLayer(layerId)
+    //TODO remove the layer source as well if none of the layers reference it
     $layerList = $layerList.filter((item) => item.definition.id !== layerId)
+    //$dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
 
+    //update dynamic
     inDynamic = false
     setDynamicLayerState()
 
-    delete layerState[layerId]
-    delete sectionState[layerId]
-    delete dynamicLayerState[layerId]
+    //update state vars
+
+    delete _layerState[layerId]
+    delete _sectionState[layerId]
+    delete _dynamicLayerState[layerId]
+
   }
 
   const hierachyDown = (layerID: string) => {
