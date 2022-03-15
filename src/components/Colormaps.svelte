@@ -26,12 +26,9 @@
   let sliderMax = Math.ceil(lMax)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
-  let valueStart;
-  let valueEnd;
 
 
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
-
 
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
@@ -40,8 +37,6 @@
   $: scalingValueStart, setScalingValueRwange()
   $: scalingValueEnd, setScalingValueRwange()
   export let reverseColorMap = false
-
-
 </script>
 
 <div class="paper-container">
