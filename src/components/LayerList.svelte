@@ -6,8 +6,6 @@
   import DynamicLayer from './DynamicLayer.svelte'
   let disabled = true
   let open = false
-
-  console.log('Disabled is: ', disabled)
 </script>
 
 {#if !disabled}

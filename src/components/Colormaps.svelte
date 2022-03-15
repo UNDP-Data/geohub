@@ -19,8 +19,8 @@
   ;({ definition } = layerConfig)
   const layerId = definition.id
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
-  let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
-  let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
+  export let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
+  export let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
 
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
