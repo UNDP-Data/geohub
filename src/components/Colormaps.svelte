@@ -22,13 +22,16 @@
   let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
 
-
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
+  let valueStart;
+  let valueEnd;
+
 
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+
 
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
@@ -37,10 +40,11 @@
   $: scalingValueStart, setScalingValueRwange()
   $: scalingValueEnd, setScalingValueRwange()
   export let reverseColorMap = false
+
+
 </script>
 
 <div class="paper-container">
-
   <div style="display: flex; align-items: center;">
     <h6 style="width: 10%;">Rescale:</h6>
     <div style="width: 90%;">
@@ -53,12 +57,9 @@
         max={sliderMax}
         step={0.1}
         input$aria-label="Range slider"
-        label="Set the min and max"
-      />
+        label="Set the min and max" />
     </div>
   </div>
-
-  
 
   <div style="display: flex; align-items: center; justify-content: center">
     <FormField>
@@ -90,14 +91,11 @@
         {#each divergingColorMaps as btn}
           <div
             class="colormap-div"
-
             title={btn.name}
             on:click={() => {
               colorMapName = btn['name']
             }}
-            style={btn.background}
-          />
-
+            style={btn.background} />
         {/each}
       </div>
     {:else if selectedColorMapType === 'Cyclic'}
