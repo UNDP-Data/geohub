@@ -32,7 +32,7 @@
 <TopAppBar bind:this={topAppBar} variant="fixed">
   <Row>
     <Section style="padding-left: 15px;">
-      <!-- <img height="52" src="1200px-UNDP_logo.svg-148x300.png" alt="GeoHub | UNDP" loading="lazy" /> -->
+      <img style="height: 52px;" src="1200px-UNDP_logo.svg-148x300.png" alt="GeoHub | UNDP" loading="lazy" />
       <Title style="font-family: ProximaNova, sans-serif; font-weight: bold;">GeoHub</Title>
     </Section>
 
