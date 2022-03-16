@@ -285,6 +285,7 @@
       text-overflow: ellipsis;
       padding: 3.5px;
       padding-left: 5px;
+      height: 29.5px;
 
       &.raster {
         background: rgb(52, 152, 219);

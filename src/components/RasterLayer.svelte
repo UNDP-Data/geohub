@@ -6,8 +6,8 @@
 
 <script lang="ts">
   import 'bulma/css/bulma.css'
-  import IconButton, { Icon } from '@smui/icon-button'
-  import Accordion, { Panel, Header, Content } from '@smui-extra/accordion'
+  import IconButton from '@smui/icon-button'
+  import Accordion, { Panel } from '@smui-extra/accordion'
   import Slider from '@smui/slider'
   import Checkbox from '@smui/checkbox'
   import { slide } from 'svelte/transition'
@@ -32,19 +32,34 @@
   export let inDynamic: boolean = dynamicLayerState[layerId] || false
   export let disabled = true
 
+  const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
+
   let mapLayers = $map.getStyle().layers
-  let colorMapName = 'viridis'
   let layer = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
-  let len = mapLayers.length
-  let index = mapLayers.indexOf(layer)
+  let colorMapName = 'viridis'
+  let mapLayerIndex = mapLayers.indexOf(layer)
+  let l = $layerList.filter((item) => item.definition.id === layerId).pop()
+  let lMax = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  let lMin = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
   let layerOpacity = 1
+  let mapLayerCount = mapLayers.length
   let queryEnabled = true
-  let visSelected = false
   let reverseColorMap = false
   let scalingValueRange = ''
-  let l = $layerList.filter((item) => item.definition.id === layerId).pop()
-  let lMin = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
-  let lMax = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  let visSelected = false
+
+  $: activeSection = sectionState[layerId] || ''
+  $: activeSection, setSectionState()
+  $: colorMapName, selectColorMap()
+  $: colorMapName, selectColorMap()
+  $: inDynamic = dynamicLayerState[layerId] || false
+  $: inDynamic, setDynamicLayerState()
+  $: layerOpacity, setLayerOpacity()
+  $: panelOpen = layerState[layerId] || false
+  $: panelOpen, setLayerState()
+  $: reverseColorMap, selectColorMap()
+  $: scalingValueRange, selectScaling()
+  $: visibility = visSelected ? 'visible' : 'none'
 
   const setSectionState = () => {
     sectionState[layerId] = activeSection
@@ -63,7 +78,7 @@
 
     let ntrue = 0
 
-    for (const [key, value] of Object.entries(dynamicLayerState)) {
+    for (const [value] of Object.entries(dynamicLayerState)) {
       if (value) {
         ++ntrue
       }
@@ -98,22 +113,8 @@
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
 
-  $: activeSection, setSectionState()
-
-  $: activeSection = sectionState[layerId] || ''
-  $: colorMapName, selectColorMap()
-  $: inDynamic = dynamicLayerState[layerId] || false
-  $: inDynamic, setDynamicLayerState()
-  $: layerOpacity, setLayerOpacity()
-  $: panelOpen, setLayerState()
-  $: panelOpen = layerState[layerId] || false
-
-  $: visibility = visSelected ? 'visible' : 'none'
-  $: colorMapName, selectColorMap()
-  $: reverseColorMap, selectColorMap()
-  $: scalingValueRange, selectScaling()
-
   const toggleVisibility = () => {
+    visSelected = !visSelected
     if (!$map.getLayer(layerId)) {
       $map.addLayer(definition)
     }
@@ -122,37 +123,29 @@
 
   const removeLayer = () => {
     $map.removeLayer(layerId)
-    //TODO remove the layer source as well if none of the layers reference it
     $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-    //$dynamicLayers  = $dynamicLayers.filter((item) => item !== layerId );
-
-    //update dynamic
     inDynamic = false
-    //setDynamicLayerState()
-
-    //update state vars
-
     delete layerState[layerId]
     delete sectionState[layerId]
     delete dynamicLayerState[layerId]
   }
 
   const hierachyDown = (layerID: string) => {
-    const newIndex = index - 1
+    const newIndex = mapLayerIndex - 1
 
     if (newIndex >= 0) {
       $map.moveLayer(layerID, mapLayers[newIndex].id)
-      index = newIndex
+      mapLayerIndex = newIndex
       $map.triggerRepaint()
     }
   }
 
   const hierachyUp = (layerID: string) => {
-    const newIndex = index + 1
+    const newIndex = mapLayerIndex + 1
 
     if (newIndex <= mapLayers.length - 1) {
       $map.moveLayer(layerID, mapLayers[newIndex].id)
-      index = newIndex
+      mapLayerIndex = newIndex
       $map.triggerRepaint()
     }
   }
@@ -174,130 +167,162 @@
   }
 </script>
 
-<Accordion style="padding-left: 10px; padding-right: -5px;">
-  <Panel
-    variant="unelevated"
-    color="white"
-    bind:open={panelOpen}
-    style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; margin-bottom: 15px; padding: 5px;">
-    <div class="layer-header">
-      <Header style="background-color: transparent; --mdc-ripple-fg-size:0;">
-        <div class="layer-header-name">
-          <div class="layer-name">
-            {name}
+<div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
+  <Accordion>
+    <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
+      <div class="layer-header">
+        <div>
+          <div class="layer-header-name">
+            <div class="layer-name">
+              {name}
+            </div>
+            <div class="unread-count">
+              <div style="float: right;">
+                <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayerCount}</Tag>
+              </div>
+            </div>
           </div>
-          <div class="unread-count">
-            <div style="float: right;">
-              <Tag type="is-info" size="is-small">{index} / {len}</Tag>
+          <div class="layer-header-icons">
+            <div class="group">
+              <IconButton
+                title="Color palette"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => (activeSection = 'color')}>
+                palette
+              </IconButton>
+              <IconButton
+                title="Define/filter"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => (activeSection = 'band')}>
+                legend_toggle
+              </IconButton>
+              <IconButton
+                title="Set transparency / opacity"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => (activeSection = 'opacity')}>
+                opacity
+              </IconButton>
+            </div>
+
+            <div class="group">
+              {#if queryEnabled === false}
+                <IconButton
+                  title="Show querying info"
+                  class="material-icons"
+                  style={iconButtonStyle}
+                  on:click={() => (queryEnabled = true)}>
+                  check_box_outline_blank
+                </IconButton>
+              {:else}
+                <IconButton
+                  title="Hide querying info"
+                  class="material-icons"
+                  style={iconButtonStyle}
+                  on:click={() => (queryEnabled = false)}>check_box</IconButton>
+              {/if}
+
+              <IconButton
+                title="Move layer up (in map)"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => hierachyUp(layerId)}>
+                keyboard_double_arrow_up
+              </IconButton>
+
+              <IconButton
+                title="Move layer down (in map)"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => hierachyDown(layerId)}
+                >keyboard_double_arrow_down
+              </IconButton>
+
+              {#if visibility === 'none'}
+                <IconButton
+                  title="Hide layer"
+                  class="material-icons"
+                  style={iconButtonStyle}
+                  on:click={() => toggleVisibility()}>visibility_off</IconButton>
+              {:else}
+                <IconButton
+                  title="Show layer"
+                  class="material-icons"
+                  style={iconButtonStyle}
+                  on:click={() => toggleVisibility()}>visibility</IconButton>
+              {/if}
+
+              {#if $layerList.length > 1}
+                <Checkbox
+                  bind:checked={inDynamic}
+                  style="--mdc-checkbox-ripple-size: 0; top: -2.5px; left: 1.5px; transform: scale(0.75);" />
+              {/if}
+
+              <IconButton
+                title="Remove layer"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => removeLayer()}>delete</IconButton>
             </div>
           </div>
         </div>
-      </Header>
-      <div class="layer-header-icons">
-        <IconButton
-          title="Toggle visibility"
-          size="mini"
-          on:click={() => toggleVisibility()}
-          toggle
-          bind:pressed={visSelected}
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;">
-          <Icon class="material-icons">visibility_off</Icon>
-          <Icon color="primary" class="material-icons" on>visibility</Icon>
-        </IconButton>
 
-        <IconButton
-          title="Remove layer"
-          size="mini"
-          class="material-icons"
-          on:click={() => removeLayer()}
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;">
-          delete
-        </IconButton>
-
-        <Checkbox
-          bind:checked={inDynamic}
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;" />
-      </div>
-    </div>
-    <Content>
-      <div style="display:flex; justify-content: left;">
-        <IconButton
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
-          title="Color palette"
-          size="mini"
-          class="material-icons"
-          on:click={() => {
-            activeSection = 'color'
-          }}>palette</IconButton>
-
-        <IconButton
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
-          title="Define/filter"
-          size="mini"
-          class="material-icons"
-          on:click={() => {
-            activeSection = 'band'
-          }}>legend_toggle</IconButton>
-
-        <IconButton
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
-          title="Set transparency/opacity"
-          size="mini"
-          class="material-icons"
-          on:click={() => {
-            activeSection = 'opacity'
-          }}>opacity</IconButton>
-
-        <IconButton
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
-          title="Toggle querying/info"
-          size="mini"
-          toggle
-          bind:pressed={queryEnabled}>
-          <Icon class="material-icons">indeterminate_check_box</Icon>
-          <Icon color="primary" class="material-icons" on>check_box</Icon>
-        </IconButton>
-
-        <IconButton
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
-          title="Move layer up (in map)"
-          size="mini"
-          class="material-icons"
-          on:click={() => {
-            hierachyUp(layerId)
-          }}
-          >keyboard_double_arrow_up
-        </IconButton>
-
-        <IconButton
-          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
-          title="Move layer down (in map)"
-          size="mini"
-          class="material-icons"
-          on:click={() => {
-            hierachyDown(layerId)
-          }}
-          >keyboard_double_arrow_down
-        </IconButton>
-      </div>
-
-      {#if activeSection === 'color'}
-        <div transition:slide>
-          <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+        <div class="layer-actions">
+          {#if activeSection === 'color'}
+            <div transition:slide>
+              <div class="header">
+                <div class="name">Rescale</div>
+                <div class="close">
+                  <IconButton
+                    title="Close"
+                    class="material-icons"
+                    style={iconButtonStyle}
+                    on:click={() => (activeSection = '')}>
+                    close
+                  </IconButton>
+                </div>
+              </div>
+              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+            </div>
+          {:else if activeSection === 'band'}
+            <div transition:slide>
+              <div class="header">
+                <div class="name">Legend</div>
+                <div class="close">
+                  <IconButton
+                    title="Close"
+                    class="material-icons"
+                    style={iconButtonStyle}
+                    on:click={() => (activeSection = '')}>
+                    close
+                  </IconButton>
+                </div>
+              </div>
+              <Legend {colorMapName} {lMax} {lMin} />
+            </div>
+          {:else if activeSection === 'opacity'}
+            <div transition:slide>
+              <div class="header">
+                <div class="name">Opacity</div>
+                <div class="close">
+                  <IconButton
+                    title="Close"
+                    class="material-icons"
+                    style={iconButtonStyle}
+                    on:click={() => (activeSection = '')}>
+                    close
+                  </IconButton>
+                </div>
+              </div>
+              <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
+            </div>
+          {/if}
         </div>
-      {:else if activeSection === 'band'}
-        <Legend {colorMapName} {lMax} {lMin} />
-      {:else if activeSection === 'opacity'}
-        <div class="layer-header" transition:slide>
-          <div>Opacity:</div>
-          <div class="">
-            <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
-          </div>
-        </div>
-      {/if}
-    </Content>
-  </Panel>
-</Accordion>
+      </div></Panel>
+  </Accordion>
+</div>
 
 <style lang="scss">
   .layer-header {
@@ -305,9 +330,7 @@
       display: flex;
       justify-content: left;
       align-items: center;
-      cursor: pointer;
       font-family: ProximaNova, sans-serif;
-      font-size: 13px;
       height: 20px;
 
       .layer-name {
@@ -315,16 +338,45 @@
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
+        font-size: 14px;
       }
 
       .unread-count {
         padding-left: 7.5px;
       }
+    }
 
-      .layer-header-icons {
+    .layer-header-icons {
+      padding-top: 10px;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
+
+      .group {
+        background: #f0f0f0;
+        border-radius: 12.5px;
+        padding: 2px;
+        padding-bottom: 4px;
+      }
+    }
+
+    .layer-actions {
+      margin-top: 10px;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
+
+      .header {
         display: flex;
-        flex-direction: row;
-        align-self: flex-start;
+        justify-content: left;
+        align-items: center;
+        margin-top: 15px;
+
+        .name {
+          width: 100%;
+        }
       }
     }
   }

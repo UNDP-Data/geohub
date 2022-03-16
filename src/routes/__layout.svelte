@@ -18,18 +18,18 @@
 
 <slot />
 
-<style global>
+<style global lang="scss">
   body,
   html {
     font-family: ProximaNova, sans-serif;
     font-size: 13px;
   }
   .mdc-drawer {
-    width: 300px;
+    width: 340px;
   }
 
   .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
-    margin-left: 300px;
+    margin-left: 340px;
     margin-right: 0;
   }
 </style>

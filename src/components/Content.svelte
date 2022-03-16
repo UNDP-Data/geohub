@@ -14,7 +14,7 @@
   export let drawerOpen = false
   let activeTab = TabNames.LoadData
   let isResizingDrawer = false
-  let drawerWidth = 300
+  let drawerWidth = 340
   let hideLinearProgress = true
 
   $: hideLinearProgress = !$indicatorProgress

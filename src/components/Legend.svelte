@@ -17,8 +17,6 @@
 </script>
 
 <div style="display: block;">
-  <h4 style="margin-left: auto; margin-right: auto; width: 40px">Legend</h4>
-
   <div style="display: flex; align-items: center; justify-content: center;">
     <div style="display: block; height: 100px; width: 20px; margin-right: 10px">
       <h6 style="margin-top: 0">{lMax}</h6>
