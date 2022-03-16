@@ -290,7 +290,7 @@
       {:else if activeSection === 'opacity'}
         <div class="layer-header" transition:slide>
           <div>Opacity:</div>
-          <div class="layer-header-name">
+          <div class="">
             <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
           </div>
         </div>
