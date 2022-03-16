@@ -40,7 +40,7 @@
 
 <div class="paper-container">
   <div style="display: flex; align-items: center;">
-    <h6 style="width: 10%;">Rescale:</h6>
+    <div style="width: 10%;">Rescale</div>
     <div style="width: 90%;">
       <Slider
         discrete
@@ -57,7 +57,9 @@
 
   <div style="display: flex; align-items: center; justify-content: center">
     <FormField>
-      <Checkbox bind:checked={reverseColorMap} />
+      <Checkbox
+        bind:checked={reverseColorMap}
+        style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;" />
       <span>Reverse color</span>
     </FormField>
   </div>

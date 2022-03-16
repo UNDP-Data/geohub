@@ -197,7 +197,7 @@
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
-  <div style=" padding-top: 5px;">
+  <div style="padding-top: 5px;">
     {#if children}
       <div
         on:click={() => toggleExpansion()}
@@ -229,7 +229,7 @@
         </div>
       </div>
     {:else}
-      <div class="node-container">
+      <div class="node-container" style="margin-top: 7.5px;">
         {#if isRaster}
           <!-- <div class="icon raster">
             {@html '&#9638'}

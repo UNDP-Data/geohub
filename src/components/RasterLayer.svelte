@@ -5,15 +5,15 @@
 </script>
 
 <script lang="ts">
-  import { map } from '../stores/mapstore'
-  import { layerList, dynamicLayers } from '../stores/stores'
   import IconButton, { Icon } from '@smui/icon-button'
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion'
-  import Badge from '@smui-extra/badge'
   import Slider from '@smui/slider'
   import Checkbox from '@smui/checkbox'
-  import Colormaps from './Colormaps.svelte'
+  import { slide } from 'svelte/transition'
 
+  import { map } from '../stores/mapstore'
+  import { layerList, dynamicLayers } from '../stores/stores'
+  import Colormaps from './Colormaps.svelte'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
 
@@ -37,8 +37,7 @@
   let queryEnabled = true
   let visSelected = false
   let reverseColorMap = false
-
-  let scalingValueRange
+  let scalingValueRange = ''
 
   const setSectionState = () => {
     sectionState[layerId] = activeSection
@@ -166,37 +165,60 @@
       $map.triggerRepaint()
     }
   }
+
+  import 'bulma/css/bulma.css'
+  import Tag from 'svelma/src/components/Tag/Tag.svelte'
 </script>
 
-<Accordion>
-  <Panel variant="unelevated" color="white" bind:open={panelOpen}>
+<Accordion style="padding-left: 10px; padding-right: -5px;">
+  <Panel
+    variant="unelevated"
+    color="white"
+    bind:open={panelOpen}
+    style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; margin-bottom: 15px; padding: 5px;">
     <div class="layer-header">
-      <div class="layer-header-name">
-        <Header>
-          <span class="layer-name"
-            >{name}<Badge position="inset" align="bottom-end" aria-label="unread count">{index}/{len}</Badge></span>
-        </Header>
-      </div>
+      <Header style="background-color: transparent; --mdc-ripple-fg-size:0;">
+        <div class="layer-header-name">
+          <div class="layer-name">
+            {name}
+          </div>
+          <div class="unread-count">
+            <div style="float: right;">
+              <Tag type="is-info" size="is-small">{index} / {len}</Tag>
+            </div>
+          </div>
+        </div>
+      </Header>
       <div class="layer-header-icons">
         <IconButton
           title="Toggle visibility"
           size="mini"
           on:click={() => toggleVisibility()}
           toggle
-          bind:pressed={visSelected}>
+          bind:pressed={visSelected}
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;">
           <Icon class="material-icons">visibility_off</Icon>
           <Icon color="primary" class="material-icons" on>visibility</Icon>
         </IconButton>
 
-        <IconButton title="Remove layer" size="mini" class="material-icons" on:click={() => removeLayer()}
-          >delete</IconButton>
+        <IconButton
+          title="Remove layer"
+          size="mini"
+          class="material-icons"
+          on:click={() => removeLayer()}
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;">
+          delete
+        </IconButton>
 
-        <Checkbox bind:checked={inDynamic} />
+        <Checkbox
+          bind:checked={inDynamic}
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;" />
       </div>
     </div>
     <Content>
-      <div style="display:flex; justify-content: center;">
+      <div style="display:flex; justify-content: left;">
         <IconButton
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
           title="Color palette"
           size="mini"
           class="material-icons"
@@ -205,6 +227,7 @@
           }}>palette</IconButton>
 
         <IconButton
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
           title="Define/filter"
           size="mini"
           class="material-icons"
@@ -213,6 +236,7 @@
           }}>legend_toggle</IconButton>
 
         <IconButton
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
           title="Set transparency/opacity"
           size="mini"
           class="material-icons"
@@ -220,12 +244,18 @@
             activeSection = 'opacity'
           }}>opacity</IconButton>
 
-        <IconButton title="Toggle querying/info" size="mini" toggle bind:pressed={queryEnabled}>
+        <IconButton
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
+          title="Toggle querying/info"
+          size="mini"
+          toggle
+          bind:pressed={queryEnabled}>
           <Icon class="material-icons">indeterminate_check_box</Icon>
           <Icon color="primary" class="material-icons" on>check_box</Icon>
         </IconButton>
 
         <IconButton
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
           title="Move layer up (in map)"
           size="mini"
           class="material-icons"
@@ -236,6 +266,7 @@
         </IconButton>
 
         <IconButton
+          style="transform: scale(0.75); background-color: transparent; --mdc-ripple-fg-size:0;"
           title="Move layer down (in map)"
           size="mini"
           class="material-icons"
@@ -247,11 +278,13 @@
       </div>
 
       {#if activeSection === 'color'}
-        <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+        <div transition:slide>
+          <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+        </div>
       {:else if activeSection === 'band'}
-        <p>B</p>
+        <p transition:slide>BAND</p>
       {:else if activeSection === 'opacity'}
-        <div class="layer-header">
+        <div class="layer-header" transition:slide>
           <div>Opacity:</div>
           <div class="layer-header-name">
             <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
@@ -264,29 +297,24 @@
 
 <style lang="scss">
   .layer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    margin: auto;
-
     .layer-header-name {
-      align-self: center;
-      flex: 0 0 160px;
-      max-width: 80%;
-      flex-wrap: nowrap;
-      overflow-wrap: anywhere;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      cursor: pointer;
+      font-family: ProximaNova, sans-serif;
+      font-size: 13px;
+      height: 20px;
 
       .layer-name {
-        display: flex;
-        cursor: pointer;
-        font-family: ProximaNova, sans-serif;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         width: 100%;
-        min-height: 2.5rem;
-        height: auto;
-        font-size: 13px;
-        justify-content: center;
-        align-items: center;
-        width: fit-content;
+      }
+
+      .unread-count {
+        padding-left: 7.5px;
       }
 
       .layer-header-icons {
