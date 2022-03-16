@@ -12,3 +12,4 @@ yarn.lock
 static/
 .vscode/
 .prettierrc
+src/index.html

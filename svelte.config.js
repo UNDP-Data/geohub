@@ -20,6 +20,13 @@ const config = {
       },
     }),
   },
+
+  onwarn(warning, defaultHandler) {
+    const warningCodeToIgnore = ['a11y-missing-content', 'a11y-missing-attribute']
+    if (warningCodeToIgnore.includes(warning.code)) return;
+
+    defaultHandler(warning);
+  }
 }
 
 export default config
