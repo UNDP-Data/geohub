@@ -8,7 +8,7 @@
   let open = false
 </script>
 
-{#if !disabled}
+{#if !disabled && $layerList.length > 1}
   <div style="display:flex; justify-content:center; flex-direction:row">
     <Button on:click={() => (open = true)}>
       <Label>Merge selected layers</Label>

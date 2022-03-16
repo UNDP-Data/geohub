@@ -40,8 +40,7 @@
 
 <div class="paper-container">
   <div style="display: flex; align-items: center;">
-    <div style="width: 10%;">Rescale</div>
-    <div style="width: 90%;">
+    <div style="width: 100%;">
       <Slider
         discrete
         range
