@@ -808,6 +808,25 @@
     "@material/typography" "^13.0.0"
     tslib "^2.1.0"
 
+"@material/snackbar@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/snackbar/-/snackbar-13.0.0.tgz#63798b832c6931ecb99350c9ef99ac23a7e47f18"
+  integrity sha512-z59aYCeMWWEbsUU04QDZN4CxzCCOp3OIc5tzrdqnY3qRq4wwApxncf7RKKKSU2K6WTEWfdHHOc7aNX8kqlDmUg==
+  dependencies:
+    "@material/animation" "^13.0.0"
+    "@material/base" "^13.0.0"
+    "@material/button" "^13.0.0"
+    "@material/dom" "^13.0.0"
+    "@material/elevation" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/icon-button" "^13.0.0"
+    "@material/ripple" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/typography" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/tab-bar@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/tab-bar/-/tab-bar-13.0.0.tgz"
@@ -1300,6 +1319,20 @@
     "@material/dom" "^13.0.0"
     "@material/slider" "^13.0.0"
     "@smui/common" "^6.0.0-beta.15"
+    "@smui/ripple" "^6.0.0-beta.15"
+    svelte2tsx "^0.4.14"
+
+"@smui/snackbar@^6.0.0-beta.15":
+  version "6.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@smui/snackbar/-/snackbar-6.0.0-beta.15.tgz#d5957bfcc10e951bacbb19e272829e08e0199213"
+  integrity sha512-9bz0S6xtG1AfUvoreAvsmY9NfIvzNXi0b8Zb0Abx9XNOVdfcG5s2PLpLmkcQC4BySaUPYxA4jOXHlvfIb5x1Cg==
+  dependencies:
+    "@material/dom" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/snackbar" "^13.0.0"
+    "@smui/button" "^6.0.0-beta.15"
+    "@smui/common" "^6.0.0-beta.15"
+    "@smui/icon-button" "^6.0.0-beta.15"
     "@smui/ripple" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 

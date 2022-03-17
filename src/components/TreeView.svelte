@@ -1,10 +1,12 @@
 <script lang="ts">
   import TreeNode from './TreeNode.svelte'
   import { wtree } from '../stores'
+
+  export let handlErrorCallback: CallableFunction
 </script>
 
 <ul>
-  <TreeNode bind:node={$wtree.tree} />
+  <TreeNode bind:node={$wtree.tree} {handlErrorCallback} />
 </ul>
 
 <style lang="scss">

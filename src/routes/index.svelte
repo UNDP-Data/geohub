@@ -17,6 +17,6 @@
   export let tree = {
     tree: TreeNodeInitialValues,
   }
-  console.log('client in index', tree)
+  // console.log('client in index', tree)
   wtree.set(tree)
 </script>
