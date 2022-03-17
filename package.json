@@ -36,6 +36,7 @@
     "@smui/segmented-button": "^6.0.0-beta.15",
     "@smui/select": "^6.0.0-beta.15",
     "@smui/slider": "^6.0.0-beta.15",
+    "@smui/snackbar": "^6.0.0-beta.15",
     "@smui/tab": "^6.0.0-beta.15",
     "@smui/tab-bar": "^6.0.0-beta.15",
     "@smui/textfield": "^6.0.0-beta.15",

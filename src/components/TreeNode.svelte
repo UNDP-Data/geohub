@@ -36,6 +36,7 @@
 
   export let node = TreeNodeInitialValues
   export let level = 0
+  export let handlErrorCallback: CallableFunction
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   let checked = false
@@ -107,6 +108,12 @@
     return res
   }
 
+  const paramsToQueryString = (params: any) => {
+    return Object.keys(params)
+      .map((key) => key + '=' + params[key])
+      .join('&')
+  }
+
   const loadLayer = async () => {
     $indicatorProgress = true
     const tileSourceId = path.replace(/\//g, '_')
@@ -147,51 +154,68 @@
         $map.addLayer(layerDefinition)
       } else {
         const layerName = path.split('/')[path.split('/').length - 1]
-        let tilejsonURL: string
-
-        let base: string, sign: string
-        ;[base, sign] = url.split('?')
-        let b64_encoded_url = `${base}?${btoa(sign)}`
-        let infoUrl = `${titilerApiUrl}/info?url=${b64_encoded_url}`
+        const [base, sign] = url.split('?')
+        const b64EncodedUrl = `${base}?${btoa(sign)}`
+        const infoUrl = `${titilerApiUrl}/info?url=${b64EncodedUrl}`
         layerInfo = await fetchLayerInfo(infoUrl)
-        let lMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-        let lMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
 
-        tilejsonURL = `${titilerApiUrl}/tiles/{z}/{x}/{y}.png?scale=1&TileMatrixSetId=WebMercatorQuad&url=${b64_encoded_url}&bidx=1&unscale=false&resampling=nearest&rescale=${lMin},${lMax}&return_mask=true&colormap_name=viridis`
+        const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
+        const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
 
-        const layerSource = {
-          type: 'raster',
-          tiles: [tilejsonURL],
-          tileSize: 256,
-          bounds: layerInfo['bounds'],
-          attribution:
-            'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
-        }
-        if (!(tileSourceId in mmap.getStyle().sources)) {
-          mmap.addSource(tileSourceId, layerSource)
-        }
-        const layerDefinition: LayerDefinition = {
-          id: layerId,
-          type: 'raster',
-          source: tileSourceId,
-          minzoom: 0,
-          maxzoom: 22,
-          layout: {
-            visibility: 'visible',
-          },
-        }
-        layerList.set([
-          { name: layerName, definition: layerDefinition, type: 'raster', info: layerInfo },
-          ...$layerList,
-        ])
-        let firstSymbolId = undefined
-        for (const layer of $map.getStyle().layers) {
-          if (layer.type === 'symbol') {
-            firstSymbolId = layer.id
-            break
+        if (layerBandMetadataMin && layerBandMetadataMax) {
+          const titilerApiUrlParams = {
+            scale: 1,
+            TileMatrixSetId: 'WebMercatorQuad',
+            url: b64EncodedUrl,
+            bidx: 1,
+            unscale: false,
+            resampling: 'nearest',
+            rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+            return_mask: true,
+            colormap_name: 'viridis',
           }
+
+          const layerSource = {
+            type: 'raster',
+            tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
+            tileSize: 256,
+            bounds: layerInfo['bounds'],
+            attribution:
+              'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+          }
+
+          if (!(tileSourceId in mmap.getStyle().sources)) {
+            mmap.addSource(tileSourceId, layerSource)
+          }
+
+          const layerDefinition: LayerDefinition = {
+            id: layerId,
+            type: 'raster',
+            source: tileSourceId,
+            minzoom: 0,
+            maxzoom: 22,
+            layout: {
+              visibility: 'visible',
+            },
+          }
+          layerList.set([
+            { name: layerName, definition: layerDefinition, type: 'raster', info: layerInfo },
+            ...$layerList,
+          ])
+          let firstSymbolId = undefined
+          for (const layer of $map.getStyle().layers) {
+            if (layer.type === 'symbol') {
+              firstSymbolId = layer.id
+              break
+            }
+          }
+          $map.addLayer(layerDefinition, firstSymbolId)
+        } else {
+          handlErrorCallback({
+            code: 'UndefinedBandMetadatalayerMinMax',
+          })
         }
-        $map.addLayer(layerDefinition, firstSymbolId)
       }
     }
     $indicatorProgress = false
@@ -254,7 +278,7 @@
 
 {#if expanded && children}
   {#each children as child}
-    <svelte:self node={child} level={level + 1} />
+    <svelte:self node={child} level={level + 1} {handlErrorCallback} />
   {/each}
 {/if}
 

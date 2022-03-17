@@ -2,25 +2,28 @@
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
   import LinearProgress from '@smui/linear-progress'
+  import type { SnackbarComponentDev } from '@smui/snackbar'
+  import Snackbar, { Actions, Label as LabelSnackbar } from '@smui/snackbar'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { layerList, indicatorProgress } from '../stores'
-  import { TabNames } from '../lib/constants'
+  import { ErrorCodes, TabNames } from '../lib/constants'
+  import type { Error } from '../lib/types'
+  import IconButton from '@smui/icon-button'
 
   export let drawerOpen = false
+
   let activeTab = TabNames.LoadData
-  let isResizingDrawer = false
   let drawerWidth = 340
   let hideLinearProgress = true
+  let isResizingDrawer = false
+  let snackbarMessage = ''
+  let snackbarWithClose: SnackbarComponentDev
 
   $: hideLinearProgress = !$indicatorProgress
-
-  const setContentContainerMargin = (margin: number) =>
-    (document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`)
-
   $: {
     if (drawerOpen) {
       try {
@@ -36,6 +39,9 @@
     document.addEventListener('mouseup', handleMouseup)
   })
 
+  const setContentContainerMargin = (margin: number) =>
+    (document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`)
+
   const handleMousemove = (e: MouseEvent | TouchEvent) => {
     if (!isResizingDrawer) return
 
@@ -44,8 +50,14 @@
 
     setContentContainerMargin(drawerWidth)
   }
+
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
+
+  const handlErrorCallback = (error: Error) => {
+    snackbarMessage = ErrorCodes[error.code]
+    snackbarWithClose.open()
+  }
 </script>
 
 <div class="content-container">
@@ -67,7 +79,7 @@
         </Header>
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.LoadData}>
-            <TreeView />
+            <TreeView {handlErrorCallback} />
           </div>
           <div hidden={activeTab !== TabNames.Layers}>
             <LayerList />
@@ -93,6 +105,15 @@
     </main>
   </AppContent>
 </div>
+
+<Snackbar bind:this={snackbarWithClose} timeoutMs={10000}>
+  <LabelSnackbar style="font-family: ProximaNova, sans-serif; font-size: 13px;">
+    Error: {snackbarMessage}
+  </LabelSnackbar>
+  <Actions>
+    <IconButton class="material-icons" title="Dismiss">close</IconButton>
+  </Actions>
+</Snackbar>
 
 <style lang="scss">
   :global(.app-content) {

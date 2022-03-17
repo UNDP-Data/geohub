@@ -59,3 +59,7 @@ export interface LayerInfo {
   overviews?: []
   width?: number
 }
+
+export interface Error {
+  code: string
+}
