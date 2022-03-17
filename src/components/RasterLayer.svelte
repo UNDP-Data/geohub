@@ -21,16 +21,11 @@
   import { LayerInitialValues } from '../lib/constants'
 
   export let layerConfig: Layer = LayerInitialValues
+  export let disabled = true
 
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
-
-  export let activeSection: string = sectionState[layerId] || ''
-  export let panelOpen: boolean = layerState[layerId] || false
-  export let inDynamic: boolean = dynamicLayerState[layerId] || false
-  export let disabled = true
-
   const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
   const layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
@@ -39,14 +34,18 @@
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
   let colorMapName = 'viridis'
-  let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
+  let inDynamic: boolean = dynamicLayerState[layerId] || false
+  let isLayerVisible = false
+  let isLegendPanelVisible = false
+  let isOpacityPanelVisible = false
+  let isRescalePanelVisible = false
   let layerOpacity = 1
+  let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
+  let panelOpen: boolean = layerState[layerId] || false
   let queryEnabled = true
   let reverseColorMap = false
   let scalingValueRange = ''
-  let isLayerVisible = false
 
-  $: activeSection, setSectionState()
   $: colorMapName, selectColorMap()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
@@ -54,10 +53,6 @@
   $: reverseColorMap, selectColorMap()
   $: scalingValueRange, selectScaling()
   $: visibility = isLayerVisible ? 'visible' : 'none'
-
-  const setSectionState = () => {
-    sectionState[layerId] = activeSection
-  }
 
   const setDynamicLayerState = () => {
     dynamicLayerState[layerId] = inDynamic
@@ -180,24 +175,24 @@
           <div class="layer-header-icons">
             <div class="group">
               <IconButton
-                title="Color palette"
+                title="Legend"
                 class="material-icons"
                 style={iconButtonStyle}
-                on:click={() => (activeSection = 'color')}>
-                palette
-              </IconButton>
-              <IconButton
-                title="Define/filter"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => (activeSection = 'band')}>
+                on:click={() => (isLegendPanelVisible = !isLegendPanelVisible)}>
                 legend_toggle
               </IconButton>
               <IconButton
-                title="Set transparency / opacity"
+                title="Rescale"
                 class="material-icons"
                 style={iconButtonStyle}
-                on:click={() => (activeSection = 'opacity')}>
+                on:click={() => (isRescalePanelVisible = !isRescalePanelVisible)}>
+                palette
+              </IconButton>
+              <IconButton
+                title="Opacity"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => (isOpacityPanelVisible = !isOpacityPanelVisible)}>
                 opacity
               </IconButton>
             </div>
@@ -265,24 +260,8 @@
         </div>
 
         <div class="layer-actions">
-          {#if activeSection === 'color'}
-            <div transition:slide>
-              <div class="header">
-                <div class="name">Rescale</div>
-                <div class="close">
-                  <IconButton
-                    title="Close"
-                    class="material-icons"
-                    style={iconButtonStyle}
-                    on:click={() => (activeSection = '')}>
-                    close
-                  </IconButton>
-                </div>
-              </div>
-              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
-            </div>
-          {:else if activeSection === 'band'}
-            <div transition:slide>
+          {#if isLegendPanelVisible === true}
+            <div transition:slide class="action">
               <div class="header">
                 <div class="name">Legend</div>
                 <div class="close">
@@ -290,15 +269,35 @@
                     title="Close"
                     class="material-icons"
                     style={iconButtonStyle}
-                    on:click={() => (activeSection = '')}>
+                    on:click={() => (isLegendPanelVisible = false)}>
                     close
                   </IconButton>
                 </div>
               </div>
               <Legend {colorMapName} lMax={layerBandMetadataMax} lMin={layerBandMetadataMin} />
             </div>
-          {:else if activeSection === 'opacity'}
-            <div transition:slide>
+          {/if}
+
+          {#if isRescalePanelVisible === true}
+            <div transition:slide class="action">
+              <div class="header">
+                <div class="name">Rescale</div>
+                <div class="close">
+                  <IconButton
+                    title="Close"
+                    class="material-icons"
+                    style={iconButtonStyle}
+                    on:click={() => (isRescalePanelVisible = false)}>
+                    close
+                  </IconButton>
+                </div>
+              </div>
+              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+            </div>
+          {/if}
+
+          {#if isOpacityPanelVisible === true}
+            <div transition:slide class="action">
               <div class="header">
                 <div class="name">Opacity</div>
                 <div class="close">
@@ -306,7 +305,7 @@
                     title="Close"
                     class="material-icons"
                     style={iconButtonStyle}
-                    on:click={() => (activeSection = '')}>
+                    on:click={() => (isOpacityPanelVisible = false)}>
                     close
                   </IconButton>
                 </div>
@@ -353,7 +352,7 @@
 
       .group {
         background: #f0f0f0;
-        border-radius: 12.5px;
+        border-radius: 7.5px;
         padding: 2px;
         padding-bottom: 4px;
       }
@@ -363,14 +362,23 @@
       margin-top: 10px;
       border-top: 1px solid rgba(204, 204, 204, 0.5);
 
-      .header {
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        margin-top: 15px;
+      .action {
+        margin-bottom: 25px;
 
-        .name {
-          width: 100%;
+        .header {
+          display: flex;
+          justify-content: left;
+          align-items: center;
+          margin-top: 15px;
+          background: #f0f0f0;
+          border-radius: 7.5px;
+          padding: 2.5px;
+          padding-left: 7.5px;
+          margin-bottom: 10px;
+
+          .name {
+            width: 100%;
+          }
         }
       }
     }
