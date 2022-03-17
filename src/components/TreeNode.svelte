@@ -47,7 +47,6 @@
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-
   $: {
     // add layer from tree
     if (checked === true && nodeLayerId === '') {
@@ -209,22 +208,21 @@
   <div style="padding-top: 5px;">
     {#if children}
       <div
-        on:click={() => toggleExpansion()}
+        on:click={() => (level > 0 ? toggleExpansion() : '')}
         class="node-container"
         transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon">
-          {#if !expanded}
-            <Icon color="primary" class="material-icons" on>chevron_right</Icon>
+          {#if level === 0}
+            <Icon color="primary" class="material-icons" style="transform: scale(0.75);">house</Icon>
+          {:else if !expanded}
+            <Icon color="primary" class="material-icons" on style="cursor: pointer;">chevron_right</Icon>
           {:else}
-            <Icon color="primary" class="material-icons" on style="transform: rotate(90deg);">chevron_right</Icon>
+            <Icon color="primary" class="material-icons" on style="transform: rotate(90deg); cursor: pointer;"
+              >chevron_right</Icon>
           {/if}
         </div>
 
         {#if url}
-          <!-- <div class="icon vector">
-            {@html '&#10070'}
-          </div> -->
-
           <div alt="Vector" class="checkbox">
             <Checkbox
               bind:checked
@@ -240,10 +238,6 @@
     {:else}
       <div class="node-container" style="margin-top: 7.5px;">
         {#if isRaster}
-          <!-- <div class="icon raster">
-            {@html '&#9638'}
-          </div> -->
-
           <div alt="Raster" class="checkbox">
             <Checkbox
               bind:checked
@@ -276,16 +270,6 @@
     .checkbox {
       transform: scale(0.75);
     }
-
-    // .icon {
-    //   &.raster {
-    //     color: rgb(52, 152, 219);
-    //   }
-
-    //   &.vector {
-    //     color: rgb(0, 255, 0);
-    //   }
-    // }
 
     .name {
       white-space: nowrap;
