@@ -32,33 +32,28 @@
   export let disabled = true
 
   const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
+  const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+  const layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  const layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  const mapLayers = $map.getStyle().layers
+  const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
-  let mapLayers = $map.getStyle().layers
-  let layer = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
   let colorMapName = 'viridis'
-  let mapLayerIndex = mapLayers.indexOf(layer)
-  let l = $layerList.filter((item) => item.definition.id === layerId).pop()
-  let lMax = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
-  let lMin = parseFloat(l.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let layerOpacity = 1
-  let mapLayerCount = mapLayers.length
   let queryEnabled = true
   let reverseColorMap = false
   let scalingValueRange = ''
-  let visSelected = false
+  let isLayerVisible = false
 
-  $: activeSection = sectionState[layerId] || ''
   $: activeSection, setSectionState()
   $: colorMapName, selectColorMap()
-  $: colorMapName, selectColorMap()
-  $: inDynamic = dynamicLayerState[layerId] || false
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
-  $: panelOpen = layerState[layerId] || false
   $: panelOpen, setLayerState()
   $: reverseColorMap, selectColorMap()
   $: scalingValueRange, selectScaling()
-  $: visibility = visSelected ? 'visible' : 'none'
+  $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const setSectionState = () => {
     sectionState[layerId] = activeSection
@@ -113,7 +108,7 @@
   }
 
   const toggleVisibility = () => {
-    visSelected = !visSelected
+    isLayerVisible = !isLayerVisible
     if (!$map.getLayer(layerId)) {
       $map.addLayer(definition)
     }
@@ -178,7 +173,7 @@
             </div>
             <div class="unread-count">
               <div style="float: right;">
-                <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayerCount}</Tag>
+                <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayers.length}</Tag>
               </div>
             </div>
           </div>
@@ -300,7 +295,7 @@
                   </IconButton>
                 </div>
               </div>
-              <Legend {colorMapName} {lMax} {lMin} />
+              <Legend {colorMapName} lMax={layerBandMetadataMax} lMin={layerBandMetadataMin} />
             </div>
           {:else if activeSection === 'opacity'}
             <div transition:slide>
