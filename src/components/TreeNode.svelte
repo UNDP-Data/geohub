@@ -32,9 +32,7 @@
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { TreeNodeInitialValues } from '../lib/constants'
-  import { wtree, layerList, removedLayerFromLayersTab } from '../stores/stores'
-  import { map } from '../stores/mapstore'
-  import { indicatorProgress } from '../stores/indicatorProgressStore'
+  import { map, layerList, removedLayerFromLayersTab, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
   export let level = 0

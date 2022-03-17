@@ -11,7 +11,7 @@
 </script>
 
 <script lang="ts">
-  import { wtree } from '../stores/stores'
+  import { wtree } from '../stores'
   import { TreeNodeInitialValues } from '../lib/constants'
 
   export let tree = {

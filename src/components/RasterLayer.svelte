@@ -16,8 +16,7 @@
   import Colormaps from './Colormaps.svelte'
   import Legend from './Legend.svelte'
 
-  import { map } from '../stores/mapstore'
-  import { layerList, dynamicLayers, removedLayerFromLayersTab } from '../stores/stores'
+  import { layerList, dynamicLayers, map, removedLayerFromLayersTab } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
 

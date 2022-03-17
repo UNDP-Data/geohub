@@ -1,7 +1,7 @@
 <script lang="ts">
   import RasterLayer from './RasterLayer.svelte'
   import VectorLayer from './VectorLayer.svelte'
-  import { layerList } from '../stores/stores'
+  import { layerList } from '../stores'
   import Button, { Label } from '@smui/button'
   import DynamicLayer from './DynamicLayer.svelte'
   let disabled = true

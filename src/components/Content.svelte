@@ -7,8 +7,7 @@
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { layerList } from '../stores/stores'
-  import { indicatorProgress } from '../stores/indicatorProgressStore'
+  import { layerList, indicatorProgress } from '../stores'
   import { TabNames } from '../lib/constants'
 
   export let drawerOpen = false

@@ -9,8 +9,7 @@
   import HelperText from '@smui/textfield/helper-text'
   import { v4 as uuidv4 } from 'uuid'
 
-  import { map } from '../stores/mapstore'
-  import { layerList, dynamicLayers } from '../stores/stores'
+  import { dynamicLayers, layerList, map } from '../stores'
   import Calculator from './raster/Calculator.svelte'
 
   export let open = false

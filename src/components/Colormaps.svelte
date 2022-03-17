@@ -3,7 +3,7 @@
   import Checkbox from '@smui/checkbox'
   import FormField from '@smui/form-field'
   import Slider from '@smui/slider'
-  import { layerList } from '../stores/stores'
+  import { layerList } from '../stores'
   import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
 
   const colorMapTypes: Array<string> = ['Sequential', 'Diverging', 'Cyclic']

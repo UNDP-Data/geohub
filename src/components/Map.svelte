@@ -3,8 +3,7 @@
   import maplibregl, { Map } from 'maplibre-gl'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
-  import { map } from '../stores/mapstore'
-  import { indicatorProgress } from '../stores/indicatorProgressStore'
+  import { indicatorProgress, map } from '../stores'
 
   export let lat = 0
   export let lon = 0
