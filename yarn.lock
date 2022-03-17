@@ -364,13 +364,6 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@iconify/svelte@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.npmjs.org/@iconify/svelte/-/svelte-2.1.2.tgz"
-  integrity sha512-NvWPg/lKNDlzyB698vLv8hYT5eRDxSIk0QnMtB7UMOZ7/SbmInyBqsb8t3SXoCYVsNG3poznW+pwYrJZ7kY+mQ==
-  dependencies:
-    cross-fetch "^3.1.5"
-
 "@mapbox/geojson-rewind@^0.5.0", "@mapbox/geojson-rewind@^0.5.1":
   version "0.5.1"
   resolved "https://registry.npmjs.org/@mapbox/geojson-rewind/-/geojson-rewind-0.5.1.tgz"
@@ -815,24 +808,6 @@
     "@material/typography" "^13.0.0"
     tslib "^2.1.0"
 
-"@material/switch@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@material/switch/-/switch-13.0.0.tgz#9f25a6fc2a45344ecdc86f6545e95359f5f0c770"
-  integrity sha512-zbdo6nKEOAx24ILCBobZlQqU2WZ+KuPgdAc1VTI1q1BCKN3rDIfm9RnsCuYiZa9iaq4UUgdYuhH8KVEYGP7Lrw==
-  dependencies:
-    "@material/animation" "^13.0.0"
-    "@material/base" "^13.0.0"
-    "@material/density" "^13.0.0"
-    "@material/dom" "^13.0.0"
-    "@material/elevation" "^13.0.0"
-    "@material/feature-targeting" "^13.0.0"
-    "@material/ripple" "^13.0.0"
-    "@material/rtl" "^13.0.0"
-    "@material/shape" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@material/tokens" "^13.0.0"
-    tslib "^2.1.0"
-
 "@material/tab-bar@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/tab-bar/-/tab-bar-13.0.0.tgz"
@@ -923,22 +898,6 @@
   dependencies:
     "@material/elevation" "^13.0.0"
 
-"@material/tooltip@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.npmjs.org/@material/tooltip/-/tooltip-13.0.0.tgz"
-  integrity sha512-/QinwEM0sYtRUthgOy7R+V4iwLMZ8SCd8A3PyGyTr27BUGWykwAUFdXyzT4rxLhDNcnDOYH14N+Z3Bom+UwO9Q==
-  dependencies:
-    "@material/animation" "^13.0.0"
-    "@material/base" "^13.0.0"
-    "@material/dom" "^13.0.0"
-    "@material/elevation" "^13.0.0"
-    "@material/feature-targeting" "^13.0.0"
-    "@material/rtl" "^13.0.0"
-    "@material/shape" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@material/typography" "^13.0.0"
-    tslib "^2.1.0"
-
 "@material/top-app-bar@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/top-app-bar/-/top-app-bar-13.0.0.tgz"
@@ -990,13 +949,6 @@
     clsx "^1.1.1"
     prop-types "^15.7.2"
     react-is "^17.0.2"
-
-"@mui/icons-material@^5.5.1":
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.5.1.tgz#848a57972617411370775980cbc6990588d4aafb"
-  integrity sha512-40f68p5+Yhq3dCn3QYHqQt5RETPyR3AkDw+fma8PtcjqvZ+d+jF84kFmT6NqwA3he7TlwluEtkyAmPzUE4uPdA==
-  dependencies:
-    "@babel/runtime" "^7.17.2"
 
 "@mui/material@^5.5.1":
   version "5.5.1"
@@ -1351,18 +1303,6 @@
     "@smui/ripple" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
-"@smui/switch@^6.0.0-beta.15":
-  version "6.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@smui/switch/-/switch-6.0.0-beta.15.tgz#735863ebc26f0411556177f745f2f5eb6dc70e57"
-  integrity sha512-Vwr1ZY3YXFVrBLSxgr8ryjxDG/FVqTMWRYzKheYjQRfUW+WHS+WSHMRFBgfrNM+vqANWp3ZocJjabVv4w4of9Q==
-  dependencies:
-    "@material/feature-targeting" "^13.0.0"
-    "@material/switch" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.15"
-    "@smui/ripple" "^6.0.0-beta.15"
-    svelte2tsx "^0.4.14"
-
 "@smui/tab-bar@^6.0.0-beta.15":
   version "6.0.0-beta.15"
   resolved "https://registry.yarnpkg.com/@smui/tab-bar/-/tab-bar-6.0.0-beta.15.tgz#803cc170945cf8c9764f54121986315ebde68140"
@@ -1421,15 +1361,6 @@
     "@smui/ripple" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
-"@smui/tooltip@^6.0.0-beta.15":
-  version "6.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@smui/tooltip/-/tooltip-6.0.0-beta.15.tgz#b5d1d46f6f9e7a8d0bdf554c5667bc9337275fb7"
-  integrity sha512-AZlcsmfPjPdxhTy6bvo3YO4NlcBZK52UWK4+pTkzlHWDpo87xb9wBH3e1JrPBBk1sNP8v1dxzypN00ZRpRgt3w==
-  dependencies:
-    "@material/tooltip" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.15"
-    svelte2tsx "^0.4.14"
-
 "@smui/top-app-bar@^6.0.0-beta.15":
   version "6.0.0-beta.15"
   resolved "https://registry.yarnpkg.com/@smui/top-app-bar/-/top-app-bar-6.0.0-beta.15.tgz#125d3c1181617f5ab0c03c444e8400323a9a3687"
@@ -1437,15 +1368,6 @@
   dependencies:
     "@material/feature-targeting" "^13.0.0"
     "@material/top-app-bar" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.15"
-    svelte2tsx "^0.4.14"
-
-"@smui/touch-target@^6.0.0-beta.15":
-  version "6.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@smui/touch-target/-/touch-target-6.0.0-beta.15.tgz#d29fbd5ba5e36e3af000afbbc212455a6ac38c0b"
-  integrity sha512-Cpq5tt8A67wo1vCgPsBRpOVoQPgjdx566plueWYdpR3ryFI6OeSI/A8odzEXlrPnq/Mbt6Hhw2/R3kcP5dzRjg==
-  dependencies:
-    "@material/touch-target" "^13.0.0"
     "@smui/common" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
@@ -2056,13 +1978,6 @@ cosmiconfig@^6.0.0:
     parse-json "^5.0.0"
     path-type "^4.0.0"
     yaml "^1.7.2"
-
-cross-fetch@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.npmjs.org/cross-fetch/-/cross-fetch-3.1.5.tgz"
-  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
-  dependencies:
-    node-fetch "2.6.7"
 
 cross-spawn@^7.0.2:
   version "7.0.3"
@@ -3588,7 +3503,7 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
-node-fetch@2.6.7, node-fetch@^2.6.5, node-fetch@^2.6.7:
+node-fetch@^2.6.5, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
