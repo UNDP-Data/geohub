@@ -67,10 +67,10 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px;">
-          <div class={activeTab === TabNames.LoadData ? 'active' : 'inactive'}>
+          <div hidden={activeTab !== TabNames.LoadData}>
             <TreeView />
           </div>
-          <div class={activeTab === TabNames.Layers ? 'active' : 'inactive'}>
+          <div hidden={activeTab !== TabNames.Layers}>
             <LayerList />
           </div>
         </Content>
@@ -127,14 +127,6 @@
     overflow: auto;
     z-index: 0;
     flex-grow: 1;
-
-    .active {
-      display: block;
-    }
-
-    .inactive {
-      display: none;
-    }
 
     .drawer-container {
       display: flex;

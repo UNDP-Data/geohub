@@ -9,3 +9,5 @@ export const wtree = writable({
 })
 
 export const layerList = writable(<Layer[]>[])
+
+export const removedLayerFromLayersTab = writable(false)

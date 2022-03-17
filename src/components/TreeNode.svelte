@@ -32,7 +32,7 @@
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { TreeNodeInitialValues } from '../lib/constants'
-  import { wtree, layerList } from '../stores/stores'
+  import { wtree, layerList, removedLayerFromLayersTab } from '../stores/stores'
   import { map } from '../stores/mapstore'
   import { indicatorProgress } from '../stores/indicatorProgressStore'
 
@@ -49,14 +49,23 @@
   $: mmap = $map
 
   $: {
-    // remove layer from map and layer list store
-    if (checked === false && $layerList.length > 0) {
-      const layer = $layerList.find((item) => item.definition.id === nodeLayerId)
+    // add layer from tree
+    if (checked === true && nodeLayerId === '') {
+      loadLayer()
+    }
 
-      if (layer) {
-        $layerList = $layerList.filter((item) => item.definition.id !== nodeLayerId)
-        $map.removeLayer(nodeLayerId)
-      }
+    // remove layer from tree
+    if (checked === false && nodeLayerId !== '') {
+      $map.removeLayer(nodeLayerId)
+      $layerList = $layerList.filter((item) => item.definition.id !== nodeLayerId)
+      nodeLayerId = ''
+    }
+
+    // remove layer from layers tab
+    if (checked === true && nodeLayerId !== '' && $removedLayerFromLayersTab === true) {
+      $removedLayerFromLayersTab = false
+      checked = false
+      nodeLayerId = ''
     }
   }
 
@@ -219,7 +228,7 @@
           <div alt="Vector" class="checkbox">
             <Checkbox
               bind:checked
-              on:change={() => loadLayer()}
+              on:change={loadLayer}
               style="background-color: transparent; --mdc-ripple-fg-size:0;" />
           </div>
         {/if}
@@ -238,7 +247,6 @@
           <div alt="Raster" class="checkbox">
             <Checkbox
               bind:checked
-              on:change={() => loadLayer()}
               value={path}
               style="background-color: transparent; --mdc-ripple-fg-size:0;"
               id={label} />
