@@ -32,43 +32,27 @@
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { TreeNodeInitialValues } from '../lib/constants'
-  import { map, layerList, removedLayerFromLayersTab, indicatorProgress, wtree } from '../stores'
+  import { map, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
   export let level = 0
   export let handlErrorCallback: CallableFunction
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
-  let checked = false
-  let nodeLayerId = ''
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-  $: {
-    // add layer from tree
-    if (checked === true && nodeLayerId === '') {
-      loadLayer()
-    }
-
-    // remove layer from tree
-    if (checked === false && nodeLayerId !== '') {
-      $map.removeLayer(nodeLayerId)
-      $layerList = $layerList.filter((item) => item.definition.id !== nodeLayerId)
-      nodeLayerId = ''
-    }
-
-    // remove layer from layers tab
-    if (checked === true && nodeLayerId !== '' && $removedLayerFromLayersTab === true) {
-      $removedLayerFromLayersTab = false
-      checked = false
-      nodeLayerId = ''
-    }
-  }
+  $: checked = $layerList.filter((item) => item.definition.source === path).length === 1 ? true : false
 
   onMount(() => {
     if (level === 0) toggleExpansion()
+
+    if (level > 0) {
+      const layer = $layerList.find((layer) => layer.definition.source === path)
+      if (layer) checked = true
+    }
   })
 
   const toggleExpansion = () => {
@@ -114,14 +98,13 @@
       .join('&')
   }
 
-  const loadLayer = async () => {
+  const loadLayer = async (event) => {
     $indicatorProgress = true
-    const tileSourceId = path.replace(/\//g, '_')
-    const layerId = uuidv4()
-    nodeLayerId = layerId
-    let layerInfo: LayerInfo = {}
+    if (event.target.checked) {
+      const tileSourceId = path
+      const layerId = uuidv4()
+      let layerInfo: LayerInfo = {}
 
-    if (checked) {
       if (!isRaster) {
         const layerName = path.split('/')[path.split('/').length - 2]
         const layerSource = {
@@ -217,6 +200,13 @@
           })
         }
       }
+    } else {
+      const layerToBeRemoved = $layerList.find((item) => item.definition.source === path)
+
+      if (layerToBeRemoved) {
+        $map.removeLayer(layerToBeRemoved.definition.id)
+        $layerList = $layerList.filter((item) => item !== layerToBeRemoved)
+      }
     }
     $indicatorProgress = false
   }
@@ -247,9 +237,11 @@
         {#if url}
           <div alt="Vector" class="checkbox">
             <Checkbox
-              bind:checked
+              {checked}
               on:change={loadLayer}
-              style="background-color: transparent; --mdc-ripple-fg-size:0;" />
+              value={path}
+              style="background-color: transparent; --mdc-ripple-fg-size:0;"
+              id={label} />
           </div>
         {/if}
 
@@ -262,7 +254,8 @@
         {#if isRaster}
           <div alt="Raster" class="checkbox">
             <Checkbox
-              bind:checked
+              {checked}
+              on:change={loadLayer}
               value={path}
               style="background-color: transparent; --mdc-ripple-fg-size:0;"
               id={label} />

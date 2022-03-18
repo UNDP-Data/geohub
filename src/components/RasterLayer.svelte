@@ -16,7 +16,7 @@
   import Colormaps from './Colormaps.svelte'
   import Legend from './Legend.svelte'
 
-  import { layerList, dynamicLayers, map, removedLayerFromLayersTab } from '../stores'
+  import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
 
@@ -111,7 +111,6 @@
   }
 
   const removeLayer = () => {
-    $removedLayerFromLayersTab = true
     $map.removeLayer(layerId)
     $layerList = $layerList.filter((item) => item.definition.id !== layerId)
     inDynamic = false
