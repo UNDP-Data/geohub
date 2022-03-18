@@ -6,16 +6,17 @@
 
 <script lang="ts">
   import 'bulma/css/bulma.css'
-  import IconButton from '@smui/icon-button'
-  import Accordion, { Panel } from '@smui-extra/accordion'
-  import Slider from '@smui/slider'
+  import Button, { Label as LabelButton } from '@smui/button'
   import Checkbox from '@smui/checkbox'
+  import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
+  import IconButton from '@smui/icon-button'
+  import Slider from '@smui/slider'
+  import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
 
   import Colormaps from './Colormaps.svelte'
   import Legend from './Legend.svelte'
-
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
@@ -34,6 +35,7 @@
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
   let colorMapName = 'viridis'
+  let confirmDeleteLayerDialogVisible = false
   let inDynamic: boolean = dynamicLayerState[layerId] || false
   let isLayerVisible = false
   let isLegendPanelVisible = false
@@ -111,12 +113,19 @@
   }
 
   const removeLayer = () => {
-    $map.removeLayer(layerId)
-    $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-    inDynamic = false
-    delete layerState[layerId]
-    delete sectionState[layerId]
-    delete dynamicLayerState[layerId]
+    isLegendPanelVisible = false
+    isOpacityPanelVisible = false
+    isRescalePanelVisible = false
+    confirmDeleteLayerDialogVisible = false
+
+    setTimeout(() => {
+      $map.removeLayer(layerId)
+      $layerList = $layerList.filter((item) => item.definition.id !== layerId)
+      inDynamic = false
+      delete layerState[layerId]
+      delete sectionState[layerId]
+      delete dynamicLayerState[layerId]
+    }, 200)
   }
 
   const hierachyDown = (layerID: string) => {
@@ -253,7 +262,7 @@
                 title="Remove layer"
                 class="material-icons"
                 style={iconButtonStyle}
-                on:click={() => removeLayer()}>delete</IconButton>
+                on:click={() => (confirmDeleteLayerDialogVisible = true)}>delete</IconButton>
             </div>
           </div>
         </div>
@@ -316,6 +325,24 @@
       </div></Panel>
   </Accordion>
 </div>
+
+<Dialog bind:open={confirmDeleteLayerDialogVisible}>
+  <Title>
+    Delete Layer
+  </Title>
+  <ContentDialog>
+    Are you sure you want to delete this layer?<br /><br />
+    {name}
+  </ContentDialog>
+  <ActionsDialog>
+    <Button>
+      <LabelButton>No</LabelButton>
+    </Button>
+    <Button on:click={() => removeLayer()}>
+      <LabelButton>Yes</LabelButton>
+    </Button>
+  </ActionsDialog>
+</Dialog>
 
 <style lang="scss">
   .layer-header {
