@@ -40,7 +40,7 @@
   let isLayerVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-  let isRescalePanelVisible = false
+  let isFilterPanelVisible = false
   let layerOpacity = 1
   let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
@@ -115,7 +115,7 @@
   const removeLayer = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
-    isRescalePanelVisible = false
+    isFilterPanelVisible = false
     confirmDeleteLayerDialogVisible = false
 
     setTimeout(() => {
@@ -183,24 +183,36 @@
           <div class="layer-header-icons">
             <div class="group">
               <IconButton
+                title="Filter"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => {
+                  isFilterPanelVisible = !isFilterPanelVisible
+                  isLegendPanelVisible = false
+                  isOpacityPanelVisible = false
+                }}>
+                palette
+              </IconButton>
+              <IconButton
                 title="Legend"
                 class="material-icons"
                 style={iconButtonStyle}
-                on:click={() => (isLegendPanelVisible = !isLegendPanelVisible)}>
+                on:click={() => {
+                  isLegendPanelVisible = !isLegendPanelVisible
+                  isFilterPanelVisible = false
+                  isOpacityPanelVisible = false
+                }}>
                 legend_toggle
-              </IconButton>
-              <IconButton
-                title="Rescale"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => (isRescalePanelVisible = !isRescalePanelVisible)}>
-                palette
               </IconButton>
               <IconButton
                 title="Opacity"
                 class="material-icons"
                 style={iconButtonStyle}
-                on:click={() => (isOpacityPanelVisible = !isOpacityPanelVisible)}>
+                on:click={() => {
+                  isOpacityPanelVisible = !isOpacityPanelVisible
+                  isLegendPanelVisible = false
+                  isFilterPanelVisible = false
+                }}>
                 opacity
               </IconButton>
             </div>
@@ -286,16 +298,16 @@
             </div>
           {/if}
 
-          {#if isRescalePanelVisible === true}
+          {#if isFilterPanelVisible === true}
             <div transition:slide class="action">
               <div class="header">
-                <div class="name">Rescale</div>
+                <div class="name">Filter</div>
                 <div class="close">
                   <IconButton
                     title="Close"
                     class="material-icons"
                     style={iconButtonStyle}
-                    on:click={() => (isRescalePanelVisible = false)}>
+                    on:click={() => (isFilterPanelVisible = false)}>
                     close
                   </IconButton>
                 </div>
