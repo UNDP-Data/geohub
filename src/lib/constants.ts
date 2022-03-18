@@ -24,3 +24,7 @@ export const LayerInitialValues = {
 export enum ErrorCodes {
   UndefinedBandMetadatalayerMinMax = 'Missing layer minimum and/or maximum metadata values.',
 }
+
+export enum BannerTypes {
+  error = 'Error',
+}

@@ -327,9 +327,7 @@
 </div>
 
 <Dialog bind:open={confirmDeleteLayerDialogVisible}>
-  <Title>
-    Delete Layer
-  </Title>
+  <Title>Delete Layer</Title>
   <ContentDialog>
     Are you sure you want to delete this layer?<br /><br />
     {name}

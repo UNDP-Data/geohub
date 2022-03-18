@@ -1,27 +1,27 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import Banner, { Label as LabelBanner } from '@smui/banner'
+  import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
   import LinearProgress from '@smui/linear-progress'
-  import type { SnackbarComponentDev } from '@smui/snackbar'
-  import Snackbar, { Actions, Label as LabelSnackbar } from '@smui/snackbar'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { layerList, indicatorProgress } from '../stores'
-  import { ErrorCodes, TabNames } from '../lib/constants'
+  import { BannerTypes, ErrorCodes, TabNames } from '../lib/constants'
   import type { Error } from '../lib/types'
-  import IconButton from '@smui/icon-button'
 
   export let drawerOpen = false
 
   let activeTab = TabNames.LoadData
+  let bannerType = ''
+  let bannerMessage = ''
   let drawerWidth = 340
   let hideLinearProgress = true
   let isResizingDrawer = false
-  let snackbarMessage = ''
-  let snackbarWithClose: SnackbarComponentDev
+  let showBanner = false
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -55,8 +55,9 @@
   const handleMouseup = () => (isResizingDrawer = false)
 
   const handlErrorCallback = (error: Error) => {
-    snackbarMessage = ErrorCodes[error.code]
-    snackbarWithClose.open()
+    bannerType = BannerTypes.error
+    bannerMessage = ErrorCodes[error.code]
+    showBanner = true
   }
 </script>
 
@@ -100,20 +101,19 @@
   </Drawer>
 
   <AppContent class="app-content">
+    <Banner bind:open={showBanner} fixed mobileStacked content$style="max-width: max-content;">
+      <LabelBanner slot="label" style="font-family: ProximaNova, sans-serif; font-size: 13px;">
+        <span style="font-weight: bold;">{bannerType}:</span>
+        {bannerMessage}
+      </LabelBanner>
+      <Button slot="actions">Dismiss</Button>
+    </Banner>
+
     <main class="main-content">
       <slot />
     </main>
   </AppContent>
 </div>
-
-<Snackbar bind:this={snackbarWithClose} timeoutMs={10000}>
-  <LabelSnackbar style="font-family: ProximaNova, sans-serif; font-size: 13px;">
-    Error: {snackbarMessage}
-  </LabelSnackbar>
-  <Actions>
-    <IconButton class="material-icons" title="Dismiss">close</IconButton>
-  </Actions>
-</Snackbar>
 
 <style lang="scss">
   :global(.app-content) {
