@@ -5,19 +5,18 @@
   import Chip, { Set, Text } from '@smui/chips'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-  import { map } from  "../stores/index"
+  import { map } from '../stores/index'
   // The updateParamsInURL takes params in the format {"key:"value"}
 
   export let lMin
   export let lMax
-  let colorMapName = 'viridis';
+  let colorMapName = 'viridis'
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
 
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
-
 
   const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
   let selectedColorMapType = ''
@@ -61,7 +60,7 @@
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
     legendBackground = activeColorMap.background
-    updateParamsInURL({colormap_name:activeColorMap.name})
+    updateParamsInURL({ colormap_name: activeColorMap.name })
   }
 
   const selectScaling = () => {
@@ -76,7 +75,18 @@
 </script>
 
 <div class="group">
+  <Slider
+          discrete
+          range
+          bind:start={scalingValueStart}
+          bind:end={scalingValueEnd}
+          min={sliderMin}
+          max={sliderMax}
+          step={0.1}
+          input$aria-label="Range slider"
+          label="Set the min and max" />
   <div style="display: flex; align-items: center; justify-content: space-around;">
+
     <!-- <div>{scalingValueStart}</div> -->
     <div
       on:click={() => {
@@ -104,7 +114,10 @@
             <div
               title={btn.name}
               class="colormap-div"
-              on:click={() => {colorMapName = btn['name']; console.log(colorMapName)}}
+              on:click={() => {
+                colorMapName = btn['name']
+                console.log(colorMapName)
+              }}
               style={btn.background} />
           {/each}
         </div>
@@ -132,16 +145,7 @@
     </div>
   </div>
 
-  <Slider
-    discrete
-    range
-    bind:start={scalingValueStart}
-    bind:end={scalingValueEnd}
-    min={sliderMin}
-    max={sliderMax}
-    step={0.1}
-    input$aria-label="Range slider"
-    label="Set the min and max" />
+
   <div class="changeLegendButtonDiv">
     <Button class="changelegendbtn" variant="raised">
       <LabelButton>Change legend</LabelButton>
