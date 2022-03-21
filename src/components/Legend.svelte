@@ -2,16 +2,19 @@
   import Slider from '@smui/slider'
   import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import Button, { Label as LabelButton } from '@smui/button'
+  import Chip, { Set, Text } from '@smui/chips'
+
   export let lMin
   export let lMax
 
   const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
-
+  let selectedColorMapType = ''
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
-
+  const colorMapTypes: Array<string> = ['Sequential', 'Diverging', 'Cyclic']
+  let cmapSelectionShown = false
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
 
   const setScalingValueRwange = () => {
@@ -37,7 +40,12 @@
 <div class="group">
   <div style="display: flex; align-items: center; justify-content: space-around;">
     <!-- <div>{scalingValueStart}</div> -->
-    <div class="colormap-div" style={legendBackground} />
+    <div
+      on:click={() => {
+        cmapSelectionShown = !cmapSelectionShown
+      }}
+      class="colormap-div"
+      style={legendBackground} />
 
     <!-- <div>{scalingValueEnd}</div> -->
 
@@ -45,6 +53,49 @@
 
     </div> -->
   </div>
+  <div class={cmapSelectionShown ? 'cmap-selection shown' : 'cmap-selection hidden'}>
+    <Set class="colormap-chips" chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
+      <Chip {chip}>
+        <Text>{chip}</Text>
+      </Chip>
+    </Set>
+    <div>
+      {#if selectedColorMapType === 'Sequential'}
+        <div class="colormaps-group">
+          {#each sequentialColormaps as btn}
+            <div
+              title={btn.name}
+              class="colormap-div"
+              on:click={() => (colorMapName = btn['name'])}
+              style={btn.background} />
+          {/each}
+        </div>
+      {:else if selectedColorMapType === 'Diverging'}
+        <div class="colormaps-group">
+          {#each divergingColorMaps as btn}
+            <div
+              class="colormap-div"
+              title={btn.name}
+              on:click={() => {
+                colorMapName = btn['name']
+              }}
+              style={btn.background} />
+          {/each}
+        </div>
+      {:else if selectedColorMapType === 'Cyclic'}
+        <div class="colormaps-group">
+          {#each cyclicColorMaps as btn}
+            <div
+              title={btn.name}
+              class="colormap-div"
+              on:click={() => (colorMapName = btn['name'])}
+              style={btn.background} />
+          {/each}
+        </div>
+      {/if}
+    </div>
+  </div>
+
   <Slider
     discrete
     range
@@ -55,16 +106,20 @@
     step={0.1}
     input$aria-label="Range slider"
     label="Set the min and max" />
-
-  <Button variant="raised" class="changeLegendButton">
-    <LabelButton>Change legend</LabelButton>
-  </Button>
+  <div class="changeLegendButton">
+    <Button variant="raised">
+      <LabelButton>Change legend</LabelButton>
+    </Button>
+  </div>
 </div>
 
 <style lang="scss">
   .colormap-div {
     height: 20px;
     width: 80%;
+    cursor: pointer;
+    justify-content: center;
+    margin: 1px;
     // transform: rotate(90deg) ;
   }
   .group {
@@ -78,5 +133,23 @@
     margin: 0 auto;
     width: 50%;
     text-transform: capitalize;
+  }
+  .cmap-selection {
+    display: block;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  * :global(.colormaps-group) {
+    margin: auto;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+  * :global(.colormap-chips) {
+    justify-content: space-evenly;
   }
 </style>
