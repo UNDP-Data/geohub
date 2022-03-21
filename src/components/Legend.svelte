@@ -76,17 +76,16 @@
 
 <div class="group">
   <Slider
-          discrete
-          range
-          bind:start={scalingValueStart}
-          bind:end={scalingValueEnd}
-          min={sliderMin}
-          max={sliderMax}
-          step={0.1}
-          input$aria-label="Range slider"
-          label="Set the min and max" />
+    discrete
+    range
+    bind:start={scalingValueStart}
+    bind:end={scalingValueEnd}
+    min={sliderMin}
+    max={sliderMax}
+    step={0.1}
+    input$aria-label="Range slider"
+    label="Set the min and max" />
   <div style="display: flex; align-items: center; justify-content: space-around;">
-
     <!-- <div>{scalingValueStart}</div> -->
     <div
       on:click={() => {
@@ -145,12 +144,14 @@
     </div>
   </div>
 
-
   <div class="changeLegendButtonDiv">
     <Button class="changelegendbtn" variant="raised">
       <LabelButton>Change legend</LabelButton>
     </Button>
   </div>
+</div>
+<div class="group">
+  <h4>Show this</h4>
 </div>
 
 <style lang="scss">
