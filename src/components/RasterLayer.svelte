@@ -48,12 +48,12 @@
   let reverseColorMap = false
   let scalingValueRange = ''
 
-  $: colorMapName, selectColorMap()
+  // $: colorMapName, selectColorMap()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  $: reverseColorMap, selectColorMap()
-  $: scalingValueRange, selectScaling()
+  // $: reverseColorMap, selectColorMap()
+  // $: scalingValueRange, selectScaling()
   $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const setDynamicLayerState = () => {
@@ -86,19 +86,19 @@
     layerState[layerId] = panelOpen
   }
 
-  const selectColorMap = () => {
-    if (!colorMapName) return
-    let name = colorMapName
-    if (reverseColorMap) {
-      name = `${name}_r`
-    }
-    updateParamsInURL({ colormap_name: name })
-  }
+  // const selectColorMap = () => {
+  //   if (!colorMapName) return
+  //   let name = colorMapName
+  //   if (reverseColorMap) {
+  //     name = `${name}_r`
+  //   }
+  //   updateParamsInURL({ colormap_name: name })
+  // }
 
-  const selectScaling = () => {
-    if (!scalingValueRange) return
-    updateParamsInURL({ rescale: scalingValueRange })
-  }
+  // const selectScaling = () => {
+  //   if (!scalingValueRange) return
+  //   updateParamsInURL({ rescale: scalingValueRange })
+  // }
 
   const setLayerOpacity = () => {
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
@@ -148,21 +148,21 @@
     }
   }
 
-  const updateParamsInURL = (params) => {
-    let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
-    const layerSource = $map.getSource(layers)
-
-    if (layerSource.tiles) {
-      const oldUrl = new URL(layerSource.tiles[0])
-      Object.keys(params).forEach((key) => {
-        oldUrl.searchParams.set(key, params[key])
-      })
-      $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
-      $map.style.sourceCaches[layers].clearTiles()
-      $map.style.sourceCaches[layers].update($map.transform)
-      $map.triggerRepaint()
-    }
-  }
+  // const updateParamsInURL = (params) => {
+  //   let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
+  //   const layerSource = $map.getSource(layers)
+  //
+  //   if (layerSource.tiles) {
+  //     const oldUrl = new URL(layerSource.tiles[0])
+  //     Object.keys(params).forEach((key) => {
+  //       oldUrl.searchParams.set(key, params[key])
+  //     })
+  //     $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
+  //     $map.style.sourceCaches[layers].clearTiles()
+  //     $map.style.sourceCaches[layers].update($map.transform)
+  //     $map.triggerRepaint()
+  //   }
+  // }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -295,7 +295,7 @@
                 </div>
               </div>
               <Legend
-                {colorMapName}
+                {layerConfig}
                 lMax={layerBandMetadataMax}
                 lMin={layerBandMetadataMin}
                 bind:scalingValueRange
