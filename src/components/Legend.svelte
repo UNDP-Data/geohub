@@ -172,6 +172,7 @@
 
   :global(.changeLegendButtonDiv) {
     margin: 0 auto;
+    padding-top: 10px;
     width: 50%;
   }
 
