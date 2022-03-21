@@ -183,23 +183,23 @@
           <div class="layer-header-icons">
             <div class="group">
               <IconButton
-                title="Filter"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => {
-                  isFilterPanelVisible = !isFilterPanelVisible
-                  isLegendPanelVisible = false
-                  isOpacityPanelVisible = false
-                }}>
-                palette
-              </IconButton>
-              <IconButton
                 title="Legend"
                 class="material-icons"
                 style={iconButtonStyle}
                 on:click={() => {
                   isLegendPanelVisible = !isLegendPanelVisible
                   isFilterPanelVisible = false
+                  isOpacityPanelVisible = false
+                }}>
+                palette
+              </IconButton>
+              <IconButton
+                title="Filter"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => {
+                  isFilterPanelVisible = !isFilterPanelVisible
+                  isLegendPanelVisible = false
                   isOpacityPanelVisible = false
                 }}>
                 legend_toggle
@@ -294,7 +294,12 @@
                   </IconButton>
                 </div>
               </div>
-              <Legend {colorMapName} lMax={layerBandMetadataMax} lMin={layerBandMetadataMin} />
+              <Legend
+                {colorMapName}
+                lMax={layerBandMetadataMax}
+                lMin={layerBandMetadataMin}
+                bind:scalingValueRange
+                bind:reverseColorMap />
             </div>
           {/if}
 
