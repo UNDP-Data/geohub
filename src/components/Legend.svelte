@@ -11,8 +11,6 @@
   import { LayerInitialValues } from '../lib/constants'
   import { map, layerList } from '../stores/index'
 
-  // Todo: Fix the refresh bug from the colormaps
-  // Something to do with the initial colormap set.
   export let lMin
   export let lMax
   export let scalingValueStart
@@ -187,7 +185,6 @@
 </div>
 <div class={changeLegend ? 'group changeLegendShown' : 'hidden'}>
   <div id="discrete-cmap" style={legendBackground} />
-  <div class="" />
 </div>
 
 <style lang="scss">
@@ -215,6 +212,8 @@
 
   :global(.changelegendbtn) {
     text-transform: capitalize;
+    height: 30px;
+    width: 100%;
   }
   .cmap-selection {
     display: block;
