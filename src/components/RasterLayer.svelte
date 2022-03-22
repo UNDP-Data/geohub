@@ -332,21 +332,21 @@
               <!--              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />-->
             </div>
           {/if}
-<!--          <div transition:slide class="action" hidden={isFilterPanelVisible === false}>-->
-<!--            <div class="header">-->
-<!--              <div class="name">Filter</div>-->
-<!--              <div class="close">-->
-<!--                <IconButton-->
-<!--                  title="Close"-->
-<!--                  class="material-icons"-->
-<!--                  style={iconButtonStyle}-->
-<!--                  on:click={() => (isFilterPanelVisible = false)}>-->
-<!--                  close-->
-<!--                </IconButton>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--&lt;!&ndash;            <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />&ndash;&gt;-->
-<!--          </div>-->
+          <!--          <div transition:slide class="action" hidden={isFilterPanelVisible === false}>-->
+          <!--            <div class="header">-->
+          <!--              <div class="name">Filter</div>-->
+          <!--              <div class="close">-->
+          <!--                <IconButton-->
+          <!--                  title="Close"-->
+          <!--                  class="material-icons"-->
+          <!--                  style={iconButtonStyle}-->
+          <!--                  on:click={() => (isFilterPanelVisible = false)}>-->
+          <!--                  close-->
+          <!--                </IconButton>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--&lt;!&ndash;            <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />&ndash;&gt;-->
+          <!--          </div>-->
 
           {#if isOpacityPanelVisible === true}
             <div transition:slide class="action">
