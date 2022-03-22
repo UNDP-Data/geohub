@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button, { Label } from '@smui/button'
-  import { Icon } from '@smui/icon-button'
+  import Fa from 'svelte-fa/src/fa.svelte'
+  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
   import RasterLayer from './RasterLayer.svelte'
   import VectorLayer from './VectorLayer.svelte'
@@ -15,8 +16,9 @@
 {#if $layerList?.length === 0}
   <ul class="no-data-layers">
     <li class="message">
-      <div class="icon" style="color: hsl(204, 86%, 53%); transform: scale(1);">
-        <Icon color="primary" class="material-icons">info</Icon>
+      <div class="icon">
+        <!-- <Icon color="primary" class="material-icons">info</Icon> -->
+        <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
       </div>
       <div class="text">
         No layers have been selected. Please select a layer from the <strong>{TabNames.LoadData}</strong> tab.

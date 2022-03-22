@@ -27,10 +27,11 @@
   import { onMount } from 'svelte'
   import { slide } from 'svelte/transition'
   import Checkbox from '@smui/checkbox'
-  import { Icon } from '@smui/icon-button'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa/src/fa.svelte'
+  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
+  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
@@ -227,14 +228,13 @@
         on:click={() => (level > 0 ? toggleExpansion() : '')}
         class="node-container"
         transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon">
+        <div class="tree-icon" style="margin-right: 5px;">
           {#if level === 0}
-            <Icon color="primary" class="material-icons" style="transform: scale(0.75);">house</Icon>
+            <Fa icon={faDatabase} size="sm" />
           {:else if !expanded}
-            <Icon color="primary" class="material-icons" on style="cursor: pointer;">chevron_right</Icon>
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
           {:else}
-            <Icon color="primary" class="material-icons" on style="transform: rotate(90deg); cursor: pointer;"
-              >chevron_right</Icon>
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
           {/if}
         </div>
 
