@@ -17,7 +17,6 @@
   <ul class="no-data-layers">
     <li class="message">
       <div class="icon">
-        <!-- <Icon color="primary" class="material-icons">info</Icon> -->
         <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
       </div>
       <div class="text">
