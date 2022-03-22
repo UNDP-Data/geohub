@@ -1,3 +1,7 @@
+<script context="module">
+  const lState = {}
+</script>
+
 <script lang="ts">
   import Slider from '@smui/slider'
   import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
@@ -5,14 +9,15 @@
   import Chip, { Set, Text } from '@smui/chips'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-  import { map } from '../stores/index'
-  // The updateParamsInURL takes params in the format {"key:"value"}
+  import { map, layerList } from '../stores/index'
 
+  // Todo: Fix the refresh bug from the colormaps
+  // Something to do with the initial colormap set.
   export let lMin
   export let lMax
-  let colorMapName = 'viridis'
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
+  export let colorMapName
 
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
@@ -26,11 +31,15 @@
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
   const colorMapTypes: Array<string> = ['Sequential', 'Diverging', 'Cyclic']
   let cmapSelectionShown = false
+  let changeLegend = false
   let mapLayers = $map.getStyle().layers
   let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+  let isLegendUniqueValues: boolean
+  let isLegendInterval: boolean
 
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+    console.log(scalingValueStart, scalingValueEnd)
   }
 
   $: scalingValueStart, setScalingValueRwange()
@@ -57,6 +66,7 @@
   let legendBackground
 
   const generateLegend = () => {
+    console.log(colorMapName)
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
     legendBackground = activeColorMap.background
@@ -68,9 +78,36 @@
     updateParamsInURL({ rescale: scalingValueRange })
   }
 
+  const requestDataInfo = () => {
+    changeLegend = !changeLegend
+    let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+    const layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+    const layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+    console.log(layer)
+    let layerBandRangeValue = layerBandMetadataMax - layerBandMetadataMin
+    let uniqueValuesList = []
+    let intervalSize = layerBandRangeValue / 10
+    if (layerBandRangeValue <= 10) {
+      isLegendUniqueValues = true
+      isLegendInterval = false
+
+      for (let i = Number(layerBandMetadataMin); i < Number(layerBandMetadataMax); i = i + Number(intervalSize)) {
+        console.log(layerBandMetadataMin, layerBandMetadataMax)
+        uniqueValuesList.push(i)
+      }
+      // for(let i=layerBandMetadataMin; i<=layerBandMetadataMax; i = i + 1){
+      //   uniqueValuesList.push(i)
+      // }
+      console.log(uniqueValuesList)
+    } else {
+      isLegendInterval = true
+      isLegendUniqueValues = false
+    }
+  }
+
   $: scalingValueStart, setScalingValueRwange()
   $: scalingValueEnd, setScalingValueRwange()
-  $: scalingValueEnd, selectScaling()
+  $: scalingValueRange, selectScaling()
   $: colorMapName, generateLegend()
 </script>
 
@@ -145,13 +182,14 @@
   </div>
 
   <div class="changeLegendButtonDiv">
-    <Button class="changelegendbtn" variant="raised">
-      <LabelButton>Change legend</LabelButton>
+    <Button on:click={requestDataInfo} class="changelegendbtn" variant="raised">
+      <LabelButton>{changeLegend ? 'Hide Legend' : 'Show Legend'}</LabelButton>
     </Button>
   </div>
 </div>
-<div class="group">
-  <h4>Show this</h4>
+<div class={changeLegend ? 'group changeLegendShown' : 'hidden'}>
+  <div id="discrete-cmap" style={legendBackground} />
+  <div class="" />
 </div>
 
 <style lang="scss">
@@ -167,6 +205,7 @@
     background: #f0f0f0;
     border-radius: 7.5px;
     padding: 2px;
+    margin-top: 1px;
     padding-bottom: 4px;
   }
 
@@ -196,5 +235,9 @@
   }
   * :global(.colormap-chips) {
     justify-content: space-evenly;
+  }
+  #discrete-cmap {
+    height: 20px;
+    width: 100%;
   }
 </style>

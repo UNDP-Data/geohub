@@ -29,12 +29,12 @@
   const layerId = definition.id
   const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
-  const layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
-  const layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
-  let colorMapName = 'viridis'
+  // let colorMapName;
   let confirmDeleteLayerDialogVisible = false
   let inDynamic: boolean = dynamicLayerState[layerId] || false
   let isLayerVisible = false
@@ -47,7 +47,7 @@
   let queryEnabled = true
   let reverseColorMap = false
   let scalingValueRange = ''
-
+  let colorMapName = 'viridis'
   // $: colorMapName, selectColorMap()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
@@ -295,10 +295,11 @@
                 </div>
               </div>
               <Legend
-                {layerConfig}
-                lMax={layerBandMetadataMax}
-                lMin={layerBandMetadataMin}
+                bind:layerConfig
+                bind:lMax={layerBandMetadataMax}
+                bind:lMin={layerBandMetadataMin}
                 bind:scalingValueRange
+                bind:colorMapName
                 bind:reverseColorMap />
             </div>
           {/if}
@@ -317,7 +318,7 @@
                   </IconButton>
                 </div>
               </div>
-              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+              <!--              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />-->
             </div>
           {/if}
 
