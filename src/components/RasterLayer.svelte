@@ -163,6 +163,16 @@
       $map.triggerRepaint()
     }
   }
+
+  import Fa from 'svelte-fa/src/fa.svelte'
+  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
+  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
+  import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
+  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
+  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
+  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
+  import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -182,7 +192,7 @@
           </div>
           <div class="layer-header-icons">
             <div class="group">
-              <IconButton
+              <!-- <IconButton
                 title="Filter"
                 class="material-icons"
                 style={iconButtonStyle}
@@ -192,7 +202,19 @@
                   isOpacityPanelVisible = false
                 }}>
                 palette
-              </IconButton>
+              </IconButton> -->
+
+              <div
+                title="Filter"
+                alt="Filter"
+                on:click={() => {
+                  isFilterPanelVisible = !isFilterPanelVisible
+                  isLegendPanelVisible = false
+                  isOpacityPanelVisible = false
+                }}>
+                <Fa icon={faPalette} size="lg" style="cursor: pointer;" />
+              </div>
+
               <IconButton
                 title="Legend"
                 class="material-icons"
