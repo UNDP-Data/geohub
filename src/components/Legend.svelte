@@ -15,9 +15,12 @@
   // Something to do with the initial colormap set.
   export let lMin
   export let lMax
+  export let scalingValueStart
+  export let scalingValueEnd
   export let layerConfig: Layer = LayerInitialValues
-  export let disabled = true
-  export let colorMapName
+  let disabled = true
+  export let legendBackground
+  export let colorMapName = 'viridis'
 
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
@@ -27,8 +30,6 @@
   let selectedColorMapType = ''
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
-  let scalingValueStart = Math.floor(lMin * 10) / 10
-  let scalingValueEnd = Math.ceil(lMax * 10) / 10
   const colorMapTypes: Array<string> = ['Sequential', 'Diverging', 'Cyclic']
   let cmapSelectionShown = false
   let changeLegend = false
@@ -37,13 +38,13 @@
   let isLegendUniqueValues: boolean
   let isLegendInterval: boolean
 
-  const setScalingValueRwange = () => {
-    scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
-    console.log(scalingValueStart, scalingValueEnd)
-  }
+  // const setScalingValueRwange = () => {
+  //   scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+  //   console.log(scalingValueStart, scalingValueEnd)
+  // }
 
-  $: scalingValueStart, setScalingValueRwange()
-  $: scalingValueEnd, setScalingValueRwange()
+  // $: scalingValueStart, setScalingValueRwange()
+  // $: scalingValueEnd, setScalingValueRwange()
   // $: colorMapName, updateParamsInURL({'colormap_name':colorMapName})
   export let reverseColorMap = false
 
@@ -63,20 +64,18 @@
     }
   }
 
-  let legendBackground
+  // const generateLegend = () => {
+  //   console.log(colorMapName)
+  //   const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
+  //   let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
+  //   legendBackground = activeColorMap.background
+  //   updateParamsInURL({ colormap_name: activeColorMap.name })
+  // }
 
-  const generateLegend = () => {
-    console.log(colorMapName)
-    const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
-    let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
-    legendBackground = activeColorMap.background
-    updateParamsInURL({ colormap_name: activeColorMap.name })
-  }
-
-  const selectScaling = () => {
-    if (!scalingValueRange) return
-    updateParamsInURL({ rescale: scalingValueRange })
-  }
+  // const selectScaling = () => {
+  //   if (!scalingValueRange) return
+  //   updateParamsInURL({ rescale: scalingValueRange })
+  // }
 
   const requestDataInfo = () => {
     changeLegend = !changeLegend
@@ -105,10 +104,9 @@
     }
   }
 
-  $: scalingValueStart, setScalingValueRwange()
-  $: scalingValueEnd, setScalingValueRwange()
-  $: scalingValueRange, selectScaling()
-  $: colorMapName, generateLegend()
+  // $: scalingValueStart, setScalingValueRwange()
+  // $: scalingValueEnd, setScalingValueRwange()
+  // $: scalingValueRange, selectScaling()
 </script>
 
 <div class="group">

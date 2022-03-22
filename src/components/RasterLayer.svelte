@@ -20,7 +20,7 @@
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-
+  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
 
@@ -48,6 +48,9 @@
   let reverseColorMap = false
   let scalingValueRange = ''
   let colorMapName = 'viridis'
+  let scalingValueStart = Math.floor(layerBandMetadataMin * 10) / 10
+  let scalingValueEnd = Math.ceil(layerBandMetadataMax * 10) / 10
+  let legendBackground
   // $: colorMapName, selectColorMap()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
@@ -163,6 +166,42 @@
   //     $map.triggerRepaint()
   //   }
   // }
+
+  const updateParamsInURL = (params) => {
+    let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
+    const layerSource = $map.getSource(layers)
+
+    if (layerSource.tiles) {
+      const oldUrl = new URL(layerSource.tiles[0])
+      Object.keys(params).forEach((key) => {
+        oldUrl.searchParams.set(key, params[key])
+      })
+      $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
+      $map.style.sourceCaches[layers].clearTiles()
+      $map.style.sourceCaches[layers].update($map.transform)
+      $map.triggerRepaint()
+    }
+  }
+  const selectScaling = () => {
+    if (!scalingValueRange) return
+    updateParamsInURL({ rescale: scalingValueRange })
+  }
+
+  const setScalingValueRwange = () => {
+    scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+    console.log(scalingValueStart, scalingValueEnd)
+  }
+  const generateLegend = () => {
+    console.log(colorMapName)
+    const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
+    let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
+    legendBackground = activeColorMap.background
+    updateParamsInURL({ colormap_name: activeColorMap.name })
+  }
+  $: scalingValueStart, setScalingValueRwange()
+  $: scalingValueEnd, setScalingValueRwange()
+  $: scalingValueRange, selectScaling()
+  $: colorMapName, generateLegend()
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -298,8 +337,10 @@
                 bind:layerConfig
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
-                bind:scalingValueRange
+                bind:scalingValueStart
+                bind:scalingValueEnd
                 bind:colorMapName
+                bind:legendBackground
                 bind:reverseColorMap />
             </div>
           {/if}
