@@ -9,7 +9,7 @@ const config = {
     adapter: adapter({
       out: 'build',
       precompress: false,
-      envPrefix: {
+      env: {
         host: 'MY_HOST_VARIABLE',
         port: 'MY_PORT_VARIABLE',
         origin: 'MY_ORIGINURL',
