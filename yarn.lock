@@ -350,6 +350,30 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fortawesome/fontawesome-common-types@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.1.0.tgz#5a9468da0e5c2a3ccc161882ef5ffafbd3d4882f"
+  integrity sha512-lFIJ5opxOKG9q88xOsuJJAdRZ+2WRldsZwUR/7MJoOMUMhF/LkHUjwWACIEPTa5Wo6uTDHvGRIX+XutdN7zYxA==
+
+"@fortawesome/fontawesome-free@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-6.1.0.tgz#db162f63c6fdb3ecc6d44de3bbc8ed178390d709"
+  integrity sha512-OgM74M6+Q7BuKAj8r+VfzwjnIGZrY62R4ipbiDvBW4FA0mLnB3yeuV/2bW63j+zppGyTvBp/3jqXp9ZXy43nFw==
+
+"@fortawesome/fontawesome-svg-core@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.1.0.tgz#b78a43df315a6b1568d803ee48a9f1edea0714aa"
+  integrity sha512-racj+/EDnMZN0jcuHePOa+9kdHHOCpCAbBvVRnEi4G4DA5SWQiT/uXJ8WcfVEbLN51vPJjhukP4o+zH0cfYplg==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.1.0"
+
+"@fortawesome/free-solid-svg-icons@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.1.0.tgz#1bdc3ce6ddd2336348ba324ac4a72161725b0d95"
+  integrity sha512-OOr0jRHl5d41RzBS3sZh5Z3HmdPjMr43PxxKlYeLtQxFSixPf4sJFVM12/rTepB2m0rVShI0vtjHQmzOTlBaXg==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.1.0"
+
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.9.5.tgz#2cbaf9a89460da24b5ca6531b8bbfc23e1df50c7"
@@ -916,6 +940,22 @@
   dependencies:
     "@material/elevation" "^13.0.0"
 
+"@material/tooltip@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/tooltip/-/tooltip-13.0.0.tgz#2a4360b1d9b07b7573d69e2a85d5522dec00b97d"
+  integrity sha512-/QinwEM0sYtRUthgOy7R+V4iwLMZ8SCd8A3PyGyTr27BUGWykwAUFdXyzT4rxLhDNcnDOYH14N+Z3Bom+UwO9Q==
+  dependencies:
+    "@material/animation" "^13.0.0"
+    "@material/base" "^13.0.0"
+    "@material/dom" "^13.0.0"
+    "@material/elevation" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/typography" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/top-app-bar@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/top-app-bar/-/top-app-bar-13.0.0.tgz"
@@ -1386,6 +1426,15 @@
     "@smui/line-ripple" "^6.0.0-beta.15"
     "@smui/notched-outline" "^6.0.0-beta.15"
     "@smui/ripple" "^6.0.0-beta.15"
+    svelte2tsx "^0.4.14"
+
+"@smui/tooltip@^6.0.0-beta.15":
+  version "6.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@smui/tooltip/-/tooltip-6.0.0-beta.15.tgz#b5d1d46f6f9e7a8d0bdf554c5667bc9337275fb7"
+  integrity sha512-AZlcsmfPjPdxhTy6bvo3YO4NlcBZK52UWK4+pTkzlHWDpo87xb9wBH3e1JrPBBk1sNP8v1dxzypN00ZRpRgt3w==
+  dependencies:
+    "@material/tooltip" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
 "@smui/top-app-bar@^6.0.0-beta.15":
@@ -4212,6 +4261,11 @@ svelte-check@^2.4.6:
     source-map "^0.7.3"
     svelte-preprocess "^4.0.0"
     typescript "*"
+
+svelte-fa@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/svelte-fa/-/svelte-fa-2.4.0.tgz#d94285151a975b92b29efec6ec9e2c11c57780ef"
+  integrity sha512-0bnbMGbsE1LUnlioDcf27tl2O8kjuXlTXMXzIxC7LoIOWmqn0D+zd539HfLiQbdLuOHGTaynwN9V+4ehhEu1Jw==
 
 svelte-hmr@^0.14.9:
   version "0.14.11"

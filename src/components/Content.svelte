@@ -1,16 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { slide } from 'svelte/transition'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
+  import IconButton from '@smui/icon-button'
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
+  import Fa from 'svelte-fa/src/fa.svelte'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { layerList, indicatorProgress } from '../stores'
-  import { BannerTypes, ErrorCodes, TabNames } from '../lib/constants'
+  import { BannerTypes, ErrorCodes, LayerIconTypes, TabNames } from '../lib/constants'
   import type { Error } from '../lib/types'
 
   export let drawerOpen = false
@@ -22,6 +25,7 @@
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
+  $: treeLgendExpanded = true
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -37,6 +41,10 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
+
+    setTimeout(() => {
+      treeLgendExpanded = false
+    }, 5000)
   })
 
   const setContentContainerMargin = (margin: number) =>
@@ -59,6 +67,8 @@
     bannerMessage = ErrorCodes[error.code]
     showBanner = true
   }
+
+  const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
 </script>
 
 <div class="content-container">
@@ -81,6 +91,42 @@
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.LoadData}>
             <TreeView {handlErrorCallback} />
+            <div style="padding: 15px; padding-right: 0;">
+              <div class="layer-actions" style="height: 20px;">
+                <div transition:slide class="action">
+                  <div class="header">
+                    <div class="name" style="font-size: 11px;">Legend</div>
+                    <div class="close">
+                      {#if treeLgendExpanded === false}
+                        <IconButton
+                          color="primary"
+                          class="material-icons"
+                          on
+                          style={iconButtonStyle + ';cursor: pointer;'}
+                          on:click={() => (treeLgendExpanded = true)}>chevron_right</IconButton>
+                      {:else}
+                        <IconButton
+                          color="primary"
+                          class="material-icons"
+                          on
+                          style={iconButtonStyle + ';transform: rotate(90deg); cursor: pointer;'}
+                          on:click={() => (treeLgendExpanded = false)}>chevron_right</IconButton>
+                      {/if}
+                    </div>
+                  </div>
+
+                  {#if treeLgendExpanded === true}
+                    <div class="legend" transition:slide>
+                      {#each LayerIconTypes as iconType}
+                        <span style="margin-right: 10px;">
+                          <Fa icon={iconType.icon} size="sm" primaryColor={iconType.color} />&nbsp;&nbsp; {iconType.label}
+                        </span>
+                      {/each}
+                    </div>
+                  {/if}
+                </div>
+              </div>
+            </div>
           </div>
           <div hidden={activeTab !== TabNames.Layers}>
             <LayerList />
@@ -137,6 +183,39 @@
 
   @media (max-width: 768px) {
     $height: calc(100vh - 184px);
+  }
+
+  .layer-actions {
+    margin-top: 10px;
+
+    .action {
+      margin-bottom: 25px;
+
+      .header {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        margin-top: 15px;
+        background: #f0f0f0;
+        border-radius: 7.5px;
+        padding: 2.5px;
+        padding-left: 7.5px;
+        margin-bottom: 10px;
+
+        .name {
+          width: 100%;
+        }
+      }
+
+      .legend {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-left: 10px;
+      }
+    }
   }
 
   .content-container {
