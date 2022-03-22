@@ -22,10 +22,18 @@
   export let lMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   export let lMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
 
+  const step = 0.1
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
   let scalingValueStart = Math.floor(lMin * 10) / 10
   let scalingValueEnd = Math.ceil(lMax * 10) / 10
+
+  if ((scalingValueStart - scalingValueEnd / step) % 1 !== 0) {
+    sliderMin = Math.round(Math.floor(lMin))
+    sliderMax = Math.round(Math.ceil(lMax))
+    scalingValueStart = Math.round(Math.floor(lMin * 10) / 10)
+    scalingValueEnd = Math.round(Math.ceil(lMax * 10) / 10)
+  }
 
   export let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
 
@@ -48,9 +56,7 @@
         bind:end={scalingValueEnd}
         min={sliderMin}
         max={sliderMax}
-        step={0.1}
-        input$aria-label="Range slider"
-        label="Set the min and max" />
+        {step} />
     </div>
   </div>
 

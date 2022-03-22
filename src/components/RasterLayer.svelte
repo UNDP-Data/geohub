@@ -89,20 +89,6 @@
     layerState[layerId] = panelOpen
   }
 
-  // const selectColorMap = () => {
-  //   if (!colorMapName) return
-  //   let name = colorMapName
-  //   if (reverseColorMap) {
-  //     name = `${name}_r`
-  //   }
-  //   updateParamsInURL({ colormap_name: name })
-  // }
-
-  // const selectScaling = () => {
-  //   if (!scalingValueRange) return
-  //   updateParamsInURL({ rescale: scalingValueRange })
-  // }
-
   const setLayerOpacity = () => {
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
@@ -150,22 +136,6 @@
       $map.triggerRepaint()
     }
   }
-
-  // const updateParamsInURL = (params) => {
-  //   let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
-  //   const layerSource = $map.getSource(layers)
-  //
-  //   if (layerSource.tiles) {
-  //     const oldUrl = new URL(layerSource.tiles[0])
-  //     Object.keys(params).forEach((key) => {
-  //       oldUrl.searchParams.set(key, params[key])
-  //     })
-  //     $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
-  //     $map.style.sourceCaches[layers].clearTiles()
-  //     $map.style.sourceCaches[layers].update($map.transform)
-  //     $map.triggerRepaint()
-  //   }
-  // }
 
   const updateParamsInURL = (params) => {
     let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
@@ -362,6 +332,21 @@
               <!--              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />-->
             </div>
           {/if}
+          <div transition:slide class="action" hidden={isFilterPanelVisible === false}>
+            <div class="header">
+              <div class="name">Filter</div>
+              <div class="close">
+                <IconButton
+                  title="Close"
+                  class="material-icons"
+                  style={iconButtonStyle}
+                  on:click={() => (isFilterPanelVisible = false)}>
+                  close
+                </IconButton>
+              </div>
+            </div>
+            <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
+          </div>
 
           {#if isOpacityPanelVisible === true}
             <div transition:slide class="action">

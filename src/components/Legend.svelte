@@ -36,14 +36,6 @@
   let isLegendUniqueValues: boolean
   let isLegendInterval: boolean
 
-  // const setScalingValueRwange = () => {
-  //   scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
-  //   console.log(scalingValueStart, scalingValueEnd)
-  // }
-
-  // $: scalingValueStart, setScalingValueRwange()
-  // $: scalingValueEnd, setScalingValueRwange()
-  // $: colorMapName, updateParamsInURL({'colormap_name':colorMapName})
   export let reverseColorMap = false
 
   const updateParamsInURL = (params) => {
@@ -62,19 +54,6 @@
     }
   }
 
-  // const generateLegend = () => {
-  //   console.log(colorMapName)
-  //   const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
-  //   let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
-  //   legendBackground = activeColorMap.background
-  //   updateParamsInURL({ colormap_name: activeColorMap.name })
-  // }
-
-  // const selectScaling = () => {
-  //   if (!scalingValueRange) return
-  //   updateParamsInURL({ rescale: scalingValueRange })
-  // }
-
   const requestDataInfo = () => {
     changeLegend = !changeLegend
     let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
@@ -89,22 +68,15 @@
       isLegendInterval = false
 
       for (let i = Number(layerBandMetadataMin); i < Number(layerBandMetadataMax); i = i + Number(intervalSize)) {
-        console.log(layerBandMetadataMin, layerBandMetadataMax)
         uniqueValuesList.push(i)
       }
-      // for(let i=layerBandMetadataMin; i<=layerBandMetadataMax; i = i + 1){
-      //   uniqueValuesList.push(i)
-      // }
+
       console.log(uniqueValuesList)
     } else {
       isLegendInterval = true
       isLegendUniqueValues = false
     }
   }
-
-  // $: scalingValueStart, setScalingValueRwange()
-  // $: scalingValueEnd, setScalingValueRwange()
-  // $: scalingValueRange, selectScaling()
 </script>
 
 <div class="group">
