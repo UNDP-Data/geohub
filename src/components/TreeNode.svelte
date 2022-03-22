@@ -28,10 +28,12 @@
   import { slide } from 'svelte/transition'
   import Checkbox from '@smui/checkbox'
   import { Icon } from '@smui/icon-button'
+  import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
+  import Fa from 'svelte-fa/src/fa.svelte'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
-  import { TreeNodeInitialValues } from '../lib/constants'
+  import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
   import { map, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
@@ -39,6 +41,8 @@
   export let handlErrorCallback: CallableFunction
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+  const iconRaster = LayerIconTypes.find((icon) => icon.id === 'raster')
+  const iconVector = LayerIconTypes.find((icon) => icon.id === 'vector')
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
@@ -248,9 +252,18 @@
         <div class={url ? 'name vector' : 'name'}>
           {label}
         </div>
+
+        {#if url}
+          <div class="icon" alt={iconVector.label} title={iconVector.label}>
+            <Wrapper>
+              <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
+              <Tooltip yPos="above">Vector</Tooltip>
+            </Wrapper>
+          </div>
+        {/if}
       </div>
     {:else}
-      <div class="node-container" style="margin-top: 7.5px;">
+      <div class="node-container">
         {#if isRaster}
           <div alt="Raster" class="checkbox">
             <Checkbox
@@ -261,9 +274,19 @@
               id={label} />
           </div>
         {/if}
+
         <div class={isRaster ? 'name raster' : 'name'}>
           {label}
         </div>
+
+        {#if isRaster}
+          <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
+            <Wrapper>
+              <Fa icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
+              <Tooltip yPos="above">Raster</Tooltip>
+            </Wrapper>
+          </div>
+        {/if}
       </div>
     {/if}
   </div>
@@ -290,19 +313,15 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 3.5px;
       padding-left: 5px;
-      height: 29.5px;
+      height: 19.5px;
+      width: 100%;
+    }
 
-      &.raster {
-        background: rgb(52, 152, 219);
-        background: linear-gradient(90deg, rgba(52, 152, 219, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
-      }
-
-      &.vector {
-        background: rgb(0, 255, 0);
-        background: linear-gradient(90deg, rgba(0, 255, 0, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
-      }
+    .icon {
+      padding-right: 10px;
+      padding-left: 10px;
+      cursor: pointer;
     }
   }
 </style>

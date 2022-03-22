@@ -1,3 +1,5 @@
+import type { IconProp } from '@fortawesome/fontawesome-svg-core'
+
 export interface Tree {
   tree: TreeNode
 }
@@ -62,4 +64,11 @@ export interface LayerInfo {
 
 export interface Error {
   code: string
+}
+
+export interface LayerIcon {
+  id: string
+  label: string
+  icon: IconProp
+  color: string
 }
