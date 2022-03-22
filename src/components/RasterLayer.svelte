@@ -20,7 +20,7 @@
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-
+  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
 
@@ -29,12 +29,12 @@
   const layerId = definition.id
   const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
-  const layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
-  const layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
-  let colorMapName = 'viridis'
+  // let colorMapName;
   let confirmDeleteLayerDialogVisible = false
   let inDynamic: boolean = dynamicLayerState[layerId] || false
   let isLayerVisible = false
@@ -47,13 +47,16 @@
   let queryEnabled = true
   let reverseColorMap = false
   let scalingValueRange = ''
-
-  $: colorMapName, selectColorMap()
+  let colorMapName = 'viridis'
+  let scalingValueStart = Math.floor(layerBandMetadataMin * 10) / 10
+  let scalingValueEnd = Math.ceil(layerBandMetadataMax * 10) / 10
+  let legendBackground
+  // $: colorMapName, selectColorMap()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  $: reverseColorMap, selectColorMap()
-  $: scalingValueRange, selectScaling()
+  // $: reverseColorMap, selectColorMap()
+  // $: scalingValueRange, selectScaling()
   $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const setDynamicLayerState = () => {
@@ -84,20 +87,6 @@
 
   const setLayerState = () => {
     layerState[layerId] = panelOpen
-  }
-
-  const selectColorMap = () => {
-    if (!colorMapName) return
-    let name = colorMapName
-    if (reverseColorMap) {
-      name = `${name}_r`
-    }
-    updateParamsInURL({ colormap_name: name })
-  }
-
-  const selectScaling = () => {
-    if (!scalingValueRange) return
-    updateParamsInURL({ rescale: scalingValueRange })
   }
 
   const setLayerOpacity = () => {
@@ -163,16 +152,26 @@
       $map.triggerRepaint()
     }
   }
+  const selectScaling = () => {
+    if (!scalingValueRange) return
+    updateParamsInURL({ rescale: scalingValueRange })
+  }
 
-  import Fa from 'svelte-fa/src/fa.svelte'
-  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
-  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
-  import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
-  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
-  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
-  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
-  import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
+  const setScalingValueRwange = () => {
+    scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
+    console.log(scalingValueStart, scalingValueEnd)
+  }
+  const generateLegend = () => {
+    console.log(colorMapName)
+    const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
+    let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
+    legendBackground = activeColorMap.background
+    updateParamsInURL({ colormap_name: activeColorMap.name })
+  }
+  $: scalingValueStart, setScalingValueRwange()
+  $: scalingValueEnd, setScalingValueRwange()
+  $: scalingValueRange, selectScaling()
+  $: colorMapName, generateLegend()
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -192,29 +191,6 @@
           </div>
           <div class="layer-header-icons">
             <div class="group">
-              <!-- <IconButton
-                title="Filter"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => {
-                  isFilterPanelVisible = !isFilterPanelVisible
-                  isLegendPanelVisible = false
-                  isOpacityPanelVisible = false
-                }}>
-                palette
-              </IconButton> -->
-
-              <div
-                title="Filter"
-                alt="Filter"
-                on:click={() => {
-                  isFilterPanelVisible = !isFilterPanelVisible
-                  isLegendPanelVisible = false
-                  isOpacityPanelVisible = false
-                }}>
-                <Fa icon={faPalette} size="lg" style="cursor: pointer;" />
-              </div>
-
               <IconButton
                 title="Legend"
                 class="material-icons"
@@ -222,6 +198,17 @@
                 on:click={() => {
                   isLegendPanelVisible = !isLegendPanelVisible
                   isFilterPanelVisible = false
+                  isOpacityPanelVisible = false
+                }}>
+                palette
+              </IconButton>
+              <IconButton
+                title="Filter"
+                class="material-icons"
+                style={iconButtonStyle}
+                on:click={() => {
+                  isFilterPanelVisible = !isFilterPanelVisible
+                  isLegendPanelVisible = false
                   isOpacityPanelVisible = false
                 }}>
                 legend_toggle
@@ -316,25 +303,50 @@
                   </IconButton>
                 </div>
               </div>
-              <Legend {colorMapName} lMax={layerBandMetadataMax} lMin={layerBandMetadataMin} />
+              <Legend
+                bind:layerConfig
+                bind:lMax={layerBandMetadataMax}
+                bind:lMin={layerBandMetadataMin}
+                bind:scalingValueStart
+                bind:scalingValueEnd
+                bind:colorMapName
+                bind:legendBackground
+                bind:reverseColorMap />
             </div>
           {/if}
 
-          <div transition:slide class="action" hidden={isFilterPanelVisible === false}>
-            <div class="header">
-              <div class="name">Filter</div>
-              <div class="close">
-                <IconButton
-                  title="Close"
-                  class="material-icons"
-                  style={iconButtonStyle}
-                  on:click={() => (isFilterPanelVisible = false)}>
-                  close
-                </IconButton>
+          {#if isFilterPanelVisible === true}
+            <div transition:slide class="action">
+              <div class="header">
+                <div class="name">Filter</div>
+                <div class="close">
+                  <IconButton
+                    title="Close"
+                    class="material-icons"
+                    style={iconButtonStyle}
+                    on:click={() => (isFilterPanelVisible = false)}>
+                    close
+                  </IconButton>
+                </div>
               </div>
+              <!--              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />-->
             </div>
-            <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />
-          </div>
+          {/if}
+          <!--          <div transition:slide class="action" hidden={isFilterPanelVisible === false}>-->
+          <!--            <div class="header">-->
+          <!--              <div class="name">Filter</div>-->
+          <!--              <div class="close">-->
+          <!--                <IconButton-->
+          <!--                  title="Close"-->
+          <!--                  class="material-icons"-->
+          <!--                  style={iconButtonStyle}-->
+          <!--                  on:click={() => (isFilterPanelVisible = false)}>-->
+          <!--                  close-->
+          <!--                </IconButton>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--&lt;!&ndash;            <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />&ndash;&gt;-->
+          <!--          </div>-->
 
           {#if isOpacityPanelVisible === true}
             <div transition:slide class="action">
