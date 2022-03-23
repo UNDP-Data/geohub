@@ -9,11 +9,11 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Checkbox from '@smui/checkbox'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
-  import Slider from '@smui/slider'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import Fa from 'svelte-fa/src/fa.svelte'
+  import RangeSlider from 'svelte-range-slider-pips'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
@@ -169,10 +169,8 @@
 
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
-    console.log(scalingValueStart, scalingValueEnd)
   }
   const generateLegend = () => {
-    console.log(colorMapName)
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
     legendBackground = activeColorMap.background
@@ -182,6 +180,12 @@
   $: scalingValueEnd, setScalingValueRwange()
   $: scalingValueRange, selectScaling()
   $: colorMapName, generateLegend()
+
+  let rangeSliderValues = [layerOpacity * 100]
+
+  $: {
+    layerOpacity = rangeSliderValues[0] / 100
+  }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -323,7 +327,19 @@
                   <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
-              <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
+              <div class="slider">
+                <RangeSlider
+                  bind:values={rangeSliderValues}
+                  float
+                  min={0}
+                  max={100}
+                  step={1}
+                  pips
+                  first="label"
+                  last="label"
+                  rest={false}
+                  suffix="%" />
+              </div>
             </div>
           {/if}
         </div>
@@ -410,6 +426,13 @@
 
       .action {
         margin-bottom: 25px;
+
+        .slider {
+          --range-handle-focus: #2196f3;
+          --range-range-inactive: #2196f3;
+          --range-handle-inactive: #2196f3;
+          --range-handle: #2196f3;
+        }
 
         .header {
           display: flex;

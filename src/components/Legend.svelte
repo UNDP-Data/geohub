@@ -3,10 +3,11 @@
 </script>
 
 <script lang="ts">
-  import Slider from '@smui/slider'
-  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import Button, { Label as LabelButton } from '@smui/button'
   import Chip, { Set, Text } from '@smui/chips'
+  import RangeSlider from 'svelte-range-slider-pips'
+
+  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import { map, layerList } from '../stores/index'
@@ -35,8 +36,15 @@
   let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   let isLegendUniqueValues: boolean
   let isLegendInterval: boolean
+  let step = 0.1
+  let rangeSliderValues = [scalingValueStart, scalingValueEnd]
 
   export let reverseColorMap = false
+
+  $: {
+    scalingValueStart = rangeSliderValues[0]
+    scalingValueEnd = rangeSliderValues[1]
+  }
 
   const updateParamsInURL = (params) => {
     let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
@@ -59,7 +67,6 @@
     let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
     const layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
     const layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
-    console.log(layer)
     let layerBandRangeValue = layerBandMetadataMax - layerBandMetadataMin
     let uniqueValuesList = []
     let intervalSize = layerBandRangeValue / 10
@@ -70,8 +77,6 @@
       for (let i = Number(layerBandMetadataMin); i < Number(layerBandMetadataMax); i = i + Number(intervalSize)) {
         uniqueValuesList.push(i)
       }
-
-      console.log(uniqueValuesList)
     } else {
       isLegendInterval = true
       isLegendUniqueValues = false
@@ -80,16 +85,20 @@
 </script>
 
 <div class="group">
-  <Slider
-    discrete
-    range
-    bind:start={scalingValueStart}
-    bind:end={scalingValueEnd}
-    min={sliderMin}
-    max={sliderMax}
-    step={0.1}
-    input$aria-label="Range slider"
-    label="Set the min and max" />
+  <div class="slider">
+    <RangeSlider
+      bind:values={rangeSliderValues}
+      float
+      range
+      min={sliderMin}
+      max={sliderMax}
+      {step}
+      pips
+      first="label"
+      last="label"
+      rest={false} />
+  </div>
+
   <div style="display: flex; align-items: center; justify-content: space-around;">
     <!-- <div>{scalingValueStart}</div> -->
     <div
@@ -174,6 +183,13 @@
     padding: 2px;
     margin-top: 1px;
     padding-bottom: 4px;
+
+    .slider {
+      --range-handle-focus: #2196f3;
+      --range-range-inactive: #2196f3;
+      --range-handle-inactive: #2196f3;
+      --range-handle: #2196f3;
+    }
   }
 
   :global(.changeLegendButtonDiv) {
