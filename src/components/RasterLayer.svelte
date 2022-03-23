@@ -159,10 +159,8 @@
 
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
-    console.log(scalingValueStart, scalingValueEnd)
   }
   const generateLegend = () => {
-    console.log(colorMapName)
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
     legendBackground = activeColorMap.background
