@@ -23,6 +23,7 @@
     "@azure/storage-blob": "^12.9.0",
     "@fortawesome/fontawesome-free": "^6.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.0",
+    "@fortawesome/free-regular-svg-icons": "^6.1.0",
     "@fortawesome/free-solid-svg-icons": "^6.1.0",
     "@mdi/js": "^6.5.95",
     "@smui-extra/accordion": "^6.0.0-beta.15",
