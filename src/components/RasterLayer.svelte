@@ -9,11 +9,22 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Checkbox from '@smui/checkbox'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
-  import IconButton from '@smui/icon-button'
   import Slider from '@smui/slider'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
+  import Fa from 'svelte-fa/src/fa.svelte'
+  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
+  import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
+  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
+  import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
+  import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
+  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
+  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
+  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
+  import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
+  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
   import Colormaps from './Colormaps.svelte'
   import Legend from './Legend.svelte'
@@ -27,7 +38,6 @@
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
-  const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
@@ -191,99 +201,68 @@
           </div>
           <div class="layer-header-icons">
             <div class="group">
-              <IconButton
-                title="Legend"
-                class="material-icons"
-                style={iconButtonStyle}
+              <div
+                class={isLegendPanelVisible ? 'icon-selected' : 'icon'}
                 on:click={() => {
                   isLegendPanelVisible = !isLegendPanelVisible
                   isFilterPanelVisible = false
                   isOpacityPanelVisible = false
                 }}>
-                palette
-              </IconButton>
-              <IconButton
-                title="Filter"
-                class="material-icons"
-                style={iconButtonStyle}
+                <Fa icon={faPalette} size="lg" style="transform: scale(0.75);" />
+              </div>
+
+              <div
+                class={isFilterPanelVisible ? 'icon-selected' : 'icon'}
                 on:click={() => {
                   isFilterPanelVisible = !isFilterPanelVisible
                   isLegendPanelVisible = false
                   isOpacityPanelVisible = false
                 }}>
-                legend_toggle
-              </IconButton>
-              <IconButton
-                title="Opacity"
-                class="material-icons"
-                style={iconButtonStyle}
+                <Fa icon={faFilter} size="lg" style="transform: scale(0.75);" />
+              </div>
+
+              <div
+                class={isOpacityPanelVisible ? 'icon-selected' : 'icon'}
+                style="margin-right: 3px;"
                 on:click={() => {
                   isOpacityPanelVisible = !isOpacityPanelVisible
                   isLegendPanelVisible = false
                   isFilterPanelVisible = false
                 }}>
-                opacity
-              </IconButton>
+                <Fa icon={faDroplet} size="lg" style="transform: scale(0.75);" />
+              </div>
             </div>
 
             <div class="group">
-              {#if queryEnabled === false}
-                <IconButton
-                  title="Show querying info"
-                  class="material-icons"
-                  style={iconButtonStyle}
-                  on:click={() => (queryEnabled = true)}>
-                  check_box_outline_blank
-                </IconButton>
-              {:else}
-                <IconButton
-                  title="Hide querying info"
-                  class="material-icons"
-                  style={iconButtonStyle}
-                  on:click={() => (queryEnabled = false)}>check_box</IconButton>
-              {/if}
+              <div title="Querying info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
+                <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="lg" style="transform: scale(0.75);" />
+              </div>
 
-              <IconButton
-                title="Move layer up (in map)"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => hierachyUp(layerId)}>
-                keyboard_double_arrow_up
-              </IconButton>
+              <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
+                <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
+              </div>
 
-              <IconButton
-                title="Move layer down (in map)"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => hierachyDown(layerId)}
-                >keyboard_double_arrow_down
-              </IconButton>
+              <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
+                <Fa icon={faChevronDown} size="lg" style="transform: scale(0.75);" />
+              </div>
 
-              {#if visibility === 'none'}
-                <IconButton
-                  title="Hide layer"
-                  class="material-icons"
-                  style={iconButtonStyle}
-                  on:click={() => toggleVisibility()}>visibility_off</IconButton>
-              {:else}
-                <IconButton
-                  title="Show layer"
-                  class="material-icons"
-                  style={iconButtonStyle}
-                  on:click={() => toggleVisibility()}>visibility</IconButton>
-              {/if}
+              <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
+                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="lg" style="transform: scale(0.75);" />
+              </div>
 
               {#if $layerList.length > 1}
                 <Checkbox
                   bind:checked={inDynamic}
-                  style="--mdc-checkbox-ripple-size: 0; top: -2.5px; left: 1.5px; transform: scale(0.75);" />
+                  style="--mdc-checkbox-ripple-size: 0; top: -1.25px; left: -5px; transform: scale(0.75);" />
               {/if}
 
-              <IconButton
-                title="Remove layer"
-                class="material-icons"
-                style={iconButtonStyle}
-                on:click={() => (confirmDeleteLayerDialogVisible = true)}>delete</IconButton>
+              <div
+                class="icon-selected"
+                style="margin-right: 0;"
+                title="Delete layer"
+                on:click={() => (confirmDeleteLayerDialogVisible = true)}>
+                <Fa icon={faTrash} size="lg" style="transform: scale(0.75);" />
+              </div>
             </div>
           </div>
         </div>
@@ -293,14 +272,8 @@
             <div transition:slide class="action">
               <div class="header">
                 <div class="name">Legend</div>
-                <div class="close">
-                  <IconButton
-                    title="Close"
-                    class="material-icons"
-                    style={iconButtonStyle}
-                    on:click={() => (isLegendPanelVisible = false)}>
-                    close
-                  </IconButton>
+                <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
+                  <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
               <Legend
@@ -319,14 +292,8 @@
             <div transition:slide class="action">
               <div class="header">
                 <div class="name">Filter</div>
-                <div class="close">
-                  <IconButton
-                    title="Close"
-                    class="material-icons"
-                    style={iconButtonStyle}
-                    on:click={() => (isFilterPanelVisible = false)}>
-                    close
-                  </IconButton>
+                <div class="close icon-selected" on:click={() => (isFilterPanelVisible = false)} title="Close">
+                  <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
               <!--              <Colormaps bind:colorMapName bind:layerConfig bind:scalingValueRange bind:reverseColorMap />-->
@@ -352,14 +319,8 @@
             <div transition:slide class="action">
               <div class="header">
                 <div class="name">Opacity</div>
-                <div class="close">
-                  <IconButton
-                    title="Close"
-                    class="material-icons"
-                    style={iconButtonStyle}
-                    on:click={() => (isOpacityPanelVisible = false)}>
-                    close
-                  </IconButton>
+                <div class="close icon-selected" on:click={() => (isOpacityPanelVisible = false)} title="Close">
+                  <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
               <Slider bind:value={layerOpacity} min={0} max={1} step={0.01} input$aria-label="Layer opacity" />
@@ -421,8 +382,25 @@
       .group {
         background: #f0f0f0;
         border-radius: 7.5px;
-        padding: 2px;
-        padding-bottom: 4px;
+        padding: 5px;
+
+        .icon {
+          opacity: 0.5;
+          display: inline;
+          cursor: pointer;
+          margin-right: 10px;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        .icon-selected {
+          opacity: 1;
+          display: inline;
+          cursor: pointer;
+          margin-right: 10px;
+        }
       }
     }
 
@@ -446,6 +424,11 @@
 
           .name {
             width: 100%;
+          }
+
+          .close {
+            cursor: pointer;
+            padding-right: 5px;
           }
         }
       }
