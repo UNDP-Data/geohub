@@ -19,6 +19,11 @@ const config = {
         },
       },
     }),
+    vite: {
+      ssr: {
+          noExternal: [/^@material(?:-extra)?\//],
+        }
+     }
   },
 
   onwarn(warning, defaultHandler) {
