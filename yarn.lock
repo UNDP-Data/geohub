@@ -433,13 +433,6 @@
     "@material/touch-target" "^13.0.0"
     tslib "^2.1.0"
 
-"@material/layout-grid@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@material/layout-grid/-/layout-grid-13.0.0.tgz#8c7534b1c1b78978cd2beabee32a9e2e37dc9522"
-  integrity sha512-9L1BVLRIyetm/AOC+59+yca6R0OO2AJKHiUMdZrxgUVjqVblqWXEMeONZqslFRGHBiSIaYdrDIhn4ZTYY6tKUA==
-  dependencies:
-    tslib "^2.1.0"
-
 "@material/line-ripple@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/line-ripple/-/line-ripple-13.0.0.tgz"
@@ -896,15 +889,6 @@
     "@material/feature-targeting" "^13.0.0"
     "@material/form-field" "^13.0.0"
     "@material/rtl" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.15"
-    svelte2tsx "^0.4.14"
-
-"@smui/layout-grid@^6.0.0-beta.15":
-  version "6.0.0-beta.15"
-  resolved "https://registry.npmjs.org/@smui/layout-grid/-/layout-grid-6.0.0-beta.15.tgz"
-  integrity sha512-bdpUoOqhY2DHLZ5p9+l6GITxUb+502EbOscZtwbPmeBdeeEGUzJXcstUeHcRbaA8ZXyzGYp+NQfdUMCatJ/XrA==
-  dependencies:
-    "@material/layout-grid" "^13.0.0"
     "@smui/common" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
@@ -1551,7 +1535,7 @@ chownr@^2.0.0:
 
 chroma-js@^2.4.2:
   version "2.4.2"
-  resolved "https://registry.npmjs.org/chroma-js/-/chroma-js-2.4.2.tgz"
+  resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-2.4.2.tgz#dffc214ed0c11fa8eefca2c36651d8e57cbfb2b0"
   integrity sha512-U9eDw6+wt7V8z5NncY2jJfZa+hUH8XEj8FQHgFJTrUFnJfXYf4Ml4adI2vXZOjqRDpFWtYVWypDfZwnJ+HIR4A==
 
 cliui@^7.0.2:

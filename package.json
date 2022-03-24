@@ -32,7 +32,6 @@
     "@smui/dialog": "^6.0.0-beta.15",
     "@smui/drawer": "^6.0.0-beta.15",
     "@smui/form-field": "^6.0.0-beta.15",
-    "@smui/layout-grid": "^6.0.0-beta.15",
     "@smui/linear-progress": "^6.0.0-beta.15",
     "@smui/list": "^6.0.0-beta.15",
     "@smui/segmented-button": "^6.0.0-beta.15",
@@ -51,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
     "bulma": "^0.9.3",
+    "chroma-js": "^2.4.2",
     "esbuild": "^0.14.27",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
@@ -73,7 +73,6 @@
   "type": "module",
   "dependencies": {
     "@watergis/maplibre-gl-export": "^1.2.15",
-    "chroma-js": "^2.4.2",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
     "uuid": "^8.3.2"
