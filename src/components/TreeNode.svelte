@@ -32,6 +32,7 @@
   import Fa from 'svelte-fa'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
@@ -44,6 +45,7 @@
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   const iconRaster = LayerIconTypes.find((icon) => icon.id === 'raster')
   const iconVector = LayerIconTypes.find((icon) => icon.id === 'vector')
+  let loadingLayer = false
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
@@ -65,12 +67,14 @@
     if (tree?.children.length === 0) updateTreeStore()
 
     setTimeout(() => {
-      if ($indicatorProgress === true) $indicatorProgress = false
+      if (loadingLayer === true) {
+        loadingLayer = false
+      }
     }, 2000)
   }
 
   const updateTreeStore = async () => {
-    $indicatorProgress = true
+    loadingLayer = true
     let newTreeData = await fetchTree(tree.path)
     let subpaths = path.split('/').slice(0, -1)
 
@@ -88,6 +92,7 @@
     })
 
     wtree.set(currentTree)
+    loadingLayer = false
   }
 
   const fetchTree = async (path: string) => {
@@ -230,7 +235,9 @@
         class="node-container"
         transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon" style="margin-right: 5px;">
-          {#if level === 0}
+          {#if loadingLayer === true}
+            <Fa icon={faSync} size="sm" spin />
+          {:else if level === 0}
             <Fa icon={faDatabase} size="sm" />
           {:else if !expanded}
             <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
