@@ -1,65 +1,23 @@
-export const sequential = [
-  'purples',
-  'greys',
-  'blues',
-  'greens',
-  'oranges',
-  'reds',
-  'orrd',
-  'rdpu',
-  'purd',
-  'bupu',
-  'gnbu',
-  'pubu',
-  'bugn',
-]
-
-export const diverging = [
-  'piyg',
-  'prgn',
-  'brbg',
-  'puor',
-  'rdgy',
-  'rdbu',
-  'spectral',
-  'coolwarm',
-  'bwr',
-  'seismic',
-  'rainbow',
-  'ocean',
-]
-
-export const cyclic = ['twilight', 'hsv']
-
 export const sequentialColormaps = [
-  'purples',
-  'greys',
-  'blues',
-  'greens',
-  'oranges',
-  'reds',
-  'orrd',
-  'rdpu',
-  'purd',
-  'bupu',
-  'gnbu',
   'pubu',
+  'ylgn',
+  'greys',
+  'rdpu',
+  'pubugn',
+  'oranges',
+  'gnbu',
+  'purples',
+  'blues',
   'bugn',
+  'reds',
+  'ylorbr',
+  'ylgnbu',
+  'viridis',
+  'orrd',
+  'greens',
+  'bupu',
 ]
 
-export const divergingColorMaps = [
-  'piyg',
-  'prgn',
-  'brbg',
-  'puor',
-  'rdgy',
-  'rdbu',
-  'spectral',
-  'coolwarm',
-  'bwr',
-  'seismic',
-  'rainbow',
-  'ocean',
-]
+export const divergingColorMaps = ['rdgy', 'spectral', 'puor', 'piyg', 'brbg', 'prgn', 'rdbu', 'rdylbu', 'rdylgn']
 
-export const cyclicColorMaps = ['twilight', 'hsv']
+export const qualitativeColorMaps = ['accent', 'set1', 'set2', 'set3', 'pastel2', 'pastel1', 'dark2', 'paired']
