@@ -64,10 +64,15 @@
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  $: scalingValueStart, setScalingValueRwange()
-  $: scalingValueEnd, setScalingValueRwange()
+  $: scalingValueStart, setScalingValueRange()
+  $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
   $: visibility = isLayerVisible ? 'visible' : 'none'
+
+  $: {
+    const layer = $layerList.some((item) => item.definition.id === layerId)
+    if (!layer) hideAllPanels()
+  }
 
   const debounce = (fn) => {
     clearTimeout(timer)
@@ -117,10 +122,7 @@
   }
 
   const removeLayer = () => {
-    isLegendPanelVisible = false
-    isOpacityPanelVisible = false
-    isFilterPanelVisible = false
-    confirmDeleteLayerDialogVisible = false
+    hideAllPanels()
 
     setTimeout(() => {
       $map.removeLayer(layerId)
@@ -130,6 +132,13 @@
       delete sectionState[layerId]
       delete dynamicLayerState[layerId]
     }, 200)
+  }
+
+  const hideAllPanels = () => {
+    isLegendPanelVisible = false
+    isOpacityPanelVisible = false
+    isFilterPanelVisible = false
+    confirmDeleteLayerDialogVisible = false
   }
 
   const hierachyDown = (layerID: string) => {
@@ -175,7 +184,7 @@
     updateParamsInURL({ rescale: scalingValueRange })
   }
 
-  const setScalingValueRwange = () => {
+  const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
 </script>
