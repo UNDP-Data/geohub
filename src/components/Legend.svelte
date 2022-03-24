@@ -17,8 +17,9 @@
   export let lMax
   export let scalingValueStart
   export let scalingValueEnd
-  export let colorMapName
   export let layerConfig: Layer = LayerInitialValues
+
+  let colorMapName = ''
   let disabled = true
   let rangeSliderValues = [scalingValueStart, scalingValueEnd]
   $: {
@@ -286,7 +287,7 @@
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-      width: 80%;
+      // width: 80%;
     }
   }
 

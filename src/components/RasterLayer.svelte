@@ -63,7 +63,7 @@
   let timer: ReturnType<typeof setTimeout>
   let legendBackground = ''
 
-  $: colorMapName, generateLegend()
+  // $: colorMapName, generateLegend()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
@@ -182,12 +182,12 @@
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-  const generateLegend = () => {
-    const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
-    let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
-    legendBackground = activeColorMap.background
-    updateParamsInURL({ colormap_name: activeColorMap.name })
-  }
+  // const generateLegend = () => {
+  //   const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
+  //   // let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
+  //   // legendBackground = activeColorMap.background
+  //   // updateParamsInURL({ colormap_name: activeColorMap.name })
+  // }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -288,8 +288,7 @@
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
                 bind:scalingValueStart
-                bind:scalingValueEnd
-                bind:colorMapName />
+                bind:scalingValueEnd />
             </div>
           {/if}
 
