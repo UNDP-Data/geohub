@@ -307,7 +307,8 @@
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
                 bind:scalingValueStart
-                bind:scalingValueEnd />
+                bind:scalingValueEnd
+                bind:colorMapName />
             </div>
           {/if}
 
