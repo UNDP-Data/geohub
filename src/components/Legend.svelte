@@ -3,11 +3,12 @@
   import Chip, { Set, Text } from '@smui/chips'
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
+  import { sequentialColormaps, divergingColorMaps, qualitativeColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import { map, layerList } from '../stores/index'
   import chroma from 'chroma-js'
+  import Accordion from '@smui-extra/accordion/src/Accordion.svelte'
 
   export let lMin = 0
   export let lMax = 0
@@ -27,13 +28,17 @@
   let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
   let mapLayers = $map.getStyle().layers
   let selectedColorMapType = ''
-  let sliderMin = Math.floor(lMin)
-  let sliderMax = Math.ceil(lMax)
-  let step = 0.1
+  let sliderMin = lMin
+  let sliderMax = lMax
+  let step = 1e-1
   let uniqueValueLegendExists = false
 
-  const colorMapTypes: Array<string> = ['sequential', 'diverging', 'cyclic']
-  const colorMapMap = { sequential: sequentialColormaps, diverging: divergingColorMaps, cyclic: cyclicColorMaps }
+  const colorMapTypes: Array<string> = ['sequential', 'diverging', 'qualitative']
+  const colorMapMap = {
+    sequential: sequentialColormaps,
+    diverging: divergingColorMaps,
+    qualitative: qualitativeColorMaps,
+  }
   const layerBandMetadataUniqueV = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES']
   const layerSrc = $map.getSource(layer.definition.source)
   const layerUrl = new URL(layerSrc.tiles[0])
@@ -99,18 +104,36 @@
       $map.triggerRepaint()
     }
   }
-
+  const range = (start = 0, stop = 255, step = 255 / 5) => {
+    return Array(Math.ceil((stop - start) / step))
+      .fill(start)
+      .map((x, y) => x + y * step)
+  }
   const generateCmapBackground = () => {
     if (selectedColorMapType) {
       const cmaps = colorMapMap[selectedColorMapType]
+      console.log(cmaps)
       cmaps.forEach((cmapstr: string) => {
-        colorBackgroundList[cmapstr] = chroma.scale(cmapstr).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
+        try {
+          if (selectedColorMapType == 'sequential') {
+            colorBackgroundList[cmapstr] = chroma
+              .scale(cmapstr)
+              .mode('lrgb')
+              .padding([0.25, 0])
+              .domain([lMin, lMax])
+              .colors(5, 'rgba')
+          } else {
+            colorBackgroundList[cmapstr] = chroma.scale(cmapstr).mode('hsv').domain([lMin, lMax]).colors(5, 'rgba')
+          }
+        } catch (error) {
+          console.log(`failed to process ${cmapstr} because ${error}`)
+        }
       })
     }
   }
 
   const getCmapBackground = () => {
-    colorMapList = chroma.scale(colorMapName).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
+    colorMapList = chroma.scale(colorMapName).mode('lrgb').padding([0.25, 0]).domain([lMin, lMax]).colors(5, 'rgba')
   }
 
   const updateParamsInURL = (params) => {
@@ -148,6 +171,7 @@
   {#if !uniqueValueLegendExists}
     <div style="display:flex;flex-direction:column; align-items:center">
       <div
+        title={colorMapName}
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
           getCmapBackground()
@@ -216,17 +240,17 @@
               style="background: linear-gradient(90deg, {colorBackgroundList[divColorMap]})" />
           {/each}
         </div>
-      {:else if selectedColorMapType === 'cyclic'}
+      {:else if selectedColorMapType === 'qualitative'}
         <div class="colormaps-group">
-          {#each cyclicColorMaps as cycColorMap}
+          {#each qualitativeColorMaps as qualitColorMap}
             <div
-              title={cycColorMap}
+              title={qualitColorMap}
               class="colormap-div"
               on:click={() => {
-                colorMapName = cycColorMap
-                colorMapList = colorBackgroundList[cycColorMap]
+                colorMapName = qualitColorMap
+                colorMapList = colorBackgroundList[qualitColorMap]
               }}
-              style="background: linear-gradient(90deg, {colorBackgroundList[cycColorMap]})" />
+              style="background: linear-gradient(90deg, {colorBackgroundList[qualitColorMap]})" />
           {/each}
         </div>
       {/if}
