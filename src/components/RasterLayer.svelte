@@ -31,6 +31,7 @@
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
+
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
 
@@ -38,28 +39,28 @@
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
-  let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
-  let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
+  let colorMapName = 'viridis'
   let confirmDeleteLayerDialogVisible = false
   let inDynamic: boolean = dynamicLayerState[layerId] || false
+  let isFilterPanelVisible = false
   let isLayerVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-  let isFilterPanelVisible = false
+  let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
   let layerOpacity = 1
+  let legendBackground = ''
   let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
   let queryEnabled = true
-  let reverseColorMap = false
-  let scalingValueRange = ''
-  let colorMapName = 'viridis'
-  let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
-  let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
-  let legendBackground = ''
   let rangeSliderValues = [layerOpacity * 100]
+  let reverseColorMap = false
+  let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
+  let scalingValueRange = ''
+  let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
 
   $: colorMapName, generateLegend()
   $: inDynamic, setDynamicLayerState()
@@ -231,29 +232,30 @@
               </div>
             </div>
 
-            <div class="group">
-              <div title="Querying info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
-                <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="lg" style="transform: scale(0.75);" />
-              </div>
+            {#if $layerList.length > 1}
+              <div class="group">
+                <div title="Querying info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
+                  <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="lg" style="transform: scale(0.75);" />
+                </div>
 
-              <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
-                <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
-              </div>
+                <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
+                  <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
+                </div>
 
-              <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
-                <Fa icon={faChevronDown} size="lg" style="transform: scale(0.75);" />
-              </div>
+                <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
+                  <Fa icon={faChevronDown} size="lg" style="transform: scale(0.75);" />
+                </div>
 
-              <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
-                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="lg" style="transform: scale(0.75);" />
-              </div>
-
-              {#if $layerList.length > 1}
                 <Checkbox
                   bind:checked={inDynamic}
                   style="--mdc-checkbox-ripple-size: 0; top: -1.25px; left: -5px; transform: scale(0.75);" />
-              {/if}
+              </div>
+            {/if}
 
+            <div class="group" style="padding-right: 5px;">
+              <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
+                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="lg" style="transform: scale(0.75);" />
+              </div>
               <div
                 class="icon-selected"
                 style="margin-right: 0;"
@@ -393,6 +395,7 @@
         background: #f0f0f0;
         border-radius: 7.5px;
         padding: 5px;
+        padding-right: 0;
 
         .icon {
           opacity: 0.5;

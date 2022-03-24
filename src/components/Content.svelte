@@ -21,12 +21,12 @@
   let activeTab = TabNames.LoadData
   let bannerType = ''
   let bannerMessage = ''
-  let drawerWidth = 340
+  let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
-  $: treeLgendExpanded = true
 
+  $: treeLgendExpanded = true
   $: hideLinearProgress = !$indicatorProgress
   $: {
     if (drawerOpen) {
