@@ -61,6 +61,7 @@
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let scalingValueRange = ''
   let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
+  let timer: ReturnType<typeof setTimeout>
 
   $: colorMapName, generateLegend()
   $: inDynamic, setDynamicLayerState()
@@ -71,6 +72,11 @@
   $: scalingValueEnd, setScalingValueRwange()
   $: scalingValueRange, selectScaling()
   $: visibility = isLayerVisible ? 'visible' : 'none'
+
+  const debounce = (fn) => {
+    clearTimeout(timer)
+    timer = setTimeout(fn, 500)
+  }
 
   const setDynamicLayerState = () => {
     dynamicLayerState[layerId] = inDynamic
@@ -151,19 +157,21 @@
   }
 
   const updateParamsInURL = (params) => {
-    let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
-    const layerSource = $map.getSource(layers)
+    debounce(() => {
+      let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
+      const layerSource = $map.getSource(layers)
 
-    if (layerSource.tiles) {
-      const oldUrl = new URL(layerSource.tiles[0])
-      Object.keys(params).forEach((key) => {
-        oldUrl.searchParams.set(key, params[key])
-      })
-      $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
-      $map.style.sourceCaches[layers].clearTiles()
-      $map.style.sourceCaches[layers].update($map.transform)
-      $map.triggerRepaint()
-    }
+      if (layerSource.tiles) {
+        const oldUrl = new URL(layerSource.tiles[0])
+        Object.keys(params).forEach((key) => {
+          oldUrl.searchParams.set(key, params[key])
+        })
+        $map.getSource(layers).tiles = [decodeURI(oldUrl.toString())]
+        $map.style.sourceCaches[layers].clearTiles()
+        $map.style.sourceCaches[layers].update($map.transform)
+        $map.triggerRepaint()
+      }
+    })
   }
 
   const selectScaling = () => {
