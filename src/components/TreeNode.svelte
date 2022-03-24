@@ -165,7 +165,7 @@
             resampling: 'nearest',
             rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
             return_mask: true,
-            colormap_name: 'viridis',
+            colormap_name: 'bugn',
           }
 
           const layerSource = {

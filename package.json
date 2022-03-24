@@ -72,6 +72,7 @@
   "type": "module",
   "dependencies": {
     "@watergis/maplibre-gl-export": "^1.2.15",
+    "chroma-js": "^2.4.2",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
     "uuid": "^8.3.2"

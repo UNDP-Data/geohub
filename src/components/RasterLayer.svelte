@@ -52,18 +52,18 @@
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
   let layerOpacity = 1
-  let legendBackground = ''
   let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
   let queryEnabled = true
   let rangeSliderValues = [layerOpacity * 100]
-  let reverseColorMap = false
-  let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let scalingValueRange = ''
-  let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
-  let timer: ReturnType<typeof setTimeout>
 
-  $: colorMapName, generateLegend()
+  let scalingValueStart = Math.floor(layerBandMetadataMin * 10) / 10
+  let scalingValueEnd = Math.ceil(layerBandMetadataMax * 10) / 10
+  let timer: ReturnType<typeof setTimeout>
+  let legendBackground = ''
+
+  // $: colorMapName, generateLegend()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
@@ -182,13 +182,12 @@
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  const generateLegend = () => {
-    const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
-    let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
-    legendBackground = activeColorMap.background
-    updateParamsInURL({ colormap_name: activeColorMap.name })
-  }
+  // const generateLegend = () => {
+  //   const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
+  //   // let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
+  //   // legendBackground = activeColorMap.background
+  //   // updateParamsInURL({ colormap_name: activeColorMap.name })
+  // }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -289,10 +288,7 @@
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
                 bind:scalingValueStart
-                bind:scalingValueEnd
-                bind:colorMapName
-                bind:legendBackground
-                bind:reverseColorMap />
+                bind:scalingValueEnd />
             </div>
           {/if}
 
