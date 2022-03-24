@@ -4,7 +4,7 @@
   import FormField from '@smui/form-field'
   import Slider from '@smui/slider'
   import { layerList } from '../stores'
-  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
+  // import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
 
   const colorMapTypes: Array<string> = ['Sequential', 'Diverging', 'Cyclic']
   let selectedColorMapType = ''
@@ -74,7 +74,7 @@
     </Chip>
   </Set>
   <div>
-    {#if selectedColorMapType === 'Sequential'}
+    <!-- {#if selectedColorMapType === 'Sequential'}
       <span>Current colormap: {colorMapName}</span>
 
       <div class="colormaps-group">
@@ -110,7 +110,7 @@
             style={btn.background} />
         {/each}
       </div>
-    {/if}
+    {/if} -->
   </div>
 </div>
 

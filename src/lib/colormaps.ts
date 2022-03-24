@@ -1,5 +1,3 @@
-import chroma from 'chroma-js'
-
 export const sequential = [
   'purples',
   'greys',

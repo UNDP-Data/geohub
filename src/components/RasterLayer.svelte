@@ -30,7 +30,6 @@
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
 
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
@@ -42,15 +41,14 @@
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
-  let colorMapName = 'viridis'
   let confirmDeleteLayerDialogVisible = false
   let inDynamic: boolean = dynamicLayerState[layerId] || false
   let isFilterPanelVisible = false
   let isLayerVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-  let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
-  let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
+  let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let layerOpacity = 1
   let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
@@ -58,12 +56,10 @@
   let rangeSliderValues = [layerOpacity * 100]
   let scalingValueRange = ''
 
-  let scalingValueStart = Math.floor(layerBandMetadataMin * 10) / 10
-  let scalingValueEnd = Math.ceil(layerBandMetadataMax * 10) / 10
+  let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
+  let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
-  let legendBackground = ''
 
-  // $: colorMapName, generateLegend()
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
@@ -182,12 +178,6 @@
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-  // const generateLegend = () => {
-  //   const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
-  //   // let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
-  //   // legendBackground = activeColorMap.background
-  //   // updateParamsInURL({ colormap_name: activeColorMap.name })
-  // }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">

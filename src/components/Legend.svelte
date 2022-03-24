@@ -1,11 +1,7 @@
-<script context="module">
-  const lState = {}
-</script>
-
 <script lang="ts">
-  import RangeSlider from 'svelte-range-slider-pips'
   import Button, { Label as LabelButton } from '@smui/button'
   import Chip, { Set, Text } from '@smui/chips'
+  import RangeSlider from 'svelte-range-slider-pips'
 
   import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition } from '../lib/types'
@@ -13,85 +9,76 @@
   import { map, layerList } from '../stores/index'
   import chroma from 'chroma-js'
 
-  export let lMin
-  export let lMax
-  export let scalingValueStart
-  export let scalingValueEnd
+  export let lMin = 0
+  export let lMax = 0
+  export let scalingValueStart = 0
+  export let scalingValueEnd = 0
   export let layerConfig: Layer = LayerInitialValues
 
-  let colorMapName = ''
-  let disabled = true
   let rangeSliderValues = [scalingValueStart, scalingValueEnd]
-  $: {
-    scalingValueStart = rangeSliderValues[0]
-    scalingValueEnd = rangeSliderValues[1]
-  }
-
-  let name: string, definition: LayerDefinition
-  ;({ name, definition } = layerConfig)
-  const layerId = definition.id
-
-  const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
+  let definition: LayerDefinition
+  ;({ definition } = layerConfig)
+  let colorMapName = ''
+  let colorMapList = []
+  let colorMapListRGB = []
+  let colorMapSelectionVisible = false
+  let colorBackgroundList = []
+  let layerId = definition.id
+  let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+  let mapLayers = $map.getStyle().layers
   let selectedColorMapType = ''
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
-  const colorMapTypes: Array<string> = ['sequential', 'diverging', 'cyclic']
-  const cMapMap = { sequential: sequentialColormaps, diverging: divergingColorMaps, cyclic: cyclicColorMaps }
-
-  let cmapSelectionShown = false
-  let changeLegend = false
-  let mapLayers = $map.getStyle().layers
-  let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
-  let isLegendUniqueValues: boolean
-  let isLegendInterval: boolean
   let step = 0.1
+  let uniqueValueLegendExists = false
 
-  const remap = (input, oldMin, oldMax, newMin = 0, newMax = 255) => {
-    const percent = (input - oldMin) / (oldMax - oldMin)
-    const output = percent * (newMax - newMin) + newMin
-    return Math.round(output)
-  }
-
-  let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
-
+  const colorMapTypes: Array<string> = ['sequential', 'diverging', 'cyclic']
+  const colorMapMap = { sequential: sequentialColormaps, diverging: divergingColorMaps, cyclic: cyclicColorMaps }
   const layerBandMetadataUniqueV = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES']
   const layerSrc = $map.getSource(layer.definition.source)
+  const layerUrl = new URL(layerSrc.tiles[0])
 
-  const lURL = new URL(layerSrc.tiles[0])
-  colorMapName = lURL.searchParams.get('colormap_name')
-  let cmapListRBG
-  let uniqueValueLegendExists = false
-  let cmapList = []
-  let bgList = {}
-
-  $: selectedColorMapType, generateCmapBackground()
-  $: colorMapName, updateParamsInURL({ colormap_name: colorMapName })
-  $: cmapList, getCmapBackground()
   $: {
     scalingValueStart = rangeSliderValues[0]
     scalingValueEnd = rangeSliderValues[1]
+  }
+
+  colorMapName = layerUrl.searchParams.get('colormap_name')
+
+  $: selectedColorMapType, generateCmapBackground()
+  $: colorMapName, updateParamsInURL({ colormap_name: colorMapName })
+  $: colorMapList, getCmapBackground()
+  $: {
+    scalingValueStart = rangeSliderValues[0]
+    scalingValueEnd = rangeSliderValues[1]
+  }
+
+  const remap = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
+    const percent = (input - oldMin) / (oldMax - oldMin)
+    const output = percent * (newMax - newMin) + newMin
+    return Math.round(output)
   }
 
   const setUniqueValueLegend = () => {
     let layerSrc = mapLayers.filter((item) => item.id === layerId).pop()['source']
     const layerSource = $map.getSource(layerSrc)
     let cmapObject = {}
-    let cMapName
+    let colorMapName = ''
     if (layerSource.tiles) {
       const oldUrl = new URL(layerSource.tiles[0])
 
       if (uniqueValueLegendExists) {
-        cMapName = oldUrl.searchParams.get('colormap')
+        colorMapName = oldUrl.searchParams.get('colormap')
       } else {
-        cMapName = oldUrl.searchParams.get('colormap_name')
+        colorMapName = oldUrl.searchParams.get('colormap_name')
         oldUrl.searchParams.delete('colormap_name')
       }
-      cmapListRBG = chroma.scale(colorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
+      colorMapListRGB = chroma.scale(colorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
       layerBandMetadataUniqueV.forEach(
         (key, i) =>
           (cmapObject[
             remap(key, layerBandMetadataUniqueV[0], layerBandMetadataUniqueV[layerBandMetadataUniqueV.length - 1])
-          ] = cmapListRBG[i].rgb()),
+          ] = colorMapListRGB[i].rgb()),
       )
 
       uniqueValueLegendExists = true
@@ -115,21 +102,15 @@
 
   const generateCmapBackground = () => {
     if (selectedColorMapType) {
-      console.log(colorMapName, selectedColorMapType)
-      const cmaps = cMapMap[selectedColorMapType]
-      console.log(cmaps)
+      const cmaps = colorMapMap[selectedColorMapType]
       cmaps.forEach((cmapstr: string) => {
-        const cmap = chroma.scale(cmapstr).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
-
-        //console.log(cmapstr, cmap, typeof cmap)
-        bgList[cmapstr] = cmap
+        colorBackgroundList[cmapstr] = chroma.scale(cmapstr).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
       })
     }
   }
 
   const getCmapBackground = () => {
-    cmapList = chroma.scale(colorMapName).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
-    console.log(colorMapName, cmapList)
+    colorMapList = chroma.scale(colorMapName).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
   }
 
   const updateParamsInURL = (params) => {
@@ -168,11 +149,11 @@
     <div style="display:flex;flex-direction:column; align-items:center">
       <div
         on:click={() => {
-          cmapSelectionShown = !cmapSelectionShown
+          colorMapSelectionVisible = !colorMapSelectionVisible
           getCmapBackground()
         }}
         class="chroma-test"
-        style="background: linear-gradient(90deg, {cmapList})" />
+        style="background: linear-gradient(90deg, {colorMapList}); cursor: pointer;" />
       <div style="align-items: center; justify-content: space-between" class="chroma-test">
         <div style="display: flex; flex-direction: row; justify-content: space-between">
           <div>
@@ -187,11 +168,11 @@
   {:else}
     <div
       on:click={() => {
-        cmapSelectionShown = !cmapSelectionShown
+        colorMapSelectionVisible = !colorMapSelectionVisible
       }}
       style="display: flex; align-items: center; justify-content: space-around; flex-direction: column">
       <div style="display: block">
-        {#each cmapList as value, index}
+        {#each colorMapList as value, index}
           <div style="display: flex; padding:2px;">
             <div class="discrete" style="background-color: {value}" />
             &nbsp-&nbsp
@@ -202,7 +183,7 @@
     </div>
   {/if}
 
-  <div class={cmapSelectionShown ? 'cmap-selection shown' : 'cmap-selection hidden'}>
+  <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
     <Set class="colormap-chips" chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
       <Chip {chip}>
         <Text>{chip}</Text>
@@ -217,10 +198,9 @@
               title={seqColorMap}
               on:click={() => {
                 colorMapName = seqColorMap
-                // console.log(colorMapName, Object.keys(bgList))
-                cmapList = bgList[seqColorMap]
+                colorMapList = colorBackgroundList[seqColorMap]
               }}
-              style="background: linear-gradient(90deg, {bgList[seqColorMap]})" />
+              style="background: linear-gradient(90deg, {colorBackgroundList[seqColorMap]})" />
           {/each}
         </div>
       {:else if selectedColorMapType === 'diverging'}
@@ -231,9 +211,9 @@
               title={divColorMap}
               on:click={() => {
                 colorMapName = divColorMap
-                cmapList = bgList[divColorMap]
+                colorMapList = colorBackgroundList[divColorMap]
               }}
-              style="background: linear-gradient(90deg, {bgList[divColorMap]})" />
+              style="background: linear-gradient(90deg, {colorBackgroundList[divColorMap]})" />
           {/each}
         </div>
       {:else if selectedColorMapType === 'cyclic'}
@@ -244,9 +224,9 @@
               class="colormap-div"
               on:click={() => {
                 colorMapName = cycColorMap
-                cmapList = bgList[cycColorMap]
+                colorMapList = colorBackgroundList[cycColorMap]
               }}
-              style="background: linear-gradient(90deg, {bgList[cycColorMap]})" />
+              style="background: linear-gradient(90deg, {colorBackgroundList[cycColorMap]})" />
           {/each}
         </div>
       {/if}
@@ -273,7 +253,6 @@
     cursor: pointer;
     justify-content: center;
     margin: 1px;
-    // transform: rotate(90deg) ;
   }
   .group {
     background: #f0f0f0;
@@ -287,7 +266,6 @@
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-      // width: 80%;
     }
   }
 
@@ -328,9 +306,5 @@
   }
   * :global(.colormap-chips) {
     justify-content: space-evenly;
-  }
-  #discrete-cmap {
-    height: 20px;
-    width: 100%;
   }
 </style>
