@@ -29,7 +29,7 @@
   import Checkbox from '@smui/checkbox'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
 

@@ -7,7 +7,7 @@
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
 
   import LayerList from './LayerList.svelte'

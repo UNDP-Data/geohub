@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
   import { faBookmark } from '@fortawesome/free-regular-svg-icons/faBookmark'
   import { faMoon } from '@fortawesome/free-regular-svg-icons/faMoon'
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'

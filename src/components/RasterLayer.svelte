@@ -12,7 +12,7 @@
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
   import RangeSlider from 'svelte-range-slider-pips'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
@@ -26,7 +26,6 @@
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
-  import Colormaps from './Colormaps.svelte'
   import Legend from './Legend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
@@ -44,7 +43,6 @@
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
-  // let colorMapName;
   let confirmDeleteLayerDialogVisible = false
   let inDynamic: boolean = dynamicLayerState[layerId] || false
   let isLayerVisible = false
@@ -58,15 +56,19 @@
   let reverseColorMap = false
   let scalingValueRange = ''
   let colorMapName = 'viridis'
-  let scalingValueStart = Math.floor(layerBandMetadataMin * 10) / 10
-  let scalingValueEnd = Math.ceil(layerBandMetadataMax * 10) / 10
-  let legendBackground
-  // $: colorMapName, selectColorMap()
+  let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
+  let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
+  let legendBackground = ''
+  let rangeSliderValues = [layerOpacity * 100]
+
+  $: colorMapName, generateLegend()
   $: inDynamic, setDynamicLayerState()
+  $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
-  // $: reverseColorMap, selectColorMap()
-  // $: scalingValueRange, selectScaling()
+  $: scalingValueStart, setScalingValueRwange()
+  $: scalingValueEnd, setScalingValueRwange()
+  $: scalingValueRange, selectScaling()
   $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const setDynamicLayerState = () => {
@@ -162,6 +164,7 @@
       $map.triggerRepaint()
     }
   }
+
   const selectScaling = () => {
     if (!scalingValueRange) return
     updateParamsInURL({ rescale: scalingValueRange })
@@ -170,21 +173,12 @@
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
   const generateLegend = () => {
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
     legendBackground = activeColorMap.background
     updateParamsInURL({ colormap_name: activeColorMap.name })
-  }
-  $: scalingValueStart, setScalingValueRwange()
-  $: scalingValueEnd, setScalingValueRwange()
-  $: scalingValueRange, selectScaling()
-  $: colorMapName, generateLegend()
-
-  let rangeSliderValues = [layerOpacity * 100]
-
-  $: {
-    layerOpacity = rangeSliderValues[0] / 100
   }
 </script>
 

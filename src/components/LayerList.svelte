@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button, { Label } from '@smui/button'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
   import RasterLayer from './RasterLayer.svelte'
