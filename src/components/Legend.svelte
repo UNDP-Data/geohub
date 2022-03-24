@@ -16,6 +16,7 @@
   export let lMax
   export let scalingValueStart
   export let scalingValueEnd
+  export let colorMapName
   export let layerConfig: Layer = LayerInitialValues
   let disabled = true
   let step = 0.1
@@ -35,7 +36,7 @@
   let selectedColorMapType = ''
   let sliderMin = Math.floor(lMin)
   let sliderMax = Math.ceil(lMax)
-  const colorMapTypes: Array<string> = ['Sequential', 'Diverging', 'Cyclic']
+  const colorMapTypes: Array<string> = ['sequential', 'diverging', 'cyclic']
   let cmapSelectionShown = false
   let changeLegend = false
   let mapLayers = $map.getStyle().layers
@@ -56,7 +57,7 @@
   const layerSrc = $map.getSource(layer.definition.source)
 
   const lURL = new URL(layerSrc.tiles[0])
-  let colorMapName = lURL.searchParams.get('colormap_name')
+  colorMapName = lURL.searchParams.get('colormap_name')
   let cmapListRBG
   let uniqueValueLegendExists = false
 
@@ -64,17 +65,17 @@
     let layerSrc = mapLayers.filter((item) => item.id === layerId).pop()['source']
     const layerSource = $map.getSource(layerSrc)
     let cmapObject = {}
-    let oldColorMapName
+    let colorMapName
     if (layerSource.tiles) {
       const oldUrl = new URL(layerSource.tiles[0])
 
       if (uniqueValueLegendExists) {
-        oldColorMapName = oldUrl.searchParams.get('colormap')
+        colorMapName = oldUrl.searchParams.get('colormap')
       } else {
-        oldColorMapName = oldUrl.searchParams.get('colormap_name')
+        colorMapName = oldUrl.searchParams.get('colormap_name')
         oldUrl.searchParams.delete('colormap_name')
       }
-      cmapListRBG = chroma.scale(oldColorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
+      cmapListRBG = chroma.scale(colorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
       layerBandMetadataUniqueV.forEach(
         (key, i) =>
           (cmapObject[
@@ -104,16 +105,25 @@
     }
   }
 
-  let cmapList = chroma.scale(colorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
-  console.log(cmapList)
+  let cmapList
+  let bgList = []
+  let selectedCmap
 
-  // let cmap = chroma.scale('viridis').domain([lMin, lMax])
+  const generateCmapBackground = (selectedCmap) => {
+    let ls = chroma.scale(selectedCmap).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
+    for (let x = 0; x < ls.length; x++) {
+      bgList.push(ls[x].rgb())
+    }
+    console.log(bgList)
+  }
 
-  /*
-  loop through the unique
-  generate divs
-  apply the background color
-  * */
+  const getCmapBackground = () => {
+    cmapList = chroma.scale(colorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
+    console.log([cmapList])
+  }
+
+  $: selectedColorMapType, generateCmapBackground(selectedCmap)
+  $: cmapList, getCmapBackground()
 </script>
 
 <div class="group">
@@ -136,6 +146,7 @@
       <div
         on:click={() => {
           cmapSelectionShown = !cmapSelectionShown
+          getCmapBackground()
         }}
         class="chroma-test"
         style="background: linear-gradient(90deg, {cmapList})" />
@@ -175,20 +186,20 @@
       </Chip>
     </Set>
     <div>
-      {#if selectedColorMapType === 'Sequential'}
+      {#if selectedColorMapType === 'sequential'}
         <div class="colormaps-group">
-          {#each sequentialColormaps as btn}
+          {#each sequentialColormaps as seqColorMap}
             <div
-              title={btn.name}
               class="colormap-div"
               on:click={() => {
-                colorMapName = btn['name']
+                colorMapName = seqColorMap
                 console.log(colorMapName)
+                generateCmapBackground(seqColorMap)
               }}
-              style={btn.background} />
+              style="background: linear-gradient(90deg, {bgList})" />
           {/each}
         </div>
-      {:else if selectedColorMapType === 'Diverging'}
+      {:else if selectedColorMapType === 'diverging'}
         <div class="colormaps-group">
           {#each divergingColorMaps as btn}
             <div
@@ -198,7 +209,7 @@
               style={btn.background} />
           {/each}
         </div>
-      {:else if selectedColorMapType === 'Cyclic'}
+      {:else if selectedColorMapType === 'cyclic'}
         <div class="colormaps-group">
           {#each cyclicColorMaps as btn}
             <div

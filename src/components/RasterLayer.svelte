@@ -160,7 +160,7 @@
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-  let colorMapName = 'viridis'
+  let colorMapName = 'bugn'
   const generateLegend = () => {
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
