@@ -86,7 +86,7 @@
         dynamicLayers.set([...$dynamicLayers, layerId])
       }
     } else {
-      $dynamicLayers = $dynamicLayers.filter((item) => item !== layerId)
+      $dynamicLayers = $dynamicLayers.filter((dynamicLayerId) => dynamicLayerId !== layerId)
     }
 
     let ntrue = 0

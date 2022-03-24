@@ -5,7 +5,7 @@
 
   import RasterLayer from './RasterLayer.svelte'
   import VectorLayer from './VectorLayer.svelte'
-  import { layerList } from '../stores'
+  import { layerList, dynamicLayers } from '../stores'
   import DynamicLayer from './DynamicLayer.svelte'
   import { TabNames } from '../lib/constants'
 
@@ -26,7 +26,7 @@
   </ul>
 {/if}
 
-{#if !disabled && $layerList.length > 1}
+{#if !disabled && $layerList?.length > 0 && $dynamicLayers.length > 1}
   <div style="display:flex; justify-content:center; flex-direction:row">
     <Button on:click={() => (open = true)}>
       <Label>Merge selected layers</Label>

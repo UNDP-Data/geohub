@@ -35,7 +35,7 @@
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
-  import { map, layerList, indicatorProgress, wtree } from '../stores'
+  import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
   export let level = 0
@@ -211,6 +211,7 @@
       if (layerToBeRemoved) {
         $map.removeLayer(layerToBeRemoved.definition.id)
         $layerList = $layerList.filter((item) => item !== layerToBeRemoved)
+        $dynamicLayers = $dynamicLayers.filter((dynamicLayerId) => dynamicLayerId !== layerToBeRemoved.definition.id)
       }
     }
     $indicatorProgress = false
