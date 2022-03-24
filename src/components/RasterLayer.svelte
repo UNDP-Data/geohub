@@ -246,14 +246,6 @@
                   <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="lg" style="transform: scale(0.75);" />
                 </div>
 
-                <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
-                  <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
-                </div>
-
-                <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
-                  <Fa icon={faChevronDown} size="lg" style="transform: scale(0.75);" />
-                </div>
-
                 <Checkbox
                   bind:checked={inDynamic}
                   style="--mdc-checkbox-ripple-size: 0; top: -1.25px; left: -5px; transform: scale(0.75);" />
@@ -261,6 +253,14 @@
             {/if}
 
             <div class="group" style="padding-right: 5px;">
+              <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
+                <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
+              </div>
+
+              <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
+                <Fa icon={faChevronDown} size="lg" style="transform: scale(0.75);" />
+              </div>
+
               <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
                 <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="lg" style="transform: scale(0.75);" />
               </div>
