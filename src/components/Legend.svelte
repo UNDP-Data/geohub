@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import Slider from '@smui/slider'
+  import RangeSlider from 'svelte-range-slider-pips'
   import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import Button, { Label as LabelButton } from '@smui/button'
   import Chip, { Set, Text } from '@smui/chips'
@@ -18,8 +18,14 @@
   export let scalingValueEnd
   export let layerConfig: Layer = LayerInitialValues
   let disabled = true
-  export let legendBackground
-  export let colorMapName = 'viridis'
+  let step = 0.1
+  let rangeSliderValues = [scalingValueStart, scalingValueEnd]
+  $: {
+    scalingValueStart = rangeSliderValues[0]
+    scalingValueEnd = rangeSliderValues[1]
+  }
+
+  // export let colorMapName = 'viridis'
 
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
@@ -37,7 +43,7 @@
   let isLegendUniqueValues: boolean
   let isLegendInterval: boolean
 
-  export let reverseColorMap = false
+  // export let reverseColorMap = false
 
   const remap = (input, oldMin, oldMax, newMin = 0, newMax = 255) => {
     const percent = (input - oldMin) / (oldMax - oldMin)
@@ -45,15 +51,20 @@
     return Math.round(output)
   }
   let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+
   const layerBandMetadataUniqueV = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES']
+  const layerSrc = $map.getSource(layer.definition.source)
+
+  const lURL = new URL(layerSrc.tiles[0])
+  let colorMapName = lURL.searchParams.get('colormap_name')
   let cmapListRBG
   let uniqueValueLegendExists = false
-  let oldColorMapName
 
   const setUniqueValueLegend = () => {
     let layerSrc = mapLayers.filter((item) => item.id === layerId).pop()['source']
     const layerSource = $map.getSource(layerSrc)
     let cmapObject = {}
+    let oldColorMapName
     if (layerSource.tiles) {
       const oldUrl = new URL(layerSource.tiles[0])
 
@@ -93,9 +104,10 @@
     }
   }
 
-  let cmapList = chroma.scale(oldColorMapName).colors(layerBandMetadataUniqueV.length)
+  let cmapList = chroma.scale(colorMapName).domain([0, 255]).colors(layerBandMetadataUniqueV.length, 'rgba')
+  console.log(cmapList)
 
-  let cmap = chroma.scale('viridis').domain([lMin, lMax])
+  // let cmap = chroma.scale('viridis').domain([lMin, lMax])
 
   /*
   loop through the unique
@@ -105,34 +117,28 @@
 </script>
 
 <div class="group">
-  <Slider
-    discrete
-    range
-    bind:start={scalingValueStart}
-    bind:end={scalingValueEnd}
-    min={sliderMin}
-    max={sliderMax}
-    step={0.1}
-    input$aria-label="Range slider"
-    label="Set the min and max" />
-  <div
-    on:click={() => {
-      cmapSelectionShown = !cmapSelectionShown
-    }}
-    style="display: flex; align-items: center; justify-content: space-around; flex-direction: column">
-    <!--     <div>{scalingValueStart}</div>-->
-    {#if uniqueValueLegendExists}
-      <div style="display: block">
-        {#each cmapList as value, index}
-          <div style="display: flex; padding:2px;">
-            <div class="discrete" style="background-color: {value}" />
-            &nbsp-&nbsp
-            <div>{layerBandMetadataUniqueV[index]}</div>
-          </div>
-        {/each}
-      </div>
-    {:else}
-      <div class="chroma-test" style="background: linear-gradient(90deg, {cmapList})" />
+  <div class="slider">
+    <RangeSlider
+      bind:values={rangeSliderValues}
+      float
+      range
+      min={sliderMin}
+      max={sliderMax}
+      {step}
+      pips
+      first="label"
+      last="label"
+      rest={false} />
+  </div>
+
+  {#if !uniqueValueLegendExists}
+    <div style="display:flex;flex-direction:column; align-items:center">
+      <div
+        on:click={() => {
+          cmapSelectionShown = !cmapSelectionShown
+        }}
+        class="chroma-test"
+        style="background: linear-gradient(90deg, {cmapList})" />
       <div style="align-items: center; justify-content: space-between" class="chroma-test">
         <div style="display: flex; flex-direction: row; justify-content: space-between">
           <div>
@@ -143,77 +149,80 @@
           </div>
         </div>
       </div>
-    {/if}
-    <!--    <div-->
-    <!--      on:click={() => {-->
-    <!--        cmapSelectionShown = !cmapSelectionShown-->
-    <!--      }}-->
-    <!--      class="colormap-div"-->
-    <!--      style={legendBackground} />-->
+    </div>
+  {:else}
+    <div
+      on:click={() => {
+        cmapSelectionShown = !cmapSelectionShown
+      }}
+      style="display: flex; align-items: center; justify-content: space-around; flex-direction: column">
+      <div style="display: block">
+        {#each cmapList as value, index}
+          <div style="display: flex; padding:2px;">
+            <div class="discrete" style="background-color: {value}" />
+            &nbsp-&nbsp
+            <div>{layerBandMetadataUniqueV[index]}</div>
+          </div>
+        {/each}
+      </div>
+    </div>
+  {/if}
 
-    <!-- <div>{scalingValueEnd}</div> -->
-
-    <!-- <div style="display: block; height: 100px; width: 20px; margin-right: 10px">
-
-    </div> -->
-  </div>
   <div class={cmapSelectionShown ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-    <!--    <Set class="colormap-chips" chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>-->
-    <!--      <Chip {chip}>-->
-    <!--        <Text>{chip}</Text>-->
-    <!--      </Chip>-->
-    <!--    </Set>-->
-    <!--    <div>-->
-    <!--      {#if selectedColorMapType === 'Sequential'}-->
-    <!--        <div class="colormaps-group">-->
-    <!--          {#each sequentialColormaps as btn}-->
-    <!--            <div-->
-    <!--              title={btn.name}-->
-    <!--              class="colormap-div"-->
-    <!--              on:click={() => {-->
-    <!--                colorMapName = btn['name']-->
-    <!--                console.log(colorMapName)-->
-    <!--              }}-->
-    <!--              style={btn.background} />-->
-    <!--          {/each}-->
-    <!--        </div>-->
-    <!--      {:else if selectedColorMapType === 'Diverging'}-->
-    <!--        <div class="colormaps-group">-->
-    <!--          {#each divergingColorMaps as btn}-->
-    <!--            <div-->
-    <!--              class="colormap-div"-->
-    <!--              title={btn.name}-->
-    <!--              on:click={() => (colorMapName = btn['name'])}-->
-    <!--              style={btn.background} />-->
-    <!--          {/each}-->
-    <!--        </div>-->
-    <!--      {:else if selectedColorMapType === 'Cyclic'}-->
-    <!--        <div class="colormaps-group">-->
-    <!--          {#each cyclicColorMaps as btn}-->
-    <!--            <div-->
-    <!--              title={btn.name}-->
-    <!--              class="colormap-div"-->
-    <!--              on:click={() => (colorMapName = btn['name'])}-->
-    <!--              style={btn.background} />-->
-    <!--          {/each}-->
-    <!--        </div>-->
-    <!--      {/if}-->
-    <!--    </div>-->
+    <Set class="colormap-chips" chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
+      <Chip {chip}>
+        <Text>{chip}</Text>
+      </Chip>
+    </Set>
+    <div>
+      {#if selectedColorMapType === 'Sequential'}
+        <div class="colormaps-group">
+          {#each sequentialColormaps as btn}
+            <div
+              title={btn.name}
+              class="colormap-div"
+              on:click={() => {
+                colorMapName = btn['name']
+                console.log(colorMapName)
+              }}
+              style={btn.background} />
+          {/each}
+        </div>
+      {:else if selectedColorMapType === 'Diverging'}
+        <div class="colormaps-group">
+          {#each divergingColorMaps as btn}
+            <div
+              class="colormap-div"
+              title={btn.name}
+              on:click={() => (colorMapName = btn['name'])}
+              style={btn.background} />
+          {/each}
+        </div>
+      {:else if selectedColorMapType === 'Cyclic'}
+        <div class="colormaps-group">
+          {#each cyclicColorMaps as btn}
+            <div
+              title={btn.name}
+              class="colormap-div"
+              on:click={() => (colorMapName = btn['name'])}
+              style={btn.background} />
+          {/each}
+        </div>
+      {/if}
+    </div>
   </div>
-
   <div class="changeLegendButtonDiv">
     <Button class="changelegendbtn" variant="raised">
-      <LabelButton>Change legend</LabelButton>
+      <LabelButton>Reclassify</LabelButton>
     </Button>
-    {#if layerBandMetadataUniqueV.length}
+  </div>
+  {#if layerBandMetadataUniqueV.length}
+    <div class="changeLegendButtonDiv">
       <Button on:click={setUniqueValueLegend} class="changelegendbtn" variant="raised">
         <LabelButton>Unique values</LabelButton>
       </Button>
-    {/if}
-  </div>
-</div>
-<div class={changeLegend ? 'group changeLegendShown' : 'hidden'}>
-  <div id="discrete-cmap" style={legendBackground} />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -231,6 +240,13 @@
     padding: 2px;
     margin-top: 1px;
     padding-bottom: 4px;
+    .slider {
+      --range-handle-focus: #2196f3;
+      --range-range-inactive: #2196f3;
+      --range-handle-inactive: #2196f3;
+      --range-handle: #2196f3;
+      --width: 80%;
+    }
   }
   .discrete {
     width: 20px;

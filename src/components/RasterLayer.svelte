@@ -47,7 +47,7 @@
   let queryEnabled = true
   let reverseColorMap = false
   let scalingValueRange = ''
-  let colorMapName = 'viridis'
+
   let scalingValueStart = Math.floor(layerBandMetadataMin * 10) / 10
   let scalingValueEnd = Math.ceil(layerBandMetadataMax * 10) / 10
   let legendBackground
@@ -160,6 +160,7 @@
   const setScalingValueRwange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+  let colorMapName = 'viridis'
   const generateLegend = () => {
     const allColorMaps = sequentialColormaps.concat(divergingColorMaps, cyclicColorMaps)
     let activeColorMap = allColorMaps.filter((item) => item.name === colorMapName).pop()
@@ -169,7 +170,7 @@
   $: scalingValueStart, setScalingValueRwange()
   $: scalingValueEnd, setScalingValueRwange()
   $: scalingValueRange, selectScaling()
-  $: colorMapName, generateLegend()
+  //$: colorMapName, generateLegend()
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -306,10 +307,7 @@
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
                 bind:scalingValueStart
-                bind:scalingValueEnd
-                bind:colorMapName
-                bind:legendBackground
-                bind:reverseColorMap />
+                bind:scalingValueEnd />
             </div>
           {/if}
 
