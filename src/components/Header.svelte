@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
-  import { Icon } from '@smui/button'
-  import { Svg } from '@smui/common/elements'
-  import IconButton from '@smui/icon-button'
   import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
+  import Fa from 'svelte-fa'
+  import { faBookmark } from '@fortawesome/free-regular-svg-icons/faBookmark'
+  import { faMoon } from '@fortawesome/free-regular-svg-icons/faMoon'
+  import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
+  import { faSun } from '@fortawesome/free-solid-svg-icons/faSun'
 
   export let drawerOpen = true
   export let panelOpen = true
@@ -37,15 +38,30 @@
     </Section>
 
     <Section align="end">
-      <IconButton class="material-icons" on:click={() => (panelOpen = !panelOpen)}>bookmark_border</IconButton>
-      <IconButton class="material-icons" on:click={() => (drawerOpen = !drawerOpen)}>menu</IconButton>
-      <IconButton on:click={() => (darkTheme = !darkTheme)}>
-        <Icon component={Svg} viewBox="0 0 24 24">
-          <path fill="currentColor" d={darkTheme ? mdiWeatherSunny : mdiWeatherNight} />
-        </Icon>
-      </IconButton>
+      <div class="icon" on:click={() => (panelOpen = !panelOpen)}>
+        <Fa icon={faBookmark} size="lg" />
+      </div>
+
+      <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
+        <Fa icon={faBars} size="lg" />
+      </div>
+
+      <div class="icon" on:click={() => (darkTheme = !darkTheme)}>
+        {#if darkTheme}
+          <Fa icon={faSun} size="lg" />
+        {:else}
+          <Fa icon={faMoon} size="lg" />
+        {/if}
+      </div>
     </Section>
   </Row>
 </TopAppBar>
 
 <AutoAdjust {topAppBar} />
+
+<style lang="scss">
+  .icon {
+    cursor: pointer;
+    margin-right: 20px;
+  }
+</style>

@@ -9,3 +9,4 @@ node_modules
 .idea
 env.ts
 .vscode/
+yarn-error.log

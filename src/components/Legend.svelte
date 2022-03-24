@@ -4,9 +4,10 @@
 
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import Button, { Label as LabelButton } from '@smui/button'
   import Chip, { Set, Text } from '@smui/chips'
+
+  import { sequentialColormaps, divergingColorMaps, cyclicColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import { map, layerList } from '../stores/index'
@@ -19,7 +20,6 @@
   export let colorMapName
   export let layerConfig: Layer = LayerInitialValues
   let disabled = true
-  let step = 0.1
   let rangeSliderValues = [scalingValueStart, scalingValueEnd]
   $: {
     scalingValueStart = rangeSliderValues[0]
@@ -43,14 +43,14 @@
   let scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   let isLegendUniqueValues: boolean
   let isLegendInterval: boolean
-
-  // export let reverseColorMap = false
+  let step = 0.1
 
   const remap = (input, oldMin, oldMax, newMin = 0, newMax = 255) => {
     const percent = (input - oldMin) / (oldMax - oldMin)
     const output = percent * (newMax - newMin) + newMin
     return Math.round(output)
   }
+
   let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
 
   const layerBandMetadataUniqueV = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES']
@@ -60,6 +60,16 @@
   colorMapName = lURL.searchParams.get('colormap_name')
   let cmapListRBG
   let uniqueValueLegendExists = false
+  let cmapList = []
+  let bgList = {}
+
+  $: selectedColorMapType, generateCmapBackground()
+  $: colorMapName, updateParamsInURL({ colormap_name: colorMapName })
+  $: cmapList, getCmapBackground()
+  $: {
+    scalingValueStart = rangeSliderValues[0]
+    scalingValueEnd = rangeSliderValues[1]
+  }
 
   const setUniqueValueLegend = () => {
     let layerSrc = mapLayers.filter((item) => item.id === layerId).pop()['source']
@@ -102,9 +112,6 @@
     }
   }
 
-  let cmapList
-  let bgList = {}
-
   const generateCmapBackground = () => {
     if (selectedColorMapType) {
       console.log(colorMapName, selectedColorMapType)
@@ -122,11 +129,7 @@
   const getCmapBackground = () => {
     cmapList = chroma.scale(colorMapName).padding([0.25, 0]).domain([0, 255]).colors(9, 'hex')
     console.log(colorMapName, cmapList)
-    //console.log([cmapList])
   }
-
-  $: selectedColorMapType, generateCmapBackground()
-  $: cmapList, getCmapBackground()
 
   const updateParamsInURL = (params) => {
     let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
@@ -143,8 +146,6 @@
       $map.triggerRepaint()
     }
   }
-
-  $: colorMapName, updateParamsInURL({ colormap_name: colorMapName })
 </script>
 
 <div class="group">
@@ -279,18 +280,21 @@
     padding: 2px;
     margin-top: 1px;
     padding-bottom: 4px;
+
     .slider {
       --range-handle-focus: #2196f3;
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-      --width: 80%;
+      width: 80%;
     }
   }
+
   .discrete {
     width: 20px;
     height: 20px;
   }
+
   :global(.changeLegendButtonDiv) {
     margin: 0 auto;
     padding-top: 10px;

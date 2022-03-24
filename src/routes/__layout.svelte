@@ -25,11 +25,11 @@
     font-size: 13px;
   }
   .mdc-drawer {
-    width: 340px;
+    width: 355px;
   }
 
   .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
-    margin-left: 340px;
+    margin-left: 355px;
     margin-right: 0;
   }
 </style>

@@ -27,14 +27,16 @@
   import { onMount } from 'svelte'
   import { slide } from 'svelte/transition'
   import Checkbox from '@smui/checkbox'
-  import { Icon } from '@smui/icon-button'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
+  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
+  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
   import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
-  import { map, layerList, indicatorProgress, wtree } from '../stores'
+  import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
   export let level = 0
@@ -43,6 +45,7 @@
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   const iconRaster = LayerIconTypes.find((icon) => icon.id === 'raster')
   const iconVector = LayerIconTypes.find((icon) => icon.id === 'vector')
+  let loadingLayer = false
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
@@ -64,12 +67,14 @@
     if (tree?.children.length === 0) updateTreeStore()
 
     setTimeout(() => {
-      if ($indicatorProgress === true) $indicatorProgress = false
+      if (loadingLayer === true) {
+        loadingLayer = false
+      }
     }, 2000)
   }
 
   const updateTreeStore = async () => {
-    $indicatorProgress = true
+    loadingLayer = true
     let newTreeData = await fetchTree(tree.path)
     let subpaths = path.split('/').slice(0, -1)
 
@@ -87,6 +92,7 @@
     })
 
     wtree.set(currentTree)
+    loadingLayer = false
   }
 
   const fetchTree = async (path: string) => {
@@ -210,6 +216,7 @@
       if (layerToBeRemoved) {
         $map.removeLayer(layerToBeRemoved.definition.id)
         $layerList = $layerList.filter((item) => item !== layerToBeRemoved)
+        $dynamicLayers = $dynamicLayers.filter((dynamicLayerId) => dynamicLayerId !== layerToBeRemoved.definition.id)
       }
     }
     $indicatorProgress = false
@@ -227,14 +234,15 @@
         on:click={() => (level > 0 ? toggleExpansion() : '')}
         class="node-container"
         transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon">
-          {#if level === 0}
-            <Icon color="primary" class="material-icons" style="transform: scale(0.75);">house</Icon>
+        <div class="tree-icon" style="margin-right: 5px;">
+          {#if loadingLayer === true}
+            <Fa icon={faSync} size="sm" spin />
+          {:else if level === 0}
+            <Fa icon={faDatabase} size="sm" />
           {:else if !expanded}
-            <Icon color="primary" class="material-icons" on style="cursor: pointer;">chevron_right</Icon>
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
           {:else}
-            <Icon color="primary" class="material-icons" on style="transform: rotate(90deg); cursor: pointer;"
-              >chevron_right</Icon>
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
           {/if}
         </div>
 

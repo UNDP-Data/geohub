@@ -1,10 +1,11 @@
 <script lang="ts">
   import Button, { Label } from '@smui/button'
-  import { Icon } from '@smui/icon-button'
+  import Fa from 'svelte-fa'
+  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
   import RasterLayer from './RasterLayer.svelte'
   import VectorLayer from './VectorLayer.svelte'
-  import { layerList } from '../stores'
+  import { layerList, dynamicLayers } from '../stores'
   import DynamicLayer from './DynamicLayer.svelte'
   import { TabNames } from '../lib/constants'
 
@@ -15,8 +16,8 @@
 {#if $layerList?.length === 0}
   <ul class="no-data-layers">
     <li class="message">
-      <div class="icon" style="color: hsl(204, 86%, 53%); transform: scale(1);">
-        <Icon color="primary" class="material-icons">info</Icon>
+      <div class="icon">
+        <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
       </div>
       <div class="text">
         No layers have been selected. Please select a layer from the <strong>{TabNames.LoadData}</strong> tab.
@@ -25,7 +26,7 @@
   </ul>
 {/if}
 
-{#if !disabled && $layerList.length > 1}
+{#if !disabled && $layerList?.length > 0 && $dynamicLayers.length > 1}
   <div style="display:flex; justify-content:center; flex-direction:row">
     <Button on:click={() => (open = true)}>
       <Label>Merge selected layers</Label>

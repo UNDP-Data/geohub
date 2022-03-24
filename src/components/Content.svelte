@@ -4,11 +4,11 @@
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
-  import IconButton from '@smui/icon-button'
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
-  import Fa from 'svelte-fa/src/fa.svelte'
+  import Fa from 'svelte-fa'
+  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
@@ -21,12 +21,12 @@
   let activeTab = TabNames.LoadData
   let bannerType = ''
   let bannerMessage = ''
-  let drawerWidth = 340
+  let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
-  $: treeLgendExpanded = true
 
+  $: treeLgendExpanded = true
   $: hideLinearProgress = !$indicatorProgress
   $: {
     if (drawerOpen) {
@@ -67,8 +67,6 @@
     bannerMessage = ErrorCodes[error.code]
     showBanner = true
   }
-
-  const iconButtonStyle = 'font-size: 18px; width: 24px; height: 24px;'
 </script>
 
 <div class="content-container">
@@ -96,21 +94,15 @@
                 <div transition:slide class="action">
                   <div class="header">
                     <div class="name" style="font-size: 11px;">Legend</div>
-                    <div class="close">
+                    <div class="close" style="margin-right: 5px;">
                       {#if treeLgendExpanded === false}
-                        <IconButton
-                          color="primary"
-                          class="material-icons"
-                          on
-                          style={iconButtonStyle + ';cursor: pointer;'}
-                          on:click={() => (treeLgendExpanded = true)}>chevron_right</IconButton>
+                        <div on:click={() => (treeLgendExpanded = true)}>
+                          <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
+                        </div>
                       {:else}
-                        <IconButton
-                          color="primary"
-                          class="material-icons"
-                          on
-                          style={iconButtonStyle + ';transform: rotate(90deg); cursor: pointer;'}
-                          on:click={() => (treeLgendExpanded = false)}>chevron_right</IconButton>
+                        <div on:click={() => (treeLgendExpanded = false)}>
+                          <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
+                        </div>
                       {/if}
                     </div>
                   </div>
