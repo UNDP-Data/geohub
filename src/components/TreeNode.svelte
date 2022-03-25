@@ -206,7 +206,7 @@
           $map.addLayer(layerDefinition, firstSymbolId)
         } else {
           handlErrorCallback({
-            code: 'UndefinedBandMetadatalayerMinMax',
+            code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
           })
         }
       }

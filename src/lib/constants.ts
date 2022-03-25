@@ -7,9 +7,9 @@ import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 import type { TreeNode } from '../lib/types'
 
 export enum TabNames {
-  LoadData = 'Load data',
-  Layers = 'Layers',
-  Analyze = 'Analyze',
+  LOAD_DATA = 'Load data',
+  LAYERS = 'Layers',
+  ANALYZE = 'Analyze',
 }
 
 export const TreeNodeInitialValues = {
@@ -28,11 +28,11 @@ export const LayerInitialValues = {
 }
 
 export enum ErrorCodes {
-  UndefinedBandMetadatalayerMinMax = 'Missing layer minimum and/or maximum metadata values.',
+  UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
 }
 
 export enum BannerTypes {
-  error = 'Error',
+  ERROR = 'Error',
 }
 
 export const LayerIconTypes = [

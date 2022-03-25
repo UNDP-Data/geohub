@@ -106,7 +106,6 @@
   const generateCmapBackground = () => {
     if (selectedColorMapType) {
       const cmaps = colorMapMap[selectedColorMapType]
-      console.log(cmaps)
       cmaps.forEach((cmapstr: string) => {
         try {
           if (selectedColorMapType === ColorMapTypes.SEQUENTIAL) {

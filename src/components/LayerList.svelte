@@ -20,7 +20,7 @@
         <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
       </div>
       <div class="text">
-        No layers have been selected. Please select a layer from the <strong>{TabNames.LoadData}</strong> tab.
+        No layers have been selected. Please select a layer from the <strong>{TabNames.LOAD_DATA}</strong> tab.
       </div>
     </li>
   </ul>

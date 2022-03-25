@@ -18,7 +18,7 @@
 
   export let drawerOpen = false
 
-  let activeTab = TabNames.LoadData
+  let activeTab = TabNames.LOAD_DATA
   let bannerType = ''
   let bannerMessage = ''
   let drawerWidth = 355
@@ -63,7 +63,7 @@
   const handleMouseup = () => (isResizingDrawer = false)
 
   const handlErrorCallback = (error: Error) => {
-    bannerType = BannerTypes.error
+    bannerType = BannerTypes.ERROR
     bannerMessage = ErrorCodes[error.code]
     showBanner = true
   }
@@ -75,11 +75,11 @@
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header>
-          <TabBar tabs={[TabNames.LoadData, TabNames.Layers]} let:tab bind:active={activeTab}>
+          <TabBar tabs={[TabNames.LOAD_DATA, TabNames.LAYERS]} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">
               <Label>
                 {tab}
-                {#if tab === TabNames.Layers}
+                {#if tab === TabNames.LAYERS}
                   ({$layerList.length})
                 {/if}
               </Label>
@@ -87,7 +87,7 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px;">
-          <div hidden={activeTab !== TabNames.LoadData}>
+          <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView {handlErrorCallback} />
             <div style="padding: 15px; padding-right: 0;">
               <div class="layer-actions" style="height: 20px;">
@@ -120,7 +120,7 @@
               </div>
             </div>
           </div>
-          <div hidden={activeTab !== TabNames.Layers}>
+          <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
         </Content>
