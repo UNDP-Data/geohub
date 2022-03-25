@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
+  const dynamicLayerIds = {}
   const layerState = {}
   const sectionState = {}
-  const dynamicLayerState = {}
 </script>
 
 <script lang="ts">
@@ -42,7 +42,7 @@
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
   let confirmDeleteLayerDialogVisible = false
-  let inDynamic: boolean = dynamicLayerState[layerId] || false
+  let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
   let isLayerVisible = false
   let isLegendPanelVisible = false
@@ -60,7 +60,7 @@
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
 
-  $: inDynamic, setDynamicLayerState()
+  $: isDynamicLayer, setDynamicLayerState()
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
@@ -80,9 +80,9 @@
   }
 
   const setDynamicLayerState = () => {
-    dynamicLayerState[layerId] = inDynamic
+    dynamicLayerIds[layerId] = isDynamicLayer
 
-    if (inDynamic == true) {
+    if (isDynamicLayer == true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
       }
@@ -92,7 +92,7 @@
 
     let ntrue = 0
 
-    for (const [value] of Object.entries(dynamicLayerState)) {
+    for (const [value] of Object.entries(dynamicLayerIds)) {
       if (value) {
         ++ntrue
       }
@@ -127,10 +127,10 @@
     setTimeout(() => {
       $map.removeLayer(layerId)
       $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-      inDynamic = false
+      isDynamicLayer = false
       delete layerState[layerId]
       delete sectionState[layerId]
-      delete dynamicLayerState[layerId]
+      delete dynamicLayerIds[layerId]
     }, 200)
   }
 
@@ -205,6 +205,7 @@
             </div>
           </div>
           <div class="layer-header-icons">
+            <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
               <div
                 class={isLegendPanelVisible ? 'icon-selected' : 'icon'}
@@ -238,6 +239,7 @@
               </div>
             </div>
 
+            <!-- GROUP : NON-EDIT ACTIONS -->
             {#if $layerList.length > 1}
               <div class="group">
                 <div title="Querying info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
@@ -245,11 +247,12 @@
                 </div>
 
                 <Checkbox
-                  bind:checked={inDynamic}
+                  bind:checked={isDynamicLayer}
                   style="--mdc-checkbox-ripple-size: 0; top: -1.25px; left: -5px; transform: scale(0.75);" />
               </div>
             {/if}
 
+            <!-- GROUP : LAYER CONTROL ACTIONS -->
             <div class="group" style="padding-right: 5px;">
               <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
                 <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
