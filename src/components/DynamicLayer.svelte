@@ -113,7 +113,7 @@
     clickedLayer = undefined
   }
 
-  const setClickedLayer = (layerId:string) => {
+  const setClickedLayer = (layerId: string) => {
     clickedLayer = layerId
     setLayerExpression()
   }

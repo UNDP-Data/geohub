@@ -1,13 +1,12 @@
 <script lang="ts" context="module">
+  const dynamicLayerIds = {}
   const layerState = {}
   const sectionState = {}
-  const dynamicLayerState = {}
 </script>
 
 <script lang="ts">
   import 'bulma/css/bulma.css'
   import Button, { Label as LabelButton } from '@smui/button'
-  import Checkbox from '@smui/checkbox'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
@@ -42,7 +41,7 @@
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
   let confirmDeleteLayerDialogVisible = false
-  let inDynamic: boolean = dynamicLayerState[layerId] || false
+  let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
   let isLayerVisible = false
   let isLegendPanelVisible = false
@@ -60,7 +59,7 @@
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
 
-  $: inDynamic, setDynamicLayerState()
+  $: isDynamicLayer, setDynamicLayerState()
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
@@ -80,9 +79,9 @@
   }
 
   const setDynamicLayerState = () => {
-    dynamicLayerState[layerId] = inDynamic
+    dynamicLayerIds[layerId] = isDynamicLayer
 
-    if (inDynamic == true) {
+    if (isDynamicLayer == true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
       }
@@ -92,7 +91,7 @@
 
     let ntrue = 0
 
-    for (const [value] of Object.entries(dynamicLayerState)) {
+    for (const [value] of Object.entries(dynamicLayerIds)) {
       if (value) {
         ++ntrue
       }
@@ -127,10 +126,10 @@
     setTimeout(() => {
       $map.removeLayer(layerId)
       $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-      inDynamic = false
+      isDynamicLayer = false
       delete layerState[layerId]
       delete sectionState[layerId]
-      delete dynamicLayerState[layerId]
+      delete dynamicLayerIds[layerId]
     }, 200)
   }
 
@@ -205,6 +204,7 @@
             </div>
           </div>
           <div class="layer-header-icons">
+            <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
               <div
                 class={isLegendPanelVisible ? 'icon-selected' : 'icon'}
@@ -213,7 +213,7 @@
                   isFilterPanelVisible = false
                   isOpacityPanelVisible = false
                 }}>
-                <Fa icon={faPalette} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={faPalette} size="1x" />
               </div>
 
               <div
@@ -223,51 +223,53 @@
                   isLegendPanelVisible = false
                   isOpacityPanelVisible = false
                 }}>
-                <Fa icon={faFilter} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={faFilter} size="1x" />
               </div>
 
               <div
                 class={isOpacityPanelVisible ? 'icon-selected' : 'icon'}
-                style="margin-right: 3px;"
+                style="margin-right: 6px;"
                 on:click={() => {
                   isOpacityPanelVisible = !isOpacityPanelVisible
                   isLegendPanelVisible = false
                   isFilterPanelVisible = false
                 }}>
-                <Fa icon={faDroplet} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={faDroplet} size="1x" />
               </div>
             </div>
 
+            <!-- GROUP : NON-EDIT ACTIONS -->
             {#if $layerList.length > 1}
               <div class="group">
-                <div title="Querying info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
-                  <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="lg" style="transform: scale(0.75);" />
+                <div title="Query Map Info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
+                  <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="1x" />
                 </div>
 
-                <Checkbox
-                  bind:checked={inDynamic}
-                  style="--mdc-checkbox-ripple-size: 0; top: -1.25px; left: -5px; transform: scale(0.75);" />
+                <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
+                  <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
+                </div>
               </div>
             {/if}
 
+            <!-- GROUP : LAYER CONTROL ACTIONS -->
             <div class="group" style="padding-right: 5px;">
               <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
-                <Fa icon={faChevronUp} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={faChevronUp} size="1x" />
               </div>
 
               <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
-                <Fa icon={faChevronDown} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={faChevronDown} size="1x" />
               </div>
 
               <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
-                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
               </div>
               <div
                 class="icon-selected"
                 style="margin-right: 0;"
                 title="Delete layer"
                 on:click={() => (confirmDeleteLayerDialogVisible = true)}>
-                <Fa icon={faTrash} size="lg" style="transform: scale(0.75);" />
+                <Fa icon={faTrash} size="1x" />
               </div>
             </div>
           </div>
