@@ -73,3 +73,14 @@ export enum ColorMapTypes {
   DIVERGING = 'diverging',
   QUALITATIVE = 'qualitative',
 }
+
+export enum DynamicLayerLegendTypes {
+  CONTINUOUS = 'continuous',
+  BUCKETED = 'bucketed',
+}
+
+export enum DynamicLayerResolutionTypes {
+  HIGHEST = 'highest',
+  LOWEST = 'lowest',
+  AVERAGE = 'average',
+}

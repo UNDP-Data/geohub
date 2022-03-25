@@ -591,22 +591,6 @@
     "@material/theme" "^13.0.0"
     tslib "^2.1.0"
 
-"@material/slider@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@material/slider/-/slider-13.0.0.tgz#21575e99bc9700b56d44bb5ee1b63b4a0545e412"
-  integrity sha512-PW+3X9MiOoWmXhirYo/Mk2UYW00Tnsihrx5YJQ4+IxwbrUI75/8yUsO8kVr7YC+Eqhldz8oXzhIXglQFtbpolQ==
-  dependencies:
-    "@material/animation" "^13.0.0"
-    "@material/base" "^13.0.0"
-    "@material/dom" "^13.0.0"
-    "@material/elevation" "^13.0.0"
-    "@material/feature-targeting" "^13.0.0"
-    "@material/ripple" "^13.0.0"
-    "@material/rtl" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@material/typography" "^13.0.0"
-    tslib "^2.1.0"
-
 "@material/tab-bar@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@material/tab-bar/-/tab-bar-13.0.0.tgz#e0ba597b507a5b62aac91837d96458dd250cee14"
@@ -1004,17 +988,6 @@
     "@smui/menu" "^6.0.0-beta.15"
     "@smui/menu-surface" "^6.0.0-beta.15"
     "@smui/notched-outline" "^6.0.0-beta.15"
-    "@smui/ripple" "^6.0.0-beta.15"
-    svelte2tsx "^0.4.14"
-
-"@smui/slider@^6.0.0-beta.15":
-  version "6.0.0-beta.15"
-  resolved "https://registry.npmjs.org/@smui/slider/-/slider-6.0.0-beta.15.tgz"
-  integrity sha512-poJMgTzY2jTNF/5xePxJm4J7yKCJ2HboogFX9KQVRcLYudAHjuMeOKdY18W4q/2cgjJpjxq2r5XcthrgXt45tg==
-  dependencies:
-    "@material/dom" "^13.0.0"
-    "@material/slider" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.15"
     "@smui/ripple" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
