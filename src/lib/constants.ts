@@ -67,3 +67,9 @@ export const LayerIconTypes = [
     color: 'dodgerblue',
   },
 ]
+
+export enum ColorMapTypes {
+  SEQUENTIAL = 'sequential',
+  DIVERGING = 'diverging',
+  QUALITATIVE = 'qualitative',
+}

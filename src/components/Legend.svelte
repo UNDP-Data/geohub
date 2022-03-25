@@ -5,10 +5,9 @@
 
   import { sequentialColormaps, divergingColorMaps, qualitativeColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition } from '../lib/types'
-  import { LayerInitialValues } from '../lib/constants'
+  import { LayerInitialValues, ColorMapTypes } from '../lib/constants'
   import { map, layerList } from '../stores/index'
   import chroma from 'chroma-js'
-  import Accordion from '@smui-extra/accordion/src/Accordion.svelte'
 
   export let lMin = 0
   export let lMax = 0
@@ -33,7 +32,6 @@
   let step = 1e-1
   let uniqueValueLegendExists = false
 
-  const colorMapTypes: Array<string> = ['sequential', 'diverging', 'qualitative']
   const colorMapMap = {
     sequential: sequentialColormaps,
     diverging: divergingColorMaps,
@@ -104,18 +102,14 @@
       $map.triggerRepaint()
     }
   }
-  const range = (start = 0, stop = 255, step = 255 / 5) => {
-    return Array(Math.ceil((stop - start) / step))
-      .fill(start)
-      .map((x, y) => x + y * step)
-  }
+
   const generateCmapBackground = () => {
     if (selectedColorMapType) {
       const cmaps = colorMapMap[selectedColorMapType]
       console.log(cmaps)
       cmaps.forEach((cmapstr: string) => {
         try {
-          if (selectedColorMapType == 'sequential') {
+          if (selectedColorMapType === ColorMapTypes.SEQUENTIAL) {
             colorBackgroundList[cmapstr] = chroma
               .scale(cmapstr)
               .mode('lrgb')
@@ -208,13 +202,18 @@
   {/if}
 
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-    <Set class="colormap-chips" chips={colorMapTypes} let:chip choice bind:selected={selectedColorMapType}>
+    <Set
+      class="colormap-chips"
+      chips={Object.values(ColorMapTypes)}
+      let:chip
+      choice
+      bind:selected={selectedColorMapType}>
       <Chip {chip}>
         <Text>{chip}</Text>
       </Chip>
     </Set>
     <div>
-      {#if selectedColorMapType === 'sequential'}
+      {#if selectedColorMapType === ColorMapTypes.SEQUENTIAL}
         <div class="colormaps-group">
           {#each sequentialColormaps as seqColorMap}
             <div
@@ -227,7 +226,7 @@
               style="background: linear-gradient(90deg, {colorBackgroundList[seqColorMap]})" />
           {/each}
         </div>
-      {:else if selectedColorMapType === 'diverging'}
+      {:else if selectedColorMapType === ColorMapTypes.DIVERGING}
         <div class="colormaps-group">
           {#each divergingColorMaps as divColorMap}
             <div
@@ -240,7 +239,7 @@
               style="background: linear-gradient(90deg, {colorBackgroundList[divColorMap]})" />
           {/each}
         </div>
-      {:else if selectedColorMapType === 'qualitative'}
+      {:else if selectedColorMapType === ColorMapTypes.QUALITATIVE}
         <div class="colormaps-group">
           {#each qualitativeColorMaps as qualitColorMap}
             <div
