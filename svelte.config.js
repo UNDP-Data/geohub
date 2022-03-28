@@ -21,8 +21,8 @@ const config = {
     }),
     vite: {
       ssr: {
-          noExternal: [/^@material(?:-extra)?\//],
-        }
+        noExternal: [/^@material(?:-extra)?\//],
+      },
      }
   },
 

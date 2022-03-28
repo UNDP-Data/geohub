@@ -143,7 +143,10 @@
           },
         }
 
-        layerList.set([{ name: layerName, definition: layerDefinition, type: 'vector' }, ...$layerList])
+        $layerList = [
+          { name: layerName, definition: layerDefinition, type: 'vector', queryInfoEnabled: true },
+          ...$layerList,
+        ]
         $map.addLayer(layerDefinition)
       } else {
         const layerName = path.split('/')[path.split('/').length - 1]
@@ -192,10 +195,18 @@
               visibility: 'visible',
             },
           }
-          layerList.set([
-            { name: layerName, definition: layerDefinition, type: 'raster', info: layerInfo },
+
+          $layerList = [
+            {
+              name: layerName,
+              definition: layerDefinition,
+              type: 'raster',
+              info: layerInfo,
+              queryInfoEnabled: true,
+              url: b64EncodedUrl,
+            },
             ...$layerList,
-          ])
+          ]
           let firstSymbolId = undefined
           for (const layer of $map.getStyle().layers) {
             if (layer.type === 'symbol') {

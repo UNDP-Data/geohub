@@ -24,21 +24,25 @@
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+  import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
+  import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
+  import { cloneDeep } from 'lodash'
 
   import Legend from './Legend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
 
-  export let layerConfig: Layer = LayerInitialValues
+  export let layer: Layer = LayerInitialValues
   export let disabled = true
 
-  let name: string, definition: LayerDefinition
-  ;({ name, definition } = layerConfig)
-  const layerId = definition.id
-  const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+  // let name: string, definition: LayerDefinition
+  // ;({ name, definition } = layerConfig)
+  const name = layer.name
+  const layerId = layer.definition.id
+  // const layer = $layerList.find((item) => item.definition.id === layerId)
   const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+  const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id == layerId)
 
   let confirmDeleteLayerDialogVisible = false
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
@@ -51,7 +55,6 @@
   let layerOpacity = 1
   let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
-  let queryEnabled = true
   let rangeSliderValues = [layerOpacity * 100]
   let scalingValueRange = ''
 
@@ -115,7 +118,7 @@
   const toggleVisibility = () => {
     isLayerVisible = !isLayerVisible
     if (!$map.getLayer(layerId)) {
-      $map.addLayer(definition)
+      $map.addLayer(layer.definition)
     }
     $map.setLayoutProperty(layerId, 'visibility', visibility)
   }
@@ -186,6 +189,16 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
+  let queryInfoEnabled = true
+
+  const setQueryInfoEnabled = () => {
+    const layerClone = cloneDeep(layer)
+    layerClone.queryInfoEnabled = !queryInfoEnabled
+    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
+    $layerList[layerIndex] = layerClone
+    queryInfoEnabled = !queryInfoEnabled
+  }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -241,10 +254,6 @@
             <!-- GROUP : NON-EDIT ACTIONS -->
             {#if $layerList.length > 1}
               <div class="group">
-                <div title="Query Map Info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
-                  <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="1x" />
-                </div>
-
                 <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
                   <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
                 </div>
@@ -253,6 +262,10 @@
 
             <!-- GROUP : LAYER CONTROL ACTIONS -->
             <div class="group" style="padding-right: 5px;">
+              <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
+                <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
+              </div>
+
               <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
                 <Fa icon={faChevronUp} size="1x" />
               </div>
@@ -285,7 +298,7 @@
                 </div>
               </div>
               <Legend
-                bind:layerConfig
+                layerConfig={layer}
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
                 bind:scalingValueStart

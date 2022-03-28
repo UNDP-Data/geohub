@@ -36,9 +36,9 @@
   <DynamicLayer bind:open />
 {/if}
 
-{#each $layerList as layerConfig (layerConfig.definition.id)}
-  {#if layerConfig.type === 'raster'}
-    <RasterLayer bind:layerConfig bind:disabled />
+{#each $layerList as layer (layer.definition.id)}
+  {#if layer.type === 'raster'}
+    <RasterLayer {layer} bind:disabled />
   {:else}
     <VectorLayer />
   {/if}
