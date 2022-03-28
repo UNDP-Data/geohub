@@ -40,7 +40,7 @@
   {#if layerConfig.type === 'raster'}
     <RasterLayer bind:layerConfig bind:disabled />
   {:else}
-    <VectorLayer />
+    <VectorLayer bind:layerConfig />
   {/if}
 {/each}
 

@@ -10,7 +10,6 @@
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
-  import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import Fa from 'svelte-fa'
   import RangeSlider from 'svelte-range-slider-pips'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
@@ -29,6 +28,8 @@
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
+  import LayerName from './LayerName.svelte'
+  let laterNameComp
 
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
@@ -49,7 +50,6 @@
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let layerOpacity = 1
-  let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
   let queryEnabled = true
   let rangeSliderValues = [layerOpacity * 100]
@@ -140,26 +140,6 @@
     confirmDeleteLayerDialogVisible = false
   }
 
-  const hierachyDown = (layerID: string) => {
-    const newIndex = mapLayerIndex - 1
-
-    if (newIndex >= 0) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
-
-  const hierachyUp = (layerID: string) => {
-    const newIndex = mapLayerIndex + 1
-
-    if (newIndex <= mapLayers.length - 1) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
-
   const updateParamsInURL = (params) => {
     debounce(() => {
       let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
@@ -193,16 +173,7 @@
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <div class="layer-header-name">
-            <div class="layer-name">
-              {name}
-            </div>
-            <div class="unread-count">
-              <div style="float: right;">
-                <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayers.length}</Tag>
-              </div>
-            </div>
-          </div>
+          <LayerName bind:this={laterNameComp} bind:layerConfig />
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
@@ -253,11 +224,17 @@
 
             <!-- GROUP : LAYER CONTROL ACTIONS -->
             <div class="group" style="padding-right: 5px;">
-              <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
+              <div
+                class="icon-selected"
+                title="Move layer up (in map)"
+                on:click={() => laterNameComp.hierachyUp(layerId)}>
                 <Fa icon={faChevronUp} size="1x" />
               </div>
 
-              <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
+              <div
+                class="icon-selected"
+                title="Move layer down (in map)"
+                on:click={() => laterNameComp.hierachyDown(layerId)}>
                 <Fa icon={faChevronDown} size="1x" />
               </div>
 
@@ -350,26 +327,6 @@
 
 <style lang="scss">
   .layer-header {
-    .layer-header-name {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      font-family: ProximaNova, sans-serif;
-      height: 20px;
-
-      .layer-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        font-size: 14px;
-      }
-
-      .unread-count {
-        padding-left: 7.5px;
-      }
-    }
-
     .layer-header-icons {
       padding-top: 10px;
       display: flex;
