@@ -116,7 +116,7 @@
             name: layer.name,
             lat,
             lng,
-            values: layerData.values,
+            values: layerData?.values ? layerData.values : undefined,
           },
         ],
         ...layerValuesDataTmp,
@@ -215,7 +215,9 @@
         {#each layerValuesData as layerValue}
           <tr>
             <td class="first-column">{layerValue.name}</td>
-            {#if isValuesRounded === true}
+            {#if layerValue.values === undefined}
+              <td style="text-align: right;"> N/A </td>
+            {:else if isValuesRounded === true}
               <td style="text-align: right;">
                 {layerValue.values.map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2)).join(', ')}
               </td>
