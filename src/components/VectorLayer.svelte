@@ -8,6 +8,7 @@
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
+  import LayerControlPanel from './LayerControlPanel.svelte'
 
   export let layerConfig: Layer = LayerInitialValues
 
@@ -16,14 +17,16 @@
   const layerId = definition.id
 
   let panelOpen: boolean = layerState[layerId] || false
+  let mapLayerIndex
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
   <Accordion>
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
-        <div>
-          <LayerName bind:layerConfig />
+        <LayerName {mapLayerIndex} bind:layerConfig />
+        <div class="layer-header-icons">
+          <LayerControlPanel bind:mapLayerIndex bind:layerConfig />
         </div>
       </div>
     </Panel>
@@ -31,4 +34,16 @@
 </div>
 
 <style lang="scss">
+  .layer-header {
+    .layer-header-icons {
+      padding-top: 10px;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
+    }
+  }
 </style>

@@ -1,13 +1,11 @@
 <script lang="ts" context="module">
   const dynamicLayerIds = {}
   const layerState = {}
-  const sectionState = {}
+  // const sectionState = {}
 </script>
 
 <script lang="ts">
   import 'bulma/css/bulma.css'
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
   import Fa from 'svelte-fa'
@@ -17,11 +15,6 @@
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
-  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
-  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
-  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
-  import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
   import Legend from './Legend.svelte'
@@ -29,22 +22,22 @@
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
-  let laterNameComp
+  import LayerControlPanel from './LayerControlPanel.svelte'
 
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
 
-  let name: string, definition: LayerDefinition
-  ;({ name, definition } = layerConfig)
+  let definition: LayerDefinition
+  ;({ definition } = layerConfig)
   const layerId = definition.id
   const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
   const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+  let mapLayerIndex
 
-  let confirmDeleteLayerDialogVisible = false
+  // let confirmDeleteLayerDialogVisible = false
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
-  let isLayerVisible = false
+  // let isLayerVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
@@ -66,7 +59,7 @@
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
-  $: visibility = isLayerVisible ? 'visible' : 'none'
+  // $: visibility = isLayerVisible ? 'visible' : 'none'
 
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
@@ -112,32 +105,24 @@
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
 
-  const toggleVisibility = () => {
-    isLayerVisible = !isLayerVisible
-    if (!$map.getLayer(layerId)) {
-      $map.addLayer(definition)
-    }
-    $map.setLayoutProperty(layerId, 'visibility', visibility)
-  }
+  // const removeLayer = () => {
+  //   hideAllPanels()
 
-  const removeLayer = () => {
-    hideAllPanels()
-
-    setTimeout(() => {
-      $map.removeLayer(layerId)
-      $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-      isDynamicLayer = false
-      delete layerState[layerId]
-      delete sectionState[layerId]
-      delete dynamicLayerIds[layerId]
-    }, 200)
-  }
+  //   setTimeout(() => {
+  //     $map.removeLayer(layerId)
+  //     $layerList = $layerList.filter((item) => item.definition.id !== layerId)
+  //     isDynamicLayer = false
+  //     delete layerState[layerId]
+  //     delete sectionState[layerId]
+  //     delete dynamicLayerIds[layerId]
+  //   }, 200)
+  // }
 
   const hideAllPanels = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
     isFilterPanelVisible = false
-    confirmDeleteLayerDialogVisible = false
+    // confirmDeleteLayerDialogVisible = false
   }
 
   const updateParamsInURL = (params) => {
@@ -173,7 +158,7 @@
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <LayerName bind:this={laterNameComp} bind:layerConfig />
+          <LayerName {mapLayerIndex} bind:layerConfig />
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
@@ -223,32 +208,7 @@
             {/if}
 
             <!-- GROUP : LAYER CONTROL ACTIONS -->
-            <div class="group" style="padding-right: 5px;">
-              <div
-                class="icon-selected"
-                title="Move layer up (in map)"
-                on:click={() => laterNameComp.hierachyUp(layerId)}>
-                <Fa icon={faChevronUp} size="1x" />
-              </div>
-
-              <div
-                class="icon-selected"
-                title="Move layer down (in map)"
-                on:click={() => laterNameComp.hierachyDown(layerId)}>
-                <Fa icon={faChevronDown} size="1x" />
-              </div>
-
-              <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
-                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
-              </div>
-              <div
-                class="icon-selected"
-                style="margin-right: 0;"
-                title="Delete layer"
-                on:click={() => (confirmDeleteLayerDialogVisible = true)}>
-                <Fa icon={faTrash} size="1x" />
-              </div>
-            </div>
+            <LayerControlPanel bind:mapLayerIndex bind:layerConfig />
           </div>
         </div>
 
@@ -308,22 +268,6 @@
       </div></Panel>
   </Accordion>
 </div>
-
-<Dialog bind:open={confirmDeleteLayerDialogVisible}>
-  <Title>Delete Layer</Title>
-  <ContentDialog>
-    Are you sure you want to delete this layer?<br /><br />
-    {name}
-  </ContentDialog>
-  <ActionsDialog>
-    <Button>
-      <LabelButton>No</LabelButton>
-    </Button>
-    <Button on:click={() => removeLayer()}>
-      <LabelButton>Yes</LabelButton>
-    </Button>
-  </ActionsDialog>
-</Dialog>
 
 <style lang="scss">
   .layer-header {

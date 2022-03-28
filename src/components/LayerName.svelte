@@ -9,30 +9,10 @@
   let name: string, definition: LayerDefinition
   ;({ name, definition } = layerConfig)
   const layerId = definition.id
+
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
-
-  let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
-
-  export const hierachyDown = (layerID: string) => {
-    const newIndex = mapLayerIndex - 1
-
-    if (newIndex >= 0) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
-
-  export const hierachyUp = (layerID: string) => {
-    const newIndex = mapLayerIndex + 1
-
-    if (newIndex <= mapLayers.length - 1) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
+  export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
 </script>
 
 <div class="layer-header">
@@ -49,6 +29,7 @@
     </div>
   </div>
 </div>
+<slot />
 
 <style lang="scss">
   .layer-header {
