@@ -17,7 +17,7 @@
   const layerId = layer.definition.id
 
   let panelOpen: boolean = layerState[layerId] || false
-  let mapLayerIndex = 0
+  let mapLayerIndex
   let isOpacityPanelVisible = false
 </script>
 
