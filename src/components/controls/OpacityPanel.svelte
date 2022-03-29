@@ -5,7 +5,7 @@
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
-  import { LayerInitialValues } from '../../lib/constants'
+  import { LayerInitialValues, LayerTypes } from '../../lib/constants'
 
   export let layer: Layer = LayerInitialValues
   export let isOpacityPanelVisible = false
@@ -19,7 +19,7 @@
   $: layerOpacity, setLayerOpacity()
 
   const setLayerOpacity = () => {
-    if (layer.definition.type === `raster`) {
+    if (layer.definition.type === LayerTypes.RASTER) {
       $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
     } else {
       switch (layer.definition.type) {

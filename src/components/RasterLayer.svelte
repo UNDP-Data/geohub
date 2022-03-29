@@ -253,13 +253,6 @@
       .action {
         margin-bottom: 25px;
 
-        .slider {
-          --range-handle-focus: #2196f3;
-          --range-range-inactive: #2196f3;
-          --range-handle-inactive: #2196f3;
-          --range-handle: #2196f3;
-        }
-
         .header {
           display: flex;
           justify-content: left;
