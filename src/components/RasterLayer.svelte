@@ -192,6 +192,13 @@
                 <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
               </div>
             </div>
+            {#if $layerList.length > 1}
+              <div class="group">
+                <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
+                  <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
+                </div>
+              </div>
+            {/if}
 
             <!-- GROUP : LAYER CONTROL ACTIONS -->
             <LayerControlPanel bind:mapLayerIndex {layer} />
