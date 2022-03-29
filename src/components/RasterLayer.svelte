@@ -1,16 +1,12 @@
 <script lang="ts" context="module">
   const dynamicLayerIds = {}
   const layerState = {}
-  const sectionState = {}
 </script>
 
 <script lang="ts">
   import 'bulma/css/bulma.css'
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
-  import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import Fa from 'svelte-fa'
   import RangeSlider from 'svelte-range-slider-pips'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
@@ -18,42 +14,29 @@
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
-  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
-  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
-  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
-  import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
-  import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
-  import { cloneDeep } from 'lodash'
 
   import Legend from './Legend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
-  import type { Layer, LayerDefinition } from '../lib/types'
+  import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
+  import LayerName from './LayerName.svelte'
+  import LayerControlPanel from './LayerControlPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
 
-  // let name: string, definition: LayerDefinition
-  // ;({ name, definition } = layerConfig)
-  const name = layer.name
   const layerId = layer.definition.id
-  // const layer = $layerList.find((item) => item.definition.id === layerId)
   const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id == layerId)
+  let mapLayerIndex = 0
 
-  let confirmDeleteLayerDialogVisible = false
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
-  let isLayerVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let layerOpacity = 1
-  let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let panelOpen: boolean = layerState[layerId] || false
   let rangeSliderValues = [layerOpacity * 100]
   let scalingValueRange = ''
@@ -69,7 +52,6 @@
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
-  $: visibility = isLayerVisible ? 'visible' : 'none'
 
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
@@ -115,52 +97,10 @@
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
 
-  const toggleVisibility = () => {
-    isLayerVisible = !isLayerVisible
-    if (!$map.getLayer(layerId)) {
-      $map.addLayer(layer.definition)
-    }
-    $map.setLayoutProperty(layerId, 'visibility', visibility)
-  }
-
-  const removeLayer = () => {
-    hideAllPanels()
-
-    setTimeout(() => {
-      $map.removeLayer(layerId)
-      $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-      isDynamicLayer = false
-      delete layerState[layerId]
-      delete sectionState[layerId]
-      delete dynamicLayerIds[layerId]
-    }, 200)
-  }
-
   const hideAllPanels = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
     isFilterPanelVisible = false
-    confirmDeleteLayerDialogVisible = false
-  }
-
-  const hierachyDown = (layerID: string) => {
-    const newIndex = mapLayerIndex - 1
-
-    if (newIndex >= 0) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
-
-  const hierachyUp = (layerID: string) => {
-    const newIndex = mapLayerIndex + 1
-
-    if (newIndex <= mapLayers.length - 1) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
   }
 
   const updateParamsInURL = (params) => {
@@ -189,16 +129,6 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  let queryInfoEnabled = true
-
-  const setQueryInfoEnabled = () => {
-    const layerClone = cloneDeep(layer)
-    layerClone.queryInfoEnabled = !queryInfoEnabled
-    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
-    $layerList[layerIndex] = layerClone
-    queryInfoEnabled = !queryInfoEnabled
-  }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -206,16 +136,7 @@
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <div class="layer-header-name">
-            <div class="layer-name">
-              {name}
-            </div>
-            <div class="unread-count">
-              <div style="float: right;">
-                <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayers.length}</Tag>
-              </div>
-            </div>
-          </div>
+          <LayerName {mapLayerIndex} {layer} />
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
@@ -261,30 +182,7 @@
             {/if}
 
             <!-- GROUP : LAYER CONTROL ACTIONS -->
-            <div class="group" style="padding-right: 5px;">
-              <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
-                <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
-              </div>
-
-              <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
-                <Fa icon={faChevronUp} size="1x" />
-              </div>
-
-              <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
-                <Fa icon={faChevronDown} size="1x" />
-              </div>
-
-              <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
-                <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
-              </div>
-              <div
-                class="icon-selected"
-                style="margin-right: 0;"
-                title="Delete layer"
-                on:click={() => (confirmDeleteLayerDialogVisible = true)}>
-                <Fa icon={faTrash} size="1x" />
-              </div>
-            </div>
+            <LayerControlPanel bind:mapLayerIndex {layer} />
           </div>
         </div>
 
@@ -345,44 +243,8 @@
   </Accordion>
 </div>
 
-<Dialog bind:open={confirmDeleteLayerDialogVisible}>
-  <Title>Delete Layer</Title>
-  <ContentDialog>
-    Are you sure you want to delete this layer?<br /><br />
-    {name}
-  </ContentDialog>
-  <ActionsDialog>
-    <Button>
-      <LabelButton>No</LabelButton>
-    </Button>
-    <Button on:click={() => removeLayer()}>
-      <LabelButton>Yes</LabelButton>
-    </Button>
-  </ActionsDialog>
-</Dialog>
-
 <style lang="scss">
   .layer-header {
-    .layer-header-name {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      font-family: ProximaNova, sans-serif;
-      height: 20px;
-
-      .layer-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        font-size: 14px;
-      }
-
-      .unread-count {
-        padding-left: 7.5px;
-      }
-    }
-
     .layer-header-icons {
       padding-top: 10px;
       display: flex;

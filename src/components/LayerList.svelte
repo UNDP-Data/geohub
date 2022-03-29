@@ -7,7 +7,7 @@
   import VectorLayer from './VectorLayer.svelte'
   import { layerList, dynamicLayers } from '../stores'
   import DynamicLayer from './DynamicLayer.svelte'
-  import { TabNames } from '../lib/constants'
+  import { LayerTypes, TabNames } from '../lib/constants'
 
   let disabled = true
   let open = false
@@ -37,10 +37,10 @@
 {/if}
 
 {#each $layerList as layer (layer.definition.id)}
-  {#if layer.type === 'raster'}
+  {#if layer.type === LayerTypes.RASTER}
     <RasterLayer {layer} bind:disabled />
-  {:else}
-    <VectorLayer />
+  {:else if layer.type === LayerTypes.VECTOR}
+    <VectorLayer {layer} />
   {/if}
 {/each}
 
