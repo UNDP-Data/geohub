@@ -19,7 +19,24 @@
   $: layerOpacity, setLayerOpacity()
 
   const setLayerOpacity = () => {
-    $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
+    if (layer.definition.type === `raster`) {
+      $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
+    } else {
+      switch (layer.definition.type) {
+        case 'symbol':
+          $map.setPaintProperty(layerId, 'icon-opacity', layerOpacity)
+          $map.setPaintProperty(layerId, 'text-opacity', layerOpacity)
+          break
+        case 'line':
+          $map.setPaintProperty(layerId, 'line-opacity', layerOpacity)
+          break
+        case 'fill':
+          $map.setPaintProperty(layerId, 'fill-opacity', layerOpacity)
+          break
+        default:
+          break
+      }
+    }
   }
 </script>
 
