@@ -36,7 +36,7 @@
 
   const setLayerExpression = () => {
     if (clickedLayer) {
-      const inputLayer = $layerList.filter((layer) => layer.definition.id === clickedLayer).pop()
+      const inputLayer = $layerList.find((layer) => layer.definition.id === clickedLayer)
       layerMinimum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
       layerMaximum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
 
@@ -56,7 +56,7 @@
       let combinedurl = ''
       let bounds = []
       $dynamicLayers.forEach((layerId) => {
-        const inLayer = $layerList.filter((item) => item.definition.id === layerId).pop()
+        const inLayer = $layerList.find((item) => item.definition.id === layerId)
 
         const layerSource = $map.getSource(inLayer.definition.source)
         const tileUrl = new URL(layerSource.tiles[0])
