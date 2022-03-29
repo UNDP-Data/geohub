@@ -106,9 +106,20 @@
     let layerValuesDataTmp = []
 
     for (const layer of layersWithQueryInfo) {
-      const layerData = await fetch(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`).then((response) =>
-        response.json(),
-      )
+      const layerData = await fetch(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`).then((res) => {
+        return res.json()
+      })
+
+      // check for no data value
+      let layerHasNoDataValue = false
+
+      if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true
+
+      if (layerHasNoDataValue === false) {
+        for (const value of layerData.values) {
+          if (value === layer.info.nodata_value) layerHasNoDataValue = true
+        }
+      }
 
       layerValuesDataTmp = [
         ...[
@@ -116,7 +127,7 @@
             name: layer.name,
             lat,
             lng,
-            values: layerData?.values ? layerData.values : undefined,
+            values: layerHasNoDataValue ? null : layerData.values,
           },
         ],
         ...layerValuesDataTmp,
@@ -166,7 +177,7 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
 </svelte:head>
 
-<div bind:this={container}>
+<div bind:this={container} class="map">
   {#if map}
     <slot />
   {/if}
@@ -198,7 +209,7 @@
         <tbody>
           <tr>
             <td class="first-column">{mapMouseEvent.lngLat.lat}</td>
-            <td>{mapMouseEvent.lngLat.lng}</td>
+            <td class="second-column">{mapMouseEvent.lngLat.lng}</td>
           </tr>
         </tbody>
       </table>
@@ -215,14 +226,15 @@
         {#each layerValuesData as layerValue}
           <tr>
             <td class="first-column">{layerValue.name}</td>
-            {#if layerValue.values === undefined}
-              <td style="text-align: right;"> N/A </td>
+
+            {#if layerValue.values === null}
+              <td class="second-column"> N/A </td>
             {:else if isValuesRounded === true}
-              <td style="text-align: right;">
+              <td class="second-column">
                 {layerValue.values.map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2)).join(', ')}
               </td>
             {:else}
-              <td style="text-align: right;">
+              <td class="second-column">
                 {layerValue.values.join(', ')}
               </td>
             {/if}
@@ -251,7 +263,7 @@
 </div>
 
 <style lang="scss">
-  :global(.maplibregl-map) {
+  .map {
     height: 100%;
     width: 100%;
   }
@@ -267,7 +279,6 @@
     padding: 10px;
     border-radius: 10px;
     display: none;
-    width: 350px;
 
     .header {
       display: flex;
@@ -298,6 +309,13 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .second-column {
+        width: 125px;
+        text-align: right;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     .actions {
@@ -323,6 +341,7 @@
           margin-right: 5px;
           font-size: 11px;
           font-weight: normal;
+          text-align: right;
         }
       }
     }
