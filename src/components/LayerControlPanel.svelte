@@ -1,46 +1,23 @@
 <script lang="ts">
   import Fa from 'svelte-fa'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
-  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
   import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
   import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
   import { cloneDeep } from 'lodash'
 
-  import { layerList, map } from '../stores'
-  import type { Layer, LayerDefinition } from '../lib/types'
+  import { layerList } from '../stores'
+  import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import DeleteButton from './controls/DeleteButton.svelte'
   import VisibilityButton from './controls/VisibilityButton.svelte'
+  import LayerOrderButtons from './controls/LayerOrderButtons.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
-  const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
 
-  export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
+  export let mapLayerIndex
 
   let queryInfoEnabled = true
-
-  const hierachyDown = (layerID: string) => {
-    const newIndex = mapLayerIndex - 1
-
-    if (newIndex >= 0) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
-
-  const hierachyUp = (layerID: string) => {
-    const newIndex = mapLayerIndex + 1
-
-    if (newIndex <= mapLayers.length - 1) {
-      $map.moveLayer(layerID, mapLayers[newIndex].id)
-      mapLayerIndex = newIndex
-      $map.triggerRepaint()
-    }
-  }
 
   const setQueryInfoEnabled = () => {
     const layerClone = cloneDeep(layer)
@@ -56,15 +33,7 @@
     <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
       <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
     </div>
-
-    <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
-      <Fa icon={faChevronUp} size="1x" />
-    </div>
-
-    <div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
-      <Fa icon={faChevronDown} size="1x" />
-    </div>
-
+    <LayerOrderButtons {layer} bind:mapLayerIndex />
     <VisibilityButton {layer} />
     <DeleteButton {layer} />
   </div>
