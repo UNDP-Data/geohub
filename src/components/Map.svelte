@@ -14,30 +14,90 @@
   import { indicatorProgress, map } from '../stores'
   import { layerList } from '../stores'
   import type { Layer } from '../lib/types'
+  import type { IControl } from 'maplibre-gl'
 
   const iconSize = 'lg'
 
   let container: HTMLDivElement
+  let layerValuesData = []
+  let isDataContainerVisible = false
+  let isValuesRounded = true
   let mapMouseEvent: MapMouseEvent
   let marker: Marker
-  let layerValuesData = []
-  let dataContainerStyle = 'none'
-  let isValuesRounded = true
 
-  // $map.addControl(exportControl, 'top-right')
-  // $map.removeControl(exportControl)
+  class MapQueryInfoControl implements IControl {
+    private container: HTMLElement
+    private queryInfoContainer: HTMLElement
+    private button: HTMLButtonElement
+    private map?: Map
 
-  // if map has been clicked, set values array when layer list updated
+    onAdd(map: Map) {
+      this.map = map
+      this.container = document.createElement('div')
+      this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
+      this.queryInfoContainer = document.createElement('div')
+      this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
+      this.button = document.createElement('button')
+      this.button.classList.add('mapboxgl-ctrl-icon', 'mapboxgl-query-info-control')
+      this.button.type = 'button'
+      this.button.addEventListener('click', () => {
+        if (isDataContainerVisible === false) {
+          map.getCanvas().style.cursor = 'crosshair'
+          isDataContainerVisible = true
+        } else {
+          resetMapQueryInfo()
+        }
+      })
+
+      this.container.appendChild(this.button)
+      this.container.appendChild(this.queryInfoContainer)
+      return this.container
+    }
+
+    onRemove() {
+      if (!this.container || !this.container.parentNode || !this.map || !this.button) {
+        return
+      }
+      this.container.parentNode.removeChild(this.container)
+      this.map = undefined
+    }
+  }
+
+  let mapQueryInfoControl: MapQueryInfoControl = null
+
+  // layer change
   $: {
-    if (mapMouseEvent?.lngLat) {
-      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+    const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+
+    if (layersWithQueryInfo.length > 0) {
+      if ($map.hasControl(mapQueryInfoControl) === false) {
+        $map.addControl(mapQueryInfoControl, 'top-right')
+      }
+    } else {
+      mapMouseEvent = null
+      if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
+      resetMapQueryInfo()
+    }
+  }
+
+  // mouse click on map
+  $: {
+    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
+      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
+
       if (layersWithQueryInfo.length > 0) {
         removeMapLayerValues(false)
         addMapLayerValues(layersWithQueryInfo)
-      } else {
-        removeMapLayerValues()
       }
     }
+  }
+
+  const resetMapQueryInfo = () => {
+    if (marker) marker.remove()
+    mapMouseEvent = null
+    isDataContainerVisible = false
+    layerValuesData = []
+    if ($map) $map.getCanvas().style.cursor = 'grab'
   }
 
   onMount(async () => {
@@ -47,10 +107,6 @@
       center: [0, 0],
       zoom: 3,
       hash: true,
-    })
-
-    newMap.on('click', async function (e: MapMouseEvent) {
-      mapMouseEvent = e
     })
 
     newMap.addControl(new maplibregl.NavigationControl({}), 'top-right')
@@ -73,6 +129,11 @@
       'top-right',
     )
 
+    mapQueryInfoControl = new MapQueryInfoControl()
+    newMap.on('click', async function (e: MapMouseEvent) {
+      mapMouseEvent = e
+    })
+
     const indicatorProgressEvents = {
       true: ['zoomstart', 'touchmove', 'mousedown'],
       false: ['zoomend', 'touchend', 'mouseup'],
@@ -90,13 +151,14 @@
   })
 
   const removeMapLayerValues = (hideCoordinates = true) => {
-    if (marker) {
-      if (hideCoordinates) dataContainerStyle = 'none'
-      marker.remove()
-    }
+    $map.getCanvas().style.cursor = ''
+
+    if (hideCoordinates) isDataContainerVisible = false
+    if (marker) marker.remove()
   }
 
   const addMapLayerValues = async (layersWithQueryInfo: Layer[]) => {
+    $map.getCanvas().style.cursor = 'crosshair'
     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
 
     // get layer value(s) at lat/lng of mouse event
@@ -135,7 +197,7 @@
     }
 
     layerValuesData = layerValuesDataTmp
-    dataContainerStyle = 'block'
+    isDataContainerVisible = true
   }
 
   const downloadCsv = () => {
@@ -183,14 +245,17 @@
   {/if}
 </div>
 
-<div class="data-container" style={`display: ${dataContainerStyle};`} use:draggable={{ handle: '.handle' }}>
+<div
+  class="data-container"
+  style={`display: ${isDataContainerVisible ? 'block' : 'none'};`}
+  use:draggable={{ handle: '.handle' }}>
   <div class="header">
     <div class="handle" alt="Move" title="Move">
       <span class="icon is-small pointer">
         <Fa icon={faUpDownLeftRight} size={iconSize} />
       </span>
     </div>
-    <div class="close" alt="Close" title="Close" on:click={() => (dataContainerStyle = 'none')}>
+    <div class="close" alt="Close" title="Close" on:click={() => resetMapQueryInfo()}>
       <span class="icon is-small pointer">
         <Fa icon={faXmark} size={iconSize} />
       </span>
@@ -198,22 +263,20 @@
   </div>
 
   <div class="content">
-    {#if mapMouseEvent?.lngLat}
-      <table class="table is-fullwidth coordinates">
-        <thead>
-          <tr>
-            <th>Latitude</th>
-            <th>Longitude</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="first-column">{mapMouseEvent.lngLat.lat}</td>
-            <td class="second-column">{mapMouseEvent.lngLat.lng}</td>
-          </tr>
-        </tbody>
-      </table>
-    {/if}
+    <table class="table is-fullwidth coordinates">
+      <thead>
+        <tr>
+          <th>Latitude</th>
+          <th>Longitude</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="first-column">{mapMouseEvent?.lngLat.lat ? mapMouseEvent?.lngLat.lat : 'N/A'}</td>
+          <td class="second-column">{mapMouseEvent?.lngLat.lng ? mapMouseEvent?.lngLat.lng : 'N/A'}</td>
+        </tr>
+      </tbody>
+    </table>
 
     <table class="table is-fullwidth is-striped data-values">
       <thead>
@@ -223,43 +286,54 @@
         </tr>
       </thead>
       <tbody>
-        {#each layerValuesData as layerValue}
-          <tr>
-            <td class="first-column">{layerValue.name}</td>
+        {#if layerValuesData.length > 0}
+          {#each layerValuesData as layerValue}
+            <tr>
+              <td class="first-column">{layerValue.name}</td>
 
-            {#if layerValue.values === null}
-              <td class="second-column"> N/A </td>
-            {:else if isValuesRounded === true}
-              <td class="second-column">
-                {layerValue.values.map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2)).join(', ')}
-              </td>
-            {:else}
-              <td class="second-column">
-                {layerValue.values.join(', ')}
-              </td>
-            {/if}
+              {#if layerValue.values === null}
+                <td class="second-column"> N/A </td>
+              {:else if isValuesRounded === true}
+                <td class="second-column">
+                  {layerValue.values
+                    .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
+                    .join(', ')}
+                </td>
+              {:else}
+                <td class="second-column">
+                  {layerValue.values.join(', ')}
+                </td>
+              {/if}
+            </tr>
+          {/each}
+        {:else}
+          <tr>
+            <td class="first-column">N/A</td>
+            <td class="second-column">N/A</td>
           </tr>
-        {/each}
+        {/if}
       </tbody>
     </table>
   </div>
 
-  <div class="actions">
-    <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
-      <div class="icon is-small">
-        <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
+  {#if layerValuesData.length > 0}
+    <div class="actions">
+      <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
+        <div class="icon is-small">
+          <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
+        </div>
+        <div>Round values</div>
       </div>
-      <div>Round values</div>
+      <div class="download">
+        <button class="button is-small download" on:click={() => downloadCsv()} alt="Download CSV" title="Download CSV">
+          <span class="icon is-small pointer">
+            <Fa icon={faDownload} size={iconSize} />
+          </span>
+          <span class="label">CSV</span>
+        </button>
+      </div>
     </div>
-    <div class="download">
-      <button class="button is-small download" on:click={() => downloadCsv()} alt="Download CSV" title="Download CSV">
-        <span class="icon is-small pointer">
-          <Fa icon={faDownload} size={iconSize} />
-        </span>
-        <span class="label">CSV</span>
-      </button>
-    </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -345,5 +419,12 @@
         }
       }
     }
+  }
+
+  :global(.mapboxgl-query-info-control) {
+    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 70%;
   }
 </style>
