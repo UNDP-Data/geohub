@@ -18,11 +18,10 @@
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
 
-  export let layerConfig: Layer = LayerInitialValues
+  export let layer: Layer = LayerInitialValues
 
-  let name: string, definition: LayerDefinition
-  ;({ name, definition } = layerConfig)
-  const layerId = definition.id
+  const name = layer.name
+  const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
@@ -54,7 +53,7 @@
   const toggleVisibility = () => {
     isLayerVisible = !isLayerVisible
     if (!$map.getLayer(layerId)) {
-      $map.addLayer(definition)
+      $map.addLayer(layer.definition)
     }
     $map.setLayoutProperty(layerId, 'visibility', visibility)
   }

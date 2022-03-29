@@ -1,7 +1,6 @@
 <script lang="ts" context="module">
   const dynamicLayerIds = {}
   const layerState = {}
-  // const sectionState = {}
 </script>
 
 <script lang="ts">
@@ -16,6 +15,9 @@
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+  import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
+  import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
+  import { cloneDeep } from 'lodash'
 
   import Legend from './Legend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
@@ -24,27 +26,22 @@
   import LayerName from './LayerName.svelte'
   import LayerControlPanel from './LayerControlPanel.svelte'
 
-  export let layerConfig: Layer = LayerInitialValues
+  export let layer: Layer = LayerInitialValues
   export let disabled = true
 
-  let definition: LayerDefinition
-  ;({ definition } = layerConfig)
-  const layerId = definition.id
-  const layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+  const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
   let mapLayerIndex
+  let mapLayerLength = mapLayers.length
 
-  // let confirmDeleteLayerDialogVisible = false
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
-  // let isLayerVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let layerOpacity = 1
   let panelOpen: boolean = layerState[layerId] || false
-  let queryEnabled = true
   let rangeSliderValues = [layerOpacity * 100]
   let scalingValueRange = ''
 
@@ -59,7 +56,6 @@
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
-  // $: visibility = isLayerVisible ? 'visible' : 'none'
 
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
@@ -105,24 +101,10 @@
     $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
   }
 
-  // const removeLayer = () => {
-  //   hideAllPanels()
-
-  //   setTimeout(() => {
-  //     $map.removeLayer(layerId)
-  //     $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-  //     isDynamicLayer = false
-  //     delete layerState[layerId]
-  //     delete sectionState[layerId]
-  //     delete dynamicLayerIds[layerId]
-  //   }, 200)
-  // }
-
   const hideAllPanels = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
     isFilterPanelVisible = false
-    // confirmDeleteLayerDialogVisible = false
   }
 
   const updateParamsInURL = (params) => {
@@ -151,6 +133,16 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
+  let queryInfoEnabled = true
+
+  const setQueryInfoEnabled = () => {
+    const layerClone = cloneDeep(layer)
+    layerClone.queryInfoEnabled = !queryInfoEnabled
+    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
+    $layerList[layerIndex] = layerClone
+    queryInfoEnabled = !queryInfoEnabled
+  }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -158,7 +150,7 @@
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <LayerName {mapLayerIndex} bind:layerConfig />
+          <LayerName {mapLayerIndex} {mapLayerLength} {layer} />
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
@@ -197,18 +189,20 @@
             <!-- GROUP : NON-EDIT ACTIONS -->
             {#if $layerList.length > 1}
               <div class="group">
-                <div title="Query Map Info" class="icon-selected" on:click={() => (queryEnabled = !queryEnabled)}>
-                  <Fa icon={queryEnabled ? faSquareCheck : faSquare} size="1x" />
-                </div>
-
                 <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
                   <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
                 </div>
               </div>
             {/if}
 
+            <div class="group" style="padding-right: 5px;">
+              <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
+                <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
+              </div>
+            </div>
+
             <!-- GROUP : LAYER CONTROL ACTIONS -->
-            <LayerControlPanel bind:mapLayerIndex bind:layerConfig />
+            <LayerControlPanel bind:mapLayerIndex {layer} />
           </div>
         </div>
 
@@ -222,7 +216,7 @@
                 </div>
               </div>
               <Legend
-                bind:layerConfig
+                layerConfig={layer}
                 bind:lMax={layerBandMetadataMax}
                 bind:lMin={layerBandMetadataMin}
                 bind:scalingValueStart

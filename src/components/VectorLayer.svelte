@@ -5,28 +5,29 @@
 <script lang="ts">
   import Accordion, { Panel } from '@smui-extra/accordion'
 
-  import type { Layer, LayerDefinition } from '../lib/types'
+  import { map } from '../stores'
+  import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
   import LayerControlPanel from './LayerControlPanel.svelte'
 
-  export let layerConfig: Layer = LayerInitialValues
+  export let layer: Layer = LayerInitialValues
 
-  let definition: LayerDefinition
-  ;({ definition } = layerConfig)
-  const layerId = definition.id
+  const layerId = layer.definition.id
 
   let panelOpen: boolean = layerState[layerId] || false
+  const mapLayers = $map.getStyle().layers
   let mapLayerIndex
+  let mapLayerLength = mapLayers.length
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
   <Accordion>
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
-        <LayerName {mapLayerIndex} bind:layerConfig />
+        <LayerName {mapLayerIndex} {mapLayerLength} {layer} />
         <div class="layer-header-icons">
-          <LayerControlPanel bind:mapLayerIndex bind:layerConfig />
+          <LayerControlPanel bind:mapLayerIndex {layer} />
         </div>
       </div>
     </Panel>

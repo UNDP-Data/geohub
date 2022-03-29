@@ -4,15 +4,15 @@
   import { map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-  export let layerConfig: Layer = LayerInitialValues
+  export let layer: Layer = LayerInitialValues
 
-  let name: string, definition: LayerDefinition
-  ;({ name, definition } = layerConfig)
-  const layerId = definition.id
+  const name = layer.name
+  const layerId = layer.definition.id
 
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
+  export let mapLayerLength = mapLayers.length
 </script>
 
 <div class="layer-header">
@@ -23,7 +23,7 @@
       </div>
       <div class="unread-count">
         <div style="float: right;">
-          <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayers.length}</Tag>
+          <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayerLength}</Tag>
         </div>
       </div>
     </div>
