@@ -28,10 +28,5 @@
 </div>
 
 <style lang="scss">
-  .icon-selected {
-    opacity: 1;
-    display: inline;
-    cursor: pointer;
-    margin-right: 10px;
-  }
+  @import '../styles/button-icons-selected.scss';
 </style>
