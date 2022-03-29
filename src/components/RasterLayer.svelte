@@ -187,14 +187,6 @@
             </div>
 
             <!-- GROUP : NON-EDIT ACTIONS -->
-            {#if $layerList.length > 1}
-              <div class="group">
-                <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
-                  <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
-                </div>
-              </div>
-            {/if}
-
             <div class="group" style="padding-right: 5px;">
               <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
                 <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
