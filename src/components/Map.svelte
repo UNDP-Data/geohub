@@ -14,6 +14,7 @@
   import { indicatorProgress, map } from '../stores'
   import { layerList } from '../stores'
   import type { Layer } from '../lib/types'
+  import type { IControl } from 'maplibre-gl'
 
   const iconSize = 'lg'
 
@@ -37,6 +38,26 @@
       } else {
         removeMapLayerValues()
       }
+    }
+  }
+
+  class MapQueryInfoControl implements IControl {
+    private container:HTMLElement
+    private map:Map
+
+    onAdd(map: Map) {
+      this.map = map
+      this.container = document.createElement('div')
+      this.container.className = 'mapboxgl-ctrl'
+      this.container.textContent = 'Hello, world'
+      this.map.getCanvas().style.cursor = 'crosshair'
+
+      return this.container
+    }
+
+    onRemove() {
+      this.container.parentNode.removeChild(this.container)
+      this.map = undefined
     }
   }
 
@@ -72,6 +93,8 @@
       exportControl,
       'top-right',
     )
+
+    newMap.addControl(new MapQueryInfoControl(), 'top-right')
 
     const indicatorProgressEvents = {
       true: ['zoomstart', 'touchmove', 'mousedown'],
