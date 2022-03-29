@@ -21,7 +21,7 @@
 
   import Legend from './Legend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
-  import type { Layer, LayerDefinition } from '../lib/types'
+  import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
   import LayerControlPanel from './LayerControlPanel.svelte'
