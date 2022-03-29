@@ -2,8 +2,6 @@
   import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
-  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
-  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
   import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
   import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
   import { cloneDeep } from 'lodash'
@@ -12,6 +10,7 @@
   import type { Layer, LayerDefinition } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import DeleteButton from './controls/DeleteButton.svelte'
+  import VisibilityButton from './controls/VisibilityButton.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -22,9 +21,6 @@
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
 
   let queryInfoEnabled = true
-  let isLayerVisible = false
-
-  $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const hierachyDown = (layerID: string) => {
     const newIndex = mapLayerIndex - 1
@@ -44,14 +40,6 @@
       mapLayerIndex = newIndex
       $map.triggerRepaint()
     }
-  }
-
-  const toggleVisibility = () => {
-    isLayerVisible = !isLayerVisible
-    if (!$map.getLayer(layerId)) {
-      $map.addLayer(layer.definition)
-    }
-    $map.setLayoutProperty(layerId, 'visibility', visibility)
   }
 
   const setQueryInfoEnabled = () => {
@@ -77,9 +65,7 @@
       <Fa icon={faChevronDown} size="1x" />
     </div>
 
-    <div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
-      <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
-    </div>
+    <VisibilityButton {layer} />
     <DeleteButton {layer} />
   </div>
 </div>
