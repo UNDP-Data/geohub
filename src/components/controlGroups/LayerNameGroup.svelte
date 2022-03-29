@@ -1,9 +1,9 @@
 <script lang="ts">
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
 
-  import { map } from '../stores'
-  import type { Layer, LayerDefinition } from '../lib/types'
-  import { LayerInitialValues } from '../lib/constants'
+  import { map } from '../../stores'
+  import type { Layer, LayerDefinition } from '../../lib/types'
+  import { LayerInitialValues } from '../../lib/constants'
   export let layer: Layer = LayerInitialValues
 
   const name = layer.name

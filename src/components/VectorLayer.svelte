@@ -7,8 +7,8 @@
 
   import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-  import LayerName from './LayerName.svelte'
-  import LayerControlPanel from './LayerControlPanel.svelte'
+  import LayerNameGroup from './controlGroups/LayerNameGroup.svelte'
+  import LayerControlGroup from './controlGroups/LayerControlGroup.svelte'
   import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
 
@@ -17,7 +17,7 @@
   const layerId = layer.definition.id
 
   let panelOpen: boolean = layerState[layerId] || false
-  let mapLayerIndex = 0
+  let mapLayerIndex
   let isOpacityPanelVisible = false
 </script>
 
@@ -26,14 +26,14 @@
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <LayerName {mapLayerIndex} {layer} />
+          <LayerNameGroup {mapLayerIndex} {layer} />
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
               <OpacityButton bind:isOpacityPanelVisible />
             </div>
 
-            <LayerControlPanel bind:mapLayerIndex {layer} />
+            <LayerControlGroup bind:mapLayerIndex {layer} />
           </div>
         </div>
         <div class="layer-actions">
