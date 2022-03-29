@@ -7,8 +7,8 @@
 
   import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
-  import LayerNameGroup from './controlGroups/LayerNameGroup.svelte'
-  import LayerControlGroup from './controlGroups/LayerControlGroup.svelte'
+  import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
+  import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
   import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
 
