@@ -63,14 +63,16 @@
     }
   }
 
-  let mapQueryInfoControl: MapQueryInfoControl
+  let mapQueryInfoControl: MapQueryInfoControl = null
 
   // layer change
   $: {
     const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
 
     if (layersWithQueryInfo.length > 0) {
-      $map.addControl(mapQueryInfoControl, 'top-right')
+      if ($map.hasControl(mapQueryInfoControl) === false) {
+        $map.addControl(mapQueryInfoControl, 'top-right')
+      }
     } else {
       mapMouseEvent = null
       if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
@@ -261,22 +263,20 @@
   </div>
 
   <div class="content">
-    {#if mapMouseEvent?.lngLat}
-      <table class="table is-fullwidth coordinates">
-        <thead>
-          <tr>
-            <th>Latitude</th>
-            <th>Longitude</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="first-column">{mapMouseEvent.lngLat.lat}</td>
-            <td class="second-column">{mapMouseEvent.lngLat.lng}</td>
-          </tr>
-        </tbody>
-      </table>
-    {/if}
+    <table class="table is-fullwidth coordinates">
+      <thead>
+        <tr>
+          <th>Latitude</th>
+          <th>Longitude</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="first-column">{mapMouseEvent?.lngLat.lat ? mapMouseEvent?.lngLat.lat : 'N/A'}</td>
+          <td class="second-column">{mapMouseEvent?.lngLat.lng ? mapMouseEvent?.lngLat.lng : 'N/A'}</td>
+        </tr>
+      </tbody>
+    </table>
 
     <table class="table is-fullwidth is-striped data-values">
       <thead>
@@ -286,43 +286,54 @@
         </tr>
       </thead>
       <tbody>
-        {#each layerValuesData as layerValue}
-          <tr>
-            <td class="first-column">{layerValue.name}</td>
+        {#if layerValuesData.length > 0}
+          {#each layerValuesData as layerValue}
+            <tr>
+              <td class="first-column">{layerValue.name}</td>
 
-            {#if layerValue.values === null}
-              <td class="second-column"> N/A </td>
-            {:else if isValuesRounded === true}
-              <td class="second-column">
-                {layerValue.values.map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2)).join(', ')}
-              </td>
-            {:else}
-              <td class="second-column">
-                {layerValue.values.join(', ')}
-              </td>
-            {/if}
+              {#if layerValue.values === null}
+                <td class="second-column"> N/A </td>
+              {:else if isValuesRounded === true}
+                <td class="second-column">
+                  {layerValue.values
+                    .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
+                    .join(', ')}
+                </td>
+              {:else}
+                <td class="second-column">
+                  {layerValue.values.join(', ')}
+                </td>
+              {/if}
+            </tr>
+          {/each}
+        {:else}
+          <tr>
+            <td class="first-column">N/A</td>
+            <td class="second-column">N/A</td>
           </tr>
-        {/each}
+        {/if}
       </tbody>
     </table>
   </div>
 
-  <div class="actions">
-    <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
-      <div class="icon is-small">
-        <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
+  {#if layerValuesData.length > 0}
+    <div class="actions">
+      <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
+        <div class="icon is-small">
+          <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
+        </div>
+        <div>Round values</div>
       </div>
-      <div>Round values</div>
+      <div class="download">
+        <button class="button is-small download" on:click={() => downloadCsv()} alt="Download CSV" title="Download CSV">
+          <span class="icon is-small pointer">
+            <Fa icon={faDownload} size={iconSize} />
+          </span>
+          <span class="label">CSV</span>
+        </button>
+      </div>
     </div>
-    <div class="download">
-      <button class="button is-small download" on:click={() => downloadCsv()} alt="Download CSV" title="Download CSV">
-        <span class="icon is-small pointer">
-          <Fa icon={faDownload} size={iconSize} />
-        </span>
-        <span class="label">CSV</span>
-      </button>
-    </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="scss">
