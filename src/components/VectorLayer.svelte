@@ -5,7 +5,6 @@
 <script lang="ts">
   import Accordion, { Panel } from '@smui-extra/accordion'
 
-  import { map } from '../stores'
   import type { Layer } from '../lib/types'
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
@@ -16,8 +15,7 @@
   const layerId = layer.definition.id
 
   let panelOpen: boolean = layerState[layerId] || false
-  let mapLayerIndex
-  let mapLayerLength
+  let mapLayerIndex = 0
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">

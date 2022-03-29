@@ -11,7 +11,7 @@
 
   import { dynamicLayers, layerList, map } from '../stores'
   import Calculator from './raster/Calculator.svelte'
-  import { DynamicLayerLegendTypes, DynamicLayerResolutionTypes } from '../lib/constants'
+  import { DynamicLayerLegendTypes, DynamicLayerResolutionTypes, LayerTypes } from '../lib/constants'
 
   export let open = false
 
@@ -73,7 +73,7 @@
       combinedurl += `&unscale=false&resampling=nearest&rescale=0,1&colormap_name=viridis&return_mask=true`
 
       const layerSource = {
-        type: 'raster',
+        type: LayerTypes.RASTER,
         tiles: [combinedurl],
         tileSize: 256,
         bounds: bounds,
@@ -88,7 +88,7 @@
 
       const definition = {
         id: newLayerId || 'test',
-        type: 'raster',
+        type: LayerTypes.RASTER,
         source: uuid,
         minzoom: 0,
         maxzoom: 22,
@@ -97,7 +97,10 @@
         },
       }
 
-      layerList.set([{ name: newLayerName || 'test', definition: definition, type: 'raster', info: {} }, ...$layerList])
+      layerList.set([
+        { name: newLayerName || 'test', definition: definition, type: LayerTypes.RASTER, info: {} },
+        ...$layerList,
+      ])
       let firstSymbolId = undefined
       for (const layer of $map.getStyle().layers) {
         if (layer.type === 'symbol') {

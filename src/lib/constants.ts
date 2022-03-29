@@ -84,3 +84,8 @@ export enum DynamicLayerResolutionTypes {
   LOWEST = 'lowest',
   AVERAGE = 'average',
 }
+
+export enum LayerTypes {
+  RASTER = 'raster',
+  VECTOR = 'vector',
+}

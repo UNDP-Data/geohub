@@ -15,9 +15,6 @@
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
-  import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
-  import { cloneDeep } from 'lodash'
 
   import Legend from './Legend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
@@ -31,8 +28,7 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  let mapLayerIndex
-  let mapLayerLength
+  let mapLayerIndex = 0
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
@@ -133,16 +129,6 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  let queryInfoEnabled = true
-
-  const setQueryInfoEnabled = () => {
-    const layerClone = cloneDeep(layer)
-    layerClone.queryInfoEnabled = !queryInfoEnabled
-    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
-    $layerList[layerIndex] = layerClone
-    queryInfoEnabled = !queryInfoEnabled
-  }
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -194,11 +180,6 @@
                 </div>
               </div>
             {/if}
-            <div class="group" style="padding-right: 5px;">
-              <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
-                <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
-              </div>
-            </div>
 
             <!-- GROUP : LAYER CONTROL ACTIONS -->
             <LayerControlPanel bind:mapLayerIndex {layer} />

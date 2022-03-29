@@ -12,7 +12,10 @@
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
+  import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
+  import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
+  import { cloneDeep } from 'lodash'
 
   import { layerList, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
@@ -26,6 +29,13 @@
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
 
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
+
+  let queryInfoEnabled = true
+  let confirmDeleteLayerDialogVisible = false
+  let isLayerVisible = false
+
+  $: visibility = isLayerVisible ? 'visible' : 'none'
+
   const hierachyDown = (layerID: string) => {
     const newIndex = mapLayerIndex - 1
 
@@ -45,10 +55,6 @@
       $map.triggerRepaint()
     }
   }
-
-  let confirmDeleteLayerDialogVisible = false
-  let isLayerVisible = false
-  $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const toggleVisibility = () => {
     isLayerVisible = !isLayerVisible
@@ -73,10 +79,22 @@
   const hideLayerControlPanel = () => {
     confirmDeleteLayerDialogVisible = false
   }
+
+  const setQueryInfoEnabled = () => {
+    const layerClone = cloneDeep(layer)
+    layerClone.queryInfoEnabled = !queryInfoEnabled
+    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
+    $layerList[layerIndex] = layerClone
+    queryInfoEnabled = !queryInfoEnabled
+  }
 </script>
 
 <div class="layer-header-icons">
   <div class="group" style="padding-right: 5px;">
+    <div title="Query Map Info" class="icon-selected" on:click={() => setQueryInfoEnabled()}>
+      <Fa icon={queryInfoEnabled ? faToggleOn : faToggleOff} size="1x" />
+    </div>
+
     <div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
       <Fa icon={faChevronUp} size="1x" />
     </div>
@@ -126,17 +144,6 @@
       border-radius: 7.5px;
       padding: 5px;
       padding-right: 0;
-
-      .icon {
-        opacity: 0.5;
-        display: inline;
-        cursor: pointer;
-        margin-right: 10px;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
 
       .icon-selected {
         opacity: 1;

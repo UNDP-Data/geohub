@@ -8,9 +8,9 @@
 
   const name = layer.name
   const layerId = layer.definition.id
-
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
   let mapLayerLength = mapLayers.length - 1
 </script>

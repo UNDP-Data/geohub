@@ -35,7 +35,7 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
-  import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
+  import { LayerIconTypes, LayerTypes, TreeNodeInitialValues } from '../lib/constants'
   import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
@@ -43,8 +43,8 @@
   export let handlErrorCallback: CallableFunction
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
-  const iconRaster = LayerIconTypes.find((icon) => icon.id === 'raster')
-  const iconVector = LayerIconTypes.find((icon) => icon.id === 'vector')
+  const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
+  const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let loadingLayer = false
 
   $: tree = node
@@ -118,7 +118,7 @@
       if (!isRaster) {
         const layerName = path.split('/')[path.split('/').length - 2]
         const layerSource = {
-          type: 'vector',
+          type: LayerTypes.VECTOR,
           tiles: [url],
           minzoom: 0,
           maxzoom: 12,
@@ -144,7 +144,7 @@
         }
 
         $layerList = [
-          { name: layerName, definition: layerDefinition, type: 'vector', queryInfoEnabled: true },
+          { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, queryInfoEnabled: true },
           ...$layerList,
         ]
         $map.addLayer(layerDefinition)
@@ -172,7 +172,7 @@
           }
 
           const layerSource = {
-            type: 'raster',
+            type: LayerTypes.RASTER,
             tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
             tileSize: 256,
             bounds: layerInfo['bounds'],
@@ -187,7 +187,7 @@
 
           const layerDefinition: LayerDefinition = {
             id: layerId,
-            type: 'raster',
+            type: LayerTypes.RASTER,
             source: tileSourceId,
             minzoom: 0,
             maxzoom: 22,
@@ -200,7 +200,7 @@
             {
               name: layerName,
               definition: layerDefinition,
-              type: 'raster',
+              type: LayerTypes.RASTER,
               info: layerInfo,
               queryInfoEnabled: true,
               url: b64EncodedUrl,
