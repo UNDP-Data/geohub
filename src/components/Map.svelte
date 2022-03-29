@@ -19,18 +19,17 @@
   const iconSize = 'lg'
 
   let container: HTMLDivElement
-  let mapMouseEvent: MapMouseEvent
-  let marker: Marker
   let layerValuesData = []
   let isDataContainerVisible = false
   let isValuesRounded = true
+  let mapMouseEvent: MapMouseEvent
+  let marker: Marker
 
-  // TODO: switch to es6 functional prototypical class
   class MapQueryInfoControl implements IControl {
-    private map?: Map
     private container: HTMLElement
     private queryInfoContainer: HTMLElement
     private button: HTMLButtonElement
+    private map?: Map
 
     onAdd(map: Map) {
       this.map = map
@@ -45,13 +44,8 @@
         if (isDataContainerVisible === false) {
           map.getCanvas().style.cursor = 'crosshair'
           isDataContainerVisible = true
-
-          if (mapMouseEvent) marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo(map)
-
         } else {
-          // removeMapLayerValues()
-          isDataContainerVisible = false
-          this.map.getCanvas().style.cursor = 'grab'
+          resetMapQueryInfo()
         }
       })
 
@@ -71,32 +65,37 @@
 
   let mapQueryInfoControl: MapQueryInfoControl
 
+  // layer change
   $: {
-    if (mapMouseEvent?.lngLat) {
-      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+    const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+
+    if (layersWithQueryInfo.length > 0) {
+      $map.addControl(mapQueryInfoControl, 'top-right')
+    } else {
+      mapMouseEvent = null
+      if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
+      resetMapQueryInfo()
+    }
+  }
+
+  // mouse click on map
+  $: {
+    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
+      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
+
       if (layersWithQueryInfo.length > 0) {
-        $map.addControl(mapQueryInfoControl, 'top-right')
-      } else {
-        if (marker) marker.remove()
-        mapMouseEvent = null
-        if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl, 'top-right')
+        removeMapLayerValues(false)
+        addMapLayerValues(layersWithQueryInfo)
       }
     }
   }
 
-  $: {
-    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
-        const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
-        if (layersWithQueryInfo.length > 0) {
-          removeMapLayerValues(false)
-          addMapLayerValues(layersWithQueryInfo)
-        } else {
-          removeMapLayerValues()
-        }
-    } else {
-      mapMouseEvent = null
-      if (marker) marker.remove()
-    }
+  const resetMapQueryInfo = () => {
+    if (marker) marker.remove()
+    mapMouseEvent = null
+    isDataContainerVisible = false
+    layerValuesData = []
+    if ($map) $map.getCanvas().style.cursor = 'grab'
   }
 
   onMount(async () => {
@@ -157,6 +156,7 @@
   }
 
   const addMapLayerValues = async (layersWithQueryInfo: Layer[]) => {
+    $map.getCanvas().style.cursor = 'crosshair'
     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
 
     // get layer value(s) at lat/lng of mouse event
@@ -196,7 +196,6 @@
 
     layerValuesData = layerValuesDataTmp
     isDataContainerVisible = true
-    $map.getCanvas().style.cursor = 'crosshair'
   }
 
   const downloadCsv = () => {
@@ -244,14 +243,17 @@
   {/if}
 </div>
 
-<div class="data-container" style={`display: ${isDataContainerVisible ? 'block' :  'none'};`} use:draggable={{ handle: '.handle' }}>
+<div
+  class="data-container"
+  style={`display: ${isDataContainerVisible ? 'block' : 'none'};`}
+  use:draggable={{ handle: '.handle' }}>
   <div class="header">
     <div class="handle" alt="Move" title="Move">
       <span class="icon is-small pointer">
         <Fa icon={faUpDownLeftRight} size={iconSize} />
       </span>
     </div>
-    <div class="close" alt="Close" title="Close" on:click={() => removeMapLayerValues(true)}>
+    <div class="close" alt="Close" title="Close" on:click={() => resetMapQueryInfo()}>
       <span class="icon is-small pointer">
         <Fa icon={faXmark} size={iconSize} />
       </span>
