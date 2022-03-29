@@ -66,7 +66,7 @@
   const setDynamicLayerState = () => {
     dynamicLayerIds[layerId] = isDynamicLayer
 
-    if (isDynamicLayer == true) {
+    if (isDynamicLayer === true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
       }
@@ -105,7 +105,7 @@
 
   const updateParamsInURL = (params) => {
     debounce(() => {
-      let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
+      let layers = mapLayers.find((item) => item.id === layerId)['source']
       const layerSource = $map.getSource(layers)
 
       if (layerSource.tiles) {

@@ -30,7 +30,7 @@
   // if map has been clicked, set values array when layer list updated
   $: {
     if (mapMouseEvent?.lngLat) {
-      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
+      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
       if (layersWithQueryInfo.length > 0) {
         removeMapLayerValues(false)
         addMapLayerValues(layersWithQueryInfo)
