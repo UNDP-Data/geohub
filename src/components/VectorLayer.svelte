@@ -16,16 +16,15 @@
   const layerId = layer.definition.id
 
   let panelOpen: boolean = layerState[layerId] || false
-  const mapLayers = $map.getStyle().layers
   let mapLayerIndex
-  let mapLayerLength = mapLayers.length
+  let mapLayerLength
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
   <Accordion>
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
-        <LayerName {mapLayerIndex} {mapLayerLength} {layer} />
+        <LayerName {mapLayerIndex} {layer} />
         <div class="layer-header-icons">
           <LayerControlPanel bind:mapLayerIndex {layer} />
         </div>

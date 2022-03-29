@@ -12,7 +12,7 @@
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
-  export let mapLayerLength = mapLayers.length
+  let mapLayerLength = mapLayers.length - 1
 </script>
 
 <div class="layer-header">

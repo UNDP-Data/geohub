@@ -32,7 +32,7 @@
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
   let mapLayerIndex
-  let mapLayerLength = mapLayers.length
+  let mapLayerLength
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
@@ -150,7 +150,7 @@
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <LayerName {mapLayerIndex} {mapLayerLength} {layer} />
+          <LayerName {mapLayerIndex} {layer} />
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
