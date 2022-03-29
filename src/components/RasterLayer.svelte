@@ -8,10 +8,8 @@
   import Accordion, { Panel } from '@smui-extra/accordion'
   import { slide } from 'svelte/transition'
   import Fa from 'svelte-fa'
-  import RangeSlider from 'svelte-range-slider-pips'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
-  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
@@ -22,6 +20,8 @@
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
   import LayerControlPanel from './LayerControlPanel.svelte'
+  import OpacityButton from './controls/OpacityButton.svelte'
+  import OpacityPanel from './controls/OpacityPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
@@ -36,9 +36,7 @@
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
-  let layerOpacity = 1
   let panelOpen: boolean = layerState[layerId] || false
-  let rangeSliderValues = [layerOpacity * 100]
   let scalingValueRange = ''
 
   let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
@@ -46,12 +44,14 @@
   let timer: ReturnType<typeof setTimeout>
 
   $: isDynamicLayer, setDynamicLayerState()
-  $: layerOpacity = rangeSliderValues[0] / 100
-  $: layerOpacity, setLayerOpacity()
   $: panelOpen, setLayerState()
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
+  $: if (isOpacityPanelVisible !== false) {
+    isLegendPanelVisible = false
+    isFilterPanelVisible = false
+  }
 
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
@@ -66,7 +66,7 @@
   const setDynamicLayerState = () => {
     dynamicLayerIds[layerId] = isDynamicLayer
 
-    if (isDynamicLayer == true) {
+    if (isDynamicLayer === true) {
       if (!$dynamicLayers.includes(layerId)) {
         dynamicLayers.set([...$dynamicLayers, layerId])
       }
@@ -93,10 +93,6 @@
     layerState[layerId] = panelOpen
   }
 
-  const setLayerOpacity = () => {
-    $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
-  }
-
   const hideAllPanels = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
@@ -105,7 +101,7 @@
 
   const updateParamsInURL = (params) => {
     debounce(() => {
-      let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
+      let layers = mapLayers.find((item) => item.id === layerId)['source']
       const layerSource = $map.getSource(layers)
 
       if (layerSource.tiles) {
@@ -160,16 +156,7 @@
                 <Fa icon={faFilter} size="1x" />
               </div>
 
-              <div
-                class={isOpacityPanelVisible ? 'icon-selected' : 'icon'}
-                style="margin-right: 6px;"
-                on:click={() => {
-                  isOpacityPanelVisible = !isOpacityPanelVisible
-                  isLegendPanelVisible = false
-                  isFilterPanelVisible = false
-                }}>
-                <Fa icon={faDroplet} size="1x" />
-              </div>
+              <OpacityButton bind:isOpacityPanelVisible />
             </div>
 
             <!-- GROUP : NON-EDIT ACTIONS -->
@@ -215,29 +202,7 @@
             </div>
           {/if}
 
-          {#if isOpacityPanelVisible === true}
-            <div transition:slide class="action">
-              <div class="header">
-                <div class="name">Opacity</div>
-                <div class="close icon-selected" on:click={() => (isOpacityPanelVisible = false)} title="Close">
-                  <Fa icon={faXmark} size="lg" />
-                </div>
-              </div>
-              <div class="slider">
-                <RangeSlider
-                  bind:values={rangeSliderValues}
-                  float
-                  min={0}
-                  max={100}
-                  step={1}
-                  pips
-                  first="label"
-                  last="label"
-                  rest={false}
-                  suffix="%" />
-              </div>
-            </div>
-          {/if}
+          <OpacityPanel {layer} {isOpacityPanelVisible} />
         </div>
       </div></Panel>
   </Accordion>
@@ -287,13 +252,6 @@
 
       .action {
         margin-bottom: 25px;
-
-        .slider {
-          --range-handle-focus: #2196f3;
-          --range-range-inactive: #2196f3;
-          --range-handle-inactive: #2196f3;
-          --range-handle: #2196f3;
-        }
 
         .header {
           display: flex;

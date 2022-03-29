@@ -19,38 +19,11 @@
   const iconSize = 'lg'
 
   let container: HTMLDivElement
-  let mapQueryInfoControl: MapQueryInfoControl
   let mapMouseEvent: MapMouseEvent
   let marker: Marker
   let layerValuesData = []
   let isDataContainerVisible = false
   let isValuesRounded = true
-
-  $: {
-    const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
-      if (layersWithQueryInfo.length > 0) {
-        $map.addControl(mapQueryInfoControl, 'top-right')
-      } else {
-        if (marker) marker.remove()
-        mapMouseEvent = null
-        if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl, 'top-right')
-      }
-  }
-
-  $: {
-    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
-        const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
-        if (layersWithQueryInfo.length > 0) {
-          removeMapLayerValues(false)
-          addMapLayerValues(layersWithQueryInfo)
-        } else {
-          removeMapLayerValues()
-        }
-    } else {
-      mapMouseEvent = null
-      if (marker) marker.remove()
-    }
-  }
 
   // TODO: switch to es6 functional prototypical class
   class MapQueryInfoControl implements IControl {
@@ -93,6 +66,36 @@
       }
       this.container.parentNode.removeChild(this.container)
       this.map = undefined
+    }
+  }
+
+  let mapQueryInfoControl: MapQueryInfoControl
+
+  $: {
+    if (mapMouseEvent?.lngLat) {
+      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+      if (layersWithQueryInfo.length > 0) {
+        $map.addControl(mapQueryInfoControl, 'top-right')
+      } else {
+        if (marker) marker.remove()
+        mapMouseEvent = null
+        if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl, 'top-right')
+      }
+    }
+  }
+
+  $: {
+    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
+        const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
+        if (layersWithQueryInfo.length > 0) {
+          removeMapLayerValues(false)
+          addMapLayerValues(layersWithQueryInfo)
+        } else {
+          removeMapLayerValues()
+        }
+    } else {
+      mapMouseEvent = null
+      if (marker) marker.remove()
     }
   }
 

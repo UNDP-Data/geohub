@@ -88,7 +88,7 @@
           item.path === newTreeData?.tree?.path ? newTreeData.tree : item,
         )
       }
-      currentTreeData = currentTreeDataChildren.filter((item) => item.label === element).pop()
+      currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
     })
 
     wtree.set(currentTree)

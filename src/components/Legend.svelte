@@ -24,7 +24,7 @@
   let colorMapSelectionVisible = false
   let colorBackgroundList = []
   let layerId = definition.id
-  let layer = $layerList.filter((item) => item.definition.id === layerId).pop()
+  let layer = $layerList.find((item) => item.definition.id === layerId)
   let mapLayers = $map.getStyle().layers
   let selectedColorMapType = ''
   let sliderMin = lMin
@@ -63,7 +63,7 @@
   }
 
   const setUniqueValueLegend = () => {
-    let layerSrc = mapLayers.filter((item) => item.id === layerId).pop()['source']
+    let layerSrc = mapLayers.find((item) => item.id === layerId)['source']
     const layerSource = $map.getSource(layerSrc)
     let cmapObject = {}
     let colorMapName = ''
@@ -130,7 +130,7 @@
   }
 
   const updateParamsInURL = (params) => {
-    let layers = mapLayers.filter((item) => item.id === layerId).pop()['source']
+    let layers = mapLayers.find((item) => item.id === layerId)['source']
     const layerSource = $map.getSource(layers)
 
     if (layerSource.tiles) {

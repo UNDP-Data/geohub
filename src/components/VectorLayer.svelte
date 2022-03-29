@@ -9,6 +9,8 @@
   import { LayerInitialValues } from '../lib/constants'
   import LayerName from './LayerName.svelte'
   import LayerControlPanel from './LayerControlPanel.svelte'
+  import OpacityButton from './controls/OpacityButton.svelte'
+  import OpacityPanel from './controls/OpacityPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -16,15 +18,26 @@
 
   let panelOpen: boolean = layerState[layerId] || false
   let mapLayerIndex = 0
+  let isOpacityPanelVisible = false
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
   <Accordion>
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
-        <LayerName {mapLayerIndex} {layer} />
-        <div class="layer-header-icons">
-          <LayerControlPanel bind:mapLayerIndex {layer} />
+        <div>
+          <LayerName {mapLayerIndex} {layer} />
+          <div class="layer-header-icons">
+            <!-- GROUP : EDIT OPTIONS-->
+            <div class="group">
+              <OpacityButton bind:isOpacityPanelVisible />
+            </div>
+
+            <LayerControlPanel bind:mapLayerIndex {layer} />
+          </div>
+        </div>
+        <div class="layer-actions">
+          <OpacityPanel {layer} {isOpacityPanelVisible} />
         </div>
       </div>
     </Panel>
@@ -41,6 +54,18 @@
       gap: 15px;
       margin-top: 10px;
       padding-top: 10px;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
+
+      .group {
+        background: #f0f0f0;
+        border-radius: 7.5px;
+        padding: 5px;
+        padding-right: 0;
+      }
+    }
+
+    .layer-actions {
+      margin-top: 10px;
       border-top: 1px solid rgba(204, 204, 204, 0.5);
     }
   }

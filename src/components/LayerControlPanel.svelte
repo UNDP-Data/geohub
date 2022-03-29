@@ -26,7 +26,7 @@
   const name = layer.name
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+  const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
 
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
 
