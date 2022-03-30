@@ -251,16 +251,17 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
 </svelte:head>
 
-<div bind:this={container} class="map">
+<div bind:this={container} class="map" id="map">
   {#if map}
     <slot />
   {/if}
 </div>
 
 <div
+  id="data-container"
   class="data-container"
   style={`display: ${isDataContainerVisible ? 'block' : 'none'};`}
-  use:draggable={{ handle: '.handle' }}>
+  use:draggable={{ handle: '.handle', bounds: document.getElementById('map') }}>
   <div class="header">
     <div class="name" style="margin-right: auto;">Query Information</div>
 
