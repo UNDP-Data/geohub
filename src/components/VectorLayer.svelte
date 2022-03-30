@@ -65,6 +65,12 @@
           border-radius: 7.5px;
           padding: 5px;
           padding-right: 0;
+
+          @media (prefers-color-scheme: dark) {
+            background: #0d1117;
+            border-color: #30363d;
+            color: white;
+          }
         }
       }
 

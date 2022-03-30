@@ -49,10 +49,10 @@
   </ContentDialog>
   <ActionsDialog>
     <Button>
-      <LabelButton>No</LabelButton>
+      <LabelButton class="button">No</LabelButton>
     </Button>
     <Button on:click={() => removeLayer()}>
-      <LabelButton>Yes</LabelButton>
+      <LabelButton class="button">Yes</LabelButton>
     </Button>
   </ActionsDialog>
 </Dialog>
@@ -62,5 +62,11 @@
 
   .container {
     margin-right: 0;
+  }
+
+  .button {
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
   }
 </style>

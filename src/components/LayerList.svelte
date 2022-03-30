@@ -62,6 +62,12 @@
       align-items: center;
       padding: 10px;
 
+      @media (prefers-color-scheme: dark) {
+        background: #323234;
+        border-color: #30363d;
+        color: white;
+      }
+
       .text {
         padding-left: 15px;
       }

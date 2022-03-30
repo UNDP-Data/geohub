@@ -87,6 +87,12 @@
       padding-left: 7.5px;
       margin-bottom: 10px;
 
+      @media (prefers-color-scheme: dark) {
+        background: #0d1117;
+        border-color: #30363d;
+        color: white;
+      }
+
       .name {
         width: 100%;
       }

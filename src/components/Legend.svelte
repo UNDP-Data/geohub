@@ -283,6 +283,12 @@
     margin-top: 1px;
     padding-bottom: 4px;
 
+    @media (prefers-color-scheme: dark) {
+      background: #0d1117;
+      border-color: #30363d;
+      color: white;
+    }
+
     .slider {
       --range-handle-focus: #2196f3;
       --range-range-inactive: #2196f3;

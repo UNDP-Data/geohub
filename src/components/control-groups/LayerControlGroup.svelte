@@ -22,5 +22,11 @@
     background: #f0f0f0;
     border-radius: 7.5px;
     padding: 5px;
+
+    @media (prefers-color-scheme: dark) {
+      background: #0d1117;
+      border-color: #30363d;
+      color: white;
+    }
   }
 </style>

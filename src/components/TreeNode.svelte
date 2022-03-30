@@ -245,7 +245,7 @@
         on:click={() => (level > 0 ? toggleExpansion() : '')}
         class="node-container"
         transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon" style="margin-right: 5px;">
+        <div class="tree-icon">
           {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
@@ -335,12 +335,24 @@
       padding-left: 5px;
       height: 19.5px;
       width: 100%;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
     }
 
     .icon {
       padding-right: 10px;
       padding-left: 10px;
       cursor: pointer;
+    }
+
+    .tree-icon {
+      margin-right: 5px;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
     }
   }
 </style>

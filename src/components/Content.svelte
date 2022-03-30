@@ -197,6 +197,12 @@
         .name {
           width: 100%;
         }
+
+        @media (prefers-color-scheme: dark) {
+          background: #323234;
+          border-color: #30363d;
+          color: white;
+        }
       }
 
       .legend {
@@ -206,6 +212,10 @@
         flex-wrap: wrap;
         gap: 10px;
         padding-left: 10px;
+
+        @media (prefers-color-scheme: dark) {
+          color: white;
+        }
       }
     }
   }
