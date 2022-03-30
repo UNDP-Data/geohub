@@ -28,7 +28,7 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  let mapLayerIndex: number
+  let mapLayerIndex
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
@@ -127,7 +127,7 @@
   }
 </script>
 
-<div class="accordion-container">
+<div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
   <Accordion>
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
@@ -209,85 +209,68 @@
 </div>
 
 <style lang="scss">
-  .accordion-container {
-    margin-left: 15px;
-    margin-bottom: 15px;
+  .layer-header {
+    .layer-header-icons {
+      padding-top: 10px;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
 
-    .layer-header {
-      .layer-header-icons {
-        padding-top: 10px;
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        gap: 15px;
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid rgba(204, 204, 204, 0.5);
+      .group {
+        background: #f0f0f0;
+        border-radius: 7.5px;
+        padding: 5px;
+        padding-right: 0;
 
-        .group {
-          background: #f0f0f0;
-          border-radius: 7.5px;
-          padding: 5px;
-          padding-right: 0;
+        .icon {
+          opacity: 0.5;
+          display: inline;
+          cursor: pointer;
+          margin-right: 10px;
 
-          @media (prefers-color-scheme: dark) {
-            background: #0d1117;
-            border-color: #30363d;
-            color: white;
-          }
-
-          .icon {
-            opacity: 0.5;
-            display: inline;
-            cursor: pointer;
-            margin-right: 10px;
-
-            &:hover {
-              opacity: 1;
-            }
-          }
-
-          .icon-selected {
+          &:hover {
             opacity: 1;
-            display: inline;
-            cursor: pointer;
-            margin-right: 10px;
           }
         }
+
+        .icon-selected {
+          opacity: 1;
+          display: inline;
+          cursor: pointer;
+          margin-right: 10px;
+        }
       }
+    }
 
-      .layer-actions {
-        margin-top: 10px;
-        border-top: 1px solid rgba(204, 204, 204, 0.5);
+    .layer-actions {
+      margin-top: 10px;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
 
-        .action {
-          margin-bottom: 25px;
+      .action {
+        margin-bottom: 25px;
 
-          .header {
-            display: flex;
-            justify-content: left;
-            align-items: center;
-            margin-top: 15px;
-            background: #f0f0f0;
-            border-radius: 7.5px;
-            padding: 2.5px;
-            padding-left: 7.5px;
-            margin-bottom: 10px;
+        .header {
+          display: flex;
+          justify-content: left;
+          align-items: center;
+          margin-top: 15px;
+          background: #f0f0f0;
+          border-radius: 7.5px;
+          padding: 2.5px;
+          padding-left: 7.5px;
+          margin-bottom: 10px;
 
-            @media (prefers-color-scheme: dark) {
-              background: #0d1117;
-              border-color: #30363d;
-              color: white;
-            }
+          .name {
+            width: 100%;
+          }
 
-            .name {
-              width: 100%;
-            }
-
-            .close {
-              cursor: pointer;
-              padding-right: 5px;
-            }
+          .close {
+            cursor: pointer;
+            padding-right: 5px;
           }
         }
       }

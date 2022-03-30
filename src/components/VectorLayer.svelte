@@ -11,6 +11,8 @@
   import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
   import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
+  import VectorLegendButton from './controls/VectorLegendButton.svelte'
+  import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -18,6 +20,7 @@
 
   let panelOpen: boolean = layerState[layerId] || false
   let mapLayerIndex: number
+  let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
 </script>
 
@@ -30,6 +33,7 @@
           <div class="layer-header-icons">
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
+              <VectorLegendButton bind:isLegendPanelVisible />
               <OpacityButton bind:isOpacityPanelVisible />
             </div>
 
@@ -37,6 +41,7 @@
           </div>
         </div>
         <div class="layer-actions">
+          <VectorLegendPanel {layer} {isLegendPanelVisible} />
           <OpacityPanel {layer} {isOpacityPanelVisible} />
         </div>
       </div>
