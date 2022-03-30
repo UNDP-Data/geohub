@@ -12,6 +12,7 @@
   import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
+  import GeoJSON from 'geojson'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { indicatorProgress, map } from '../stores'
@@ -167,7 +168,7 @@
 
   const downloadCsv = () => {
     const data = [
-      ['UNDP : GeoHub : Layer Export'],
+      ['UNDP : GeoHub : Query Information'],
       [new Date().toISOString()],
       [],
       ['Latitude', 'Longitude'],
@@ -180,8 +181,7 @@
       data.push([layerValue.name, layerValue.values])
     })
 
-    const filename = `undp-geohub-layers-data-${new Date().toISOString().split('T')[0]}`
-    const bomCode = '\ufeff'
+    const filename = `undp-geohub-layers-data-${new Date().toISOString().split('T')[0]}.json`
     let csvContent = null
 
     if (typeof data === 'object') {
@@ -190,11 +190,22 @@
       csvContent = data
     }
 
-    const csvData = new Blob([`${bomCode}${csvContent}`], { type: 'text/csv;charset=utf-8;' })
-    const csvURL = window.URL.createObjectURL(csvData)
+    downloadFile(filename, csvContent)
+  }
+
+  const downloadGeoJson = () => {
+    const data = JSON.stringify(GeoJSON.parse(layerValuesData, { Point: ['lat', 'lng'] }))
+    const filename = `undp-geohub-layers-data-${new Date().toISOString().split('T')[0]}.geojson`
+    downloadFile(filename, data)
+  }
+
+  const downloadFile = (filename: string, content: string) => {
+    const bomCode = '\ufeff'
+    const data = new Blob([`${bomCode}${content}`], { type: 'text/csv;charset=utf-8;' })
+    const url = window.URL.createObjectURL(data)
     const link = document.createElement('a')
-    link.href = csvURL
-    link.setAttribute('download', `${filename}.csv`)
+    link.href = url
+    link.setAttribute('download', `${filename}`)
     link.click()
     link.remove()
   }
@@ -344,6 +355,20 @@
             </div>
             <div>Round values</div>
           </div>
+
+          <div class="download">
+            <button
+              class="button is-small download"
+              on:click={() => downloadGeoJson()}
+              alt="Download GeoJSON"
+              title="Download GeoJSON">
+              <span class="icon is-small pointer">
+                <Fa icon={faDownload} size={iconSize} />
+              </span>
+              <span class="label">GeoJSON</span>
+            </button>
+          </div>
+
           <div class="download">
             <button
               class="button is-small download"
@@ -452,14 +477,17 @@
       }
 
       .download {
+        margin-right: 5px;
+        width: 85px;
+
         .pointer {
           cursor: pointer;
         }
+
         .label {
           font-size: 11px;
           font-weight: normal;
-          margin-right: 5px;
-          text-align: right;
+          margin-left: 5px;
         }
       }
     }
