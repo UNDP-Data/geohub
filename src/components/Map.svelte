@@ -247,12 +247,17 @@
   style={`display: ${isDataContainerVisible ? 'block' : 'none'};`}
   use:draggable={{ handle: '.handle' }}>
   <div class="header">
-    <div class="handle" alt="Move" title="Move">
+    <div class="name" style="margin-right: auto;">Query Information</div>
+    <div class="handle" alt="Move Query Information" title="Move Query Information">
       <span class="icon is-small pointer">
         <Fa icon={faUpDownLeftRight} size={iconSize} />
       </span>
     </div>
-    <div class="close" alt="Close" title="Close" on:click={() => resetMapQueryInfo()}>
+    <div
+      class="close"
+      alt="Close Query Information"
+      title="Close Query Information"
+      on:click={() => resetMapQueryInfo()}>
       <span class="icon is-small pointer">
         <Fa icon={faXmark} size={iconSize} />
       </span>
@@ -340,32 +345,49 @@
   }
 
   .data-container {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    bottom: 50px;
+    display: none;
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
-    background-color: white;
-    opacity: 0.8;
-    position: absolute;
-    bottom: 50px;
     left: 10px;
     padding: 10px;
-    border-radius: 10px;
-    display: none;
+    position: absolute;
 
     .header {
-      display: flex;
       align-items: right;
-      justify-content: flex-end;
+      background: #f0f0f0;
+      border-radius: 7.5px;
+      display: flex;
       gap: 7.5px;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+      padding-left: 7.5px;
+      padding-top: 5px;
 
-      > div {
-        width: 20px;
+      .name {
+        font-size: 13px;
+        margin-right: auto;
+        padding-bottom: 2px;
+      }
+
+      .handle,
+      .close {
         cursor: pointer;
+        padding-top: 2px;
+        width: 20px;
       }
     }
 
     .content {
-      margin-top: 10px;
+      margin-top: 15px;
       margin-bottom: 15px;
+
+      table {
+        background-color: #f9f9f9;
+      }
 
       .coordinates {
         margin: 0;
@@ -375,17 +397,17 @@
         margin-bottom: 10px;
       }
       .first-column {
-        width: 200px;
-        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 200px;
       }
       .second-column {
-        width: 125px;
-        text-align: right;
-        white-space: nowrap;
         overflow: hidden;
+        text-align: right;
         text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 125px;
       }
     }
 
@@ -395,13 +417,13 @@
       justify-content: flex-end;
 
       .rounded-values {
-        width: 110px;
-        display: flex;
         align-items: left;
+        display: flex;
         gap: 4px;
+        margin-left: 6px;
         margin-right: auto;
         margin-top: 5px;
-        margin-left: 6px;
+        width: 110px;
       }
 
       .download {
@@ -409,9 +431,9 @@
           cursor: pointer;
         }
         .label {
-          margin-right: 5px;
           font-size: 11px;
           font-weight: normal;
+          margin-right: 5px;
           text-align: right;
         }
       }
