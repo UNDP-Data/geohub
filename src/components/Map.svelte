@@ -18,7 +18,6 @@
   import { indicatorProgress, map } from '../stores'
   import { layerList } from '../stores'
   import type { Layer } from '../lib/types'
-  // import type { IControl } from 'maplibre-gl'
 
   const iconSize = 'lg'
 
@@ -261,9 +260,9 @@
   id="data-container"
   class="data-container"
   style={`display: ${isDataContainerVisible ? 'block' : 'none'};`}
-  use:draggable={{ handle: '.handle', bounds: document.getElementById('map') }}>
+  use:draggable={{ bounds: document.getElementById('map') }}>
   <div class="header">
-    <div class="name" style="margin-right: auto;">Query Information</div>
+    <div class="name">Query Information</div>
 
     <div class="handle" alt="Move Query Information" title="Move Query Information">
       <span class="icon is-small pointer">
@@ -419,6 +418,7 @@
       padding-top: 5px;
 
       .name {
+        cursor: pointer;
         font-size: 13px;
         margin-right: auto;
         padding-bottom: 2px;

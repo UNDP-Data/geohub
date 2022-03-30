@@ -284,8 +284,7 @@
     padding-bottom: 4px;
 
     @media (prefers-color-scheme: dark) {
-      background: #0d1117;
-      border-color: #30363d;
+      background: #212125;
       color: white;
     }
 

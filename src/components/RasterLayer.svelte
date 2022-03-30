@@ -28,7 +28,7 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  let mapLayerIndex
+  let mapLayerIndex: number = 0
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
@@ -226,6 +226,11 @@
         padding: 5px;
         padding-right: 0;
 
+        @media (prefers-color-scheme: dark) {
+          background: #323234;
+          color: white;
+        }
+
         .icon {
           opacity: 0.5;
           display: inline;
@@ -263,6 +268,12 @@
           padding: 2.5px;
           padding-left: 7.5px;
           margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            background: #323234;
+            border-color: #30363d;
+            color: white;
+          }
 
           .name {
             width: 100%;
