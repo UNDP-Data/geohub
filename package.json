@@ -15,8 +15,8 @@
     "prettier-check": "prettier --check \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore",
     "prettify": "yarn prettier --write",
     "prettifile": "prettier --ignore-path .prettierignore --write",
-    "smui-theme-light": "smui-theme compile static/smui.css -i src/theme",
-    "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/theme/dark",
+    "smui-theme-light": "smui-theme compile static/smui.css -i src/styles/theme",
+    "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/styles/theme/dark",
     "prepare": "npm run smui-theme-light && npm run smui-theme-dark && husky install"
   },
   "devDependencies": {

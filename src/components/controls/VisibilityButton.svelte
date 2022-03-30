@@ -29,5 +29,5 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/button-icons-selected.scss';
+  @import '../../styles/button-icons-selected.scss';
 </style>
