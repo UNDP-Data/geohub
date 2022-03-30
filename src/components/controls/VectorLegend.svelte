@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Button, { Label as LabelButton } from '@smui/button'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer, LayerDefinition } from '../../lib/types'
@@ -8,14 +9,21 @@
   export let layer: Layer = LayerInitialValues
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
-  const style = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+  const style = $map.getStyle().layers.filter((layer) => layer.id === layerId)[0]
+
+  $: styleJSON = JSON.stringify(style, null, 4)
 
   let legendSymbolContainer
   onMount(() => {
+    updateLegend()
+  })
+
+  const updateLegend = () => {
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
 
     let symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
+    legendSymbolContainer.innerHTML = ''
     if (symbol) {
       switch (symbol.element) {
         case 'div': {
@@ -64,12 +72,35 @@
         }
       }
     }
-  })
+  }
+
+  const applyLayerStyle = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (newStyle.paint) {
+      Object.keys(newStyle.paint).forEach((key) => {
+        const value = newStyle.paint[key]
+        console.log(layerId, key, value)
+        $map.setPaintProperty(layerId, key, value)
+      })
+    }
+    if (newStyle.layout) {
+      Object.keys(newStyle.layout).forEach((key) => {
+        const value = newStyle.layout[key]
+        $map.setLayoutProperty(layerId, key, value)
+      })
+    }
+    updateLegend()
+  }
 </script>
 
 <div>
   <div bind:this={legendSymbolContainer} />
-  <textarea value={JSON.stringify(style, null, 2)} />
+  <textarea bind:value={styleJSON} />
+  <div class="changeLegendButtonDiv">
+    <Button class="changelegendbtn" variant="raised" on:click={() => applyLayerStyle()}>
+      <LabelButton>Apply</LabelButton>
+    </Button>
+  </div>
 </div>
 
 <style lang="scss">
@@ -79,5 +110,16 @@
     height: 150px;
     min-height: 50px;
     max-height: 300px;
+  }
+  :global(.changeLegendButtonDiv) {
+    margin: 0 auto;
+    padding-top: 10px;
+    width: 80%;
+    display: flex;
+  }
+  :global(.changelegendbtn) {
+    text-transform: capitalize;
+    height: 30px;
+    width: 100%;
   }
 </style>
