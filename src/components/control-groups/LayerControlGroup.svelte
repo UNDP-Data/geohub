@@ -7,10 +7,10 @@
   import QueryMapInfoButton from '../controls/QueryMapInfoButton.svelte'
 
   export let layer: Layer = LayerInitialValues
-  export let mapLayerIndex
+  export let mapLayerIndex: number
 </script>
 
-<div class="group" style="padding-right: 5px;">
+<div class="group">
   <QueryMapInfoButton {layer} />
   <LayerOrderButtons {layer} bind:mapLayerIndex />
   <VisibilityButton {layer} />
@@ -22,6 +22,5 @@
     background: #f0f0f0;
     border-radius: 7.5px;
     padding: 5px;
-    padding-right: 0;
   }
 </style>

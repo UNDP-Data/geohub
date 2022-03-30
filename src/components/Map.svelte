@@ -14,7 +14,7 @@
   import { indicatorProgress, map } from '../stores'
   import { layerList } from '../stores'
   import type { Layer } from '../lib/types'
-  import type { IControl } from 'maplibre-gl'
+  // import type { IControl } from 'maplibre-gl'
 
   const iconSize = 'lg'
 
@@ -24,46 +24,7 @@
   let isValuesRounded = true
   let mapMouseEvent: MapMouseEvent
   let marker: Marker
-
-  class MapQueryInfoControl implements IControl {
-    private container: HTMLElement
-    private queryInfoContainer: HTMLElement
-    private button: HTMLButtonElement
-    private map?: Map
-
-    onAdd(map: Map) {
-      this.map = map
-      this.container = document.createElement('div')
-      this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
-      this.queryInfoContainer = document.createElement('div')
-      this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
-      this.button = document.createElement('button')
-      this.button.classList.add('mapboxgl-ctrl-icon', 'mapboxgl-query-info-control')
-      this.button.type = 'button'
-      this.button.addEventListener('click', () => {
-        if (isDataContainerVisible === false) {
-          map.getCanvas().style.cursor = 'crosshair'
-          isDataContainerVisible = true
-        } else {
-          resetMapQueryInfo()
-        }
-      })
-
-      this.container.appendChild(this.button)
-      this.container.appendChild(this.queryInfoContainer)
-      return this.container
-    }
-
-    onRemove() {
-      if (!this.container || !this.container.parentNode || !this.map || !this.button) {
-        return
-      }
-      this.container.parentNode.removeChild(this.container)
-      this.map = undefined
-    }
-  }
-
-  let mapQueryInfoControl: MapQueryInfoControl = null
+  let mapQueryInfoControl = null
 
   // layer change
   $: {
@@ -83,7 +44,7 @@
   // mouse click on map
   $: {
     if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
-      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled == true)
+      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
 
       if (layersWithQueryInfo.length > 0) {
         removeMapLayerValues(false)
@@ -232,6 +193,42 @@
     link.setAttribute('download', `${filename}.csv`)
     link.click()
     link.remove()
+  }
+
+  // eslint-disable-next-line
+  function MapQueryInfoControl() {}
+
+  MapQueryInfoControl.prototype.onAdd = function (map: Map) {
+    this.map = map
+    this.container = document.createElement('div')
+    this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
+
+    this.queryInfoContainer = document.createElement('div')
+    this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
+    this.container.appendChild(this.queryInfoContainer)
+
+    this.button = document.createElement('button')
+    this.button.classList.add('mapboxgl-ctrl-icon', 'mapboxgl-query-info-control')
+    this.button.type = 'button'
+    this.button.addEventListener('click', () => {
+      if (isDataContainerVisible === false) {
+        map.getCanvas().style.cursor = 'crosshair'
+        isDataContainerVisible = true
+      } else {
+        resetMapQueryInfo()
+      }
+    })
+    this.container.appendChild(this.button)
+
+    return this.container
+  }
+
+  MapQueryInfoControl.prototype.onRemove = function () {
+    if (!this.container || !this.container.parentNode || !this.map || !this.button) {
+      return
+    }
+    this.container.parentNode.removeChild(this.container)
+    this.map = undefined
   }
 </script>
 

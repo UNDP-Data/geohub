@@ -28,7 +28,7 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  let mapLayerIndex
+  let mapLayerIndex: number
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
@@ -127,7 +127,7 @@
   }
 </script>
 
-<div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
+<div class="accordion-container">
   <Accordion>
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
@@ -209,68 +209,73 @@
 </div>
 
 <style lang="scss">
-  .layer-header {
-    .layer-header-icons {
-      padding-top: 10px;
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      gap: 15px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(204, 204, 204, 0.5);
+  .accordion-container {
+    margin-left: 15px;
+    margin-bottom: 15px;
 
-      .group {
-        background: #f0f0f0;
-        border-radius: 7.5px;
-        padding: 5px;
-        padding-right: 0;
+    .layer-header {
+      .layer-header-icons {
+        padding-top: 10px;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        gap: 15px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(204, 204, 204, 0.5);
 
-        .icon {
-          opacity: 0.5;
-          display: inline;
-          cursor: pointer;
-          margin-right: 10px;
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-
-        .icon-selected {
-          opacity: 1;
-          display: inline;
-          cursor: pointer;
-          margin-right: 10px;
-        }
-      }
-    }
-
-    .layer-actions {
-      margin-top: 10px;
-      border-top: 1px solid rgba(204, 204, 204, 0.5);
-
-      .action {
-        margin-bottom: 25px;
-
-        .header {
-          display: flex;
-          justify-content: left;
-          align-items: center;
-          margin-top: 15px;
+        .group {
           background: #f0f0f0;
           border-radius: 7.5px;
-          padding: 2.5px;
-          padding-left: 7.5px;
-          margin-bottom: 10px;
+          padding: 5px;
+          padding-right: 0;
 
-          .name {
-            width: 100%;
+          .icon {
+            opacity: 0.5;
+            display: inline;
+            cursor: pointer;
+            margin-right: 10px;
+
+            &:hover {
+              opacity: 1;
+            }
           }
 
-          .close {
+          .icon-selected {
+            opacity: 1;
+            display: inline;
             cursor: pointer;
-            padding-right: 5px;
+            margin-right: 10px;
+          }
+        }
+      }
+
+      .layer-actions {
+        margin-top: 10px;
+        border-top: 1px solid rgba(204, 204, 204, 0.5);
+
+        .action {
+          margin-bottom: 25px;
+
+          .header {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            margin-top: 15px;
+            background: #f0f0f0;
+            border-radius: 7.5px;
+            padding: 2.5px;
+            padding-left: 7.5px;
+            margin-bottom: 10px;
+
+            .name {
+              width: 100%;
+            }
+
+            .close {
+              cursor: pointer;
+              padding-right: 5px;
+            }
           }
         }
       }

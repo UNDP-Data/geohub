@@ -37,11 +37,7 @@
   }
 </script>
 
-<div
-  class="icon-selected"
-  style="margin-right: 0;"
-  title="Delete layer"
-  on:click={() => (confirmDeleteLayerDialogVisible = true)}>
+<div class="container icon-selected" title="Delete layer" on:click={() => (confirmDeleteLayerDialogVisible = true)}>
   <Fa icon={faTrash} size="1x" />
 </div>
 
@@ -63,4 +59,8 @@
 
 <style lang="scss">
   @import '../styles/button-icons-selected.scss';
+
+  .container {
+    margin-right: 0;
+  }
 </style>

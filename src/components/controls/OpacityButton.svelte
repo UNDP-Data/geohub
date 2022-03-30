@@ -6,15 +6,18 @@
 </script>
 
 <div
-  class={isOpacityPanelVisible ? 'icon-selected' : 'icon'}
-  style="margin-right: 6px;"
-  on:click={() => {
-    isOpacityPanelVisible = !isOpacityPanelVisible
-  }}>
+  class={`container ${isOpacityPanelVisible ? 'icon-selected' : 'icon'}`}
+  on:click={() => (isOpacityPanelVisible = !isOpacityPanelVisible)}>
   <Fa icon={faDroplet} size="1x" />
 </div>
 
 <style lang="scss">
+  @import '../styles/button-icons-selected.scss';
+
+  .container {
+    margin-right: 6px;
+  }
+
   .icon {
     opacity: 0.5;
     display: inline;
@@ -25,5 +28,4 @@
       opacity: 1;
     }
   }
-  @import '../styles/button-icons-selected.scss';
 </style>

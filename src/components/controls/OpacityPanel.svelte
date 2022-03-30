@@ -3,6 +3,7 @@
   import { slide } from 'svelte/transition'
   import RangeSlider from 'svelte-range-slider-pips'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues, LayerTypes } from '../../lib/constants'
