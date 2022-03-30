@@ -19,6 +19,7 @@
     if (symbol) {
       switch (symbol.element) {
         case 'div': {
+          const div = document.createElement('div')
           if (
             symbol.attributes.style.backgroundImage &&
             !['url(undefined)', 'url(null)'].includes(symbol.attributes.style.backgroundImage)
@@ -27,8 +28,16 @@
             img.src = symbol.attributes.style.backgroundImage.replace('url(', '').replace(')', '')
             img.alt = layerId
             img.style.cssText = `height: 24px;`
-            legendSymbolContainer.appendChild(img)
+            div.appendChild(img)
           }
+          const divBackground = document.createElement('div')
+          divBackground.style.backgroundColor = symbol.attributes.style.backgroundColor
+          divBackground.style.backgroundPosition = symbol.attributes.style.backgroundPosition
+          divBackground.style.backgroundSize = symbol.attributes.style.backgroundSize
+          divBackground.style.backgroundRepeat = symbol.attributes.style.backgroundRepeat
+          divBackground.style.opacity = symbol.attributes.style.opacity
+          div.appendChild(divBackground)
+          legendSymbolContainer.appendChild(div)
           break
         }
         case 'svg': {
@@ -68,5 +77,7 @@
     resize: vertical;
     width: 100%;
     height: 150px;
+    min-height: 50px;
+    max-height: 300px;
   }
 </style>
