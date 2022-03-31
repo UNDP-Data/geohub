@@ -1,14 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide } from 'svelte/transition'
   import { draggable } from '@neodrag/svelte'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons/faUpDownLeftRight'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize'
-  import { faWindowMinimize } from '@fortawesome/free-solid-svg-icons/faWindowMinimize'
   import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
@@ -24,7 +21,6 @@
   let container: HTMLDivElement
   let layerValuesData = []
   let isDataContainerVisible = false
-  let isDataContainerExpanded = true
   let isValuesRounded = true
   let mapMouseEvent: MapMouseEvent
   let marker: Marker
@@ -271,16 +267,6 @@
     </div>
 
     <div
-      class="expand-collapse"
-      alt="Collapse / Expand Query Information"
-      title="Collapse / Expand Query Information"
-      on:click={() => (isDataContainerExpanded = !isDataContainerExpanded)}>
-      <span class="icon is-small pointer">
-        <Fa icon={isDataContainerExpanded ? faWindowMinimize : faWindowMaximize} size={iconSize} />
-      </span>
-    </div>
-
-    <div
       class="close"
       alt="Close Query Information"
       title="Close Query Information"
@@ -291,100 +277,98 @@
     </div>
   </div>
 
-  {#if isDataContainerExpanded === true}
-    <div class="container-expand-collapse" transition:slide>
-      <div class="content">
-        <table class="table is-fullwidth coordinates">
-          <thead>
-            <tr>
-              <th>Latitude</th>
-              <th>Longitude</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="first-column">{mapMouseEvent?.lngLat.lat ? mapMouseEvent?.lngLat.lat : 'N/A'}</td>
-              <td class="second-column">{mapMouseEvent?.lngLat.lng ? mapMouseEvent?.lngLat.lng : 'N/A'}</td>
-            </tr>
-          </tbody>
-        </table>
+  <div class="container-expand-collapse">
+    <div class="content">
+      <table class="table is-fullwidth coordinates">
+        <thead>
+          <tr>
+            <th>Latitude</th>
+            <th>Longitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="first-column">{mapMouseEvent?.lngLat.lat ? mapMouseEvent?.lngLat.lat : 'N/A'}</td>
+            <td class="second-column">{mapMouseEvent?.lngLat.lng ? mapMouseEvent?.lngLat.lng : 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <table class="table is-fullwidth is-striped data-values">
-          <thead>
-            <tr>
-              <th>Layer Name</th>
-              <th>Values</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#if layerValuesData.length > 0}
-              {#each layerValuesData as layerValue}
-                <tr>
-                  <td class="first-column">{layerValue.name}</td>
-
-                  {#if layerValue.values === null}
-                    <td class="second-column"> N/A </td>
-                  {:else if isValuesRounded === true}
-                    <td class="second-column">
-                      {layerValue.values
-                        .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
-                        .join(', ')}
-                    </td>
-                  {:else}
-                    <td class="second-column">
-                      {layerValue.values.join(', ')}
-                    </td>
-                  {/if}
-                </tr>
-              {/each}
-            {:else}
+      <table class="table is-fullwidth is-striped data-values">
+        <thead>
+          <tr>
+            <th>Layer Name</th>
+            <th>Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#if layerValuesData.length > 0}
+            {#each layerValuesData as layerValue}
               <tr>
-                <td class="first-column">N/A</td>
-                <td class="second-column">N/A</td>
+                <td class="first-column">{layerValue.name}</td>
+
+                {#if layerValue.values === null}
+                  <td class="second-column"> N/A </td>
+                {:else if isValuesRounded === true}
+                  <td class="second-column">
+                    {layerValue.values
+                      .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
+                      .join(', ')}
+                  </td>
+                {:else}
+                  <td class="second-column">
+                    {layerValue.values.join(', ')}
+                  </td>
+                {/if}
               </tr>
-            {/if}
-          </tbody>
-        </table>
-      </div>
-
-      {#if layerValuesData.length > 0}
-        <div class="actions">
-          <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
-            <div class="icon is-small">
-              <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
-            </div>
-            <div>Round values</div>
-          </div>
-
-          <div class="download">
-            <button
-              class="button is-small download"
-              on:click={() => downloadGeoJson()}
-              alt="Download GeoJSON"
-              title="Download GeoJSON">
-              <span class="icon is-small pointer">
-                <Fa icon={faDownload} size={iconSize} />
-              </span>
-              <span class="label">GeoJSON</span>
-            </button>
-          </div>
-
-          <div class="download">
-            <button
-              class="button is-small download"
-              on:click={() => downloadCsv()}
-              alt="Download CSV"
-              title="Download CSV">
-              <span class="icon is-small pointer">
-                <Fa icon={faDownload} size={iconSize} />
-              </span>
-              <span class="label">CSV</span>
-            </button>
-          </div>
-        </div>
-      {/if}
+            {/each}
+          {:else}
+            <tr>
+              <td class="first-column">N/A</td>
+              <td class="second-column">N/A</td>
+            </tr>
+          {/if}
+        </tbody>
+      </table>
     </div>
-  {/if}
+
+    {#if layerValuesData.length > 0}
+      <div class="actions">
+        <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
+          <div class="icon is-small">
+            <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
+          </div>
+          <div>Round values</div>
+        </div>
+
+        <div class="download">
+          <button
+            class="button is-small download"
+            on:click={() => downloadGeoJson()}
+            alt="Download GeoJSON"
+            title="Download GeoJSON">
+            <span class="icon is-small pointer">
+              <Fa icon={faDownload} size={iconSize} />
+            </span>
+            <span class="label">GeoJSON</span>
+          </button>
+        </div>
+
+        <div class="download">
+          <button
+            class="button is-small download"
+            on:click={() => downloadCsv()}
+            alt="Download CSV"
+            title="Download CSV">
+            <span class="icon is-small pointer">
+              <Fa icon={faDownload} size={iconSize} />
+            </span>
+            <span class="label">CSV</span>
+          </button>
+        </div>
+      </div>
+    {/if}
+  </div>
 </div>
 
 <style lang="scss">
@@ -424,7 +408,6 @@
         padding-bottom: 2px;
       }
 
-      .expand-collapse,
       .handle,
       .close {
         cursor: pointer;
