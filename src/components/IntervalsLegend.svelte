@@ -84,13 +84,14 @@
 
   let selectedClassificationMethod: any = 'e'
 
-  const reclassifyImage = () => {
-    console.log('reclassifying')
+  const reclassifyImage = (params = {}) => {
+    console.log(`before reclassifying ${intervalList} ${selectedClassificationMethod}`)
     let cmap = []
     // Interval List needs to be updated every time the number of classes changes
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
+    console.log(`after reclassifying ${intervalList}`)
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
     //console.log(`Interval List is: ${intervalList}`)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
@@ -106,13 +107,27 @@
     let encodedCmap = JSON.stringify(cmap)
     //console.log(encodedCmap)
     layerURL.searchParams.delete('colormap_name')
-    updateParamsInURL({ colormap: encodedCmap })
+    let updatedParams = Object.assign({ colormap: encodedCmap }, params)
+    updateParamsInURL(updatedParams)
   }
 
-  $: numberOfClasses, reclassifyImage()
-  //$: activeColorMapName, setContext(layerId, activeColorMapName), console.log(`acm for ${layerId} set to ${getContext(layerId)}`)
+  const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
+    if (operation === 'increment') {
+      if (numberOfClasses <= maxNoOfClasses) {
+        numberOfClasses++
+      }
+    }
+    if (operation === 'decrement') {
+      if (numberOfClasses > minNoOfClasses) {
+        numberOfClasses--
+      }
+    }
+    reclassifyImage()
+  }
 
-  $: rangeSliderValues, reclassifyImage()
+  const handleRangeSliderValues = () => {
+    reclassifyImage({ rescale: rangeSliderValues.join(',') })
+  }
 </script>
 
 <div class="group">
@@ -129,7 +144,7 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={updateParamsInURL({ rescale: rangeSliderValues.join(',') })} />
+      on:stop={handleRangeSliderValues()} />
   </div>
 
   <div class="intervals-legend">
@@ -142,9 +157,7 @@
             class="icon-selected"
             title="Increase number of classes"
             on:click={() => {
-              if (numberOfClasses > 2) {
-                numberOfClasses--
-              }
+              handleNumberOfClasses('decrement')
             }}>
             <Fa icon={faCaretLeft} size="lg" style="transform: scale(1); padding-right:2px" />
           </div>
@@ -153,9 +166,7 @@
             class="icon-selected"
             title="Decrese number of classes"
             on:click={() => {
-              if (numberOfClasses <= 30) {
-                numberOfClasses++
-              }
+              handleNumberOfClasses('increment')
             }}>
             <Fa icon={faCaretRight} size="lg" style="transform: scale(1); padding-left: 2px ;" />
           </div>

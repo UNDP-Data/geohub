@@ -137,6 +137,7 @@
   }
 
   $: layerURL, console.log(`${layerURL.toString()}`)
+  setUniqueValueLegend()
 </script>
 
 <div class="group">
