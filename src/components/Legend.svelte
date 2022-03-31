@@ -162,7 +162,6 @@
 </div>
 
 <style lang="scss">
-  
   .colormap-div {
     height: 20px;
     width: 80%;
