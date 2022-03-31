@@ -21,6 +21,9 @@
   let ZoomSliderValues = [0, 24]
   $: ZoomSliderValues, setMinMaxZoom()
 
+  let LineWidthValues = [style.paint && style.paint['line-width'] ? style.paint['line-width'] : 1.0]
+  $: LineWidthValues, setLineWidth()
+
   onMount(() => {
     updateLegend()
   })
@@ -93,6 +96,16 @@
     $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
   }
 
+  const setLineWidth = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (!newStyle.paint) {
+      newStyle.paint = {}
+    }
+    newStyle.paint['line-width'] = LineWidthValues[0]
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setPaintProperty(layerId, 'line-width', LineWidthValues[0])
+  }
+
   const applyLayerStyle = () => {
     const newStyle = JSON.parse(styleJSON)
     if (newStyle.minzoom && newStyle.maxzoom) {
@@ -117,29 +130,29 @@
 <div>
   <div bind:this={legendSymbolContainer} />
 
-  <table>
-    <tr>
-      <td><p>Zoom Level</p></td>
-      <td style="width:100%">
-        <div class="slider">
-          <RangeSlider
-            id="ZoomSliderValues"
-            bind:values={ZoomSliderValues}
-            float
-            range
-            min={0}
-            max={24}
-            step={1}
-            pips
-            first="1"
-            last="20"
-            rest={false} />
-        </div>
-      </td>
-    </tr>
-  </table>
+  <p>Zoom Level</p>
+  <div class="slider">
+    <RangeSlider
+      bind:values={ZoomSliderValues}
+      float
+      range
+      min={0}
+      max={24}
+      step={1}
+      pips
+      first="1"
+      last="20"
+      rest={false} />
+  </div>
 
-  <br />
+  {#if style.type === 'line'}
+    <p>Line Width</p>
+    <div class="slider">
+      <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
+    </div>
+  {/if}
+
+  <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
     <HelperText slot="helper">style.json for the layer</HelperText>
   </Textfield>
@@ -167,5 +180,11 @@
     --range-range-inactive: #2196f3;
     --range-handle-inactive: #2196f3;
     --range-handle: #2196f3;
+  }
+
+  .color-picker {
+    —-picker-height: 200px;
+    —-slider-width: 30px;
+    —-picker-width: 100%;
   }
 </style>
