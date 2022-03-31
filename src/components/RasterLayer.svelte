@@ -13,11 +13,16 @@
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+  import { faDiagramNext } from '@fortawesome/free-solid-svg-icons/faDiagramNext'
+  import { faRankingStar } from '@fortawesome/free-solid-svg-icons/faRankingStar'
+  import { faBarsProgress } from '@fortawesome/free-solid-svg-icons/faBarsProgress'
 
   import Legend from './Legend.svelte'
+  import UniqueValuesLegend from './UniqueValuesLegend.svelte'
+  import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
-  import type { Layer } from '../lib/types'
-  import { LayerInitialValues } from '../lib/constants'
+  import type { Layer, LayerDefinition } from '../lib/types'
+  import { LayerInitialValues, DEFAULT_COLORMAP } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
   import OpacityButton from './controls/OpacityButton.svelte'
@@ -28,6 +33,9 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
+  const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
+  // check if has unique values and extract min/max from info property
+  const layerUniqueValues = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
   let mapLayerIndex: number
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
@@ -36,6 +44,7 @@
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
+
   let panelOpen: boolean = layerState[layerId] || false
   let scalingValueRange = ''
 
@@ -43,7 +52,18 @@
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
 
+  let legendTypes = { continuous: faDiagramNext }
+  if (layerUniqueValues.length > 0) {
+    legendTypes = { ...legendTypes, ...{ unique: faRankingStar } }
+  } else {
+    legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
+  }
+
+  let selectedLegendType = 'continuous'
+  let activeColorMapName: string = DEFAULT_COLORMAP
+
   $: isDynamicLayer, setDynamicLayerState()
+
   $: panelOpen, setLayerState()
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
@@ -125,6 +145,8 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
+  $: selectedLegendType, console.log('RasterLayer:selectedLegendType', selectedLegendType)
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -178,16 +200,30 @@
             <div transition:slide class="action">
               <div class="header">
                 <div class="name">Legend</div>
+                <div class="legend-icons-container">
+                  {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
+                    <div
+                      class={selectedLegendType == legendType ? 'legend-icon-selected' : 'legend-icon'}
+                      on:click={() => {
+                        selectedLegendType = legendType
+                      }}
+                      title="{legendType} legend">
+                      <Fa icon={legendTypeIcon} size="lg" style="transform: scale(.75);" />
+                    </div>
+                  {/each}
+                </div>
                 <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
                   <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
-              <Legend
-                layerConfig={layer}
-                bind:lMax={layerBandMetadataMax}
-                bind:lMin={layerBandMetadataMin}
-                bind:scalingValueStart
-                bind:scalingValueEnd />
+
+              {#if selectedLegendType == 'continuous'}
+                <Legend bind:activeColorMapName layerConfig={layer} />
+              {:else if selectedLegendType == 'unique'}
+                <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+              {:else}
+                <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+              {/if}
             </div>
           {/if}
 
@@ -201,7 +237,6 @@
               </div>
             </div>
           {/if}
-
           <OpacityPanel {layer} {isOpacityPanelVisible} />
         </div>
       </div></Panel>
@@ -210,6 +245,52 @@
 
 <style lang="scss">
   .layer-header {
+    .layer-header-name {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      font-family: ProximaNova, sans-serif;
+      height: 20px;
+
+      .layer-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        font-size: 14px;
+      }
+
+      .unread-count {
+        padding-left: 7.5px;
+      }
+    }
+
+    .legend-icons-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      align-items: center;
+      border: 0px solid;
+      padding-right: 50%;
+      width: 50%;
+    }
+
+    .legend-icon {
+      opacity: 0.5;
+      display: inline;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    .legend-icon-selected {
+      opacity: 1;
+      display: inline;
+      cursor: pointer;
+    }
+
     .layer-header-icons {
       padding-top: 10px;
       display: flex;

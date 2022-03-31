@@ -21,3 +21,15 @@ export const sequentialColormaps = [
 export const divergingColorMaps = ['rdgy', 'spectral', 'puor', 'piyg', 'brbg', 'prgn', 'rdbu', 'rdylbu', 'rdylgn']
 
 export const qualitativeColorMaps = ['accent', 'set1', 'set2', 'set3', 'pastel2', 'pastel1', 'dark2', 'paired']
+
+export enum ColorMapTypes {
+  sequential = 'sequential',
+  diverging = 'diverging',
+  qualitative = 'qualitative',
+}
+
+export const ColorMaps = {
+  sequential: sequentialColormaps,
+  diverging: divergingColorMaps,
+  qualitative: qualitativeColorMaps,
+}
