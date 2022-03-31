@@ -28,7 +28,7 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  let mapLayerIndex: number = 0
+  let mapLayerIndex: number
 
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false

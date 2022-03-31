@@ -21,7 +21,7 @@ export interface Layer {
   definition: LayerDefinition
   type?: string
   info?: LayerInfo
-  queryInfoEnabled?: boolean | true
+  visible?: boolean | true
   url?: string
 }
 

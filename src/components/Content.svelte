@@ -12,7 +12,7 @@
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { layerList, indicatorProgress } from '../stores'
+  import { layerList, indicatorProgress, map } from '../stores'
   import { BannerTypes, ErrorCodes, LayerIconTypes, TabNames } from '../lib/constants'
   import type { Error } from '../lib/types'
 
@@ -47,8 +47,10 @@
     }, 5000)
   })
 
-  const setContentContainerMargin = (margin: number) =>
-    (document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`)
+  const setContentContainerMargin = (margin: number) => {
+    document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`
+    $map.triggerRepaint()
+  }
 
   const handleMousemove = (e: MouseEvent | TouchEvent) => {
     if (!isResizingDrawer) return

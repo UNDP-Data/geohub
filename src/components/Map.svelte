@@ -32,9 +32,9 @@
 
   // layer change
   $: {
-    const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+    const layersVisible = $layerList.filter((layer) => layer.visible === true)
 
-    if (layersWithQueryInfo.length > 0) {
+    if (layersVisible.length > 0) {
       if ($map.hasControl(mapQueryInfoControl) === false) {
         $map.addControl(mapQueryInfoControl, 'top-right')
       }
@@ -48,11 +48,11 @@
   // mouse click on map
   $: {
     if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
-      const layersWithQueryInfo = $layerList.filter((layer) => layer.queryInfoEnabled === true)
+      const layersVisible = $layerList.filter((layer) => layer.visible === true)
 
-      if (layersWithQueryInfo.length > 0) {
+      if (layersVisible.length > 0) {
         removeMapLayerValues(false)
-        addMapLayerValues(layersWithQueryInfo)
+        addMapLayerValues(layersVisible)
       }
     }
   }
@@ -122,7 +122,7 @@
     if (marker) marker.remove()
   }
 
-  const addMapLayerValues = async (layersWithQueryInfo: Layer[]) => {
+  const addMapLayerValues = async (layersVisible: Layer[]) => {
     $map.getCanvas().style.cursor = 'crosshair'
     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
 
@@ -132,7 +132,7 @@
     const lng = mapMouseEvent.lngLat.lng
     let layerValuesDataTmp = []
 
-    for (const layer of layersWithQueryInfo) {
+    for (const layer of layersVisible) {
       const layerData = await fetch(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`).then((res) => {
         return res.json()
       })
