@@ -1657,6 +1657,11 @@ csstype@^3.0.10:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.11.tgz#d66700c5eacfac1940deb4e3ee5642792d85cd33"
   integrity sha512-sa6P2wJ+CAbgyy4KFssIb/JNMLxFvKF1pCYCSXS8ZMuqZnMsrxqI2E5sPyoTpxoPU/gVZMzr2zjOfg8GIZOMsw==
 
+d3-color@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-2.0.0.tgz#8d625cab42ed9b8f601a1760a389f7ea9189d62e"
+  integrity sha512-SPXi0TSKPD4g9tw0NMZFnR95XVgUZiBH+uUTqQuDu1OsE2zomHU7ho0FISciaPvosimixwHFl3WHLGabv6dDgQ==
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -3462,6 +3467,13 @@ svelte-check@^2.4.6:
     source-map "^0.7.3"
     svelte-preprocess "^4.0.0"
     typescript "*"
+
+svelte-colorpick@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/svelte-colorpick/-/svelte-colorpick-0.1.7.tgz#2f7c5a886d8dc191559b1fc141b84f5e8491acba"
+  integrity sha512-2E7nbweSdl81LtFm8z/hpWEv52cU1jSIiYgTpSpanaBWNiFxr+QT4QMlxFASE/LWACFbm1Xe37ACnIwHxWfr9Q==
+  dependencies:
+    d3-color "^2.0.0"
 
 svelte-fa@^2.4.0:
   version "2.4.0"
