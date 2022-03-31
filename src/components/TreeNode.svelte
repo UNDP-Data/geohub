@@ -35,7 +35,7 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
-  import { LayerIconTypes, TreeNodeInitialValues } from '../lib/constants'
+  import { LayerIconTypes, TreeNodeInitialValues, DEFAULT_COLORMAP } from '../lib/constants'
   import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
@@ -165,7 +165,7 @@
             resampling: 'nearest',
             rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
             return_mask: true,
-            colormap_name: 'bugn',
+            colormap_name: DEFAULT_COLORMAP,
           }
 
           const layerSource = {

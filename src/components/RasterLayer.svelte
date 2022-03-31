@@ -25,14 +25,16 @@
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faBarsStaggered } from '@fortawesome/free-solid-svg-icons/faBarsStaggered'
+  import { faDiagramNext } from '@fortawesome/free-solid-svg-icons/faDiagramNext'
   import { faRankingStar } from '@fortawesome/free-solid-svg-icons/faRankingStar'
   import { faBarsProgress } from '@fortawesome/free-solid-svg-icons/faBarsProgress'
 
   import Legend from './Legend.svelte'
+  import UniqueValuesLegend from './UniqueValuesLegend.svelte'
+  import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
-  import { LayerInitialValues } from '../lib/constants'
+  import { LayerInitialValues, DEFAULT_COLORMAP } from '../lib/constants'
 
   export let layerConfig: Layer = LayerInitialValues
   export let disabled = true
@@ -66,12 +68,15 @@
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
 
-  let legendTypes = { continuous: faBarsStaggered, intervals: faBarsProgress }
+  let legendTypes = { continuous: faDiagramNext }
   if (layerUniqueValues.length > 0) {
     legendTypes = { ...legendTypes, ...{ unique: faRankingStar } }
+  } else {
+    legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
   let selectedLegendType = 'continuous'
+  let activeColorMapName: string = DEFAULT_COLORMAP
 
   $: inDynamic, setDynamicLayerState()
   $: layerOpacity = rangeSliderValues[0] / 100
@@ -192,7 +197,7 @@
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
 
-  $: selectedLegendType, console.log('selectedLegendType', selectedLegendType)
+  $: selectedLegendType, console.log('RasterLayer:selectedLegendType', selectedLegendType)
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -201,7 +206,7 @@
       <div class="layer-header">
         <div>
           <div class="layer-header-name">
-            <div class="layer-name">
+            <div class="layer-name" title={name}>
               {name}
             </div>
             <div class="unread-count">
@@ -302,11 +307,11 @@
               </div>
 
               {#if selectedLegendType == 'continuous'}
-                <Legend {layerConfig} />
+                <Legend bind:activeColorMapName {layerConfig} />
               {:else if selectedLegendType == 'unique'}
-                Unique
+                <UniqueValuesLegend bind:activeColorMapName {layerConfig} />
               {:else}
-                intervals
+                <IntervalsLegend bind:activeColorMapName {layerConfig} />
               {/if}
             </div>
           {/if}

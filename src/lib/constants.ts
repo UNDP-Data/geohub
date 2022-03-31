@@ -6,6 +6,8 @@ import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 
 import type { TreeNode } from '../lib/types'
 
+export const DEFAULT_COLORMAP = 'viridis'
+
 export enum TabNames {
   LoadData = 'Load data',
   Layers = 'Layers',
