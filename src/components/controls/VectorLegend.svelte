@@ -2,6 +2,7 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
+  import RangeSlider from 'svelte-range-slider-pips'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer, LayerDefinition } from '../../lib/types'
@@ -13,9 +14,13 @@
   const zoom = $map.getZoom()
   const style = $map.getStyle().layers.filter((layer) => layer.id === layerId)[0]
 
-  $: styleJSON = JSON.stringify(style, null, 4)
+  $: styleJSON = stringifyStyleJSON(style)
 
   let legendSymbolContainer
+
+  let ZoomSliderValues = [0, 24]
+  $: ZoomSliderValues, setMinMaxZoom()
+
   onMount(() => {
     updateLegend()
   })
@@ -76,12 +81,26 @@
     }
   }
 
+  const stringifyStyleJSON = (style) => {
+    return JSON.stringify(style, null, 4)
+  }
+
+  const setMinMaxZoom = () => {
+    const newStyle = JSON.parse(styleJSON)
+    newStyle.minzoom = ZoomSliderValues[0]
+    newStyle.maxzoom = ZoomSliderValues[1]
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
+  }
+
   const applyLayerStyle = () => {
     const newStyle = JSON.parse(styleJSON)
+    if (newStyle.minzoom && newStyle.maxzoom) {
+      $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
+    }
     if (newStyle.paint) {
       Object.keys(newStyle.paint).forEach((key) => {
         const value = newStyle.paint[key]
-        console.log(layerId, key, value)
         $map.setPaintProperty(layerId, key, value)
       })
     }
@@ -97,6 +116,30 @@
 
 <div>
   <div bind:this={legendSymbolContainer} />
+
+  <table>
+    <tr>
+      <td><p>Zoom Level</p></td>
+      <td style="width:100%">
+        <div class="slider">
+          <RangeSlider
+            id="ZoomSliderValues"
+            bind:values={ZoomSliderValues}
+            float
+            range
+            min={0}
+            max={24}
+            step={1}
+            pips
+            first="1"
+            last="20"
+            rest={false} />
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <br />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
     <HelperText slot="helper">style.json for the layer</HelperText>
   </Textfield>
@@ -118,5 +161,11 @@
     text-transform: capitalize;
     height: 30px;
     width: 100%;
+  }
+  .slider {
+    --range-handle-focus: #2196f3;
+    --range-range-inactive: #2196f3;
+    --range-handle-inactive: #2196f3;
+    --range-handle: #2196f3;
   }
 </style>
