@@ -14,10 +14,6 @@
 <style lang="scss">
   @import '../../styles/button-icons-selected.scss';
 
-  .container {
-    margin-right: 6px;
-  }
-
   .icon {
     opacity: 0.5;
     display: inline;

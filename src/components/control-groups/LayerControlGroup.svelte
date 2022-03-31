@@ -4,14 +4,12 @@
   import DeleteButton from '../controls/DeleteButton.svelte'
   import VisibilityButton from '../controls/VisibilityButton.svelte'
   import LayerOrderButtons from '../controls/LayerOrderButtons.svelte'
-  import QueryMapInfoButton from '../controls/QueryMapInfoButton.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let mapLayerIndex: number
 </script>
 
 <div class="group">
-  <QueryMapInfoButton {layer} />
   <LayerOrderButtons {layer} bind:mapLayerIndex />
   <VisibilityButton {layer} />
   <DeleteButton {layer} />

@@ -144,7 +144,7 @@
         }
 
         $layerList = [
-          { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, queryInfoEnabled: true },
+          { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, visible: true },
           ...$layerList,
         ]
         $map.addLayer(layerDefinition)
@@ -202,7 +202,7 @@
               definition: layerDefinition,
               type: LayerTypes.RASTER,
               info: layerInfo,
-              queryInfoEnabled: true,
+              visible: true,
               url: b64EncodedUrl,
             },
             ...$layerList,
