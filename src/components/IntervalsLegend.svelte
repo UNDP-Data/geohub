@@ -85,13 +85,13 @@
   let selectedClassificationMethod: any = 'e'
 
   const reclassifyImage = (params = {}) => {
-    console.log(`before reclassifying ${intervalList} ${selectedClassificationMethod}`)
+    //console.log(`before reclassifying ${intervalList} ${selectedClassificationMethod}`)
     let cmap = []
     // Interval List needs to be updated every time the number of classes changes
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
-    console.log(`after reclassifying ${intervalList}`)
+    //console.log(`after reclassifying ${intervalList}`)
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
     //console.log(`Interval List is: ${intervalList}`)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
@@ -105,7 +105,7 @@
       cmap.push(cmapitem)
     }
     let encodedCmap = JSON.stringify(cmap)
-    //console.log(encodedCmap)
+    console.log(encodedCmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodedCmap }, params)
     updateParamsInURL(updatedParams)
@@ -128,6 +128,7 @@
   const handleRangeSliderValues = () => {
     reclassifyImage({ rescale: rangeSliderValues.join(',') })
   }
+  reclassifyImage()
 </script>
 
 <div class="group">
@@ -144,7 +145,7 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={handleRangeSliderValues()} />
+      on:stop={() => {handleRangeSliderValues()}} />
   </div>
 
   <div class="intervals-legend">

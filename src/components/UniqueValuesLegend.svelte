@@ -136,7 +136,7 @@
     setUniqueValueLegend({ rescale: rangeSliderValues.join(',') })
   }
 
-  $: layerURL, console.log(`${layerURL.toString()}`)
+  //$: layerURL, console.log(`${layerURL.toString()}`)
   setUniqueValueLegend()
 </script>
 

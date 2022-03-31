@@ -82,7 +82,6 @@
     })
     refreshLayerURL()
   }
-
   if (layerURL.searchParams.has('colormap')) {
     layerURL.searchParams.delete('colormap')
     updateParamsInURL({ colormap_name: activeColorMapName })
@@ -175,6 +174,11 @@
     padding: 2px;
     //margin-top: 1px;
     //padding-bottom: 4px;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+      color: white;
+    }
 
     .slider {
       --range-handle-focus: #2196f3;

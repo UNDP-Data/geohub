@@ -9,9 +9,9 @@ import type { TreeNode } from '../lib/types'
 export const DEFAULT_COLORMAP = 'viridis'
 
 export enum TabNames {
-  LoadData = 'Load data',
-  Layers = 'Layers',
-  Analyze = 'Analyze',
+  LOAD_DATA = 'Load data',
+  LAYERS = 'Layers',
+  ANALYZE = 'Analyze',
 }
 
 export const TreeNodeInitialValues = {
@@ -30,11 +30,11 @@ export const LayerInitialValues = {
 }
 
 export enum ErrorCodes {
-  UndefinedBandMetadatalayerMinMax = 'Missing layer minimum and/or maximum metadata values.',
+  UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
 }
 
 export enum BannerTypes {
-  error = 'Error',
+  ERROR = 'Error',
 }
 
 export const LayerIconTypes = [
@@ -69,3 +69,25 @@ export const LayerIconTypes = [
     color: 'dodgerblue',
   },
 ]
+
+export enum ColorMapTypes {
+  SEQUENTIAL = 'sequential',
+  DIVERGING = 'diverging',
+  QUALITATIVE = 'qualitative',
+}
+
+export enum DynamicLayerLegendTypes {
+  CONTINUOUS = 'continuous',
+  BUCKETED = 'bucketed',
+}
+
+export enum DynamicLayerResolutionTypes {
+  HIGHEST = 'highest',
+  LOWEST = 'lowest',
+  AVERAGE = 'average',
+}
+
+export enum LayerTypes {
+  RASTER = 'raster',
+  VECTOR = 'vector',
+}

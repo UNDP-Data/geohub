@@ -35,7 +35,7 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
-  import { LayerIconTypes, TreeNodeInitialValues, DEFAULT_COLORMAP } from '../lib/constants'
+  import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
@@ -43,8 +43,8 @@
   export let handlErrorCallback: CallableFunction
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
-  const iconRaster = LayerIconTypes.find((icon) => icon.id === 'raster')
-  const iconVector = LayerIconTypes.find((icon) => icon.id === 'vector')
+  const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
+  const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let loadingLayer = false
 
   $: tree = node
@@ -88,7 +88,7 @@
           item.path === newTreeData?.tree?.path ? newTreeData.tree : item,
         )
       }
-      currentTreeData = currentTreeDataChildren.filter((item) => item.label === element).pop()
+      currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
     })
 
     wtree.set(currentTree)
@@ -118,7 +118,7 @@
       if (!isRaster) {
         const layerName = path.split('/')[path.split('/').length - 2]
         const layerSource = {
-          type: 'vector',
+          type: LayerTypes.VECTOR,
           tiles: [url],
           minzoom: 0,
           maxzoom: 12,
@@ -143,7 +143,10 @@
           },
         }
 
-        layerList.set([{ name: layerName, definition: layerDefinition, type: 'vector' }, ...$layerList])
+        $layerList = [
+          { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, visible: true },
+          ...$layerList,
+        ]
         $map.addLayer(layerDefinition)
       } else {
         const layerName = path.split('/')[path.split('/').length - 1]
@@ -169,7 +172,7 @@
           }
 
           const layerSource = {
-            type: 'raster',
+            type: LayerTypes.RASTER,
             tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
             tileSize: 256,
             bounds: layerInfo['bounds'],
@@ -184,7 +187,7 @@
 
           const layerDefinition: LayerDefinition = {
             id: layerId,
-            type: 'raster',
+            type: LayerTypes.RASTER,
             source: tileSourceId,
             minzoom: 0,
             maxzoom: 22,
@@ -192,10 +195,18 @@
               visibility: 'visible',
             },
           }
-          layerList.set([
-            { name: layerName, definition: layerDefinition, type: 'raster', info: layerInfo },
+
+          $layerList = [
+            {
+              name: layerName,
+              definition: layerDefinition,
+              type: LayerTypes.RASTER,
+              info: layerInfo,
+              visible: true,
+              url: b64EncodedUrl,
+            },
             ...$layerList,
-          ])
+          ]
           let firstSymbolId = undefined
           for (const layer of $map.getStyle().layers) {
             if (layer.type === 'symbol') {
@@ -206,7 +217,7 @@
           $map.addLayer(layerDefinition, firstSymbolId)
         } else {
           handlErrorCallback({
-            code: 'UndefinedBandMetadatalayerMinMax',
+            code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
           })
         }
       }
@@ -234,7 +245,7 @@
         on:click={() => (level > 0 ? toggleExpansion() : '')}
         class="node-container"
         transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon" style="margin-right: 5px;">
+        <div class="tree-icon">
           {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
@@ -324,12 +335,24 @@
       padding-left: 5px;
       height: 19.5px;
       width: 100%;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
     }
 
     .icon {
       padding-right: 10px;
       padding-left: 10px;
       cursor: pointer;
+    }
+
+    .tree-icon {
+      margin-right: 5px;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
     }
   }
 </style>

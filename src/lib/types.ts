@@ -21,6 +21,8 @@ export interface Layer {
   definition: LayerDefinition
   type?: string
   info?: LayerInfo
+  visible?: boolean | true
+  url?: string
 }
 
 export interface LayerDefinition {

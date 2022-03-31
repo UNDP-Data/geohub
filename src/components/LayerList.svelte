@@ -7,7 +7,7 @@
   import VectorLayer from './VectorLayer.svelte'
   import { layerList, dynamicLayers } from '../stores'
   import DynamicLayer from './DynamicLayer.svelte'
-  import { TabNames } from '../lib/constants'
+  import { LayerTypes, TabNames } from '../lib/constants'
 
   let disabled = true
   let open = false
@@ -20,7 +20,7 @@
         <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
       </div>
       <div class="text">
-        No layers have been selected. Please select a layer from the <strong>{TabNames.LoadData}</strong> tab.
+        No layers have been selected. Please select a layer from the <strong>{TabNames.LOAD_DATA}</strong> tab.
       </div>
     </li>
   </ul>
@@ -36,11 +36,11 @@
   <DynamicLayer bind:open />
 {/if}
 
-{#each $layerList as layerConfig (layerConfig.definition.id)}
-  {#if layerConfig.type === 'raster'}
-    <RasterLayer bind:layerConfig bind:disabled />
-  {:else}
-    <VectorLayer />
+{#each $layerList as layer (layer.definition.id)}
+  {#if layer.type === LayerTypes.RASTER}
+    <RasterLayer {layer} bind:disabled />
+  {:else if layer.type === LayerTypes.VECTOR}
+    <VectorLayer {layer} />
   {/if}
 {/each}
 
@@ -61,6 +61,12 @@
       justify-content: left;
       align-items: center;
       padding: 10px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #323234;
+        border-color: #30363d;
+        color: white;
+      }
 
       .text {
         padding-left: 15px;

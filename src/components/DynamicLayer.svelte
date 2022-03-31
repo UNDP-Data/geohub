@@ -4,61 +4,51 @@
   import Dialog, { Title, Content, Actions } from '@smui/dialog'
   import List, { Item, Text as LText } from '@smui/list'
   import Select, { Option } from '@smui/select'
-  import Slider from '@smui/slider'
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
   import { v4 as uuidv4 } from 'uuid'
+  import RangeSlider from 'svelte-range-slider-pips'
 
   import { dynamicLayers, layerList, map } from '../stores'
   import Calculator from './raster/Calculator.svelte'
+  import { DynamicLayerLegendTypes, DynamicLayerResolutionTypes, LayerTypes } from '../lib/constants'
 
   export let open = false
-  let layerMinimum = 0
-  let layerMaximum = 10
-  let layerStep = 0
-  let layerSliderValue = 0
-  let selectedRes = 'highest'
-  let resChoices = ['highest', 'lowest', 'average']
-  let legendTypes = ['continuous', 'bucketed']
-  let selectedLegendType = ''
-  let newLayerName = ''
-  let newLayerId = ''
+
   let clickedLayer = undefined
-  let layerNames = []
   let expression = ''
+  let layerMaximum = 10
+  let layerMinimum = 0
+  let layerNames = []
+  let layerStep = 0
+  let newLayerId = ''
+  let newLayerName = ''
+  let rangeSliderValues = []
+  let selectedLegendType = ''
+  let selectedRes = DynamicLayerResolutionTypes.HIGHEST
 
   $: open, initialize()
-  $: if (newLayerName !== '') {
-    newLayerId = uuidv4()
-  }
+  $: newLayerName !== '' ? (newLayerId = uuidv4()) : newLayerId
 
   const initialize = () => {
-    layerNames = $layerList
-      .filter((layer) => {
-        return $dynamicLayers.includes(layer.definition.id)
-      })
-      .map((layer) => {
-        return layer.name
-      })
+    layerNames = $layerList.filter((layer) => $dynamicLayers.includes(layer.definition.id)).map((layer) => layer.name)
   }
 
   const setLayerExpression = () => {
     if (clickedLayer) {
-      let inputLayer = $layerList.filter((layer) => layer.definition.id === clickedLayer).pop()
+      const inputLayer = $layerList.find((layer) => layer.definition.id === clickedLayer)
       layerMinimum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
       layerMaximum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
 
       layerStep = (layerMaximum - layerMinimum) * 1e-2
       layerStep = parseFloat(layerStep.toFixed(2))
-      layerSliderValue = layerMinimum + layerStep * 50
-      let inputLayerIdx = $dynamicLayers.indexOf(clickedLayer) + 1
-
-      expression += `b${inputLayerIdx}`
+      rangeSliderValues = [layerMinimum + layerStep * 50]
+      expression += `b${$dynamicLayers.indexOf(clickedLayer) + 1}`
     }
   }
 
   const processSliderClick = () => {
-    expression += `${layerSliderValue}`
+    expression += `${rangeSliderValues[0]}`
   }
 
   const processCombinedLayer = (action: boolean) => {
@@ -66,25 +56,24 @@
       let combinedurl = ''
       let bounds = []
       $dynamicLayers.forEach((layerId) => {
-        let inLayer = $layerList.filter((item) => item.definition.id === layerId).pop()
+        const inLayer = $layerList.find((item) => item.definition.id === layerId)
 
-        let lSrc = $map.getSource(inLayer.definition.source)
-        let tileurl = lSrc.tiles[0]
-        let tURL = new URL(tileurl)
-        let lurl = tURL.searchParams.get('url')
+        const layerSource = $map.getSource(inLayer.definition.source)
+        const tileUrl = new URL(layerSource.tiles[0])
+        const layerUrl = tileUrl.searchParams.get('url')
         if (combinedurl === '') {
-          combinedurl = `${tURL.protocol}/${tURL.host}${decodeURI(
-            tURL.pathname,
+          combinedurl = `${tileUrl.protocol}/${tileUrl.host}${decodeURI(
+            tileUrl.pathname,
           )}?scale=1&TileMatrixSetId=WebMercatorQuad`
-          bounds = lSrc.bounds
+          bounds = layerSource.bounds
         }
-        combinedurl += `&url=${lurl}`
+        combinedurl += `&url=${layerUrl}`
       })
 
       combinedurl += `&unscale=false&resampling=nearest&rescale=0,1&colormap_name=viridis&return_mask=true`
 
-      const lSrc = {
-        type: 'raster',
+      const layerSource = {
+        type: LayerTypes.RASTER,
         tiles: [combinedurl],
         tileSize: 256,
         bounds: bounds,
@@ -92,15 +81,15 @@
           'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
       }
 
-      const srcID = uuidv4()
-      if (!(srcID in $map.getStyle().sources)) {
-        $map.addSource(srcID, lSrc)
+      const uuid = uuidv4()
+      if (!(uuid in $map.getStyle().sources)) {
+        $map.addSource(uuid, layerSource)
       }
 
       const definition = {
         id: newLayerId || 'test',
-        type: 'raster',
-        source: srcID,
+        type: LayerTypes.RASTER,
+        source: uuid,
         minzoom: 0,
         maxzoom: 22,
         layout: {
@@ -108,7 +97,10 @@
         },
       }
 
-      layerList.set([{ name: newLayerName || 'test', definition: definition, type: 'raster', info: {} }, ...$layerList])
+      layerList.set([
+        { name: newLayerName || 'test', definition: definition, type: LayerTypes.RASTER, info: {} },
+        ...$layerList,
+      ])
       let firstSymbolId = undefined
       for (const layer of $map.getStyle().layers) {
         if (layer.type === 'symbol') {
@@ -124,8 +116,8 @@
     clickedLayer = undefined
   }
 
-  const setClickedLayer = (l) => {
-    clickedLayer = l
+  const setClickedLayer = (layerId: string) => {
+    clickedLayer = layerId
     setLayerExpression()
   }
 </script>
@@ -161,19 +153,21 @@
 
       {#if clickedLayer !== undefined}
         <div class="onecol">
-          <div>{layerMinimum}</div>
-          <Slider
-            discrete
-            bind:value={layerSliderValue}
-            min={layerMinimum}
-            max={layerMaximum}
-            step={layerStep}
-            style="width:300px"
-            input$aria-label="Layer opacity" />
-          <div>{layerMaximum}</div>
+          <div class="slider">
+            <RangeSlider
+              bind:values={rangeSliderValues}
+              float
+              min={layerMinimum}
+              max={layerMaximum}
+              step={layerStep}
+              pips
+              first="label"
+              last="label"
+              rest={false} />
+          </div>
           <div>
             <Button on:click={() => processSliderClick()}>
-              <Label>USE</Label>
+              <Label>Insert</Label>
             </Button>
           </div>
         </div>
@@ -184,14 +178,14 @@
 
       <div>
         <Select bind:value={selectedLegendType} label="Select legend type">
-          {#each legendTypes as legendType}
+          {#each Object.values(DynamicLayerLegendTypes) as legendType}
             <Option value={legendType}>{legendType}</Option>
           {/each}
         </Select>
       </div>
 
       <div>
-        <Set chips={resChoices} let:chip choice bind:selected={selectedRes}>
+        <Set chips={Object.values(DynamicLayerResolutionTypes)} let:chip choice bind:selected={selectedRes}>
           <Chip {chip} touch>
             <Text>{chip}</Text>
           </Chip>
@@ -215,7 +209,7 @@
   </Actions>
 </Dialog>
 
-<style>
+<style lang="scss">
   .wrapper {
     border: 0px solid;
     display: grid;
@@ -247,5 +241,14 @@
     justify-content: space-evenly;
     margin: auto;
     border: 1px solid red;
+    width: 250px;
+
+    .slider {
+      --range-handle-focus: #2196f3;
+      --range-range-inactive: #2196f3;
+      --range-handle-inactive: #2196f3;
+      --range-handle: #2196f3;
+      width: 100%;
+    }
   }
 </style>
