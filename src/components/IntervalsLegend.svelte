@@ -105,7 +105,7 @@
       cmap.push(cmapitem)
     }
     let encodedCmap = JSON.stringify(cmap)
-    console.log(encodedCmap)
+    //console.log(encodedCmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodedCmap }, params)
     updateParamsInURL(updatedParams)
@@ -145,7 +145,9 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={() => {handleRangeSliderValues()}} />
+      on:stop={() => {
+        handleRangeSliderValues()
+      }} />
   </div>
 
   <div class="intervals-legend">

@@ -28,8 +28,6 @@
   import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
 
-  
-
   export let layer: Layer = LayerInitialValues
   export let disabled = true
 
@@ -47,8 +45,6 @@
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
 
-
-  
   let panelOpen: boolean = layerState[layerId] || false
   let scalingValueRange = ''
 
