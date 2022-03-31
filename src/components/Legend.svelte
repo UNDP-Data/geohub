@@ -21,7 +21,7 @@
   let info: LayerInfo
     //descructired
   ;({ name, definition, type, info } = layerConfig)
-  const layerId = definition.id
+
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
 
@@ -162,29 +162,7 @@
 </div>
 
 <style lang="scss">
-  .row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    border: 0px dashed;
-    justify-content: center;
-    align-items: center;
-  }
-  .column {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 100%;
-    align-items: center;
-    flex: 1;
-  }
-  .uvalues-legend {
-    display: flex;
-    flex-direction: rows;
-    align-items: stretch;
-    // height: 100%;
-    border: 0px solid red;
-  }
+  
   .colormap-div {
     height: 20px;
     width: 80%;
@@ -207,11 +185,6 @@
       width: calc(90% - 4px);
       padding-left: calc(10% + 4px);
     }
-  }
-
-  .discrete {
-    width: 20px;
-    height: 20px;
   }
 
   :global(.changeLegendButtonDiv) {

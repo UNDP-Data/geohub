@@ -10,7 +10,6 @@
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
   import chroma from 'chroma-js'
-  import { MapTouchEvent } from 'maplibre-gl'
 
   //variables
   //layer config prop
@@ -26,7 +25,7 @@
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerUniqueValues: Array<number> = info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
-  const layerId = definition.id
+
   //console.log(layerMin, layerMax, layerUniqueValues)
 
   //slider vars, intialized to Layer min/max
@@ -93,7 +92,7 @@
     console.log(`setting Unique values legend for ${name} with ${activeColorMapName}`)
 
     let cmapObject = {}
-    layerUniqueValues.forEach((key, i) => {
+    layerUniqueValues.forEach((key) => {
       let c = [...activeColorMap(key).rgb(), 255]
       //console.log(activeColorMap(key).rgb(), i, key, c)
       //cmapObject[remap(key, layerUniqueValues[0], layerUniqueValues[layerUniqueValues.length - 1])] = c
@@ -280,10 +279,7 @@
     width: 80%;
     display: flex;
   }
-  .chroma-test {
-    height: 20px;
-    width: 80%;
-  }
+
   :global(.changelegendbtn) {
     text-transform: capitalize;
     height: 30px;

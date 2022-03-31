@@ -23,7 +23,7 @@
   let type: string
   let info: LayerInfo
   ;({ name, definition, type, info } = layerConfig)
-  const layerId = definition.id
+
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   //slider vars, intialized to Layer min/max
@@ -287,10 +287,7 @@
     width: 80%;
     display: block;
   }
-  .chroma-test {
-    height: 20px;
-    width: 80%;
-  }
+
   :global(.changelegendbtn) {
     text-transform: capitalize;
     height: 30px;
