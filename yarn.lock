@@ -1053,7 +1053,7 @@
 
 "@smui/textfield@^6.0.0-beta.15":
   version "6.0.0-beta.15"
-  resolved "https://registry.npmjs.org/@smui/textfield/-/textfield-6.0.0-beta.15.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/textfield/-/textfield-6.0.0-beta.15.tgz#28b1779defcf4b6e49fc7941787211282b4d1dd6"
   integrity sha512-NmAFzAG8tQfXDcHfXvVMUNJcNROa+3RiA3BP9bFLePh7aiEgVAdL5rsaWKjN+1NzDiI/wuJ6PGH42N855f2ttg==
   dependencies:
     "@material/dom" "^13.0.0"

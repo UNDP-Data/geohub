@@ -1,5 +1,7 @@
 <script lang="ts">
   import Button, { Label as LabelButton } from '@smui/button'
+  import Textfield from '@smui/textfield'
+  import HelperText from '@smui/textfield/helper-text'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer, LayerDefinition } from '../../lib/types'
@@ -95,7 +97,9 @@
 
 <div>
   <div bind:this={legendSymbolContainer} />
-  <textarea bind:value={styleJSON} />
+  <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
+    <HelperText slot="helper">style.json for the layer</HelperText>
+  </Textfield>
   <div class="changeLegendButtonDiv">
     <Button class="changelegendbtn" variant="raised" on:click={() => applyLayerStyle()}>
       <LabelButton>Apply</LabelButton>
@@ -104,13 +108,6 @@
 </div>
 
 <style lang="scss">
-  textarea {
-    resize: vertical;
-    width: 100%;
-    height: 150px;
-    min-height: 50px;
-    max-height: 300px;
-  }
   :global(.changeLegendButtonDiv) {
     margin: 0 auto;
     padding-top: 10px;
