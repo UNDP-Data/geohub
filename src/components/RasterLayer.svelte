@@ -22,6 +22,7 @@
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer } from '../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
@@ -55,7 +56,7 @@
     legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
   let activeColorMapName: string = DEFAULT_COLORMAP
 
   $: isDynamicLayer, setDynamicLayerState()
@@ -117,7 +118,7 @@
 
   const updateParamsInURL = (params) => {
     debounce(() => {
-      let layers = mapLayers.find((item) => item.id === layerId)['source']
+      let layers = mapLayers.find((item: LayerSpecification) => item.id === layerId)['source']
       const layerSource = $map.getSource(layers)
 
       if (layerSource.tiles) {
@@ -276,7 +277,7 @@
       border-top: 1px solid rgba(204, 204, 204, 0.5);
 
       .group {
-        background: #f0f0f0;
+        background: #e3e3e3;
         border-radius: 7.5px;
         padding: 5px;
         padding-right: 0;
@@ -318,7 +319,7 @@
           justify-content: left;
           align-items: center;
           margin-top: 15px;
-          background: #f0f0f0;
+          background: #e3e3e3;
           border-radius: 7.5px;
           padding: 2.5px;
           padding-left: 7.5px;

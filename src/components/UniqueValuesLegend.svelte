@@ -90,6 +90,8 @@
 
     let encodedCmap = JSON.stringify(cmapObject)
     layerURL.searchParams.delete('colormap_name')
+
+    //layerURL.searchParams.delete('rescale')
     let updatedParams = Object.assign({ colormap: encodedCmap }, params)
     updateParamsInURL(updatedParams)
   }
@@ -116,9 +118,12 @@
         layerUniqueValues = [...layerUniqueValues, sliderMax]
       }
     }
-
+    let rescaledValues = rangeSliderValues.map((el) => {
+      return remap(el, layerMin, layerMax)
+    })
     activeColorMap = activeColorMap.domain(rangeSliderValues)
-    setUniqueValueLegend({ rescale: rangeSliderValues.join(',') })
+
+    setUniqueValueLegend({ rescale: rescaledValues.join(',') })
   }
 
   setUniqueValueLegend()

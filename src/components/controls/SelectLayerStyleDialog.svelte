@@ -1,8 +1,3 @@
-<!-- <script lang="ts" context="module">
-    const dynamicLayerIds = {}
-    const layerState = {}
-    const sectionState = {}
-  </script> -->
 <script lang="ts">
   import Button, { Label as LabelButton } from '@smui/button'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
@@ -18,7 +13,6 @@
   import { map, layerList } from '../../stores'
 
   export let SelectLayerStyleDialogVisible = false
-  export let IsCanceledAddingLayer = false
   export let path
   export let url
   export let label
@@ -96,10 +90,6 @@
     ]
     $map.addLayer(layerDefinition)
   }
-
-  const cancel = () => {
-    IsCanceledAddingLayer = true
-  }
 </script>
 
 <Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 400px; height: 300px">
@@ -114,7 +104,7 @@
     </Select>
   </ContentDialog>
   <ActionsDialog>
-    <Button on:click={() => cancel()}>
+    <Button>
       <LabelButton class="button">Cancel</LabelButton>
     </Button>
     <Button on:click={() => addLayer()}>

@@ -1,5 +1,4 @@
 <script context="module" lang="ts">
-  // retain module scoped expansion state for each tree node
   const expansionState = {}
 </script>
 
@@ -26,25 +25,24 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { slide } from 'svelte/transition'
-  import Checkbox from '@smui/checkbox'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
+  import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 
   import type { TreeNode, LayerInfo } from '../lib/types'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
-  import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
+  import { map, layerList, indicatorProgress, wtree } from '../stores'
   import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0
   export let handlErrorCallback: CallableFunction
   let SelectLayerStyleDialogVisible
-  let IsCanceledAddingLayer
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
@@ -55,15 +53,9 @@
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-  $: checked = $layerList.filter((item) => item.definition.source === path).length === 1 ? true : false
 
   onMount(() => {
     if (level === 0) toggleExpansion()
-
-    if (level > 0) {
-      const layer = $layerList.find((layer) => layer.definition.source === path)
-      if (layer) checked = true
-    }
   })
 
   const toggleExpansion = () => {
@@ -112,98 +104,95 @@
       .join('&')
   }
 
-  const loadLayer = async (event) => {
+  const loadLayer = async () => {
     $indicatorProgress = true
-    if (event.target.checked) {
-      const tileSourceId = path
-      const layerId = uuidv4()
-      let layerInfo: LayerInfo = {}
+    loadingLayer = true
 
-      if (!isRaster) {
-        SelectLayerStyleDialogVisible = true
-      } else {
-        const layerName = path.split('/')[path.split('/').length - 1]
-        const [base, sign] = url.split('?')
-        const b64EncodedUrl = `${base}?${btoa(sign)}`
-        const infoUrl = `${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`
-        layerInfo = await fetchLayerInfo(infoUrl)
+    const tileSourceId = path
+    const layerId = uuidv4()
+    let layerInfo: LayerInfo = {}
 
-        const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-        const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
-
-        if (layerBandMetadataMin && layerBandMetadataMax) {
-          const titilerApiUrlParams = {
-            scale: 1,
-            TileMatrixSetId: 'WebMercatorQuad',
-            url: b64EncodedUrl,
-            bidx: 1,
-            unscale: false,
-            resampling: 'nearest',
-            rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-            return_mask: true,
-            colormap_name: DEFAULT_COLORMAP,
-          }
-
-          const layerSource = {
-            type: LayerTypes.RASTER,
-            tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
-            tileSize: 256,
-            bounds: layerInfo['bounds'],
-            attribution:
-              'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
-              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
-          }
-
-          if (!(tileSourceId in mmap.getStyle().sources)) {
-            mmap.addSource(tileSourceId, layerSource)
-          }
-
-          const layerDefinition: RasterLayerSpecification = {
-            id: layerId,
-            type: LayerTypes.RASTER,
-            source: tileSourceId,
-            minzoom: 0,
-            maxzoom: 22,
-            layout: {
-              visibility: 'visible',
-            },
-          }
-
-          $layerList = [
-            {
-              name: layerName,
-              definition: layerDefinition,
-              type: LayerTypes.RASTER,
-              info: layerInfo,
-              visible: true,
-              url: b64EncodedUrl,
-            },
-            ...$layerList,
-          ]
-          let firstSymbolId = undefined
-          for (const layer of $map.getStyle().layers) {
-            if (layer.type === 'symbol') {
-              firstSymbolId = layer.id
-              break
-            }
-          }
-          $map.addLayer(layerDefinition, firstSymbolId)
-        } else {
-          handlErrorCallback({
-            code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
-          })
-        }
-      }
+    if (!isRaster) {
+      SelectLayerStyleDialogVisible = true
     } else {
-      const layerToBeRemoved = $layerList.find((item) => item.definition.source === path)
+      const layerName = path.split('/')[path.split('/').length - 1]
+      const [base, sign] = url.split('?')
+      const b64EncodedUrl = `${base}?${btoa(sign)}`
+      const infoUrl = `${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`
+      layerInfo = await fetchLayerInfo(infoUrl)
 
-      if (layerToBeRemoved) {
-        $map.removeLayer(layerToBeRemoved.definition.id)
-        $layerList = $layerList.filter((item) => item !== layerToBeRemoved)
-        $dynamicLayers = $dynamicLayers.filter((dynamicLayerId) => dynamicLayerId !== layerToBeRemoved.definition.id)
+      const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+
+      if (layerBandMetadataMin && layerBandMetadataMax) {
+        const titilerApiUrlParams = {
+          scale: 1,
+          TileMatrixSetId: 'WebMercatorQuad',
+          url: b64EncodedUrl,
+          bidx: 1,
+          unscale: false,
+          resampling: 'nearest',
+          rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+          return_mask: true,
+          colormap_name: DEFAULT_COLORMAP,
+        }
+
+        const layerSource = {
+          type: LayerTypes.RASTER,
+          tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
+          tileSize: 256,
+          bounds: layerInfo['bounds'],
+          attribution:
+            'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+        }
+
+        if (!(tileSourceId in mmap.getStyle().sources)) {
+          mmap.addSource(tileSourceId, layerSource)
+        }
+
+        const layerDefinition: RasterLayerSpecification = {
+          id: layerId,
+          type: LayerTypes.RASTER,
+          source: tileSourceId,
+          minzoom: 0,
+          maxzoom: 22,
+          layout: {
+            visibility: 'visible',
+          },
+        }
+
+        $layerList = [
+          {
+            name: layerName,
+            definition: layerDefinition,
+            type: LayerTypes.RASTER,
+            info: layerInfo,
+            visible: true,
+            url: b64EncodedUrl,
+          },
+          ...$layerList,
+        ]
+        let firstSymbolId = undefined
+        for (const layer of $map.getStyle().layers) {
+          if (layer.type === 'symbol') {
+            firstSymbolId = layer.id
+            break
+          }
+        }
+        $map.addLayer(layerDefinition, firstSymbolId)
+      } else {
+        handlErrorCallback({
+          code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
+        })
       }
     }
+
     $indicatorProgress = false
+
+    setTimeout(function () {
+      loadingLayer = false
+    }, 350)
   }
 
   const fetchLayerInfo = async (url: string) => {
@@ -214,12 +203,9 @@
 <li style="padding-left:{level * 0.75}rem;">
   <div style="padding-top: 5px;">
     {#if children}
-      <div
-        on:click={() => (level > 0 ? toggleExpansion() : '')}
-        class="node-container"
-        transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon">
-          {#if loadingLayer === true}
+      <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
+        <div class="tree-icon" on:click={() => (level > 0 ? toggleExpansion() : '')}>
+          {#if loadingLayer === true && expanded === false}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
             <Fa icon={faDatabase} size="sm" />
@@ -231,13 +217,12 @@
         </div>
 
         {#if url}
-          <div alt="Vector" class="checkbox">
-            <Checkbox
-              {checked}
-              on:change={loadLayer}
-              value={path}
-              style="background-color: transparent; --mdc-ripple-fg-size:0;"
-              id={label} />
+          <div alt="Vector" class="load-layer" on:click={loadLayer}>
+            {#if loadingLayer === true}
+              <Fa icon={faSync} size="sm" spin />
+            {:else}
+              <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+            {/if}
           </div>
         {/if}
 
@@ -257,13 +242,12 @@
     {:else}
       <div class="node-container">
         {#if isRaster}
-          <div alt="Raster" class="checkbox">
-            <Checkbox
-              {checked}
-              on:change={loadLayer}
-              value={path}
-              style="background-color: transparent; --mdc-ripple-fg-size:0;"
-              id={label} />
+          <div alt="Raster" class="load-layer" on:click={loadLayer}>
+            {#if loadingLayer === true}
+              <Fa icon={faSync} size="sm" spin />
+            {:else}
+              <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+            {/if}
           </div>
         {/if}
 
@@ -290,25 +274,26 @@
   {/each}
 {/if}
 
-<SelectLayerStyleDialog bind:SelectLayerStyleDialogVisible bind:IsCanceledAddingLayer {path} {url} {label} />
+<SelectLayerStyleDialog bind:SelectLayerStyleDialogVisible {path} {url} {label} />
 
 <style lang="scss">
   .node-container {
-    display: flex;
-    justify-content: left;
     align-items: center;
+    display: flex;
     height: 22px;
+    justify-content: left;
 
-    .checkbox {
-      transform: scale(0.75);
+    .load-layer {
+      -webkit-filter: invert(100%);
+      filter: invert(100%);
     }
 
     .name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-left: 5px;
       height: 19.5px;
+      overflow: hidden;
+      padding-left: 5px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       width: 100%;
 
       @media (prefers-color-scheme: dark) {
@@ -317,9 +302,9 @@
     }
 
     .icon {
-      padding-right: 10px;
-      padding-left: 10px;
       cursor: pointer;
+      padding-left: 10px;
+      padding-right: 10px;
     }
 
     .tree-icon {
