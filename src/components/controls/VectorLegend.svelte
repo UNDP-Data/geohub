@@ -92,7 +92,7 @@
     }
   }
 
-  const stringifyStyleJSON = (style) => {
+  const stringifyStyleJSON = (style: JSON) => {
     return JSON.stringify(style, null, 4)
   }
 
