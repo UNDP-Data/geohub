@@ -79,7 +79,7 @@
       ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
       rescaleMin = Number(rescaleMin)
       rescaleMax = Number(rescaleMin)
-      if (rescaleMin != rangeSliderValues[0] || rescaleMax != rangeSliderValues[1]) {
+      if (rescaleMin !== rangeSliderValues[0] || rescaleMax !== rangeSliderValues[1]) {
         params = { rescale: rangeSliderValues.join(',') }
       }
     }
