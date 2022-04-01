@@ -80,7 +80,6 @@
     "@maplibre/maplibre-gl-style-spec": "^15.0.0",
     "@watergis/legend-symbol": "^0.2.2",
     "@watergis/maplibre-gl-export": "^1.2.15",
-    "axios": "^0.26.1",
     "colormap": "^2.3.2",
     "dotenv": "^16.0.0",
     "svelte-colorpick": "^0.1.7",

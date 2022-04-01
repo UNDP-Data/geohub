@@ -10,7 +10,6 @@
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
   import ColorPicker from './ColorPicker.svelte'
-  import axios from 'axios'
 
   export let layer: Layer = LayerInitialValues
 
@@ -62,7 +61,7 @@
   }
 
   const loadJson = (url: string) => {
-    return axios.get(url, { responseType: 'json' }).then((res) => res.data)
+    return fetch(url).then((data) => data.json())
   }
 
   const styleUrl = $map.getStyle().sprite
