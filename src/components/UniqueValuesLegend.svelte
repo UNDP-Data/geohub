@@ -151,13 +151,14 @@
     <div class="column">
       <div class="row">Active color map</div>
 
-      <div class="row">
+      <div class="row" style="width: 100%; height: 20px">
         <Button
           on:click={() => {
             colorMapSelectionVisible = !colorMapSelectionVisible
           }}
-          variant="raised">
-          <LabelButton>{activeColorMapName}</LabelButton>
+          variant="raised"
+          style="width:100%; height:100%; background: linear-gradient(90deg, {[...activeColorMap.colors()]})">
+          <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
         </Button>
       </div>
     </div>

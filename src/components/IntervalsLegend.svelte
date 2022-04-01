@@ -163,6 +163,7 @@
 
   <div class="row">
     <div style="width: 50%; height: 20px">
+      Active colormap:
       <Button
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
@@ -173,6 +174,7 @@
       </Button>
     </div>
     <div class="column">
+      Intervals:
       {#each activeColorMap.colors(numberOfClasses, 'rgba') as value, index}
         <div style="display: flex; padding:2px;">
           <div class="discrete" style="background-color: {value}" />
