@@ -161,11 +161,12 @@
     margin: 1px;
   }
   .group {
+    background: #f0f0f0;
     border-radius: 7.5px;
     padding: 2px;
 
     @media (prefers-color-scheme: dark) {
-      background: #212125;
+      background: #323234;
       color: white;
     }
 
