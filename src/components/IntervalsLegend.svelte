@@ -6,11 +6,11 @@
   import Fa from 'svelte-fa'
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
   import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
-
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
+  import Ripple from '@smui/ripple'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName = ''
@@ -164,7 +164,7 @@
             on:click={() => {
               handleNumberOfClasses('decrement')
             }}>
-            <Fa icon={faCaretLeft} size="lg" style="transform: scale(1); padding-right:2px" />
+            <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
           </div>
           <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
           <div
@@ -173,7 +173,7 @@
             on:click={() => {
               handleNumberOfClasses('increment')
             }}>
-            <Fa icon={faCaretRight} size="lg" style="transform: scale(1); padding-left: 2px ;" />
+            <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
           </div>
         </div>
       </div>
@@ -196,13 +196,14 @@
   </div>
 
   <div class="row">
-    <div class="column">
+    <div style="width: 50%; height: 20px">
       <Button
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
-        variant="raised">
-        <LabelButton style="text-transform: lowercase">Colormap: {activeColorMapName}</LabelButton>
+        variant="raised"
+        style="width:100%; height:100%;background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
+        <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
     <div class="column">
@@ -222,25 +223,26 @@
         <Text>{chip}</Text>
       </Chip>
     </Set>
-  </div>
-  <div class="colormaps-group">
-    {#if selectedColorMapType}
-      {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-        <div
-          class="colormap-div"
-          title={aColorMap}
-          on:click={() => {
-            activeColorMapName = aColorMap
-            activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
+    <div class="colormaps-group">
+      {#if selectedColorMapType}
+        {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
+          <div
+            use:Ripple={{ surface: true }}
+            class="colormap-div"
+            title={aColorMap}
+            on:click={() => {
+              activeColorMapName = aColorMap
+              activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
 
-            reclassifyImage()
-          }}
-          style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
-            defaultNumberOfColors,
-            'rgba',
-          )})" />
-      {/each}
-    {/if}
+              reclassifyImage()
+            }}
+            style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
+              defaultNumberOfColors,
+              'rgba',
+            )})" />
+        {/each}
+      {/if}
+    </div>
   </div>
 </div>
 
