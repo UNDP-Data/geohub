@@ -36,12 +36,22 @@
         $map.addSource(tileSourceId, layerSource)
       }
     }
-
     const layerId = uuidv4()
     let layerDefinition: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
     switch (layerType) {
       case 'symbol':
-        return
+        layerDefinition = {
+          id: layerId,
+          type: layerType,
+          source: tileSourceId,
+          'source-layer': label,
+          layout: {
+            visibility: 'visible',
+            'icon-image': 'circle-11',
+            'icon-size': 0.8,
+          },
+        }
+        break
       case 'line':
         layerDefinition = {
           id: layerId,

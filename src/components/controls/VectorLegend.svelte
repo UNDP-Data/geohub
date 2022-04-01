@@ -106,6 +106,7 @@
   }
 
   const setLineWidth = () => {
+    if (style.type !== 'line') return
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
       newStyle.paint = {}
@@ -116,6 +117,7 @@
   }
 
   const setLineBlur = () => {
+    if (style.type !== 'line') return
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
       newStyle.paint = {}
@@ -126,6 +128,7 @@
   }
 
   const setLineColor = () => {
+    if (style.type !== 'line') return
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
       newStyle.paint = {}
