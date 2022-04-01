@@ -3,13 +3,12 @@
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
   import RangeSlider from 'svelte-range-slider-pips'
-  import { ColorPicker, Color } from 'svelte-colorpick'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer, LayerDefinition } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
-  import { rgb2hex } from '../../lib/rgb2hex'
+  import ColorPicker from './ColorPicker.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -27,48 +26,8 @@
   let LineWidthValues = [style.paint && style.paint['line-width'] ? style.paint['line-width'] : 1.0]
   $: LineWidthValues, setLineWidth()
 
-  const lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)']
-  let lineColor = Color.hex(rgb2hex(lineRGBColor[0]))
-  $: lineColor, setLineColor()
-  const setLineColor = () => {
-    const rgb = `rgb(${lineColor.data.r}, ${lineColor.data.g}, ${lineColor.data.b})`
-    const newStyle = JSON.parse(styleJSON)
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-color'] = rgb
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setPaintProperty(layerId, 'line-color', rgb)
-  }
-
-  const lineColorPickerSetting = {
-    selectedDimension: 'rgb.r',
-    tabbed: false,
-    selectedTab: 'rgb',
-    showMatrix: true,
-    showSlidersGlobal: true,
-    showHex: true,
-    showNumeric: true,
-    showLabels: true,
-    showSliders: {
-      'hsl.h': false,
-      'hsl.s': false,
-      'hsl.l': false,
-      'hcl.h': false,
-      'hcl.c': false,
-      'hcl.l': false,
-      'lab.l': false,
-      'lab.a': false,
-      'lab.b': false,
-      'rgb.r': true,
-      'rgb.g': true,
-      'rgb.b': true,
-    },
-    selectDimensions: false,
-    matrixWidth: 250,
-    matrixHeight: 150,
-    scrollbarHeight: 10,
-  }
+  let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
+  $: lineRGBColor, setLineColor()
 
   onMount(() => {
     updateLegend()
@@ -152,6 +111,16 @@
     $map.setPaintProperty(layerId, 'line-width', LineWidthValues[0])
   }
 
+  const setLineColor = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (!newStyle.paint) {
+      newStyle.paint = {}
+    }
+    newStyle.paint['line-color'] = lineRGBColor
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setPaintProperty(layerId, 'line-color', lineRGBColor)
+  }
+
   const applyLayerStyle = () => {
     const newStyle = JSON.parse(styleJSON)
     if (newStyle.minzoom && newStyle.maxzoom) {
@@ -197,20 +166,7 @@
       <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
     </div>
     <p>Line Color</p>
-    <ColorPicker
-      bind:color={lineColor}
-      tabbed={lineColorPickerSetting.tabbed}
-      selectedTab={lineColorPickerSetting.selectedTab}
-      selectedDimension={lineColorPickerSetting.selectedDimension}
-      showMatrix={lineColorPickerSetting.showMatrix}
-      showSliders={lineColorPickerSetting.showSlidersGlobal && lineColorPickerSetting.showSliders}
-      showHex={lineColorPickerSetting.showHex}
-      showLabels={lineColorPickerSetting.showLabels}
-      showNumeric={lineColorPickerSetting.showNumeric}
-      selectDimensions={lineColorPickerSetting.selectDimensions}
-      matrixWidth={lineColorPickerSetting.matrixWidth}
-      matrixHeight={lineColorPickerSetting.matrixHeight}
-      scrollbarHeight={lineColorPickerSetting.scrollbarHeight} />
+    <ColorPicker bind:RgbColor={lineRGBColor} />
   {/if}
 
   <hr />
@@ -241,11 +197,5 @@
     --range-range-inactive: #2196f3;
     --range-handle-inactive: #2196f3;
     --range-handle: #2196f3;
-  }
-
-  .color-picker {
-    —-picker-height: 200px;
-    —-slider-width: 30px;
-    —-picker-width: 100%;
   }
 </style>
