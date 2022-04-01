@@ -6,17 +6,18 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Chip, { Set, Text } from '@smui/chips'
   import RangeSlider from 'svelte-range-slider-pips'
-
-  import type { Layer, LayerInfo } from '../lib/types'
   import type {
     RasterLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
+
+  import type { Layer, LayerInfo } from '../lib/types'
   import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
+  import { updateParamsInURL } from '../lib/helper'
 
   export let activeColorMapName = ''
   export let layerConfig: Layer = LayerInitialValues
@@ -60,21 +61,6 @@
 
     allColorMaps[cmapType] = cmaps
   }
-
-  const refreshLayerURL = () => {
-    $map.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
-    $map.style.sourceCaches[definition.source].clearTiles()
-    $map.style.sourceCaches[definition.source].update($map.transform)
-    $map.triggerRepaint()
-  }
-
-  const updateParamsInURL = (params) => {
-    Object.keys(params).forEach((key) => {
-      layerURL.searchParams.set(key, params[key])
-    })
-    refreshLayerURL()
-  }
-
   const remap = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
     const percent = (input - oldMin) / (oldMax - oldMin)
     const rescaled = percent * (newMax - newMin) + newMin
@@ -91,9 +77,8 @@
     let encodedCmap = JSON.stringify(cmapObject)
     layerURL.searchParams.delete('colormap_name')
 
-    //layerURL.searchParams.delete('rescale')
     let updatedParams = Object.assign({ colormap: encodedCmap }, params)
-    updateParamsInURL(updatedParams)
+    updateParamsInURL(definition, layerURL, updatedParams)
   }
 
   const handleRangeSlider = () => {

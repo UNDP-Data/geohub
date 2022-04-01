@@ -77,8 +77,9 @@ export enum ColorMapTypes {
 }
 
 export enum DynamicLayerLegendTypes {
-  CONTINUOUS = 'continuous',
   BUCKETED = 'bucketed',
+  CONTINUOUS = 'continuous',
+  UNIQUE = 'unique',
 }
 
 export enum DynamicLayerResolutionTypes {

@@ -116,7 +116,7 @@
     isFilterPanelVisible = false
   }
 
-  const updateParamsInURL = (params) => {
+  const updateParamsInURL = (params: Record<string, string>) => {
     debounce(() => {
       let layers = mapLayers.find((item: LayerSpecification) => item.id === layerId)['source']
       const layerSource = $map.getSource(layers)
@@ -211,10 +211,9 @@
                   <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
-
               {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
-                <Legend bind:activeColorMapName layerConfig={layer} />
-              {:else if selectedLegendType === 'unique'}
+                <Legend bind:activeColorMapName bind:layerConfig={layer} />
+              {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
                 <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
               {:else}
                 <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
