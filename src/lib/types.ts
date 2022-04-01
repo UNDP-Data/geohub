@@ -43,8 +43,11 @@ export interface LayerVisibility {
 }
 
 export interface LayerPaint {
-  'line-color': string
-  'line-width': number
+  'line-color'?: string
+  'line-width'?: number
+  'fill-color'?: string
+  'fill-outline-color'?: string
+  'fill-opacity'?: number
 }
 
 export interface LayerInfo {

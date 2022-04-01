@@ -268,6 +268,19 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
+"@maplibre/maplibre-gl-style-spec@^15.0.0":
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-15.0.0.tgz#7922d2655e5a5ab81d3904a1ef762e86dad6ba86"
+  integrity sha512-CMCYA6V7YhTfMFyPl7YzHJXu+MuEQeC25KUdsyJJd17d3aCiLTJ5HtE3F2iqr8MJaMYIvsAAsiP5xBLwHdyPFQ==
+  dependencies:
+    "@mapbox/jsonlint-lines-primitives" "~2.0.2"
+    "@mapbox/unitbezier" "^0.0.0"
+    csscolorparser "~1.0.2"
+    json-stringify-pretty-compact "^2.0.0"
+    minimist "^1.2.5"
+    rw "^1.3.3"
+    sort-object "^0.3.2"
+
 "@material/animation@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@material/animation/-/animation-13.0.0.tgz#42ec7aee6548ba27edb49063c7a7ae431e4ef450"
