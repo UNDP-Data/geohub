@@ -102,7 +102,7 @@
   }
 </script>
 
-<Dialog bind:open={SelectLayerStyleDialogVisible}>
+<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 400px; height: 300px">
   <Title>Add layer</Title>
   <ContentDialog>
     <Textfield bind:value={label} label="Source layer" />
