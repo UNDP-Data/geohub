@@ -10,8 +10,8 @@
   export let drawerOpen = true
   export let panelOpen = true
 
-  let topAppBar: any
   let darkTheme: boolean
+  let topAppBar: any
 
   onMount(() => {
     window.matchMedia('(prefers-color-scheme: light)')

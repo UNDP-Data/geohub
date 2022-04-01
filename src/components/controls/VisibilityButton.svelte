@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { cloneDeep } from 'lodash'
   import Fa from 'svelte-fa'
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
-  import { cloneDeep } from 'lodash'
 
   import { layerList, map } from '../../stores'
   import type { Layer } from '../../lib/types'

@@ -1,59 +1,46 @@
 <!-- <script lang="ts" context="module">
-  
+
 </script> -->
 <script lang="ts">
+  import chroma from 'chroma-js'
   import Button, { Label as LabelButton } from '@smui/button'
-  import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
-  import { LayerInitialValues } from '../lib/constants'
-  import RangeSlider from 'svelte-range-slider-pips'
   import Chip, { Set, Text } from '@smui/chips'
+  import RangeSlider from 'svelte-range-slider-pips'
+
+  import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
+  import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
-  import chroma from 'chroma-js'
 
-  //variables
-  //layer config prop
+  export let activeColorMapName = ''
   export let layerConfig: Layer = LayerInitialValues
-  export let activeColorMapName
-  let name: string
+
   let definition: LayerDefinition
-  let type: string
   let info: LayerInfo
-    //descructured
-  ;({ name, definition, type, info } = layerConfig)
+  ;({ definition, info } = layerConfig)
 
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerUniqueValues: Array<number> = info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
 
-  //console.log(layerMin, layerMax, layerUniqueValues)
-
-  //slider vars, intialized to Layer min/max
-  let rangeSliderValues = [layerMin, layerMax]
-  let step = (layerMax - layerMin) / (layerUniqueValues.length - 1)
-
-  //console.log(rangeSliderValues, step)
-
   const layerSrc = $map.getSource(definition.source)
-  let layerURL = new URL(layerSrc.tiles[0])
-  let activeColorMap: chroma.Scale = undefined
-  //let activeColorMapName: string = getContext(layerId) || layerURL.searchParams.get('colormap_name') || 'viridis'
-
-  let allColorMaps = {}
   const defaultNumberOfColors = 5
 
+  let activeColorMap: chroma.Scale = undefined
+  let allColorMaps = {}
   let colorMapSelectionVisible = false
-
+  let layerURL = new URL(layerSrc.tiles[0])
+  let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
+  let step = (layerMax - layerMin) / (layerUniqueValues.length - 1)
 
   //populate allColorMaps with scale/colors
   for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
     let cmaps = {}
     cMaps.forEach((cmapstr: string) => {
       try {
-        if (cmapType == 'sequential') {
+        if (cmapType === ColorMapTypes.SEQUENTIAL) {
           cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
-          //.colors(nColors, 'rgba')
         } else {
           cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
         }
@@ -89,18 +76,13 @@
   }
 
   const setUniqueValueLegend = (params = {}) => {
-    console.log(`setting Unique values legend for ${name} with ${activeColorMapName}`)
-
     let cmapObject = {}
     layerUniqueValues.forEach((key) => {
       let c = [...activeColorMap(key).rgb(), 255]
-      //console.log(activeColorMap(key).rgb(), i, key, c)
-      //cmapObject[remap(key, layerUniqueValues[0], layerUniqueValues[layerUniqueValues.length - 1])] = c
       cmapObject[remap(key, rangeSliderValues[0], rangeSliderValues[1])] = c
     })
 
     let encodedCmap = JSON.stringify(cmapObject)
-    console.log(encodedCmap)
     layerURL.searchParams.delete('colormap_name')
 
     //layerURL.searchParams.delete('rescale')
@@ -109,14 +91,13 @@
   }
 
   const handleRangeSlider = () => {
-    console.log(layerUniqueValues, rangeSliderValues)
     // check unique values list against slider
     let sliderMin = rangeSliderValues[0]
     let sliderMax = rangeSliderValues[1]
     let uvMin = Math.min(...layerUniqueValues)
     let uvMax = Math.max(...layerUniqueValues)
 
-    if (sliderMin != uvMin) {
+    if (sliderMin !== uvMin) {
       if (sliderMin > uvMin) {
         layerUniqueValues = layerUniqueValues.filter((el) => el >= sliderMin)
       } else {
@@ -124,7 +105,7 @@
       }
     }
 
-    if (sliderMax != uvMax) {
+    if (sliderMax !== uvMax) {
       if (sliderMax < uvMax) {
         layerUniqueValues = layerUniqueValues.filter((el) => el <= sliderMax)
       } else {
@@ -139,7 +120,6 @@
     setUniqueValueLegend({ rescale: rescaledValues.join(',') })
   }
 
-  //$: layerURL, console.log(`${layerURL.toString()}`)
   setUniqueValueLegend()
 </script>
 
@@ -181,7 +161,7 @@
 
       <div
         class="row"
-        style="display: flex; align-items: center; justify-content: space-around; 
+        style="display: flex; align-items: center; justify-content: space-around;
         flex-direction: column; background-color: white; border-radius: 5px; padding: 10px">
         <div style="display: block">
           {#each activeColorMap.colors(layerUniqueValues.length, 'rgba') as value, index}
