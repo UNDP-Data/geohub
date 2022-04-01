@@ -96,6 +96,8 @@
             div.appendChild(img)
           }
           const divBackground = document.createElement('div')
+          divBackground.style.height = '24px'
+          divBackground.style.width = '50px'
           divBackground.style.backgroundColor = symbol.attributes.style.backgroundColor
           divBackground.style.backgroundPosition = symbol.attributes.style.backgroundPosition
           divBackground.style.backgroundSize = symbol.attributes.style.backgroundSize
