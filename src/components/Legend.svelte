@@ -146,11 +146,8 @@
     margin: 1px;
   }
   .group {
-    background: #f0f0f0;
     border-radius: 7.5px;
     padding: 2px;
-    //margin-top: 1px;
-    //padding-bottom: 4px;
 
     @media (prefers-color-scheme: dark) {
       background: #212125;

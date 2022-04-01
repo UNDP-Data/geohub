@@ -81,7 +81,7 @@
       justify-content: left;
       align-items: center;
       margin-top: 15px;
-      background: #f0f0f0;
+      background: #e3e3e3;
       border-radius: 7.5px;
       padding: 2.5px;
       padding-left: 7.5px;
