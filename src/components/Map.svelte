@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { draggable } from '@neodrag/svelte'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
@@ -10,13 +9,19 @@
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
   import GeoJSON from 'geojson'
+  import Moveable from 'moveable'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { indicatorProgress, map } from '../stores'
   import { layerList } from '../stores'
   import type { Layer } from '../lib/types'
+  import { LayerTypes } from '$lib/constants'
 
   const iconSize = 'lg'
+
+  const frame = {
+    translate: [0, 0],
+  }
 
   let container: HTMLDivElement
   let layerValuesData = []
@@ -51,14 +56,6 @@
         addMapLayerValues(layersVisible)
       }
     }
-  }
-
-  const resetMapQueryInfo = () => {
-    if (marker) marker.remove()
-    mapMouseEvent = null
-    isDataContainerVisible = false
-    layerValuesData = []
-    if ($map) $map.getCanvas().style.cursor = 'grab'
   }
 
   onMount(async () => {
@@ -109,7 +106,46 @@
     })
 
     map.update(() => newMap)
+
+    new Moveable(document.body, {
+      className: 'moveable-control',
+      draggable: true,
+      hideDefaultLines: true,
+      origin: false,
+      resizable: true,
+      target: document.getElementById('data-container'),
+      throttleDrag: 0,
+      throttleResize: 0,
+    })
+      .on('dragStart', (e) => {
+        e.set(frame.translate)
+      })
+      .on('drag', (e) => {
+        frame.translate = e.beforeTranslate
+        e.target.style.transform = `translate(${e.beforeTranslate[0]}px, ${e.beforeTranslate[1]}px)`
+      })
+      .on('resizeStart', (e) => {
+        e.setOrigin(['%', '%'])
+        const style = window.getComputedStyle(e.target)
+        const cssWidth = parseFloat(style.width)
+        const cssHeight = parseFloat(style.height)
+        e.set([cssWidth, cssHeight])
+      })
+      .on('resize', (e) => {
+        e.target.style.width = `${e.width}px`
+        e.target.style.height = `${e.height}px`
+        frame.translate = e.drag.beforeTranslate
+        e.target.style.transform = `translate(${e.drag.beforeTranslate[0]}px, ${e.drag.beforeTranslate[1]}px)`
+      })
   })
+
+  const resetMapQueryInfo = () => {
+    if (marker) marker.remove()
+    mapMouseEvent = null
+    isDataContainerVisible = false
+    layerValuesData = []
+    if ($map) $map.getCanvas().style.cursor = 'grab'
+  }
 
   const removeMapLayerValues = (hideCoordinates = true) => {
     $map.getCanvas().style.cursor = ''
@@ -129,32 +165,27 @@
     let layerValuesDataTmp = []
 
     for (const layer of layersVisible) {
-      const layerData = await fetch(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`).then((res) => {
-        return res.json()
-      })
+      let values = []
+      if (layer.type === LayerTypes.RASTER) {
+        const layerData = await fetch(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`).then((res) => {
+          return res.json()
+        })
 
-      // check for no data value
-      let layerHasNoDataValue = false
+        // check for no data value
+        let layerHasNoDataValue = false
 
-      if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true
+        if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true
 
-      if (layerHasNoDataValue === false) {
-        for (const value of layerData.values) {
-          if (value === layer.info.nodata_value) layerHasNoDataValue = true
+        if (layerHasNoDataValue === false) {
+          for (const value of layerData.values) {
+            if (value === layer.info.nodata_value) layerHasNoDataValue = true
+          }
         }
+
+        values = layerHasNoDataValue ? null : layerData.values
       }
 
-      layerValuesDataTmp = [
-        ...[
-          {
-            name: layer.name,
-            lat,
-            lng,
-            values: layerHasNoDataValue ? null : layerData.values,
-          },
-        ],
-        ...layerValuesDataTmp,
-      ]
+      layerValuesDataTmp = [...[{ name: layer.name, lat, lng, values }], ...layerValuesDataTmp]
     }
 
     layerValuesData = layerValuesDataTmp
@@ -252,11 +283,7 @@
   {/if}
 </div>
 
-<div
-  id="data-container"
-  class="data-container"
-  style={`display: ${isDataContainerVisible ? 'block' : 'none'};`}
-  use:draggable={{ bounds: document.getElementById('map') }}>
+<div id="data-container" class="data-container target" hidden={!isDataContainerVisible}>
   <div class="header">
     <div class="name">Query Information</div>
 
@@ -372,6 +399,18 @@
 </div>
 
 <style lang="scss">
+  :global(.moveable-control) {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 0 !important;
+    box-sizing: none !important;
+    background: none !important ;
+    margin-top: -7px;
+    margin-left: -7px;
+    z-index: 10;
+  }
   .map {
     height: 100%;
     width: 100%;
@@ -383,10 +422,11 @@
     border: 1px solid #ccc;
     bottom: 50px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
-    display: none;
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
     left: 10px;
+    min-height: 250px;
+    min-width: 300px;
     padding: 10px;
     position: absolute;
     width: 325px;
