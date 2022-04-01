@@ -130,7 +130,7 @@
     console.log(`rangeSliderValues ${rangeSliderValues} - rescaled ${rescaledValues}`)
     reclassifyImage({ rescale: rescaledValues.join(',') })
   }
-  reclassifyImage({ rescale: '0,255' })
+  reclassifyImage()
 </script>
 
 <div class="group">
