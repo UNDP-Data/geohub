@@ -13,9 +13,9 @@
   import { map, layerList } from '../../stores'
 
   export let SelectLayerStyleDialogVisible = false
-  export let path
-  export let url
-  export let label
+  export let path: string
+  export let url: string
+  export let label: string
   let tileSourceId = path
   let layerTypes = ['symbol', 'line', 'fill']
   let layerType = 'line'
@@ -114,15 +114,4 @@
 </Dialog>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
-
-  .container {
-    margin-right: 0;
-  }
-
-  .button {
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
 </style>
