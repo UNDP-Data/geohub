@@ -26,6 +26,9 @@
   let LineWidthValues = [style.paint && style.paint['line-width'] ? style.paint['line-width'] : 1.0]
   $: LineWidthValues, setLineWidth()
 
+  let LineBlurValues = [style.paint && style.paint['line-blur'] ? style.paint['line-blur'] : 0]
+  $: LineBlurValues, setLineBlur()
+
   let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
   $: lineRGBColor, setLineColor()
 
@@ -111,6 +114,16 @@
     $map.setPaintProperty(layerId, 'line-width', LineWidthValues[0])
   }
 
+  const setLineBlur = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (!newStyle.paint) {
+      newStyle.paint = {}
+    }
+    newStyle.paint['line-blur'] = LineBlurValues[0]
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setPaintProperty(layerId, 'line-blur', LineBlurValues[0])
+  }
+
   const setLineColor = () => {
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
@@ -164,6 +177,10 @@
     <p>Line Width</p>
     <div class="slider">
       <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
+    </div>
+    <p>Line Blur</p>
+    <div class="slider">
+      <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
     </div>
     <p>Line Color</p>
     <ColorPicker bind:RgbColor={lineRGBColor} />
