@@ -28,7 +28,6 @@
     "@smui-extra/accordion": "^6.0.0-beta.15",
     "@smui/banner": "^6.0.0-beta.15",
     "@smui/button": "^6.0.0-beta.15",
-    "@smui/checkbox": "^6.0.0-beta.15",
     "@smui/chips": "^6.0.0-beta.15",
     "@smui/dialog": "^6.0.0-beta.15",
     "@smui/drawer": "^6.0.0-beta.15",

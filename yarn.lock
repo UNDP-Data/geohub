@@ -867,16 +867,6 @@
     "@smui/ripple" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
-"@smui/checkbox@^6.0.0-beta.15":
-  version "6.0.0-beta.15"
-  resolved "https://registry.npmjs.org/@smui/checkbox/-/checkbox-6.0.0-beta.15.tgz"
-  integrity sha512-0D9oANqCsNT0UeCcj4/sTfMez/y73s6Tn0G0ZAqA2n9klA+9WXkGguOvSx9wELZVSTdeCJuD+JS3lk9lYs2ssQ==
-  dependencies:
-    "@material/checkbox" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.15"
-    "@smui/ripple" "^6.0.0-beta.15"
-    svelte2tsx "^0.4.14"
-
 "@smui/chips@^6.0.0-beta.15":
   version "6.0.0-beta.15"
   resolved "https://registry.npmjs.org/@smui/chips/-/chips-6.0.0-beta.15.tgz"
