@@ -9,6 +9,7 @@
   import type { Layer, LayerDefinition } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
+  import { rgb2hex } from '../../lib/rgb2hex'
 
   export let layer: Layer = LayerInitialValues
 
@@ -27,10 +28,9 @@
   $: LineWidthValues, setLineWidth()
 
   const lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)']
-  let lineColor = Color.hex('#ccff00')
+  let lineColor = Color.hex(rgb2hex(lineRGBColor[0]))
   $: lineColor, setLineColor()
   const setLineColor = () => {
-    console.log(lineColor)
     const rgb = `rgb(${lineColor.data.r}, ${lineColor.data.g}, ${lineColor.data.b})`
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
