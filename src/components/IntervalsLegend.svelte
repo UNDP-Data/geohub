@@ -202,7 +202,7 @@
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
         variant="raised">
-        <LabelButton>{activeColorMapName}</LabelButton>
+        <LabelButton style="text-transform: lowercase">Colormap: {activeColorMapName}</LabelButton>
       </Button>
     </div>
     <div class="column">
@@ -259,7 +259,7 @@
     align-items: center;
   }
   .column {
-    display: flex;
+    display: block;
     flex-direction: column;
     flex-basis: 100%;
     align-items: center;
