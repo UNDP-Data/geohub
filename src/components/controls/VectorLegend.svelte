@@ -5,7 +5,8 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
-  import type { Layer, LayerDefinition } from '../../lib/types'
+  import type { Layer } from '../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
   import ColorPicker from './ColorPicker.svelte'
@@ -14,7 +15,7 @@
 
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
-  const style = $map.getStyle().layers.filter((layer: LayerDefinition) => layer.id === layerId)[0]
+  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let legendSymbolContainer: HTMLElement
 
@@ -38,7 +39,7 @@
 
   const updateLegend = () => {
     const mapLayers = $map.getStyle().layers
-    const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
+    const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
     let symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
     legendSymbolContainer.innerHTML = ''

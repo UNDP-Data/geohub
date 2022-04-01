@@ -9,12 +9,18 @@
 
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
-  import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
+  import type { Layer, LayerInfo } from '../lib/types'
+  import type {
+    RasterLayerSpecification,
+    FillLayerSpecification,
+    LineLayerSpecification,
+    SymbolLayerSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types'
   import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName = ''
-  let definition: LayerDefinition
+  let definition: RasterLayerSpecification | FillLayerSpecification | LineLayerSpecification | SymbolLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 

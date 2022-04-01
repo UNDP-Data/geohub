@@ -34,7 +34,8 @@
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
-  import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
+  import type { TreeNode, LayerInfo } from '../lib/types'
+  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
   import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
@@ -157,7 +158,7 @@
             mmap.addSource(tileSourceId, layerSource)
           }
 
-          const layerDefinition: LayerDefinition = {
+          const layerDefinition: RasterLayerSpecification = {
             id: layerId,
             type: LayerTypes.RASTER,
             source: tileSourceId,

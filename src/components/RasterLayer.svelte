@@ -21,7 +21,7 @@
   import UniqueValuesLegend from './UniqueValuesLegend.svelte'
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
-  import type { Layer, LayerDefinition } from '../lib/types'
+  import type { Layer } from '../lib/types'
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
