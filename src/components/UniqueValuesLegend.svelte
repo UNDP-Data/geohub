@@ -1,7 +1,11 @@
+<!-- <script lang="ts" context="module">
+
+</script> -->
 <script lang="ts">
-  import RangeSlider from 'svelte-range-slider-pips'
-  import Chip, { Set, Text } from '@smui/chips'
   import chroma from 'chroma-js'
+  import Button, { Label as LabelButton } from '@smui/button'
+  import Chip, { Set, Text } from '@smui/chips'
+  import RangeSlider from 'svelte-range-slider-pips'
 
   import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
   import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
@@ -15,19 +19,22 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
-  const defaultNumberOfColors = 5
-  const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
+  const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
+  let layerUniqueValues: Array<number> = info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
+
   const layerSrc = $map.getSource(definition.source)
-  const layerURL = new URL(layerSrc.tiles[0])
+  const defaultNumberOfColors = 5
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
+  let layerURL = new URL(layerSrc.tiles[0])
   let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
-  let step = (layerMax - layerMin) * 1e-2
+  let step = (layerMax - layerMin) / (layerUniqueValues.length - 1)
 
+  //populate allColorMaps with scale/colors
   for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
     let cmaps = {}
     cMaps.forEach((cmapstr: string) => {
@@ -56,16 +63,59 @@
   }
 
   const updateParamsInURL = (params) => {
-    console.log('updating')
     Object.keys(params).forEach((key) => {
       layerURL.searchParams.set(key, params[key])
     })
     refreshLayerURL()
   }
-  if (layerURL.searchParams.has('colormap')) {
-    layerURL.searchParams.delete('colormap')
-    updateParamsInURL({ colormap_name: activeColorMapName })
+
+  const remap = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
+    const percent = (input - oldMin) / (oldMax - oldMin)
+    const rescaled = percent * (newMax - newMin) + newMin
+    return rescaled | 0
   }
+
+  const setUniqueValueLegend = (params = {}) => {
+    let cmapObject = {}
+    layerUniqueValues.forEach((key) => {
+      let c = [...activeColorMap(key).rgb(), 255]
+      cmapObject[remap(key, rangeSliderValues[0], rangeSliderValues[1])] = c
+    })
+
+    let encodedCmap = JSON.stringify(cmapObject)
+    layerURL.searchParams.delete('colormap_name')
+    let updatedParams = Object.assign({ colormap: encodedCmap }, params)
+    updateParamsInURL(updatedParams)
+  }
+
+  const handleRangeSlider = () => {
+    // check unique values list against slider
+    let sliderMin = rangeSliderValues[0]
+    let sliderMax = rangeSliderValues[1]
+    let uvMin = Math.min(...layerUniqueValues)
+    let uvMax = Math.max(...layerUniqueValues)
+
+    if (sliderMin !== uvMin) {
+      if (sliderMin > uvMin) {
+        layerUniqueValues = layerUniqueValues.filter((el) => el >= sliderMin)
+      } else {
+        layerUniqueValues = [sliderMin, ...layerUniqueValues]
+      }
+    }
+
+    if (sliderMax !== uvMax) {
+      if (sliderMax < uvMax) {
+        layerUniqueValues = layerUniqueValues.filter((el) => el <= sliderMax)
+      } else {
+        layerUniqueValues = [...layerUniqueValues, sliderMax]
+      }
+    }
+
+    activeColorMap = activeColorMap.domain(rangeSliderValues)
+    setUniqueValueLegend({ rescale: rangeSliderValues.join(',') })
+  }
+
+  setUniqueValueLegend()
 </script>
 
 <div class="group">
@@ -82,27 +132,40 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={updateParamsInURL({ rescale: rangeSliderValues.join(',') })} />
+      on:stop={() => {
+        handleRangeSlider()
+      }} />
   </div>
-  <div style="display:flex;flex-direction:column; align-items:center">
-    <div
-      title={`Colormap: ${activeColorMapName}`}
-      on:click={() => {
-        colorMapSelectionVisible = !colorMapSelectionVisible
-      }}
-      class="chroma-test"
-      style="background: linear-gradient(90deg, {activeColorMap.colors(
-        defaultNumberOfColors,
-        'rgba',
-      )}); cursor: pointer;" />
-    <div style="align-items: center; justify-content: space-between" class="chroma-test">
-      <div style="display: flex; flex-direction: row; justify-content: space-between">
-        <div>
-          Min: {rangeSliderValues[0]}
-        </div>
+  <div class="uvalues-legend">
+    <div class="column">
+      <div class="row">Active color map</div>
 
-        <div>
-          Max: {rangeSliderValues[1]}
+      <div class="row">
+        <Button
+          on:click={() => {
+            colorMapSelectionVisible = !colorMapSelectionVisible
+          }}
+          variant="raised">
+          <LabelButton>{activeColorMapName}</LabelButton>
+        </Button>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="row">Values:</div>
+
+      <div
+        class="row"
+        style="display: flex; align-items: center; justify-content: space-around;
+        flex-direction: column; background-color: white; border-radius: 5px; padding: 10px">
+        <div style="display: block">
+          {#each activeColorMap.colors(layerUniqueValues.length, 'rgba') as value, index}
+            <div style="display: flex; padding:2px;">
+              <div class="discrete" style="background-color: {value}" />
+              &nbsp;&raquo;&nbsp
+              <div>{layerUniqueValues[index]}</div>
+            </div>
+          {/each}
         </div>
       </div>
     </div>
@@ -123,8 +186,7 @@
               on:click={() => {
                 activeColorMapName = aColorMap
                 activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-
-                updateParamsInURL({ colormap_name: activeColorMapName })
+                setUniqueValueLegend()
               }}
               style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
                 defaultNumberOfColors,
@@ -138,6 +200,29 @@
 </div>
 
 <style lang="scss">
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    border: 0px dashed;
+    justify-content: center;
+    align-items: center;
+  }
+  .column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    align-items: center;
+    flex: 1;
+  }
+  .uvalues-legend {
+    display: flex;
+    flex-direction: rows;
+    align-items: stretch;
+    // height: 100%;
+    border: 0px solid red;
+  }
   .colormap-div {
     height: 20px;
     width: 80%;
@@ -152,11 +237,6 @@
     //margin-top: 1px;
     //padding-bottom: 4px;
 
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-      color: white;
-    }
-
     .slider {
       --range-handle-focus: #2196f3;
       --range-range-inactive: #2196f3;
@@ -167,16 +247,18 @@
     }
   }
 
+  .discrete {
+    width: 20px;
+    height: 20px;
+  }
+
   :global(.changeLegendButtonDiv) {
     margin: 0 auto;
     padding-top: 10px;
     width: 80%;
     display: flex;
   }
-  .chroma-test {
-    height: 20px;
-    width: 80%;
-  }
+
   :global(.changelegendbtn) {
     text-transform: capitalize;
     height: 30px;

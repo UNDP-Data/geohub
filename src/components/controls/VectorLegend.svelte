@@ -11,13 +11,14 @@
   import LegendSymbol from '@watergis/legend-symbol'
 
   export let layer: Layer = LayerInitialValues
+
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
-  const style = $map.getStyle().layers.filter((layer) => layer.id === layerId)[0]
+  const style = $map.getStyle().layers.filter((layer: LayerDefinition) => layer.id === layerId)[0]
+
+  let legendSymbolContainer: HTMLElement
 
   $: styleJSON = stringifyStyleJSON(style)
-
-  let legendSymbolContainer
 
   let ZoomSliderValues = [0, 24]
   $: ZoomSliderValues, setMinMaxZoom()

@@ -7,8 +7,8 @@
   import { LayerInitialValues } from '../../lib/constants'
   import VectorLegend from './VectorLegend.svelte'
 
-  export let layer: Layer = LayerInitialValues
   export let isLegendPanelVisible = false
+  export let layer: Layer = LayerInitialValues
 </script>
 
 {#if isLegendPanelVisible === true}

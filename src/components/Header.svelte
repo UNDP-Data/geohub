@@ -10,8 +10,8 @@
   export let drawerOpen = true
   export let panelOpen = true
 
-  let topAppBar: any
   let darkTheme: boolean
+  let topAppBar: any
 
   onMount(() => {
     window.matchMedia('(prefers-color-scheme: light)')
@@ -38,7 +38,7 @@
     </Section>
 
     <Section align="end">
-      <div class="icon" on:click={() => (panelOpen = !panelOpen)}>
+      <div class="icon" on:click={() => (panelOpen = !panelOpen)} style="display: none;">
         <Fa icon={faBookmark} size="lg" />
       </div>
 
@@ -46,7 +46,7 @@
         <Fa icon={faBars} size="lg" />
       </div>
 
-      <div class="icon" on:click={() => (darkTheme = !darkTheme)}>
+      <div class="icon" on:click={() => (darkTheme = !darkTheme)} style="display: none;">
         {#if darkTheme}
           <Fa icon={faSun} size="lg" />
         {:else}

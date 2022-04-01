@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { cloneDeep } from 'lodash'
   import Fa from 'svelte-fa'
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
 
-  import { map } from '../../stores'
+  import { layerList, map } from '../../stores'
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
 
@@ -16,11 +17,16 @@
   $: visibility = isLayerVisible ? 'visible' : 'none'
 
   const toggleVisibility = () => {
-    isLayerVisible = !isLayerVisible
     if (!$map.getLayer(layerId)) {
       $map.addLayer(layer.definition)
     }
     $map.setLayoutProperty(layerId, 'visibility', visibility)
+
+    const layerClone = cloneDeep(layer)
+    layerClone.visible = isLayerVisible
+    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
+    $layerList[layerIndex] = layerClone
+    isLayerVisible = !isLayerVisible
   }
 </script>
 

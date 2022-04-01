@@ -35,7 +35,7 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
   import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
-  import { LayerIconTypes, LayerTypes, TreeNodeInitialValues } from '../lib/constants'
+  import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import { map, dynamicLayers, layerList, indicatorProgress, wtree } from '../stores'
 
   export let node = TreeNodeInitialValues
@@ -144,7 +144,7 @@
         }
 
         $layerList = [
-          { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, queryInfoEnabled: true },
+          { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, visible: true },
           ...$layerList,
         ]
         $map.addLayer(layerDefinition)
@@ -168,7 +168,7 @@
             resampling: 'nearest',
             rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
             return_mask: true,
-            colormap_name: 'bugn',
+            colormap_name: DEFAULT_COLORMAP,
           }
 
           const layerSource = {
@@ -202,7 +202,7 @@
               definition: layerDefinition,
               type: LayerTypes.RASTER,
               info: layerInfo,
-              queryInfoEnabled: true,
+              visible: true,
               url: b64EncodedUrl,
             },
             ...$layerList,

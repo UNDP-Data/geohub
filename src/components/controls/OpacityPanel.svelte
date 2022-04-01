@@ -88,7 +88,7 @@
       margin-bottom: 10px;
 
       @media (prefers-color-scheme: dark) {
-        background: #0d1117;
+        background: #323234;
         border-color: #30363d;
         color: white;
       }
