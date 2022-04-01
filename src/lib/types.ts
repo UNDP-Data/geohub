@@ -1,5 +1,10 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core'
-import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+import type {
+  RasterLayerSpecification,
+  LineLayerSpecification,
+  FillLayerSpecification,
+  SymbolLayerSpecification,
+} from '@maplibre/maplibre-gl-style-spec/types'
 
 export interface Tree {
   tree: TreeNode
@@ -19,37 +24,12 @@ export interface LayerList extends Array<Layer> {}
 
 export interface Layer {
   name: string
-  definition: LayerSpecification
+  definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
   type?: string
   info?: LayerInfo
   visible?: boolean | true
   url?: string
 }
-
-// export interface LayerDefinition {
-//   id?: string
-//   type?: string
-//   source?: string
-//   minzoom?: number
-//   maxzoom?: number
-//   layout?: LayerVisibility
-//   'source-layer'?: string
-//   paint?: LayerPaint
-// }
-
-// export interface LayerVisibility {
-//   visibility: string
-//   'line-cap'?: string
-//   'line-join'?: string
-// }
-
-// export interface LayerPaint {
-//   'line-color'?: string
-//   'line-width'?: number
-//   'fill-color'?: string
-//   'fill-outline-color'?: string
-//   'fill-opacity'?: number
-// }
 
 export interface LayerInfo {
   band_descriptions?: string[]

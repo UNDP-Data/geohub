@@ -9,8 +9,11 @@
   import Textfield from '@smui/textfield'
   import Select, { Option } from '@smui/select'
   import { v4 as uuidv4 } from 'uuid'
-  // import type { LayerDefinition, LayerInfo } from '../../lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type {
+    LineLayerSpecification,
+    FillLayerSpecification,
+    SymbolLayerSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerTypes } from '../../lib/constants'
   import { map, layerList } from '../../stores'
 
@@ -35,8 +38,7 @@
     }
 
     const layerId = uuidv4()
-    let layerDefinition: LayerSpecification
-
+    let layerDefinition: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
     switch (layerType) {
       case 'symbol':
         return
