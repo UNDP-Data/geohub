@@ -1,59 +1,39 @@
-<!-- <script lang="ts" context="module">
-  
-</script> -->
 <script lang="ts">
-  import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
-  //import {refreshLayerURL} from '$lib/legendutils'
-  import { LayerInitialValues } from '../lib/constants'
   import RangeSlider from 'svelte-range-slider-pips'
   import Chip, { Set, Text } from '@smui/chips'
-  import { map } from '../stores/index'
-  import { ColorMaps } from '../lib/colormaps'
   import chroma from 'chroma-js'
 
-  //variables
-  //layer config prop
+  import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
+  import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
+  import { map } from '../stores/index'
+  import { ColorMaps } from '../lib/colormaps'
+
+  export let activeColorMapName = ''
   export let layerConfig: Layer = LayerInitialValues
-  export let activeColorMapName
-  let name: string
+
   let definition: LayerDefinition
-  let type: string
   let info: LayerInfo
-    //descructired
-  ;({ name, definition, type, info } = layerConfig)
+  ;({ definition, info } = layerConfig)
 
-  const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
+  const defaultNumberOfColors = 5
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
-
-  //console.log(layerMin, layerMax, layerUniqueValues)
-
-  //slider vars, intialized to Layer min/max
-  let rangeSliderValues = [layerMin, layerMax]
-  let step = (layerMax - layerMin) * 1e-2
-
-  //console.log(rangeSliderValues, step)
-
+  const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
+
   let activeColorMap: chroma.Scale = undefined
-
-  //let activeColorMapName: string = layerURL.searchParams.get('colormap_name') || 'viridis'
-
   let allColorMaps = {}
-  const defaultNumberOfColors = 5
-
   let colorMapSelectionVisible = false
-
+  let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
+  let step = (layerMax - layerMin) * 1e-2
 
-  //populate allColorMaps with scale/colors
   for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
     let cmaps = {}
     cMaps.forEach((cmapstr: string) => {
       try {
-        if (cmapType == 'sequential') {
+        if (cmapType === ColorMapTypes.SEQUENTIAL) {
           cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
-          //.colors(nColors, 'rgba')
         } else {
           cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
         }
@@ -86,9 +66,6 @@
     layerURL.searchParams.delete('colormap')
     updateParamsInURL({ colormap_name: activeColorMapName })
   }
-
-  //$: layerURL, console.log(`${layerURL.toString()}`)
-  //$: activeColorMapName, setContext(layerId, activeColorMapName), console.log(`acm for ${layerId} set to ${getContext(layerId)}`)
 </script>
 
 <div class="group">

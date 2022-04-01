@@ -6,7 +6,7 @@
   import { faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons/faUpDownLeftRight'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import GeoJSON from 'geojson'
-  import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
+  import maplibregl, { Map, MapMouseEvent, Marker, TriangleIndexArray } from 'maplibre-gl'
   import Moveable from 'moveable'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
@@ -194,6 +194,8 @@
     new Moveable(document.body, {
       className: 'moveable-control',
       draggable: true,
+      dragTarget: document.getElementById('header'),
+      edgeDraggable: true,
       hideDefaultLines: true,
       origin: false,
       resizable: true,
@@ -225,7 +227,7 @@
 </script>
 
 <div id="data-container" class="data-container target" hidden={!isDataContainerVisible}>
-  <div class="header">
+  <div id="header" class="header">
     <div class="name">Query Information</div>
 
     <div class="handle" alt="Move Query Information" title="Move Query Information">
@@ -372,6 +374,7 @@
       align-items: right;
       background: #f0f0f0;
       border-radius: 7.5px;
+      cursor: grab;
       display: flex;
       gap: 7.5px;
       justify-content: flex-end;
@@ -390,6 +393,10 @@
         cursor: pointer;
         padding-top: 2px;
         width: 20px;
+      }
+
+      .handle {
+        cursor: grab;
       }
     }
 

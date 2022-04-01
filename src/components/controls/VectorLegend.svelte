@@ -6,6 +6,7 @@
   import LegendSymbol from '@watergis/legend-symbol'
 
   export let layer: Layer = LayerInitialValues
+
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
   const style = $map.getStyle().layers.filter((layer: LayerDefinition) => layer.id === layerId)

@@ -22,7 +22,7 @@
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
   import type { Layer, LayerDefinition } from '../lib/types'
-  import { LayerInitialValues, DEFAULT_COLORMAP } from '../lib/constants'
+  import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
   import OpacityButton from './controls/OpacityButton.svelte'
@@ -33,8 +33,6 @@
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.filter((item: LayerDefinition) => item.id == layerId).pop()
-  // check if has unique values and extract min/max from info property
   const layerUniqueValues = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
   let mapLayerIndex: number
 
@@ -44,10 +42,8 @@
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
-
   let panelOpen: boolean = layerState[layerId] || false
   let scalingValueRange = ''
-
   let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
@@ -59,7 +55,7 @@
     legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
-  let selectedLegendType = 'continuous'
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
   let activeColorMapName: string = DEFAULT_COLORMAP
 
   $: isDynamicLayer, setDynamicLayerState()
@@ -145,8 +141,6 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  $: selectedLegendType, console.log('RasterLayer:selectedLegendType', selectedLegendType)
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -203,7 +197,7 @@
                 <div class="legend-icons-container">
                   {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
                     <div
-                      class={selectedLegendType == legendType ? 'legend-icon-selected' : 'legend-icon'}
+                      class={selectedLegendType === legendType ? 'legend-icon-selected' : 'legend-icon'}
                       on:click={() => {
                         selectedLegendType = legendType
                       }}
@@ -217,9 +211,9 @@
                 </div>
               </div>
 
-              {#if selectedLegendType == 'continuous'}
+              {#if selectedLegendType === 'continuous'}
                 <Legend bind:activeColorMapName layerConfig={layer} />
-              {:else if selectedLegendType == 'unique'}
+              {:else if selectedLegendType === 'unique'}
                 <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
               {:else}
                 <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
@@ -245,26 +239,6 @@
 
 <style lang="scss">
   .layer-header {
-    .layer-header-name {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      font-family: ProximaNova, sans-serif;
-      height: 20px;
-
-      .layer-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        font-size: 14px;
-      }
-
-      .unread-count {
-        padding-left: 7.5px;
-      }
-    }
-
     .legend-icons-container {
       display: flex;
       flex-direction: row;
