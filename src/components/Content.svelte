@@ -95,7 +95,7 @@
               <div class="layer-actions" style="height: 20px;">
                 <div transition:slide class="action">
                   <div class="header">
-                    <div class="name" style="font-size: 11px;">Legend</div>
+                    <div class="name">Legend</div>
                     <div class="close" style="margin-right: 5px;">
                       {#if treeLgendExpanded === false}
                         <div on:click={() => (treeLgendExpanded = true)}>
@@ -190,7 +190,7 @@
         justify-content: left;
         align-items: center;
         margin-top: 15px;
-        background: #f0f0f0;
+        background: #e3e3e3;
         border-radius: 7.5px;
         padding: 2.5px;
         padding-left: 7.5px;

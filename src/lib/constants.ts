@@ -91,3 +91,9 @@ export enum LayerTypes {
   RASTER = 'raster',
   VECTOR = 'vector',
 }
+
+export enum ClassificationMethodTypes {
+  EQUIDISTANT = 'e',
+  QUANTILE = 'q',
+  LOGARITHMIC = 'l',
+}

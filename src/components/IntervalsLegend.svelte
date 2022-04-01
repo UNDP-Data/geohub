@@ -10,7 +10,7 @@
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
-  import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
+  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName = ''
@@ -74,7 +74,7 @@
     { name: 'Logarithmic', value: 'l' },
   ]
 
-  let selectedClassificationMethod: any = 'e'
+  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
 
   const reclassifyImage = (params = {}) => {
     //console.log(`before reclassifying ${intervalList} ${selectedClassificationMethod}`)

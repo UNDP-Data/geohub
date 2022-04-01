@@ -6,7 +6,7 @@
   import { faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons/faUpDownLeftRight'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import GeoJSON from 'geojson'
-  import maplibregl, { Map, MapMouseEvent, Marker, TriangleIndexArray } from 'maplibre-gl'
+  import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
   import Moveable from 'moveable'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
@@ -372,7 +372,7 @@
 
     .header {
       align-items: right;
-      background: #f0f0f0;
+      background: #e3e3e3;
       border-radius: 7.5px;
       cursor: grab;
       display: flex;

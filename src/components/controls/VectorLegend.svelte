@@ -1,23 +1,47 @@
 <script lang="ts">
+  import Button, { Label as LabelButton } from '@smui/button'
+  import Textfield from '@smui/textfield'
+  import HelperText from '@smui/textfield/helper-text'
+  import RangeSlider from 'svelte-range-slider-pips'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer, LayerDefinition } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
+  import ColorPicker from './ColorPicker.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
-  const style = $map.getStyle().layers.filter((layer: LayerDefinition) => layer.id === layerId)
+  const style = $map.getStyle().layers.filter((layer: LayerDefinition) => layer.id === layerId)[0]
 
   let legendSymbolContainer: HTMLElement
 
+  $: styleJSON = stringifyStyleJSON(style)
+
+  let ZoomSliderValues = [0, 24]
+  $: ZoomSliderValues, setMinMaxZoom()
+
+  let LineWidthValues = [style.paint && style.paint['line-width'] ? style.paint['line-width'] : 1.0]
+  $: LineWidthValues, setLineWidth()
+
+  let LineBlurValues = [style.paint && style.paint['line-blur'] ? style.paint['line-blur'] : 0]
+  $: LineBlurValues, setLineBlur()
+
+  let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
+  $: lineRGBColor, setLineColor()
+
   onMount(() => {
+    updateLegend()
+  })
+
+  const updateLegend = () => {
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
 
     let symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
+    legendSymbolContainer.innerHTML = ''
     if (symbol) {
       switch (symbol.element) {
         case 'div': {
@@ -66,20 +90,129 @@
         }
       }
     }
-  })
+  }
+
+  const stringifyStyleJSON = (style: JSON) => {
+    return JSON.stringify(style, null, 4)
+  }
+
+  const setMinMaxZoom = () => {
+    const newStyle = JSON.parse(styleJSON)
+    newStyle.minzoom = ZoomSliderValues[0]
+    newStyle.maxzoom = ZoomSliderValues[1]
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
+  }
+
+  const setLineWidth = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (!newStyle.paint) {
+      newStyle.paint = {}
+    }
+    newStyle.paint['line-width'] = LineWidthValues[0]
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setPaintProperty(layerId, 'line-width', LineWidthValues[0])
+  }
+
+  const setLineBlur = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (!newStyle.paint) {
+      newStyle.paint = {}
+    }
+    newStyle.paint['line-blur'] = LineBlurValues[0]
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setPaintProperty(layerId, 'line-blur', LineBlurValues[0])
+  }
+
+  const setLineColor = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (!newStyle.paint) {
+      newStyle.paint = {}
+    }
+    newStyle.paint['line-color'] = lineRGBColor
+    styleJSON = stringifyStyleJSON(newStyle)
+    $map.setPaintProperty(layerId, 'line-color', lineRGBColor)
+  }
+
+  const applyLayerStyle = () => {
+    const newStyle = JSON.parse(styleJSON)
+    if (newStyle.minzoom && newStyle.maxzoom) {
+      $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
+    }
+    if (newStyle.paint) {
+      Object.keys(newStyle.paint).forEach((key) => {
+        const value = newStyle.paint[key]
+        $map.setPaintProperty(layerId, key, value)
+      })
+    }
+    if (newStyle.layout) {
+      Object.keys(newStyle.layout).forEach((key) => {
+        const value = newStyle.layout[key]
+        $map.setLayoutProperty(layerId, key, value)
+      })
+    }
+    updateLegend()
+  }
 </script>
 
 <div>
   <div bind:this={legendSymbolContainer} />
-  <textarea value={JSON.stringify(style, null, 2)} />
+
+  <p>Zoom Level</p>
+  <div class="slider">
+    <RangeSlider
+      bind:values={ZoomSliderValues}
+      float
+      range
+      min={0}
+      max={24}
+      step={1}
+      pips
+      first="1"
+      last="20"
+      rest={false} />
+  </div>
+
+  {#if style.type === 'line'}
+    <p>Line Width</p>
+    <div class="slider">
+      <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
+    </div>
+    <p>Line Blur</p>
+    <div class="slider">
+      <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
+    </div>
+    <p>Line Color</p>
+    <ColorPicker bind:RgbColor={lineRGBColor} />
+  {/if}
+
+  <hr />
+  <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
+    <HelperText slot="helper">style.json for the layer</HelperText>
+  </Textfield>
+  <div class="changeLegendButtonDiv">
+    <Button class="changelegendbtn" variant="raised" on:click={() => applyLayerStyle()}>
+      <LabelButton>Apply</LabelButton>
+    </Button>
+  </div>
 </div>
 
 <style lang="scss">
-  textarea {
-    resize: vertical;
+  :global(.changeLegendButtonDiv) {
+    margin: 0 auto;
+    padding-top: 10px;
+    width: 80%;
+    display: flex;
+  }
+  :global(.changelegendbtn) {
+    text-transform: capitalize;
+    height: 30px;
     width: 100%;
-    height: 150px;
-    min-height: 50px;
-    max-height: 300px;
+  }
+  .slider {
+    --range-handle-focus: #2196f3;
+    --range-range-inactive: #2196f3;
+    --range-handle-inactive: #2196f3;
+    --range-handle: #2196f3;
   }
 </style>
