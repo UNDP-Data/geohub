@@ -292,6 +292,11 @@
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
     }
+
+    @media (prefers-color-scheme: dark) {
+      background: #323234;
+      color: white;
+    }
   }
   .discrete {
     width: 20px;
