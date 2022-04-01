@@ -24,7 +24,7 @@ export const TreeNodeInitialValues = {
 
 export const LayerInitialValues = {
   name: '',
-  definition: {},
+  definition: undefined,
   type: '',
   info: {},
 }

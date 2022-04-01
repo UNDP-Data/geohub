@@ -5,7 +5,8 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
-  import type { Layer, LayerDefinition } from '../../lib/types'
+  import type { Layer } from '../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
   import ColorPicker from './ColorPicker.svelte'
@@ -14,7 +15,11 @@
 
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
-  const style = $map.getStyle().layers.filter((layer: LayerDefinition) => layer.id === layerId)[0]
+  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+  let sprite = {
+    image: HTMLImageElement,
+    json: JSON,
+  }
 
   let legendSymbolContainer: HTMLElement
 
@@ -32,15 +37,48 @@
   let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
   $: lineRGBColor, setLineColor()
 
-  onMount(() => {
+  const setSprite = (image, json) => {
+    sprite = {
+      image,
+      json,
+    }
+  }
+
+  const loadImage = (url: string) => {
+    let cancelled = false
+    const promise = new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'Anonymous'
+      img.onload = () => {
+        if (!cancelled) resolve(img)
+      }
+      img.onerror = (e) => {
+        if (!cancelled) reject(e)
+      }
+      img.src = url
+    })
+    return promise
+  }
+
+  const loadJson = (url: string) => {
+    return fetch(url).then((data) => data.json())
+  }
+
+  const styleUrl = $map.getStyle().sprite
+  const promise = Promise.all([loadImage(`${styleUrl}.png`), loadJson(`${styleUrl}.json`)])
+
+  onMount(async () => {
+    await promise.then(([image, json]) => {
+      setSprite(image, json)
+    })
     updateLegend()
   })
 
   const updateLegend = () => {
     const mapLayers = $map.getStyle().layers
-    const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
+    const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-    let symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
+    let symbol = LegendSymbol({ sprite: sprite, zoom: zoom, layer: mapLayerByLayerId })
     legendSymbolContainer.innerHTML = ''
     if (symbol) {
       switch (symbol.element) {
@@ -57,6 +95,8 @@
             div.appendChild(img)
           }
           const divBackground = document.createElement('div')
+          divBackground.style.height = '24px'
+          divBackground.style.width = '50px'
           divBackground.style.backgroundColor = symbol.attributes.style.backgroundColor
           divBackground.style.backgroundPosition = symbol.attributes.style.backgroundPosition
           divBackground.style.backgroundSize = symbol.attributes.style.backgroundSize
@@ -105,6 +145,7 @@
   }
 
   const setLineWidth = () => {
+    if (style.type !== 'line') return
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
       newStyle.paint = {}
@@ -115,6 +156,7 @@
   }
 
   const setLineBlur = () => {
+    if (style.type !== 'line') return
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
       newStyle.paint = {}
@@ -125,6 +167,7 @@
   }
 
   const setLineColor = () => {
+    if (style.type !== 'line') return
     const newStyle = JSON.parse(styleJSON)
     if (!newStyle.paint) {
       newStyle.paint = {}

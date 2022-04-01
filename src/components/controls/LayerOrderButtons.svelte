@@ -4,14 +4,15 @@
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
 
   import { map } from '../../stores'
-  import type { Layer, LayerDefinition } from '../../lib/types'
+  import type { Layer } from '../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  const mapLayerByLayerId = mapLayers.find((item: LayerDefinition) => item.id === layerId)
+  const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
 

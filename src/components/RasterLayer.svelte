@@ -21,7 +21,8 @@
   import UniqueValuesLegend from './UniqueValuesLegend.svelte'
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, dynamicLayers, map } from '../stores'
-  import type { Layer, LayerDefinition } from '../lib/types'
+  import type { Layer } from '../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
@@ -117,7 +118,7 @@
 
   const updateParamsInURL = (params) => {
     debounce(() => {
-      let layers = mapLayers.find((item: LayerDefinition) => item.id === layerId)['source']
+      let layers = mapLayers.find((item: LayerSpecification) => item.id === layerId)['source']
       const layerSource = $map.getSource(layers)
 
       if (layerSource.tiles) {

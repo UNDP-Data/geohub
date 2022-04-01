@@ -3,7 +3,13 @@
   import Chip, { Set, Text } from '@smui/chips'
   import chroma from 'chroma-js'
 
-  import type { Layer, LayerDefinition, LayerInfo } from '../lib/types'
+  import type { Layer, LayerInfo } from '../lib/types'
+  import type {
+    RasterLayerSpecification,
+    FillLayerSpecification,
+    LineLayerSpecification,
+    SymbolLayerSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types'
   import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
@@ -11,7 +17,7 @@
   export let activeColorMapName = ''
   export let layerConfig: Layer = LayerInitialValues
 
-  let definition: LayerDefinition
+  let definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
@@ -73,7 +79,7 @@
       ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
       rescaleMin = Number(rescaleMin)
       rescaleMax = Number(rescaleMin)
-      if (rescaleMin != rangeSliderValues[0] || rescaleMax != rangeSliderValues[1]) {
+      if (rescaleMin !== rangeSliderValues[0] || rescaleMax !== rangeSliderValues[1]) {
         params = { rescale: rangeSliderValues.join(',') }
       }
     }

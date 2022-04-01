@@ -33,13 +33,16 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 
-  import type { TreeNode, LayerDefinition, LayerInfo } from '../lib/types'
+  import type { TreeNode, LayerInfo } from '../lib/types'
+  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import { map, layerList, indicatorProgress, wtree } from '../stores'
+  import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0
   export let handlErrorCallback: CallableFunction
+  let SelectLayerStyleDialogVisible
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
@@ -110,38 +113,7 @@
     let layerInfo: LayerInfo = {}
 
     if (!isRaster) {
-      const layerName = path.split('/')[path.split('/').length - 2]
-      const layerSource = {
-        type: LayerTypes.VECTOR,
-        tiles: [url],
-        minzoom: 0,
-        maxzoom: 12,
-      }
-      if (!(tileSourceId in mmap.getStyle().sources)) {
-        $map.addSource(tileSourceId, layerSource)
-      }
-
-      const layerDefinition: LayerDefinition = {
-        id: layerId,
-        type: 'line',
-        source: tileSourceId,
-        'source-layer': label,
-        layout: {
-          visibility: 'visible',
-          'line-cap': 'round',
-          'line-join': 'round',
-        },
-        paint: {
-          'line-color': 'rgb(53, 175, 109)',
-          'line-width': 0.5,
-        },
-      }
-
-      $layerList = [
-        { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, visible: true },
-        ...$layerList,
-      ]
-      $map.addLayer(layerDefinition)
+      SelectLayerStyleDialogVisible = true
     } else {
       const layerName = path.split('/')[path.split('/').length - 1]
       const [base, sign] = url.split('?')
@@ -179,7 +151,7 @@
           mmap.addSource(tileSourceId, layerSource)
         }
 
-        const layerDefinition: LayerDefinition = {
+        const layerDefinition: RasterLayerSpecification = {
           id: layerId,
           type: LayerTypes.RASTER,
           source: tileSourceId,
@@ -301,6 +273,8 @@
     <svelte:self node={child} level={level + 1} {handlErrorCallback} />
   {/each}
 {/if}
+
+<SelectLayerStyleDialog bind:SelectLayerStyleDialogVisible {path} {url} {label} />
 
 <style lang="scss">
   .node-container {
