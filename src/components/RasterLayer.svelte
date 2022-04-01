@@ -212,7 +212,7 @@
                 </div>
               </div>
 
-              {#if selectedLegendType === 'continuous'}
+              {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
                 <Legend bind:activeColorMapName layerConfig={layer} />
               {:else if selectedLegendType === 'unique'}
                 <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />

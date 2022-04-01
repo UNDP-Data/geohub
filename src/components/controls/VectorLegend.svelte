@@ -37,7 +37,7 @@
   let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
   $: lineRGBColor, setLineColor()
 
-  const setSprite = (image, json) => {
+  const setSprite = (image: any, json: JSON) => {
     sprite = {
       image,
       json,
@@ -60,7 +60,7 @@
     return promise
   }
 
-  const loadJson = (url: string) => {
+  const loadJson = async (url: string) => {
     return fetch(url).then((data) => data.json())
   }
 

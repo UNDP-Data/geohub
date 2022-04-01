@@ -8,6 +8,7 @@
   import HelperText from '@smui/textfield/helper-text'
   import { v4 as uuidv4 } from 'uuid'
   import RangeSlider from 'svelte-range-slider-pips'
+  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import { dynamicLayers, layerList, map } from '../stores'
   import Calculator from './raster/Calculator.svelte'
@@ -86,7 +87,7 @@
         $map.addSource(uuid, layerSource)
       }
 
-      const definition = {
+      const definition: RasterLayerSpecification = {
         id: newLayerId || 'test',
         type: LayerTypes.RASTER,
         source: uuid,

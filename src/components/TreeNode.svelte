@@ -42,7 +42,7 @@
   export let node = TreeNodeInitialValues
   export let level = 0
   export let handlErrorCallback: CallableFunction
-  let SelectLayerStyleDialogVisible
+  let SelectLayerStyleDialogVisible: boolean
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
@@ -98,7 +98,7 @@
     return res
   }
 
-  const paramsToQueryString = (params: any) => {
+  const paramsToQueryString = (params: Record<string, unknown>) => {
     return Object.keys(params)
       .map((key) => key + '=' + params[key])
       .join('&')

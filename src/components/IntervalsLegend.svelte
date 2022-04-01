@@ -1,6 +1,5 @@
 <script lang="ts">
   import chroma from 'chroma-js'
-  import RangeSlider from 'svelte-range-slider-pips'
   import Chip, { Set, Text } from '@smui/chips'
   import Button, { Label as LabelButton } from '@smui/button'
   import Fa from 'svelte-fa'
@@ -27,7 +26,6 @@
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let rangeSliderValues = [layerMin, layerMax]
-  let step = (layerMax - layerMin) * 1e-2
 
   const defaultNumberOfColors = 5
   const layerSrc = $map.getSource(definition.source)
@@ -72,7 +70,6 @@
   }
 
   let intervalList = []
-  let reclassIntervalList = []
   let numberOfClasses = 5
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
@@ -83,18 +80,13 @@
   let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
 
   const reclassifyImage = (params = {}) => {
-    //console.log(`before reclassifying ${intervalList} ${selectedClassificationMethod}`)
     let cmap = []
-    // Interval List needs to be updated every time the number of classes changes
 
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
-    console.log(`rangeSliderValues interval ${intervalList}`)
-    //reclassIntervalList = intervalList.map((el) => {return remap(el, layerMin, layerMax)})
 
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
-    //console.log(`Interval List is: ${intervalList}`)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
       let c = [...scaleColorList(intervalList[i]).rgb(), 255]
       let intervalStart = intervalList[i]
@@ -122,48 +114,16 @@
     }
     reclassifyImage()
   }
-  const remap = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
-    const percent = (input - oldMin) / (oldMax - oldMin)
-    const rescaled = percent * (newMax - newMin) + newMin
-    return rescaled | 0
-  }
 
-  const handleRangeSliderValues = () => {
-    const rescaledValues = rangeSliderValues.map((el) => {
-      return remap(el, rangeSliderValues[0], rangeSliderValues[1])
-      //return remap(el,layerMin, layerMax, )
-    })
-    console.log(`rangeSliderValues ${rangeSliderValues} - rescaled ${rescaledValues}`)
-    reclassifyImage({ rescale: rescaledValues.join(',') })
-  }
   reclassifyImage()
 </script>
 
 <div class="group">
-  <!-- <div class="slider">
-    <RangeSlider
-      bind:values={rangeSliderValues}
-      float
-      range
-      min={layerMin}
-      max={layerMax}
-      {step}
-      pips
-      pipstep={Math.round(step * 10)}
-      first="label"
-      last="label"
-      rest={false}
-      on:stop={() => {
-        handleRangeSliderValues()
-      }} />
-  </div> -->
-
   <div class="intervals-legend">
     <div class="row">
       <div class="column">Number of classes:</div>
       <div class="column">
         <div class="no-classes">
-          <!-- <input id="no-classes" type="number" min="2" max="30" bind:value={numberOfClasses}  /> -->
           <div
             class="icon-selected"
             title="Increase number of classes"
@@ -292,12 +252,6 @@
     padding: 2px;
     margin-top: 1px;
     padding-bottom: 4px;
-    .slider {
-      --range-handle-focus: #2196f3;
-      --range-range-inactive: #2196f3;
-      --range-handle-inactive: #2196f3;
-      --range-handle: #2196f3;
-    }
 
     @media (prefers-color-scheme: dark) {
       background: #323234;

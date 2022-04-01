@@ -75,11 +75,10 @@
       params = { rescale: rangeSliderValues.join(',') }
     } else {
       let rescaleParam = layerURL.searchParams.get('rescale')
-      let rescaleMin, rescaleMax
+      let rescaleMin = '',
+        rescaleMax = ''
       ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
-      rescaleMin = Number(rescaleMin)
-      rescaleMax = Number(rescaleMin)
-      if (rescaleMin !== rangeSliderValues[0] || rescaleMax !== rangeSliderValues[1]) {
+      if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
         params = { rescale: rangeSliderValues.join(',') }
       }
     }
