@@ -66,6 +66,7 @@
   }
 
   let intervalList = []
+  let reclassIntervalList = []
   let numberOfClasses = 5
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
@@ -79,24 +80,25 @@
     //console.log(`before reclassifying ${intervalList} ${selectedClassificationMethod}`)
     let cmap = []
     // Interval List needs to be updated every time the number of classes changes
+
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
-    //console.log(`after reclassifying ${intervalList}`)
+    console.log(`rangeSliderValues interval ${intervalList}`)
+    //reclassIntervalList = intervalList.map((el) => {return remap(el, layerMin, layerMax)})
+
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
     //console.log(`Interval List is: ${intervalList}`)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
       let c = [...scaleColorList(intervalList[i]).rgb(), 255]
       let intervalStart = intervalList[i]
       let intervalEnd = intervalList[i + 1]
-      if (i > 0) {
-        intervalStart += 0.01
-      }
       let cmapitem = [[intervalStart, intervalEnd], c]
       cmap.push(cmapitem)
     }
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
+    layerURL.searchParams.delete('rescale')
     let updatedParams = Object.assign({ colormap: encodedCmap }, params)
     updateParamsInURL(updatedParams)
   }
@@ -114,15 +116,25 @@
     }
     reclassifyImage()
   }
+  const remap = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
+    const percent = (input - oldMin) / (oldMax - oldMin)
+    const rescaled = percent * (newMax - newMin) + newMin
+    return rescaled | 0
+  }
 
   const handleRangeSliderValues = () => {
-    reclassifyImage({ rescale: rangeSliderValues.join(',') })
+    const rescaledValues = rangeSliderValues.map((el) => {
+      return remap(el, rangeSliderValues[0], rangeSliderValues[1])
+      //return remap(el,layerMin, layerMax, )
+    })
+    console.log(`rangeSliderValues ${rangeSliderValues} - rescaled ${rescaledValues}`)
+    reclassifyImage({ rescale: rescaledValues.join(',') })
   }
   reclassifyImage()
 </script>
 
 <div class="group">
-  <div class="slider">
+  <!-- <div class="slider">
     <RangeSlider
       bind:values={rangeSliderValues}
       float
@@ -138,7 +150,7 @@
       on:stop={() => {
         handleRangeSliderValues()
       }} />
-  </div>
+  </div> -->
 
   <div class="intervals-legend">
     <div class="row">

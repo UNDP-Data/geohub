@@ -56,15 +56,30 @@
   }
 
   const updateParamsInURL = (params) => {
-    console.log('updating')
     Object.keys(params).forEach((key) => {
       layerURL.searchParams.set(key, params[key])
     })
     refreshLayerURL()
   }
+
   if (layerURL.searchParams.has('colormap')) {
+    let params = {}
     layerURL.searchParams.delete('colormap')
-    updateParamsInURL({ colormap_name: activeColorMapName })
+    if (!layerURL.searchParams.has('rescale')) {
+      params = { rescale: rangeSliderValues.join(',') }
+    } else {
+      let rescaleParam = layerURL.searchParams.get('rescale')
+      let rescaleMin, rescaleMax
+      ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
+      rescaleMin = Number(rescaleMin)
+      rescaleMax = Number(rescaleMin)
+      if (rescaleMin != rangeSliderValues[0] || rescaleMax != rangeSliderValues[1]) {
+        params = { rescale: rangeSliderValues.join(',') }
+      }
+    }
+
+    params = Object.assign(params, { colormap_name: activeColorMapName })
+    updateParamsInURL(params)
   }
 </script>
 
