@@ -1,21 +1,23 @@
 <script lang="ts">
   import chroma from 'chroma-js'
-  import Chip, { Set, Text } from '@smui/chips'
   import Button, { Label as LabelButton } from '@smui/button'
+  import Chip, { Set, Text } from '@smui/chips'
+  import Ripple from '@smui/ripple'
   import Fa from 'svelte-fa'
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
   import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
-  import { map } from '../stores/index'
-  import { ColorMaps } from '../lib/colormaps'
-  import type { Layer, LayerInfo } from '../lib/types'
   import type {
     RasterLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
+
+  import { map } from '../stores/index'
+  import { ColorMaps } from '../lib/colormaps'
+  import type { Layer, LayerInfo } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
-  import Ripple from '@smui/ripple'
+  import { updateParamsInURL } from '../lib/helper'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName = ''
@@ -33,8 +35,17 @@
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
+  let classificationMethods = [
+    { name: 'Equidistant', value: 'e' },
+    { name: 'Quantile', value: 'q' },
+    { name: 'Logarithmic', value: 'l' },
+  ]
+
   let colorMapSelectionVisible = false
+  let intervalList = []
+  let numberOfClasses = 5
   let selectedColorMapType = ''
+  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
 
   //populate allColorMaps with scale/colors
   for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
@@ -56,29 +67,6 @@
     allColorMaps[cmapType] = cmaps
   }
 
-  const refreshLayerURL = () => {
-    $map.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
-    $map.style.sourceCaches[definition.source].clearTiles()
-    $map.style.sourceCaches[definition.source].update($map.transform)
-    $map.triggerRepaint()
-  }
-  const updateParamsInURL = (params) => {
-    Object.keys(params).forEach((key) => {
-      layerURL.searchParams.set(key, params[key])
-    })
-    refreshLayerURL()
-  }
-
-  let intervalList = []
-  let numberOfClasses = 5
-  let classificationMethods = [
-    { name: 'Equidistant', value: 'e' },
-    { name: 'Quantile', value: 'q' },
-    { name: 'Logarithmic', value: 'l' },
-  ]
-
-  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
-
   const reclassifyImage = (params = {}) => {
     let cmap = []
 
@@ -98,7 +86,7 @@
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     let updatedParams = Object.assign({ colormap: encodedCmap }, params)
-    updateParamsInURL(updatedParams)
+    updateParamsInURL(definition, layerURL, updatedParams)
   }
 
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {

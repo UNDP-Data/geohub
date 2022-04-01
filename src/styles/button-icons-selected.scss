@@ -1,6 +1,10 @@
 .icon-selected {
-  opacity: 1;
+  opacity: 0.5;
   display: inline;
   cursor: pointer;
   margin-right: 10px;
+
+  &:hover {
+    opacity: 1;
+  }
 }

@@ -30,7 +30,7 @@
   }
 </script>
 
-<div class="icon-selected" title="Show/hide layer" on:click={() => toggleVisibility()}>
+<div class="icon-selected" title={isLayerVisible ? 'Show Layer' : 'Hide Layer'} on:click={() => toggleVisibility()}>
   <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
 </div>
 

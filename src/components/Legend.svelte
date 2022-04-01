@@ -13,6 +13,7 @@
   import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
+  import { updateParamsInURL } from '../lib/helper'
 
   export let activeColorMapName = ''
   export let layerConfig: Layer = LayerInitialValues
@@ -54,20 +55,6 @@
     allColorMaps[cmapType] = cmaps
   }
 
-  const refreshLayerURL = () => {
-    $map.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
-    $map.style.sourceCaches[definition.source].clearTiles()
-    $map.style.sourceCaches[definition.source].update($map.transform)
-    $map.triggerRepaint()
-  }
-
-  const updateParamsInURL = (params) => {
-    Object.keys(params).forEach((key) => {
-      layerURL.searchParams.set(key, params[key])
-    })
-    refreshLayerURL()
-  }
-
   if (layerURL.searchParams.has('colormap')) {
     let params = {}
     layerURL.searchParams.delete('colormap')
@@ -84,7 +71,7 @@
     }
 
     params = Object.assign(params, { colormap_name: activeColorMapName })
-    updateParamsInURL(params)
+    updateParamsInURL(definition, layerURL, params)
   }
 </script>
 
@@ -102,7 +89,7 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={updateParamsInURL({ rescale: rangeSliderValues.join(',') })} />
+      on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
   </div>
   <div style="display:flex;flex-direction:column; align-items:center">
     <div
@@ -144,7 +131,7 @@
                 activeColorMapName = aColorMap
                 activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
 
-                updateParamsInURL({ colormap_name: activeColorMapName })
+                updateParamsInURL(definition, layerURL, { colormap_name: activeColorMapName })
               }}
               style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
                 defaultNumberOfColors,

@@ -49,10 +49,10 @@
   </ContentDialog>
   <ActionsDialog>
     <Button>
-      <LabelButton class="button">No</LabelButton>
+      <LabelButton>No</LabelButton>
     </Button>
     <Button on:click={() => removeLayer()}>
-      <LabelButton class="button">Yes</LabelButton>
+      <LabelButton>Yes</LabelButton>
     </Button>
   </ActionsDialog>
 </Dialog>
@@ -64,7 +64,7 @@
     margin-right: 0;
   }
 
-  .button {
+  :global(.mdc-button__label) {
     @media (prefers-color-scheme: dark) {
       color: white;
     }
