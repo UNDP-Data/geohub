@@ -17,8 +17,8 @@
   export let url: string
   export let label: string
   let tileSourceId = path
-  let layerTypes = ['symbol', 'line', 'fill']
-  let layerType = 'line'
+  let layerTypes = [LayerTypes.SYMBOL, LayerTypes.LINE, LayerTypes.FILL]
+  let layerType = LayerTypes.LINE
 
   const addLayer = () => {
     if (!$map.getSource(tileSourceId)) {

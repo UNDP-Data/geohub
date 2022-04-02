@@ -24,14 +24,14 @@
       $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
     } else {
       switch (layer.definition.type) {
-        case 'symbol':
+        case LayerTypes.SYMBOL:
           $map.setPaintProperty(layerId, 'icon-opacity', layerOpacity)
           $map.setPaintProperty(layerId, 'text-opacity', layerOpacity)
           break
-        case 'line':
+        case LayerTypes.LINE:
           $map.setPaintProperty(layerId, 'line-opacity', layerOpacity)
           break
-        case 'fill':
+        case LayerTypes.FILL:
           $map.setPaintProperty(layerId, 'fill-opacity', layerOpacity)
           break
         default:

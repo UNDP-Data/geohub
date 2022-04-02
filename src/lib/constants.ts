@@ -91,6 +91,9 @@ export enum DynamicLayerResolutionTypes {
 export enum LayerTypes {
   RASTER = 'raster',
   VECTOR = 'vector',
+  SYMBOL = 'symbol',
+  LINE = 'line',
+  FILL = 'fill',
 }
 
 export enum ClassificationMethodTypes {
