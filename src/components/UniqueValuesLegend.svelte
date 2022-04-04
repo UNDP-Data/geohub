@@ -136,7 +136,7 @@
     <div class="column">
       <div class="row">Active color map</div>
 
-      <div class="row" style="width: 50%; height: 20px; margin:auto; ">
+      <div class="row" id="unique-legend-button-div">
         <Button
           on:click={() => {
             colorMapSelectionVisible = !colorMapSelectionVisible
@@ -150,10 +150,7 @@
 
     <div class="column">
       <div class="row">Values:</div>
-      <div
-        class="row"
-        style="display: flex; align-items: center; justify-content: space-around;
-        flex-direction: column; background-color: white; border-radius: 5px; padding: 10px">
+      <div class="row" id="unique-legend-div" style="">
         <div style="display: block">
           {#each activeColorMap.colors(layerUniqueValues.length, 'rgba') as value, index}
             <div style="display: flex; padding:2px;">
@@ -277,5 +274,21 @@
   }
   * :global(.colormap-chips) {
     justify-content: space-evenly;
+  }
+
+  #unique-legend-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  #unique-legend-button-div {
+    width: 50%;
+    height: 20px;
+    margin: auto;
   }
 </style>
