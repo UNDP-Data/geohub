@@ -149,20 +149,22 @@
     </div>
   </div>
 
-  <div class="row">
-    <div style="width: 50%; height: 20px">
+  <div class="column">
+    <div id="intervals-cmap-button-div">
+      <div>Active colormap</div>
       <Button
+        id="intervals-cmap-button"
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
         variant="raised"
-        style="width:100%; height:100%;background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
+        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
         <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
-    <div class="column">
+    <div class="column" id="intervals-list-div">
       {#each activeColorMap.colors(numberOfClasses, 'rgba') as value, index}
-        <div style="display: flex; padding:2px;">
+        <div style="display: flex; padding:2px; width: 50%; margin: auto">
           <div class="discrete" style="background-color: {value}" />
           &nbsp;&raquo;&nbsp
           <div>{intervalList[index]} - {intervalList[index + 1]}</div>
@@ -279,5 +281,21 @@
   }
   * :global(.colormap-chips) {
     justify-content: space-evenly;
+  }
+
+  #intervals-cmap-button-div {
+    width: 50%;
+    height: 100%;
+    margin: auto;
+  }
+  * :global(#intervals-cmap-button) {
+    margin-bottom: 2rem;
+    width: 100%;
+    height: 100%;
+  }
+  #intervals-list-div {
+    background-color: white;
+    width: 100%;
+    margin: auto;
   }
 </style>

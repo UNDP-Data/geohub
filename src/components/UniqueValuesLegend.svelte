@@ -132,28 +132,25 @@
         handleRangeSlider()
       }} />
   </div>
-  <div class="uvalues-legend">
+  <div class="uvalues-legend" style="display: block">
     <div class="column">
       <div class="row">Active color map</div>
 
-      <div class="row">
+      <div class="row" id="unique-legend-button-div">
         <Button
           on:click={() => {
             colorMapSelectionVisible = !colorMapSelectionVisible
           }}
-          variant="raised">
-          <LabelButton>{activeColorMapName}</LabelButton>
+          variant="raised"
+          style="width:100%; height:100%; background: linear-gradient(90deg, {[...activeColorMap.colors()]})">
+          <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
         </Button>
       </div>
     </div>
 
     <div class="column">
       <div class="row">Values:</div>
-
-      <div
-        class="row"
-        style="display: flex; align-items: center; justify-content: space-around;
-        flex-direction: column; background-color: white; border-radius: 5px; padding: 10px">
+      <div class="row" id="unique-legend-div" style="">
         <div style="display: block">
           {#each activeColorMap.colors(layerUniqueValues.length, 'rgba') as value, index}
             <div style="display: flex; padding:2px;">
@@ -206,7 +203,7 @@
     align-items: center;
   }
   .column {
-    display: flex;
+    display: block;
     flex-direction: column;
     flex-basis: 100%;
     align-items: center;
@@ -277,5 +274,21 @@
   }
   * :global(.colormap-chips) {
     justify-content: space-evenly;
+  }
+
+  #unique-legend-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  #unique-legend-button-div {
+    width: 50%;
+    height: 20px;
+    margin: auto;
   }
 </style>
