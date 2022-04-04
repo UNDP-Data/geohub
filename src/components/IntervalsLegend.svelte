@@ -153,14 +153,12 @@
     <div id="intervals-cmap-button-div">
       <div>Active colormap</div>
       <Button
-              id="intervals-cmap-button"
+        id="intervals-cmap-button"
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
         variant="raised"
-        style="background:linear-gradient(90deg, {[
-          ...activeColorMap.colors(),
-        ]})">
+        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
         <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
@@ -285,19 +283,19 @@
     justify-content: space-evenly;
   }
 
-  #intervals-cmap-button-div{
+  #intervals-cmap-button-div {
     width: 50%;
     height: 100%;
-    margin:auto;
+    margin: auto;
   }
-  * :global(#intervals-cmap-button){
-    margin-bottom:2rem;
-    width:100%;
-    height:100%;
+  * :global(#intervals-cmap-button) {
+    margin-bottom: 2rem;
+    width: 100%;
+    height: 100%;
   }
-  #intervals-list-div{
+  #intervals-list-div {
     background-color: white;
     width: 100%;
-    margin: auto
+    margin: auto;
   }
 </style>
