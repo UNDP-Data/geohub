@@ -161,22 +161,23 @@
     </div>
   </div>
 
-  <div class="row">
-    <div style="width: 50%; height: 20px">
-      Active colormap:
+  <div class="column">
+    <div style="width: 50%; height: 100%; margin:auto;">
+      <div>Active colormap</div>
       <Button
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
         variant="raised"
-        style="width:100%; height:100%;background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
+        style="margin-bottom:2rem; width:100%; height:100%;background:linear-gradient(90deg, {[
+          ...activeColorMap.colors(),
+        ]})">
         <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
-    <div class="column">
-      Intervals:
+    <div class="column" style="background-color: white; width: 100%; margin: auto">
       {#each activeColorMap.colors(numberOfClasses, 'rgba') as value, index}
-        <div style="display: flex; padding:2px;">
+        <div style="display: flex; padding:2px; width: 50%; margin: auto">
           <div class="discrete" style="background-color: {value}" />
           &nbsp;&raquo;&nbsp
           <div>{intervalList[index]} - {intervalList[index + 1]}</div>

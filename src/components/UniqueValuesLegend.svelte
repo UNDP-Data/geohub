@@ -147,11 +147,11 @@
         handleRangeSlider()
       }} />
   </div>
-  <div class="uvalues-legend">
+  <div class="uvalues-legend" style="display: block">
     <div class="column">
       <div class="row">Active color map</div>
 
-      <div class="row" style="width: 100%; height: 20px">
+      <div class="row" style="width: 50%; height: 20px; margin:auto; ">
         <Button
           on:click={() => {
             colorMapSelectionVisible = !colorMapSelectionVisible
@@ -165,7 +165,6 @@
 
     <div class="column">
       <div class="row">Values:</div>
-
       <div
         class="row"
         style="display: flex; align-items: center; justify-content: space-around;
@@ -222,7 +221,7 @@
     align-items: center;
   }
   .column {
-    display: flex;
+    display: block;
     flex-direction: column;
     flex-basis: 100%;
     align-items: center;
