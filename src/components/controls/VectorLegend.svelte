@@ -2,7 +2,6 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
-  import RangeSlider from 'svelte-range-slider-pips'
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
@@ -10,6 +9,7 @@
   import { LayerInitialValues } from '../../lib/constants'
   import LegendSymbol from '@watergis/legend-symbol'
   import ColorPicker from './ColorPicker.svelte'
+  import MinMaxZoom from './vector-styles/MinMaxZoom.svelte'
   import LineWidth from './vector-styles/LineWidth.svelte'
   import LineBlur from './vector-styles/LineBlur.svelte'
 
@@ -26,9 +26,6 @@
   let legendSymbolContainer: HTMLElement
 
   $: styleJSON = stringifyStyleJSON(style)
-
-  let ZoomSliderValues = [0, 24]
-  $: ZoomSliderValues, setMinMaxZoom()
 
   let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
   $: lineRGBColor, setLineColor()
@@ -132,14 +129,6 @@
     return JSON.stringify(style, null, 4)
   }
 
-  const setMinMaxZoom = () => {
-    const newStyle = JSON.parse(styleJSON)
-    newStyle.minzoom = ZoomSliderValues[0]
-    newStyle.maxzoom = ZoomSliderValues[1]
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
-  }
-
   const onStyleChange = () => {
     const _style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
     styleJSON = stringifyStyleJSON(_style)
@@ -180,24 +169,11 @@
 <div>
   <div bind:this={legendSymbolContainer} />
 
-  <p>Zoom Level</p>
-  <div class="slider">
-    <RangeSlider
-      bind:values={ZoomSliderValues}
-      float
-      range
-      min={0}
-      max={24}
-      step={1}
-      pips
-      first="1"
-      last="20"
-      rest={false} />
-  </div>
+  <MinMaxZoom on:change={onStyleChange} {layer} />
+  <LineWidth on:change={onStyleChange} {layer} />
+  <LineBlur on:change={onStyleChange} {layer} />
 
   {#if style.type === 'line'}
-    <LineWidth on:change={onStyleChange} {layer} />
-    <LineBlur on:change={onStyleChange} {layer} />
     <p>Line Color</p>
     <ColorPicker bind:RgbColor={lineRGBColor} />
   {/if}

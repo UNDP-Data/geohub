@@ -12,33 +12,41 @@
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let LineBlurValues = [style.paint && style.paint['line-blur'] ? style.paint['line-blur'] : 0]
-  $: LineBlurValues, setLineBlur()
+  let ZoomSliderValues = [0, 24]
+  $: ZoomSliderValues, setMinMaxZoom()
 
-  const setLineBlur = () => {
-    if (style.type !== 'line') return
+  const setMinMaxZoom = () => {
     const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-blur'] = LineBlurValues[0]
-    $map.setPaintProperty(layerId, 'line-blur', LineBlurValues[0])
-
+    newStyle.minzoom = ZoomSliderValues[0]
+    newStyle.maxzoom = ZoomSliderValues[1]
+    $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
     dispatch('change', [
       {
-        property: 'line-blur',
-        value: LineBlurValues[0],
+        property: 'minzoom',
+        value: newStyle.minzoom,
+      },
+      {
+        property: 'maxzoom',
+        value: newStyle.maxzoom,
       },
     ])
   }
 </script>
 
-{#if style.type === 'line'}
-  <p>Line Blur</p>
-  <div class="slider">
-    <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
-  </div>
-{/if}
+<p>Zoom Level</p>
+<div class="slider">
+  <RangeSlider
+    bind:values={ZoomSliderValues}
+    float
+    range
+    min={0}
+    max={24}
+    step={1}
+    pips
+    first="1"
+    last="20"
+    rest={false} />
+</div>
 
 <style lang="scss">
   .slider {
