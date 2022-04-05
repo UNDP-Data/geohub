@@ -12,6 +12,9 @@
   import LineWidth from './vector-styles/LineWidth.svelte'
   import LineBlur from './vector-styles/LineBlur.svelte'
   import LineColor from './vector-styles/LineColor.svelte'
+  import FillOutliineColor from './vector-styles/FillOutlineColor.svelte'
+  import FiillColor from './vector-styles/FillColor.svelte'
+  import FillColor from './vector-styles/FillColor.svelte'
 
   export let layer: Layer = LayerInitialValues
   let updateLegend
@@ -56,6 +59,9 @@
   <LineWidth on:change={onStyleChange} {layer} />
   <LineBlur on:change={onStyleChange} {layer} />
   <LineColor on:change={onStyleChange} {layer} />
+
+  <FillColor on:change={onStyleChange} {layer} />
+  <FillOutliineColor on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
