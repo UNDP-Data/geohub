@@ -29,6 +29,7 @@ export interface Layer {
   info?: LayerInfo
   visible?: boolean | true
   url?: string
+  features?: []
 }
 
 export interface LayerInfo {
