@@ -1,6 +1,5 @@
 <script lang="ts">
   import Fa from 'svelte-fa'
-  import { slide } from 'svelte/transition'
   import RangeSlider from 'svelte-range-slider-pips'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
@@ -42,7 +41,7 @@
 </script>
 
 {#if isOpacityPanelVisible === true}
-  <div transition:slide class="action">
+  <div class="action">
     <div class="header">
       <div class="name">Opacity</div>
       <div class="close icon-selected" on:click={() => (isOpacityPanelVisible = false)} title="Close">

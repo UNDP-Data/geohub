@@ -191,38 +191,41 @@
         </div>
 
         <div class="layer-actions">
-          {#if isLegendPanelVisible === true}
-            <div transition:slide class="action">
-              <div class="header">
-                <div class="name">Legend</div>
-                <div class="legend-icons-container">
-                  {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
-                    <div
-                      class={selectedLegendType === legendType ? 'legend-icon-selected' : 'legend-icon'}
-                      on:click={() => {
-                        selectedLegendType = legendType
-                      }}
-                      title="{legendType} legend">
-                      <Fa icon={legendTypeIcon} size="lg" style="transform: scale(.75);" />
-                    </div>
-                  {/each}
-                </div>
-                <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
-                  <Fa icon={faXmark} size="lg" />
-                </div>
+          <div transition:slide class="action" hidden={isLegendPanelVisible === false}>
+            <div class="header">
+              <div class="name">Legend</div>
+              <div class="legend-icons-container">
+                {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
+                  <div
+                    class={selectedLegendType === legendType ? 'legend-icon-selected' : 'legend-icon'}
+                    on:click={() => {
+                      selectedLegendType = legendType
+                    }}
+                    title="{legendType} legend">
+                    <Fa icon={legendTypeIcon} size="lg" style="transform: scale(.75);" />
+                  </div>
+                {/each}
               </div>
-              {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
-                <Legend bind:activeColorMapName bind:layerConfig={layer} />
-              {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
-                <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
-              {:else}
-                <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
-              {/if}
+              <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
+                <Fa icon={faXmark} size="lg" />
+              </div>
             </div>
-          {/if}
+
+            <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>
+              <Legend bind:activeColorMapName bind:layerConfig={layer} />
+            </div>
+
+            <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>
+              <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+            </div>
+
+            <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>
+              <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+            </div>
+          </div>
 
           {#if isFilterPanelVisible === true}
-            <div transition:slide class="action">
+            <div class="action">
               <div class="header">
                 <div class="name">Filter</div>
                 <div class="close icon-selected" on:click={() => (isFilterPanelVisible = false)} title="Close">

@@ -80,6 +80,7 @@ export enum DynamicLayerLegendTypes {
   BUCKETED = 'bucketed',
   CONTINUOUS = 'continuous',
   UNIQUE = 'unique',
+  INTERVALS = 'intervals',
 }
 
 export enum DynamicLayerResolutionTypes {

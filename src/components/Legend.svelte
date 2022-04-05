@@ -26,7 +26,6 @@
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerSrc = $map.getSource(definition.source)
-  const layerURL = new URL(layerSrc.tiles[0])
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
@@ -34,6 +33,7 @@
   let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
   let step = (layerMax - layerMin) * 1e-2
+  let layerURL: URL
 
   for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
     let cmaps = {}
@@ -55,23 +55,28 @@
     allColorMaps[cmapType] = cmaps
   }
 
-  if (layerURL.searchParams.has('colormap')) {
-    let params = {}
-    layerURL.searchParams.delete('colormap')
-    if (!layerURL.searchParams.has('rescale')) {
-      params = { rescale: rangeSliderValues.join(',') }
-    } else {
-      let rescaleParam = layerURL.searchParams.get('rescale')
-      let rescaleMin = '',
-        rescaleMax = ''
-      ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
-      if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
-        params = { rescale: rangeSliderValues.join(',') }
+  $: {
+    if (layerSrc.tiles !== undefined) {
+      layerURL = new URL(layerSrc.tiles[0])
+      if (layerURL.searchParams.has('colormap')) {
+        let params = {}
+        layerURL.searchParams.delete('colormap')
+        if (!layerURL.searchParams.has('rescale')) {
+          params = { rescale: rangeSliderValues.join(',') }
+        } else {
+          let rescaleParam = layerURL.searchParams.get('rescale')
+          let rescaleMin = '',
+            rescaleMax = ''
+          ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
+          if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
+            params = { rescale: rangeSliderValues.join(',') }
+          }
+        }
+
+        params = Object.assign(params, { colormap_name: activeColorMapName })
+        updateParamsInURL(definition, layerURL, params)
       }
     }
-
-    params = Object.assign(params, { colormap_name: activeColorMapName })
-    updateParamsInURL(definition, layerURL, params)
   }
 </script>
 
@@ -91,29 +96,31 @@
       rest={false}
       on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
   </div>
-  <div style="display:flex;flex-direction:column; align-items:center">
-    <div
-      title={`Colormap: ${activeColorMapName}`}
-      on:click={() => {
-        colorMapSelectionVisible = !colorMapSelectionVisible
-      }}
-      class="chroma-test"
-      style="background: linear-gradient(90deg, {activeColorMap.colors(
-        defaultNumberOfColors,
-        'rgba',
-      )}); cursor: pointer;" />
-    <div style="align-items: center; justify-content: space-between" class="chroma-test">
-      <div style="display: flex; flex-direction: row; justify-content: space-between">
-        <div>
-          Min: {rangeSliderValues[0]}
-        </div>
+  {#if activeColorMap !== undefined}
+    <div style="display:flex;flex-direction:column; align-items:center">
+      <div
+        title={`Colormap: ${activeColorMapName}`}
+        on:click={() => {
+          colorMapSelectionVisible = !colorMapSelectionVisible
+        }}
+        class="chroma-test"
+        style="background: linear-gradient(90deg, {activeColorMap.colors(
+          defaultNumberOfColors,
+          'rgba',
+        )}); cursor: pointer;" />
+      <div style="align-items: center; justify-content: space-between" class="chroma-test">
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+          <div>
+            Min: {rangeSliderValues[0]}
+          </div>
 
-        <div>
-          Max: {rangeSliderValues[1]}
+          <div>
+            Max: {rangeSliderValues[1]}
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  {/if}
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
     <Set class="colormap-chips" chips={Object.keys(ColorMaps)} let:chip choice bind:selected={selectedColorMapType}>
       <Chip {chip}>

@@ -13,7 +13,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import { map } from '../stores/index'
+  import { map, indicatorProgress } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerInfo } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
@@ -30,8 +30,6 @@
   let rangeSliderValues = [layerMin, layerMax]
 
   const defaultNumberOfColors = 5
-  const layerSrc = $map.getSource(definition.source)
-  const layerURL = new URL(layerSrc.tiles[0])
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
@@ -68,6 +66,8 @@
   }
 
   const reclassifyImage = (params = {}) => {
+    const layerSrc = $map.getSource(definition.source)
+    const layerURL = new URL(layerSrc.tiles[0])
     let cmap = []
 
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
@@ -103,7 +103,9 @@
     reclassifyImage()
   }
 
-  reclassifyImage()
+  setTimeout(() => {
+    reclassifyImage()
+  }, 3000)
 </script>
 
 <div class="group">

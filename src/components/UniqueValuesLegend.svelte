@@ -36,7 +36,6 @@
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
-  let layerURL = new URL(layerSrc.tiles[0])
   let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
   let step = (layerMax - layerMin) / (layerUniqueValues.length - 1)
@@ -68,17 +67,20 @@
   }
 
   const setUniqueValueLegend = (params = {}) => {
-    let cmapObject = {}
-    layerUniqueValues.forEach((key) => {
-      let c = [...activeColorMap(key).rgb(), 255]
-      cmapObject[remap(key, rangeSliderValues[0], rangeSliderValues[1])] = c
-    })
+    if (layerSrc.tiles !== undefined) {
+      const layerURL = new URL(layerSrc.tiles[0])
+      let cmapObject = {}
+      layerUniqueValues.forEach((key) => {
+        let c = [...activeColorMap(key).rgb(), 255]
+        cmapObject[remap(key, rangeSliderValues[0], rangeSliderValues[1])] = c
+      })
 
-    let encodedCmap = JSON.stringify(cmapObject)
-    layerURL.searchParams.delete('colormap_name')
+      let encodedCmap = JSON.stringify(cmapObject)
+      layerURL.searchParams.delete('colormap_name')
 
-    let updatedParams = Object.assign({ colormap: encodedCmap }, params)
-    updateParamsInURL(definition, layerURL, updatedParams)
+      let updatedParams = Object.assign({ colormap: encodedCmap }, params)
+      updateParamsInURL(definition, layerURL, updatedParams)
+    }
   }
 
   const handleRangeSlider = () => {

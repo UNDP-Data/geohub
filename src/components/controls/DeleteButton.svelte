@@ -1,9 +1,3 @@
-<script lang="ts" context="module">
-  const dynamicLayerIds = {}
-  const layerState = {}
-  const sectionState = {}
-</script>
-
 <script lang="ts">
   import Button, { Label as LabelButton } from '@smui/button'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
@@ -16,24 +10,16 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const name = layer.name
-  const layerId = layer.definition.id
-
   let confirmDeleteLayerDialogVisible = false
 
   const removeLayer = () => {
-    hideLayerControlPanel()
+    const layerId = layer.definition.id
+    confirmDeleteLayerDialogVisible = false
 
     setTimeout(() => {
-      $map.removeLayer(layerId)
       $layerList = $layerList.filter((item) => item.definition.id !== layerId)
-      delete layerState[layerId]
-      delete sectionState[layerId]
-      delete dynamicLayerIds[layerId]
+      $map.removeLayer(layerId)
     }, 200)
-  }
-  const hideLayerControlPanel = () => {
-    confirmDeleteLayerDialogVisible = false
   }
 </script>
 
@@ -45,7 +31,7 @@
   <Title>Delete Layer</Title>
   <ContentDialog>
     Are you sure you want to delete this layer?<br /><br />
-    {name}
+    {layer.name}
   </ContentDialog>
   <ActionsDialog>
     <Button>
