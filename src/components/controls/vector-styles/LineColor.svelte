@@ -12,8 +12,8 @@
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
-  $: lineRGBColor, setLineColor()
+  let RGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
+  $: RGBColor, setLineColor()
 
   const setLineColor = () => {
     if (style.type !== LayerTypes.LINE) return
@@ -21,13 +21,13 @@
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint['line-color'] = lineRGBColor
-    $map.setPaintProperty(layerId, 'line-color', lineRGBColor)
+    newStyle.paint['line-color'] = RGBColor
+    $map.setPaintProperty(layerId, 'line-color', RGBColor)
 
     dispatch('change', [
       {
         property: 'line-color',
-        value: lineRGBColor,
+        value: RGBColor,
       },
     ])
   }
@@ -35,7 +35,7 @@
 
 {#if style.type === LayerTypes.LINE}
   <p>Line Color</p>
-  <ColorPicker bind:RgbColor={lineRGBColor} />
+  <ColorPicker bind:RgbColor={RGBColor} />
 {/if}
 
 <style lang="scss">
