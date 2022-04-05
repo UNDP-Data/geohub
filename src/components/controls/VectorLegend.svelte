@@ -11,6 +11,7 @@
   import LegendSymbol from '@watergis/legend-symbol'
   import ColorPicker from './ColorPicker.svelte'
   import LineWidth from './vector-styles/LineWidth.svelte'
+  import LineBlur from './vector-styles/LineBlur.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -28,9 +29,6 @@
 
   let ZoomSliderValues = [0, 24]
   $: ZoomSliderValues, setMinMaxZoom()
-
-  let LineBlurValues = [style.paint && style.paint['line-blur'] ? style.paint['line-blur'] : 0]
-  $: LineBlurValues, setLineBlur()
 
   let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
   $: lineRGBColor, setLineColor()
@@ -142,20 +140,9 @@
     $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
   }
 
-  const onLineWidthChange = () => {
+  const onStyleChange = () => {
     const _style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
     styleJSON = stringifyStyleJSON(_style)
-  }
-
-  const setLineBlur = () => {
-    if (style.type !== 'line') return
-    const newStyle = JSON.parse(styleJSON)
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-blur'] = LineBlurValues[0]
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setPaintProperty(layerId, 'line-blur', LineBlurValues[0])
   }
 
   const setLineColor = () => {
@@ -209,11 +196,8 @@
   </div>
 
   {#if style.type === 'line'}
-    <LineWidth on:change={onLineWidthChange} {layer} />
-    <p>Line Blur</p>
-    <div class="slider">
-      <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
-    </div>
+    <LineWidth on:change={onStyleChange} {layer} />
+    <LineBlur on:change={onStyleChange} {layer} />
     <p>Line Color</p>
     <ColorPicker bind:RgbColor={lineRGBColor} />
   {/if}
