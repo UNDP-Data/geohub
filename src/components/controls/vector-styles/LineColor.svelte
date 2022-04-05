@@ -33,7 +33,7 @@
   }
 </script>
 
-{#if style.type === 'line'}
+{#if style.type === LayerTypes.LINE}
   <p>Line Color</p>
   <ColorPicker bind:RgbColor={lineRGBColor} />
 {/if}
