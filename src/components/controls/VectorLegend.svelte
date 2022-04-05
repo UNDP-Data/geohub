@@ -1,11 +1,10 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
-
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
   import { stringifyStyleJSON } from '../../lib/helper'
   import VectorLegendSymbol from './VectorLegendSymbol.svelte'

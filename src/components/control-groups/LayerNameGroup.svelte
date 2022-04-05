@@ -1,11 +1,10 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
 
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
-
   export let layer: Layer = LayerInitialValues
 
   const name = layer.name
@@ -14,7 +13,6 @@
   const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
-
   let mapLayerLength = mapLayers.length - 1
 </script>
 

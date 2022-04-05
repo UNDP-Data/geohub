@@ -1,18 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
-
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
-
+  import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
+  const propertyName = 'line-blur'
 
   const layerId = layer.definition.id
-  const propertyName = 'line-blur'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let LineBlurValues = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 0]

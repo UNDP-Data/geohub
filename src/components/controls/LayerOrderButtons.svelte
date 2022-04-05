@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
 
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
 
   export let layer: Layer = LayerInitialValues
