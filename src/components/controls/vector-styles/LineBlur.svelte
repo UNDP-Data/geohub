@@ -8,11 +8,12 @@
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
+  const propertyName = 'line-blur'
 
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let LineBlurValues = [style.paint && style.paint['line-blur'] ? style.paint['line-blur'] : 0]
+  let LineBlurValues = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 0]
   $: LineBlurValues, setLineBlur()
 
   const setLineBlur = () => {
@@ -21,12 +22,12 @@
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint['line-blur'] = LineBlurValues[0]
-    $map.setPaintProperty(layerId, 'line-blur', LineBlurValues[0])
+    newStyle.paint[propertyName] = LineBlurValues[0]
+    $map.setPaintProperty(layerId, propertyName, LineBlurValues[0])
 
     dispatch('change', [
       {
-        property: 'line-blur',
+        property: propertyName,
         value: LineBlurValues[0],
       },
     ])

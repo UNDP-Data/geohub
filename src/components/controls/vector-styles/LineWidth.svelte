@@ -8,11 +8,12 @@
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
+  const propertyName = 'line-width'
 
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let LineWidthValues = [style.paint && style.paint['line-width'] ? style.paint['line-width'] : 1.0]
+  let LineWidthValues = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 1.0]
   $: LineWidthValues, setLineWidth()
 
   const setLineWidth = () => {
@@ -21,12 +22,12 @@
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint['line-width'] = LineWidthValues[0]
-    $map.setPaintProperty(layerId, 'line-width', LineWidthValues[0])
+    newStyle.paint[propertyName] = LineWidthValues[0]
+    $map.setPaintProperty(layerId, propertyName, LineWidthValues[0])
 
     dispatch('change', [
       {
-        property: 'line-width',
+        property: propertyName,
         value: LineWidthValues[0],
       },
     ])

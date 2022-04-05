@@ -8,11 +8,12 @@
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
+  const propertyName = 'line-color'
 
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let RGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
+  let RGBColor = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(53, 175, 109)'][0]
   $: RGBColor, setLineColor()
 
   const setLineColor = () => {
@@ -21,12 +22,12 @@
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint['line-color'] = RGBColor
-    $map.setPaintProperty(layerId, 'line-color', RGBColor)
+    newStyle.paint[propertyName] = RGBColor
+    $map.setPaintProperty(layerId, propertyName, RGBColor)
 
     dispatch('change', [
       {
-        property: 'line-color',
+        property: propertyName,
         value: RGBColor,
       },
     ])
