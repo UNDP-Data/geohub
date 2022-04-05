@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide } from 'svelte/transition'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
@@ -106,17 +105,16 @@
 
         values = layerHasNoDataValue ? [] : layerData.values
       } else if (layer.type === LayerTypes.VECTOR) {
-        const features = $map
-          .queryRenderedFeatures([mapMouseEvent.lngLat.lng, mapMouseEvent.lngLat.lat])
-          .filter((feature) => feature.layer.id === layer.definition.id)
-
-        if (features.length > 0) {
-          const feature = features[0]
-          values = feature.properties
+        const layerClicked = $layerList.find((layerList) => layerList.definition.id === layer.definition.id)
+        if (layerClicked.features) {
+          values = layer.features
         }
       }
 
-      layerValuesDataTmp = [...[{ name: layer.name, lat, lng, type: layer.type, values }], ...layerValuesDataTmp]
+      layerValuesDataTmp = [
+        ...[{ id: layer.definition.id, name: layer.name, lat, lng, type: layer.type, values }],
+        ...layerValuesDataTmp,
+      ]
     }
 
     layerValuesData = layerValuesDataTmp
@@ -347,10 +345,10 @@
               {/if}
             </tr>
 
-            {#if layerValuesExpanded[i] === true && layerValue.type !== LayerTypes.RASTER}
+            {#if (layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === true) && layerValue.type !== LayerTypes.RASTER}
               <tr style={layerValuesExpanded[i] === true ? 'border-top: 0;' : ''}>
                 <td colspan="2">
-                  <div class="expanded-container" transition:slide={{ duration: 750 }}>
+                  <div class="expanded-container">
                     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                       <tbody>
                         {#each Object.keys(layerValue.values) as layerValueRow}

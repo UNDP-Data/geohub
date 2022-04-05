@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
+  import { cloneDeep } from 'lodash'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
-  import { indicatorProgress, map } from '../stores'
+  import { indicatorProgress, map, layerList } from '../stores'
   import MapQueryInfoPanel from './MapQueryInfoPanel.svelte'
+  import { LayerTypes } from '$lib/constants'
 
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
@@ -39,6 +41,16 @@
     )
 
     newMap.on('click', async function (e: MapMouseEvent) {
+      // clear all previous vector feature properties
+      for (const layer of $layerList) {
+        if (layer.type === LayerTypes.VECTOR) {
+          const layerClone = cloneDeep(layer)
+          layerClone.features = []
+          const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerClone.definition.id)
+          $layerList[layerIndex] = layerClone
+        }
+      }
+
       mapMouseEvent = e
     })
 
