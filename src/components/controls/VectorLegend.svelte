@@ -7,11 +7,12 @@
   import type { Layer } from '../../lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
+  import { stringifyStyleJSON } from '../../lib/helper'
   import LegendSymbol from '@watergis/legend-symbol'
-  import ColorPicker from './ColorPicker.svelte'
   import MinMaxZoom from './vector-styles/MinMaxZoom.svelte'
   import LineWidth from './vector-styles/LineWidth.svelte'
   import LineBlur from './vector-styles/LineBlur.svelte'
+  import LineColor from './vector-styles/LineColor.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -26,9 +27,6 @@
   let legendSymbolContainer: HTMLElement
 
   $: styleJSON = stringifyStyleJSON(style)
-
-  let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
-  $: lineRGBColor, setLineColor()
 
   const setSprite = (image: any, json: JSON) => {
     sprite = {
@@ -125,24 +123,9 @@
     }
   }
 
-  const stringifyStyleJSON = (style: JSON) => {
-    return JSON.stringify(style, null, 4)
-  }
-
   const onStyleChange = () => {
     const _style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
     styleJSON = stringifyStyleJSON(_style)
-  }
-
-  const setLineColor = () => {
-    if (style.type !== 'line') return
-    const newStyle = JSON.parse(styleJSON)
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-color'] = lineRGBColor
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setPaintProperty(layerId, 'line-color', lineRGBColor)
   }
 
   const applyLayerStyle = () => {
@@ -172,11 +155,7 @@
   <MinMaxZoom on:change={onStyleChange} {layer} />
   <LineWidth on:change={onStyleChange} {layer} />
   <LineBlur on:change={onStyleChange} {layer} />
-
-  {#if style.type === 'line'}
-    <p>Line Color</p>
-    <ColorPicker bind:RgbColor={lineRGBColor} />
-  {/if}
+  <LineColor on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
