@@ -201,10 +201,4 @@
     height: 30px;
     width: 100%;
   }
-  .slider {
-    --range-handle-focus: #2196f3;
-    --range-range-inactive: #2196f3;
-    --range-handle-inactive: #2196f3;
-    --range-handle: #2196f3;
-  }
 </style>

@@ -41,10 +41,5 @@
 {/if}
 
 <style lang="scss">
-  .slider {
-    --range-handle-focus: #2196f3;
-    --range-range-inactive: #2196f3;
-    --range-handle-inactive: #2196f3;
-    --range-handle: #2196f3;
-  }
+  @import '../../../styles/vector-style-slider.scss';
 </style>
