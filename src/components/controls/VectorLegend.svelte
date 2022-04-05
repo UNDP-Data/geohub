@@ -13,7 +13,6 @@
   import LineBlur from './vector-styles/LineBlur.svelte'
   import LineColor from './vector-styles/LineColor.svelte'
   import FillOutliineColor from './vector-styles/FillOutlineColor.svelte'
-  import FiillColor from './vector-styles/FillColor.svelte'
   import FillColor from './vector-styles/FillColor.svelte'
 
   export let layer: Layer = LayerInitialValues
