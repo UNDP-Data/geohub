@@ -13,6 +13,7 @@
   import LineWidth from './vector-styles/LineWidth.svelte'
   import LineBlur from './vector-styles/LineBlur.svelte'
   import LineColor from './vector-styles/LineColor.svelte'
+  import LineDasharray from './vector-styles/LineDasharray.svelte'
   import FillOutlineColor from './vector-styles/FillOutlineColor.svelte'
   import FillColor from './vector-styles/FillColor.svelte'
 
@@ -59,6 +60,7 @@
   <LineWidth on:change={onStyleChange} {layer} />
   <LineBlur on:change={onStyleChange} {layer} />
   <LineColor on:change={onStyleChange} {layer} />
+  <LineDasharray on:change={onStyleChange} {layer} />
   <FillColor on:change={onStyleChange} {layer} />
   <FillOutlineColor on:change={onStyleChange} {layer} />
 
