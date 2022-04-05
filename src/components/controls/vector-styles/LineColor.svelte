@@ -2,7 +2,7 @@
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues } from '../../../lib/constants'
+  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
   import ColorPicker from '../ColorPicker.svelte'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
@@ -16,7 +16,7 @@
   $: lineRGBColor, setLineColor()
 
   const setLineColor = () => {
-    if (style.type !== 'line') return
+    if (style.type !== LayerTypes.LINE) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
       newStyle.paint = {}
