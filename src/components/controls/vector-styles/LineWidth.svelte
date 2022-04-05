@@ -16,7 +16,7 @@
   $: LineWidthValues, setLineWidth()
 
   const setLineWidth = () => {
-    if (style.type !== 'line') return
+    if (style.type !== LayerTypes.LINE) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
       newStyle.paint = {}
