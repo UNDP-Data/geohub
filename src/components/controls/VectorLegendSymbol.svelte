@@ -1,20 +1,18 @@
 <script lang="ts">
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import LegendSymbol from '@watergis/legend-symbol'
+
   import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
-  import LegendSymbol from '@watergis/legend-symbol'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
-  let sprite = {
-    image: HTMLImageElement,
-    json: JSON,
-  }
 
+  let sprite = { image: HTMLImageElement, json: JSON }
   let legendSymbolContainer: HTMLElement
 
   const setSprite = (image: any, json: JSON) => {
