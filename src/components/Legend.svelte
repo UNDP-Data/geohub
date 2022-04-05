@@ -108,8 +108,8 @@
           defaultNumberOfColors,
           'rgba',
         )}); cursor: pointer;" />
-      <div style="align-items: center; justify-content: space-between" class="chroma-test">
-        <div style="display: flex; flex-direction: row; justify-content: space-between">
+      <div class="chroma-test">
+        <div>
           <div>
             Min: {rangeSliderValues[0]}
           </div>
@@ -180,6 +180,14 @@
     .chroma-test {
       height: 20px;
       width: 80%;
+      align-items: center;
+      justify-content: space-between;
+
+      div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
     }
 
     .cmap-selection {

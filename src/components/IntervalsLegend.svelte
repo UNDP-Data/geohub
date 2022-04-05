@@ -76,6 +76,8 @@
 
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
       let c = [...scaleColorList(intervalList[i]).rgb(), 255]
       let intervalStart = intervalList[i]
       let intervalEnd = intervalList[i + 1]
@@ -101,6 +103,12 @@
       }
     }
     reclassifyImage()
+  }
+
+  const getActiveColorMap = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore:next-line
+    return [...activeColorMap.colors()]
   }
 
   setTimeout(() => {
@@ -160,7 +168,7 @@
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
         variant="raised"
-        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
+        style="background:linear-gradient(90deg, {getActiveColorMap()})">
         <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
