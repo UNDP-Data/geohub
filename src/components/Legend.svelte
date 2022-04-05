@@ -97,7 +97,7 @@
       on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
   </div>
   {#if activeColorMap !== undefined}
-    <div style="display:flex;flex-direction:column; align-items:center">
+    <div class="active-color-map">
       <div
         title={`Colormap: ${activeColorMapName}`}
         on:click={() => {
@@ -152,13 +152,6 @@
 </div>
 
 <style lang="scss">
-  .colormap-div {
-    height: 20px;
-    width: 80%;
-    cursor: pointer;
-    justify-content: center;
-    margin: 1px;
-  }
   .group {
     background: #f0f0f0;
     border-radius: 7.5px;
@@ -177,6 +170,33 @@
       width: calc(90% - 4px);
       padding-left: calc(10% + 4px);
     }
+
+    .active-color-map {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chroma-test {
+      height: 20px;
+      width: 80%;
+    }
+
+    .cmap-selection {
+      display: block;
+
+      .colormap-div {
+        height: 20px;
+        width: 80%;
+        cursor: pointer;
+        justify-content: center;
+        margin: 1px;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
   }
 
   :global(.changeLegendButtonDiv) {
@@ -185,21 +205,11 @@
     width: 80%;
     display: flex;
   }
-  .chroma-test {
-    height: 20px;
-    width: 80%;
-  }
+
   :global(.changelegendbtn) {
     text-transform: capitalize;
     height: 30px;
     width: 100%;
-  }
-  .cmap-selection {
-    display: block;
-  }
-
-  .hidden {
-    display: none;
   }
 
   * :global(.colormaps-group) {
@@ -209,6 +219,7 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
   }
+
   * :global(.colormap-chips) {
     justify-content: space-evenly;
   }

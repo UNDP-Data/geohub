@@ -13,7 +13,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import { map, indicatorProgress } from '../stores/index'
+  import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerInfo } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
@@ -205,41 +205,6 @@
 </div>
 
 <style lang="scss">
-  .no-classes {
-    display: flex;
-    flex-direction: row;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    border: 0px dashed;
-    justify-content: center;
-    align-items: center;
-  }
-  .column {
-    display: block;
-    flex-direction: column;
-    flex-basis: 100%;
-    align-items: center;
-    flex: 1;
-    border: 0px solid red;
-  }
-  .intervals-legend {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-
-    border: 0px solid red;
-  }
-  .colormap-div {
-    height: 20px;
-    width: 80%;
-    cursor: pointer;
-    justify-content: center;
-    margin: 1px;
-  }
   .group {
     background: #f0f0f0;
     border-radius: 7.5px;
@@ -251,11 +216,73 @@
       background: #323234;
       color: white;
     }
+
+    .intervals-legend {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+
+      border: 0px solid red;
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        border: 0px dashed;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    .column {
+      display: block;
+      flex-direction: column;
+      flex-basis: 100%;
+      align-items: center;
+      flex: 1;
+      border: 0px solid red;
+
+      #intervals-cmap-button-div {
+        width: 50%;
+        height: 100%;
+        margin: auto;
+      }
+
+      #intervals-list-div {
+        background-color: white;
+        width: 100%;
+        margin: auto;
+
+        .discrete {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .no-classes {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+
+    .cmap-selection {
+      display: block;
+
+      .colormap-div {
+        height: 20px;
+        width: 80%;
+        cursor: pointer;
+        justify-content: center;
+        margin: 1px;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
   }
-  .discrete {
-    width: 20px;
-    height: 20px;
-  }
+
   :global(.changeLegendButtonDiv) {
     margin: 0 auto;
     padding-top: 10px;
@@ -268,12 +295,7 @@
     height: 30px;
     width: 100%;
   }
-  .cmap-selection {
-    display: block;
-  }
-  .hidden {
-    display: none;
-  }
+
   * :global(.colormaps-group) {
     margin: auto;
     width: 100%;
@@ -281,23 +303,14 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
   }
+
   * :global(.colormap-chips) {
     justify-content: space-evenly;
   }
 
-  #intervals-cmap-button-div {
-    width: 50%;
-    height: 100%;
-    margin: auto;
-  }
   * :global(#intervals-cmap-button) {
     margin-bottom: 2rem;
     width: 100%;
     height: 100%;
-  }
-  #intervals-list-div {
-    background-color: white;
-    width: 100%;
-    margin: auto;
   }
 </style>
