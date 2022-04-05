@@ -1,16 +1,17 @@
 <script lang="ts">
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { createEventDispatcher } from 'svelte'
+
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
   import ColorPicker from '../ColorPicker.svelte'
-  import { createEventDispatcher } from 'svelte'
-  const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
-  const propertyName = 'line-color'
 
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
+  const propertyName = 'line-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let RGBColor = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(53, 175, 109)'][0]
