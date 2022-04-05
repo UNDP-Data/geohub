@@ -58,7 +58,6 @@
   <LineWidth on:change={onStyleChange} {layer} />
   <LineBlur on:change={onStyleChange} {layer} />
   <LineColor on:change={onStyleChange} {layer} />
-
   <FillColor on:change={onStyleChange} {layer} />
   <FillOutlineColor on:change={onStyleChange} {layer} />
 
