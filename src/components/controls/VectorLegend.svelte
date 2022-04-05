@@ -2,179 +2,29 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
-  import RangeSlider from 'svelte-range-slider-pips'
-  import { onMount } from 'svelte'
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../lib/constants'
-  import LegendSymbol from '@watergis/legend-symbol'
-  import ColorPicker from './ColorPicker.svelte'
+  import { stringifyStyleJSON } from '../../lib/helper'
+  import VectorLegendSymbol from './VectorLegendSymbol.svelte'
+  import MinMaxZoom from './vector-styles/MinMaxZoom.svelte'
+  import LineWidth from './vector-styles/LineWidth.svelte'
+  import LineBlur from './vector-styles/LineBlur.svelte'
+  import LineColor from './vector-styles/LineColor.svelte'
 
   export let layer: Layer = LayerInitialValues
+  let updateLegend
 
   const layerId = layer.definition.id
-  const zoom = $map.getZoom()
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-  let sprite = {
-    image: HTMLImageElement,
-    json: JSON,
-  }
-
-  let legendSymbolContainer: HTMLElement
 
   $: styleJSON = stringifyStyleJSON(style)
 
-  let ZoomSliderValues = [0, 24]
-  $: ZoomSliderValues, setMinMaxZoom()
-
-  let LineWidthValues = [style.paint && style.paint['line-width'] ? style.paint['line-width'] : 1.0]
-  $: LineWidthValues, setLineWidth()
-
-  let LineBlurValues = [style.paint && style.paint['line-blur'] ? style.paint['line-blur'] : 0]
-  $: LineBlurValues, setLineBlur()
-
-  let lineRGBColor = [style.paint && style.paint['line-color'] ? style.paint['line-color'] : 'rgb(53, 175, 109)'][0]
-  $: lineRGBColor, setLineColor()
-
-  const setSprite = (image: any, json: JSON) => {
-    sprite = {
-      image,
-      json,
-    }
-  }
-
-  const loadImage = (url: string) => {
-    let cancelled = false
-    const promise = new Promise((resolve, reject) => {
-      const img = new Image()
-      img.crossOrigin = 'Anonymous'
-      img.onload = () => {
-        if (!cancelled) resolve(img)
-      }
-      img.onerror = (e) => {
-        if (!cancelled) reject(e)
-      }
-      img.src = url
-    })
-    return promise
-  }
-
-  const loadJson = async (url: string) => {
-    return fetch(url).then((data) => data.json())
-  }
-
-  const styleUrl = $map.getStyle().sprite
-  const promise = Promise.all([loadImage(`${styleUrl}.png`), loadJson(`${styleUrl}.json`)])
-
-  onMount(async () => {
-    await promise.then(([image, json]) => {
-      setSprite(image, json)
-    })
+  const onStyleChange = () => {
+    const _style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+    styleJSON = stringifyStyleJSON(_style)
     updateLegend()
-  })
-
-  const updateLegend = () => {
-    const mapLayers = $map.getStyle().layers
-    const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
-
-    let symbol = LegendSymbol({ sprite: sprite, zoom: zoom, layer: mapLayerByLayerId })
-    legendSymbolContainer.innerHTML = ''
-    if (symbol) {
-      switch (symbol.element) {
-        case 'div': {
-          const div = document.createElement('div')
-          if (
-            symbol.attributes.style.backgroundImage &&
-            !['url(undefined)', 'url(null)'].includes(symbol.attributes.style.backgroundImage)
-          ) {
-            const img = document.createElement('img')
-            img.src = symbol.attributes.style.backgroundImage.replace('url(', '').replace(')', '')
-            img.alt = layerId
-            img.style.cssText = `height: 24px;`
-            div.appendChild(img)
-          }
-          const divBackground = document.createElement('div')
-          divBackground.style.height = '24px'
-          divBackground.style.width = '50px'
-          divBackground.style.backgroundColor = symbol.attributes.style.backgroundColor
-          divBackground.style.backgroundPosition = symbol.attributes.style.backgroundPosition
-          divBackground.style.backgroundSize = symbol.attributes.style.backgroundSize
-          divBackground.style.backgroundRepeat = symbol.attributes.style.backgroundRepeat
-          divBackground.style.opacity = symbol.attributes.style.opacity
-          div.appendChild(divBackground)
-          legendSymbolContainer.appendChild(div)
-          break
-        }
-        case 'svg': {
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-          svg.style.cssText = 'height: 24px;'
-          svg.setAttributeNS(null, 'version', '1.1')
-          Object.keys(symbol.attributes).forEach((k) => {
-            svg.setAttribute(k, symbol.attributes[k])
-            let group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-            symbol.children.forEach((child) => {
-              var c = document.createElementNS('http://www.w3.org/2000/svg', child.element)
-              Object.keys(child.attributes).forEach((k2) => {
-                c.setAttributeNS(null, k2, child.attributes[k2])
-              })
-              group.appendChild(c)
-            })
-            svg.appendChild(group)
-          })
-          legendSymbolContainer.appendChild(svg)
-          break
-        }
-        default: {
-          break
-        }
-      }
-    }
-  }
-
-  const stringifyStyleJSON = (style: JSON) => {
-    return JSON.stringify(style, null, 4)
-  }
-
-  const setMinMaxZoom = () => {
-    const newStyle = JSON.parse(styleJSON)
-    newStyle.minzoom = ZoomSliderValues[0]
-    newStyle.maxzoom = ZoomSliderValues[1]
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
-  }
-
-  const setLineWidth = () => {
-    if (style.type !== 'line') return
-    const newStyle = JSON.parse(styleJSON)
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-width'] = LineWidthValues[0]
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setPaintProperty(layerId, 'line-width', LineWidthValues[0])
-  }
-
-  const setLineBlur = () => {
-    if (style.type !== 'line') return
-    const newStyle = JSON.parse(styleJSON)
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-blur'] = LineBlurValues[0]
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setPaintProperty(layerId, 'line-blur', LineBlurValues[0])
-  }
-
-  const setLineColor = () => {
-    if (style.type !== 'line') return
-    const newStyle = JSON.parse(styleJSON)
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint['line-color'] = lineRGBColor
-    styleJSON = stringifyStyleJSON(newStyle)
-    $map.setPaintProperty(layerId, 'line-color', lineRGBColor)
   }
 
   const applyLayerStyle = () => {
@@ -199,35 +49,13 @@
 </script>
 
 <div>
-  <div bind:this={legendSymbolContainer} />
+  <VectorLegendSymbol bind:updateLegend {layer} />
 
-  <p>Zoom Level</p>
-  <div class="slider">
-    <RangeSlider
-      bind:values={ZoomSliderValues}
-      float
-      range
-      min={0}
-      max={24}
-      step={1}
-      pips
-      first="1"
-      last="20"
-      rest={false} />
-  </div>
+  <MinMaxZoom on:change={onStyleChange} {layer} />
 
-  {#if style.type === 'line'}
-    <p>Line Width</p>
-    <div class="slider">
-      <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
-    </div>
-    <p>Line Blur</p>
-    <div class="slider">
-      <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
-    </div>
-    <p>Line Color</p>
-    <ColorPicker bind:RgbColor={lineRGBColor} />
-  {/if}
+  <LineWidth on:change={onStyleChange} {layer} />
+  <LineBlur on:change={onStyleChange} {layer} />
+  <LineColor on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
@@ -251,11 +79,5 @@
     text-transform: capitalize;
     height: 30px;
     width: 100%;
-  }
-  .slider {
-    --range-handle-focus: #2196f3;
-    --range-range-inactive: #2196f3;
-    --range-handle-inactive: #2196f3;
-    --range-handle: #2196f3;
   }
 </style>
