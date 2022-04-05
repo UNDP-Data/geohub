@@ -22,3 +22,7 @@ export const updateParamsInURL = (
   mapStore.style.sourceCaches[definition.source].update(mapStore.transform)
   mapStore.triggerRepaint()
 }
+
+export const stringifyStyleJSON = (style: JSON) => {
+  return JSON.stringify(style, null, 4)
+}
