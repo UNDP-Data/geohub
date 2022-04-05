@@ -1,14 +1,15 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
+
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues } from '../../../lib/constants'
-  import { createEventDispatcher } from 'svelte'
-  const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
 
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
