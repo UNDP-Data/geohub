@@ -9,6 +9,8 @@
     FillLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
+  import { cloneDeep } from 'lodash'
+
   import { LayerTypes } from '../../lib/constants'
   import { map, layerList } from '../../stores'
 
@@ -89,6 +91,17 @@
       ...$layerList,
     ]
     $map.addLayer(layerDefinition)
+
+    // set layer list features properties to diplay in query panel info
+    $map.on('click', layerDefinition.id, function (e) {
+      const layer = $layerList.find((layer) => layer.definition.id == layerDefinition.id)
+      if (layer) {
+        const layerClone = cloneDeep(layer)
+        layerClone.features = e.features.length > 0 ? e.features[0].properties : []
+        const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerDefinition.id)
+        $layerList[layerIndex] = layerClone
+      }
+    })
   }
 </script>
 
