@@ -26,12 +26,7 @@
     newStyle.paint[propertyName] = LineWidthValues[0]
     $map.setPaintProperty(layerId, propertyName, LineWidthValues[0])
 
-    dispatch('change', [
-      {
-        property: propertyName,
-        value: LineWidthValues[0],
-      },
-    ])
+    dispatch('change')
   }
 </script>
 

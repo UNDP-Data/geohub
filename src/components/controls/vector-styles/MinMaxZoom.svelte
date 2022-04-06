@@ -21,16 +21,7 @@
     newStyle.minzoom = ZoomSliderValues[0]
     newStyle.maxzoom = ZoomSliderValues[1]
     $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
-    dispatch('change', [
-      {
-        property: 'minzoom',
-        value: newStyle.minzoom,
-      },
-      {
-        property: 'maxzoom',
-        value: newStyle.maxzoom,
-      },
-    ])
+    dispatch('change')
   }
 </script>
 
