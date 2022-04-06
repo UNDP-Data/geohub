@@ -3,7 +3,7 @@
   import { tick } from 'svelte'
   import { ColorPicker, Color } from 'svelte-colorpick'
 
-  const lineColorPickerSetting = {
+  const ColorPickerSetting = {
     selectedDimension: 'rgb.r',
     tabbed: false,
     selectedTab: 'rgb',
@@ -124,18 +124,18 @@
     on:click_outside={clickOutsideDropdown}>
     <ColorPicker
       bind:color={hexColorObject}
-      tabbed={lineColorPickerSetting.tabbed}
-      selectedTab={lineColorPickerSetting.selectedTab}
-      selectedDimension={lineColorPickerSetting.selectedDimension}
-      showMatrix={lineColorPickerSetting.showMatrix}
-      showSliders={lineColorPickerSetting.showSlidersGlobal && lineColorPickerSetting.showSliders}
-      showHex={lineColorPickerSetting.showHex}
-      showLabels={lineColorPickerSetting.showLabels}
-      showNumeric={lineColorPickerSetting.showNumeric}
-      selectDimensions={lineColorPickerSetting.selectDimensions}
-      matrixWidth={lineColorPickerSetting.matrixWidth}
-      matrixHeight={lineColorPickerSetting.matrixHeight}
-      scrollbarHeight={lineColorPickerSetting.scrollbarHeight} />
+      tabbed={ColorPickerSetting.tabbed}
+      selectedTab={ColorPickerSetting.selectedTab}
+      selectedDimension={ColorPickerSetting.selectedDimension}
+      showMatrix={ColorPickerSetting.showMatrix}
+      showSliders={ColorPickerSetting.showSlidersGlobal && ColorPickerSetting.showSliders}
+      showHex={ColorPickerSetting.showHex}
+      showLabels={ColorPickerSetting.showLabels}
+      showNumeric={ColorPickerSetting.showNumeric}
+      selectDimensions={ColorPickerSetting.selectDimensions}
+      matrixWidth={ColorPickerSetting.matrixWidth}
+      matrixHeight={ColorPickerSetting.matrixHeight}
+      scrollbarHeight={ColorPickerSetting.scrollbarHeight} />
   </div>
 {/if}
 
