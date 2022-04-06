@@ -28,22 +28,6 @@ export const stringifyStyleJSON = (style: JSON) => {
   return JSON.stringify(style, null, 4)
 }
 
-export const loadImage = (url: string) => {
-  const cancelled = false
-  const promise = new Promise((resolve, reject) => {
-    const img = new Image()
-    img.crossOrigin = 'Anonymous'
-    img.onload = () => {
-      if (!cancelled) resolve(img)
-    }
-    img.onerror = (e) => {
-      if (!cancelled) reject(e)
-    }
-    img.src = url
-  })
-  return promise
-}
-
 export const loadImageToDataUrl = async (url: string) => {
   const blob = await fetch(url).then((r) => r.blob())
   const dataUrl = await new Promise((resolve) => {
@@ -59,7 +43,7 @@ export const loadJson = async (url: string) => {
 }
 
 export const clipSprite = (url, id, icon) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     Clipper(url, function () {
       this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl) {
         resolve({

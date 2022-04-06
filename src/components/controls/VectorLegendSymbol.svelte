@@ -6,30 +6,34 @@
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
-  import { loadImage, loadJson } from '../../lib/helper'
+  import { loadImageToDataUrl, loadJson, clipSprite } from '../../lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
 
-  let sprite = { image: HTMLImageElement, json: JSON }
+  let sprite = {
+    dataUrl: null,
+    json: null,
+  }
   let legendSymbolContainer: HTMLElement
 
-  const setSprite = (image: any, json: JSON) => {
-    sprite = {
-      image,
-      json,
-    }
-  }
-
   const styleUrl = $map.getStyle().sprite
-  const promise = Promise.all([loadImage(`${styleUrl}@4x.png`), loadJson(`${styleUrl}@4x.json`)])
+
+  let iconList = []
 
   onMount(async () => {
-    await promise.then(([image, json]) => {
-      setSprite(image, json)
+    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@2x.png`), loadJson(`${styleUrl}@2x.json`)])
+    await promise.then(([dataUrl, json]) => {
+      sprite.dataUrl = dataUrl
+      sprite.json = json
     })
+    const promises = []
+    Object.keys(sprite.json).forEach((id) => {
+      promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
+    })
+    iconList = await Promise.all(promises)
     updateLegend()
   })
 
@@ -37,7 +41,7 @@
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-    let symbol = LegendSymbol({ sprite: sprite, zoom: zoom, layer: mapLayerByLayerId })
+    let symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
     legendSymbolContainer.innerHTML = ''
     if (symbol) {
       switch (symbol.element) {
@@ -66,22 +70,34 @@
           break
         }
         case 'svg': {
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-          svg.style.cssText = 'height: 24px;'
-          svg.setAttributeNS(null, 'version', '1.1')
-          Object.keys(symbol.attributes).forEach((k) => {
-            svg.setAttribute(k, symbol.attributes[k])
-            let group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-            symbol.children.forEach((child) => {
-              var c = document.createElementNS('http://www.w3.org/2000/svg', child.element)
-              Object.keys(child.attributes).forEach((k2) => {
-                c.setAttributeNS(null, k2, child.attributes[k2])
-              })
-              group.appendChild(c)
+          if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
+            iconList.forEach((icon) => {
+              if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
+                const img = document.createElement('img')
+                img.src = icon.src
+                img.alt = layerId
+                img.style.cssText = `height: 24px;`
+                legendSymbolContainer.appendChild(img)
+              }
             })
-            svg.appendChild(group)
-          })
-          legendSymbolContainer.appendChild(svg)
+          } else {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+            svg.style.cssText = 'height: 24px;'
+            svg.setAttributeNS(null, 'version', '1.1')
+            Object.keys(symbol.attributes).forEach((k) => {
+              svg.setAttribute(k, symbol.attributes[k])
+              let group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+              symbol.children.forEach((child) => {
+                var c = document.createElementNS('http://www.w3.org/2000/svg', child.element)
+                Object.keys(child.attributes).forEach((k2) => {
+                  c.setAttributeNS(null, k2, child.attributes[k2])
+                })
+                group.appendChild(c)
+              })
+              svg.appendChild(group)
+            })
+            legendSymbolContainer.appendChild(svg)
+          }
           break
         }
         default: {
