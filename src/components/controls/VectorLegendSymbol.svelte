@@ -6,6 +6,7 @@
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
+  import { loadImage, loadJson } from '../../lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
@@ -22,28 +23,8 @@
     }
   }
 
-  const loadImage = (url: string) => {
-    let cancelled = false
-    const promise = new Promise((resolve, reject) => {
-      const img = new Image()
-      img.crossOrigin = 'Anonymous'
-      img.onload = () => {
-        if (!cancelled) resolve(img)
-      }
-      img.onerror = (e) => {
-        if (!cancelled) reject(e)
-      }
-      img.src = url
-    })
-    return promise
-  }
-
-  const loadJson = async (url: string) => {
-    return fetch(url).then((data) => data.json())
-  }
-
   const styleUrl = $map.getStyle().sprite
-  const promise = Promise.all([loadImage(`${styleUrl}.png`), loadJson(`${styleUrl}.json`)])
+  const promise = Promise.all([loadImage(`${styleUrl}@4x.png`), loadJson(`${styleUrl}@4x.json`)])
 
   onMount(async () => {
     await promise.then(([image, json]) => {
