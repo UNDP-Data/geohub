@@ -178,7 +178,11 @@
             <!-- GROUP : NON-EDIT ACTIONS -->
             {#if $layerList.length > 1}
               <div class="group">
-                <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)} style="margin-right: 8px; margin-left: 3px;">
+                <div
+                  title="Layer Merge"
+                  class="icon-selected"
+                  on:click={() => (isDynamicLayer = !isDynamicLayer)}
+                  style="margin-right: 8px; margin-left: 3px;">
                   <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
                 </div>
               </div>
