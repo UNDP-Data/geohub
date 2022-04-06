@@ -234,7 +234,7 @@
           <div class="icon" alt={iconVector.label} title={iconVector.label}>
             <Wrapper>
               <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-              <Tooltip yPos="above">Vector</Tooltip>
+              <Tooltip showDelay={0} hideDelay={100} yPos="above">Vector</Tooltip>
             </Wrapper>
           </div>
         {/if}
@@ -259,7 +259,7 @@
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
             <Wrapper>
               <Fa icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
-              <Tooltip yPos="above">Raster</Tooltip>
+              <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
             </Wrapper>
           </div>
         {/if}

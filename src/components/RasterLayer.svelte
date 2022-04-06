@@ -195,7 +195,6 @@
 
         <div class="layer-actions">
           {#if isLegendPanelVisible === true}
-            {activeColorMapName}
             <div transition:slide class="action">
               <div class="header">
                 <div class="name">Legend</div>
