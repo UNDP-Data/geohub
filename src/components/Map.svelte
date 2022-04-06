@@ -14,7 +14,7 @@
   onMount(async () => {
     const newMap = new Map({
       container,
-      style: 'https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+      style: 'https://undp-data.github.io/style/style.json',
       center: [0, 0],
       zoom: 3,
       hash: true,
