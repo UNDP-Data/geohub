@@ -92,6 +92,8 @@
   function clickOutsideDropdown() {
     ddActive = false
   }
+
+  export let showTextbox = false
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} on:keydown={handleKeydown} />
@@ -108,7 +110,9 @@
         <div class="caret" class:top style="margin-right: .2rem;" />
       </div>
     </button>
-    <input type="text" bind:value={RgbColor} readonly />
+    {#if showTextbox}
+      <input type="text" bind:value={RgbColor} readonly />
+    {/if}
   </div>
 </div>
 
