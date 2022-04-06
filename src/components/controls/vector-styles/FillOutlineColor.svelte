@@ -31,9 +31,14 @@
 </script>
 
 {#if style.type === LayerTypes.FILL}
-  <p>Fill Outline Color</p>
-  <ColorPicker bind:RgbColor={RGBColor} />
+  <div class="style-editing-box">
+    <span class="box-title">Fill Outline Color</span>
+    <p>
+      <ColorPicker bind:RgbColor={RGBColor} />
+    </p>
+  </div>
 {/if}
 
 <style lang="scss">
+  @import '../../../styles/style-editing-box.scss';
 </style>

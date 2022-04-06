@@ -25,21 +25,25 @@
   }
 </script>
 
-<p>Zoom Level</p>
-<div class="slider">
-  <RangeSlider
-    bind:values={ZoomSliderValues}
-    float
-    range
-    min={0}
-    max={24}
-    step={1}
-    pips
-    first="1"
-    last="20"
-    rest={false} />
+<div class="style-editing-box">
+  <span class="box-title">Zoom Level</span>
+  <p />
+  <div class="slider">
+    <RangeSlider
+      bind:values={ZoomSliderValues}
+      float
+      range
+      min={0}
+      max={24}
+      step={1}
+      pips
+      first="1"
+      last="20"
+      rest={false} />
+  </div>
 </div>
 
 <style lang="scss">
   @import '../../../styles/vector-style-slider.scss';
+  @import '../../../styles/style-editing-box.scss';
 </style>

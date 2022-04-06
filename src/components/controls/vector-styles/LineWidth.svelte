@@ -31,12 +31,16 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <p>Line Width</p>
-  <div class="slider">
-    <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
+  <div class="style-editing-box">
+    <span class="box-title">Line Width</span>
+    <p />
+    <div class="slider">
+      <RangeSlider bind:values={LineWidthValues} float min={0} max={10} step={0.1} pips rest={false} />
+    </div>
   </div>
 {/if}
 
 <style lang="scss">
   @import '../../../styles/vector-style-slider.scss';
+  @import '../../../styles/style-editing-box.scss';
 </style>

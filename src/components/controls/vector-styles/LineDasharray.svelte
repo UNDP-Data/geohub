@@ -36,18 +36,18 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <div class="line-dasharray">
-    <Select variant="outlined" bind:value={LineDasharrayValue} label="Line Dasharray">
-      {#each lineTypes as type}
-        <Option value={type.value}>{type.title}</Option>
-      {/each}
-    </Select>
+  <div class="style-editing-box">
+    <span class="box-title">Line Dasharray</span>
+    <p>
+      <Select bind:value={LineDasharrayValue}>
+        {#each lineTypes as type}
+          <Option value={type.value}>{type.title}</Option>
+        {/each}
+      </Select>
+    </p>
   </div>
 {/if}
 
 <style lang="scss">
-  .line-dasharray {
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
+  @import '../../../styles/style-editing-box.scss';
 </style>

@@ -14,6 +14,7 @@
   import LineBlur from './vector-styles/LineBlur.svelte'
   import LineColor from './vector-styles/LineColor.svelte'
   import LineDasharray from './vector-styles/LineDasharray.svelte'
+  import LineJoin from './vector-styles/LineJoin.svelte'
   import FillOutlineColor from './vector-styles/FillOutlineColor.svelte'
   import FillColor from './vector-styles/FillColor.svelte'
 
@@ -61,6 +62,7 @@
   <LineBlur on:change={onStyleChange} {layer} />
   <LineColor on:change={onStyleChange} {layer} />
   <LineDasharray on:change={onStyleChange} {layer} />
+  <LineJoin on:change={onStyleChange} {layer} />
   <FillColor on:change={onStyleChange} {layer} />
   <FillOutlineColor on:change={onStyleChange} {layer} />
 
