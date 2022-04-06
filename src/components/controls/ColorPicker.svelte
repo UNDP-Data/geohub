@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ColorPicker, Color } from 'svelte-colorpick'
 
-  const lineColorPickerSetting = {
+  const ColorPickerSetting = {
     selectedDimension: 'rgb.r',
     tabbed: false,
     selectedTab: 'rgb',
@@ -31,6 +31,7 @@
   }
 
   export let RgbColor = ''
+  export let collapse = true
 
   const rgb2hex = (rgbColor: string): string => {
     const rgbText = rgbColor.replace('rgb(', '').replace(')', '').replace(' ', '').split(',')
@@ -42,28 +43,33 @@
     return hex
   }
 
-  let hexColor = Color.hex(rgb2hex(RgbColor))
-  $: hexColor, colorToRGB()
+  let hexColor = rgb2hex(RgbColor)
+  let hexColorObject = Color.hex(hexColor)
+  $: hexColorObject, colorToRGB()
   const colorToRGB = () => {
-    RgbColor = `rgb(${hexColor.data.r}, ${hexColor.data.g}, ${hexColor.data.b})`
+    RgbColor = `rgb(${Math.round(hexColorObject.data.r)}, ${Math.round(hexColorObject.data.g)}, ${Math.round(
+      hexColorObject.data.b,
+    )})`
+    hexColor = rgb2hex(RgbColor)
   }
 </script>
 
 <div>
   <ColorPicker
-    bind:color={hexColor}
-    tabbed={lineColorPickerSetting.tabbed}
-    selectedTab={lineColorPickerSetting.selectedTab}
-    selectedDimension={lineColorPickerSetting.selectedDimension}
-    showMatrix={lineColorPickerSetting.showMatrix}
-    showSliders={lineColorPickerSetting.showSlidersGlobal && lineColorPickerSetting.showSliders}
-    showHex={lineColorPickerSetting.showHex}
-    showLabels={lineColorPickerSetting.showLabels}
-    showNumeric={lineColorPickerSetting.showNumeric}
-    selectDimensions={lineColorPickerSetting.selectDimensions}
-    matrixWidth={lineColorPickerSetting.matrixWidth}
-    matrixHeight={lineColorPickerSetting.matrixHeight}
-    scrollbarHeight={lineColorPickerSetting.scrollbarHeight} />
+    bind:color={hexColorObject}
+    {collapse}
+    tabbed={ColorPickerSetting.tabbed}
+    selectedTab={ColorPickerSetting.selectedTab}
+    selectedDimension={ColorPickerSetting.selectedDimension}
+    showMatrix={ColorPickerSetting.showMatrix}
+    showSliders={ColorPickerSetting.showSlidersGlobal && ColorPickerSetting.showSliders}
+    showHex={ColorPickerSetting.showHex}
+    showLabels={ColorPickerSetting.showLabels}
+    showNumeric={ColorPickerSetting.showNumeric}
+    selectDimensions={ColorPickerSetting.selectDimensions}
+    matrixWidth={ColorPickerSetting.matrixWidth}
+    matrixHeight={ColorPickerSetting.matrixHeight}
+    scrollbarHeight={ColorPickerSetting.scrollbarHeight} />
 </div>
 
 <style lang="scss">
