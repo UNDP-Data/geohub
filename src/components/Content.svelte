@@ -12,15 +12,12 @@
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { layerList, indicatorProgress, map } from '../stores'
-  import { BannerTypes, ErrorCodes, LayerIconTypes, TabNames } from '../lib/constants'
-  import type { Error } from '../lib/types'
+  import { layerList, indicatorProgress, map, bannerMessages } from '../stores'
+  import { LayerIconTypes, TabNames } from '../lib/constants'
 
   export let drawerOpen = false
 
   let activeTab = TabNames.LOAD_DATA
-  let bannerType = ''
-  let bannerMessage = ''
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
@@ -35,6 +32,16 @@
       } catch (e) {} // eslint-disable-line
     } else {
       setContentContainerMargin(0)
+    }
+  }
+
+  // show banner when content store available
+  $: {
+    if ($bannerMessages.length > 0) {
+      showBanner = false
+      setTimeout(() => {
+        showBanner = true
+      }, 500)
     }
   }
 
@@ -64,10 +71,11 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
-  const handlErrorCallback = (error: Error) => {
-    bannerType = BannerTypes.ERROR
-    bannerMessage = ErrorCodes[error.code]
-    showBanner = true
+  const hideBanner = () => {
+    setTimeout(() => {
+      showBanner = false
+    }, 350)
+    $bannerMessages = []
   }
 </script>
 
@@ -90,7 +98,7 @@
         </Header>
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
-            <TreeView {handlErrorCallback} />
+            <TreeView />
             <div style="padding: 15px; padding-right: 0;">
               <div class="layer-actions" style="height: 20px;">
                 <div transition:slide class="action">
@@ -141,12 +149,19 @@
   </Drawer>
 
   <AppContent class="app-content">
-    <Banner bind:open={showBanner} fixed mobileStacked content$style="max-width: max-content;">
-      <LabelBanner slot="label" style="font-family: ProximaNova, sans-serif; font-size: 13px;">
-        <span style="font-weight: bold;">{bannerType}:</span>
-        {bannerMessage}
+    <Banner bind:open={showBanner} fixed mobileStacked content$style={`max-width: max-content; height:`}>
+      <LabelBanner
+        slot="label"
+        style={`font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 70px;`}>
+        {#each $bannerMessages as row}
+          <div>
+            <div style="font-weight: bold;">{row.title}</div>
+            <div>{row.message}</div>
+          </div>
+          <br />
+        {/each}
       </LabelBanner>
-      <Button slot="actions">Dismiss</Button>
+      <Button slot="actions" on:click={() => hideBanner()}>Dismiss</Button>
     </Banner>
 
     <main class="main-content">

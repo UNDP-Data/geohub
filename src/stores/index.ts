@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import { TreeNodeInitialValues } from '../lib/constants'
-import type { Layer } from '../lib/types'
+import type { BannerContent, Layer } from '../lib/types'
 
 // dynamic layer list
 export const dynamicLayers = writable([])
@@ -16,3 +16,6 @@ export const map = writable(null)
 
 // tree store in load data tab drawer
 export const wtree = writable({ tree: TreeNodeInitialValues })
+
+// content to display in the banner
+export const bannerMessages = writable(<BannerContent[]>[])

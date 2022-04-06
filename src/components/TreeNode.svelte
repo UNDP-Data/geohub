@@ -32,16 +32,17 @@
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
+  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import type { TreeNode, LayerInfo } from '../lib/types'
-  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
+  import { fetchUrl } from '../lib/helper'
   import { map, layerList, indicatorProgress, wtree } from '../stores'
   import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0
-  export let handlErrorCallback: CallableFunction
+  // export let handlErrorCallback: CallableFunction
   let SelectLayerStyleDialogVisible: boolean
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
@@ -71,31 +72,27 @@
 
   const updateTreeStore = async () => {
     loadingLayer = true
-    let newTreeData = await fetchTree(tree.path)
-    let subpaths = path.split('/').slice(0, -1)
+    const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
 
-    let currentTree = { ...$wtree }
-    let currentTreeData: TreeNode = currentTree.tree
+    if (treeData) {
+      const subpaths = path.split('/').slice(0, -1)
+      let currentTree = { ...$wtree }
+      let currentTreeData: TreeNode = currentTree.tree
 
-    subpaths.forEach((element) => {
-      let currentTreeDataChildren = [...currentTreeData.children]
-      if (path === newTreeData.tree.path) {
-        currentTreeData.children = currentTreeDataChildren.map((item) =>
-          item.path === newTreeData?.tree?.path ? newTreeData.tree : item,
-        )
-      }
-      currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
-    })
+      subpaths.forEach((element) => {
+        let currentTreeDataChildren = [...currentTreeData.children]
+        if (path === treeData.tree.path) {
+          currentTreeData.children = currentTreeDataChildren.map((item) =>
+            item.path === treeData?.tree?.path ? treeData.tree : item,
+          )
+        }
+        currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
+      })
 
-    wtree.set(currentTree)
+      wtree.set(currentTree)
+    }
+
     loadingLayer = false
-  }
-
-  const fetchTree = async (path: string) => {
-    let url = `azstorage.json?path=${path}`
-    let res = await fetch(url).then((resp) => resp.json())
-
-    return res
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -182,9 +179,9 @@
         }
         $map.addLayer(layerDefinition, firstSymbolId)
       } else {
-        handlErrorCallback({
-          code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
-        })
+        // handlErrorCallback({
+        //   code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
+        // })
       }
     }
 
@@ -270,7 +267,7 @@
 
 {#if expanded && children}
   {#each children as child}
-    <svelte:self node={child} level={level + 1} {handlErrorCallback} />
+    <svelte:self node={child} level={level + 1} />
   {/each}
 {/if}
 
