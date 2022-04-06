@@ -61,7 +61,7 @@
 
 {#if style.type === LayerTypes.SYMBOL}
   <StyleControlGroup title="Icon Image">
-    <ImageList class="my-image-list-standard">
+    <ImageList>
       {#each iconList as icon}
         <Item>
           <Wrapper>
@@ -82,15 +82,4 @@
 
 <style lang="scss">
   @use '@material/image-list/index' as image-list;
-
-  .my-image-list-standard {
-    @include image-list.standard-columns(5);
-    max-width: 680px;
-  }
-
-  @media (max-width: 599px) {
-    .my-image-list-standard {
-      @include image-list.standard-columns(3);
-    }
-  }
 </style>
