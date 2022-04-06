@@ -10,6 +10,7 @@
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
   import { loadImageToDataUrl, loadJson, clipSprite } from '../../../lib/helper'
   import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
+  import VectorLegendSymbol from '../VectorLegendSymbol.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -21,6 +22,7 @@
   const styleUrl = $map.getStyle().sprite
 
   let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+  let selectedIcon = null
   $: iconImage, setIconImage()
   const setIconImage = () => {
     if (style.type !== LayerTypes.SYMBOL) return
@@ -31,6 +33,12 @@
     newStyle.layout[propertyName] = iconImage
     $map.setLayoutProperty(layerId, propertyName, iconImage)
 
+    iconList.forEach((icon) => {
+      if (icon.alt === iconImage) {
+        selectedIcon = icon
+        return
+      }
+    })
     dispatch('change')
   }
 
@@ -40,6 +48,8 @@
   }
 
   let iconList = []
+  let updateLegend
+  let isIconListPanelVisible = false
 
   onMount(async () => {
     const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@2x.png`), loadJson(`${styleUrl}@2x.json`)])
@@ -52,31 +62,48 @@
       promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
     })
     iconList = await Promise.all(promises)
+
+    iconList.forEach((icon) => {
+      if (icon.alt === iconImage) {
+        selectedIcon = icon
+        return
+      }
+    })
   })
 
   const onClick = (e) => {
     iconImage = e.target.value
+    isIconListPanelVisible = false
+    setIconImage()
+    updateLegend()
   }
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
   <StyleControlGroup title="Icon Image">
-    <ImageList>
-      {#each iconList as icon}
-        <Item>
-          <Wrapper>
-            <input
-              type="image"
-              src={icon.src}
-              alt={icon.alt}
-              style="width:24px;height:24px"
-              value={icon.alt}
-              on:click={onClick} />
-            <Tooltip>{icon.alt}</Tooltip>
-          </Wrapper>
-        </Item>
-      {/each}
-    </ImageList>
+    <div on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
+      <VectorLegendSymbol bind:updateLegend {layer} />
+    </div>
+    {#if isIconListPanelVisible === true}
+      <StyleControlGroup title="Icon Image List">
+        <ImageList>
+          {#each iconList as icon}
+            <Item>
+              <Wrapper>
+                <input
+                  type="image"
+                  src={icon.src}
+                  alt={icon.alt}
+                  style="width:24px;height:24px"
+                  value={icon.alt}
+                  on:click={onClick} />
+                <Tooltip>{icon.alt}</Tooltip>
+              </Wrapper>
+            </Item>
+          {/each}
+        </ImageList>
+      </StyleControlGroup>
+    {/if}
   </StyleControlGroup>
 {/if}
 
