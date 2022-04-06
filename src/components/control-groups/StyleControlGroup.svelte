@@ -1,0 +1,33 @@
+<script lang="ts">
+  export let title: string
+</script>
+
+<div class="style-editing-box">
+  <span class="box-title">{title}</span>
+  <p>
+    <slot />
+  </p>
+</div>
+
+<style lang="scss">
+  .style-editing-box {
+    position: relative;
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    border: solid 0.5px #1c1c1c;
+    border-radius: 8px;
+
+    .box-title {
+      position: absolute;
+      display: inline-block;
+      top: -8px;
+      left: 10px;
+      padding: 0 9px;
+      line-height: 1;
+      font-size: 8px;
+      background: #fff;
+      color: #010101;
+      font-weight: bold;
+    }
+  }
+</style>

@@ -6,6 +6,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
   import { createEventDispatcher } from 'svelte'
+  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
@@ -33,18 +34,11 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <div class="style-editing-box">
-    <span class="box-title">Line Join</span>
-    <p>
-      <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
-        <Segment {segment}>
-          <Label>{segment}</Label>
-        </Segment>
-      </SegmentedButton>
-    </p>
-  </div>
+  <StyleControlGroup title="Line Join">
+    <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
+      <Segment {segment}>
+        <Label>{segment}</Label>
+      </Segment>
+    </SegmentedButton>
+  </StyleControlGroup>
 {/if}
-
-<style lang="scss">
-  @import '../../../styles/style-editing-box.scss';
-</style>
