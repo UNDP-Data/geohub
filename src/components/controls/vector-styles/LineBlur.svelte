@@ -33,7 +33,7 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <StyleControlGroup title="Line Blurr">
+  <StyleControlGroup title="Line Blur">
     <div class="slider">
       <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
     </div>
