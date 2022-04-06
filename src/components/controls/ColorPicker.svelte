@@ -46,7 +46,6 @@
 
   let hexColor = rgb2hex(RgbColor)
   let hexColorObject = Color.hex(hexColor)
-  console.log(RgbColor)
   $: hexColorObject, colorToRGB()
   const colorToRGB = () => {
     RgbColor = `rgb(${Math.round(hexColorObject.data.r)}, ${Math.round(hexColorObject.data.g)}, ${Math.round(
