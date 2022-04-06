@@ -26,12 +26,7 @@
     newStyle.paint[propertyName] = RGBColor
     $map.setPaintProperty(layerId, propertyName, RGBColor)
 
-    dispatch('change', [
-      {
-        property: propertyName,
-        value: RGBColor,
-      },
-    ])
+    dispatch('change')
   }
 </script>
 

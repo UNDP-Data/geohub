@@ -31,12 +31,7 @@
     newStyle.paint[propertyName] = LineDasharrayValue
     $map.setPaintProperty(layerId, propertyName, LineDasharrayValue)
 
-    dispatch('change', [
-      {
-        property: propertyName,
-        value: LineDasharrayValue,
-      },
-    ])
+    dispatch('change')
   }
 </script>
 

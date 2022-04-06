@@ -27,12 +27,7 @@
     newStyle.paint[propertyName] = LineBlurValues[0]
     $map.setPaintProperty(layerId, propertyName, LineBlurValues[0])
 
-    dispatch('change', [
-      {
-        property: propertyName,
-        value: LineBlurValues[0],
-      },
-    ])
+    dispatch('change')
   }
 </script>
 
