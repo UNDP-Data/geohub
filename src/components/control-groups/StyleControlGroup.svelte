@@ -12,22 +12,22 @@
 <style lang="scss">
   .style-editing-box {
     position: relative;
-    margin: 1em 0;
-    padding: 0.5em 1em;
+    margin: 2em 0;
+    padding: 1em 1em 0.5em 1em;
     border: solid 0.5px #1c1c1c;
     border-radius: 8px;
 
     .box-title {
       position: absolute;
       display: inline-block;
-      top: -8px;
-      left: 10px;
-      padding: 0 9px;
+      top: -5px;
+      left: 7px;
+      padding: 0 6px;
       line-height: 1;
-      font-size: 8px;
+      font-size: 9px;
       background: #fff;
-      color: #010101;
-      font-weight: bold;
+      color: rgb(1, 1, 1, 0.6);
+      font-weight: normal;
     }
   }
 </style>
