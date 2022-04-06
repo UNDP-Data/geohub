@@ -6,6 +6,7 @@
   import type { Layer } from '../../../lib/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
   import ColorPicker from '../ColorPicker.svelte'
+  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -31,14 +32,7 @@
 </script>
 
 {#if style.type === LayerTypes.FILL}
-  <div class="style-editing-box">
-    <span class="box-title">Fill Outline Color</span>
-    <p>
-      <ColorPicker bind:RgbColor={RGBColor} />
-    </p>
-  </div>
+  <StyleControlGroup title="Fill Outline Color">
+    <ColorPicker bind:RgbColor={RGBColor} />
+  </StyleControlGroup>
 {/if}
-
-<style lang="scss">
-  @import '../../../styles/style-editing-box.scss';
-</style>
