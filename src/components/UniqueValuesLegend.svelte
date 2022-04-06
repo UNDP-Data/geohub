@@ -113,12 +113,6 @@
     setUniqueValueLegend({ rescale: rescaledValues.join(',') })
   }
 
-  const getActiveColorMap = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore:next-line
-    return [...activeColorMap.colors()]
-  }
-
   setUniqueValueLegend()
 </script>
 
@@ -150,7 +144,7 @@
             colorMapSelectionVisible = !colorMapSelectionVisible
           }}
           variant="raised"
-          style="width:100%; height:100%; background: linear-gradient(90deg, {getActiveColorMap()})">
+          style="width:100%; height:100%; background: linear-gradient(90deg, {[...activeColorMap.colors()]})">
           <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
         </Button>
       </div>

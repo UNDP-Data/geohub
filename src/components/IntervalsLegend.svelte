@@ -20,53 +20,60 @@
   import { updateParamsInURL } from '../lib/helper'
 
   export let layerConfig: Layer = LayerInitialValues
-  export let activeColorMapName = ''
+  export let activeColorMapName: string
+
   let definition: RasterLayerSpecification | FillLayerSpecification | LineLayerSpecification | SymbolLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
+  const defaultNumberOfColors = 5
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
-  let rangeSliderValues = [layerMin, layerMax]
-
-  const defaultNumberOfColors = 5
+  const layerSrc = $map.getSource(definition.source)
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
+  let colorMapSelectionVisible = false
+  let intervalList = []
+  let numberOfClasses = 5
+  let rangeSliderValues = [layerMin, layerMax]
+  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
+  let selectedColorMapType = ''
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
     { name: 'Logarithmic', value: 'l' },
   ]
 
-  let colorMapSelectionVisible = false
-  let intervalList = []
-  let numberOfClasses = 5
-  let selectedColorMapType = ''
-  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
+  $: {
+    if (activeColorMapName !== '') {
+      populateAllColorMaps()
+      reclassifyImage()
+    }
+  }
 
-  //populate allColorMaps with scale/colors
-  for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
-    let cmaps = {}
-    cMaps.forEach((cmapstr: string) => {
-      try {
-        if (cmapType === ColorMapTypes.SEQUENTIAL) {
-          cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
-        } else {
-          cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
+  const populateAllColorMaps = () => {
+    for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
+      let cmaps = {}
+      cMaps.forEach((cmapstr: string) => {
+        try {
+          if (cmapType === ColorMapTypes.SEQUENTIAL) {
+            cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
+          } else {
+            cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
+          }
+        } catch (error) {
+          console.log(`failed to process ${cmapstr} because ${error}`)
         }
-      } catch (error) {
-        console.log(`failed to process ${cmapstr} because ${error}`)
-      }
-      if (activeColorMapName === cmapstr) {
-        activeColorMap = cmaps[cmapstr]
-      }
-    })
-    allColorMaps[cmapType] = cmaps
+        if (activeColorMapName === cmapstr) {
+          activeColorMap = cmaps[cmapstr]
+        }
+      })
+      allColorMaps[cmapType] = cmaps
+    }
   }
 
   const reclassifyImage = (params = {}) => {
-    const layerSrc = $map.getSource(definition.source)
     const layerURL = new URL(layerSrc.tiles[0])
     let cmap = []
 
@@ -104,16 +111,6 @@
     }
     reclassifyImage()
   }
-
-  const getActiveColorMap = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore:next-line
-    return [...activeColorMap.colors()]
-  }
-
-  setTimeout(() => {
-    reclassifyImage()
-  }, 3000)
 </script>
 
 <div class="group">
@@ -168,7 +165,7 @@
           colorMapSelectionVisible = !colorMapSelectionVisible
         }}
         variant="raised"
-        style="background:linear-gradient(90deg, {getActiveColorMap()})">
+        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
         <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
@@ -261,6 +258,11 @@
         background-color: white;
         width: 100%;
         margin: auto;
+
+        @media (prefers-color-scheme: dark) {
+          background: #323234;
+          color: white;
+        }
 
         .discrete {
           width: 20px;

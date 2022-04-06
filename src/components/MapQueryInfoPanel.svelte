@@ -10,7 +10,6 @@
   import GeoJSON from 'geojson'
   import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
   import Moveable from 'moveable'
-  import { draggable } from '@neodrag/svelte'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
 
@@ -221,9 +220,9 @@
 
     new Moveable(document.body, {
       className: 'moveable-control',
-      draggable: false,
-      dragTarget: document.getElementById('header'),
-      edgeDraggable: true,
+      draggable: true,
+      dragTarget: document.querySelector('#header'),
+      edgeDraggable: false,
       hideDefaultLines: true,
       origin: false,
       resizable: true,
@@ -256,11 +255,7 @@
   let layerValuesExpanded = []
 </script>
 
-<div
-  id="data-container"
-  class="data-container target"
-  hidden={!isDataContainerVisible}
-  use:draggable={{ bounds: document.getElementById('map'), handle: '.header' }}>
+<div id="data-container" class="data-container target" hidden={!isDataContainerVisible}>
   <div id="header" class="header">
     <div class="name">Query Information</div>
 
