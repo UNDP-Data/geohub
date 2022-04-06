@@ -227,7 +227,7 @@
         {/if}
 
         <div class={url ? 'name vector' : 'name'}>
-          {label}
+          {label.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')}
         </div>
 
         {#if url}
@@ -252,7 +252,7 @@
         {/if}
 
         <div class={isRaster ? 'name raster' : 'name'}>
-          {label}
+          {label.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')}
         </div>
 
         {#if isRaster}
