@@ -173,10 +173,6 @@
     border-top: none;
   }
 
-  .active {
-    box-shadow: inset 0 0 0 1px #fff, 0 0 3px 1px rgba(0, 0, 0, 0.25);
-  }
-
   .color-block {
     border-radius: 0.2rem;
     width: 24px;
@@ -198,9 +194,5 @@
   .values-dropdown.top {
     top: auto;
     bottom: 40px;
-  }
-
-  .values-dropdown button {
-    border: none;
   }
 </style>
