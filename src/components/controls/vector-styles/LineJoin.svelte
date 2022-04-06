@@ -26,7 +26,6 @@
       newStyle.layout = {}
     }
     newStyle.layout[propertyName] = selected
-    console.log(newStyle)
     $map.setLayoutProperty(layerId, propertyName, selected)
 
     dispatch('change')
@@ -34,13 +33,18 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <p>Line Join</p>
-  <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
-    <Segment {segment}>
-      <Label>{segment}</Label>
-    </Segment>
-  </SegmentedButton>
+  <div class="style-editing-box">
+    <span class="box-title">Line Join</span>
+    <p>
+      <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
+        <Segment {segment}>
+          <Label>{segment}</Label>
+        </Segment>
+      </SegmentedButton>
+    </p>
+  </div>
 {/if}
 
 <style lang="scss">
+  @import '../../../styles/style-editing-box.scss';
 </style>
