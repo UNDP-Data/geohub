@@ -60,7 +60,6 @@
   let activeColorMapName: string = DEFAULT_COLORMAP
 
   $: isDynamicLayer, setDynamicLayerState()
-
   $: panelOpen, setLayerState()
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
@@ -179,7 +178,7 @@
             <!-- GROUP : NON-EDIT ACTIONS -->
             {#if $layerList.length > 1}
               <div class="group">
-                <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
+                <div title="Layer Merge" class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)} style="margin-right: 8px; margin-left: 3px;">
                   <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
                 </div>
               </div>
@@ -191,38 +190,40 @@
         </div>
 
         <div class="layer-actions">
-          <div transition:slide class="action" hidden={isLegendPanelVisible === false}>
-            <div class="header">
-              <div class="name">Legend</div>
-              <div class="legend-icons-container">
-                {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
-                  <div
-                    class={selectedLegendType === legendType ? 'legend-icon-selected' : 'legend-icon'}
-                    on:click={() => {
-                      selectedLegendType = legendType
-                    }}
-                    title="{legendType} legend">
-                    <Fa icon={legendTypeIcon} size="lg" style="transform: scale(.75);" />
-                  </div>
-                {/each}
+          {#if isLegendPanelVisible === true}
+            {activeColorMapName}
+            <div transition:slide class="action">
+              <div class="header">
+                <div class="name">Legend</div>
+                <div class="legend-icons-container">
+                  {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
+                    <div
+                      class={selectedLegendType === legendType ? 'legend-icon-selected' : 'legend-icon'}
+                      on:click={() => {
+                        selectedLegendType = legendType
+                      }}
+                      title="{legendType} legend">
+                      <Fa icon={legendTypeIcon} size="lg" style="transform: scale(.75);" />
+                    </div>
+                  {/each}
+                </div>
+                <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
+                  <Fa icon={faXmark} size="lg" />
+                </div>
               </div>
-              <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
-                <Fa icon={faXmark} size="lg" />
+
+              <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>
+                <Legend bind:activeColorMapName layerConfig={layer} />
               </div>
-            </div>
 
-            <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>
-              <Legend bind:activeColorMapName bind:layerConfig={layer} />
-            </div>
+              <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>
+                <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+              </div>
 
-            <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>
-              <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
-            </div>
-
-            <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>
-              <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
-            </div>
-          </div>
+              <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>
+                <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+              </div>
+            </div>{/if}
 
           {#if isFilterPanelVisible === true}
             <div class="action">

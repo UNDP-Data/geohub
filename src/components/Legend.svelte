@@ -15,7 +15,7 @@
   import { ColorMaps } from '../lib/colormaps'
   import { updateParamsInURL } from '../lib/helper'
 
-  export let activeColorMapName = ''
+  export let activeColorMapName: string
   export let layerConfig: Layer = LayerInitialValues
 
   let definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
@@ -26,6 +26,7 @@
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerSrc = $map.getSource(definition.source)
+  const layerURL = new URL(layerSrc.tiles[0])
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
@@ -33,49 +34,55 @@
   let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
   let step = (layerMax - layerMin) * 1e-2
-  let layerURL: URL
-
-  for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
-    let cmaps = {}
-    cMaps.forEach((cmapstr: string) => {
-      try {
-        if (cmapType === ColorMapTypes.SEQUENTIAL) {
-          cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
-        } else {
-          cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
-        }
-      } catch (error) {
-        console.log(`failed to process ${cmapstr} because ${error}`)
-      }
-      if (activeColorMapName === cmapstr) {
-        activeColorMap = cmaps[cmapstr]
-      }
-    })
-
-    allColorMaps[cmapType] = cmaps
-  }
+  // let layerURL: URL
 
   $: {
-    if (layerSrc.tiles !== undefined) {
-      layerURL = new URL(layerSrc.tiles[0])
-      if (layerURL.searchParams.has('colormap')) {
-        let params = {}
-        layerURL.searchParams.delete('colormap')
-        if (!layerURL.searchParams.has('rescale')) {
-          params = { rescale: rangeSliderValues.join(',') }
-        } else {
-          let rescaleParam = layerURL.searchParams.get('rescale')
-          let rescaleMin = '',
-            rescaleMax = ''
-          ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
-          if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
-            params = { rescale: rangeSliderValues.join(',') }
-          }
-        }
+    if (activeColorMapName !== '') {
+      populateAllColorMaps()
+      rescaleColorMap()
+    }
+  }
 
-        params = Object.assign(params, { colormap_name: activeColorMapName })
-        updateParamsInURL(definition, layerURL, params)
+  const populateAllColorMaps = () => {
+    for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
+      let cmaps = {}
+      cMaps.forEach((cmapstr: string) => {
+        try {
+          if (cmapType === ColorMapTypes.SEQUENTIAL) {
+            cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
+          } else {
+            cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
+          }
+        } catch (error) {
+          console.log(`failed to process ${cmapstr} because ${error}`)
+        }
+        if (activeColorMapName === cmapstr) {
+          activeColorMap = cmaps[cmapstr]
+        }
+      })
+
+      allColorMaps[cmapType] = cmaps
+    }
+  }
+
+  const rescaleColorMap = () => {
+    if (layerURL.searchParams.has('colormap')) {
+      let params = {}
+      layerURL.searchParams.delete('colormap')
+      if (!layerURL.searchParams.has('rescale')) {
+        params = { rescale: rangeSliderValues.join(',') }
+      } else {
+        let rescaleParam = layerURL.searchParams.get('rescale')
+        let rescaleMin = '',
+          rescaleMax = ''
+        ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
+        if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
+          params = { rescale: rangeSliderValues.join(',') }
+        }
       }
+
+      params = Object.assign(params, { colormap_name: activeColorMapName })
+      updateParamsInURL(definition, layerURL, params)
     }
   }
 </script>
@@ -137,7 +144,6 @@
               on:click={() => {
                 activeColorMapName = aColorMap
                 activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-
                 updateParamsInURL(definition, layerURL, { colormap_name: activeColorMapName })
               }}
               style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
