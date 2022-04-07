@@ -61,6 +61,14 @@ export interface LayerIcon {
   color: string
 }
 
+export interface spriteIcon {
+  width: number
+  height: number
+  x: number
+  y: number
+  pixelRatio: number
+}
+
 export interface BannerMessage {
   type: StatusTypes
   title: string

@@ -482,6 +482,17 @@
     "@material/touch-target" "^13.0.0"
     tslib "^2.1.0"
 
+"@material/image-list@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/image-list/-/image-list-13.0.0.tgz#8a1da68ebd53ff0123f071c49691ffde4c369fca"
+  integrity sha512-D78QKpK5JmO6zrbsSYt1YfRlkqzzduDTe6BstS0efUFS1CA11hrqwQFoMaR1L1dw2U3CQ/CP22bBMSZVV9aU6A==
+  dependencies:
+    "@material/feature-targeting" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/typography" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/line-ripple@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/line-ripple/-/line-ripple-13.0.0.tgz"
@@ -934,6 +945,15 @@
     "@material/feature-targeting" "^13.0.0"
     "@material/form-field" "^13.0.0"
     "@material/rtl" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.15"
+    svelte2tsx "^0.4.14"
+
+"@smui/image-list@^6.0.0-beta.15":
+  version "6.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@smui/image-list/-/image-list-6.0.0-beta.15.tgz#0a44e30609211e6caa35809a4b540c7f92154b30"
+  integrity sha512-394MibBR9uoTNnU84GG24IAtICyOTFKs5rerIYYNkVHIqrD+SLZB6HOXSr6KZU1J/IscPZkptQKD/SY5d2lTPw==
+  dependencies:
+    "@material/image-list" "^13.0.0"
     "@smui/common" "^6.0.0-beta.15"
     svelte2tsx "^0.4.14"
 
@@ -2479,6 +2499,11 @@ ignore@^5.1.8, ignore@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
   integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
+
+image-clipper@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/image-clipper/-/image-clipper-0.4.4.tgz#f03115ee59c5fde31259dbc4f6daceafad182dd2"
+  integrity sha512-ukiEzCwRES9mrlrp16kRCIx0HGfa3C4LXUR9grf0ueyk06cU1WDpBiu2lwvSf+HvUOTG7uFXSZKf0b9bIsO81A==
 
 immutable@^4.0.0:
   version "4.0.0"
