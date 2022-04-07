@@ -1,6 +1,7 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
   import Chip, { Set, Text } from '@smui/chips'
+  import Ripple from '@smui/ripple'
   import chroma from 'chroma-js'
 
   import type { Layer, LayerInfo } from '../lib/types'
@@ -130,8 +131,8 @@
   {/if}
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
     <Set class="colormap-chips" chips={Object.keys(ColorMaps)} let:chip choice bind:selected={selectedColorMapType}>
-      <Chip {chip}>
-        <Text>{chip}</Text>
+      <Chip {chip} style="margin-left: 0; margin-right: 0;">
+        <Text style="font-family: ProximaNova, sans-serif;">{chip.charAt(0).toUpperCase() + chip.slice(1)}</Text>
       </Chip>
     </Set>
     <div>
@@ -139,6 +140,7 @@
         {#if selectedColorMapType}
           {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
             <div
+              use:Ripple={{ surface: true }}
               class="colormap-div"
               title={aColorMap}
               on:click={() => {
@@ -159,9 +161,10 @@
 
 <style lang="scss">
   .group {
-    background: #f0f0f0;
     border-radius: 7.5px;
     padding: 2px;
+    padding-left: 0;
+    padding-right: 0;
 
     @media (prefers-color-scheme: dark) {
       background: #323234;
@@ -173,26 +176,28 @@
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-      width: calc(90% - 4px);
-      padding-left: calc(10% + 4px);
+      width: calc(100% - 4px);
+      // padding-left: calc(10% + 4px);
     }
 
     .active-color-map {
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
+      padding-top: 10px;
+      padding-bottom: 10px;
 
-    .chroma-test {
-      height: 20px;
-      width: 80%;
-      align-items: center;
-      justify-content: space-between;
-
-      div {
-        display: flex;
-        flex-direction: row;
+      .chroma-test {
+        height: 20px;
+        width: 100%;
+        align-items: center;
         justify-content: space-between;
+
+        div {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        }
       }
     }
 
@@ -236,5 +241,7 @@
 
   * :global(.colormap-chips) {
     justify-content: space-evenly;
+    padding-left: 0;
+    padding-right: 0;
   }
 </style>

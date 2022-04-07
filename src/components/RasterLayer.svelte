@@ -56,6 +56,8 @@
     legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
+  console.log(Object.keys(legendTypes).map((type) => type.charAt(0).toUpperCase() + type.slice(1)))
+
   let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
   let activeColorMapName: string = DEFAULT_COLORMAP
 
@@ -141,6 +143,10 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
+  import Tab, { Label } from '@smui/tab'
+  import TabBar from '@smui/tab-bar'
+  const legendTypeLabels = Object.keys(legendTypes)
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -198,33 +204,37 @@
             <div transition:slide class="action">
               <div class="header">
                 <div class="name">Legend</div>
-                <div class="legend-icons-container">
-                  {#each Object.entries(legendTypes) as [legendType, legendTypeIcon]}
-                    <div
-                      class={selectedLegendType === legendType ? 'legend-icon-selected' : 'legend-icon'}
-                      on:click={() => {
-                        selectedLegendType = legendType
-                      }}
-                      title="{legendType} legend">
-                      <Fa icon={legendTypeIcon} size="lg" style="transform: scale(.75);" />
-                    </div>
-                  {/each}
-                </div>
                 <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
                   <Fa icon={faXmark} size="lg" />
                 </div>
               </div>
+              <div class="content">
+                <div class="tab-bar">
+                  <TabBar tabs={legendTypeLabels} let:tab style="" active={legendTypeLabels[0]}>
+                    <Tab
+                      {tab}
+                      class="tab"
+                      style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px;"
+                      on:click={() => (selectedLegendType = tab)}>
+                      <Label
+                        style="font-size: 9px; text-transform: none; font-weight: normal; font-family: ProximaNova, sans-serif;">
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      </Label>
+                    </Tab>
+                  </TabBar>
+                </div>
 
-              <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>
-                <Legend bind:activeColorMapName layerConfig={layer} />
-              </div>
+                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>
+                  <Legend bind:activeColorMapName layerConfig={layer} />
+                </div>
 
-              <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>
-                <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
-              </div>
+                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>
+                  <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+                </div>
 
-              <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>
-                <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>
+                  <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+                </div>
               </div>
             </div>{/if}
 
@@ -246,32 +256,6 @@
 
 <style lang="scss">
   .layer-header {
-    .legend-icons-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-evenly;
-      align-items: center;
-      border: 0px solid;
-      padding-right: 50%;
-      width: 50%;
-    }
-
-    .legend-icon {
-      opacity: 0.5;
-      display: inline;
-      cursor: pointer;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-
-    .legend-icon-selected {
-      opacity: 1;
-      display: inline;
-      cursor: pointer;
-    }
-
     .layer-header-icons {
       padding-top: 10px;
       display: flex;
@@ -344,6 +328,14 @@
           .close {
             cursor: pointer;
             padding-right: 5px;
+          }
+        }
+
+        .content {
+          padding: 5px 15px 5px 15px;
+
+          .tab-bar {
+            margin-bottom: 20px;
           }
         }
       }
