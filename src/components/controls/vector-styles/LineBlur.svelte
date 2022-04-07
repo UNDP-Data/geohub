@@ -6,6 +6,7 @@
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
+  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -32,10 +33,11 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <p>Line Blur</p>
-  <div class="slider">
-    <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
-  </div>
+  <StyleControlGroup title="Line Blur">
+    <div class="slider">
+      <RangeSlider bind:values={LineBlurValues} float min={0} max={10} step={0.1} pips rest={false} />
+    </div>
+  </StyleControlGroup>
 {/if}
 
 <style lang="scss">

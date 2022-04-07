@@ -6,6 +6,7 @@
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
   import { LayerInitialValues } from '../../../lib/constants'
+  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -25,20 +26,21 @@
   }
 </script>
 
-<p>Zoom Level</p>
-<div class="slider">
-  <RangeSlider
-    bind:values={ZoomSliderValues}
-    float
-    range
-    min={0}
-    max={24}
-    step={1}
-    pips
-    first="1"
-    last="20"
-    rest={false} />
-</div>
+<StyleControlGroup title="Line Width">
+  <div class="slider">
+    <RangeSlider
+      bind:values={ZoomSliderValues}
+      float
+      range
+      min={0}
+      max={24}
+      step={1}
+      pips
+      first="1"
+      last="20"
+      rest={false} />
+  </div>
+</StyleControlGroup>
 
 <style lang="scss">
   @import '../../../styles/vector-style-slider.scss';

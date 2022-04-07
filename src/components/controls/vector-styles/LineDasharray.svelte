@@ -5,6 +5,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
   import { createEventDispatcher } from 'svelte'
+  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
@@ -36,18 +37,11 @@
 </script>
 
 {#if style.type === LayerTypes.LINE}
-  <div class="line-dasharray">
-    <Select variant="outlined" bind:value={LineDasharrayValue} label="Line Dasharray">
+  <StyleControlGroup title="Line Dasharray">
+    <Select bind:value={LineDasharrayValue}>
       {#each lineTypes as type}
         <Option value={type.value}>{type.title}</Option>
       {/each}
     </Select>
-  </div>
+  </StyleControlGroup>
 {/if}
-
-<style lang="scss">
-  .line-dasharray {
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
-</style>

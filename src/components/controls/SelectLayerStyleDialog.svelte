@@ -43,7 +43,7 @@
           'source-layer': label,
           layout: {
             visibility: 'visible',
-            'icon-image': 'circle-11',
+            'icon-image': 'circle',
             'icon-size': 0.8,
           },
         }
