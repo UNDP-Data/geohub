@@ -182,8 +182,8 @@
 
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
     <Set class="colormap-chips" chips={Object.keys(ColorMaps)} let:chip choice bind:selected={selectedColorMapType}>
-      <Chip {chip}>
-        <Text>{chip}</Text>
+      <Chip {chip} style="margin-left: 0; margin-right: 0;">
+        <Text style="font-family: ProximaNova, sans-serif;">{chip.charAt(0).toUpperCase() + chip.slice(1)}</Text>
       </Chip>
     </Set>
     <div class="colormaps-group">
@@ -196,7 +196,6 @@
             on:click={() => {
               activeColorMapName = aColorMap
               activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-
               reclassifyImage()
             }}
             style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
@@ -211,7 +210,6 @@
 
 <style lang="scss">
   .group {
-    background: #f0f0f0;
     border-radius: 7.5px;
     padding: 2px;
     margin-top: 1px;
