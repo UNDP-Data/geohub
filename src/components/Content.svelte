@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide } from 'svelte/transition'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
@@ -8,14 +7,13 @@
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
   import Fa from 'svelte-fa'
-  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { layerList, indicatorProgress, map, bannerMessages } from '../stores'
-  import { LayerIconTypes, StatusTypes, TabNames } from '../lib/constants'
+  import { StatusTypes, TabNames } from '../lib/constants'
 
   export let drawerOpen = false
 
@@ -25,7 +23,6 @@
   let isResizingDrawer = false
   let showBanner = false
 
-  $: treeLgendExpanded = true
   $: hideLinearProgress = !$indicatorProgress
   $: {
     if (drawerOpen) {
@@ -50,10 +47,6 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-
-    setTimeout(() => {
-      treeLgendExpanded = false
-    }, 5000)
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -101,36 +94,6 @@
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
-            <div style="padding: 15px; padding-right: 0;">
-              <div class="layer-actions" style="height: 20px;">
-                <div transition:slide class="action">
-                  <div class="header">
-                    <div class="name">Legend</div>
-                    <div class="close" style="margin-right: 5px;">
-                      {#if treeLgendExpanded === false}
-                        <div on:click={() => (treeLgendExpanded = true)}>
-                          <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
-                        </div>
-                      {:else}
-                        <div on:click={() => (treeLgendExpanded = false)}>
-                          <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
-                        </div>
-                      {/if}
-                    </div>
-                  </div>
-
-                  {#if treeLgendExpanded === true}
-                    <div class="legend" transition:slide>
-                      {#each LayerIconTypes as iconType}
-                        <span style="margin-right: 10px;">
-                          <Fa icon={iconType.icon} size="sm" primaryColor={iconType.color} />&nbsp;&nbsp; {iconType.label}
-                        </span>
-                      {/each}
-                    </div>
-                  {/if}
-                </div>
-              </div>
-            </div>
           </div>
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
@@ -202,49 +165,6 @@
 
   @media (max-width: 768px) {
     $height: calc(100vh - 184px);
-  }
-
-  .layer-actions {
-    margin-top: 10px;
-
-    .action {
-      margin-bottom: 25px;
-
-      .header {
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        margin-top: 15px;
-        background: #e3e3e3;
-        border-radius: 7.5px;
-        padding: 2.5px;
-        padding-left: 7.5px;
-        margin-bottom: 10px;
-
-        .name {
-          width: 100%;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          background: #323234;
-          border-color: #30363d;
-          color: white;
-        }
-      }
-
-      .legend {
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding-left: 10px;
-
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-    }
   }
 
   .content-container {
