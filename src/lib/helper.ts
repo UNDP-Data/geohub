@@ -4,6 +4,7 @@ import type {
   LineLayerSpecification,
   SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
+import type { spriteIcon } from './types'
 import { get } from 'svelte/store'
 import { map } from '../stores/index'
 import Clipper from 'image-clipper'
@@ -42,7 +43,7 @@ export const loadJson = async (url: string) => {
   return fetch(url).then((data) => data.json())
 }
 
-export const clipSprite = (url, id, icon) => {
+export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
   return new Promise((resolve) => {
     Clipper(url, function () {
       this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl) {

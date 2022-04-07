@@ -59,3 +59,11 @@ export interface LayerIcon {
   icon: IconProp
   color: string
 }
+
+export interface spriteIcon {
+  width: number
+  height: number
+  x: number
+  y: number
+  pixelRatio: number
+}

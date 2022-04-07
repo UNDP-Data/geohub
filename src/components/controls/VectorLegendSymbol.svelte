@@ -41,7 +41,7 @@
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-    let symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
+    const symbol = LegendSymbol({ zoom: zoom, layer: mapLayerByLayerId })
     legendSymbolContainer.innerHTML = ''
     if (symbol) {
       switch (symbol.element) {
