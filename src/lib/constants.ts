@@ -31,7 +31,7 @@ export const LayerInitialValues = {
 
 export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
-  FETCH_TIMEOUT = 'Oops! Something went wrong! The request took longer than expected. Please try again later.',
+  FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
 }
 export const LayerIconTypes = [
   {

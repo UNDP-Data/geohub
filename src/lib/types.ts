@@ -61,7 +61,7 @@ export interface LayerIcon {
   color: string
 }
 
-export interface BannerContent {
+export interface BannerMessage {
   type: StatusTypes
   title: string
   message: string

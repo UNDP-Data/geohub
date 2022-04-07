@@ -34,15 +34,21 @@
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import type { TreeNode, LayerInfo } from '../lib/types'
-  import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
+  import type { BannerMessage, TreeNode, LayerInfo } from '../lib/types'
+  import {
+    ErrorMessages,
+    LayerIconTypes,
+    TreeNodeInitialValues,
+    LayerTypes,
+    StatusTypes,
+    DEFAULT_COLORMAP,
+  } from '../lib/constants'
   import { fetchUrl } from '../lib/helper'
-  import { map, layerList, indicatorProgress, wtree } from '../stores'
+  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '../stores'
   import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0
-  // export let handlErrorCallback: CallableFunction
   let SelectLayerStyleDialogVisible: boolean
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
@@ -115,8 +121,7 @@
       const layerName = path.split('/')[path.split('/').length - 1]
       const [base, sign] = url.split('?')
       const b64EncodedUrl = `${base}?${btoa(sign)}`
-      const infoUrl = `${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`
-      layerInfo = await fetchLayerInfo(infoUrl)
+      layerInfo = await fetchUrl(`${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
@@ -179,9 +184,12 @@
         }
         $map.addLayer(layerDefinition, firstSymbolId)
       } else {
-        // handlErrorCallback({
-        //   code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
-        // })
+        const bannerErrorMessage: BannerMessage = {
+          type: StatusTypes.INFO,
+          title: 'Whoops! Something went wrong.',
+          message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
+        }
+        $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
       }
     }
 
@@ -190,10 +198,6 @@
     setTimeout(function () {
       loadingLayer = false
     }, 350)
-  }
-
-  const fetchLayerInfo = async (url: string) => {
-    return await fetch(url).then((response) => response.json())
   }
 </script>
 

@@ -6,7 +6,7 @@ import type {
 } from '@maplibre/maplibre-gl-style-spec/types'
 import { get } from 'svelte/store'
 import { bannerMessages, map } from '../stores'
-import type { BannerContent } from './types'
+import type { BannerMessage } from './types'
 import { ErrorMessages, StatusTypes } from './constants'
 
 export const updateParamsInURL = (
@@ -31,12 +31,12 @@ export const stringifyStyleJSON = (style: JSON) => {
 
 export async function fetchUrl(url: string) {
   try {
-    const response = await fetchWithTimeout(url, { timeout: 100 })
+    const response = await fetchWithTimeout(url, { timeout: 5000 })
     return await response.json()
   } catch (error) {
-    const bannerErrorMessage: BannerContent = {
+    const bannerErrorMessage: BannerMessage = {
       type: StatusTypes.DANGER,
-      title: 'Error',
+      title: 'Whoops! Something went wrong.',
       message: ErrorMessages.FETCH_TIMEOUT,
     }
     bannerMessages.update((data) => [...data, bannerErrorMessage])
