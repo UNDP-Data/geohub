@@ -153,7 +153,11 @@
       <div class="layer-header">
         <div>
           <LayerNameGroup {mapLayerIndex} {layer} />
-          <div class="layer-header-icons">
+          <div
+            class="layer-header-icons"
+            style={isLegendPanelVisible || isOpacityPanelVisible || isFilterPanelVisible
+              ? `opacity: 0.25;`
+              : 'opacity: 1;'}>
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
               <div
@@ -255,20 +259,19 @@
 <style lang="scss">
   .layer-header {
     .layer-header-icons {
-      padding-top: 10px;
-      display: flex;
-      justify-content: left;
       align-items: center;
+      border-top: 1px solid rgba(204, 204, 204, 0.5);
+      display: flex;
       gap: 15px;
+      justify-content: left;
       margin-top: 10px;
       padding-top: 10px;
-      border-top: 1px solid rgba(204, 204, 204, 0.5);
 
       .group {
         background: #e3e3e3;
         border-radius: 7.5px;
-        padding: 5px;
         padding-right: 0;
+        padding: 5px;
 
         @media (prefers-color-scheme: dark) {
           background: #323234;
@@ -276,10 +279,10 @@
         }
 
         .icon {
-          opacity: 0.5;
-          display: inline;
           cursor: pointer;
+          display: inline;
           margin-right: 10px;
+          opacity: 0.5;
 
           &:hover {
             opacity: 1;
@@ -287,31 +290,31 @@
         }
 
         .icon-selected {
-          opacity: 1;
-          display: inline;
           cursor: pointer;
+          display: inline;
           margin-right: 10px;
+          opacity: 1;
         }
       }
     }
 
     .layer-actions {
-      margin-top: 10px;
       border-top: 1px solid rgba(204, 204, 204, 0.5);
+      margin-top: 10px;
 
       .action {
         margin-bottom: 25px;
 
         .header {
-          display: flex;
-          justify-content: left;
           align-items: center;
-          margin-top: 15px;
           background: #e3e3e3;
           border-radius: 7.5px;
-          padding: 2.5px;
-          padding-left: 7.5px;
+          display: flex;
+          justify-content: left;
           margin-bottom: 10px;
+          margin-top: 15px;
+          padding-left: 7.5px;
+          padding: 2.5px;
 
           @media (prefers-color-scheme: dark) {
             background: #323234;
@@ -321,6 +324,7 @@
 
           .name {
             width: 100%;
+            padding-left: 5px;
           }
 
           .close {

@@ -56,20 +56,19 @@
 
     .layer-header {
       .layer-header-icons {
-        padding-top: 10px;
-        display: flex;
-        justify-content: left;
         align-items: center;
+        border-top: 1px solid rgba(204, 204, 204, 0.5);
+        display: flex;
         gap: 15px;
+        justify-content: left;
         margin-top: 10px;
         padding-top: 10px;
-        border-top: 1px solid rgba(204, 204, 204, 0.5);
 
         .group {
-          background: #f0f0f0;
+          background: #e3e3e3;
           border-radius: 7.5px;
-          padding: 5px;
           padding-right: 0;
+          padding: 5px;
 
           @media (prefers-color-scheme: dark) {
             background: #0d1117;
