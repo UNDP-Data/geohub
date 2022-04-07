@@ -32,16 +32,23 @@
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
-
-  import type { TreeNode, LayerInfo } from '../lib/types'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerIconTypes, TreeNodeInitialValues, LayerTypes, DEFAULT_COLORMAP } from '../lib/constants'
-  import { map, layerList, indicatorProgress, wtree } from '../stores'
+
+  import type { BannerMessage, TreeNode, LayerInfo } from '../lib/types'
+  import {
+    ErrorMessages,
+    LayerIconTypes,
+    TreeNodeInitialValues,
+    LayerTypes,
+    StatusTypes,
+    DEFAULT_COLORMAP,
+  } from '../lib/constants'
+  import { fetchUrl } from '../lib/helper'
+  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '../stores'
   import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0
-  export let handlErrorCallback: CallableFunction
   let SelectLayerStyleDialogVisible: boolean
 
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
@@ -71,31 +78,27 @@
 
   const updateTreeStore = async () => {
     loadingLayer = true
-    let newTreeData = await fetchTree(tree.path)
-    let subpaths = path.split('/').slice(0, -1)
+    const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
 
-    let currentTree = { ...$wtree }
-    let currentTreeData: TreeNode = currentTree.tree
+    if (treeData) {
+      const subpaths = path.split('/').slice(0, -1)
+      let currentTree = { ...$wtree }
+      let currentTreeData: TreeNode = currentTree.tree
 
-    subpaths.forEach((element) => {
-      let currentTreeDataChildren = [...currentTreeData.children]
-      if (path === newTreeData.tree.path) {
-        currentTreeData.children = currentTreeDataChildren.map((item) =>
-          item.path === newTreeData?.tree?.path ? newTreeData.tree : item,
-        )
-      }
-      currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
-    })
+      subpaths.forEach((element) => {
+        let currentTreeDataChildren = [...currentTreeData.children]
+        if (path === treeData.tree.path) {
+          currentTreeData.children = currentTreeDataChildren.map((item) =>
+            item.path === treeData?.tree?.path ? treeData.tree : item,
+          )
+        }
+        currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
+      })
 
-    wtree.set(currentTree)
+      wtree.set(currentTree)
+    }
+
     loadingLayer = false
-  }
-
-  const fetchTree = async (path: string) => {
-    let url = `azstorage.json?path=${path}`
-    let res = await fetch(url).then((resp) => resp.json())
-
-    return res
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -118,8 +121,7 @@
       const layerName = path.split('/')[path.split('/').length - 1]
       const [base, sign] = url.split('?')
       const b64EncodedUrl = `${base}?${btoa(sign)}`
-      const infoUrl = `${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`
-      layerInfo = await fetchLayerInfo(infoUrl)
+      layerInfo = await fetchUrl(`${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
@@ -182,9 +184,12 @@
         }
         $map.addLayer(layerDefinition, firstSymbolId)
       } else {
-        handlErrorCallback({
-          code: 'UNDEFINED_BAND_METADATA_LAYER_MINMAX',
-        })
+        const bannerErrorMessage: BannerMessage = {
+          type: StatusTypes.INFO,
+          title: 'Whoops! Something went wrong.',
+          message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
+        }
+        $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
       }
     }
 
@@ -193,10 +198,6 @@
     setTimeout(function () {
       loadingLayer = false
     }, 350)
-  }
-
-  const fetchLayerInfo = async (url: string) => {
-    return await fetch(url).then((response) => response.json())
   }
 </script>
 
@@ -270,7 +271,7 @@
 
 {#if expanded && children}
   {#each children as child}
-    <svelte:self node={child} level={level + 1} {handlErrorCallback} />
+    <svelte:self node={child} level={level + 1} />
   {/each}
 {/if}
 

@@ -16,6 +16,7 @@
   import { layerList, map } from '../stores'
   import type { Layer } from '../lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
+  import { fetchUrl } from '../lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
 
@@ -88,10 +89,7 @@
       let values = []
 
       if (layer.type === LayerTypes.RASTER) {
-        const layerData = await fetch(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`).then((res) => {
-          return res.json()
-        })
-
+        const layerData = await fetchUrl(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`)
         let layerHasNoDataValue = false
 
         if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true

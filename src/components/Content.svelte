@@ -9,18 +9,17 @@
   import TabBar from '@smui/tab-bar'
   import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
+  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { layerList, indicatorProgress, map } from '../stores'
-  import { BannerTypes, ErrorCodes, LayerIconTypes, TabNames } from '../lib/constants'
-  import type { Error } from '../lib/types'
+  import { layerList, indicatorProgress, map, bannerMessages } from '../stores'
+  import { LayerIconTypes, StatusTypes, TabNames } from '../lib/constants'
 
   export let drawerOpen = false
 
   let activeTab = TabNames.LOAD_DATA
-  let bannerType = ''
-  let bannerMessage = ''
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
@@ -35,6 +34,16 @@
       } catch (e) {} // eslint-disable-line
     } else {
       setContentContainerMargin(0)
+    }
+  }
+
+  // show banner when content store available
+  $: {
+    if ($bannerMessages.length > 0) {
+      showBanner = false
+      setTimeout(() => {
+        showBanner = true
+      }, 500)
     }
   }
 
@@ -64,10 +73,11 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
-  const handlErrorCallback = (error: Error) => {
-    bannerType = BannerTypes.ERROR
-    bannerMessage = ErrorCodes[error.code]
-    showBanner = true
+  const hideBanner = () => {
+    setTimeout(() => {
+      showBanner = false
+    }, 350)
+    $bannerMessages = []
   }
 </script>
 
@@ -90,7 +100,7 @@
         </Header>
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
-            <TreeView {handlErrorCallback} />
+            <TreeView />
             <div style="padding: 15px; padding-right: 0;">
               <div class="layer-actions" style="height: 20px;">
                 <div transition:slide class="action">
@@ -141,12 +151,27 @@
   </Drawer>
 
   <AppContent class="app-content">
-    <Banner bind:open={showBanner} fixed mobileStacked content$style="max-width: max-content;">
-      <LabelBanner slot="label" style="font-family: ProximaNova, sans-serif; font-size: 13px;">
-        <span style="font-weight: bold;">{bannerType}:</span>
-        {bannerMessage}
+    <Banner bind:open={showBanner} fixed mobileStacked content$style={`max-width: max-content; height:`}>
+      <LabelBanner
+        slot="label"
+        style={`font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 60px;`}>
+        {#each $bannerMessages as row}
+          <div class="banner-container">
+            <div class="icon">
+              {#if row.type === StatusTypes.INFO}
+                <Fa icon={faCircleInfo} size="2x" primaryColor="hsl(204, 86%, 53%)" />
+              {:else if row.type === StatusTypes.DANGER}
+                <Fa icon={faBan} size="2x" primaryColor="hsl(348, 100%, 61%)" />
+              {/if}
+            </div>
+            <div class="content">
+              <div class="subtitle">{row.title}</div>
+              <div class="message">{row.message}</div>
+            </div>
+          </div>
+        {/each}
       </LabelBanner>
-      <Button slot="actions">Dismiss</Button>
+      <Button slot="actions" on:click={() => hideBanner()}>Dismiss</Button>
     </Banner>
 
     <main class="main-content">
@@ -261,6 +286,34 @@
         align-items: center;
         pointer-events: none;
         color: black;
+      }
+    }
+  }
+
+  .banner-container {
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    justify-content: left;
+    margin-bottom: 20px;
+
+    .content {
+      .subtitle {
+        margin: 0;
+        margin-bottom: 10px;
+
+        @media (prefers-color-scheme: dark) {
+          color: white;
+        }
+      }
+
+      .message {
+        background: #fff;
+
+        @media (prefers-color-scheme: dark) {
+          background: #212125;
+          color: white;
+        }
       }
     }
   }

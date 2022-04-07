@@ -4,10 +4,11 @@ import type {
   LineLayerSpecification,
   SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
-import type { spriteIcon } from './types'
+import type { BannerMessage, spriteIcon } from './types'
 import { get } from 'svelte/store'
-import { map } from '../stores/index'
 import Clipper from 'image-clipper'
+import { bannerMessages, map } from '../stores'
+import { ErrorMessages, StatusTypes } from './constants'
 
 export const updateParamsInURL = (
   definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification,
@@ -54,4 +55,31 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
       })
     })
   })
+}
+
+export async function fetchUrl(url: string) {
+  try {
+    const response = await fetchWithTimeout(url, { timeout: 5000 })
+    return await response.json()
+  } catch (error) {
+    const bannerErrorMessage: BannerMessage = {
+      type: StatusTypes.DANGER,
+      title: 'Whoops! Something went wrong.',
+      message: ErrorMessages.FETCH_TIMEOUT,
+    }
+    bannerMessages.update((data) => [...data, bannerErrorMessage])
+    return null
+  }
+}
+
+async function fetchWithTimeout(resource: string, options = { timeout: 5000 }) {
+  const { timeout = 5000 } = options
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), timeout)
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal,
+  })
+  clearTimeout(id)
+  return response
 }

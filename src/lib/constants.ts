@@ -29,14 +29,10 @@ export const LayerInitialValues = {
   info: {},
 }
 
-export enum ErrorCodes {
+export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
+  FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
 }
-
-export enum BannerTypes {
-  ERROR = 'Error',
-}
-
 export const LayerIconTypes = [
   {
     id: 'point',
@@ -101,4 +97,13 @@ export enum ClassificationMethodTypes {
   EQUIDISTANT = 'e',
   QUANTILE = 'q',
   LOGARITHMIC = 'l',
+}
+
+export enum StatusTypes {
+  PRIMARY = 'primary',
+  LINK = 'link',
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  DANGER = 'danger',
 }
