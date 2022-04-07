@@ -5,6 +5,7 @@ import type {
   FillLayerSpecification,
   SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
+import type { StatusTypes } from './constants'
 
 export interface Tree {
   tree: TreeNode
@@ -58,4 +59,10 @@ export interface LayerIcon {
   label: string
   icon: IconProp
   color: string
+}
+
+export interface BannerMessage {
+  type: StatusTypes
+  title: string
+  message: string
 }
