@@ -12,6 +12,8 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
+  import ColorPicker from './controls/ColorPicker.svelte'
+  import { Color } from 'svelte-colorpick'
 
   import { map } from '../stores/index'
   import { ColorMaps } from '../lib/colormaps'
@@ -30,11 +32,13 @@
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
+  const layerURL = new URL(layerSrc.tiles[0])
 
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
   let intervalList = []
+  let cmap = []
   let numberOfClasses = 5
   let rangeSliderValues = [layerMin, layerMax]
   let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
@@ -74,9 +78,6 @@
   }
 
   const reclassifyImage = (params = {}) => {
-    const layerURL = new URL(layerSrc.tiles[0])
-    let cmap = []
-
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
@@ -91,13 +92,16 @@
       let cmapitem = [[intervalStart, intervalEnd], c]
       cmap.push(cmapitem)
     }
+    handleParamsUpdate(cmap)
+  }
+
+  const handleParamsUpdate = (cmap) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
-    let updatedParams = Object.assign({ colormap: encodedCmap }, params)
+    let updatedParams = Object.assign({ colormap: encodedCmap })
     updateParamsInURL(definition, layerURL, updatedParams)
   }
-
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
     if (operation === 'increment') {
       if (numberOfClasses <= maxNoOfClasses) {
@@ -110,6 +114,37 @@
       }
     }
     reclassifyImage()
+  }
+
+  //Todo: My  changes begin here
+  let openColorPicker = false
+  let currentIntervalColor
+  let currentIntervalColorRGB
+  let intervalIndex
+
+  function sendIndexForCmap(index) {
+    openColorPicker = true
+    currentIntervalColor = cmap[index][1]
+    currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
+    console.log(currentIntervalColorRGB)
+    intervalIndex = index
+  }
+
+  function updateColorMap(index, rgb) {
+    console.log(index, Color.hex(rgb).data.r)
+    let cmapItem = []
+    cmapItem.push(Color.hex(rgb).data.r)
+    cmapItem.push(Color.hex(rgb).data.g)
+    cmapItem.push(Color.hex(rgb).data.b)
+    cmapItem.push(255)
+    cmap[index].splice(1, 1, cmapItem)
+    handleParamsUpdate(cmap)
+  }
+
+  $: {
+    if (openColorPicker) {
+      currentIntervalColorRGB, updateColorMap(intervalIndex, currentIntervalColorRGB)
+    }
   }
 </script>
 
@@ -172,12 +207,17 @@
     <div class="column" id="intervals-list-div">
       {#each activeColorMap.colors(numberOfClasses, 'rgba') as value, index}
         <div style="display: flex; padding:2px; width: 50%; margin: auto">
-          <div class="discrete" style="background-color: {value}" />
+          <div on:click={() => sendIndexForCmap(index)} class="discrete" style="background-color: {value}" />
           &nbsp;&raquo;&nbsp
-          <div>{intervalList[index]} - {intervalList[index + 1]}</div>
+          <div contenteditable="true" bind:innerHTML={intervalList[index]} />
+          -
+          <div contenteditable="true" bind:innerHTML={intervalList[index + 1]} />
         </div>
       {/each}
     </div>
+    {#if openColorPicker}
+      <ColorPicker bind:RgbColor={currentIntervalColorRGB} />
+    {/if}
   </div>
 
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
