@@ -39,6 +39,7 @@
   let colorMapSelectionVisible = false
   let intervalList = []
   let cmap = []
+  let cmapItem = []
   let numberOfClasses = 5
   let rangeSliderValues = [layerMin, layerMax]
   let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
@@ -83,6 +84,9 @@
     })
 
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
+    if (cmap.length > 0) {
+      cmap = []
+    }
     for (let i = 0; i <= numberOfClasses - 1; i++) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore:next-line
@@ -132,12 +136,15 @@
 
   function updateColorMap(index, rgb) {
     console.log(index, Color.hex(rgb).data.r)
-    let cmapItem = []
+    if (cmapItem.length > 0) {
+      cmapItem = []
+    }
     cmapItem.push(Color.hex(rgb).data.r)
     cmapItem.push(Color.hex(rgb).data.g)
     cmapItem.push(Color.hex(rgb).data.b)
     cmapItem.push(255)
     cmap[index].splice(1, 1, cmapItem)
+    console.log(cmap)
     handleParamsUpdate(cmap)
   }
 
