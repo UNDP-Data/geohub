@@ -3,7 +3,7 @@
 </script>
 
 <div class="style-editing-box">
-  <span class="box-title">{title}</span>
+  <span class="box-title" data-testid="box-title">{title}</span>
   <p>
     <slot />
   </p>

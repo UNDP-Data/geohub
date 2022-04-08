@@ -41,9 +41,17 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # build app
-      - name: Build application
-        run: yarn build
+      - name: Run lint
+        run: yarn ci:lint
+
+      - name: Run Prettier
+        run: yarn ci:prettier
+
+      - name: Run build
+        run: yarn ci:compile
+
+      - name: Run Jest
+        run: yarn ci:test
 
       - name: Copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
