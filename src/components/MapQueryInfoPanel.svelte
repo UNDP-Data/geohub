@@ -183,6 +183,7 @@
   MapQueryInfoControl.prototype.onAdd = function (map: Map) {
     this.map = map
     this.container = document.createElement('div')
+    this.container.title = 'Query Layer Information'
     this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
 
     this.queryInfoContainer = document.createElement('div')
