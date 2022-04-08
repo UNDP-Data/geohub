@@ -20,7 +20,7 @@
   import IconImage from './vector-styles/IconImage.svelte'
 
   export let layer: Layer = LayerInitialValues
-  let updateLegend
+  let updateLegend = () => undefined
 
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]

@@ -22,7 +22,6 @@
   const styleUrl = $map.getStyle().sprite
 
   let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
-  let selectedIcon = null
   $: iconImage, setIconImage()
   const setIconImage = () => {
     if (style.type !== LayerTypes.SYMBOL) return
@@ -32,13 +31,6 @@
     }
     newStyle.layout[propertyName] = iconImage
     $map.setLayoutProperty(layerId, propertyName, iconImage)
-
-    iconList.forEach((icon) => {
-      if (icon.alt === iconImage) {
-        selectedIcon = icon
-        return
-      }
-    })
     dispatch('change')
   }
 
@@ -48,7 +40,7 @@
   }
 
   let iconList = []
-  let updateLegend
+  let updateLegend = () => undefined
   let isIconListPanelVisible = false
 
   onMount(async () => {
@@ -62,17 +54,11 @@
       promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
     })
     iconList = await Promise.all(promises)
-
-    iconList.forEach((icon) => {
-      if (icon.alt === iconImage) {
-        selectedIcon = icon
-        return
-      }
-    })
   })
 
-  const onClick = (e) => {
-    iconImage = e.target.value
+  const onClick = (e: MouseEvent) => {
+    const element = e.target as HTMLInputElement
+    iconImage = element.value
     isIconListPanelVisible = false
     setIconImage()
     updateLegend()
