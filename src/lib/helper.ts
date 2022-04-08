@@ -26,6 +26,11 @@ export const updateParamsInURL = (
   mapStore.triggerRepaint()
 }
 
+/**
+ * Returns a formatted stringified version of json object
+ * @param {JSON} style
+ * @returns {string}
+ */
 export const stringifyStyleJSON = (style: JSON) => {
   return JSON.stringify(style, null, 4)
 }
