@@ -8,7 +8,7 @@
   import { map } from '../../../stores'
   import type { Layer } from '../../../lib/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
-  import { loadImageToDataUrl, loadJson, clipSprite } from '../../../lib/helper'
+  import { loadImageToDataUrl, fetchUrl, clipSprite } from '../../../lib/helper'
   import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
   import VectorLegendSymbol from '../VectorLegendSymbol.svelte'
 
@@ -44,7 +44,7 @@
   let isIconListPanelVisible = false
 
   onMount(async () => {
-    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@2x.png`), loadJson(`${styleUrl}@2x.json`)])
+    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@2x.png`), fetchUrl(`${styleUrl}@2x.json`)])
     await promise.then(([dataUrl, json]) => {
       sprite.dataUrl = dataUrl
       sprite.json = json

@@ -45,10 +45,6 @@ export const loadImageToDataUrl = async (url: string) => {
   return dataUrl
 }
 
-export const loadJson = async (url: string) => {
-  return fetch(url).then((data) => data.json())
-}
-
 export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
   return new Promise((resolve) => {
     Clipper(url, function () {
@@ -62,6 +58,11 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
   })
 }
 
+/**
+ * Returns a json response object from the a fetch of a url
+ * @param {string} url
+ * @returns {JSON}
+ */
 export async function fetchUrl(url: string) {
   try {
     const response = await fetchWithTimeout(url, { timeout: 5000 })
