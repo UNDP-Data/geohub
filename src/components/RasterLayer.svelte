@@ -156,7 +156,7 @@
           <div
             class="layer-header-icons"
             style={isLegendPanelVisible || isOpacityPanelVisible || isFilterPanelVisible
-              ? `opacity: 0.25;`
+              ? `opacity: 1;`
               : 'opacity: 1;'}>
             <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
