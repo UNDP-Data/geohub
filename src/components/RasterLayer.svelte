@@ -320,7 +320,7 @@
             background: #323234;
             border-color: #30363d;
             color: white;
-             }
+          }
 
           .name {
             width: 100%;
