@@ -1,3 +1,4 @@
+import * as helper from './helper'
 import type {
   RasterLayerSpecification,
   FillLayerSpecification,
@@ -65,7 +66,7 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
  */
 export async function fetchUrl(url: string) {
   try {
-    const response = await fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
+    const response = await helper.fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
     return await response.json()
   } catch (error) {
     const bannerErrorMessage: BannerMessage = {
