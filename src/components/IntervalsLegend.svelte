@@ -107,6 +107,7 @@
     let updatedParams = Object.assign({ colormap: encodedCmap })
     updateParamsInURL(definition, layerURL, updatedParams)
   }
+
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
     if (operation === 'increment') {
       if (numberOfClasses <= maxNoOfClasses) {
