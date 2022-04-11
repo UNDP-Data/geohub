@@ -28,8 +28,8 @@ export const updateParamsInURL = (
 
 /**
  * Returns a formatted stringified version of json object
- * @param {JSON} style
- * @returns {string}
+ * @param style JSON object
+ * @returns string Formatted JSON string
  */
 export const stringifyStyleJSON = (style: JSON): string => {
   return JSON.stringify(style, null, 4)
@@ -60,8 +60,8 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
 
 /**
  * Returns a json response object from the a fetch of a url
- * @param {string} url
- * @returns {JSON} | null
+ * @param url The URL to fetch
+ * @returns JSON | null
  */
 export async function fetchUrl(url: string) {
   try {

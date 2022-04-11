@@ -9,15 +9,7 @@ const config = {
     adapter: adapter({
       out: 'build',
       precompress: false,
-      env: {
-        host: 'MY_HOST_VARIABLE',
-        port: 'MY_PORT_VARIABLE',
-        origin: 'MY_ORIGINURL',
-        headers: {
-          protocol: 'MY_PROTOCOL_HEADER',
-          host: 'MY_HOST_HEADER',
-        },
-      },
+      envPrefix: ''
     }),
     vite: {
       ssr: {
