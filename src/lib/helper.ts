@@ -65,7 +65,7 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
  */
 export async function fetchUrl(url: string) {
   try {
-    const response = await exports.fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
+    const response = await fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
     return await response.json()
   } catch (error) {
     const bannerErrorMessage: BannerMessage = {
