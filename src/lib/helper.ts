@@ -8,7 +8,7 @@ import type { BannerMessage, spriteIcon } from './types'
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import { bannerMessages, map } from '../stores'
-import { ErrorMessages, StatusTypes } from './constants'
+import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 
 export const updateParamsInURL = (
   definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification,
@@ -65,7 +65,7 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
  */
 export async function fetchUrl(url: string) {
   try {
-    const response = await fetchWithTimeout(url, { timeout: 5000 })
+    const response = await fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
     return await response.json()
   } catch (error) {
     const bannerErrorMessage: BannerMessage = {
@@ -78,8 +78,8 @@ export async function fetchUrl(url: string) {
   }
 }
 
-async function fetchWithTimeout(resource: string, options = { timeout: 5000 }) {
-  const { timeout = 5000 } = options
+async function fetchWithTimeout(resource: string, options = { timeout: DEFAULT_TIMEOUT_MS }) {
+  const { timeout = DEFAULT_TIMEOUT_MS } = options
   const controller = new AbortController()
   const id = setTimeout(() => controller.abort(), timeout)
   const response = await fetch(resource, {

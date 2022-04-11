@@ -7,6 +7,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 import type { TreeNode } from '../lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
+export const DEFAULT_TIMEOUT_MS = 60000
 
 export enum TabNames {
   LOAD_DATA = 'Load data',
