@@ -15,7 +15,7 @@
   import ColorPicker from './controls/ColorPicker.svelte'
   import { Color } from 'svelte-colorpick'
 
-  import { map } from '../stores/index'
+  import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerInfo } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
@@ -97,6 +97,7 @@
       cmap.push(cmapitem)
     }
     handleParamsUpdate(cmap)
+    //generateBGColors(cmap)
   }
 
   const handleParamsUpdate = (cmap) => {
@@ -120,14 +121,13 @@
     reclassifyImage()
   }
 
-  //Todo: My  changes begin here
   let openColorPicker = false
   let currentIntervalColor
   let currentIntervalColorRGB
   let intervalIndex
 
   function sendIndexForCmap(index) {
-    openColorPicker = true
+    openColorPicker = !openColorPicker
     currentIntervalColor = cmap[index][1]
     currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
     console.log(currentIntervalColorRGB)
@@ -135,7 +135,6 @@
   }
 
   function updateColorMap(index, rgb) {
-    console.log(index, Color.hex(rgb).data.r)
     if (cmapItem.length > 0) {
       cmapItem = []
     }
@@ -146,13 +145,34 @@
     cmap[index].splice(1, 1, cmapItem)
     console.log(cmap)
     handleParamsUpdate(cmap)
+    document.getElementById(`interval-${index}`).style.background = `rgb(${cmapItem})`
   }
-
+  let collapse = false
   $: {
     if (openColorPicker) {
       currentIntervalColorRGB, updateColorMap(intervalIndex, currentIntervalColorRGB)
+      collapse = false
     }
   }
+
+  /*
+  Todo: Please don't remove this block; To be revisited
+  let bgColors = []
+  let currentRGB;
+  const generateBGColors = (cmap) => {
+    if(bgColors.length > 0){
+      bgColors = []
+    }else{
+      cmap.forEach((value, index) => {
+        bgColors.push(`rgb(${value[1][0]}, ${value[1][1]}, ${value[1][2]})`)
+      })
+      console.log(bgColors)
+    }
+  }
+  bgColors.forEach((item, index) => {
+    currentRGB = item
+  })
+   */
 </script>
 
 <div class="group">
@@ -211,20 +231,40 @@
         <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
       </Button>
     </div>
+
+    <!-- Todo: Please dont delete this block. To be revisited
     <div class="column" id="intervals-list-div">
-      {#each activeColorMap.colors(numberOfClasses, 'rgba') as value, index}
+      {#each bgColors as value, index}
         <div style="display: flex; padding:2px; width: 50%; margin: auto">
-          <div on:click={() => sendIndexForCmap(index)} class="discrete" style="background-color: {value}" />
+          <ColorPicker class='colorpicker' bind:RgbColor={value} />
+          &nbsp;&raquo;&nbsp
+          <div contenteditable="true" bind:innerHTML={intervalList[index]} />
+          -
+          <div contenteditable="true" bind:innerHTML={intervalList[index+1]} />
+        </div>
+      {/each}
+    </div>
+    Todo: ending here
+    -->
+
+    <div class="column" id="intervals-list-div">
+      {#each cmap as value, index}
+        <div style="display: flex; padding:2px; width: 50%; margin: auto">
+          <div
+            id="interval-{index}"
+            on:click={() => sendIndexForCmap(index)}
+            class="discrete"
+            style="background-color: rgb({cmap[index][1]})" />
           &nbsp;&raquo;&nbsp
           <div contenteditable="true" bind:innerHTML={intervalList[index]} />
           -
           <div contenteditable="true" bind:innerHTML={intervalList[index + 1]} />
         </div>
       {/each}
+      {#if openColorPicker}
+        <ColorPicker bind:collapse bind:RgbColor={currentIntervalColorRGB} />
+      {/if}
     </div>
-    {#if openColorPicker}
-      <ColorPicker bind:RgbColor={currentIntervalColorRGB} />
-    {/if}
   </div>
 
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
@@ -367,5 +407,11 @@
     margin-bottom: 2rem;
     width: 100%;
     height: 100%;
+  }
+
+  * :global(.color-picker-handle) {
+    border-radius: 0 !important;
+    height: 20px !important;
+    width: 20px !important;
   }
 </style>
