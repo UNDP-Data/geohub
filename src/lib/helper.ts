@@ -31,7 +31,7 @@ export const updateParamsInURL = (
  * @param {JSON} style
  * @returns {string}
  */
-export const stringifyStyleJSON = (style: JSON) => {
+export const stringifyStyleJSON = (style: JSON): string => {
   return JSON.stringify(style, null, 4)
 }
 
@@ -61,11 +61,11 @@ export const clipSprite = (url: string, id: string, icon: spriteIcon) => {
 /**
  * Returns a json response object from the a fetch of a url
  * @param {string} url
- * @returns {JSON}
+ * @returns {JSON} | null
  */
 export async function fetchUrl(url: string) {
   try {
-    const response = await fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
+    const response = await exports.fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
     return await response.json()
   } catch (error) {
     const bannerErrorMessage: BannerMessage = {
@@ -78,7 +78,7 @@ export async function fetchUrl(url: string) {
   }
 }
 
-async function fetchWithTimeout(resource: string, options = { timeout: DEFAULT_TIMEOUT_MS }) {
+export async function fetchWithTimeout(resource: string, options = { timeout: DEFAULT_TIMEOUT_MS }) {
   const { timeout = DEFAULT_TIMEOUT_MS } = options
   const controller = new AbortController()
   const id = setTimeout(() => controller.abort(), timeout)
