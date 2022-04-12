@@ -155,7 +155,6 @@
       collapse = false
     }
   }
-
   /*
   Todo: Please don't remove this block; To be revisited
   let bgColors = []
@@ -174,6 +173,23 @@
     currentRGB = item
   })
    */
+
+  const sendFirstInterval = (index, item) => {
+    if (item > cmap[index][0][1]) {
+      console.log('That is not allowed')
+    } else {
+      cmap[index][0].splice(0, 1, Number(item))
+      handleParamsUpdate(cmap)
+    }
+  }
+  const sendLastInterval = (index, item) => {
+    if (item < cmap[index + 1][0][1]) {
+      cmap[index][0].splice(1, 1, Number(item))
+      handleParamsUpdate(cmap)
+    } else {
+      console.log('That is not allowed')
+    }
+  }
 </script>
 
 <div class="group">
@@ -257,9 +273,18 @@
             class="discrete"
             style="background-color: rgb({cmap[index][1]})" />
           &nbsp;&raquo;&nbsp
-          <div contenteditable="true" bind:innerHTML={intervalList[index]} />
+          <input
+            style="width: 30px!important; border: none"
+            bind:value={intervalList[index]}
+            on:change={sendFirstInterval(index, intervalList[index])} />
+          <!--          <div id='firstInterval-{index}' on:input={sendFirstInterval(index)} contenteditable="true" bind:innerHTML={intervalList[index]} />-->
           -
-          <div contenteditable="true" bind:innerHTML={intervalList[index + 1]} />
+          <input
+            style="width: 30px!important; border: none"
+            bind:value={intervalList[index + 1]}
+            on:change={sendLastInterval(index, intervalList[index + 1])} />
+
+          <!--          <div id='lastInterval-{index}' on:input={sendLastInterval(index)} contenteditable="true" bind:innerHTML={intervalList[index + 1]} />-->
         </div>
       {/each}
       {#if openColorPicker}
