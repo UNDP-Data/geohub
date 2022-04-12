@@ -44,7 +44,7 @@
   let isIconListPanelVisible = false
 
   onMount(async () => {
-    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@2x.png`), fetchUrl(`${styleUrl}@2x.json`)])
+    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
     await promise.then(([dataUrl, json]) => {
       sprite.dataUrl = dataUrl
       sprite.json = json
