@@ -18,6 +18,7 @@
   import FillOutlineColor from './vector-styles/FillOutlineColor.svelte'
   import FillColor from './vector-styles/FillColor.svelte'
   import IconImage from './vector-styles/IconImage.svelte'
+  import IconSize from './vector-styles/IconSize.svelte'
 
   export let layer: Layer = LayerInitialValues
   let updateLegend = () => undefined
@@ -67,6 +68,7 @@
   <FillColor on:change={onStyleChange} {layer} />
   <FillOutlineColor on:change={onStyleChange} {layer} />
   <IconImage on:change={onStyleChange} {layer} />
+  <IconSize on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
