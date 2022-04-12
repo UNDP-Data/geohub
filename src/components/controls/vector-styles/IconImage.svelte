@@ -5,10 +5,9 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { onMount } from 'svelte'
 
-  import { map } from '../../../stores'
+  import { map, spriteImageList } from '../../../stores'
   import type { Layer } from '../../../lib/types'
   import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
-  import { loadImageToDataUrl, fetchUrl, clipSprite } from '../../../lib/helper'
   import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
   import VectorLegendSymbol from '../VectorLegendSymbol.svelte'
 
@@ -19,7 +18,6 @@
   const layerId = layer.definition.id
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-  const styleUrl = $map.getStyle().sprite
 
   let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   $: iconImage, setIconImage()
@@ -34,26 +32,11 @@
     dispatch('change')
   }
 
-  let sprite = {
-    dataUrl: null,
-    json: null,
-  }
-
-  let iconList = []
   let updateLegend = () => undefined
   let isIconListPanelVisible = false
 
   onMount(async () => {
-    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
-    await promise.then(([dataUrl, json]) => {
-      sprite.dataUrl = dataUrl
-      sprite.json = json
-    })
-    const promises = []
-    Object.keys(sprite.json).forEach((id) => {
-      promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
-    })
-    iconList = await Promise.all(promises)
+    updateLegend()
   })
 
   const onClick = (e: MouseEvent) => {
@@ -73,7 +56,7 @@
     {#if isIconListPanelVisible === true}
       <StyleControlGroup title="Icon Image List">
         <ImageList>
-          {#each iconList as icon}
+          {#each $spriteImageList as icon}
             <Item>
               <Wrapper>
                 <input

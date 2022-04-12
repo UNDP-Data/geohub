@@ -69,6 +69,16 @@ export interface spriteIcon {
   pixelRatio: number
 }
 
+export interface spriteImage {
+  src: string
+  alt: string
+}
+
+export interface sprite {
+  dataUrl: string
+  json: JSON
+}
+
 export interface BannerMessage {
   type: StatusTypes
   title: string

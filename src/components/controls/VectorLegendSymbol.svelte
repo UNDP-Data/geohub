@@ -2,40 +2,16 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import LegendSymbol from '@watergis/legend-symbol'
 
-  import { onMount } from 'svelte'
-  import { map } from '../../stores'
+  import { map, spriteImageList } from '../../stores'
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
-  import { loadImageToDataUrl, fetchUrl, clipSprite } from '../../lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const zoom = $map.getZoom()
 
-  let sprite = {
-    dataUrl: null,
-    json: null,
-  }
   let legendSymbolContainer: HTMLElement
-
-  const styleUrl = $map.getStyle().sprite
-
-  let iconList = []
-
-  onMount(async () => {
-    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
-    await promise.then(([dataUrl, json]) => {
-      sprite.dataUrl = dataUrl
-      sprite.json = json
-    })
-    const promises = []
-    Object.keys(sprite.json).forEach((id) => {
-      promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
-    })
-    iconList = await Promise.all(promises)
-    updateLegend()
-  })
 
   export const updateLegend = () => {
     const mapLayers = $map.getStyle().layers
@@ -71,7 +47,7 @@
         }
         case 'svg': {
           if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
-            iconList.forEach((icon) => {
+            $spriteImageList.forEach((icon) => {
               if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
                 const img = document.createElement('img')
                 img.src = icon.src
