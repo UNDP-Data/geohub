@@ -21,6 +21,7 @@
   import IconSize from './vector-styles/IconSize.svelte'
   import IconOverlap from './vector-styles/IconOverlap.svelte'
   import IconKeepUpright from './vector-styles/IconKeepUpright.svelte'
+  import IconIgnorePlacement from './vector-styles/IconIgnorePlacement.svelte'
 
   export let layer: Layer = LayerInitialValues
   let updateLegend = () => undefined
@@ -73,6 +74,7 @@
   <IconSize on:change={onStyleChange} {layer} />
   <IconOverlap on:change={onStyleChange} {layer} />
   <IconKeepUpright on:change={onStyleChange} {layer} />
+  <IconIgnorePlacement on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
