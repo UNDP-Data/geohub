@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom'
+import { describe, expect, it, vi } from 'vitest'
 
 import { bannerMessages } from '../../stores'
 import * as helper from '../helper'
@@ -19,12 +19,8 @@ describe('stringifyStyleJSON', () => {
 })
 
 describe('fetchUrl', () => {
-  beforeEach(() => {
-    jest.resetAllMocks()
-  })
-
   it('should return a json object upon no timeout ', async () => {
-    const { Response, Headers } = jest.requireActual('node-fetch')
+    const { Response, Headers } = await vi.importActual('node-fetch')
     const meta = {
       'Content-Type': 'application/json',
       Accept: '*/*',
@@ -39,14 +35,14 @@ describe('fetchUrl', () => {
     }
 
     const response = new Response(JSON.stringify({ data: {} }), ResponseInit)
-    const fetchWithNoTimeout = jest.spyOn(helper, 'fetchWithTimeout').mockReturnValue(Promise.resolve(response))
+    const fetchWithNoTimeout = vi.spyOn(helper, 'fetchWithTimeout').mockReturnValue(Promise.resolve(response))
     const json = await helper.fetchUrl('http://www.google.com')
     expect(json).toEqual({ data: {} })
     expect(fetchWithNoTimeout).toHaveBeenCalledTimes(1)
   })
 
   it('should return no json object and a banner message store should be updated upon timeout', async () => {
-    const fetchWithTimeout = jest.spyOn(helper, 'fetchWithTimeout').mockRejectedValue(new Error('TIME_OUT'))
+    const fetchWithTimeout = vi.spyOn(helper, 'fetchWithTimeout').mockRejectedValue(new Error('TIME_OUT'))
     const json = await helper.fetchUrl('http://www.google.com')
     expect(json).toBeNull()
     expect(fetchWithTimeout).toHaveBeenCalledTimes(1)

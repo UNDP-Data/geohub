@@ -15,7 +15,11 @@ const config = {
       ssr: {
         noExternal: [/^@material(?:-extra)?\//],
       },
-     }
+      test: {
+        threads: false,
+        environment: "jsdom",
+      }
+    }
   },
 
   onwarn(warning, defaultHandler) {
