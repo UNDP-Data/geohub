@@ -20,6 +20,7 @@
   import IconImage from './vector-styles/IconImage.svelte'
   import IconSize from './vector-styles/IconSize.svelte'
   import IconOverlap from './vector-styles/IconOverlap.svelte'
+  import IconKeepUpright from './vector-styles/IconKeepUpright.svelte'
 
   export let layer: Layer = LayerInitialValues
   let updateLegend = () => undefined
@@ -71,6 +72,7 @@
   <IconImage on:change={onStyleChange} {layer} />
   <IconSize on:change={onStyleChange} {layer} />
   <IconOverlap on:change={onStyleChange} {layer} />
+  <IconKeepUpright on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">

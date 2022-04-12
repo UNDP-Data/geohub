@@ -89,6 +89,7 @@
   "type": "module",
   "dependencies": {
     "@maplibre/maplibre-gl-style-spec": "^15.0.0",
+    "@smui/switch": "^6.0.0-beta.16",
     "@watergis/legend-symbol": "^0.2.2",
     "@watergis/maplibre-gl-export": "^1.2.15",
     "colormap": "^2.3.2",
