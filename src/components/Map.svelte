@@ -4,9 +4,11 @@
   import { cloneDeep } from 'lodash'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
-  import { indicatorProgress, map, layerList } from '../stores'
+  import { indicatorProgress, map, layerList, spriteImageList } from '../stores'
   import MapQueryInfoPanel from './MapQueryInfoPanel.svelte'
   import { LayerTypes } from '$lib/constants'
+  import { loadImageToDataUrl, fetchUrl, clipSprite } from '../lib/helper'
+  import type { sprite } from '$lib/types'
 
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
@@ -68,6 +70,28 @@
     })
 
     map.update(() => newMap)
+
+    const styleUrl = newMap.getStyle().sprite
+
+    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
+    promise
+      .then(([dataUrl, json]) => {
+        const sprite: sprite = {
+          dataUrl: dataUrl,
+          json: json,
+        }
+        return sprite
+      })
+      .then((sprite: sprite) => {
+        const promises = []
+        Object.keys(sprite.json).forEach((id) => {
+          promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
+        })
+        return Promise.all(promises)
+      })
+      .then((iconList) => {
+        spriteImageList.update(() => iconList)
+      })
   })
 </script>
 

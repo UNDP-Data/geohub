@@ -18,6 +18,12 @@
   import FillOutlineColor from './vector-styles/FillOutlineColor.svelte'
   import FillColor from './vector-styles/FillColor.svelte'
   import IconImage from './vector-styles/IconImage.svelte'
+  import IconSize from './vector-styles/IconSize.svelte'
+  import IconOverlap from './vector-styles/IconOverlap.svelte'
+  import IconKeepUpright from './vector-styles/IconKeepUpright.svelte'
+  import IconIgnorePlacement from './vector-styles/IconIgnorePlacement.svelte'
+  import IconOffset from './vector-styles/IconOffset.svelte'
+  import IconColor from './vector-styles/IconColor.svelte'
 
   export let layer: Layer = LayerInitialValues
   let updateLegend = () => undefined
@@ -67,6 +73,12 @@
   <FillColor on:change={onStyleChange} {layer} />
   <FillOutlineColor on:change={onStyleChange} {layer} />
   <IconImage on:change={onStyleChange} {layer} />
+  <IconColor on:change={onStyleChange} {layer} />
+  <IconSize on:change={onStyleChange} {layer} />
+  <IconOverlap on:change={onStyleChange} {layer} />
+  <IconKeepUpright on:change={onStyleChange} {layer} />
+  <IconIgnorePlacement on:change={onStyleChange} {layer} />
+  <IconOffset on:change={onStyleChange} {layer} />
 
   <hr />
   <Textfield textarea bind:value={styleJSON} label="style.json" style="width: 100%;" helperLine$style="width: 100%;">
