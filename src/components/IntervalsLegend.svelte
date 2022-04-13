@@ -44,6 +44,7 @@
   let rangeSliderValues = [layerMin, layerMax]
   let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
   let selectedColorMapType = ''
+
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
@@ -225,7 +226,7 @@
           bind:value={selectedClassificationMethod}
           id="class-mode"
           on:change={() => {
-            reclassifyImage()
+            reclassifyImage
           }}>
           {#each classificationMethods as classificationMethod}
             <option value={classificationMethod.value}>{classificationMethod.name}</option>
@@ -309,7 +310,7 @@
             on:click={() => {
               activeColorMapName = aColorMap
               activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-              reclassifyImage()
+              reclassifyImage
             }}
             style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
               defaultNumberOfColors,
