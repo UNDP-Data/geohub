@@ -13,6 +13,9 @@ export enum TabNames {
   LOAD_DATA = 'Load data',
   LAYERS = 'Layers',
   ANALYZE = 'Analyze',
+  LEGEND = 'Legend',
+  REFINE = 'Refine',
+  OPACITY = 'Opacity',
 }
 
 export const TreeNodeInitialValues = {
