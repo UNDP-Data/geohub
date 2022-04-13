@@ -50,8 +50,8 @@
     legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
-  //let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
-  let selectedLegendType
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
+
   let activeColorMapName: string = DEFAULT_COLORMAP
 
   $: panelOpen, setLayerState()

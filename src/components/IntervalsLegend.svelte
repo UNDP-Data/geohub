@@ -51,13 +51,6 @@
     { name: 'Logarithmic', value: 'l' },
   ]
 
-  $: {
-    if (activeColorMapName !== '') {
-      populateAllColorMaps()
-      reclassifyImage()
-    }
-  }
-
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
       let cmaps = {}
@@ -79,7 +72,7 @@
     }
   }
 
-  const reclassifyImage = (params = {}) => {
+  const reclassifyImage = () => {
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
@@ -101,7 +94,7 @@
     //generateBGColors(cmap)
   }
 
-  const handleParamsUpdate = (cmap) => {
+  const handleParamsUpdate = (cmap: object) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
@@ -128,7 +121,7 @@
   let currentIntervalColorRGB
   let intervalIndex
 
-  function sendIndexForCmap(index) {
+  function sendIndexForCmap(index: number) {
     openColorPicker = !openColorPicker
     currentIntervalColor = cmap[index][1]
     currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
@@ -136,7 +129,7 @@
     intervalIndex = index
   }
 
-  function updateColorMap(index, rgb) {
+  function updateColorMap(index: number, rgb: string) {
     if (cmapItem.length > 0) {
       cmapItem = []
     }
@@ -149,6 +142,7 @@
     handleParamsUpdate(cmap)
     document.getElementById(`interval-${index}`).style.background = `rgb(${cmapItem})`
   }
+
   let collapse = false
   $: {
     if (openColorPicker) {
@@ -175,20 +169,32 @@
   })
    */
 
-  const sendFirstInterval = (index, item) => {
+  const sendFirstInterval = (index: number, item: string) => {
     if (item > cmap[index][0][1]) {
       console.log('That is not allowed')
     } else {
       cmap[index][0].splice(0, 1, Number(item))
+      console.log(cmap)
       handleParamsUpdate(cmap)
     }
   }
-  const sendLastInterval = (index, item) => {
+  const sendLastInterval = (index: number, item: string) => {
     if (item < cmap[index + 1][0][1]) {
       cmap[index][0].splice(1, 1, Number(item))
+      cmap[index + 1][0].splice(0, 1, Number(item))
+      console.log(cmap)
       handleParamsUpdate(cmap)
     } else {
       console.log('That is not allowed')
+    }
+  }
+
+  // This is causing the ma to be reloaded every time
+  $: {
+    if (activeColorMapName) {
+      populateAllColorMaps()
+      reclassifyImage()
+      console.log('this is being called')
     }
   }
 </script>
