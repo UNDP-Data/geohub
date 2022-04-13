@@ -672,6 +672,24 @@
     "@material/theme" "^13.0.0"
     tslib "^2.1.0"
 
+"@material/switch@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/switch/-/switch-13.0.0.tgz#9f25a6fc2a45344ecdc86f6545e95359f5f0c770"
+  integrity sha512-zbdo6nKEOAx24ILCBobZlQqU2WZ+KuPgdAc1VTI1q1BCKN3rDIfm9RnsCuYiZa9iaq4UUgdYuhH8KVEYGP7Lrw==
+  dependencies:
+    "@material/animation" "^13.0.0"
+    "@material/base" "^13.0.0"
+    "@material/density" "^13.0.0"
+    "@material/dom" "^13.0.0"
+    "@material/elevation" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/ripple" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/tokens" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/tab-bar@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@material/tab-bar/-/tab-bar-13.0.0.tgz#e0ba597b507a5b62aac91837d96458dd250cee14"
@@ -1090,6 +1108,18 @@
     "@smui/menu" "^6.0.0-beta.16"
     "@smui/menu-surface" "^6.0.0-beta.16"
     "@smui/notched-outline" "^6.0.0-beta.16"
+    "@smui/ripple" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
+"@smui/switch@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui/switch/-/switch-6.0.0-beta.16.tgz#be47d9473a770ef9bf9b946d201ad32aa55c9acd"
+  integrity sha512-z14p7DE4ZF0D2ir+qQ3wgA3khexztSY3Z7xbNV0+yO5rIW24l2Sg/uFrZSNDfQuiIUHSf1aP9zHCPrxmm74OLA==
+  dependencies:
+    "@material/feature-targeting" "^13.0.0"
+    "@material/switch" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.16"
     "@smui/ripple" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
