@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Tooltip, { Wrapper } from '@smui/tooltip'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
@@ -37,14 +38,28 @@
   }
 </script>
 
-<div class="icon-selected" title="Move layer up (in map)" on:click={() => hierachyUp(layerId)}>
-  <Fa icon={faChevronUp} size="1x" />
-</div>
+<div class="grouped">
+  <Wrapper>
+    <div class="icon-selected" on:click={() => hierachyUp(layerId)}>
+      <Fa icon={faChevronUp} size="1x" />
+    </div>
+    <Tooltip showDelay={300} hideDelay={100} yPos="above">Bring Forward in Map</Tooltip>
+  </Wrapper>
 
-<div class="icon-selected" title="Move layer down (in map)" on:click={() => hierachyDown(layerId)}>
-  <Fa icon={faChevronDown} size="1x" />
+  <Wrapper>
+    <div class="icon-selected" on:click={() => hierachyDown(layerId)}>
+      <Fa icon={faChevronDown} size="1x" />
+    </div>
+    <Tooltip showDelay={300} hideDelay={100} yPos="above">Send Backward in Map</Tooltip>
+  </Wrapper>
 </div>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss'; ;
+  @import '../../styles/button-icons-selected.scss';
+
+  .grouped {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
 </style>

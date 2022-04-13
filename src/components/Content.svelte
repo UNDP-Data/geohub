@@ -75,7 +75,10 @@
 </script>
 
 <div class="content-container">
-  <Drawer variant="dismissible" bind:open={drawerOpen} style="width: {drawerWidth}px; max-width: {drawerWidth}px;">
+  <Drawer
+    variant="dismissible"
+    bind:open={drawerOpen}
+    style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow: visible;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
@@ -91,7 +94,7 @@
             </Tab>
           </TabBar>
         </Header>
-        <Content style="padding-right: 15px;">
+        <Content style="padding-right: 15px; overflow: visible;">
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>

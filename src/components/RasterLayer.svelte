@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-  const dynamicLayerIds = {}
   const layerState = {}
 </script>
 
@@ -10,8 +9,7 @@
   import Fa from 'svelte-fa'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
-  import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-  import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
+
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { faDiagramNext } from '@fortawesome/free-solid-svg-icons/faDiagramNext'
   import { faRankingStar } from '@fortawesome/free-solid-svg-icons/faRankingStar'
@@ -20,24 +18,20 @@
   import Legend from './Legend.svelte'
   import UniqueValuesLegend from './UniqueValuesLegend.svelte'
   import IntervalsLegend from './IntervalsLegend.svelte'
-  import { layerList, dynamicLayers, map } from '../stores'
+  import { layerList, map } from '../stores'
   import type { Layer } from '../lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
-  import LayerControlGroup from './control-groups/LayerControlGroup.svelte'
   import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
-  export let disabled = true
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
   const layerUniqueValues = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
-  let mapLayerIndex: number
 
-  let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
@@ -59,7 +53,6 @@
   let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
   let activeColorMapName: string = DEFAULT_COLORMAP
 
-  $: isDynamicLayer, setDynamicLayerState()
   $: panelOpen, setLayerState()
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
@@ -77,32 +70,6 @@
   const debounce = (fn) => {
     clearTimeout(timer)
     timer = setTimeout(fn, 500)
-  }
-
-  const setDynamicLayerState = () => {
-    dynamicLayerIds[layerId] = isDynamicLayer
-
-    if (isDynamicLayer === true) {
-      if (!$dynamicLayers.includes(layerId)) {
-        dynamicLayers.set([...$dynamicLayers, layerId])
-      }
-    } else {
-      $dynamicLayers = $dynamicLayers.filter((dynamicLayerId) => dynamicLayerId !== layerId)
-    }
-
-    let ntrue = 0
-
-    for (const [value] of Object.entries(dynamicLayerIds)) {
-      if (value) {
-        ++ntrue
-      }
-      if (ntrue >= 2) {
-        disabled = false
-        break
-      } else {
-        disabled = true
-      }
-    }
   }
 
   const setLayerState = () => {
@@ -148,11 +115,11 @@
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
-  <Accordion>
+  <Accordion style="z-index: inherit;">
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
         <div>
-          <LayerNameGroup {mapLayerIndex} {layer} />
+          <LayerNameGroup {layer} />
           <div
             class="layer-header-icons"
             style={isLegendPanelVisible || isOpacityPanelVisible || isFilterPanelVisible
@@ -182,22 +149,6 @@
 
               <OpacityButton bind:isOpacityPanelVisible />
             </div>
-
-            <!-- GROUP : NON-EDIT ACTIONS -->
-            {#if $layerList.length > 1}
-              <div class="group">
-                <div
-                  title="Layer Merge"
-                  class="icon-selected"
-                  on:click={() => (isDynamicLayer = !isDynamicLayer)}
-                  style="margin-right: 8px; margin-left: 3px;">
-                  <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
-                </div>
-              </div>
-            {/if}
-
-            <!-- GROUP : LAYER CONTROL ACTIONS -->
-            <LayerControlGroup bind:mapLayerIndex {layer} />
           </div>
         </div>
 
