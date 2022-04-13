@@ -1,7 +1,5 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
   import RangeSlider from 'svelte-range-slider-pips'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
@@ -42,12 +40,6 @@
 
 {#if isOpacityPanelVisible === true}
   <div class="action">
-    <div class="header">
-      <div class="name">Opacity</div>
-      <div class="close icon-selected" on:click={() => (isOpacityPanelVisible = false)} title="Close">
-        <Fa icon={faXmark} size="lg" />
-      </div>
-    </div>
     <div class="slider">
       <RangeSlider
         bind:values={rangeSliderValues}
@@ -73,33 +65,6 @@
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-    }
-
-    .header {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      margin-top: 15px;
-      background: #e3e3e3;
-      border-radius: 7.5px;
-      padding: 2.5px;
-      padding-left: 7.5px;
-      margin-bottom: 10px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #323234;
-        border-color: #30363d;
-        color: white;
-      }
-
-      .name {
-        width: 100%;
-      }
-
-      .close {
-        cursor: pointer;
-        padding-right: 5px;
-      }
     }
   }
 </style>

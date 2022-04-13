@@ -4,22 +4,44 @@
 
 <script lang="ts">
   import Accordion, { Panel } from '@smui-extra/accordion'
+  import Tab, { Label } from '@smui/tab'
+  import TabBar from '@smui/tab-bar'
+  import Fa from 'svelte-fa'
+  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
+  import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import type { Layer } from '../lib/types'
-  import { LayerInitialValues } from '../lib/constants'
+  import { LayerInitialValues, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
-  import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
-  import VectorLegendButton from './controls/VectorLegendButton.svelte'
   import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
 
-  let panelOpen: boolean = layerState[layerId] || false
+  let activeTab = ''
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
+  let panelOpen: boolean = layerState[layerId] || false
+
+  $: {
+    if (activeTab === '') {
+      isLegendPanelVisible = false
+
+      isOpacityPanelVisible = false
+    }
+
+    if (activeTab === TabNames.LEGEND) {
+      isLegendPanelVisible = !isLegendPanelVisible
+      isOpacityPanelVisible = false
+    }
+
+    if (activeTab === TabNames.OPACITY) {
+      isLegendPanelVisible = false
+      isOpacityPanelVisible = true
+    }
+  }
 </script>
 
 <div class="accordion-container">
@@ -29,10 +51,31 @@
         <div>
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
-            <!-- GROUP : EDIT OPTIONS-->
             <div class="group">
-              <VectorLegendButton bind:isLegendPanelVisible />
-              <OpacityButton bind:isOpacityPanelVisible />
+              <TabBar tabs={[TabNames.LEGEND, TabNames.OPACITY]} let:tab active={activeTab}>
+                <Tab
+                  {tab}
+                  class="tab"
+                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
+                  on:click={() => {
+                    activeTab === tab ? (activeTab = '') : (activeTab = tab)
+                  }}>
+                  <Label>
+                    <div class="tabs">
+                      <div style="padding-right: 5px;">
+                        {#if tab === TabNames.LEGEND}
+                          <Fa icon={faList} size="1x" />
+                        {:else if tab === TabNames.OPACITY}
+                          <Fa icon={faDroplet} size="1x" />
+                        {/if}
+                      </div>
+                      <div>
+                        {tab}
+                      </div>
+                    </div>
+                  </Label>
+                </Tab>
+              </TabBar>
             </div>
           </div>
         </div>
@@ -61,22 +104,26 @@
         padding-top: 10px;
 
         .group {
-          background: #e3e3e3;
-          border-radius: 7.5px;
-          padding-right: 0;
-          padding: 5px;
+          padding-top: 5px;
+          padding-bottom: 5px;
+
+          .tabs {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            font-family: ProximaNova, sans-serif;
+            font-size: 11px;
+            gap: 5px;
+          }
 
           @media (prefers-color-scheme: dark) {
-            background: #0d1117;
-            border-color: #30363d;
             color: white;
           }
         }
       }
 
       .layer-actions {
-        margin-top: 10px;
-        border-top: 1px solid rgba(204, 204, 204, 0.5);
+        padding-top: 5px;
       }
     }
   }

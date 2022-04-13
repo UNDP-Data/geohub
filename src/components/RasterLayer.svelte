@@ -5,15 +5,15 @@
 <script lang="ts">
   import 'bulma/css/bulma.css'
   import Accordion, { Panel } from '@smui-extra/accordion'
-  import { slide } from 'svelte/transition'
   import Fa from 'svelte-fa'
-  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
-  import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
-
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faDiagramNext } from '@fortawesome/free-solid-svg-icons/faDiagramNext'
-  import { faRankingStar } from '@fortawesome/free-solid-svg-icons/faRankingStar'
   import { faBarsProgress } from '@fortawesome/free-solid-svg-icons/faBarsProgress'
+  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
+  import { faDiagramNext } from '@fortawesome/free-solid-svg-icons/faDiagramNext'
+  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
+  import { faList } from '@fortawesome/free-solid-svg-icons/faList'
+  import { faRankingStar } from '@fortawesome/free-solid-svg-icons/faRankingStar'
+  import Tab, { Label } from '@smui/tab'
+  import TabBar from '@smui/tab-bar'
 
   import Legend from './Legend.svelte'
   import UniqueValuesLegend from './UniqueValuesLegend.svelte'
@@ -21,9 +21,8 @@
   import { layerList, map } from '../stores'
   import type { Layer } from '../lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP } from '../lib/constants'
+  import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
-  import OpacityButton from './controls/OpacityButton.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -32,6 +31,8 @@
   const mapLayers = $map.getStyle().layers
   const layerUniqueValues = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
 
+  let activeColorMapName: string = DEFAULT_COLORMAP
+  let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
@@ -42,6 +43,7 @@
   let scalingValueStart = Math.floor(+layerBandMetadataMin * 10) / 10
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
 
   let legendTypes = { continuous: faDiagramNext }
   if (layerUniqueValues.length > 0) {
@@ -50,9 +52,7 @@
     legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
-
-  let activeColorMapName: string = DEFAULT_COLORMAP
+  const legendTypeLabels = Object.keys(legendTypes)
 
   $: panelOpen, setLayerState()
   $: scalingValueStart, setScalingValueRange()
@@ -66,6 +66,32 @@
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
     if (!layer) hideAllPanels()
+  }
+
+  $: {
+    if (activeTab === '') {
+      isLegendPanelVisible = false
+      isFilterPanelVisible = false
+      isOpacityPanelVisible = false
+    }
+
+    if (activeTab === TabNames.LEGEND) {
+      isLegendPanelVisible = !isLegendPanelVisible
+      isFilterPanelVisible = false
+      isOpacityPanelVisible = false
+    }
+
+    if (activeTab === TabNames.REFINE) {
+      isFilterPanelVisible = !isFilterPanelVisible
+      isLegendPanelVisible = false
+      isOpacityPanelVisible = false
+    }
+
+    if (activeTab === TabNames.OPACITY) {
+      isFilterPanelVisible = false
+      isLegendPanelVisible = false
+      isOpacityPanelVisible = true
+    }
   }
 
   const debounce = (fn) => {
@@ -109,10 +135,6 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  import Tab, { Label } from '@smui/tab'
-  import TabBar from '@smui/tab-bar'
-  const legendTypeLabels = Object.keys(legendTypes)
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -121,54 +143,48 @@
       <div class="layer-header">
         <div>
           <LayerNameGroup {layer} />
-          <div
-            class="layer-header-icons"
-            style={isLegendPanelVisible || isOpacityPanelVisible || isFilterPanelVisible
-              ? `opacity: 1;`
-              : 'opacity: 1;'}>
-            <!-- GROUP : EDIT OPTIONS-->
+          <div class="layer-header-icons">
             <div class="group">
-              <div
-                class={isLegendPanelVisible ? 'icon-selected' : 'icon'}
-                on:click={() => {
-                  isLegendPanelVisible = !isLegendPanelVisible
-                  isFilterPanelVisible = false
-                  isOpacityPanelVisible = false
-                }}>
-                <Fa icon={faPalette} size="1x" />
-              </div>
-
-              <div
-                class={isFilterPanelVisible ? 'icon-selected' : 'icon'}
-                on:click={() => {
-                  isFilterPanelVisible = !isFilterPanelVisible
-                  isLegendPanelVisible = false
-                  isOpacityPanelVisible = false
-                }}>
-                <Fa icon={faFilter} size="1x" />
-              </div>
-
-              <OpacityButton bind:isOpacityPanelVisible />
+              <TabBar tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]} let:tab active={activeTab}>
+                <Tab
+                  {tab}
+                  class="tab"
+                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
+                  on:click={() => {
+                    activeTab === tab ? (activeTab = '') : (activeTab = tab)
+                  }}>
+                  <Label>
+                    <div class="tabs">
+                      <div style="padding-right: 5px;">
+                        {#if tab === TabNames.LEGEND}
+                          <Fa icon={faList} size="1x" />
+                        {:else if tab === TabNames.REFINE}
+                          <Fa icon={faCalculator} size="1x" />
+                        {:else if tab === TabNames.OPACITY}
+                          <Fa icon={faDroplet} size="1x" />
+                        {/if}
+                      </div>
+                      <div>
+                        {tab}
+                      </div>
+                    </div>
+                  </Label>
+                </Tab>
+              </TabBar>
             </div>
           </div>
         </div>
 
         <div class="layer-actions">
           {#if isLegendPanelVisible === true}
-            <div transition:slide class="action">
-              <div class="header">
-                <div class="name">Legend</div>
-                <div class="close icon-selected" on:click={() => (isLegendPanelVisible = false)} title="Close">
-                  <Fa icon={faXmark} size="lg" />
-                </div>
-              </div>
+            <div class="action">
               <div class="content">
                 <div class="tab-bar">
                   <TabBar tabs={legendTypeLabels} let:tab style="" active={legendTypeLabels[0]}>
                     <Tab
                       {tab}
                       class="tab"
-                      style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px;"
+                      style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none;"
                       on:click={() => {
                         selectedLegendType = tab
                       }}>
@@ -199,16 +215,6 @@
                 <!--                  <IntervalsLegend bind:activeColorMapName layerConfig={layer} />-->
                 <!--                </div>-->
               </div>
-            </div>{/if}
-
-          {#if isFilterPanelVisible === true}
-            <div class="action">
-              <div class="header">
-                <div class="name">Filter</div>
-                <div class="close icon-selected" on:click={() => (isFilterPanelVisible = false)} title="Close">
-                  <Fa icon={faXmark} size="lg" />
-                </div>
-              </div>
             </div>
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
@@ -229,70 +235,29 @@
       padding-top: 10px;
 
       .group {
-        background: #e3e3e3;
-        border-radius: 7.5px;
-        padding-right: 0;
-        padding: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+
+        .tabs {
+          align-items: center;
+          display: flex;
+          flex-direction: row;
+          font-family: ProximaNova, sans-serif;
+          font-size: 11px;
+          gap: 5px;
+        }
 
         @media (prefers-color-scheme: dark) {
-          background: #323234;
           color: white;
-        }
-
-        .icon {
-          cursor: pointer;
-          display: inline;
-          margin-right: 10px;
-          opacity: 0.5;
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-
-        .icon-selected {
-          cursor: pointer;
-          display: inline;
-          margin-right: 10px;
-          opacity: 1;
         }
       }
     }
 
     .layer-actions {
-      border-top: 1px solid rgba(204, 204, 204, 0.5);
-      margin-top: 10px;
+      padding-top: 5px;
 
       .action {
         margin-bottom: 25px;
-
-        .header {
-          align-items: center;
-          background: #e3e3e3;
-          border-radius: 7.5px;
-          display: flex;
-          justify-content: left;
-          margin-bottom: 10px;
-          margin-top: 15px;
-          padding-left: 7.5px;
-          padding: 2.5px;
-
-          @media (prefers-color-scheme: dark) {
-            background: #323234;
-            border-color: #30363d;
-            color: white;
-          }
-
-          .name {
-            width: 100%;
-            padding-left: 5px;
-          }
-
-          .close {
-            cursor: pointer;
-            padding-right: 5px;
-          }
-        }
 
         .content {
           padding: 5px 15px 5px 15px;
