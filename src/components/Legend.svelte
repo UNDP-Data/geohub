@@ -12,7 +12,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
-  import { map } from '../stores/index'
+  import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
   import { updateParamsInURL } from '../lib/helper'
 
@@ -35,14 +35,6 @@
   let rangeSliderValues = [layerMin, layerMax]
   let selectedColorMapType = ''
   let step = (layerMax - layerMin) * 1e-2
-  // let layerURL: URL
-
-  $: {
-    if (activeColorMapName !== '') {
-      populateAllColorMaps()
-      rescaleColorMap()
-    }
-  }
 
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
@@ -83,7 +75,17 @@
       }
 
       params = Object.assign(params, { colormap_name: activeColorMapName })
+      Object.keys(params).forEach((key) => {
+        layerURL.searchParams.set(key, params[key])
+      })
       updateParamsInURL(definition, layerURL, params)
+    }
+  }
+
+  $: {
+    if (activeColorMapName) {
+      populateAllColorMaps()
+      rescaleColorMap()
     }
   }
 </script>
@@ -146,7 +148,7 @@
               on:click={() => {
                 activeColorMapName = aColorMap
                 activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-                updateParamsInURL(definition, layerURL, { colormap_name: activeColorMapName })
+                updateParamsInURL(definition, layerURL, { colormap_name: aColorMap })
               }}
               style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
                 defaultNumberOfColors,

@@ -19,7 +19,6 @@ export const updateParamsInURL = (
   Object.keys(params).forEach((key) => {
     layerURL.searchParams.set(key, params[key])
   })
-
   const mapStore = get(map)
   mapStore.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
   mapStore.style.sourceCaches[definition.source].clearTiles()

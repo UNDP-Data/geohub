@@ -56,7 +56,8 @@
     legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
   }
 
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
+  //let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
+  let selectedLegendType
   let activeColorMapName: string = DEFAULT_COLORMAP
 
   $: isDynamicLayer, setDynamicLayerState()
@@ -217,7 +218,9 @@
                       {tab}
                       class="tab"
                       style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px;"
-                      on:click={() => (selectedLegendType = tab)}>
+                      on:click={() => {
+                        selectedLegendType = tab
+                      }}>
                       <Label
                         style="font-size: 9px; text-transform: none; font-weight: normal; font-family: ProximaNova, sans-serif;">
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -226,17 +229,24 @@
                   </TabBar>
                 </div>
 
-                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>
+                {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
                   <Legend bind:activeColorMapName layerConfig={layer} />
-                </div>
-
-                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>
+                {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
                   <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
-                </div>
-
-                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>
+                {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
                   <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
-                </div>
+                {/if}
+                <!--                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>-->
+                <!--                  <Legend bind:activeColorMapName layerConfig={layer} />-->
+                <!--                </div>-->
+
+                <!--                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>-->
+                <!--                  <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />-->
+                <!--                </div>-->
+
+                <!--                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>-->
+                <!--                  <IntervalsLegend bind:activeColorMapName layerConfig={layer} />-->
+                <!--                </div>-->
               </div>
             </div>{/if}
 
