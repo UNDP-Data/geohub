@@ -40,6 +40,7 @@
     "@smui/image-list": "^6.0.0-beta.16",
     "@smui/linear-progress": "^6.0.0-beta.16",
     "@smui/list": "^6.0.0-beta.16",
+    "@smui/radio": "^6.0.0-beta.16",
     "@smui/segmented-button": "^6.0.0-beta.16",
     "@smui/select": "^6.0.0-beta.16",
     "@smui/tab": "^6.0.0-beta.16",

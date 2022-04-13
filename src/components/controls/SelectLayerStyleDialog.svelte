@@ -1,8 +1,9 @@
 <script lang="ts">
   import Button, { Label as LabelButton } from '@smui/button'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
+  import FormField from '@smui/form-field'
+  import Radio from '@smui/radio'
   import Textfield from '@smui/textfield'
-  import Select, { Option } from '@smui/select'
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
@@ -14,13 +15,14 @@
   import { LayerTypes } from '../../lib/constants'
   import { map, layerList } from '../../stores'
 
-  export let SelectLayerStyleDialogVisible = false
-  export let path: string
-  export let url: string
   export let label: string
-  let tileSourceId = path
-  let layerTypes = [LayerTypes.SYMBOL, LayerTypes.LINE, LayerTypes.FILL]
+  export let path: string
+  export let SelectLayerStyleDialogVisible = false
+  export let url: string
+
   let layerType = LayerTypes.LINE
+  let layerTypes = [LayerTypes.LINE, LayerTypes.SYMBOL, LayerTypes.FILL]
+  let tileSourceId = path
 
   const addLayer = () => {
     if (!$map.getSource(tileSourceId)) {
@@ -106,15 +108,25 @@
 </script>
 
 <Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 400px; height: 300px">
-  <Title>Add layer</Title>
+  <Title>Add Layer</Title>
   <ContentDialog>
-    <Textfield bind:value={label} label="Source layer" />
-    <br />
-    <Select bind:value={layerType} label="Layer type">
-      {#each layerTypes as type}
-        <Option value={type}>{type}</Option>
-      {/each}
-    </Select>
+    <div>Name</div>
+    <Textfield bind:value={label} style="height: 25px;" />
+    <br /><br />
+
+    <div>Types</div>
+    <div>
+      <div class="layer-type">
+        {#each layerTypes as type}
+          <FormField>
+            <Radio bind:group={layerType} value={type} />
+            <span slot="label">
+              {type}
+            </span>
+          </FormField>
+        {/each}
+      </div>
+    </div>
   </ContentDialog>
   <ActionsDialog>
     <Button>
@@ -127,4 +139,10 @@
 </Dialog>
 
 <style lang="scss">
+  .layer-type {
+    align-items: left;
+    flex-direction: row;
+    gap: 10px;
+    display: flex;
+  }
 </style>
