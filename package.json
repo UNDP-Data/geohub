@@ -21,7 +21,7 @@
     "test": "vitest --run --dir src --passWithNoTests",
     "test:watch": "vitest --watch --dir src --passWithNoTests",
     "ci:compile": "svelte-kit build",
-    "ci:lint": "eslint --ignore-path .gitignore .",
+    "ci:lint": "eslint --ignore-path .gitignore . --quiet",
     "ci:test": "vitest --run --dir src --passWithNoTests --reporter verbose",
     "ci:prettier": "prettier --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore"
   },
