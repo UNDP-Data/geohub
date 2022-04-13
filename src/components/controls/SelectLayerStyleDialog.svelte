@@ -114,7 +114,7 @@
     <Textfield bind:value={label} style="height: 25px;" />
     <br /><br />
 
-    <div>Types</div>
+    <div>Type</div>
     <div>
       <div class="layer-type">
         {#each layerTypes as type}
@@ -130,10 +130,10 @@
   </ContentDialog>
   <ActionsDialog>
     <Button>
-      <LabelButton class="button">Cancel</LabelButton>
+      <LabelButton>Cancel</LabelButton>
     </Button>
     <Button on:click={() => addLayer()}>
-      <LabelButton class="button">Add</LabelButton>
+      <LabelButton>Add</LabelButton>
     </Button>
   </ActionsDialog>
 </Dialog>
