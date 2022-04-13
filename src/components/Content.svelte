@@ -78,7 +78,7 @@
   <Drawer
     variant="dismissible"
     bind:open={drawerOpen}
-    style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow: visible;">
+    style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow-y: auto;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
