@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Tooltip, { Wrapper } from '@smui/tooltip'
   import { cloneDeep } from 'lodash'
   import Fa from 'svelte-fa'
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
@@ -30,9 +31,12 @@
   }
 </script>
 
-<div class="icon-selected" title={isLayerVisible ? 'Show Layer' : 'Hide Layer'} on:click={() => toggleVisibility()}>
-  <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
-</div>
+<Wrapper>
+  <div class="icon-selected" on:click={() => toggleVisibility()}>
+    <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
+  </div>
+  <Tooltip showDelay={300} hideDelay={100} yPos="above">{isLayerVisible ? 'Show Layer' : 'Hide Layer'}</Tooltip>
+</Wrapper>
 
 <style lang="scss">
   @import '../../styles/button-icons-selected.scss';

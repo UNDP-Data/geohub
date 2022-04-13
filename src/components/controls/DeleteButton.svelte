@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button, { Label as LabelButton } from '@smui/button'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
+  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
@@ -23,9 +24,12 @@
   }
 </script>
 
-<div class="container icon-selected" title="Delete layer" on:click={() => (confirmDeleteLayerDialogVisible = true)}>
-  <Fa icon={faTrash} size="1x" />
-</div>
+<Wrapper>
+  <div class="container icon-selected" title="Delete layer" on:click={() => (confirmDeleteLayerDialogVisible = true)}>
+    <Fa icon={faTrash} size="1x" />
+  </div>
+  <Tooltip showDelay={300} hideDelay={100} yPos="above">Delete layer</Tooltip>
+</Wrapper>
 
 <Dialog bind:open={confirmDeleteLayerDialogVisible}>
   <Title>Delete Layer</Title>
@@ -45,10 +49,6 @@
 
 <style lang="scss">
   @import '../../styles/button-icons-selected.scss';
-
-  .container {
-    margin-right: 0;
-  }
 
   :global(.mdc-button__label) {
     @media (prefers-color-scheme: dark) {
