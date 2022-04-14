@@ -6,6 +6,7 @@
   import { faMoon } from '@fortawesome/free-regular-svg-icons/faMoon'
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
   import { faSun } from '@fortawesome/free-solid-svg-icons/faSun'
+  import StyleDownloader from './StyleDownloader.svelte'
 
   export let drawerOpen = true
   export let panelOpen = true
@@ -38,6 +39,8 @@
     </Section>
 
     <Section align="end">
+      <StyleDownloader />
+
       <div class="icon" on:click={() => (panelOpen = !panelOpen)} style="display: none;">
         <Fa icon={faBookmark} size="lg" />
       </div>
