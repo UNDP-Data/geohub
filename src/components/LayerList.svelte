@@ -38,7 +38,7 @@
 
 {#each $layerList as layer (layer.definition.id)}
   {#if layer.type === LayerTypes.RASTER}
-    <RasterLayer {layer} bind:disabled />
+    <RasterLayer {layer} />
   {:else if layer.type === LayerTypes.VECTOR}
     <VectorLayer {layer} />
   {/if}

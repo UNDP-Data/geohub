@@ -55,7 +55,7 @@ export const loadImageToDataUrl = async (url: string): Promise<string> => {
 export const clipSprite = (url: string, id: string, icon: spriteIcon): Promise<spriteImage> => {
   return new Promise((resolve) => {
     Clipper(url, function () {
-      this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl) {
+      this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl: string) {
         resolve({
           src: dataUrl,
           alt: id,
