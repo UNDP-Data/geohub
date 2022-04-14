@@ -90,7 +90,7 @@ export interface Bucket {
   id: string
   published: boolean
   path: string
-  name: string
+  label: string
   description: string | null
   icon: string | null
   type: BucketType
