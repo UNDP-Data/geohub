@@ -5,6 +5,9 @@
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
   import TextField from './vector-styles/TextField.svelte'
+  import TextColor from './vector-styles/TextColor.svelte'
+  import TextHaloCalor from './vector-styles/TextHaloCalor.svelte'
+  import TextHaloWidth from './vector-styles/TextHaloWidth.svelte'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -38,6 +41,9 @@
     {#if enabledTextLabel === true}
       <div>
         <TextField on:change={onStyleChange} {layer} />
+        <TextColor on:change={onStyleChange} {layer} />
+        <TextHaloCalor on:change={onStyleChange} {layer} />
+        <TextHaloWidth on:change={onStyleChange} {layer} />
       </div>
     {/if}
   </div>
