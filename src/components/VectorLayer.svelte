@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
@@ -11,9 +12,9 @@
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
   import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
-
+  import { map } from '../stores'
   import type { Layer } from '../lib/types'
-  import { LayerInitialValues, TabNames } from '../lib/constants'
+  import { LayerInitialValues, LayerTypes, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
   import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
@@ -23,6 +24,7 @@
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
+  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let drawerWidth = 355
   let activeTab = ''
@@ -32,6 +34,12 @@
   let isStyleJsonPanelVisible = false
   let panelOpen: boolean = layerState[layerId] || false
   let onStyleChange = () => undefined
+  let tabs = [TabNames.LEGEND]
+  if (style.type === LayerTypes.SYMBOL) {
+    tabs.push(TabNames.LABEL)
+  }
+  tabs.push(TabNames.OPACITY)
+  tabs.push(TabNames.STYLEJSON)
 
   $: {
     if (activeTab === '') {
@@ -81,7 +89,7 @@
           <div class="layer-header-icons">
             <div class="group">
               <TabBar
-                tabs={[TabNames.LEGEND, TabNames.LABEL, TabNames.OPACITY, TabNames.STYLEJSON]}
+                {tabs}
                 let:tab
                 active={activeTab}
                 style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
@@ -117,7 +125,9 @@
         </div>
         <div class="layer-actions">
           <VectorLegendPanel {layer} {isLegendPanelVisible} />
-          <VectorLabelPanel {layer} {isLabelPanelVisible} />
+          {#if style.type === LayerTypes.SYMBOL}
+            <VectorLabelPanel {layer} {isLabelPanelVisible} />
+          {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
           <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
         </div>
