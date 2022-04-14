@@ -16,7 +16,7 @@
   import { layerList, map } from '../stores'
   import type { Layer } from '../lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { fetchUrl } from '../lib/helper'
+  import { downloadFile, fetchUrl } from '../lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
 
@@ -164,17 +164,6 @@
     const data = JSON.stringify(GeoJSON.parse(layerValuesData, { Point: ['lat', 'lng'] }))
     const filename = `undp-geohub-layers-data-${new Date().toISOString().split('T')[0]}.geojson`
     downloadFile(filename, data)
-  }
-
-  const downloadFile = (filename: string, content: string) => {
-    const bomCode = '\ufeff'
-    const data = new Blob([`${bomCode}${content}`], { type: 'text/csv;charset=utf-8;' })
-    const url = window.URL.createObjectURL(data)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `${filename}`)
-    link.click()
-    link.remove()
   }
 
   // eslint-disable-next-line

@@ -5,9 +5,12 @@ import type {
   LineLayerSpecification,
   SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
-import type { BannerMessage, spriteIcon, spriteImage } from './types'
+
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
+import mime from 'mime'
+
+import type { BannerMessage, spriteIcon, spriteImage } from './types'
 import { bannerMessages, map } from '../stores'
 import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 
@@ -52,7 +55,7 @@ export const loadImageToDataUrl = async (url: string): Promise<string> => {
 export const clipSprite = (url: string, id: string, icon: spriteIcon): Promise<spriteImage> => {
   return new Promise((resolve) => {
     Clipper(url, function () {
-      this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl) {
+      this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl: string) {
         resolve({
           src: dataUrl,
           alt: id,
@@ -94,10 +97,16 @@ export async function fetchWithTimeout(resource: string, options = { timeout: DE
   return response
 }
 
-export const downloadJSON = (json) => {
-  const a = document.createElement('a')
-  const file = new Blob([json], { type: 'application/json' })
-  a.href = URL.createObjectURL(file)
-  a.download = 'style.json'
-  a.click()
+/**
+ * Download a file
+ * @param filename
+ * @param content
+ */
+export const downloadFile = (filename: string, content: string) => {
+  const type = mime.getType(filename.split('.').pop())
+  const element = document.createElement('a')
+  element.href = `data:${type};charset=utf-8,` + encodeURIComponent(content)
+  element.download = filename
+  element.click()
+  element.remove()
 }

@@ -119,15 +119,15 @@
   }
 
   let openColorPicker = false
-  let currentIntervalColor
-  let currentIntervalColorRGB
-  let intervalIndex
+  let currentIntervalColor: string[]
+  let currentIntervalColorRGB: string
+  let intervalIndex: number
 
   function sendIndexForCmap(index: number) {
     openColorPicker = !openColorPicker
     currentIntervalColor = cmap[index][1]
     currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
-    console.log(currentIntervalColorRGB)
+    // console.log(currentIntervalColorRGB)
     intervalIndex = index
   }
 

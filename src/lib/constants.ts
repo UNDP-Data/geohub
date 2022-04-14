@@ -16,7 +16,8 @@ export enum TabNames {
   LEGEND = 'Legend',
   REFINE = 'Refine',
   OPACITY = 'Opacity',
-  STYLEJSON = 'style.json',
+  STYLEJSON = 'Specification',
+  LABEL = 'Label',
 }
 
 export const TreeNodeInitialValues = {
