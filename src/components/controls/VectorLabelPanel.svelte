@@ -8,6 +8,7 @@
   import TextColor from './vector-styles/TextColor.svelte'
   import TextHaloCalor from './vector-styles/TextHaloCalor.svelte'
   import TextHaloWidth from './vector-styles/TextHaloWidth.svelte'
+  import TextMaxWidth from './vector-styles/TextMaxWidth.svelte'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -44,6 +45,7 @@
         <TextColor on:change={onStyleChange} {layer} />
         <TextHaloCalor on:change={onStyleChange} {layer} />
         <TextHaloWidth on:change={onStyleChange} {layer} />
+        <TextMaxWidth on:change={onStyleChange} {layer} />
       </div>
     {/if}
   </div>
