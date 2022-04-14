@@ -50,6 +50,12 @@
     { name: 'Quantile', value: 'q' },
     { name: 'Logarithmic', value: 'l' },
   ]
+  if (layerMin < 0) {
+    classificationMethods = [
+      { name: 'Equidistant', value: 'e' },
+      { name: 'Quantile', value: 'q' },
+    ]
+  }
 
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
@@ -195,6 +201,9 @@
   $: {
     if (activeColorMapName) {
       populateAllColorMaps()
+      reclassifyImage()
+    }
+    if (selectedClassificationMethod) {
       reclassifyImage()
     }
   }
