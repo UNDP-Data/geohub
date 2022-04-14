@@ -138,7 +138,6 @@
     cmapItem.push(Color.hex(rgb).data.b)
     cmapItem.push(255)
     cmap[index].splice(1, 1, cmapItem)
-    console.log(cmap)
     handleParamsUpdate(cmap)
     document.getElementById(`interval-${index}`).style.background = `rgb(${cmapItem})`
   }
@@ -171,7 +170,9 @@
 
   const sendFirstInterval = (index: number, item: string) => {
     if (item > cmap[index][0][1]) {
-      console.log('That is not allowed')
+      console.warn(
+        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
+      )
     } else {
       cmap[index][0].splice(0, 1, Number(item))
       console.log(cmap)
@@ -182,10 +183,11 @@
     if (item < cmap[index + 1][0][1]) {
       cmap[index][0].splice(1, 1, Number(item))
       cmap[index + 1][0].splice(0, 1, Number(item))
-      console.log(cmap)
       handleParamsUpdate(cmap)
     } else {
-      console.log('That is not allowed')
+      console.warn(
+        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
+      )
     }
   }
 
@@ -194,7 +196,6 @@
     if (activeColorMapName) {
       populateAllColorMaps()
       reclassifyImage()
-      console.log('this is being called')
     }
   }
 </script>
