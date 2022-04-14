@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
@@ -10,46 +11,68 @@
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
-
+  import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
+  import { map } from '../stores'
   import type { Layer } from '../lib/types'
-  import { LayerInitialValues, TabNames } from '../lib/constants'
+  import { LayerInitialValues, LayerTypes, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
   import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
   import VectorStyleJsonPanel from './controls/VectorStyleJsonPanel.svelte'
+  import VectorLabelPanel from './controls/VectorLabelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
+  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
+  let drawerWidth = 355
   let activeTab = ''
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
+  let isLabelPanelVisible = false
   let isStyleJsonPanelVisible = false
   let panelOpen: boolean = layerState[layerId] || false
   let onStyleChange = () => undefined
+  let tabs = [TabNames.LEGEND]
+  if (style.type === LayerTypes.SYMBOL) {
+    tabs.push(TabNames.LABEL)
+  }
+  tabs.push(TabNames.OPACITY)
+  tabs.push(TabNames.STYLEJSON)
 
   $: {
     if (activeTab === '') {
       isLegendPanelVisible = false
+      isLabelPanelVisible = false
       isOpacityPanelVisible = false
       isStyleJsonPanelVisible = false
     }
 
     if (activeTab === TabNames.LEGEND) {
       isLegendPanelVisible = !isLegendPanelVisible
+      isLabelPanelVisible = false
+      isOpacityPanelVisible = false
+      isStyleJsonPanelVisible = false
+    }
+
+    if (activeTab === TabNames.LABEL) {
+      isLegendPanelVisible = false
+      isLabelPanelVisible = true
       isOpacityPanelVisible = false
       isStyleJsonPanelVisible = false
     }
 
     if (activeTab === TabNames.OPACITY) {
       isLegendPanelVisible = false
+      isLabelPanelVisible = false
       isOpacityPanelVisible = true
       isStyleJsonPanelVisible = false
     }
 
     if (activeTab === TabNames.STYLEJSON) {
       isLegendPanelVisible = false
+      isLabelPanelVisible = false
       isOpacityPanelVisible = false
       isStyleJsonPanelVisible = true
       onStyleChange()
@@ -65,7 +88,11 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <TabBar tabs={[TabNames.LEGEND, TabNames.OPACITY, TabNames.STYLEJSON]} let:tab active={activeTab}>
+              <TabBar
+                {tabs}
+                let:tab
+                active={activeTab}
+                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
                 <Tab
                   {tab}
                   class="tab"
@@ -78,6 +105,8 @@
                       <div style="padding-right: 5px;">
                         {#if tab === TabNames.LEGEND}
                           <Fa icon={faList} size="1x" />
+                        {:else if tab === TabNames.LABEL}
+                          <Fa icon={faTag} size="1x" />
                         {:else if tab === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
                         {:else if tab === TabNames.STYLEJSON}
@@ -96,6 +125,9 @@
         </div>
         <div class="layer-actions">
           <VectorLegendPanel {layer} {isLegendPanelVisible} />
+          {#if style.type === LayerTypes.SYMBOL}
+            <VectorLabelPanel {layer} {isLabelPanelVisible} />
+          {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
           <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
         </div>
