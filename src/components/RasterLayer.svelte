@@ -24,6 +24,7 @@
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
+  import SegmentedButton, { Segment } from '@smui/segmented-button'
 
   export let layer: Layer = LayerInitialValues
 
@@ -145,6 +146,35 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
+              <!--              <SegmentedButton-->
+              <!--                segments={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]}-->
+              <!--                let:segment-->
+              <!--                singleSelect-->
+              <!--                bind:selected={activeTab}>-->
+              <!--                &lt;!&ndash; Note: the `segment` property is required! &ndash;&gt;-->
+              <!--                <Segment-->
+              <!--                  {segment}-->
+              <!--                  class="tab"-->
+              <!--                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px; margin-top: 0;">-->
+              <!--                  <Label>-->
+              <!--                    <div class="tabs">-->
+              <!--                      <div style="padding-right: 5px;">-->
+              <!--                        {#if segment === TabNames.LEGEND}-->
+              <!--                          <Fa icon={faList} size="1x" />-->
+              <!--                        {:else if segment === TabNames.REFINE}-->
+              <!--                          <Fa icon={faCalculator} size="1x" />-->
+              <!--                        {:else if segment === TabNames.OPACITY}-->
+              <!--                          <Fa icon={faDroplet} size="1x" />-->
+              <!--                        {/if}-->
+              <!--                      </div>-->
+              <!--                      <div>-->
+              <!--                        {segment}-->
+              <!--                      </div>-->
+              <!--                    </div>-->
+              <!--                  </Label>-->
+              <!--                </Segment>-->
+              <!--              </SegmentedButton>-->
+
               <TabBar tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]} let:tab active={activeTab}>
                 <Tab
                   {tab}
@@ -231,8 +261,8 @@
       display: flex;
       gap: 15px;
       justify-content: left;
-      margin-top: 10px;
-      padding-top: 10px;
+      margin-top: 0;
+      padding-top: 0;
 
       .group {
         padding-top: 5px;
