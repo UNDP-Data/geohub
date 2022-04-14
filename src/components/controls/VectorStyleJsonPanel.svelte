@@ -2,7 +2,6 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
-  import HelperText from '@smui/textfield/helper-text'
 
   import { map } from '../../stores'
   import type { Layer } from '../../lib/types'
@@ -47,11 +46,9 @@
     <Textfield
       textarea
       bind:value={styleJSON}
-      label="style.json"
+      label="Layer Specification"
       style="width: 100%; height: 200px;"
-      helperLine$style="width: 100%;">
-      <HelperText slot="helper">style.json for the layer</HelperText>
-    </Textfield>
+      helperLine$style="width: 100%;" />
     <div class="changeLegendButtonDiv">
       <Button class="changelegendbtn" variant="raised" on:click={() => applyLayerStyle()}>
         <LabelButton>Apply</LabelButton>
