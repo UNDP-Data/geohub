@@ -113,3 +113,8 @@ export enum StatusTypes {
   WARNING = 'warning',
   DANGER = 'danger',
 }
+
+export enum BucketType {
+  INTERNAL = 'internal',
+  EXTERNAL = 'external',
+}

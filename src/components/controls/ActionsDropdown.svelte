@@ -65,9 +65,9 @@
     <Fa
       icon={faChevronRight}
       size="1x"
-      style={`cursor: pointer;${menuOpen === true ? 'transform: rotate(180deg);' : ''}`} />
+      style={`cursor: pointer;${menuOpen === true ? 'transform: rotate(90deg);' : ''}`} />
   </div>
-  <Tooltip showDelay={300} hideDelay={100} yPos="above"
+  <Tooltip showDelay={500} hideDelay={500} yPos="above"
     >{menuOpen ? 'Hide Actions Panel' : 'Show Actions Panel'}</Tooltip>
 </Wrapper>
 
@@ -85,7 +85,7 @@
         <div class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
           <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
         </div>
-        <Tooltip showDelay={300} hideDelay={100} yPos="above">Merge Layers</Tooltip>
+        <Tooltip showDelay={500} hideDelay={500} yPos="above">Merge Layers</Tooltip>
       </Wrapper>
     {/if}
   </div>
@@ -105,8 +105,9 @@
     height: 40px;
     padding: 10px;
     position: absolute;
+    right: 30px;
+    top: 40px;
     z-index: 10;
-    margin-left: 80px;
 
     @media (prefers-color-scheme: dark) {
       background: #323234;

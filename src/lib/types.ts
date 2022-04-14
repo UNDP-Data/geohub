@@ -1,4 +1,5 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core'
+import type { BucketType } from '$lib/constants'
 import type {
   RasterLayerSpecification,
   LineLayerSpecification,
@@ -83,4 +84,15 @@ export interface BannerMessage {
   type: StatusTypes
   title: string
   message: string
+}
+
+export interface Bucket {
+  id: string
+  published: boolean
+  path: string
+  name: string
+  description: string | null
+  icon: string | null
+  type: BucketType
+  tags: []
 }
