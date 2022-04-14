@@ -2,15 +2,12 @@
   import Fa from 'svelte-fa'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { map } from '../stores'
+  import { downloadJSON } from '$lib/helper'
 
   export const download = () => {
     const style = $map.getStyle()
-    const styleJSON = JSON.stringify(style, null, 2)
-    const a = document.createElement('a')
-    const file = new Blob([styleJSON], { type: 'application/json' })
-    a.href = URL.createObjectURL(file)
-    a.download = 'style.json'
-    a.click()
+    const json = JSON.stringify(style, null, 2)
+    downloadJSON(json)
   }
 </script>
 
