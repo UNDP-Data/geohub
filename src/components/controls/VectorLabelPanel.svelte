@@ -19,9 +19,21 @@
   const disableTextLabel = () => {
     if (enabledTextLabel === true) return
     const layerId = layer.definition.id
-    const layoutFields = ['text-field']
+    const layoutFields = [
+      'text-field',
+      'text-variable-anchor',
+      'text-radial-offset',
+      'text-justify',
+      'text-size',
+      'text-max-width',
+    ]
     layoutFields.forEach((prop) => {
       $map.setLayoutProperty(layerId, prop, undefined)
+    })
+
+    const paintFields = ['text-color', 'text-halo-color', 'text-halo-width']
+    paintFields.forEach((prop) => {
+      $map.setPaintProperty(layerId, prop, undefined)
     })
   }
 

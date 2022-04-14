@@ -32,6 +32,11 @@
     newStyle.layout[propertyName] = propertyValue
     $map.setLayoutProperty(layerId, propertyName, propertyValue)
 
+    // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
+    $map.setLayoutProperty(layerId, 'text-variable-anchor', ['top', 'bottom', 'left', 'right'])
+    $map.setLayoutProperty(layerId, 'text-radial-offset', 0.5)
+    $map.setLayoutProperty(layerId, 'text-justify', 'auto')
+
     dispatch('change')
   }
 </script>
