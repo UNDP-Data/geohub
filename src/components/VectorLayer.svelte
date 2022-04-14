@@ -10,6 +10,7 @@
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
+  import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
 
   import type { Layer } from '../lib/types'
   import { LayerInitialValues, TabNames } from '../lib/constants'
@@ -17,14 +18,17 @@
   import OpacityPanel from './controls/OpacityPanel.svelte'
   import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
   import VectorStyleJsonPanel from './controls/VectorStyleJsonPanel.svelte'
+  import VectorLabelPanel from './controls/VectorLabelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
 
+  let drawerWidth = 355
   let activeTab = ''
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
+  let isLabelPanelVisible = false
   let isStyleJsonPanelVisible = false
   let panelOpen: boolean = layerState[layerId] || false
   let onStyleChange = () => undefined
@@ -32,24 +36,35 @@
   $: {
     if (activeTab === '') {
       isLegendPanelVisible = false
+      isLabelPanelVisible = false
       isOpacityPanelVisible = false
       isStyleJsonPanelVisible = false
     }
 
     if (activeTab === TabNames.LEGEND) {
       isLegendPanelVisible = !isLegendPanelVisible
+      isLabelPanelVisible = false
+      isOpacityPanelVisible = false
+      isStyleJsonPanelVisible = false
+    }
+
+    if (activeTab === TabNames.LABEL) {
+      isLegendPanelVisible = false
+      isLabelPanelVisible = true
       isOpacityPanelVisible = false
       isStyleJsonPanelVisible = false
     }
 
     if (activeTab === TabNames.OPACITY) {
       isLegendPanelVisible = false
+      isLabelPanelVisible = false
       isOpacityPanelVisible = true
       isStyleJsonPanelVisible = false
     }
 
     if (activeTab === TabNames.STYLEJSON) {
       isLegendPanelVisible = false
+      isLabelPanelVisible = false
       isOpacityPanelVisible = false
       isStyleJsonPanelVisible = true
       onStyleChange()
@@ -65,7 +80,11 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <TabBar tabs={[TabNames.LEGEND, TabNames.OPACITY, TabNames.STYLEJSON]} let:tab active={activeTab}>
+              <TabBar
+                tabs={[TabNames.LEGEND, TabNames.LABEL, TabNames.OPACITY, TabNames.STYLEJSON]}
+                let:tab
+                active={activeTab}
+                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
                 <Tab
                   {tab}
                   class="tab"
@@ -78,6 +97,8 @@
                       <div style="padding-right: 5px;">
                         {#if tab === TabNames.LEGEND}
                           <Fa icon={faList} size="1x" />
+                        {:else if tab === TabNames.LABEL}
+                          <Fa icon={faTag} size="1x" />
                         {:else if tab === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
                         {:else if tab === TabNames.STYLEJSON}
@@ -96,6 +117,7 @@
         </div>
         <div class="layer-actions">
           <VectorLegendPanel {layer} {isLegendPanelVisible} />
+          <VectorLabelPanel {layer} {isLabelPanelVisible} />
           <OpacityPanel {layer} {isOpacityPanelVisible} />
           <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
         </div>
