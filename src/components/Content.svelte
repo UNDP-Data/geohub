@@ -52,6 +52,7 @@
   const setContentContainerMargin = (margin: number) => {
     document.querySelector<HTMLElement>('body > div > div.content-container > div').style.marginLeft = `${margin}px`
     $map.triggerRepaint()
+    $map.resize()
   }
 
   const handleMousemove = (e: MouseEvent | TouchEvent) => {
@@ -95,7 +96,7 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px; overflow: visible;">
-          <div hidden={activeTab !== TabNames.LOAD_DATA}>
+          <div hidden={activeTab !== TabNames.LOAD_DATA} style="overflow-y: auto; max-height: calc(100vh - 145px);">
             <TreeView />
           </div>
           <div hidden={activeTab !== TabNames.LAYERS}>
