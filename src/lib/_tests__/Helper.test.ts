@@ -20,7 +20,7 @@ describe('stringifyStyleJSON', () => {
 
 describe('downloadFile', () => {
   it('should create an HTML element to download a file ', () => {
-    const linkElement:HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement
+    const linkElement: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement
     const link = {
       ...linkElement,
       click: vi.fn(),

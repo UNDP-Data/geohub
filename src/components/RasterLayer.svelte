@@ -12,6 +12,7 @@
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
+  import Tooltip, { Wrapper } from '@smui/tooltip'
 
   import Legend from './Legend.svelte'
   import IntervalsLegend from './IntervalsLegend.svelte'
@@ -31,6 +32,7 @@
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
+  let isLegendSwitchAnimate = false
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
@@ -122,9 +124,6 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  import Tooltip, { Wrapper } from '@smui/tooltip'
-  let isLegendAnimate = false
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -169,43 +168,42 @@
           {#if isLegendPanelVisible === true}
             <div class="action">
               <div class="content">
-                <div style="margin-bottom: 10px;">
+                <div class="scene">
+                  <div class={`card ${selectedLegendType === DynamicLayerLegendTypes.INTERVALS ? 'is-flipped' : ''}`}>
+                    <div class="card-face card-face-front">
+                      <div class="container">
+                        <Legend bind:activeColorMapName layerConfig={layer} />
+                      </div>
+                    </div>
+                    <div class="card-face card-face-back">
+                      <div class="container">
+                        <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flip">
                   <Wrapper>
                     <div
                       style="cursor: pointer; width: 20px;  margin-left: auto;"
                       on:click={() => {
-                        isLegendAnimate = true
+                        isLegendSwitchAnimate = true
                         setTimeout(() => {
-                          isLegendAnimate = false
+                          isLegendSwitchAnimate = false
                         }, 400)
 
                         selectedLegendType === DynamicLayerLegendTypes.INTERVALS
                           ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
                           : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
                       }}>
-                      <Fa icon={faRetweet} size="1x" spin={isLegendAnimate} />
+                      <Fa icon={faRetweet} size="1x" spin={isLegendSwitchAnimate} />
                     </div>
                     <Tooltip showDelay={300} hideDelay={100} yPos="above">
                       {selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-                        ? 'Show Continous Legend'
-                        : 'Show Intervals Legend'}
+                        ? `Show ${DynamicLayerLegendTypes.CONTINUOUS} legend`
+                        : `Show ${DynamicLayerLegendTypes.INTERVALS} legend`}
                     </Tooltip>
                   </Wrapper>
-                </div>
-
-                <div class="scene scene--card">
-                  <div class={`card ${selectedLegendType === DynamicLayerLegendTypes.INTERVALS ? 'is-flipped' : ''}`}>
-                    <div class="card__face card__face--front">
-                      <div style="border: 1px solid #ccc; padding: 5px;">
-                        <Legend bind:activeColorMapName layerConfig={layer} />
-                      </div>
-                    </div>
-                    <div class="card__face card__face--back">
-                      <div style="border: 1px solid #ccc; padding: 5px;">
-                        <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -217,35 +215,6 @@
 </div>
 
 <style lang="scss">
-  .scene {
-    min-height: 320px;
-
-    .card {
-      cursor: pointer;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 1s;
-      width: 100%;
-
-      &.is-flipped {
-        transform: rotateY(180deg);
-      }
-    }
-
-    .card__face {
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      height: 100%;
-      position: absolute;
-      width: 100%;
-    }
-
-    .card__face--back {
-      transform: rotateY(180deg);
-    }
-  }
-
   .layer-header {
     .layer-header-icons {
       align-items: center;
@@ -257,8 +226,8 @@
       padding-top: 10px;
 
       .group {
-        padding-top: 5px;
         padding-bottom: 5px;
+        padding-top: 5px;
 
         .tabs {
           align-items: center;
@@ -282,10 +251,47 @@
         margin-bottom: 25px;
 
         .content {
-          padding: 5px 15px 5px 15px;
+          align-items: flex-start;
+          display: flex;
+          flex-direction: row;
+          gap: 15px;
+          padding-bottom: 10px;
+          padding-top: 10px;
 
-          .tab-bar {
-            margin-bottom: 20px;
+          .scene {
+            min-height: 320px;
+            width: 100%;
+
+            .card {
+              cursor: pointer;
+              height: 100%;
+              position: relative;
+              transform-style: preserve-3d;
+              transition: transform 1s;
+              width: 100%;
+
+              &.is-flipped {
+                transform: rotateY(180deg);
+              }
+            }
+
+            .card-face {
+              -webkit-backface-visibility: hidden;
+              backface-visibility: hidden;
+              height: 100%;
+              position: absolute;
+              width: 100%;
+
+              .container {
+                border-radius: 7.5px;
+                border: 1px solid #ccc;
+                padding: 5px;
+              }
+            }
+
+            .card-face-back {
+              transform: rotateY(180deg);
+            }
           }
         }
       }
