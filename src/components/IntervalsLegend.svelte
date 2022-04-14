@@ -48,13 +48,9 @@
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
-    { name: 'Logarithmic', value: 'l' },
   ]
-  if (layerMin < 0) {
-    classificationMethods = [
-      { name: 'Equidistant', value: 'e' },
-      { name: 'Quantile', value: 'q' },
-    ]
+  if (layerMin > 0) {
+    classificationMethods.push({ name: 'Logarithmic', value: 'l' })
   }
 
   const populateAllColorMaps = () => {

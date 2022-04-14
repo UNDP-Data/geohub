@@ -94,5 +94,5 @@ export interface Bucket {
   description: string | null
   icon: string | null
   type: BucketType
-  tags: []
+  tags: string[]
 }
