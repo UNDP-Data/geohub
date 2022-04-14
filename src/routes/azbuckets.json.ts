@@ -16,15 +16,21 @@ const listContainers = async () => {
 
   for await (const container of blobServiceClient.listContainers(listContainerOpts)) {
     if (container.metadata && 'published' in container.metadata && container.metadata.published) {
+      let tags: Array<string> = []
+      if (!container.metadata.tags.includes(',')) {
+        tags.push(container.metadata.tags)
+      } else {
+        tags = container.metadata.tags.split(',').map((item) => item.trim())
+      }
       const bucket: Bucket = {
         id: container.properties.lastModified.valueOf().toString(),
         published: Boolean(container.metadata.published),
         path: `${container.name}/`,
-        name: container.name,
+        label: container.metadata.label,
         description: container.metadata.description || '',
         icon: container.metadata.icon || null,
         type: BucketType.INTERNAL,
-        tags: container.metadata.tags.split(',').map((item) => item.trim()),
+        tags: tags,
       }
 
       bucketList.push(bucket)
