@@ -20,25 +20,29 @@
 
   export let layer: Layer = LayerInitialValues
   let updateLegend = () => undefined
+
+  const onStyleChange = () => {
+    updateLegend()
+  }
 </script>
 
 <div>
   <VectorLegendSymbol bind:updateLegend {layer} />
-  <MinMaxZoom on:change={updateLegend} {layer} />
-  <LineWidth on:change={updateLegend} {layer} />
-  <LineBlur on:change={updateLegend} {layer} />
-  <LineColor on:change={updateLegend} {layer} />
-  <LineDasharray on:change={updateLegend} {layer} />
-  <LineJoin on:change={updateLegend} {layer} />
-  <FillColor on:change={updateLegend} {layer} />
-  <FillOutlineColor on:change={updateLegend} {layer} />
-  <IconImage on:change={updateLegend} {layer} />
-  <IconColor on:change={updateLegend} {layer} />
-  <IconSize on:change={updateLegend} {layer} />
-  <IconOverlap on:change={updateLegend} {layer} />
-  <IconKeepUpright on:change={updateLegend} {layer} />
-  <IconIgnorePlacement on:change={updateLegend} {layer} />
-  <IconOffset on:change={updateLegend} {layer} />
+  <MinMaxZoom on:change={onStyleChange} {layer} />
+  <LineWidth on:change={onStyleChange} {layer} />
+  <LineBlur on:change={onStyleChange} {layer} />
+  <LineColor on:change={onStyleChange} {layer} />
+  <LineDasharray on:change={onStyleChange} {layer} />
+  <LineJoin on:change={onStyleChange} {layer} />
+  <FillColor on:change={onStyleChange} {layer} />
+  <FillOutlineColor on:change={onStyleChange} {layer} />
+  <IconImage on:change={onStyleChange} {layer} />
+  <IconColor on:change={onStyleChange} {layer} />
+  <IconSize on:change={onStyleChange} {layer} />
+  <IconOverlap on:change={onStyleChange} {layer} />
+  <IconKeepUpright on:change={onStyleChange} {layer} />
+  <IconIgnorePlacement on:change={onStyleChange} {layer} />
+  <IconOffset on:change={onStyleChange} {layer} />
 </div>
 
 <style lang="scss">
