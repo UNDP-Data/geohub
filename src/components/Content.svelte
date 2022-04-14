@@ -96,7 +96,7 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px; overflow: visible;">
-          <div hidden={activeTab !== TabNames.LOAD_DATA} style="overflow-y: auto; max-height: calc(100vh - 145px);">
+          <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>
           <div hidden={activeTab !== TabNames.LAYERS}>
@@ -181,10 +181,13 @@
     flex-grow: 1;
 
     .drawer-container {
+      position: relative;
       display: flex;
       height: $height;
+      overflow: hidden;
 
       .drawer-content {
+        overflow: auto;
         display: flex;
         flex-direction: column;
         flex-basis: 100%;
