@@ -6,17 +6,14 @@
   import 'bulma/css/bulma.css'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import Fa from 'svelte-fa'
-  import { faBarsProgress } from '@fortawesome/free-solid-svg-icons/faBarsProgress'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { faDiagramNext } from '@fortawesome/free-solid-svg-icons/faDiagramNext'
+  import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import { faRankingStar } from '@fortawesome/free-solid-svg-icons/faRankingStar'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
 
   import Legend from './Legend.svelte'
-  import UniqueValuesLegend from './UniqueValuesLegend.svelte'
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { layerList, map } from '../stores'
   import type { Layer } from '../lib/types'
@@ -24,13 +21,11 @@
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
-  const layerUniqueValues = layer.info['band_metadata'][0][1]['STATISTICS_UNIQUE_VALUES'].sort()
 
   let activeColorMapName: string = DEFAULT_COLORMAP
   let activeTab = ''
@@ -45,15 +40,6 @@
   let scalingValueEnd = Math.ceil(+layerBandMetadataMax * 10) / 10
   let timer: ReturnType<typeof setTimeout>
   let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
-
-  let legendTypes = { continuous: faDiagramNext }
-  if (layerUniqueValues.length > 0) {
-    legendTypes = { ...legendTypes, ...{ unique: faRankingStar } }
-  } else {
-    legendTypes = { ...legendTypes, ...{ intervals: faBarsProgress } }
-  }
-
-  const legendTypeLabels = Object.keys(legendTypes)
 
   $: panelOpen, setLayerState()
   $: scalingValueStart, setScalingValueRange()
@@ -136,6 +122,9 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
+  import Tooltip, { Wrapper } from '@smui/tooltip'
+  let isLegendAnimate = false
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -146,35 +135,6 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <!--              <SegmentedButton-->
-              <!--                segments={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]}-->
-              <!--                let:segment-->
-              <!--                singleSelect-->
-              <!--                bind:selected={activeTab}>-->
-              <!--                &lt;!&ndash; Note: the `segment` property is required! &ndash;&gt;-->
-              <!--                <Segment-->
-              <!--                  {segment}-->
-              <!--                  class="tab"-->
-              <!--                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px; margin-top: 0;">-->
-              <!--                  <Label>-->
-              <!--                    <div class="tabs">-->
-              <!--                      <div style="padding-right: 5px;">-->
-              <!--                        {#if segment === TabNames.LEGEND}-->
-              <!--                          <Fa icon={faList} size="1x" />-->
-              <!--                        {:else if segment === TabNames.REFINE}-->
-              <!--                          <Fa icon={faCalculator} size="1x" />-->
-              <!--                        {:else if segment === TabNames.OPACITY}-->
-              <!--                          <Fa icon={faDroplet} size="1x" />-->
-              <!--                        {/if}-->
-              <!--                      </div>-->
-              <!--                      <div>-->
-              <!--                        {segment}-->
-              <!--                      </div>-->
-              <!--                    </div>-->
-              <!--                  </Label>-->
-              <!--                </Segment>-->
-              <!--              </SegmentedButton>-->
-
               <TabBar tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]} let:tab active={activeTab}>
                 <Tab
                   {tab}
@@ -209,41 +169,44 @@
           {#if isLegendPanelVisible === true}
             <div class="action">
               <div class="content">
-                <div class="tab-bar">
-                  <TabBar tabs={legendTypeLabels} let:tab style="" active={legendTypeLabels[0]}>
-                    <Tab
-                      {tab}
-                      class="tab"
-                      style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none;"
+                <div style="margin-bottom: 10px;">
+                  <Wrapper>
+                    <div
+                      style="cursor: pointer; width: 20px;  margin-left: auto;"
                       on:click={() => {
-                        selectedLegendType = tab
+                        isLegendAnimate = true
+                        setTimeout(() => {
+                          isLegendAnimate = false
+                        }, 400)
+
+                        selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+                          ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
+                          : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
                       }}>
-                      <Label
-                        style="font-size: 9px; text-transform: none; font-weight: normal; font-family: ProximaNova, sans-serif;">
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      </Label>
-                    </Tab>
-                  </TabBar>
+                      <Fa icon={faRetweet} size="1x" spin={isLegendAnimate} />
+                    </div>
+                    <Tooltip showDelay={300} hideDelay={100} yPos="above">
+                      {selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+                        ? 'Show Continous Legend'
+                        : 'Show Intervals Legend'}
+                    </Tooltip>
+                  </Wrapper>
                 </div>
 
-                {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
-                  <Legend bind:activeColorMapName layerConfig={layer} />
-                {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
-                  <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
-                {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
-                  <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
-                {/if}
-                <!--                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.CONTINUOUS}>-->
-                <!--                  <Legend bind:activeColorMapName layerConfig={layer} />-->
-                <!--                </div>-->
-
-                <!--                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.UNIQUE}>-->
-                <!--                  <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />-->
-                <!--                </div>-->
-
-                <!--                <div hidden={selectedLegendType !== DynamicLayerLegendTypes.INTERVALS}>-->
-                <!--                  <IntervalsLegend bind:activeColorMapName layerConfig={layer} />-->
-                <!--                </div>-->
+                <div class="scene scene--card">
+                  <div class={`card ${selectedLegendType === DynamicLayerLegendTypes.INTERVALS ? 'is-flipped' : ''}`}>
+                    <div class="card__face card__face--front">
+                      <div style="border: 1px solid #ccc; padding: 5px;">
+                        <Legend bind:activeColorMapName layerConfig={layer} />
+                      </div>
+                    </div>
+                    <div class="card__face card__face--back">
+                      <div style="border: 1px solid #ccc; padding: 5px;">
+                        <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           {/if}
@@ -254,6 +217,35 @@
 </div>
 
 <style lang="scss">
+  .scene {
+    min-height: 320px;
+
+    .card {
+      cursor: pointer;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+      width: 100%;
+
+      &.is-flipped {
+        transform: rotateY(180deg);
+      }
+    }
+
+    .card__face {
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      height: 100%;
+      position: absolute;
+      width: 100%;
+    }
+
+    .card__face--back {
+      transform: rotateY(180deg);
+    }
+  }
+
   .layer-header {
     .layer-header-icons {
       align-items: center;
@@ -261,8 +253,8 @@
       display: flex;
       gap: 15px;
       justify-content: left;
-      margin-top: 0;
-      padding-top: 0;
+      margin-top: 10px;
+      padding-top: 10px;
 
       .group {
         padding-top: 5px;
