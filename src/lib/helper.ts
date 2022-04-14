@@ -93,3 +93,11 @@ export async function fetchWithTimeout(resource: string, options = { timeout: DE
   clearTimeout(id)
   return response
 }
+
+export const downloadJSON = (json) => {
+  const a = document.createElement('a')
+  const file = new Blob([json], { type: 'application/json' })
+  a.href = URL.createObjectURL(file)
+  a.download = 'style.json'
+  a.click()
+}
