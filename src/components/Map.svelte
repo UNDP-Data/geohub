@@ -69,29 +69,30 @@
       })
     })
 
-    map.update(() => newMap)
-
-    const styleUrl = newMap.getStyle().sprite
-
-    const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
-    promise
-      .then(([dataUrl, json]) => {
-        const sprite: sprite = {
-          dataUrl: dataUrl,
-          json: json,
-        }
-        return sprite
-      })
-      .then((sprite: sprite) => {
-        const promises = []
-        Object.keys(sprite.json).forEach((id) => {
-          promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
+    newMap.on('load', () => {
+      const styleUrl = newMap.getStyle().sprite
+      const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
+      promise
+        .then(([dataUrl, json]) => {
+          const sprite: sprite = {
+            dataUrl: dataUrl,
+            json: json,
+          }
+          return sprite
         })
-        return Promise.all(promises)
-      })
-      .then((iconList) => {
-        spriteImageList.update(() => iconList)
-      })
+        .then((sprite: sprite) => {
+          const promises = []
+          Object.keys(sprite.json).forEach((id) => {
+            promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
+          })
+          return Promise.all(promises)
+        })
+        .then((iconList) => {
+          spriteImageList.update(() => iconList)
+        })
+    })
+
+    map.update(() => newMap)
   })
 </script>
 
