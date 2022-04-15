@@ -3,7 +3,6 @@
 </script>
 
 <script lang="ts">
-  import 'bulma/css/bulma.css'
   import Accordion, { Panel } from '@smui-extra/accordion'
   import Fa from 'svelte-fa'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
@@ -215,6 +214,8 @@
 </div>
 
 <style lang="scss">
+  @import '../styles/bulma.css';
+
   .layer-header {
     .layer-header-icons {
       align-items: center;
