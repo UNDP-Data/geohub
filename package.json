@@ -34,6 +34,7 @@
     "@smui-extra/accordion": "^6.0.0-beta.16",
     "@smui/banner": "^6.0.0-beta.16",
     "@smui/button": "^6.0.0-beta.16",
+    "@smui/card": "^6.0.0-beta.16",
     "@smui/chips": "^6.0.0-beta.16",
     "@smui/dialog": "^6.0.0-beta.16",
     "@smui/drawer": "^6.0.0-beta.16",

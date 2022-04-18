@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
+  import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
@@ -12,7 +13,7 @@
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { layerList, indicatorProgress, map, bannerMessages } from '../stores'
+  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '../stores'
   import { StatusTypes, TabNames } from '../lib/constants'
 
   export let drawerOpen = false
@@ -22,6 +23,7 @@
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
+  let tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -43,6 +45,19 @@
       }, 500)
     }
   }
+
+
+$: {
+  if ($bucketFeature === true && tabs.length === 2) {
+    tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
+    activeTab = TabNames.BUCKETS
+  }
+
+  if ($bucketFeature === false && tabs.length === 3) {
+    tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
+    activeTab = TabNames.LOAD_DATA
+  }
+}
 
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
@@ -73,6 +88,8 @@
     }, 350)
     $bannerMessages = []
   }
+
+
 </script>
 
 <div class="content-container">
@@ -84,7 +101,7 @@
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header>
-          <TabBar tabs={[TabNames.LOAD_DATA, TabNames.LAYERS]} let:tab bind:active={activeTab}>
+          <TabBar {tabs} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">
               <Label>
                 {tab}
@@ -99,6 +116,31 @@
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>
+          {#if $bucketFeature === true}
+            <div hidden={activeTab !== TabNames.BUCKETS}>
+              {#each $bucketList as bucket}
+                <div class="card">
+                  <Card>
+                    <PrimaryAction on:click={() => undefined}>
+                      <ContentCard>
+                        <div class="title is-size-5">
+                          {bucket.label}
+                        </div>
+                        <div class="subtitle is-size-6">
+                          {bucket.description}
+                        </div>
+                        <div class="content is-size-7">
+                          {bucket.tags.join(', ')}
+                          <br /><br />
+                          {bucket.path}
+                        </div>
+                      </ContentCard>
+                    </PrimaryAction>
+                  </Card>
+                </div>
+              {/each}
+            </div>
+          {/if}
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
@@ -148,6 +190,7 @@
 </div>
 
 <style lang="scss">
+  @import '../styles/bulma.css';
   :global(.app-content) {
     flex: auto;
     overflow: auto;
@@ -192,6 +235,19 @@
         flex-direction: column;
         flex-basis: 100%;
         flex: 1;
+
+        .card {
+          margin-bottom: 15px;
+          margin-left: 15px;
+
+          .title,
+          .subtitle,
+          .content {
+            @media (prefers-color-scheme: dark) {
+              color: white;
+            }
+          }
+        }
       }
 
       .drawer-divider {

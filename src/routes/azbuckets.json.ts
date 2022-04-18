@@ -37,6 +37,8 @@ const listContainers = async () => {
     }
   }
 
+  bucketList.sort((a, b) => a.label !== undefined && a.label.localeCompare(b.label))
+
   return bucketList
 }
 

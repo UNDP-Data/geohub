@@ -352,6 +352,20 @@
     "@material/typography" "^13.0.0"
     tslib "^2.1.0"
 
+"@material/card@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/card/-/card-13.0.0.tgz#875d60b398898b6f3a6ff115717f0c144b681bf3"
+  integrity sha512-ooJUOt1Viv99Dyz4rhz9ZZbfa996eHh3RUuXkPRkT66Btd5TzpdqsQWKwOVc5bgbgWqzhDWQ6A/aQdYqH97ccg==
+  dependencies:
+    "@material/dom" "^13.0.0"
+    "@material/elevation" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/ripple" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/checkbox@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@material/checkbox/-/checkbox-13.0.0.tgz#ee7ca7930586102a748998239672f62724a90ad9"
@@ -940,6 +954,18 @@
     "@smui/ripple" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
+"@smui/card@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui/card/-/card-6.0.0-beta.16.tgz#7a0967040eb5b7fd71cf7b1c477e96e67967969d"
+  integrity sha512-QCFM7EuM0mH0hxzRbFbforgGFP9q8SLLUHIqW4D17QA5EYiVAuGrputlT4Zx8ujTDSs7/Glax+qCSL3WnF2L3g==
+  dependencies:
+    "@material/card" "^13.0.0"
+    "@smui/button" "^6.0.0-beta.16"
+    "@smui/common" "^6.0.0-beta.16"
+    "@smui/icon-button" "^6.0.0-beta.16"
+    "@smui/ripple" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
 "@smui/chips@^6.0.0-beta.16":
   version "6.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/@smui/chips/-/chips-6.0.0-beta.16.tgz#16ca7a9dda30493fd3dcfc159a9d4258aec13de0"
@@ -1000,6 +1026,17 @@
     "@material/form-field" "^13.0.0"
     "@material/rtl" "^13.0.0"
     "@smui/common" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
+"@smui/icon-button@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui/icon-button/-/icon-button-6.0.0-beta.16.tgz#686f9f282cc86b917feb007bd72f62dc405ebb47"
+  integrity sha512-2OwRT3smK5S5V+sI2c8URij0Z91/FVeGKZHy4V5q/GYSlaPu1WJtgFY1O/9wNYEYq0PkP4ohwq16ZiURy+rYTQ==
+  dependencies:
+    "@material/density" "^13.0.0"
+    "@material/icon-button" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.16"
+    "@smui/ripple" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
 "@smui/image-list@^6.0.0-beta.16":
