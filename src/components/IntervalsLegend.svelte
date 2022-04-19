@@ -1,7 +1,5 @@
 <script lang="ts">
   import chroma from 'chroma-js'
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Chip, { Set, Text } from '@smui/chips'
   import Ripple from '@smui/ripple'
   import Fa from 'svelte-fa'
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
@@ -14,12 +12,15 @@
   } from '@maplibre/maplibre-gl-style-spec/types'
   //import ColorPicker from './controls/ColorPicker.svelte'
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
-
+  import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
+  import MenuSurface from '@smui/menu-surface'
   import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerInfo, Color } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { updateParamsInURL } from '../lib/helper'
+  import FormField from '@smui/form-field'
+  import Radio from '@smui/radio'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
@@ -43,7 +44,9 @@
   let numberOfClasses = 5
   let rangeSliderValues = [layerMin, layerMax]
   let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
-  let selectedColorMapType = ''
+  let selectedColorMapType = 'sequential'
+  let surface: MenuSurfaceComponentDev
+  //let colorMapType = 'On';
 
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
@@ -268,15 +271,54 @@
   <div class="column">
     <div id="intervals-cmap-button-div">
       <div>Active colormap</div>
-      <Button
+      <div
         id="intervals-cmap-button"
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
+          surface.setOpen(true)
         }}
+        use:Ripple={{ surface: true }}
         variant="raised"
         style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
-        <LabelButton style="text-transform: lowercase">{activeColorMapName}</LabelButton>
-      </Button>
+        <span style="color: white">{activeColorMapName}</span>
+      </div>
+      <MenuSurface
+        bind:this={surface}
+        anchorCorner="BOTTOM_LEFT"
+        style="max-height: 200px; overflow-y: scroll; margin-top: 10px; width: 100%">
+        <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
+          <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
+            {#each Object.keys(ColorMaps) as option}
+              <FormField>
+                <Radio bind:group={selectedColorMapType} value={option} touch />
+                <span
+                  slot="label"
+                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
+                  >{option}</span>
+              </FormField>
+            {/each}
+          </div>
+          <div class="colormaps-group">
+            {#if selectedColorMapType}
+              {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
+                <div
+                  use:Ripple={{ surface: true }}
+                  class="colormap-div"
+                  title={aColorMap}
+                  on:click={() => {
+                    activeColorMapName = aColorMap
+                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
+                    reclassifyImage
+                  }}
+                  style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
+                    defaultNumberOfColors,
+                    'rgba',
+                  )})" />
+              {/each}
+            {/if}
+          </div>
+        </div>
+      </MenuSurface>
     </div>
 
     <!-- Todo: Please dont delete this block. To be revisited
@@ -296,7 +338,7 @@
 
     <div class="column" id="intervals-list-div">
       {#each cmap as value, index}
-        <div style="display: flex; padding:2px; width: 50%; margin: auto">
+        <div style="display: flex; padding:2px; width: 100%; margin-left: 25%; margin-right: 25%">
           <div
             id="interval-{index}"
             on:click={() => sendIndexForCmap(index)}
@@ -326,32 +368,6 @@
             isOpen={true}
             bind:color />
         </div>
-      {/if}
-    </div>
-  </div>
-  <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-    <Set class="colormap-chips" chips={Object.keys(ColorMaps)} let:chip choice bind:selected={selectedColorMapType}>
-      <Chip {chip} style="margin-left: 0; margin-right: 0;">
-        <Text style="font-family: ProximaNova, sans-serif;">{chip.charAt(0).toUpperCase() + chip.slice(1)}</Text>
-      </Chip>
-    </Set>
-    <div class="colormaps-group">
-      {#if selectedColorMapType}
-        {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-          <div
-            use:Ripple={{ surface: true }}
-            class="colormap-div"
-            title={aColorMap}
-            on:click={() => {
-              activeColorMapName = aColorMap
-              activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-              reclassifyImage
-            }}
-            style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
-              defaultNumberOfColors,
-              'rgba',
-            )})" />
-        {/each}
       {/if}
     </div>
   </div>
@@ -396,7 +412,7 @@
       border: 0px solid red;
 
       #intervals-cmap-button-div {
-        width: 50%;
+        width: 100%;
         height: 100%;
         margin: auto;
       }
@@ -454,7 +470,7 @@
   }
 
   * :global(.colormaps-group) {
-    margin: auto;
+    margin-right: 0;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -463,6 +479,7 @@
 
   * :global(.colormap-chips) {
     justify-content: space-evenly;
+    display: flex;
   }
 
   * :global(#intervals-cmap-button) {
@@ -470,10 +487,27 @@
     width: 100%;
     height: 100%;
   }
-
+  * :global(.mdc-radio) {
+    padding: 0;
+    margin: 0;
+  }
+  * :global(.mdc-radio__native-control) {
+    height: 20px;
+    width: 20px;
+    padding: 10px;
+  }
   * :global(.color-picker-handle) {
     border-radius: 0 !important;
     height: 20px !important;
     width: 20px !important;
+  }
+  * :global(::-webkit-scrollbar) {
+    width: 5px;
+    padding: 0;
+    margin: 0;
+  }
+  * :global(::-webkit-scrollbar-thumb) {
+    background: grey;
+    border-radius: 10px;
   }
 </style>
