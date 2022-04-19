@@ -387,30 +387,6 @@
     "@material/typography" "^13.0.0"
     tslib "^2.1.0"
 
-"@material/data-table@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@material/data-table/-/data-table-13.0.0.tgz#b305cdb31eec7722df6a94a78ea3a838b0f0389b"
-  integrity sha512-Z3yEq1T6Om/A3ntPw0bd40dqtOR4H3++pvchgW35kq+V9xDLL0hfzmuiy0QH4plA2ZsFYJxjt02k/SRvnkjKPQ==
-  dependencies:
-    "@material/animation" "^13.0.0"
-    "@material/base" "^13.0.0"
-    "@material/checkbox" "^13.0.0"
-    "@material/density" "^13.0.0"
-    "@material/dom" "^13.0.0"
-    "@material/elevation" "^13.0.0"
-    "@material/feature-targeting" "^13.0.0"
-    "@material/icon-button" "^13.0.0"
-    "@material/linear-progress" "^13.0.0"
-    "@material/list" "^13.0.0"
-    "@material/menu" "^13.0.0"
-    "@material/rtl" "^13.0.0"
-    "@material/select" "^13.0.0"
-    "@material/shape" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@material/touch-target" "^13.0.0"
-    "@material/typography" "^13.0.0"
-    tslib "^2.1.0"
-
 "@material/density@^13.0.0":
   version "13.0.0"
   resolved "https://registry.npmjs.org/@material/density/-/density-13.0.0.tgz"
@@ -975,16 +951,6 @@
     "@smui/ripple" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
-"@smui/checkbox@^6.0.0-beta.16":
-  version "6.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@smui/checkbox/-/checkbox-6.0.0-beta.16.tgz#9b292fa823eed65aa118a483edb47fe255fd5ab0"
-  integrity sha512-gasHsQjgpPoYfOPl7hCibBiv6PWG8I1VzRrdmSQMbv9H0HI2Nn8Oo3DpYCnAUd6z4JhVk6UWCzqaO+La/tUAHw==
-  dependencies:
-    "@material/checkbox" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.16"
-    "@smui/ripple" "^6.0.0-beta.16"
-    svelte2tsx "^0.5.5"
-
 "@smui/chips@^6.0.0-beta.16":
   version "6.0.0-beta.16"
   resolved "https://registry.npmjs.org/@smui/chips/-/chips-6.0.0-beta.16.tgz"
@@ -1004,20 +970,6 @@
   dependencies:
     "@material/dom" "^13.0.0"
     "@tsconfig/svelte" "^3.0.0"
-    svelte2tsx "^0.5.5"
-
-"@smui/data-table@^6.0.0-beta.16":
-  version "6.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@smui/data-table/-/data-table-6.0.0-beta.16.tgz#4640a0d92ec3723496dfbb3e5f6bac04a9914252"
-  integrity sha512-nNHIGbGMviTDGivOeaIwV6RnP/Lq7XZqs72gmX40ncLYIu1c//HNhIrcL3qbF+Ne/8gq7cuuKC4F26VUPEPD0g==
-  dependencies:
-    "@material/data-table" "^13.0.0"
-    "@material/dom" "^13.0.0"
-    "@smui/checkbox" "^6.0.0-beta.16"
-    "@smui/common" "^6.0.0-beta.16"
-    "@smui/icon-button" "^6.0.0-beta.16"
-    "@smui/ripple" "^6.0.0-beta.16"
-    "@smui/select" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
 "@smui/dialog@^6.0.0-beta.16":
@@ -4196,6 +4148,11 @@ svelma@^0.4.5:
   version "0.4.5"
   resolved "https://registry.npmjs.org/svelma/-/svelma-0.4.5.tgz"
   integrity sha512-9FadKnZf7j7E/IL7HYpIiRKr76Dt9FVdmeOQvFU89E8ivwhBgibD8aGqjlKMcKkKrh1L2ed2qOnolz951u1dwg==
+
+svelte-awesome-color-picker@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/svelte-awesome-color-picker/-/svelte-awesome-color-picker-0.0.10.tgz#004a6e86a7eece3416e4c7abb52ae64e0433a708"
+  integrity sha512-9hla0LgUfADMK3UyWv6QrjWff8qduovfAg/3fMzk+lmlDcBIQ/JFVf6a/Pq1YcGTP+LgvgeGNvMX/WwMDc4gvw==
 
 svelte-body@^1.3.6:
   version "1.3.6"
