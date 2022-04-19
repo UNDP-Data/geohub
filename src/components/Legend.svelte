@@ -1,9 +1,11 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-  import Chip, { Set, Text } from '@smui/chips'
+  import FormField from '@smui/form-field'
+  import Radio from '@smui/radio'
   import Ripple from '@smui/ripple'
   import chroma from 'chroma-js'
-
+  import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
+  import MenuSurface from '@smui/menu-surface'
   import type { Layer, LayerInfo } from '../lib/types'
   import type {
     RasterLayerSpecification,
@@ -33,8 +35,9 @@
   let allColorMaps = {}
   let colorMapSelectionVisible = false
   let rangeSliderValues = [layerMin, layerMax]
-  let selectedColorMapType = ''
   let step = (layerMax - layerMin) * 1e-2
+  let selectedColorMapType = 'sequential'
+  let surface: MenuSurfaceComponentDev
 
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
@@ -112,12 +115,50 @@
         title={`Colormap: ${activeColorMapName}`}
         on:click={() => {
           colorMapSelectionVisible = !colorMapSelectionVisible
+          surface.setOpen(true)
         }}
         class="chroma-test"
         style="background: linear-gradient(90deg, {activeColorMap.colors(
           defaultNumberOfColors,
           'rgba',
         )}); cursor: pointer;" />
+      <MenuSurface
+        bind:this={surface}
+        anchorCorner="BOTTOM_LEFT"
+        style="max-height: 200px; overflow-y: scroll; margin-top: 10px; width: 100%">
+        <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
+          <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
+            {#each Object.keys(ColorMaps) as option}
+              <FormField>
+                <Radio bind:group={selectedColorMapType} value={option} touch />
+                <span
+                  slot="label"
+                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
+                  >{option}</span>
+              </FormField>
+            {/each}
+          </div>
+          <div class="colormaps-group">
+            {#if selectedColorMapType}
+              {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
+                <div
+                  use:Ripple={{ surface: true }}
+                  class="colormap-div"
+                  title={aColorMap}
+                  on:click={() => {
+                    activeColorMapName = aColorMap
+                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
+                    updateParamsInURL(definition, layerURL, { colormap_name: aColorMap })
+                  }}
+                  style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
+                    defaultNumberOfColors,
+                    'rgba',
+                  )})" />
+              {/each}
+            {/if}
+          </div>
+        </div>
+      </MenuSurface>
       <div class="chroma-test">
         <div>
           <div>
@@ -131,34 +172,6 @@
       </div>
     </div>
   {/if}
-  <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-    <Set class="colormap-chips" chips={Object.keys(ColorMaps)} let:chip choice bind:selected={selectedColorMapType}>
-      <Chip {chip} style="margin-left: 0; margin-right: 0;">
-        <Text style="font-family: ProximaNova, sans-serif;">{chip.charAt(0).toUpperCase() + chip.slice(1)}</Text>
-      </Chip>
-    </Set>
-    <div>
-      <div class="colormaps-group">
-        {#if selectedColorMapType}
-          {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-            <div
-              use:Ripple={{ surface: true }}
-              class="colormap-div"
-              title={aColorMap}
-              on:click={() => {
-                activeColorMapName = aColorMap
-                activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-                updateParamsInURL(definition, layerURL, { colormap_name: aColorMap })
-              }}
-              style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
-                defaultNumberOfColors,
-                'rgba',
-              )})" />
-          {/each}
-        {/if}
-      </div>
-    </div>
-  </div>
 </div>
 
 <style lang="scss">
@@ -245,5 +258,25 @@
     justify-content: space-evenly;
     padding-left: 0;
     padding-right: 0;
+  }
+
+  * :global(.mdc-radio) {
+    padding: 0;
+    margin: 0;
+  }
+  * :global(.mdc-radio__native-control) {
+    height: 20px;
+    width: 20px;
+    padding: 10px;
+  }
+
+  * :global(::-webkit-scrollbar) {
+    width: 5px;
+    padding: 0;
+    margin: 0;
+  }
+  * :global(::-webkit-scrollbar-thumb) {
+    background: grey;
+    border-radius: 10px;
   }
 </style>

@@ -171,45 +171,69 @@
                   <div class={`card ${selectedLegendType === DynamicLayerLegendTypes.INTERVALS ? 'is-flipped' : ''}`}>
                     <div class="card-face card-face-front">
                       <div class="container">
+                        <div class="flip">
+                          <Wrapper>
+                            <div
+                              style="cursor: pointer; width: 20px;  margin-left: auto;"
+                              on:click={() => {
+                                isLegendSwitchAnimate = true
+                                setTimeout(() => {
+                                  isLegendSwitchAnimate = false
+                                }, 400)
+
+                                selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+                                  ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
+                                  : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
+                              }}>
+                              <Fa icon={faRetweet} size="1x" spin={isLegendSwitchAnimate} />
+                            </div>
+                            <Tooltip showDelay={300} hideDelay={100} yPos="above">
+                              {selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+                                ? `Show ${DynamicLayerLegendTypes.CONTINUOUS} legend`
+                                : `Show ${DynamicLayerLegendTypes.INTERVALS} legend`}
+                            </Tooltip>
+                          </Wrapper>
+                        </div>
                         <Legend bind:activeColorMapName layerConfig={layer} />
                       </div>
                     </div>
                     <div class="card-face card-face-back">
                       <div class="container">
+                        <div class="flip">
+                          <Wrapper>
+                            <div
+                              style="cursor: pointer; width: 20px;  margin-left: auto;"
+                              on:click={() => {
+                                isLegendSwitchAnimate = true
+                                setTimeout(() => {
+                                  isLegendSwitchAnimate = false
+                                }, 400)
+
+                                selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+                                  ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
+                                  : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
+                              }}>
+                              <Fa icon={faRetweet} size="1x" spin={isLegendSwitchAnimate} />
+                            </div>
+                            <Tooltip showDelay={300} hideDelay={100} yPos="above">
+                              {selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+                                ? `Show ${DynamicLayerLegendTypes.CONTINUOUS} legend`
+                                : `Show ${DynamicLayerLegendTypes.INTERVALS} legend`}
+                            </Tooltip>
+                          </Wrapper>
+                        </div>
                         <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flip">
-                  <Wrapper>
-                    <div
-                      style="cursor: pointer; width: 20px;  margin-left: auto;"
-                      on:click={() => {
-                        isLegendSwitchAnimate = true
-                        setTimeout(() => {
-                          isLegendSwitchAnimate = false
-                        }, 400)
-
-                        selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-                          ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
-                          : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
-                      }}>
-                      <Fa icon={faRetweet} size="1x" spin={isLegendSwitchAnimate} />
-                    </div>
-                    <Tooltip showDelay={300} hideDelay={100} yPos="above">
-                      {selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-                        ? `Show ${DynamicLayerLegendTypes.CONTINUOUS} legend`
-                        : `Show ${DynamicLayerLegendTypes.INTERVALS} legend`}
-                    </Tooltip>
-                  </Wrapper>
                 </div>
               </div>
             </div>
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
         </div>
-      </div></Panel>
+      </div>
+    </Panel>
   </Accordion>
 </div>
 
