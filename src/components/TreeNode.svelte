@@ -121,7 +121,7 @@
       const layerName = path.split('/')[path.split('/').length - 1]
       const [base, sign] = url.split('?')
       const b64EncodedUrl = `${base}?${btoa(sign)}`
-      layerInfo = await fetchUrl(`${titilerApiUrl}/fullinfo?url=${b64EncodedUrl}`)
+      layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
