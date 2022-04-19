@@ -9,6 +9,7 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
+  import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
   import Tooltip, { Wrapper } from '@smui/tooltip'
@@ -21,18 +22,21 @@
   import { LayerInitialValues, DynamicLayerLegendTypes, DEFAULT_COLORMAP, TabNames } from '../lib/constants'
   import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
   import OpacityPanel from './controls/OpacityPanel.svelte'
+  import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
 
+  let drawerWidth = 355
   let activeColorMapName: string = DEFAULT_COLORMAP
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
   let isLegendSwitchAnimate = false
   let isOpacityPanelVisible = false
+  let isZoomLevelPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   let panelOpen: boolean = layerState[layerId] || false
@@ -46,10 +50,6 @@
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
-  $: if (isOpacityPanelVisible !== false) {
-    isLegendPanelVisible = false
-    isFilterPanelVisible = false
-  }
 
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
@@ -57,28 +57,25 @@
   }
 
   $: {
-    if (activeTab === '') {
-      isLegendPanelVisible = false
-      isFilterPanelVisible = false
-      isOpacityPanelVisible = false
-    }
-
-    if (activeTab === TabNames.LEGEND) {
-      isLegendPanelVisible = !isLegendPanelVisible
-      isFilterPanelVisible = false
-      isOpacityPanelVisible = false
-    }
-
-    if (activeTab === TabNames.REFINE) {
-      isFilterPanelVisible = !isFilterPanelVisible
-      isLegendPanelVisible = false
-      isOpacityPanelVisible = false
-    }
-
-    if (activeTab === TabNames.OPACITY) {
-      isFilterPanelVisible = false
-      isLegendPanelVisible = false
-      isOpacityPanelVisible = true
+    isLegendPanelVisible = false
+    isFilterPanelVisible = false
+    isOpacityPanelVisible = false
+    isZoomLevelPanelVisible = false
+    switch (activeTab) {
+      case TabNames.LEGEND:
+        isLegendPanelVisible = true
+        break
+      case TabNames.REFINE:
+        isFilterPanelVisible = true
+        break
+      case TabNames.OPACITY:
+        isOpacityPanelVisible = true
+        break
+      case TabNames.ZOOM:
+        isZoomLevelPanelVisible = true
+        break
+      default:
+        break
     }
   }
 
@@ -133,7 +130,11 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <TabBar tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]} let:tab active={activeTab}>
+              <TabBar
+                tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
+                let:tab
+                active={activeTab}
+                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
                 <Tab
                   {tab}
                   class="tab"
@@ -150,6 +151,8 @@
                           <Fa icon={faCalculator} size="1x" />
                         {:else if tab === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
+                        {:else if tab === TabNames.ZOOM}
+                          <Fa icon={faMagnifyingGlassLocation} size="1x" />
                         {/if}
                       </div>
                       <div>
@@ -208,6 +211,7 @@
             </div>
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
+          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
         </div>
       </div></Panel>
   </Accordion>
