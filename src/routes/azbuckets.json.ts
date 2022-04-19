@@ -20,8 +20,14 @@ const listContainers = async () => {
       if (!container.metadata.tags.includes(',')) {
         tags.push(container.metadata.tags)
       } else {
-        tags = container.metadata.tags.split(',').map((item) => item.trim())
+        tags = container.metadata.tags
+          .split(',')
+          .filter((item) => item !== '')
+          .map((item) => item.trim())
+          .map((item) => item.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase()))
+          .sort((a, b) => a.localeCompare(b))
       }
+
       const bucket: Bucket = {
         id: container.properties.lastModified.valueOf().toString(),
         published: Boolean(container.metadata.published),
@@ -30,7 +36,7 @@ const listContainers = async () => {
         description: container.metadata.description || '',
         icon: container.metadata.icon || null,
         type: BucketType.INTERNAL,
-        tags: tags,
+        tags,
       }
 
       bucketList.push(bucket)
