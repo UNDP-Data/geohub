@@ -99,11 +99,11 @@ export interface Bucket {
 }
 
 export interface Color {
-  r: number
-  g: number
-  b: number
-  hex: string
-  h: number
+  r: string
+  b: string
   s: number
   v: number
+  g: string
+  h: number
+  hex: string
 }
