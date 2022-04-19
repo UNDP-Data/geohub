@@ -10,14 +10,13 @@
   export let layer: Layer = LayerInitialValues
   import Slider from './Slider.svelte'
 
-  let layerType = LayerTypes.SYMBOL
-  let propertyName = 'text-halo-width'
-  let titleName = 'Text Halo Width'
+  let layerType = LayerTypes.HEATMAP
+  let propertyName = 'heatmap-intensity'
+  let titleName = 'Heatmap Intensity'
   let defaultValue = 1
   let minValue = 0
-  let maxValue = 10
+  let maxValue = 5
   let stepValue = 0.1
-  let propertyType = 'paint'
 </script>
 
 <Slider
@@ -29,5 +28,4 @@
   bind:defaultValue
   bind:minValue
   bind:maxValue
-  bind:stepValue
-  bind:propertyType />
+  bind:stepValue />
