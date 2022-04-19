@@ -54,28 +54,50 @@
       <VectorLegendSymbol bind:updateLegend {layer} />
     </div>
     {#if isIconListPanelVisible === true}
-      <StyleControlGroup title="Icon Image List">
+      <!-- <StyleControlGroup title="Icon Image List"> -->
+      <div class="imageList">
         <ImageList>
           {#each $spriteImageList as icon}
             <Item>
               <Wrapper>
-                <input
-                  type="image"
-                  src={icon.src}
-                  alt={icon.alt}
-                  style="width:24px;height:24px"
-                  value={icon.alt}
-                  on:click={onClick} />
+                <div class="icon">
+                  <input
+                    type="image"
+                    src={icon.src}
+                    alt={icon.alt}
+                    style="width:24px;height:24px"
+                    value={icon.alt}
+                    on:click={onClick} />
+                </div>
                 <Tooltip>{icon.alt}</Tooltip>
               </Wrapper>
             </Item>
           {/each}
         </ImageList>
-      </StyleControlGroup>
+      </div>
+      <!-- </StyleControlGroup> -->
     {/if}
   </StyleControlGroup>
 {/if}
 
 <style lang="scss">
   @use '@material/image-list/index' as image-list;
+  .imageList {
+    max-height: 150px;
+    overflow-x: hiden;
+    overflow-y: scroll;
+
+    position: relative;
+    margin: 1em 0;
+    padding: 1em 1em 0.5em 1em;
+    border: solid 0.5px #1c1c1c;
+    border-radius: 4px;
+  }
+  .icon {
+    padding: 1em;
+  }
+  .icon :hover {
+    border: 2px solid #ffae00;
+    background-color: #fac45178;
+  }
 </style>
