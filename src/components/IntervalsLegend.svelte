@@ -325,7 +325,6 @@
             isInput={false}
             isOpen={true}
             bind:color />
-          <div style="cursor: pointer; position: absolute; right: 0">X</div>
         </div>
       {/if}
     </div>

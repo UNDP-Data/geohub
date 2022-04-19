@@ -7,7 +7,6 @@ import type {
   SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
 import type { StatusTypes } from './constants'
-import chroma from 'chroma-js'
 
 export interface Tree {
   tree: TreeNode
