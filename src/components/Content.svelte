@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
+  import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
@@ -9,10 +10,11 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
+  import Tag from 'svelma/src/components/Tag/Tag.svelte'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
-  import { layerList, indicatorProgress, map, bannerMessages } from '../stores'
+  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '../stores'
   import { StatusTypes, TabNames } from '../lib/constants'
 
   export let drawerOpen = false
@@ -22,6 +24,7 @@
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
+  let tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -41,6 +44,24 @@
       setTimeout(() => {
         showBanner = true
       }, 500)
+    }
+  }
+
+  $: {
+    if ($bucketFeature === true && tabs.length === 2) {
+      tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
+
+      setTimeout(() => {
+        activeTab = TabNames.BUCKETS
+      }, 10)
+    }
+
+    if ($bucketFeature === false && tabs.length === 3) {
+      tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
+
+      setTimeout(() => {
+        activeTab = TabNames.LOAD_DATA
+      }, 10)
     }
   }
 
@@ -84,7 +105,7 @@
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header>
-          <TabBar tabs={[TabNames.LOAD_DATA, TabNames.LAYERS]} let:tab bind:active={activeTab}>
+          <TabBar {tabs} let:tab bind:active={activeTab}>
             <Tab {tab} class="tab">
               <Label>
                 {tab}
@@ -99,6 +120,38 @@
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>
+          {#if $bucketFeature === true}
+            <div hidden={activeTab !== TabNames.BUCKETS}>
+              {#each $bucketList as bucket}
+                <div class="card">
+                  <Card>
+                    <PrimaryAction on:click={() => undefined}>
+                      <ContentCard>
+                        <div class="columns is-vcentered is-mobile">
+                          <div class="column">
+                            <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} />
+                          </div>
+                          <div class="column is-full">
+                            <div class="title is-size-5">
+                              {bucket.label}
+                            </div>
+                            <div class="subtitle is-size-6">
+                              {bucket.description}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="content is-size-7 tags">
+                          {#each bucket.tags as tag}
+                            <Tag type="is-info is-light" size="is-small">{tag}</Tag>
+                          {/each}
+                        </div>
+                      </ContentCard>
+                    </PrimaryAction>
+                  </Card>
+                </div>
+              {/each}
+            </div>
+          {/if}
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
@@ -148,6 +201,9 @@
 </div>
 
 <style lang="scss">
+  @import '../styles/bulma.css';
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+
   :global(.app-content) {
     flex: auto;
     overflow: auto;
@@ -192,6 +248,31 @@
         flex-direction: column;
         flex-basis: 100%;
         flex: 1;
+
+        .card {
+          margin-bottom: 15px;
+          margin-left: 15px;
+
+          .columns {
+            .is-full {
+              padding-right: 40px;
+
+              .title,
+              .subtitle,
+              .content {
+                @media (prefers-color-scheme: dark) {
+                  color: white;
+                }
+              }
+            }
+          }
+
+          .content .tags {
+            display: flex;
+            gap: 5px;
+            flex-flow: row wrap;
+          }
+        }
       }
 
       .drawer-divider {

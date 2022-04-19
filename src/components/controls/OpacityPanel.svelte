@@ -31,6 +31,9 @@
         case LayerTypes.FILL:
           $map.setPaintProperty(layerId, 'fill-opacity', layerOpacity)
           break
+        case LayerTypes.HEATMAP:
+          $map.setPaintProperty(layerId, 'heatmap-opacity', layerOpacity)
+          break
         default:
           break
       }

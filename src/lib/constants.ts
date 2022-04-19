@@ -10,14 +10,15 @@ export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
 
 export enum TabNames {
-  LOAD_DATA = 'Load data',
-  LAYERS = 'Layers',
   ANALYZE = 'Analyze',
-  LEGEND = 'Legend',
-  REFINE = 'Refine',
-  OPACITY = 'Opacity',
-  STYLEJSON = 'Specification',
+  BUCKETS = 'Buckets',
   LABEL = 'Label',
+  LAYERS = 'Layers',
+  LEGEND = 'Legend',
+  LOAD_DATA = 'Load data',
+  OPACITY = 'Opacity',
+  REFINE = 'Refine',
+  STYLEJSON = 'Specification',
 }
 
 export const TreeNodeInitialValues = {
@@ -26,6 +27,17 @@ export const TreeNodeInitialValues = {
   path: '/',
   url: null,
   isRaster: false,
+}
+
+export const BucketIntialValues = {
+  id: '',
+  published: true,
+  path: '',
+  label: '',
+  description: '',
+  icon: '',
+  type: '',
+  tags: [],
 }
 
 export const LayerInitialValues = {
@@ -97,6 +109,7 @@ export enum LayerTypes {
   SYMBOL = 'symbol',
   LINE = 'line',
   FILL = 'fill',
+  HEATMAP = 'heatmap',
 }
 
 export enum ClassificationMethodTypes {

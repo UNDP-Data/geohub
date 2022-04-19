@@ -6,9 +6,12 @@
   import { faMoon } from '@fortawesome/free-regular-svg-icons/faMoon'
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
   import { faSun } from '@fortawesome/free-solid-svg-icons/faSun'
+  import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleOn'
+  import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
   import Tooltip, { Wrapper } from '@smui/tooltip'
 
   import StyleDownloader from './StyleDownloader.svelte'
+  import { bucketFeature } from '../stores'
 
   export let drawerOpen = true
   export let panelOpen = true
@@ -49,6 +52,15 @@
       <div class="icon" on:click={() => (panelOpen = !panelOpen)} style="display: none;">
         <Fa icon={faBookmark} size="lg" />
       </div>
+
+      <Wrapper>
+        <div class="icon" on:click={() => ($bucketFeature = !$bucketFeature)}>
+          <Fa icon={$bucketFeature ? faToggleOn : faToggleOff} size="lg" />
+        </div>
+        <Tooltip showDelay={500} hideDelay={500} yPos="below">
+          {faToggleOff ? 'Hide' : 'Show'} Bucket Feature
+        </Tooltip>
+      </Wrapper>
 
       <Wrapper>
         <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>

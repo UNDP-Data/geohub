@@ -5,6 +5,7 @@ import type {
   LineLayerSpecification,
   FillLayerSpecification,
   SymbolLayerSpecification,
+  HeatmapLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
 import type { StatusTypes } from './constants'
 
@@ -26,7 +27,12 @@ export interface LayerList extends Array<Layer> {}
 
 export interface Layer {
   name: string
-  definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
+  definition:
+    | RasterLayerSpecification
+    | LineLayerSpecification
+    | FillLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification
   type?: string
   info?: LayerInfo
   visible?: boolean | true
@@ -95,4 +101,14 @@ export interface Bucket {
   icon: string | null
   type: BucketType
   tags: string[]
+}
+
+export interface Color {
+  r: string
+  b: string
+  s: number
+  v: number
+  g: string
+  h: number
+  hex: string
 }

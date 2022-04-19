@@ -7,17 +7,17 @@
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
   import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
   import type {
-    RasterLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
+    RasterLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import ColorPicker from './controls/ColorPicker.svelte'
-  import { Color } from 'svelte-colorpick'
+  //import ColorPicker from './controls/ColorPicker.svelte'
+  import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
 
   import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
-  import type { Layer, LayerInfo } from '../lib/types'
+  import type { Layer, LayerInfo, Color } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { updateParamsInURL } from '../lib/helper'
 
@@ -122,33 +122,50 @@
   let currentIntervalColor: string[]
   let currentIntervalColorRGB: string
   let intervalIndex: number
+  let color: Color
 
   function sendIndexForCmap(index: number) {
     openColorPicker = !openColorPicker
     currentIntervalColor = cmap[index][1]
+
+    let r = currentIntervalColor[0]
+    let g = currentIntervalColor[1]
+    let b = currentIntervalColor[2]
+
+    color = {
+      r: r,
+      g: g,
+      b: b,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+
     currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
-    // console.log(currentIntervalColorRGB)
     intervalIndex = index
   }
 
-  function updateColorMap(index: number, rgb: string) {
+  function updateColorMap(index: number, color: Color) {
     if (cmapItem.length > 0) {
       cmapItem = []
     }
-    cmapItem.push(Color.hex(rgb).data.r)
-    cmapItem.push(Color.hex(rgb).data.g)
-    cmapItem.push(Color.hex(rgb).data.b)
-    cmapItem.push(255)
-    cmap[index].splice(1, 1, cmapItem)
+
+    cmap[index].splice(1, 1, chroma(color['hex']).rgba())
+    cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
+    cmapItem = cmap[index]
+
     handleParamsUpdate(cmap)
-    document.getElementById(`interval-${index}`).style.background = `rgb(${cmapItem})`
+    document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
   }
 
-  let collapse = false
+  function rescaleOpacity(opacity: number) {
+    return 255 * opacity
+  }
+
   $: {
     if (openColorPicker) {
-      currentIntervalColorRGB, updateColorMap(intervalIndex, currentIntervalColorRGB)
-      collapse = false
+      currentIntervalColor, updateColorMap(intervalIndex, color)
     }
   }
   /*
@@ -284,28 +301,34 @@
             id="interval-{index}"
             on:click={() => sendIndexForCmap(index)}
             class="discrete"
-            style="background-color: rgb({cmap[index][1]})" />
+            style="caret-color:rgb({cmap[index][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
           &nbsp;&raquo;&nbsp
           <input
             style="width: 30px!important; border: none"
             bind:value={intervalList[index]}
             on:change={sendFirstInterval(index, intervalList[index])} />
-          <!--          <div id='firstInterval-{index}' on:input={sendFirstInterval(index)} contenteditable="true" bind:innerHTML={intervalList[index]} />-->
           -
           <input
             style="width: 30px!important; border: none"
             bind:value={intervalList[index + 1]}
             on:change={sendLastInterval(index, intervalList[index + 1])} />
-
-          <!--          <div id='lastInterval-{index}' on:input={sendLastInterval(index)} contenteditable="true" bind:innerHTML={intervalList[index + 1]} />-->
         </div>
       {/each}
       {#if openColorPicker}
-        <ColorPicker bind:collapse bind:RgbColor={currentIntervalColorRGB} />
+        <div style="cursor: crosshair">
+          <ColorPicker
+            isPopup={true}
+            wrapper="div"
+            --picker-height="150px"
+            --picker-width="150px"
+            --slider-width="10px"
+            isInput={false}
+            isOpen={true}
+            bind:color />
+        </div>
       {/if}
     </div>
   </div>
-
   <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
     <Set class="colormap-chips" chips={Object.keys(ColorMaps)} let:chip choice bind:selected={selectedColorMapType}>
       <Chip {chip} style="margin-left: 0; margin-right: 0;">
