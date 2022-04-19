@@ -23,8 +23,7 @@ const listContainers = async () => {
         tags = container.metadata.tags
           .split(',')
           .filter((item) => item !== '')
-          .map((item) => item.trim())
-          .map((item) => item.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase()))
+          .map((item) => item.trim().replace(/(^\w|\s\w)/g, (m) => m.toUpperCase()))
           .sort((a, b) => a.localeCompare(b))
       }
 
