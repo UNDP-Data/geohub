@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
-  import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
@@ -10,8 +9,8 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
-  import Tag from 'svelma/src/components/Tag/Tag.svelte'
 
+  import BucketCard from './BucketCard.svelte'
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '../stores'
@@ -123,32 +122,7 @@
           {#if $bucketFeature === true}
             <div hidden={activeTab !== TabNames.BUCKETS}>
               {#each $bucketList as bucket}
-                <div class="card">
-                  <Card>
-                    <PrimaryAction on:click={() => undefined}>
-                      <ContentCard>
-                        <div class="columns is-vcentered is-mobile">
-                          <div class="column">
-                            <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} />
-                          </div>
-                          <div class="column is-full">
-                            <div class="title is-size-5">
-                              {bucket.label}
-                            </div>
-                            <div class="subtitle is-size-6">
-                              {bucket.description}
-                            </div>
-                          </div>
-                        </div>
-                        <div class="content is-size-7 tags">
-                          {#each bucket.tags as tag}
-                            <Tag type="is-info is-light" size="is-small">{tag}</Tag>
-                          {/each}
-                        </div>
-                      </ContentCard>
-                    </PrimaryAction>
-                  </Card>
-                </div>
+                <BucketCard {bucket} />
               {/each}
             </div>
           {/if}
@@ -248,31 +222,6 @@
         flex-direction: column;
         flex-basis: 100%;
         flex: 1;
-
-        .card {
-          margin-bottom: 15px;
-          margin-left: 15px;
-
-          .columns {
-            .is-full {
-              padding-right: 40px;
-
-              .title,
-              .subtitle,
-              .content {
-                @media (prefers-color-scheme: dark) {
-                  color: white;
-                }
-              }
-            }
-          }
-
-          .content .tags {
-            display: flex;
-            gap: 5px;
-            flex-flow: row wrap;
-          }
-        }
       }
 
       .drawer-divider {

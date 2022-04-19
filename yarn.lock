@@ -870,6 +870,11 @@
   resolved "https://registry.npmjs.org/@opentelemetry/api/-/api-1.1.0.tgz"
   integrity sha512-hf+3bwuBwtXsugA2ULBc95qxrOqP2pOekLz34BJhcAKawt94vfeNyUKpYc0lZQ/3sCP6LqRa7UAdHA7i5UODzQ==
 
+"@popperjs/core@^2.9.0":
+  version "2.11.5"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.5.tgz#db5a11bf66bdab39569719555b0f76e138d7bd64"
+  integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
+
 "@rollup/pluginutils@^4.2.0":
   version "4.2.0"
   resolved "https://registry.npmjs.org/@rollup/pluginutils/-/pluginutils-4.2.0.tgz"
@@ -4193,12 +4198,24 @@ svelte-hmr@^0.14.11:
   resolved "https://registry.npmjs.org/svelte-hmr/-/svelte-hmr-0.14.11.tgz"
   integrity sha512-R9CVfX6DXxW1Kn45Jtmx+yUe+sPhrbYSUp7TkzbW0jI5fVPn6lsNG9NEs5dFg5qRhFNAoVdRw5qQDLALNKhwbQ==
 
+svelte-ktippy@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/svelte-ktippy/-/svelte-ktippy-1.2.1.tgz#32736068fc838b3fc3dd69617a3f296cb9f35353"
+  integrity sha512-++sFw1Erm/fCs54OHsRe8CtgFa9Enf+9bFYxOsSRCnTmWg3xXQfol0xDPY25UZoCSPyUUTOM+XxXcj0b6pwiEQ==
+  dependencies:
+    tippy.js "^6.3.1"
+
 svelte-moveable@^0.21.3:
   version "0.21.3"
   resolved "https://registry.npmjs.org/svelte-moveable/-/svelte-moveable-0.21.3.tgz"
   integrity sha512-83GGxTLESua229ITvtWBzc19eAYMgoe9VVwqhKfNg4i2G6EiWkR3JpNrh4WA7SjehE2Pcdo2fYSKQMifWQKSuA==
   dependencies:
     moveable "~0.29.3"
+
+svelte-popperjs@^1.2.9:
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/svelte-popperjs/-/svelte-popperjs-1.2.9.tgz#731f93878028924500d1ae6ac5e3e6657996d659"
+  integrity sha512-6kUzxG7LRt9uoi0StvnyfM6gmiJvouzus1yI98rhOplVHTYwh0i8FtzKGbk3gyJ5SPo9KePpuZ3xG0M8YYO9wQ==
 
 svelte-preprocess@^4.0.0:
   version "4.10.4"
@@ -4298,6 +4315,13 @@ tinyspy@^0.3.2:
   version "0.3.2"
   resolved "https://registry.npmjs.org/tinyspy/-/tinyspy-0.3.2.tgz"
   integrity sha512-2+40EP4D3sFYy42UkgkFFB+kiX2Tg3URG/lVvAZFfLxgGpnWl5qQJuBw1gaLttq8UOS+2p3C0WrhJnQigLTT2Q==
+
+tippy.js@^6.3.1:
+  version "6.3.7"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
+  integrity sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==
+  dependencies:
+    "@popperjs/core" "^2.9.0"
 
 to-regex-range@^5.0.1:
   version "5.0.1"
