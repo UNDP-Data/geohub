@@ -109,6 +109,7 @@ export enum LayerTypes {
   SYMBOL = 'symbol',
   LINE = 'line',
   FILL = 'fill',
+  HEATMAP = 'heatmap',
 }
 
 export enum ClassificationMethodTypes {

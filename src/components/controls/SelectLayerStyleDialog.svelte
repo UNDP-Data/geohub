@@ -9,6 +9,7 @@
     LineLayerSpecification,
     FillLayerSpecification,
     SymbolLayerSpecification,
+    HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { cloneDeep } from 'lodash'
 
@@ -21,7 +22,7 @@
   export let url: string
 
   let layerType = LayerTypes.LINE
-  let layerTypes = [LayerTypes.LINE, LayerTypes.SYMBOL, LayerTypes.FILL]
+  let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
   let tileSourceId = path
 
   const addLayer = () => {
@@ -35,9 +36,13 @@
       }
     }
     const layerId = uuidv4()
-    let layerDefinition: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
+    let layerDefinition:
+      | LineLayerSpecification
+      | FillLayerSpecification
+      | SymbolLayerSpecification
+      | HeatmapLayerSpecification
     switch (layerType) {
-      case 'symbol':
+      case LayerTypes.SYMBOL:
         layerDefinition = {
           id: layerId,
           type: layerType,
@@ -50,7 +55,7 @@
           },
         }
         break
-      case 'line':
+      case LayerTypes.LINE:
         layerDefinition = {
           id: layerId,
           type: layerType,
@@ -67,7 +72,7 @@
           },
         }
         break
-      case 'fill':
+      case LayerTypes.FILL:
         layerDefinition = {
           id: layerId,
           type: layerType,
@@ -80,6 +85,40 @@
             'fill-color': 'rgb(20, 180, 60)',
             'fill-outline-color': 'rgb(110, 110, 110)',
             'fill-opacity': 0.6,
+          },
+        }
+        break
+      case LayerTypes.HEATMAP:
+        layerDefinition = {
+          id: layerId,
+          type: layerType,
+          source: tileSourceId,
+          'source-layer': label,
+          layout: {
+            visibility: 'visible',
+          },
+          paint: {
+            'heatmap-color': [
+              'interpolate',
+              ['linear'],
+              ['heatmap-density'],
+              0,
+              'rgba(0, 0, 255, 0)',
+              0.1,
+              'royalblue',
+              0.3,
+              'cyan',
+              0.5,
+              'lime',
+              0.7,
+              'yellow',
+              1,
+              'red',
+            ],
+            'heatmap-intensity': 1,
+            'heatmap-opacity': 1,
+            'heatmap-radius': 30,
+            'heatmap-weight': 1,
           },
         }
         break
