@@ -10,6 +10,7 @@
   import { map, layerList } from '../stores'
   import { downloadFile } from '$lib/helper'
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { Layer } from '$lib/types'
 
   let dialogOpen = false
   let selectedOption = 'all'
@@ -27,14 +28,14 @@
   }
 
   export const download = () => {
-    let style: StyleSpecification = $map.getStyle()
+    const style: StyleSpecification = $map.getStyle()
     if (selectedOption === 'geohub') {
       if ($layerList.length === 0) {
         return
       }
       const newSources = {}
-      Object.keys(style.sources).forEach((key) => {
-        $layerList.forEach((l) => {
+      Object.keys(style.sources).forEach((key: string) => {
+        $layerList.forEach((l: Layer) => {
           if (l.definition && l.definition.source === key) {
             newSources[key] = style.sources[key]
           }
@@ -43,7 +44,7 @@
       style.sources = newSources
       const newLayers = []
       style.layers.forEach((layer) => {
-        $layerList.forEach((l) => {
+        $layerList.forEach((l: Layer) => {
           if (l.definition.id === layer.id) {
             newLayers.push(layer)
           }
@@ -62,7 +63,7 @@
     dialogOpen = false
   }
 
-  function closeHandler(e: CustomEvent<{ action: string }>) {
+  const closeHandler = (e: CustomEvent<{ action: string }>) => {
     if (e.detail.action === 'accept') {
       download()
     }
