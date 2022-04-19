@@ -93,6 +93,13 @@
     }, 350)
     $bannerMessages = []
   }
+
+  let bucketIdsSelected = []
+
+  const handleBucketClick = (event) => {
+    console.log(event.detail.id)
+    bucketIdsSelected = [...bucketIdsSelected, event.detail.id]
+  }
 </script>
 
 <div class="content-container">
@@ -122,7 +129,12 @@
           {#if $bucketFeature === true}
             <div hidden={activeTab !== TabNames.BUCKETS}>
               {#each $bucketList as bucket}
-                <BucketCard {bucket} />
+                <BucketCard {bucket} on:click={handleBucketClick} />
+              {/each}
+            </div>
+            <div>
+              {#each bucketIdsSelected as bucketId}
+                {bucketId}<br />
               {/each}
             </div>
           {/if}

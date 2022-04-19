@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import { fade } from 'svelte/transition'
@@ -8,6 +9,8 @@
 
   export let bucket: Bucket
   let showTooltip = false
+
+  const dispatch = createEventDispatcher()
 
   const [popperRef, popperContent] = createPopperActions({
     placement: 'right-start',
@@ -30,11 +33,16 @@
       },
     ],
   }
+
+  const handleBucketClick = () => {
+    dispatch('click', { id: bucket.id })
+  }
 </script>
 
 <div
   class="card-container"
   use:popperRef
+  on:click={() => handleBucketClick()}
   on:mouseenter={() => (showTooltip = true)}
   on:mouseleave={() => (showTooltip = false)}>
   <Card>
