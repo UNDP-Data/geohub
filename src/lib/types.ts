@@ -7,6 +7,7 @@ import type {
   SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
 import type { StatusTypes } from './constants'
+import chroma from 'chroma-js'
 
 export interface Tree {
   tree: TreeNode
@@ -95,4 +96,14 @@ export interface Bucket {
   icon: string | null
   type: BucketType
   tags: string[]
+}
+
+export interface Color {
+  r: number
+  g: number
+  b: number
+  hex: string
+  h: number
+  s: number
+  v: number
 }

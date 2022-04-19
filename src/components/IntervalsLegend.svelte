@@ -17,7 +17,7 @@
 
   import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
-  import type { Layer, LayerInfo } from '../lib/types'
+  import type { Layer, LayerInfo, Color } from '../lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
   import { updateParamsInURL } from '../lib/helper'
 
@@ -122,7 +122,7 @@
   let currentIntervalColor
   let currentIntervalColorRGB
   let intervalIndex
-  let color
+  let color: Color
 
   function sendIndexForCmap(index: number) {
     openColorPicker = !openColorPicker
@@ -145,7 +145,7 @@
     intervalIndex = index
   }
 
-  function updateColorMap(index: number, color: object) {
+  function updateColorMap(index: number, color: Color) {
     if (cmapItem.length > 0) {
       cmapItem = []
     }
@@ -324,6 +324,7 @@
             isInput={false}
             isOpen={true}
             bind:color />
+          <div style="cursor: pointer; position: absolute; right: 0">X</div>
         </div>
       {/if}
     </div>
