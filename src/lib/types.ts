@@ -96,3 +96,13 @@ export interface Bucket {
   type: BucketType
   tags: string[]
 }
+
+export interface Color {
+  r: string
+  b: string
+  s: number
+  v: number
+  g: string
+  h: number
+  hex: string
+}
