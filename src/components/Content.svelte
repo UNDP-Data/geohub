@@ -126,16 +126,21 @@
                   <Card>
                     <PrimaryAction on:click={() => undefined}>
                       <ContentCard>
-                        <div class="title is-size-5">
-                          {bucket.label}
-                        </div>
-                        <div class="subtitle is-size-6">
-                          {bucket.description}
+                        <div class="columns is-vcentered is-mobile">
+                          <div class="column">
+                            <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} />
+                          </div>
+                          <div class="column is-full">
+                            <div class="title is-size-5">
+                              {bucket.label}
+                            </div>
+                            <div class="subtitle is-size-6">
+                              {bucket.description}
+                            </div>
+                          </div>
                         </div>
                         <div class="content is-size-7">
                           {bucket.tags.join(', ')}
-                          <br /><br />
-                          {bucket.path}
                         </div>
                       </ContentCard>
                     </PrimaryAction>
@@ -194,6 +199,8 @@
 
 <style lang="scss">
   @import '../styles/bulma.css';
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+
   :global(.app-content) {
     flex: auto;
     overflow: auto;
@@ -243,11 +250,17 @@
           margin-bottom: 15px;
           margin-left: 15px;
 
-          .title,
-          .subtitle,
-          .content {
-            @media (prefers-color-scheme: dark) {
-              color: white;
+          .columns {
+            .is-full {
+              padding-right: 40px;
+
+              .title,
+              .subtitle,
+              .content {
+                @media (prefers-color-scheme: dark) {
+                  color: white;
+                }
+              }
             }
           }
         }
