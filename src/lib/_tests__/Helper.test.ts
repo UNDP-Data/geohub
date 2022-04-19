@@ -18,6 +18,27 @@ describe('stringifyStyleJSON', () => {
   })
 })
 
+describe('downloadFile', () => {
+  it('should create an HTML element to download a file ', () => {
+    const linkElement: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement
+    const link = {
+      ...linkElement,
+      click: vi.fn(),
+      remove: vi.fn(),
+      download: '',
+      href: '',
+    }
+
+    vi.spyOn(document, 'createElement').mockReturnValue(link)
+    helper.downloadFile('test-file.txt', 'test content here')
+
+    expect(link.download).toEqual('test-file.txt')
+    expect(link.href).toEqual('data:text/plain;charset=utf-8,test%20content%20here')
+    expect(link.click).toHaveBeenCalledTimes(1)
+    expect(link.remove).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe('fetchUrl', () => {
   it('should return a json object upon no timeout ', async () => {
     const { Response, Headers } = await vi.importActual('node-fetch')

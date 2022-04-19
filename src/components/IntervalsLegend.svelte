@@ -119,9 +119,9 @@
   }
 
   let openColorPicker = false
-  let currentIntervalColor
-  let currentIntervalColorRGB
-  let intervalIndex
+  let currentIntervalColor: string[]
+  let currentIntervalColorRGB: string
+  let intervalIndex: number
   let color: Color
 
   function sendIndexForCmap(index: number) {
