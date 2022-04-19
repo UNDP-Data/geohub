@@ -36,8 +36,8 @@
       max={24}
       step={1}
       pips
-      first="1"
-      last="20"
+      first="label"
+      last="label"
       rest={false} />
   </div>
 </StyleControlGroup>
