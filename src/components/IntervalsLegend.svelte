@@ -1,8 +1,5 @@
 <script lang="ts">
   import chroma from 'chroma-js'
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Chip, { Set, Text } from '@smui/chips'
-  import { Label } from '@smui/common'
   import Ripple from '@smui/ripple'
   import Fa from 'svelte-fa'
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
@@ -17,8 +14,6 @@
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
-
   import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerInfo, Color } from '../lib/types'
