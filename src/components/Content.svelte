@@ -10,6 +10,7 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
+  import Tag from 'svelma/src/components/Tag/Tag.svelte'
 
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
@@ -139,8 +140,10 @@
                             </div>
                           </div>
                         </div>
-                        <div class="content is-size-7">
-                          {bucket.tags.join(', ')}
+                        <div class="content is-size-7 tags">
+                          {#each bucket.tags as tag}
+                            <Tag type="is-info is-light" size="is-small">{tag}</Tag>
+                          {/each}
                         </div>
                       </ContentCard>
                     </PrimaryAction>
@@ -262,6 +265,12 @@
                 }
               }
             }
+          }
+
+          .content .tags {
+            display: flex;
+            gap: 5px;
+            flex-flow: row wrap;
           }
         }
       }
