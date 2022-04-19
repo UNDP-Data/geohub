@@ -46,24 +46,23 @@
     }
   }
 
+  $: {
+    if ($bucketFeature === true && tabs.length === 2) {
+      tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
 
-$: {
-  if ($bucketFeature === true && tabs.length === 2) {
-    tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
+      setTimeout(() => {
+        activeTab = TabNames.BUCKETS
+      }, 10)
+    }
 
-    setTimeout(() => {
-      activeTab = TabNames.BUCKETS
-    }, 10)
+    if ($bucketFeature === false && tabs.length === 3) {
+      tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
+
+      setTimeout(() => {
+        activeTab = TabNames.LOAD_DATA
+      }, 10)
+    }
   }
-
-  if ($bucketFeature === false && tabs.length === 3) {
-    tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
-
-    setTimeout(() => {
-      activeTab = TabNames.LOAD_DATA
-    }, 10)
-  }
-}
 
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
@@ -94,8 +93,6 @@ $: {
     }, 350)
     $bannerMessages = []
   }
-
-
 </script>
 
 <div class="content-container">
