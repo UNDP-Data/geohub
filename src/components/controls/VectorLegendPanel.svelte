@@ -20,6 +20,7 @@
   import HeatmapIntensity from './vector-styles/HeatmapIntensity.svelte'
   import HeatmapRadius from './vector-styles/HeatmapRadius.svelte'
   import HeatmapWeight from './vector-styles/HeatmapWeight.svelte'
+  import HeatmapColor from './vector-styles/HeatmapColor.svelte'
 
   export let isLegendPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -48,6 +49,7 @@
     <IconKeepUpright on:change={onStyleChange} {layer} />
     <IconIgnorePlacement on:change={onStyleChange} {layer} />
     <IconOffset on:change={onStyleChange} {layer} />
+    <HeatmapColor on:change={onStyleChange} {layer} />
     <HeatmapIntensity on:change={onStyleChange} {layer} />
     <HeatmapRadius on:change={onStyleChange} {layer} />
     <HeatmapWeight on:change={onStyleChange} {layer} />
