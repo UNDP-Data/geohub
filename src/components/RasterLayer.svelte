@@ -25,12 +25,10 @@
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
 
-  let drawerWidth = 355
   let activeColorMapName: string = DEFAULT_COLORMAP
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
-  let isLegendSwitchAnimate = false
   let isOpacityPanelVisible = false
   let isZoomLevelPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
@@ -129,7 +127,7 @@
                 tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
                 let:tab
                 active={activeTab}
-                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
+                style="overflow:hidden">
                 <Tab
                   {tab}
                   class="tab"
