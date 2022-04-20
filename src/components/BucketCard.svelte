@@ -55,6 +55,7 @@
 
 <div
   class="card-container"
+  data-testid="card-container"
   use:popperRef
   on:click={() => handleBucketClick()}
   on:mouseenter={() => handleMouseEnter()}
@@ -69,7 +70,7 @@
 </div>
 
 {#if showTooltip}
-  <div id="tooltip" use:popperContent={popperOptions} transition:fade>
+  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
         <div class="title is-size-5">
@@ -82,7 +83,9 @@
     </div>
     <div class="content is-size-7 tags">
       {#each bucket.tags as tag}
-        <Tag type="is-info is-light" size="is-small">{tag}</Tag>
+        <span title="tag">
+          <Tag type="is-info is-light" size="is-small">{tag}</Tag>
+        </span>
       {/each}
     </div>
     <div id="arrow" data-popper-arrow />
