@@ -26,7 +26,7 @@
   }
 </script>
 
-<StyleControlGroup title="Min/Max Zoom level">
+<StyleControlGroup title="Min/Max Zoom Level">
   <div class="slider">
     <RangeSlider
       bind:values={ZoomSliderValues}
