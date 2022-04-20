@@ -14,6 +14,7 @@ export interface Tree {
 }
 
 export interface TreeNode {
+  id?: string
   label?: string
   children?: Array<TreeNode>
   path?: string
