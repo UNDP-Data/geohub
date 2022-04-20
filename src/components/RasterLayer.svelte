@@ -27,7 +27,6 @@
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
-  let isLegendSwitchAnimate = false
   let isOpacityPanelVisible = false
   let layerBandMetadataMax = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   let layerBandMetadataMin = parseFloat(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])

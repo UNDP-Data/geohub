@@ -125,7 +125,7 @@
       <MenuSurface
         bind:this={surface}
         anchorCorner="BOTTOM_LEFT"
-        style="max-height: 200px; overflow-y: scroll; margin-top: 10px; width: 100%">
+        style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">
         <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
           <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
             {#each Object.keys(ColorMaps) as option}
