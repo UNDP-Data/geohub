@@ -5,7 +5,7 @@
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
 
-  import { map } from '../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
 

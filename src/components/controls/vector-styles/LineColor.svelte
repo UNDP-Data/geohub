@@ -2,7 +2,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createEventDispatcher } from 'svelte'
 
-  import { map } from '../../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import ColorPicker from '../ColorPicker.svelte'

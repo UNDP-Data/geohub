@@ -7,7 +7,7 @@
   import Fa from 'svelte-fa'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
 
-  import { map, layerList } from '../stores'
+  import { map, layerList } from '$stores'
   import { downloadFile } from '$lib/helper'
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import type { Layer } from '$lib/types'

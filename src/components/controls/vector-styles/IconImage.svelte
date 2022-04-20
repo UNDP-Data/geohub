@@ -5,7 +5,7 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { onMount } from 'svelte'
 
-  import { map, spriteImageList } from '../../../stores'
+  import { map, spriteImageList } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'

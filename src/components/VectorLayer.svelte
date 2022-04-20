@@ -13,7 +13,7 @@
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
   import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
   import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
-  import { map } from '../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes, TabNames } from '$lib/constants'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'

@@ -5,7 +5,7 @@
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
 
-  import { layerList, map } from '../../stores'
+  import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
 

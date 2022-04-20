@@ -11,14 +11,15 @@
   import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
-  import GodLegend from '$components/GodLegend.svelte'
-  import { layerList, map } from '../stores'
-  import type { Layer } from '$lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
+
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
+  import GodLegend from '$components/GodLegend.svelte'
+  import { layerList, map } from '$stores'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
 
   export let layer: Layer = LayerInitialValues
 

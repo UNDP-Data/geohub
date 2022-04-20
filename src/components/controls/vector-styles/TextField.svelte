@@ -4,7 +4,7 @@
   import Textfield from '@smui/textfield'
   import HelperText from '@smui/textfield/helper-text'
 
-  import { map } from '../../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
 

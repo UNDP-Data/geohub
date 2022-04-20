@@ -15,7 +15,7 @@
 
   import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
   import { LayerInitialValues } from '$lib/constants'
-  import { dynamicLayers, layerList, map } from '../../stores'
+  import { dynamicLayers, layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues

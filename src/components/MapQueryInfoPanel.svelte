@@ -13,7 +13,7 @@
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
 
-  import { layerList, map } from '../stores'
+  import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { downloadFile, fetchUrl } from '$lib/helper'

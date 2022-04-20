@@ -3,7 +3,7 @@
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
 
-  import { map } from '../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
   import { stringifyStyleJSON } from '$lib/helper'

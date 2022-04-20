@@ -3,7 +3,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { map } from '../../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'

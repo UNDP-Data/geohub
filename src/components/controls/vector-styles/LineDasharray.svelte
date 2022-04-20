@@ -1,6 +1,6 @@
 <script lang="ts">
   import Select, { Option } from '@smui/select'
-  import { map } from '../../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'

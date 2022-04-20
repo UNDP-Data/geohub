@@ -3,7 +3,7 @@
   import { Label } from '@smui/common'
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
-  import { map } from '../../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'

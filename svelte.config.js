@@ -23,6 +23,7 @@ const config = {
       resolve: {
 				alias: {
           $components: resolve('./src/components'),
+          $stores: resolve('./src/stores/index.ts'),
 				}
 			}
     }

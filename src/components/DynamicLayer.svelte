@@ -10,7 +10,7 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import { dynamicLayers, layerList, map } from '../stores'
+  import { dynamicLayers, layerList, map } from '$stores'
   import Calculator from '$components/raster/Calculator.svelte'
   import { DynamicLayerLegendTypes, DynamicLayerResolutionTypes, LayerTypes } from '$lib/constants'
 

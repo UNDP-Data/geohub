@@ -14,7 +14,7 @@
   import { cloneDeep } from 'lodash'
 
   import { LayerTypes } from '$lib/constants'
-  import { map, layerList } from '../../stores'
+  import { map, layerList } from '$stores'
 
   export let label: string
   export let path: string

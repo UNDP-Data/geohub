@@ -2,7 +2,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
-  import { map } from '../../stores'
+  import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import TextField from '$components/controls/vector-styles/TextField.svelte'

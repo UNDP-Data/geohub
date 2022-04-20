@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { bannerMessages } from '../../stores'
+import { bannerMessages } from '$stores'
 import * as helper from '../helper'
 import type { BannerMessage } from '$lib/types'
 

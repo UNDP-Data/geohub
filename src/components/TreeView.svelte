@@ -1,6 +1,6 @@
 <script lang="ts">
   import TreeNode from '$components/TreeNode.svelte'
-  import { wtree } from '../stores'
+  import { wtree } from '$stores'
 </script>
 
 <ul>

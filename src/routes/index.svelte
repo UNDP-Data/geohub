@@ -16,7 +16,7 @@
 </script>
 
 <script lang="ts">
-  import { bucketList, wtree } from '../stores'
+  import { bucketList, wtree } from '$stores'
   import { BucketIntialValues, TreeNodeInitialValues } from '$lib/constants'
   import type { Bucket } from '$lib/types'
 

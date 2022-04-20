@@ -3,9 +3,9 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
-  import RasterLayer from '$components/rasterLayer.svelte'
+  import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
-  import { layerList, dynamicLayers } from '../stores'
+  import { layerList, dynamicLayers } from '$stores'
   import DynamicLayer from '$components/DynamicLayer.svelte'
   import { LayerTypes, TabNames } from '$lib/constants'
 

@@ -44,7 +44,7 @@
     DEFAULT_COLORMAP,
   } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
-  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '../stores'
+  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '$stores'
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues

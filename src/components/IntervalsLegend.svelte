@@ -15,7 +15,7 @@
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
-  import { map } from '../stores'
+  import { map } from '$stores'
   import { ColorMaps } from '$lib/colormaps'
   import type { Layer, LayerInfo, Color } from '$lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '$lib/constants'
