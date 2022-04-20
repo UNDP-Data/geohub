@@ -29,7 +29,6 @@
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
 
-  let drawerWidth = 355
   let activeColorMapName: string = DEFAULT_COLORMAP
   let activeTab = ''
   let isFilterPanelVisible = false
@@ -134,7 +133,7 @@
                 tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
                 let:tab
                 active={activeTab}
-                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
+                style="overflow:hidden">
                 <Tab
                   {tab}
                   class="tab"

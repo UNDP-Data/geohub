@@ -28,7 +28,6 @@
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let drawerWidth = 355
   let activeTab = ''
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
@@ -82,11 +81,7 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <TabBar
-                {tabs}
-                let:tab
-                active={activeTab}
-                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
+              <TabBar {tabs} let:tab active={activeTab} style="overflow:hidden">
                 <Tab
                   {tab}
                   class="tab"
