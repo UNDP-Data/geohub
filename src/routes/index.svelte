@@ -17,8 +17,8 @@
 
 <script lang="ts">
   import { bucketList, wtree } from '../stores'
-  import { BucketIntialValues, TreeNodeInitialValues } from '../lib/constants'
-  import type { Bucket } from '../lib/types'
+  import { BucketIntialValues, TreeNodeInitialValues } from '$lib/constants'
+  import type { Bucket } from '$lib/types'
 
   export let tree = { tree: TreeNodeInitialValues }
   wtree.set(tree)

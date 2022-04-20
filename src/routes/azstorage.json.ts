@@ -6,7 +6,7 @@ import {
 } from '@azure/storage-blob'
 
 import azure from '@azure/storage-blob'
-import type { Tree, TreeNode } from '../lib/types'
+import type { Tree, TreeNode } from '$lib/types'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
 
 const account = AZURE_STORAGE_ACCOUNT

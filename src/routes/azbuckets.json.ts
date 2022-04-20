@@ -2,7 +2,7 @@ import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-bl
 import type { ServiceListContainersOptions } from '@azure/storage-blob'
 
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
-import type { Bucket } from '../lib/types'
+import type { Bucket } from '$lib/types'
 import { BucketType } from '$lib/constants'
 
 const account = AZURE_STORAGE_ACCOUNT

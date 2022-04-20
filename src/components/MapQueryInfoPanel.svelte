@@ -14,9 +14,9 @@
   import Fa from 'svelte-fa'
 
   import { layerList, map } from '../stores'
-  import type { Layer } from '../lib/types'
+  import type { Layer } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { downloadFile, fetchUrl } from '../lib/helper'
+  import { downloadFile, fetchUrl } from '$lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
 

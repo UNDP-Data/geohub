@@ -7,7 +7,7 @@
   import VectorLayer from './VectorLayer.svelte'
   import { layerList, dynamicLayers } from '../stores'
   import DynamicLayer from './DynamicLayer.svelte'
-  import { LayerTypes, TabNames } from '../lib/constants'
+  import { LayerTypes, TabNames } from '$lib/constants'
 
   let disabled = true
   let open = false

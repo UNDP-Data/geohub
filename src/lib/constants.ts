@@ -4,7 +4,7 @@ import { faWaveSquare } from '@fortawesome/free-solid-svg-icons/faWaveSquare'
 import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 
-import type { TreeNode } from '../lib/types'
+import type { TreeNode } from '$lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000

@@ -14,7 +14,7 @@
   import LayerList from './LayerList.svelte'
   import TreeView from './TreeView.svelte'
   import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '../stores'
-  import { StatusTypes, TabNames } from '../lib/constants'
+  import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
 

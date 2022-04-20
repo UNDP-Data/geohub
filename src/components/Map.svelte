@@ -7,7 +7,7 @@
   import { indicatorProgress, map, layerList, spriteImageList } from '../stores'
   import MapQueryInfoPanel from './MapQueryInfoPanel.svelte'
   import { LayerTypes } from '$lib/constants'
-  import { loadImageToDataUrl, fetchUrl, clipSprite } from '../lib/helper'
+  import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { sprite } from '$lib/types'
 
   let container: HTMLDivElement

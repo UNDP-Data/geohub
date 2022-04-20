@@ -3,7 +3,7 @@
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { Wrapper } from '@smui/tooltip'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
-  import { DynamicLayerLegendTypes } from '../lib/constants'
+  import { DynamicLayerLegendTypes } from '$lib/constants'
   import Fa from 'svelte-fa'
   import UniqueValuesLegend from './UniqueValuesLegend.svelte'
 
