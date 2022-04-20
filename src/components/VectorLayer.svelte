@@ -12,6 +12,7 @@
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
   import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
+  import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
   import { map } from '../stores'
   import type { Layer } from '../lib/types'
   import { LayerInitialValues, LayerTypes, TabNames } from '../lib/constants'
@@ -20,16 +21,17 @@
   import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
   import VectorStyleJsonPanel from './controls/VectorStyleJsonPanel.svelte'
   import VectorLabelPanel from './controls/VectorLabelPanel.svelte'
+  import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let drawerWidth = 355
   let activeTab = ''
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
+  let isZoomLevelPanelVisible = false
   let isLabelPanelVisible = false
   let isStyleJsonPanelVisible = false
   let panelOpen: boolean = layerState[layerId] || false
@@ -39,43 +41,34 @@
     tabs.push(TabNames.LABEL)
   }
   tabs.push(TabNames.OPACITY)
+  tabs.push(TabNames.ZOOM)
   tabs.push(TabNames.STYLEJSON)
 
   $: {
-    if (activeTab === '') {
-      isLegendPanelVisible = false
-      isLabelPanelVisible = false
-      isOpacityPanelVisible = false
-      isStyleJsonPanelVisible = false
-    }
-
-    if (activeTab === TabNames.LEGEND) {
-      isLegendPanelVisible = !isLegendPanelVisible
-      isLabelPanelVisible = false
-      isOpacityPanelVisible = false
-      isStyleJsonPanelVisible = false
-    }
-
-    if (activeTab === TabNames.LABEL) {
-      isLegendPanelVisible = false
-      isLabelPanelVisible = true
-      isOpacityPanelVisible = false
-      isStyleJsonPanelVisible = false
-    }
-
-    if (activeTab === TabNames.OPACITY) {
-      isLegendPanelVisible = false
-      isLabelPanelVisible = false
-      isOpacityPanelVisible = true
-      isStyleJsonPanelVisible = false
-    }
-
-    if (activeTab === TabNames.STYLEJSON) {
-      isLegendPanelVisible = false
-      isLabelPanelVisible = false
-      isOpacityPanelVisible = false
-      isStyleJsonPanelVisible = true
-      onStyleChange()
+    isLegendPanelVisible = false
+    isLabelPanelVisible = false
+    isOpacityPanelVisible = false
+    isStyleJsonPanelVisible = false
+    isZoomLevelPanelVisible = false
+    switch (activeTab) {
+      case TabNames.LEGEND:
+        isLegendPanelVisible = true
+        break
+      case TabNames.LABEL:
+        isLabelPanelVisible = true
+        break
+      case TabNames.OPACITY:
+        isOpacityPanelVisible = true
+        break
+      case TabNames.ZOOM:
+        isZoomLevelPanelVisible = true
+        break
+      case TabNames.STYLEJSON:
+        isStyleJsonPanelVisible = true
+        onStyleChange()
+        break
+      default:
+        break
     }
   }
 </script>
@@ -88,11 +81,7 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <TabBar
-                {tabs}
-                let:tab
-                active={activeTab}
-                style="width: {drawerWidth - 100}px; max-width: {drawerWidth - 100}px;">
+              <TabBar {tabs} let:tab active={activeTab} style="overflow:hidden">
                 <Tab
                   {tab}
                   class="tab"
@@ -109,6 +98,8 @@
                           <Fa icon={faTag} size="1x" />
                         {:else if tab === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
+                        {:else if tab === TabNames.ZOOM}
+                          <Fa icon={faMagnifyingGlassLocation} size="1x" />
                         {:else if tab === TabNames.STYLEJSON}
                           <Fa icon={faPenToSquare} size="1x" />
                         {/if}
@@ -129,6 +120,7 @@
             <VectorLabelPanel {layer} {isLabelPanelVisible} />
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
+          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
           <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
         </div>
       </div>

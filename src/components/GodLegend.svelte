@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Legend from './Legend.svelte'
   import IntervalsLegend from './IntervalsLegend.svelte'
   import { Wrapper } from '@smui/tooltip'

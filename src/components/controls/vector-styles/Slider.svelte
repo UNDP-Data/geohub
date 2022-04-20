@@ -47,7 +47,16 @@
 {#if style.type === layerType}
   <StyleControlGroup title={titleName}>
     <div class="slider">
-      <RangeSlider bind:values float min={minValue} max={maxValue} step={stepValue} pips rest={false} />
+      <RangeSlider
+        bind:values
+        float
+        min={minValue}
+        max={maxValue}
+        step={stepValue}
+        pips
+        first="label"
+        last="label"
+        rest={false} />
     </div>
   </StyleControlGroup>
 {/if}

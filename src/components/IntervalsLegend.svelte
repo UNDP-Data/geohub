@@ -213,7 +213,7 @@
     }
   }
 
-  // This is causing the ma to be reloaded every time
+  // This is causing the map to be reloaded every time
   $: {
     if (activeColorMapName) {
       populateAllColorMaps()
@@ -285,7 +285,7 @@
       <MenuSurface
         bind:this={surface}
         anchorCorner="BOTTOM_LEFT"
-        style="max-height: 200px; overflow-y: scroll; margin-top: 10px; width: 100%">
+        style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">
         <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
           <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
             {#each Object.keys(ColorMaps) as option}
@@ -310,10 +310,9 @@
                     activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
                     reclassifyImage
                   }}
-                  style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
-                    defaultNumberOfColors,
-                    'rgba',
-                  )})" />
+                  style="margin-top:5px; background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][
+                    aColorMap
+                  ].colors(defaultNumberOfColors, 'rgba')})" />
               {/each}
             {/if}
           </div>
