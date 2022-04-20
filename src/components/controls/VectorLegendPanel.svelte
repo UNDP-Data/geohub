@@ -2,7 +2,6 @@
   import type { Layer } from '../../lib/types'
   import { LayerInitialValues } from '../../lib/constants'
   import VectorLegendSymbol from './VectorLegendSymbol.svelte'
-  import MinMaxZoom from './vector-styles/MinMaxZoom.svelte'
   import LineWidth from './vector-styles/LineWidth.svelte'
   import LineBlur from './vector-styles/LineBlur.svelte'
   import LineColor from './vector-styles/LineColor.svelte'
@@ -34,7 +33,6 @@
 {#if isLegendPanelVisible === true}
   <div class="action">
     <VectorLegendSymbol bind:updateLegend {layer} />
-    <MinMaxZoom on:change={onStyleChange} {layer} />
     <LineWidth on:change={onStyleChange} {layer} />
     <LineBlur on:change={onStyleChange} {layer} />
     <LineColor on:change={onStyleChange} {layer} />

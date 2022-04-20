@@ -40,11 +40,29 @@
   <StyleControlGroup title="Icon Offset">
     <p>X offset</p>
     <div class="slider">
-      <RangeSlider bind:values={xValues} float min={-10} max={10} step={0.1} pips rest={false} />
+      <RangeSlider
+        bind:values={xValues}
+        float
+        min={-10}
+        max={10}
+        step={0.1}
+        pips
+        first="label"
+        last="label"
+        rest={false} />
     </div>
     <p>Y offset</p>
     <div class="slider">
-      <RangeSlider bind:values={yValues} float min={-10} max={10} step={0.1} pips rest={false} />
+      <RangeSlider
+        bind:values={yValues}
+        float
+        min={-10}
+        max={10}
+        step={0.1}
+        pips
+        first="label"
+        last="label"
+        rest={false} />
     </div>
   </StyleControlGroup>
 {/if}
