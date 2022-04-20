@@ -37,17 +37,18 @@
   }
 
   const handleBucketClick = () => {
+    handleMouseLeave()
     dispatch('click', { bucket })
   }
 
   const handleMouseEnter = () => {
     timer = setTimeout(() => {
       showTooltip = true
-    }, 1000)
+    }, 500)
   }
 
   const handleMouseLeave = () => {
-    clearTimeout(timer)
+    if (timer) clearTimeout(timer)
     showTooltip = false
   }
 </script>
@@ -61,7 +62,7 @@
   <Card>
     <PrimaryAction on:click={() => undefined}>
       <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
-        <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} />
+        <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
       </ContentCard>
     </PrimaryAction>
   </Card>
