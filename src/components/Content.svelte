@@ -12,12 +12,12 @@
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import { cloneDeep } from 'lodash'
 
-  import BucketCard from './BucketCard.svelte'
-  import LayerList from './LayerList.svelte'
-  import TreeView from './TreeView.svelte'
-  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '../stores'
-  import { StatusTypes, TabNames } from '../lib/constants'
   import type { Bucket } from '$lib/types'
+  import BucketCard from '$components/BucketCard.svelte'
+  import LayerList from '$components/LayerList.svelte'
+  import TreeView from '$components/TreeView.svelte'
+  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '$stores'
+  import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
 

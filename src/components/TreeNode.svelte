@@ -34,7 +34,7 @@
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import type { BannerMessage, TreeNode, LayerInfo } from '../lib/types'
+  import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
   import {
     ErrorMessages,
     LayerIconTypes,
@@ -42,10 +42,10 @@
     LayerTypes,
     StatusTypes,
     DEFAULT_COLORMAP,
-  } from '../lib/constants'
-  import { fetchUrl } from '../lib/helper'
-  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '../stores'
-  import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
+  } from '$lib/constants'
+  import { fetchUrl } from '$lib/helper'
+  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '$stores'
+  import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0

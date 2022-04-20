@@ -5,10 +5,10 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { onMount } from 'svelte'
 
-  import { map, spriteImageList } from '../../../stores'
-  import type { Layer } from '../../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
-  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
+  import { map, spriteImageList } from '$stores'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import VectorLegendSymbol from '../VectorLegendSymbol.svelte'
 
   const dispatch = createEventDispatcher()

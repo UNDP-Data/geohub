@@ -13,11 +13,11 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import type { Layer, LayerInfo } from '../lib/types'
-  import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
+  import type { Layer, LayerInfo } from '$lib/types'
+  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { map } from '../stores/index'
-  import { ColorMaps } from '../lib/colormaps'
-  import { updateParamsInURL } from '../lib/helper'
+  import { ColorMaps } from '$lib/colormaps'
+  import { updateParamsInURL } from '$lib/helper'
 
   export let activeColorMapName = ''
   export let layerConfig: Layer = LayerInitialValues

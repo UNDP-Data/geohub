@@ -4,10 +4,10 @@
   import { cloneDeep } from 'lodash'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
-  import { indicatorProgress, map, layerList, spriteImageList } from '../stores'
-  import MapQueryInfoPanel from './MapQueryInfoPanel.svelte'
+  import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
+  import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
   import { LayerTypes } from '$lib/constants'
-  import { loadImageToDataUrl, fetchUrl, clipSprite } from '../lib/helper'
+  import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { sprite } from '$lib/types'
 
   let container: HTMLDivElement

@@ -2,11 +2,11 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import { map } from '../../../stores'
-  import type { Layer } from '../../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
+  import { map } from '$stores'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import ColorPicker from '../ColorPicker.svelte'
-  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues

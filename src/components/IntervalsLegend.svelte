@@ -9,23 +9,29 @@
     LineLayerSpecification,
     RasterLayerSpecification,
     SymbolLayerSpecification,
+    HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   //import ColorPicker from './controls/ColorPicker.svelte'
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
-  import { map } from '../stores'
-  import { ColorMaps } from '../lib/colormaps'
-  import type { Layer, LayerInfo, Color } from '../lib/types'
-  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
-  import { updateParamsInURL } from '../lib/helper'
+  import { map } from '$stores'
+  import { ColorMaps } from '$lib/colormaps'
+  import type { Layer, LayerInfo, Color } from '$lib/types'
+  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import { updateParamsInURL } from '$lib/helper'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
 
-  let definition: RasterLayerSpecification | FillLayerSpecification | LineLayerSpecification | SymbolLayerSpecification
+  let definition:
+    | RasterLayerSpecification
+    | FillLayerSpecification
+    | LineLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
