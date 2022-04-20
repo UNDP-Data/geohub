@@ -15,7 +15,7 @@ const listContainers = async () => {
   const bucketList: Array<Bucket> = []
 
   for await (const container of blobServiceClient.listContainers(listContainerOpts)) {
-    if (container.metadata && 'published' in container.metadata && container.metadata.published) {
+    if (container.metadata && 'published' in container.metadata && container.metadata.published === 'true') {
       let tags: Array<string> = []
       if (!container.metadata.tags.includes(',')) {
         tags.push(container.metadata.tags)
