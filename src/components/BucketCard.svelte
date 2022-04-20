@@ -8,7 +8,9 @@
   import type { Bucket } from '$lib/types'
 
   export let bucket: Bucket
+
   let showTooltip = false
+  let timer: ReturnType<typeof setTimeout>
 
   const dispatch = createEventDispatcher()
 
@@ -35,7 +37,18 @@
   }
 
   const handleBucketClick = () => {
-    dispatch('click', { id: bucket.id })
+    dispatch('click', { bucket })
+  }
+
+  const handleMouseEnter = () => {
+    timer = setTimeout(() => {
+      showTooltip = true
+    }, 1000)
+  }
+
+  const handleMouseLeave = () => {
+    clearTimeout(timer)
+    showTooltip = false
   }
 </script>
 
@@ -43,11 +56,11 @@
   class="card-container"
   use:popperRef
   on:click={() => handleBucketClick()}
-  on:mouseenter={() => (showTooltip = true)}
-  on:mouseleave={() => (showTooltip = false)}>
+  on:mouseenter={() => handleMouseEnter()}
+  on:mouseleave={() => handleMouseLeave()}>
   <Card>
     <PrimaryAction on:click={() => undefined}>
-      <ContentCard>
+      <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
         <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} />
       </ContentCard>
     </PrimaryAction>
@@ -58,10 +71,10 @@
   <div id="tooltip" use:popperContent={popperOptions} transition:fade>
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
-        <div class="title is-size-5" style="color: black;">
+        <div class="title is-size-5">
           {bucket.label}
         </div>
-        <div class="subtitle is-size-6" style="color: black;">
+        <div class="subtitle is-size-6">
           {bucket.description}
         </div>
       </div>
@@ -76,6 +89,8 @@
 {/if}
 
 <style lang="scss">
+  $tooltip-background: #fff;
+
   .card-container {
     height: 65px;
     margin: 0;
@@ -91,14 +106,19 @@
   }
 
   #tooltip {
-    background: white;
+    background: $tooltip-background;
     border-radius: 7.5px;
     border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-size: 13px;
     font-weight: bold;
     max-width: 250px;
     padding: 10px;
     position: relative;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+    }
 
     .columns {
       .is-full {
@@ -107,8 +127,10 @@
         .title,
         .subtitle,
         .content {
+          color: #000;
+
           @media (prefers-color-scheme: dark) {
-            color: white;
+            color: #fff;
           }
         }
       }
@@ -125,8 +147,12 @@
       position: absolute;
       width: 8px;
       height: 8px;
-      background: white;
+      background: $tooltip-background;
       left: -2.5px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
     }
 
     #arrow {
