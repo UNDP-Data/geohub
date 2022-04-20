@@ -16,12 +16,12 @@
   import { map } from '../stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes, TabNames } from '$lib/constants'
-  import LayerNameGroup from './control-groups/LayerNameGroup.svelte'
-  import OpacityPanel from './controls/OpacityPanel.svelte'
-  import VectorLegendPanel from './controls/VectorLegendPanel.svelte'
-  import VectorStyleJsonPanel from './controls/VectorStyleJsonPanel.svelte'
-  import VectorLabelPanel from './controls/VectorLabelPanel.svelte'
-  import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
+  import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
+  import OpacityPanel from '$components/controls/OpacityPanel.svelte'
+  import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
+  import VectorStyleJsonPanel from '$components/controls/VectorStyleJsonPanel.svelte'
+  import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
+  import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 

@@ -3,14 +3,14 @@
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
   import { map } from '../../stores'
-  import type { Layer } from '../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../lib/constants'
-  import TextField from './vector-styles/TextField.svelte'
-  import TextColor from './vector-styles/TextColor.svelte'
-  import TextHaloCalor from './vector-styles/TextHaloCalor.svelte'
-  import TextHaloWidth from './vector-styles/TextHaloWidth.svelte'
-  import TextMaxWidth from './vector-styles/TextMaxWidth.svelte'
-  import TextSize from './vector-styles/TextSize.svelte'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import TextField from '$components/controls/vector-styles/TextField.svelte'
+  import TextColor from '$components/controls/vector-styles/TextColor.svelte'
+  import TextHaloCalor from '$components/controls/vector-styles/TextHaloCalor.svelte'
+  import TextHaloWidth from '$components/controls/vector-styles/TextHaloWidth.svelte'
+  import TextMaxWidth from '$components/controls/vector-styles/TextMaxWidth.svelte'
+  import TextSize from '$components/controls/vector-styles/TextSize.svelte'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues

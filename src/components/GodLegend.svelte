@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Legend from './Legend.svelte'
-  import IntervalsLegend from './IntervalsLegend.svelte'
+  import Legend from '$components/Legend.svelte'
+  import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import { Wrapper } from '@smui/tooltip'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import Fa from 'svelte-fa'
-  import UniqueValuesLegend from './UniqueValuesLegend.svelte'
+  import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
 
   export let activeColorMapName
   export let layer

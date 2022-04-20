@@ -4,6 +4,7 @@ import type {
   FillLayerSpecification,
   LineLayerSpecification,
   SymbolLayerSpecification,
+  HeatmapLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
 
 import { get } from 'svelte/store'
@@ -15,7 +16,12 @@ import { bannerMessages, map } from '../stores'
 import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 
 export const updateParamsInURL = (
-  definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification,
+  definition:
+    | RasterLayerSpecification
+    | LineLayerSpecification
+    | FillLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification,
   layerURL: URL,
   params: Record<string, string>,
 ) => {

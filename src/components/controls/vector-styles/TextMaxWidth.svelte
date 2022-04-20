@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Layer } from '../../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
   const onStyleChange = () => {
@@ -8,7 +8,7 @@
   }
 
   export let layer: Layer = LayerInitialValues
-  import Slider from './Slider.svelte'
+  import Slider from '$components/controls/vector-styles/Slider.svelte'
 
   let layerType = LayerTypes.SYMBOL
   let propertyName = 'text-max-width'

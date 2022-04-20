@@ -11,7 +11,7 @@
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import { dynamicLayers, layerList, map } from '../stores'
-  import Calculator from './raster/Calculator.svelte'
+  import Calculator from '$components/raster/Calculator.svelte'
   import { DynamicLayerLegendTypes, DynamicLayerResolutionTypes, LayerTypes } from '$lib/constants'
 
   export let open = false

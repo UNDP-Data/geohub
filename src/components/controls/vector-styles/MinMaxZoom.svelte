@@ -4,9 +4,9 @@
   import RangeSlider from 'svelte-range-slider-pips'
 
   import { map } from '../../../stores'
-  import type { Layer } from '../../../lib/types'
-  import { LayerInitialValues } from '../../../lib/constants'
-  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues } from '$lib/constants'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
 
   export let layer: Layer = LayerInitialValues
 

@@ -9,6 +9,7 @@
     LineLayerSpecification,
     RasterLayerSpecification,
     SymbolLayerSpecification,
+    HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   //import ColorPicker from './controls/ColorPicker.svelte'
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
@@ -25,7 +26,12 @@
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
 
-  let definition: RasterLayerSpecification | FillLayerSpecification | LineLayerSpecification | SymbolLayerSpecification
+  let definition:
+    | RasterLayerSpecification
+    | FillLayerSpecification
+    | LineLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 

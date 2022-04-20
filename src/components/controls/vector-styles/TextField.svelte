@@ -5,8 +5,8 @@
   import HelperText from '@smui/textfield/helper-text'
 
   import { map } from '../../../stores'
-  import type { Layer } from '../../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
 
   export let layer: Layer = LayerInitialValues
 

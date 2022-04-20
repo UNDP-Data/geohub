@@ -3,8 +3,8 @@
   import LegendSymbol from '@watergis/legend-symbol'
 
   import { map, spriteImageList } from '../../stores'
-  import type { Layer } from '../../lib/types'
-  import { LayerInitialValues } from '../../lib/constants'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues } from '$lib/constants'
 
   export let layer: Layer = LayerInitialValues
 

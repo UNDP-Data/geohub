@@ -10,7 +10,7 @@
   import { faToggleOff } from '@fortawesome/free-solid-svg-icons/faToggleOff'
   import Tooltip, { Wrapper } from '@smui/tooltip'
 
-  import StyleDownloader from './StyleDownloader.svelte'
+  import StyleDownloader from '$components/StyleDownloader.svelte'
   import { bucketFeature } from '../stores'
 
   export let drawerOpen = true

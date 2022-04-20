@@ -45,7 +45,7 @@
   } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
   import { map, layerList, indicatorProgress, bannerMessages, wtree } from '../stores'
-  import SelectLayerStyleDialog from './controls/SelectLayerStyleDialog.svelte'
+  import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
   export let level = 0
