@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { slide } from 'svelte/transition'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
@@ -9,7 +10,9 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
+  import { cloneDeep } from 'lodash'
 
+  import type { Bucket } from '$lib/types'
   import BucketCard from '$components/BucketCard.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TreeView from '$components/TreeView.svelte'
@@ -18,7 +21,7 @@
 
   export let drawerOpen = false
 
-  let activeTab = TabNames.LOAD_DATA
+  let activeTab = TabNames.BUCKETS
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
@@ -94,11 +97,11 @@
     $bannerMessages = []
   }
 
-  let bucketIdsSelected = []
-
-  const handleBucketClick = (event) => {
-    console.log(event.detail.id)
-    bucketIdsSelected = [...bucketIdsSelected, event.detail.id]
+  const handleBucketClick = (event: CustomEvent) => {
+    const bucketClone: Bucket = cloneDeep(event.detail.bucket)
+    bucketClone.selected = !bucketClone.selected
+    const bucketIndex = $bucketList.findIndex((bucket) => bucket.id === bucketClone.id)
+    $bucketList[bucketIndex] = bucketClone
   }
 </script>
 
@@ -128,14 +131,20 @@
           </div>
           {#if $bucketFeature === true}
             <div hidden={activeTab !== TabNames.BUCKETS}>
-              {#each $bucketList as bucket}
-                <BucketCard {bucket} on:click={handleBucketClick} />
-              {/each}
-            </div>
-            <div>
-              {#each bucketIdsSelected as bucketId}
-                {bucketId}<br />
-              {/each}
+              <div class="columns" style="padding-right: 30px;">
+                <div class="column">
+                  {#each $bucketList as bucket}
+                    <BucketCard {bucket} on:click={handleBucketClick} />
+                  {/each}
+                </div>
+                <div class="column is-four-fifths">
+                  <ul>
+                    {#each $bucketList.filter((bucket) => bucket.selected === true) as bucket}
+                      <li transition:slide={{ duration: 350 }}>{bucket.label}</li>
+                    {/each}
+                  </ul>
+                </div>
+              </div>
             </div>
           {/if}
           <div hidden={activeTab !== TabNames.LAYERS}>

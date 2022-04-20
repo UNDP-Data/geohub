@@ -101,6 +101,7 @@ export interface Bucket {
   icon: string | null
   type: BucketType
   tags: string[]
+  selected?: boolean | false
 }
 
 export interface Color {

@@ -409,7 +409,7 @@
     border-radius: 10px;
     border: 1px solid #ccc;
     bottom: 50px;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
     left: 10px;
