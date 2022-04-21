@@ -14,6 +14,7 @@ export interface Tree {
 }
 
 export interface TreeNode {
+  id?: string
   label?: string
   children?: Array<TreeNode>
   path?: string
@@ -101,6 +102,7 @@ export interface Bucket {
   icon: string | null
   type: BucketType
   tags: string[]
+  selected?: boolean | false
 }
 
 export interface Color {
