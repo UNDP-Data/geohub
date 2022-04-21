@@ -3,6 +3,7 @@
   import { map } from '../stores'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
   import BasemapsControl from 'maplibre-gl-basemaps'
+  import MaplibreDrawCircleControl from '../plugins/DrawCircleControl'
 
   let newMap: Map
   let mapContainer: HTMLDivElement
@@ -25,6 +26,7 @@
     )
     newMap.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left')
     newMap.addControl(new AttributionControl({ compact: true }), 'bottom-right')
+    newMap.addControl(new MaplibreDrawCircleControl())
 
     const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
     newMap.addControl(
@@ -70,6 +72,7 @@
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
   @import 'maplibre-gl-basemaps/lib/basemaps.css';
+  @import '../css/DrawCircleControl.css';
   .map {
     height: 100%;
     width: 100%;

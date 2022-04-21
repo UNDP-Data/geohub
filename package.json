@@ -30,6 +30,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@mapbox/mapbox-gl-draw": "^1.3.0",
     "@maplibre/maplibre-gl-style-spec": "^15.0.0",
     "@smui-extra/accordion": "^6.0.0-beta.16",
     "@smui/banner": "^6.0.0-beta.16",
@@ -102,5 +103,8 @@
     "vitest-svelte-kit": "^0.0.6"
   },
   "type": "module",
-  "dependencies": {}
+  "dependencies": {
+    "mapbox-gl-draw-geodesic": "^2.1.3",
+    "maplibre-gl-draw-circle": "^0.0.6"
+  }
 }
