@@ -23,6 +23,7 @@ export enum TabNames {
 }
 
 export const TreeNodeInitialValues = {
+  id: null,
   label: 'GeoHub Storage',
   children: <TreeNode[]>[],
   path: '/',

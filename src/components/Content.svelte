@@ -12,11 +12,12 @@
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import { cloneDeep } from 'lodash'
 
-  import type { Bucket } from '$lib/types'
+  import { treeBucket } from '$stores'
+  import type { Bucket, TreeNode as TreeNodeType } from '$lib/types'
   import BucketCard from '$components/BucketCard.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TreeView from '$components/TreeView.svelte'
-  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '$stores'
+  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages, wtree } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
@@ -97,12 +98,35 @@
     $bannerMessages = []
   }
 
-  const handleBucketClick = (event: CustomEvent) => {
+  const handleBucketClick = async (event: CustomEvent) => {
     const bucketClone: Bucket = cloneDeep(event.detail.bucket)
     bucketClone.selected = !bucketClone.selected
     const bucketIndex = $bucketList.findIndex((bucket) => bucket.id === bucketClone.id)
     $bucketList[bucketIndex] = bucketClone
+
+    const tree = cloneDeep($treeBucket)
+    const isBucketInTree = tree.tree.children.some((item) => item.path === bucketClone.path)
+
+    if (isBucketInTree === false) {
+      tree.tree.children = [
+        ...tree.tree.children,
+        {
+          id: bucketClone.id,
+          children: [],
+          isRaster: false,
+          label: bucketClone.path.slice(0, -1),
+          path: bucketClone.path,
+        },
+      ]
+    } else {
+      tree.tree.children = tree.tree.children.filter((item) => item.path !== bucketClone.path)
+    }
+
+    tree.tree.children.sort((a, b) => a.label.localeCompare(b.label))
+    $treeBucket = tree
   }
+
+  import BucketTreeNode from '$components/BucketTreeNode.svelte'
 </script>
 
 <div class="content-container">
@@ -139,9 +163,7 @@
                 </div>
                 <div class="column is-four-fifths">
                   <ul>
-                    {#each $bucketList.filter((bucket) => bucket.selected === true) as bucket}
-                      <li transition:slide={{ duration: 350 }}>{bucket.label}</li>
-                    {/each}
+                    <BucketTreeNode bind:node={$treeBucket.tree} />
                   </ul>
                 </div>
               </div>
