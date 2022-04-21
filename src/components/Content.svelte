@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { slide } from 'svelte/transition'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
@@ -9,12 +10,15 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
+  import { cloneDeep } from 'lodash'
 
-  import BucketCard from './BucketCard.svelte'
-  import LayerList from './LayerList.svelte'
-  import TreeView from './TreeView.svelte'
-  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '../stores'
-  import { StatusTypes, TabNames } from '../lib/constants'
+  import { treeBucket } from '$stores'
+  import type { Bucket, TreeNode as TreeNodeType } from '$lib/types'
+  import BucketCard from '$components/BucketCard.svelte'
+  import LayerList from '$components/LayerList.svelte'
+  import TreeView from '$components/TreeView.svelte'
+  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages, wtree } from '$stores'
+  import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
 
@@ -94,12 +98,35 @@
     $bannerMessages = []
   }
 
-  let bucketIdsSelected = []
+  const handleBucketClick = async (event: CustomEvent) => {
+    const bucketClone: Bucket = cloneDeep(event.detail.bucket)
+    bucketClone.selected = !bucketClone.selected
+    const bucketIndex = $bucketList.findIndex((bucket) => bucket.id === bucketClone.id)
+    $bucketList[bucketIndex] = bucketClone
 
-  const handleBucketClick = (event) => {
-    console.log(event.detail.id)
-    bucketIdsSelected = [...bucketIdsSelected, event.detail.id]
+    const tree = cloneDeep($treeBucket)
+    const isBucketInTree = tree.tree.children.some((item) => item.path === bucketClone.path)
+
+    if (isBucketInTree === false) {
+      tree.tree.children = [
+        ...tree.tree.children,
+        {
+          id: bucketClone.id,
+          children: [],
+          isRaster: false,
+          label: bucketClone.path.slice(0, -1),
+          path: bucketClone.path,
+        },
+      ]
+    } else {
+      tree.tree.children = tree.tree.children.filter((item) => item.path !== bucketClone.path)
+    }
+
+    tree.tree.children.sort((a, b) => a.label.localeCompare(b.label))
+    $treeBucket = tree
   }
+
+  import BucketTreeNode from '$components/BucketTreeNode.svelte'
 </script>
 
 <div class="content-container">
@@ -128,14 +155,18 @@
           </div>
           {#if $bucketFeature === true}
             <div hidden={activeTab !== TabNames.BUCKETS}>
-              {#each $bucketList as bucket}
-                <BucketCard {bucket} on:click={handleBucketClick} />
-              {/each}
-            </div>
-            <div>
-              {#each bucketIdsSelected as bucketId}
-                {bucketId}<br />
-              {/each}
+              <div class="columns" style="padding-right: 30px;">
+                <div class="column">
+                  {#each $bucketList as bucket}
+                    <BucketCard {bucket} on:click={handleBucketClick} />
+                  {/each}
+                </div>
+                <div class="column is-four-fifths">
+                  <ul>
+                    <BucketTreeNode bind:node={$treeBucket.tree} />
+                  </ul>
+                </div>
+              </div>
             </div>
           {/if}
           <div hidden={activeTab !== TabNames.LAYERS}>

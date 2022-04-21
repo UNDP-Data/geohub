@@ -23,7 +23,7 @@
           $: ({ label, children, path, url, isRaster } = tree)
  -->
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
   import { slide } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
@@ -44,7 +44,7 @@
     DEFAULT_COLORMAP,
   } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
-  import { map, layerList, indicatorProgress, bannerMessages, wtree } from '$stores'
+  import { map, layerList, indicatorProgress, bannerMessages, treeBucket } from '$stores'
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
 
   export let node = TreeNodeInitialValues
@@ -58,15 +58,19 @@
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
-  $: expanded = expansionState[label] || false
+  $: expanded = expansionState[label + path] || false
   $: mmap = $map
 
   onMount(() => {
     if (level === 0) toggleExpansion()
   })
 
+  onDestroy(() => {
+    expansionState[label + path] = false
+  })
+
   const toggleExpansion = () => {
-    expanded = expansionState[label] = !expanded
+    expanded = expansionState[label + path] = !expanded
     if (tree?.children.length === 0) updateTreeStore()
 
     setTimeout(() => {
@@ -82,7 +86,7 @@
 
     if (treeData) {
       const subpaths = path.split('/').slice(0, -1)
-      let currentTree = { ...$wtree }
+      let currentTree = { ...$treeBucket }
       let currentTreeData: TreeNode = currentTree.tree
 
       subpaths.forEach((element) => {
@@ -95,7 +99,7 @@
         currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
       })
 
-      wtree.set(currentTree)
+      treeBucket.set(currentTree)
     }
 
     loadingLayer = false
@@ -206,7 +210,7 @@
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon" on:click={() => (level > 0 ? toggleExpansion() : '')}>
-          {#if loadingLayer === true}
+          {#if loadingLayer === true && expanded === false}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
             <Fa icon={faDatabase} size="sm" />

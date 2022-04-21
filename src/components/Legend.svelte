@@ -6,17 +6,17 @@
   import chroma from 'chroma-js'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
-  import type { Layer, LayerInfo } from '../lib/types'
+  import type { Layer, LayerInfo } from '$lib/types'
   import type {
     RasterLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { ColorMapTypes, DynamicLayerLegendTypes, LayerInitialValues } from '../lib/constants'
-  import { map } from '../stores'
-  import { ColorMaps } from '../lib/colormaps'
-  import { updateParamsInURL } from '../lib/helper'
+  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import { map } from '$stores'
+  import { ColorMaps } from '$lib/colormaps'
+  import { updateParamsInURL } from '$lib/helper'
 
   export let activeColorMapName: string
   export let layerConfig: Layer = LayerInitialValues

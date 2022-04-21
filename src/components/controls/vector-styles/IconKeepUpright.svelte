@@ -3,12 +3,12 @@
   import { Label } from '@smui/common'
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
-  import { map } from '../../../stores'
-  import type { Layer } from '../../../lib/types'
+  import { map } from '$stores'
+  import type { Layer } from '$lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
-  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues

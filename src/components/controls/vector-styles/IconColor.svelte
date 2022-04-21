@@ -2,10 +2,10 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import { map } from '../../../stores'
-  import type { Layer } from '../../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../../lib/constants'
-  import StyleControlGroup from '../../control-groups/StyleControlGroup.svelte'
+  import { map } from '$stores'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import ColorPicker from '../ColorPicker.svelte'
 
   const dispatch = createEventDispatcher()

@@ -13,10 +13,10 @@
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
 
-  import { layerList, map } from '../stores'
-  import type { Layer } from '../lib/types'
+  import { layerList, map } from '$stores'
+  import type { Layer } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { downloadFile, fetchUrl } from '../lib/helper'
+  import { downloadFile, fetchUrl } from '$lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
 
@@ -409,7 +409,7 @@
     border-radius: 10px;
     border: 1px solid #ccc;
     bottom: 50px;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
     left: 10px;

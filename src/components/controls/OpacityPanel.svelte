@@ -1,9 +1,9 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { map } from '../../stores'
-  import type { Layer } from '../../lib/types'
-  import { LayerInitialValues, LayerTypes } from '../../lib/constants'
+  import { map } from '$stores'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
 
   export let layer: Layer = LayerInitialValues
   export let isOpacityPanelVisible = false

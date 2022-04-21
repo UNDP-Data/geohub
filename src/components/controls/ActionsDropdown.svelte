@@ -13,10 +13,10 @@
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
 
-  import LayerOrderButtons from '../controls/LayerOrderButtons.svelte'
-  import { LayerInitialValues } from '../../lib/constants'
-  import { dynamicLayers, layerList, map } from '../../stores'
-  import type { Layer } from '../../lib/types'
+  import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
+  import { LayerInitialValues } from '$lib/constants'
+  import { dynamicLayers, layerList, map } from '$stores'
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true

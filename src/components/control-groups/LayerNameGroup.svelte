@@ -1,7 +1,7 @@
 <script lang="ts">
-  import LayerControlGroup from './LayerControlGroup.svelte'
-  import type { Layer } from '../../lib/types'
-  import { LayerInitialValues } from '../../lib/constants'
+  import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
+  import type { Layer } from '$lib/types'
+  import { LayerInitialValues } from '$lib/constants'
 
   export let layer: Layer = LayerInitialValues
 
