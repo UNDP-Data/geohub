@@ -17,6 +17,8 @@ export const map = writable(null)
 // tree store in load data tab drawer
 export const wtree = writable({ tree: TreeNodeInitialValues })
 
+export const treeBucket = writable({ tree: TreeNodeInitialValues })
+
 export const bucketList = writable(<Bucket[]>[])
 
 // content to display in the banner
