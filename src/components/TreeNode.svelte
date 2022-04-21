@@ -206,7 +206,7 @@
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon" on:click={() => (level > 0 ? toggleExpansion() : '')}>
-          {#if loadingLayer === true && expanded === false}
+          {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
             <Fa icon={faDatabase} size="sm" />
