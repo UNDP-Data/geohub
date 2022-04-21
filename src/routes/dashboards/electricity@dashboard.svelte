@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<h1>This is the electricity access dashboard</h1>
+<h1>Electricity Dashboard</h1>
 
 <style>
 </style>
