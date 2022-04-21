@@ -2,7 +2,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import LegendSymbol from '@watergis/legend-symbol'
 
-  import { map, SpriteImageList } from '$stores'
+  import { map, spriteImageList } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
 
@@ -47,7 +47,7 @@
         }
         case 'svg': {
           if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
-            $SpriteImageList.forEach((icon) => {
+            $spriteImageList.forEach((icon) => {
               if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
                 const img = document.createElement('img')
                 img.src = icon.src

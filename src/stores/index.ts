@@ -25,6 +25,6 @@ export const bucketList = writable(<Bucket[]>[])
 export const bannerMessages = writable(<BannerMessage[]>[])
 
 // vector : sprite list
-export const SpriteImageList = writable(<SpriteImage[]>[])
+export const spriteImageList = writable(<SpriteImage[]>[])
 
 export const bucketFeature = writable(false)
