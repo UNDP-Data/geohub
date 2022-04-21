@@ -19,6 +19,9 @@
   import { updateParamsInURL } from '$lib/helper'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
+  import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
+  import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
+  import Fa from 'svelte-fa'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
@@ -193,10 +196,32 @@
       reclassifyImage()
     }
   }
+
+  const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
+    if (operation === 'increment') {
+      if (numberOfClasses <= maxNoOfClasses) {
+        numberOfClasses++
+      }
+    }
+    if (operation === 'decrement') {
+      if (numberOfClasses > minNoOfClasses) {
+        numberOfClasses--
+      }
+    }
+    reclassifyImage()
+  }
   const range = (start, end) => Array.from(Array(end + 1).keys()).slice(start)
 </script>
 
 <div class="column">
+  <div class="row" style="display: flex;">
+    <div style="width: 50%; margin-left: 5%">
+      <span class="legend-text">Classification: </span>
+    </div>
+    <div style="width: 50%; margin-left: 40%">
+      <span class="legend-text">Classes</span>
+    </div>
+  </div>
   <div class="row" id="class-and-method-control-div">
     <div class="column" style="padding: 0">
       <select
@@ -205,29 +230,48 @@
         on:change={() => {
           reclassifyImage
         }}>
-        <option value="" disabled selected>Classification</option>
+        <option class="legend-text" value="" disabled selected>Classification</option>
         {#each classificationMethods as classificationMethod}
-          <option value={classificationMethod.value}>{classificationMethod.name}</option>
+          <option class="legend-text" value={classificationMethod.value}>{classificationMethod.name}</option>
         {/each}
       </select>
     </div>
     <div class="column">
-      <div class="no-classes">
-        <select
-          bind:value={numberOfClasses}
-          on:change={() => {
-            reclassifyImage()
+      <div class="no-classes" style="display: flex; justify-content: flex-end">
+        <div
+          class="icon-selected"
+          title="Increase number of classes"
+          on:click={() => {
+            handleNumberOfClasses('decrement')
           }}>
-          <option value="" disabled selected>Classes</option>
-          {#each range(2, 15) as _, value}
-            <option {value}>{value}</option>
-          {/each}
-        </select>
+          <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
+        </div>
+        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
+        <div
+          class="icon-selected"
+          title="Decrese number of classes"
+          on:click={() => {
+            handleNumberOfClasses('increment')
+          }}>
+          <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
+        </div>
+        <!--        <input style='margin-left: 50%' type='number' bind:value={numberOfClasses} min='2' max='15'/>-->
+        <!--        <select class='legend-text'-->
+        <!--          style='margin-left: 50%'-->
+        <!--          bind:value={numberOfClasses}-->
+        <!--          on:change={() => {-->
+        <!--            reclassifyImage()-->
+        <!--          }}>-->
+        <!--          <option class='legend-text' value="" disabled selected>Classes</option>-->
+        <!--          {#each range(2, 15) as _, value}-->
+        <!--            <option {value}>{value}</option>-->
+        <!--          {/each}-->
+        <!--        </select>-->
       </div>
     </div>
   </div>
   <div class="row" id="intervals-cmap-div">
-    <div class="column" style="padding: 0; width: 80%">
+    <div class="column" style="padding: 0; width: 90%">
       {#each cmap as value, index}
         <div style="display: flex; padding:2px; width: 100%;">
           <div
@@ -238,15 +282,25 @@
               index
             ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
           &nbsp;&raquo;&nbsp
-          <input
-            style="width: 50px!important; border: none"
-            bind:value={intervalList[index]}
-            on:change={sendFirstInterval(index, intervalList[index])} />
-          -
-          <input
-            style="width: 50px!important; border: none"
-            bind:value={intervalList[index + 1]}
-            on:change={sendLastInterval(index, intervalList[index + 1])} />
+          <span
+            class="legend-text"
+            contenteditable="true"
+            bind:innerHTML={intervalList[index]}
+            on:input={sendLastInterval(index, intervalList[index])} />
+          <!--          <input-->
+          <!--            style="width: 30%!important; border: none"-->
+          <!--            bind:value={intervalList[index]}-->
+          <!--            on:change={sendFirstInterval(index, intervalList[index])} />-->
+          <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
+          <span
+            class="legend-text"
+            contenteditable="true"
+            bind:innerHTML={intervalList[index + 1]}
+            on:input={sendLastInterval(index, intervalList[index + 1])} />
+          <!--          <input-->
+          <!--            style="width: 30%!important; border: none"-->
+          <!--            bind:value={intervalList[index + 1]}-->
+          <!--            on:change={sendLastInterval(index, intervalList[index + 1])} />-->
         </div>
       {/each}
       {#if openColorPicker}
@@ -263,19 +317,18 @@
         </div>
       {/if}
     </div>
-    <div class="column">
-      <div
-        title="Current colormap. Click to change."
-        id="current-colormap"
-        style="cursor:pointer; width: 20px; min-height: 120px!important; height:100%; margin-left: 50%; background:linear-gradient(1deg, {[
-          ...activeColorMap.colors(),
-        ]}); "
-        on:click={() => {
-          colorMapSelectionVisible = !colorMapSelectionVisible
-          surface.setOpen(true)
-        }}
-        use:Ripple={{ surface: true }} />
-    </div>
+    <div
+      title="Current colormap. Click to change."
+      id="current-colormap"
+      style="cursor:pointer; width: 20px!important; min-height:100%; background:linear-gradient(1deg, {[
+        ...activeColorMap.colors(),
+      ]}); "
+      on:click={() => {
+        colorMapSelectionVisible = !colorMapSelectionVisible
+        surface.setOpen(true)
+      }}
+      use:Ripple={{ surface: true }} />
+
     <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT" class="select-cmaps-menu">
       <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
         {#each Object.keys(ColorMaps) as option}
@@ -456,7 +509,6 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    border: 2px solid black;
   }
   :global(.select-cmaps-menu) {
     max-height: 200px;
@@ -464,5 +516,8 @@
     width: 100%;
     margin-top: 5px;
     padding: 5px;
+  }
+  .legend-text {
+    font-family: ProximaNova, sans-serif;
   }
 </style>
