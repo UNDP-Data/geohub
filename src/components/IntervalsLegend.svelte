@@ -18,7 +18,7 @@
   import { map } from '$stores'
   import { ColorMaps } from '$lib/colormaps'
   import type { Layer, LayerInfo, Color } from '$lib/types'
-  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import { ClassificationMethodTypes, ColorMapTypes, DynamicLayerLegendTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'

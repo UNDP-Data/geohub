@@ -13,7 +13,7 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import { ColorMapTypes, LayerInitialValues, DynamicLayerLegendTypes } from '$lib/constants'
   import { map } from '$stores'
   import { ColorMaps } from '$lib/colormaps'
   import { updateParamsInURL } from '$lib/helper'
