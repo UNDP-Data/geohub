@@ -69,7 +69,7 @@ export interface LayerIcon {
   color: string
 }
 
-export interface spriteIcon {
+export interface SpriteIcon {
   width: number
   height: number
   x: number
@@ -77,12 +77,12 @@ export interface spriteIcon {
   pixelRatio: number
 }
 
-export interface spriteImage {
+export interface SpriteImage {
   src: string
   alt: string
 }
 
-export interface sprite {
+export interface Sprite {
   dataUrl: string
   json: JSON
 }

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide } from 'svelte/transition'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
@@ -13,11 +12,11 @@
   import { cloneDeep } from 'lodash'
 
   import { treeBucket } from '$stores'
-  import type { Bucket, TreeNode as TreeNodeType } from '$lib/types'
+  import type { Bucket } from '$lib/types'
   import BucketCard from '$components/BucketCard.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TreeView from '$components/TreeView.svelte'
-  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages, wtree } from '$stores'
+  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false

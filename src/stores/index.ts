@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import { TreeNodeInitialValues } from '$lib/constants'
-import type { BannerMessage, Bucket, Layer, spriteImage } from '$lib/types'
+import type { BannerMessage, Bucket, Layer, SpriteImage } from '$lib/types'
 
 // dynamic layer list
 export const dynamicLayers = writable([])
@@ -25,6 +25,6 @@ export const bucketList = writable(<Bucket[]>[])
 export const bannerMessages = writable(<BannerMessage[]>[])
 
 // vector : sprite list
-export const spriteImageList = writable(<spriteImage[]>[])
+export const SpriteImageList = writable(<SpriteImage[]>[])
 
 export const bucketFeature = writable(false)

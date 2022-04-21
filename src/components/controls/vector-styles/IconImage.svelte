@@ -5,7 +5,7 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { onMount } from 'svelte'
 
-  import { map, spriteImageList } from '$stores'
+  import { map, SpriteImageList } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
@@ -57,7 +57,7 @@
       <!-- <StyleControlGroup title="Icon Image List"> -->
       <div class="imageList">
         <ImageList>
-          {#each $spriteImageList as icon}
+          {#each $SpriteImageList as icon}
             <Item>
               <Wrapper>
                 <div class="icon">

@@ -11,7 +11,7 @@ import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
 
-import type { BannerMessage, spriteIcon, spriteImage } from './types'
+import type { BannerMessage, SpriteIcon, SpriteImage } from './types'
 import { bannerMessages, map } from '$stores'
 import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 
@@ -58,7 +58,7 @@ export const loadImageToDataUrl = async (url: string): Promise<string> => {
   return dataUrl
 }
 
-export const clipSprite = (url: string, id: string, icon: spriteIcon): Promise<spriteImage> => {
+export const clipSprite = (url: string, id: string, icon: SpriteIcon): Promise<SpriteImage> => {
   return new Promise((resolve) => {
     Clipper(url, function () {
       this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl: string) {
