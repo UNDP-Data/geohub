@@ -119,9 +119,11 @@
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>
-          <div hidden={activeTab !== TabNames.BUCKETS && $bucketFeature === false}>
-            <BucketView />
-          </div>
+          {#if $bucketFeature === true}
+            <div hidden={activeTab !== TabNames.BUCKETS}>
+              <BucketView />
+            </div>
+          {/if}
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
