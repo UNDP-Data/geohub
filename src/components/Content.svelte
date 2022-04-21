@@ -9,14 +9,11 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
-  import { cloneDeep } from 'lodash'
 
-  import { treeBucket } from '$stores'
-  import type { Bucket } from '$lib/types'
-  import BucketCard from '$components/BucketCard.svelte'
+  import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TreeView from '$components/TreeView.svelte'
-  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '$stores'
+  import { bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
@@ -96,36 +93,6 @@
     }, 350)
     $bannerMessages = []
   }
-
-  const handleBucketClick = async (event: CustomEvent) => {
-    const bucketClone: Bucket = cloneDeep(event.detail.bucket)
-    bucketClone.selected = !bucketClone.selected
-    const bucketIndex = $bucketList.findIndex((bucket) => bucket.id === bucketClone.id)
-    $bucketList[bucketIndex] = bucketClone
-
-    const tree = cloneDeep($treeBucket)
-    const isBucketInTree = tree.tree.children.some((item) => item.path === bucketClone.path)
-
-    if (isBucketInTree === false) {
-      tree.tree.children = [
-        ...tree.tree.children,
-        {
-          id: bucketClone.id,
-          children: [],
-          isRaster: false,
-          label: bucketClone.path.slice(0, -1),
-          path: bucketClone.path,
-        },
-      ]
-    } else {
-      tree.tree.children = tree.tree.children.filter((item) => item.path !== bucketClone.path)
-    }
-
-    tree.tree.children.sort((a, b) => a.label.localeCompare(b.label))
-    $treeBucket = tree
-  }
-
-  import BucketTreeNode from '$components/BucketTreeNode.svelte'
 </script>
 
 <div class="content-container">
@@ -152,22 +119,9 @@
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>
-          {#if $bucketFeature === true}
-            <div hidden={activeTab !== TabNames.BUCKETS}>
-              <div class="columns" style="padding-right: 30px;">
-                <div class="column">
-                  {#each $bucketList as bucket}
-                    <BucketCard {bucket} on:click={handleBucketClick} />
-                  {/each}
-                </div>
-                <div class="column is-four-fifths">
-                  <ul>
-                    <BucketTreeNode bind:node={$treeBucket.tree} />
-                  </ul>
-                </div>
-              </div>
-            </div>
-          {/if}
+          <div hidden={activeTab !== TabNames.BUCKETS && $bucketFeature === false}>
+            <BucketView />
+          </div>
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
