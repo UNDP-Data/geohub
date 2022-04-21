@@ -5,6 +5,7 @@
   import Fa from 'svelte-fa'
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
   import Tooltip, { Wrapper } from '@smui/tooltip'
+  import DrawCircle from './DrawCircle.svelte'
 
   export let drawerOpen = true
 
@@ -39,6 +40,7 @@
     </Section>
 
     <Section align="end">
+      <DrawCircle />
       <Wrapper>
         <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
           <Fa icon={faBars} size="lg" />
