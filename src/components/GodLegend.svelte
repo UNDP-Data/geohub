@@ -6,6 +6,7 @@
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import Fa from 'svelte-fa'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
+  import Button, { Label, Icon } from '@smui/button'
 
   export let activeColorMapName
   export let layer
@@ -15,7 +16,28 @@
 </script>
 
 <div class="card-face card-face-back" id="legend-control" style="">
-  <div style="width: 90%">
+  <Button
+    variant="unelevated"
+    class="switch-legend-button"
+    on:click={() => {
+      isLegendSwitchAnimate = true
+      setTimeout(() => {
+        isLegendSwitchAnimate = false
+      }, 400)
+      selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+        ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
+        : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
+    }}>
+    <!--    <Fa icon={faRetweet} size="2x" spin={isLegendSwitchAnimate} />-->
+    <Label>Switch legend</Label>
+  </Button>
+  <!--    <div-->
+  <!--      class='switch-legend'-->
+  <!--      id="retweet-icon-div"-->
+  <!--      >-->
+  <!--      <Fa style="border: 1px solid black" icon={faRetweet} size="2x" spin={isLegendSwitchAnimate} />-->
+  <!--    </div>-->
+  <div style="width: 100%">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div>
         <Legend bind:activeColorMapName layerConfig={layer} />
@@ -28,34 +50,32 @@
       <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
     {/if}
   </div>
-  <Wrapper>
-    <div
-      id="retweet-icon-div"
-      on:click={() => {
-        isLegendSwitchAnimate = true
-        setTimeout(() => {
-          isLegendSwitchAnimate = false
-        }, 400)
-        selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-          ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
-          : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
-      }}>
-      <Fa style="border: 1px solid black" icon={faRetweet} size="2x" spin={isLegendSwitchAnimate} />
-    </div>
-  </Wrapper>
 </div>
 
 <style lang="scss">
   #legend-control {
-    display: flex;
+    display: block;
+
+    width: 100%;
+  }
+
+  :global(.switch-legend-button) {
     padding: 0;
-    border: 1px solid black;
+    width: 50%;
+    height: 20px;
+    text-transform: none;
+    margin-left: 25%;
+    border: 1px solid dodgerblue;
   }
-  #retweet-icon-div {
-    cursor: pointer;
-    width: 5%;
-    margin-left: auto;
-    padding-right: 15%;
-    margin-top: 5%;
-  }
+  //#retweet-icon-div {
+  //  cursor: pointer;
+  //  width: 100%;
+  //  justify-content: center;
+  //}
+  //
+  //*:global(.switch-legend){
+  //  height: 30px;
+  //  width: 100%;
+  //  background: red;
+  //}
 </style>

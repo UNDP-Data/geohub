@@ -221,8 +221,8 @@
           display: flex;
           flex-direction: row;
           gap: 15px;
-          padding-bottom: 10px;
-          padding-top: 10px;
+          padding-bottom: 0px;
+          padding-top: 0px;
 
           .scene {
             min-height: 100px;
