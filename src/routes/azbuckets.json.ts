@@ -15,16 +15,23 @@ const listContainers = async () => {
   const bucketList: Array<Bucket> = []
 
   for await (const container of blobServiceClient.listContainers(listContainerOpts)) {
-    if (container.metadata && 'published' in container.metadata && container.metadata.published === 'true') {
+    if (
+      container.metadata &&
+      'published' in container.metadata &&
+      container.metadata.published === 'true' &&
+      container?.metadata?.label
+    ) {
       let tags: Array<string> = []
-      if (!container.metadata.tags.includes(',')) {
-        tags.push(container.metadata.tags)
-      } else {
+
+      if (container?.metadata?.tags) {
         tags = container.metadata.tags
           .split(',')
           .filter((item) => item !== '')
           .map((item) => item.trim().replace(/(^\w|\s\w)/g, (m) => m.toUpperCase()))
           .sort((a, b) => a.localeCompare(b))
+      } else {
+        console.error('ERROR: Missing tags parameter')
+        console.error(container.metadata)
       }
 
       const bucket: Bucket = {
