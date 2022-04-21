@@ -113,6 +113,11 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
+
+  import { DynamicLayerLegendTypes } from '../lib/constants'
+
+  let isLegendSwitchAnimate
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
@@ -213,7 +218,7 @@
       padding-top: 5px;
 
       .action {
-        margin-bottom: 25px;
+        margin-bottom: 0;
 
         .content {
           align-items: flex-start;
@@ -224,7 +229,7 @@
           padding-top: 10px;
 
           .scene {
-            min-height: 320px;
+            min-height: 100px;
             width: 100%;
 
             .card {

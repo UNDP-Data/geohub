@@ -13,7 +13,7 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { ColorMapTypes, LayerInitialValues } from '../lib/constants'
+  import { ColorMapTypes, DynamicLayerLegendTypes, LayerInitialValues } from '../lib/constants'
   import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
   import { updateParamsInURL } from '../lib/helper'
@@ -91,24 +91,35 @@
       rescaleColorMap()
     }
   }
+
+  let isLegendSwitchAnimate
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
+  import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
+  import Fa from 'svelte-fa'
+  import { Wrapper } from '@smui/tooltip'
+  import ShowLegend from './controls/ShowLegend.svelte'
 </script>
 
 <div class="group">
-  <div class="slider">
-    <RangeSlider
-      bind:values={rangeSliderValues}
-      float
-      range
-      min={layerMin}
-      max={layerMax}
-      {step}
-      pips
-      pipstep={Math.round(step * 10)}
-      first="label"
-      last="label"
-      rest={false}
-      on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
+  <div style="display: flex">
+    <div class="slider">
+      <RangeSlider
+        bind:values={rangeSliderValues}
+        float
+        range
+        min={layerMin}
+        max={layerMax}
+        {step}
+        pips
+        pipstep={Math.round(step * 10)}
+        first="label"
+        last="label"
+        rest={false}
+        on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
+    </div>
+    <ShowLegend currentLegendType={DynamicLayerLegendTypes.CONTINUOUS} />
   </div>
+
   {#if activeColorMap !== undefined}
     <div class="active-color-map">
       <div
@@ -191,7 +202,8 @@
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-      width: calc(100% - 4px);
+      width: calc(100% - 50px);
+      margin: 0;
       // padding-left: calc(10% + 4px);
     }
 
@@ -201,6 +213,7 @@
       align-items: center;
       padding-top: 10px;
       padding-bottom: 10px;
+      width: calc(100% - 80px);
 
       .chroma-test {
         height: 20px;

@@ -17,10 +17,16 @@
   import { map } from '../stores'
   import { ColorMaps } from '../lib/colormaps'
   import type { Layer, LayerInfo, Color } from '../lib/types'
-  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '../lib/constants'
+  import {
+    ClassificationMethodTypes,
+    ColorMapTypes,
+    DynamicLayerLegendTypes,
+    LayerInitialValues,
+  } from '../lib/constants'
   import { updateParamsInURL } from '../lib/helper'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
+  import ShowLegend from './controls/ShowLegend.svelte'
 
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
@@ -225,132 +231,68 @@
   }
 </script>
 
-<div class="group">
-  <div class="intervals-legend">
-    <div class="row">
-      <div class="column">Number of classes:</div>
-      <div class="column">
-        <div class="no-classes">
-          <div
-            class="icon-selected"
-            title="Increase number of classes"
-            on:click={() => {
-              handleNumberOfClasses('decrement')
-            }}>
-            <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
-          </div>
-          <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
-          <div
-            class="icon-selected"
-            title="Decrese number of classes"
-            on:click={() => {
-              handleNumberOfClasses('increment')
-            }}>
-            <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
-          </div>
+<div style="border: 1px solid black" class="column">
+  <div class="row" style="display: flex; align-items: center; justify-content: space-around">
+    <div class="column" style="padding: 0">
+      <h6 style="border-bottom: 1px solid black; margin: 0;">Classification:</h6>
+      <select
+        style="border-top: 0"
+        bind:value={selectedClassificationMethod}
+        on:change={() => {
+          reclassifyImage
+        }}>
+        {#each classificationMethods as classificationMethod}
+          <option value={classificationMethod.value}>{classificationMethod.name}</option>
+        {/each}
+      </select>
+    </div>
+    <div class="column">
+      <h6 style="margin: 0;">classes</h6>
+      <div class="no-classes" style="display: flex; align-items: center; justify-content: space-evenly">
+        <div
+          class="icon-selected"
+          title="Increase number of classes"
+          on:click={() => {
+            handleNumberOfClasses('decrement')
+          }}>
+          <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
+        </div>
+        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
+        <div
+          class="icon-selected"
+          title="Decrese number of classes"
+          on:click={() => {
+            handleNumberOfClasses('increment')
+          }}>
+          <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="column">Classification:</div>
-      <div class="column">
-        <select
-          bind:value={selectedClassificationMethod}
-          id="class-mode"
-          on:change={() => {
-            reclassifyImage
-          }}>
-          {#each classificationMethods as classificationMethod}
-            <option value={classificationMethod.value}>{classificationMethod.name}</option>
-          {/each}
-        </select>
-      </div>
+    <div class="column">
+      <ShowLegend bind:currentLegendType={DynamicLayerLegendTypes.INTERVALS} />
     </div>
   </div>
-
-  <div class="column">
-    <div id="intervals-cmap-button-div">
-      <div>Active colormap</div>
-      <div
-        id="intervals-cmap-button"
-        on:click={() => {
-          colorMapSelectionVisible = !colorMapSelectionVisible
-          surface.setOpen(true)
-        }}
-        use:Ripple={{ surface: true }}
-        variant="raised"
-        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
-        <span style="color: white">{activeColorMapName}</span>
-      </div>
-      <MenuSurface
-        bind:this={surface}
-        anchorCorner="BOTTOM_LEFT"
-        style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">
-        <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-          <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
-            {#each Object.keys(ColorMaps) as option}
-              <FormField>
-                <Radio bind:group={selectedColorMapType} value={option} touch />
-                <span
-                  slot="label"
-                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
-                  >{option}</span>
-              </FormField>
-            {/each}
-          </div>
-          <div class="colormaps-group">
-            {#if selectedColorMapType}
-              {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-                <div
-                  use:Ripple={{ surface: true }}
-                  class="colormap-div"
-                  title={aColorMap}
-                  on:click={() => {
-                    activeColorMapName = aColorMap
-                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-                    reclassifyImage
-                  }}
-                  style="margin-top:5px; background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][
-                    aColorMap
-                  ].colors(defaultNumberOfColors, 'rgba')})" />
-              {/each}
-            {/if}
-          </div>
-        </div>
-      </MenuSurface>
-    </div>
-
-    <!-- Todo: Please dont delete this block. To be revisited
-    <div class="column" id="intervals-list-div">
-      {#each bgColors as value, index}
-        <div style="display: flex; padding:2px; width: 50%; margin: auto">
-          <ColorPicker class='colorpicker' bind:RgbColor={value} />
-          &nbsp;&raquo;&nbsp
-          <div contenteditable="true" bind:innerHTML={intervalList[index]} />
-          -
-          <div contenteditable="true" bind:innerHTML={intervalList[index+1]} />
-        </div>
-      {/each}
-    </div>
-    Todo: ending here
-    -->
-
-    <div class="column" id="intervals-list-div">
+  <div
+    class="row"
+    style="display: flex; align-items: center; justify-content: space-between; width: 100%; border-top: 2px solid black">
+    <div class="column" style="padding: 0; width: 80%">
       {#each cmap as value, index}
-        <div style="display: flex; padding:2px; width: 100%; margin-left: 25%; margin-right: 25%">
+        <div style="display: flex; padding:2px; width: 100%;">
           <div
             id="interval-{index}"
             on:click={() => sendIndexForCmap(index)}
             class="discrete"
-            style="caret-color:rgb({cmap[index][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
+            style="width:20px; height:20px; caret-color:rgb({cmap[
+              index
+            ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
           &nbsp;&raquo;&nbsp
           <input
-            style="width: 30px!important; border: none"
+            style="width: 50px!important; border: none"
             bind:value={intervalList[index]}
             on:change={sendFirstInterval(index, intervalList[index])} />
           -
           <input
-            style="width: 30px!important; border: none"
+            style="width: 50px!important; border: none"
             bind:value={intervalList[index + 1]}
             on:change={sendLastInterval(index, intervalList[index + 1])} />
         </div>
@@ -369,9 +311,223 @@
         </div>
       {/if}
     </div>
+    <div class="column" style="width:20%; height: 100px; padding:0;">
+      <div
+        title="Current colormap. Click to change."
+        style="cursor:pointer; width: 20px; height:100px; margin-left: 50%; background:linear-gradient(1deg, {[
+          ...activeColorMap.colors(),
+        ]}); "
+        on:click={() => {
+          colorMapSelectionVisible = !colorMapSelectionVisible
+          surface.setOpen(true)
+        }}
+        use:Ripple={{ surface: true }} />
+
+      <!--      <div-->
+      <!--        id="intervals-cmap-button"-->
+      <!--        on:click={() => {-->
+      <!--          colorMapSelectionVisible = !colorMapSelectionVisible-->
+      <!--          surface.setOpen(true)-->
+      <!--        }}-->
+      <!--        use:Ripple={{ surface: true }}-->
+      <!--        variant="raised"-->
+      <!--        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">-->
+      <!--        <span style="color: white">{activeColorMapName}</span>-->
+      <!--      </div>-->
+    </div>
+    <MenuSurface
+      bind:this={surface}
+      anchorCorner="BOTTOM_LEFT"
+      style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">
+      <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
+        {#each Object.keys(ColorMaps) as option}
+          <FormField>
+            <Radio bind:group={selectedColorMapType} value={option} touch />
+            <span
+              slot="label"
+              style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
+              >{option}</span>
+          </FormField>
+        {/each}
+      </div>
+      <div class="colormaps-group">
+        {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
+          <div
+            title={aColorMap}
+            style="cursor:pointer; margin-top:5px; height: 20px; width: 100%; background: linear-gradient(90deg, {allColorMaps[
+              selectedColorMapType
+            ][aColorMap].colors(defaultNumberOfColors, 'rgba')})"
+            use:Ripple={{ surface: true }}
+            on:click={() => {
+              activeColorMapName = aColorMap
+              activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
+              reclassifyImage
+            }} />
+          <!--            <div-->
+          <!--                use:Ripple={{ surface: true }}-->
+
+          <!--                title={aColorMap}-->
+          <!--                on:click={() => {-->
+          <!--                    activeColorMapName = aColorMap-->
+          <!--                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]-->
+          <!--                    reclassifyImage-->
+          <!--                  }}-->
+          <!--                style="margin-top:5px; background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][-->
+          <!--                    aColorMap-->
+          <!--                  ].colors(defaultNumberOfColors, 'rgba')})"></div>-->
+        {/each}
+      </div>
+    </MenuSurface>
   </div>
 </div>
+<!--Todo: my changes end here-->
+<!--<div class="group">-->
+<!--  <div class="intervals-legend">-->
+<!--    <div class="row">-->
+<!--      <div class="column">Number of classes:</div>-->
+<!--      <div class="column">-->
+<!--        <div class="no-classes">-->
+<!--          <div-->
+<!--            class="icon-selected"-->
+<!--            title="Increase number of classes"-->
+<!--            on:click={() => {-->
+<!--              handleNumberOfClasses('decrement')-->
+<!--            }}>-->
+<!--            <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />-->
+<!--          </div>-->
+<!--          <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />-->
+<!--          <div-->
+<!--            class="icon-selected"-->
+<!--            title="Decrese number of classes"-->
+<!--            on:click={() => {-->
+<!--              handleNumberOfClasses('increment')-->
+<!--            }}>-->
+<!--            <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="row">-->
+<!--      <div class="column">Classification:</div>-->
+<!--      <div class="column">-->
+<!--        <select-->
+<!--          bind:value={selectedClassificationMethod}-->
+<!--          id="class-mode"-->
+<!--          on:change={() => {-->
+<!--            reclassifyImage-->
+<!--          }}>-->
+<!--          {#each classificationMethods as classificationMethod}-->
+<!--            <option value={classificationMethod.value}>{classificationMethod.name}</option>-->
+<!--          {/each}-->
+<!--        </select>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 
+<!--  <div class="column">-->
+<!--    <div id="intervals-cmap-button-div">-->
+<!--      <div>Active colormap</div>-->
+<!--      <div-->
+<!--        id="intervals-cmap-button"-->
+<!--        on:click={() => {-->
+<!--          colorMapSelectionVisible = !colorMapSelectionVisible-->
+<!--          surface.setOpen(true)-->
+<!--        }}-->
+<!--        use:Ripple={{ surface: true }}-->
+<!--        variant="raised"-->
+<!--        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">-->
+<!--        <span style="color: white">{activeColorMapName}</span>-->
+<!--      </div>-->
+<!--      <MenuSurface-->
+<!--        bind:this={surface}-->
+<!--        anchorCorner="BOTTOM_LEFT"-->
+<!--        style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">-->
+<!--        <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>-->
+<!--          <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">-->
+<!--            {#each Object.keys(ColorMaps) as option}-->
+<!--              <FormField>-->
+<!--                <Radio bind:group={selectedColorMapType} value={option} touch />-->
+<!--                <span-->
+<!--                  slot="label"-->
+<!--                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"-->
+<!--                  >{option}</span>-->
+<!--              </FormField>-->
+<!--            {/each}-->
+<!--          </div>-->
+<!--          <div class="colormaps-group">-->
+<!--            {#if selectedColorMapType}-->
+<!--              {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}-->
+<!--                <div-->
+<!--                  use:Ripple={{ surface: true }}-->
+<!--                  class="colormap-div"-->
+<!--                  title={aColorMap}-->
+<!--                  on:click={() => {-->
+<!--                    activeColorMapName = aColorMap-->
+<!--                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]-->
+<!--                    reclassifyImage-->
+<!--                  }}-->
+<!--                  style="margin-top:5px; background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][-->
+<!--                    aColorMap-->
+<!--                  ].colors(defaultNumberOfColors, 'rgba')})" />-->
+<!--              {/each}-->
+<!--            {/if}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </MenuSurface>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Todo: Please dont delete this block. To be revisited-->
+<!--    <div class="column" id="intervals-list-div">-->
+<!--      {#each bgColors as value, index}-->
+<!--        <div style="display: flex; padding:2px; width: 50%; margin: auto">-->
+<!--          <ColorPicker class='colorpicker' bind:RgbColor={value} />-->
+<!--          &nbsp;&raquo;&nbsp-->
+<!--          <div contenteditable="true" bind:innerHTML={intervalList[index]} />-->
+<!--          - -->
+<!--          <div contenteditable="true" bind:innerHTML={intervalList[index+1]} />-->
+<!--        </div>-->
+<!--      {/each}-->
+<!--    </div>-->
+<!--    Todo: ending here-->
+<!--    &ndash;&gt;-->
+
+<!--    <div class="column" id="intervals-list-div">-->
+<!--      {#each cmap as value, index}-->
+<!--        <div style="display: flex; padding:2px; width: 100%; margin-left: 25%; margin-right: 25%">-->
+<!--          <div-->
+<!--            id="interval-{index}"-->
+<!--            on:click={() => sendIndexForCmap(index)}-->
+<!--            class="discrete"-->
+<!--            style="caret-color:rgb({cmap[index][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />-->
+<!--          &nbsp;&raquo;&nbsp-->
+<!--          <input-->
+<!--            style="width: 30px!important; border: none"-->
+<!--            bind:value={intervalList[index]}-->
+<!--            on:change={sendFirstInterval(index, intervalList[index])} />-->
+<!--          - -->
+<!--          <input-->
+<!--            style="width: 30px!important; border: none"-->
+<!--            bind:value={intervalList[index + 1]}-->
+<!--            on:change={sendLastInterval(index, intervalList[index + 1])} />-->
+<!--        </div>-->
+<!--      {/each}-->
+<!--      {#if openColorPicker}-->
+<!--        <div style="cursor: crosshair">-->
+<!--          <ColorPicker-->
+<!--            isPopup={true}-->
+<!--            wrapper="div"-->
+<!--            &#45;&#45;picker-height="150px"-->
+<!--            &#45;&#45;picker-width="150px"-->
+<!--            &#45;&#45;slider-width="10px"-->
+<!--            isInput={false}-->
+<!--            isOpen={true}-->
+<!--            bind:color />-->
+<!--        </div>-->
+<!--      {/if}-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--</div>-->
 <style lang="scss">
   .group {
     border-radius: 7.5px;
@@ -442,8 +598,8 @@
       display: block;
 
       .colormap-div {
-        height: 20px;
-        width: 80%;
+        height: 100%;
+        width: 20px;
         cursor: pointer;
         justify-content: center;
         margin: 1px;

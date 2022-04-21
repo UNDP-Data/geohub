@@ -25,7 +25,6 @@
             setTimeout(() => {
               isLegendSwitchAnimate = false
             }, 400)
-
             selectedLegendType === DynamicLayerLegendTypes.INTERVALS
               ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
               : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
