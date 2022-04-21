@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cloneDeep } from 'lodash'
-  import type { Bucket } from '$lib/types'
+  import type { Bucket, TreeNode } from '$lib/types'
 
   import BucketCard from '$components/BucketCard.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
@@ -9,15 +9,15 @@
   const handleBucketClick = async (event: CustomEvent) => {
     const bucketClone: Bucket = cloneDeep(event.detail.bucket)
     bucketClone.selected = !bucketClone.selected
-    const bucketIndex = $bucketList.findIndex((bucket) => bucket.id === bucketClone.id)
+    const bucketIndex = $bucketList.findIndex((node) => node.id === bucketClone.id)
     $bucketList[bucketIndex] = bucketClone
 
-    const tree = cloneDeep($treeBucket)
-    const isBucketInTree = tree.tree.children.some((item) => item.path === bucketClone.path)
+    let treeBucketClone = cloneDeep($treeBucket)
+    const isBucketInTree = treeBucketClone.some((node) => node.path === bucketClone.path)
 
     if (isBucketInTree === false) {
-      tree.tree.children = [
-        ...tree.tree.children,
+      treeBucketClone = [
+        ...treeBucketClone,
         {
           id: bucketClone.id,
           children: [],
@@ -27,11 +27,11 @@
         },
       ]
     } else {
-      tree.tree.children = tree.tree.children.filter((item) => item.path !== bucketClone.path)
+      treeBucketClone = treeBucketClone.filter((node) => node.path !== bucketClone.path)
     }
 
-    tree.tree.children.sort((a, b) => a.label.localeCompare(b.label))
-    $treeBucket = tree
+    treeBucketClone.sort((a, b) => a.label.localeCompare(b.label))
+    $treeBucket = treeBucketClone
   }
 </script>
 
@@ -43,9 +43,11 @@
       {/each}
     </div>
     <div class="column is-four-fifths tree">
-      <ul>
-        <BucketTreeNode bind:node={$treeBucket.tree} />
-      </ul>
+      {#each $treeBucket as tree}
+        <ul>
+          <BucketTreeNode bind:node={tree} />
+        </ul>
+      {/each}
     </div>
   </div>
 </div>

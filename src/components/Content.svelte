@@ -18,7 +18,7 @@
 
   export let drawerOpen = false
 
-  let activeTab = TabNames.LOAD_DATA
+  let activeTab = TabNames.BUCKETS
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false

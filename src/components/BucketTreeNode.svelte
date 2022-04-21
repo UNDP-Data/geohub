@@ -33,6 +33,7 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { cloneDeep } from 'lodash'
 
   import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
   import {
@@ -47,7 +48,7 @@
   import { map, layerList, indicatorProgress, bannerMessages, treeBucket } from '$stores'
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
 
-  export let node = TreeNodeInitialValues
+  export let node: TreeNode
   export let level = 0
   let SelectLayerStyleDialogVisible: boolean
 
@@ -85,21 +86,29 @@
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
 
     if (treeData) {
-      const subpaths = path.split('/').slice(0, -1)
-      let currentTree = { ...$treeBucket }
-      let currentTreeData: TreeNode = currentTree.tree
+      node.children = treeData.tree.children
+      // const treePathChildren = cloneDeep(treeData.tree.children)
+      // console.log(treePathChildren)
+      // // const subpaths = path.split('/').slice(0, -1)
+      // let nodeTree = $treeBucket.find(node => node.path === path)
+      // // let currentTreeData: TreeNode = currentTree.tree
 
-      subpaths.forEach((element) => {
-        let currentTreeDataChildren = [...currentTreeData.children]
-        if (path === treeData.tree.path) {
-          currentTreeData.children = currentTreeDataChildren.map((item) =>
-            item.path === treeData?.tree?.path ? treeData.tree : item,
-          )
-        }
-        currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
-      })
+      // let currentTree = { ...$treeBucket }
+      // let currentTreeData: TreeNode = $treeBucket.find(node => node.path === path)
 
-      treeBucket.set(currentTree)
+      //  subpaths.forEach((element) => {
+      //   let currentTreeDataChildren = [...currentTreeData.children]
+      //   if (path === treeData.tree.path) {
+      //     currentTreeData.children = currentTreeDataChildren.map((item) =>
+      //       item.path === treeData?.tree?.path ? treeData.tree : item,
+      //     )
+      //   }
+      //   currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
+      // })
+
+      // console.log(currentTree)
+
+      // treeBucket.set(currentTree)
     }
 
     loadingLayer = false
@@ -210,7 +219,7 @@
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon" on:click={() => (level > 0 ? toggleExpansion() : '')}>
-          {#if loadingLayer === true && expanded === false}
+          {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
             <Fa icon={faDatabase} size="sm" />
