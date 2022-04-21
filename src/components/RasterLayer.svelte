@@ -114,11 +114,6 @@
   const setScalingValueRange = () => {
     scalingValueRange = `${scalingValueStart},${scalingValueEnd}`
   }
-
-  import { DynamicLayerLegendTypes } from '../lib/constants'
-
-  let isLegendSwitchAnimate
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
 </script>
 
 <div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
