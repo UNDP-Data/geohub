@@ -46,13 +46,29 @@
 </script>
 
 <div class="view-container" data-testid="view-container">
-  <div class="columns">
-    <div class="column cards">
-      {#each $bucketList as bucket}
-        <BucketCard {bucket} on:click={handleBucketClick} />
-      {/each}
+  <div class="columns filter-container">
+    <div class="column filter">
+      <div class="control has-icons-left has-icons-right">
+        <input class="input is-rounded" type="text" placeholder="Filter Buckets" />
+        <span class="icon is-small is-left">
+          <i class="fas fa-search" />
+        </span>
+      </div>
     </div>
-    <div class="column is-four-fifths tree">
+  </div>
+
+  <div class="columns cards-tree-container is-gapless" style="">
+    <div class="column">
+      <div class="columns">
+        <div class="column cards">
+          {#each $bucketList as bucket}
+            <BucketCard {bucket} on:click={handleBucketClick} />
+          {/each}
+        </div>
+        <div class="column separator" style="" />
+      </div>
+    </div>
+    <div class="column is-three-quarters tree">
       {#each $treeBucket as tree}
         <ul>
           <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
@@ -63,15 +79,42 @@
 </div>
 
 <style lang="scss">
-  .view-container {
-    padding-right: 30px;
+  $separator: 1px solid whitesmoke;
+  $separator-dark: 1px solid #ccc;
 
-    .cards {
-      z-index: 10;
+  .view-container {
+    .filter-container {
+      border-bottom: $separator;
+      margin-bottom: 20px;
+      padding-left: 10px;
+
+      @media (prefers-color-scheme: dark) {
+        border-bottom: $separator-dark;
+      }
+
+      .filter {
+        padding-bottom: 15px;
+      }
     }
 
-    .tree {
-      z-index: 1;
+    .cards-tree-container {
+      margin-bottom: 0;
+      .cards {
+        z-index: 10;
+      }
+
+      .tree {
+        z-index: 1;
+      }
+
+      .separator {
+        border-left: $separator;
+        height: calc(100vh - 200px);
+
+        @media (prefers-color-scheme: dark) {
+          border-left: $separator-dark;
+        }
+      }
     }
   }
 </style>
