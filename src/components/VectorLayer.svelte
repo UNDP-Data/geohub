@@ -140,12 +140,12 @@
         display: flex;
         gap: 15px;
         justify-content: left;
-        margin-top: 10px;
-        padding-top: 10px;
+        margin-top: 0;
+        padding-top: 0;
 
         .group {
-          padding-top: 5px;
-          padding-bottom: 5px;
+          padding-top: 0;
+          padding-bottom: 0;
 
           .tabs {
             align-items: center;
@@ -166,5 +166,8 @@
         padding-top: 5px;
       }
     }
+  }
+  *:global(.tab) {
+    padding: 0;
   }
 </style>
