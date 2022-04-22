@@ -201,11 +201,11 @@
         flex: 1;
       }
       ::-webkit-scrollbar {
-        width: 1em;
-        height: 5px;
+        width: 2px;
+        height: 2px;
       }
       ::-webkit-scrollbar-thumb {
-        background-color: dodgerblue;
+        background-color: grey;
       }
       .drawer -divider {
         width: 9px;
