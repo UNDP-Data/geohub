@@ -28,8 +28,8 @@ describe('Bucket View', () => {
     expect(viewContainer).toBeDefined()
   })
 
-  it('should render an empty tree with a root node label', () => {
-    expect(within(viewContainer).getByText(treeBucketsData.tree.label)).toBeDefined()
+  it('should render a root node item  with a label', () => {
+    expect(within(viewContainer).getByText('endpoverty')).toBeDefined()
   })
 
   it('should render five buckets / icons', () => {

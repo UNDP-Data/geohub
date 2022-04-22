@@ -1,28 +1,11 @@
-{
-	"tree": {
-		"id": null,
-		"label": "GeoHub Storage",
-		"children": [{
-			"id": "1650409953000",
-			"children": [],
-			"isRaster": false,
-			"label": "electricity",
-			"path": "electricity/"
-		}, {
-			"id": "1649952050000",
-			"children": [],
-			"isRaster": false,
-			"label": "endpoverty",
-			"path": "endpoverty/"
-		}, {
-			"id": "1649952114000",
-			"children": [],
-			"isRaster": false,
-			"label": "goodhealthandwellbeing",
-			"path": "goodhealthandwellbeing/"
-		}],
-		"path": "/",
-		"url": null,
-		"isRaster": false
-	}
-}
+[
+  {
+     "id":"1649952050000",
+     "children":[
+
+     ],
+     "isRaster":false,
+     "label":"endpoverty",
+     "path":"endpoverty/"
+  }
+]

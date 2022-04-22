@@ -2,64 +2,39 @@
   const expansionState = {}
 </script>
 
-<!--
-   Update the JSON based data structure that power the tree view (this) component
-  The general idea of the update is:
-  0. the tree is initialized with data, and is destructured into its mains props
-      Very imp, the variables that are created in the descructuring are reactive:
-          let label, children, path, url, isRaster;
-          $: ({ label, children, path, url, isRaster } = tree)
-  1. User clicks on a tree node
-  2. toggleExpansion is called:
-      a) id the ndoe has children nothing happens, else the fucntion continues
-      b) the current node path prop is used to fethc the children for the current node from the endpoint
-          this cretaestree an identical node with the current one with exception that its children are fetched
-      c) a new copy of the tree is is created by descructuring the old tree
-      d) the copy is updated  inside updateTree
-      e) the updated copy is wriiten into the store so  other componnets are notified
-      f) the parent component updates the current
-      g) the TreeView componnet
-          let label, children, path, url, isRaster;
-          $: ({ label, children, path, url, isRaster } = tree)
- -->
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte'
   import { slide } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
-  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
-  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
+  import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
+  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
+  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { cloneDeep } from 'lodash'
 
-  import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
-  import {
-    ErrorMessages,
-    LayerIconTypes,
-    TreeNodeInitialValues,
-    LayerTypes,
-    StatusTypes,
-    DEFAULT_COLORMAP,
-  } from '$lib/constants'
-  import { fetchUrl } from '$lib/helper'
-  import { map, layerList, indicatorProgress, bannerMessages, treeBucket } from '$stores'
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
+  import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
+  import { fetchUrl } from '$lib/helper'
+  import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
+  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
 
-  export let node: TreeNode
   export let level = 0
-  let SelectLayerStyleDialogVisible: boolean
+  export let node: TreeNode
 
-  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+  const dispatch = createEventDispatcher()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
   const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
+  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+
   let loadingLayer = false
+  let SelectLayerStyleDialogVisible: boolean
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
-  $: expanded = expansionState[label + path] || false
+  $: expanded = expansionState[label] || false
   $: mmap = $map
 
   onMount(() => {
@@ -67,11 +42,11 @@
   })
 
   onDestroy(() => {
-    expansionState[label + path] = false
+    expansionState[label] = false
   })
 
   const toggleExpansion = () => {
-    expanded = expansionState[label + path] = !expanded
+    expanded = expansionState[label] = !expanded
     if (tree?.children.length === 0) updateTreeStore()
 
     setTimeout(() => {
@@ -82,36 +57,12 @@
   }
 
   const updateTreeStore = async () => {
-    loadingLayer = true
+    setProgressIndicator(true)
+
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
+    if (treeData) node.children = treeData.tree.children
 
-    if (treeData) {
-      node.children = treeData.tree.children
-      // const treePathChildren = cloneDeep(treeData.tree.children)
-      // console.log(treePathChildren)
-      // // const subpaths = path.split('/').slice(0, -1)
-      // let nodeTree = $treeBucket.find(node => node.path === path)
-      // // let currentTreeData: TreeNode = currentTree.tree
-
-      // let currentTree = { ...$treeBucket }
-      // let currentTreeData: TreeNode = $treeBucket.find(node => node.path === path)
-
-      //  subpaths.forEach((element) => {
-      //   let currentTreeDataChildren = [...currentTreeData.children]
-      //   if (path === treeData.tree.path) {
-      //     currentTreeData.children = currentTreeDataChildren.map((item) =>
-      //       item.path === treeData?.tree?.path ? treeData.tree : item,
-      //     )
-      //   }
-      //   currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
-      // })
-
-      // console.log(currentTree)
-
-      // treeBucket.set(currentTree)
-    }
-
-    loadingLayer = false
+    setProgressIndicator(false)
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -120,9 +71,13 @@
       .join('&')
   }
 
+  const setProgressIndicator = (state: boolean) => {
+    loadingLayer = state
+    $indicatorProgress = state
+  }
+
   const loadLayer = async () => {
-    $indicatorProgress = true
-    loadingLayer = true
+    setProgressIndicator(true)
 
     const tileSourceId = path
     const layerId = uuidv4()
@@ -212,17 +167,21 @@
       loadingLayer = false
     }, 350)
   }
+
+  const handleRemoveBucket = () => {
+    dispatch('remove', { node })
+  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
   <div style="padding-top: 5px;">
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon" on:click={() => (level > 0 ? toggleExpansion() : '')}>
+        <div class="tree-icon" on:click={() => toggleExpansion()}>
           {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
-            <Fa icon={faDatabase} size="sm" />
+            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
           {:else if !expanded}
             <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
           {:else}
@@ -250,6 +209,18 @@
               <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Vector</Tooltip>
             </Wrapper>
+          </div>
+        {/if}
+
+        {#if level === 0}
+          <div
+            alt="Remove container"
+            title="Remove container"
+            data-testid="remove-container"
+            class="close"
+            style="width: 19.5px; height: 19.5px; cursor: pointer;"
+            on:click={handleRemoveBucket}>
+            <Fa icon={faWindowClose} size="sm" />
           </div>
         {/if}
       </div>

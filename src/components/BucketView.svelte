@@ -1,37 +1,47 @@
 <script lang="ts">
-  import { cloneDeep } from 'lodash'
-  import type { Bucket, TreeNode } from '$lib/types'
-
   import BucketCard from '$components/BucketCard.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
-  import { bucketList, treeBucket } from '$stores'
+  import { bucketList, indicatorProgress, treeBucket } from '$stores'
 
   const handleBucketClick = async (event: CustomEvent) => {
-    const bucketClone: Bucket = cloneDeep(event.detail.bucket)
-    bucketClone.selected = !bucketClone.selected
-    const bucketIndex = $bucketList.findIndex((node) => node.id === bucketClone.id)
-    $bucketList[bucketIndex] = bucketClone
+    $indicatorProgress = true
+    const bucket = event.detail.bucket
+    bucket.selected = !bucket.selected
+    const bucketIndex = $bucketList.findIndex((node) => node.id === bucket.id)
+    $bucketList[bucketIndex] = bucket
 
-    let treeBucketClone = cloneDeep($treeBucket)
-    const isBucketInTree = treeBucketClone.some((node) => node.path === bucketClone.path)
+    let treeBucketUpdated = []
+    const isBucketInTree = $treeBucket.some((node) => node.path === bucket.path)
 
     if (isBucketInTree === false) {
-      treeBucketClone = [
-        ...treeBucketClone,
+      treeBucketUpdated = [
+        ...$treeBucket,
         {
-          id: bucketClone.id,
+          id: bucket.id,
           children: [],
           isRaster: false,
-          label: bucketClone.path.slice(0, -1),
-          path: bucketClone.path,
+          label: bucket.path.slice(0, -1),
+          path: bucket.path,
         },
       ]
     } else {
-      treeBucketClone = treeBucketClone.filter((node) => node.path !== bucketClone.path)
+      treeBucketUpdated = $treeBucket.filter((node) => node.path !== bucket.path)
     }
 
-    treeBucketClone.sort((a, b) => a.label.localeCompare(b.label))
-    $treeBucket = treeBucketClone
+    treeBucketUpdated.sort((a, b) => a.label.localeCompare(b.label))
+    $treeBucket = treeBucketUpdated
+    $indicatorProgress = false
+  }
+
+  const handleRemoveBucket = (event: CustomEvent) => {
+    $indicatorProgress = true
+    const bucket = $bucketList.find((node) => node.path === event.detail.node.path)
+    bucket.selected = false
+    const bucketIndex = $bucketList.findIndex((node) => node.path === event.detail.node.path)
+    $bucketList[bucketIndex] = bucket
+
+    $treeBucket = $treeBucket.filter((node) => node.path !== bucket.path)
+    $indicatorProgress = false
   }
 </script>
 
@@ -45,7 +55,7 @@
     <div class="column is-four-fifths tree">
       {#each $treeBucket as tree}
         <ul>
-          <BucketTreeNode bind:node={tree} />
+          <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
         </ul>
       {/each}
     </div>
@@ -55,5 +65,13 @@
 <style lang="scss">
   .view-container {
     padding-right: 30px;
+
+    .cards {
+      z-index: 10;
+    }
+
+    .tree {
+      z-index: 1;
+    }
   }
 </style>
