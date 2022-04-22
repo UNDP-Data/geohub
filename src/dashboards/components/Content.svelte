@@ -98,7 +98,9 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Header>
-          <p use:Ripple={{ surface: true, color: 'primary' }} tabindex="0" on:click={addBingAerialLayer}>Whatever</p>
+          <p use:Ripple={{ surface: true, color: 'primary' }} tabindex="0" on:click={addBingAerialLayer}>
+            Toggle Bing Aerial
+          </p>
         </Header>
         <Content style="padding-right: 15px; overflow: visible;">
           <div />
