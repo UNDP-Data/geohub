@@ -8,18 +8,16 @@
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
   import Tab, { Label } from '@smui/tab'
-  import TabBar from '@smui/tab-bar'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
   import GodLegend from '$components/GodLegend.svelte'
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
+  import SegmentedButton, { Segment } from '@smui/segmented-button'
 
   export let layer: Layer = LayerInitialValues
 
@@ -124,38 +122,37 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <TabBar
-                tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
-                let:tab
-                active={activeTab}
-                style="overflow:hidden">
-                <Tab
-                  {tab}
+              <SegmentedButton
+                segments={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]}
+                let:segment
+                singleSelect
+                bind:selected={activeTab}>
+                <!-- Note: the `segment` property is required! -->
+                <Segment
+                  {segment}
                   class="tab"
                   style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
                   on:click={() => {
-                    activeTab === tab ? (activeTab = '') : (activeTab = tab)
+                    activeTab === segment ? (activeTab = '') : (activeTab = segment)
                   }}>
                   <Label>
                     <div class="tabs">
                       <div style="padding-right: 5px;">
-                        {#if tab === TabNames.LEGEND}
+                        {#if segment === TabNames.LEGEND}
                           <Fa icon={faList} size="1x" />
-                        {:else if tab === TabNames.REFINE}
+                        {:else if segment === TabNames.REFINE}
                           <Fa icon={faCalculator} size="1x" />
-                        {:else if tab === TabNames.OPACITY}
+                        {:else if segment === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
-                        {:else if tab === TabNames.ZOOM}
-                          <Fa icon={faMagnifyingGlassLocation} size="1x" />
                         {/if}
                       </div>
                       <div>
-                        {tab}
+                        {segment}
                       </div>
                     </div>
                   </Label>
-                </Tab>
-              </TabBar>
+                </Segment>
+              </SegmentedButton>
             </div>
           </div>
         </div>
@@ -171,7 +168,7 @@
             </div>
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
-          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
+          <!--          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />-->
         </div>
       </div>
     </Panel>
@@ -188,12 +185,12 @@
       display: flex;
       gap: 15px;
       justify-content: left;
-      margin-top: 10px;
-      padding-top: 10px;
+      margin-top: 0;
+      padding-top: 0;
 
       .group {
-        padding-bottom: 5px;
-        padding-top: 5px;
+        padding-bottom: 0;
+        padding-top: 0;
 
         .tabs {
           align-items: center;
