@@ -17,7 +17,8 @@
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
+  import TabBar from '@smui/tab-bar'
+  import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -122,37 +123,36 @@
           <LayerNameGroup {layer} />
           <div class="layer-header-icons">
             <div class="group">
-              <SegmentedButton
-                segments={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY]}
-                let:segment
-                singleSelect
-                bind:selected={activeTab}>
+              <TabBar
+                tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
+                let:tab
+                bind:active={activeTab}>
                 <!-- Note: the `segment` property is required! -->
-                <Segment
-                  {segment}
+                <Tab
+                  {tab}
                   class="tab"
                   style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
                   on:click={() => {
-                    activeTab === segment ? (activeTab = '') : (activeTab = segment)
+                    activeTab === tab ? (activeTab = '') : (activeTab = tab)
                   }}>
                   <Label>
                     <div class="tabs">
                       <div style="padding-right: 5px;">
-                        {#if segment === TabNames.LEGEND}
+                        {#if tab === TabNames.LEGEND}
                           <Fa icon={faList} size="1x" />
-                        {:else if segment === TabNames.REFINE}
+                        {:else if tab === TabNames.REFINE}
                           <Fa icon={faCalculator} size="1x" />
-                        {:else if segment === TabNames.OPACITY}
+                        {:else if tab === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
                         {/if}
                       </div>
                       <div>
-                        {segment}
+                        {tab}
                       </div>
                     </div>
                   </Label>
-                </Segment>
-              </SegmentedButton>
+                </Tab>
+              </TabBar>
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@
             </div>
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
-          <!--          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />-->
+          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
         </div>
       </div>
     </Panel>
