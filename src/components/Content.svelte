@@ -13,7 +13,7 @@
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TreeView from '$components/TreeView.svelte'
-  import { bucketFeature, layerList, indicatorProgress, map, bannerMessages } from '$stores'
+  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
@@ -23,7 +23,7 @@
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
-  let tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
+  let tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -43,24 +43,6 @@
       setTimeout(() => {
         showBanner = true
       }, 500)
-    }
-  }
-
-  $: {
-    if ($bucketFeature === true && tabs.length === 2) {
-      tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
-
-      setTimeout(() => {
-        activeTab = TabNames.BUCKETS
-      }, 10)
-    }
-
-    if ($bucketFeature === false && tabs.length === 3) {
-      tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
-
-      setTimeout(() => {
-        activeTab = TabNames.LOAD_DATA
-      }, 10)
     }
   }
 
@@ -119,11 +101,9 @@
           <div hidden={activeTab !== TabNames.LOAD_DATA}>
             <TreeView />
           </div>
-          {#if $bucketFeature === true}
-            <div hidden={activeTab !== TabNames.BUCKETS}>
-              <BucketView />
-            </div>
-          {/if}
+          <div hidden={activeTab !== TabNames.BUCKETS}>
+            <BucketView />
+          </div>
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
@@ -174,7 +154,6 @@
 
 <style lang="scss">
   @import '../styles/bulma.css';
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 
   :global(.app-content) {
     flex: auto;

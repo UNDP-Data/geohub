@@ -62,9 +62,11 @@
   on:mouseleave={() => handleMouseLeave()}>
   <Card>
     <PrimaryAction on:click={() => undefined}>
-      <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
-        <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
-      </ContentCard>
+      <div class="icon-container">
+        <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
+          <i class={`icon ${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
+        </ContentCard>
+      </div>
     </PrimaryAction>
   </Card>
 </div>
@@ -93,6 +95,8 @@
 {/if}
 
 <style lang="scss">
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+
   $tooltip-background: #fff;
 
   .card-container {
@@ -106,6 +110,21 @@
     .card {
       margin-bottom: 15px;
       margin-left: 15px;
+    }
+
+    .icon-container {
+      @media (prefers-color-scheme: dark) {
+        border-radius: 7.5px;
+        border: 1px solid #ccc;
+      }
+
+      .icon {
+        color: #000;
+
+        @media (prefers-color-scheme: dark) {
+          color: #ccc;
+        }
+      }
     }
   }
 
