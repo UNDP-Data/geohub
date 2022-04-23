@@ -85,7 +85,10 @@
     </div>
     <div class="content is-size-7 tags">
       {#each bucket.tags as tag}
-        <span title="tag">
+        <span
+          title="tag"
+          style="          margin-right: 5px;
+        ">
           <Tag type="is-info is-light" size="is-small">{tag}</Tag>
         </span>
       {/each}
@@ -159,10 +162,12 @@
       }
     }
 
-    .content .tags {
-      display: flex;
-      gap: 5px;
-      flex-flow: row wrap;
+    .content {
+      .tags {
+        display: flex;
+        gap: 5px;
+        flex-flow: row wrap;
+      }
     }
 
     #arrow,

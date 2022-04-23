@@ -11,7 +11,7 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { cloneDeep } from 'lodash'
+  import { cloneDeep } from 'lodash-es'
 
   import { LayerTypes } from '$lib/constants'
   import { map, layerList } from '$stores'

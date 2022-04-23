@@ -72,7 +72,7 @@
   const hideBanner = () => {
     setTimeout(() => {
       showBanner = false
-    }, 350)
+    }, 150)
     $bannerMessages = []
   }
 </script>

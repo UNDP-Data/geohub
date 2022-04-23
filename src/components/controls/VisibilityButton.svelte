@@ -1,6 +1,6 @@
 <script lang="ts">
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import { cloneDeep } from 'lodash'
+  import { cloneDeep } from 'lodash-es'
   import Fa from 'svelte-fa'
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
