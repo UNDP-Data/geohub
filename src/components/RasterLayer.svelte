@@ -8,18 +8,17 @@
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
   import Tab, { Label } from '@smui/tab'
-  import TabBar from '@smui/tab-bar'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
   import GodLegend from '$components/GodLegend.svelte'
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
+  import TabBar from '@smui/tab-bar'
+  import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -127,8 +126,8 @@
               <TabBar
                 tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
                 let:tab
-                active={activeTab}
-                style="overflow:hidden">
+                bind:active={activeTab}>
+                <!-- Note: the `segment` property is required! -->
                 <Tab
                   {tab}
                   class="tab"
@@ -145,8 +144,6 @@
                           <Fa icon={faCalculator} size="1x" />
                         {:else if tab === TabNames.OPACITY}
                           <Fa icon={faDroplet} size="1x" />
-                        {:else if tab === TabNames.ZOOM}
-                          <Fa icon={faMagnifyingGlassLocation} size="1x" />
                         {/if}
                       </div>
                       <div>
@@ -188,12 +185,12 @@
       display: flex;
       gap: 15px;
       justify-content: left;
-      margin-top: 10px;
-      padding-top: 10px;
+      margin-top: 0;
+      padding-top: 0;
 
       .group {
-        padding-bottom: 5px;
-        padding-top: 5px;
+        padding-bottom: 0;
+        padding-top: 0;
 
         .tabs {
           align-items: center;

@@ -1,16 +1,12 @@
 <script lang="ts">
   import Legend from '$components/Legend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
-  import { Wrapper } from '@smui/tooltip'
-  import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { DynamicLayerLegendTypes } from '$lib/constants'
-  import Fa from 'svelte-fa'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import Button, { Label, Icon } from '@smui/button'
+  import Button, { Label } from '@smui/button'
 
   export let activeColorMapName
   export let layer
-
   let isLegendSwitchAnimate
   let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
 </script>
@@ -28,15 +24,9 @@
         ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
         : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
     }}>
-    <!--    <Fa icon={faRetweet} size="2x" spin={isLegendSwitchAnimate} />-->
     <Label>Switch legend</Label>
   </Button>
-  <!--    <div-->
-  <!--      class='switch-legend'-->
-  <!--      id="retweet-icon-div"-->
-  <!--      >-->
-  <!--      <Fa style="border: 1px solid black" icon={faRetweet} size="2x" spin={isLegendSwitchAnimate} />-->
-  <!--    </div>-->
+
   <div style="width: 100%">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div>
@@ -67,15 +57,6 @@
     margin-left: 25%;
     border: 1px solid dodgerblue;
   }
-  //#retweet-icon-div {
-  //  cursor: pointer;
-  //  width: 100%;
-  //  justify-content: center;
-  //}
-  //
-  //*:global(.switch-legend){
-  //  height: 30px;
-  //  width: 100%;
-  //  background: red;
+
   //}
 </style>

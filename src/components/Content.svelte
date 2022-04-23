@@ -200,8 +200,14 @@
         flex-basis: 100%;
         flex: 1;
       }
-
-      .drawer-divider {
+      ::-webkit-scrollbar {
+        width: 2px;
+        height: 2px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: grey;
+      }
+      .drawer -divider {
         width: 9px;
         @media only screen and (max-width: 760px) {
           width: 15px;
