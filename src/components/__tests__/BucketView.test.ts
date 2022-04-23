@@ -1,5 +1,6 @@
 import { describe, beforeEach, expect, it } from 'vitest'
-import { cleanup, render, within, type RenderResult } from '@testing-library/svelte'
+import { cleanup, render, fireEvent, within, type RenderResult } from '@testing-library/svelte'
+import { get } from 'svelte/store'
 
 import BucketView from '$components/BucketView.svelte'
 import { bucketList, treeBucket } from '$stores'
@@ -29,7 +30,8 @@ describe('Bucket View', () => {
   })
 
   it('should render a root node item  with a label', () => {
-    expect(within(viewContainer).getByText('endpoverty')).toBeDefined()
+    const treeContainer = sut.getByTestId('tree-container')
+    expect(within(treeContainer).getByText('endpoverty')).toBeDefined()
   })
 
   it('should render five buckets / icons', () => {
@@ -38,5 +40,23 @@ describe('Bucket View', () => {
     expect(within(viewContainer).getByLabelText('End Poverty')).toBeDefined()
     expect(within(viewContainer).getByLabelText('Good Health And Well Being')).toBeDefined()
     expect(within(viewContainer).getByLabelText('Zero Hunger')).toBeDefined()
+  })
+
+  it('should add and remove a root node on click of a bucket icon', async () => {
+    const bucketClimateActionButton = within(viewContainer).getByLabelText('Climate Action')
+    const treeContainer = sut.getByTestId('tree-container')
+
+    // add climate action
+    await fireEvent.click(bucketClimateActionButton)
+    expect(within(treeContainer).getByText('endpoverty')).toBeDefined()
+    expect(within(treeContainer).getByText('climateaction')).toBeDefined()
+    let bucketClimateAction = get(bucketList).find((bucket) => bucket.label === 'Climate Action')
+    expect(bucketClimateAction.selected).toBe(true)
+
+    // remove climate action
+    await fireEvent.click(bucketClimateActionButton)
+    bucketClimateAction = get(bucketList).find((bucket) => bucket.label === 'Climate Action')
+    expect(bucketClimateAction.selected).toBe(false)
+    expect(within(treeContainer).queryByText('climateaction')).toBeNull()
   })
 })
