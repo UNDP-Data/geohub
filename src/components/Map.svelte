@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
-  import { cloneDeep } from 'lodash'
+  import { cloneDeep } from 'lodash-es'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { indicatorProgress, map, layerList, spriteImageList } from '$stores'

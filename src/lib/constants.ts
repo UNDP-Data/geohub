@@ -8,6 +8,7 @@ import type { TreeNode } from '$lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
+export const STRING_COMPARE_THRESHOLD = 0.25
 
 export enum TabNames {
   ANALYZE = 'Analyze',

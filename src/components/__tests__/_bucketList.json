@@ -6,7 +6,8 @@
 	"description": "Bucket contains data related to SDG 13",
 	"icon": "fa-duotone fa-earth-americas",
 	"type": "internal",
-	"tags": ["Climate Change", "Heat", "Precipitation", "Weather"]
+	"tags": ["Climate Change", "Heat", "Precipitation", "Weather"],
+  "selected": false
 }, {
 	"id": "1650409953000",
 	"published": true,
@@ -16,7 +17,7 @@
 	"icon": "fa-solid fa-plug-circle-bolt",
 	"type": "internal",
 	"tags": ["Elctricity Access", "Estimated Access", "Estimated Brightness Levels", "Freaquency Of Brightness", "Machine Learning", "Nighttime Lights"],
-	"selected": true
+	"selected": false
 }, {
 	"id": "1649952050000",
 	"published": true,
@@ -26,7 +27,7 @@
 	"icon": "fa-duotone fa-people-group",
 	"type": "internal",
 	"tags": ["Dependency", "Disasters", "Population", "Poverty", "Social Protection", "Tenure"],
-	"selected": true
+	"selected": false
 }, {
 	"id": "1649952114000",
 	"published": true,
@@ -36,7 +37,7 @@
 	"icon": "fa-solid fa-bed-pulse",
 	"type": "internal",
 	"tags": ["Development Indicators", "Diseases", "Health", "Healthsites", "Mortality"],
-	"selected": true
+	"selected": false
 }, {
 	"id": "1650401860000",
 	"published": true,
@@ -45,5 +46,6 @@
 	"description": "Bucket contains data related to SDG 2",
 	"icon": "fa-solid fa-plate-wheat",
 	"type": "internal",
-	"tags": ["Agriculture", "Crops", "Food Insecurity", "Hunger"]
+	"tags": ["Agriculture", "Crops", "Food Insecurity", "Hunger"],
+  "selected": false
 }]

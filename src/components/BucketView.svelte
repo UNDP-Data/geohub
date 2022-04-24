@@ -1,7 +1,12 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition'
+
   import BucketCard from '$components/BucketCard.svelte'
+  import BucketFilter from '$components/BucketFilter.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
   import { bucketList, indicatorProgress, treeBucket } from '$stores'
+
+  let bucketsMeetThereshold = new Map()
 
   const handleBucketClick = async (event: CustomEvent) => {
     $indicatorProgress = true
@@ -46,13 +51,38 @@
 </script>
 
 <div class="view-container" data-testid="view-container">
-  <div class="columns">
-    <div class="column cards">
-      {#each $bucketList as bucket}
-        <BucketCard {bucket} on:click={handleBucketClick} />
-      {/each}
+  <div class="columns filter-container">
+    <div class="column filter">
+      <BucketFilter bind:bucketsMeetThereshold />
     </div>
-    <div class="column is-four-fifths tree">
+  </div>
+
+  <div class="columns cards-tree-container is-gapless">
+    <div class="column">
+      <div class="columns">
+        <div class="column cards" data-testid="buckets-container">
+          {#if bucketsMeetThereshold.size > 0}
+            {#if bucketsMeetThereshold.has('NO_RESULTS')}
+              <div class="no-results">No results</div>
+            {:else}
+              {#each [...bucketsMeetThereshold] as [key, bucket]}
+                <div data-testid={key} transition:slide>
+                  <BucketCard {bucket} on:click={handleBucketClick} />
+                </div>
+              {/each}
+            {/if}
+          {:else}
+            {#each $bucketList as bucket}
+              <div data-testid={bucket.path} transition:slide>
+                <BucketCard {bucket} on:click={handleBucketClick} />
+              </div>
+            {/each}
+          {/if}
+        </div>
+        <div class="column separator" style="" />
+      </div>
+    </div>
+    <div class="column is-three-quarters tree" data-testid="tree-container">
       {#each $treeBucket as tree}
         <ul>
           <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
@@ -63,15 +93,47 @@
 </div>
 
 <style lang="scss">
-  .view-container {
-    padding-right: 30px;
+  $separator: 1px solid whitesmoke;
+  $separator-dark: 1px solid #ccc;
 
-    .cards {
-      z-index: 10;
+  .view-container {
+    .filter-container {
+      border-bottom: $separator;
+      margin-bottom: 20px;
+      padding-left: 10px;
+
+      @media (prefers-color-scheme: dark) {
+        border-bottom: $separator-dark;
+      }
+
+      .filter {
+        padding-bottom: 15px;
+      }
     }
 
-    .tree {
-      z-index: 1;
+    .cards-tree-container {
+      margin-bottom: 0;
+      .cards {
+        z-index: 10;
+      }
+
+      .tree {
+        z-index: 1;
+      }
+
+      .separator {
+        border-left: $separator;
+        height: calc(100vh - 200px);
+
+        @media (prefers-color-scheme: dark) {
+          border-left: $separator-dark;
+        }
+      }
+
+      .no-results {
+        padding-left: 11px;
+        white-space: nowrap;
+      }
     }
   }
 </style>

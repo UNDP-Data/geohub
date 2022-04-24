@@ -85,7 +85,7 @@
     </div>
     <div class="content is-size-7 tags">
       {#each bucket.tags as tag}
-        <span title="tag">
+        <span title="tag" style="margin-right: 5px;">
           <Tag type="is-info is-light" size="is-small">{tag}</Tag>
         </span>
       {/each}
@@ -102,9 +102,9 @@
   .card-container {
     height: 65px;
     margin: 0;
-    padding: 10px;
     padding-bottom: 0px;
     padding-top: 0px;
+    padding: 10px;
     width: 70px;
 
     .card {
@@ -159,10 +159,12 @@
       }
     }
 
-    .content .tags {
-      display: flex;
-      gap: 5px;
-      flex-flow: row wrap;
+    .content {
+      .tags {
+        display: flex;
+        gap: 5px;
+        flex-flow: row wrap;
+      }
     }
 
     #arrow,

@@ -174,7 +174,7 @@
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
-  <div style="padding-top: 5px;">
+  <div style="padding-bottom: 5px;">
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         <div class="tree-icon" on:click={() => toggleExpansion()}>
