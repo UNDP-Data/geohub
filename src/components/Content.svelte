@@ -85,12 +85,12 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
-        <Header>
+        <Header style="margin-top: 10px;">
           <TabBar {tabs} let:tab bind:active={activeTab}>
-            <Tab {tab} class="tab">
-              <Label>
+            <Tab {tab} class="tab" style="height: 40px;">
+              <Label style="font-weight: normal; text-transform: capitalize;">
                 {tab}
-                {#if tab === TabNames.LAYERS}
+                {#if tab === TabNames.LAYERS && $layerList.length > 0}
                   ({$layerList.length})
                 {/if}
               </Label>
@@ -207,7 +207,7 @@
       ::-webkit-scrollbar-thumb {
         background-color: grey;
       }
-      .drawer -divider {
+      .drawer-divider {
         width: 9px;
         @media only screen and (max-width: 760px) {
           width: 15px;

@@ -16,7 +16,7 @@ export enum TabNames {
   LABEL = 'Label',
   LAYERS = 'Layers',
   LEGEND = 'Legend',
-  LOAD_DATA = 'Load data',
+  LOAD_DATA = 'Data Explorer',
   OPACITY = 'Opacity',
   REFINE = 'Refine',
   STYLEJSON = 'Specification',
