@@ -79,7 +79,7 @@ const listContainer = async (containerName: string, relPath: string) => {
         sharedKeyCredential,
       )
 
-      const signedEncodedUrl = `${blockBlobClient.url}?${btoa(sasToken)}`
+      const signedEncodedUrl = `${blockBlobClient.url}?${Buffer.from(sasToken.toString()).toString('base64')}`
       const label = item.name
 
       if (label.includes('/')) {
@@ -91,7 +91,7 @@ const listContainer = async (containerName: string, relPath: string) => {
       if (childLabel === 'metadata.json') {
         tree.url = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
       }
-      let treeItem: TreeNode = { label: childLabel, path: path, url: signedEncodedUrl, isRaster: isRaster }
+      const treeItem: TreeNode = { label: childLabel, path: path, url: signedEncodedUrl, isRaster: isRaster }
       if (isRaster) {
         treeItem.info = await fetchUrl(`${titilerApiUrl}/info?url=${signedEncodedUrl}`)
       }
