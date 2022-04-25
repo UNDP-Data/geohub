@@ -18,12 +18,12 @@
 
   export let drawerOpen = false
 
-  let activeTab = TabNames.LOAD_DATA
+  let activeTab = TabNames.BUCKETS
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
-  let tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
+  let tabs = [TabNames.BUCKETS, TabNames.LOAD_DATA, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {

@@ -44,7 +44,7 @@
   const handleMouseEnter = () => {
     timer = setTimeout(() => {
       showTooltip = true
-    }, 500)
+    }, 100)
   }
 
   const handleMouseLeave = () => {

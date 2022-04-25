@@ -85,11 +85,22 @@
       </div>
     </div>
     <div class="column is-three-quarters tree" data-testid="tree-container">
-      {#each $treeBucket as tree}
-        <ul>
-          <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
-        </ul>
-      {/each}
+      {#if $treeBucket.length === 0}
+        <div class="title is-size-4">Welcome to GeoHub</div>
+        <div class="subtitle is-size-5">
+          This UNDP data repository features a range of innovative tools to visualise, analyse, and download data.
+        </div>
+        <div class="subtitle is-size-5">
+          Select an icon to the left, to explore the data. Click on each icon to see data available for visualisation
+          and download.
+        </div>
+      {:else}
+        {#each $treeBucket as tree}
+          <ul>
+            <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
+          </ul>
+        {/each}
+      {/if}
     </div>
   </div>
 </div>
@@ -121,6 +132,10 @@
 
       .tree {
         z-index: 1;
+
+        .title {
+          margin-bottom: 30px;
+        }
       }
 
       .separator {
