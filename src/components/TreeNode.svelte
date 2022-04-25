@@ -222,7 +222,10 @@
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else}
-              <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+              <Wrapper>
+                <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+                <Tooltip showDelay={0} hideDelay={100} yPos="above">Add Layer</Tooltip>
+              </Wrapper>
             {/if}
           </div>
         {/if}
@@ -247,7 +250,10 @@
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else}
-              <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+              <Wrapper>
+                <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+                <Tooltip showDelay={0} hideDelay={100} yPos="above">Add Layer</Tooltip>
+              </Wrapper>
             {/if}
           </div>
         {/if}
