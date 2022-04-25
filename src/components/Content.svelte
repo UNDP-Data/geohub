@@ -87,7 +87,7 @@
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header style="margin-top: 10px;">
           <TabBar {tabs} let:tab bind:active={activeTab}>
-            <Tab {tab} class="tab" style="height: 40px;">
+            <Tab {tab} class="tab" style="height: 40px; font-family: ProximaNova, sans-serif;">
               <Label style="font-weight: normal; text-transform: capitalize;">
                 {tab}
                 {#if tab === TabNames.LAYERS && $layerList.length > 0}
