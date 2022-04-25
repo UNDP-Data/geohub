@@ -4,11 +4,10 @@
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import Button, { Label } from '@smui/button'
+  import { selectedLegendType } from '../stores'
 
   export let activeColorMapName
   export let layer
-  let isLegendSwitchAnimate
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
 </script>
 
 <div class="card-face card-face-back" id="legend-control" style="">
@@ -16,27 +15,23 @@
     variant="unelevated"
     class="switch-legend-button"
     on:click={() => {
-      isLegendSwitchAnimate = true
-      setTimeout(() => {
-        isLegendSwitchAnimate = false
-      }, 400)
-      selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-        ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
-        : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
+      $selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+        ? ($selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
+        : ($selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
     }}>
     <Label>Switch legend</Label>
   </Button>
 
   <div style="width: 100%">
-    {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
+    {#if $selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div>
         <Legend bind:activeColorMapName layerConfig={layer} />
       </div>
-    {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
+    {:else if $selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div>
         <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
       </div>
-    {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
+    {:else if $selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
     {/if}
   </div>
