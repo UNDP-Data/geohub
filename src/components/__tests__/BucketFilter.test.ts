@@ -31,6 +31,17 @@ describe('Bucket Filter', () => {
     expect(input.value).toBe('Health')
   })
 
+  it('should return two buckets upon filter of a string', async () => {
+    const input = sut.getByTestId('filter-bucket-input') as HTMLInputElement
+    await fireEvent.input(input, { target: { value: 'Health' } })
+    expect(input.value).toBe('Health')
+
+    // add delay for debounce
+    await new Promise((r) => setTimeout(r, 500))
+    const filterIndex = sut.component.$$.props.bucketsMeetThereshold
+    expect(sut.component.$$.ctx[filterIndex]).toEqual(['climateaction/', 'goodhealthandwellbeing/'])
+  })
+
   it('should have an empty input upon click of clear button', async () => {
     const input = sut.getByTestId('filter-bucket-input') as HTMLInputElement
     await fireEvent.input(input, { target: { value: 'Health' } })
