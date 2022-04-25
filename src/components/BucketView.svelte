@@ -6,7 +6,7 @@
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
   import { bucketList, indicatorProgress, treeBucket } from '$stores'
 
-  let bucketsMeetThereshold = new Map()
+  let bucketsMeetThereshold = []
 
   const handleBucketClick = async (event: CustomEvent) => {
     $indicatorProgress = true
@@ -61,14 +61,16 @@
     <div class="column">
       <div class="columns">
         <div class="column cards" data-testid="buckets-container">
-          {#if bucketsMeetThereshold.size > 0}
-            {#if bucketsMeetThereshold.has('NO_RESULTS')}
+          {#if bucketsMeetThereshold.length > 0}
+            {#if bucketsMeetThereshold.includes('NO_RESULTS')}
               <div class="no-results">No results</div>
             {:else}
-              {#each [...bucketsMeetThereshold] as [key, bucket]}
-                <div data-testid={key} transition:slide>
-                  <BucketCard {bucket} on:click={handleBucketClick} />
-                </div>
+              {#each $bucketList as bucket}
+                {#if bucketsMeetThereshold.includes(bucket.path)}
+                  <div data-testid={bucket.path} transition:slide>
+                    <BucketCard {bucket} on:click={handleBucketClick} />
+                  </div>
+                {/if}
               {/each}
             {/if}
           {:else}

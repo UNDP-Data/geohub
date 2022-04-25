@@ -5,16 +5,16 @@
   import { STRING_COMPARE_THRESHOLD } from '$lib/constants'
   import { bucketList } from '$stores'
 
-  export let bucketsMeetThereshold = new Map()
+  export let bucketsMeetThereshold = []
   let inputValue = ''
 
   const handleFilterInput = debounce((e) => {
-    bucketsMeetThereshold.clear()
+    bucketsMeetThereshold = []
     const bucketsMeetTheresholdFilterInput = new Map()
     const inputString = (e.target as HTMLInputElement).value
 
     if (inputString === '') {
-      bucketsMeetThereshold = new Map()
+      bucketsMeetThereshold = []
     } else {
       $bucketList.forEach((bucket) => {
         let targetStrings = [bucket.tags, bucket.label, bucket.description].flat()
@@ -23,7 +23,7 @@
           const score = stringSimilarity(inputString, targetString, false)
 
           if (score >= STRING_COMPARE_THRESHOLD) {
-            bucketsMeetTheresholdFilterInput.set(bucket.path, bucket)
+            bucketsMeetTheresholdFilterInput.set(bucket.path, true)
           }
         })
       })
@@ -32,7 +32,7 @@
         bucketsMeetTheresholdFilterInput.set('NO_RESULTS', true)
       }
 
-      bucketsMeetThereshold = bucketsMeetTheresholdFilterInput
+      bucketsMeetThereshold = Array.from(bucketsMeetTheresholdFilterInput.keys())
     }
   }, 500)
 
@@ -81,7 +81,7 @@
   }
 
   const clearInput = () => {
-    bucketsMeetThereshold = new Map()
+    bucketsMeetThereshold = []
     inputValue = ''
   }
 </script>
