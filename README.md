@@ -8,8 +8,8 @@ You'll need a basic development environment prepared before you can install and 
 Make sure you have `node`, `nvm`, `yarn` installed before you get to these commands:
 
 - `nvm use` // to set the needed node version from .nvmrc
-- `yarn install` // to install dependencies
-- `yarn start` // to start the SvelteKit on `localhost:3000`
+- `yarn run install` // to install dependencies
+- `yarn run start` // to start the SvelteKit on `localhost:3000`
 
 Copy and update the environment variables file by running this command and contacting the project manager to obtain the values:
 
