@@ -8,7 +8,8 @@ import {
 import azure from '@azure/storage-blob'
 import type { Tree, TreeNode } from '$lib/types'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
-
+import { fetchUrl } from '$lib/helper'
+const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 const account = AZURE_STORAGE_ACCOUNT
 const accountKey = AZURE_STORAGE_ACCESS_KEY
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
@@ -78,19 +79,23 @@ const listContainer = async (containerName: string, relPath: string) => {
         sharedKeyCredential,
       )
 
-      const sasUrl = `${blockBlobClient.url}?${sasToken}`
+      const signedEncodedUrl = `${blockBlobClient.url}?${btoa(sasToken)}`
       const label = item.name
+
       if (label.includes('/')) {
         childLabel = label.split('/').pop()
       } else {
         childLabel = label
       }
-
+      const isRaster: boolean = isRasterExtension(childLabel)
       if (childLabel === 'metadata.json') {
         tree.url = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
       }
-
-      containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRasterExtension(childLabel) })
+      let treeItem: TreeNode = { label: childLabel, path: path, url: signedEncodedUrl, isRaster: isRaster }
+      if (isRaster) {
+        treeItem.info = await fetchUrl(`${titilerApiUrl}/info?url=${signedEncodedUrl}`)
+      }
+      containerChildren.push(treeItem)
     }
   }
   tree.children = containerChildren
@@ -108,6 +113,7 @@ const listContainers = async (prefix = '/') => {
     path: prefix,
     url: null,
     isRaster: false,
+    info: null,
   }
 
   for await (const container of blobServiceClient.listContainers()) {

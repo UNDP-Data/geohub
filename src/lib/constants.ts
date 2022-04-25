@@ -30,6 +30,7 @@ export const TreeNodeInitialValues = {
   path: '/',
   url: null,
   isRaster: false,
+  info: null,
 }
 
 export const BucketIntialValues = {

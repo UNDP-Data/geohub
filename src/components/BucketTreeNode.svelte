@@ -33,7 +33,7 @@
   let SelectLayerStyleDialogVisible: boolean
 
   $: tree = node
-  $: ({ label, children, path, url, isRaster } = tree)
+  $: ({ label, children, path, url, isRaster, info } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
 
@@ -81,15 +81,14 @@
 
     const tileSourceId = path
     const layerId = uuidv4()
-    let layerInfo: LayerInfo = {}
+    const layerInfo: LayerInfo = info
 
     if (!isRaster) {
       SelectLayerStyleDialogVisible = true
     } else {
       const layerName = path.split('/')[path.split('/').length - 1]
-      const [base, sign] = url.split('?')
-      const b64EncodedUrl = `${base}?${btoa(sign)}`
-      layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
+      //const [base, sign] = url.split('?')
+      //const b64EncodedUrl = `${base}?${btoa(sign)}`
 
       const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
@@ -98,7 +97,7 @@
         const titilerApiUrlParams = {
           scale: 1,
           TileMatrixSetId: 'WebMercatorQuad',
-          url: b64EncodedUrl,
+          url: url,
           bidx: 1,
           unscale: false,
           resampling: 'nearest',
@@ -139,7 +138,7 @@
             type: LayerTypes.RASTER,
             info: layerInfo,
             visible: true,
-            url: b64EncodedUrl,
+            url: url,
           },
           ...$layerList,
         ]

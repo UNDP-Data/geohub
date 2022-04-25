@@ -21,6 +21,7 @@ export interface TreeNode {
   prefix?: string
   url?: string
   isRaster?: boolean
+  info?: LayerInfo
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
