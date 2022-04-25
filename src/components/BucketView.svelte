@@ -2,11 +2,13 @@
   import { slide } from 'svelte/transition'
 
   import BucketCard from '$components/BucketCard.svelte'
+  import BucketCardFilter from '$components/BucketCardFilter.svelte'
   import BucketFilter from '$components/BucketFilter.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
   import { bucketList, indicatorProgress, treeBucket } from '$stores'
 
   let bucketsMeetThereshold = []
+  let bucketCardFilterSelected = false
 
   const handleBucketClick = async (event: CustomEvent) => {
     $indicatorProgress = true
@@ -48,23 +50,31 @@
     $treeBucket = $treeBucket.filter((node) => node.path !== bucket.path)
     $indicatorProgress = false
   }
+
+  const handleBucketCardFilterClick = (event: CustomEvent) => {
+    bucketCardFilterSelected = event.detail.bucketCardFilterSelected
+  }
 </script>
 
 <div class="view-container" data-testid="view-container">
-  <div class="columns filter-container">
-    <div class="column filter">
-      <BucketFilter bind:bucketsMeetThereshold />
+  {#if bucketCardFilterSelected}
+    <div class="columns filter-container" transition:slide data-testid="filter-container">
+      <div class="column filter">
+        <BucketFilter bind:bucketsMeetThereshold />
+      </div>
     </div>
-  </div>
+  {/if}
 
   <div class="columns cards-tree-container is-gapless">
     <div class="column">
       <div class="columns">
         <div class="column cards" data-testid="buckets-container">
+          <div class="card-filter" data-testid="buckets-filter-container">
+            <BucketCardFilter on:click={handleBucketCardFilterClick} />
+          </div>
+
           {#if bucketsMeetThereshold.length > 0}
-            {#if bucketsMeetThereshold.includes('NO_RESULTS')}
-              <div class="no-results">No results</div>
-            {:else}
+            {#if !bucketsMeetThereshold.includes('NO_RESULTS')}
               {#each $bucketList as bucket}
                 {#if bucketsMeetThereshold.includes(bucket.path)}
                   <div data-testid={bucket.path} transition:slide>
@@ -145,11 +155,6 @@
         @media (prefers-color-scheme: dark) {
           border-left: $separator-dark;
         }
-      }
-
-      .no-results {
-        padding-left: 11px;
-        white-space: nowrap;
       }
     }
   }
