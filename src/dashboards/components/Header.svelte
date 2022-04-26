@@ -40,7 +40,9 @@
     </Section>
 
     <Section align="end">
-      <DrawCircle />
+      <div class="drawcircle-button">
+        <DrawCircle />
+      </div>
       <Wrapper>
         <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
           <Fa icon={faBars} size="lg" />
@@ -59,5 +61,8 @@
   .icon {
     cursor: pointer;
     margin-right: 20px;
+  }
+  .drawcircle-button {
+    padding-right: 20px;
   }
 </style>

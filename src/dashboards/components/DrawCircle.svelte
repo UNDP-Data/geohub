@@ -1,26 +1,34 @@
 <script lang="ts">
-  import IconButton from '@smui/icon-button'
-  import { Marker, MapMouseEvent } from 'maplibre-gl'
+  import Button, { Group, GroupItem, Label, Icon } from '@smui/button'
+  import type { MenuComponentDev } from '@smui/menu'
+  import Menu from '@smui/menu'
+  import List, { Item, Text } from '@smui/list'
+  import type { MapMouseEvent } from 'maplibre-gl'
   import distance from '@turf/distance'
-  import circle from '@turf/circle'
-  import { map } from '../stores'
+  import bearing from '@turf/bearing'
+  import area from '@turf/area'
+  import { destinationPoint as geodesyDestinationPoint } from 'geodesy-fn/src/spherical.js'
+  import { map, circleFeatures } from '../stores'
 
   const SOURCE_LINE = 'draw-circle-controls-source-line'
   const LAYER_LINE = 'draw-circle-controls-layer-line'
   const LAYER_LINE_SYMBOL = 'draw-circle-controls-layer-line-symbol'
   const LAYER_SYMBOL = 'draw-circle-controls-layer-symbol'
   const SOURCE_SYMBOL = 'draw-circle-controls-source-symbol'
+  const LAYER_SYMBOL_RADIUS = 'draw-circle-controls-layer-symbol-radius'
+  const SOURCE_SYMBOL_RADIUS = 'draw-circle-controls-source-symbol-radius'
   const LAYER_CIRCLE = 'draw-circle-controls-layer-circle'
   const SOURCE_CIRCLE = 'draw-circle-controls-source-circle'
   const LAYER_CIRCLE_OUTLINE = 'draw-circle-controls-layer-circle-outline'
 
   let isDrawing = false
-  let markers: Marker[] = []
-  let coordinates = []
+  let coordinatesCenter: number[][] = []
+  let coordinatesRadius: number[][] = []
   let units = 'meters'
+  let isDragging = false
+  let menu: MenuComponentDev
 
   const drawStart = () => {
-    console.log(isDrawing)
     if ($map) {
       $map.getCanvas().style.cursor = 'crosshair'
       isDrawing = true
@@ -32,46 +40,53 @@
     }
   }
 
+  const deleteFeatures = () => {
+    if (!$map) return
+    $map.getCanvas().style.cursor = ''
+    isDrawing = true
+    clearFeatures()
+    initFeatures()
+    $map.off('click', mapClickListener)
+    $map.off('mousemove', mapMoveListener)
+  }
+
   const mapClickListener = (event: MapMouseEvent) => {
-    console.log(event)
     if (!$map?.getSource(SOURCE_LINE) || !$map?.getSource(SOURCE_SYMBOL)) {
       initFeatures()
     }
     const lnglat: number[] = [event.lngLat.lng, event.lngLat.lat]
     if ($map) {
-      if (markers.length < 2) {
-        const marker = new Marker({
-          draggable: true,
-        })
-          .setLngLat(event.lngLat)
-          .addTo($map)
-        markers.push(marker)
-        if (coordinates.length === 0) {
-          coordinates.push(lnglat)
-        } else {
-          coordinates[coordinates.length - 1] = lnglat
-          $map.off('click', mapClickListener)
-          $map.off('mousemove', mapMoveListener)
-          $map.getCanvas().style.cursor = ''
-        }
+      if (coordinatesCenter.length === 0) {
+        coordinatesCenter.push(lnglat)
+      } else if (coordinatesRadius.length === 0) {
+        coordinatesRadius.push(lnglat)
+      } else {
+        coordinatesRadius[coordinatesRadius.length - 1] = lnglat
+        $map.off('click', mapClickListener)
+        $map.off('mousemove', mapMoveListener)
+        $map.getCanvas().style.cursor = ''
       }
     }
   }
 
   const mapMoveListener = (event: MapMouseEvent) => {
     if (!$map) return
+    if (coordinatesCenter.length === 0) return
     const lnglat: number[] = [event.lngLat.lng, event.lngLat.lat]
-    if (coordinates.length === 1) {
-      coordinates.push(lnglat)
-    } else if (coordinates.length === 2) {
-      coordinates[coordinates.length - 1] = lnglat
+    if (coordinatesRadius.length === 0) {
+      coordinatesRadius.push(lnglat)
+    } else if (coordinatesRadius.length > 0) {
+      coordinatesRadius[coordinatesRadius.length - 1] = lnglat
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_LINE).setData(geoLineString(coordinates))
+    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinates))
+    $map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_SYMBOL_RADIUS).setData(geoPoint(coordinatesRadius))
 
     updateCircleFeature()
   }
@@ -81,28 +96,32 @@
       if ($map.getLayer(LAYER_LINE)) $map.removeLayer(LAYER_LINE)
       if ($map.getLayer(LAYER_LINE_SYMBOL)) $map.removeLayer(LAYER_LINE_SYMBOL)
       if ($map.getLayer(LAYER_SYMBOL)) $map.removeLayer(LAYER_SYMBOL)
+      if ($map.getLayer(LAYER_SYMBOL_RADIUS)) $map.removeLayer(LAYER_SYMBOL_RADIUS)
       if ($map.getLayer(LAYER_CIRCLE)) $map.removeLayer(LAYER_CIRCLE)
       if ($map.getLayer(LAYER_CIRCLE_OUTLINE)) $map.removeLayer(LAYER_CIRCLE_OUTLINE)
       if ($map.getSource(SOURCE_LINE)) $map.removeSource(SOURCE_LINE)
       if ($map.getSource(SOURCE_SYMBOL)) $map.removeSource(SOURCE_SYMBOL)
+      if ($map.getSource(SOURCE_SYMBOL_RADIUS)) $map.removeSource(SOURCE_SYMBOL_RADIUS)
       if ($map.getSource(SOURCE_CIRCLE)) $map.removeSource(SOURCE_CIRCLE)
+      circleFeatures.update(() => [])
     }
-    markers.forEach((m) => {
-      m.remove()
-    })
   }
 
   const initFeatures = () => {
-    markers = []
-    coordinates = []
+    coordinatesCenter = []
+    coordinatesRadius = []
     if ($map) {
       $map.addSource(SOURCE_LINE, {
         type: 'geojson',
-        data: geoLineString(coordinates),
+        data: geoLineString([]),
       })
       $map.addSource(SOURCE_SYMBOL, {
         type: 'geojson',
-        data: geoPoint(coordinates),
+        data: geoPoint(coordinatesCenter),
+      })
+      $map.addSource(SOURCE_SYMBOL_RADIUS, {
+        type: 'geojson',
+        data: geoPoint(coordinatesRadius),
       })
 
       $map.addLayer({
@@ -110,7 +129,7 @@
         type: 'line',
         source: SOURCE_LINE,
         paint: {
-          'line-color': '#263238',
+          'line-color': 'rgb(245,169,71)',
           'line-width': 2,
         },
       })
@@ -122,11 +141,12 @@
         layout: {
           'text-field': '{text}',
           // 'text-font': ['Roboto Medium'],
-          'text-size': 20,
-          //   'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+          'text-size': 14,
+          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
           'text-radial-offset': 0.8,
-          //   'text-justify': 'auto',
-          'symbol-placement': 'line',
+          'text-justify': 'auto',
+          'symbol-placement': 'line-center',
+          'text-ignore-placement': true,
         },
         paint: {
           'text-color': '#263238',
@@ -140,29 +160,60 @@
         type: 'symbol',
         source: SOURCE_SYMBOL,
         layout: {
-          'text-field': '{text}',
-          'text-font': ['Roboto Regular Bold'],
-          'text-size': 12,
-          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-          'text-radial-offset': 0.8,
-          'text-justify': 'auto',
+          'icon-image': 'circle',
+          'icon-size': 1,
         },
         paint: {
-          'text-color': '#263238',
-          'text-halo-color': '#fff',
-          'text-halo-width': 1,
+          'icon-color': 'rgb(245,169,71)',
         },
+      })
+      $map.addLayer({
+        id: LAYER_SYMBOL_RADIUS,
+        type: 'symbol',
+        source: SOURCE_SYMBOL_RADIUS,
+        layout: {
+          'icon-image': 'square',
+          'icon-size': 1,
+        },
+        paint: {
+          'icon-color': 'rgb(245,169,71)',
+        },
+      })
+      $map.on('mousedown', LAYER_SYMBOL_RADIUS, (e) => {
+        // Prevent the default map drag behavior.
+        e.preventDefault()
+        isDragging = true
+
+        // Set a cursor indicator
+        $map.getCanvasContainer().style.cursor = 'grab'
+
+        // Mouse events
+        $map.on('mousemove', mouseMoveOnPoint)
+        $map.once('mouseup', mouseUpOnPoint)
+      })
+
+      $map.on('mousedown', LAYER_SYMBOL, (e) => {
+        // Prevent the default map drag behavior.
+        e.preventDefault()
+        isDragging = true
+
+        // Set a cursor indicator
+        $map.getCanvasContainer().style.cursor = 'grab'
+
+        // Mouse events
+        $map.on('mousemove', mouseMoveOnCenter)
+        $map.once('mouseup', mouseUpOnCenter)
       })
     }
   }
 
   const updateCircleFeature = () => {
-    const circleFeature = getGeoCircle(coordinates)
-    if (circleFeature) {
+    const feature = getGeoCircle([coordinatesCenter[0], coordinatesRadius[0]])
+    if (feature) {
       if (!$map?.getSource(SOURCE_CIRCLE)) {
         $map.addSource(SOURCE_CIRCLE, {
           type: 'geojson',
-          data: circleFeature,
+          data: feature,
         })
         $map.addLayer({
           id: LAYER_CIRCLE,
@@ -187,8 +238,11 @@
       } else {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        $map.getSource(SOURCE_CIRCLE).setData(circleFeature)
+        $map.getSource(SOURCE_CIRCLE).setData(feature)
       }
+      circleFeatures.update(() => [feature])
+    } else {
+      circleFeatures.update(() => [])
     }
   }
 
@@ -228,7 +282,6 @@
           type: 'Feature',
           properties: {
             id: i + 1,
-            text: `Lng:${coordinates[0]}\nLat:${coordinates[1]}`,
             length: (sum * 1000).toFixed(),
           },
           geometry: {
@@ -243,18 +296,114 @@
   const getGeoCircle = (coordinates: number[][] = []) => {
     if (coordinates.length !== 2) return
     const center = coordinates[0]
-    const radius = distance(coordinates[0], coordinates[1], { units: 'meters' })
-    const feature = circle(center, radius, { steps: 64, units: 'meters' })
-    return feature
+    const radius = distance(center, coordinates[1], { units: 'kilometers' })
+    const bearingVal = bearing(center, coordinates[1])
+    const geodesicCoordinates = createGeodesicCircle(center, radius, bearingVal)
+
+    const circlePolygon = {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [geodesicCoordinates],
+      },
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const circleArea = area(circlePolygon)
+    circlePolygon.properties['area'] = circleArea
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return circlePolygon
   }
 
   const labelFormat = (length: number) => {
-    let lengthLabel = `${length.toFixed(2)} km`
+    let lengthLabel = `${length.toFixed(2)} m`
     if (length < 1) {
-      lengthLabel = `${(length * 1000).toFixed()} m`
+      lengthLabel = `${(length / 1000).toFixed()} km`
     }
     return `${lengthLabel}`
   }
+
+  const createGeodesicCircle = (center: number[], radius: number, bearing: number, steps = 64) => {
+    const coordinates: number[] = []
+    for (let i = 0; i < steps; ++i) {
+      coordinates.push(destinationPoint(center, radius, bearing + (360 * -i) / steps))
+    }
+    coordinates.push(coordinates[0])
+
+    return coordinates
+  }
+
+  const destinationPoint = (start: number[], distance: number, bearing: number) => {
+    // radius used by mapbox-gl, see https://github.com/mapbox/mapbox-gl-js/blob/main/src/geo/lng_lat.js#L11
+    const DEFAULT_RADIUS = 6371.0088
+    return geodesyDestinationPoint(start, distance, bearing, DEFAULT_RADIUS)
+  }
+
+  const mouseMoveOnPoint = (e: MapMouseEvent) => {
+    if (!isDragging) return
+    const coords = e.lngLat
+    isDragging = true
+    $map.getCanvasContainer().style.cursor = 'grabbing'
+    coordinatesRadius = [[coords.lng, coords.lat]]
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_SYMBOL_RADIUS).setData(geoPoint(coordinatesRadius))
+    updateCircleFeature()
+  }
+
+  const mouseUpOnPoint = (e: MapMouseEvent) => {
+    if (!isDragging) return
+    isDragging = false
+    $map.getCanvasContainer().style.cursor = ''
+    $map.off('mousemove', mouseMoveOnPoint)
+  }
+
+  const mouseMoveOnCenter = (e: MapMouseEvent) => {
+    if (!isDragging) return
+    const coords = e.lngLat
+    isDragging = true
+    $map.getCanvasContainer().style.cursor = 'grabbing'
+    coordinatesCenter = [[coords.lng, coords.lat]]
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
+    updateCircleFeature()
+  }
+
+  const mouseUpOnCenter = (e: MapMouseEvent) => {
+    if (!isDragging) return
+    isDragging = false
+    $map.getCanvasContainer().style.cursor = ''
+    $map.off('mousemove', mouseMoveOnCenter)
+  }
 </script>
 
-<IconButton class="material-icons" aria-label="DrawCircle" on:click={() => drawStart()}>add_circle</IconButton>
+<Group variant="raised">
+  <Button on:click={() => drawStart()} variant="raised">
+    <Label>
+      <Icon class="material-icons" style="margin: 0;vertical-align:middle">add_circle</Icon>
+      Add circle
+    </Label>
+  </Button>
+  <div use:GroupItem>
+    <Button on:click={() => menu.setOpen(true)} variant="raised" style="padding: 0; min-width: 36px;">
+      <Icon class="material-icons" style="margin: 0;">arrow_drop_down</Icon>
+    </Button>
+    <Menu bind:this={menu} anchorCorner="TOP_LEFT">
+      <List>
+        <Item on:SMUI:action={() => deleteFeatures()}>
+          <Icon class="material-icons" style="margin: 0;">delete</Icon>
+          <Text>Delete circle</Text>
+        </Item>
+      </List>
+    </Menu>
+  </div>
+</Group>
