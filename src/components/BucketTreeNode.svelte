@@ -224,6 +224,12 @@
 
           layerMetadataClone.set(layerPathHash, metadata)
           $layerMetadata = layerMetadataClone
+        } else {
+          metadata = {
+            description: 'N/A',
+            source: 'N/A',
+            unit: 'N/A',
+          }
         }
       }
 
@@ -346,9 +352,11 @@
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
         <div class="label">{label}</div>
-        <div class="description">{layerInfoMetadata.description}</div>
-        <div class="source is-size-6"><span class="has-text-weight-bold">Source: </span>{layerInfoMetadata.source}</div>
-        <div class="unit is-size-6"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata.unit}</div>
+        <div class="description">{layerInfoMetadata?.description}</div>
+        <div class="source is-size-6">
+          <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source}
+        </div>
+        <div class="unit is-size-6"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit}</div>
       </div>
     </div>
     <div id="arrow" data-popper-arrow />
