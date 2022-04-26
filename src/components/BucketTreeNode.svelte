@@ -444,6 +444,10 @@
           border-bottom: 1px solid #ccc;
           padding-bottom: 5px;
           margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
         }
 
         .description {
