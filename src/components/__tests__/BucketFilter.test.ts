@@ -37,7 +37,7 @@ describe('Bucket Filter', () => {
     expect(input.value).toBe('Health')
 
     // add delay for debounce
-    await new Promise((r) => setTimeout(r, 500))
+    await new Promise((r) => setTimeout(r, 750))
     const filterIndex = sut.component.$$.props.bucketsMeetThereshold
     expect(sut.component.$$.ctx[filterIndex]).toEqual(['climateaction/', 'goodhealthandwellbeing/'])
   })
