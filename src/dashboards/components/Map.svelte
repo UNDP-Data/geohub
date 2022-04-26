@@ -2,12 +2,24 @@
   import { onMount } from 'svelte'
   import { map } from '../stores'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
-  import BasemapsControl from 'maplibre-gl-basemaps'
+  import type { MapboxStyleDefinition } from '@watergis/mapbox-gl-style-switcher'
+  import { MapboxStyleSwitcherControl } from '@watergis/mapbox-gl-style-switcher'
   import { fetchUrl } from '$lib/helper'
 
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
   let newMap: Map
   let mapContainer: HTMLDivElement
+
+  const styles: MapboxStyleDefinition[] = [
+    {
+      title: 'Carto',
+      uri: 'https://undp-data.github.io/style/style.json',
+    },
+    {
+      title: 'Bing Aerial',
+      uri: 'https://undp-data.github.io/style/aerialstyle.json',
+    },
+  ]
 
   const getQuadkey = (z: number, x: number, y: number): string => {
     let quadkey = '',
@@ -56,39 +68,11 @@
       }),
       'top-right',
     )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    newMap.addControl(new MapboxStyleSwitcherControl(styles))
     newMap.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left')
     newMap.addControl(new AttributionControl({ compact: true }), 'bottom-right')
-
-    // newMap.addControl(
-    //   new BasemapsControl({
-    //     basemaps: [
-    //       {
-    //         id: 'basemap_World_Topo_Map',
-    //         tiles: ['//server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
-    //       },
-    //       {
-    //         id: 'esri_satellite',
-    //         tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-    //       },
-    //       // {
-    //       //   id: 'Bing CanvasLight',
-    //       //   tiles: [`https://dev.virtualearth.net/REST/v1/Imagery/Metadata/CanvasLight?key=${BingMapsKey}`],
-    //       // },
-    //       // {
-    //       //   id: 'Bing CanvasDark',
-    //       //   tiles: [`https://dev.virtualearth.net/REST/v1/Imagery/Metadata/CanvasDark?key=${BingMapsKey}`],
-    //       // },
-
-    //       {
-    //         id: 'Bing Aerial',
-    //         tiles: ['http://ecn.t3.tiles.virtualearth.net/tiles/a{q}.jpeg?g=1'],
-    //       },
-    //     ],
-    //     initialBasemap: 'basemap_World_Topo_Map',
-    //     expandDirection: 'top',
-    //   }),
-    //   'bottom-left',
-    // )
 
     map.update(() => newMap)
   })
@@ -98,7 +82,7 @@
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
-  @import 'maplibre-gl-basemaps/lib/basemaps.css';
+  @import '@watergis/mapbox-gl-style-switcher/styles.css';
   .map {
     height: 100%;
     width: 100%;
