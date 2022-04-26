@@ -14,7 +14,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { map, rangeSliderValues } from '$stores'
+  import { map } from '$stores'
   import { ColorMaps } from '$lib/colormaps'
   import { updateParamsInURL } from '$lib/helper'
 
@@ -34,7 +34,7 @@
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
-  $rangeSliderValues = [layerMin, layerMax]
+  let rangeSliderValues = [layerMin, layerMax]
   let step = (layerMax - layerMin) * 1e-2
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
@@ -66,14 +66,14 @@
       let params = {}
       layerURL.searchParams.delete('colormap')
       if (!layerURL.searchParams.has('rescale')) {
-        params = { rescale: $rangeSliderValues.join(',') }
+        params = { rescale: rangeSliderValues.join(',') }
       } else {
         let rescaleParam = layerURL.searchParams.get('rescale')
         let rescaleMin = '',
           rescaleMax = ''
         ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
-        if (Number(rescaleMin) !== $rangeSliderValues[0] || Number(rescaleMax) !== $rangeSliderValues[1]) {
-          params = { rescale: $rangeSliderValues.join(',') }
+        if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
+          params = { rescale: rangeSliderValues.join(',') }
         }
       }
 
@@ -96,7 +96,7 @@
 <div class="group">
   <div class="slider">
     <RangeSlider
-      bind:values={$rangeSliderValues}
+      bind:values={rangeSliderValues}
       float
       range
       min={layerMin}
@@ -107,7 +107,7 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={updateParamsInURL(definition, layerURL, { rescale: $rangeSliderValues.join(',') })} />
+      on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
     {#if activeColorMap !== undefined}
       <div class="active-color-map">
         <div
@@ -124,11 +124,11 @@
         <div class="chroma-test">
           <div>
             <div>
-              Min: {$rangeSliderValues[0]}
+              Min: {rangeSliderValues[0]}
             </div>
 
             <div>
-              Max: {$rangeSliderValues[1]}
+              Max: {rangeSliderValues[1]}
             </div>
           </div>
         </div>

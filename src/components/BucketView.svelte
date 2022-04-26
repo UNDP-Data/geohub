@@ -147,7 +147,8 @@
           margin-bottom: 30px;
         }
 
-        .title, .subtitle {
+        .title,
+        .subtitle {
           @media (prefers-color-scheme: dark) {
             color: #fff;
           }
