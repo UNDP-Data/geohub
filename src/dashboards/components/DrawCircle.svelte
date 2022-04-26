@@ -2,7 +2,8 @@
   import IconButton from '@smui/icon-button'
   import type { MapMouseEvent } from 'maplibre-gl'
   import distance from '@turf/distance'
-  import circle from '@turf/circle'
+  import bearing from '@turf/bearing'
+  import { destinationPoint as geodesyDestinationPoint } from 'geodesy-fn/src/spherical.js'
   import { map } from '../stores'
 
   const SOURCE_LINE = 'draw-circle-controls-source-line'
@@ -224,9 +225,19 @@
   const getGeoCircle = (coordinates: number[][] = []) => {
     if (coordinates.length !== 2) return
     const center = coordinates[0]
-    const radius = distance(coordinates[0], coordinates[1], { units: 'meters' })
-    const feature = circle(center, radius, { steps: 64, units: 'meters' })
-    return feature
+    const radius = distance(center, coordinates[1], { units: 'kilometers' })
+    const bearingVal = bearing(center, coordinates[1])
+    const geodesicCoordinates = createGeodesicCircle(center, radius, bearingVal)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'LineString',
+        coordinates: geodesicCoordinates,
+      },
+    }
   }
 
   const labelFormat = (length: number) => {
@@ -235,6 +246,22 @@
       lengthLabel = `${(length * 1000).toFixed()} m`
     }
     return `${lengthLabel}`
+  }
+
+  const createGeodesicCircle = (center: number[], radius: number, bearing: number, steps = 64) => {
+    const coordinates: number[] = []
+    for (let i = 0; i < steps; ++i) {
+      coordinates.push(destinationPoint(center, radius, bearing + (360 * -i) / steps))
+    }
+    coordinates.push(coordinates[0])
+
+    return coordinates
+  }
+
+  const destinationPoint = (start: number[], distance: number, bearing: number) => {
+    // radius used by mapbox-gl, see https://github.com/mapbox/mapbox-gl-js/blob/main/src/geo/lng_lat.js#L11
+    const DEFAULT_RADIUS = 6371.0088
+    return geodesyDestinationPoint(start, distance, bearing, DEFAULT_RADIUS)
   }
 </script>
 

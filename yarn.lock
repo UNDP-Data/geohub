@@ -1325,18 +1325,10 @@
   resolved "https://registry.npmjs.org/@tsconfig/svelte/-/svelte-3.0.0.tgz"
   integrity sha512-pYrtLtOwku/7r1i9AMONsJMVYAtk3hzOfiGNekhtq5tYBGA7unMve8RvUclKLMT3PrihvJqUmzsRGh0RP84hKg==
 
-"@turf/circle@^6.5.0":
+"@turf/bearing@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@turf/circle/-/circle-6.5.0.tgz#dc017d8c0131d1d212b7c06f76510c22bbeb093c"
-  integrity sha512-oU1+Kq9DgRnoSbWFHKnnUdTmtcRUMmHoV9DjTXu9vOLNV5OWtAAh1VZ+mzsioGGzoDNT/V5igbFOkMfBQc0B6A==
-  dependencies:
-    "@turf/destination" "^6.5.0"
-    "@turf/helpers" "^6.5.0"
-
-"@turf/destination@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@turf/destination/-/destination-6.5.0.tgz#30a84702f9677d076130e0440d3223ae503fdae1"
-  integrity sha512-4cnWQlNC8d1tItOz9B4pmJdWpXqS0vEvv65bI/Pj/genJnsL7evI0/Xw42RvEGROS481MPiU80xzvwxEvhQiMQ==
+  resolved "https://registry.yarnpkg.com/@turf/bearing/-/bearing-6.5.0.tgz#462a053c6c644434bdb636b39f8f43fb0cd857b0"
+  integrity sha512-dxINYhIEMzgDOztyMZc20I7ssYVNEpSv04VbMo5YPQsqa80KO3TFvbuCahMsCAW5z8Tncc8dwBlEFrmRjJG33A==
   dependencies:
     "@turf/helpers" "^6.5.0"
     "@turf/invariant" "^6.5.0"
@@ -2793,6 +2785,11 @@ gauge@^3.0.0:
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
+
+geodesy-fn@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/geodesy-fn/-/geodesy-fn-1.0.1.tgz#0fe6a0929f939ae997d6a41528e4a2d646c00e00"
+  integrity sha512-UDPi0tDyPtrYeHJnLOjEAxP3mfFlq8h15+wbj8tN5AvbUT62pst2q7jyZTM+btHjaX3CDcK6Iriv5kvV19FXtg==
 
 geojson-vt@^3.2.1:
   version "3.2.1"
