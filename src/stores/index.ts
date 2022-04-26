@@ -28,3 +28,6 @@ export const bannerMessages = writable(<BannerMessage[]>[])
 
 // vector : sprite list
 export const spriteImageList = writable(<SpriteImage[]>[])
+
+// store metadata
+export const layerMetadata = writable(new Map())
