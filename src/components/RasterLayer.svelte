@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
   const layerState = {}
+  const colorMapNameState = {}
 </script>
 
 <script lang="ts">
@@ -25,7 +26,7 @@
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
 
-  let activeColorMapName: string = DEFAULT_COLORMAP
+  let activeColorMapName: string = colorMapNameState[layerId] || DEFAULT_COLORMAP
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
@@ -43,7 +44,7 @@
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
-
+  $: activeColorMapName, setColormapState()
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
     if (!layer) hideAllPanels()
@@ -81,6 +82,9 @@
     layerState[layerId] = panelOpen
   }
 
+  const setColormapState = () => {
+    colorMapNameState[layerId] = activeColorMapName
+  }
   const hideAllPanels = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false

@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  const selectedLegend = {}
+</script>
+
 <script lang="ts">
   import Legend from '$components/Legend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
@@ -8,7 +12,12 @@
   export let activeColorMapName
   export let layer
   let isLegendSwitchAnimate
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS.toString()
+
+  let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
+  const setSelectedLegend = () => {
+    selectedLegend[layer.definition.id] = selectedLegendType
+  }
+  $: selectedLegendType, setSelectedLegend()
 </script>
 
 <div class="card-face card-face-back" id="legend-control" style="">
