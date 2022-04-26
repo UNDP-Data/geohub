@@ -12,10 +12,10 @@
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
-  import { map, cmap, selectedClassificationMethod, numberOfClasses, rangeSliderValues } from '$stores'
+  import { map } from '$stores'
   import { ColorMaps } from '$lib/colormaps'
-  import type { Layer, LayerInfo } from '$lib/types'
-  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import type { Layer, LayerInfo, Color } from '$lib/types'
+  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
@@ -24,7 +24,7 @@
   import Fa from 'svelte-fa'
 
   export let layerConfig: Layer = LayerInitialValues
-  export let activeColorMapName
+  export let activeColorMapName: string
 
   let definition:
     | RasterLayerSpecification
@@ -45,9 +45,11 @@
   let allColorMaps = {}
   let colorMapSelectionVisible = false
   let intervalList = []
-  let intervalColors: string[] = []
-
-  $rangeSliderValues = [layerMin, layerMax]
+  let cmap = []
+  let cmapItem = []
+  let numberOfClasses = 5
+  let rangeSliderValues = [layerMin, layerMax]
+  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
   //let colorMapType = 'On';
@@ -82,26 +84,24 @@
   }
 
   const reclassifyImage = () => {
-    intervalList = chroma.limits($rangeSliderValues, $selectedClassificationMethod, $numberOfClasses).map((element) => {
+    intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
 
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
-    if ($cmap.length > 0) {
-      $cmap = []
-      intervalColors = []
+    if (cmap.length > 0) {
+      cmap = []
     }
-    for (let i = 0; i <= $numberOfClasses - 1; i++) {
+    for (let i = 0; i <= numberOfClasses - 1; i++) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore:next-line
       let c = [...scaleColorList(intervalList[i]).rgb(), 255]
       let intervalStart = intervalList[i]
       let intervalEnd = intervalList[i + 1]
       let cmapitem = [[intervalStart, intervalEnd], c]
-      $cmap.push(cmapitem)
-      intervalColors.push(chroma(scaleColorList(intervalList[i])).hex())
+      cmap.push(cmapitem)
     }
-    handleParamsUpdate($cmap)
+    handleParamsUpdate(cmap)
     //generateBGColors(cmap)
   }
 
@@ -112,8 +112,55 @@
     let updatedParams = Object.assign({ colormap: encodedCmap })
     updateParamsInURL(definition, layerURL, updatedParams)
   }
+  let openColorPicker = false
+  let currentIntervalColor: string[]
+  let currentIntervalColorRGB: string
+  let intervalIndex: number
+  let color: Color
+
+  function sendIndexForCmap(index: number) {
+    openColorPicker = !openColorPicker
+    currentIntervalColor = cmap[index][1]
+
+    let r = currentIntervalColor[0]
+    let g = currentIntervalColor[1]
+    let b = currentIntervalColor[2]
+
+    color = {
+      r: r,
+      g: g,
+      b: b,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+
+    currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
+    intervalIndex = index
+  }
+
+  function updateColorMap(index: number, color: Color) {
+    if (cmapItem.length > 0) {
+      cmapItem = []
+    }
+
+    cmap[index].splice(1, 1, chroma(color['hex']).rgba())
+    cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
+    cmapItem = cmap[index]
+
+    handleParamsUpdate(cmap)
+    document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
+  }
+
   function rescaleOpacity(opacity: number) {
     return 255 * opacity
+  }
+
+  $: {
+    if (openColorPicker) {
+      currentIntervalColor, updateColorMap(intervalIndex, color)
+    }
   }
 
   const sendFirstInterval = (index: number, item: string) => {
@@ -122,17 +169,16 @@
         'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
       )
     } else {
-      $cmap[index][0].splice(0, 1, Number(item))
-      console.log($cmap)
-      handleParamsUpdate($cmap)
+      cmap[index][0].splice(0, 1, Number(item))
+      console.log(cmap)
+      handleParamsUpdate(cmap)
     }
   }
   const sendLastInterval = (index: number, item: string) => {
-    if (item < $cmap[index + 1][0][1]) {
-      $cmap[index][0].splice(1, 1, Number(item))
-      $cmap[index + 1][0].splice(0, 1, Number(item))
-
-      handleParamsUpdate($cmap)
+    if (item < cmap[index + 1][0][1]) {
+      cmap[index][0].splice(1, 1, Number(item))
+      cmap[index + 1][0].splice(0, 1, Number(item))
+      handleParamsUpdate(cmap)
     } else {
       console.warn(
         'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
@@ -146,32 +192,24 @@
       populateAllColorMaps()
       reclassifyImage()
     }
-    if ($selectedClassificationMethod) {
+    if (selectedClassificationMethod) {
       reclassifyImage()
     }
   }
 
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
     if (operation === 'increment') {
-      if ($numberOfClasses <= maxNoOfClasses) {
-        $numberOfClasses++
+      if (numberOfClasses <= maxNoOfClasses) {
+        numberOfClasses++
       }
     }
     if (operation === 'decrement') {
-      if ($numberOfClasses > minNoOfClasses) {
-        $numberOfClasses--
+      if (numberOfClasses > minNoOfClasses) {
+        numberOfClasses--
       }
     }
     reclassifyImage()
   }
-
-  const setCmapColor = (index, hexColor) => {
-    // Update the cmap with new interval
-    $cmap[index].splice(1, 1, chroma(hexColor).rgba())
-    $cmap[index][1].splice(3, 1, 255)
-    handleParamsUpdate($cmap)
-  }
-
   const range = (start, end) => Array.from(Array(end + 1).keys()).slice(start)
 </script>
 
@@ -188,7 +226,7 @@
     <div class="column" style="padding: 0">
       <select
         id="method"
-        bind:value={$selectedClassificationMethod}
+        bind:value={selectedClassificationMethod}
         on:change={() => {
           reclassifyImage
         }}>
@@ -208,7 +246,7 @@
           }}>
           <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
         </div>
-        <input type="text" bind:value={$numberOfClasses} size="1" style="text-align:center;" />
+        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
         <div
           class="icon-selected"
           title="Decrese number of classes"
@@ -217,32 +255,67 @@
           }}>
           <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
         </div>
+        <!--        <input style='margin-left: 50%' type='number' bind:value={numberOfClasses} min='2' max='15'/>-->
+        <!--        <select class='legend-text'-->
+        <!--          style='margin-left: 50%'-->
+        <!--          bind:value={numberOfClasses}-->
+        <!--          on:change={() => {-->
+        <!--            reclassifyImage()-->
+        <!--          }}>-->
+        <!--          <option class='legend-text' value="" disabled selected>Classes</option>-->
+        <!--          {#each range(2, 15) as _, value}-->
+        <!--            <option {value}>{value}</option>-->
+        <!--          {/each}-->
+        <!--        </select>-->
       </div>
     </div>
   </div>
   <div class="row" id="intervals-cmap-div">
     <div class="column" style="padding: 0; width: 90%">
-      {#each $cmap as interval, index}
+      {#each cmap as value, index}
         <div style="display: flex; padding:2px; width: 100%;">
-          <input
-            type="color"
-            bind:value={intervalColors[index]}
-            on:change={() => setCmapColor(index, intervalColors[index])} />
+          <div
+            id="interval-{index}"
+            on:click={() => sendIndexForCmap(index)}
+            class="discrete"
+            style="width:20px; height:20px; caret-color:rgb({cmap[
+              index
+            ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
           &nbsp;&raquo;&nbsp
           <span
             class="legend-text"
             contenteditable="true"
             bind:innerHTML={intervalList[index]}
             on:input={sendLastInterval(index, intervalList[index])} />
-
+          <!--          <input-->
+          <!--            style="width: 30%!important; border: none"-->
+          <!--            bind:value={intervalList[index]}-->
+          <!--            on:change={sendFirstInterval(index, intervalList[index])} />-->
           <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
           <span
             class="legend-text"
             contenteditable="true"
             bind:innerHTML={intervalList[index + 1]}
             on:input={sendLastInterval(index, intervalList[index + 1])} />
+          <!--          <input-->
+          <!--            style="width: 30%!important; border: none"-->
+          <!--            bind:value={intervalList[index + 1]}-->
+          <!--            on:change={sendLastInterval(index, intervalList[index + 1])} />-->
         </div>
       {/each}
+      {#if openColorPicker}
+        <div style="cursor: crosshair">
+          <ColorPicker
+            isPopup={true}
+            wrapper="div"
+            --picker-height="150px"
+            --picker-width="150px"
+            --slider-width="10px"
+            isInput={false}
+            isOpen={true}
+            bind:color />
+        </div>
+      {/if}
     </div>
     <div
       title="Current colormap. Click to change."
@@ -446,18 +519,5 @@
   }
   .legend-text {
     font-family: ProximaNova, sans-serif;
-  }
-
-  input[type='color'] {
-    -webkit-appearance: none;
-    border: none;
-    width: 20px;
-    height: 20px;
-  }
-  input[type='color']::-webkit-color-swatch-wrapper {
-    padding: 0;
-  }
-  input[type='color']::-webkit-color-swatch {
-    border: none;
   }
 </style>
