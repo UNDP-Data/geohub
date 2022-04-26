@@ -3,6 +3,7 @@
   import type { MapMouseEvent } from 'maplibre-gl'
   import distance from '@turf/distance'
   import bearing from '@turf/bearing'
+  import area from '@turf/area'
   import { destinationPoint as geodesyDestinationPoint } from 'geodesy-fn/src/spherical.js'
   import { map } from '../stores'
 
@@ -280,16 +281,22 @@
     const radius = distance(center, coordinates[1], { units: 'kilometers' })
     const bearingVal = bearing(center, coordinates[1])
     const geodesicCoordinates = createGeodesicCircle(center, radius, bearingVal)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return {
+
+    const circlePolygon = {
       type: 'Feature',
       properties: {},
       geometry: {
-        type: 'LineString',
-        coordinates: geodesicCoordinates,
+        type: 'Polygon',
+        coordinates: [geodesicCoordinates],
       },
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const circleArea = area(circlePolygon)
+    circlePolygon.properties['area'] = circleArea
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return circlePolygon
   }
 
   const labelFormat = (length: number) => {
