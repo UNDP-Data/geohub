@@ -20,7 +20,7 @@
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
-  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
+  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -95,8 +95,8 @@
       const b64EncodedUrl = `${base}?${btoa(sign)}`
       layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
 
-      const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+      const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
 
       if (layerBandMetadataMin && layerBandMetadataMax) {
         const titilerApiUrlParams = {
@@ -186,7 +186,7 @@
       {
         name: 'offset',
         options: {
-          offset: [0, 8],
+          offset: [0, -20],
         },
       },
       {
@@ -199,15 +199,24 @@
   }
 
   const handleTooltipMouseEnter = () => {
+    // delay display of tooltip and create reference for mouse leave event
     tooltipTimer = setTimeout(async () => {
       const [base, sign] = url.split('?')
       const b64EncodedUrl = `${base}?${btoa(sign)}`
       const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
-      layerDescription = layerInfo['band_metadata'][0][1]['Description']
-      layerSource = layerInfo['band_metadata'][0][1]['Source']
-      layerUnit = layerInfo['band_metadata'][0][1]['Unit']
-      showTooltip = true
+      if (layerInfo?.band_metadata?.length > 0) {
+        const metadata = layerInfo.band_metadata[0][1]
+        layerDescription = metadata['Description']
+        layerSource = metadata['Source']
+        layerUnit = metadata['Unit']
+        showTooltip = true
+      }
     }, 200)
+
+    // hide popover after 5 seconds
+    setTimeout(() => {
+      handleToolipMouseLeave
+    }, 5000)
   }
 
   const handleToolipMouseLeave = () => {
@@ -312,6 +321,7 @@
     {/if}
   </div>
 </li>
+
 {#if showTooltip}
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
     <div class="columns is-vcentered is-mobile">
@@ -382,8 +392,10 @@
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-size: 13px;
     font-weight: bold;
-    max-width: 250px;
-    padding: 10px;
+    max-width: 450px;
+    width: 450px;
+    min-height: 150px;
+    padding: 15px;
     padding-top: 10px;
     position: absolute;
     top: 10px;
@@ -413,10 +425,10 @@
     #arrow,
     #arrow::before {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 18px;
+      height: 18px;
       background: $tooltip-background;
-      left: -2.5px;
+      left: -4.5px;
 
       @media (prefers-color-scheme: dark) {
         background: #212125;
