@@ -1,8 +1,7 @@
 import { writable } from 'svelte/store'
-import type { Writable } from 'svelte/store'
 import { TreeNodeInitialValues } from '$lib/constants'
 import type { BannerMessage, Bucket, Layer, SpriteImage, TreeNode } from '$lib/types'
-import { DynamicLayerLegendTypes } from '$lib/constants'
+
 // dynamic layer list
 export const dynamicLayers = writable([])
 
@@ -29,13 +28,3 @@ export const bannerMessages = writable(<BannerMessage[]>[])
 
 // vector : sprite list
 export const spriteImageList = writable(<SpriteImage[]>[])
-
-// store metadata
-export const layerMetadata = writable(new Map())
-
-export const selectedLegendType = writable(DynamicLayerLegendTypes.CONTINUOUS.toString())
-export const cmap = writable([])
-export const activeColorMapName: Writable<string> = writable('viridis')
-export const rangeSliderValues: Writable<number[]> = writable([])
-export const selectedClassificationMethod: Writable<string> = writable('e')
-export const numberOfClasses = writable(5)
