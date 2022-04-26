@@ -30,6 +30,9 @@ export const bannerMessages = writable(<BannerMessage[]>[])
 // vector : sprite list
 export const spriteImageList = writable(<SpriteImage[]>[])
 
+// store metadata
+export const layerMetadata = writable(new Map())
+
 export const selectedLegendType = writable(DynamicLayerLegendTypes.CONTINUOUS.toString())
 export const cmap = writable([])
 export const activeColorMapName: Writable<string> = writable('viridis')
