@@ -14,7 +14,7 @@
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import GodLegend from '$components/GodLegend.svelte'
-  import { layerList, map, activeColorMapName } from '$stores'
+  import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
   import TabBar from '@smui/tab-bar'
@@ -25,6 +25,7 @@
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
 
+  let activeColorMapName: string = DEFAULT_COLORMAP
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
@@ -161,7 +162,7 @@
             <div class="action">
               <div class="content">
                 <div class="scene">
-                  <GodLegend bind:activeColorMapName={$activeColorMapName} bind:layer />
+                  <GodLegend bind:activeColorMapName bind:layer />
                 </div>
               </div>
             </div>
