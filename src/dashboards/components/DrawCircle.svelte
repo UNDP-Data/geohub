@@ -8,7 +8,7 @@
   import bearing from '@turf/bearing'
   import area from '@turf/area'
   import { destinationPoint as geodesyDestinationPoint } from 'geodesy-fn/src/spherical.js'
-  import { map } from '../stores'
+  import { map, circleFeatures } from '../stores'
 
   const SOURCE_LINE = 'draw-circle-controls-source-line'
   const LAYER_LINE = 'draw-circle-controls-layer-line'
@@ -103,6 +103,7 @@
       if ($map.getSource(SOURCE_SYMBOL)) $map.removeSource(SOURCE_SYMBOL)
       if ($map.getSource(SOURCE_SYMBOL_RADIUS)) $map.removeSource(SOURCE_SYMBOL_RADIUS)
       if ($map.getSource(SOURCE_CIRCLE)) $map.removeSource(SOURCE_CIRCLE)
+      circleFeatures.update(() => [])
     }
   }
 
@@ -207,12 +208,12 @@
   }
 
   const updateCircleFeature = () => {
-    const circleFeature = getGeoCircle([coordinatesCenter[0], coordinatesRadius[0]])
-    if (circleFeature) {
+    const feature = getGeoCircle([coordinatesCenter[0], coordinatesRadius[0]])
+    if (feature) {
       if (!$map?.getSource(SOURCE_CIRCLE)) {
         $map.addSource(SOURCE_CIRCLE, {
           type: 'geojson',
-          data: circleFeature,
+          data: feature,
         })
         $map.addLayer({
           id: LAYER_CIRCLE,
@@ -237,8 +238,11 @@
       } else {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        $map.getSource(SOURCE_CIRCLE).setData(circleFeature)
+        $map.getSource(SOURCE_CIRCLE).setData(feature)
       }
+      circleFeatures.update(() => [feature])
+    } else {
+      circleFeatures.update(() => [])
     }
   }
 
