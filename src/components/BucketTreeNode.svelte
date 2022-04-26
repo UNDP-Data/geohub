@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte'
-  import { slide } from 'svelte/transition'
+  import { fade, slide } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
@@ -14,6 +14,7 @@
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { createPopperActions } from 'svelte-popperjs'
 
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
@@ -29,8 +30,13 @@
   const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
+  let layerDescription = ''
+  let layerSource = ''
+  let layerUnit = ''
   let loadingLayer = false
   let SelectLayerStyleDialogVisible: boolean
+  let showTooltip = false
+  let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
@@ -58,10 +64,8 @@
 
   const updateTreeStore = async () => {
     setProgressIndicator(true)
-
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
     if (treeData) node.children = treeData.tree.children
-
     setProgressIndicator(false)
   }
 
@@ -171,6 +175,45 @@
   const handleRemoveBucket = () => {
     dispatch('remove', { node })
   }
+
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'auto',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 8],
+        },
+      },
+      {
+        name: 'preventOverflow',
+        options: {
+          mainAxis: true,
+        },
+      },
+    ],
+  }
+
+  const handleTooltipMouseEnter = () => {
+    tooltipTimer = setTimeout(async () => {
+      const [base, sign] = url.split('?')
+      const b64EncodedUrl = `${base}?${btoa(sign)}`
+      const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
+      layerDescription = layerInfo['band_metadata'][0][1]['Description']
+      layerSource = layerInfo['band_metadata'][0][1]['Source']
+      layerUnit = layerInfo['band_metadata'][0][1]['Unit']
+      showTooltip = true
+    }, 200)
+  }
+
+  const handleToolipMouseLeave = () => {
+    if (tooltipTimer) clearTimeout(tooltipTimer)
+    showTooltip = false
+  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
@@ -242,9 +285,20 @@
           </div>
         {/if}
 
-        <div class={isRaster ? 'name raster' : 'name'}>
-          {label}
-        </div>
+        {#if isRaster}
+          <div
+            class="name raster"
+            use:popperRef
+            on:mouseenter={() => handleTooltipMouseEnter()}
+            on:mouseleave={() => handleToolipMouseLeave()}
+            style="cursor: pointer;">
+            {label}
+          </div>
+        {:else}
+          <div class="name">
+            {label}
+          </div>
+        {/if}
 
         {#if isRaster}
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
@@ -258,6 +312,18 @@
     {/if}
   </div>
 </li>
+{#if showTooltip}
+  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+    <div class="columns is-vcentered is-mobile">
+      <div class="column is-full">
+        <div class="source" style="font-weight: bold;">{layerSource}</div>
+        <div class="description">{layerDescription}</div>
+        <div class="unit">{layerUnit}</div>
+      </div>
+    </div>
+    <div id="arrow" data-popper-arrow />
+  </div>
+{/if}
 
 {#if expanded && children}
   {#each children as child}
@@ -304,6 +370,69 @@
       @media (prefers-color-scheme: dark) {
         color: white;
       }
+    }
+  }
+
+  $tooltip-background: #fff;
+
+  #tooltip {
+    background: $tooltip-background;
+    border-radius: 7.5px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    font-weight: bold;
+    max-width: 250px;
+    padding: 10px;
+    padding-top: 10px;
+    position: absolute;
+    top: 10px;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+    }
+
+    .columns {
+      .is-full {
+        padding-right: 40px;
+
+        .description,
+        .source,
+        .unit {
+          font-weight: normal;
+          color: #000;
+          margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    #arrow,
+    #arrow::before {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: $tooltip-background;
+      left: -2.5px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
+    }
+
+    #arrow {
+      visibility: visible;
+    }
+
+    #arrow::before {
+      visibility: visible;
+      content: '';
+      transform: rotate(45deg);
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
     }
   }
 </style>
