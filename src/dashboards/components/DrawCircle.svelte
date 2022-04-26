@@ -1,5 +1,8 @@
 <script lang="ts">
-  import IconButton from '@smui/icon-button'
+  import Button, { Group, GroupItem, Label, Icon } from '@smui/button'
+  import type { MenuComponentDev } from '@smui/menu'
+  import Menu from '@smui/menu'
+  import List, { Item, Text } from '@smui/list'
   import type { MapMouseEvent } from 'maplibre-gl'
   import distance from '@turf/distance'
   import bearing from '@turf/bearing'
@@ -23,6 +26,7 @@
   let coordinatesRadius: number[][] = []
   let units = 'meters'
   let isDragging = false
+  let menu: MenuComponentDev
 
   const drawStart = () => {
     if ($map) {
@@ -34,6 +38,16 @@
       $map.on('mousemove', mapMoveListener)
       $map.fire('drawcircle.on')
     }
+  }
+
+  const deleteFeatures = () => {
+    if (!$map) return
+    $map.getCanvas().style.cursor = ''
+    isDrawing = true
+    clearFeatures()
+    initFeatures()
+    $map.off('click', mapClickListener)
+    $map.off('mousemove', mapMoveListener)
   }
 
   const mapClickListener = (event: MapMouseEvent) => {
@@ -300,9 +314,9 @@
   }
 
   const labelFormat = (length: number) => {
-    let lengthLabel = `${length.toFixed(2)} km`
+    let lengthLabel = `${length.toFixed(2)} m`
     if (length < 1) {
-      lengthLabel = `${(length * 1000).toFixed()} m`
+      lengthLabel = `${(length / 1000).toFixed()} km`
     }
     return `${lengthLabel}`
   }
@@ -368,4 +382,24 @@
   }
 </script>
 
-<IconButton class="material-icons" aria-label="DrawCircle" on:click={() => drawStart()}>add_circle</IconButton>
+<Group variant="raised">
+  <Button on:click={() => drawStart()} variant="raised">
+    <Label>
+      <Icon class="material-icons" style="margin: 0;vertical-align:middle">add_circle</Icon>
+      Add circle
+    </Label>
+  </Button>
+  <div use:GroupItem>
+    <Button on:click={() => menu.setOpen(true)} variant="raised" style="padding: 0; min-width: 36px;">
+      <Icon class="material-icons" style="margin: 0;">arrow_drop_down</Icon>
+    </Button>
+    <Menu bind:this={menu} anchorCorner="TOP_LEFT">
+      <List>
+        <Item on:SMUI:action={() => deleteFeatures()}>
+          <Icon class="material-icons" style="margin: 0;">delete</Icon>
+          <Text>Delete circle</Text>
+        </Item>
+      </List>
+    </Menu>
+  </div>
+</Group>

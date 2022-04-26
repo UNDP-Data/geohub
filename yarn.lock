@@ -1095,7 +1095,7 @@
 
 "@smui/menu@^6.0.0-beta.16":
   version "6.0.0-beta.16"
-  resolved "https://registry.npmjs.org/@smui/menu/-/menu-6.0.0-beta.16.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/menu/-/menu-6.0.0-beta.16.tgz#001b0490264b51f384c2aa41d8a586095372b30b"
   integrity sha512-Kh4aaf217ZGBIX0ZFqK5BxdII/KoYRfsKrpQNH9wIXShKUUH4uPIbIINYCkpzcoJ2ximzmpHJC0OfHvXfkipbA==
   dependencies:
     "@material/dom" "^13.0.0"
