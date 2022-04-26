@@ -345,9 +345,10 @@
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
-        <div class="source" style="font-weight: bold;">{layerInfoMetadata.source}</div>
+        <div class="label">{label}</div>
         <div class="description">{layerInfoMetadata.description}</div>
-        <div class="unit"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata.unit}</div>
+        <div class="source is-size-6"><span class="has-text-weight-bold">Source: </span>{layerInfoMetadata.source}</div>
+        <div class="unit is-size-6"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata.unit}</div>
       </div>
     </div>
     <div id="arrow" data-popper-arrow />
@@ -437,6 +438,20 @@
           @media (prefers-color-scheme: dark) {
             color: #fff;
           }
+        }
+
+        .label {
+          border-bottom: 1px solid #ccc;
+          padding-bottom: 5px;
+          margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
+        }
+
+        .description {
+          margin-bottom: 15px;
         }
       }
     }
