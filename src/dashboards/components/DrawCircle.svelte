@@ -1,6 +1,6 @@
 <script lang="ts">
   import IconButton from '@smui/icon-button'
-  import { Marker, MapMouseEvent } from 'maplibre-gl'
+  import type { MapMouseEvent } from 'maplibre-gl'
   import distance from '@turf/distance'
   import circle from '@turf/circle'
   import { map } from '../stores'
@@ -15,12 +15,10 @@
   const LAYER_CIRCLE_OUTLINE = 'draw-circle-controls-layer-circle-outline'
 
   let isDrawing = false
-  let markers: Marker[] = []
   let coordinates = []
   let units = 'meters'
 
   const drawStart = () => {
-    console.log(isDrawing)
     if ($map) {
       $map.getCanvas().style.cursor = 'crosshair'
       isDrawing = true
@@ -33,19 +31,12 @@
   }
 
   const mapClickListener = (event: MapMouseEvent) => {
-    console.log(event)
     if (!$map?.getSource(SOURCE_LINE) || !$map?.getSource(SOURCE_SYMBOL)) {
       initFeatures()
     }
     const lnglat: number[] = [event.lngLat.lng, event.lngLat.lat]
     if ($map) {
-      if (markers.length < 2) {
-        const marker = new Marker({
-          draggable: true,
-        })
-          .setLngLat(event.lngLat)
-          .addTo($map)
-        markers.push(marker)
+      if (coordinates.length < 3) {
         if (coordinates.length === 0) {
           coordinates.push(lnglat)
         } else {
@@ -87,13 +78,9 @@
       if ($map.getSource(SOURCE_SYMBOL)) $map.removeSource(SOURCE_SYMBOL)
       if ($map.getSource(SOURCE_CIRCLE)) $map.removeSource(SOURCE_CIRCLE)
     }
-    markers.forEach((m) => {
-      m.remove()
-    })
   }
 
   const initFeatures = () => {
-    markers = []
     coordinates = []
     if ($map) {
       $map.addSource(SOURCE_LINE, {
@@ -110,7 +97,7 @@
         type: 'line',
         source: SOURCE_LINE,
         paint: {
-          'line-color': '#263238',
+          'line-color': 'rgb(245,169,71)',
           'line-width': 2,
         },
       })
@@ -122,11 +109,12 @@
         layout: {
           'text-field': '{text}',
           // 'text-font': ['Roboto Medium'],
-          'text-size': 20,
-          //   'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+          'text-size': 14,
+          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
           'text-radial-offset': 0.8,
-          //   'text-justify': 'auto',
-          'symbol-placement': 'line',
+          'text-justify': 'auto',
+          'symbol-placement': 'line-center',
+          'text-ignore-placement': true,
         },
         paint: {
           'text-color': '#263238',
@@ -140,17 +128,11 @@
         type: 'symbol',
         source: SOURCE_SYMBOL,
         layout: {
-          'text-field': '{text}',
-          'text-font': ['Roboto Regular Bold'],
-          'text-size': 12,
-          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-          'text-radial-offset': 0.8,
-          'text-justify': 'auto',
+          'icon-image': 'circle',
+          'icon-size': 1,
         },
         paint: {
-          'text-color': '#263238',
-          'text-halo-color': '#fff',
-          'text-halo-width': 1,
+          'icon-color': 'rgb(245,169,71)',
         },
       })
     }
@@ -228,7 +210,6 @@
           type: 'Feature',
           properties: {
             id: i + 1,
-            text: `Lng:${coordinates[0]}\nLat:${coordinates[1]}`,
             length: (sum * 1000).toFixed(),
           },
           geometry: {
