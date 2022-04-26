@@ -21,6 +21,7 @@
   let coordinatesCenter: number[][] = []
   let coordinatesRadius: number[][] = []
   let units = 'meters'
+  let isDragging = false
 
   const drawStart = () => {
     if ($map) {
@@ -174,6 +175,19 @@
         $map.on('mousemove', mouseMoveOnPoint)
         $map.once('mouseup', mouseUpOnPoint)
       })
+
+      $map.on('mousedown', LAYER_SYMBOL, (e) => {
+        // Prevent the default map drag behavior.
+        e.preventDefault()
+        isDragging = true
+
+        // Set a cursor indicator
+        $map.getCanvasContainer().style.cursor = 'grab'
+
+        // Mouse events
+        $map.on('mousemove', mouseMoveOnCenter)
+        $map.once('mouseup', mouseUpOnCenter)
+      })
     }
   }
 
@@ -302,8 +316,6 @@
     return geodesyDestinationPoint(start, distance, bearing, DEFAULT_RADIUS)
   }
 
-  let isDragging = false
-
   const mouseMoveOnPoint = (e: MapMouseEvent) => {
     if (!isDragging) return
     const coords = e.lngLat
@@ -324,6 +336,28 @@
     isDragging = false
     $map.getCanvasContainer().style.cursor = ''
     $map.off('mousemove', mouseMoveOnPoint)
+  }
+
+  const mouseMoveOnCenter = (e: MapMouseEvent) => {
+    if (!isDragging) return
+    const coords = e.lngLat
+    isDragging = true
+    $map.getCanvasContainer().style.cursor = 'grabbing'
+    coordinatesCenter = [[coords.lng, coords.lat]]
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    $map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
+    updateCircleFeature()
+  }
+
+  const mouseUpOnCenter = (e: MapMouseEvent) => {
+    if (!isDragging) return
+    isDragging = false
+    $map.getCanvasContainer().style.cursor = ''
+    $map.off('mousemove', mouseMoveOnCenter)
   }
 </script>
 
