@@ -146,6 +146,12 @@
         .title {
           margin-bottom: 30px;
         }
+
+        .title, .subtitle {
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
+        }
       }
 
       .separator {

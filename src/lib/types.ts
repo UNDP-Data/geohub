@@ -58,6 +58,12 @@ export interface LayerInfo {
   width?: number
 }
 
+export interface LayerInfoMetadata {
+  source?: string
+  description?: string
+  unit?: string
+}
+
 export interface Error {
   code: string
 }

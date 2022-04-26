@@ -15,12 +15,13 @@
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createPopperActions } from 'svelte-popperjs'
+  import { cloneDeep } from 'lodash-es'
 
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
-  import { fetchUrl } from '$lib/helper'
-  import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
-  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
+  import { fetchUrl, hash } from '$lib/helper'
+  import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
+  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -30,9 +31,7 @@
   const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
-  let layerDescription = ''
-  let layerSource = ''
-  let layerUnit = ''
+  let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let SelectLayerStyleDialogVisible: boolean
   let showTooltip = false
@@ -95,8 +94,8 @@
       const b64EncodedUrl = `${base}?${btoa(sign)}`
       layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
 
-      const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+      const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
 
       if (layerBandMetadataMin && layerBandMetadataMax) {
         const titilerApiUrlParams = {
@@ -186,7 +185,7 @@
       {
         name: 'offset',
         options: {
-          offset: [0, 8],
+          offset: [0, -20],
         },
       },
       {
@@ -199,15 +198,50 @@
   }
 
   const handleTooltipMouseEnter = () => {
+    // delay display of tooltip and create reference for mouse leave event
     tooltipTimer = setTimeout(async () => {
-      const [base, sign] = url.split('?')
-      const b64EncodedUrl = `${base}?${btoa(sign)}`
-      const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
-      layerDescription = layerInfo['band_metadata'][0][1]['Description']
-      layerSource = layerInfo['band_metadata'][0][1]['Source']
-      layerUnit = layerInfo['band_metadata'][0][1]['Unit']
+      const layerPathHash = hash(path)
+      let metadata: LayerInfoMetadata
+
+      // get existing metadata from store
+      if ($layerMetadata.has(layerPathHash)) {
+        metadata = $layerMetadata.get(layerPathHash)
+      } else {
+        // get metadata from endpoint
+        const [base, sign] = url.split('?')
+        const b64EncodedUrl = `${base}?${btoa(sign)}`
+        const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
+
+        if (layerInfo?.band_metadata?.length > 0) {
+          // save metadata to store
+          const layerMetadataClone = cloneDeep($layerMetadata)
+
+          metadata = {
+            description: layerInfo.band_metadata[0][1]['Description'],
+            source: layerInfo.band_metadata[0][1]['Source'],
+            unit: layerInfo.band_metadata[0][1]['Unit'],
+          }
+
+          layerMetadataClone.set(layerPathHash, metadata)
+          $layerMetadata = layerMetadataClone
+        }
+      }
+
+      if (metadata) {
+        layerInfoMetadata = {
+          description: metadata.description,
+          source: metadata.source,
+          unit: metadata.unit,
+        }
+      }
+
       showTooltip = true
     }, 200)
+
+    // hide popover after 5 seconds
+    setTimeout(() => {
+      handleToolipMouseLeave
+    }, 5000)
   }
 
   const handleToolipMouseLeave = () => {
@@ -283,9 +317,6 @@
               </Wrapper>
             {/if}
           </div>
-        {/if}
-
-        {#if isRaster}
           <div
             class="name raster"
             use:popperRef
@@ -294,31 +325,30 @@
             style="cursor: pointer;">
             {label}
           </div>
-        {:else}
-          <div class="name">
-            {label}
-          </div>
-        {/if}
-
-        {#if isRaster}
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
             <Wrapper>
               <Fa icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
             </Wrapper>
           </div>
+        {:else}
+          <div class="name">
+            {label}
+          </div>
         {/if}
       </div>
     {/if}
   </div>
 </li>
+
 {#if showTooltip}
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
-        <div class="source" style="font-weight: bold;">{layerSource}</div>
-        <div class="description">{layerDescription}</div>
-        <div class="unit">{layerUnit}</div>
+        <div class="label">{label}</div>
+        <div class="description">{layerInfoMetadata.description}</div>
+        <div class="source is-size-6"><span class="has-text-weight-bold">Source: </span>{layerInfoMetadata.source}</div>
+        <div class="unit is-size-6"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata.unit}</div>
       </div>
     </div>
     <div id="arrow" data-popper-arrow />
@@ -382,8 +412,10 @@
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-size: 13px;
     font-weight: bold;
-    max-width: 250px;
-    padding: 10px;
+    max-width: 450px;
+    width: 450px;
+    min-height: 150px;
+    padding: 15px;
     padding-top: 10px;
     position: absolute;
     top: 10px;
@@ -407,16 +439,30 @@
             color: #fff;
           }
         }
+
+        .label {
+          border-bottom: 1px solid #ccc;
+          padding-bottom: 5px;
+          margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
+        }
+
+        .description {
+          margin-bottom: 15px;
+        }
       }
     }
 
     #arrow,
     #arrow::before {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 18px;
+      height: 18px;
       background: $tooltip-background;
-      left: -2.5px;
+      left: -4.5px;
 
       @media (prefers-color-scheme: dark) {
         background: #212125;

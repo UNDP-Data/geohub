@@ -76,4 +76,27 @@ describe('fetchUrl', () => {
       expect(message.message).toEqual('The request took longer than expected. Please try again later.')
     })
   })
+
+  describe('hash', () => {
+    it('should return a value with no seed parameter', () => {
+      const value = helper.hash('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
+      expect(value).toEqual(2009597772892510)
+    })
+
+    it('should return a value with a seed parameter', () => {
+      const value = helper.hash(
+        'ed in lorem sed turpis luctus hendrerit at eu ipsum. Nulla vestibulum, mi ac dapibus commodo, ipsum lectus mattis ex, eget hendrerit lectus libero a velit.',
+        123345,
+      )
+      expect(value).toEqual(2462451796570643)
+    })
+
+    it('should return a different value everytime with date as a seed', () => {
+      const value = helper.hash(
+        ' Nulla vestibulum, mi ac dapibus commodo, ipsum lectus mattis ex',
+        Math.round(new Date().getTime() / 1000),
+      )
+      expect(value).not.toEqual(7325803889978825)
+    })
+  })
 })
