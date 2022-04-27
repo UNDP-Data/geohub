@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store'
-import { TreeNodeInitialValues } from '$lib/constants'
 import type { BannerMessage, Bucket, Layer, SpriteImage, TreeNode } from '$lib/types'
 
 // dynamic layer list
@@ -13,9 +12,6 @@ export const layerList = writable(<Layer[]>[])
 
 // map store for maplibre-gl object
 export const map = writable(null)
-
-// tree store in load data tab drawer
-export const wtree = writable({ tree: TreeNodeInitialValues })
 
 // tree store for buckets
 export const treeBucket = writable(<TreeNode[]>[])

@@ -12,7 +12,6 @@
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import TreeView from '$components/TreeView.svelte'
   import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
 
@@ -23,7 +22,7 @@
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
-  let tabs = [TabNames.BUCKETS, TabNames.LOAD_DATA, TabNames.LAYERS]
+  let tabs = [TabNames.BUCKETS, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -98,9 +97,6 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px; overflow: visible;">
-          <div hidden={activeTab !== TabNames.LOAD_DATA}>
-            <TreeView />
-          </div>
           <div hidden={activeTab !== TabNames.BUCKETS}>
             <BucketView />
           </div>
