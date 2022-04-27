@@ -54,7 +54,7 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-    // loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+    loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
   })
 
   const setContentContainerMargin = (margin: number) => {
