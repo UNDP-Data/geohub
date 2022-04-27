@@ -61,7 +61,6 @@
     }, 2000)
   }
 
-
   const updateTreeStore = async () => {
     setProgressIndicator(true)
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
@@ -93,12 +92,12 @@
     setProgressIndicator(false)
   }
 
-  const getBase64EncodedUrl = (url:string) => {
+  const getBase64EncodedUrl = (url: string) => {
     const [base, sign] = url.split('?')
     return `${base}?${btoa(sign)}`
   }
 
-  const setLayerMetaDataStore = (layerPathHash: number, layerInfo:LayerInfo) => {
+  const setLayerMetaDataStore = (layerPathHash: number, layerInfo: LayerInfo) => {
     const layerMetadataClone = cloneDeep($layerMetadata)
 
     const metadata = {

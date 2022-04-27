@@ -104,7 +104,7 @@
 </script>
 
 <div class="group">
-  <div class="slider">
+  <div class="range-slider">
     <RangeSlider
       bind:values={rangeSliderValues}
       float
@@ -193,7 +193,7 @@
       color: white;
     }
 
-    .slider {
+    .range-slider {
       --range-handle-focus: #2196f3;
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
