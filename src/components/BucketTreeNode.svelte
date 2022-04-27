@@ -61,11 +61,56 @@
     }, 2000)
   }
 
+
   const updateTreeStore = async () => {
     setProgressIndicator(true)
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
-    if (treeData) node.children = treeData.tree.children
+    if (treeData) {
+      node.children = treeData.tree.children
+      const childNodes = node.children.filter((item) => item.url !== null)
+
+      // store metadata upon expansion of node
+      Promise.all(
+        childNodes.map((node) => {
+          return {
+            data: fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`),
+            node,
+          }
+        }),
+      ).then((responses) => {
+        responses.forEach((response) => {
+          response.data.then((layerInfo) => {
+            const layerPathHash = hash(response.node.path)
+
+            if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+              setLayerMetaDataStore(layerPathHash, layerInfo)
+            }
+          })
+        })
+      })
+    }
+
     setProgressIndicator(false)
+  }
+
+  const getBase64EncodedUrl = (url:string) => {
+    const [base, sign] = url.split('?')
+    return `${base}?${btoa(sign)}`
+  }
+
+  const setLayerMetaDataStore = (layerPathHash: number, layerInfo:LayerInfo) => {
+    const layerMetadataClone = cloneDeep($layerMetadata)
+
+    const metadata = {
+      description: layerInfo.band_metadata[0][1]['Description'],
+      source: layerInfo.band_metadata[0][1]['Source'],
+      unit: layerInfo.band_metadata[0][1]['Unit'],
+    }
+
+    layerMetadataClone.set(layerPathHash, metadata)
+    $layerMetadata = layerMetadataClone
+
+    return metadata
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -90,8 +135,7 @@
       SelectLayerStyleDialogVisible = true
     } else {
       const layerName = path.split('/')[path.split('/').length - 1]
-      const [base, sign] = url.split('?')
-      const b64EncodedUrl = `${base}?${btoa(sign)}`
+      const b64EncodedUrl = getBase64EncodedUrl(url)
       layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
@@ -208,22 +252,10 @@
         metadata = $layerMetadata.get(layerPathHash)
       } else {
         // get metadata from endpoint
-        const [base, sign] = url.split('?')
-        const b64EncodedUrl = `${base}?${btoa(sign)}`
-        const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
+        const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(url)}`)
 
         if (layerInfo?.band_metadata?.length > 0) {
-          // save metadata to store
-          const layerMetadataClone = cloneDeep($layerMetadata)
-
-          metadata = {
-            description: layerInfo.band_metadata[0][1]['Description'],
-            source: layerInfo.band_metadata[0][1]['Source'],
-            unit: layerInfo.band_metadata[0][1]['Unit'],
-          }
-
-          layerMetadataClone.set(layerPathHash, metadata)
-          $layerMetadata = layerMetadataClone
+          metadata = setLayerMetaDataStore(layerPathHash, layerInfo)
         } else {
           metadata = {
             description: 'N/A',
