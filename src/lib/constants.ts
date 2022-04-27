@@ -4,8 +4,6 @@ import { faWaveSquare } from '@fortawesome/free-solid-svg-icons/faWaveSquare'
 import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 
-import type { TreeNode } from '$lib/types'
-
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
 export const STRING_COMPARE_THRESHOLD = 0.25
@@ -16,20 +14,10 @@ export enum TabNames {
   LABEL = 'Label',
   LAYERS = 'Layers',
   LEGEND = 'Legend',
-  LOAD_DATA = 'Data Explorer',
   OPACITY = 'Opacity',
   REFINE = 'Refine',
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
-}
-
-export const TreeNodeInitialValues = {
-  id: null,
-  label: 'GeoHub Storage',
-  children: <TreeNode[]>[],
-  path: '/',
-  url: null,
-  isRaster: false,
 }
 
 export const BucketIntialValues = {
