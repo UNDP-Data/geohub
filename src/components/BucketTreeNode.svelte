@@ -19,7 +19,7 @@
 
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
-  import { fetchUrl, hash } from '$lib/helper'
+  import { fetchUrl, hash, clean } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
   import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
@@ -61,7 +61,6 @@
     }, 2000)
   }
 
-
   const updateTreeStore = async () => {
     setProgressIndicator(true)
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
@@ -93,12 +92,12 @@
     setProgressIndicator(false)
   }
 
-  const getBase64EncodedUrl = (url:string) => {
+  const getBase64EncodedUrl = (url: string) => {
     const [base, sign] = url.split('?')
     return `${base}?${btoa(sign)}`
   }
 
-  const setLayerMetaDataStore = (layerPathHash: number, layerInfo:LayerInfo) => {
+  const setLayerMetaDataStore = (layerPathHash: number, layerInfo: LayerInfo) => {
     const layerMetadataClone = cloneDeep($layerMetadata)
 
     const metadata = {
@@ -318,7 +317,7 @@
         {/if}
 
         <div class={url ? 'name vector' : 'name'}>
-          {label}
+          {level === 0 ? label : clean(label)}
         </div>
 
         {#if url}
@@ -361,7 +360,7 @@
             on:mouseenter={() => handleTooltipMouseEnter()}
             on:mouseleave={() => handleToolipMouseLeave()}
             style="cursor: pointer;">
-            {label}
+            {clean(label)}
           </div>
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
             <Wrapper>
@@ -371,7 +370,7 @@
           </div>
         {:else}
           <div class="name">
-            {label}
+            {clean(label)}
           </div>
         {/if}
       </div>
@@ -383,7 +382,7 @@
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
-        <div class="label">{label}</div>
+        <div class="label">{clean(label)}</div>
         <div class="description">{layerInfoMetadata?.description}</div>
         <div class="source is-size-6">
           <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source}

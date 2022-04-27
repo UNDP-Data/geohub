@@ -1,17 +1,18 @@
 <script lang="ts">
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
-  import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
+  import { clean } from '$lib/helper'
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
 
-  const name = layer.name
+  const name = clean(layer.name)
 </script>
 
 <div class="layer-header">
   <div>
     <div class="layer-header-name">
-      <div class="layer-name">
+      <div class="layer-name" alt={name} title={name}>
         {name}
       </div>
       <div>
