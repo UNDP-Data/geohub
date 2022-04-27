@@ -6,8 +6,9 @@
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
   import { layerList, map } from '$stores'
-  import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
+  import { clean } from '$lib/helper'
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
 
@@ -35,7 +36,7 @@
   <Title>Delete Layer</Title>
   <ContentDialog>
     Are you sure you want to delete this layer?<br /><br />
-    {layer.name}
+    {clean(layer.name)}
   </ContentDialog>
   <ActionsDialog>
     <Button>

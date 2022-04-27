@@ -136,3 +136,16 @@ export const hash = (val: string, seed = 0) => {
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
   return 4294967296 * (2097151 & h2) + (h1 >>> 0)
 }
+
+/**
+ * Remove underscore and extension and apply start/title case to a string
+ * @param filename
+ * @param content
+ */
+export const clean = (val: string) => {
+  const clean = val
+    .replace(/_/g, ' ') // remove underscore
+    .replace(/\.[^/.]+$/, '') // remove extension
+    .replace(/\b\w/g, (str) => str.toUpperCase()) // apply start/title case
+  return clean
+}
