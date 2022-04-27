@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  const sliderState = {}
+</script>
+
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
   import FormField from '@smui/form-field'
@@ -34,7 +38,7 @@
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
-  let rangeSliderValues = [layerMin, layerMax]
+  let rangeSliderValues = sliderState[layerConfig.definition.id] || [layerMin, layerMax]
   let step = (layerMax - layerMin) * 1e-2
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
@@ -84,6 +88,12 @@
       updateParamsInURL(definition, layerURL, params)
     }
   }
+
+  const setSliderState = () => {
+    sliderState[layerConfig.definition.id] = rangeSliderValues
+  }
+
+  $: rangeSliderValues, setSliderState()
 
   $: {
     if (activeColorMapName) {

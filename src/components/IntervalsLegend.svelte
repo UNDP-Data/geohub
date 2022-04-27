@@ -1,3 +1,9 @@
+<script lang="ts" context="module">
+  const selectedClassificationMethodState = {}
+  const numberOfClassesState = {}
+  const activeColorMapNameState = {}
+</script>
+
 <script lang="ts">
   import chroma from 'chroma-js'
   import Ripple from '@smui/ripple'
@@ -34,7 +40,7 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
-  const defaultNumberOfColors = 5
+  const defaultNumberOfColors = numberOfClassesState[layerConfig.definition.id] || 5
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
@@ -44,12 +50,13 @@
   let allColorMaps = {}
   let colorMapSelectionVisible = false
   let intervalList = []
-  let cmap = []
-  let numberOfClasses = 5
+  let numberOfClasses = numberOfClassesState[layerConfig.definition.id] || 5
   let rangeSliderValues = [layerMin, layerMax]
-  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
+  let selectedClassificationMethod =
+    selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
+  let cmap = []
   let cmapColorsList = []
   //let colorMapType = 'On';
 
@@ -141,15 +148,25 @@
   }
 
   // This is causing the map to be reloaded every time
-  $: {
-    if (activeColorMapName) {
-      populateAllColorMaps()
-      reclassifyImage()
-    }
-    if (selectedClassificationMethod) {
-      reclassifyImage()
-    }
+
+  const setClassificationMethodState = () => {
+    selectedClassificationMethodState[layerConfig.definition.id] = selectedClassificationMethod
+    reclassifyImage()
   }
+
+  const setNumberOfClassesState = () => {
+    numberOfClassesState[layerConfig.definition.id] = numberOfClasses
+  }
+
+  const setActiveColorMapNameState = () => {
+    activeColorMapNameState[layerConfig.definition.id] = activeColorMapName
+    populateAllColorMaps()
+    reclassifyImage()
+  }
+
+  $: selectedClassificationMethod, setClassificationMethodState()
+  $: numberOfClasses, setNumberOfClassesState()
+  $: activeColorMapName, setActiveColorMapNameState()
 
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
     if (operation === 'increment') {
@@ -183,7 +200,7 @@
     </div>
   </div>
   <div class="row" id="class-and-method-control-div">
-    <div class="column" style="padding: 0">
+    <div class="column" style="padding: 0; width: 80%!important;">
       <select
         id="method"
         bind:value={selectedClassificationMethod}
@@ -196,24 +213,24 @@
         {/each}
       </select>
     </div>
-    <div class="column">
-      <div class="no-classes" style="display: flex; justify-content: flex-end">
+    <div class="column" style="padding: 0; width: 20%!important;">
+      <div class="no-classes" style="display: flex; justify-content: flex-end;">
         <div
           class="icon-selected"
           title="Increase number of classes"
           on:click={() => {
             handleNumberOfClasses('decrement')
           }}>
-          <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
+          <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); cursor: pointer" />
         </div>
-        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
+        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center; border:none" />
         <div
           class="icon-selected"
           title="Decrese number of classes"
           on:click={() => {
             handleNumberOfClasses('increment')
           }}>
-          <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
+          <Fa icon={faCaretRight} size="2x" style="transform: scale(1); cursor: pointer" />
         </div>
       </div>
     </div>
@@ -230,7 +247,7 @@
             bind:innerHTML={intervalList[index]}
             on:input={sendLastInterval(index, intervalList[index])} />
 
-          <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
+          <span class="legend-text" style="max-width: 10%!important;"> &nbsp;&horbar;&nbsp; </span>
           <span
             class="legend-text"
             contenteditable="true"
@@ -426,6 +443,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100% !important;
   }
   #intervals-cmap-div {
     display: flex;
@@ -439,7 +457,9 @@
     margin-top: 5px;
     padding: 5px;
   }
-  .legend-text {
+  :global(.legend-text) {
     font-family: ProximaNova, sans-serif;
+    max-width: 30%;
+    width: 30%;
   }
 </style>
