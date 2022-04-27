@@ -6,6 +6,7 @@
   import { createPopperActions } from 'svelte-popperjs'
 
   import type { Bucket } from '$lib/types'
+  import '../styles/font-awesome/all.css'
 
   export let bucket: Bucket
 
@@ -95,8 +96,6 @@
 {/if}
 
 <style lang="scss">
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-
   $tooltip-background: #fff;
 
   .card-container {
