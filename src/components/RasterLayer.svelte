@@ -20,6 +20,7 @@
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
   import TabBar from '@smui/tab-bar'
   import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
+  import '../styles/bulma.css'
 
   export let layer: Layer = LayerInitialValues
 
@@ -180,8 +181,6 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/bulma.css';
-
   .layer-header {
     .layer-header-icons {
       align-items: center;

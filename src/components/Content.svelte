@@ -12,8 +12,9 @@
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
+  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
+  import '../styles/bulma.css'
 
   export let drawerOpen = false
 
@@ -149,8 +150,6 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/bulma.css';
-
   :global(.app-content) {
     flex: auto;
     overflow: auto;

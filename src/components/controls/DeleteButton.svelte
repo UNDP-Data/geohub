@@ -5,10 +5,11 @@
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
-  import { layerList, map } from '$stores'
   import { LayerInitialValues } from '$lib/constants'
   import { clean } from '$lib/helper'
   import type { Layer } from '$lib/types'
+  import { layerList, map } from '$stores'
+  import '../../styles/button-icons-selected.scss'
 
   export let layer: Layer = LayerInitialValues
 
@@ -49,8 +50,6 @@
 </Dialog>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
-
   :global(.mdc-button__label) {
     @media (prefers-color-scheme: dark) {
       color: white;

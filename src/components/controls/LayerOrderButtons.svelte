@@ -8,6 +8,7 @@
   import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
+  import '../../styles/button-icons-selected.scss'
 
   export let layer: Layer = LayerInitialValues
 
@@ -55,8 +56,6 @@
 </div>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
-
   .grouped {
     display: flex;
     justify-content: left;

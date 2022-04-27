@@ -15,8 +15,9 @@
 
   import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
   import { LayerInitialValues } from '$lib/constants'
-  import { dynamicLayers, layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
+  import { dynamicLayers, layerList, map } from '$stores'
+  import '../../styles/button-icons-selected.scss'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
@@ -92,8 +93,6 @@
 {/if}
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
-
   .dropdown {
     align-items: center;
     background-color: #e3e3e3;

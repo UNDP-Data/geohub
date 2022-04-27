@@ -5,9 +5,10 @@
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
   import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
 
-  import { layerList, map } from '$stores'
-  import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { layerList, map } from '$stores'
+  import '../../styles/button-icons-selected.scss'
 
   export let layer: Layer = LayerInitialValues
 
@@ -39,5 +40,4 @@
 </Wrapper>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
 </style>

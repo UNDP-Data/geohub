@@ -3,10 +3,11 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import { LayerInitialValues } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
+  import '../../../styles/vector-style-slider.scss'
 
   export let layer: Layer = LayerInitialValues
 
@@ -43,5 +44,4 @@
 </StyleControlGroup>
 
 <style lang="scss">
-  @import '../../../styles/vector-style-slider.scss';
 </style>
