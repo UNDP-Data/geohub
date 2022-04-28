@@ -11,8 +11,12 @@ const reverse = async (lng: number, lat: number) => {
   const lnglat = [lng, lat]
   const [x, y] = lngLatToGoogle(lnglat, zoomBase)
   const buffer = await getTile(adminTiles, zoomBase, x, y)
-  const features = intersectsFeaturesOnTile(buffer, zoomBase, x, y, lnglat)
-  return features
+  if (buffer) {
+    const features = intersectsFeaturesOnTile(buffer, zoomBase, x, y, lnglat)
+    return features
+  } else {
+    return null
+  }
 }
 
 // Example URL
@@ -26,7 +30,12 @@ export async function get({ url }) {
   lng = Number(lng)
   lat = Number(lat)
 
-  return {
-    body: await reverse(lng, lat),
+  const features = await reverse(lng, lat)
+  if (features) {
+    return {
+      body: features,
+    }
+  } else {
+    return { status: 404 }
   }
 }

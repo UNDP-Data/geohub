@@ -10,7 +10,6 @@ export const getTile = (file: string, z: number, x: number, y: number) => {
   return new Promise<Uint8Array>((resolve, reject) => {
     new MBTiles(`${file}?mode=ro`, (err, mbtiles) => {
       if (err) reject(err)
-      console.log(mbtiles)
       mbtiles.getTile(z, x, y, (err, data) => {
         if (err) {
           data = null
