@@ -46,7 +46,7 @@
         {admin0_feature.properties.NAME}
       {/if}
       {#if admin0_feature && admin1_feature}
-        {'>>'} {admin1_feature.properties.name}
+        {'>'} {admin1_feature.properties.name}
       {/if}
     </p>
   </div>
