@@ -363,7 +363,12 @@
             on:mouseleave={() => handleToolipMouseLeave()}>
             {clean(label)}
           </div>
-          <div class="icon" alt="Download Layer Data" style="cursor: pointer;" title="Download Layer Data" on:click={() => downloadFile(url)}>
+          <div
+            class="icon"
+            alt="Download Layer Data"
+            style="cursor: pointer;"
+            title="Download Layer Data"
+            on:click={() => downloadFile(url)}>
             <Wrapper>
               <Fa icon={faDownload} size="sm" />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>

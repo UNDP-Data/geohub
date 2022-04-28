@@ -34,6 +34,7 @@
 <Content bind:drawerOpen>
   <Map />
 </Content>
+
 <style global lang="scss">
   body,
   html {
