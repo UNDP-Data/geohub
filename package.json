@@ -108,5 +108,10 @@
     "vitest-svelte-kit": "^0.0.6"
   },
   "type": "module",
-  "dependencies": {}
+  "dependencies": {
+    "@mapbox/mbtiles": "^0.12.1",
+    "d3-geo": "^3.0.1",
+    "global-mercator": "^3.1.0",
+    "mapbox-vector-tile": "^0.3.0"
+  }
 }
