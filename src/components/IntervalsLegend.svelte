@@ -2,6 +2,7 @@
   const selectedClassificationMethodState = {}
   const numberOfClassesState = {}
   const activeColorMapNameState = {}
+  const cmapState = {}
 </script>
 
 <script lang="ts">
@@ -14,12 +15,13 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
+  import { fade } from 'svelte/transition'
   import ColorPicker from './controls/ColorPicker.svelte'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
   import { map } from '$stores'
   import { ColorMaps } from '$lib/colormaps'
-  import type { Layer, LayerInfo } from '$lib/types'
+  import type { Layer, LayerInfo, Color } from '$lib/types'
   import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
   import FormField from '@smui/form-field'
@@ -27,7 +29,9 @@
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
   import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
   import Fa from 'svelte-fa'
+  import RasterPicker from './raster/RasterPicker.svelte'
 
+  // Exports
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
 
@@ -40,12 +44,14 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
+  // Const vars
   const defaultNumberOfColors = numberOfClassesState[layerConfig.definition.id] || 5
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
+  // Let variables
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
@@ -56,10 +62,15 @@
     selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
-  let cmap = []
+  let cmap = cmapState[layerConfig.definition.id]
   let cmapColorsList = []
-  //let colorMapType = 'On';
+  let showToolTip = false
+  let intervalIndex
+  let currentIntervalColor
+  let color
 
+  //let colorMapType = 'On';
+  console.log(cmap)
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
@@ -68,6 +79,12 @@
     classificationMethods.push({ name: 'Logarithmic', value: 'l' })
   }
 
+  // Generic function to store the colormap
+  const setCmapState = (cmap) => {
+    cmapState[layerConfig.definition.id] = cmap
+  }
+
+  // Populate the colormaps choices depending on the type of colormap selected
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
       let cmaps = {}
@@ -89,30 +106,56 @@
     }
   }
 
+  // Fixme: This function is being called twice every time
+  // Reclassify the layer every time the color, interval or number of classes is changed.
+  // Fixme: Need to rewrite the function to detect the exact operation that has been carried out
+
   const reclassifyImage = () => {
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
 
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
-    if (cmap.length > 0) {
+    if (cmapState[layerConfig.definition.id] !== undefined) {
+      cmap = cmapState[layerConfig.definition.id]
+      if (cmap.length > 0) {
+        cmap = []
+        cmapColorsList = []
+        setCmapState(cmap)
+      }
+      for (let i = 0; i <= numberOfClasses - 1; i++) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        let c = [...scaleColorList(intervalList[i]).rgb(), 255]
+        let intervalStart = intervalList[i]
+        let intervalEnd = intervalList[i + 1]
+        let cmapitem = [[intervalStart, intervalEnd], c]
+        cmap.push(cmapitem)
+        cmapColorsList.push(cmapitem[1])
+      }
+      setCmapState(cmap)
+      handleParamsUpdate(cmap)
+      console.log(cmap)
+    } else {
+      // cmap is undefined. Initially
       cmap = []
-      cmapColorsList = []
+      for (let i = 0; i <= numberOfClasses - 1; i++) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        let c = [...scaleColorList(intervalList[i]).rgb(), 255]
+        let intervalStart = intervalList[i]
+        let intervalEnd = intervalList[i + 1]
+        let cmapitem = [[intervalStart, intervalEnd], c]
+        cmap.push(cmapitem)
+        cmapColorsList.push(cmapitem[1])
+      }
+      setCmapState(cmap)
+      handleParamsUpdate(cmap)
+      console.log(cmap)
     }
-    for (let i = 0; i <= numberOfClasses - 1; i++) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      let c = [...scaleColorList(intervalList[i]).rgb(), 255]
-      let intervalStart = intervalList[i]
-      let intervalEnd = intervalList[i + 1]
-      let cmapitem = [[intervalStart, intervalEnd], c]
-      cmap.push(cmapitem)
-      cmapColorsList.push(cmapitem[1])
-    }
-    handleParamsUpdate(cmap)
-    //generateBGColors(cmap)
   }
 
+  // Function to encode colormap, and update url parameters
   const handleParamsUpdate = (cmap: object) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
@@ -121,10 +164,13 @@
     updateParamsInURL(definition, layerURL, updatedParams)
   }
 
+  // The opacity of the titiler is between 0 and 255 instead of 0-1.
+  // This function rescales the opacity to 0-255
   function rescaleOpacity(opacity: number) {
     return 255 * opacity
   }
 
+  // Change the colormap value every time the interval on the left is changed
   const sendFirstInterval = (index: number, item: string) => {
     if (item > cmap[index][0][1]) {
       console.warn(
@@ -133,6 +179,7 @@
     } else {
       cmap[index][0].splice(0, 1, Number(item))
       handleParamsUpdate(cmap)
+      setCmapState(cmap)
     }
   }
   const sendLastInterval = (index: number, item: string) => {
@@ -140,6 +187,7 @@
       cmap[index][0].splice(1, 1, Number(item))
       cmap[index + 1][0].splice(0, 1, Number(item))
       handleParamsUpdate(cmap)
+      setCmapState(cmap)
     } else {
       console.warn(
         'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
@@ -186,8 +234,46 @@
     if (e) {
       cmap[e.detail.position].splice(1, 1, e.detail.color.tuple())
       handleParamsUpdate(cmap)
+      setCmapState(cmap)
     }
   }
+
+  const setIndexColor = (index) => {
+    currentIntervalColor = cmap[index][1]
+
+    let r = currentIntervalColor[0]
+    let g = currentIntervalColor[1]
+    let b = currentIntervalColor[2]
+
+    color = {
+      r: r,
+      g: g,
+      b: b,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  }
+
+  const updateColorMap = (index: number, color: Color) => {
+    // eslint-disable-next-line no-empty
+    if (index === undefined || color === undefined) {
+    } else {
+      cmap[index].splice(1, 1, chroma(color['hex']).rgba())
+      cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
+      handleParamsUpdate(cmap)
+      setCmapState(cmap)
+      document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
+    }
+  }
+
+  $: {
+    if (intervalIndex !== undefined) {
+      setIndexColor(intervalIndex)
+    }
+  }
+  $: color, updateColorMap(intervalIndex, color)
 </script>
 
 <div class="column">
@@ -217,7 +303,7 @@
       <div class="no-classes" style="display: flex; justify-content: flex-end;">
         <div
           class="icon-selected"
-          title="Increase number of classes"
+          title="Decrease number of classes"
           on:click={() => {
             handleNumberOfClasses('decrement')
           }}>
@@ -226,7 +312,7 @@
         <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center; border:none" />
         <div
           class="icon-selected"
-          title="Decrese number of classes"
+          title="Increase number of classes"
           on:click={() => {
             handleNumberOfClasses('increment')
           }}>
@@ -239,7 +325,23 @@
     <div class="column" style="padding: 0; width: 90%">
       {#each cmap as value, index}
         <div style="display: flex; padding:2px; width: 100%;">
-          <ColorPicker position={index} bind:color={value[1]} on:changeColor={setColorForMap} />
+          <div
+            use:Ripple={{ surface: true }}
+            id="interval-{index}"
+            on:click={() => {
+              showToolTip = !showToolTip
+              intervalIndex = index
+            }}
+            class="discrete"
+            style="width:20px; height:20px; caret-color:rgb({cmap[
+              index
+            ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
+          {#if showToolTip}
+            <div class={showToolTip && intervalIndex === index ? 'tooltipshown' : 'tooltiphidden'} transition:fade>
+              <RasterPicker bind:color />
+            </div>
+          {/if}
+          <!--          <ColorPicker position={index} bind:color={value[1]} on:changeColor={setColorForMap} />-->
           &nbsp;&raquo;&nbsp
           <span
             class="legend-text"
@@ -247,7 +349,7 @@
             bind:innerHTML={intervalList[index]}
             on:input={sendLastInterval(index, intervalList[index])} />
 
-          <span class="legend-text" style="max-width: 10%!important;"> &nbsp;&horbar;&nbsp; </span>
+          <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
           <span
             class="legend-text"
             contenteditable="true"
@@ -461,5 +563,11 @@
     font-family: ProximaNova, sans-serif;
     max-width: 30%;
     width: 30%;
+  }
+  :global(.show) {
+    display: none;
+  }
+  :global(.tooltiphidden) {
+    display: none !important;
   }
 </style>

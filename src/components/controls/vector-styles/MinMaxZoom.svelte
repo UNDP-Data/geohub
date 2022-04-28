@@ -27,7 +27,7 @@
 </script>
 
 <StyleControlGroup title="Min/Max Zoom Level">
-  <div class="slider">
+  <div class="range-slider">
     <RangeSlider
       bind:values={ZoomSliderValues}
       float
