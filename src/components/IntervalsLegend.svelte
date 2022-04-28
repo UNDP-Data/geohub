@@ -31,6 +31,7 @@
   import Fa from 'svelte-fa'
   import RasterPicker from './raster/RasterPicker.svelte'
 
+  // Exports
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
 
@@ -43,12 +44,14 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
+  // Const vars
   const defaultNumberOfColors = numberOfClassesState[layerConfig.definition.id] || 5
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
+  // Let variables
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
@@ -59,10 +62,13 @@
     selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
-
   let cmap = cmapState[layerConfig.definition.id]
-
   let cmapColorsList = []
+  let showToolTip = false
+  let intervalIndex
+  let currentIntervalColor
+  let color
+
   //let colorMapType = 'On';
   console.log(cmap)
   let classificationMethods = [
@@ -73,9 +79,12 @@
     classificationMethods.push({ name: 'Logarithmic', value: 'l' })
   }
 
+  // Generic function to store the colormap
   const setCmapState = (cmap) => {
     cmapState[layerConfig.definition.id] = cmap
   }
+
+  // Populate the colormaps choices depending on the type of colormap selected
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
       let cmaps = {}
@@ -97,7 +106,10 @@
     }
   }
 
-  // Todo: This function is being called twice every time
+  // Fixme: This function is being called twice every time
+  // Reclassify the layer every time the color, interval or number of classes is changed.
+  // Fixme: Need to rewrite the function to detect the exact operation that has been carried out
+
   const reclassifyImage = () => {
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
@@ -143,6 +155,7 @@
     }
   }
 
+  // Function to encode colormap, and update url parameters
   const handleParamsUpdate = (cmap: object) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
@@ -151,10 +164,13 @@
     updateParamsInURL(definition, layerURL, updatedParams)
   }
 
+  // The opacity of the titiler is between 0 and 255 instead of 0-1.
+  // This function rescales the opacity to 0-255
   function rescaleOpacity(opacity: number) {
     return 255 * opacity
   }
 
+  // Change the colormap value every time the interval on the left is changed
   const sendFirstInterval = (index: number, item: string) => {
     if (item > cmap[index][0][1]) {
       console.warn(
@@ -221,11 +237,6 @@
       setCmapState(cmap)
     }
   }
-  let showToolTip = false
-  let intervalIndex
-  let rgbColor
-  let currentIntervalColor
-  let color
 
   const setIndexColor = (index) => {
     currentIntervalColor = cmap[index][1]
@@ -320,7 +331,6 @@
             on:click={() => {
               showToolTip = !showToolTip
               intervalIndex = index
-              rgbColor = value
             }}
             class="discrete"
             style="width:20px; height:20px; caret-color:rgb({cmap[
@@ -339,7 +349,7 @@
             bind:innerHTML={intervalList[index]}
             on:input={sendLastInterval(index, intervalList[index])} />
 
-          <span class="legend-text" style="max-width: 10%!important;"> &nbsp;&horbar;&nbsp; </span>
+          <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
           <span
             class="legend-text"
             contenteditable="true"
