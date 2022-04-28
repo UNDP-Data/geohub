@@ -7,13 +7,17 @@
   export let layer: Layer = LayerInitialValues
 
   const name = clean(layer.name)
+  import Tooltip, { Wrapper } from '@smui/tooltip'
 </script>
 
 <div class="layer-header">
   <div>
     <div class="layer-header-name">
-      <div class="layer-name" alt={name} title={name}>
-        {name}
+      <div class="layer-name">
+        <Wrapper>
+          <div>{name}</div>
+          <Tooltip showDelay={500} hideDelay={100} yPos="above">{name}</Tooltip>
+        </Wrapper>
       </div>
       <div>
         <LayerControlGroup {layer} />
@@ -33,11 +37,13 @@
       height: 20px;
 
       .layer-name {
-        white-space: nowrap;
+        display: -webkit-box;
+        font-size: 14px;
+        width: 100%;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 100%;
-        font-size: 14px;
       }
     }
   }
