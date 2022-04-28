@@ -145,8 +145,7 @@ export const hash = (val: string, seed = 0) => {
 
 /**
  * Remove underscore and extension and apply start/title case to a string
- * @param val
- * @param content
+ * @param val String to clean
  */
 export const clean = (val: string) => {
   const clean = val
