@@ -3,69 +3,79 @@
 </script>
 
 <script lang="ts">
-  import Legend from '$components/Legend.svelte'
+  import { slide } from 'svelte/transition'
+  import Card, { PrimaryAction } from '@smui/card'
+  import Tooltip, { Wrapper } from '@smui/tooltip'
+  import Fa from 'svelte-fa'
+  import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
+
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import Legend from '$components/Legend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import Button, { Label } from '@smui/button'
+  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
 
-  export let activeColorMapName
-  export let layer
-  let isLegendSwitchAnimate
+  export let activeColorMapName: string
+  export let layer: Layer
 
+  let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
+
+  $: selectedLegendType, setSelectedLegend()
+
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
   }
-  $: selectedLegendType, setSelectedLegend()
+
+  const handleLegendToggleClick = () => {
+    isLegendSwitchAnimate = true
+
+    setTimeout(() => {
+      isLegendSwitchAnimate = false
+    }, 400)
+
+    selectedLegendType === DynamicLayerLegendTypes.INTERVALS
+      ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
+      : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
+  }
 </script>
 
-<div class="card-face card-face-back" id="legend-control" style="">
-  <Button
-    variant="unelevated"
-    class="switch-legend-button"
-    on:click={() => {
-      isLegendSwitchAnimate = true
-      setTimeout(() => {
-        isLegendSwitchAnimate = false
-      }, 400)
-      selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-        ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
-        : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
-    }}>
-    <Label>Switch legend</Label>
-  </Button>
-
-  <div style="width: 100%">
+<div class="columns" data-testid="raster-legend-view-container">
+  <div class="column is-10">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
-      <div>
+      <div transition:slide>
         <Legend bind:activeColorMapName layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
-      <div>
+      <div transition:slide>
         <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
-      <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+      <div transition:slide>
+        <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+      </div>
     {/if}
+  </div>
+  <div class="columm legend-toggle">
+    <Wrapper>
+      <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
+        <Card>
+          <PrimaryAction style="padding: 10px;">
+            <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
+          </PrimaryAction>
+        </Card>
+      </div>
+      <Tooltip showDelay={500} hideDelay={100} yPos="above">Toggle Legend Type</Tooltip>
+    </Wrapper>
   </div>
 </div>
 
 <style lang="scss">
-  #legend-control {
-    display: block;
+  .legend-toggle {
+    padding-top: 15px;
 
-    width: 100%;
+    .toggle-container {
+      margin-left: 3.5px;
+    }
   }
-
-  :global(.switch-legend-button) {
-    padding: 0;
-    width: 50%;
-    height: 20px;
-    text-transform: none;
-    margin-left: 25%;
-    border: 1px solid dodgerblue;
-  }
-
-  //}
 </style>

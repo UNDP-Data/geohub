@@ -119,7 +119,7 @@
   }
 </script>
 
-<div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
+<div class="raster-layer-container" style="">
   <Accordion style="z-index: inherit;">
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
@@ -160,14 +160,7 @@
 
         <div class="layer-actions">
           {#if isLegendPanelVisible === true}
-            <div class="action">
-              <div class="content">
-                <div class="scene">
-                  <RasterLegendContainer bind:activeColorMapName bind:layer />
-                </div>
-              </div>
-            </div>
-            w
+            <RasterLegendContainer bind:activeColorMapName bind:layer />
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
           <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
@@ -180,84 +173,36 @@
 <style lang="scss">
   @import '../styles/bulma.css';
 
-  .layer-header {
-    .layer-header-icons {
-      align-items: center;
-      border-top: 1px solid rgba(204, 204, 204, 0.5);
-      display: flex;
-      gap: 15px;
-      justify-content: left;
-      margin-top: 10px;
-      padding-bottom: 10px;
-      padding-top: 10px;
+  .raster-layer-container {
+    margin-left: 15px;
+    margin-bottom: 15px;
 
-      .group {
-        padding-bottom: 0;
-        padding-top: 0;
+    .layer-header {
+      .layer-header-icons {
+        align-items: center;
+        border-top: 1px solid rgba(204, 204, 204, 0.5);
+        display: flex;
+        gap: 15px;
+        justify-content: left;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        padding-top: 10px;
 
-        .tabs {
-          align-items: center;
-          display: flex;
-          flex-direction: row;
-          font-family: ProximaNova, sans-serif;
-          font-size: 11px;
-          gap: 5px;
-        }
+        .group {
+          padding-bottom: 0;
+          padding-top: 0;
 
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-    }
+          .tabs {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            font-family: ProximaNova, sans-serif;
+            font-size: 11px;
+            gap: 5px;
+          }
 
-    .layer-actions {
-      padding-top: 5px;
-
-      .action {
-        margin-bottom: 0;
-
-        .content {
-          align-items: flex-start;
-          display: flex;
-          flex-direction: row;
-          gap: 15px;
-          padding-bottom: 0px;
-          padding-top: 0px;
-
-          .scene {
-            min-height: 100px;
-            width: 100%;
-
-            .card {
-              cursor: pointer;
-              height: 100%;
-              position: relative;
-              transform-style: preserve-3d;
-              transition: transform 1s;
-              width: 100%;
-
-              &.is-flipped {
-                transform: rotateY(180deg);
-              }
-            }
-
-            .card-face {
-              -webkit-backface-visibility: hidden;
-              backface-visibility: hidden;
-              height: 100%;
-              position: absolute;
-              width: 100%;
-
-              .container {
-                border-radius: 7.5px;
-                border: 1px solid #ccc;
-                padding: 5px;
-              }
-            }
-
-            .card-face-back {
-              transform: rotateY(180deg);
-            }
+          @media (prefers-color-scheme: dark) {
+            color: white;
           }
         }
       }

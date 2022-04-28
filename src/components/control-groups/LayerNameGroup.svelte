@@ -30,20 +30,20 @@
 <style lang="scss">
   .layer-header {
     .layer-header-name {
-      display: flex;
-      justify-content: left;
       align-items: center;
+      display: flex;
       font-family: ProximaNova, sans-serif;
       height: 20px;
+      justify-content: left;
 
       .layer-name {
-        display: -webkit-box;
-        font-size: 14px;
-        width: 100%;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 1;
+        display: -webkit-box;
+        font-size: 14px;
         overflow: hidden;
         text-overflow: ellipsis;
+        width: 100%;
       }
     }
   }
