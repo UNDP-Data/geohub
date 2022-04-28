@@ -14,7 +14,7 @@
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import GodLegend from '$components/GodLegend.svelte'
+  import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
@@ -163,7 +163,7 @@
             <div class="action">
               <div class="content">
                 <div class="scene">
-                  <GodLegend bind:activeColorMapName bind:layer />
+                  <RasterLegendContainer bind:activeColorMapName bind:layer />
                 </div>
               </div>
             </div>
