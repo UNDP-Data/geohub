@@ -10,7 +10,7 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
 
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
-  import Legend from '$components/Legend.svelte'
+  import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
@@ -44,7 +44,7 @@
   <div class="column is-10">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <Legend bind:activeColorMapName layerConfig={layer} />
+        <ContinuousLegend bind:activeColorMapName layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
