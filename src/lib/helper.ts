@@ -108,10 +108,16 @@ export async function fetchWithTimeout(resource: string, options = { timeout: DE
  * @param filename
  * @param content
  */
-export const downloadFile = (filename: string, content: string) => {
-  const type = mime.getType(filename.split('.').pop())
+export const downloadFile = (filename: string, content?: string) => {
   const element = document.createElement('a')
-  element.href = `data:${type};charset=utf-8,` + encodeURIComponent(content)
+
+  if (content) {
+    const type = mime.getType(filename.split('.').pop())
+    element.href = `data:${type};charset=utf-8,` + encodeURIComponent(content)
+  } else {
+    element.href = filename
+  }
+
   element.download = filename
   element.click()
   element.remove()

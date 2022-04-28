@@ -10,16 +10,18 @@
   import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
-  import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
+  import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
+  import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
+
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
 
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
-  import { fetchUrl, hash, clean } from '$lib/helper'
+  import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
   import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
@@ -358,9 +360,14 @@
             class="name raster"
             use:popperRef
             on:mouseenter={() => handleTooltipMouseEnter()}
-            on:mouseleave={() => handleToolipMouseLeave()}
-            style="cursor: pointer;">
+            on:mouseleave={() => handleToolipMouseLeave()}>
             {clean(label)}
+          </div>
+          <div class="icon" alt="Download Layer Data" style="cursor: pointer;" title="Download Layer Data" on:click={() => downloadFile(url)}>
+            <Wrapper>
+              <Fa icon={faDownload} size="sm" />
+              <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
+            </Wrapper>
           </div>
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
             <Wrapper>
@@ -428,7 +435,6 @@
     }
 
     .icon {
-      cursor: pointer;
       padding-left: 10px;
       padding-right: 10px;
     }
