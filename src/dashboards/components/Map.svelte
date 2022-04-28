@@ -4,6 +4,7 @@
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
   import type { MapboxStyleDefinition } from '@watergis/mapbox-gl-style-switcher'
   import { MapboxStyleSwitcherControl } from '@watergis/mapbox-gl-style-switcher'
+  import CurrentLocation from './CurrentLocation.svelte'
   import { fetchUrl } from '$lib/helper'
 
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
@@ -79,6 +80,7 @@
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
+<CurrentLocation />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
