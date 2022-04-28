@@ -19,7 +19,7 @@
 
   const updateLocation = () => {
     const center = $map.getCenter()
-    fetchUrl(`./reverse.json?lng=${center.lng}&lat=${center.lat}`)
+    fetchUrl(`/reverse.json?lng=${center.lng}&lat=${center.lat}`)
       .then((features) => {
         if (!features) return
         admin0_feature = features.find((f) => f.layer === 'admin_0')
