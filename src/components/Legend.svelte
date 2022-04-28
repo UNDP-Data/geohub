@@ -103,7 +103,7 @@
   }
 </script>
 
-<div class="group">
+<div class="group" data-testid="legend-view-container">
   <div class="range-slider">
     <RangeSlider
       bind:values={rangeSliderValues}

@@ -70,7 +70,7 @@
   let color
 
   //let colorMapType = 'On';
-  console.log(cmap)
+  // console.log(cmap)
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
@@ -96,7 +96,7 @@
             cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
           }
         } catch (error) {
-          console.log(`failed to process ${cmapstr} because ${error}`)
+          // console.log(`failed to process ${cmapstr} because ${error}`)
         }
         if (activeColorMapName === cmapstr) {
           activeColorMap = cmaps[cmapstr]
@@ -135,7 +135,7 @@
       }
       setCmapState(cmap)
       handleParamsUpdate(cmap)
-      console.log(cmap)
+      // console.log(cmap)
     } else {
       // cmap is undefined. Initially
       cmap = []
@@ -151,7 +151,7 @@
       }
       setCmapState(cmap)
       handleParamsUpdate(cmap)
-      console.log(cmap)
+      // console.log(cmap)
     }
   }
 
@@ -276,7 +276,7 @@
   $: color, updateColorMap(intervalIndex, color)
 </script>
 
-<div class="column">
+<div class="column" data-testid="intervals-view-container">
   <div class="row" style="display: flex;">
     <div style="width: 50%; margin-left: 5%">
       <span class="legend-text">Classification: </span>

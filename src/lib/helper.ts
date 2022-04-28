@@ -30,9 +30,9 @@ export const updateParamsInURL = (
   })
   const mapStore = get(map)
   mapStore.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
-  mapStore.style.sourceCaches[definition.source].clearTiles()
-  mapStore.style.sourceCaches[definition.source].update(mapStore.transform)
-  mapStore.triggerRepaint()
+  mapStore?.style?.sourceCaches[definition.source].clearTiles()
+  mapStore?.style?.sourceCaches[definition.source].update(mapStore.transform)
+  mapStore?.triggerRepaint()
 }
 
 /**
