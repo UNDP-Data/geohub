@@ -1,0 +1,3 @@
+Custom named layout
+
+<slot />
