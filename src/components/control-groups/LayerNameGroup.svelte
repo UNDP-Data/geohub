@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Tooltip, { Wrapper } from '@smui/tooltip'
+
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
   import { LayerInitialValues } from '$lib/constants'
   import { clean } from '$lib/helper'
@@ -7,7 +9,6 @@
   export let layer: Layer = LayerInitialValues
 
   const name = clean(layer.name)
-  import Tooltip, { Wrapper } from '@smui/tooltip'
 </script>
 
 <div class="layer-header">
