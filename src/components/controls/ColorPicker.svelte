@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ColorPicker, Color } from 'svelte-colorpick'
+  import { createEventDispatcher } from 'svelte'
 
   const ColorPickerSetting = {
     selectedDimension: 'rgb.r',
@@ -14,24 +15,25 @@
       'hsl.h': false,
       'hsl.s': false,
       'hsl.l': false,
-      'hcl.h': false,
+      'hcl.h': true,
       'hcl.c': false,
       'hcl.l': false,
       'lab.l': false,
       'lab.a': false,
       'lab.b': false,
-      'rgb.r': true,
-      'rgb.g': true,
-      'rgb.b': true,
+      'rgb.r': false,
+      'rgb.g': false,
+      'rgb.b': false,
     },
     selectDimensions: false,
     matrixWidth: 250,
     matrixHeight: 150,
     scrollbarHeight: 10,
   }
-
+  export let color
   export let RgbColor = ''
   export let collapse = true
+  export let position
 
   const rgb2hex = (rgbColor: string): string => {
     const rgbText = rgbColor.replace('rgb(', '').replace(')', '').replace(' ', '').split(',')
@@ -44,6 +46,7 @@
   }
 
   let hexColor = rgb2hex(RgbColor)
+
   let hexColorObject = Color.hex(hexColor)
   $: hexColorObject, colorToRGB()
   const colorToRGB = () => {
@@ -51,6 +54,32 @@
       hexColorObject.data.b,
     )})`
     hexColor = rgb2hex(RgbColor)
+  }
+
+  const generateHex = () => {
+    if (color) {
+      RgbColor = `rgb(${color.join()})`
+    }
+    hexColor = rgb2hex(RgbColor)
+    hexColorObject = Color.hex(hexColor)
+  }
+
+  $: color, generateHex()
+
+  $: hexColorObject, changeColor()
+  $: hexColorObject, getIndex()
+
+  const dispatch = createEventDispatcher()
+
+  function changeColor() {
+    dispatch('changeColor', {
+      color: hexColorObject,
+      position: position,
+    })
+  }
+
+  function getIndex() {
+    dispatch('getIndex', {})
   }
 </script>
 

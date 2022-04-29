@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
   const layerState = {}
+  const colorMapNameState = {}
 </script>
 
 <script lang="ts">
@@ -8,25 +9,24 @@
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
   import Tab, { Label } from '@smui/tab'
-  import TabBar from '@smui/tab-bar'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
-  import GodLegend from '$components/GodLegend.svelte'
+  import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
+  import TabBar from '@smui/tab-bar'
+  import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const mapLayers = $map.getStyle().layers
 
-  let activeColorMapName: string = DEFAULT_COLORMAP
+  let activeColorMapName: string = colorMapNameState[layerId] || DEFAULT_COLORMAP
   let activeTab = ''
   let isFilterPanelVisible = false
   let isLegendPanelVisible = false
@@ -44,7 +44,7 @@
   $: scalingValueStart, setScalingValueRange()
   $: scalingValueEnd, setScalingValueRange()
   $: scalingValueRange, selectScaling()
-
+  $: activeColorMapName, setColormapState()
   $: {
     const layer = $layerList.some((item) => item.definition.id === layerId)
     if (!layer) hideAllPanels()
@@ -82,6 +82,9 @@
     layerState[layerId] = panelOpen
   }
 
+  const setColormapState = () => {
+    colorMapNameState[layerId] = activeColorMapName
+  }
   const hideAllPanels = () => {
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
@@ -116,59 +119,48 @@
   }
 </script>
 
-<div class="accordion-container" style="margin-left: 15px; margin-bottom: 15px;">
+<div class="raster-layer-container" style="">
   <Accordion style="z-index: inherit;">
     <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
       <div class="layer-header">
-        <div>
-          <LayerNameGroup {layer} />
-          <div class="layer-header-icons">
-            <div class="group">
-              <TabBar
-                tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
-                let:tab
-                active={activeTab}
-                style="overflow:hidden">
-                <Tab
-                  {tab}
-                  class="tab"
-                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
-                  on:click={() => {
-                    activeTab === tab ? (activeTab = '') : (activeTab = tab)
-                  }}>
-                  <Label>
-                    <div class="tabs">
-                      <div style="padding-right: 5px;">
-                        {#if tab === TabNames.LEGEND}
-                          <Fa icon={faList} size="1x" />
-                        {:else if tab === TabNames.REFINE}
-                          <Fa icon={faCalculator} size="1x" />
-                        {:else if tab === TabNames.OPACITY}
-                          <Fa icon={faDroplet} size="1x" />
-                        {:else if tab === TabNames.ZOOM}
-                          <Fa icon={faMagnifyingGlassLocation} size="1x" />
-                        {/if}
-                      </div>
-                      <div>
-                        {tab}
-                      </div>
+        <LayerNameGroup {layer} />
+        <div class="layer-header-icons">
+          <div class="group">
+            <TabBar
+              tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
+              let:tab
+              bind:active={activeTab}>
+              <Tab
+                {tab}
+                class="tab"
+                style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
+                on:click={() => {
+                  activeTab === tab ? (activeTab = '') : (activeTab = tab)
+                }}>
+                <Label>
+                  <div class="tabs">
+                    <div style="padding-right: 5px;">
+                      {#if tab === TabNames.LEGEND}
+                        <Fa icon={faList} size="1x" />
+                      {:else if tab === TabNames.REFINE}
+                        <Fa icon={faCalculator} size="1x" />
+                      {:else if tab === TabNames.OPACITY}
+                        <Fa icon={faDroplet} size="1x" />
+                      {/if}
                     </div>
-                  </Label>
-                </Tab>
-              </TabBar>
-            </div>
+                    <div>
+                      {tab}
+                    </div>
+                  </div>
+                </Label>
+              </Tab>
+            </TabBar>
           </div>
         </div>
 
         <div class="layer-actions">
           {#if isLegendPanelVisible === true}
-            <div class="action">
-              <div class="content">
-                <div class="scene">
-                  <GodLegend bind:activeColorMapName bind:layer />
-                </div>
-              </div>
-            </div>
+            <RasterLegendContainer bind:activeColorMapName bind:layer />
           {/if}
           <OpacityPanel {layer} {isOpacityPanelVisible} />
           <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
@@ -181,83 +173,36 @@
 <style lang="scss">
   @import '../styles/bulma.css';
 
-  .layer-header {
-    .layer-header-icons {
-      align-items: center;
-      border-top: 1px solid rgba(204, 204, 204, 0.5);
-      display: flex;
-      gap: 15px;
-      justify-content: left;
-      margin-top: 10px;
-      padding-top: 10px;
+  .raster-layer-container {
+    margin-left: 15px;
+    margin-bottom: 15px;
 
-      .group {
-        padding-bottom: 5px;
-        padding-top: 5px;
+    .layer-header {
+      .layer-header-icons {
+        align-items: center;
+        border-top: 1px solid rgba(204, 204, 204, 0.5);
+        display: flex;
+        gap: 15px;
+        justify-content: left;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        padding-top: 10px;
 
-        .tabs {
-          align-items: center;
-          display: flex;
-          flex-direction: row;
-          font-family: ProximaNova, sans-serif;
-          font-size: 11px;
-          gap: 5px;
-        }
+        .group {
+          padding-bottom: 0;
+          padding-top: 0;
 
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-    }
+          .tabs {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            font-family: ProximaNova, sans-serif;
+            font-size: 11px;
+            gap: 5px;
+          }
 
-    .layer-actions {
-      padding-top: 5px;
-
-      .action {
-        margin-bottom: 25px;
-
-        .content {
-          align-items: flex-start;
-          display: flex;
-          flex-direction: row;
-          gap: 15px;
-          padding-bottom: 10px;
-          padding-top: 10px;
-
-          .scene {
-            min-height: 320px;
-            width: 100%;
-
-            .card {
-              cursor: pointer;
-              height: 100%;
-              position: relative;
-              transform-style: preserve-3d;
-              transition: transform 1s;
-              width: 100%;
-
-              &.is-flipped {
-                transform: rotateY(180deg);
-              }
-            }
-
-            .card-face {
-              -webkit-backface-visibility: hidden;
-              backface-visibility: hidden;
-              height: 100%;
-              position: absolute;
-              width: 100%;
-
-              .container {
-                border-radius: 7.5px;
-                border: 1px solid #ccc;
-                padding: 5px;
-              }
-            }
-
-            .card-face-back {
-              transform: rotateY(180deg);
-            }
+          @media (prefers-color-scheme: dark) {
+            color: white;
           }
         }
       }

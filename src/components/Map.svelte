@@ -1,14 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
-  import { cloneDeep } from 'lodash'
+  import { cloneDeep } from 'lodash-es'
 
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
   import { LayerTypes } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
-  import type { sprite } from '$lib/types'
+  import type { Sprite } from '$lib/types'
 
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
@@ -74,13 +74,13 @@
       const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
       promise
         .then(([dataUrl, json]) => {
-          const sprite: sprite = {
+          const sprite: Sprite = {
             dataUrl: dataUrl,
             json: json,
           }
           return sprite
         })
-        .then((sprite: sprite) => {
+        .then((sprite: Sprite) => {
           const promises = []
           Object.keys(sprite.json).forEach((id) => {
             promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))

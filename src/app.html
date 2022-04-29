@@ -71,10 +71,21 @@
     html,
     body {
       margin: 0;
+      font-family: ProximaNova, sans-serif;
+      font-size: 13px;
     }
 
     html {
       overflow-y: hidden !important;
+    }
+
+    .mdc-drawer {
+      width: 355px;
+    }
+
+    .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
+      margin-left: 355px;
+      margin-right: 0;
     }
   </style>
   <body>

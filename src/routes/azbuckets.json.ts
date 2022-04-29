@@ -43,6 +43,7 @@ const listContainers = async () => {
         icon: container.metadata.icon || null,
         type: BucketType.INTERNAL,
         tags,
+        selected: false,
       }
 
       bucketList.push(bucket)

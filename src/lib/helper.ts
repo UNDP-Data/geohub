@@ -11,7 +11,7 @@ import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
 
-import type { BannerMessage, spriteIcon, spriteImage } from './types'
+import type { BannerMessage, SpriteIcon, SpriteImage } from './types'
 import { bannerMessages, map } from '$stores'
 import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 
@@ -30,9 +30,9 @@ export const updateParamsInURL = (
   })
   const mapStore = get(map)
   mapStore.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
-  mapStore.style.sourceCaches[definition.source].clearTiles()
-  mapStore.style.sourceCaches[definition.source].update(mapStore.transform)
-  mapStore.triggerRepaint()
+  mapStore?.style?.sourceCaches[definition.source].clearTiles()
+  mapStore?.style?.sourceCaches[definition.source].update(mapStore.transform)
+  mapStore?.triggerRepaint()
 }
 
 /**
@@ -58,7 +58,7 @@ export const loadImageToDataUrl = async (url: string): Promise<string> => {
   return dataUrl
 }
 
-export const clipSprite = (url: string, id: string, icon: spriteIcon): Promise<spriteImage> => {
+export const clipSprite = (url: string, id: string, icon: SpriteIcon): Promise<SpriteImage> => {
   return new Promise((resolve) => {
     Clipper(url, function () {
       this.crop(icon.x, icon.y, icon.width, icon.height).toDataURL(function (dataUrl: string) {
@@ -108,11 +108,49 @@ export async function fetchWithTimeout(resource: string, options = { timeout: DE
  * @param filename
  * @param content
  */
-export const downloadFile = (filename: string, content: string) => {
-  const type = mime.getType(filename.split('.').pop())
+export const downloadFile = (filename: string, content?: string) => {
   const element = document.createElement('a')
-  element.href = `data:${type};charset=utf-8,` + encodeURIComponent(content)
+
+  if (content) {
+    const type = mime.getType(filename.split('.').pop())
+    element.href = `data:${type};charset=utf-8,` + encodeURIComponent(content)
+  } else {
+    element.href = filename
+  }
+
   element.download = filename
   element.click()
   element.remove()
+}
+
+/**
+ * Create a 53 bit hash from a string
+ * https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript
+ * @param val String to hash
+ * @param seed Seed (unsigned integer, 32-bit max)
+ * @returns A number
+ */
+export const hash = (val: string, seed = 0) => {
+  let h1 = 0xdeadbeef ^ seed,
+    h2 = 0x41c6ce57 ^ seed
+  for (let i = 0, ch: number; i < val.length; i++) {
+    ch = val.charCodeAt(i)
+    h1 = Math.imul(h1 ^ ch, 2654435761)
+    h2 = Math.imul(h2 ^ ch, 1597334677)
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0)
+}
+
+/**
+ * Remove underscore and extension and apply start/title case to a string
+ * @param val String to clean
+ */
+export const clean = (val: string) => {
+  const clean = val
+    .replace(/_/g, ' ') // remove underscore
+    .replace(/\.[^/.]+$/, '') // remove extension
+    .replace(/\b\w/g, (str) => str.toUpperCase()) // apply start/title case
+  return clean
 }

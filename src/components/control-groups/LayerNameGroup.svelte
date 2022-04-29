@@ -1,18 +1,23 @@
 <script lang="ts">
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
-  import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
+  import { clean } from '$lib/helper'
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
 
-  const name = layer.name
+  const name = clean(layer.name)
+  import Tooltip, { Wrapper } from '@smui/tooltip'
 </script>
 
 <div class="layer-header">
   <div>
     <div class="layer-header-name">
       <div class="layer-name">
-        {name}
+        <Wrapper>
+          <div>{name}</div>
+          <Tooltip showDelay={500} hideDelay={100} yPos="above">{name}</Tooltip>
+        </Wrapper>
       </div>
       <div>
         <LayerControlGroup {layer} />
@@ -25,18 +30,20 @@
 <style lang="scss">
   .layer-header {
     .layer-header-name {
-      display: flex;
-      justify-content: left;
       align-items: center;
+      display: flex;
       font-family: ProximaNova, sans-serif;
       height: 20px;
+      justify-content: left;
 
       .layer-name {
-        white-space: nowrap;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        display: -webkit-box;
+        font-size: 14px;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
-        font-size: 14px;
       }
     }
   }

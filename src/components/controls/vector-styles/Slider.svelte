@@ -46,7 +46,7 @@
 
 {#if style.type === layerType}
   <StyleControlGroup title={titleName}>
-    <div class="slider">
+    <div class="range-slider">
       <RangeSlider
         bind:values
         float
