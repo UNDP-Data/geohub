@@ -1,27 +1,38 @@
+<script lang="ts" context="module">
+  const sliderState = {}
+</script>
+
 <script lang="ts">
+  import chroma from 'chroma-js'
   import RangeSlider from 'svelte-range-slider-pips'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
   import Ripple from '@smui/ripple'
-  import chroma from 'chroma-js'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
-  import type { Layer, LayerInfo } from '$lib/types'
   import type {
     RasterLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
     SymbolLayerSpecification,
+    HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { map } from '$stores'
+
   import { ColorMaps } from '$lib/colormaps'
+  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
+  import type { Layer, LayerInfo } from '$lib/types'
+  import { map } from '$stores'
 
   export let activeColorMapName: string
   export let layerConfig: Layer = LayerInitialValues
 
-  let definition: RasterLayerSpecification | LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
+  let definition:
+    | RasterLayerSpecification
+    | LineLayerSpecification
+    | FillLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
@@ -34,10 +45,19 @@
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
-  let rangeSliderValues = [layerMin, layerMax]
+  let rangeSliderValues = sliderState[layerConfig.definition.id] || [layerMin, layerMax]
+  let selectedColorMapType = ColorMapTypes.SEQUENTIAL
   let step = (layerMax - layerMin) * 1e-2
-  let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
+
+  $: rangeSliderValues, setSliderState()
+
+  $: {
+    if (activeColorMapName) {
+      populateAllColorMaps()
+      rescaleColorMap()
+    }
+  }
 
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
@@ -50,7 +70,7 @@
             cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
           }
         } catch (error) {
-          console.log(`failed to process ${cmapstr} because ${error}`)
+          // console.log(`failed to process ${cmapstr} because ${error}`)
         }
         if (activeColorMapName === cmapstr) {
           activeColorMap = cmaps[cmapstr]
@@ -85,16 +105,28 @@
     }
   }
 
-  $: {
-    if (activeColorMapName) {
-      populateAllColorMaps()
-      rescaleColorMap()
-    }
+  const setSliderState = () => {
+    sliderState[layerConfig.definition.id] = rangeSliderValues
   }
 </script>
 
-<div class="group">
-  <div class="slider">
+<div class="group" data-testid="legend-view-container">
+  <div class="range-slider">
+    {#if activeColorMap !== undefined}
+      <div class="active-color-map">
+        <div
+          title={`Colormap: ${activeColorMapName}`}
+          on:click={() => {
+            colorMapSelectionVisible = !colorMapSelectionVisible
+            surface.setOpen(true)
+          }}
+          class="chroma-test"
+          style="background: linear-gradient(90deg, {activeColorMap.colors(
+            defaultNumberOfColors,
+            'rgba',
+          )}); cursor: pointer;" />
+      </div>
+    {/if}
     <RangeSlider
       bind:values={rangeSliderValues}
       float
@@ -109,89 +141,64 @@
       rest={false}
       on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
   </div>
-  {#if activeColorMap !== undefined}
-    <div class="active-color-map">
-      <div
-        title={`Colormap: ${activeColorMapName}`}
-        on:click={() => {
-          colorMapSelectionVisible = !colorMapSelectionVisible
-          surface.setOpen(true)
-        }}
-        class="chroma-test"
-        style="background: linear-gradient(90deg, {activeColorMap.colors(
-          defaultNumberOfColors,
-          'rgba',
-        )}); cursor: pointer;" />
-      <MenuSurface
-        bind:this={surface}
-        anchorCorner="BOTTOM_LEFT"
-        style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">
-        <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-          <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
-            {#each Object.keys(ColorMaps) as option}
-              <FormField>
-                <Radio bind:group={selectedColorMapType} value={option} touch />
-                <span
-                  slot="label"
-                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
-                  >{option}</span>
-              </FormField>
-            {/each}
-          </div>
-          <div class="colormaps-group">
-            {#if selectedColorMapType}
-              {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-                <div
-                  use:Ripple={{ surface: true }}
-                  class="colormap-div"
-                  title={aColorMap}
-                  on:click={() => {
-                    activeColorMapName = aColorMap
-                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-                    updateParamsInURL(definition, layerURL, { colormap_name: aColorMap })
-                  }}
-                  style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
-                    defaultNumberOfColors,
-                    'rgba',
-                  )})" />
-              {/each}
-            {/if}
-          </div>
-        </div>
-      </MenuSurface>
-      <div class="chroma-test">
-        <div>
-          <div>
-            Min: {rangeSliderValues[0]}
-          </div>
-
-          <div>
-            Max: {rangeSliderValues[1]}
-          </div>
-        </div>
+  <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT" class="select-cmaps-menu">
+    <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
+      <div class="radio-demo">
+        {#each Object.keys(ColorMaps) as option}
+          <FormField>
+            <Radio bind:group={selectedColorMapType} value={option} touch />
+            <span class="label" slot="label">
+              {option}
+            </span>
+          </FormField>
+        {/each}
+      </div>
+      <div class="colormaps-group">
+        {#if selectedColorMapType}
+          {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
+            <div
+              use:Ripple={{ surface: true }}
+              class="colormap-div"
+              title={aColorMap}
+              on:click={() => {
+                activeColorMapName = aColorMap
+                activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
+                updateParamsInURL(definition, layerURL, { colormap_name: aColorMap })
+              }}
+              style="background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][aColorMap].colors(
+                defaultNumberOfColors,
+                'rgba',
+              )})" />
+          {/each}
+        {/if}
       </div>
     </div>
-  {/if}
+  </MenuSurface>
 </div>
 
 <style lang="scss">
+  :global(.rangeNub) {
+    cursor: pointer;
+  }
+
   .group {
     border-radius: 7.5px;
     padding: 2px;
     padding-left: 0;
     padding-right: 0;
-
+    width: 100%;
     @media (prefers-color-scheme: dark) {
       background: #323234;
       color: white;
     }
 
-    .slider {
+    .range-slider {
       --range-handle-focus: #2196f3;
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
-      width: calc(100% - 4px);
+      width: 95%;
+      margin: 0;
       // padding-left: calc(10% + 4px);
     }
 
@@ -201,6 +208,7 @@
       align-items: center;
       padding-top: 10px;
       padding-bottom: 10px;
+      width: 100%;
 
       .chroma-test {
         height: 20px;
@@ -225,6 +233,19 @@
         cursor: pointer;
         justify-content: center;
         margin: 1px;
+      }
+
+      .radio-demo {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+
+        .label {
+          font-size: 9px;
+          font-weight: normal;
+          font-family: ProximaNova, sans-serif;
+          text-transform: none;
+        }
       }
     }
 

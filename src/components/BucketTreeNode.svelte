@@ -2,63 +2,46 @@
   const expansionState = {}
 </script>
 
-<!--
-   Update the JSON based data structure that power the tree view (this) component
-  The general idea of the update is:
-  0. the tree is initialized with data, and is destructured into its mains props
-      Very imp, the variables that are created in the descructuring are reactive:
-          let label, children, path, url, isRaster;
-          $: ({ label, children, path, url, isRaster } = tree)
-  1. User clicks on a tree node
-  2. toggleExpansion is called:
-      a) id the ndoe has children nothing happens, else the fucntion continues
-      b) the current node path prop is used to fethc the children for the current node from the endpoint
-          this cretaestree an identical node with the current one with exception that its children are fetched
-      c) a new copy of the tree is is created by descructuring the old tree
-      d) the copy is updated  inside updateTree
-      e) the updated copy is wriiten into the store so  other componnets are notified
-      f) the parent component updates the current
-      g) the TreeView componnet
-          let label, children, path, url, isRaster;
-          $: ({ label, children, path, url, isRaster } = tree)
- -->
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte'
-  import { slide } from 'svelte/transition'
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte'
+  import { fade, slide } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
-  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
-  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
+  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
+  import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
+  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
+  import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
+
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { createPopperActions } from 'svelte-popperjs'
+  import { cloneDeep } from 'lodash-es'
 
-  import type { BannerMessage, TreeNode, LayerInfo } from '$lib/types'
-  import {
-    ErrorMessages,
-    LayerIconTypes,
-    TreeNodeInitialValues,
-    LayerTypes,
-    StatusTypes,
-    DEFAULT_COLORMAP,
-  } from '$lib/constants'
-  import { fetchUrl } from '$lib/helper'
-  import { map, layerList, indicatorProgress, bannerMessages, treeBucket } from '$stores'
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
+  import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
+  import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
+  import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
+  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
-  export let node = TreeNodeInitialValues
   export let level = 0
-  let SelectLayerStyleDialogVisible: boolean
+  export let node: TreeNode
 
-  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+  const dispatch = createEventDispatcher()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
   const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
+  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+
+  let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
+  let SelectLayerStyleDialogVisible: boolean
+  let showTooltip = false
+  let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
   $: ({ label, children, path, url, isRaster } = tree)
-  $: expanded = expansionState[label + path] || false
+  $: expanded = expansionState[label] || false
   $: mmap = $map
 
   onMount(() => {
@@ -66,11 +49,11 @@
   })
 
   onDestroy(() => {
-    expansionState[label + path] = false
+    expansionState[label] = false
   })
 
   const toggleExpansion = () => {
-    expanded = expansionState[label + path] = !expanded
+    expanded = expansionState[label] = !expanded
     if (tree?.children.length === 0) updateTreeStore()
 
     setTimeout(() => {
@@ -81,28 +64,54 @@
   }
 
   const updateTreeStore = async () => {
-    loadingLayer = true
+    setProgressIndicator(true)
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
-
     if (treeData) {
-      const subpaths = path.split('/').slice(0, -1)
-      let currentTree = { ...$treeBucket }
-      let currentTreeData: TreeNode = currentTree.tree
+      node.children = treeData.tree.children
+      const childNodes = node.children.filter((item) => item.url !== null)
 
-      subpaths.forEach((element) => {
-        let currentTreeDataChildren = [...currentTreeData.children]
-        if (path === treeData.tree.path) {
-          currentTreeData.children = currentTreeDataChildren.map((item) =>
-            item.path === treeData?.tree?.path ? treeData.tree : item,
-          )
-        }
-        currentTreeData = currentTreeDataChildren.find((item) => item.label === element)
+      // store metadata upon expansion of node
+      Promise.all(
+        childNodes.map((node) => {
+          return {
+            data: fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`),
+            node,
+          }
+        }),
+      ).then((responses) => {
+        responses.forEach((response) => {
+          response.data.then((layerInfo) => {
+            const layerPathHash = hash(response.node.path)
+
+            if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+              setLayerMetaDataStore(layerPathHash, layerInfo)
+            }
+          })
+        })
       })
-
-      treeBucket.set(currentTree)
     }
 
-    loadingLayer = false
+    setProgressIndicator(false)
+  }
+
+  const getBase64EncodedUrl = (url: string) => {
+    const [base, sign] = url.split('?')
+    return `${base}?${btoa(sign)}`
+  }
+
+  const setLayerMetaDataStore = (layerPathHash: number, layerInfo: LayerInfo) => {
+    const layerMetadataClone = cloneDeep($layerMetadata)
+
+    const metadata = {
+      description: layerInfo.band_metadata[0][1]['Description'],
+      source: layerInfo.band_metadata[0][1]['Source'],
+      unit: layerInfo.band_metadata[0][1]['Unit'],
+    }
+
+    layerMetadataClone.set(layerPathHash, metadata)
+    $layerMetadata = layerMetadataClone
+
+    return metadata
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -111,9 +120,13 @@
       .join('&')
   }
 
+  const setProgressIndicator = (state: boolean) => {
+    loadingLayer = state
+    $indicatorProgress = state
+  }
+
   const loadLayer = async () => {
-    $indicatorProgress = true
-    loadingLayer = true
+    setProgressIndicator(true)
 
     const tileSourceId = path
     const layerId = uuidv4()
@@ -123,12 +136,11 @@
       SelectLayerStyleDialogVisible = true
     } else {
       const layerName = path.split('/')[path.split('/').length - 1]
-      const [base, sign] = url.split('?')
-      const b64EncodedUrl = `${base}?${btoa(sign)}`
+      const b64EncodedUrl = getBase64EncodedUrl(url)
       layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
 
-      const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+      const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
 
       if (layerBandMetadataMin && layerBandMetadataMax) {
         const titilerApiUrlParams = {
@@ -203,17 +215,89 @@
       loadingLayer = false
     }, 350)
   }
+
+  const handleRemoveBucket = () => {
+    dispatch('remove', { node })
+  }
+
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'auto',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, -20],
+        },
+      },
+      {
+        name: 'preventOverflow',
+        options: {
+          mainAxis: true,
+        },
+      },
+    ],
+  }
+
+  const handleTooltipMouseEnter = () => {
+    // delay display of tooltip and create reference for mouse leave event
+    tooltipTimer = setTimeout(async () => {
+      const layerPathHash = hash(path)
+      let metadata: LayerInfoMetadata
+
+      // get existing metadata from store
+      if ($layerMetadata.has(layerPathHash)) {
+        metadata = $layerMetadata.get(layerPathHash)
+      } else {
+        // get metadata from endpoint
+        const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(url)}`)
+
+        if (layerInfo?.band_metadata?.length > 0) {
+          metadata = setLayerMetaDataStore(layerPathHash, layerInfo)
+        } else {
+          metadata = {
+            description: 'N/A',
+            source: 'N/A',
+            unit: 'N/A',
+          }
+        }
+      }
+
+      if (metadata) {
+        layerInfoMetadata = {
+          description: metadata.description,
+          source: metadata.source,
+          unit: metadata.unit,
+        }
+      }
+
+      showTooltip = true
+    }, 200)
+
+    // hide popover after 5 seconds
+    setTimeout(() => {
+      handleToolipMouseLeave
+    }, 5000)
+  }
+
+  const handleToolipMouseLeave = () => {
+    if (tooltipTimer) clearTimeout(tooltipTimer)
+    showTooltip = false
+  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
-  <div style="padding-top: 5px;">
+  <div style="padding-bottom: 5px;">
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon" on:click={() => (level > 0 ? toggleExpansion() : '')}>
-          {#if loadingLayer === true && expanded === false}
+        <div class="tree-icon" on:click={() => toggleExpansion()}>
+          {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
           {:else if level === 0}
-            <Fa icon={faDatabase} size="sm" />
+            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
           {:else if !expanded}
             <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
           {:else}
@@ -226,13 +310,16 @@
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else}
-              <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+              <Wrapper>
+                <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+                <Tooltip showDelay={0} hideDelay={100} yPos="above">Add Layer</Tooltip>
+              </Wrapper>
             {/if}
           </div>
         {/if}
 
         <div class={url ? 'name vector' : 'name'}>
-          {label}
+          {level === 0 ? label : clean(label)}
         </div>
 
         {#if url}
@@ -243,6 +330,18 @@
             </Wrapper>
           </div>
         {/if}
+
+        {#if level === 0}
+          <div
+            alt="Remove container"
+            title="Remove container"
+            data-testid="remove-container"
+            class="close"
+            style="width: 19.5px; height: 19.5px; cursor: pointer;"
+            on:click={handleRemoveBucket}>
+            <Fa icon={faWindowClose} size="sm" />
+          </div>
+        {/if}
       </div>
     {:else}
       <div class="node-container">
@@ -251,27 +350,61 @@
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else}
-              <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+              <Wrapper>
+                <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+                <Tooltip showDelay={0} hideDelay={100} yPos="above">Add Layer</Tooltip>
+              </Wrapper>
             {/if}
           </div>
-        {/if}
-
-        <div class={isRaster ? 'name raster' : 'name'}>
-          {label}
-        </div>
-
-        {#if isRaster}
+          <div
+            class="name raster"
+            use:popperRef
+            on:mouseenter={() => handleTooltipMouseEnter()}
+            on:mouseleave={() => handleToolipMouseLeave()}>
+            {clean(label)}
+          </div>
+          <div
+            class="icon"
+            alt="Download Layer Data"
+            style="cursor: pointer;"
+            title="Download Layer Data"
+            on:click={() => downloadFile(url)}>
+            <Wrapper>
+              <Fa icon={faDownload} size="sm" />
+              <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
+            </Wrapper>
+          </div>
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
             <Wrapper>
               <Fa icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
             </Wrapper>
           </div>
+        {:else}
+          <div class="name">
+            {clean(label)}
+          </div>
         {/if}
       </div>
     {/if}
   </div>
 </li>
+
+{#if showTooltip}
+  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+    <div class="columns is-vcentered is-mobile">
+      <div class="column is-full">
+        <div class="label">{clean(label)}</div>
+        <div class="description">{layerInfoMetadata?.description}</div>
+        <div class="source is-size-6">
+          <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source}
+        </div>
+        <div class="unit is-size-6"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit}</div>
+      </div>
+    </div>
+    <div id="arrow" data-popper-arrow />
+  </div>
+{/if}
 
 {#if expanded && children}
   {#each children as child}
@@ -307,7 +440,6 @@
     }
 
     .icon {
-      cursor: pointer;
       padding-left: 10px;
       padding-right: 10px;
     }
@@ -318,6 +450,85 @@
       @media (prefers-color-scheme: dark) {
         color: white;
       }
+    }
+  }
+
+  $tooltip-background: #fff;
+
+  #tooltip {
+    background: $tooltip-background;
+    border-radius: 7.5px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    font-weight: bold;
+    max-width: 450px;
+    width: 450px;
+    min-height: 150px;
+    padding: 15px;
+    padding-top: 10px;
+    position: absolute;
+    top: 10px;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+    }
+
+    .columns {
+      .is-full {
+        padding-right: 40px;
+
+        .description,
+        .source,
+        .unit {
+          font-weight: normal;
+          color: #000;
+          margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
+        }
+
+        .label {
+          border-bottom: 1px solid #ccc;
+          padding-bottom: 5px;
+          margin-bottom: 10px;
+
+          @media (prefers-color-scheme: dark) {
+            color: #fff;
+          }
+        }
+
+        .description {
+          margin-bottom: 15px;
+        }
+      }
+    }
+
+    #arrow,
+    #arrow::before {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: $tooltip-background;
+      left: -4.5px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
+    }
+
+    #arrow {
+      visibility: visible;
+    }
+
+    #arrow::before {
+      visibility: visible;
+      content: '';
+      transform: rotate(45deg);
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
     }
   }
 </style>

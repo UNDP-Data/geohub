@@ -6,6 +6,7 @@
   import { createPopperActions } from 'svelte-popperjs'
 
   import type { Bucket } from '$lib/types'
+  import '../styles/font-awesome/all.css'
 
   export let bucket: Bucket
 
@@ -44,7 +45,7 @@
   const handleMouseEnter = () => {
     timer = setTimeout(() => {
       showTooltip = true
-    }, 500)
+    }, 400)
   }
 
   const handleMouseLeave = () => {
@@ -62,9 +63,11 @@
   on:mouseleave={() => handleMouseLeave()}>
   <Card>
     <PrimaryAction on:click={() => undefined}>
-      <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
-        <i class={`${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
-      </ContentCard>
+      <div class="icon-container">
+        <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
+          <i class={`icon ${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
+        </ContentCard>
+      </div>
     </PrimaryAction>
   </Card>
 </div>
@@ -83,7 +86,7 @@
     </div>
     <div class="content is-size-7 tags">
       {#each bucket.tags as tag}
-        <span title="tag">
+        <span title="tag" style="margin-right: 5px;">
           <Tag type="is-info is-light" size="is-small">{tag}</Tag>
         </span>
       {/each}
@@ -98,14 +101,29 @@
   .card-container {
     height: 65px;
     margin: 0;
-    padding: 10px;
     padding-bottom: 0px;
     padding-top: 0px;
+    padding: 10px;
     width: 70px;
 
     .card {
       margin-bottom: 15px;
       margin-left: 15px;
+    }
+
+    .icon-container {
+      @media (prefers-color-scheme: dark) {
+        border-radius: 7.5px;
+        border: 1px solid #ccc;
+      }
+
+      .icon {
+        color: #000;
+
+        @media (prefers-color-scheme: dark) {
+          color: #ccc;
+        }
+      }
     }
   }
 
@@ -140,10 +158,12 @@
       }
     }
 
-    .content .tags {
-      display: flex;
-      gap: 5px;
-      flex-flow: row wrap;
+    .content {
+      .tags {
+        display: flex;
+        gap: 5px;
+        flex-flow: row wrap;
+      }
     }
 
     #arrow,

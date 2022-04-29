@@ -1,9 +1,13 @@
+<script lang="ts" context="module">
+  const selectedClassificationMethodState = {}
+  const numberOfClassesState = {}
+  const activeColorMapNameState = {}
+  const cmapState = {}
+</script>
+
 <script lang="ts">
   import chroma from 'chroma-js'
   import Ripple from '@smui/ripple'
-  import Fa from 'svelte-fa'
-  import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
-  import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
   import type {
     FillLayerSpecification,
     LineLayerSpecification,
@@ -11,8 +15,7 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  //import ColorPicker from './controls/ColorPicker.svelte'
-  import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
+  import { fade } from 'svelte/transition'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
   import { map } from '$stores'
@@ -22,7 +25,12 @@
   import { updateParamsInURL } from '$lib/helper'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
+  import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
+  import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
+  import Fa from 'svelte-fa'
+  import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
 
+  // Exports
   export let layerConfig: Layer = LayerInitialValues
   export let activeColorMapName: string
 
@@ -35,25 +43,33 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
-  const defaultNumberOfColors = 5
+  // Const vars
+  const defaultNumberOfColors = numberOfClassesState[layerConfig.definition.id] || 5
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
+  // Let variables
   let activeColorMap: chroma.Scale = undefined
   let allColorMaps = {}
   let colorMapSelectionVisible = false
   let intervalList = []
-  let cmap = []
-  let cmapItem = []
-  let numberOfClasses = 5
+  let numberOfClasses = numberOfClassesState[layerConfig.definition.id] || 5
   let rangeSliderValues = [layerMin, layerMax]
-  let selectedClassificationMethod = ClassificationMethodTypes.EQUIDISTANT
+  let selectedClassificationMethod =
+    selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
   let selectedColorMapType = 'sequential'
   let surface: MenuSurfaceComponentDev
-  //let colorMapType = 'On';
+  let cmap = cmapState[layerConfig.definition.id]
+  let cmapColorsList = []
+  let showToolTip = false
+  let intervalIndex
+  let currentIntervalColor
+  let color
 
+  //let colorMapType = 'On';
+  // console.log(cmap)
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
@@ -62,6 +78,12 @@
     classificationMethods.push({ name: 'Logarithmic', value: 'l' })
   }
 
+  // Generic function to store the colormap
+  const setCmapState = (cmap) => {
+    cmapState[layerConfig.definition.id] = cmap
+  }
+
+  // Populate the colormaps choices depending on the type of colormap selected
   const populateAllColorMaps = () => {
     for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
       let cmaps = {}
@@ -73,7 +95,7 @@
             cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
           }
         } catch (error) {
-          console.log(`failed to process ${cmapstr} because ${error}`)
+          // console.log(`failed to process ${cmapstr} because ${error}`)
         }
         if (activeColorMapName === cmapstr) {
           activeColorMap = cmaps[cmapstr]
@@ -83,28 +105,56 @@
     }
   }
 
+  // Fixme: This function is being called twice every time
+  // Reclassify the layer every time the color, interval or number of classes is changed.
+  // Fixme: Need to rewrite the function to detect the exact operation that has been carried out
+
   const reclassifyImage = () => {
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
 
     let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
-    if (cmap.length > 0) {
+    if (cmapState[layerConfig.definition.id] !== undefined) {
+      cmap = cmapState[layerConfig.definition.id]
+      if (cmap.length > 0) {
+        cmap = []
+        cmapColorsList = []
+        setCmapState(cmap)
+      }
+      for (let i = 0; i <= numberOfClasses - 1; i++) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        let c = [...scaleColorList(intervalList[i]).rgb(), 255]
+        let intervalStart = intervalList[i]
+        let intervalEnd = intervalList[i + 1]
+        let cmapitem = [[intervalStart, intervalEnd], c]
+        cmap.push(cmapitem)
+        cmapColorsList.push(cmapitem[1])
+      }
+      setCmapState(cmap)
+      handleParamsUpdate(cmap)
+      // console.log(cmap)
+    } else {
+      // cmap is undefined. Initially
       cmap = []
+      for (let i = 0; i <= numberOfClasses - 1; i++) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        let c = [...scaleColorList(intervalList[i]).rgb(), 255]
+        let intervalStart = intervalList[i]
+        let intervalEnd = intervalList[i + 1]
+        let cmapitem = [[intervalStart, intervalEnd], c]
+        cmap.push(cmapitem)
+        cmapColorsList.push(cmapitem[1])
+      }
+      setCmapState(cmap)
+      handleParamsUpdate(cmap)
+      // console.log(cmap)
     }
-    for (let i = 0; i <= numberOfClasses - 1; i++) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      let c = [...scaleColorList(intervalList[i]).rgb(), 255]
-      let intervalStart = intervalList[i]
-      let intervalEnd = intervalList[i + 1]
-      let cmapitem = [[intervalStart, intervalEnd], c]
-      cmap.push(cmapitem)
-    }
-    handleParamsUpdate(cmap)
-    //generateBGColors(cmap)
   }
 
+  // Function to encode colormap, and update url parameters
   const handleParamsUpdate = (cmap: object) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
@@ -112,6 +162,58 @@
     let updatedParams = Object.assign({ colormap: encodedCmap })
     updateParamsInURL(definition, layerURL, updatedParams)
   }
+
+  // The opacity of the titiler is between 0 and 255 instead of 0-1.
+  // This function rescales the opacity to 0-255
+  function rescaleOpacity(opacity: number) {
+    return 255 * opacity
+  }
+
+  // Change the colormap value every time the interval on the left is changed
+  const sendFirstInterval = (index: number, item: string) => {
+    if (item > cmap[index][0][1]) {
+      console.warn(
+        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
+      )
+    } else {
+      cmap[index][0].splice(0, 1, Number(item))
+      handleParamsUpdate(cmap)
+      setCmapState(cmap)
+    }
+  }
+  const sendLastInterval = (index: number, item: string) => {
+    if (item < cmap[index + 1][0][1]) {
+      cmap[index][0].splice(1, 1, Number(item))
+      cmap[index + 1][0].splice(0, 1, Number(item))
+      handleParamsUpdate(cmap)
+      setCmapState(cmap)
+    } else {
+      console.warn(
+        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
+      )
+    }
+  }
+
+  // This is causing the map to be reloaded every time
+
+  const setClassificationMethodState = () => {
+    selectedClassificationMethodState[layerConfig.definition.id] = selectedClassificationMethod
+    reclassifyImage()
+  }
+
+  const setNumberOfClassesState = () => {
+    numberOfClassesState[layerConfig.definition.id] = numberOfClasses
+  }
+
+  const setActiveColorMapNameState = () => {
+    activeColorMapNameState[layerConfig.definition.id] = activeColorMapName
+    populateAllColorMaps()
+    reclassifyImage()
+  }
+
+  $: selectedClassificationMethod, setClassificationMethodState()
+  $: numberOfClasses, setNumberOfClassesState()
+  $: activeColorMapName, setActiveColorMapNameState()
 
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
     if (operation === 'increment') {
@@ -127,14 +229,15 @@
     reclassifyImage()
   }
 
-  let openColorPicker = false
-  let currentIntervalColor: string[]
-  let currentIntervalColorRGB: string
-  let intervalIndex: number
-  let color: Color
+  const setColorForMap = (e) => {
+    if (e) {
+      cmap[e.detail.position].splice(1, 1, e.detail.color.tuple())
+      handleParamsUpdate(cmap)
+      setCmapState(cmap)
+    }
+  }
 
-  function sendIndexForCmap(index: number) {
-    openColorPicker = !openColorPicker
+  const setIndexColor = (index) => {
     currentIntervalColor = cmap[index][1]
 
     let r = currentIntervalColor[0]
@@ -150,231 +253,150 @@
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
     }
-
-    currentIntervalColorRGB = `rgb(${currentIntervalColor[0]},${currentIntervalColor[1]},${currentIntervalColor[2]})`
-    intervalIndex = index
   }
 
-  function updateColorMap(index: number, color: Color) {
-    if (cmapItem.length > 0) {
-      cmapItem = []
+  const updateColorMap = (index: number, color: Color) => {
+    // eslint-disable-next-line no-empty
+    if (index === undefined || color === undefined) {
+    } else {
+      cmap[index].splice(1, 1, chroma(color['hex']).rgba())
+      cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
+      handleParamsUpdate(cmap)
+      setCmapState(cmap)
+      document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
     }
-
-    cmap[index].splice(1, 1, chroma(color['hex']).rgba())
-    cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
-    cmapItem = cmap[index]
-
-    handleParamsUpdate(cmap)
-    document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
-  }
-
-  function rescaleOpacity(opacity: number) {
-    return 255 * opacity
   }
 
   $: {
-    if (openColorPicker) {
-      currentIntervalColor, updateColorMap(intervalIndex, color)
+    if (intervalIndex !== undefined) {
+      setIndexColor(intervalIndex)
     }
   }
-  /*
-  Todo: Please don't remove this block; To be revisited
-  let bgColors = []
-  let currentRGB;
-  const generateBGColors = (cmap) => {
-    if(bgColors.length > 0){
-      bgColors = []
-    }else{
-      cmap.forEach((value, index) => {
-        bgColors.push(`rgb(${value[1][0]}, ${value[1][1]}, ${value[1][2]})`)
-      })
-      console.log(bgColors)
-    }
-  }
-  bgColors.forEach((item, index) => {
-    currentRGB = item
-  })
-   */
-
-  const sendFirstInterval = (index: number, item: string) => {
-    if (item > cmap[index][0][1]) {
-      console.warn(
-        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
-      )
-    } else {
-      cmap[index][0].splice(0, 1, Number(item))
-      console.log(cmap)
-      handleParamsUpdate(cmap)
-    }
-  }
-  const sendLastInterval = (index: number, item: string) => {
-    if (item < cmap[index + 1][0][1]) {
-      cmap[index][0].splice(1, 1, Number(item))
-      cmap[index + 1][0].splice(0, 1, Number(item))
-      handleParamsUpdate(cmap)
-    } else {
-      console.warn(
-        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
-      )
-    }
-  }
-
-  // This is causing the map to be reloaded every time
-  $: {
-    if (activeColorMapName) {
-      populateAllColorMaps()
-      reclassifyImage()
-    }
-    if (selectedClassificationMethod) {
-      reclassifyImage()
-    }
-  }
+  $: color, updateColorMap(intervalIndex, color)
 </script>
 
-<div class="group">
-  <div class="intervals-legend">
-    <div class="row">
-      <div class="column">Number of classes:</div>
-      <div class="column">
-        <div class="no-classes">
-          <div
-            class="icon-selected"
-            title="Increase number of classes"
-            on:click={() => {
-              handleNumberOfClasses('decrement')
-            }}>
-            <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); padding-right:2px" />
-          </div>
-          <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center;" />
-          <div
-            class="icon-selected"
-            title="Decrese number of classes"
-            on:click={() => {
-              handleNumberOfClasses('increment')
-            }}>
-            <Fa icon={faCaretRight} size="2x" style="transform: scale(1); padding-left: 2px ;" />
-          </div>
-        </div>
-      </div>
+<div class="column" data-testid="intervals-view-container">
+  <div class="row" style="display: flex;">
+    <div style="width: 50%; margin-left: 5%">
+      <span class="legend-text">Classification: </span>
     </div>
-    <div class="row">
-      <div class="column">Classification:</div>
-      <div class="column">
-        <select
-          bind:value={selectedClassificationMethod}
-          id="class-mode"
-          on:change={() => {
-            reclassifyImage
+    <div style="width: 50%; margin-left: 40%">
+      <span class="legend-text">Classes</span>
+    </div>
+  </div>
+  <div class="row" id="class-and-method-control-div">
+    <div class="column" style="padding: 0; width: 80%!important;">
+      <select
+        id="method"
+        bind:value={selectedClassificationMethod}
+        on:change={() => {
+          reclassifyImage
+        }}>
+        <option class="legend-text" value="" disabled selected>Classification</option>
+        {#each classificationMethods as classificationMethod}
+          <option class="legend-text" value={classificationMethod.value}>{classificationMethod.name}</option>
+        {/each}
+      </select>
+    </div>
+    <div class="column" style="padding: 0; width: 20%!important;">
+      <div class="no-classes" style="display: flex; justify-content: flex-end;">
+        <div
+          class="icon-selected"
+          title="Decrease number of classes"
+          on:click={() => {
+            handleNumberOfClasses('decrement')
           }}>
-          {#each classificationMethods as classificationMethod}
-            <option value={classificationMethod.value}>{classificationMethod.name}</option>
-          {/each}
-        </select>
+          <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); cursor: pointer" />
+        </div>
+        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center; border:none" />
+        <div
+          class="icon-selected"
+          title="Increase number of classes"
+          on:click={() => {
+            handleNumberOfClasses('increment')
+          }}>
+          <Fa icon={faCaretRight} size="2x" style="transform: scale(1); cursor: pointer" />
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="column">
-    <div id="intervals-cmap-button-div">
-      <div>Active colormap</div>
-      <div
-        id="intervals-cmap-button"
-        on:click={() => {
-          colorMapSelectionVisible = !colorMapSelectionVisible
-          surface.setOpen(true)
-        }}
-        use:Ripple={{ surface: true }}
-        variant="raised"
-        style="background:linear-gradient(90deg, {[...activeColorMap.colors()]})">
-        <span style="color: white">{activeColorMapName}</span>
-      </div>
-      <MenuSurface
-        bind:this={surface}
-        anchorCorner="BOTTOM_LEFT"
-        style="max-height: 200px; overflow-y: scroll; width: 100%; margin-top:5px; padding: 5px">
-        <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
-          <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
-            {#each Object.keys(ColorMaps) as option}
-              <FormField>
-                <Radio bind:group={selectedColorMapType} value={option} touch />
-                <span
-                  slot="label"
-                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
-                  >{option}</span>
-              </FormField>
-            {/each}
-          </div>
-          <div class="colormaps-group">
-            {#if selectedColorMapType}
-              {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-                <div
-                  use:Ripple={{ surface: true }}
-                  class="colormap-div"
-                  title={aColorMap}
-                  on:click={() => {
-                    activeColorMapName = aColorMap
-                    activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-                    reclassifyImage
-                  }}
-                  style="margin-top:5px; background: linear-gradient(90deg, {allColorMaps[selectedColorMapType][
-                    aColorMap
-                  ].colors(defaultNumberOfColors, 'rgba')})" />
-              {/each}
-            {/if}
-          </div>
-        </div>
-      </MenuSurface>
-    </div>
-
-    <!-- Todo: Please dont delete this block. To be revisited
-    <div class="column" id="intervals-list-div">
-      {#each bgColors as value, index}
-        <div style="display: flex; padding:2px; width: 50%; margin: auto">
-          <ColorPicker class='colorpicker' bind:RgbColor={value} />
-          &nbsp;&raquo;&nbsp
-          <div contenteditable="true" bind:innerHTML={intervalList[index]} />
-          -
-          <div contenteditable="true" bind:innerHTML={intervalList[index+1]} />
-        </div>
-      {/each}
-    </div>
-    Todo: ending here
-    -->
-
-    <div class="column" id="intervals-list-div">
+  <div class="row" id="intervals-cmap-div">
+    <div class="column" style="padding: 0; width: 90%">
       {#each cmap as value, index}
-        <div style="display: flex; padding:2px; width: 100%; margin-left: 25%; margin-right: 25%">
+        <div style="display: flex; padding:2px; width: 100%;">
           <div
+            use:Ripple={{ surface: true }}
             id="interval-{index}"
-            on:click={() => sendIndexForCmap(index)}
+            on:click={() => {
+              showToolTip = !showToolTip
+              intervalIndex = index
+            }}
             class="discrete"
-            style="caret-color:rgb({cmap[index][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
+            style="width:20px; height:20px; caret-color:rgb({cmap[
+              index
+            ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
+          {#if showToolTip}
+            <div class={showToolTip && intervalIndex === index ? 'tooltipshown' : 'tooltiphidden'} transition:fade>
+              <RasterColorPicker bind:color />
+            </div>
+          {/if}
+          <!--          <ColorPicker position={index} bind:color={value[1]} on:changeColor={setColorForMap} />-->
           &nbsp;&raquo;&nbsp
-          <input
-            style="width: 30px!important; border: none"
-            bind:value={intervalList[index]}
-            on:change={sendFirstInterval(index, intervalList[index])} />
-          -
-          <input
-            style="width: 30px!important; border: none"
-            bind:value={intervalList[index + 1]}
-            on:change={sendLastInterval(index, intervalList[index + 1])} />
+          <span
+            class="legend-text"
+            contenteditable="true"
+            bind:innerHTML={intervalList[index]}
+            on:input={sendLastInterval(index, intervalList[index])} />
+
+          <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
+          <span
+            class="legend-text"
+            contenteditable="true"
+            bind:innerHTML={intervalList[index + 1]}
+            on:input={sendLastInterval(index, intervalList[index + 1])} />
         </div>
       {/each}
-      {#if openColorPicker}
-        <div style="cursor: crosshair">
-          <ColorPicker
-            isPopup={true}
-            wrapper="div"
-            --picker-height="150px"
-            --picker-width="150px"
-            --slider-width="10px"
-            isInput={false}
-            isOpen={true}
-            bind:color />
-        </div>
-      {/if}
     </div>
+    <div
+      title="Current colormap. Click to change."
+      id="current-colormap"
+      style="cursor:pointer; width: 20px!important; min-height:100%; background:linear-gradient(1deg, {[
+        ...activeColorMap.colors(),
+      ]}); "
+      on:click={() => {
+        colorMapSelectionVisible = !colorMapSelectionVisible
+        surface.setOpen(true)
+      }}
+      use:Ripple={{ surface: true }} />
+
+    <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT" class="select-cmaps-menu">
+      <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
+        {#each Object.keys(ColorMaps) as option}
+          <FormField>
+            <Radio bind:group={selectedColorMapType} value={option} touch />
+            <span
+              slot="label"
+              style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
+              >{option}</span>
+          </FormField>
+        {/each}
+      </div>
+      <div class="colormaps-group">
+        {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
+          <div
+            title={aColorMap}
+            style="cursor:pointer; margin-top:5px; height: 20px; width: 100%; background: linear-gradient(90deg, {allColorMaps[
+              selectedColorMapType
+            ][aColorMap].colors(defaultNumberOfColors, 'rgba')})"
+            use:Ripple={{ surface: true }}
+            on:click={() => {
+              activeColorMapName = aColorMap
+              activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
+              reclassifyImage
+            }} />
+        {/each}
+      </div>
+    </MenuSurface>
   </div>
 </div>
 
@@ -441,6 +463,8 @@
       .no-classes {
         display: flex;
         flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
       }
     }
 
@@ -448,8 +472,8 @@
       display: block;
 
       .colormap-div {
-        height: 20px;
-        width: 80%;
+        height: 100%;
+        width: 20px;
         cursor: pointer;
         justify-content: center;
         margin: 1px;
@@ -514,5 +538,35 @@
   * :global(::-webkit-scrollbar-thumb) {
     background: grey;
     border-radius: 10px;
+  }
+
+  #class-and-method-control-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100% !important;
+  }
+  #intervals-cmap-div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  :global(.select-cmaps-menu) {
+    max-height: 200px;
+    overflow-y: scroll;
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+  }
+  :global(.legend-text) {
+    font-family: ProximaNova, sans-serif;
+    max-width: 30%;
+    width: 30%;
+  }
+  :global(.show) {
+    display: none;
+  }
+  :global(.tooltiphidden) {
+    display: none !important;
   }
 </style>

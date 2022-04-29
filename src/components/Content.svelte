@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide } from 'svelte/transition'
   import Banner, { Label as LabelBanner } from '@smui/banner'
   import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
@@ -10,24 +9,20 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
-  import { cloneDeep } from 'lodash'
 
-  import { treeBucket } from '$stores'
-  import type { Bucket, TreeNode as TreeNodeType } from '$lib/types'
-  import BucketCard from '$components/BucketCard.svelte'
+  import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import TreeView from '$components/TreeView.svelte'
-  import { bucketList, bucketFeature, layerList, indicatorProgress, map, bannerMessages, wtree } from '$stores'
+  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
 
   export let drawerOpen = false
 
-  let activeTab = TabNames.LOAD_DATA
+  let activeTab = TabNames.BUCKETS
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
   let showBanner = false
-  let tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
+  let tabs = [TabNames.BUCKETS, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -47,24 +42,6 @@
       setTimeout(() => {
         showBanner = true
       }, 500)
-    }
-  }
-
-  $: {
-    if ($bucketFeature === true && tabs.length === 2) {
-      tabs = [TabNames.LOAD_DATA, TabNames.BUCKETS, TabNames.LAYERS]
-
-      setTimeout(() => {
-        activeTab = TabNames.BUCKETS
-      }, 10)
-    }
-
-    if ($bucketFeature === false && tabs.length === 3) {
-      tabs = [TabNames.LOAD_DATA, TabNames.LAYERS]
-
-      setTimeout(() => {
-        activeTab = TabNames.LOAD_DATA
-      }, 10)
     }
   }
 
@@ -94,39 +71,9 @@
   const hideBanner = () => {
     setTimeout(() => {
       showBanner = false
-    }, 350)
+    }, 150)
     $bannerMessages = []
   }
-
-  const handleBucketClick = async (event: CustomEvent) => {
-    const bucketClone: Bucket = cloneDeep(event.detail.bucket)
-    bucketClone.selected = !bucketClone.selected
-    const bucketIndex = $bucketList.findIndex((bucket) => bucket.id === bucketClone.id)
-    $bucketList[bucketIndex] = bucketClone
-
-    const tree = cloneDeep($treeBucket)
-    const isBucketInTree = tree.tree.children.some((item) => item.path === bucketClone.path)
-
-    if (isBucketInTree === false) {
-      tree.tree.children = [
-        ...tree.tree.children,
-        {
-          id: bucketClone.id,
-          children: [],
-          isRaster: false,
-          label: bucketClone.path.slice(0, -1),
-          path: bucketClone.path,
-        },
-      ]
-    } else {
-      tree.tree.children = tree.tree.children.filter((item) => item.path !== bucketClone.path)
-    }
-
-    tree.tree.children.sort((a, b) => a.label.localeCompare(b.label))
-    $treeBucket = tree
-  }
-
-  import BucketTreeNode from '$components/BucketTreeNode.svelte'
 </script>
 
 <div class="content-container">
@@ -137,12 +84,12 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <LinearProgress indeterminate bind:closed={hideLinearProgress} />
-        <Header>
+        <Header style="margin-top: 10px;">
           <TabBar {tabs} let:tab bind:active={activeTab}>
-            <Tab {tab} class="tab">
-              <Label>
+            <Tab {tab} class="tab" style="height: 40px; font-family: ProximaNova, sans-serif;">
+              <Label style="font-weight: normal; text-transform: capitalize;">
                 {tab}
-                {#if tab === TabNames.LAYERS}
+                {#if tab === TabNames.LAYERS && $layerList.length > 0}
                   ({$layerList.length})
                 {/if}
               </Label>
@@ -150,25 +97,9 @@
           </TabBar>
         </Header>
         <Content style="padding-right: 15px; overflow: visible;">
-          <div hidden={activeTab !== TabNames.LOAD_DATA}>
-            <TreeView />
+          <div hidden={activeTab !== TabNames.BUCKETS}>
+            <BucketView />
           </div>
-          {#if $bucketFeature === true}
-            <div hidden={activeTab !== TabNames.BUCKETS}>
-              <div class="columns" style="padding-right: 30px;">
-                <div class="column">
-                  {#each $bucketList as bucket}
-                    <BucketCard {bucket} on:click={handleBucketClick} />
-                  {/each}
-                </div>
-                <div class="column is-four-fifths">
-                  <ul>
-                    <BucketTreeNode bind:node={$treeBucket.tree} />
-                  </ul>
-                </div>
-              </div>
-            </div>
-          {/if}
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
@@ -219,7 +150,6 @@
 
 <style lang="scss">
   @import '../styles/bulma.css';
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 
   :global(.app-content) {
     flex: auto;
@@ -266,7 +196,13 @@
         flex-basis: 100%;
         flex: 1;
       }
-
+      ::-webkit-scrollbar {
+        width: 2px;
+        height: 2px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: grey;
+      }
       .drawer-divider {
         width: 9px;
         @media only screen and (max-width: 760px) {

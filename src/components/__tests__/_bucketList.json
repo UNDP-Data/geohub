@@ -1,0 +1,51 @@
+[{
+	"id": "1649951891000",
+	"published": true,
+	"path": "climateaction/",
+	"label": "Climate Action",
+	"description": "Bucket contains data related to SDG 13",
+	"icon": "fa-duotone fa-earth-americas",
+	"type": "internal",
+	"tags": ["Climate Change", "Heat", "Precipitation", "Weather"],
+  "selected": false
+}, {
+	"id": "1650409953000",
+	"published": true,
+	"path": "electricity/",
+	"label": "Electricity Access",
+	"description": "Bucket contains electricity access data sourced from the University of Michigen and UNDP",
+	"icon": "fa-solid fa-plug-circle-bolt",
+	"type": "internal",
+	"tags": ["Elctricity Access", "Estimated Access", "Estimated Brightness Levels", "Freaquency Of Brightness", "Machine Learning", "Nighttime Lights"],
+	"selected": false
+}, {
+	"id": "1649952050000",
+	"published": true,
+	"path": "endpoverty/",
+	"label": "End Poverty",
+	"description": "Bucket contains data related to SDG 1",
+	"icon": "fa-duotone fa-people-group",
+	"type": "internal",
+	"tags": ["Dependency", "Disasters", "Population", "Poverty", "Social Protection", "Tenure"],
+	"selected": false
+}, {
+	"id": "1649952114000",
+	"published": true,
+	"path": "goodhealthandwellbeing/",
+	"label": "Good Health And Well Being",
+	"description": "Bucket contains SDG 3 related data",
+	"icon": "fa-solid fa-bed-pulse",
+	"type": "internal",
+	"tags": ["Development Indicators", "Diseases", "Health", "Healthsites", "Mortality"],
+	"selected": false
+}, {
+	"id": "1650401860000",
+	"published": true,
+	"path": "zerohunger/",
+	"label": "Zero Hunger",
+	"description": "Bucket contains data related to SDG 2",
+	"icon": "fa-solid fa-plate-wheat",
+	"type": "internal",
+	"tags": ["Agriculture", "Crops", "Food Insecurity", "Hunger"],
+  "selected": false
+}]

@@ -116,7 +116,7 @@
   setUniqueValueLegend()
 </script>
 
-<div class="group">
+<div class="group" data-testid="unique-values-view-container">
   <div class="slider">
     <RangeSlider
       bind:values={rangeSliderValues}

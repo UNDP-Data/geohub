@@ -1,5 +1,13 @@
-import { beforeEach, expect, it, vi } from 'vitest'
-import { cleanup, render, fireEvent, waitFor, within, waitForElementToBeRemoved } from '@testing-library/svelte'
+import { describe, beforeEach, expect, it, vi } from 'vitest'
+import {
+  cleanup,
+  render,
+  fireEvent,
+  waitFor,
+  within,
+  waitForElementToBeRemoved,
+  type RenderResult,
+} from '@testing-library/svelte'
 
 import BucketCard from '$components/BucketCard.svelte'
 import type { Bucket } from '$lib/types'
@@ -18,38 +26,50 @@ const bucket: Bucket = {
 
 beforeEach(cleanup)
 
-it('shows proper heading when rendered', async () => {
-  vi.useRealTimers()
-  const { queryByText, getByTestId, getByLabelText, component } = render(BucketCard, { bucket })
+describe('Bucket Card', () => {
+  let sut: RenderResult
+  let cardContainer: HTMLElement
 
-  // container
-  const cardContainer = getByTestId('card-container')
-  expect(cardContainer).toBeDefined()
-  const mock = vi.fn()
-  component.$on('click', mock)
-  fireEvent.click(cardContainer)
-  expect(mock).toHaveBeenCalledOnce()
+  beforeEach(() => {
+    sut = render(BucketCard, { bucket })
+    cardContainer = sut.getByTestId('card-container')
+  })
 
-  // icon
-  const label = getByLabelText(bucket.label)
-  expect(label).toBeDefined()
+  it('should render the container', () => {
+    expect(cardContainer).toBeDefined()
+  })
 
-  // show tooltip
-  fireEvent.mouseEnter(cardContainer)
+  it('should display an icon', async () => {
+    const mock = vi.fn()
+    sut.component.$on('click', mock)
+    fireEvent.click(cardContainer)
+    expect(mock).toHaveBeenCalledOnce()
 
-  // label and description
-  await waitFor(() => getByTestId('tooltip'))
-  const tooltip = getByTestId('tooltip')
-  expect(within(tooltip).getByText(bucket.label)).toBeDefined()
-  expect(within(tooltip).getByText(bucket.description)).toBeDefined()
+    // icon
+    const label = sut.getByLabelText(bucket.label)
+    expect(label).toBeDefined()
+  })
 
-  // tags
-  expect(within(tooltip).getByText('Climate Change')).toBeDefined()
-  expect(within(tooltip).getByText('Heat')).toBeDefined()
-  expect(within(tooltip).getByText('Precipitation')).toBeDefined()
-  expect(within(tooltip).getByText('Weather')).toBeDefined()
+  it('should display a tooltip with a label, description and tags upon click', async () => {
+    // show tooltip
+    fireEvent.mouseEnter(cardContainer)
 
-  // hide tooltip
-  await fireEvent.click(cardContainer)
-  waitForElementToBeRemoved(tooltip).then(() => expect(queryByText(bucket.label)).toBeNull())
+    // label and description
+    await waitFor(() => sut.getByTestId('tooltip'))
+    const tooltip = sut.getByTestId('tooltip')
+    expect(within(tooltip).getByText(bucket.label)).toBeDefined()
+    expect(within(tooltip).getByText(bucket.description)).toBeDefined()
+
+    // tags
+    expect(within(tooltip).getByText('Climate Change')).toBeDefined()
+    expect(within(tooltip).getByText('Heat')).toBeDefined()
+    expect(within(tooltip).getByText('Precipitation')).toBeDefined()
+    expect(within(tooltip).getByText('Weather')).toBeDefined()
+
+    // hide tooltip
+    await fireEvent.click(cardContainer)
+    waitForElementToBeRemoved(tooltip, {
+      timeout: 5000,
+    }).then(() => expect(sut.queryByText(bucket.label)).toBeNull())
+  })
 })

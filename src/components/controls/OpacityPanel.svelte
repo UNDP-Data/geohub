@@ -43,7 +43,7 @@
 
 {#if isOpacityPanelVisible === true}
   <div class="action">
-    <div class="slider">
+    <div class="range-slider">
       <RangeSlider
         bind:values={rangeSliderValues}
         float
@@ -63,7 +63,7 @@
   .action {
     margin-bottom: 25px;
 
-    .slider {
+    .range-slider {
       --range-handle-focus: #2196f3;
       --range-range-inactive: #2196f3;
       --range-handle-inactive: #2196f3;
