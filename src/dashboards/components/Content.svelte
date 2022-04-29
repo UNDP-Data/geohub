@@ -1,20 +1,65 @@
 <script lang="ts">
+  import { LayerTypes } from '$lib/constants'
   import { onMount } from 'svelte'
-  import Drawer, { AppContent, Content, Header } from '@smui/drawer'
+  import Drawer, { AppContent, Content } from '@smui/drawer'
   import { map } from '../stores'
-  import Ripple from '@smui/ripple'
+  import SegmentedButton, { Segment } from '@smui/segmented-button'
+  import Button from '@smui/button'
+  import { Label } from '@smui/common'
+  import Paper from '@smui/paper'
+  import FormField from '@smui/form-field'
+  import Checkbox from '@smui/checkbox'
   import { fetchUrl } from '$lib/helper'
-  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { RasterLayerSpecification, HeatmapLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import RangeSlider from 'svelte-range-slider-pips'
+
+  const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
+  const HREA_TOKEN =
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMDYlM0EwMFomc3I9YiZzcD1yJnNpZz1WYXp0QWdEUFBvQWc5NHVtMXpBa0pmJTJGamNjZ0RndkJsYlZWRlhLRXRIRmclM0Q='
+  const ML_TOKEN =
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMjUlM0EzMFomc3I9YiZzcD1yJnNpZz02c1R6VDlTSmdkQ21jUSUyQm9ydmNPRWkzcjcxTDJPZVBXZDhhTDZPQnRaOFklM0Q='
+  const RWI_TOKEN =
+    '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
+  const HREA_ID = 'hrea'
+  const ML_ID = 'ml'
+  const RWI_ID = 'rwi'
+  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif${HREA_TOKEN}`
+  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
+  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
+
+  console.log(RWI_URL)
 
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
   const aerialBingUrl = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
+  const apiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
   export let drawerOpen = false
 
+  let showIntro = true
+  let checked = false
+  let electricityChoices = ['HREA', 'ML']
+  let electricitySelected = 'HREA'
+  let interactChoices = ['Hover', 'Draw']
+  let interactSelected = 'Hover'
   let drawerWidth = 355
   let isResizingDrawer = false
   let bingAerialLayerMeta = undefined
   let aerialBingTiles = []
+
+  let layerOpacity = 1
+  let rangeSliderValues = [layerOpacity * 100]
+  $: layerOpacity = rangeSliderValues[0] / 100
+  $: layerOpacity, setLayerOpacity()
+
+  const setLayerOpacity = () => {
+    if ($map) {
+      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    }
+  }
+
+  function hideIntro() {
+    showIntro = false
+  }
 
   $: {
     if (drawerOpen) {
@@ -29,6 +74,7 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
+    map.subscribe(() => loadRasterLayer(HREA_ID, HREA_URL, ML_ID))
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -49,12 +95,105 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
+  const loadRasterLayer = async (id: string, url: string, oldId: string) => {
+    const layerInfo = await fetchUrl(`${apiUrl}/info?url=${url}`)
+    const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
+    const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
+    const apiUrlParams = {
+      scale: 1,
+      TileMatrixSetId: 'WebMercatorQuad',
+      url,
+      bidx: 1,
+      unscale: false,
+      resampling: 'nearest',
+      rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+      return_mask: true,
+      colormap_name: 'bugn',
+    }
+
+    const layerSource = {
+      type: LayerTypes.RASTER,
+      tiles: [`${apiUrl}/tiles/{z}/{x}/{y}.png?${new URLSearchParams(apiUrlParams).toString()}`],
+      tileSize: 256,
+      bounds: layerInfo['bounds'],
+      attribution:
+        'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+            Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+    }
+    const layerDefinition: RasterLayerSpecification = {
+      id: id,
+      type: LayerTypes.RASTER,
+      source: id,
+      minzoom: 0,
+      maxzoom: 22,
+      layout: { visibility: 'visible' },
+    }
+    let firstSymbolId = undefined
+    for (const layer of $map.getStyle().layers) {
+      if (layer.type === 'symbol' || layer.id === RWI_ID) {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+
+    $map.getLayer(oldId) && $map.removeLayer(oldId)
+    $map.getSource(oldId) && $map.removeSource(oldId)
+    !$map.getSource(id) && $map.addSource(id, layerSource)
+    !$map.getLayer(id) && $map.addLayer(layerDefinition, firstSymbolId)
+  }
+
+  const loadLayer = ({ target: { textContent } }) => {
+    if (textContent === 'HREA') loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+    else if (textContent === 'ML') loadRasterLayer(ML_ID, ML_URL, HREA_ID)
+  }
+
+  const loadHeatmap = ({ target: { checked } }) => {
+    const layerSource = {
+      type: 'geojson',
+      data: RWI_URL,
+    }
+    const layerDefinition: HeatmapLayerSpecification = {
+      id: RWI_ID,
+      type: LayerTypes.HEATMAP,
+      source: RWI_ID,
+      minzoom: 0,
+      maxzoom: 22,
+      layout: { visibility: 'visible' },
+      paint: {
+        'heatmap-weight': {
+          property: 'rwi',
+          type: 'exponential',
+          stops: [
+            [-0.855, 0],
+            [1.06009, 1],
+          ],
+        },
+      },
+    }
+    let firstSymbolId = undefined
+    for (const layer of $map.getStyle().layers) {
+      if (layer.type === 'symbol') {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+
+    if (checked) {
+      !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
+      !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
+      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    } else {
+      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
+      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
+    }
+  }
+
   const addBingAerialLayer = async () => {
     if (aerialBingTiles.length == 0) {
       bingAerialLayerMeta = await fetchUrl(
         `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BingMapsKey}`,
       )
-      const { estimatedTotal, resources } = bingAerialLayerMeta.resourceSets[0]
+      const { resources } = bingAerialLayerMeta.resourceSets[0]
       const imageUrlSubdomains = resources[0].imageUrlSubdomains
       aerialBingTiles = imageUrlSubdomains.map((el) => {
         return aerialBingUrl.replace('{subdomain}', el)
@@ -97,12 +236,72 @@
     style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow:visible;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
-        <Header>
-          <p use:Ripple={{ surface: true, color: 'primary' }} tabindex="0" on:click={addBingAerialLayer}>
-            Toggle Bing Aerial
-          </p>
-        </Header>
-        <Content style="padding-right: 15px; overflow: visible;">
+        <Content style="padding: 15px; overflow: visible;">
+          {#if showIntro}
+            <Paper>
+              <p>
+                Welcome to the UNDP GeoHub dashboard. This site serves as a simplified preview to familiarize users with
+                data being prepared for the full-fledged GeoHub web app launching soon. Presented here is a High
+                Resolution Electricity Access (HREA) created by the University of Michigan, used to support the 2030
+                Social Development Goal (SDG) number 7: ensuring access to affordable, reliable, sustainable and modern
+                energy for all.
+              </p>
+              <p>
+                This map displays two types of electricity access layers, with an optional poverty heatmap which can be
+                overlaid. Layer statistics can be explored by either hovering over the map, showing values for the
+                layers underneath the mouse, or by drawing a circle, providing summaries of the values contained within.
+              </p>
+              <br />
+              <Button on:click={hideIntro}>Explore Data</Button>
+            </Paper>
+          {/if}
+
+          {#if !showIntro}
+            <Paper>
+              Layers
+              <br /><br />
+              Electricity Access
+              <br />
+              <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:electricitySelected>
+                <Segment {segment} on:click={loadLayer}>
+                  <Label>{segment}</Label>
+                </Segment>
+              </SegmentedButton>
+              <br /><br />
+              Poverty
+              <br />
+              <FormField>
+                <Checkbox bind:checked on:change={loadHeatmap} />
+                <span slot="label">Show Heatmap</span>
+              </FormField>
+              <div class="action">
+                <div class="slider">
+                  <RangeSlider
+                    bind:values={rangeSliderValues}
+                    float
+                    min={0}
+                    max={100}
+                    step={1}
+                    pips
+                    first="label"
+                    last="label"
+                    rest={false}
+                    suffix="%" />
+                </div>
+              </div>
+            </Paper>
+            <br />
+            <Paper>
+              Statistics
+              <br />
+              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:interactSelected>
+                <Segment {segment}>
+                  <Label>{segment}</Label>
+                </Segment>
+              </SegmentedButton>
+              <br />
+            </Paper>
+          {/if}
           <div />
         </Content>
       </div>
