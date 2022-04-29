@@ -16,7 +16,6 @@
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { fade } from 'svelte/transition'
-  import ColorPicker from './controls/ColorPicker.svelte'
   import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
   import MenuSurface from '@smui/menu-surface'
   import { map } from '$stores'
@@ -29,7 +28,7 @@
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
   import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
   import Fa from 'svelte-fa'
-  import RasterPicker from './raster/RasterPicker.svelte'
+  import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
 
   // Exports
   export let layerConfig: Layer = LayerInitialValues
@@ -338,7 +337,7 @@
             ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
           {#if showToolTip}
             <div class={showToolTip && intervalIndex === index ? 'tooltipshown' : 'tooltiphidden'} transition:fade>
-              <RasterPicker bind:color />
+              <RasterColorPicker bind:color />
             </div>
           {/if}
           <!--          <ColorPicker position={index} bind:color={value[1]} on:changeColor={setColorForMap} />-->

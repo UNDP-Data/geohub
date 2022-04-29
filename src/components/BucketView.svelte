@@ -66,7 +66,7 @@
   {/if}
 
   <div class="columns cards-tree-container is-gapless">
-    <div class="column">
+    <div class="column" style="max-width: 112px;">
       <div class="columns">
         <div class="column cards" data-testid="buckets-container">
           <div class="card-filter" data-testid="buckets-filter-container">
@@ -136,8 +136,11 @@
 
     .cards-tree-container {
       margin-bottom: 0;
+
       .cards {
         z-index: 10;
+        max-width: 90px;
+        width: 90px;
       }
 
       .tree {
@@ -158,6 +161,8 @@
       .separator {
         border-left: $separator;
         height: calc(100vh - 200px);
+        max-width: 21px;
+        width: 21px;
 
         @media (prefers-color-scheme: dark) {
           border-left: $separator-dark;
