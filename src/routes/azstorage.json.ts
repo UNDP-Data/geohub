@@ -52,47 +52,62 @@ const listContainer = async (containerName: string, relPath: string) => {
 
   const tree = { label: treeLabel, children: [], path: treePath, url: null }
   const cclient = blobServiceClient.getContainerClient(containerName)
+  
   const containerChildren: Array<TreeNode> = []
-  for await (const item of cclient.listBlobsByHierarchy('/', { prefix: relPath })) {
-    let childLabel: string
-
-    const path = `${containerName}/${item.name}`
-    if (item.kind === 'prefix') {
-      const label = item.name.slice(0, -1)
-      if (label.includes('/')) {
-        childLabel = label.split('/').pop()
+  // tests if the relPath is a vector tile...
+  // const bclient = cclient.getBlobClient(`${relPath}metadata.json`)
+  // const isVectorTile:boolean = await bclient.exists()
+  // if (isVectorTile) {
+  //   tree.url = `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
+  //   console.log(tree.url)
+  // }
+  // else {
+    for await (const item of cclient.listBlobsByHierarchy('/', { prefix: relPath })) {
+      let childLabel: string
+  
+      const path = `${containerName}/${item.name}`
+      if (item.kind === 'prefix') {
+        const label = item.name.slice(0, -1)
+        if (label.includes('/')) {
+          childLabel = label.split('/').pop()
+        } else {
+          childLabel = label
+        }
+        const bclient = cclient.getBlobClient(`${path}metadata.json`)
+        const isVectorTile:boolean = await bclient.exists()
+        console.log(item, isVectorTile, `${path}metadata.json`)
+        const url = isVectorTile ? `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}` : null
+        
+        containerChildren.push({ label: childLabel, children: [], path: path, url: url, isRaster: false })
       } else {
-        childLabel = label
+        const blockBlobClient = cclient.getBlockBlobClient(item.name)
+        const sasToken = generateBlobSASQueryParameters(
+          {
+            containerName: containerName,
+            blobName: item.name,
+            expiresOn: new Date(new Date().valueOf() + 86400000),
+            permissions: BlobSASPermissions.parse('r'),
+          },
+          sharedKeyCredential,
+        )
+  
+        const sasUrl = `${blockBlobClient.url}?${sasToken}`
+        const label = item.name
+        if (label.includes('/')) {
+          childLabel = label.split('/').pop()
+        } else {
+          childLabel = label
+        }
+        const isRaster = isRasterExtension(childLabel)
+        
+        if (isRaster) {
+          containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRaster })
+        }
+        
       }
-
-      containerChildren.push({ label: childLabel, children: [], path: path, url: null, isRaster: false })
-    } else {
-      const blockBlobClient = cclient.getBlockBlobClient(item.name)
-      const sasToken = generateBlobSASQueryParameters(
-        {
-          containerName: containerName,
-          blobName: item.name,
-          expiresOn: new Date(new Date().valueOf() + 86400000),
-          permissions: BlobSASPermissions.parse('r'),
-        },
-        sharedKeyCredential,
-      )
-
-      const sasUrl = `${blockBlobClient.url}?${sasToken}`
-      const label = item.name
-      if (label.includes('/')) {
-        childLabel = label.split('/').pop()
-      } else {
-        childLabel = label
-      }
-
-      if (childLabel === 'metadata.json') {
-        tree.url = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
-      }
-
-      containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRasterExtension(childLabel) })
     }
-  }
+  //}
+
   tree.children = containerChildren
 
   return {

@@ -43,8 +43,9 @@
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-
+  
   onMount(() => {
+    console.log({label:label, path:path, url:url})
     if (level === 0) toggleExpansion()
   })
 
@@ -64,12 +65,16 @@
   }
 
   const updateTreeStore = async () => {
+    console.log(`updating tree at ${tree.path} `)
     setProgressIndicator(true)
+    
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
     if (treeData) {
       node.children = treeData.tree.children
+      //console.log(node.children)
       const childNodes = node.children.filter((item) => item.url !== null)
-
+      //console.log(node.children)
+      console.log(`got vector tile at ${treeData.tree} `)
       // store metadata upon expansion of node
       Promise.all(
         childNodes.map((node) => {
