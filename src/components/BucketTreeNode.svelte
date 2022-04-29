@@ -43,9 +43,9 @@
   $: ({ label, children, path, url, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-  
+
   onMount(() => {
-    console.log({label:label, path:path, url:url})
+    console.log({ label: label, path: path, url: url })
     if (level === 0) toggleExpansion()
   })
 
@@ -67,7 +67,7 @@
   const updateTreeStore = async () => {
     console.log(`updating tree at ${tree.path} `)
     setProgressIndicator(true)
-    
+
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
     if (treeData) {
       node.children = treeData.tree.children
