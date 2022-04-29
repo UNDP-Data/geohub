@@ -4,12 +4,12 @@
 </script>
 
 <script lang="ts">
-  import Accordion, { Panel } from '@smui-extra/accordion'
   import Fa from 'svelte-fa'
+  import { fade } from 'svelte/transition'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import Tab, { Label } from '@smui/tab'
+  import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
@@ -18,7 +18,6 @@
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, DEFAULT_COLORMAP, TabNames } from '$lib/constants'
-  import TabBar from '@smui/tab-bar'
   import ZoomLevelPanel from './controls/ZoomLevelPanel.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -73,6 +72,13 @@
     }
   }
 
+  const tabs = [
+    { label: TabNames.LEGEND, icon: faList, active: false },
+    { label: TabNames.REFINE, icon: faCalculator, active: false },
+    { label: TabNames.OPACITY, icon: faDroplet, active: false },
+    { label: TabNames.ZOOM, icon: faMagnifyingGlass, active: false },
+  ]
+
   const debounce = (fn) => {
     clearTimeout(timer)
     timer = setTimeout(fn, 500)
@@ -119,55 +125,33 @@
   }
 </script>
 
-<div class="raster-layer-container" style="">
-  <Accordion style="z-index: inherit;">
-    <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
-      <div class="layer-header">
-        <LayerNameGroup {layer} />
-        <div class="layer-header-icons">
-          <div class="group">
-            <TabBar
-              tabs={[TabNames.LEGEND, TabNames.REFINE, TabNames.OPACITY, TabNames.ZOOM]}
-              let:tab
-              bind:active={activeTab}>
-              <Tab
-                {tab}
-                class="tab"
-                style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
-                on:click={() => {
-                  activeTab === tab ? (activeTab = '') : (activeTab = tab)
-                }}>
-                <Label>
-                  <div class="tabs">
-                    <div style="padding-right: 5px;">
-                      {#if tab === TabNames.LEGEND}
-                        <Fa icon={faList} size="1x" />
-                      {:else if tab === TabNames.REFINE}
-                        <Fa icon={faCalculator} size="1x" />
-                      {:else if tab === TabNames.OPACITY}
-                        <Fa icon={faDroplet} size="1x" />
-                      {/if}
-                    </div>
-                    <div>
-                      {tab}
-                    </div>
-                  </div>
-                </Label>
-              </Tab>
-            </TabBar>
-          </div>
-        </div>
+<div class="raster-layer-container" transition:fade>
+  <nav class="panel">
+    <p class="panel-heading">
+      <LayerNameGroup {layer} />
+    </p>
+    <p class="panel-tabs">
+      {#each tabs as tab}
+        <a
+          href={'#'}
+          on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
+          class={activeTab === tab.label ? 'is-active' : ''}>
+          <span>
+            <Fa icon={tab.icon} size="sm" />
+          </span>
+          {tab.label}
+        </a>
+      {/each}
+    </p>
 
-        <div class="layer-actions">
-          {#if isLegendPanelVisible === true}
-            <RasterLegendContainer bind:activeColorMapName bind:layer />
-          {/if}
-          <OpacityPanel {layer} {isOpacityPanelVisible} />
-          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
-        </div>
-      </div>
-    </Panel>
-  </Accordion>
+    <p class="panel-content">
+      {#if isLegendPanelVisible === true}
+        <RasterLegendContainer bind:activeColorMapName bind:layer />
+      {/if}
+      <OpacityPanel {layer} {isOpacityPanelVisible} />
+      <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
+    </p>
+  </nav>
 </div>
 
 <style lang="scss">
@@ -175,37 +159,22 @@
 
   .raster-layer-container {
     margin-left: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 
-    .layer-header {
-      .layer-header-icons {
-        align-items: center;
-        border-top: 1px solid rgba(204, 204, 204, 0.5);
-        display: flex;
-        gap: 15px;
-        justify-content: left;
-        margin-top: 10px;
-        padding-bottom: 10px;
-        padding-top: 10px;
+    .panel-tabs {
+      padding-top: 10px;
 
-        .group {
-          padding-bottom: 0;
-          padding-top: 0;
+      a {
+        margin-right: 5px;
 
-          .tabs {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
-            font-family: ProximaNova, sans-serif;
-            font-size: 11px;
-            gap: 5px;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: white;
-          }
+        span {
+          margin-right: 3px;
         }
       }
+    }
+
+    .panel-content {
+      padding: 10px;
     }
   }
 </style>

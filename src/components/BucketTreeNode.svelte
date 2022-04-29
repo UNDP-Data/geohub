@@ -312,7 +312,7 @@
             {:else}
               <Wrapper>
                 <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
-                <Tooltip showDelay={0} hideDelay={100} yPos="above">Add Layer</Tooltip>
+                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
             {/if}
           </div>
@@ -326,7 +326,7 @@
           <div class="icon" alt={iconVector.label} title={iconVector.label}>
             <Wrapper>
               <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-              <Tooltip showDelay={0} hideDelay={100} yPos="above">Vector</Tooltip>
+              <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
             </Wrapper>
           </div>
         {/if}
@@ -352,7 +352,7 @@
             {:else}
               <Wrapper>
                 <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
-                <Tooltip showDelay={0} hideDelay={100} yPos="above">Add Layer</Tooltip>
+                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
             {/if}
           </div>
