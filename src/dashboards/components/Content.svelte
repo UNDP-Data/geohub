@@ -10,14 +10,24 @@
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
   import { fetchUrl } from '$lib/helper'
-  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { RasterLayerSpecification, HeatmapLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import RangeSlider from 'svelte-range-slider-pips'
 
+  const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
+  const HREA_TOKEN =
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMDYlM0EwMFomc3I9YiZzcD1yJnNpZz1WYXp0QWdEUFBvQWc5NHVtMXpBa0pmJTJGamNjZ0RndkJsYlZWRlhLRXRIRmclM0Q='
+  const ML_TOKEN =
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMjUlM0EzMFomc3I9YiZzcD1yJnNpZz02c1R6VDlTSmdkQ21jUSUyQm9ydmNPRWkzcjcxTDJPZVBXZDhhTDZPQnRaOFklM0Q='
+  const RWI_TOKEN =
+    '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
   const HREA_ID = 'hrea'
   const ML_ID = 'ml'
-  const HREA_URL =
-    'https://undpngddlsgeohubdev01.blob.core.windows.net/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTI4VDEyJTNBNTYlM0E1Mlomc3I9YiZzcD1yJnNpZz0xMFd5QlNxMjVlaDZ4bFloNEtPRFRINU8lMkJPZTlwU3lEM2xySXJHTFIlMkZlRSUzRA=='
-  const ML_URL =
-    'https://undpngddlsgeohubdev01.blob.core.windows.net/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTI4VDEzJTNBNDQlM0EwOVomc3I9YiZzcD1yJnNpZz1oUzJwWmNiSzlsTXo2ZmQ4OG0xenBLUEpheXEwSTQ1OHM0OW5vJTJGUVdRY3MlM0Q='
+  const RWI_ID = 'rwi'
+  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif${HREA_TOKEN}`
+  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
+  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
+
+  console.log(RWI_URL)
 
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
   const aerialBingUrl = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
@@ -27,7 +37,6 @@
 
   let showIntro = true
   let checked = false
-  let opacity = 100
   let electricityChoices = ['HREA', 'ML']
   let electricitySelected = 'HREA'
   let interactChoices = ['Hover', 'Draw']
@@ -36,6 +45,17 @@
   let isResizingDrawer = false
   let bingAerialLayerMeta = undefined
   let aerialBingTiles = []
+
+  let layerOpacity = 1
+  let rangeSliderValues = [layerOpacity * 100]
+  $: layerOpacity = rangeSliderValues[0] / 100
+  $: layerOpacity, setLayerOpacity()
+
+  const setLayerOpacity = () => {
+    if ($map) {
+      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    }
+  }
 
   function hideIntro() {
     showIntro = false
@@ -54,7 +74,7 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-    loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+    map.subscribe(() => loadRasterLayer(HREA_ID, HREA_URL, ML_ID))
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -110,7 +130,7 @@
     }
     let firstSymbolId = undefined
     for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol') {
+      if (layer.type === 'symbol' || layer.id === RWI_ID) {
         firstSymbolId = layer.id
         break
       }
@@ -125,6 +145,47 @@
   const loadLayer = ({ target: { textContent } }) => {
     if (textContent === 'HREA') loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
     else if (textContent === 'ML') loadRasterLayer(ML_ID, ML_URL, HREA_ID)
+  }
+
+  const loadHeatmap = ({ target: { checked } }) => {
+    const layerSource = {
+      type: 'geojson',
+      data: RWI_URL,
+    }
+    const layerDefinition: HeatmapLayerSpecification = {
+      id: RWI_ID,
+      type: LayerTypes.HEATMAP,
+      source: RWI_ID,
+      minzoom: 0,
+      maxzoom: 22,
+      layout: { visibility: 'visible' },
+      paint: {
+        'heatmap-weight': {
+          property: 'rwi',
+          type: 'exponential',
+          stops: [
+            [-0.855, 0],
+            [1.06009, 1],
+          ],
+        },
+      },
+    }
+    let firstSymbolId = undefined
+    for (const layer of $map.getStyle().layers) {
+      if (layer.type === 'symbol') {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+
+    if (checked) {
+      !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
+      !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
+      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    } else {
+      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
+      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
+    }
   }
 
   const addBingAerialLayer = async () => {
@@ -210,9 +271,24 @@
               Poverty
               <br />
               <FormField>
-                <Checkbox bind:checked />
+                <Checkbox bind:checked on:change={loadHeatmap} />
                 <span slot="label">Show Heatmap</span>
               </FormField>
+              <div class="action">
+                <div class="slider">
+                  <RangeSlider
+                    bind:values={rangeSliderValues}
+                    float
+                    min={0}
+                    max={100}
+                    step={1}
+                    pips
+                    first="label"
+                    last="label"
+                    rest={false}
+                    suffix="%" />
+                </div>
+              </div>
             </Paper>
             <br />
             <Paper>
