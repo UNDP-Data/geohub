@@ -319,7 +319,7 @@
         {/if}
 
         <div class={url ? 'name vector' : 'name'}>
-          {level === 0 ? label : clean(label)}
+          {clean(label)}
         </div>
 
         {#if url}

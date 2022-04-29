@@ -39,7 +39,7 @@ describe('Bucket Filter', () => {
     // add delay for debounce
     await new Promise((r) => setTimeout(r, 750))
     const filterIndex = sut.component.$$.props.bucketsMeetThereshold
-    expect(sut.component.$$.ctx[filterIndex]).toEqual(['climateaction/', 'goodhealthandwellbeing/'])
+    expect(sut.component.$$.ctx[filterIndex]).toEqual(['climate-action/', 'good-health-and-wellbeing/'])
   })
 
   it('should have an empty input upon click of clear button', async () => {
