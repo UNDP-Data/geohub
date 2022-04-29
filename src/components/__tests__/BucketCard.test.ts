@@ -16,7 +16,7 @@ import { BucketType } from '$lib/constants'
 const bucket: Bucket = {
   id: '1649951891000',
   published: true,
-  path: 'climateaction/',
+  path: 'climate-action/',
   label: 'Climate Action',
   description: 'Bucket contains data related to SDG 13',
   icon: 'fa-duotone fa-earth-americas',
