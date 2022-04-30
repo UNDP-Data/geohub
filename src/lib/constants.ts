@@ -32,7 +32,7 @@ export const BucketIntialValues = {
 }
 
 export const LayerInitialValues = {
-  name: '',
+  name: 'GeoHub',
   definition: undefined,
   type: '',
   info: {},
