@@ -50,9 +50,11 @@ const listContainer = async (containerName: string, relPath: string) => {
     treeLabel = treeLabel.split('/').pop()
   }
 
-  const tree = { label: treeLabel, children: [], path: treePath, url: null }
+  const tree: TreeNode = <TreeNode>{ label: treeLabel, children: [], path: treePath, url: null }
   const cclient = blobServiceClient.getContainerClient(containerName)
+
   const containerChildren: Array<TreeNode> = []
+
   for await (const item of cclient.listBlobsByHierarchy('/', { prefix: relPath })) {
     let childLabel: string
 
@@ -65,7 +67,14 @@ const listContainer = async (containerName: string, relPath: string) => {
         childLabel = label
       }
 
-      containerChildren.push({ label: childLabel, children: [], path: path, url: null, isRaster: false })
+      const bclient = cclient.getBlobClient(`${item.name}metadata.json`)
+      const isVectorTile: boolean = await bclient.exists()
+
+      const url = isVectorTile
+        ? `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
+        : null
+
+      containerChildren.push({ label: childLabel, children: [], path: path, url: url, isRaster: false })
     } else {
       const blockBlobClient = cclient.getBlockBlobClient(item.name)
       const sasToken = generateBlobSASQueryParameters(
@@ -85,14 +94,14 @@ const listContainer = async (containerName: string, relPath: string) => {
       } else {
         childLabel = label
       }
+      const isRaster = isRasterExtension(childLabel)
 
-      if (childLabel === 'metadata.json') {
-        tree.url = `${blockBlobClient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
+      if (isRaster) {
+        containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRaster })
       }
-
-      containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRasterExtension(childLabel) })
     }
   }
+
   tree.children = containerChildren
 
   return {
