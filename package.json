@@ -31,7 +31,6 @@
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@maplibre/maplibre-gl-style-spec": "^15.0.0",
-    "@smui-extra/accordion": "^6.0.0-beta.16",
     "@smui/banner": "^6.0.0-beta.16",
     "@smui/button": "^6.0.0-beta.16",
     "@smui/card": "^6.0.0-beta.16",

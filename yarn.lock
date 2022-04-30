@@ -905,22 +905,6 @@
   dependencies:
     "@daybrush/utils" "^1.4.0"
 
-"@smui-extra/accordion@^6.0.0-beta.16":
-  version "6.0.0-beta.16"
-  resolved "https://registry.npmjs.org/@smui-extra/accordion/-/accordion-6.0.0-beta.16.tgz"
-  integrity sha512-p1gBhIyg3a8EXZWOsDPKURneqIssWsg5g72bp+TYvRWqN/e1X2CPnpiYwxWivl+k8A0h2u3rRvQiQnD08R0TlA==
-  dependencies:
-    "@material/animation" "^13.0.0"
-    "@material/elevation" "^13.0.0"
-    "@material/feature-targeting" "^13.0.0"
-    "@material/ripple" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@material/typography" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.16"
-    "@smui/paper" "^6.0.0-beta.16"
-    "@smui/ripple" "^6.0.0-beta.16"
-    svelte2tsx "^0.5.5"
-
 "@smui/banner@^6.0.0-beta.16":
   version "6.0.0-beta.16"
   resolved "https://registry.npmjs.org/@smui/banner/-/banner-6.0.0-beta.16.tgz"
@@ -1098,19 +1082,6 @@
     "@material/notched-outline" "^13.0.0"
     "@smui/common" "^6.0.0-beta.16"
     "@smui/floating-label" "^6.0.0-beta.16"
-    svelte2tsx "^0.5.5"
-
-"@smui/paper@^6.0.0-beta.16":
-  version "6.0.0-beta.16"
-  resolved "https://registry.npmjs.org/@smui/paper/-/paper-6.0.0-beta.16.tgz"
-  integrity sha512-b103emE4DoN6ZuZk5jHD7TbROJYGo3rsfbZlmzUG9plPcOL5rhGVkLhB8m3oWlLqLNG0vl6kJPLiHe2qYny66g==
-  dependencies:
-    "@material/elevation" "^13.0.0"
-    "@material/feature-targeting" "^13.0.0"
-    "@material/shape" "^13.0.0"
-    "@material/theme" "^13.0.0"
-    "@material/typography" "^13.0.0"
-    "@smui/common" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
 "@smui/radio@^6.0.0-beta.16":

@@ -74,7 +74,7 @@ const listContainer = async (containerName: string, relPath: string) => {
         ? `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
         : null
 
-      containerChildren.push({ label: childLabel, children: [], path: path, url: url, isRaster: false })
+      containerChildren.push({ label: childLabel, children: [], path, url, isRaster: false })
     } else {
       const blockBlobClient = cclient.getBlockBlobClient(item.name)
       const sasToken = generateBlobSASQueryParameters(
@@ -97,7 +97,7 @@ const listContainer = async (containerName: string, relPath: string) => {
       const isRaster = isRasterExtension(childLabel)
 
       if (isRaster) {
-        containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRaster })
+        containerChildren.push({ label: childLabel, path, url: sasUrl, isRaster })
       }
     }
   }

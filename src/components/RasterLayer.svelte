@@ -9,7 +9,6 @@
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
@@ -76,7 +75,6 @@
     { label: TabNames.LEGEND, icon: faList, active: false },
     { label: TabNames.REFINE, icon: faCalculator, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
-    // { label: TabNames.ZOOM, icon: faMagnifyingGlass, active: false },
   ]
 
   const debounce = (fn) => {

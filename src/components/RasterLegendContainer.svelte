@@ -8,7 +8,6 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
 
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
@@ -75,7 +74,7 @@
     </Wrapper>
     <br />
     <Wrapper>
-      <div class="toggle-container" on:click={handleColorMapToggleClick} data-testid="legend-toggle-container">
+      <div class="toggle-container" on:click={handleColorMapToggleClick} data-testid="colormap-toggle-container">
         <Card>
           <PrimaryAction style="padding: 10px;">
             <Fa icon={faPalette} style="font-size: 16px;" />
