@@ -8,6 +8,8 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
+  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
 
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
@@ -38,6 +40,10 @@
       ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
       : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
   }
+
+  const handleColorMapToggleClick = () => {
+    console.log('handleColorMapToggleClick')
+  }
 </script>
 
 <div class="columns" data-testid="raster-legend-view-container">
@@ -56,7 +62,7 @@
       </div>
     {/if}
   </div>
-  <div class="columm legend-toggle">
+  <div class="columm legend-toggle" transition:slide>
     <Wrapper>
       <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
         <Card>
@@ -66,6 +72,17 @@
         </Card>
       </div>
       <Tooltip showDelay={500} hideDelay={100} yPos="above">Toggle Legend Type</Tooltip>
+    </Wrapper>
+    <br />
+    <Wrapper>
+      <div class="toggle-container" on:click={handleColorMapToggleClick} data-testid="legend-toggle-container">
+        <Card>
+          <PrimaryAction style="padding: 10px;">
+            <Fa icon={faPalette} style="font-size: 16px;" />
+          </PrimaryAction>
+        </Card>
+      </div>
+      <Tooltip showDelay={500} hideDelay={100} yPos="above">Toggle Color Map Type</Tooltip>
     </Wrapper>
   </div>
 </div>

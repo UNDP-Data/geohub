@@ -76,7 +76,7 @@
     { label: TabNames.LEGEND, icon: faList, active: false },
     { label: TabNames.REFINE, icon: faCalculator, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
-    { label: TabNames.ZOOM, icon: faMagnifyingGlass, active: false },
+    // { label: TabNames.ZOOM, icon: faMagnifyingGlass, active: false },
   ]
 
   const debounce = (fn) => {
