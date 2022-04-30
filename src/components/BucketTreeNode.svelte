@@ -23,7 +23,7 @@
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
-  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
+  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, treeBucket } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -45,6 +45,7 @@
   $: mmap = $map
 
   onMount(() => {
+    //console.log({ label: label, path: path, url: url })
     if (level === 0) toggleExpansion()
   })
 
@@ -65,14 +66,19 @@
 
   const updateTreeStore = async () => {
     setProgressIndicator(true)
+
     const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
     if (treeData) {
-      node.children = treeData.tree.children
-      const childNodes = node.children.filter((item) => item.url !== null)
+      //set  node value to the result of the fetch. This will work
+      node = treeData.tree
+      // the info endpoint returns metdata for rasters. the same needs to be implemented for
+      // vector data with the difference that the metadat will be coming from .metadata.json
 
-      // store metadata upon expansion of node
+      const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
+      //const vectorChildNodes = node.children.filter((item) => item.url !== null && !item.isRaster)
+
       Promise.all(
-        childNodes.map((node) => {
+        rasterChildNodes.map((node) => {
           return {
             data: fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`),
             node,
@@ -293,18 +299,6 @@
   <div style="padding-bottom: 5px;">
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <div class="tree-icon" on:click={() => toggleExpansion()}>
-          {#if loadingLayer === true}
-            <Fa icon={faSync} size="sm" spin />
-          {:else if level === 0}
-            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
-          {:else if !expanded}
-            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
-          {:else}
-            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
-          {/if}
-        </div>
-
         {#if url}
           <div alt="Vector" class="load-layer" on:click={loadLayer}>
             {#if loadingLayer === true}
@@ -314,6 +308,18 @@
                 <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
+            {/if}
+          </div>
+        {:else}
+          <div class="tree-icon" on:click={() => toggleExpansion()}>
+            {#if loadingLayer === true}
+              <Fa icon={faSync} size="sm" spin />
+            {:else if level === 0}
+              <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
+            {:else if !expanded}
+              <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
+            {:else}
+              <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
             {/if}
           </div>
         {/if}
@@ -448,7 +454,7 @@
       margin-right: 5px;
 
       @media (prefers-color-scheme: dark) {
-        color: white;
+        color: rgb(138, 20, 20);
       }
     }
   }
