@@ -50,18 +50,11 @@ const listContainer = async (containerName: string, relPath: string) => {
     treeLabel = treeLabel.split('/').pop()
   }
 
-  const tree = { label: treeLabel, children: [], path: treePath, url: null }
+  const tree: TreeNode = <TreeNode>{ label: treeLabel, children: [], path: treePath, url: null }
   const cclient = blobServiceClient.getContainerClient(containerName)
 
   const containerChildren: Array<TreeNode> = []
-  // tests if the relPath is a vector tile...
-  // const bclient = cclient.getBlobClient(`${relPath}metadata.json`)
-  // const isVectorTile:boolean = await bclient.exists()
-  // if (isVectorTile) {
-  //   tree.url = `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
-  //   console.log(tree.url)
-  // }
-  // else {
+
   for await (const item of cclient.listBlobsByHierarchy('/', { prefix: relPath })) {
     let childLabel: string
 
@@ -73,9 +66,10 @@ const listContainer = async (containerName: string, relPath: string) => {
       } else {
         childLabel = label
       }
-      const bclient = cclient.getBlobClient(`${path}metadata.json`)
+
+      const bclient = cclient.getBlobClient(`${item.name}metadata.json`)
       const isVectorTile: boolean = await bclient.exists()
-      console.log(item, isVectorTile, `${path}metadata.json`)
+
       const url = isVectorTile
         ? `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
         : null
@@ -107,7 +101,6 @@ const listContainer = async (containerName: string, relPath: string) => {
       }
     }
   }
-  //}
 
   tree.children = containerChildren
 
