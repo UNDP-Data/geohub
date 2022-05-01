@@ -13,7 +13,6 @@
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
-  import { faSquareXmark } from '@fortawesome/free-solid-svg-icons/faSquareXmark'
   import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
