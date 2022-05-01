@@ -8,12 +8,14 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
+  import FaLayers from 'svelte-fa/src/fa-layers.svelte'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
-  import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
+  import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
+  import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 
   import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createPopperActions } from 'svelte-popperjs'
@@ -23,16 +25,16 @@
   import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
-  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, treeBucket } from '$stores'
+  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
   export let level = 0
   export let node: TreeNode
 
   const dispatch = createEventDispatcher()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
-  const iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
-  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
+  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+  let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let SelectLayerStyleDialogVisible: boolean
@@ -40,13 +42,16 @@
   let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
-  $: ({ label, children, path, url, isRaster } = tree)
+  $: ({ label, children, path, url, isRaster, geomType } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
 
   onMount(() => {
-    //console.log({ label: label, path: path, url: url })
+    //console.log({ label: label,  geomType:geomType, url: url })
     if (level === 0) toggleExpansion()
+    if (geomType !== undefined) {
+      iconVector = getVectorLayerIcon(geomType)
+    }
   })
 
   onDestroy(() => {
@@ -71,16 +76,23 @@
     if (treeData) {
       //set  node value to the result of the fetch. This will work
       node = treeData.tree
-      // the info endpoint returns metdata for rasters. the same needs to be implemented for
-      // vector data with the difference that the metadat will be coming from .metadata.json
+      // the info endpoint returns metadata for rasters. the same needs to be implemented for
+      // vector data with the difference that the metadata will be coming from .metadata.json
 
-      const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
+      //const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
       //const vectorChildNodes = node.children.filter((item) => item.url !== null && !item.isRaster)
+      const childNodes = node.children.filter((item) => item.url !== null)
 
       Promise.all(
-        rasterChildNodes.map((node) => {
+        childNodes.map((node) => {
+          const layerURL = new URL(node.url)
+          const infoURI: string = node.isRaster
+            ? `${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`
+            : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
+                layerURL.search
+              }`
           return {
-            data: fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`),
+            data: fetchUrl(infoURI),
             node,
           }
         }),
@@ -88,9 +100,23 @@
         responses.forEach((response) => {
           response.data.then((layerInfo) => {
             const layerPathHash = hash(response.node.path)
+            if (response.node.isRaster) {
+              if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+                const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
+                  description: layerInfo.band_metadata[0][1]['Description'],
+                  source: layerInfo.band_metadata[0][1]['Source'],
+                  unit: layerInfo.band_metadata[0][1]['Unit'],
+                }
 
-            if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-              setLayerMetaDataStore(layerPathHash, layerInfo)
+                setLayerMetaDataStore(layerPathHash, metadata)
+              }
+            } else {
+              const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
+                description: layerInfo.description,
+                source: layerInfo.source,
+                unit: layerInfo.unit,
+              }
+              setLayerMetaDataStore(layerPathHash, metadata)
             }
           })
         })
@@ -100,24 +126,21 @@
     setProgressIndicator(false)
   }
 
+  const getVectorLayerIcon = (layerGeomType: string) => {
+    return LayerIconTypes.find((icon) => layerGeomType.toLowerCase().includes(icon.id))
+  }
+
   const getBase64EncodedUrl = (url: string) => {
     const [base, sign] = url.split('?')
     return `${base}?${btoa(sign)}`
   }
 
-  const setLayerMetaDataStore = (layerPathHash: number, layerInfo: LayerInfo) => {
+  const setLayerMetaDataStore = (layerPathHash: number, metadata: LayerInfoMetadata) => {
+    //TODO: clarify with Chris why is this code  overly complicated
     const layerMetadataClone = cloneDeep($layerMetadata)
-
-    const metadata = {
-      description: layerInfo.band_metadata[0][1]['Description'],
-      source: layerInfo.band_metadata[0][1]['Source'],
-      unit: layerInfo.band_metadata[0][1]['Unit'],
-    }
-
     layerMetadataClone.set(layerPathHash, metadata)
     $layerMetadata = layerMetadataClone
-
-    return metadata
+    return
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -259,16 +282,33 @@
         metadata = $layerMetadata.get(layerPathHash)
       } else {
         // get metadata from endpoint
-        const layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${getBase64EncodedUrl(url)}`)
+        const layerURL = new URL(url)
+        const infoURI: string = isRaster
+          ? `${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`
+          : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
+              layerURL.search
+            }`
+        const layerInfo = await fetchUrl(infoURI)
 
-        if (layerInfo?.band_metadata?.length > 0) {
-          metadata = setLayerMetaDataStore(layerPathHash, layerInfo)
-        } else {
-          metadata = {
-            description: 'N/A',
-            source: 'N/A',
-            unit: 'N/A',
+        if (isRaster) {
+          if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+            metadata = <LayerInfoMetadata>{
+              description: layerInfo.band_metadata[0][1]['Description'],
+              source: layerInfo.band_metadata[0][1]['Source'],
+              unit: layerInfo.band_metadata[0][1]['Unit'],
+            }
+
+            setLayerMetaDataStore(layerPathHash, metadata)
           }
+        } else {
+          //layerInfo here is the whole metadata.json so the propes needs to be extracted into a new object
+          metadata = <LayerInfoMetadata>{
+            description: layerInfo.description,
+            source: layerInfo.source,
+            unit: layerInfo.unit,
+          }
+
+          setLayerMetaDataStore(layerPathHash, metadata)
         }
       }
 
@@ -305,10 +345,21 @@
               <Fa icon={faSync} size="sm" spin />
             {:else}
               <Wrapper>
-                <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+                <!-- <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" /> -->
+                <FaLayers size="sm" style="cursor: pointer;">
+                  <Fa icon={faLayerGroup} scale={1} />
+                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:white" />
+                </FaLayers>
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
             {/if}
+          </div>
+          <div
+            class="name vector"
+            use:popperRef
+            on:mouseenter={() => handleTooltipMouseEnter()}
+            on:mouseleave={() => handleToolipMouseLeave()}>
+            {clean(label)}
           </div>
         {:else}
           <div class="tree-icon" on:click={() => toggleExpansion()}>
@@ -322,11 +373,10 @@
               <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
             {/if}
           </div>
+          <div class="name">
+            {clean(label)}
+          </div>
         {/if}
-
-        <div class={url ? 'name vector' : 'name'}>
-          {clean(label)}
-        </div>
 
         {#if url}
           <div class="icon" alt={iconVector.label} title={iconVector.label}>
@@ -357,7 +407,11 @@
               <Fa icon={faSync} size="sm" spin />
             {:else}
               <Wrapper>
-                <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" />
+                <!-- <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" /> -->
+                <FaLayers size="sm" style="cursor: pointer;">
+                  <Fa icon={faLayerGroup} scale={1} />
+                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:white" />
+                </FaLayers>
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
             {/if}

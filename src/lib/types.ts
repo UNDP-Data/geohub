@@ -21,6 +21,7 @@ export interface TreeNode {
   prefix?: string
   url?: string
   isRaster?: boolean
+  geomType?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
