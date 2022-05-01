@@ -9,9 +9,11 @@
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
+  import { createPopperActions } from 'svelte-popperjs'
 
-  import IntervalsLegend from '$components/IntervalsLegend.svelte'
+  import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
+  import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
@@ -40,8 +42,27 @@
       : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
   }
 
-  const handleColorMapToggleClick = () => {
-    console.log('handleColorMapToggleClick')
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'right-end',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [20, 20],
+        },
+      },
+    ],
+  }
+  let showTooltip = false
+
+  import { fade } from 'svelte/transition'
+
+  const handleColorMapClick = () => {
+    showTooltip = !showTooltip
   }
 </script>
 
@@ -70,19 +91,24 @@
           </PrimaryAction>
         </Card>
       </div>
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Toggle Legend Type</Tooltip>
+      <Tooltip showDelay={1000} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
     </Wrapper>
     <br />
-    <Wrapper>
-      <div class="toggle-container" on:click={handleColorMapToggleClick} data-testid="colormap-toggle-container">
-        <Card>
-          <PrimaryAction style="padding: 10px;">
-            <Fa icon={faPalette} style="font-size: 16px;" />
-          </PrimaryAction>
-        </Card>
+
+    <div class="toggle-container" use:popperRef on:click={handleColorMapClick} data-testid="colormap-toggle-container">
+      <Card>
+        <PrimaryAction style="padding: 10px;">
+          <Fa icon={faPalette} style="font-size: 16px;" />
+        </PrimaryAction>
+      </Card>
+    </div>
+
+    {#if showTooltip}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} {layer} />
+        <div id="arrow" data-popper-arrow />
       </div>
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Toggle Color Map Type</Tooltip>
-    </Wrapper>
+    {/if}
   </div>
 </div>
 
@@ -92,6 +118,52 @@
 
     .toggle-container {
       margin-left: 3.5px;
+    }
+  }
+
+  $tooltip-background: #fff;
+
+  #tooltip {
+    background: $tooltip-background;
+    border-radius: 7.5px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    max-width: 480px;
+    width: 480px;
+    max-height: 300px;
+    padding: 15px;
+    padding-top: 10px;
+    position: absolute;
+    top: 10px;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+    }
+
+    #arrow,
+    #arrow::before {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: $tooltip-background;
+      left: -4.5px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
+    }
+
+    #arrow {
+      visibility: visible;
+    }
+
+    #arrow::before {
+      visibility: visible;
+      content: '';
+      transform: rotate(45deg);
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
     }
   }
 </style>

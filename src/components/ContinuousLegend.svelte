@@ -141,6 +141,7 @@
       rest={false}
       on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
   </div>
+
   <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT" class="select-cmaps-menu">
     <div class={colorMapSelectionVisible ? 'cmap-selection shown' : 'cmap-selection hidden'}>
       <div class="radio-demo">
