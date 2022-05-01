@@ -1,6 +1,6 @@
-import { faShapes } from '@fortawesome/free-solid-svg-icons/faShapes'
+import { faDrawPolygon } from '@fortawesome/free-solid-svg-icons/faDrawPolygon'
 import { faBraille } from '@fortawesome/free-solid-svg-icons/faBraille'
-import { faWaveSquare } from '@fortawesome/free-solid-svg-icons/faWaveSquare'
+import { faBacon } from '@fortawesome/free-solid-svg-icons/faBacon'
 import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage'
 
@@ -52,13 +52,13 @@ export const LayerIconTypes = [
   {
     id: 'line',
     label: 'Line',
-    icon: faWaveSquare,
+    icon: faBacon,
     color: 'mediumpurple',
   },
   {
     id: 'polygon',
     label: 'Polygon',
-    icon: faShapes,
+    icon: faDrawPolygon,
     color: 'crimson',
   },
   {
