@@ -1,15 +1,16 @@
 <script lang="ts">
   import { style } from 'svelte-body'
-  import Header from '../../dashboards/components/Header.svelte'
   import Content from '../../dashboards/components/Content.svelte'
   import Map from '../../dashboards/components/Map.svelte'
 
   let drawerOpen = true
 </script>
 
+<svelte:head>
+  <link rel="stylesheet" href="../smui.css" media="(prefers-color-scheme: light)" />
+  <link rel="stylesheet" href="../smui-dark.css" media="screen and (prefers-color-scheme: dark)" />
+</svelte:head>
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
-
-<Header bind:drawerOpen>Electricity Dashboard</Header>
 
 <Content bind:drawerOpen>
   <Map />

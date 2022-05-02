@@ -27,8 +27,6 @@
   const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
   const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
 
-  console.log(RWI_URL)
-
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
   const aerialBingUrl = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
   const apiUrl = import.meta.env.VITE_TITILER_ENDPOINT
@@ -355,7 +353,7 @@
     }
   }
 
-  $height: calc(100vh - 64px);
+  $height: 100vh;
 
   @media (max-width: 768px) {
     $height: calc(100vh - 184px);
