@@ -15,14 +15,16 @@
 
   const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
   const HREA_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMDYlM0EwMFomc3I9YiZzcD1yJnNpZz1WYXp0QWdEUFBvQWc5NHVtMXpBa0pmJTJGamNjZ0RndkJsYlZWRlhLRXRIRmclM0Q='
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjElM0E0OVomc3I9YiZzcD1yJnNpZz1TdEJmZ1lISmgxd2xnb1VrMFJteDlNRWxmSXFvQk1jYiUyQnV0Qk9KRWtQUm8lM0Q='
   const ML_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMjUlM0EzMFomc3I9YiZzcD1yJnNpZz02c1R6VDlTSmdkQ21jUSUyQm9ydmNPRWkzcjcxTDJPZVBXZDhhTDZPQnRaOFklM0Q='
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjIlM0EzM1omc3I9YiZzcD1yJnNpZz1XQUFiM2o4QjZSN2dFUlYlMkJhWUlkdnRsWUR5SGc0cG5TJTJGU0p2S2NKSDllZyUzRA=='
   const RWI_TOKEN =
     '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
   const HREA_ID = 'hrea'
   const ML_ID = 'ml'
   const RWI_ID = 'rwi'
+  const ADM_ID = 'admin'
+  const ADM_LAYER = 'adm1_polygons'
   const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif${HREA_TOKEN}`
   const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
   const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
@@ -32,12 +34,13 @@
   const apiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
   export let drawerOpen = false
+  let hoveredStateId = null
 
   let showIntro = true
   let checked = false
   let electricityChoices = ['HREA', 'ML']
   let electricitySelected = 'HREA'
-  let interactChoices = ['Hover', 'Draw']
+  let interactChoices = ['Hover', 'Click']
   let interactSelected = 'Hover'
   let drawerWidth = 355
   let isResizingDrawer = false
@@ -50,7 +53,7 @@
   $: layerOpacity, setLayerOpacity()
 
   const setLayerOpacity = () => {
-    if ($map) {
+    if ($map && $map.getLayer(RWI_ID)) {
       $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
     }
   }
@@ -72,7 +75,14 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-    map.subscribe(() => loadRasterLayer(HREA_ID, HREA_URL, ML_ID))
+    map.subscribe(() => {
+      if ($map) {
+        $map.on('load', () => {
+          loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+          loadAdminLayer()
+        })
+      }
+    })
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -92,6 +102,37 @@
 
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
+
+  const loadAdminLayer = () => {
+    const layerSource = {
+      type: LayerTypes.VECTOR,
+      maxzoom: 10,
+      promoteId: 'adm1_id',
+      tiles: [`${AZURE_URL}/admin/${ADM_LAYER}/{z}/{x}/{y}.pbf`],
+    }
+    const layerFill = {
+      id: ADM_ID,
+      type: LayerTypes.FILL,
+      source: ADM_ID,
+      'source-layer': ADM_LAYER,
+      paint: {
+        'fill-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 0.05)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+        'fill-outline-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 1)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+      },
+    }
+    !$map.getSource(ADM_ID) && $map.addSource(ADM_ID, layerSource)
+    !$map.getLayer(ADM_ID) && $map.addLayer(layerFill)
+  }
 
   const loadRasterLayer = async (id: string, url: string, oldId: string) => {
     const layerInfo = await fetchUrl(`${apiUrl}/info?url=${url}`)
@@ -140,6 +181,54 @@
     !$map.getLayer(id) && $map.addLayer(layerDefinition, firstSymbolId)
   }
 
+  const onMouseMove = (e) => {
+    if (e.features.length > 0) {
+      if (hoveredStateId) {
+        $map.setFeatureState(
+          {
+            source: ADM_ID,
+            sourceLayer: ADM_LAYER,
+            id: hoveredStateId,
+          },
+          { hover: false },
+        )
+      }
+      hoveredStateId = e.features[0].id
+      $map.setFeatureState(
+        {
+          source: ADM_ID,
+          sourceLayer: ADM_LAYER,
+          id: hoveredStateId,
+        },
+        { hover: true },
+      )
+    }
+  }
+
+  const onMouseLeave = () => {
+    if (hoveredStateId) {
+      $map.setFeatureState(
+        {
+          source: ADM_ID,
+          sourceLayer: ADM_LAYER,
+          id: hoveredStateId,
+        },
+        { hover: false },
+      )
+    }
+    hoveredStateId = null
+  }
+
+  const loadInteraction = ({ target: { textContent } }) => {
+    if (textContent === 'Click') {
+      $map.on('mousemove', ADM_ID, onMouseMove)
+      $map.on('mouseleave', ADM_ID, onMouseLeave)
+    } else {
+      $map.off('mousemove', ADM_ID, onMouseMove)
+      $map.off('mouseleave', ADM_ID, onMouseLeave)
+    }
+  }
+
   const loadLayer = ({ target: { textContent } }) => {
     if (textContent === 'HREA') loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
     else if (textContent === 'ML') loadRasterLayer(ML_ID, ML_URL, HREA_ID)
@@ -159,7 +248,7 @@
       layout: { visibility: 'visible' },
       paint: {
         'heatmap-weight': {
-          property: 'rwi',
+          property: RWI_ID,
           type: 'exponential',
           stops: [
             [-0.855, 0],
@@ -293,7 +382,7 @@
               Statistics
               <br />
               <SegmentedButton segments={interactChoices} let:segment singleSelect bind:interactSelected>
-                <Segment {segment}>
+                <Segment {segment} on:click={loadInteraction}>
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
