@@ -56,8 +56,6 @@ jobs:
       - name: Copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          yarn run download
-          cp -r data build/.
           cp package.json build/.
           cp yarn.lock build/.
           mv node_modules build/.

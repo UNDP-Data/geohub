@@ -1,52 +1,38 @@
 <script lang="ts">
-  import { fetchUrl } from '$lib/helper'
   import { map } from '../stores'
 
   let isContainerVisible = false
-  let admin0_feature
-  let admin1_feature
+  let adm0Name = null
+  let adm1Name = null
 
   $: {
     if ($map) {
-      updateLocation()
-      $map.on('moveend', mapMoveEnd)
+      $map.on('styledata', updateLocation)
+      $map.on('move', updateLocation)
     }
   }
 
-  const mapMoveEnd = () => {
-    updateLocation()
-  }
-
   const updateLocation = () => {
-    const center = $map.getCenter()
-    fetchUrl(`/reverse.json?lng=${center.lng}&lat=${center.lat}`)
-      .then((features) => {
-        if (!features) return
-        admin0_feature = features.find((f) => f.layer === 'admin_0')
-        admin1_feature = features.find((f) => f.layer === 'admin_1')
-
-        if (admin0_feature) {
-          isContainerVisible = true
-        } else {
-          isContainerVisible = false
-        }
-      })
-      .catch((err) => {
-        admin0_feature = undefined
-        admin1_feature = undefined
-        isContainerVisible = false
-      })
+    if ($map.getLayer('admin')) {
+      const point = $map.project($map.getCenter())
+      const features = $map.queryRenderedFeatures(point, { layers: ['admin'] })
+      if (features.length > 0) {
+        adm0Name = features[0].properties.adm0_name
+        adm1Name = features[0].properties.adm1_name
+        isContainerVisible = Boolean(features[0].properties.adm0_name)
+      } else isContainerVisible = false
+    }
   }
 </script>
 
 {#if isContainerVisible}
   <div id="data-container" class="data-container target">
     <p>
-      {#if admin0_feature}
-        {admin0_feature.properties.NAME}
+      {#if adm0Name}
+        {adm0Name}
       {/if}
-      {#if admin0_feature && admin1_feature}
-        {'>'} {admin1_feature.properties.name}
+      {#if adm1Name}
+        {'>'} {adm1Name}
       {/if}
     </p>
   </div>

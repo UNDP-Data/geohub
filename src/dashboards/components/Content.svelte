@@ -12,7 +12,6 @@
   import { fetchUrl } from '$lib/helper'
   import type { RasterLayerSpecification, HeatmapLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
-  import { RGBAImage } from 'maplibre-gl'
 
   const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
   const HREA_TOKEN =
@@ -21,11 +20,11 @@
     '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjIlM0EzM1omc3I9YiZzcD1yJnNpZz1XQUFiM2o4QjZSN2dFUlYlMkJhWUlkdnRsWUR5SGc0cG5TJTJGU0p2S2NKSDllZyUzRA=='
   const RWI_TOKEN =
     '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
-  const ADM_TOKEN =
-    '?sv=2020-10-02&st=2022-01-01T05%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=nx88t%2Fvodaf9m8pZeJQSNCabByEcZEv4%2Bvvdqlid9ro%3D'
   const HREA_ID = 'hrea'
   const ML_ID = 'ml'
   const RWI_ID = 'rwi'
+  const ADM_ID = 'admin'
+  const ADM_LAYER = 'adm1_polygons'
   const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif${HREA_TOKEN}`
   const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
   const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
@@ -35,12 +34,13 @@
   const apiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
   export let drawerOpen = false
+  let hoveredStateId = null
 
   let showIntro = true
   let checked = false
   let electricityChoices = ['HREA', 'ML']
   let electricitySelected = 'HREA'
-  let interactChoices = ['Hover', 'Draw']
+  let interactChoices = ['Hover', 'Click']
   let interactSelected = 'Hover'
   let drawerWidth = 355
   let isResizingDrawer = false
@@ -53,7 +53,7 @@
   $: layerOpacity, setLayerOpacity()
 
   const setLayerOpacity = () => {
-    if ($map) {
+    if ($map && $map.getLayer(RWI_ID)) {
       $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
     }
   }
@@ -104,19 +104,17 @@
   const handleMouseup = () => (isResizingDrawer = false)
 
   const loadAdminLayer = () => {
-    const id = 'admin'
-    const layerName = 'adm1_polygons'
     const layerSource = {
       type: LayerTypes.VECTOR,
       maxzoom: 10,
       promoteId: 'adm1_id',
-      tiles: [`${AZURE_URL}/admin/${layerName}/{z}/{x}/{y}.pbf`],
+      tiles: [`${AZURE_URL}/admin/${ADM_LAYER}/{z}/{x}/{y}.pbf`],
     }
     const layerFill = {
-      id: id,
+      id: ADM_ID,
       type: LayerTypes.FILL,
-      source: id,
-      'source-layer': layerName,
+      source: ADM_ID,
+      'source-layer': ADM_LAYER,
       paint: {
         'fill-color': [
           'case',
@@ -132,46 +130,8 @@
         ],
       },
     }
-    !$map.getSource(id) && $map.addSource(id, layerSource)
-    !$map.getLayer(id) && $map.addLayer(layerFill)
-
-    let hoveredStateId = null
-    $map.on('mousemove', id, (e) => {
-      if (e.features.length > 0) {
-        if (hoveredStateId) {
-          $map.setFeatureState(
-            {
-              source: id,
-              sourceLayer: layerName,
-              id: hoveredStateId,
-            },
-            { hover: false },
-          )
-        }
-        hoveredStateId = e.features[0].id
-        $map.setFeatureState(
-          {
-            source: id,
-            sourceLayer: layerName,
-            id: hoveredStateId,
-          },
-          { hover: true },
-        )
-      }
-    })
-    $map.on('mouseleave', id, () => {
-      if (hoveredStateId) {
-        $map.setFeatureState(
-          {
-            source: id,
-            sourceLayer: layerName,
-            id: hoveredStateId,
-          },
-          { hover: false },
-        )
-      }
-      hoveredStateId = null
-    })
+    !$map.getSource(ADM_ID) && $map.addSource(ADM_ID, layerSource)
+    !$map.getLayer(ADM_ID) && $map.addLayer(layerFill)
   }
 
   const loadRasterLayer = async (id: string, url: string, oldId: string) => {
@@ -219,6 +179,54 @@
     $map.getSource(oldId) && $map.removeSource(oldId)
     !$map.getSource(id) && $map.addSource(id, layerSource)
     !$map.getLayer(id) && $map.addLayer(layerDefinition, firstSymbolId)
+  }
+
+  const onMouseMove = (e) => {
+    if (e.features.length > 0) {
+      if (hoveredStateId) {
+        $map.setFeatureState(
+          {
+            source: ADM_ID,
+            sourceLayer: ADM_LAYER,
+            id: hoveredStateId,
+          },
+          { hover: false },
+        )
+      }
+      hoveredStateId = e.features[0].id
+      $map.setFeatureState(
+        {
+          source: ADM_ID,
+          sourceLayer: ADM_LAYER,
+          id: hoveredStateId,
+        },
+        { hover: true },
+      )
+    }
+  }
+
+  const onMouseLeave = () => {
+    if (hoveredStateId) {
+      $map.setFeatureState(
+        {
+          source: ADM_ID,
+          sourceLayer: ADM_LAYER,
+          id: hoveredStateId,
+        },
+        { hover: false },
+      )
+    }
+    hoveredStateId = null
+  }
+
+  const loadInteraction = ({ target: { textContent } }) => {
+    if (textContent === 'Click') {
+      $map.on('mousemove', ADM_ID, onMouseMove)
+      $map.on('mouseleave', ADM_ID, onMouseLeave)
+    } else {
+      $map.off('mousemove', ADM_ID, onMouseMove)
+      $map.off('mouseleave', ADM_ID, onMouseLeave)
+    }
   }
 
   const loadLayer = ({ target: { textContent } }) => {
@@ -374,7 +382,7 @@
               Statistics
               <br />
               <SegmentedButton segments={interactChoices} let:segment singleSelect bind:interactSelected>
-                <Segment {segment}>
+                <Segment {segment} on:click={loadInteraction}>
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
