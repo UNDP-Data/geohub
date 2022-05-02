@@ -12,14 +12,17 @@
   import { fetchUrl } from '$lib/helper'
   import type { RasterLayerSpecification, HeatmapLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
+  import { RGBAImage } from 'maplibre-gl'
 
   const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
   const HREA_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMDYlM0EwMFomc3I9YiZzcD1yJnNpZz1WYXp0QWdEUFBvQWc5NHVtMXpBa0pmJTJGamNjZ0RndkJsYlZWRlhLRXRIRmclM0Q='
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjElM0E0OVomc3I9YiZzcD1yJnNpZz1TdEJmZ1lISmgxd2xnb1VrMFJteDlNRWxmSXFvQk1jYiUyQnV0Qk9KRWtQUm8lM0Q='
   const ML_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMjUlM0EzMFomc3I9YiZzcD1yJnNpZz02c1R6VDlTSmdkQ21jUSUyQm9ydmNPRWkzcjcxTDJPZVBXZDhhTDZPQnRaOFklM0Q='
+    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjIlM0EzM1omc3I9YiZzcD1yJnNpZz1XQUFiM2o4QjZSN2dFUlYlMkJhWUlkdnRsWUR5SGc0cG5TJTJGU0p2S2NKSDllZyUzRA=='
   const RWI_TOKEN =
     '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
+  const ADM_TOKEN =
+    '?sv=2020-10-02&st=2022-01-01T05%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=nx88t%2Fvodaf9m8pZeJQSNCabByEcZEv4%2Bvvdqlid9ro%3D'
   const HREA_ID = 'hrea'
   const ML_ID = 'ml'
   const RWI_ID = 'rwi'
@@ -72,7 +75,14 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-    map.subscribe(() => loadRasterLayer(HREA_ID, HREA_URL, ML_ID))
+    map.subscribe(() => {
+      if ($map) {
+        $map.on('load', () => {
+          loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+          loadAdminLayer()
+        })
+      }
+    })
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -92,6 +102,77 @@
 
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
+
+  const loadAdminLayer = () => {
+    const id = 'admin'
+    const layerName = 'adm1_polygons'
+    const layerSource = {
+      type: LayerTypes.VECTOR,
+      maxzoom: 10,
+      promoteId: 'adm1_id',
+      tiles: [`${AZURE_URL}/admin/${layerName}/{z}/{x}/{y}.pbf`],
+    }
+    const layerFill = {
+      id: id,
+      type: LayerTypes.FILL,
+      source: id,
+      'source-layer': layerName,
+      paint: {
+        'fill-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 0.05)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+        'fill-outline-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 1)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+      },
+    }
+    !$map.getSource(id) && $map.addSource(id, layerSource)
+    !$map.getLayer(id) && $map.addLayer(layerFill)
+
+    let hoveredStateId = null
+    $map.on('mousemove', id, (e) => {
+      if (e.features.length > 0) {
+        if (hoveredStateId) {
+          $map.setFeatureState(
+            {
+              source: id,
+              sourceLayer: layerName,
+              id: hoveredStateId,
+            },
+            { hover: false },
+          )
+        }
+        hoveredStateId = e.features[0].id
+        $map.setFeatureState(
+          {
+            source: id,
+            sourceLayer: layerName,
+            id: hoveredStateId,
+          },
+          { hover: true },
+        )
+      }
+    })
+    $map.on('mouseleave', id, () => {
+      if (hoveredStateId) {
+        $map.setFeatureState(
+          {
+            source: id,
+            sourceLayer: layerName,
+            id: hoveredStateId,
+          },
+          { hover: false },
+        )
+      }
+      hoveredStateId = null
+    })
+  }
 
   const loadRasterLayer = async (id: string, url: string, oldId: string) => {
     const layerInfo = await fetchUrl(`${apiUrl}/info?url=${url}`)
@@ -159,7 +240,7 @@
       layout: { visibility: 'visible' },
       paint: {
         'heatmap-weight': {
-          property: 'rwi',
+          property: RWI_ID,
           type: 'exponential',
           stops: [
             [-0.855, 0],
