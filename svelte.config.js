@@ -18,7 +18,9 @@ const config = {
       },
       test: {
         threads: false,
+        globals: true,
         environment: "jsdom",
+        setupFiles: ['./jest-setup.ts'],
         deps: {
           inline: [/@smui/]
         },

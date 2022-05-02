@@ -7,6 +7,7 @@ import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe'
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
 export const STRING_COMPARE_THRESHOLD = 0.25
+export const COLOR_CLASS_COUNT = 5
 
 export enum TabNames {
   ANALYZE = 'Analyze',

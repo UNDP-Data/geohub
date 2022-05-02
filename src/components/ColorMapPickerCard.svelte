@@ -1,39 +1,44 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import chroma from 'chroma-js'
+  // import chroma from 'chroma-js'
+  import Fa from 'svelte-fa'
+  import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
 
-  import { ColorMapTypes } from '$lib/constants'
+  import type { ColorMapTypes } from '$lib/constants'
+  import { colorMapStyle } from '$lib/colormaps'
 
   export let colorMapName: string
   export let colorMapType: ColorMapTypes
-  export let layerMin: number
+  export let isCardStyle = true
+  export let isSelected: boolean
   export let layerMax: number
-  export let numberOfColors: number
+  export let layerMin: number
+  export let numberOfClasses: number
 
-  let colorMap = []
-  onMount(() => {
-    if (colorMapType === ColorMapTypes.SEQUENTIAL) {
-      colorMap = chroma
-        .scale(colorMapName)
-        .mode('lrgb')
-        .padding([0.25, 0])
-        .domain([layerMin, layerMax])
-        .colors(numberOfColors, 'rgba')
-    } else {
-      colorMap = chroma.scale(colorMapName).mode('lrgb').domain([layerMin, layerMax]).colors(numberOfColors, 'rgba')
-    }
-  })
+  let cardStyle: string
+
+  $: {
+    if (colorMapName || numberOfClasses) setCardStyle()
+  }
+
+  const setCardStyle = () => {
+    cardStyle = colorMapStyle(colorMapType, colorMapName, layerMin, layerMax, numberOfClasses, isCardStyle)
+  }
 </script>
 
-<div class="card">
+<div class="card" data-testid="color-map-picker-card-container">
   <div class="card-content">
     <div class="media">
-      <figure
-        class="image is-16by9"
-        style="height: calc(9px * 4); width: calc(16px * 4);  background: linear-gradient(90deg, {colorMap});" />
+      <figure class={`image ${isCardStyle ? 'is-2by1' : ''}`} style={cardStyle} data-testid="color-map-figure"/>
     </div>
-    <div class="content is-size-7">
-      {colorMapName}
+    <div class="content is-size-7 columns is-gapless">
+      <div class="column is-10">
+        {colorMapName}
+      </div>
+      {#if isSelected}
+        <div class="column is-size-8 selected" alt="Colormap Selected" title="Colormap Selected">
+          <Fa icon={faCheck} />
+        </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -44,6 +49,13 @@
 
     .media {
       margin: 0;
+    }
+
+    .selected {
+      color: hsl(141, 53%, 53%);
+      position: relative;
+      right: 2px;
+      top: 1.5px;
     }
   }
 </style>

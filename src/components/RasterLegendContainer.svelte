@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { slide } from 'svelte/transition'
+  import { fade, slide } from 'svelte/transition'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
@@ -15,7 +15,7 @@
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import { COLOR_CLASS_COUNT, DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
   export let activeColorMapName: string
@@ -23,11 +23,14 @@
 
   let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
+  let showTooltip = false
+  let numberOfClasses = COLOR_CLASS_COUNT
 
   $: selectedLegendType, setSelectedLegend()
 
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
+    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) numberOfClasses = COLOR_CLASS_COUNT
   }
 
   const handleLegendToggleClick = () => {
@@ -52,16 +55,19 @@
       {
         name: 'offset',
         options: {
-          offset: [20, 20],
+          offset: [10, 25],
         },
       },
     ],
   }
-  let showTooltip = false
 
-  import { fade } from 'svelte/transition'
+  const handleColorMapClick = (event: CustomEvent) => {
+    if (event?.detail?.colorMapName) {
+      activeColorMapName = event.detail.colorMapName
+    }
+  }
 
-  const handleColorMapClick = () => {
+  const handleClosePopup = () => {
     showTooltip = !showTooltip
   }
 </script>
@@ -74,7 +80,7 @@
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+        <IntervalsLegend bind:activeColorMapName layerConfig={layer} bind:numberOfClasses />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
@@ -95,7 +101,7 @@
     </Wrapper>
     <br />
 
-    <div class="toggle-container" use:popperRef on:click={handleColorMapClick} data-testid="colormap-toggle-container">
+    <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
       <Card>
         <PrimaryAction style="padding: 10px;">
           <Fa icon={faPalette} style="font-size: 16px;" />
@@ -105,7 +111,12 @@
 
     {#if showTooltip}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} {layer} />
+        <ColorMapPicker
+          on:handleColorMapClick={handleColorMapClick}
+          on:handleClosePopup={handleClosePopup}
+          {layer}
+          {activeColorMapName}
+          {numberOfClasses} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}
@@ -129,13 +140,13 @@
     border: 1px solid #ccc;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-size: 13px;
-    max-width: 480px;
-    width: 480px;
     max-height: 300px;
-    padding: 15px;
+    max-width: 460px;
     padding-top: 10px;
+    padding: 15px;
     position: absolute;
     top: 10px;
+    width: 460px;
 
     @media (prefers-color-scheme: dark) {
       background: #212125;
@@ -143,11 +154,11 @@
 
     #arrow,
     #arrow::before {
+      background: $tooltip-background;
+      height: 18px;
+      left: -4.5px;
       position: absolute;
       width: 18px;
-      height: 18px;
-      background: $tooltip-background;
-      left: -4.5px;
 
       @media (prefers-color-scheme: dark) {
         background: #212125;
@@ -159,11 +170,11 @@
     }
 
     #arrow::before {
-      visibility: visible;
-      content: '';
-      transform: rotate(45deg);
       border-bottom: 1px solid #ccc;
       border-left: 1px solid #ccc;
+      content: '';
+      transform: rotate(45deg);
+      visibility: visible;
     }
   }
 </style>
