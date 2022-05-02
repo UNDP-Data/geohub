@@ -8,7 +8,7 @@ import {
 import azure from '@azure/storage-blob'
 import type { Tree, TreeNode } from '$lib/types'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
-
+import { fetchUrl } from '$lib/helper'
 const account = AZURE_STORAGE_ACCOUNT
 const accountKey = AZURE_STORAGE_ACCESS_KEY
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
@@ -73,8 +73,21 @@ const listContainer = async (containerName: string, relPath: string) => {
       const url = isVectorTile
         ? `${bclient.url.replace('metadata.json', '{z}/{x}/{y}.pbf')}${ACCOUNT_SAS_TOKEN_URL.search}`
         : null
-
-      containerChildren.push({ label: childLabel, children: [], path, url, isRaster: false })
+      // fetch geom type ...there must be a better way to avoid calling get on metadata.json
+      let geomType: string
+      if (isVectorTile) {
+        const vectorLayerInfo = await fetchUrl(`${bclient.url}${ACCOUNT_SAS_TOKEN_URL.search}`)
+        const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
+        geomType = vectorTileMeta.tilestats.layers[0].geometry
+      }
+      containerChildren.push({
+        label: childLabel,
+        children: [],
+        path: path,
+        url: url,
+        isRaster: false,
+        geomType: geomType,
+      })
     } else {
       const blockBlobClient = cclient.getBlockBlobClient(item.name)
       const sasToken = generateBlobSASQueryParameters(
