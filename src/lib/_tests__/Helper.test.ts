@@ -122,6 +122,11 @@ describe('clean', () => {
     expect(value).toEqual('Proportion Of Local Governments Implementing Local Disaster Risk Reduction Strategies')
   })
 
+  it('should remove hyphen characters', () => {
+    const value = helper.clean('climate-action-plan')
+    expect(value).toEqual('Climate Action Plan')
+  })
+
   it('should remove extension', () => {
     const file = helper.clean('AUTOEXEC.BAT')
     expect(file).toEqual('AUTOEXEC')

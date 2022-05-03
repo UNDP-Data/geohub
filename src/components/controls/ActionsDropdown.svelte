@@ -4,19 +4,19 @@
 
 <script lang="ts">
   import Tooltip, { Wrapper } from '@smui/tooltip'
-
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
-  import { slide } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
+  import { createPopperActions } from 'svelte-popperjs'
 
   import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
   import { LayerInitialValues } from '$lib/constants'
-  import { dynamicLayers, layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
+  import { dynamicLayers, layerList, map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
@@ -25,9 +25,9 @@
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-  let mapLayerLength = mapLayers.length - 1
-  let menuOpen = false
   let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
+  let mapLayerLength = mapLayers.length - 1
+  let showTooltip = false
 
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
 
@@ -58,23 +58,44 @@
       }
     }
   }
+
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'right-start',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [-10, 10],
+        },
+      },
+      {
+        name: 'preventOverflow',
+        options: {
+          mainAxis: true,
+        },
+      },
+    ],
+  }
+
+  const handleTooltipClick = () => {
+    showTooltip = !showTooltip
+  }
 </script>
 
-<Wrapper>
-  <div class="icon-selected" on:click={() => (menuOpen = !menuOpen)}>
-    <Fa
-      icon={faChevronRight}
-      size="1x"
-      style={`cursor: pointer;${menuOpen === true ? 'transform: rotate(90deg);' : ''}`} />
-  </div>
-  <Tooltip showDelay={500} hideDelay={500} yPos="above"
-    >{menuOpen ? 'Hide Actions Panel' : 'Show Actions Panel'}</Tooltip>
-</Wrapper>
+<div class="icon-selected" use:popperRef on:click={handleTooltipClick} style="margin-right: 0; cursor: pointer;">
+  <Fa icon={faChevronRight} size="sm" />
+</div>
 
-{#if menuOpen}
-  <div transition:slide class="dropdown">
+{#if showTooltip}
+  <div transition:fade class="dropdown" use:popperContent={popperOptions} data-testid="tooltip">
     <div>
-      <Tag type="is-info" size="is-small">{mapLayerIndex} / {mapLayerLength}</Tag>
+      <Tag type="is-info" size="is-small">
+        {mapLayerIndex} / {mapLayerLength}
+      </Tag>
     </div>
     <div style="padding-left: 5px;">
       <LayerOrderButtons {layer} bind:mapLayerIndex />
@@ -83,7 +104,7 @@
     {#if $layerList.length > 1}
       <Wrapper>
         <div class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
-          <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="1x" />
+          <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="sm" />
         </div>
         <Tooltip showDelay={500} hideDelay={500} yPos="above">Merge Layers</Tooltip>
       </Wrapper>
@@ -105,9 +126,8 @@
     height: 40px;
     padding: 10px;
     position: absolute;
-    right: 30px;
-    top: 40px;
-    z-index: 10;
+    right: 40px;
+    z-index: 1;
 
     @media (prefers-color-scheme: dark) {
       background: #323234;
