@@ -42,6 +42,8 @@
   export let drawerOpen = false
   let hoveredStateId = null
 
+  let hoverValue = {}
+
   let showIntro = true
   let heatmapChecked = false
   let electricityChoices = [
@@ -90,6 +92,7 @@
           loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
           loadAdminLayer()
         })
+        $map.on('mousemove', onMouseHover)
       }
     })
   })
@@ -227,15 +230,31 @@
     hoveredStateId = null
   }
 
+  const onMouseHover = async (e) => {
+    const { lng, lat } = $map.unproject(e.point)
+    const options = [
+      [HREA_ID, HREA_URL],
+      [ML_ID, ML_URL],
+    ]
+    for (const [name, dataURL] of options) {
+      const url = `${API_URL}/point/${lng},${lat}?url=${dataURL}`
+      const r = await fetch(url)
+      const response = await r.json()
+      hoverValue[name] = response.values[0]
+    }
+  }
+
   $: interactSelected, loadInteraction()
   const loadInteraction = () => {
     if (!$map) return
     if (interactSelected === 'Click') {
       $map.on('mousemove', ADM_ID, onMouseMove)
       $map.on('mouseleave', ADM_ID, onMouseLeave)
+      $map.off('mousemove', onMouseHover)
     } else {
       $map.off('mousemove', ADM_ID, onMouseMove)
       $map.off('mouseleave', ADM_ID, onMouseLeave)
+      $map.on('mousemove', onMouseHover)
     }
   }
 
