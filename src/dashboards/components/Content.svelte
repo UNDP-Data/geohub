@@ -10,7 +10,14 @@
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
   import { fetchUrl } from '$lib/helper'
-  import type { RasterLayerSpecification, HeatmapLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type {
+    RasterLayerSpecification,
+    HeatmapLayerSpecification,
+    FillLayerSpecification,
+    SourceSpecification,
+    GeoJSONSourceSpecification,
+    RasterSourceSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
 
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
@@ -33,11 +40,11 @@
   let hoveredStateId = null
 
   let showIntro = true
-  let checked = false
+  let heatmapChecked = false
   let electricityChoices = ['HREA', 'ML']
-  let electricitySelected = 'HREA'
+  let electricitySelected = electricityChoices[0]
   let interactChoices = ['Hover', 'Click']
-  let interactSelected = 'Hover'
+  let interactSelected = interactChoices[0]
   let drawerWidth = 355
   let isResizingDrawer = false
   let bingAerialLayerMeta = undefined
@@ -100,13 +107,13 @@
   const handleMouseup = () => (isResizingDrawer = false)
 
   const loadAdminLayer = () => {
-    const layerSource = {
+    const layerSource: SourceSpecification = {
       type: LayerTypes.VECTOR,
       maxzoom: 10,
       promoteId: 'adm1_id',
       tiles: [`${AZURE_URL}/admin/${ADM_LAYER}/{z}/{x}/{y}.pbf`],
     }
-    const layerFill = {
+    const layerFill: FillLayerSpecification = {
       id: ADM_ID,
       type: LayerTypes.FILL,
       source: ADM_ID,
@@ -134,21 +141,20 @@
     const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
     const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
-    const apiUrlParams = {
-      scale: 1,
-      TileMatrixSetId: 'WebMercatorQuad',
-      url,
-      bidx: 1,
-      unscale: false,
-      resampling: 'nearest',
-      rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-      return_mask: true,
-      colormap_name: 'bugn',
-    }
+    const apiUrlParams = new URLSearchParams()
+    apiUrlParams.set('scale', '1')
+    apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad')
+    apiUrlParams.set('url', url)
+    apiUrlParams.set('bidx', '1')
+    apiUrlParams.set('unscale', 'false')
+    apiUrlParams.set('resampling', 'nearest')
+    apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`)
+    apiUrlParams.set('return_mask', 'true')
+    apiUrlParams.set('colormap_name', 'bugn')
 
-    const layerSource = {
+    const layerSource: SourceSpecification = {
       type: LayerTypes.RASTER,
-      tiles: [`${API_URL}/tiles/{z}/{x}/{y}.png?${new URLSearchParams(apiUrlParams).toString()}`],
+      tiles: [`${API_URL}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
       tileSize: 256,
       bounds: layerInfo['bounds'],
       attribution:
@@ -215,8 +221,10 @@
     hoveredStateId = null
   }
 
-  const loadInteraction = ({ target: { textContent } }) => {
-    if (textContent === 'Click') {
+  $: interactSelected, loadInteraction()
+  const loadInteraction = () => {
+    if (!$map) return
+    if (interactSelected === 'Click') {
       $map.on('mousemove', ADM_ID, onMouseMove)
       $map.on('mouseleave', ADM_ID, onMouseLeave)
     } else {
@@ -225,13 +233,23 @@
     }
   }
 
-  const loadLayer = ({ target: { textContent } }) => {
-    if (textContent === 'HREA') loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
-    else if (textContent === 'ML') loadRasterLayer(ML_ID, ML_URL, HREA_ID)
+  $: electricitySelected, loadLayer()
+  const loadLayer = () => {
+    if (!$map) return
+    switch (electricitySelected) {
+      case 'HREA':
+        loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+        break
+      case 'ML':
+        loadRasterLayer(ML_ID, ML_URL, HREA_ID)
+        break
+      default:
+        break
+    }
   }
 
-  const loadHeatmap = ({ target: { checked } }) => {
-    const layerSource = {
+  const loadHeatmap = () => {
+    const layerSource: GeoJSONSourceSpecification = {
       type: 'geojson',
       data: RWI_URL,
     }
@@ -261,7 +279,7 @@
       }
     }
 
-    if (checked) {
+    if (heatmapChecked) {
       !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
       !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
       $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
@@ -282,7 +300,7 @@
         return AERIAL_BING_URL.replace('{subdomain}', el)
       })
     }
-    const layerSource = {
+    const layerSource: RasterSourceSpecification = {
       type: 'raster',
       tiles: aerialBingTiles,
       tileSize: 256,
@@ -345,8 +363,12 @@
               <br /><br />
               Electricity Access
               <br />
-              <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:electricitySelected>
-                <Segment {segment} on:click={loadLayer}>
+              <SegmentedButton
+                segments={electricityChoices}
+                let:segment
+                singleSelect
+                bind:selected={electricitySelected}>
+                <Segment {segment}>
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
@@ -354,7 +376,7 @@
               Poverty
               <br />
               <FormField>
-                <Checkbox bind:checked on:change={loadHeatmap} />
+                <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
                 <span slot="label">Show Heatmap</span>
               </FormField>
               <div class="action">
@@ -377,8 +399,8 @@
             <Paper>
               Statistics
               <br />
-              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:interactSelected>
-                <Segment {segment} on:click={loadInteraction}>
+              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
+                <Segment {segment}>
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>

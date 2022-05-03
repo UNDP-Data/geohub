@@ -33,7 +33,7 @@
 
 <Wrapper>
   <div class="icon-selected" on:click={() => toggleVisibility()}>
-    <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="1x" />
+    <Fa icon={visibility === 'none' ? faEyeSlash : faEye} size="sm" />
   </div>
   <Tooltip showDelay={300} hideDelay={100} yPos="above">{isLayerVisible ? 'Show Layer' : 'Hide Layer'}</Tooltip>
 </Wrapper>
