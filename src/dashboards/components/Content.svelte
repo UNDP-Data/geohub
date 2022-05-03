@@ -344,7 +344,7 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Content style="padding: 15px; overflow: visible;">
-          <p style="font-size:large; font-weight:bold">UNDP Electricity Dashboards</p>
+          <p style="font-size:large; font-weight:bold">UNDP Electricity Dashboard</p>
           {#if showIntro}
             <Paper>
               <p>
