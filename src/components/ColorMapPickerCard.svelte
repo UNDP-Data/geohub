@@ -28,7 +28,7 @@
 <div class="card" data-testid="color-map-picker-card-container">
   <div class="card-content">
     <div class="media">
-      <figure class={`image ${isCardStyle ? 'is-2by1' : ''}`} style={cardStyle} data-testid="color-map-figure"/>
+      <figure class={`image ${isCardStyle ? 'is-2by1' : ''}`} style={cardStyle} data-testid="color-map-figure" />
     </div>
     <div class="content is-size-7 columns is-gapless">
       <div class="column is-10">

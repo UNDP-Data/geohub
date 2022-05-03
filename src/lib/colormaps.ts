@@ -41,7 +41,14 @@ export const ColorMaps = {
  * @param isCardStyle Card style (card or list)
  * @returns string
  */
-export const colorMapStyle = (colorMapType:ColorMapTypes, colorMapName: string, layerMin: number, layerMax: number, numberOfClasses: number, isCardStyle: boolean) => {
+export const colorMapStyle = (
+  colorMapType: ColorMapTypes,
+  colorMapName: string,
+  layerMin: number,
+  layerMax: number,
+  numberOfClasses: number,
+  isCardStyle: boolean,
+) => {
   let colorMap = []
   let style = ''
 
