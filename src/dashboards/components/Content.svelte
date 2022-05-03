@@ -360,7 +360,7 @@
                 layers underneath the mouse, or by drawing a circle, providing summaries of the values contained within.
               </p>
               <br />
-              <Button on:click={hideIntro}>Explore Data</Button>
+              <Button variant="raised" on:click={hideIntro}>Explore Data</Button>
             </Paper>
           {/if}
 
