@@ -81,7 +81,6 @@
 
   // Fixme: This function is being called twice every time
   // Reclassify the layer every time the color, interval or number of classes is changed.
-  // Fixme: Need to rewrite the function to detect the exact operation that has been carried out
 
   const reclassifyImage = () => {
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
@@ -191,11 +190,15 @@
     // eslint-disable-next-line no-empty
     if (index === undefined || color === undefined) {
     } else {
-      cmap[index].splice(1, 1, chroma(color['hex']).rgba())
-      cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
-      handleParamsUpdate(cmap)
-      setCmapState(cmap)
-      document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
+      try {
+        cmap[index].splice(1, 1, chroma(color['hex']).rgba())
+        cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
+        handleParamsUpdate(cmap)
+        setCmapState(cmap)
+        document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 
