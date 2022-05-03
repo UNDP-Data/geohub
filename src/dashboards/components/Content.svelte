@@ -23,25 +23,21 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
 
-  const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
-  const HREA_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjElM0E0OVomc3I9YiZzcD1yJnNpZz1TdEJmZ1lISmgxd2xnb1VrMFJteDlNRWxmSXFvQk1jYiUyQnV0Qk9KRWtQUm8lM0Q='
-  const ML_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTAzVDE0JTNBMjIlM0EzM1omc3I9YiZzcD1yJnNpZz1XQUFiM2o4QjZSN2dFUlYlMkJhWUlkdnRsWUR5SGc0cG5TJTJGU0p2S2NKSDllZyUzRA=='
-  const RWI_TOKEN =
-    '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
+  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
+  const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
+  const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
+  const AZURE_URL = `https://undpngddlsgeohubdev01.blob.core.windows.net`
+  const AERIAL_BING_URL = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
+
+  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif?${TOKEN}`
+  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif?${TOKEN}`
+  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson?${TOKEN}`
+
   const HREA_ID = 'hrea'
   const ML_ID = 'ml'
   const RWI_ID = 'rwi'
   const ADM_ID = 'admin'
   const ADM_LAYER = 'adm1_polygons'
-  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif${HREA_TOKEN}`
-  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
-  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
-
-  const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
-  const aerialBingUrl = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
-  const apiUrl = import.meta.env.VITE_TITILER_ENDPOINT
 
   export let drawerOpen = false
   let hoveredStateId = null
@@ -148,7 +144,7 @@
   }
 
   const loadRasterLayer = async (id: string, url: string, oldId: string) => {
-    const layerInfo = await fetchUrl(`${apiUrl}/info?url=${url}`)
+    const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
     const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
     const apiUrlParams = new URLSearchParams()
@@ -164,7 +160,7 @@
 
     const layerSource: SourceSpecification = {
       type: LayerTypes.RASTER,
-      tiles: [`${apiUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
+      tiles: [`${API_URL}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
       tileSize: 256,
       bounds: layerInfo['bounds'],
       attribution:
@@ -302,12 +298,12 @@
   const addBingAerialLayer = async () => {
     if (aerialBingTiles.length == 0) {
       bingAerialLayerMeta = await fetchUrl(
-        `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BingMapsKey}`,
+        `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BING_MAPS_KEY}`,
       )
       const { resources } = bingAerialLayerMeta.resourceSets[0]
       const imageUrlSubdomains = resources[0].imageUrlSubdomains
       aerialBingTiles = imageUrlSubdomains.map((el) => {
-        return aerialBingUrl.replace('{subdomain}', el)
+        return AERIAL_BING_URL.replace('{subdomain}', el)
       })
     }
     const layerSource: RasterSourceSpecification = {
