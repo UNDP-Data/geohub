@@ -17,7 +17,7 @@
   })
 </script>
 
-<svelte:head>
+<!-- <svelte:head>
   {#if darkTheme === undefined}
     <link rel="stylesheet" href="../smui.css" media="(prefers-color-scheme: light)" />
     <link rel="stylesheet" href="../smui-dark.css" media="screen and (prefers-color-scheme: dark)" />
@@ -27,7 +27,7 @@
   {:else}
     <link rel="stylesheet" href="../smui.css" />
   {/if}
-</svelte:head>
+</svelte:head> -->
 
 <TopAppBar bind:this={topAppBar} variant="fixed">
   <Row>

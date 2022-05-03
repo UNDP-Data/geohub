@@ -10,37 +10,41 @@
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
   import { fetchUrl } from '$lib/helper'
-  import type { RasterLayerSpecification, HeatmapLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type {
+    RasterLayerSpecification,
+    HeatmapLayerSpecification,
+    FillLayerSpecification,
+    SourceSpecification,
+    GeoJSONSourceSpecification,
+    RasterSourceSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
 
-  const AZURE_URL = 'https://undpngddlsgeohubdev01.blob.core.windows.net'
-  const HREA_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMDYlM0EwMFomc3I9YiZzcD1yJnNpZz1WYXp0QWdEUFBvQWc5NHVtMXpBa0pmJTJGamNjZ0RndkJsYlZWRlhLRXRIRmclM0Q='
-  const ML_TOKEN =
-    '?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA0LTMwVDEyJTNBMjUlM0EzMFomc3I9YiZzcD1yJnNpZz02c1R6VDlTSmdkQ21jUSUyQm9ydmNPRWkzcjcxTDJPZVBXZDhhTDZPQnRaOFklM0Q='
-  const RWI_TOKEN =
-    '?sv=2020-10-02&st=2022-04-27T04%3A00%3A00Z&se=2025-01-01T05%3A00%3A00Z&sr=b&sp=r&sig=FxQpof0Mhp9hU0DqfitRm6J1JkPdw0K8eGuou1Y2vRI%3D'
+  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
+  const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
+  const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
+  const AZURE_URL = `https://undpngddlsgeohubdev01.blob.core.windows.net`
+  const AERIAL_BING_URL = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
+
+  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif?${TOKEN}`
+  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif?${TOKEN}`
+  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson?${TOKEN}`
+
   const HREA_ID = 'hrea'
   const ML_ID = 'ml'
   const RWI_ID = 'rwi'
-  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif${HREA_TOKEN}`
-  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif${ML_TOKEN}`
-  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson${RWI_TOKEN}`
-
-  console.log(RWI_URL)
-
-  const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
-  const aerialBingUrl = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
-  const apiUrl = import.meta.env.VITE_TITILER_ENDPOINT
+  const ADM_ID = 'admin'
+  const ADM_LAYER = 'adm1_polygons'
 
   export let drawerOpen = false
+  let hoveredStateId = null
 
   let showIntro = true
-  let checked = false
+  let heatmapChecked = false
   let electricityChoices = ['HREA', 'ML']
-  let electricitySelected = 'HREA'
-  let interactChoices = ['Hover', 'Draw']
-  let interactSelected = 'Hover'
+  let electricitySelected = electricityChoices[0]
+  let interactChoices = ['Hover', 'Click']
+  let interactSelected = interactChoices[0]
   let drawerWidth = 355
   let isResizingDrawer = false
   let bingAerialLayerMeta = undefined
@@ -52,7 +56,7 @@
   $: layerOpacity, setLayerOpacity()
 
   const setLayerOpacity = () => {
-    if ($map) {
+    if ($map && $map.getLayer(RWI_ID)) {
       $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
     }
   }
@@ -74,7 +78,14 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-    map.subscribe(() => loadRasterLayer(HREA_ID, HREA_URL, ML_ID))
+    map.subscribe(() => {
+      if ($map) {
+        $map.on('load', () => {
+          loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+          loadAdminLayer()
+        })
+      }
+    })
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -95,25 +106,55 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
+  const loadAdminLayer = () => {
+    const layerSource: SourceSpecification = {
+      type: LayerTypes.VECTOR,
+      maxzoom: 10,
+      promoteId: 'adm1_id',
+      tiles: [`${AZURE_URL}/admin/${ADM_LAYER}/{z}/{x}/{y}.pbf`],
+    }
+    const layerFill: FillLayerSpecification = {
+      id: ADM_ID,
+      type: LayerTypes.FILL,
+      source: ADM_ID,
+      'source-layer': ADM_LAYER,
+      paint: {
+        'fill-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 0.05)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+        'fill-outline-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 1)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+      },
+    }
+    !$map.getSource(ADM_ID) && $map.addSource(ADM_ID, layerSource)
+    !$map.getLayer(ADM_ID) && $map.addLayer(layerFill)
+  }
+
   const loadRasterLayer = async (id: string, url: string, oldId: string) => {
-    const layerInfo = await fetchUrl(`${apiUrl}/info?url=${url}`)
+    const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
     const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
-    const apiUrlParams = {
-      scale: 1,
-      TileMatrixSetId: 'WebMercatorQuad',
-      url,
-      bidx: 1,
-      unscale: false,
-      resampling: 'nearest',
-      rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-      return_mask: true,
-      colormap_name: 'bugn',
-    }
+    const apiUrlParams = new URLSearchParams()
+    apiUrlParams.set('scale', '1')
+    apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad')
+    apiUrlParams.set('url', url)
+    apiUrlParams.set('bidx', '1')
+    apiUrlParams.set('unscale', 'false')
+    apiUrlParams.set('resampling', 'nearest')
+    apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`)
+    apiUrlParams.set('return_mask', 'true')
+    apiUrlParams.set('colormap_name', 'bugn')
 
-    const layerSource = {
+    const layerSource: SourceSpecification = {
       type: LayerTypes.RASTER,
-      tiles: [`${apiUrl}/tiles/{z}/{x}/{y}.png?${new URLSearchParams(apiUrlParams).toString()}`],
+      tiles: [`${API_URL}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
       tileSize: 256,
       bounds: layerInfo['bounds'],
       attribution:
@@ -142,13 +183,73 @@
     !$map.getLayer(id) && $map.addLayer(layerDefinition, firstSymbolId)
   }
 
-  const loadLayer = ({ target: { textContent } }) => {
-    if (textContent === 'HREA') loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
-    else if (textContent === 'ML') loadRasterLayer(ML_ID, ML_URL, HREA_ID)
+  const onMouseMove = (e) => {
+    if (e.features.length > 0) {
+      if (hoveredStateId) {
+        $map.setFeatureState(
+          {
+            source: ADM_ID,
+            sourceLayer: ADM_LAYER,
+            id: hoveredStateId,
+          },
+          { hover: false },
+        )
+      }
+      hoveredStateId = e.features[0].id
+      $map.setFeatureState(
+        {
+          source: ADM_ID,
+          sourceLayer: ADM_LAYER,
+          id: hoveredStateId,
+        },
+        { hover: true },
+      )
+    }
   }
 
-  const loadHeatmap = ({ target: { checked } }) => {
-    const layerSource = {
+  const onMouseLeave = () => {
+    if (hoveredStateId) {
+      $map.setFeatureState(
+        {
+          source: ADM_ID,
+          sourceLayer: ADM_LAYER,
+          id: hoveredStateId,
+        },
+        { hover: false },
+      )
+    }
+    hoveredStateId = null
+  }
+
+  $: interactSelected, loadInteraction()
+  const loadInteraction = () => {
+    if (!$map) return
+    if (interactSelected === 'Click') {
+      $map.on('mousemove', ADM_ID, onMouseMove)
+      $map.on('mouseleave', ADM_ID, onMouseLeave)
+    } else {
+      $map.off('mousemove', ADM_ID, onMouseMove)
+      $map.off('mouseleave', ADM_ID, onMouseLeave)
+    }
+  }
+
+  $: electricitySelected, loadLayer()
+  const loadLayer = () => {
+    if (!$map) return
+    switch (electricitySelected) {
+      case 'HREA':
+        loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
+        break
+      case 'ML':
+        loadRasterLayer(ML_ID, ML_URL, HREA_ID)
+        break
+      default:
+        break
+    }
+  }
+
+  const loadHeatmap = () => {
+    const layerSource: GeoJSONSourceSpecification = {
       type: 'geojson',
       data: RWI_URL,
     }
@@ -161,7 +262,7 @@
       layout: { visibility: 'visible' },
       paint: {
         'heatmap-weight': {
-          property: 'rwi',
+          property: RWI_ID,
           type: 'exponential',
           stops: [
             [-0.855, 0],
@@ -178,7 +279,7 @@
       }
     }
 
-    if (checked) {
+    if (heatmapChecked) {
       !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
       !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
       $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
@@ -191,15 +292,15 @@
   const addBingAerialLayer = async () => {
     if (aerialBingTiles.length == 0) {
       bingAerialLayerMeta = await fetchUrl(
-        `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BingMapsKey}`,
+        `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BING_MAPS_KEY}`,
       )
       const { resources } = bingAerialLayerMeta.resourceSets[0]
       const imageUrlSubdomains = resources[0].imageUrlSubdomains
       aerialBingTiles = imageUrlSubdomains.map((el) => {
-        return aerialBingUrl.replace('{subdomain}', el)
+        return AERIAL_BING_URL.replace('{subdomain}', el)
       })
     }
-    const layerSource = {
+    const layerSource: RasterSourceSpecification = {
       type: 'raster',
       tiles: aerialBingTiles,
       tileSize: 256,
@@ -262,8 +363,12 @@
               <br /><br />
               Electricity Access
               <br />
-              <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:electricitySelected>
-                <Segment {segment} on:click={loadLayer}>
+              <SegmentedButton
+                segments={electricityChoices}
+                let:segment
+                singleSelect
+                bind:selected={electricitySelected}>
+                <Segment {segment}>
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
@@ -271,7 +376,7 @@
               Poverty
               <br />
               <FormField>
-                <Checkbox bind:checked on:change={loadHeatmap} />
+                <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
                 <span slot="label">Show Heatmap</span>
               </FormField>
               <div class="action">
@@ -294,7 +399,7 @@
             <Paper>
               Statistics
               <br />
-              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:interactSelected>
+              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
                 <Segment {segment}>
                   <Label>{segment}</Label>
                 </Segment>
@@ -355,7 +460,7 @@
     }
   }
 
-  $height: calc(100vh - 64px);
+  $height: 100vh;
 
   @media (max-width: 768px) {
     $height: calc(100vh - 184px);

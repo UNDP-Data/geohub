@@ -149,7 +149,7 @@ export const hash = (val: string, seed = 0) => {
  */
 export const clean = (val: string) => {
   const clean = val
-    .replace(/_/g, ' ') // remove underscore
+    .replace(/[_-]/g, ' ') // remove underscore and hyphen
     .replace(/\.[^/.]+$/, '') // remove extension
     .replace(/\b\w/g, (str) => str.toUpperCase()) // apply start/title case
   return clean

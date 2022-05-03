@@ -3,16 +3,19 @@
 </script>
 
 <script lang="ts">
-  import { slide } from 'svelte/transition'
+  import { fade, slide } from 'svelte/transition'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
+  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
+  import { createPopperActions } from 'svelte-popperjs'
 
-  import IntervalsLegend from '$components/IntervalsLegend.svelte'
+  import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
+  import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import { COLOR_CLASS_COUNT, DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
   export let activeColorMapName: string
@@ -20,11 +23,14 @@
 
   let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
+  let showTooltip = false
+  let numberOfClasses = COLOR_CLASS_COUNT
 
   $: selectedLegendType, setSelectedLegend()
 
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
+    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) numberOfClasses = COLOR_CLASS_COUNT
   }
 
   const handleLegendToggleClick = () => {
@@ -38,6 +44,32 @@
       ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
       : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
   }
+
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'right-end',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [10, 25],
+        },
+      },
+    ],
+  }
+
+  const handleColorMapClick = (event: CustomEvent) => {
+    if (event?.detail?.colorMapName) {
+      activeColorMapName = event.detail.colorMapName
+    }
+  }
+
+  const handleClosePopup = () => {
+    showTooltip = !showTooltip
+  }
 </script>
 
 <div class="columns" data-testid="raster-legend-view-container">
@@ -48,7 +80,7 @@
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:activeColorMapName layerConfig={layer} />
+        <IntervalsLegend bind:activeColorMapName layerConfig={layer} bind:numberOfClasses />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
@@ -56,7 +88,7 @@
       </div>
     {/if}
   </div>
-  <div class="columm legend-toggle">
+  <div class="columm legend-toggle" transition:slide>
     <Wrapper>
       <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
         <Card>
@@ -65,8 +97,29 @@
           </PrimaryAction>
         </Card>
       </div>
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Toggle Legend Type</Tooltip>
+      <Tooltip showDelay={1000} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
     </Wrapper>
+    <br />
+
+    <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
+      <Card>
+        <PrimaryAction style="padding: 10px;">
+          <Fa icon={faPalette} style="font-size: 16px;" />
+        </PrimaryAction>
+      </Card>
+    </div>
+
+    {#if showTooltip}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <ColorMapPicker
+          on:handleColorMapClick={handleColorMapClick}
+          on:handleClosePopup={handleClosePopup}
+          {layer}
+          {activeColorMapName}
+          {numberOfClasses} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -76,6 +129,52 @@
 
     .toggle-container {
       margin-left: 3.5px;
+    }
+  }
+
+  $tooltip-background: #fff;
+
+  #tooltip {
+    background: $tooltip-background;
+    border-radius: 7.5px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    max-height: 300px;
+    max-width: 460px;
+    padding-top: 10px;
+    padding: 15px;
+    position: absolute;
+    top: 10px;
+    width: 460px;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+    }
+
+    #arrow,
+    #arrow::before {
+      background: $tooltip-background;
+      height: 18px;
+      left: -4.5px;
+      position: absolute;
+      width: 18px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
+    }
+
+    #arrow {
+      visibility: visible;
+    }
+
+    #arrow::before {
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      content: '';
+      transform: rotate(45deg);
+      visibility: visible;
     }
   }
 </style>

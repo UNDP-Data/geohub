@@ -1,11 +1,12 @@
 <script lang="ts" context="module">
-  const selectedClassificationMethodState = {}
-  const numberOfClassesState = {}
   const activeColorMapNameState = {}
   const cmapState = {}
+  const numberOfClassesState = {}
+  const selectedClassificationMethodState = {}
 </script>
 
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import Ripple from '@smui/ripple'
   import type {
@@ -15,24 +16,19 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { fade } from 'svelte/transition'
-  import type { MenuSurfaceComponentDev } from '@smui/menu-surface'
-  import MenuSurface from '@smui/menu-surface'
-  import { map } from '$stores'
-  import { ColorMaps } from '$lib/colormaps'
-  import type { Layer, LayerInfo, Color } from '$lib/types'
-  import { ClassificationMethodTypes, ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { updateParamsInURL } from '$lib/helper'
-  import FormField from '@smui/form-field'
-  import Radio from '@smui/radio'
+  import Fa from 'svelte-fa'
   import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
   import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
-  import Fa from 'svelte-fa'
-  import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
 
-  // Exports
-  export let layerConfig: Layer = LayerInitialValues
+  import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
+  import { ClassificationMethodTypes, LayerInitialValues } from '$lib/constants'
+  import { updateParamsInURL } from '$lib/helper'
+  import type { Layer, LayerInfo, Color } from '$lib/types'
+  import { map } from '$stores'
+
   export let activeColorMapName: string
+  export let layerConfig: Layer = LayerInitialValues
+  export let numberOfClasses = numberOfClassesState[layerConfig.definition.id] || 5
 
   let definition:
     | RasterLayerSpecification
@@ -43,33 +39,23 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
-  // Const vars
-  const defaultNumberOfColors = numberOfClassesState[layerConfig.definition.id] || 5
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
-  // Let variables
-  let activeColorMap: chroma.Scale = undefined
-  let allColorMaps = {}
-  let colorMapSelectionVisible = false
+  let activeColorMap: chroma.Scale
+  let cmap = cmapState[layerConfig.definition.id]
+  let cmapColorsList = []
+  let color
+  let currentIntervalColor
+  let intervalIndex: number
   let intervalList = []
-  let numberOfClasses = numberOfClassesState[layerConfig.definition.id] || 5
   let rangeSliderValues = [layerMin, layerMax]
   let selectedClassificationMethod =
     selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
-  let selectedColorMapType = 'sequential'
-  let surface: MenuSurfaceComponentDev
-  let cmap = cmapState[layerConfig.definition.id]
-  let cmapColorsList = []
   let showToolTip = false
-  let intervalIndex
-  let currentIntervalColor
-  let color
 
-  //let colorMapType = 'On';
-  // console.log(cmap)
   let classificationMethods = [
     { name: 'Equidistant', value: 'e' },
     { name: 'Quantile', value: 'q' },
@@ -78,31 +64,19 @@
     classificationMethods.push({ name: 'Logarithmic', value: 'l' })
   }
 
+  $: selectedClassificationMethod, setClassificationMethodState()
+  $: numberOfClasses, setNumberOfClassesState()
+  $: activeColorMapName, setActiveColorMapNameState()
+  $: {
+    if (intervalIndex !== undefined) {
+      setIndexColor(intervalIndex)
+    }
+  }
+  $: color, updateColorMap(intervalIndex, color)
+
   // Generic function to store the colormap
   const setCmapState = (cmap) => {
     cmapState[layerConfig.definition.id] = cmap
-  }
-
-  // Populate the colormaps choices depending on the type of colormap selected
-  const populateAllColorMaps = () => {
-    for (let [cmapType, cMaps] of Object.entries(ColorMaps)) {
-      let cmaps = {}
-      cMaps.forEach((cmapstr: string) => {
-        try {
-          if (cmapType === ColorMapTypes.SEQUENTIAL) {
-            cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
-          } else {
-            cmaps[cmapstr] = chroma.scale(cmapstr).mode('lrgb').domain([layerMin, layerMax])
-          }
-        } catch (error) {
-          // console.log(`failed to process ${cmapstr} because ${error}`)
-        }
-        if (activeColorMapName === cmapstr) {
-          activeColorMap = cmaps[cmapstr]
-        }
-      })
-      allColorMaps[cmapType] = cmaps
-    }
   }
 
   // Fixme: This function is being called twice every time
@@ -134,7 +108,6 @@
       }
       setCmapState(cmap)
       handleParamsUpdate(cmap)
-      // console.log(cmap)
     } else {
       // cmap is undefined. Initially
       cmap = []
@@ -150,7 +123,6 @@
       }
       setCmapState(cmap)
       handleParamsUpdate(cmap)
-      // console.log(cmap)
     }
   }
 
@@ -169,33 +141,6 @@
     return 255 * opacity
   }
 
-  // Change the colormap value every time the interval on the left is changed
-  const sendFirstInterval = (index: number, item: string) => {
-    if (item > cmap[index][0][1]) {
-      console.warn(
-        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
-      )
-    } else {
-      cmap[index][0].splice(0, 1, Number(item))
-      handleParamsUpdate(cmap)
-      setCmapState(cmap)
-    }
-  }
-  const sendLastInterval = (index: number, item: string) => {
-    if (item < cmap[index + 1][0][1]) {
-      cmap[index][0].splice(1, 1, Number(item))
-      cmap[index + 1][0].splice(0, 1, Number(item))
-      handleParamsUpdate(cmap)
-      setCmapState(cmap)
-    } else {
-      console.warn(
-        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
-      )
-    }
-  }
-
-  // This is causing the map to be reloaded every time
-
   const setClassificationMethodState = () => {
     selectedClassificationMethodState[layerConfig.definition.id] = selectedClassificationMethod
     reclassifyImage()
@@ -207,13 +152,8 @@
 
   const setActiveColorMapNameState = () => {
     activeColorMapNameState[layerConfig.definition.id] = activeColorMapName
-    populateAllColorMaps()
     reclassifyImage()
   }
-
-  $: selectedClassificationMethod, setClassificationMethodState()
-  $: numberOfClasses, setNumberOfClassesState()
-  $: activeColorMapName, setActiveColorMapNameState()
 
   const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
     if (operation === 'increment') {
@@ -227,14 +167,6 @@
       }
     }
     reclassifyImage()
-  }
-
-  const setColorForMap = (e) => {
-    if (e) {
-      cmap[e.detail.position].splice(1, 1, e.detail.color.tuple())
-      handleParamsUpdate(cmap)
-      setCmapState(cmap)
-    }
   }
 
   const setIndexColor = (index) => {
@@ -267,12 +199,18 @@
     }
   }
 
-  $: {
-    if (intervalIndex !== undefined) {
-      setIndexColor(intervalIndex)
+  const sendLastInterval = (index: number, item: string) => {
+    if (item < cmap[index + 1][0][1]) {
+      cmap[index][0].splice(1, 1, Number(item))
+      cmap[index + 1][0].splice(0, 1, Number(item))
+      handleParamsUpdate(cmap)
+      setCmapState(cmap)
+    } else {
+      console.warn(
+        'That is not allowed!! Please make sure your intervals follow the right order to see your changes on the map',
+      )
     }
   }
-  $: color, updateColorMap(intervalIndex, color)
 </script>
 
 <div class="column" data-testid="intervals-view-container">
@@ -340,7 +278,6 @@
               <RasterColorPicker bind:color />
             </div>
           {/if}
-          <!--          <ColorPicker position={index} bind:color={value[1]} on:changeColor={setColorForMap} />-->
           &nbsp;&raquo;&nbsp
           <span
             class="legend-text"
@@ -357,200 +294,23 @@
         </div>
       {/each}
     </div>
-    <div
-      title="Current colormap. Click to change."
-      id="current-colormap"
-      style="cursor:pointer; width: 20px!important; min-height:100%; background:linear-gradient(1deg, {[
-        ...activeColorMap.colors(),
-      ]}); "
-      on:click={() => {
-        colorMapSelectionVisible = !colorMapSelectionVisible
-        surface.setOpen(true)
-      }}
-      use:Ripple={{ surface: true }} />
-
-    <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT" class="select-cmaps-menu">
-      <div class="radio-demo" style="display: flex; width: 100%; justify-content: space-around">
-        {#each Object.keys(ColorMaps) as option}
-          <FormField>
-            <Radio bind:group={selectedColorMapType} value={option} touch />
-            <span
-              slot="label"
-              style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; text-transform: none;"
-              >{option}</span>
-          </FormField>
-        {/each}
-      </div>
-      <div class="colormaps-group">
-        {#each Object.keys(allColorMaps[selectedColorMapType]) as aColorMap}
-          <div
-            title={aColorMap}
-            style="cursor:pointer; margin-top:5px; height: 20px; width: 100%; background: linear-gradient(90deg, {allColorMaps[
-              selectedColorMapType
-            ][aColorMap].colors(defaultNumberOfColors, 'rgba')})"
-            use:Ripple={{ surface: true }}
-            on:click={() => {
-              activeColorMapName = aColorMap
-              activeColorMap = allColorMaps[selectedColorMapType][aColorMap]
-              reclassifyImage
-            }} />
-        {/each}
-      </div>
-    </MenuSurface>
   </div>
 </div>
 
 <style lang="scss">
-  .group {
-    border-radius: 7.5px;
-    padding: 2px;
-    margin-top: 1px;
-    padding-bottom: 4px;
-
-    @media (prefers-color-scheme: dark) {
-      background: #323234;
-      color: white;
-    }
-
-    .intervals-legend {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-
-      border: 0px solid red;
-
-      .row {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        width: 100%;
-        border: 0px dashed;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-
-    .column {
-      display: block;
-      flex-direction: column;
-      flex-basis: 100%;
-      align-items: center;
-      flex: 1;
-      border: 0px solid red;
-
-      #intervals-cmap-button-div {
-        width: 100%;
-        height: 100%;
-        margin: auto;
-      }
-
-      #intervals-list-div {
-        background-color: white;
-        width: 100%;
-        margin: auto;
-
-        @media (prefers-color-scheme: dark) {
-          background: #323234;
-          color: white;
-        }
-
-        .discrete {
-          width: 20px;
-          height: 20px;
-        }
-      }
-
-      .no-classes {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-around;
-      }
-    }
-
-    .cmap-selection {
-      display: block;
-
-      .colormap-div {
-        height: 100%;
-        width: 20px;
-        cursor: pointer;
-        justify-content: center;
-        margin: 1px;
-      }
-    }
-
-    .hidden {
-      display: none;
-    }
-  }
-
-  :global(.changeLegendButtonDiv) {
-    margin: 0 auto;
-    padding-top: 10px;
-    width: 80%;
-    display: block;
-  }
-
-  :global(.changelegendbtn) {
-    text-transform: capitalize;
-    height: 30px;
-    width: 100%;
-  }
-
-  * :global(.colormaps-group) {
-    margin-right: 0;
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-  }
-
-  * :global(.colormap-chips) {
-    justify-content: space-evenly;
-    display: flex;
-  }
-
-  * :global(#intervals-cmap-button) {
-    margin-bottom: 2rem;
-    width: 100%;
-    height: 100%;
-  }
-  * :global(.mdc-radio) {
-    padding: 0;
-    margin: 0;
-  }
-  * :global(.mdc-radio__native-control) {
-    height: 20px;
-    width: 20px;
-    padding: 10px;
-  }
-  * :global(.color-picker-handle) {
-    border-radius: 0 !important;
-    height: 20px !important;
-    width: 20px !important;
-  }
-  * :global(::-webkit-scrollbar) {
-    width: 5px;
-    padding: 0;
-    margin: 0;
-  }
-  * :global(::-webkit-scrollbar-thumb) {
-    background: grey;
-    border-radius: 10px;
-  }
-
   #class-and-method-control-div {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100% !important;
   }
+
   #intervals-cmap-div {
     display: flex;
     justify-content: space-between;
     width: 100%;
   }
+
   :global(.select-cmaps-menu) {
     max-height: 200px;
     overflow-y: scroll;
@@ -558,14 +318,17 @@
     margin-top: 5px;
     padding: 5px;
   }
+
   :global(.legend-text) {
     font-family: ProximaNova, sans-serif;
     max-width: 30%;
     width: 30%;
   }
+
   :global(.show) {
     display: none;
   }
+
   :global(.tooltiphidden) {
     display: none !important;
   }
