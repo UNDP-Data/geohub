@@ -17,6 +17,10 @@
     border: solid 0.5px #1c1c1c;
     border-radius: 8px;
 
+    @media (prefers-color-scheme: dark) {
+      border: solid 0.5px #ffffff;
+    }
+
     .box-title {
       position: absolute;
       display: inline-block;
@@ -28,6 +32,11 @@
       background: #fff;
       color: rgb(1, 1, 1, 0.6);
       font-weight: normal;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+        color: white;
+      }
     }
   }
 </style>

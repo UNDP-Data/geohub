@@ -344,7 +344,7 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Content style="padding: 15px; overflow: visible;">
-          <p style="font-size:large; font-weight:bold">UNDP Electricity Dashboard</p>
+          <p class="heading-text">UNDP Electricity Dashboard</p>
           {#if showIntro}
             <Paper>
               <p>
@@ -366,7 +366,7 @@
 
           {#if !showIntro}
             <StyleControlGroup title="Layers">
-              <p>Electricity Access</p>
+              <p class="title-text">Electricity Access</p>
               <SegmentedButton
                 segments={electricityChoices}
                 let:segment
@@ -379,7 +379,7 @@
                   <Label>{segment.name}</Label>
                 </Segment>
               </SegmentedButton>
-              <p>Poverty</p>
+              <p class="title-text">Poverty</p>
               <FormField>
                 <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
                 <span slot="label">Show Heatmap</span>
@@ -513,6 +513,26 @@
         pointer-events: none;
         color: black;
       }
+    }
+  }
+
+  .heading-text {
+    font-size: large;
+    font-weight: bold;
+    color: rgb(1, 1, 1, 0.6);
+
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+
+  .title-text {
+    font-size: 12px;
+    color: rgb(1, 1, 1, 0.6);
+    font-weight: normal;
+
+    @media (prefers-color-scheme: dark) {
+      color: white;
     }
   }
 </style>
