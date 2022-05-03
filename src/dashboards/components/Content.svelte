@@ -3,9 +3,11 @@
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
   import { map } from '../stores'
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
+  import { Svg } from '@smui/common/elements'
+  import SegmentedButton, { Segment, Icon, Label } from '@smui/segmented-button'
+  import { mdiFlash, mdiLaptop } from '@mdi/js'
   import Button from '@smui/button'
-  import { Label } from '@smui/common'
+  // import { Label } from '@smui/common'
   import Paper from '@smui/paper'
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
@@ -19,6 +21,7 @@
     RasterSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
 
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
@@ -41,7 +44,10 @@
 
   let showIntro = true
   let heatmapChecked = false
-  let electricityChoices = ['HREA', 'ML']
+  let electricityChoices = [
+    { name: 'HREA', icon: mdiFlash },
+    { name: 'ML', icon: mdiLaptop },
+  ]
   let electricitySelected = electricityChoices[0]
   let interactChoices = ['Hover', 'Click']
   let interactSelected = interactChoices[0]
@@ -236,7 +242,7 @@
   $: electricitySelected, loadLayer()
   const loadLayer = () => {
     if (!$map) return
-    switch (electricitySelected) {
+    switch (electricitySelected.name) {
       case 'HREA':
         loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
         break
@@ -338,6 +344,7 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Content style="padding: 15px; overflow: visible;">
+          <p class="heading-text">UNDP Electricity Dashboard</p>
           {#if showIntro}
             <Paper>
               <p>
@@ -353,59 +360,56 @@
                 layers underneath the mouse, or by drawing a circle, providing summaries of the values contained within.
               </p>
               <br />
-              <Button on:click={hideIntro}>Explore Data</Button>
+              <Button variant="raised" on:click={hideIntro}>Explore Data</Button>
             </Paper>
           {/if}
 
           {#if !showIntro}
-            <Paper>
-              Layers
-              <br /><br />
-              Electricity Access
-              <br />
+            <StyleControlGroup title="Layers">
+              <p class="title-text">Electricity Access</p>
               <SegmentedButton
                 segments={electricityChoices}
                 let:segment
                 singleSelect
                 bind:selected={electricitySelected}>
                 <Segment {segment}>
-                  <Label>{segment}</Label>
+                  <Icon component={Svg} style="width: 1em; height: auto;" viewBox="0 0 24 24">
+                    <path fill="currentColor" d={segment.icon} />
+                  </Icon>
+                  <Label>{segment.name}</Label>
                 </Segment>
               </SegmentedButton>
-              <br /><br />
-              Poverty
-              <br />
+              <p class="title-text">Poverty</p>
               <FormField>
                 <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
                 <span slot="label">Show Heatmap</span>
               </FormField>
-              <div class="action">
-                <div class="slider">
-                  <RangeSlider
-                    bind:values={rangeSliderValues}
-                    float
-                    min={0}
-                    max={100}
-                    step={1}
-                    pips
-                    first="label"
-                    last="label"
-                    rest={false}
-                    suffix="%" />
+              {#if heatmapChecked}
+                <div class="action">
+                  <div class="slider">
+                    <RangeSlider
+                      bind:values={rangeSliderValues}
+                      float
+                      min={0}
+                      max={100}
+                      step={1}
+                      pips
+                      first="label"
+                      last="label"
+                      rest={false}
+                      suffix="%" />
+                  </div>
                 </div>
-              </div>
-            </Paper>
-            <br />
-            <Paper>
-              Statistics
-              <br />
+              {/if}
+            </StyleControlGroup>
+
+            <StyleControlGroup title="Statistics">
               <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
                 <Segment {segment}>
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
-              <br />
-            </Paper>
+            </StyleControlGroup>
           {/if}
           <div />
         </Content>
@@ -509,6 +513,26 @@
         pointer-events: none;
         color: black;
       }
+    }
+  }
+
+  .heading-text {
+    font-size: large;
+    font-weight: bold;
+    color: rgb(1, 1, 1, 0.6);
+
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
+
+  .title-text {
+    font-size: 12px;
+    color: rgb(1, 1, 1, 0.6);
+    font-weight: normal;
+
+    @media (prefers-color-scheme: dark) {
+      color: white;
     }
   }
 </style>
