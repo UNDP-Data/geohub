@@ -14,7 +14,6 @@
 
 <script lang="ts">
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
-
 </script>
 
 <!--<Header>Dashboards</Header>-->
@@ -23,6 +22,7 @@
     <DashboardCard title={page.title} link={page.link} />
   {/each}
 </div>
+
 <style>
   .body-div {
     padding: 20px;
