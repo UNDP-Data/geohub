@@ -1,7 +1,6 @@
 <script lang="ts">
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { Color } from 'svelte-awesome-color-picker/type/types'
-
   export let color: Color
 </script>
 
