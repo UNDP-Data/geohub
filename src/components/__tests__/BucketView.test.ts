@@ -31,7 +31,7 @@ describe('Bucket View', () => {
 
   it('should render a root node item  with a label', () => {
     const treeContainer = sut.getByTestId('tree-container')
-    expect(within(treeContainer).getByText('endpoverty')).toBeDefined()
+    expect(within(treeContainer).getByText('End Poverty')).toBeDefined()
   })
 
   it('should render five buckets / icons', () => {
@@ -48,8 +48,8 @@ describe('Bucket View', () => {
 
     // add climate action
     await fireEvent.click(bucketClimateActionButton)
-    expect(within(treeContainer).getByText('endpoverty')).toBeDefined()
-    expect(within(treeContainer).getByText('climateaction')).toBeDefined()
+    expect(within(treeContainer).getByText('End Poverty')).toBeDefined()
+    expect(within(treeContainer).getByText('Climate Action')).toBeDefined()
     let bucketClimateAction = get(bucketList).find((bucket) => bucket.label === 'Climate Action')
     expect(bucketClimateAction.selected).toBe(true)
 
@@ -57,6 +57,6 @@ describe('Bucket View', () => {
     await fireEvent.click(bucketClimateActionButton)
     bucketClimateAction = get(bucketList).find((bucket) => bucket.label === 'Climate Action')
     expect(bucketClimateAction.selected).toBe(false)
-    expect(within(treeContainer).queryByText('climateaction')).toBeNull()
+    expect(within(treeContainer).queryByText('Climate Action')).toBeNull()
   })
 })

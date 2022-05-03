@@ -27,7 +27,7 @@
 
 <Wrapper>
   <div class="container icon-selected" title="Delete layer" on:click={() => (confirmDeleteLayerDialogVisible = true)}>
-    <Fa icon={faTrash} size="1x" />
+    <Fa icon={faTrash} size="sm" />
   </div>
   <Tooltip showDelay={300} hideDelay={100} yPos="above">Delete layer</Tooltip>
 </Wrapper>

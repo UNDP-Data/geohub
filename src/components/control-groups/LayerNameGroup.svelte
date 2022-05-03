@@ -1,13 +1,16 @@
 <script lang="ts">
+  import Tooltip, { Wrapper } from '@smui/tooltip'
+
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
   import { LayerInitialValues } from '$lib/constants'
-  import { clean } from '$lib/helper'
+  import { clean, hash } from '$lib/helper'
   import type { Layer } from '$lib/types'
+  import { layerMetadata } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
   const name = clean(layer.name)
-  import Tooltip, { Wrapper } from '@smui/tooltip'
+  const layerInfoMetadata = $layerMetadata.get(hash(layer.definition.source))
 </script>
 
 <div class="layer-header">
@@ -16,7 +19,13 @@
       <div class="layer-name">
         <Wrapper>
           <div>{name}</div>
-          <Tooltip showDelay={500} hideDelay={100} yPos="above">{name}</Tooltip>
+          <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
+            <div class="label">{clean(name)}</div>
+            <div class="description">{layerInfoMetadata?.description ? layerInfoMetadata?.description : 'N/A'}</div>
+            <div class="unit is-size-7">
+              <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : ''}
+            </div>
+          </Tooltip>
         </Wrapper>
       </div>
       <div>
@@ -46,5 +55,31 @@
         width: 100%;
       }
     }
+  }
+
+  .label {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: #fff;
+
+    @media (prefers-color-scheme: dark) {
+      color: #fff;
+    }
+  }
+
+  .description,
+  .unit {
+    font-weight: normal;
+    color: #fff;
+    margin-bottom: 10px;
+
+    @media (prefers-color-scheme: dark) {
+      color: #fff;
+    }
+  }
+
+  .description {
+    margin-bottom: 15px;
   }
 </style>

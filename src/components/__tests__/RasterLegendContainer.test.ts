@@ -50,7 +50,7 @@ describe('Raster Legend Container', () => {
   })
 
   it('should render the default legend type: continuous', () => {
-    expect(within(viewContainer).getByTestId('legend-view-container')).toBeDefined()
+    expect(within(viewContainer).getByTestId('continous-view-container')).toBeDefined()
   })
 
   it('should toggle between continuous / intervals legend types upon click of toggle icon', async () => {
@@ -63,6 +63,6 @@ describe('Raster Legend Container', () => {
 
     // show continuous legend type
     await fireEvent.click(toggleIcon)
-    expect(within(viewContainer).getByTestId('legend-view-container')).toBeDefined()
+    expect(within(viewContainer).getByTestId('continous-view-container')).toBeDefined()
   })
 })
