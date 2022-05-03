@@ -1,27 +1,22 @@
-<script lang="ts" context="module">
-  const layerState = {}
-</script>
-
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import Accordion, { Panel } from '@smui-extra/accordion'
-  import Tab, { Label } from '@smui/tab'
-  import TabBar from '@smui/tab-bar'
   import Fa from 'svelte-fa'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
   import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
   import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes, TabNames } from '$lib/constants'
+
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorStyleJsonPanel from '$components/controls/VectorStyleJsonPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
   import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
+  import { LayerInitialValues, LayerTypes, TabNames } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
@@ -29,20 +24,24 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let activeTab = ''
+  let isLabelPanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-  let isZoomLevelPanelVisible = false
-  let isLabelPanelVisible = false
   let isStyleJsonPanelVisible = false
-  let panelOpen: boolean = layerState[layerId] || false
+  let isZoomLevelPanelVisible = false
   let onStyleChange = () => undefined
-  let tabs = [TabNames.LEGEND]
-  if (style.type === LayerTypes.SYMBOL) {
-    tabs.push(TabNames.LABEL)
+
+  let tabs = [
+    { label: TabNames.LEGEND, icon: faList, active: false },
+    { label: TabNames.OPACITY, icon: faDroplet, active: false },
+    { label: TabNames.LABEL, icon: faTag, active: false },
+    { label: TabNames.ZOOM, icon: faMagnifyingGlassLocation, active: false },
+    { label: TabNames.STYLEJSON, icon: faPenToSquare, active: false },
+  ]
+
+  if (style.type !== LayerTypes.SYMBOL) {
+    tabs = tabs.filter((tab) => tab.label !== TabNames.LABEL)
   }
-  tabs.push(TabNames.OPACITY)
-  tabs.push(TabNames.ZOOM)
-  tabs.push(TabNames.STYLEJSON)
 
   $: {
     isLegendPanelVisible = false
@@ -50,6 +49,7 @@
     isOpacityPanelVisible = false
     isStyleJsonPanelVisible = false
     isZoomLevelPanelVisible = false
+
     switch (activeTab) {
       case TabNames.LEGEND:
         isLegendPanelVisible = true
@@ -73,101 +73,58 @@
   }
 </script>
 
-<div class="accordion-container">
-  <Accordion>
-    <Panel variant="raised" bind:open={panelOpen} style="padding: 15px;">
-      <div class="layer-header">
-        <div>
-          <LayerNameGroup {layer} />
-          <div class="layer-header-icons">
-            <div class="group">
-              <TabBar {tabs} let:tab active={activeTab} style="overflow:hidden">
-                <Tab
-                  {tab}
-                  class="tab"
-                  style="font-size: 9px; font-weight: normal; font-family: ProximaNova, sans-serif; height: 25px; text-transform: none; max-width: 95px;"
-                  on:click={() => {
-                    activeTab === tab ? (activeTab = '') : (activeTab = tab)
-                  }}>
-                  <Label>
-                    <div class="tabs">
-                      <div style="padding-right: 5px;">
-                        {#if tab === TabNames.LEGEND}
-                          <Fa icon={faList} size="1x" />
-                        {:else if tab === TabNames.LABEL}
-                          <Fa icon={faTag} size="1x" />
-                        {:else if tab === TabNames.OPACITY}
-                          <Fa icon={faDroplet} size="1x" />
-                        {:else if tab === TabNames.ZOOM}
-                          <Fa icon={faMagnifyingGlassLocation} size="1x" />
-                        {:else if tab === TabNames.STYLEJSON}
-                          <Fa icon={faPenToSquare} size="1x" />
-                        {/if}
-                      </div>
-                      <div>
-                        {tab}
-                      </div>
-                    </div>
-                  </Label>
-                </Tab>
-              </TabBar>
-            </div>
-          </div>
-        </div>
-        <div class="layer-actions">
-          <VectorLegendPanel {layer} {isLegendPanelVisible} />
-          {#if style.type === LayerTypes.SYMBOL}
-            <VectorLabelPanel {layer} {isLabelPanelVisible} />
-          {/if}
-          <OpacityPanel {layer} {isOpacityPanelVisible} />
-          <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
-          <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
-        </div>
-      </div>
-    </Panel>
-  </Accordion>
+<div class="vector-layer-container" transition:fade>
+  <nav class="panel">
+    <p class="panel-heading">
+      <LayerNameGroup {layer} />
+    </p>
+    <p class="panel-tabs">
+      {#each tabs as tab}
+        <a
+          href={'#'}
+          on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
+          class={activeTab === tab.label ? 'is-active' : ''}>
+          <span>
+            <Fa icon={tab.icon} size="sm" />
+          </span>
+          {tab.label}
+        </a>
+      {/each}
+    </p>
+
+    <p class="panel-content">
+      <VectorLegendPanel {layer} {isLegendPanelVisible} />
+      {#if style.type === LayerTypes.SYMBOL}
+        <VectorLabelPanel {layer} {isLabelPanelVisible} />
+      {/if}
+      <OpacityPanel {layer} {isOpacityPanelVisible} />
+      <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
+      <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
+    </p>
+  </nav>
 </div>
 
 <style lang="scss">
-  .accordion-container {
+  @import '../styles/bulma.css';
+
+  .vector-layer-container {
     margin-left: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 
-    .layer-header {
-      .layer-header-icons {
-        align-items: center;
-        border-top: 1px solid rgba(204, 204, 204, 0.5);
-        display: flex;
-        gap: 15px;
-        justify-content: left;
-        margin-top: 0;
-        padding-top: 0;
+    .panel-tabs {
+      padding-top: 10px;
 
-        .group {
-          padding-top: 0;
-          padding-bottom: 0;
+      a {
+        margin-right: 5px;
 
-          .tabs {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
-            font-family: ProximaNova, sans-serif;
-            font-size: 11px;
-            gap: 5px;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: white;
-          }
+        span {
+          margin-right: 3px;
         }
       }
-
-      .layer-actions {
-        padding-top: 5px;
-      }
     }
-  }
-  *:global(.tab) {
-    padding: 0;
+
+    .panel-content {
+      padding: 25px;
+    }
   }
 </style>

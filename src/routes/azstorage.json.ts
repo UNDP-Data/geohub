@@ -110,7 +110,7 @@ const listContainer = async (containerName: string, relPath: string) => {
       const isRaster = isRasterExtension(childLabel)
 
       if (isRaster) {
-        containerChildren.push({ label: childLabel, path: path, url: sasUrl, isRaster: isRaster })
+        containerChildren.push({ label: childLabel, path, url: sasUrl, isRaster })
       }
     }
   }
