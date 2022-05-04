@@ -19,6 +19,7 @@
   import Fa from 'svelte-fa'
   import { faCircleMinus } from '@fortawesome/free-solid-svg-icons/faCircleMinus'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
+  import { debounce } from 'lodash-es'
 
   import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
   import {
@@ -136,13 +137,13 @@
   }
 
   // Function to encode colormap, and update url parameters
-  const handleParamsUpdate = (cmap: object) => {
+  const handleParamsUpdate = debounce((cmap: object) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     let updatedParams = Object.assign({ colormap: encodedCmap })
     updateParamsInURL(definition, layerURL, updatedParams)
-  }
+  }, 500)
 
   // The opacity of the titiler is between 0 and 255 instead of 0-1.
   // This function rescales the opacity to 0-255
@@ -287,7 +288,9 @@
       <div class="column minimum">
         <input
           class="input is-small"
-          type="text"
+          type="number"
+          min="-1000000"
+          max="1000000"
           value={intervalList[index]}
           on:input={() => sendLastInterval(index, intervalList[index])} />
       </div>
@@ -295,7 +298,9 @@
       <div class="column maximum">
         <input
           class="input is-small"
-          type="text"
+          type="number"
+          min="-1000000"
+          max="1000000"
           value={intervalList[index + 1]}
           on:input={() => sendLastInterval(index, intervalList[index + 1])} />
       </div>
@@ -370,6 +375,16 @@
         top: -20px;
         z-index: 10;
       }
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type='number'] {
+      -moz-appearance: textfield;
     }
   }
 </style>
