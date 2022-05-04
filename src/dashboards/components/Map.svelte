@@ -95,4 +95,8 @@
     height: 100%;
     width: 100%;
   }
+
+  :global(.maplibregl-ctrl-bottom-right) {
+    padding-left: 64px;
+  }
 </style>
