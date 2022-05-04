@@ -4,13 +4,16 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Map } from 'maplibre-gl'
   import { map } from '../stores'
+  import type { StyleDefinition } from '$lib/types'
 
   const dispatch = createEventDispatcher()
 
-  export let styles = []
-  let activeStyle
+  export let stylePrimary: StyleDefinition
+  export let styleSecondary: StyleDefinition
+  let activeStyle: StyleDefinition
+  let buttonStyle: StyleDefinition
   let mainContainerId = 'main-switch-container'
-  let showStyleSelection = false
+  let mapToggle: Map
 
   const createMap = (id, uri) => {
     return new Map({
@@ -24,59 +27,53 @@
   }
 
   onMount(() => {
-    styles.forEach((style) => {
-      createMap(style.title, style.uri)
-      if (style.active === true) {
-        createMap(mainContainerId, style.uri)
-      }
-    })
+    activeStyle = JSON.parse(JSON.stringify(stylePrimary))
+    buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
+    mapToggle = createMap(mainContainerId, buttonStyle.uri)
   })
 
-  const changeStyle = (title) => {
+  const changeStyle = () => {
     if (!$map) return
-    styles.forEach((s) => {
-      s.active = s.title === title
-      if (s.active) {
-        activeStyle = JSON.parse(JSON.stringify(s))
-      }
-    })
+
+    if (!activeStyle) {
+      activeStyle = JSON.parse(JSON.stringify(stylePrimary))
+    }
+    if (!buttonStyle) {
+      buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
+    }
+
+    if (activeStyle.title === stylePrimary.title) {
+      activeStyle = JSON.parse(JSON.stringify(styleSecondary))
+      buttonStyle = JSON.parse(JSON.stringify(stylePrimary))
+    } else {
+      activeStyle = JSON.parse(JSON.stringify(stylePrimary))
+      buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
+    }
+
     $map.setStyle(activeStyle.uri)
-    createMap(mainContainerId, activeStyle.uri)
-    showStyleSelection = false
+    if (!mapToggle) {
+      createMap(mainContainerId, buttonStyle.uri)
+    } else {
+      mapToggle.setStyle(buttonStyle.uri)
+    }
     dispatch('styleChanged', {
       style: activeStyle,
     })
   }
 </script>
 
-<div
-  class="main-switch-container"
-  on:mouseenter={() => {
-    showStyleSelection = true
-  }}
-  on:mouseleave={() => {
-    showStyleSelection = false
-  }}>
-  <div
-    class="map-button"
-    id={mainContainerId}
-    on:click={() => {
-      showStyleSelection = !showStyleSelection
-    }} />
-
-  <div class="style-selection-container" class:visible={showStyleSelection}>
-    {#each styles as style}
-      <Wrapper>
-        <div
-          class="map-button map-selectionn"
-          id={style.title}
-          on:click={() => {
-            changeStyle(style.title)
-          }} />
-        <Tooltip>{style.title}</Tooltip>
-      </Wrapper>
-    {/each}
-  </div>
+<div class="main-switch-container">
+  <Wrapper>
+    <div
+      class="map-button"
+      id={mainContainerId}
+      on:click={() => {
+        changeStyle()
+      }} />
+    {#if buttonStyle}
+      <Tooltip>{buttonStyle.title}</Tooltip>
+    {/if}
+  </Wrapper>
 </div>
 
 <style lang="scss">
@@ -95,22 +92,5 @@
     border-style: solid;
     border-color: #1c1c1c;
     border-width: 1px;
-  }
-
-  .style-selection-container {
-    position: absolute;
-    bottom: 60px;
-    left: 0px;
-    display: inline-flex;
-    visibility: hidden;
-  }
-
-  .visible {
-    visibility: visible;
-  }
-
-  .map-selectionn:hover {
-    border-color: #e7aa70;
-    border-width: 2px;
   }
 </style>

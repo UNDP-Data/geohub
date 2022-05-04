@@ -6,6 +6,7 @@
   import CurrentLocation from './CurrentLocation.svelte'
   import StyleSwicher from './StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
+  import type { StyleDefinition } from '$lib/types'
 
   const dispatch = createEventDispatcher()
 
@@ -13,16 +14,14 @@
   let newMap: Map
   let mapContainer: HTMLDivElement
 
-  let styles = [
+  let styles: StyleDefinition[] = [
     {
       title: 'Carto',
       uri: 'https://undp-data.github.io/style/style.json',
-      active: true,
     },
     {
       title: 'Bing Aerial',
       uri: 'https://undp-data.github.io/style/aerialstyle.json',
-      active: false,
     },
   ]
 
@@ -88,7 +87,7 @@
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation />
-<StyleSwicher bind:styles on:styleChanged={styleChanged} />
+<StyleSwicher bind:stylePrimary={styles[0]} bind:styleSecondary={styles[1]} on:styleChanged={styleChanged} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
