@@ -60,9 +60,8 @@
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint[propertyName] = `rgb(${color.r}, ${color.b}, ${color.g})`
-    $map.setPaintProperty(layerId, propertyName, `rgb(${color.r}, ${color.b}, ${color.g})`)
-
+    newStyle.paint[propertyName] = `rgb(${color.r}, ${color.g}, ${color.b})`
+    $map.setPaintProperty(layerId, propertyName, `rgb(${color.r}, ${color.g}, ${color.b})`)
     dispatch('change')
   }
 </script>
@@ -77,7 +76,7 @@
     <div
       use:Ripple={{ surface: true }}
       on:click={() => (showToolTip = !showToolTip)}
-      style="width: 20px; height: 20px; cursor:pointer; background: {`rgb(${color.r}, ${color.b}, ${color.g})`}" />
+      style="width: 32px; height: 32px; cursor:pointer; background: {`rgb(${color.r}, ${color.g}, ${color.b})`}" />
     <!--    <ColorPicker bind:RgbColor={RGBColor} />-->
   </StyleControlGroup>
 {/if}

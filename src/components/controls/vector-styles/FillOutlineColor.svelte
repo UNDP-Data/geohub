@@ -9,6 +9,7 @@
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import RasterColorPicker from '../../raster/RasterColorPicker.svelte'
+  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 
@@ -20,9 +21,40 @@
   let RGBColor = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(110, 110, 110)'][0]
   let color
   let showToolTip = false
+  let rgbString
+  let rgbArray
 
-  $: RGBColor, setLineColor()
-  $: RGBColor, console.log(RGBColor)
+  $: color, setLineColor()
+
+  if (style.paint && style.paint[propertyName]) {
+    rgbString = style.paint[propertyName].replace('rgb(', '').replace(')', '')
+    rgbArray = Array(rgbString)
+    let r = parseInt(rgbArray[0])
+    let g = parseInt(rgbArray[1])
+    let b = parseInt(rgbArray[2])
+    color = {
+      r: r,
+      g: g,
+      b: b,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  } else {
+    let r = 20
+    let g = 180
+    let b = 60
+    color = {
+      r: r,
+      g: g,
+      b: b,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  }
 
   const setLineColor = () => {
     if (style.type !== LayerTypes.FILL) return
@@ -30,9 +62,8 @@
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint[propertyName] = RGBColor
-    $map.setPaintProperty(layerId, propertyName, RGBColor)
-
+    newStyle.paint[propertyName] = `rgb(${color.r}, ${color.g}, ${color.b})`
+    $map.setPaintProperty(layerId, propertyName, `rgb(${color.r}, ${color.g}, ${color.b})`)
     dispatch('change')
   }
 </script>
@@ -47,7 +78,7 @@
     <div
       use:Ripple={{ surface: true }}
       on:click={() => (showToolTip = !showToolTip)}
-      style="width: 20px; height: 20px; cursor:pointer; background: red" />
+      style="width: 32px; height: 32px; cursor:pointer; background: {`rgb(${color.r}, ${color.g}, ${color.b})`}" />
     <!--    <ColorPicker bind:RgbColor={RGBColor} />-->
   </StyleControlGroup>
 {/if}
