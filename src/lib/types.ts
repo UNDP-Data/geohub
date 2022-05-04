@@ -53,6 +53,14 @@ export interface ContinuousLegend {
 export interface IntervalLegend {
   classification?: ClassificationMethodTypes
   numberOfClasses?: number
+  colorMapRows?: IntervalLegendColorMapRow[]
+}
+
+export interface IntervalLegendColorMapRow {
+  index?: number
+  color?: number[]
+  start?: number
+  end?: number
 }
 
 export interface LayerInfo {

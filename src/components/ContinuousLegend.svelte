@@ -36,7 +36,11 @@
   let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
   let step = (layerMax - layerMin) * 1e-2
 
-  $: rangeSliderValues, setSliderState()
+  $: {
+    if (rangeSliderValues) {
+      setSliderState()
+    }
+  }
   $: {
     if (layerConfig) {
       activeColorMapName = layerConfig.colorMapName
@@ -70,12 +74,10 @@
     }
   }
 
-  const setSliderState = () => {
-    debounce(() => {
-      layerConfig.continuous.minimum = rangeSliderValues[0]
-      layerConfig.continuous.maximum = rangeSliderValues[1]
-    }, 500)
-  }
+  const setSliderState = debounce(() => {
+    layerConfig.continuous.minimum = rangeSliderValues[0]
+    layerConfig.continuous.maximum = rangeSliderValues[1]
+  }, 500)
 </script>
 
 <div class="group" data-testid="continous-view-container">

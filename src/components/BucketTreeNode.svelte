@@ -267,6 +267,7 @@
           intervals: {
             classification: ClassificationMethodTypes.EQUIDISTANT,
             numberOfClasses: COLOR_CLASS_COUNT,
+            colorMapRows: [],
           },
         },
         ...$layerList,
@@ -352,6 +353,7 @@
             intervals: {
               classification: ClassificationMethodTypes.EQUIDISTANT,
               numberOfClasses: COLOR_CLASS_COUNT,
+              colorMapRows: [],
             },
           },
           ...$layerList,

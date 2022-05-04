@@ -77,15 +77,15 @@
   <div class="column is-10">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <ContinuousLegend layerConfig={layer} />
+        <ContinuousLegend bind:layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend layerConfig={layer} />
+        <IntervalsLegend bind:layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend layerConfig={layer} />
+        <UniqueValuesLegend bind:layerConfig={layer} />
       </div>
     {/if}
   </div>
