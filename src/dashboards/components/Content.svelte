@@ -2,12 +2,11 @@
   import { LayerTypes } from '$lib/constants'
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
-  import { map } from '../stores'
+  import { map, year } from '../stores'
   import { Svg } from '@smui/common/elements'
   import SegmentedButton, { Segment, Icon, Label } from '@smui/segmented-button'
   import { mdiFlash, mdiLaptop } from '@mdi/js'
   import Button from '@smui/button'
-  // import { Label } from '@smui/common'
   import Paper from '@smui/paper'
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
@@ -22,33 +21,45 @@
   } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import TimeSlider from './TimeSlider.svelte'
+  import vegaEmbed from 'vega-embed'
 
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
-  const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
+  const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
   const AZURE_URL = `https://undpngddlsgeohubdev01.blob.core.windows.net`
   const AERIAL_BING_URL = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
 
-  const HREA_URL = `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_2020.tif?${TOKEN}`
-  const ML_URL = `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_2019_Result.tif?${TOKEN}`
   const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson?${TOKEN}`
 
-  const HREA_ID = 'hrea'
-  const ML_ID = 'ml'
-  const RWI_ID = 'rwi'
+  let RWI_ID = 'rwi'
   const ADM_ID = 'admin'
   const ADM_LAYER = 'adm1_polygons'
+  const HREA_ID = 'HREA'
+  const HREA_NODATA = -3.3999999521443642e38
+  const ML_ID = 'ML'
+  const ML_NODATA = 0
+
+  export const getHreaUrl = () => {
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_${$year}.tif?${TOKEN}`
+  }
+  export const getMlUrl = () => {
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_${$year}_Result.tif?${TOKEN}`
+  }
 
   export let drawerOpen = false
   let hoveredStateId = null
 
-  let hoverValue = {}
+  let hoverValue = {
+    [HREA_ID]: 0,
+    [ML_ID]: 0,
+  }
 
   let showIntro = true
   let heatmapChecked = false
   let electricityChoices = [
-    { name: 'HREA', icon: mdiFlash },
-    { name: 'ML', icon: mdiLaptop },
+    { name: HREA_ID, icon: mdiFlash },
+    { name: ML_ID, icon: mdiLaptop },
   ]
   let electricitySelected = electricityChoices[0]
   let interactChoices = ['Hover', 'Click']
@@ -60,6 +71,7 @@
 
   let layerOpacity = 1
   let rangeSliderValues = [layerOpacity * 100]
+
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
 
@@ -71,6 +83,8 @@
 
   function hideIntro() {
     showIntro = false
+    $map.on('click', onMouseClick)
+    renderDonut()
   }
 
   $: {
@@ -83,16 +97,31 @@
     }
   }
 
+  const getSpec = (numerator, denomonator) => ({
+    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+    description: 'A simple donut chart with embedded data.',
+    background: null,
+    data: {
+      values: [
+        { category: 1, value: numerator },
+        { category: 2, value: denomonator - numerator },
+      ],
+    },
+    mark: { type: 'arc', innerRadius: 50 },
+    encoding: {
+      theta: { field: 'value', type: 'quantitative' },
+      color: { field: 'category', type: 'nominal', legend: null },
+    },
+  })
+
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
     map.subscribe(() => {
       if ($map) {
         $map.on('load', () => {
-          loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
           loadAdminLayer()
         })
-        $map.on('mousemove', onMouseHover)
       }
     })
   })
@@ -146,52 +175,6 @@
     !$map.getLayer(ADM_ID) && $map.addLayer(layerFill)
   }
 
-  const loadRasterLayer = async (id: string, url: string, oldId: string) => {
-    const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
-    const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
-    const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
-    const apiUrlParams = new URLSearchParams()
-    apiUrlParams.set('scale', '1')
-    apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad')
-    apiUrlParams.set('url', url)
-    apiUrlParams.set('bidx', '1')
-    apiUrlParams.set('unscale', 'false')
-    apiUrlParams.set('resampling', 'nearest')
-    apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`)
-    apiUrlParams.set('return_mask', 'true')
-    apiUrlParams.set('colormap_name', 'bugn')
-
-    const layerSource: SourceSpecification = {
-      type: LayerTypes.RASTER,
-      tiles: [`${API_URL}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
-      tileSize: 256,
-      bounds: layerInfo['bounds'],
-      attribution:
-        'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
-            Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
-    }
-    const layerDefinition: RasterLayerSpecification = {
-      id: id,
-      type: LayerTypes.RASTER,
-      source: id,
-      minzoom: 0,
-      maxzoom: 22,
-      layout: { visibility: 'visible' },
-    }
-    let firstSymbolId = undefined
-    for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol' || layer.id === RWI_ID) {
-        firstSymbolId = layer.id
-        break
-      }
-    }
-
-    $map.getLayer(oldId) && $map.removeLayer(oldId)
-    $map.getSource(oldId) && $map.removeSource(oldId)
-    !$map.getSource(id) && $map.addSource(id, layerSource)
-    !$map.getLayer(id) && $map.addLayer(layerDefinition, firstSymbolId)
-  }
-
   const onMouseMove = (e) => {
     if (e.features.length > 0) {
       if (hoveredStateId) {
@@ -230,18 +213,25 @@
     hoveredStateId = null
   }
 
-  const onMouseHover = async (e) => {
+  const onMouseClick = async (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
-      [HREA_ID, HREA_URL],
-      [ML_ID, ML_URL],
+      [HREA_ID, getHreaUrl(), HREA_NODATA],
+      [ML_ID, getMlUrl(), ML_NODATA],
     ]
-    for (const [name, dataURL] of options) {
+    for (const [name, dataURL, noData] of options) {
       const url = `${API_URL}/point/${lng},${lat}?url=${dataURL}`
       const r = await fetch(url)
       const response = await r.json()
-      hoverValue[name] = response.values[0]
+      hoverValue[name] = response.values[0] === noData ? 0 : response.values[0]
     }
+    renderDonut()
+  }
+
+  const renderDonut = () => {
+    const options = { actions: false, renderer: 'svg' }
+    vegaEmbed('#donut1', getSpec(hoverValue[HREA_ID], 1), options)
+    vegaEmbed('#donut2', getSpec(hoverValue[ML_ID], 255), options)
   }
 
   $: interactSelected, loadInteraction()
@@ -250,26 +240,12 @@
     if (interactSelected === 'Click') {
       $map.on('mousemove', ADM_ID, onMouseMove)
       $map.on('mouseleave', ADM_ID, onMouseLeave)
-      $map.off('mousemove', onMouseHover)
+      $map.off('click', onMouseClick)
     } else {
       $map.off('mousemove', ADM_ID, onMouseMove)
       $map.off('mouseleave', ADM_ID, onMouseLeave)
-      $map.on('mousemove', onMouseHover)
-    }
-  }
-
-  $: electricitySelected, loadLayer()
-  const loadLayer = () => {
-    if (!$map) return
-    switch (electricitySelected.name) {
-      case 'HREA':
-        loadRasterLayer(HREA_ID, HREA_URL, ML_ID)
-        break
-      case 'ML':
-        loadRasterLayer(ML_ID, ML_URL, HREA_ID)
-        break
-      default:
-        break
+      $map.on('click', onMouseClick)
+      renderDonut()
     }
   }
 
@@ -398,6 +374,9 @@
                   <Label>{segment.name}</Label>
                 </Segment>
               </SegmentedButton>
+              <div class="raster-time-slider">
+                <TimeSlider bind:electricitySelected bind:BEFORE_LAYER_ID={RWI_ID} {AZURE_URL} />
+              </div>
               <p class="title-text">Poverty</p>
               <FormField>
                 <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
@@ -428,6 +407,13 @@
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
+              {#if interactSelected === 'Hover'}
+                <br /><br />
+                <p class="title-text">HREA</p>
+                <div id="donut1" />
+                <p class="title-text">ML</p>
+                <div id="donut2" />
+              {/if}
             </StyleControlGroup>
           {/if}
           <div />
@@ -546,12 +532,17 @@
   }
 
   .title-text {
-    font-size: 12px;
+    font-size: 14px;
     color: rgb(1, 1, 1, 0.6);
     font-weight: normal;
 
     @media (prefers-color-scheme: dark) {
       color: white;
     }
+  }
+
+  .raster-time-slider {
+    padding-top: 1em;
+    padding-bottom: 1em;
   }
 </style>
