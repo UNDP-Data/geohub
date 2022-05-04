@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Map } from 'maplibre-gl'
   import { map } from '../stores'
 
   export let styles = []
-  let maps = []
   let activeStyle
   let mainContainerId = 'main-switch-container'
   let showStyleSelection = false
@@ -23,7 +23,7 @@
 
   onMount(() => {
     styles.forEach((style) => {
-      const _map = new Map({
+      new Map({
         container: style.title,
         style: style.uri,
         center: [36.975, -1.364],
@@ -31,8 +31,6 @@
         attributionControl: false,
         interactive: false,
       })
-      maps.push(_map)
-
       if (style.active === true) {
         updateMainContainerMap(style.uri)
       }
@@ -77,12 +75,15 @@
 
   <div class="style-selection-container" class:visible={showStyleSelection}>
     {#each styles as style}
-      <div
-        class="map-button map-selectionn"
-        id={style.title}
-        on:click={() => {
-          changeStyle(style.title)
-        }} />
+      <Wrapper>
+        <div
+          class="map-button map-selectionn"
+          id={style.title}
+          on:click={() => {
+            changeStyle(style.title)
+          }} />
+        <Tooltip>{style.title}</Tooltip>
+      </Wrapper>
     {/each}
   </div>
 </div>
