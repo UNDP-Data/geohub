@@ -1,17 +1,20 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import { map } from '../stores'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
-  import type { MapboxStyleDefinition } from '@watergis/mapbox-gl-style-switcher'
-  import { MapboxStyleSwitcherControl } from '@watergis/mapbox-gl-style-switcher'
   import CurrentLocation from './CurrentLocation.svelte'
+  import StyleSwicher from './StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
+  import type { StyleDefinition } from '$lib/types'
+
+  const dispatch = createEventDispatcher()
 
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
   let newMap: Map
   let mapContainer: HTMLDivElement
 
-  const styles: MapboxStyleDefinition[] = [
+  let styles: StyleDefinition[] = [
     {
       title: 'Carto',
       uri: 'https://undp-data.github.io/style/style.json',
@@ -69,24 +72,31 @@
       }),
       'top-right',
     )
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    newMap.addControl(new MapboxStyleSwitcherControl(styles))
     newMap.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left')
     newMap.addControl(new AttributionControl({ compact: true }), 'bottom-right')
 
     map.update(() => newMap)
   })
+
+  export function styleChanged(e) {
+    dispatch('styleChanged', {
+      style: e.detail.style,
+    })
+  }
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation />
+<StyleSwicher bind:stylePrimary={styles[0]} bind:styleSecondary={styles[1]} on:styleChanged={styleChanged} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
-  @import '@watergis/mapbox-gl-style-switcher/styles.css';
   .map {
     height: 100%;
     width: 100%;
+  }
+
+  :global(.maplibregl-ctrl-bottom-right) {
+    padding-left: 72px;
   }
 </style>

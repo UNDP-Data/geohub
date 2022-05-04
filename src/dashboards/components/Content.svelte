@@ -57,6 +57,7 @@
 
   let showIntro = true
   let heatmapChecked = false
+  $: heatmapChecked, loadHeatmap()
   let electricityChoices = [
     { name: HREA_ID, icon: mdiFlash },
     { name: ML_ID, icon: mdiLaptop },
@@ -71,7 +72,6 @@
 
   let layerOpacity = 1
   let rangeSliderValues = [layerOpacity * 100]
-
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
 
@@ -250,6 +250,13 @@
   }
 
   const loadHeatmap = () => {
+    if (!$map) return
+
+    if (!heatmapChecked) {
+      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
+      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
+      return
+    }
     const layerSource: GeoJSONSourceSpecification = {
       type: 'geojson',
       data: RWI_URL,
@@ -280,14 +287,9 @@
       }
     }
 
-    if (heatmapChecked) {
-      !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
-      !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
-      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
-    } else {
-      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
-      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
-    }
+    !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
+    !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
+    $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
   }
 
   const addBingAerialLayer = async () => {
@@ -379,7 +381,7 @@
               </div>
               <p class="title-text">Poverty</p>
               <FormField>
-                <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
+                <Checkbox bind:checked={heatmapChecked} />
                 <span slot="label">Show Heatmap</span>
               </FormField>
               {#if heatmapChecked}

@@ -22,7 +22,7 @@
 
   let minValue = 2012
   let maxValue = 2020
-  let rangeSliderValues = [2019]
+  let rangeSliderValues = [2020]
 
   export let electricitySelected
   $: electricitySelected, setSlider()
@@ -55,7 +55,11 @@
   }
 
   const loadRasterLayer = async (url: string) => {
+    if (!$map) return
     const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
+    if (!(layerInfo && layerInfo['band_metadata'])) {
+      return
+    }
     const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
     const apiUrlParams = new URLSearchParams()
