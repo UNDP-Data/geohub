@@ -39,6 +39,11 @@ export const LayerInitialValues = {
   definition: undefined,
   type: '',
   info: {},
+  colorMapName: DEFAULT_COLORMAP,
+  continuous: {
+    minimum: undefined,
+    maximum: undefined,
+  }
 }
 
 export enum ErrorMessages {

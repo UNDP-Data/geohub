@@ -40,6 +40,13 @@ export interface Layer {
   visible?: boolean | true
   url?: string
   features?: []
+  colorMapName?: string
+  continuous?: RangerSliderValues
+}
+
+export interface RangerSliderValues {
+  minimum: number
+  maximum: number
 }
 
 export interface LayerInfo {

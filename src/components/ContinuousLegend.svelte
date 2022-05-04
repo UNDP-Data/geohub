@@ -1,7 +1,3 @@
-<script lang="ts" context="module">
-  const sliderState = {}
-</script>
-
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
   import type {
@@ -36,7 +32,7 @@
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
-  let rangeSliderValues = sliderState[layerConfig.definition.id] || [layerMin, layerMax]
+  let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
   let step = (layerMax - layerMin) * 1e-2
 
   $: rangeSliderValues, setSliderState()
@@ -72,7 +68,8 @@
   }
 
   const setSliderState = () => {
-    sliderState[layerConfig.definition.id] = rangeSliderValues
+    layerConfig.continuous.minimum = rangeSliderValues[0]
+    layerConfig.continuous.maximum = rangeSliderValues[1]
   }
 </script>
 

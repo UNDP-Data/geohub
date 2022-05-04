@@ -32,6 +32,11 @@ const layer: Layer = {
       ['1', {}],
     ],
   },
+  colorMapName: DEFAULT_COLORMAP,
+  continuous: {
+    minimum: 0,
+    maximum: 100,
+  },
 }
 
 beforeEach(cleanup)

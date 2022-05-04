@@ -149,7 +149,6 @@
   }
 
   const setLayerMetaDataStore = (layerPathHash: number, metadata: LayerInfoMetadata) => {
-    //TODO: clarify with Chris why is this code  overly complicated
     const layerMetadataClone = cloneDeep($layerMetadata)
     layerMetadataClone.set(layerPathHash, metadata)
     $layerMetadata = layerMetadataClone
@@ -254,6 +253,11 @@
           info: layerMeta,
           visible: true,
           url,
+          colorMapName: null,
+          continuous: {
+            minimum: null,
+            maximum: null,
+          },
         },
         ...$layerList,
       ]
@@ -330,6 +334,11 @@
             info: layerInfo,
             visible: true,
             url: b64EncodedUrl,
+            colorMapName: DEFAULT_COLORMAP,
+            continuous: {
+              minimum: parseFloat(layerBandMetadataMin),
+              maximum: parseFloat(layerBandMetadataMax),
+            },
           },
           ...$layerList,
         ]
