@@ -7,7 +7,7 @@
 
 <div class="card one-page">
   <header class="card-header">
-    <p style="color:dodgerblue;" class="card-header-title">
+    <p class="card-header-title">
       {title}
       dashboard
     </p>
@@ -34,6 +34,10 @@
     height: 460px;
     cursor: pointer;
     border-radius: 10px;
+    @media (prefers-color-scheme: dark) {
+      border: solid 0.5px #212125;
+      background: #212125;
+    }
   }
   .dashboard-image:hover {
     webkit-filter: blur(4px); /* Chrome, Safari, Opera */
@@ -42,9 +46,16 @@
   .card-header-title {
     font-family: ProximaNova, sans-serif;
     text-transform: capitalize;
+    color: dodgerblue;
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
   }
   .content {
     font-family: ProximaNova, sans-serif;
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
   }
   .card-footer {
     font-family: ProximaNova, sans-serif;

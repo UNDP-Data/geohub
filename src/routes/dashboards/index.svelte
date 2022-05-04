@@ -19,7 +19,7 @@
 
 <Header>Dashboards</Header>
 <div style="width: 100%; height: max-content; z-index: -1;">
-  <h3 style="color:dodgerblue; margin: auto; width: 30%;" class="title is-3">GeoHub Dashboard Gallery</h3>
+  <h3 style="" class="title is-3">GeoHub Dashboard Gallery</h3>
 </div>
 <div class="body-div">
   {#each pages as page}
@@ -39,5 +39,15 @@
     .body-div {
       display: block;
     }
+  }
+  @media (prefers-color-scheme: dark) {
+    .is-3 {
+      color: #ffffff !important;
+    }
+  }
+  .is-3 {
+    color: dodgerblue;
+    margin: auto;
+    width: 30%;
   }
 </style>
