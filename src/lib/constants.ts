@@ -8,6 +8,8 @@ export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
 export const STRING_COMPARE_THRESHOLD = 0.25
 export const COLOR_CLASS_COUNT = 5
+export const COLOR_CLASS_COUNT_MINIMUM = 2
+export const COLOR_CLASS_COUNT_MAXIMUM = 25
 
 export enum TabNames {
   ANALYZE = 'Analyze',
@@ -108,6 +110,12 @@ export enum ClassificationMethodTypes {
   EQUIDISTANT = 'e',
   QUANTILE = 'q',
   LOGARITHMIC = 'l',
+}
+
+export enum ClassificationMethodNames {
+  EQUIDISTANT = 'Equidistant',
+  QUANTILE = 'Quantile',
+  LOGARITHMIC = 'Logarithmic',
 }
 
 export enum StatusTypes {
