@@ -43,7 +43,7 @@ export const LayerInitialValues = {
   continuous: {
     minimum: undefined,
     maximum: undefined,
-  }
+  },
 }
 
 export enum ErrorMessages {

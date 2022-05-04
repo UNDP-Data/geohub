@@ -8,7 +8,6 @@
   import { ColorMapTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let activeColorMapName: string
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layer: Layer
   export let numberOfClasses: number
@@ -28,6 +27,7 @@
 
   const handleColorMapClick = (colorMapName: string) => {
     dispatch('handleColorMapClick', { colorMapName })
+    layer.colorMapName = colorMapName
   }
 
   const handleClosePopup = () => {
@@ -71,7 +71,7 @@
                   {layerMax}
                   {layerMin}
                   {numberOfClasses}
-                  isSelected={activeColorMapName === colorMapName ? true : false} />
+                  isSelected={layer.colorMapName === colorMapName ? true : false} />
               </li>
             {/each}
           {/if}

@@ -7,6 +7,7 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
+  import { debounce } from 'lodash-es'
 
   import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
@@ -14,7 +15,6 @@
   import type { Layer, LayerInfo } from '$lib/types'
   import { map } from '$stores'
 
-  export let activeColorMapName: string
   export let layerConfig: Layer = LayerInitialValues
 
   let definition:
@@ -25,6 +25,7 @@
     | HeatmapLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
+  let activeColorMapName = layerConfig.colorMapName
 
   const numberOfClasses = COLOR_CLASS_COUNT
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
@@ -37,9 +38,10 @@
 
   $: rangeSliderValues, setSliderState()
   $: {
-    if (activeColorMapName) {
+    if (layerConfig) {
+      activeColorMapName = layerConfig.colorMapName
       rescaleColorMap()
-      updateParamsInURL(definition, layerURL, { colormap_name: activeColorMapName })
+      updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
     }
   }
 
@@ -68,8 +70,10 @@
   }
 
   const setSliderState = () => {
-    layerConfig.continuous.minimum = rangeSliderValues[0]
-    layerConfig.continuous.maximum = rangeSliderValues[1]
+    debounce(() => {
+      layerConfig.continuous.minimum = rangeSliderValues[0]
+      layerConfig.continuous.maximum = rangeSliderValues[1]
+    }, 500)
   }
 </script>
 

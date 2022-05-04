@@ -33,7 +33,7 @@
   import type { Layer, LayerInfo, Color } from '$lib/types'
   import { map } from '$stores'
 
-  export let activeColorMapName: string
+  // export let activeColorMapName: string
   export let layerConfig: Layer = LayerInitialValues
   export let numberOfClasses = numberOfClassesState[layerConfig.definition.id] || 5
 
@@ -45,6 +45,7 @@
     | HeatmapLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
+  let activeColorMapName = layerConfig.colorMapName
 
   const layerMin = Number(info.band_metadata[0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info.band_metadata[0][1]['STATISTICS_MAXIMUM'])
@@ -76,7 +77,13 @@
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
 
-  $: activeColorMapName, setActiveColorMapNameState()
+  $: {
+    if (layerConfig) {
+      activeColorMapName = layerConfig.colorMapName
+      setActiveColorMapNameState()
+    }
+  }
+
   $: color, updateColorMap(intervalIndex, color)
   $: numberOfClasses, setNumberOfClassesState()
   $: selectedClassificationMethod, setClassificationMethodState()

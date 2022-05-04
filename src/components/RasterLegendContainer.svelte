@@ -18,7 +18,6 @@
   import { COLOR_CLASS_COUNT, DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let activeColorMapName: string
   export let layer: Layer
 
   let isLegendSwitchAnimate = false
@@ -63,28 +62,32 @@
 
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      activeColorMapName = event.detail.colorMapName
+      const layerClone = cloneDeep(layer)
+      layerClone.colorMapName = event.detail.colorMapName
+      layer = layerClone
     }
   }
 
   const handleClosePopup = () => {
     showTooltip = !showTooltip
   }
+
+  import { cloneDeep } from 'lodash-es'
 </script>
 
 <div class="columns" data-testid="raster-legend-view-container">
   <div class="column is-10">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <ContinuousLegend bind:activeColorMapName layerConfig={layer} />
+        <ContinuousLegend layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:activeColorMapName layerConfig={layer} bind:numberOfClasses />
+        <IntervalsLegend layerConfig={layer} bind:numberOfClasses />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+        <UniqueValuesLegend layerConfig={layer} />
       </div>
     {/if}
   </div>
@@ -115,7 +118,6 @@
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
-          {activeColorMapName}
           {numberOfClasses} />
         <div id="arrow" data-popper-arrow />
       </div>
