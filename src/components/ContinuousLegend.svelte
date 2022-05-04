@@ -27,7 +27,7 @@
   ;({ definition, info } = layerConfig)
   let activeColorMapName = layerConfig.colorMapName
 
-  const numberOfClasses = COLOR_CLASS_COUNT
+  let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
   const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const layerSrc = $map.getSource(definition.source)
@@ -40,6 +40,7 @@
   $: {
     if (layerConfig) {
       activeColorMapName = layerConfig.colorMapName
+      numberOfClasses = layerConfig.intervals.numberOfClasses
       rescaleColorMap()
       updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
     }

@@ -1,7 +1,5 @@
 <script lang="ts" context="module">
-  const activeColorMapNameState = {}
   const cmapState = {}
-  const numberOfClassesState = {}
   const selectedClassificationMethodState = {}
 </script>
 
@@ -26,6 +24,7 @@
     ClassificationMethodNames,
     ClassificationMethodTypes,
     LayerInitialValues,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MINIMUM,
     COLOR_CLASS_COUNT_MAXIMUM,
   } from '$lib/constants'
@@ -33,9 +32,8 @@
   import type { Layer, LayerInfo, Color } from '$lib/types'
   import { map } from '$stores'
 
-  // export let activeColorMapName: string
   export let layerConfig: Layer = LayerInitialValues
-  export let numberOfClasses = numberOfClassesState[layerConfig.definition.id] || 5
+  export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
   let definition:
     | RasterLayerSpecification
@@ -45,7 +43,6 @@
     | HeatmapLayerSpecification
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
-  let activeColorMapName = layerConfig.colorMapName
 
   const layerMin = Number(info.band_metadata[0][1]['STATISTICS_MINIMUM'])
   const layerMax = Number(info.band_metadata[0][1]['STATISTICS_MAXIMUM'])
@@ -79,13 +76,12 @@
 
   $: {
     if (layerConfig) {
-      activeColorMapName = layerConfig.colorMapName
-      setActiveColorMapNameState()
+      reclassifyImage()
     }
   }
 
   $: color, updateColorMap(intervalIndex, color)
-  $: numberOfClasses, setNumberOfClassesState()
+  // $: numberOfClasses, setNumberOfClassesState()
   $: selectedClassificationMethod, setClassificationMethodState()
   $: {
     if (intervalIndex !== undefined) {
@@ -105,7 +101,7 @@
       return Number(element.toFixed(2))
     })
 
-    let scaleColorList = chroma.scale(activeColorMapName).classes(intervalList)
+    let scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
     if (cmapState[layerConfig.definition.id] !== undefined) {
       cmap = cmapState[layerConfig.definition.id]
       if (cmap.length > 0) {
@@ -163,15 +159,6 @@
     reclassifyImage()
   }
 
-  const setNumberOfClassesState = () => {
-    numberOfClassesState[layerConfig.definition.id] = numberOfClasses
-  }
-
-  const setActiveColorMapNameState = () => {
-    activeColorMapNameState[layerConfig.definition.id] = activeColorMapName
-    reclassifyImage()
-  }
-
   const handleIncrementDecrementClasses = (operation: string) => {
     if (operation === '+') {
       if (numberOfClasses < COLOR_CLASS_COUNT_MAXIMUM) {
@@ -183,6 +170,8 @@
         numberOfClasses--
       }
     }
+
+    layerConfig.intervals.numberOfClasses = numberOfClasses
     reclassifyImage()
   }
 

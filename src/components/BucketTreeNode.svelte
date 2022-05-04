@@ -22,7 +22,15 @@
   import { cloneDeep } from 'lodash-es'
 
   import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
-  import { ErrorMessages, LayerIconTypes, LayerTypes, StatusTypes, DEFAULT_COLORMAP } from '$lib/constants'
+  import {
+    ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
+    ErrorMessages,
+    LayerIconTypes,
+    LayerTypes,
+    StatusTypes,
+    DEFAULT_COLORMAP,
+  } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
   import type {
@@ -53,7 +61,6 @@
   $: mmap = $map
 
   onMount(() => {
-    //console.log({ label: label,  geomType:geomType, url: url })
     if (level === 0) toggleExpansion()
     if (geomType !== undefined) {
       iconVector = getVectorLayerIcon(geomType)
@@ -123,7 +130,6 @@
                 setLayerMetaDataStore(layerPathHash, metadata)
               }
             } else {
-              console.log('JUSSI', JSON.stringify(JSON.parse(layerInfo.json), null, '\t'))
               const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
                 description: layerInfo.description,
                 source: layerInfo.source,
@@ -258,6 +264,10 @@
             minimum: null,
             maximum: null,
           },
+          intervals: {
+            classification: ClassificationMethodTypes.EQUIDISTANT,
+            numberOfClasses: COLOR_CLASS_COUNT,
+          },
         },
         ...$layerList,
       ]
@@ -338,6 +348,10 @@
             continuous: {
               minimum: parseFloat(layerBandMetadataMin),
               maximum: parseFloat(layerBandMetadataMax),
+            },
+            intervals: {
+              classification: ClassificationMethodTypes.EQUIDISTANT,
+              numberOfClasses: COLOR_CLASS_COUNT,
             },
           },
           ...$layerList,

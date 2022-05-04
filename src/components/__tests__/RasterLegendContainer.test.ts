@@ -3,7 +3,7 @@ import { cleanup, render, fireEvent, within, type RenderResult } from '@testing-
 import { Map } from 'maplibre-gl'
 
 import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
-import { DEFAULT_COLORMAP } from '$lib/constants'
+import { ClassificationMethodTypes, COLOR_CLASS_COUNT, DEFAULT_COLORMAP } from '$lib/constants'
 import type { Layer } from '$lib/types'
 import { map } from '$stores'
 
@@ -36,6 +36,10 @@ const layer: Layer = {
   continuous: {
     minimum: 0,
     maximum: 100,
+  },
+  intervals: {
+    classification: ClassificationMethodTypes.EQUIDISTANT,
+    numberOfClasses: COLOR_CLASS_COUNT,
   },
 }
 

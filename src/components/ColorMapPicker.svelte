@@ -10,7 +10,13 @@
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layer: Layer
-  export let numberOfClasses: number
+  let numberOfClasses = layer.intervals.numberOfClasses
+
+  $: {
+    if (layer) {
+      numberOfClasses = layer.intervals.numberOfClasses
+    }
+  }
 
   const dispatch = createEventDispatcher()
   const layerMax = Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])

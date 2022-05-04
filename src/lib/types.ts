@@ -7,7 +7,7 @@ import type {
   SymbolLayerSpecification,
   HeatmapLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
-import type { StatusTypes } from './constants'
+import type { ClassificationMethodTypes, StatusTypes } from './constants'
 
 export interface Tree {
   tree: TreeNode
@@ -41,12 +41,18 @@ export interface Layer {
   url?: string
   features?: []
   colorMapName?: string
-  continuous?: RangerSliderValues
+  continuous?: ContinuousLegend
+  intervals?: IntervalLegend
 }
 
-export interface RangerSliderValues {
+export interface ContinuousLegend {
   minimum: number
   maximum: number
+}
+
+export interface IntervalLegend {
+  classification?: ClassificationMethodTypes
+  numberOfClasses?: number
 }
 
 export interface LayerInfo {

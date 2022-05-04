@@ -15,7 +15,7 @@
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { COLOR_CLASS_COUNT, DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
   export let layer: Layer
@@ -23,13 +23,11 @@
   let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
-  let numberOfClasses = COLOR_CLASS_COUNT
 
   $: selectedLegendType, setSelectedLegend()
 
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
-    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) numberOfClasses = COLOR_CLASS_COUNT
   }
 
   const handleLegendToggleClick = () => {
@@ -83,7 +81,7 @@
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend layerConfig={layer} bind:numberOfClasses />
+        <IntervalsLegend layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
@@ -114,11 +112,7 @@
 
     {#if showTooltip}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
-          on:handleClosePopup={handleClosePopup}
-          {layer}
-          {numberOfClasses} />
+        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} on:handleClosePopup={handleClosePopup} {layer} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}
