@@ -34,6 +34,18 @@ export const BucketIntialValues = {
   tags: [],
 }
 
+export enum ClassificationMethodTypes {
+  EQUIDISTANT = 'e',
+  QUANTILE = 'q',
+  LOGARITHMIC = 'l',
+}
+
+export enum ClassificationMethodNames {
+  EQUIDISTANT = 'Equidistant',
+  QUANTILE = 'Quantile',
+  LOGARITHMIC = 'Logarithmic',
+}
+
 export const LayerInitialValues = {
   name: 'GeoHub',
   definition: undefined,
@@ -43,6 +55,10 @@ export const LayerInitialValues = {
   continuous: {
     minimum: undefined,
     maximum: undefined,
+  },
+  intervals: {
+    classification: ClassificationMethodTypes.EQUIDISTANT,
+    numberOfClasses: COLOR_CLASS_COUNT,
   },
 }
 
@@ -109,18 +125,6 @@ export enum LayerTypes {
   LINE = 'line',
   FILL = 'fill',
   HEATMAP = 'heatmap',
-}
-
-export enum ClassificationMethodTypes {
-  EQUIDISTANT = 'e',
-  QUANTILE = 'q',
-  LOGARITHMIC = 'l',
-}
-
-export enum ClassificationMethodNames {
-  EQUIDISTANT = 'Equidistant',
-  QUANTILE = 'Quantile',
-  LOGARITHMIC = 'Logarithmic',
 }
 
 export enum StatusTypes {

@@ -1,6 +1,5 @@
 <script lang="ts" context="module">
   const cmapState = {}
-  const selectedClassificationMethodState = {}
 </script>
 
 <script lang="ts">
@@ -64,8 +63,7 @@
   let intervalIndex: number
   let intervalList = []
   let rangeSliderValues = [layerMin, layerMax]
-  let selectedClassificationMethod =
-    selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
+  let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
   let showToolTip = false
 
   const classificationMethods = [
@@ -74,20 +72,9 @@
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
 
-  $: {
-    if (layerConfig) {
-      reclassifyImage()
-    }
-  }
-
+  $: if (layerConfig) reclassifyImage()
+  $: if (intervalIndex !== undefined) setIndexColor(intervalIndex)
   $: color, updateColorMap(intervalIndex, color)
-  // $: numberOfClasses, setNumberOfClassesState()
-  $: selectedClassificationMethod, setClassificationMethodState()
-  $: {
-    if (intervalIndex !== undefined) {
-      setIndexColor(intervalIndex)
-    }
-  }
 
   // Generic function to store the colormap
   const setCmapState = (cmap) => {
@@ -97,7 +84,7 @@
   // Fixme: This function is being called twice every time
   // Reclassify the layer every time the color, interval or number of classes is changed.
   const reclassifyImage = () => {
-    intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
+    intervalList = chroma.limits(rangeSliderValues, classificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
 
@@ -137,6 +124,8 @@
       setCmapState(cmap)
       handleParamsUpdate(cmap)
     }
+
+    layerConfig.intervals.classification = classificationMethod
   }
 
   // Function to encode colormap, and update url parameters
@@ -152,11 +141,6 @@
   // This function rescales the opacity to 0-255
   function rescaleOpacity(opacity: number) {
     return 255 * opacity
-  }
-
-  const setClassificationMethodState = () => {
-    selectedClassificationMethodState[layerConfig.definition.id] = selectedClassificationMethod
-    reclassifyImage()
   }
 
   const handleIncrementDecrementClasses = (operation: string) => {
@@ -228,7 +212,7 @@
     <div class="column classification">
       <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
       <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
-        <select bind:value={selectedClassificationMethod} on:change={() => reclassifyImage()} style="width: 114px;">
+        <select bind:value={classificationMethod} on:change={() => reclassifyImage()} style="width: 114px;">
           {#each classificationMethods as classificationMethod}
             <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
           {/each}
