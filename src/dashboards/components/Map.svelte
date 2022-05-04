@@ -1,10 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import { map } from '../stores'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
   import CurrentLocation from './CurrentLocation.svelte'
   import StyleSwicher from './StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
+
+  const dispatch = createEventDispatcher()
 
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
   let newMap: Map
@@ -75,11 +78,17 @@
 
     map.update(() => newMap)
   })
+
+  export function styleChanged(e) {
+    dispatch('styleChanged', {
+      style: e.detail.style,
+    })
+  }
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation />
-<StyleSwicher bind:styles />
+<StyleSwicher bind:styles on:styleChanged={styleChanged} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';

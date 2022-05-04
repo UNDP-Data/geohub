@@ -39,6 +39,7 @@
 
   let showIntro = false
   let heatmapChecked = false
+  $: heatmapChecked, loadHeatmap()
   let electricityChoices = [
     { name: 'HREA', icon: mdiFlash },
     { name: 'ML', icon: mdiLaptop },
@@ -79,14 +80,18 @@
     }
   }
 
+  export function loadLayers() {
+    loadRasterLayer()
+    loadAdminLayer()
+  }
+
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
     map.subscribe(() => {
       if ($map) {
         $map.on('load', () => {
-          loadRasterLayer()
-          loadAdminLayer()
+          loadLayers()
           showIntro = true
         })
       }
@@ -193,6 +198,13 @@
   }
 
   const loadHeatmap = () => {
+    if (!$map) return
+
+    if (!heatmapChecked) {
+      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
+      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
+      return
+    }
     const layerSource: GeoJSONSourceSpecification = {
       type: 'geojson',
       data: RWI_URL,
@@ -223,14 +235,9 @@
       }
     }
 
-    if (heatmapChecked) {
-      !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
-      !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
-      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
-    } else {
-      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
-      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
-    }
+    !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
+    !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
+    $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
   }
 
   const addBingAerialLayer = async () => {
@@ -326,7 +333,7 @@
               </div>
               <p class="title-text">Poverty</p>
               <FormField>
-                <Checkbox bind:checked={heatmapChecked} on:change={loadHeatmap} />
+                <Checkbox bind:checked={heatmapChecked} />
                 <span slot="label">Show Heatmap</span>
               </FormField>
               {#if heatmapChecked}

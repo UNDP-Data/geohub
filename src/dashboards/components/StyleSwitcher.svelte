@@ -1,18 +1,20 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Map } from 'maplibre-gl'
   import { map } from '../stores'
+
+  const dispatch = createEventDispatcher()
 
   export let styles = []
   let activeStyle
   let mainContainerId = 'main-switch-container'
   let showStyleSelection = false
-  $: activeStyle, setActive()
 
-  const updateMainContainerMap = (uri) => {
-    new Map({
-      container: mainContainerId,
+  const createMap = (id, uri) => {
+    return new Map({
+      container: id,
       style: uri,
       center: [36.975, -1.364],
       zoom: 1,
@@ -23,38 +25,27 @@
 
   onMount(() => {
     styles.forEach((style) => {
-      new Map({
-        container: style.title,
-        style: style.uri,
-        center: [36.975, -1.364],
-        zoom: 1,
-        attributionControl: false,
-        interactive: false,
-      })
+      createMap(style.title, style.uri)
       if (style.active === true) {
-        updateMainContainerMap(style.uri)
+        createMap(mainContainerId, style.uri)
       }
     })
   })
 
-  const setActive = () => {
-    if (!activeStyle) return
-    styles.forEach((s) => {
-      s.active = s.title === activeStyle.title
-    })
-  }
-
   const changeStyle = (title) => {
     if (!$map) return
     styles.forEach((s) => {
-      if (s.title === title) {
+      s.active = s.title === title
+      if (s.active) {
         activeStyle = JSON.parse(JSON.stringify(s))
       }
     })
     $map.setStyle(activeStyle.uri)
-    setActive()
-    updateMainContainerMap(activeStyle.uri)
+    createMap(mainContainerId, activeStyle.uri)
     showStyleSelection = false
+    dispatch('styleChanged', {
+      style: activeStyle,
+    })
   }
 </script>
 
