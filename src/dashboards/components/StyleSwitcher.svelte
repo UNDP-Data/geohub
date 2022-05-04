@@ -6,7 +6,20 @@
   export let styles = []
   let maps = []
   let activeStyle
+  let mainContainerId = 'main-switch-container'
+  let showStyleSelection = false
   $: activeStyle, setActive()
+
+  const updateMainContainerMap = (uri) => {
+    new Map({
+      container: mainContainerId,
+      style: uri,
+      center: [36.975, -1.364],
+      zoom: 1,
+      attributionControl: false,
+      interactive: false,
+    })
+  }
 
   onMount(() => {
     styles.forEach((style) => {
@@ -19,6 +32,10 @@
         interactive: false,
       })
       maps.push(_map)
+
+      if (style.active === true) {
+        updateMainContainerMap(style.uri)
+      }
     })
   })
 
@@ -38,29 +55,46 @@
     })
     $map.setStyle(activeStyle.uri)
     setActive()
+    updateMainContainerMap(activeStyle.uri)
+    showStyleSelection = false
   }
 </script>
 
-<div class="style-swich-container">
-  {#each styles as style}
-    <div
-      class="map-style-switcher"
-      id={style.title}
-      on:click={() => {
-        changeStyle(style.title)
-      }} />
-  {/each}
+<div
+  class="main-switch-container"
+  on:mouseenter={() => {
+    showStyleSelection = true
+  }}
+  on:mouseleave={() => {
+    showStyleSelection = false
+  }}>
+  <div
+    class="map-button"
+    id={mainContainerId}
+    on:click={() => {
+      showStyleSelection = !showStyleSelection
+    }} />
+
+  <div class="style-selection-container" class:visible={showStyleSelection}>
+    {#each styles as style}
+      <div
+        class="map-button map-selectionn"
+        id={style.title}
+        on:click={() => {
+          changeStyle(style.title)
+        }} />
+    {/each}
+  </div>
 </div>
 
 <style lang="scss">
-  .style-swich-container {
+  .main-switch-container {
     position: absolute;
     bottom: 40px;
     left: 10px;
-    display: inline-flex;
   }
 
-  .map-style-switcher {
+  .map-button {
     cursor: pointer;
     width: 60px;
     height: 60px;
@@ -71,7 +105,19 @@
     border-width: 1px;
   }
 
-  .map-style-switcher:hover {
+  .style-selection-container {
+    position: absolute;
+    bottom: 65px;
+    left: 0px;
+    display: inline-flex;
+    visibility: hidden;
+  }
+
+  .visible {
+    visibility: visible;
+  }
+
+  .map-selectionn:hover {
     border-color: #e7aa70;
     border-width: 2px;
   }
