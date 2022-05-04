@@ -18,9 +18,8 @@
 </script>
 
 <Header>Dashboards</Header>
-<div style='width: 100%; height: max-content; z-index: -1;'>
-  <h3 style='color:dodgerblue; margin: auto; width: 30%;' class="title is-3">GeoHub Dashboard Gallery</h3>
-
+<div style="width: 100%; height: max-content; z-index: -1;">
+  <h3 style="color:dodgerblue; margin: auto; width: 30%;" class="title is-3">GeoHub Dashboard Gallery</h3>
 </div>
 <div class="body-div">
   {#each pages as page}
@@ -30,11 +29,11 @@
 
 <style>
   .body-div {
-      padding: 20px;
-      height: 100vh;
-      width: 100%;
-      overflow-y: auto;
-      display: flex;
+    padding: 20px;
+    height: 100vh;
+    width: 100%;
+    overflow-y: auto;
+    display: flex;
   }
   @media (max-width: 600px) {
     .body-div {

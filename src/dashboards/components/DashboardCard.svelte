@@ -7,7 +7,7 @@
 
 <div class="card one-page">
   <header class="card-header">
-    <p style='color:dodgerblue;' class="card-header-title">
+    <p style="color:dodgerblue;" class="card-header-title">
       {title}
       dashboard
     </p>
@@ -18,7 +18,9 @@
         <img class="dashboard-image" src="electricity-snapshot.jpg" alt="Placeholder image" />
       </figure>
     </div>
-    <div style='color:dodgerblue;' class="content">The description should go here and some the information about the specific dashboard</div>
+    <div style="color:dodgerblue;" class="content">
+      The description should go here and some the information about the specific dashboard
+    </div>
   </div>
   <footer class="card-footer" use:Ripple={{ surface: true }}>
     <a href={link} class="card-footer-item">Open {title} dashboard</a>
@@ -34,7 +36,6 @@
     height: 460px;
     cursor: pointer;
     border-radius: 10px;
-
   }
   .dashboard-image:hover {
     webkit-filter: blur(4px); /* Chrome, Safari, Opera */
