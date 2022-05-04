@@ -42,9 +42,9 @@
       v: chroma([r, g, b]).hsv()[2],
     }
   } else {
-    let r = 20
-    let g = 180
-    let b = 60
+    let r = 110
+    let g = 110
+    let b = 110
     color = {
       r: r,
       g: g,
