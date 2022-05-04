@@ -15,15 +15,15 @@
 <script lang="ts">
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import Header from '../../components/Header.svelte'
+
+  let title = 'Geohub Dashboard Gallery'
+  let showControls = false
 </script>
 
-<Header>Dashboards</Header>
-<div style="width: 100%; height: max-content; z-index: -1;">
-  <h3 style="" class="title is-3">GeoHub Dashboard Gallery</h3>
-</div>
+<Header bind:title bind:showControls />
 <div class="body-div">
   {#each pages as page}
-    <DashboardCard title={page.title} link={page.link} />
+    <DashboardCard bind:title={page.title} bind:link={page.link} />
   {/each}
 </div>
 
@@ -41,13 +41,8 @@
     }
   }
   @media (prefers-color-scheme: dark) {
-    .is-3 {
-      color: #ffffff !important;
+    .body-div {
+      background: #121212;
     }
-  }
-  .is-3 {
-    color: dodgerblue;
-    margin: auto;
-    width: 30%;
   }
 </style>

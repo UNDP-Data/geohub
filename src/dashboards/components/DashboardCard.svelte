@@ -5,25 +5,27 @@
   import Ripple from '@smui/ripple'
 </script>
 
-<div class="card one-page">
-  <header class="card-header">
-    <p class="card-header-title">
-      {title}
-      dashboard
-    </p>
-  </header>
-  <div class="card-content">
-    <div class="card-image">
-      <figure class="image is-4by3">
-        <img class="dashboard-image" src="electricity-snapshot.jpg" alt="Placeholder image" />
-      </figure>
+<a href={link}>
+  <div class="card one-page">
+    <header class="card-header">
+      <p class="card-header-title">
+        {title}
+        dashboard
+      </p>
+    </header>
+    <div class="card-content">
+      <div class="card-image">
+        <figure class="image is-4by3">
+          <img class="dashboard-image" src="electricity-snapshot.jpg" alt="Placeholder image" />
+        </figure>
+      </div>
+      <div class="content">The description should go here and some the information about the specific dashboard</div>
     </div>
-    <div class="content">The description should go here and some the information about the specific dashboard</div>
+    <footer class="card-footer" use:Ripple={{ surface: true }}>
+      <a href={link} class="card-footer-item">Open {title} dashboard</a>
+    </footer>
   </div>
-  <footer class="card-footer" use:Ripple={{ surface: true }}>
-    <a href={link} class="card-footer-item">Open {title} dashboard</a>
-  </footer>
-</div>
+</a>
 
 <style lang="scss">
   @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
