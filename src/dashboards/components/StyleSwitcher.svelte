@@ -100,7 +100,7 @@
     width: 60px;
     height: 60px;
     border-radius: 30px;
-    margin: 5px;
+    margin: 0px;
     border-style: solid;
     border-color: #1c1c1c;
     border-width: 1px;
@@ -108,7 +108,7 @@
 
   .style-selection-container {
     position: absolute;
-    bottom: 65px;
+    bottom: 60px;
     left: 0px;
     display: inline-flex;
     visibility: hidden;
