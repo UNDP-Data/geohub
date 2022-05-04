@@ -56,8 +56,10 @@
     } else {
       mapToggle.setStyle(buttonStyle.uri)
     }
-    dispatch('styleChanged', {
-      style: activeStyle,
+    mapToggle.on('styledata', () => {
+      dispatch('styleChanged', {
+        style: activeStyle,
+      })
     })
   }
 </script>
