@@ -3,9 +3,10 @@
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
   import { map } from '../stores'
-  import { Svg } from '@smui/common/elements'
   import SegmentedButton, { Segment, Icon, Label } from '@smui/segmented-button'
-  import { mdiFlash, mdiLaptop } from '@mdi/js'
+  import Fa from 'svelte-fa'
+  import { faPlugCircleBolt } from '@fortawesome/free-solid-svg-icons/faPlugCircleBolt'
+  import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
   import Button from '@smui/button'
   import Paper from '@smui/paper'
   import FormField from '@smui/form-field'
@@ -41,8 +42,8 @@
   let heatmapChecked = false
   $: heatmapChecked, loadHeatmap()
   let electricityChoices = [
-    { name: 'HREA', icon: mdiFlash },
-    { name: 'ML', icon: mdiLaptop },
+    { name: 'HREA', icon: faPlugCircleBolt },
+    { name: 'ML', icon: faLaptopCode },
   ]
   let electricitySelected = electricityChoices[0]
   let interactChoices = ['Hover', 'Click']
@@ -328,9 +329,9 @@
                 singleSelect
                 bind:selected={electricitySelected}>
                 <Segment {segment}>
-                  <Icon component={Svg} style="width: 1em; height: auto;" viewBox="0 0 24 24">
-                    <path fill="currentColor" d={segment.icon} />
-                  </Icon>
+                  <div class="icon">
+                    <Fa icon={segment.icon} size="lg" />
+                  </div>
                   <Label>{segment.name}</Label>
                 </Segment>
               </SegmentedButton>
@@ -501,5 +502,10 @@
   .raster-time-slider {
     padding-top: 1em;
     padding-bottom: 1em;
+  }
+
+  .icon {
+    padding-left: 10px;
+    padding-right: 20px;
   }
 </style>
