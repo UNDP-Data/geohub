@@ -1,7 +1,6 @@
 <script lang="ts">
-  export let title
-  export let description
-  export let link
+  export let title: string
+  export let link: string
   import Ripple from '@smui/ripple'
 </script>
 
