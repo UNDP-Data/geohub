@@ -4,6 +4,9 @@
   import Map from '../../dashboards/components/Map.svelte'
 
   let drawerOpen = true
+  let loadLayers = () => {
+    return
+  }
 </script>
 
 <svelte:head>
@@ -12,8 +15,8 @@
 </svelte:head>
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Content bind:drawerOpen>
-  <Map />
+<Content bind:drawerOpen bind:loadLayers>
+  <Map on:styleChanged={loadLayers} />
 </Content>
 
 <style global lang="scss">
