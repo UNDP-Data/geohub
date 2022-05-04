@@ -97,6 +97,6 @@
   }
 
   :global(.maplibregl-ctrl-bottom-right) {
-    padding-left: 72px;
+    padding-left: 80px;
   }
 </style>

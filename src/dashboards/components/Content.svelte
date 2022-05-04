@@ -99,6 +99,8 @@
 
   const getSpec = (numerator, denomonator) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+    width: 120,
+    height: 120,
     description: 'A simple donut chart with embedded data.',
     background: null,
     data: {
@@ -107,7 +109,7 @@
         { category: 2, value: denomonator - numerator },
       ],
     },
-    mark: { type: 'arc', innerRadius: 50 },
+    mark: { type: 'arc', innerRadius: 30 },
     encoding: {
       theta: { field: 'value', type: 'quantitative' },
       color: { field: 'category', type: 'nominal', legend: null },
@@ -411,10 +413,16 @@
               </SegmentedButton>
               {#if interactSelected === 'Hover'}
                 <br /><br />
-                <p class="title-text">HREA</p>
-                <div id="donut1" />
-                <p class="title-text">ML</p>
-                <div id="donut2" />
+                <div class="chart-container">
+                  <div class="chart-item">
+                    <p class="title-text">HREA</p>
+                    <div id="donut1" />
+                  </div>
+                  <div class="chart-item">
+                    <p class="title-text">ML</p>
+                    <div id="donut2" />
+                  </div>
+                </div>
               {/if}
             </StyleControlGroup>
           {/if}
@@ -546,5 +554,13 @@
   .raster-time-slider {
     padding-top: 1em;
     padding-bottom: 1em;
+  }
+
+  .chart-container {
+    display: flex;
+  }
+
+  .chart-item {
+    flex-grow: 1;
   }
 </style>
