@@ -226,131 +226,150 @@
   }
 </script>
 
-<div class="columns is-gapless" data-testid="intervals-view-container">
-  <div class="column classification">
-    <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
-    <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
-      <select bind:value={selectedClassificationMethod} on:change={() => reclassifyImage()} style="width: 114px;">
-        {#each classificationMethods as classificationMethod}
-          <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
-        {/each}
-      </select>
+<div class="intervals-view-container" data-testid="intervals-view-container">
+  <div class="columns is-gapless controls">
+    <div class="column classification">
+      <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
+      <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
+        <select bind:value={selectedClassificationMethod} on:change={() => reclassifyImage()} style="width: 114px;">
+          {#each classificationMethods as classificationMethod}
+            <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+          {/each}
+        </select>
+      </div>
     </div>
-  </div>
-  <div class="column number-classes">
-    <div class="is-size-6 is-flex is-justify-content-center">Number of Classess</div>
-    <div class="container is-flex is-justify-content-center">
-      <div class="row">
-        <div
-          class={`minus ${numberOfClasses === COLOR_CLASS_COUNT_MINIMUM ? 'disabled' : ''}`}
-          on:click={() => handleIncrementDecrementClasses('-')}
-          alt="Decrease number of classes"
-          title="Decrease number of classes">
-          <Fa icon={faCircleMinus} />
-        </div>
-        <div class="tag is-info is-light is-medium">
-          {numberOfClasses}
-        </div>
-        <div
-          class={`plus ${numberOfClasses === COLOR_CLASS_COUNT_MAXIMUM ? 'disabled' : ''}`}
-          on:click={() => handleIncrementDecrementClasses('+')}
-          alt="Increase number of classes"
-          title="Increase number of classes">
-          <Fa icon={faCirclePlus} />
+    <div class="column number-classes">
+      <div class="is-size-6 is-flex is-justify-content-center">Number of Classess</div>
+      <div class="container is-flex is-justify-content-center">
+        <div class="row">
+          <div
+            class={`minus ${numberOfClasses === COLOR_CLASS_COUNT_MINIMUM ? 'disabled' : ''}`}
+            on:click={() => handleIncrementDecrementClasses('-')}
+            alt="Decrease number of classes"
+            title="Decrease number of classes">
+            <Fa icon={faCircleMinus} />
+          </div>
+          <div class="tag is-info is-light is-medium">
+            {numberOfClasses}
+          </div>
+          <div
+            class={`plus ${numberOfClasses === COLOR_CLASS_COUNT_MAXIMUM ? 'disabled' : ''}`}
+            on:click={() => handleIncrementDecrementClasses('+')}
+            alt="Increase number of classes"
+            title="Increase number of classes">
+            <Fa icon={faCirclePlus} />
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  {#each cmap as value, index}
+    <div class="columns is-vcentered is-gapless colormap-editor">
+      <div class="column is-1 color-picker">
+        <div
+          use:Ripple={{ surface: true }}
+          id="interval-{index}"
+          on:click={() => {
+            showToolTip = !showToolTip
+            intervalIndex = index
+          }}
+          class="discrete"
+          style="caret-color:rgb({cmap[index][1]}); background-color: rgb({cmap[index][1]})" />
+
+        {#if showToolTip}
+          <div class={`tooltip ${showToolTip && intervalIndex === index ? '' : 'tooltip-hidden'}`} transition:fade>
+            <RasterColorPicker bind:color />
+          </div>
+        {/if}
+      </div>
+
+      <div class="column minimum">
+        <input
+          class="input is-small"
+          type="text"
+          value={intervalList[index]}
+          on:input={() => sendLastInterval(index, intervalList[index])} />
+      </div>
+
+      <div class="column maximum">
+        <input
+          class="input is-small"
+          type="text"
+          value={intervalList[index + 1]}
+          on:input={() => sendLastInterval(index, intervalList[index + 1])} />
+      </div>
+    </div>
+  {/each}
 </div>
 
-{#each cmap as value, index}
-  <div class="columns is-vcentered colormap-editor">
-    <div class="column is-2">
-      <div
-        use:Ripple={{ surface: true }}
-        id="interval-{index}"
-        on:click={() => {
-          showToolTip = !showToolTip
-          intervalIndex = index
-        }}
-        class="discrete"
-        style="caret-color:rgb({cmap[index][1]}); background-color: rgb({cmap[index][1]})" />
-
-      {#if showToolTip}
-        <div class={`tooltip ${showToolTip && intervalIndex === index ? '' : 'tooltip-hidden'}`} transition:fade>
-          <RasterColorPicker bind:color />
-        </div>
-      {/if}
-    </div>
-
-    <div class="column">
-      <input
-        class="input"
-        type="text"
-        value={intervalList[index]}
-        on:input={() => sendLastInterval(index, intervalList[index])} />
-    </div>
-
-    <div class="column">
-      <input
-        class="input"
-        type="text"
-        value={intervalList[index + 1]}
-        on:input={() => sendLastInterval(index, intervalList[index + 1])} />
-    </div>
-  </div>
-{/each}
-
 <style lang="scss">
-  .number-classes {
-    .container {
-      height: 40px;
-      display: flex;
-      justify-content: center;
+  .intervals-view-container {
+    .controls {
+      margin-bottom: 10px !important;
 
-      .row {
-        display: flex;
-        align-items: center;
+      .number-classes {
+        .container {
+          height: 40px;
+          display: flex;
+          justify-content: center;
 
-        .minus,
-        .plus {
-          cursor: pointer;
-        }
+          .row {
+            display: flex;
+            align-items: center;
 
-        .disabled {
-          opacity: 0.1;
-          cursor: default;
-        }
+            .minus,
+            .plus {
+              cursor: pointer;
+            }
 
-        .tag {
-          margin-left: 10px;
-          margin-right: 10px;
-          user-select: none;
-          -moz-user-select: none;
-          -webkit-user-select: none;
-          -ms-user-select: none;
+            .disabled {
+              opacity: 0.1;
+              cursor: default;
+            }
+
+            .tag {
+              margin-left: 10px;
+              margin-right: 10px;
+              user-select: none;
+              -moz-user-select: none;
+              -webkit-user-select: none;
+              -ms-user-select: none;
+            }
+          }
         }
       }
     }
-  }
 
-  .colormap-editor {
-    margin-bottom: 0;
-    .discrete {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
+    $input-margin: 5px !important;
 
-    .tooltip-hidden {
-      display: none !important;
-    }
+    .colormap-editor {
+      margin-bottom: $input-margin;
 
-    .tooltip {
-      position: relative;
-      left: 25px;
-      top: -20px;
-      z-index: 10;
+      .color-picker {
+        margin-right: $input-margin;
+      }
+
+      .minimum {
+        margin-right: $input-margin;
+      }
+
+      .discrete {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+
+      .tooltip-hidden {
+        display: none !important;
+      }
+
+      .tooltip {
+        position: relative;
+        left: 19px;
+        top: -20px;
+        z-index: 10;
+      }
     }
   }
 </style>
