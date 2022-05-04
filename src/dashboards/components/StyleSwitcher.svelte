@@ -71,7 +71,7 @@
         changeStyle()
       }} />
     {#if buttonStyle}
-      <Tooltip>{buttonStyle.title}</Tooltip>
+      <Tooltip yPos="above">{buttonStyle.title}</Tooltip>
     {/if}
   </Wrapper>
 </div>
