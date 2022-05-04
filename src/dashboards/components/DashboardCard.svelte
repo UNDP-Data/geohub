@@ -18,9 +18,7 @@
         <img class="dashboard-image" src="electricity-snapshot.jpg" alt="Placeholder image" />
       </figure>
     </div>
-    <div style="color:dodgerblue;" class="content">
-      The description should go here and some the information about the specific dashboard
-    </div>
+    <div class="content">The description should go here and some the information about the specific dashboard</div>
   </div>
   <footer class="card-footer" use:Ripple={{ surface: true }}>
     <a href={link} class="card-footer-item">Open {title} dashboard</a>
