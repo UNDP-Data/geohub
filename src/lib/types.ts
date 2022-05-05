@@ -142,3 +142,8 @@ export interface Color {
   h: number
   hex: string
 }
+
+export interface StyleDefinition {
+  title: string
+  uri: string
+}
