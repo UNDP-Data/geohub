@@ -1,20 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
   import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
-  import type { Color, IntervalLegendColorMapRow } from '$lib/types'
+  import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
 
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number
+  export let layer: Layer
 
   const dispatch = createEventDispatcher()
 
   let color: Color
   let colorPickerStyle: string
   let showToolTip = false
+  let colorMapName: string
 
   $: colorPickerStyle = getColorPickerStyle(colorMapRow.color.join())
   $: {
@@ -27,8 +29,16 @@
 
   $: color, updateColorMap(color)
 
-  onMount(() => {
-    // set color based on default value
+  // load color map upon change of layer color map name
+  $: {
+    if (layer.colorMapName !== colorMapName) {
+      colorMapName = layer.colorMapName
+      setColorFromProp()
+    }
+  }
+
+  // set color based on default value
+  const setColorFromProp = () => {
     const rowColor: number[] = colorMapRow.color
     const r = rowColor[0]
     const g = rowColor[1]
@@ -43,19 +53,19 @@
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
     }
-  })
+  }
 
   const getColorPickerStyle = (rgb: string) => {
     return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`
   }
 
   // set color of display and dispatch to update map
-  const updateColorMap = debounce((color: Color) => {
-    if (color) {
+  const updateColorMap = debounce((colorSelected: Color) => {
+    if (colorSelected) {
       try {
-        const rgba: number[] = chroma(color['hex']).rgba()
+        const rgba: number[] = chroma(colorSelected['hex']).rgba()
         colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
-        colorPickerStyle = getColorPickerStyle(chroma(color['hex']).rgba().join())
+        colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
         dispatch('changeIntervalValues')
       } catch (e) {
         console.log(e)
