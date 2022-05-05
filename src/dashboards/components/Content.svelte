@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
   import { map } from '../stores'
-  import SegmentedButton, { Segment, Icon, Label } from '@smui/segmented-button'
+  import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import Fa from 'svelte-fa'
   import { faPlugCircleBolt } from '@fortawesome/free-solid-svg-icons/faPlugCircleBolt'
   import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
@@ -15,8 +15,6 @@
   import type {
     RasterLayerSpecification,
     HeatmapLayerSpecification,
-    FillLayerSpecification,
-    SourceSpecification,
     GeoJSONSourceSpecification,
     RasterSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
@@ -83,7 +81,6 @@
 
   export function loadLayers() {
     loadRasterLayer()
-    loadAdminLayer()
     loadHeatmap()
   }
 
@@ -117,37 +114,6 @@
 
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
-
-  const loadAdminLayer = () => {
-    const layerSource: SourceSpecification = {
-      type: LayerTypes.VECTOR,
-      maxzoom: 10,
-      promoteId: 'adm1_id',
-      tiles: [`${AZURE_URL}/admin/${ADM_LAYER}/{z}/{x}/{y}.pbf`],
-    }
-    const layerFill: FillLayerSpecification = {
-      id: ADM_ID,
-      type: LayerTypes.FILL,
-      source: ADM_ID,
-      'source-layer': ADM_LAYER,
-      paint: {
-        'fill-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          'hsla(0, 0%, 0%, 0.05)',
-          'hsla(0, 0%, 0%, 0)',
-        ],
-        'fill-outline-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          'hsla(0, 0%, 0%, 1)',
-          'hsla(0, 0%, 0%, 0)',
-        ],
-      },
-    }
-    !$map.getSource(ADM_ID) && $map.addSource(ADM_ID, layerSource)
-    !$map.getLayer(ADM_ID) && $map.addLayer(layerFill)
-  }
 
   const onMouseMove = (e) => {
     if (e.features.length > 0) {
