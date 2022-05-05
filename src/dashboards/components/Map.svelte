@@ -74,6 +74,7 @@
     )
     newMap.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left')
     newMap.addControl(new AttributionControl({ compact: true }), 'bottom-right')
+    newMap.getCanvas().style.cursor = 'pointer'
 
     map.update(() => newMap)
   })
@@ -98,9 +99,5 @@
 
   :global(.maplibregl-ctrl-bottom-right) {
     padding-left: 80px;
-  }
-
-  :global(.maplibregl-map) {
-    cursor: pointer;
   }
 </style>
