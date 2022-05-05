@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
@@ -12,8 +12,9 @@
 
   const dispatch = createEventDispatcher()
 
-  let showToolTip = false
   let color: Color
+  let colorPickerStyle: string
+  let showToolTip = false
 
   $: {
     if (colorPickerVisibleIndex === colorMapRow.index) {
@@ -23,17 +24,36 @@
     }
   }
 
-  $: colorPickerStyle = `caret-color:rgb(${colorMapRow.color.join()}); background-color: rgb(${colorMapRow.color.join()})`
   $: color, updateColorMap(color)
 
+  onMount(() => {
+    // set color based on default value
+    const rowColor: number[] = colorMapRow.color
+    const r = rowColor[0]
+    const g = rowColor[1]
+    const b = rowColor[2]
+
+    color = {
+      r,
+      g,
+      b,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  })
+
+  // set color of display and dispatch to update map
   const updateColorMap = debounce((color: Color) => {
     if (color) {
       try {
         const rgba: number[] = chroma(color['hex']).rgba()
         colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
-        colorPickerStyle = `caret-color:rgb(${chroma(color['hex']).rgba()}); background-color: rgb(${chroma(
-          color['hex'],
-        ).rgba()})`
+        colorPickerStyle = `
+          caret-color:rgb(${chroma(color['hex']).rgba()});
+          background-color: rgb(${chroma(color['hex']).rgba()});`
+
         dispatch('changeIntervalValues')
       } catch (e) {
         console.log(e)

@@ -51,7 +51,7 @@ describe('Raster Legend Container', () => {
   let viewContainer: HTMLElement
 
   beforeEach(() => {
-    sut = render(RasterLegendContainer, { activeColorMapName: DEFAULT_COLORMAP, layer })
+    sut = render(RasterLegendContainer, { layer })
     viewContainer = sut.getByTestId('raster-legend-view-container')
   })
 

@@ -33,6 +33,7 @@
   }
 
   const handleLegendToggleClick = () => {
+    colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
 
     setTimeout(() => {
