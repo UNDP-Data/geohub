@@ -52,10 +52,8 @@
   export let drawerOpen = false
   let hoveredStateId = null
 
-  let pointDonutValue = {
-    [HREA_ID]: 0,
-    [ML_ID]: 0,
-  }
+  let controller = new AbortController()
+  let pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
   let pointBarValues = []
 
   let showIntro = true
@@ -242,12 +240,15 @@
       [HREA_ID, getHreaUrl, HREA_NODATA, [], 1],
       [ML_ID, getMlUrl, ML_NODATA, [2020], 255],
     ]
+    pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
     pointBarValues = []
+    controller.abort()
+    controller = new AbortController()
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
       for (let x = 2012; x <= 2020; x++) {
         if (!ignoreValue.includes(x)) {
           const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL(x)}`
-          fetch(url)
+          fetch(url, { signal: controller.signal })
             .then((r) => r.json())
             .then((response) => {
               const responseValue = response.values[0] === noData ? 0 : response.values[0] / total
