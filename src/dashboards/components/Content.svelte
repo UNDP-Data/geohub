@@ -38,6 +38,9 @@
   const HREA_NODATA = -3.3999999521443642e38
   const ML_ID = 'ML'
   const ML_NODATA = 0
+  const PRIMARY = '#1f77b4'
+  const SECONDARY = '#ff7f0e'
+  const GREY = '#808080'
 
   export const getHreaUrl = (y) => {
     return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
@@ -120,7 +123,7 @@
         legend: null,
         scale: {
           domain: [1, 2],
-          range: [color, '#808080'],
+          range: [color, GREY],
         },
       },
     },
@@ -137,7 +140,7 @@
     encoding: {
       x: {
         field: 'year',
-        axis: { title: false, labelColor: '#808080' },
+        axis: { title: false, labelColor: GREY },
         scale: {
           domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
         },
@@ -150,7 +153,14 @@
       },
       tooltip: { field: 'percent', type: 'qualitative' },
       xOffset: { field: 'category' },
-      color: { field: 'category', legend: null },
+      color: {
+        field: 'category',
+        legend: null,
+        scale: {
+          domain: [HREA_ID, ML_ID],
+          range: [PRIMARY, SECONDARY],
+        },
+      },
     },
   })
 
@@ -259,8 +269,8 @@
 
   const renderPointCharts = () => {
     const options = { actions: false, renderer: 'svg' }
-    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], '#4C78A8'), options)
-    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], '#F58419'), options)
+    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], PRIMARY), options)
+    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], SECONDARY), options)
     vegaEmbed('#point-bar', getBarSpec(pointBarValues), options)
   }
 
