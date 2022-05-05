@@ -72,6 +72,9 @@
 
   let layerOpacity = 1
   let rangeSliderValues = [layerOpacity * 100]
+  let loadRasterLayer = () => {
+    return
+  }
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
 
@@ -149,9 +152,20 @@
     },
   })
 
+  export function loadLayers() {
+    loadRasterLayer()
+    loadHeatmap()
+  }
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
+    map.subscribe(() => {
+      if ($map) {
+        $map.on('load', () => {
+          loadLayers()
+        })
+      }
+    })
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -454,7 +468,11 @@
                 </Segment>
               </SegmentedButton>
               <div class="raster-time-slider">
-                <TimeSlider bind:electricitySelected bind:BEFORE_LAYER_ID={RWI_ID} {AZURE_URL} />
+                <TimeSlider
+                  bind:electricitySelected
+                  bind:loadLayer={loadRasterLayer}
+                  bind:BEFORE_LAYER_ID={RWI_ID}
+                  {AZURE_URL} />
               </div>
               <p class="title-text">Poverty</p>
               <FormField>
