@@ -8,6 +8,8 @@ export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
 export const STRING_COMPARE_THRESHOLD = 0.25
 export const COLOR_CLASS_COUNT = 5
+export const COLOR_CLASS_COUNT_MINIMUM = 2
+export const COLOR_CLASS_COUNT_MAXIMUM = 25
 
 export enum TabNames {
   ANALYZE = 'Analyze',
@@ -32,11 +34,32 @@ export const BucketIntialValues = {
   tags: [],
 }
 
+export enum ClassificationMethodTypes {
+  EQUIDISTANT = 'e',
+  QUANTILE = 'q',
+  LOGARITHMIC = 'l',
+}
+
+export enum ClassificationMethodNames {
+  EQUIDISTANT = 'Equidistant',
+  QUANTILE = 'Quantile',
+  LOGARITHMIC = 'Logarithmic',
+}
+
 export const LayerInitialValues = {
   name: 'GeoHub',
   definition: undefined,
   type: '',
   info: {},
+  colorMapName: DEFAULT_COLORMAP,
+  continuous: {
+    minimum: undefined,
+    maximum: undefined,
+  },
+  intervals: {
+    classification: ClassificationMethodTypes.EQUIDISTANT,
+    numberOfClasses: COLOR_CLASS_COUNT,
+  },
 }
 
 export enum ErrorMessages {
@@ -102,12 +125,6 @@ export enum LayerTypes {
   LINE = 'line',
   FILL = 'fill',
   HEATMAP = 'heatmap',
-}
-
-export enum ClassificationMethodTypes {
-  EQUIDISTANT = 'e',
-  QUANTILE = 'q',
-  LOGARITHMIC = 'l',
 }
 
 export enum StatusTypes {
