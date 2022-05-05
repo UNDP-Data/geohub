@@ -844,11 +844,6 @@
     "@material/theme" "^13.0.0"
     tslib "^2.1.0"
 
-"@mdi/js@^6.6.96":
-  version "6.6.96"
-  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-6.6.96.tgz#119f79fa9327359421167a7d4b8bde26e84702ce"
-  integrity sha512-ke9PN5DjPCOlMfhioxeZYADz8Yiz6v47W0IYRza01SSJD7y1EwESVpwFnnFUso+eCoWtE1CO9cTIvQF6sEreuA==
-
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -1275,9 +1270,9 @@
     tiny-glob "^0.2.9"
 
 "@sveltejs/kit@^1.0.0-next.322":
-  version "1.0.0-next.325"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.325.tgz#768c543793a4cb3319b3755a3f84a2a941e736f6"
-  integrity sha512-ED+wJR/eYdLGwvELP8aeMtkSpYsr8jGAyno9vcV2DLQv8F0i5nRq/xtO1820mSSqjp+YU2QMuvWQIzF4ERwGsw==
+  version "1.0.0-next.326"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.326.tgz#fe9bfe68ebbdc7ede9b9faf9d504e8fa83f17311"
+  integrity sha512-prJqmXZ2H1wmFfnMw7wDujfbkcA8vuubuqUkpVVmXhfh2+SEzQscPTNwxoE5EJxb5sywtLWEvYx3hv1gPS4Lvg==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^1.0.0-next.32"
     chokidar "^3.5.3"
@@ -2930,9 +2925,9 @@ geojson@^0.5.0:
   integrity sha1-PNbJY5m+ZbVu5VWWEW/pGRznAcA=
 
 gesto@^1.7.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/gesto/-/gesto-1.8.0.tgz#82a2ae6b6624e70f1b80b99ac4ed2c395ac18f6b"
-  integrity sha512-+lCjAqedQBG7qyGpCPvhKixhUvMIR/G2p7Lu4NoKA7HaRmNDLnujTUwkjIYfYN636GUUhyH8mQ0kCiGF3W/Cqw==
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/gesto/-/gesto-1.8.1.tgz#8a6481235dc0c1ad3f70e759fff937a53264fd70"
+  integrity sha512-FwZ3e4C9cJ3DN1PgeOf9tFQIYzBk5RzavtT2bDzGG51Wbp6+JEGzX4A8VqbgkHVTBlJGaRLdsNKRnH0fIVFsmA==
   dependencies:
     "@daybrush/utils" "^1.0.0"
     "@scena/event-emitter" "^1.0.2"
@@ -4116,9 +4111,9 @@ robust-predicates@^3.0.0:
   integrity sha512-ndEIpszUHiG4HtDsQLeIuMvRsDnn8c8rYStabochtUeCvfuvNptb5TUbVD68LRAILPX7p9nqQGh4xJgn3EHS/g==
 
 rollup@^2.59.0:
-  version "2.71.1"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.71.1.tgz#82b259af7733dfd1224a8171013aaaad02971a22"
-  integrity sha512-lMZk3XfUBGjrrZQpvPSoXcZSfKcJ2Bgn+Z0L1MoW2V8Wh7BVM+LOBJTPo16yul2MwL59cXedzW1ruq3rCjSRgw==
+  version "2.72.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.72.0.tgz#f94280b003bcf9f2f1f2594059a9db5abced371e"
+  integrity sha512-KqtR2YcO35/KKijg4nx4STO3569aqCUeGRkKWnJ6r+AvBBrVY9L4pmf4NHVrQr4mTOq6msbohflxr2kpihhaOA==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -5104,9 +5099,9 @@ verror@1.10.0:
     extsprintf "^1.2.0"
 
 vite@^2.9.0, vite@^2.9.5:
-  version "2.9.7"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-2.9.7.tgz#210c328e08ed206ab0953eb1ca00860042cd0a77"
-  integrity sha512-5hH7aNQe8rJiTTqCtPNX/6mIKlGw+1wg8UXwAxDIIN8XaSR+Zx3GT2zSu7QKa1vIaBqfUODGh3vpwY8r0AW/jw==
+  version "2.9.8"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-2.9.8.tgz#2c2cb0790beb0fbe4b8c0995b80fe691a91c2545"
+  integrity sha512-zsBGwn5UT3YS0NLSJ7hnR54+vUKfgzMUh/Z9CxF1YKEBVIe213+63jrFLmZphgGI5zXwQCSmqIdbPuE8NJywPw==
   dependencies:
     esbuild "^0.14.27"
     postcss "^8.4.13"
