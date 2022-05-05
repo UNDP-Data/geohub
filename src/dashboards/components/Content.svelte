@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
   import { map, year } from '../stores'
-  import SegmentedButton, { Segment, Icon, Label } from '@smui/segmented-button'
+  import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import Fa from 'svelte-fa'
   import { faPlugCircleBolt } from '@fortawesome/free-solid-svg-icons/faPlugCircleBolt'
   import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
@@ -261,7 +261,7 @@
       for (let x = 2012; x <= 2020; x++) {
         if (!ignoreValue.includes(x)) {
           const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL(x)}`
-          const r = fetch(url)
+          fetch(url)
             .then((r) => r.json())
             .then((response) => {
               const responseValue = response.values[0] === noData ? 0 : response.values[0] / total
