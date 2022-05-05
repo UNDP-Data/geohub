@@ -296,6 +296,7 @@
       const layerSource: GeoJSONSourceSpecification = {
         type: 'geojson',
         data: RWI_URL,
+        maxzoom: 9,
       }
       $map.addSource(RWI_ID, layerSource)
     }
@@ -305,8 +306,6 @@
         id: RWI_ID,
         type: LayerTypes.HEATMAP,
         source: RWI_ID,
-        minzoom: 0,
-        maxzoom: 22,
         layout: { visibility: 'none' },
         paint: {
           'heatmap-weight': {
@@ -315,6 +314,61 @@
             stops: [
               [-0.855, 0],
               [1.06009, 1],
+            ],
+          },
+          // use sequential color palette to use exponentially as the weight increases
+          'heatmap-color': [
+            'interpolate',
+            ['linear'],
+            ['heatmap-density'],
+            0,
+            'rgba(0,140,0,0)',
+            0.1,
+            'rgb(104,255,0)',
+            0.2,
+            'rgb(150,255,0)',
+            0.3,
+            'rgb(195,255,0)',
+            0.4,
+            'rgb(255,255,0)',
+            0.5,
+            'rgb(255,222,0)',
+            0.6,
+            'rgb(255,208,0)',
+            0.7,
+            'rgb(255,180,0)',
+            0.8,
+            'rgb(255,132,0)',
+            0.9,
+            'rgb(255,80,0)',
+            1.0,
+            'rgb(255,0,0)',
+          ],
+          // increase intensity as zoom level increases
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          'heatmap-intensity': {
+            stops: [
+              [2, 1],
+              [4, 3],
+              [6, 5],
+            ],
+          },
+          // increase radius as zoom increases
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          'heatmap-radius': {
+            stops: [
+              [0, 5],
+              [1, 15],
+              [2, 30],
+              [3, 40],
+              [4, 50],
+              [5, 60],
+              [6, 70],
+              [7, 100],
+              [8, 120],
+              [9, 140],
             ],
           },
         },
