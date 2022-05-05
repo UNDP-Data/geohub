@@ -1269,7 +1269,7 @@
   dependencies:
     tiny-glob "^0.2.9"
 
-"@sveltejs/kit@^1.0.0-next.322":
+"@sveltejs/kit@^1.0.0-next.324":
   version "1.0.0-next.324"
   resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.324.tgz#e30e746d47462a4de79a4e02f8a39a6310ce7024"
   integrity sha512-/CGW9rQpHQLBb2EcMw08yelD/C9hTsypymctUWdhryMTI8n1VWb0gkUcSHsz8n8oAAbKLXqwyHqeLATfcIMg2w==
@@ -1516,7 +1516,7 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
   integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
-"@typescript-eslint/eslint-plugin@^5.21.0":
+"@typescript-eslint/eslint-plugin@^5.22.0":
   version "5.22.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.22.0.tgz#7b52a0de2e664044f28b36419210aea4ab619e2a"
   integrity sha512-YCiy5PUzpAeOPGQ7VSGDEY2NeYUV1B0swde2e0HzokRsHBYjSdF6DZ51OuRZxVPHx0032lXGLvOMls91D8FXlg==
@@ -1531,7 +1531,7 @@
     semver "^7.3.5"
     tsutils "^3.21.0"
 
-"@typescript-eslint/parser@^5.21.0":
+"@typescript-eslint/parser@^5.22.0":
   version "5.22.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.22.0.tgz#7bedf8784ef0d5d60567c5ba4ce162460e70c178"
   integrity sha512-piwC4krUpRDqPaPbFaycN70KCP87+PC5WZmrWs+DlVOxxmF+zI6b6hETv7Quy4s9wbkV16ikMeZgXsvzwI3icQ==
@@ -4263,7 +4263,7 @@ svelte-ktippy@^1.2.1:
   dependencies:
     tippy.js "^6.3.1"
 
-svelte-moveable@^0.21.4:
+svelte-moveable@^0.21.8:
   version "0.21.8"
   resolved "https://registry.yarnpkg.com/svelte-moveable/-/svelte-moveable-0.21.8.tgz#a23282af39c901b6e4cec4173ffc9c2d88754b4d"
   integrity sha512-h1g4AnveBMgm0hi0BctBGmCiYP0V94zpiT6dK3tSsjc54Vm65xftI97WyOoxyz5yQX6MQ9ZK0fXDj0Ml39HGAA==
@@ -4301,7 +4301,7 @@ svelte2tsx@^0.5.5:
     dedent-js "^1.0.1"
     pascal-case "^3.1.1"
 
-svelte@^3.47.0:
+svelte@^3.48.0:
   version "3.48.0"
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.48.0.tgz#f98c866d45e155bad8e1e88f15f9c03cd28753d3"
   integrity sha512-fN2YRm/bGumvjUpu6yI3BpvZnpIm9I6A7HR4oUNYd7ggYyIwSA/BX7DJ+UXXffLp6XNcUijyLvttbPVCYa/3xQ==
@@ -4480,7 +4480,12 @@ type-fest@^0.20.2:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.20.2.tgz#1bf207f4b28f91583666cb5fbd327887301cd5f4"
   integrity sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==
 
-typescript@*, typescript@^4.6.3:
+typescript@*:
+  version "4.6.2"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.6.2.tgz"
+  integrity sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg==
+
+typescript@^4.6.4:
   version "4.6.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.4.tgz#caa78bbc3a59e6a5c510d35703f6a09877ce45e9"
   integrity sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==
@@ -4550,7 +4555,7 @@ vitest-svelte-kit@^0.0.6:
   resolved "https://registry.yarnpkg.com/vitest-svelte-kit/-/vitest-svelte-kit-0.0.6.tgz#a8d5ea0c9340b440d75043ecbc9a4667ffeaceea"
   integrity sha512-bQ1GcCAk600YV1xOiJBhltGE/HO/j6FozNY2BFq2GP1mHh3pj0KrGZlyx0kVlXx+BSKDXQHuYZtwlHwNlvv0fQ==
 
-vitest@^0.10.0:
+vitest@^0.10.2:
   version "0.10.2"
   resolved "https://registry.yarnpkg.com/vitest/-/vitest-0.10.2.tgz#d8e9375bb0fca3c8555e2c00488c4f5a94b870b8"
   integrity sha512-41D+nhswCco5vy1NXmpAjZX11Aj+HMnyhjWQD12piwHibf4bvdTGtni56UcFWcvONVoIForgDuLrKSohHJjwQA==
