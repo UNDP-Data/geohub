@@ -38,6 +38,9 @@
   const HREA_NODATA = -3.3999999521443642e38
   const ML_ID = 'ML'
   const ML_NODATA = 0
+  const PRIMARY = '#1f77b4'
+  const SECONDARY = '#ff7f0e'
+  const GREY = '#808080'
 
   export const getHreaUrl = (y) => {
     return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
@@ -49,10 +52,8 @@
   export let drawerOpen = false
   let hoveredStateId = null
 
-  let pointDonutValue = {
-    [HREA_ID]: 0,
-    [ML_ID]: 0,
-  }
+  let controller = new AbortController()
+  let pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
   let pointBarValues = []
 
   let showIntro = true
@@ -99,27 +100,28 @@
     }
   }
 
-  const getDonutSpec = (numerator, color) => ({
+  const getDonutSpec = (value, color) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 120,
     height: 120,
     background: null,
     data: {
       values: [
-        { category: 1, value: numerator },
-        { category: 2, value: 1 - numerator },
+        { category: 1, value, percent: Math.round(value * 100) + '%' },
+        { category: 2, value: 1 - value, percent: '' },
       ],
     },
     mark: { type: 'arc', innerRadius: 30 },
     encoding: {
       theta: { field: 'value', type: 'quantitative' },
+      tooltip: { field: 'percent', type: 'qualitative' },
       color: {
         field: 'category',
         type: 'nominal',
         legend: null,
         scale: {
           domain: [1, 2],
-          range: [color, '#808080'],
+          range: [color, GREY],
         },
       },
     },
@@ -132,11 +134,11 @@
     view: { stroke: 'transparent' },
     background: null,
     data: { values },
-    mark: 'bar',
+    mark: { type: 'bar' },
     encoding: {
       x: {
         field: 'year',
-        axis: { title: false, labelColor: '#808080' },
+        axis: { title: false, labelColor: GREY },
         scale: {
           domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
         },
@@ -147,8 +149,16 @@
         axis: null,
         scale: { domain: [0, 1] },
       },
+      tooltip: { field: 'percent', type: 'qualitative' },
       xOffset: { field: 'category' },
-      color: { field: 'category', legend: null },
+      color: {
+        field: 'category',
+        legend: null,
+        scale: {
+          domain: [HREA_ID, ML_ID],
+          range: [PRIMARY, SECONDARY],
+        },
+      },
     },
   })
 
@@ -230,19 +240,27 @@
       [HREA_ID, getHreaUrl, HREA_NODATA, [], 1],
       [ML_ID, getMlUrl, ML_NODATA, [2020], 255],
     ]
+    pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
     pointBarValues = []
+    controller.abort()
+    controller = new AbortController()
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
       for (let x = 2012; x <= 2020; x++) {
         if (!ignoreValue.includes(x)) {
           const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL(x)}`
-          fetch(url)
+          fetch(url, { signal: controller.signal })
             .then((r) => r.json())
             .then((response) => {
               const responseValue = response.values[0] === noData ? 0 : response.values[0] / total
               if (x === $year) {
                 pointDonutValue[name] = responseValue
               }
-              pointBarValues.push({ category: name, year: x, value: responseValue })
+              pointBarValues.push({
+                category: name,
+                year: x,
+                value: responseValue,
+                percent: Math.round(responseValue * 100) + '%',
+              })
               renderPointCharts()
             })
         }
@@ -252,8 +270,8 @@
 
   const renderPointCharts = () => {
     const options = { actions: false, renderer: 'svg' }
-    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], '#4C78A8'), options)
-    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], '#F58419'), options)
+    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], PRIMARY), options)
+    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], SECONDARY), options)
     vegaEmbed('#point-bar', getBarSpec(pointBarValues), options)
   }
 
@@ -508,11 +526,11 @@
                 <br /><br />
                 <div class="chart-container">
                   <div class="chart-item">
-                    <p class="title-text">HREA</p>
+                    <p class="title-text">HREA - {$year}</p>
                     <div id="point-donut-1" />
                   </div>
                   <div class="chart-item">
-                    <p class="title-text">ML</p>
+                    <p class="title-text">ML - {$year}</p>
                     <div id="point-donut-2" />
                   </div>
                 </div>
