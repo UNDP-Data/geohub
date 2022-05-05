@@ -17,11 +17,18 @@
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import Fa from 'svelte-fa'
-  import { faCaretLeft } from '@fortawesome/free-solid-svg-icons/faCaretLeft'
-  import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight'
+  import { faCircleMinus } from '@fortawesome/free-solid-svg-icons/faCircleMinus'
+  import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
+  import { debounce } from 'lodash-es'
 
   import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
-  import { ClassificationMethodTypes, LayerInitialValues } from '$lib/constants'
+  import {
+    ClassificationMethodNames,
+    ClassificationMethodTypes,
+    LayerInitialValues,
+    COLOR_CLASS_COUNT_MINIMUM,
+    COLOR_CLASS_COUNT_MAXIMUM,
+  } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
   import type { Layer, LayerInfo, Color } from '$lib/types'
   import { map } from '$stores'
@@ -39,16 +46,23 @@
   let info: LayerInfo
   ;({ definition, info } = layerConfig)
 
-  const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
-  const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
+  const layerMin = Number(info.band_metadata[0][1]['STATISTICS_MINIMUM'])
+  const layerMax = Number(info.band_metadata[0][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
-  let activeColorMap: chroma.Scale
   let cmap = cmapState[layerConfig.definition.id]
   let cmapColorsList = []
-  let color
-  let currentIntervalColor
+  let color = {
+    r: null,
+    g: null,
+    b: null,
+    hex: null,
+    h: null,
+    s: null,
+    v: null,
+  }
+  let currentIntervalColor = {}
   let intervalIndex: number
   let intervalList = []
   let rangeSliderValues = [layerMin, layerMax]
@@ -56,23 +70,21 @@
     selectedClassificationMethodState[layerConfig.definition.id] || ClassificationMethodTypes.EQUIDISTANT
   let showToolTip = false
 
-  let classificationMethods = [
-    { name: 'Equidistant', value: 'e' },
-    { name: 'Quantile', value: 'q' },
+  const classificationMethods = [
+    { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
+    { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
+    { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
-  if (layerMin > 0) {
-    classificationMethods.push({ name: 'Logarithmic', value: 'l' })
-  }
 
-  $: selectedClassificationMethod, setClassificationMethodState()
-  $: numberOfClasses, setNumberOfClassesState()
   $: activeColorMapName, setActiveColorMapNameState()
+  $: color, updateColorMap(intervalIndex, color)
+  $: numberOfClasses, setNumberOfClassesState()
+  $: selectedClassificationMethod, setClassificationMethodState()
   $: {
     if (intervalIndex !== undefined) {
       setIndexColor(intervalIndex)
     }
   }
-  $: color, updateColorMap(intervalIndex, color)
 
   // Generic function to store the colormap
   const setCmapState = (cmap) => {
@@ -81,8 +93,6 @@
 
   // Fixme: This function is being called twice every time
   // Reclassify the layer every time the color, interval or number of classes is changed.
-  // Fixme: Need to rewrite the function to detect the exact operation that has been carried out
-
   const reclassifyImage = () => {
     intervalList = chroma.limits(rangeSliderValues, selectedClassificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
@@ -127,13 +137,13 @@
   }
 
   // Function to encode colormap, and update url parameters
-  const handleParamsUpdate = (cmap: object) => {
+  const handleParamsUpdate = debounce((cmap: object) => {
     let encodedCmap = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     let updatedParams = Object.assign({ colormap: encodedCmap })
     updateParamsInURL(definition, layerURL, updatedParams)
-  }
+  }, 500)
 
   // The opacity of the titiler is between 0 and 255 instead of 0-1.
   // This function rescales the opacity to 0-255
@@ -155,21 +165,21 @@
     reclassifyImage()
   }
 
-  const handleNumberOfClasses = (operation: string, minNoOfClasses = 2, maxNoOfClasses = 25) => {
-    if (operation === 'increment') {
-      if (numberOfClasses <= maxNoOfClasses) {
+  const handleIncrementDecrementClasses = (operation: string) => {
+    if (operation === '+') {
+      if (numberOfClasses < COLOR_CLASS_COUNT_MAXIMUM) {
         numberOfClasses++
       }
     }
-    if (operation === 'decrement') {
-      if (numberOfClasses > minNoOfClasses) {
+    if (operation === '-') {
+      if (numberOfClasses > COLOR_CLASS_COUNT_MINIMUM) {
         numberOfClasses--
       }
     }
     reclassifyImage()
   }
 
-  const setIndexColor = (index) => {
+  const setIndexColor = (index: number) => {
     currentIntervalColor = cmap[index][1]
 
     let r = currentIntervalColor[0]
@@ -177,9 +187,9 @@
     let b = currentIntervalColor[2]
 
     color = {
-      r: r,
-      g: g,
-      b: b,
+      r,
+      g,
+      b,
       hex: chroma([r, g, b]).hex('rgba'),
       h: chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
@@ -191,11 +201,15 @@
     // eslint-disable-next-line no-empty
     if (index === undefined || color === undefined) {
     } else {
-      cmap[index].splice(1, 1, chroma(color['hex']).rgba())
-      cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
-      handleParamsUpdate(cmap)
-      setCmapState(cmap)
-      document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
+      try {
+        cmap[index].splice(1, 1, chroma(color['hex']).rgba())
+        cmap[index][1].splice(3, 1, rescaleOpacity(cmap[index][1][3]))
+        handleParamsUpdate(cmap)
+        setCmapState(cmap)
+        document.getElementById(`interval-${index}`).style.background = `rgb(${chroma(color['hex']).rgba()})`
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 
@@ -213,123 +227,164 @@
   }
 </script>
 
-<div class="column" data-testid="intervals-view-container">
-  <div class="row" style="display: flex;">
-    <div style="width: 50%; margin-left: 5%">
-      <span class="legend-text">Classification: </span>
+<div class="intervals-view-container" data-testid="intervals-view-container">
+  <div class="columns is-gapless controls">
+    <div class="column classification">
+      <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
+      <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
+        <select bind:value={selectedClassificationMethod} on:change={() => reclassifyImage()} style="width: 114px;">
+          {#each classificationMethods as classificationMethod}
+            <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+          {/each}
+        </select>
+      </div>
     </div>
-    <div style="width: 50%; margin-left: 40%">
-      <span class="legend-text">Classes</span>
-    </div>
-  </div>
-  <div class="row" id="class-and-method-control-div">
-    <div class="column" style="padding: 0; width: 80%!important;">
-      <select
-        id="method"
-        bind:value={selectedClassificationMethod}
-        on:change={() => {
-          reclassifyImage
-        }}>
-        <option class="legend-text" value="" disabled selected>Classification</option>
-        {#each classificationMethods as classificationMethod}
-          <option class="legend-text" value={classificationMethod.value}>{classificationMethod.name}</option>
-        {/each}
-      </select>
-    </div>
-    <div class="column" style="padding: 0; width: 20%!important;">
-      <div class="no-classes" style="display: flex; justify-content: flex-end;">
-        <div
-          class="icon-selected"
-          title="Decrease number of classes"
-          on:click={() => {
-            handleNumberOfClasses('decrement')
-          }}>
-          <Fa icon={faCaretLeft} size="2x" style="transform: scale(1); cursor: pointer" />
-        </div>
-        <input type="text" bind:value={numberOfClasses} size="1" style="text-align:center; border:none" />
-        <div
-          class="icon-selected"
-          title="Increase number of classes"
-          on:click={() => {
-            handleNumberOfClasses('increment')
-          }}>
-          <Fa icon={faCaretRight} size="2x" style="transform: scale(1); cursor: pointer" />
+    <div class="column number-classes">
+      <div class="is-size-6 is-flex is-justify-content-center">Number of Classess</div>
+      <div class="container is-flex is-justify-content-center">
+        <div class="row">
+          <div
+            class={`minus ${numberOfClasses === COLOR_CLASS_COUNT_MINIMUM ? 'disabled' : ''}`}
+            on:click={() => handleIncrementDecrementClasses('-')}
+            alt="Decrease number of classes"
+            title="Decrease number of classes">
+            <Fa icon={faCircleMinus} />
+          </div>
+          <div class="tag is-info is-light is-medium">
+            {numberOfClasses}
+          </div>
+          <div
+            class={`plus ${numberOfClasses === COLOR_CLASS_COUNT_MAXIMUM ? 'disabled' : ''}`}
+            on:click={() => handleIncrementDecrementClasses('+')}
+            alt="Increase number of classes"
+            title="Increase number of classes">
+            <Fa icon={faCirclePlus} />
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row" id="intervals-cmap-div">
-    <div class="column" style="padding: 0; width: 90%">
-      {#each cmap as value, index}
-        <div style="display: flex; padding:2px; width: 100%;">
-          <div
-            use:Ripple={{ surface: true }}
-            id="interval-{index}"
-            on:click={() => {
-              showToolTip = !showToolTip
-              intervalIndex = index
-            }}
-            class="discrete"
-            style="width:20px; height:20px; caret-color:rgb({cmap[
-              index
-            ][1]}); cursor:pointer; background-color: rgb({cmap[index][1]})" />
-          {#if showToolTip}
-            <div class={showToolTip && intervalIndex === index ? 'tooltipshown' : 'tooltiphidden'} transition:fade>
-              <RasterColorPicker bind:color />
-            </div>
-          {/if}
-          &nbsp;&raquo;&nbsp
-          <span
-            class="legend-text"
-            contenteditable="true"
-            bind:innerHTML={intervalList[index]}
-            on:input={sendLastInterval(index, intervalList[index])} />
 
-          <span class="legend-text"> &nbsp;&horbar;&nbsp; </span>
-          <span
-            class="legend-text"
-            contenteditable="true"
-            bind:innerHTML={intervalList[index + 1]}
-            on:input={sendLastInterval(index, intervalList[index + 1])} />
-        </div>
-      {/each}
+  {#each cmap as value, index}
+    <div class="columns is-vcentered is-gapless colormap-editor">
+      <div class="column is-1 color-picker">
+        <div
+          use:Ripple={{ surface: true }}
+          id="interval-{index}"
+          on:click={() => {
+            showToolTip = !showToolTip
+            intervalIndex = index
+          }}
+          class="discrete"
+          style="caret-color:rgb({cmap[index][1]}); background-color: rgb({cmap[index][1]})" />
+
+        {#if showToolTip}
+          <div class={`tooltip ${showToolTip && intervalIndex === index ? '' : 'tooltip-hidden'}`} transition:fade>
+            <RasterColorPicker bind:color />
+          </div>
+        {/if}
+      </div>
+
+      <div class="column minimum">
+        <input
+          class="input is-small"
+          type="number"
+          min="-1000000"
+          max="1000000"
+          value={intervalList[index]}
+          on:input={() => sendLastInterval(index, intervalList[index])} />
+      </div>
+
+      <div class="column maximum">
+        <input
+          class="input is-small"
+          type="number"
+          min="-1000000"
+          max="1000000"
+          value={intervalList[index + 1]}
+          on:input={() => sendLastInterval(index, intervalList[index + 1])} />
+      </div>
     </div>
-  </div>
+  {/each}
 </div>
 
 <style lang="scss">
-  #class-and-method-control-div {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100% !important;
-  }
+  .intervals-view-container {
+    .controls {
+      margin-bottom: 10px !important;
 
-  #intervals-cmap-div {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+      .number-classes {
+        .container {
+          height: 40px;
+          display: flex;
+          justify-content: center;
 
-  :global(.select-cmaps-menu) {
-    max-height: 200px;
-    overflow-y: scroll;
-    width: 100%;
-    margin-top: 5px;
-    padding: 5px;
-  }
+          .row {
+            display: flex;
+            align-items: center;
 
-  :global(.legend-text) {
-    font-family: ProximaNova, sans-serif;
-    max-width: 30%;
-    width: 30%;
-  }
+            .minus,
+            .plus {
+              cursor: pointer;
+            }
 
-  :global(.show) {
-    display: none;
-  }
+            .disabled {
+              opacity: 0.1;
+              cursor: default;
+            }
 
-  :global(.tooltiphidden) {
-    display: none !important;
+            .tag {
+              margin-left: 10px;
+              margin-right: 10px;
+              user-select: none;
+              -moz-user-select: none;
+              -webkit-user-select: none;
+              -ms-user-select: none;
+            }
+          }
+        }
+      }
+    }
+
+    $input-margin: 5px !important;
+
+    .colormap-editor {
+      margin-bottom: $input-margin;
+
+      .color-picker {
+        margin-right: $input-margin;
+      }
+
+      .minimum {
+        margin-right: $input-margin;
+      }
+
+      .discrete {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+
+      .tooltip-hidden {
+        display: none !important;
+      }
+
+      .tooltip {
+        position: relative;
+        left: 19px;
+        top: -20px;
+        z-index: 10;
+      }
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type='number'] {
+      -moz-appearance: textfield;
+    }
   }
 </style>
