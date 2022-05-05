@@ -16,6 +16,7 @@
   let colorPickerStyle: string
   let showToolTip = false
 
+  $: colorPickerStyle = getColorPickerStyle(colorMapRow.color.join())
   $: {
     if (colorPickerVisibleIndex === colorMapRow.index) {
       showToolTip = true
@@ -44,16 +45,17 @@
     }
   })
 
+  const getColorPickerStyle = (rgb: string) => {
+    return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`
+  }
+
   // set color of display and dispatch to update map
   const updateColorMap = debounce((color: Color) => {
     if (color) {
       try {
         const rgba: number[] = chroma(color['hex']).rgba()
         colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
-        colorPickerStyle = `
-          caret-color:rgb(${chroma(color['hex']).rgba()});
-          background-color: rgb(${chroma(color['hex']).rgba()});`
-
+        colorPickerStyle = getColorPickerStyle(chroma(color['hex']).rgba().join())
         dispatch('changeIntervalValues')
       } catch (e) {
         console.log(e)
@@ -95,7 +97,7 @@
 
     {#if showToolTip}
       <div class={`tooltip`} transition:fade>
-        <RasterColorPicker bind:color />
+        <RasterColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
       </div>
     {/if}
   </div>

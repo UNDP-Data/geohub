@@ -51,10 +51,9 @@
   export let colorPickerVisibleIndex: number
   let rangeSliderValues = [layerMin, layerMax]
 
-  const classificationMethods = [
+  let classificationMethods = [
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
-    { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
 
   $: {
@@ -66,6 +65,13 @@
   }
 
   onMount(() => {
+    if (layerMin > 0) {
+      classificationMethods = [
+        ...classificationMethods,
+        ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+      ]
+    }
+
     reclassifyImage()
   })
 
