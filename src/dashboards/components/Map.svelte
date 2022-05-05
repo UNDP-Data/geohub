@@ -99,4 +99,8 @@
   :global(.maplibregl-ctrl-bottom-right) {
     padding-left: 80px;
   }
+
+  :global(.maplibregl-map) {
+    cursor: pointer;
+  }
 </style>

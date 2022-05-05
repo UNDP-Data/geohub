@@ -41,20 +41,21 @@
   const ML_ID = 'ML'
   const ML_NODATA = 0
 
-  export const getHreaUrl = () => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_${$year}.tif?${TOKEN}`
+  export const getHreaUrl = (y) => {
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_${y}.tif?${TOKEN}`
   }
-  export const getMlUrl = () => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_${$year}_Result.tif?${TOKEN}`
+  export const getMlUrl = (y) => {
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_${y}_Result.tif?${TOKEN}`
   }
 
   export let drawerOpen = false
   let hoveredStateId = null
 
-  let hoverValue = {
+  let pointDonutValue = {
     [HREA_ID]: 0,
     [ML_ID]: 0,
   }
+  let pointBarValues = []
 
   let showIntro = true
   let heatmapChecked = false
@@ -64,7 +65,7 @@
     { name: ML_ID, icon: faLaptopCode },
   ]
   let electricitySelected = electricityChoices[0]
-  let interactChoices = ['Hover', 'Click']
+  let interactChoices = ['Admin', 'Point']
   let interactSelected = interactChoices[0]
   let drawerWidth = 355
   let isResizingDrawer = false
@@ -84,8 +85,7 @@
 
   function hideIntro() {
     showIntro = false
-    $map.on('click', onMouseClick)
-    renderDonut()
+    adminInteraction()
   }
 
   $: {
@@ -98,22 +98,48 @@
     }
   }
 
-  const getSpec = (numerator, denomonator) => ({
+  const getDonutSpec = (numerator, color) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 120,
     height: 120,
-    description: 'A simple donut chart with embedded data.',
     background: null,
     data: {
       values: [
         { category: 1, value: numerator },
-        { category: 2, value: denomonator - numerator },
+        { category: 2, value: 1 - numerator },
       ],
     },
     mark: { type: 'arc', innerRadius: 30 },
     encoding: {
       theta: { field: 'value', type: 'quantitative' },
-      color: { field: 'category', type: 'nominal', legend: null },
+      color: {
+        field: 'category',
+        type: 'nominal',
+        legend: null,
+        scale: {
+          domain: [1, 2],
+          range: [color, '#808080'],
+        },
+      },
+    },
+  })
+
+  const getBarSpec = (values) => ({
+    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+    width: 240,
+    height: 120,
+    view: { stroke: 'transparent' },
+    background: null,
+    data: { values },
+    mark: 'bar',
+    encoding: {
+      x: {
+        field: 'year',
+        axis: { title: false, labelColor: '#808080' },
+      },
+      y: { field: 'value', type: 'quantitative', axis: null },
+      xOffset: { field: 'category' },
+      color: { field: 'category', legend: null },
     },
   })
 
@@ -219,37 +245,50 @@
   const onMouseClick = async (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
-      [HREA_ID, getHreaUrl(), HREA_NODATA],
-      [ML_ID, getMlUrl(), ML_NODATA],
+      [HREA_ID, getHreaUrl, HREA_NODATA, [2012, 2020], 1],
+      [ML_ID, getMlUrl, ML_NODATA, [2012, 2019], 255],
     ]
-    for (const [name, dataURL, noData] of options) {
-      const url = `${API_URL}/point/${lng},${lat}?url=${dataURL}`
-      const r = await fetch(url)
-      const response = await r.json()
-      hoverValue[name] = response.values[0] === noData ? 0 : response.values[0]
+    pointBarValues = []
+    for (const [name, getDataURL, noData, [dateFrom, dateTo], total] of options) {
+      for (let x = dateFrom; x <= dateTo; x++) {
+        const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL($year)}`
+        const r = await fetch(url)
+        const response = await r.json()
+        const responseValue = response.values[0] === noData ? 0 : response.values[0] / total
+        if (x === $year) {
+          pointDonutValue[name] = responseValue
+        }
+        pointBarValues.push({ category: name, year: x, value: responseValue })
+      }
     }
-    renderDonut()
+    renderPointCharts()
   }
 
-  const renderDonut = () => {
+  const renderPointCharts = () => {
     const options = { actions: false, renderer: 'svg' }
-    vegaEmbed('#donut1', getSpec(hoverValue[HREA_ID], 1), options)
-    vegaEmbed('#donut2', getSpec(hoverValue[ML_ID], 255), options)
+    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], '#4C78A8'), options)
+    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], '#F58419'), options)
+    vegaEmbed('#point-bar', getBarSpec(pointBarValues), options)
+  }
+
+  const adminInteraction = () => {
+    $map.on('mousemove', ADM_ID, onMouseMove)
+    $map.on('mouseleave', ADM_ID, onMouseLeave)
+    $map.off('click', onMouseClick)
+  }
+
+  const pointInteraction = () => {
+    $map.off('mousemove', ADM_ID, onMouseMove)
+    $map.off('mouseleave', ADM_ID, onMouseLeave)
+    $map.on('click', onMouseClick)
+    renderPointCharts()
   }
 
   $: interactSelected, loadInteraction()
   const loadInteraction = () => {
     if (!$map) return
-    if (interactSelected === 'Click') {
-      $map.on('mousemove', ADM_ID, onMouseMove)
-      $map.on('mouseleave', ADM_ID, onMouseLeave)
-      $map.off('click', onMouseClick)
-    } else {
-      $map.off('mousemove', ADM_ID, onMouseMove)
-      $map.off('mouseleave', ADM_ID, onMouseLeave)
-      $map.on('click', onMouseClick)
-      renderDonut()
-    }
+    if (interactSelected === 'Admin') adminInteraction()
+    else pointInteraction()
   }
 
   const initHeatmap = () => {
@@ -421,18 +460,19 @@
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
-              {#if interactSelected === 'Hover'}
+              {#if interactSelected === 'Point'}
                 <br /><br />
                 <div class="chart-container">
                   <div class="chart-item">
                     <p class="title-text">HREA</p>
-                    <div id="donut1" />
+                    <div id="point-donut-1" />
                   </div>
                   <div class="chart-item">
                     <p class="title-text">ML</p>
-                    <div id="donut2" />
+                    <div id="point-donut-2" />
                   </div>
                 </div>
+                <div id="point-bar" />
               {/if}
             </StyleControlGroup>
           {/if}
