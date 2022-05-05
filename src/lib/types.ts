@@ -7,7 +7,7 @@ import type {
   SymbolLayerSpecification,
   HeatmapLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
-import type { StatusTypes } from './constants'
+import type { ClassificationMethodTypes, StatusTypes } from './constants'
 
 export interface Tree {
   tree: TreeNode
@@ -40,6 +40,27 @@ export interface Layer {
   visible?: boolean | true
   url?: string
   features?: []
+  colorMapName?: string
+  continuous?: ContinuousLegend
+  intervals?: IntervalLegend
+}
+
+export interface ContinuousLegend {
+  minimum: number
+  maximum: number
+}
+
+export interface IntervalLegend {
+  classification?: ClassificationMethodTypes
+  numberOfClasses?: number
+  colorMapRows?: IntervalLegendColorMapRow[]
+}
+
+export interface IntervalLegendColorMapRow {
+  index?: number
+  color?: number[]
+  start?: number
+  end?: number
 }
 
 export interface LayerInfo {

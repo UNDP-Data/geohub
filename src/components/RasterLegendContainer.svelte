@@ -15,22 +15,19 @@
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { COLOR_CLASS_COUNT, DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let activeColorMapName: string
   export let layer: Layer
 
   let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
-  let numberOfClasses = COLOR_CLASS_COUNT
 
   $: selectedLegendType, setSelectedLegend()
 
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
-    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) numberOfClasses = COLOR_CLASS_COUNT
   }
 
   const handleLegendToggleClick = () => {
@@ -63,28 +60,32 @@
 
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      activeColorMapName = event.detail.colorMapName
+      const layerClone = cloneDeep(layer)
+      layerClone.colorMapName = event.detail.colorMapName
+      layer = layerClone
     }
   }
 
   const handleClosePopup = () => {
     showTooltip = !showTooltip
   }
+
+  import { cloneDeep } from 'lodash-es'
 </script>
 
 <div class="columns" data-testid="raster-legend-view-container">
   <div class="column is-10">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <ContinuousLegend bind:activeColorMapName layerConfig={layer} />
+        <ContinuousLegend bind:layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:activeColorMapName layerConfig={layer} bind:numberOfClasses />
+        <IntervalsLegend bind:layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+        <UniqueValuesLegend bind:layerConfig={layer} />
       </div>
     {/if}
   </div>
@@ -111,12 +112,7 @@
 
     {#if showTooltip}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
-          on:handleClosePopup={handleClosePopup}
-          {layer}
-          {activeColorMapName}
-          {numberOfClasses} />
+        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} on:handleClosePopup={handleClosePopup} {layer} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}
