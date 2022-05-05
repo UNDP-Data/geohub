@@ -3,11 +3,11 @@
   export let link: string
 
   // This should not be hardcoded
-  export let description = "Electricity Access for populations all over the world"
+  export let description = 'Electricity Access for populations all over the world'
   import Ripple from '@smui/ripple'
 </script>
 
-<a href={link} style="max-width: 20%; min-width: 20%; margin: 20px">
+<a href={link} style="max-width: 20%; min-width: 300px; margin: 20px">
   <div class="card one-page">
     <header class="card-header">
       <p class="card-header-title">
