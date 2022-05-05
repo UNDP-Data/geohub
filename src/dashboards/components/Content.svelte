@@ -251,36 +251,40 @@
     }
   }
 
-  const loadHeatmap = () => {
-    if (!$map) return
+  const initHeatmap = () => {
+    if (!$map.getSource(RWI_ID)) {
+      const layerSource: GeoJSONSourceSpecification = {
+        type: 'geojson',
+        data: RWI_URL,
+      }
+      $map.addSource(RWI_ID, layerSource)
+    }
 
-    if (!heatmapChecked) {
-      $map.getLayer(RWI_ID) && $map.removeLayer(RWI_ID)
-      $map.getSource(RWI_ID) && $map.removeSource(RWI_ID)
-      return
-    }
-    const layerSource: GeoJSONSourceSpecification = {
-      type: 'geojson',
-      data: RWI_URL,
-    }
-    const layerDefinition: HeatmapLayerSpecification = {
-      id: RWI_ID,
-      type: LayerTypes.HEATMAP,
-      source: RWI_ID,
-      minzoom: 0,
-      maxzoom: 22,
-      layout: { visibility: 'visible' },
-      paint: {
-        'heatmap-weight': {
-          property: RWI_ID,
-          type: 'exponential',
-          stops: [
-            [-0.855, 0],
-            [1.06009, 1],
-          ],
+    if (!$map.getLayer(RWI_ID)) {
+      const layerDefinition: HeatmapLayerSpecification = {
+        id: RWI_ID,
+        type: LayerTypes.HEATMAP,
+        source: RWI_ID,
+        minzoom: 0,
+        maxzoom: 22,
+        layout: { visibility: 'none' },
+        paint: {
+          'heatmap-weight': {
+            property: RWI_ID,
+            type: 'exponential',
+            stops: [
+              [-0.855, 0],
+              [1.06009, 1],
+            ],
+          },
         },
-      },
+      }
+      $map.addLayer(layerDefinition)
     }
+  }
+
+  const moveHeatmap = () => {
+    if (!$map) return
     let firstSymbolId = undefined
     for (const layer of $map.getStyle().layers) {
       if (layer.type === 'symbol') {
@@ -288,10 +292,15 @@
         break
       }
     }
+    $map.moveLayer(RWI_ID, firstSymbolId)
+  }
 
-    !$map.getSource(RWI_ID) && $map.addSource(RWI_ID, layerSource)
-    !$map.getLayer(RWI_ID) && $map.addLayer(layerDefinition, firstSymbolId)
+  const loadHeatmap = () => {
+    if (!$map) return
+    initHeatmap()
+    $map.setLayoutProperty(RWI_ID, 'visibility', heatmapChecked ? 'visible' : 'none')
     $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    moveHeatmap()
   }
 
   const addBingAerialLayer = async () => {
