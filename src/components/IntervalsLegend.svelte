@@ -48,7 +48,7 @@
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
   let cmap = layerConfig.intervals.colorMapRows
   let colorMapName = layerConfig.colorMapName
-  let colorPickerVisibleIndex: number
+  export let colorPickerVisibleIndex: number
   let rangeSliderValues = [layerMin, layerMax]
 
   const classificationMethods = [

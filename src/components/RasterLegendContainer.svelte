@@ -10,6 +10,7 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { createPopperActions } from 'svelte-popperjs'
+  import { cloneDeep } from 'lodash-es'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
@@ -20,6 +21,7 @@
 
   export let layer: Layer
 
+  let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
@@ -63,14 +65,14 @@
       const layerClone = cloneDeep(layer)
       layerClone.colorMapName = event.detail.colorMapName
       layer = layerClone
+      colorPickerVisibleIndex = -1
     }
   }
 
   const handleClosePopup = () => {
     showTooltip = !showTooltip
+    colorPickerVisibleIndex = -1
   }
-
-  import { cloneDeep } from 'lodash-es'
 </script>
 
 <div class="columns" data-testid="raster-legend-view-container">
@@ -81,7 +83,7 @@
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:layerConfig={layer} />
+        <IntervalsLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
