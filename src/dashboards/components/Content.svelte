@@ -99,20 +99,21 @@
     }
   }
 
-  const getDonutSpec = (numerator, color) => ({
+  const getDonutSpec = (value, color) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 120,
     height: 120,
     background: null,
     data: {
       values: [
-        { category: 1, value: numerator },
-        { category: 2, value: 1 - numerator },
+        { category: 1, value, percent: Math.round(value * 100) + '%' },
+        { category: 2, value: 1 - value, percent: '' },
       ],
     },
     mark: { type: 'arc', innerRadius: 30 },
     encoding: {
       theta: { field: 'value', type: 'quantitative' },
+      tooltip: { field: 'percent', type: 'qualitative' },
       color: {
         field: 'category',
         type: 'nominal',
@@ -132,7 +133,7 @@
     view: { stroke: 'transparent' },
     background: null,
     data: { values },
-    mark: 'bar',
+    mark: { type: 'bar' },
     encoding: {
       x: {
         field: 'year',
@@ -147,6 +148,7 @@
         axis: null,
         scale: { domain: [0, 1] },
       },
+      tooltip: { field: 'percent', type: 'qualitative' },
       xOffset: { field: 'category' },
       color: { field: 'category', legend: null },
     },
@@ -242,7 +244,12 @@
               if (x === $year) {
                 pointDonutValue[name] = responseValue
               }
-              pointBarValues.push({ category: name, year: x, value: responseValue })
+              pointBarValues.push({
+                category: name,
+                year: x,
+                value: responseValue,
+                percent: Math.round(responseValue * 100) + '%',
+              })
               renderPointCharts()
             })
         }
@@ -508,11 +515,11 @@
                 <br /><br />
                 <div class="chart-container">
                   <div class="chart-item">
-                    <p class="title-text">HREA</p>
+                    <p class="title-text">HREA - {$year}</p>
                     <div id="point-donut-1" />
                   </div>
                   <div class="chart-item">
-                    <p class="title-text">ML</p>
+                    <p class="title-text">ML - {$year}</p>
                     <div id="point-donut-2" />
                   </div>
                 </div>
