@@ -134,11 +134,11 @@ export interface Bucket {
 }
 
 export interface Color {
-  r: string
-  b: string
+  r: number
+  b: number
   s: number
   v: number
-  g: string
+  g: number
   h: number
   hex: string
 }
