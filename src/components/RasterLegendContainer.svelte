@@ -10,30 +10,30 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { createPopperActions } from 'svelte-popperjs'
+  import { cloneDeep } from 'lodash-es'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { COLOR_CLASS_COUNT, DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let activeColorMapName: string
   export let layer: Layer
 
+  let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
-  let numberOfClasses = COLOR_CLASS_COUNT
 
   $: selectedLegendType, setSelectedLegend()
 
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
-    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) numberOfClasses = COLOR_CLASS_COUNT
   }
 
   const handleLegendToggleClick = () => {
+    colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
 
     setTimeout(() => {
@@ -63,12 +63,16 @@
 
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      activeColorMapName = event.detail.colorMapName
+      const layerClone = cloneDeep(layer)
+      layerClone.colorMapName = event.detail.colorMapName
+      layer = layerClone
+      colorPickerVisibleIndex = -1
     }
   }
 
   const handleClosePopup = () => {
     showTooltip = !showTooltip
+    colorPickerVisibleIndex = -1
   }
 </script>
 
@@ -76,15 +80,15 @@
   <div class="column is-10">
     {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <ContinuousLegend bind:activeColorMapName layerConfig={layer} />
+        <ContinuousLegend bind:layerConfig={layer} />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:activeColorMapName layerConfig={layer} bind:numberOfClasses />
+        <IntervalsLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:activeColorMapName layerConfig={layer} />
+        <UniqueValuesLegend bind:layerConfig={layer} />
       </div>
     {/if}
   </div>
@@ -111,12 +115,7 @@
 
     {#if showTooltip}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
-          on:handleClosePopup={handleClosePopup}
-          {layer}
-          {activeColorMapName}
-          {numberOfClasses} />
+        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} on:handleClosePopup={handleClosePopup} {layer} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}

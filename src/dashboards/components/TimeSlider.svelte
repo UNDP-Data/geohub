@@ -3,18 +3,18 @@
   import type { RasterLayerSpecification, SourceSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { LayerTypes } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
-  import { map } from '../stores'
+  import { map, year } from '../stores'
 
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
   export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
 
-  const HREA_URL = (year: string) => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_${year}.tif?${TOKEN}`
+  export const getHreaUrl = (y: number) => {
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
   }
-  const ML_URL = (year: string) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_${year}_Result.tif?${TOKEN}`
+  export const getMlUrl = (y: number) => {
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
   }
 
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'
@@ -48,13 +48,18 @@
 
   export function loadLayer() {
     if (!$map) return
-    const year = rangeSliderValues[0].toString()
-    let url = electricitySelected.name === 'HREA' ? HREA_URL(year) : ML_URL(year)
+    const yearValue = rangeSliderValues[0]
+    year.update(() => yearValue)
+    let url = electricitySelected.name === 'HREA' ? getHreaUrl($year) : getMlUrl($year)
     loadRasterLayer(url)
   }
 
   const loadRasterLayer = async (url: string) => {
+    if (!$map) return
     const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
+    if (!(layerInfo && layerInfo['band_metadata'])) {
+      return
+    }
     const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM']
     const apiUrlParams = new URLSearchParams()
