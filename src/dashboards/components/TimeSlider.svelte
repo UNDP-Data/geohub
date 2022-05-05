@@ -10,11 +10,11 @@
   export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
 
-  const getHreaUrl = (year: number) => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${year}.tif?${TOKEN}`
+  export const getHreaUrl = (y: number) => {
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
   }
-  const getMlUrl = (year: number) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${year}.tif?${TOKEN}`
+  export const getMlUrl = (y: number) => {
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
   }
 
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'

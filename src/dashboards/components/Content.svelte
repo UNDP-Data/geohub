@@ -42,10 +42,10 @@
   const ML_NODATA = 0
 
   export const getHreaUrl = (y) => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_${y}.tif?${TOKEN}`
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
   }
   export const getMlUrl = (y) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_${y}_Result.tif?${TOKEN}`
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
   }
 
   export let drawerOpen = false
@@ -126,7 +126,7 @@
 
   const getBarSpec = (values) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 240,
+    width: 278,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
@@ -136,8 +136,16 @@
       x: {
         field: 'year',
         axis: { title: false, labelColor: '#808080' },
+        scale: {
+          domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+        },
       },
-      y: { field: 'value', type: 'quantitative', axis: null },
+      y: {
+        field: 'value',
+        type: 'quantitative',
+        axis: null,
+        scale: { domain: [0, 1] },
+      },
       xOffset: { field: 'category' },
       color: { field: 'category', legend: null },
     },
@@ -242,26 +250,30 @@
     hoveredStateId = null
   }
 
-  const onMouseClick = async (e) => {
+  const onMouseClick = (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
-      [HREA_ID, getHreaUrl, HREA_NODATA, [2012, 2020], 1],
-      [ML_ID, getMlUrl, ML_NODATA, [2012, 2019], 255],
+      [HREA_ID, getHreaUrl, HREA_NODATA, [], 1],
+      [ML_ID, getMlUrl, ML_NODATA, [2020], 255],
     ]
     pointBarValues = []
-    for (const [name, getDataURL, noData, [dateFrom, dateTo], total] of options) {
-      for (let x = dateFrom; x <= dateTo; x++) {
-        const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL($year)}`
-        const r = await fetch(url)
-        const response = await r.json()
-        const responseValue = response.values[0] === noData ? 0 : response.values[0] / total
-        if (x === $year) {
-          pointDonutValue[name] = responseValue
+    for (const [name, getDataURL, noData, ignoreValue, total] of options) {
+      for (let x = 2012; x <= 2020; x++) {
+        if (!ignoreValue.includes(x)) {
+          const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL(x)}`
+          const r = fetch(url)
+            .then((r) => r.json())
+            .then((response) => {
+              const responseValue = response.values[0] === noData ? 0 : response.values[0] / total
+              if (x === $year) {
+                pointDonutValue[name] = responseValue
+              }
+              pointBarValues.push({ category: name, year: x, value: responseValue })
+              renderPointCharts()
+            })
         }
-        pointBarValues.push({ category: name, year: x, value: responseValue })
       }
     }
-    renderPointCharts()
   }
 
   const renderPointCharts = () => {
