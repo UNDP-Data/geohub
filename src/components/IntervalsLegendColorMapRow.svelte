@@ -97,7 +97,7 @@
 
     {#if showToolTip}
       <div class={`tooltip`} transition:fade>
-        <RasterColorPicker bind:color />
+        <RasterColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
       </div>
     {/if}
   </div>
