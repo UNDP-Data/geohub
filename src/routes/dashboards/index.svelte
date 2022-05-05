@@ -14,35 +14,49 @@
 
 <script lang="ts">
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
-  import Header from '../../components/Header.svelte'
-
-  let title = 'Geohub Dashboard Gallery'
-  let showControls = false
 </script>
 
-<Header bind:title bind:showControls />
-<div class="body-div">
-  {#each pages as page}
-    <DashboardCard bind:title={page.title} bind:link={page.link} />
-  {/each}
+<div style="height: 100vh; width: 100%; overflow-y: scroll">
+  <section class="hero is-medium is-link">
+    <div class="hero-body">
+      <div style="display: flex; align-items: center">
+        <img style="height:80px; margin-right: 20px" src="1200px-UNDP_logo.svg-148x300.png" alt="UNDP Logo" />
+        <p class="title">UNDP Dashboards Gallery</p>
+      </div>
+    </div>
+  </section>
+  <div class="main-section">
+    <div style="width: 80%; display: flex; flex-wrap: wrap; margin: auto">
+      {#each pages as page}
+        <DashboardCard bind:title={page.title} bind:link={page.link} />
+      {/each}
+    </div>
+  </div>
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>&copy UNDP 2022</p>
+    </div>
+  </footer>
 </div>
 
 <style>
-  .body-div {
-    padding: 20px;
-    height: 100vh;
+  .hero {
+    background: dodgerblue;
+  }
+  .main-section {
     width: 100%;
-    overflow-y: auto;
+    height: max-content;
     display: flex;
   }
-  @media (max-width: 600px) {
-    .body-div {
-      display: block;
-    }
-  }
   @media (prefers-color-scheme: dark) {
-    .body-div {
-      background: #121212;
+    .hero {
+      background: #212125;
+    }
+    .main-section {
+      background: #4a4a4a;
+    }
+    .footer {
+      background: #121212 !important;
     }
   }
 </style>

@@ -1,10 +1,13 @@
 <script lang="ts">
   export let title: string
   export let link: string
+
+  // This should not be hardcoded
+  export let description = "Electricity Access for populations all over the world"
   import Ripple from '@smui/ripple'
 </script>
 
-<a href={link}>
+<a href={link} style="max-width: 20%; min-width: 20%; margin: 20px">
   <div class="card one-page">
     <header class="card-header">
       <p class="card-header-title">
@@ -18,7 +21,7 @@
           <img class="dashboard-image" src="electricity-snapshot.jpg" alt="Placeholder image" />
         </figure>
       </div>
-      <div class="content">The description should go here and some the information about the specific dashboard</div>
+      <div class="content">{description}</div>
     </div>
     <footer class="card-footer" use:Ripple={{ surface: true }}>
       <a href={link} class="card-footer-item">Open {title} dashboard</a>
@@ -30,9 +33,7 @@
   @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
 
   .one-page {
-    width: 400px;
-    margin-right: 10px;
-    height: 460px;
+    width: 100%;
     cursor: pointer;
     border-radius: 10px;
     @media (prefers-color-scheme: dark) {

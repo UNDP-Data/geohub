@@ -58,7 +58,6 @@
             {drawerOpen ? 'Hide Drawer' : 'Show Drawer'}
           </Tooltip>
         </Wrapper>
-
         <div class="icon" on:click={() => (darkTheme = !darkTheme)} style="display: none;">
           {#if darkTheme}
             <Fa icon={faSun} size="lg" />
