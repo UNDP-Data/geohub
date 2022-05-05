@@ -36,6 +36,7 @@ jobs:
           envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
 
       # install dependencies
       - name: Install dependencies
