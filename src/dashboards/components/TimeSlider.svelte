@@ -10,11 +10,11 @@
   export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
 
-  export const getHreaUrl = () => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/HREA_electricity_access_${$year}.tif?${TOKEN}`
+  const getHreaUrl = (year: number) => {
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${year}.tif?${TOKEN}`
   }
-  export const getMlUrl = () => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/MLEE_${$year}_Result.tif?${TOKEN}`
+  const getMlUrl = (year: number) => {
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${year}.tif?${TOKEN}`
   }
 
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'
@@ -50,7 +50,7 @@
     if (!$map) return
     const yearValue = rangeSliderValues[0]
     year.update(() => yearValue)
-    let url = electricitySelected.name === 'HREA' ? getHreaUrl() : getMlUrl()
+    let url = electricitySelected.name === 'HREA' ? getHreaUrl($year) : getMlUrl($year)
     loadRasterLayer(url)
   }
 
