@@ -69,7 +69,14 @@
     reclassifyImage()
   })
 
-  const reclassifyImage = () => {
+  const reclassifyImage = (e?: CustomEvent) => {
+    let isClassificationMethodEdited = false
+
+    if (e) {
+      classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
+      isClassificationMethodEdited = true
+    }
+
     const intervalList = chroma.limits(rangeSliderValues, classificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
@@ -84,12 +91,14 @@
         // @ts-ignore:next-line
         color: [...scaleColorList(intervalList[i]).rgb(), 255],
         start:
+          isClassificationMethodEdited == false &&
           layerConfig.intervals.colorMapRows.length > 0 &&
           layerConfig.intervals.numberOfClasses === numberOfClasses &&
           layerConfig.intervals.colorMapRows[i]?.start
             ? layerConfig.intervals.colorMapRows[i].start
             : intervalList[i],
         end:
+          isClassificationMethodEdited == false &&
           layerConfig.intervals.colorMapRows.length > 0 &&
           layerConfig.intervals.numberOfClasses === numberOfClasses &&
           layerConfig.intervals.colorMapRows[i]?.end
@@ -145,7 +154,7 @@
     <div class="column classification">
       <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
       <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
-        <select bind:value={classificationMethod} on:change={() => reclassifyImage()} style="width: 114px;">
+        <select bind:value={classificationMethod} on:change={(e) => reclassifyImage(e)} style="width: 114px;">
           {#each classificationMethods as classificationMethod}
             <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
           {/each}
