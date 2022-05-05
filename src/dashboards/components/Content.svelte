@@ -234,6 +234,39 @@
     hoveredStateId = null
   }
 
+  const geoJSONStats = async (e) => {
+    const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
+    const apiUrlParams = { url: lurl }
+    const features = $map.queryRenderedFeatures(e.point, { layers: [ADM_ID] })
+    if (features.length > 0) {
+      const { type, geometry, properties } = features[0].toJSON()
+      const geoJSON = { type, geometry, properties }
+      //console.log(JSON.stringify(geoJSON, null, '\t'))
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(geoJSON),
+      }
+      //const url = `http://localhost:8000/cog/statistics?${new URLSearchParams(apiUrlParams).toString()}`
+      const url = `${API_URL}/statistics?${new URLSearchParams(apiUrlParams).toString()}`
+      //console.log(url)
+      try {
+        const response = await fetch(url, config)
+        if (response.ok) {
+          const result = await response.json()
+          console.log(JSON.stringify(result.properties.statistics['1'], null, '\t'))
+          return result
+        } else {
+          throw new Error('Network response was not ok.')
+        }
+      } catch (error) {
+        console.error(error.name, error.message)
+      }
+    }
+  }
+
   const onMouseClick = (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
@@ -279,12 +312,14 @@
     $map.on('mousemove', ADM_ID, onMouseMove)
     $map.on('mouseleave', ADM_ID, onMouseLeave)
     $map.off('click', onMouseClick)
+    $map.on('click', geoJSONStats)
   }
 
   const pointInteraction = () => {
     $map.off('mousemove', ADM_ID, onMouseMove)
     $map.off('mouseleave', ADM_ID, onMouseLeave)
     $map.on('click', onMouseClick)
+    $map.off('click', geoJSONStats)
     renderPointCharts()
   }
 
