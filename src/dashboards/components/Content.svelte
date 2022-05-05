@@ -15,8 +15,6 @@
   import type {
     RasterLayerSpecification,
     HeatmapLayerSpecification,
-    FillLayerSpecification,
-    SourceSpecification,
     GeoJSONSourceSpecification,
     RasterSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
@@ -154,13 +152,6 @@
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
-    map.subscribe(() => {
-      if ($map) {
-        $map.on('load', () => {
-          loadAdminLayer()
-        })
-      }
-    })
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -180,37 +171,6 @@
 
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
-
-  const loadAdminLayer = () => {
-    const layerSource: SourceSpecification = {
-      type: LayerTypes.VECTOR,
-      maxzoom: 10,
-      promoteId: 'adm1_id',
-      tiles: [`${AZURE_URL}/admin/${ADM_LAYER}/{z}/{x}/{y}.pbf`],
-    }
-    const layerFill: FillLayerSpecification = {
-      id: ADM_ID,
-      type: LayerTypes.FILL,
-      source: ADM_ID,
-      'source-layer': ADM_LAYER,
-      paint: {
-        'fill-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          'hsla(0, 0%, 0%, 0.05)',
-          'hsla(0, 0%, 0%, 0)',
-        ],
-        'fill-outline-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          'hsla(0, 0%, 0%, 1)',
-          'hsla(0, 0%, 0%, 0)',
-        ],
-      },
-    }
-    !$map.getSource(ADM_ID) && $map.addSource(ADM_ID, layerSource)
-    !$map.getLayer(ADM_ID) && $map.addLayer(layerFill)
-  }
 
   const onMouseMove = (e) => {
     if (e.features.length > 0) {
