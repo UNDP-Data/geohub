@@ -13,8 +13,7 @@
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import { cloneDeep, debounce } from 'lodash-es'
 
-  import type { IntervalLegendColorMapRow } from '$lib/types'
-
+  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
@@ -24,9 +23,8 @@
     COLOR_CLASS_COUNT_MAXIMUM,
   } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
-  import type { Layer, LayerInfo } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, LayerInfo } from '$lib/types'
   import { map } from '$stores'
-  import IntervalsLegendColorMapRow from './IntervalsLegendColorMapRow.svelte'
 
   export let layerConfig: Layer = LayerInitialValues
   export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
@@ -46,20 +44,17 @@
   const layerURL = new URL(layerSrc.tiles[0])
 
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
-  let cmap = layerConfig.intervals.colorMapRows
-  let colorMapName = layerConfig.colorMapName
-  export let colorPickerVisibleIndex: number
-  let rangeSliderValues = [layerMin, layerMax]
-
   let classificationMethods = [
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
+  let colorMapName = layerConfig.colorMapName
+
+  export let colorPickerVisibleIndex: number
 
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
-      cmap = layerConfig.intervals.colorMapRows
       reclassifyImage()
     }
   }
@@ -83,7 +78,7 @@
       isClassificationMethodEdited = true
     }
 
-    const intervalList = chroma.limits(rangeSliderValues, classificationMethod, numberOfClasses).map((element) => {
+    const intervalList = chroma.limits([layerMin, layerMax], classificationMethod, numberOfClasses).map((element) => {
       return Number(element.toFixed(2))
     })
 
@@ -117,7 +112,6 @@
 
     layerConfig.intervals.colorMapRows = colorMap
     layerConfig.intervals.classification = classificationMethod
-    cmap = layerConfig.intervals.colorMapRows
     handleParamsUpdate()
   }
 
@@ -133,15 +127,11 @@
   }, 500)
 
   const handleIncrementDecrementClasses = (operation: string) => {
-    if (operation === '+') {
-      if (numberOfClasses < COLOR_CLASS_COUNT_MAXIMUM) {
-        numberOfClasses++
-      }
+    if (operation === '+' && numberOfClasses < COLOR_CLASS_COUNT_MAXIMUM) {
+      numberOfClasses++
     }
-    if (operation === '-') {
-      if (numberOfClasses > COLOR_CLASS_COUNT_MINIMUM) {
-        numberOfClasses--
-      }
+    if (operation === '-' && numberOfClasses > COLOR_CLASS_COUNT_MINIMUM) {
+      numberOfClasses--
     }
 
     const layerConfigClone = cloneDeep(layerConfig)
@@ -194,7 +184,7 @@
     </div>
   </div>
 
-  {#each cmap as colorMapRow}
+  {#each layerConfig.intervals.colorMapRows as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
       layer={layerConfig}
