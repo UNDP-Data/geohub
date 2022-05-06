@@ -1,7 +1,3 @@
-<script lang="ts" context="module">
-  const colorState = {}
-</script>
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
