@@ -14,9 +14,9 @@
   const dispatch = createEventDispatcher()
 
   let color: Color
+  let colorMapName: string
   let colorPickerStyle: string
   let showToolTip = false
-  let colorMapName: string
 
   $: colorPickerStyle = getColorPickerStyle(colorMapRow.color.join())
   $: {

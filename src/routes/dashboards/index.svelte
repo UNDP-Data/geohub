@@ -17,7 +17,7 @@
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
 </script>
 
-<div style="height: 100vh; width: 100%; overflow-y: auto;">
+<div style="height: 100vh!important; width: 100%; overflow-y: auto;">
   <section class="hero is-primary is-medium">
     <DashboardHeader />
     <div class="hero-body">
@@ -25,10 +25,8 @@
       <div style="width: 120px; height: 5px; background: grey; " />
     </div>
   </section>
-
-  <div style="width: 100%; height: 40px; display: flex; align-items: center" />
   <div class="main-section">
-    <div style="width: 90%; display: flex; flex-wrap: wrap; margin: auto">
+    <div style="width: 90%; display: flex; flex-wrap: wrap; margin: auto; min-height: 100vh">
       {#each pages as page}
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
