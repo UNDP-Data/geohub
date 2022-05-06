@@ -18,15 +18,25 @@
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import { layerList } from '$stores'
 
   export let layer: Layer
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
+  let layerListCount = $layerList.length
   let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
 
   $: selectedLegendType, setSelectedLegend()
+
+  // hide colormap picker if change in layer list
+  $: {
+    if (layerListCount !== $layerList.length) {
+      showTooltip = false
+      layerListCount = $layerList.length
+    }
+  }
 
   const setSelectedLegend = () => {
     selectedLegend[layer.definition.id] = selectedLegendType
