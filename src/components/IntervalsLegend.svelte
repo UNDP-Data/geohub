@@ -147,6 +147,7 @@
     const layerConfigClone = cloneDeep(layerConfig)
     layerConfigClone.intervals.numberOfClasses = numberOfClasses
     layerConfig = layerConfigClone
+    layerConfig.intervals.colorMapRows = []
     reclassifyImage()
   }
 

@@ -6,12 +6,12 @@
 
   let drawerOpen = true
   let panelOpen = false
+  let showControls = true
 </script>
 
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Header bind:drawerOpen bind:panelOpen />
-
+<Header bind:drawerOpen bind:panelOpen bind:showControls />
 <Content bind:drawerOpen>
   <Map />
 </Content>
