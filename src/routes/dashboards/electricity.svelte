@@ -2,7 +2,6 @@
   import { style } from 'svelte-body'
   import Content from '../../dashboards/components/Content.svelte'
   import Map from '../../dashboards/components/Map.svelte'
-
   let drawerOpen = true
   let loadLayers = () => {
     return
