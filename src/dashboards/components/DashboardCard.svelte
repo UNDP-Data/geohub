@@ -52,7 +52,7 @@
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   }
-  .card-header{
+  .card-header {
     background: darkslategrey;
   }
   .card-header-title {
@@ -75,7 +75,7 @@
     .card-footer-item {
       color: white;
     }
-    .card-footer-item{
+    .card-footer-item {
       color: darkslategrey;
     }
     .card-footer-item:hover {

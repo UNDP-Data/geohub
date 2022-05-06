@@ -45,7 +45,7 @@
   .hero-body {
     /*margin-top: 300px;*/
     background: darkslategrey;
-      //border-bottom: 1px solid grey;
+    //border-bottom: 1px solid grey;
   }
   .main-section {
     width: 100%;

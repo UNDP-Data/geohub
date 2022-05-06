@@ -19,8 +19,8 @@
     z-index: 1;
     //border-bottom: 1px solid grey;
   }
-  .navbar-item{
-    color:white!important;
+  .navbar-item {
+    color: white !important;
   }
   .navbar-item:hover {
     background: slategrey !important;
