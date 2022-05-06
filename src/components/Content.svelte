@@ -96,7 +96,7 @@
             </Tab>
           </TabBar>
         </Header>
-        <Content style="padding-right: 15px; overflow: visible;">
+        <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.BUCKETS}>
             <BucketView />
           </div>
@@ -122,7 +122,7 @@
     <Banner bind:open={showBanner} fixed mobileStacked content$style={`max-width: max-content; height:`}>
       <LabelBanner
         slot="label"
-        style={`font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 60px;`}>
+        style="font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 60px;">
         {#each $bannerMessages as row}
           <div class="banner-container">
             <div class="icon">
