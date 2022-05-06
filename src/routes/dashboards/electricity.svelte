@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="../smui-dark.css" media="screen and (prefers-color-scheme: dark)" />
 </svelte:head>
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
-<Header bind:drawerOpen>Electricity Dashboard</Header>
 
 <Content bind:drawerOpen bind:loadLayers>
   <Map on:styleChanged={loadLayers} />

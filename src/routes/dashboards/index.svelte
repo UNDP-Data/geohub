@@ -14,25 +14,27 @@
 
 <script lang="ts">
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
+  import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
 </script>
 
-<div style="height: 100vh; width: 100%; overflow-y: scroll">
-  <section class="hero is-medium is-link">
+<div style="height: 100vh; width: 100%; overflow-y: scroll; background: #2a2a2e">
+  <section class="hero is-primary is-medium">
+    <DashboardHeader />
     <div class="hero-body">
-      <div style="display: flex; align-items: center">
-        <img style="height:80px; margin-right: 20px" src="1200px-UNDP_logo.svg-148x300.png" alt="UNDP Logo" />
-        <p class="title">UNDP Dashboards Gallery</p>
-      </div>
+      <p class="title" style="margin-bottom: 10px">Gallery</p>
+      <div style="width: 120px; height: 5px; background: grey; " />
     </div>
   </section>
+
+  <div style="width: 100%; height: 40px; display: flex; align-items: center" />
   <div class="main-section">
-    <div style="width: 80%; display: flex; flex-wrap: wrap; margin: auto">
+    <div style="width: 90%; display: flex; flex-wrap: wrap; margin: auto">
       {#each pages as page}
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
   </div>
-  <footer class="footer">
+  <footer style="background: black" class="footer">
     <div class="content has-text-centered">
       <p>&copy UNDP 2022</p>
     </div>
@@ -40,8 +42,9 @@
 </div>
 
 <style>
-  .hero {
-    background: dodgerblue;
+  .hero-body {
+    /*margin-top: 300px;*/
+    background: #212125;
   }
   .main-section {
     width: 100%;

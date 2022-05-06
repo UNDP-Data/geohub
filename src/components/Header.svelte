@@ -12,8 +12,6 @@
 
   export let drawerOpen = true
   export let panelOpen = true
-  export let title = 'GeoHub'
-  export let showControls = true
 
   let darkTheme: boolean
   let topAppBar: any
@@ -39,34 +37,32 @@
   <Row>
     <Section style="padding-left: 15px;">
       <img style="height: 52px;" src="1200px-UNDP_logo.svg-148x300.png" alt="GeoHub | UNDP" loading="lazy" />
-      <Title style="font-family: ProximaNova, sans-serif; font-weight: bold;">{title}</Title>
+      <Title style="font-family: ProximaNova, sans-serif; font-weight: bold;">GeoHub</Title>
     </Section>
-    {#if showControls}
-      <Section align="end">
-        <Wrapper>
-          <StyleDownloader />
-          <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
-        </Wrapper>
-        <div class="icon" on:click={() => (panelOpen = !panelOpen)} style="display: none;">
-          <Fa icon={faBookmark} size="lg" />
+    <Section align="end">
+      <Wrapper>
+        <StyleDownloader />
+        <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
+      </Wrapper>
+      <div class="icon" on:click={() => (panelOpen = !panelOpen)} style="display: none;">
+        <Fa icon={faBookmark} size="lg" />
+      </div>
+      <Wrapper>
+        <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
+          <Fa icon={faBars} size="lg" />
         </div>
-        <Wrapper>
-          <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
-            <Fa icon={faBars} size="lg" />
-          </div>
-          <Tooltip showDelay={500} hideDelay={500} yPos="below">
-            {drawerOpen ? 'Hide Drawer' : 'Show Drawer'}
-          </Tooltip>
-        </Wrapper>
-        <div class="icon" on:click={() => (darkTheme = !darkTheme)} style="display: none;">
-          {#if darkTheme}
-            <Fa icon={faSun} size="lg" />
-          {:else}
-            <Fa icon={faMoon} size="lg" />
-          {/if}
-        </div>
-      </Section>
-    {/if}
+        <Tooltip showDelay={500} hideDelay={500} yPos="below">
+          {drawerOpen ? 'Hide Drawer' : 'Show Drawer'}
+        </Tooltip>
+      </Wrapper>
+      <div class="icon" on:click={() => (darkTheme = !darkTheme)} style="display: none;">
+        {#if darkTheme}
+          <Fa icon={faSun} size="lg" />
+        {:else}
+          <Fa icon={faMoon} size="lg" />
+        {/if}
+      </div>
+    </Section>
   </Row>
 </TopAppBar>
 
