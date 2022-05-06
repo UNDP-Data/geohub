@@ -1,11 +1,29 @@
 <script lang="ts">
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { Color } from 'svelte-awesome-color-picker/type/types'
+  import { createEventDispatcher } from 'svelte'
+  import Fa from 'svelte-fa'
+  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
   export let color: Color
+
+  const dispatch = createEventDispatcher()
+
+  const changeColor = () => {
+    dispatch('changeColor')
+  }
+
+  const handleClose = () => {
+    dispatch('closeColorPicker', { index: -1 })
+  }
+
+  $: color, changeColor()
 </script>
 
 <div class="raster-color-picker-container">
+  <div class="close is-clickable" alt="Close Color Picker" title="Close Color Picker" on:click={handleClose}>
+    <Fa icon={faXmark} size="sm" />
+  </div>
   <div class="arrow" />
   <ColorPicker isPopup={true} isInput={false} isAlpha={true} toRight={true} isOpen={true} bind:color />
 </div>
