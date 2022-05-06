@@ -94,7 +94,7 @@
         <div class="column separator" style="" />
       </div>
     </div>
-    <div class="column is-three-quarters tree" data-testid="tree-container">
+    <div class="column is-three-quarters tree" data-testid="tree-container" style="overflow-y: auto">
       {#if $treeBucket.length === 0}
         <div class="title is-size-4">Welcome to GeoHub</div>
         <div class="subtitle is-size-5">

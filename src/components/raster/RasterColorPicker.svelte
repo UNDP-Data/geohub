@@ -1,6 +1,7 @@
 <script lang="ts">
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { Color } from 'svelte-awesome-color-picker/type/types'
+
   export let color: Color
 </script>
 
@@ -15,6 +16,12 @@
     --picker-width: 150px;
     position: relative;
     top: -15px;
+
+    .close {
+      position: absolute;
+      left: 160px;
+      z-index: 10;
+    }
 
     .arrow {
       background-color: #fff;
@@ -35,23 +42,26 @@
     border-radius: 7.5px;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    margin-top: 8px;
     width: 170px;
   }
 
   // handles
   :global(.picker > div, .slider > div.to-right, .alpha > div.to-right) {
+    background: #000 !important;
     border-color: #fff;
     border-width: 2px;
-    width: 10px;
-    height: 10px;
-    background: #000 !important;
-    top: 5px;
     cursor: pointer;
+    height: 10px;
+    margin-left: -4px;
+    top: 5px;
+    width: 10px;
   }
 
   :global(.slider, .alpha) {
     cursor: pointer;
     height: 10px !important;
+    margin-top: 8px;
     width: 150px !important;
   }
 
