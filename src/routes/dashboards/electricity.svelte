@@ -1,6 +1,5 @@
 <script lang="ts">
   import { style } from 'svelte-body'
-  import Header from '../../dashboards/components/Header.svelte'
   import Content from '../../dashboards/components/Content.svelte'
   import Map from '../../dashboards/components/Map.svelte'
   let drawerOpen = true
