@@ -8,7 +8,7 @@
 </script>
 
 <a class="dashboard-card-link" href={link} style="max-width: 20%; min-width: 300px; padding: 20px; ">
-  <div class="card one-page" style="background: #212125;">
+  <div class="card one-page" style="background: white;">
     <header class="card-header">
       <p class="card-header-title">
         {title}
@@ -42,7 +42,7 @@
     }
   }
   .one-page:hover {
-    background: black !important;
+    background: mintcream !important;
   }
   .dashboard-image:hover {
     webkit-filter: blur(4px); /* Chrome, Safari, Opera */
@@ -51,6 +51,9 @@
   .dashboard-image {
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  }
+  .card-header{
+    background: darkslategrey;
   }
   .card-header-title {
     font-family: ProximaNova, sans-serif;
@@ -71,6 +74,9 @@
     border-top: 1px solid grey;
     .card-footer-item {
       color: white;
+    }
+    .card-footer-item{
+      color: darkslategrey;
     }
     .card-footer-item:hover {
       color: #4a4a4a;

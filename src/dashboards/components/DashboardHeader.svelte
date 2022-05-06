@@ -13,13 +13,17 @@
 
 <style lang="scss">
   :global(.hero-head) {
-    background: #121212;
+    background: #1e1e1e;
     position: fixed;
     width: 100%;
     z-index: 1;
+    //border-bottom: 1px solid grey;
+  }
+  .navbar-item{
+    color:white!important;
   }
   .navbar-item:hover {
-    background: #121212 !important;
-    color: grey !important;
+    background: slategrey !important;
+    color: mintcream !important;
   }
 </style>
