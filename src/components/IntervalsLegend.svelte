@@ -196,6 +196,7 @@
   {#each cmap as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
+      layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
       on:changeIntervalValues={handleParamsUpdate} />

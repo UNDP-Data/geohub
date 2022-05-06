@@ -71,7 +71,7 @@
     apiUrlParams.set('resampling', 'nearest')
     apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`)
     apiUrlParams.set('return_mask', 'true')
-    apiUrlParams.set('colormap_name', 'bugn')
+    apiUrlParams.set('colormap_name', 'rdylbu')
 
     const layerSource: SourceSpecification = {
       type: LayerTypes.RASTER,
