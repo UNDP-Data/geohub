@@ -38,7 +38,6 @@
   const generateColorObject = (rgbColor: string) => {
     let String = rgbColor.replace('rgba(', '').replace('rgb(', '').replace(')', '')
     let rgbArray = String.split(',')
-    console.log(rgbArray)
     let r = parseInt(rgbArray[0])
     let g = parseInt(rgbArray[1])
     let b = parseInt(rgbArray[2])
