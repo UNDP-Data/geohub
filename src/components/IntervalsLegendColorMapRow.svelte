@@ -66,7 +66,7 @@
         const rgba: number[] = chroma(colorSelected['hex']).rgba()
         colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
         colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
-        dispatch('changeIntervalValues')
+        dispatch('changeColorMap')
       } catch (e) {
         console.log(e)
       }
@@ -85,15 +85,19 @@
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
 
-    if (id === 'minimum') {
+    if (id === 'start') {
       colorMapRow.start = parseFloat(value)
     }
 
-    if (id === 'maximum') {
+    if (id === 'end') {
       colorMapRow.end = parseFloat(value)
     }
 
-    dispatch('changeIntervalValues')
+    dispatch('changeIntervalValues', {
+      index: colorMapRow.index,
+      id,
+      value: parseFloat(value),
+    })
   }, 500)
 </script>
 
@@ -112,9 +116,9 @@
     {/if}
   </div>
 
-  <div class="column minimum">
+  <div class="column start">
     <input
-      id="minimum"
+      id="start"
       class="input is-small"
       type="number"
       min="-1000000"
@@ -123,9 +127,9 @@
       on:input={handleInput} />
   </div>
 
-  <div class="column maximum">
+  <div class="column end">
     <input
-      id="maximum"
+      id="end"
       class="input is-small"
       type="number"
       min="-1000000"
