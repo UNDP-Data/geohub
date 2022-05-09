@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { debounce } from 'lodash-es'
 
   import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
@@ -60,7 +59,7 @@
   }
 
   // set color of display and dispatch to update map
-  const updateColorMap = debounce((colorSelected: Color) => {
+  const updateColorMap = (colorSelected: Color) => {
     if (colorSelected) {
       try {
         const rgba: number[] = chroma(colorSelected['hex']).rgba()
@@ -71,7 +70,7 @@
         console.log(e)
       }
     }
-  }, 50)
+  }
 
   const handleColorPickerClick = () => {
     if (showToolTip === false) {
@@ -80,25 +79,6 @@
       showToolTip = false
     }
   }
-
-  const handleInput = debounce((e) => {
-    const id = e.target.id
-    const value = (e.target as HTMLInputElement).value
-
-    if (id === 'start') {
-      colorMapRow.start = parseFloat(value)
-    }
-
-    if (id === 'end') {
-      colorMapRow.end = parseFloat(value)
-    }
-
-    dispatch('changeIntervalValues', {
-      index: colorMapRow.index,
-      id,
-      value: parseFloat(value),
-    })
-  }, 500)
 </script>
 
 <div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">
@@ -116,26 +96,12 @@
     {/if}
   </div>
 
-  <div class="column start">
-    <input
-      id="start"
-      class="input is-small"
-      type="number"
-      min="-1000000"
-      max="1000000"
-      value={colorMapRow.start}
-      on:input={handleInput} />
+  <div class="column is-1 minimum">
+    <input id="minimum" class="input is-small is-static" type="text" value={colorMapRow.start} />
   </div>
 
-  <div class="column end">
-    <input
-      id="end"
-      class="input is-small"
-      type="number"
-      min="-1000000"
-      max="1000000"
-      value={colorMapRow.end}
-      on:input={handleInput} />
+  <div class="column maximum">
+    <input id="maximum" class="input is-small is-static" type="text" value={colorMapRow.end} />
   </div>
 </div>
 
@@ -155,7 +121,7 @@
 
     .discrete {
       cursor: pointer;
-      height: 20px;
+      height: 20px !important;
       width: 20px;
     }
 
@@ -169,15 +135,5 @@
       top: -20px;
       z-index: 10;
     }
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  input[type='number'] {
-    -moz-appearance: textfield;
   }
 </style>

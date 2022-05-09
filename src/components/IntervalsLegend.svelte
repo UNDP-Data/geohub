@@ -144,6 +144,22 @@
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index
   }
+
+  const handleChangeIntervalValues = (event: CustomEvent) => {
+    const rowIndex = event.detail.index
+    const inputType = event.detail.id
+    const inputValue = event.detail.value
+
+    if (inputType === 'start' && rowIndex !== 0) {
+      layerConfig.intervals.colorMapRows[rowIndex - 1].end = inputValue
+    }
+
+    if (inputType === 'end' && rowIndex < layerConfig.intervals.colorMapRows.length - 1) {
+      layerConfig.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    }
+
+    handleParamsUpdate()
+  }
 </script>
 
 <div class="intervals-view-container" data-testid="intervals-view-container">
@@ -190,7 +206,8 @@
       layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
-      on:changeIntervalValues={handleParamsUpdate} />
+      on:changeColorMap={handleParamsUpdate}
+      on:changeIntervalValues={handleChangeIntervalValues} />
   {/each}
 </div>
 
