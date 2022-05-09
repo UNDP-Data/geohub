@@ -28,7 +28,7 @@
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
   const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
-  const AZURE_URL = `undp-geohub-blob-afg3dscuh3g6cffx.z01.azurefd.net`
+  const AZURE_URL = 'https://undp-geohub-blob-afg3dscuh3g6cffx.z01.azurefd.net'
   const AERIAL_BING_URL = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
 
   const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson?${TOKEN}`
