@@ -121,7 +121,7 @@
 
     .discrete {
       cursor: pointer;
-      height: 20px;
+      height: 20px !important;
       width: 20px;
     }
 
