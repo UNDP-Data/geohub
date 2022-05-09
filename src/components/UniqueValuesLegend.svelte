@@ -71,7 +71,7 @@
 
       layerConfig.unique.colorMapRows = colorMapRows
 
-    // use existing color map rows from layer
+      // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
         colorMap[remap(row.start, layerMin, layerMax)] = row.color
