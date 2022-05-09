@@ -4,6 +4,9 @@
   let isContainerVisible = false
   let adm0Name = null
   let adm1Name = null
+  let adm2Name = null
+  let adm3Name = null
+  let adm4Name = null
 
   $: {
     if ($map) {
@@ -19,6 +22,9 @@
       if (features.length > 0) {
         adm0Name = features[0].properties.adm0_name
         adm1Name = features[0].properties.adm1_name
+        adm2Name = features[0].properties.adm2_name
+        adm3Name = features[0].properties.adm3_name
+        adm4Name = features[0].properties.adm4_name
         isContainerVisible = Boolean(features[0].properties.adm0_name)
       } else isContainerVisible = false
     }
@@ -33,6 +39,15 @@
       {/if}
       {#if adm1Name}
         {'>'} {adm1Name}
+      {/if}
+      {#if adm2Name}
+        {'>'} {adm2Name}
+      {/if}
+      {#if adm3Name}
+        {'>'} {adm3Name}
+      {/if}
+      {#if adm4Name}
+        {'>'} {adm4Name}
       {/if}
     </p>
   </div>
