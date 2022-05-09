@@ -43,6 +43,7 @@ export interface Layer {
   colorMapName?: string
   continuous?: ContinuousLegend
   intervals?: IntervalLegend
+  unique?: UniqueLegend
 }
 
 export interface ContinuousLegend {
@@ -54,6 +55,15 @@ export interface IntervalLegend {
   classification?: ClassificationMethodTypes
   numberOfClasses?: number
   colorMapRows?: IntervalLegendColorMapRow[]
+}
+
+export interface UniqueLegend {
+  colorMapRows?: IntervalLegendColorMapRow[]
+}
+
+export interface UniqueLegendColorMapRow {
+  value: number
+  name: string
 }
 
 export interface IntervalLegendColorMapRow {
