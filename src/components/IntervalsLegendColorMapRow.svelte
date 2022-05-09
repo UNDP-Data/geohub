@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
+  import DefaultColorPicker from './DefaultColorPicker.svelte'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
 
   export let colorMapRow: IntervalLegendColorMapRow
@@ -107,7 +107,7 @@
 
     {#if showToolTip}
       <div class={`tooltip`} transition:fade>
-        <RasterColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
       </div>
     {/if}
   </div>

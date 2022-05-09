@@ -7,7 +7,7 @@
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import RasterColorPicker from '../../raster/RasterColorPicker.svelte'
+  import DefaultColorPicker from '../../DefaultColorPicker.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -37,7 +37,10 @@
   <StyleControlGroup title="Fill Outline Color">
     {#if showToolTip}
       <div class={showToolTip ? 'tooltipshown' : 'tooltiphidden'}>
-        <RasterColorPicker bind:color on:closeColorPicker={() => (showToolTip = false)} on:changeColor={setLineColor} />
+        <DefaultColorPicker
+          bind:color
+          on:closeColorPicker={() => (showToolTip = false)}
+          on:changeColor={setLineColor} />
       </div>
     {/if}
     <div

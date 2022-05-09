@@ -7,10 +7,9 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import Ripple from '@smui/ripple'
-  import RasterColorPicker from '../../raster/RasterColorPicker.svelte'
+  import DefaultColorPicker from '../../DefaultColorPicker.svelte'
 
   let showToolTip
-
   export let layer: Layer = LayerInitialValues
 
   const dispatch = createEventDispatcher()
@@ -19,7 +18,6 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let color
-
   let rgbString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(20, 180, 60)'][0]
 
   const setLineColor = () => {
@@ -39,7 +37,10 @@
   <StyleControlGroup title="Fill Color">
     {#if showToolTip}
       <div class={showToolTip ? 'tooltipshown' : 'tooltiphidden'}>
-        <RasterColorPicker bind:color on:closeColorPicker={() => (showToolTip = false)} on:changeColor={setLineColor} />
+        <DefaultColorPicker
+          bind:color
+          on:closeColorPicker={() => (showToolTip = false)}
+          on:changeColor={setLineColor} />
       </div>
     {/if}
     <div
