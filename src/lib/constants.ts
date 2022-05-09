@@ -18,7 +18,7 @@ export enum TabNames {
   LAYERS = 'Layers',
   LEGEND = 'Legend',
   OPACITY = 'Opacity',
-  REFINE = 'Refine',
+  FILTER = 'Filter',
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
 }

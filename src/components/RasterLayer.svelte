@@ -1,8 +1,8 @@
 <script lang="ts">
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
-  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
+  import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
@@ -30,7 +30,7 @@
       case TabNames.LEGEND:
         isLegendPanelVisible = true
         break
-      case TabNames.REFINE:
+      case TabNames.FILTER:
         isFilterPanelVisible = true
         break
       case TabNames.OPACITY:
@@ -46,7 +46,7 @@
 
   const tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
-    { label: TabNames.REFINE, icon: faCalculator, active: false },
+    { label: TabNames.FILTER, icon: faFilter, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
 </script>
