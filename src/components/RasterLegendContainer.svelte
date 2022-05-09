@@ -1,8 +1,5 @@
-<script lang="ts" context="module">
-  const selectedLegend = {}
-</script>
-
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
@@ -18,19 +15,28 @@
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import { layerList } from '$stores'
 
   export let layer: Layer
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
-  let selectedLegendType = selectedLegend[layer.definition.id] || DynamicLayerLegendTypes.CONTINUOUS
+  let layerListCount = $layerList.length
+  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
+  let layerHasUniqueValues = false
 
-  $: selectedLegendType, setSelectedLegend()
-
-  const setSelectedLegend = () => {
-    selectedLegend[layer.definition.id] = selectedLegendType
+  // hide colormap picker if change in layer list
+  $: {
+    if (layerListCount !== $layerList.length) {
+      showTooltip = false
+      layerListCount = $layerList.length
+    }
   }
+
+  onMount(() => {
+    layerHasUniqueValues = hasLayerUniqueValues()
+  })
 
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
@@ -40,9 +46,17 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    selectedLegendType === DynamicLayerLegendTypes.INTERVALS
-      ? (selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS)
-      : (selectedLegendType = DynamicLayerLegendTypes.INTERVALS)
+    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) {
+      selectedLegendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    } else {
+      selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
+    }
+  }
+
+  const hasLayerUniqueValues = () => {
+    const stats = layer.info.band_metadata[0][1]
+    const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
+    return val
   }
 
   const [popperRef, popperContent] = createPopperActions({
@@ -88,7 +102,7 @@
       </div>
     {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:layerConfig={layer} />
+        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
       </div>
     {/if}
   </div>

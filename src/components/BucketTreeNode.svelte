@@ -269,6 +269,9 @@
             numberOfClasses: COLOR_CLASS_COUNT,
             colorMapRows: [],
           },
+          unique: {
+            colorMapRows: [],
+          },
         },
         ...$layerList,
       ]
@@ -353,6 +356,9 @@
             intervals: {
               classification: ClassificationMethodTypes.EQUIDISTANT,
               numberOfClasses: COLOR_CLASS_COUNT,
+              colorMapRows: [],
+            },
+            unique: {
               colorMapRows: [],
             },
           },
