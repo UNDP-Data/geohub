@@ -3,8 +3,8 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
 
-  import RasterColorPicker from '$components/raster/RasterColorPicker.svelte'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import DefaultColorPicker from './DefaultColorPicker.svelte'
 
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number
@@ -91,7 +91,7 @@
 
     {#if showToolTip}
       <div class={`tooltip`} transition:fade>
-        <RasterColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
       </div>
     {/if}
   </div>
