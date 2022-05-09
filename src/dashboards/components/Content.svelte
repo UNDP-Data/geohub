@@ -55,6 +55,9 @@
   let controller = new AbortController()
   let pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
   let pointBarValues = []
+  let adminHistogram = []
+  let adminHistogramAdmin = ''
+  let adminHistogramStep = 1
 
   let showIntro = true
   let heatmapChecked = false
@@ -162,6 +165,26 @@
     },
   })
 
+  const getHistogramSpec = (values) => ({
+    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+    width: 278,
+    height: 120,
+    view: { stroke: 'transparent' },
+    background: null,
+    data: { values },
+    mark: { type: 'bar', color: PRIMARY },
+    encoding: {
+      x: {
+        field: 'bin1',
+        type: 'quantitative',
+        bin: { binned: true, step: adminHistogramStep },
+        axis: { title: false, labelColor: GREY, format: '.0%' },
+      },
+      x2: { field: 'bin2' },
+      y: { field: 'count', type: 'quantitative', axis: null },
+    },
+  })
+
   export function loadLayers() {
     loadRasterLayer()
     loadHeatmap()
@@ -236,28 +259,42 @@
 
   const geoJSONStats = async (e) => {
     const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
+    const total = electricitySelected.name == 'HREA' ? 1 : 255
     const apiUrlParams = { url: lurl }
     const features = $map.queryRenderedFeatures(e.point, { layers: [ADM_ID] })
     if (features.length > 0) {
+      controller.abort()
+      controller = new AbortController()
       const { type, geometry, properties } = features[0].toJSON()
       const geoJSON = { type, geometry, properties }
-      //console.log(JSON.stringify(geoJSON, null, '\t'))
       const config = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(geoJSON),
+        signal: controller.signal,
       }
-      //const url = `http://localhost:8000/cog/statistics?${new URLSearchParams(apiUrlParams).toString()}`
       const url = `${API_URL}/statistics?${new URLSearchParams(apiUrlParams).toString()}`
-      //console.log(url)
+      adminHistogram = []
+      adminHistogramStep = 1
+      adminHistogramAdmin = ''
+      renderAdminCharts()
       try {
         const response = await fetch(url, config)
         if (response.ok) {
           const result = await response.json()
-          console.log(JSON.stringify(result.properties.statistics['1'], null, '\t'))
-          return result
+          const {
+            histogram: [values, bins],
+          } = result.properties.statistics['1']
+          adminHistogramAdmin = [properties.adm0_name, properties.adm1_name].filter(Boolean).join(', ')
+          adminHistogramStep = (bins[1] - bins[0]) / total
+          adminHistogram = values.map((x, i) => ({
+            count: x,
+            bin1: bins[i] / total,
+            bin2: bins[i + 1] / total,
+          }))
+          renderAdminCharts()
         } else {
           throw new Error('Network response was not ok.')
         }
@@ -267,7 +304,7 @@
     }
   }
 
-  const onMouseClick = (e) => {
+  const onPointClick = (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
       [HREA_ID, getHreaUrl, HREA_NODATA, [], 1],
@@ -275,6 +312,7 @@
     ]
     pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
     pointBarValues = []
+    renderPointCharts()
     controller.abort()
     controller = new AbortController()
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
@@ -308,17 +346,23 @@
     vegaEmbed('#point-bar', getBarSpec(pointBarValues), options)
   }
 
+  const renderAdminCharts = () => {
+    const options = { actions: false, renderer: 'svg' }
+    vegaEmbed('#admin-histogram', getHistogramSpec(adminHistogram), options)
+  }
+
   const adminInteraction = () => {
     $map.on('mousemove', ADM_ID, onMouseMove)
     $map.on('mouseleave', ADM_ID, onMouseLeave)
-    $map.off('click', onMouseClick)
+    $map.off('click', onPointClick)
     $map.on('click', geoJSONStats)
+    renderAdminCharts()
   }
 
   const pointInteraction = () => {
     $map.off('mousemove', ADM_ID, onMouseMove)
     $map.off('mouseleave', ADM_ID, onMouseLeave)
-    $map.on('click', onMouseClick)
+    $map.on('click', onPointClick)
     $map.off('click', geoJSONStats)
     renderPointCharts()
   }
@@ -557,6 +601,12 @@
                   <Label>{segment}</Label>
                 </Segment>
               </SegmentedButton>
+              {#if interactSelected === 'Admin'}
+                <br /><br />
+                <div class="title-text">{electricitySelected.name} Histogram - {$year}</div>
+                <div class="title-text">{adminHistogramAdmin}</div>
+                <div id="admin-histogram" />
+              {/if}
               {#if interactSelected === 'Point'}
                 <br /><br />
                 <div class="chart-container">
