@@ -13,6 +13,8 @@
   import Checkbox from '@smui/checkbox'
   import { fetchUrl } from '$lib/helper'
   import type {
+    SourceSpecification,
+    FillLayerSpecification,
     RasterLayerSpecification,
     HeatmapLayerSpecification,
     GeoJSONSourceSpecification,
@@ -33,7 +35,6 @@
 
   let RWI_ID = 'rwi'
   const ADM_ID = 'admin'
-  const ADM_LAYER = 'adm1_polygons'
   const HREA_ID = 'HREA'
   const HREA_NODATA = -3.3999999521443642e38
   const ML_ID = 'ML'
@@ -58,6 +59,7 @@
   let adminHistogram = []
   let adminHistogramAdmin = ''
   let adminHistogramStep = 1
+  let adminLevel = 0
 
   let showIntro = true
   let heatmapChecked = false
@@ -88,7 +90,7 @@
     }
   }
 
-  function hideIntro() {
+  const hideIntro = () => {
     showIntro = false
     adminInteraction()
   }
@@ -102,6 +104,8 @@
       setContentContainerMargin(0)
     }
   }
+
+  const getAdminLayer = () => `adm${adminLevel}_polygons`
 
   const getDonutSpec = (value, color) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
@@ -185,9 +189,44 @@
     },
   })
 
+  const loadAdminLayer = () => {
+    const lvl = getAdminLevel()
+    const layerSource: SourceSpecification = {
+      type: LayerTypes.VECTOR,
+      maxzoom: 10,
+      promoteId: `adm${lvl}_id`,
+      tiles: [`${AZURE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`],
+    }
+    const layerFill: FillLayerSpecification = {
+      id: ADM_ID,
+      type: LayerTypes.FILL,
+      source: ADM_ID,
+      'source-layer': `adm${lvl}_polygons`,
+      paint: {
+        'fill-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 0.25)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+        'fill-outline-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 1)',
+          'hsla(0, 0%, 0%, 0)',
+        ],
+      },
+    }
+    $map.getLayer(ADM_ID) && $map.removeLayer(ADM_ID)
+    $map.getSource(ADM_ID) && $map.removeSource(ADM_ID)
+    $map.addSource(ADM_ID, layerSource)
+    $map.addLayer(layerFill)
+  }
+
   export function loadLayers() {
     loadRasterLayer()
     loadHeatmap()
+    loadAdminLayer()
   }
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
@@ -219,13 +258,13 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
-  const onMouseMove = (e) => {
+  const onAdminMouseMove = (e) => {
     if (e.features.length > 0) {
       if (hoveredStateId) {
         $map.setFeatureState(
           {
             source: ADM_ID,
-            sourceLayer: ADM_LAYER,
+            sourceLayer: getAdminLayer(),
             id: hoveredStateId,
           },
           { hover: false },
@@ -235,7 +274,7 @@
       $map.setFeatureState(
         {
           source: ADM_ID,
-          sourceLayer: ADM_LAYER,
+          sourceLayer: getAdminLayer(),
           id: hoveredStateId,
         },
         { hover: true },
@@ -243,12 +282,12 @@
     }
   }
 
-  const onMouseLeave = () => {
+  const onAdminMouseLeave = () => {
     if (hoveredStateId) {
       $map.setFeatureState(
         {
           source: ADM_ID,
-          sourceLayer: ADM_LAYER,
+          sourceLayer: getAdminLayer(),
           id: hoveredStateId,
         },
         { hover: false },
@@ -287,7 +326,15 @@
           const {
             histogram: [values, bins],
           } = result.properties.statistics['1']
-          adminHistogramAdmin = [properties.adm0_name, properties.adm1_name].filter(Boolean).join(', ')
+          adminHistogramAdmin = [
+            properties.adm0_name,
+            properties.adm1_name,
+            properties.adm2_name,
+            properties.adm3_name,
+            properties.adm4_name,
+          ]
+            .filter(Boolean)
+            .join(', ')
           adminHistogramStep = (bins[1] - bins[0]) / total
           adminHistogram = values.map((x, i) => ({
             count: x,
@@ -339,6 +386,26 @@
     }
   }
 
+  const getAdminLevel = () => {
+    const zoom = $map.getZoom()
+    if (zoom < 4) return 0
+    if (zoom < 7) return 1
+    if (zoom < 9) return 2
+    return 3
+  }
+
+  const onAdminZoom = ({ originalEvent }) => {
+    const zoom = $map.getZoom()
+    if (adminLevel !== 0 && zoom < 4) loadAdminLayer()
+    else if (adminLevel !== 1 && zoom >= 4 && zoom < 7) loadAdminLayer()
+    else if (adminLevel !== 2 && zoom >= 7 && zoom < 9) loadAdminLayer()
+    else if (adminLevel !== 3 && zoom >= 9) loadAdminLayer()
+    adminLevel = getAdminLevel()
+    const point = [originalEvent.layerX, originalEvent.layerY]
+    const features = $map.queryRenderedFeatures(point, { layers: [ADM_ID] })
+    if (features.length > 0) onAdminMouseMove({ features })
+  }
+
   const renderPointCharts = () => {
     const options = { actions: false, renderer: 'svg' }
     vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], PRIMARY), options)
@@ -352,16 +419,19 @@
   }
 
   const adminInteraction = () => {
-    $map.on('mousemove', ADM_ID, onMouseMove)
-    $map.on('mouseleave', ADM_ID, onMouseLeave)
+    adminLevel = getAdminLevel()
+    $map.on('mousemove', ADM_ID, onAdminMouseMove)
+    $map.on('mouseleave', ADM_ID, onAdminMouseLeave)
+    $map.on('zoom', onAdminZoom)
     $map.off('click', onPointClick)
     $map.on('click', geoJSONStats)
     renderAdminCharts()
   }
 
   const pointInteraction = () => {
-    $map.off('mousemove', ADM_ID, onMouseMove)
-    $map.off('mouseleave', ADM_ID, onMouseLeave)
+    $map.off('mousemove', ADM_ID, onAdminMouseMove)
+    $map.off('mouseleave', ADM_ID, onAdminMouseLeave)
+    $map.off('zoom', onAdminZoom)
     $map.on('click', onPointClick)
     $map.off('click', geoJSONStats)
     renderPointCharts()
