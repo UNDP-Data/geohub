@@ -1,16 +1,15 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-
   import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import ColorPicker from '../ColorPicker.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import chroma from 'chroma-js'
+  import DefaultColorPicker from '../../DefaultColorPicker.svelte'
+  import Ripple from '@smui/ripple'
 
   export let layer: Layer = LayerInitialValues
-
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'heatmap-color'
@@ -21,32 +20,62 @@
     0,
     'rgba(0, 0, 255, 0)',
     0.1,
-    'royalblue',
+    'rgb(0,35,102)',
     0.3,
-    'cyan',
+    'rgb(0,255,255)',
     0.5,
-    'lime',
+    'rgb(0,255,0)',
     0.7,
-    'yellow',
+    'rgb(255,255,0)',
     1,
-    'red',
+    'rgb(255,0,0)',
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-
   let heatmapColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultValue
+  let showToolTip = false
+  let color
+  let rgbString = `rgb(89,123,233)`
+  let colorIndex
+
+  const setLineColor = () => {
+    console.log(color, colorIndex)
+  }
   // $: heatmapColor, setHeatmapColor()
+
+  const generateColorObject = (rgbColor: string) => {
+    let String = rgbColor.replace('rgba(', '').replace('rgb(', '').replace(')', '')
+    let rgbArray = String.split(', ')
+    console.log(rgbArray)
+    let r = parseInt(rgbArray[0])
+    let g = parseInt(rgbArray[1])
+    let b = parseInt(rgbArray[2])
+    return {
+      r,
+      g,
+      b,
+      hex: chroma([r, g, b]).hex('rgb'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  }
 
   let colorValues = []
   for (let i = 3; i < heatmapColor.length; i++) {
     const val = heatmapColor[i]
+
+    //generateColorObject(val)
     if (typeof val === 'number') {
       colorValues.push({ seq: i, value: val })
     } else if (typeof val === 'string') {
-      const rgb = chroma(val).rgb()
-      colorValues[colorValues.length - 1].color = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`
+      //const rgb = chroma(val).rgb()
+      colorValues[colorValues.length - 1].color = generateColorObject(val)
+      // colorValues[colorValues.length - 1].color = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`
     }
   }
-  $: colorValues, setColor()
+  console.log('CVALUES', colorValues)
+  // todo: Don't call this yet!!
+  // $: colorValues, setColor()
   const setColor = () => {
     if (style.type !== LayerTypes.HEATMAP) return
     for (let i = 0; i < colorValues.length; i++) {
@@ -54,10 +83,13 @@
       heatmapColor[value.seq] = value.value
       let colorValue = value.color
       if (i === 0) {
-        const rgb = chroma(value.color).rgb()
+        // const rgb = chroma(value.color).rgb()
+        const rgb = [value.color.r, value.color.g, value.color.b]
+        console.log('RGB', rgb)
         colorValue = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`
+        console.log(colorValue)
       }
-      heatmapColor[value.seq + 1] = colorValue
+      heatmapColor[value.seq + 1] = `rgb(${colorValue.r},${colorValue.g},${colorValue.b})`
     }
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
@@ -65,7 +97,6 @@
     }
     newStyle.paint[propertyName] = heatmapColor
     $map.setPaintProperty(layerId, propertyName, heatmapColor)
-
     dispatch('change')
   }
 </script>
@@ -73,10 +104,27 @@
 {#if style.type === LayerTypes.HEATMAP}
   <StyleControlGroup title="Heatmap Color">
     <table>
-      {#each colorValues as color}
+      {#each colorValues as colorValue, index}
         <tr>
-          <td class="color-table-td"><ColorPicker bind:RgbColor={color.color} /></td>
-          <td class="color-table-td">{color.value}</td>
+          <td className="color-table-td">
+            {#if showToolTip}
+              <div class={showToolTip && colorIndex === index ? 'tooltipshown' : 'tooltiphidden'}>
+                <DefaultColorPicker
+                  bind:color
+                  on:closeColorPicker={() => (showToolTip = false)}
+                  on:changeColor={setLineColor} />
+              </div>
+            {/if}
+            <div
+              use:Ripple={{ surface: true }}
+              on:click={() => {
+                showToolTip = !showToolTip
+                colorIndex = index
+              }}
+              style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: {rgbString}" />
+            <!--            <ColorPicker bind:RgbColor={color.color} />-->
+          </td>
+          <td className="color-table-td">{JSON.stringify(color)}</td>
         </tr>
       {/each}
     </table>
@@ -89,5 +137,8 @@
     vertical-align: middle;
     padding-right: 5px;
     padding-left: 5px;
+  }
+  :global(.tooltiphidden) {
+    display: none !important;
   }
 </style>

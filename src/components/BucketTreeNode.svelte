@@ -179,7 +179,7 @@
 
     if (!isRaster) {
       const layerName = path.split('/')[path.split('/').length - 2]
-      //SelectLayerStyleDialogVisible = true
+      SelectLayerStyleDialogVisible = true
       const layerURL = new URL(url)
       const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
         '{z}/{x}/{y}.pbf',
