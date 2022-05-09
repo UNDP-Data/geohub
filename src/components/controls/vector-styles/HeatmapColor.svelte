@@ -20,7 +20,7 @@
     0,
     'rgba(0, 0, 255, 0)',
     0.1,
-    'rgb(0,35,102)',
+    'rgb(0,0,255)',
     0.3,
     'rgb(0,255,255)',
     0.5,
@@ -33,18 +33,11 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
   let heatmapColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultValue
   let showToolTip = false
-  let color
-  let rgbString = `rgb(89,123,233)`
   let colorIndex
-
-  const setLineColor = () => {
-    console.log(color, colorIndex)
-  }
-  // $: heatmapColor, setHeatmapColor()
 
   const generateColorObject = (rgbColor: string) => {
     let String = rgbColor.replace('rgba(', '').replace('rgb(', '').replace(')', '')
-    let rgbArray = String.split(', ')
+    let rgbArray = String.split(',')
     console.log(rgbArray)
     let r = parseInt(rgbArray[0])
     let g = parseInt(rgbArray[1])
@@ -63,33 +56,27 @@
   let colorValues = []
   for (let i = 3; i < heatmapColor.length; i++) {
     const val = heatmapColor[i]
-
-    //generateColorObject(val)
     if (typeof val === 'number') {
       colorValues.push({ seq: i, value: val })
     } else if (typeof val === 'string') {
-      //const rgb = chroma(val).rgb()
       colorValues[colorValues.length - 1].color = generateColorObject(val)
-      // colorValues[colorValues.length - 1].color = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`
     }
   }
-  console.log('CVALUES', colorValues)
-  // todo: Don't call this yet!!
-  // $: colorValues, setColor()
+
   const setColor = () => {
     if (style.type !== LayerTypes.HEATMAP) return
     for (let i = 0; i < colorValues.length; i++) {
       const value = colorValues[i]
       heatmapColor[value.seq] = value.value
-      let colorValue = value.color
+      const r = value.color.r
+      const g = value.color.g
+      const b = value.color.b
+      let colorValue = `rgb(${r},${g},${b})`
       if (i === 0) {
-        // const rgb = chroma(value.color).rgb()
         const rgb = [value.color.r, value.color.g, value.color.b]
-        console.log('RGB', rgb)
         colorValue = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`
-        console.log(colorValue)
       }
-      heatmapColor[value.seq + 1] = `rgb(${colorValue.r},${colorValue.g},${colorValue.b})`
+      heatmapColor[value.seq + 1] = colorValue
     }
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
@@ -110,9 +97,9 @@
             {#if showToolTip}
               <div class={showToolTip && colorIndex === index ? 'tooltipshown' : 'tooltiphidden'}>
                 <DefaultColorPicker
-                  bind:color
+                  bind:color={colorValues[index].color}
                   on:closeColorPicker={() => (showToolTip = false)}
-                  on:changeColor={setLineColor} />
+                  on:changeColor={setColor} />
               </div>
             {/if}
             <div
@@ -121,10 +108,13 @@
                 showToolTip = !showToolTip
                 colorIndex = index
               }}
-              style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: {rgbString}" />
+              style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: rgb({colorValues[
+                index
+              ].color.r},{colorValues[index].color.g},{colorValues[index].color.b})" />
             <!--            <ColorPicker bind:RgbColor={color.color} />-->
           </td>
-          <td className="color-table-td">{JSON.stringify(color)}</td>
+          <td className="color-table-td"
+            >{colorValues[index].color.r},{colorValues[index].color.g},{colorValues[index].color.b}</td>
         </tr>
       {/each}
     </table>
