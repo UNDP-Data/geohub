@@ -26,6 +26,7 @@
   import type { IntervalLegendColorMapRow, Layer, LayerInfo } from '$lib/types'
   import { map } from '$stores'
 
+  export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
   export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
@@ -49,8 +50,6 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
   let colorMapName = layerConfig.colorMapName
-
-  export let colorPickerVisibleIndex: number
 
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
@@ -167,7 +166,12 @@
     <div class="column classification">
       <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
       <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
-        <select bind:value={classificationMethod} on:change={(e) => reclassifyImage(e)} style="width: 114px;">
+        <select
+          bind:value={classificationMethod}
+          on:change={(e) => reclassifyImage(e)}
+          style="width: 114px;"
+          alt="Classification Methods"
+          title="Classification Methods">
           {#each classificationMethods as classificationMethod}
             <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
           {/each}
@@ -185,7 +189,7 @@
             title="Decrease number of classes">
             <Fa icon={faCircleMinus} />
           </div>
-          <div class="tag is-info is-light is-medium">
+          <div class="tag is-info is-light is-medium" alt="Number of Classes" title="Number of Classes">
             {numberOfClasses}
           </div>
           <div

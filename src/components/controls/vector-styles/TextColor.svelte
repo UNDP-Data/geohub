@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  let textState = {}
+</script>
+
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
@@ -7,31 +11,52 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import DefaultColorPicker from '../../DefaultColorPicker.svelte'
-  const dispatch = createEventDispatcher()
+  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 
-  let color
-  let showToolTip = false
-
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'text-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
+  const r = 0
+  const g = 0
+  const b = 0
+  const a = 1
+  let color
+  if (!Object.keys(textState).length) {
+    color = {
+      r,
+      g,
+      b,
+      a,
+      hex: chroma([r, g, b]).hex('rgb'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  } else {
+    color = textState[layerId]
+  }
+
+  let showToolTip = false
+
   // let TextColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
-  let rgbString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
+  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgb(${r}, ${g}, ${b})`
 
   // $: TextColor, setTextColor()
 
   const setTextColor = () => {
-    rgbString = `rgb(${color.r},${color.g},${color.b})`
+    rgbaString = `rgba(${color.r},${color.g},${color.b})`
+    textState[layerId] = color
     if (style.type !== LayerTypes.SYMBOL) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint[propertyName] = rgbString
-    $map.setPaintProperty(layerId, propertyName, rgbString)
+    newStyle.paint[propertyName] = rgbaString
+    $map.setPaintProperty(layerId, propertyName, rgbaString)
 
     dispatch('change')
   }
@@ -50,7 +75,7 @@
     <div
       use:Ripple={{ surface: true }}
       on:click={() => (showToolTip = !showToolTip)}
-      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbString}" />
+      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbaString}" />
   </StyleControlGroup>
 {/if}
 

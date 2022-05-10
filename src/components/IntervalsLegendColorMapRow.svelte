@@ -81,7 +81,7 @@
     }
   }
 
-  const handleInput = debounce((e) => {
+  const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
 
@@ -98,7 +98,7 @@
       id,
       value: parseFloat(value),
     })
-  }, 500)
+  }
 </script>
 
 <div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">

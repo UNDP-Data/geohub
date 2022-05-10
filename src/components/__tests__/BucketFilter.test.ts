@@ -42,6 +42,22 @@ describe('Bucket Filter', () => {
     expect(sut.component.$$.ctx[filterIndex]).toEqual(['climate-action/', 'good-health-and-wellbeing/'])
   })
 
+  it('should return 4 buckets for filter of a case insensitive description', async () => {
+    const input = sut.getByTestId('filter-bucket-input') as HTMLInputElement
+    await fireEvent.input(input, { target: { value: 'sDg' } })
+    expect(input.value).toBe('sDg')
+
+    // add delay for debounce
+    await new Promise((r) => setTimeout(r, 750))
+    const filterIndex = sut.component.$$.props.bucketsMeetThereshold
+    expect(sut.component.$$.ctx[filterIndex]).toEqual([
+      'climate-action/',
+      'end-poverty/',
+      'good-health-and-wellbeing/',
+      'zero-hunger/',
+    ])
+  })
+
   it('should have an empty input upon click of clear button', async () => {
     const input = sut.getByTestId('filter-bucket-input') as HTMLInputElement
     await fireEvent.input(input, { target: { value: 'Health' } })

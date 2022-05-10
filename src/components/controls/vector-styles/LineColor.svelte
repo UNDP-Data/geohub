@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  let lineState = {}
+</script>
+
 <script lang="ts">
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createEventDispatcher } from 'svelte'
@@ -9,6 +13,7 @@
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import DefaultColorPicker from '../../DefaultColorPicker.svelte'
   import Ripple from '@smui/ripple'
+  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 
@@ -17,19 +22,40 @@
   const propertyName = 'line-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
+  // Default value for the color object
+  const r = 53
+  const g = 175
+  const b = 109
+  const a = 1
   let color
+  if (!Object.keys(lineState).length) {
+    color = {
+      r,
+      g,
+      b,
+      a,
+      hex: chroma([r, g, b]).hex('rgb'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  } else {
+    color = lineState[layerId]
+  }
+
   let showToolTip = false
-  let rgbString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(53, 175, 109)'][0]
+  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(${r}, ${g}, ${b})`][0]
 
   const setLineColor = () => {
-    rgbString = `rgb(${color.r},${color.g},${color.b})`
+    rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`
+    lineState[layerId] = color
     if (style.type !== LayerTypes.LINE) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint[propertyName] = rgbString
-    $map.setPaintProperty(layerId, propertyName, rgbString)
+    newStyle.paint[propertyName] = rgbaString
+    $map.setPaintProperty(layerId, propertyName, rgbaString)
     dispatch('change')
   }
 </script>
@@ -47,6 +73,6 @@
     <div
       use:Ripple={{ surface: true }}
       on:click={() => (showToolTip = !showToolTip)}
-      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbString}" />
+      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbaString}" />
   </StyleControlGroup>
 {/if}

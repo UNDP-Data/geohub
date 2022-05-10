@@ -70,7 +70,9 @@
       const r = value.color.r
       const g = value.color.g
       const b = value.color.b
-      let colorValue = `rgb(${r},${g},${b})`
+      const a = value.color.a
+      console.log('ALPHA')
+      let colorValue = `rgba(${r},${g},${b},${a})`
       if (i === 0) {
         const rgb = [value.color.r, value.color.g, value.color.b]
         colorValue = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`
@@ -107,13 +109,15 @@
                 showToolTip = !showToolTip
                 colorIndex = index
               }}
-              style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: rgb({colorValues[
+              style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: rgba({colorValues[
                 index
-              ].color.r},{colorValues[index].color.g},{colorValues[index].color.b})" />
+              ].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[index].color.a})" />
             <!--            <ColorPicker bind:RgbColor={color.color} />-->
           </td>
           <td className="color-table-td"
-            >{colorValues[index].color.r},{colorValues[index].color.g},{colorValues[index].color.b}</td>
+            >rgba({colorValues[index].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[
+              index
+            ].color.a})</td>
         </tr>
       {/each}
     </table>

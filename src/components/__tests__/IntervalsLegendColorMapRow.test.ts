@@ -12,7 +12,7 @@ beforeEach(cleanup)
 
 describe('Intervals Legend : Color Map', () => {
   let sut: RenderResult
-  let cardContainer: HTMLElement
+  let viewContainer: HTMLElement
 
   beforeEach(() => {
     sut = render(IntervalsLegendColorMapRow, {
@@ -20,17 +20,17 @@ describe('Intervals Legend : Color Map', () => {
       colorPickerVisibleIndex: -1,
       layer,
     })
-    cardContainer = sut.getByTestId('intervals-legend-color-map-row-container')
+    viewContainer = sut.getByTestId('intervals-legend-color-map-row-container')
   })
 
   it('should render the container', () => {
-    expect(cardContainer).toBeDefined()
+    expect(viewContainer).toBeDefined()
   })
 
   it('should display the start, end and color value', () => {
-    expect(within(cardContainer).getByAltText('Start Value')).toHaveValue(100)
-    expect(within(cardContainer).getByAltText('End Value')).toHaveValue(100.6)
-    expect(within(cardContainer).getByTitle('Color Map Control')).toHaveStyle(
+    expect(within(viewContainer).getByAltText('Start Value')).toHaveValue(100)
+    expect(within(viewContainer).getByAltText('End Value')).toHaveValue(100.6)
+    expect(within(viewContainer).getByTitle('Color Map Control')).toHaveStyle(
       'caret-color:rgb(68,1,84,255); background-color: rgb(68,1,84,255)',
     )
   })
@@ -55,7 +55,7 @@ describe('Intervals Legend : Color Map', () => {
 
 describe('Intervals Legend : Color Map : Open/Close Color Picker', () => {
   let sut: RenderResult
-  let cardContainer: HTMLElement
+  let viewContainer: HTMLElement
 
   beforeEach(() => {
     sut = render(IntervalsLegendColorMapRow, {
@@ -63,14 +63,14 @@ describe('Intervals Legend : Color Map : Open/Close Color Picker', () => {
       colorPickerVisibleIndex: 0,
       layer,
     })
-    cardContainer = sut.getByTestId('intervals-legend-color-map-row-container')
+    viewContainer = sut.getByTestId('intervals-legend-color-map-row-container')
   })
 
   it('should render the container', () => {
-    expect(cardContainer).toBeDefined()
+    expect(viewContainer).toBeDefined()
   })
 
   it('should display the color map picker', async () => {
-    expect(within(cardContainer).getByTestId('raster-color-picker-container')).toBeVisible()
+    expect(within(viewContainer).getByTestId('raster-color-picker-container')).toBeVisible()
   })
 })
