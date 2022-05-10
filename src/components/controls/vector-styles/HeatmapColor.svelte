@@ -41,10 +41,12 @@
     let r = parseInt(rgbArray[0])
     let g = parseInt(rgbArray[1])
     let b = parseInt(rgbArray[2])
+    let a = 1
     return {
       r,
       g,
       b,
+      a,
       hex: chroma([r, g, b]).hex('rgb'),
       h: chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
@@ -71,7 +73,6 @@
       const g = value.color.g
       const b = value.color.b
       const a = value.color.a
-      console.log('ALPHA')
       let colorValue = `rgba(${r},${g},${b},${a})`
       if (i === 0) {
         const rgb = [value.color.r, value.color.g, value.color.b]
