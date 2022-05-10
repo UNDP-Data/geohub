@@ -32,8 +32,8 @@
       bind:values={ZoomSliderValues}
       float
       range
-      min={0}
-      max={24}
+      min={layer.info.minzoom}
+      max={layer.info.maxzoom}
       step={1}
       pips
       first="label"

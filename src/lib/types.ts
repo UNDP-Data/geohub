@@ -22,6 +22,7 @@ export interface TreeNode {
   url?: string
   isRaster?: boolean
   geomType?: string
+  metadata?: VectorTileMetadata
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -36,7 +37,7 @@ export interface Layer {
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
   type?: string
-  info?: LayerInfo
+  info?: LayerInfo | VectorTileMetadata
   visible?: boolean | true
   url?: string
   features?: []
@@ -88,6 +89,50 @@ export interface LayerInfo {
   nodata_value?: number
   overviews?: []
   width?: number
+}
+
+// https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
+export interface VectorTileMetadata {
+  name: string
+  format: 'pbf'
+  bounds: string
+  center: string
+  minzoom: number
+  maxzoom: number
+  attribution?: string
+  description?: string
+  type?: string
+  version?: string
+  json: {
+    vector_layers: [
+      {
+        id: string
+        fields: {
+          [key: string]: string
+        }
+        description?: string
+        minzoom?: number
+        maxzoom?: number
+      },
+    ]
+    tilestats?: {
+      layerCount: number
+      layers: [
+        {
+          layer: string
+          geometry: string
+          count: number
+          attributeCount: number
+          attributes: {
+            attribute: string
+            count: number
+            type: string
+            values: string[] | number[]
+          }
+        },
+      ]
+    }
+  }
 }
 
 export interface LayerInfoMetadata {
