@@ -91,6 +91,16 @@ export interface LayerInfo {
   width?: number
 }
 
+export interface VectorLayerMetadata {
+  id: string
+  fields: {
+    [key: string]: string
+  }
+  description?: string
+  minzoom?: number
+  maxzoom?: number
+}
+
 // https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
 export interface VectorTileMetadata {
   name: string
@@ -103,18 +113,8 @@ export interface VectorTileMetadata {
   description?: string
   type?: string
   version?: string
-  json: {
-    vector_layers: [
-      {
-        id: string
-        fields: {
-          [key: string]: string
-        }
-        description?: string
-        minzoom?: number
-        maxzoom?: number
-      },
-    ]
+  json?: {
+    vector_layers: VectorLayerMetadata[]
     tilestats?: {
       layerCount: number
       layers: [

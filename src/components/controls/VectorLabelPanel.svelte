@@ -60,7 +60,7 @@
       </div>
       {#if enabledTextLabel === true}
         <div>
-          <TextField on:change={onStyleChange} {layer} />
+          <TextField on:change={onStyleChange} {layer} {enabledTextLabel} />
           <TextColor on:change={onStyleChange} {layer} />
           <TextSize on:change={onStyleChange} {layer} />
           <TextHaloCalor on:change={onStyleChange} {layer} />
