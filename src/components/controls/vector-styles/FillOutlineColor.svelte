@@ -18,17 +18,17 @@
 
   let color
   let showToolTip = false
-  let rgbString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(20, 180, 60)'][0]
+  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(20, 180, 60)'][0]
 
   const setLineColor = () => {
-    rgbString = `rgb(${color.r},${color.g},${color.b})`
+    rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`
     if (style.type !== LayerTypes.FILL) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint[propertyName] = rgbString
-    $map.setPaintProperty(layerId, propertyName, rgbString)
+    newStyle.paint[propertyName] = rgbaString
+    $map.setPaintProperty(layerId, propertyName, rgbaString)
     dispatch('change')
   }
 </script>
@@ -46,7 +46,7 @@
     <div
       use:Ripple={{ surface: true }}
       on:click={() => (showToolTip = !showToolTip)}
-      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbString}" />
+      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbaString}" />
     <!--    <ColorPicker bind:RgbColor={RGBColor} />-->
   </StyleControlGroup>
 {/if}

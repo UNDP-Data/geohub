@@ -2,7 +2,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, within, type RenderResult } from '@testing-library/svelte'
 
 import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
-import type {  IntervalLegendColorMapRow } from '$lib/types'
+import type { IntervalLegendColorMapRow } from '$lib/types'
 
 import layer from './_layer.json'
 
@@ -18,7 +18,7 @@ describe('Intervals Legend : Color Map', () => {
     sut = render(IntervalsLegendColorMapRow, {
       colorMapRow,
       colorPickerVisibleIndex: -1,
-      layer
+      layer,
     })
     cardContainer = sut.getByTestId('intervals-legend-color-map-row-container')
   })
@@ -61,7 +61,7 @@ describe('Intervals Legend : Color Map : Open/Close Color Picker', () => {
     sut = render(IntervalsLegendColorMapRow, {
       colorMapRow,
       colorPickerVisibleIndex: 0,
-      layer
+      layer,
     })
     cardContainer = sut.getByTestId('intervals-legend-color-map-row-container')
   })

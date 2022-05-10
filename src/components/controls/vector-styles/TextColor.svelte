@@ -19,19 +19,19 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   // let TextColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
-  let rgbString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
+  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
 
   // $: TextColor, setTextColor()
 
   const setTextColor = () => {
-    rgbString = `rgb(${color.r},${color.g},${color.b})`
+    rgbaString = `rgba(${color.r},${color.g},${color.b})`
     if (style.type !== LayerTypes.SYMBOL) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
       newStyle.paint = {}
     }
-    newStyle.paint[propertyName] = rgbString
-    $map.setPaintProperty(layerId, propertyName, rgbString)
+    newStyle.paint[propertyName] = rgbaString
+    $map.setPaintProperty(layerId, propertyName, rgbaString)
 
     dispatch('change')
   }
@@ -50,7 +50,7 @@
     <div
       use:Ripple={{ surface: true }}
       on:click={() => (showToolTip = !showToolTip)}
-      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbString}" />
+      style="width: 32px; height: 32px; cursor:pointer; border:1px solid grey; background: {rgbaString}" />
   </StyleControlGroup>
 {/if}
 
