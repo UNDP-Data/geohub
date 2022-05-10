@@ -9,6 +9,7 @@
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import DefaultColorPicker from '../../DefaultColorPicker.svelte'
   import Ripple from '@smui/ripple'
+  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 
@@ -17,9 +18,24 @@
   const propertyName = 'line-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let color
+  // Default value for the color object
+  const r = 53
+  const g = 175
+  const b = 209
+  const a = 1
+  let color = {
+    r,
+    g,
+    b,
+    a,
+    hex: chroma([r, g, b]).hex('rgb'),
+    h: chroma([r, g, b]).hsv()[0],
+    s: chroma([r, g, b]).hsv()[1],
+    v: chroma([r, g, b]).hsv()[2],
+  }
+
   let showToolTip = false
-  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(53, 175, 109)'][0]
+  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(${r}, ${g}, ${b})`][0]
 
   const setLineColor = () => {
     rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`

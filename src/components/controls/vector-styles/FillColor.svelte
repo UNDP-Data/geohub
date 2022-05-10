@@ -8,6 +8,7 @@
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import Ripple from '@smui/ripple'
   import DefaultColorPicker from '../../DefaultColorPicker.svelte'
+  import chroma from 'chroma-js'
 
   let showToolTip
   export let layer: Layer = LayerInitialValues
@@ -17,8 +18,23 @@
   const propertyName = 'fill-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let color
-  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(20, 180, 60)'][0]
+  // Default Value for color object
+  const r = 20
+  const g = 180
+  const b = 60
+  const a = 1
+  let color = {
+    r,
+    g,
+    b,
+    a,
+    hex: chroma([r, g, b]).hex('rgb'),
+    h: chroma([r, g, b]).hsv()[0],
+    s: chroma([r, g, b]).hsv()[1],
+    v: chroma([r, g, b]).hsv()[2],
+  }
+
+  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(${r}, ${g}, ${b})`][0]
 
   const setLineColor = () => {
     rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`

@@ -7,11 +7,26 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import DefaultColorPicker from '../../DefaultColorPicker.svelte'
+  import chroma from 'chroma-js'
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
 
-  let color
+  const r = 0
+  const g = 0
+  const b = 0
+  const a = 1
+  let color = {
+    r,
+    g,
+    b,
+    a,
+    hex: chroma([r, g, b]).hex('rgb'),
+    h: chroma([r, g, b]).hsv()[0],
+    s: chroma([r, g, b]).hsv()[1],
+    v: chroma([r, g, b]).hsv()[2],
+  }
+
   let showToolTip = false
 
   const layerId = layer.definition.id
@@ -19,7 +34,7 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   // let TextColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
-  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
+  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgb(${r}, ${g}, ${b})`
 
   // $: TextColor, setTextColor()
 
