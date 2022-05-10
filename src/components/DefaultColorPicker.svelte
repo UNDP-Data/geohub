@@ -20,7 +20,7 @@
   $: color, changeColor()
 </script>
 
-<div class="raster-color-picker-container">
+<div class="raster-color-picker-container" data-testid="raster-color-picker-container">
   <div class="close is-clickable" alt="Close Color Picker" title="Close Color Picker" on:click={handleClose}>
     <Fa icon={faXmark} size="sm" />
   </div>
