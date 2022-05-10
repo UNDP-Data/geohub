@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
   import type { Color } from 'svelte-awesome-color-picker/type/types'
+  import { createEventDispatcher } from 'svelte'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
@@ -9,9 +9,15 @@
 
   const dispatch = createEventDispatcher()
 
+  const changeColor = () => {
+    dispatch('changeColor')
+  }
+
   const handleClose = () => {
     dispatch('closeColorPicker', { index: -1 })
   }
+
+  $: color, changeColor()
 </script>
 
 <div class="raster-color-picker-container" data-testid="raster-color-picker-container">
