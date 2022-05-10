@@ -82,7 +82,7 @@
                 },
                 {
                   type: LayerTypes.HEATMAP,
-                  label: 'Heatmep',
+                  label: 'Heatmap',
                 },
               ]
               break
@@ -109,7 +109,7 @@
       },
       {
         type: LayerTypes.HEATMAP,
-        label: 'Heatmep',
+        label: 'Heatmap',
       },
     ]
     layerType = LayerTypes.LINE
