@@ -1,23 +1,9 @@
-import { describe, beforeEach, expect, it, vi } from 'vitest'
+import { describe, beforeEach, expect, it } from 'vitest'
 import { cleanup, render, fireEvent, within, type RenderResult } from '@testing-library/svelte'
-import { Map } from 'maplibre-gl'
 
 import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
 import { ClassificationMethodTypes, COLOR_CLASS_COUNT, DEFAULT_COLORMAP } from '$lib/constants'
 import type { Layer } from '$lib/types'
-import { map } from '$stores'
-
-vi.mock('maplibre-gl/dist/maplibre-gl', () => ({
-  Map: vi.fn(() => ({
-    getSource: () => {
-      return { tiles: ['https://google.com'] }
-    },
-    triggerRepaint: () => undefined,
-  })),
-}))
-
-let container: HTMLDivElement
-map.set(new Map({ container, style: '' }))
 
 const layer: Layer = {
   definition: {
