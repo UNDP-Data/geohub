@@ -26,6 +26,14 @@
             bucketsMeetTheresholdFilterInput.set(bucket.path, true)
           }
         })
+
+        // case insensitive find for bucket description / label
+        if (
+          bucket.description.toLowerCase().includes(inputString.toLowerCase()) ||
+          bucket.label.toLowerCase().includes(inputString.toLowerCase())
+        ) {
+          bucketsMeetTheresholdFilterInput.set(bucket.path, true)
+        }
       })
 
       if (bucketsMeetTheresholdFilterInput.size === 0) {
@@ -43,7 +51,7 @@
    * @param caseSensitive By default the comparison is case sensitive
    * @returns Percentage of how similiar the strings are
    */
-  const stringSimilarity = (stringOne: string, stringTwo: string, caseSensitive = true) => {
+  const stringSimilarity = (stringOne: string, stringTwo: string, caseSensitive = false) => {
     stringOne = stringOne.replace(/\s/g, '')
     stringTwo = stringTwo.replace(/\s/g, '')
 
