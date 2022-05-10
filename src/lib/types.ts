@@ -71,7 +71,7 @@ export interface IntervalLegendColorMapRow {
   index?: number
   color?: number[]
   start?: number
-  end?: number
+  end?: number | string
 }
 
 export interface LayerInfo {
