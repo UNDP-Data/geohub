@@ -921,6 +921,18 @@
     "@smui/ripple" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
+"@smui-extra/autocomplete@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui-extra/autocomplete/-/autocomplete-6.0.0-beta.16.tgz#3774036459091c44e0bb50093f29164fd4e4f037"
+  integrity sha512-ENmfOy4SNj68tDYNjCmwkDIU/dDWu3X7YghcrFkxsJdNinvlzwKnX1dvRvFc9Ov8V2n8V6oNQZsw7f9yhGcOBQ==
+  dependencies:
+    "@smui/common" "^6.0.0-beta.16"
+    "@smui/list" "^6.0.0-beta.16"
+    "@smui/menu" "^6.0.0-beta.16"
+    "@smui/menu-surface" "^6.0.0-beta.16"
+    "@smui/textfield" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
 "@smui/banner@^6.0.0-beta.16":
   version "6.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/@smui/banner/-/banner-6.0.0-beta.16.tgz#c4e6c18c1470183683108073604ef149d4672d29"

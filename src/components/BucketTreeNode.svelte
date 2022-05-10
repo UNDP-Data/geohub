@@ -33,12 +33,6 @@
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
-  import type {
-    LineLayerSpecification,
-    FillLayerSpecification,
-    SymbolLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types'
-
   import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
 
   export let level = 0
@@ -81,11 +75,7 @@
       }
     }, 2000)
   }
-  const getLayerTypeFromGeomType = (geomType: string) => {
-    if (geomType.toLowerCase().includes('point')) return LayerTypes.SYMBOL
-    if (geomType.toLowerCase().includes('line')) return LayerTypes.LINE
-    if (geomType.toLowerCase().includes('polygon')) return LayerTypes.FILL
-  }
+
   const updateTreeStore = async () => {
     setProgressIndicator(true)
 
@@ -133,7 +123,7 @@
               const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
                 description: layerInfo.description,
                 source: layerInfo.source,
-                unit: layerInfo.unit,
+                unit: undefined,
               }
               setLayerMetaDataStore(layerPathHash, metadata)
             }
@@ -179,7 +169,6 @@
 
     if (!isRaster) {
       const layerName = path.split('/')[path.split('/').length - 2]
-      SelectLayerStyleDialogVisible = true
       const layerURL = new URL(url)
       const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
         '{z}/{x}/{y}.pbf',
@@ -187,107 +176,12 @@
       )}${layerURL.search}`
 
       const layerMeta = await fetchUrl(metaURI)
-
-      if (!$map.getSource(tileSourceId)) {
-        const layerSource = {
-          type: LayerTypes.VECTOR,
-          tiles: [url],
-        }
-        if (!(tileSourceId in $map.getStyle().sources)) {
-          $map.addSource(tileSourceId, layerSource)
-        }
+      if (layerMeta.json) {
+        layerMeta.json = JSON.parse(layerMeta.json)
       }
-      let layerDefinition: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
-      const layerType = getLayerTypeFromGeomType(geomType)
+      node.metadata = layerMeta
+      SelectLayerStyleDialogVisible = true
 
-      switch (layerType) {
-        case LayerTypes.SYMBOL:
-          layerDefinition = {
-            id: layerId,
-            type: layerType,
-            source: tileSourceId,
-            'source-layer': label,
-            layout: {
-              visibility: 'visible',
-              'icon-image': 'circle',
-              'icon-size': 0.8,
-            },
-          }
-          break
-        case LayerTypes.LINE:
-          layerDefinition = {
-            id: layerId,
-            type: layerType,
-            source: tileSourceId,
-            'source-layer': label,
-            layout: {
-              visibility: 'visible',
-              'line-cap': 'round',
-              'line-join': 'round',
-            },
-            paint: {
-              'line-color': 'rgb(53, 175, 109)',
-              'line-width': 0.5,
-            },
-          }
-          break
-        case LayerTypes.FILL:
-          layerDefinition = {
-            id: layerId,
-            type: layerType,
-            source: tileSourceId,
-            'source-layer': label,
-            layout: {
-              visibility: 'visible',
-            },
-            paint: {
-              'fill-color': 'rgb(20, 180, 60)',
-              'fill-outline-color': 'rgb(110, 110, 110)',
-              'fill-opacity': 0.6,
-            },
-          }
-          break
-        default:
-          return
-      }
-
-      $layerList = [
-        {
-          name: layerName,
-          definition: layerDefinition,
-          type: LayerTypes.VECTOR,
-          info: layerMeta,
-          visible: true,
-          url,
-          colorMapName: null,
-          continuous: {
-            minimum: null,
-            maximum: null,
-          },
-          intervals: {
-            classification: ClassificationMethodTypes.EQUIDISTANT,
-            numberOfClasses: COLOR_CLASS_COUNT,
-            colorMapRows: [],
-          },
-          unique: {
-            colorMapRows: [],
-          },
-        },
-        ...$layerList,
-      ]
-      $map.addLayer(layerDefinition)
-
-      // set layer list features properties to diplay in query panel info
-
-      $map.on('click', layerDefinition.id, function (e) {
-        const layer = $layerList.find((layer) => layer.definition.id == layerDefinition.id)
-        if (layer) {
-          const layerClone = cloneDeep(layer)
-          layerClone.features = e.features.length > 0 ? e.features[0].properties : []
-          const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerDefinition.id)
-          $layerList[layerIndex] = layerClone
-        }
-      })
       $indicatorProgress = false
 
       setTimeout(function () {
@@ -616,7 +510,7 @@
   {/each}
 {/if}
 
-<SelectLayerStyleDialog bind:SelectLayerStyleDialogVisible {path} {url} {label} />
+<SelectLayerStyleDialog bind:SelectLayerStyleDialogVisible {tree} />
 
 <style lang="scss">
   .node-container {
