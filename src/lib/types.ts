@@ -77,7 +77,7 @@ export interface IntervalLegendColorMapRow {
 export interface LayerInfo {
   band_descriptions?: string[]
   band_metadata?: string[]
-  bounds?: []
+  bounds?: [] | string
   colorinterp?: []
   count?: number
   driver?: string
@@ -133,6 +133,7 @@ export interface VectorTileMetadata {
       ]
     }
   }
+  band_metadata?: string[]
 }
 
 export interface LayerInfoMetadata {

@@ -32,6 +32,7 @@
               "STATISTICS_STDDEV":"1.1215340629323",
               "STATISTICS_UNIQUE_VALUES_COUNT":"4",
               "STATISTICS_VALID_PERCENT":"3.237",
+              "STATISTICS_UNIQUE_VALUES": "[{\"name\":\"Rice Village\", \"value\":\"11\"}, {\"name\":\"Sparse trees\", \"value\":\"23\"}, {\"name\":\"Remote croplands\", \"value\":\"63\"}]",
               "Unit":"sqkm"
            }
         ]
