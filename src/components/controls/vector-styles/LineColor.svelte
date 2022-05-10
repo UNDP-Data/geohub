@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  let lineState = {}
+</script>
+
 <script lang="ts">
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createEventDispatcher } from 'svelte'
@@ -21,17 +25,22 @@
   // Default value for the color object
   const r = 53
   const g = 175
-  const b = 209
+  const b = 109
   const a = 1
-  let color = {
-    r,
-    g,
-    b,
-    a,
-    hex: chroma([r, g, b]).hex('rgb'),
-    h: chroma([r, g, b]).hsv()[0],
-    s: chroma([r, g, b]).hsv()[1],
-    v: chroma([r, g, b]).hsv()[2],
+  let color
+  if (!Object.keys(lineState).length) {
+    color = {
+      r,
+      g,
+      b,
+      a,
+      hex: chroma([r, g, b]).hex('rgb'),
+      h: chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+  } else {
+    color = lineState[layerId]
   }
 
   let showToolTip = false
@@ -39,6 +48,7 @@
 
   const setLineColor = () => {
     rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`
+    lineState[layerId] = color
     if (style.type !== LayerTypes.LINE) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
