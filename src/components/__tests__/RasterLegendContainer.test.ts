@@ -1,4 +1,4 @@
-import { describe, beforeEach, expect, it, vi } from 'vitest'
+import { describe, beforeEach, expect, it } from 'vitest'
 import { cleanup, render, fireEvent, within, type RenderResult } from '@testing-library/svelte'
 
 import RasterLegendContainer from '$components/RasterLegendContainer.svelte'

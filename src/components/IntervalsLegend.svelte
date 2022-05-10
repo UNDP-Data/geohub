@@ -166,7 +166,12 @@
     <div class="column classification">
       <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
       <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
-        <select bind:value={classificationMethod} on:change={(e) => reclassifyImage(e)} style="width: 114px;">
+        <select
+          bind:value={classificationMethod}
+          on:change={(e) => reclassifyImage(e)}
+          style="width: 114px;"
+          alt="Classification Methods"
+          title="Classification Methods">
           {#each classificationMethods as classificationMethod}
             <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
           {/each}
