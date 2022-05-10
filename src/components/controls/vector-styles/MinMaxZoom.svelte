@@ -20,7 +20,6 @@
   $: ZoomSliderValues, setMinMaxZoom()
 
   const setMinMaxZoom = () => {
-    console.log(ZoomSliderValues)
     const newStyle: LayerSpecification = JSON.parse(JSON.stringify(style))
     newStyle.minzoom = ZoomSliderValues[0]
     newStyle.maxzoom = ZoomSliderValues[1]
