@@ -26,6 +26,7 @@
   import type { IntervalLegendColorMapRow, Layer, LayerInfo } from '$lib/types'
   import { map } from '$stores'
 
+  export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
   export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
@@ -49,8 +50,6 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
   let colorMapName = layerConfig.colorMapName
-
-  export let colorPickerVisibleIndex: number
 
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
@@ -185,7 +184,7 @@
             title="Decrease number of classes">
             <Fa icon={faCircleMinus} />
           </div>
-          <div class="tag is-info is-light is-medium">
+          <div class="tag is-info is-light is-medium" alt="Number of Classes" title="Number of Classes">
             {numberOfClasses}
           </div>
           <div

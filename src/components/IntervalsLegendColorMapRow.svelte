@@ -18,9 +18,9 @@
   let colorPickerStyle: string
   let showToolTip = false
 
-  $: colorPickerStyle = getColorPickerStyle(colorMapRow.color.join())
+  $: colorPickerStyle = getColorPickerStyle(colorMapRow?.color.join())
   $: {
-    if (colorPickerVisibleIndex === colorMapRow.index) {
+    if (colorPickerVisibleIndex === colorMapRow?.index) {
       showToolTip = true
     } else {
       showToolTip = false
@@ -31,7 +31,7 @@
 
   // load color map upon change of layer color map name
   $: {
-    if (layer.colorMapName !== colorMapName) {
+    if (layer?.colorMapName !== colorMapName) {
       colorMapName = layer.colorMapName
       setColorFromProp()
     }
@@ -104,12 +104,14 @@
 <div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">
   <div class="column is-1 color-picker">
     <div
-      id={`interval-${colorMapRow.index}`}
+      id={`interval-${colorMapRow?.index}`}
+      alt="Color Map Control"
+      title="Color Map Control"
       on:click={() => handleColorPickerClick()}
       class="discrete"
       style={colorPickerStyle} />
 
-    {#if showToolTip}
+    {#if showToolTip && color}
       <div class={`tooltip`} transition:fade>
         <RasterColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
       </div>
@@ -119,22 +121,26 @@
   <div class="column start">
     <input
       id="start"
+      alt="Start Value"
+      title="Start Value"
       class="input is-small"
       type="number"
       min="-1000000"
       max="1000000"
-      value={colorMapRow.start}
+      value={colorMapRow?.start}
       on:input={handleInput} />
   </div>
 
   <div class="column end">
     <input
       id="end"
+      alt="End Value"
+      title="End Value"
       class="input is-small"
       type="number"
       min="-1000000"
       max="1000000"
-      value={colorMapRow.end}
+      value={colorMapRow?.end}
       on:input={handleInput} />
   </div>
 </div>
