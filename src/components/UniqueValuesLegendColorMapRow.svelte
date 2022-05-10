@@ -87,6 +87,8 @@
       id={`interval-${colorMapRow.index}`}
       on:click={() => handleColorPickerClick()}
       class="discrete"
+      alt="Color Map Control"
+      title="Color Map Control"
       style={colorPickerStyle} />
 
     {#if showToolTip}
