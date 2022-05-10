@@ -139,7 +139,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': tree.label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
             'icon-image': 'circle',
@@ -152,7 +152,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': tree.label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
             'line-cap': 'round',
@@ -169,7 +169,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': tree.label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
           },
@@ -185,7 +185,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': tree.label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
           },
