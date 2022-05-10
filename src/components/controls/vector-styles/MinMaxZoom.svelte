@@ -12,13 +12,16 @@
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+  const style: LayerSpecification = $map
+    .getStyle()
+    .layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let ZoomSliderValues = [0, 24]
+  let ZoomSliderValues = [style.minzoom ? style.minzoom : 0, style.maxzoom ? style.maxzoom : 24]
   $: ZoomSliderValues, setMinMaxZoom()
 
   const setMinMaxZoom = () => {
-    const newStyle = JSON.parse(JSON.stringify(style))
+    console.log(ZoomSliderValues)
+    const newStyle: LayerSpecification = JSON.parse(JSON.stringify(style))
     newStyle.minzoom = ZoomSliderValues[0]
     newStyle.maxzoom = ZoomSliderValues[1]
     $map.setLayerZoomRange(layerId, newStyle.minzoom, newStyle.maxzoom)
@@ -32,8 +35,8 @@
       bind:values={ZoomSliderValues}
       float
       range
-      min={layer.info.minzoom}
-      max={layer.info.maxzoom}
+      min={0}
+      max={24}
       step={1}
       pips
       first="label"
