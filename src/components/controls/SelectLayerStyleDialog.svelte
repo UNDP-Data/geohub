@@ -12,7 +12,7 @@
     HeatmapLayerSpecification,
     VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { cloneDeep } from 'lodash-es'
+  import { cloneDeep, find } from 'lodash-es'
 
   import { LayerTypes } from '$lib/constants'
   import { map, layerList } from '$stores'
@@ -249,7 +249,7 @@
   }
 </script>
 
-<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 400px; height: 300px">
+<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 430px; height: 300px">
   <Title>Add Layer</Title>
   <ContentDialog>
     <Autocomplete combobox options={layerIdList} bind:value={selectedLayerId} label="Layer ID" />
@@ -270,9 +270,11 @@
     <Button>
       <LabelButton>Cancel</LabelButton>
     </Button>
-    <Button on:click={() => addLayer()}>
-      <LabelButton>Add</LabelButton>
-    </Button>
+    {#if selectedLayerId && layerIdList && layerIdList.includes(selectedLayerId)}
+      <Button on:click={() => addLayer()}>
+        <LabelButton>Add</LabelButton>
+      </Button>
+    {/if}
   </ActionsDialog>
 </Dialog>
 
