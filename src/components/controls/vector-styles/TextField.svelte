@@ -65,7 +65,7 @@
 
 {#if style.type === LayerTypes.SYMBOL}
   <div>
-    <Select bind:value={textFieldValue} label="Text field" variant="outlined">
+    <Select bind:value={textFieldValue} variant="outlined">
       {#if layerIdList}
         {#each layerIdList as id}
           <Option value={id}>{id}</Option>

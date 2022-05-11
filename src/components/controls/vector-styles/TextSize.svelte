@@ -20,6 +20,7 @@
   let propertyType = 'layout'
   let stepValue = 0.5
   let titleName = 'Text Size'
+  let styleControlGroupDisabled = true
 </script>
 
 <Slider
@@ -32,4 +33,5 @@
   bind:minValue
   bind:maxValue
   bind:stepValue
-  bind:propertyType />
+  bind:propertyType
+  bind:styleControlGroupDisabled />

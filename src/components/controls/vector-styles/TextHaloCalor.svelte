@@ -5,7 +5,6 @@
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
 
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import MaplibreColorPicker from './MaplibreColorPicker.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -27,9 +26,7 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <StyleControlGroup title="Text Halo Color">
-    <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-  </StyleControlGroup>
+  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
 {/if}
 
 <style lang="scss">

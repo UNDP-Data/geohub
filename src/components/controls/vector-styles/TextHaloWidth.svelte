@@ -20,6 +20,7 @@
   let propertyType = 'paint'
   let stepValue = 0.1
   let titleName = 'Text Halo Width'
+  let styleControlGroupDisabled = true
 </script>
 
 <Slider
@@ -32,4 +33,5 @@
   bind:minValue
   bind:maxValue
   bind:stepValue
-  bind:propertyType />
+  bind:propertyType
+  bind:styleControlGroupDisabled />

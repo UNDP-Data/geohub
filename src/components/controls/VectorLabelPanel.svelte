@@ -58,17 +58,68 @@
       <div>
         <FormField>
           <Switch bind:checked={enabledTextLabel} />
-          <span slot="label">Enable text label</span>
+          <span slot="label"><div class="title is-size-5">Create label</div></span>
         </FormField>
       </div>
       {#if enabledTextLabel === true}
-        <div>
-          <TextField on:change={onStyleChange} {layer} {enabledTextLabel} />
-          <TextColor on:change={onStyleChange} {layer} />
-          <TextSize on:change={onStyleChange} {layer} />
-          <TextHaloCalor on:change={onStyleChange} {layer} />
-          <TextHaloWidth on:change={onStyleChange} {layer} />
-          <TextMaxWidth on:change={onStyleChange} {layer} />
+        <hr />
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-4">
+            <div class="title is-size-6">Property</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextField on:change={onStyleChange} {layer} {enabledTextLabel} />
+            </div>
+          </div>
+        </div>
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-4">
+            <div class="title is-size-6">Font color</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextColor on:change={onStyleChange} {layer} />
+            </div>
+          </div>
+          <div class="column is-4">
+            <div class="title is-size-6">Halo color</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextHaloCalor on:change={onStyleChange} {layer} />
+            </div>
+          </div>
+        </div>
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-4">
+            <div class="title is-size-6">Font Size</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextSize on:change={onStyleChange} {layer} />
+            </div>
+          </div>
+        </div>
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-4">
+            <div class="title is-size-6">Halo Width</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextMaxWidth on:change={onStyleChange} {layer} />
+            </div>
+          </div>
+        </div>
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-4">
+            <div class="title is-size-6">Max Width</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextHaloWidth on:change={onStyleChange} {layer} />
+            </div>
+          </div>
         </div>
       {/if}
     </div>
@@ -78,5 +129,23 @@
 <style lang="scss">
   .action {
     margin-bottom: 25px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  table th {
+    padding: 0.5em;
+    position: relative;
+    text-align: left;
+    vertical-align: middle;
+    width: 90px;
+  }
+
+  table td {
+    padding: 0.5em;
+    text-align: center;
+    vertical-align: middle;
   }
 </style>
