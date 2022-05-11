@@ -43,12 +43,12 @@
   let showToolTip = false
 
   // let TextColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
-  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgb(${r}, ${g}, ${b})`
+  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(${r}, ${g}, ${b}, ${a})`
 
   // $: TextColor, setTextColor()
 
   const setTextColor = () => {
-    rgbaString = `rgba(${color.r},${color.g},${color.b})`
+    rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`
     textState[layerId] = color
     if (style.type !== LayerTypes.SYMBOL) return
     const newStyle = JSON.parse(JSON.stringify(style))
