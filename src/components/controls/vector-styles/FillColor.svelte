@@ -5,16 +5,15 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import Ripple from '@smui/ripple'
-  import DefaultColorPicker from '../../DefaultColorPicker.svelte'
   import chroma from 'chroma-js'
 
-  let showToolTip
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
+
   export let layer: Layer = LayerInitialValues
 
   const dispatch = createEventDispatcher()
@@ -27,7 +26,11 @@
   const g = 180
   const b = 60
   const a = 1
+
   let color
+  let showToolTip = false
+  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(${r}, ${g}, ${b})`][0]
+
   if (!Object.keys(fillState).length) {
     color = {
       r,
@@ -42,8 +45,6 @@
   } else {
     color = fillState[layerId]
   }
-
-  let rgbaString = [style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(${r}, ${g}, ${b})`][0]
 
   const setLineColor = () => {
     rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`

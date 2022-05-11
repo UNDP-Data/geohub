@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues } from '$lib/constants'
+  import ActionsDropdown from '$components/controls/ActionsDropdown.svelte'
   import DeleteButton from '$components/controls/DeleteButton.svelte'
   import VisibilityButton from '$components/controls/VisibilityButton.svelte'
-  import ActionsDropdown from '$components/controls/ActionsDropdown.svelte'
+  import { LayerInitialValues } from '$lib/constants'
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
 </script>

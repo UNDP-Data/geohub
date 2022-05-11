@@ -1,30 +1,30 @@
 <script lang="ts">
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
-  import { Label } from '@smui/common'
-  import Switch from '@smui/switch'
-  import FormField from '@smui/form-field'
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { Label } from '@smui/common'
+  import FormField from '@smui/form-field'
+  import SegmentedButton, { Segment } from '@smui/segmented-button'
+  import Switch from '@smui/switch'
+
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  const dispatch = createEventDispatcher()
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
+
+  const dispatch = createEventDispatcher()
+  const layerId = layer.definition.id
   const propertyName = 'icon-keep-upright'
   const propertyNameSymbolPlacement = 'symbol-placement'
-
-  let choices = ['point', 'line', 'line-center']
-
-  const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let checked = style.layout && style.layout[propertyName] ? style.layout[propertyName] : false
-  $: checked, setIconKeepUpright()
-
+  let choices = ['point', 'line', 'line-center']
   let selected =
     style.layout && style.layout[propertyNameSymbolPlacement] ? style.layout[propertyNameSymbolPlacement] : 'point'
+
+  $: checked, setIconKeepUpright()
   $: selected, setSymbolPlacement()
 
   const setSymbolPlacement = () => {

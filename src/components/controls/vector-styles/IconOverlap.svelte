@@ -1,23 +1,25 @@
 <script lang="ts">
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
-  import { Label } from '@smui/common'
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
+  import { Label } from '@smui/common'
+  import SegmentedButton, { Segment } from '@smui/segmented-button'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
+
   const dispatch = createEventDispatcher()
 
   export let layer: Layer = LayerInitialValues
-  const propertyName = 'icon-overlap'
-
-  let choices = ['never', 'always', 'cooperative']
 
   const layerId = layer.definition.id
+  const propertyName = 'icon-overlap'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
+  let choices = ['never', 'always', 'cooperative']
   let selected = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'never'
+
   $: selected, setIconOverlap()
 
   const setIconOverlap = () => {

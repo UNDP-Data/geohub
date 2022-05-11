@@ -3,9 +3,9 @@
   import { createEventDispatcher } from 'svelte'
   import Select, { Option } from '@smui/select'
 
-  import { map } from '$stores'
-  import type { Layer, VectorLayerMetadata } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer, VectorLayerMetadata } from '$lib/types'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
   export let enabledTextLabel = false
@@ -13,12 +13,14 @@
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const metadata = layer.info
-  let vectorLayerMeta: VectorLayerMetadata
-  let layerIdList: string[]
   const propertyName = 'text-field'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-  let textFieldValue: string = null
 
+  let layerIdList: string[]
+  let textFieldValue: string = null
+  let vectorLayerMeta: VectorLayerMetadata
+
+  $: textFieldValue, setTextField()
   $: enabledTextLabel, setDefaultTextField()
 
   const setDefaultTextField = () => {
@@ -40,8 +42,6 @@
       textFieldValue = layerIdList[0]
     }
   }
-
-  $: textFieldValue, setTextField()
 
   const setTextField = () => {
     if (style.type !== LayerTypes.SYMBOL) return

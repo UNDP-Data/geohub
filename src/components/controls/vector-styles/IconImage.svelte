@@ -5,35 +5,24 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { onMount } from 'svelte'
 
-  import { map, spriteImageList } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import VectorLegendSymbol from '../VectorLegendSymbol.svelte'
-
-  const dispatch = createEventDispatcher()
+  import VectorLegendSymbol from '$components/controls/VectorLegendSymbol.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map, spriteImageList } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
-  $: iconImage, setIconImage()
-  const setIconImage = () => {
-    if (style.type !== LayerTypes.SYMBOL) return
-    const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.layout) {
-      newStyle.layout = {}
-    }
-    newStyle.layout[propertyName] = iconImage
-    $map.setLayoutProperty(layerId, propertyName, iconImage)
-    dispatch('change')
-  }
-
-  let updateLegend = () => undefined
   let isIconListPanelVisible = false
+  let updateLegend = () => undefined
+
+  $: iconImage, setIconImage()
 
   onMount(async () => {
     updateLegend()
@@ -45,6 +34,17 @@
     isIconListPanelVisible = false
     setIconImage()
     updateLegend()
+  }
+
+  const setIconImage = () => {
+    if (style.type !== LayerTypes.SYMBOL) return
+    const newStyle = JSON.parse(JSON.stringify(style))
+    if (!newStyle.layout) {
+      newStyle.layout = {}
+    }
+    newStyle.layout[propertyName] = iconImage
+    $map.setLayoutProperty(layerId, propertyName, iconImage)
+    dispatch('change')
   }
 </script>
 

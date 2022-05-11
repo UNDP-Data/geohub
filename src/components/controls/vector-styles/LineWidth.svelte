@@ -1,23 +1,25 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
+
+  import Slider from '$components/controls/vector-styles/Slider.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+
+  export let layer: Layer = LayerInitialValues
+
   const dispatch = createEventDispatcher()
   const onStyleChange = () => {
     dispatch('change')
   }
 
-  export let layer: Layer = LayerInitialValues
-  import Slider from '$components/controls/vector-styles/Slider.svelte'
-
-  let layerType = LayerTypes.LINE
-  let propertyName = 'line-width'
-  let titleName = 'Line Width'
   let defaultValue = 1
-  let minValue = 0
+  let layerType = LayerTypes.LINE
   let maxValue = 10
-  let stepValue = 0.1
+  let minValue = 0
+  let propertyName = 'line-width'
   let propertyType = 'paint'
+  let stepValue = 0.1
+  let titleName = 'Line Width'
 </script>
 
 <Slider

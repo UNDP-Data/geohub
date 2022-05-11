@@ -1,23 +1,24 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import SegmentedButton, { Segment } from '@smui/segmented-button'
   import { Label } from '@smui/common'
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import { createEventDispatcher } from 'svelte'
+
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  const dispatch = createEventDispatcher()
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
-  const propertyName = 'line-join'
 
-  let choices = ['bevel', 'round', 'miter']
-
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
+  const propertyName = 'line-join'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
+  let choices = ['bevel', 'round', 'miter']
   let selected = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'miter'
+
   $: selected, setLineJoin()
 
   const setLineJoin = () => {
