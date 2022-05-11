@@ -2,8 +2,7 @@
   import Autocomplete from '@smui-extra/autocomplete'
   import Button, { Label as LabelButton } from '@smui/button'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
-  import FormField from '@smui/form-field'
-  import Radio from '@smui/radio'
+  import Chip, { Set, Text } from '@smui/chips'
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
@@ -58,36 +57,13 @@
           const type = getLayerTypeFromGeomType(layer.geometry)
           switch (type) {
             case LayerTypes.LINE:
-              layerTypes = [
-                {
-                  type: LayerTypes.LINE,
-                  label: 'Line',
-                },
-              ]
+              layerTypes = [LayerTypes.LINE]
               break
             case LayerTypes.FILL:
-              layerTypes = [
-                {
-                  type: LayerTypes.LINE,
-                  label: 'Line',
-                },
-                {
-                  type: LayerTypes.FILL,
-                  label: 'Polygon',
-                },
-              ]
+              layerTypes = [LayerTypes.LINE, LayerTypes.FILL]
               break
             case LayerTypes.SYMBOL:
-              layerTypes = [
-                {
-                  type: LayerTypes.SYMBOL,
-                  label: 'Symbol',
-                },
-                {
-                  type: LayerTypes.HEATMAP,
-                  label: 'Heatmap',
-                },
-              ]
+              layerTypes = [LayerTypes.SYMBOL, LayerTypes.HEATMAP]
               break
             default:
               break
@@ -97,24 +73,7 @@
         }
       }
     }
-    layerTypes = [
-      {
-        type: LayerTypes.LINE,
-        label: 'Line',
-      },
-      {
-        type: LayerTypes.FILL,
-        label: 'Polygon',
-      },
-      {
-        type: LayerTypes.SYMBOL,
-        label: 'Symbol',
-      },
-      {
-        type: LayerTypes.HEATMAP,
-        label: 'Heatmap',
-      },
-    ]
+    layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
     layerType = LayerTypes.LINE
   }
 
@@ -250,24 +209,48 @@
       }
     })
   }
+
+  const getLayerTypeLabel = (layerType: LayerTypes) => {
+    switch (layerType) {
+      case LayerTypes.LINE:
+        return 'Line'
+      case LayerTypes.FILL:
+        return 'Polygon'
+      case LayerTypes.SYMBOL:
+        return 'Symbol'
+      case LayerTypes.HEATMAP:
+        return 'Heatmap'
+      default:
+        return layerType
+    }
+  }
 </script>
 
-<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 430px; height: 300px">
+<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 350px;">
   <Title>Add Layer</Title>
   <ContentDialog>
-    <Autocomplete combobox options={layerIdList} bind:value={selectedLayerId} label="Layer ID" />
-    <StyleControlGroup title={'Type'}>
-      <div class="layer-type">
-        {#each layerTypes as type}
-          <FormField>
-            <Radio bind:group={layerType} value={type.type} />
-            <span slot="label">
-              {type.label}
-            </span>
-          </FormField>
-        {/each}
+    <div class="columns is-flex is-vcentered">
+      <div class="column is-4">
+        <div class="title is-size-5">Layer ID</div>
       </div>
-    </StyleControlGroup>
+      <div class="column">
+        <div>
+          <Autocomplete combobox options={layerIdList} bind:value={selectedLayerId} textfield$variant="outlined" />
+        </div>
+      </div>
+    </div>
+    <div class="columns is-flex is-vcentered">
+      <div class="column is-4">
+        <div class="title is-size-5">Layer Type</div>
+      </div>
+      <div class="column">
+        <Set chips={layerTypes} let:chip choice bind:selected={layerType}>
+          <Chip {chip}>
+            <Text>{getLayerTypeLabel(chip)}</Text>
+          </Chip>
+        </Set>
+      </div>
+    </div>
   </ContentDialog>
   <ActionsDialog>
     <Button>
