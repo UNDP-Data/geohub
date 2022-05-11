@@ -18,7 +18,7 @@
 
   let rgba = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor
 
-  const setColor = (e) => {
+  const handleSetColor = (e: CustomEvent) => {
     if (style.type !== LayerTypes.SYMBOL) return
     rgba = e.detail.color
     $map.setPaintProperty(layerId, propertyName, rgba)
@@ -28,7 +28,7 @@
 
 {#if style.type === LayerTypes.SYMBOL}
   <StyleControlGroup title="Text Color">
-    <MaplibreColorPicker {rgba} on:change={setColor} />
+    <MaplibreColorPicker {rgba} on:change={handleSetColor} />
   </StyleControlGroup>
 {/if}
 
