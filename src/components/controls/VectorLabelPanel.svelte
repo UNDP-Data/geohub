@@ -125,27 +125,3 @@
     </div>
   {/if}
 {/if}
-
-<style lang="scss">
-  .action {
-    margin-bottom: 25px;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  table th {
-    padding: 0.5em;
-    position: relative;
-    text-align: left;
-    vertical-align: middle;
-    width: 90px;
-  }
-
-  table td {
-    padding: 0.5em;
-    text-align: center;
-    vertical-align: middle;
-  }
-</style>
