@@ -12,7 +12,7 @@
     HeatmapLayerSpecification,
     VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { cloneDeep, find } from 'lodash-es'
+  import { cloneDeep } from 'lodash-es'
 
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerTypes } from '$lib/constants'

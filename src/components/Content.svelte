@@ -12,8 +12,8 @@
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
   import { StatusTypes, TabNames } from '$lib/constants'
+  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
 
   export let drawerOpen = false
 

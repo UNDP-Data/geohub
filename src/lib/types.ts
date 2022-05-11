@@ -134,6 +134,7 @@ export interface VectorTileMetadata {
     }
   }
   band_metadata?: string[]
+  nodata_value?: number
 }
 
 export interface LayerInfoMetadata {

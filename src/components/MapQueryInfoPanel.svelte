@@ -1,5 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import GeoJSON from 'geojson'
+  import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
+  import Moveable from 'moveable'
+  import PapaParse from 'papaparse'
+  import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
@@ -7,11 +12,6 @@
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons/faUpDownLeftRight'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import GeoJSON from 'geojson'
-  import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
-  import Moveable from 'moveable'
-  import PapaParse from 'papaparse'
-  import Fa from 'svelte-fa'
 
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
@@ -161,6 +161,8 @@
   }
 
   const downloadGeoJson = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore:next-line
     const data = JSON.stringify(GeoJSON.parse(layerValuesData, { Point: ['lat', 'lng'] }))
     const filename = `undp-geohub-layers-data-${new Date().toISOString().split('T')[0]}.geojson`
     downloadFile(filename, data)

@@ -21,10 +21,10 @@
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
+  let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
-  let layerHasUniqueValues = false
 
   // hide colormap picker if change in layer list
   $: {

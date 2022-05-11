@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
 
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
-  import DefaultColorPicker from './DefaultColorPicker.svelte'
+  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
 
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number

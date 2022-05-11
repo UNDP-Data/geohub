@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import DefaultColorPicker from './DefaultColorPicker.svelte'
+  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
 
   export let colorMapRow: IntervalLegendColorMapRow
