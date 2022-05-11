@@ -150,3 +150,10 @@ describe('clean', () => {
     expect(value).toEqual('Biotic Genetic Resources For Food And Agriculture Secured In Conservation Facilities')
   })
 })
+
+describe('rgb2hsv', () => {
+  it('should convert rgb to hsv correctly', () => {
+    const hsv = helper.rgb2hsv([28, 28, 28])
+    expect(hsv).toEqual([0, 0, 11])
+  })
+})
