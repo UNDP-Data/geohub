@@ -5,10 +5,10 @@
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
-  import { layerList, map } from '$stores'
   import { LayerInitialValues } from '$lib/constants'
   import { clean } from '$lib/helper'
   import type { Layer } from '$lib/types'
+  import { layerList, map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 

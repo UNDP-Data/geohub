@@ -2,9 +2,9 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import LegendSymbol from '@watergis/legend-symbol'
 
-  import { map, spriteImageList } from '$stores'
-  import type { Layer } from '$lib/types'
   import { LayerInitialValues } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map, spriteImageList } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 

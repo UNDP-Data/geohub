@@ -14,19 +14,31 @@
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { cloneDeep, find } from 'lodash-es'
 
-  import { LayerTypes } from '$lib/constants'
-  import { map, layerList } from '$stores'
-  import type { TreeNode } from '$lib/types'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import { LayerTypes } from '$lib/constants'
+  import type { TreeNode } from '$lib/types'
+  import { map, layerList } from '$stores'
 
   export let SelectLayerStyleDialogVisible = false
   export let tree: TreeNode
 
+  let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = []
-  let tileSourceId = tree.path
-  let layerIdList: string[]
   let selectedLayerId: string | undefined = tree.label
+  let tileSourceId = tree.path
+
+  $: SelectLayerStyleDialogVisible, init()
+  $: selectedLayerId, setLayerTypeList()
+  $: layerIdList, setLayerTypeList()
+
+  const init = async () => {
+    if (SelectLayerStyleDialogVisible !== true) return
+    const vector_layers = tree.metadata.json.vector_layers
+    layerIdList = vector_layers.map((l) => {
+      return l.id
+    })
+  }
 
   const getLayerTypeFromGeomType = (geomType: string) => {
     if (geomType.toLowerCase().includes('point')) return LayerTypes.SYMBOL
@@ -36,18 +48,6 @@
     if (geomType.toLowerCase().includes('multilinestring')) return LayerTypes.LINE
     if (geomType.toLowerCase().includes('multipolygon')) return LayerTypes.FILL
   }
-
-  $: SelectLayerStyleDialogVisible, init()
-  const init = async () => {
-    if (SelectLayerStyleDialogVisible !== true) return
-    const vector_layers = tree.metadata.json.vector_layers
-    layerIdList = vector_layers.map((l) => {
-      return l.id
-    })
-  }
-
-  $: selectedLayerId, setLayerTypeList()
-  $: layerIdList, setLayerTypeList()
 
   const setLayerTypeList = () => {
     if (selectedLayerId && tree.metadata) {
