@@ -121,7 +121,7 @@
     )
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
-    let updatedParams = Object.assign({ colormap: encodeColorMapRows })
+    const updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
   }, 500)
 

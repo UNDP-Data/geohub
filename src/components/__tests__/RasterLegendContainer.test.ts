@@ -28,6 +28,7 @@ const layer: Layer = {
     numberOfClasses: COLOR_CLASS_COUNT,
     colorMapRows: [],
   },
+  expression: '',
 }
 
 beforeEach(cleanup)
