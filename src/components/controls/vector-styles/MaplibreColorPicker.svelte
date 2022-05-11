@@ -5,7 +5,6 @@
 
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
   import type { Color } from '$lib/types'
-  import { rgb2hsv } from '$lib/helper'
 
   const dispatch = createEventDispatcher()
 
@@ -17,9 +16,9 @@
     b: chroma(rgba).rgba()[2],
     a: chroma(rgba).rgba()[3],
     hex: chroma(rgba).hex('rgb'),
-    h: rgb2hsv(chroma(rgba).rgb())[0],
-    s: rgb2hsv(chroma(rgba).rgb())[1],
-    v: rgb2hsv(chroma(rgba).rgb())[2],
+    h: isNaN(chroma(rgba).hsv()[0]) ? 0 : chroma(rgba).hsv()[0],
+    s: chroma(rgba).hsv()[1],
+    v: chroma(rgba).hsv()[2],
   }
 
   let showToolTip = false
