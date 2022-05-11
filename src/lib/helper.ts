@@ -154,3 +154,40 @@ export const clean = (val: string) => {
     .replace(/\b\w/g, (str) => str.toUpperCase()) // apply start/title case
   return clean
 }
+
+/**
+ * Convert rgb color to hsv color because chromajs cannot handle white and black.
+ * @param rgb number[]
+ * @returns hsv number[]
+ */
+export const rgb2hsv = (rgb: [number, number, number]) => {
+  const r = rgb[0]
+  const g = rgb[1]
+  const b = rgb[2]
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const delta = max - min
+
+  let h: number
+  // hue
+  if (delta === 0) {
+    h = 0
+  } else if (r === max) {
+    h = ((g - b) / delta) % 6
+  } else if (g === max) {
+    h = (b - r) / delta + 2
+  } else if (b === max) {
+    h = (r - g) / delta + 4
+  }
+
+  h = Math.round(h * 60)
+  if (h < 0) h += 360
+
+  // saturation
+  const s = Math.round((max === 0 ? 0 : delta / max) * 100)
+
+  // value
+  const v = Math.round((max / 255) * 100)
+
+  return [h, s, v]
+}

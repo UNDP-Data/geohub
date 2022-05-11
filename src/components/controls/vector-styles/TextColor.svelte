@@ -1,7 +1,3 @@
-<script lang="ts" context="module">
-  let textState = {}
-</script>
-
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
@@ -13,6 +9,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Color, Layer } from '$lib/types'
   import { map } from '$stores'
+  import { rgb2hsv } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
@@ -21,33 +18,23 @@
   const propertyName = 'text-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  const r = 0
-  const g = 0
-  const b = 0
-  const a = 1
-  let color: Color
+  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgba(0,0,0,1)`
 
-  let rgbaString = style.paint && style.paint[propertyName] ? style.paint[propertyName] : `rgb(${r}, ${g}, ${b})`
-  let showToolTip = false
-
-  if (!Object.keys(textState).length) {
-    color = {
-      r,
-      g,
-      b,
-      a,
-      hex: chroma([r, g, b]).hex('rgb'),
-      h: chroma([r, g, b]).hsv()[0],
-      s: chroma([r, g, b]).hsv()[1],
-      v: chroma([r, g, b]).hsv()[2],
-    }
-  } else {
-    color = textState[layerId]
+  let color: Color = {
+    r: chroma(rgbaString).rgba()[0],
+    g: chroma(rgbaString).rgba()[1],
+    b: chroma(rgbaString).rgba()[2],
+    a: chroma(rgbaString).rgba()[3],
+    hex: chroma(rgbaString).hex('rgb'),
+    h: rgb2hsv(chroma(rgbaString).rgb())[0],
+    s: rgb2hsv(chroma(rgbaString).rgb())[1],
+    v: rgb2hsv(chroma(rgbaString).rgb())[2],
   }
+
+  let showToolTip = false
 
   const setTextColor = () => {
     rgbaString = `rgba(${color.r},${color.g},${color.b},${color.a})`
-    textState[layerId] = color
     if (style.type !== LayerTypes.SYMBOL) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.paint) {
