@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import Fa from 'svelte-fa'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
@@ -14,14 +13,10 @@
   import VectorStyleJsonPanel from '$components/controls/VectorStyleJsonPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
   import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
-  import { LayerInitialValues, LayerTypes, TabNames } from '$lib/constants'
+  import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
-
-  const layerId = layer.definition.id
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let activeTab = ''
   let isLabelPanelVisible = false
@@ -38,10 +33,6 @@
     { label: TabNames.ZOOM, icon: faMagnifyingGlassLocation, active: false },
     { label: TabNames.STYLEJSON, icon: faPenToSquare, active: false },
   ]
-
-  if (style.type !== LayerTypes.SYMBOL) {
-    tabs = tabs.filter((tab) => tab.label !== TabNames.LABEL)
-  }
 
   $: {
     isLegendPanelVisible = false
@@ -94,9 +85,7 @@
 
     <p class="panel-content">
       <VectorLegendPanel {layer} {isLegendPanelVisible} />
-      {#if style.type === LayerTypes.SYMBOL}
-        <VectorLabelPanel {layer} {isLabelPanelVisible} />
-      {/if}
+      <VectorLabelPanel {layer} {isLabelPanelVisible} />
       <OpacityPanel {layer} {isOpacityPanelVisible} />
       <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
       <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />

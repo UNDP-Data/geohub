@@ -46,6 +46,7 @@ export interface Layer {
   intervals?: IntervalLegend
   unique?: UniqueLegend
   expression?: string
+  children?: Layer[]
 }
 
 export interface ContinuousLegend {
