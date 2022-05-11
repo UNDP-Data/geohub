@@ -2,41 +2,37 @@
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
-  import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
+  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
+  import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
+  import RefineContainer from '$components/RefineContainer.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
-  import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
 
   let activeTab = ''
-  let isFilterPanelVisible = false
+  let isRefinePanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-  let isZoomLevelPanelVisible = false
 
   $: {
     isLegendPanelVisible = false
+    isRefinePanelVisible = false
     isOpacityPanelVisible = false
-    isZoomLevelPanelVisible = false
 
     switch (activeTab) {
       case TabNames.LEGEND:
         isLegendPanelVisible = true
         break
-      case TabNames.FILTER:
-        isFilterPanelVisible = true
+      case TabNames.REFINE:
+        isRefinePanelVisible = true
         break
       case TabNames.OPACITY:
         isOpacityPanelVisible = true
-        break
-      case TabNames.ZOOM:
-        isZoomLevelPanelVisible = true
         break
       default:
         break
@@ -45,7 +41,7 @@
 
   const tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
-    { label: TabNames.FILTER, icon: faFilter, active: false },
+    { label: TabNames.REFINE, icon: faCalculator, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
 </script>
@@ -73,8 +69,10 @@
       {#if isLegendPanelVisible === true}
         <RasterLegendContainer bind:layer />
       {/if}
+      {#if isRefinePanelVisible === true}
+        <RefineContainer bind:layer />
+      {/if}
       <OpacityPanel {layer} {isOpacityPanelVisible} />
-      <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
     </p>
   </nav>
 </div>

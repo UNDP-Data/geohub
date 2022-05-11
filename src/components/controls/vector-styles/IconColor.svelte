@@ -2,11 +2,11 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import ColorPicker from '$components/controls/ColorPicker.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import MaplibreColorPicker from './MaplibreColorPicker.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -14,26 +14,21 @@
   const layerId = layer.definition.id
   const propertyName = 'icon-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+  const defaultColor = `rgba(0,0,0,1)`
 
-  let IconColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 'rgb(0, 0, 0)'
-  $: IconColor, setIconColor()
+  let rgba = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor
 
-  const setIconColor = () => {
+  const handleSetColor = (e: CustomEvent) => {
     if (style.type !== LayerTypes.SYMBOL) return
-    const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint[propertyName] = IconColor
-    $map.setPaintProperty(layerId, propertyName, IconColor)
-
+    rgba = e.detail.color
+    $map.setPaintProperty(layerId, propertyName, rgba)
     dispatch('change')
   }
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
   <StyleControlGroup title="Icon Color">
-    <ColorPicker bind:RgbColor={IconColor} />
+    <MaplibreColorPicker {rgba} on:change={handleSetColor} />
   </StyleControlGroup>
 {/if}
 
