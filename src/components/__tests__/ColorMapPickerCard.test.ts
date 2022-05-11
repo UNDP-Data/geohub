@@ -36,7 +36,6 @@ describe('Color Map Picker Card : Card Style', () => {
     expect(colorMapFigure).toHaveStyle({
       height: 'calc(1px * 30)',
       width: 'calc(2px * 30)',
-      cursor: 'pointer',
     })
   })
 
