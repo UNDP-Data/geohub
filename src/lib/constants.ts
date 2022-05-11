@@ -18,7 +18,7 @@ export enum TabNames {
   LAYERS = 'Layers',
   LEGEND = 'Legend',
   OPACITY = 'Opacity',
-  FILTER = 'Filter',
+  REFINE = 'Refine',
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
 }
@@ -60,6 +60,7 @@ export const LayerInitialValues = {
     classification: ClassificationMethodTypes.EQUIDISTANT,
     numberOfClasses: COLOR_CLASS_COUNT,
   },
+  expression: '',
 }
 
 export enum ErrorMessages {

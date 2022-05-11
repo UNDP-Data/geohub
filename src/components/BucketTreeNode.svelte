@@ -254,6 +254,7 @@
             unique: {
               colorMapRows: [],
             },
+            expression: '',
           },
           ...$layerList,
         ]
