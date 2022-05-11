@@ -58,6 +58,13 @@
           const type = getLayerTypeFromGeomType(layer.geometry)
           switch (type) {
             case LayerTypes.LINE:
+              layerTypes = [
+                {
+                  type: LayerTypes.LINE,
+                  label: 'Line',
+                },
+              ]
+              break
             case LayerTypes.FILL:
               layerTypes = [
                 {
@@ -67,10 +74,6 @@
                 {
                   type: LayerTypes.FILL,
                   label: 'Polygon',
-                },
-                {
-                  type: LayerTypes.SYMBOL,
-                  label: 'Symbol',
                 },
               ]
               break
