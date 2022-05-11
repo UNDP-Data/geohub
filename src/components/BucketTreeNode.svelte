@@ -168,7 +168,6 @@
     const layerId = uuidv4()
 
     if (!isRaster) {
-      const layerName = path.split('/')[path.split('/').length - 2]
       const layerURL = new URL(url)
       const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
         '{z}/{x}/{y}.pbf',

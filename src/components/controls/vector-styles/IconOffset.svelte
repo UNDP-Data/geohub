@@ -69,5 +69,4 @@
 {/if}
 
 <style lang="scss">
-  @import '../../../styles/vector-style-slider.scss';
 </style>

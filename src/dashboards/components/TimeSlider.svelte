@@ -1,22 +1,17 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
   import type { RasterLayerSpecification, SourceSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+
   import { LayerTypes } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
   import { map, year } from '../stores'
 
-  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
-  const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
   export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
+  export let electricitySelected
 
-  export const getHreaUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
-  }
-  export const getMlUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
-  }
-
+  const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
+  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'
   const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source'
 
@@ -24,8 +19,9 @@
   let maxValue = 2020
   let rangeSliderValues = [2020]
 
-  export let electricitySelected
   $: electricitySelected, setSlider()
+  $: rangeSliderValues, loadLayer()
+
   const setSlider = () => {
     switch (electricitySelected.name) {
       case 'HREA':
@@ -44,7 +40,13 @@
     }
   }
 
-  $: rangeSliderValues, loadLayer()
+  export const getHreaUrl = (y: number) => {
+    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
+  }
+
+  export const getMlUrl = (y: number) => {
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
+  }
 
   export function loadLayer() {
     if (!$map) return

@@ -5,7 +5,7 @@
   <nav class="navbar">
     <div class="container">
       <div class="navbar-brand">
-        <a class="navbar-item"> UNDP Dashboards </a>
+        <a href={'#'} class="navbar-item"> UNDP Dashboards </a>
       </div>
     </div>
   </nav>

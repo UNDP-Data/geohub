@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { createEventDispatcher } from 'svelte'
-  import { map } from '../stores'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
+
   import CurrentLocation from './CurrentLocation.svelte'
   import StyleSwicher from './StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
   import type { StyleDefinition } from '$lib/types'
+  import { map } from '../stores'
 
   const dispatch = createEventDispatcher()
-
   const BingMapsKey = import.meta.env.VITE_BINGMAP_KEY
-  let newMap: Map
-  let mapContainer: HTMLDivElement
 
+  let aerialBingTiles = []
+  let mapContainer: HTMLDivElement
+  let newMap: Map
   let styles: StyleDefinition[] = [
     {
       title: 'Carto',
@@ -27,7 +27,7 @@
 
   const getQuadkey = (z: number, x: number, y: number): string => {
     let quadkey = '',
-      mask
+      mask: number
     for (let i = z; i > 0; i--) {
       mask = 1 << (i - 1)
       quadkey += (x & mask ? 1 : 0) + (y & mask ? 2 : 0)
@@ -35,19 +35,16 @@
     return quadkey
   }
 
-  let aerialBingTiles = []
-
   onMount(async () => {
     const bingAerialLayerMeta = await fetchUrl(
       `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BingMapsKey}`,
     )
 
-    const { estimatedTotal, resources } = bingAerialLayerMeta.resourceSets[0]
+    const { resources } = bingAerialLayerMeta.resourceSets[0]
 
     // should probably warn user if estimatedTotal == 0
     //const aerialBingUrl = resources[0].imageUrl
     const aerialBingUrl = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
-    const signedAerialBingUrl = `${aerialBingUrl}?key=${BingMapsKey}`
     const imageUrlSubdomains = resources[0].imageUrlSubdomains
     aerialBingTiles = imageUrlSubdomains.map((el) => {
       return aerialBingUrl.replace('{subdomain}', el)
@@ -79,7 +76,7 @@
     map.update(() => newMap)
   })
 
-  export function styleChanged(e) {
+  export function styleChanged(e: CustomEvent) {
     dispatch('styleChanged', {
       style: e.detail.style,
     })

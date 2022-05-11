@@ -9,7 +9,6 @@
 
   export let drawerOpen = true
 
-  let darkTheme: boolean
   let topAppBar: TopAppBarComponentDev
 
   onMount(() => {

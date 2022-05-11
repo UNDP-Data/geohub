@@ -18,7 +18,7 @@
     <div class="card-content">
       <div class="card-image">
         <figure class="image is-4by3">
-          <img class="dashboard-image" src="electricity-snapshot.jpg" alt="Placeholder image" />
+          <img class="dashboard-image" src="electricity-snapshot.jpg" alt={'Placeholder image'} />
         </figure>
       </div>
       <div class="content">{description}</div>
@@ -45,7 +45,7 @@
     background: mintcream !important;
   }
   .dashboard-image:hover {
-    webkit-filter: blur(4px); /* Chrome, Safari, Opera */
+    -webkit-filter: blur(4px); /* Chrome, Safari, Opera */
     filter: blur(4px);
   }
   .dashboard-image {

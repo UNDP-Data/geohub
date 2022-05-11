@@ -21,7 +21,6 @@
   const SOURCE_CIRCLE = 'draw-circle-controls-source-circle'
   const LAYER_CIRCLE_OUTLINE = 'draw-circle-controls-layer-circle-outline'
 
-  let isDrawing = false
   let coordinatesCenter: number[][] = []
   let coordinatesRadius: number[][] = []
   let units = 'meters'
@@ -31,7 +30,6 @@
   const drawStart = () => {
     if ($map) {
       $map.getCanvas().style.cursor = 'crosshair'
-      isDrawing = true
       clearFeatures()
       initFeatures()
       $map.on('click', mapClickListener)
@@ -43,7 +41,6 @@
   const deleteFeatures = () => {
     if (!$map) return
     $map.getCanvas().style.cursor = ''
-    isDrawing = true
     clearFeatures()
     initFeatures()
     $map.off('click', mapClickListener)
@@ -356,7 +353,7 @@
     updateCircleFeature()
   }
 
-  const mouseUpOnPoint = (e: MapMouseEvent) => {
+  const mouseUpOnPoint = () => {
     if (!isDragging) return
     isDragging = false
     $map.getCanvasContainer().style.cursor = ''
@@ -378,7 +375,7 @@
     updateCircleFeature()
   }
 
-  const mouseUpOnCenter = (e: MapMouseEvent) => {
+  const mouseUpOnCenter = () => {
     if (!isDragging) return
     isDragging = false
     $map.getCanvasContainer().style.cursor = ''
