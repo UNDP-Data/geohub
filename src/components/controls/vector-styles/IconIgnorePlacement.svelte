@@ -1,21 +1,23 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import { createEventDispatcher } from 'svelte'
+
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  const dispatch = createEventDispatcher()
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
-  const propertyName = 'icon-ignore-placement'
 
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
+  const propertyName = 'icon-ignore-placement'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let checked = style.layout && style.layout[propertyName] ? style.layout[propertyName] : false
+
   $: checked, setIconKeepUpright()
 
   const setIconKeepUpright = () => {

@@ -3,28 +3,29 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
 
+  export let defaultValue: number
   export let layer: Layer = LayerInitialValues
+  export let layerType: LayerTypes
+  export let maxValue: number
+  export let minValue: number
+  export let propertyName: string
+  export let propertyType = 'paint'
+  export let stepValue: number
+  export let titleName: string
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
-  export let layerType: LayerTypes
-  export let propertyName: string
-  export let titleName: string
-  export let defaultValue: number
-  export let minValue: number
-  export let maxValue: number
-  export let stepValue: number
-  export let propertyType = 'paint'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let values = [
     style[propertyType] && style[propertyType][propertyName] ? style[propertyType][propertyName] : defaultValue,
   ]
+
   $: values, setValue()
 
   const setValue = () => {

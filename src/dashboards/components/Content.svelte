@@ -725,10 +725,6 @@
     border-radius: 5px;
   }
 
-  [tabindex='0'] {
-    cursor: pointer;
-  }
-
   :global(.app-content) {
     flex: auto;
     overflow: auto;

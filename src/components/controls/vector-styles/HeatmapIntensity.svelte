@@ -1,22 +1,24 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
+
+  import Slider from '$components/controls/vector-styles/Slider.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+
   const dispatch = createEventDispatcher()
   const onStyleChange = () => {
     dispatch('change')
   }
 
   export let layer: Layer = LayerInitialValues
-  import Slider from '$components/controls/vector-styles/Slider.svelte'
 
-  let layerType = LayerTypes.HEATMAP
-  let propertyName = 'heatmap-intensity'
-  let titleName = 'Heatmap Intensity'
   let defaultValue = 1
-  let minValue = 0
+  let layerType = LayerTypes.HEATMAP
   let maxValue = 5
+  let minValue = 0
+  let propertyName = 'heatmap-intensity'
   let stepValue = 0.1
+  let titleName = 'Heatmap Intensity'
 </script>
 
 <Slider

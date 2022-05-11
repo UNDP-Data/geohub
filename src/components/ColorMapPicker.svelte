@@ -32,8 +32,10 @@
   }
 
   const handleColorMapClick = (colorMapName: string) => {
-    dispatch('handleColorMapClick', { colorMapName })
-    layer.colorMapName = colorMapName
+    if (colorMapName !== layer.colorMapName) {
+      dispatch('handleColorMapClick', { colorMapName })
+      layer.colorMapName = colorMapName
+    }
   }
 
   const handleClosePopup = () => {

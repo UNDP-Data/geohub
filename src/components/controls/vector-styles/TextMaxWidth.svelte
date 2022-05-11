@@ -1,23 +1,25 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import { createEventDispatcher } from 'svelte'
+
+  import Slider from '$components/controls/vector-styles/Slider.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+
+  export let layer: Layer = LayerInitialValues
+
   const dispatch = createEventDispatcher()
   const onStyleChange = () => {
     dispatch('change')
   }
 
-  export let layer: Layer = LayerInitialValues
-  import Slider from '$components/controls/vector-styles/Slider.svelte'
-
-  let layerType = LayerTypes.SYMBOL
-  let propertyName = 'text-max-width'
-  let titleName = 'Text Max Width'
   let defaultValue = 10
-  let minValue = 0
+  let layerType = LayerTypes.SYMBOL
   let maxValue = 20
-  let stepValue = 1
+  let minValue = 0
+  let propertyName = 'text-max-width'
   let propertyType = 'layout'
+  let stepValue = 1
+  let titleName = 'Text Max Width'
 </script>
 
 <Slider

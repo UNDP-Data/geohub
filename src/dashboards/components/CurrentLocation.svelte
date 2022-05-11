@@ -58,12 +58,12 @@
     background-color: #fff;
     border-radius: 10px;
     border: 1px solid #ccc;
-    top: 10px;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
     left: 10px;
     padding: 10px;
     position: absolute;
+    top: 10px;
   }
 </style>

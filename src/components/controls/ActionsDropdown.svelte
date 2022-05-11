@@ -29,9 +29,9 @@
   let mapLayerLength = mapLayers.length - 1
   let showTooltip = false
 
-  export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
-
   $: isDynamicLayer, setDynamicLayerState()
+
+  export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
 
   const setDynamicLayerState = () => {
     dynamicLayerIds[layerId] = isDynamicLayer

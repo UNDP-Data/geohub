@@ -2,16 +2,15 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import ColorPicker from '$components/controls/ColorPicker.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import ColorPicker from '../ColorPicker.svelte'
-
-  const dispatch = createEventDispatcher()
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'icon-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]

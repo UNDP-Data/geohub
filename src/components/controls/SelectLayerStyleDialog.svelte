@@ -1,41 +1,133 @@
 <script lang="ts">
+  import Autocomplete from '@smui-extra/autocomplete'
   import Button, { Label as LabelButton } from '@smui/button'
   import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
   import FormField from '@smui/form-field'
   import Radio from '@smui/radio'
-  import Textfield from '@smui/textfield'
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
     FillLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
+    VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { cloneDeep } from 'lodash-es'
+  import { cloneDeep, find } from 'lodash-es'
 
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerTypes } from '$lib/constants'
+  import type { TreeNode } from '$lib/types'
   import { map, layerList } from '$stores'
 
-  export let label: string
-  export let path: string
   export let SelectLayerStyleDialogVisible = false
-  export let url: string
+  export let tree: TreeNode
 
+  let layerIdList: string[]
   let layerType = LayerTypes.LINE
-  let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-  let tileSourceId = path
+  let layerTypes = []
+  let selectedLayerId: string | undefined = tree.label
+  let tileSourceId = tree.path
 
-  const addLayer = () => {
+  $: SelectLayerStyleDialogVisible, init()
+  $: selectedLayerId, setLayerTypeList()
+  $: layerIdList, setLayerTypeList()
+
+  const init = async () => {
+    if (SelectLayerStyleDialogVisible !== true) return
+    const vector_layers = tree.metadata.json.vector_layers
+    layerIdList = vector_layers.map((l) => {
+      return l.id
+    })
+  }
+
+  const getLayerTypeFromGeomType = (geomType: string) => {
+    if (geomType.toLowerCase().includes('point')) return LayerTypes.SYMBOL
+    if (geomType.toLowerCase().includes('linestring')) return LayerTypes.LINE
+    if (geomType.toLowerCase().includes('polygon')) return LayerTypes.FILL
+    if (geomType.toLowerCase().includes('multipoint')) return LayerTypes.SYMBOL
+    if (geomType.toLowerCase().includes('multilinestring')) return LayerTypes.LINE
+    if (geomType.toLowerCase().includes('multipolygon')) return LayerTypes.FILL
+  }
+
+  const setLayerTypeList = () => {
+    if (selectedLayerId && tree.metadata) {
+      const tilestats = tree.metadata.json.tilestats
+      if (tilestats) {
+        const layer = tilestats.layers.find((layer) => layer.layer == selectedLayerId)
+        if (layer) {
+          const type = getLayerTypeFromGeomType(layer.geometry)
+          switch (type) {
+            case LayerTypes.LINE:
+            case LayerTypes.FILL:
+              layerTypes = [
+                {
+                  type: LayerTypes.LINE,
+                  label: 'Line',
+                },
+                {
+                  type: LayerTypes.FILL,
+                  label: 'Polygon',
+                },
+                {
+                  type: LayerTypes.SYMBOL,
+                  label: 'Symbol',
+                },
+              ]
+              break
+            case LayerTypes.SYMBOL:
+              layerTypes = [
+                {
+                  type: LayerTypes.SYMBOL,
+                  label: 'Symbol',
+                },
+                {
+                  type: LayerTypes.HEATMAP,
+                  label: 'Heatmap',
+                },
+              ]
+              break
+            default:
+              break
+          }
+          layerType = type
+          return
+        }
+      }
+    }
+    layerTypes = [
+      {
+        type: LayerTypes.LINE,
+        label: 'Line',
+      },
+      {
+        type: LayerTypes.FILL,
+        label: 'Polygon',
+      },
+      {
+        type: LayerTypes.SYMBOL,
+        label: 'Symbol',
+      },
+      {
+        type: LayerTypes.HEATMAP,
+        label: 'Heatmap',
+      },
+    ]
+    layerType = LayerTypes.LINE
+  }
+
+  const addLayer = async () => {
     if (!$map.getSource(tileSourceId)) {
-      const layerSource = {
+      const layerSource: VectorSourceSpecification = {
         type: LayerTypes.VECTOR,
-        tiles: [url],
+        tiles: [tree.url],
+        minzoom: tree.metadata.minzoom | 0,
+        maxzoom: tree.metadata.maxzoom | 24,
       }
       if (!(tileSourceId in $map.getStyle().sources)) {
         $map.addSource(tileSourceId, layerSource)
       }
     }
-    const layerId = uuidv4()
+    const layerId = `${selectedLayerId}-${uuidv4()}`
     let layerDefinition:
       | LineLayerSpecification
       | FillLayerSpecification
@@ -47,7 +139,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
             'icon-image': 'circle',
@@ -60,7 +152,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
             'line-cap': 'round',
@@ -77,7 +169,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
           },
@@ -93,7 +185,7 @@
           id: layerId,
           type: layerType,
           source: tileSourceId,
-          'source-layer': label,
+          'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
           },
@@ -126,11 +218,22 @@
         return
     }
 
-    const layerName = path.split('/')[path.split('/').length - 2]
+    layerDefinition.minzoom = Number(tree.metadata.minzoom && tree.metadata.minzoom >= 0 ? tree.metadata.minzoom : 0)
+    layerDefinition.maxzoom = Number(tree.metadata.maxzoom && tree.metadata.maxzoom <= 24 ? tree.metadata.maxzoom : 24)
+
+    const layerName = tree.path.split('/')[tree.path.split('/').length - 2]
     $layerList = [
-      { name: layerName, definition: layerDefinition, type: LayerTypes.VECTOR, visible: true },
+      {
+        name: layerName,
+        definition: layerDefinition,
+        type: LayerTypes.VECTOR,
+        info: tree.metadata,
+        visible: true,
+        url: tree.url,
+      },
       ...$layerList,
     ]
+
     $map.addLayer(layerDefinition)
 
     // set layer list features properties to diplay in query panel info
@@ -146,34 +249,32 @@
   }
 </script>
 
-<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 400px; height: 300px">
+<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 430px; height: 300px">
   <Title>Add Layer</Title>
   <ContentDialog>
-    <div>Name</div>
-    <Textfield bind:value={label} style="height: 25px;" />
-    <br /><br />
-
-    <div>Type</div>
-    <div>
+    <Autocomplete combobox options={layerIdList} bind:value={selectedLayerId} label="Layer ID" />
+    <StyleControlGroup title={'Type'}>
       <div class="layer-type">
         {#each layerTypes as type}
           <FormField>
-            <Radio bind:group={layerType} value={type} />
+            <Radio bind:group={layerType} value={type.type} />
             <span slot="label">
-              {type}
+              {type.label}
             </span>
           </FormField>
         {/each}
       </div>
-    </div>
+    </StyleControlGroup>
   </ContentDialog>
   <ActionsDialog>
     <Button>
       <LabelButton>Cancel</LabelButton>
     </Button>
-    <Button on:click={() => addLayer()}>
-      <LabelButton>Add</LabelButton>
-    </Button>
+    {#if selectedLayerId && layerIdList && layerIdList.includes(selectedLayerId)}
+      <Button on:click={() => addLayer()}>
+        <LabelButton>Add</LabelButton>
+      </Button>
+    {/if}
   </ActionsDialog>
 </Dialog>
 

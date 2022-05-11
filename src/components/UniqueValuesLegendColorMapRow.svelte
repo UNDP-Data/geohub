@@ -81,12 +81,14 @@
   }
 </script>
 
-<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">
+<div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
   <div class="column is-1 color-picker">
     <div
       id={`interval-${colorMapRow.index}`}
       on:click={() => handleColorPickerClick()}
       class="discrete"
+      alt="Color Map Control"
+      title="Color Map Control"
       style={colorPickerStyle} />
 
     {#if showToolTip}
@@ -97,11 +99,23 @@
   </div>
 
   <div class="column is-1 minimum">
-    <input id="minimum" class="input is-small is-static" type="text" value={colorMapRow.start} />
+    <input
+      id="minimum"
+      alt="Start Value"
+      title="Start Value"
+      class="input is-small is-static"
+      type="text"
+      value={colorMapRow.start} />
   </div>
 
   <div class="column maximum">
-    <input id="maximum" class="input is-small is-static" type="text" value={colorMapRow.end} />
+    <input
+      id="maximum"
+      alt="End Value"
+      title="End Value"
+      class="input is-small is-static"
+      type="text"
+      value={colorMapRow.end} />
   </div>
 </div>
 

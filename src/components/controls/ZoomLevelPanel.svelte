@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues } from '$lib/constants'
   import MinMaxZoom from '$components/controls/vector-styles/MinMaxZoom.svelte'
+  import { LayerInitialValues } from '$lib/constants'
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
   export let isZoomLevelPanelVisible = false

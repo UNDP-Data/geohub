@@ -1,21 +1,22 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Map } from 'maplibre-gl'
-  import { map } from '../stores'
-  import type { StyleDefinition } from '$lib/types'
 
-  const dispatch = createEventDispatcher()
+  import type { StyleDefinition } from '$lib/types'
+  import { map } from '../stores'
 
   export let stylePrimary: StyleDefinition
   export let styleSecondary: StyleDefinition
+
+  const dispatch = createEventDispatcher()
+
   let activeStyle: StyleDefinition
   let buttonStyle: StyleDefinition
   let mainContainerId = 'main-switch-container'
   let mapToggle: Map
 
-  const createMap = (id, uri) => {
+  const createMap = (id: string, uri: string) => {
     return new Map({
       container: id,
       style: uri,

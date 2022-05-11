@@ -22,7 +22,6 @@
 
   $: {
     isLegendPanelVisible = false
-    isFilterPanelVisible = false
     isOpacityPanelVisible = false
     isZoomLevelPanelVisible = false
 

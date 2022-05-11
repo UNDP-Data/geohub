@@ -9,14 +9,15 @@
   import { map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
+
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import DefaultColorPicker from '../../DefaultColorPicker.svelte'
   import chroma from 'chroma-js'
 
-  const dispatch = createEventDispatcher()
-
   export let layer: Layer = LayerInitialValues
   let showToolTip = false
+
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'text-halo-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]

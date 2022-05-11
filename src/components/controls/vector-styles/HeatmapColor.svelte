@@ -1,18 +1,17 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { map } from '$stores'
-  import type { Layer } from '$lib/types'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import chroma from 'chroma-js'
-  import DefaultColorPicker from '../../DefaultColorPicker.svelte'
   import Ripple from '@smui/ripple'
 
+  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer } from '$lib/types'
+  import { map } from '$stores'
+
   export let layer: Layer = LayerInitialValues
-  const dispatch = createEventDispatcher()
-  const layerId = layer.definition.id
-  const propertyName = 'heatmap-color'
+
   const defaultValue = [
     'interpolate',
     ['linear'],
@@ -30,10 +29,15 @@
     1,
     'rgb(255,0,0)',
   ]
+  const dispatch = createEventDispatcher()
+  const layerId = layer.definition.id
+  const propertyName = 'heatmap-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+
+  let colorIndex: number
+  let colorValues = []
   let heatmapColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultValue
   let showToolTip = false
-  let colorIndex
 
   const generateColorObject = (rgbColor: string) => {
     let String = rgbColor.replace('rgba(', '').replace('rgb(', '').replace(')', '')
@@ -41,24 +45,16 @@
     let r = parseInt(rgbArray[0])
     let g = parseInt(rgbArray[1])
     let b = parseInt(rgbArray[2])
+    let a = 1
     return {
       r,
       g,
       b,
+      a,
       hex: chroma([r, g, b]).hex('rgb'),
       h: chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
-    }
-  }
-
-  let colorValues = []
-  for (let i = 3; i < heatmapColor.length; i++) {
-    const val = heatmapColor[i]
-    if (typeof val === 'number') {
-      colorValues.push({ seq: i, value: val })
-    } else if (typeof val === 'string') {
-      colorValues[colorValues.length - 1].color = generateColorObject(val)
     }
   }
 
@@ -71,7 +67,6 @@
       const g = value.color.g
       const b = value.color.b
       const a = value.color.a
-      console.log('ALPHA')
       let colorValue = `rgba(${r},${g},${b},${a})`
       if (i === 0) {
         const rgb = [value.color.r, value.color.g, value.color.b]
@@ -87,6 +82,15 @@
     $map.setPaintProperty(layerId, propertyName, heatmapColor)
     dispatch('change')
   }
+
+  for (let i = 3; i < heatmapColor.length; i++) {
+    const val = heatmapColor[i]
+    if (typeof val === 'number') {
+      colorValues.push({ seq: i, value: val })
+    } else if (typeof val === 'string') {
+      colorValues[colorValues.length - 1].color = generateColorObject(val)
+    }
+  }
 </script>
 
 {#if style.type === LayerTypes.HEATMAP}
@@ -94,7 +98,7 @@
     <table>
       {#each colorValues as colorValue, index}
         <tr>
-          <td className="color-table-td">
+          <td class="color-table-td">
             {#if showToolTip}
               <div class={showToolTip && colorIndex === index ? 'tooltipshown' : 'tooltiphidden'}>
                 <DefaultColorPicker
@@ -114,7 +118,7 @@
               ].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[index].color.a})" />
             <!--            <ColorPicker bind:RgbColor={color.color} />-->
           </td>
-          <td className="color-table-td"
+          <td class="color-table-td"
             >rgba({colorValues[index].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[
               index
             ].color.a})</td>

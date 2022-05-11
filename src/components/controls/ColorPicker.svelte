@@ -30,10 +30,11 @@
     matrixHeight: 150,
     scrollbarHeight: 10,
   }
-  export let color
-  export let RgbColor = ''
+
   export let collapse = true
+  export let color
   export let position
+  export let RgbColor = ''
 
   const rgb2hex = (rgbColor: string): string => {
     const rgbText = rgbColor.replace('rgb(', '').replace(')', '').replace(' ', '').split(',')
@@ -45,10 +46,6 @@
     return hex
   }
 
-  let hexColor = rgb2hex(RgbColor)
-
-  let hexColorObject = Color.hex(hexColor)
-  $: hexColorObject, colorToRGB()
   const colorToRGB = () => {
     RgbColor = `rgb(${Math.round(hexColorObject.data.r)}, ${Math.round(hexColorObject.data.g)}, ${Math.round(
       hexColorObject.data.b,
@@ -64,9 +61,12 @@
     hexColorObject = Color.hex(hexColor)
   }
 
-  $: color, generateHex()
+  let hexColor = rgb2hex(RgbColor)
+  let hexColorObject = Color.hex(hexColor)
 
+  $: color, generateHex()
   $: hexColorObject, changeColor()
+  $: hexColorObject, colorToRGB()
   $: hexColorObject, getIndex()
 
   const dispatch = createEventDispatcher()
