@@ -12,7 +12,7 @@ describe('Number Input : Default Values', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     sut = render(NumberInput, {
-      value: 5
+      value: 5,
     })
     viewContainer = sut.getByTestId('number-input-view-container')
   })
@@ -152,4 +152,3 @@ describe('Number Input : Step Values', () => {
     expect(sut.getByTitle('Number Label')).toHaveTextContent('10')
   })
 })
-

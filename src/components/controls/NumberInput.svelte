@@ -3,6 +3,7 @@
   import Fa from 'svelte-fa'
   import { faCircleMinus } from '@fortawesome/free-solid-svg-icons/faCircleMinus'
   import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
+  import BigNumber from 'bignumber.js'
 
   const dispatch = createEventDispatcher()
 
@@ -13,10 +14,10 @@
 
   const handleIncrementDecrementClasses = (operation: string) => {
     if (operation === '+' && value < maxValue) {
-      value = value + step
+      value = new BigNumber(value).plus(step).toNumber()
     }
     if (operation === '-' && value > minValue) {
-      value = value - step
+      value = new BigNumber(value).minus(step).toNumber()
     }
     dispatch('change', { value })
   }
