@@ -27,6 +27,11 @@
     operators: ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0', '(', ')'],
   }
 
+  const functionsList  = {
+    title: 'Functions',
+    operators: ['where(cond, true, false)', 'sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs'],
+  }
+
   const handleClearExpression = () => {
     expression = ''
     handleApplyExpression()
@@ -52,12 +57,26 @@
 </script>
 
 <div class="refine-view-container" data-testid="refine-view-container">
-  <div class="columns is-gapless">
+  <div class="columns">
     <div class="column">
       <div class="numbers">
         <div class="is-size-7 has-text-weight-semibold">{numbers.title}</div>
         <div class="buttons">
           {#each numbers.operators as operator}
+            <button
+              class="button is-small"
+              on:click={() => handleAddOperator(operator)}
+              alt={operator}
+              title={operator}>
+              <span>{operator}</span>
+            </button>
+          {/each}
+        </div>
+      </div>
+      <div class="functions">
+        <div class="is-size-7 has-text-weight-semibold">{functionsList.title}</div>
+        <div class="buttons">
+          {#each functionsList.operators as operator}
             <button
               class="button is-small"
               on:click={() => handleAddOperator(operator)}
@@ -151,17 +170,23 @@
 
 <style lang="scss">
   .refine-view-container {
-    padding-left: 25px;
+    padding-left: 10px;
 
     > div {
-      margin-bottom: 0;
+      margin-bottom: 15px;
     }
 
     .comparison,
     .arithmetic,
     .numbers {
       max-width: 130px;
-      width: 130px;
+      width: 150px;
+    }
+
+    .functions {
+      button {
+        min-width: 40px;
+      }
     }
 
     .numbers,
