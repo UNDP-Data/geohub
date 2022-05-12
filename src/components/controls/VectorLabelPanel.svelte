@@ -107,69 +107,66 @@
 
 {#if isLabelPanelVisible === true}
   <div class="action">
-    <div>
-      <FormField>
-        <Switch bind:checked={enabledTextLabel} />
-        <span slot="label"><div class="title is-size-5">Create label</div></span>
-      </FormField>
-    </div>
-    {#if enabledTextLabel === true}
-      <hr />
-      <div class="columns is-flex is-vcentered">
-        <div class="column is-4">
-          <div class="title is-size-6">Property</div>
-        </div>
-        <div class="column">
+    <div class="columns is-flex is-vcentered">
+      <div class="column is-3">
+        <FormField>
+          <Switch bind:checked={enabledTextLabel} />
+        </FormField>
+      </div>
+      {#if enabledTextLabel === true}
+        <div class="column is-vcentered">
           <div>
             <TextField on:change={onStyleChange} bind:layer={targetLayer} {enabledTextLabel} />
           </div>
         </div>
-      </div>
-      <div class="columns is-flex is-vcentered">
-        <div class="column is-4">
-          <div class="title is-size-6">Font color</div>
-        </div>
-        <div class="column">
-          <div>
-            <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
+      {/if}
+    </div>
+    {#if enabledTextLabel === true}
+      <div class="container notification is-secondary">
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-3">
+            <div class="is-size-6">Font color</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
+            </div>
+          </div>
+          <div class="column is-2">
+            <div class="is-size-6">Font size</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
+            </div>
           </div>
         </div>
-        <div class="column is-4">
-          <div class="title is-size-6">Halo color</div>
-        </div>
-        <div class="column">
-          <div>
-            <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-3">
+            <div class="is-size-6">Halo color</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
+            </div>
+          </div>
+          <div class="column is-2">
+            <div class="is-size-6">Halo width</div>
+          </div>
+          <div class="column">
+            <div>
+              <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="columns is-flex is-vcentered">
-        <div class="column is-4">
-          <div class="title is-size-6">Font Size</div>
-        </div>
-        <div class="column">
-          <div>
-            <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
+        <div class="columns is-flex is-vcentered">
+          <div class="column is-7">
+            <div class="is-size-6">Text Max Width</div>
           </div>
-        </div>
-      </div>
-      <div class="columns is-flex is-vcentered">
-        <div class="column is-4">
-          <div class="title is-size-6">Halo Width</div>
-        </div>
-        <div class="column">
-          <div>
-            <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
-          </div>
-        </div>
-      </div>
-      <div class="columns is-flex is-vcentered">
-        <div class="column is-4">
-          <div class="title is-size-6">Max Width</div>
-        </div>
-        <div class="column">
-          <div>
-            <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
+          <div class="column">
+            <div>
+              <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
+            </div>
           </div>
         </div>
       </div>
