@@ -255,6 +255,7 @@
               colorMapRows: [],
             },
             expression: '',
+            legendType: '',
           },
           ...$layerList,
         ]

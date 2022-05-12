@@ -61,6 +61,7 @@ export const LayerInitialValues = {
     numberOfClasses: COLOR_CLASS_COUNT,
   },
   expression: '',
+  legendType: '',
 }
 
 export enum ErrorMessages {
