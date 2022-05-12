@@ -37,22 +37,25 @@ describe('Refine Container', () => {
     const numbersButton = sut.getByTitle('7')
     await fireEvent.click(numbersButton)
 
+    const functionsButton = sut.getByTitle('sin')
+    await fireEvent.click(functionsButton)
+
     const expressionInput = sut.getByTitle('Expression input')
-    expect(expressionInput).toHaveValue('&=*7')
+    expect(expressionInput).toHaveValue('&=*7sin')
   })
 
   it('should input an expression to the input field', async () => {
     let expressionInput = sut.getByTitle('Expression input')
     expect(expressionInput).toBeDefined()
-    await fireEvent.input(expressionInput, { target: { value: 'where((b1==1)|(b1%3E0.9),1,0);' } })
+    await fireEvent.input(expressionInput, { target: { value: 'where((b1==1)|(b1>0.9),1,0);' } })
     expressionInput = sut.getByTitle('Expression input')
-    expect(expressionInput).toHaveValue('where((b1==1)|(b1%3E0.9),1,0);')
+    expect(expressionInput).toHaveValue('where((b1==1)|(b1>0.9),1,0);')
   })
 
   it('should clear an expression upon click of the clear button', async () => {
     const spy = vi.spyOn(helper, 'updateParamsInURL')
     let expressionInput = sut.getByTitle('Expression input')
-    await fireEvent.input(expressionInput, { target: { value: 'where((b1==1)|(b1%3E0.9),1,0);' } })
+    await fireEvent.input(expressionInput, { target: { value: 'where((b1==1)|(b1>0.9),1,0);' } })
 
     const clearButton = sut.getByTitle('Clear expression button')
     await fireEvent.click(clearButton)
@@ -78,7 +81,7 @@ describe('Refine Container', () => {
 describe('Refine Container : Expression Data in Layer ', () => {
   let sut: RenderResult
   let viewContainer: HTMLElement
-  const expression = 'where((b1==1)|(b1%3E0.9),1,0);'
+  const expression = 'where((b1==1)|(b1>0.9),1,0);'
 
   beforeEach(() => {
     layer.expression = expression
