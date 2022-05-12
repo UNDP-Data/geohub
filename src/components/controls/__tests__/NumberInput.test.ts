@@ -152,3 +152,47 @@ describe('Number Input : Step Values', () => {
     expect(sut.getByTitle('Number Label')).toHaveTextContent('10')
   })
 })
+
+describe('Number Input : Float Step Values', () => {
+  let sut: RenderResult
+  let viewContainer: HTMLElement
+
+  beforeEach(() => {
+    vi.resetAllMocks()
+    sut = render(NumberInput, {
+      value: 6,
+      minValue: 0,
+      maxValue: 10,
+      step: 0.1,
+    })
+    viewContainer = sut.getByTestId('number-input-view-container')
+  })
+
+  it('should render the container', () => {
+    expect(viewContainer).toBeDefined()
+  })
+
+  it('should display the number', () => {
+    const numberOfClasses = sut.getByTitle('Number Label')
+    expect(numberOfClasses).toBeDefined()
+    expect(numberOfClasses).toHaveTextContent('6')
+  })
+
+  it('should decrease the number upon click of decrease button to the minimum', async () => {
+    const decreaseClassesButton = sut.getByTitle('Decrease number')
+    expect(decreaseClassesButton).toBeDefined()
+    await fireEvent.click(decreaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('5.9')
+    await fireEvent.click(decreaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('5.8')
+  })
+
+  it('should increase the number of classes upon click of increase button to the maximum', async () => {
+    const increaseClassesButton = sut.getByTitle('Increase number')
+    expect(increaseClassesButton).toBeDefined()
+    await fireEvent.click(increaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6.1')
+    await fireEvent.click(increaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6.2')
+  })
+})
