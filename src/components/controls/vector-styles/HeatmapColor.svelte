@@ -116,7 +116,6 @@
               style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: rgba({colorValues[
                 index
               ].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[index].color.a})" />
-            <!--            <ColorPicker bind:RgbColor={color.color} />-->
           </td>
           <td class="color-table-td"
             >rgba({colorValues[index].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[

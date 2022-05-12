@@ -264,10 +264,4 @@
 </Dialog>
 
 <style lang="scss">
-  .layer-type {
-    align-items: left;
-    flex-direction: row;
-    gap: 10px;
-    display: flex;
-  }
 </style>

@@ -62,7 +62,7 @@
     }
 
     Object.keys(indicatorProgressEvents).forEach((state) => {
-      indicatorProgressEvents[state].forEach((event: any) => {
+      indicatorProgressEvents[state].forEach((event: string) => {
         newMap.on(event, () => {
           $indicatorProgress = state === 'true'
         })
