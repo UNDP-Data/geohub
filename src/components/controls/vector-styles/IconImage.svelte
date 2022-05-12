@@ -3,6 +3,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import ImageList, { Item } from '@smui/image-list'
   import Tooltip, { Wrapper } from '@smui/tooltip'
+  import Dialog, { Title, Content } from '@smui/dialog'
   import { onMount } from 'svelte'
 
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
@@ -53,37 +54,40 @@
     <div on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
       <VectorLegendSymbol bind:updateLegend {layer} />
     </div>
-    {#if isIconListPanelVisible === true}
-      <!-- <StyleControlGroup title="Icon Image List"> -->
-      <div class="imageList">
-        <ImageList>
-          {#each $spriteImageList as icon}
-            <Item>
-              <Wrapper>
-                <div class="icon">
-                  <input
-                    type="image"
-                    src={icon.src}
-                    alt={icon.alt}
-                    style="width:24px;height:24px"
-                    value={icon.alt}
-                    on:click={onClick} />
-                </div>
-                <Tooltip>{icon.alt}</Tooltip>
-              </Wrapper>
-            </Item>
-          {/each}
-        </ImageList>
-      </div>
-      <!-- </StyleControlGroup> -->
-    {/if}
   </StyleControlGroup>
 {/if}
+
+<Dialog bind:open={isIconListPanelVisible} selection aria-labelledby="list-title" aria-describedby="list-content">
+  <Title id="list-title">Icon images</Title>
+  <Content id="list-content">
+    <div class="imageList">
+      <ImageList>
+        {#each $spriteImageList as icon}
+          <Item>
+            <Wrapper>
+              <div class="icon">
+                <input
+                  type="image"
+                  src={icon.src}
+                  alt={icon.alt}
+                  style="width:24px;height:24px"
+                  value={icon.alt}
+                  on:click={onClick} />
+              </div>
+              <Tooltip>{icon.alt}</Tooltip>
+            </Wrapper>
+          </Item>
+        {/each}
+      </ImageList>
+    </div>
+  </Content>
+</Dialog>
 
 <style lang="scss">
   @use '@material/image-list/index' as image-list;
   .imageList {
-    max-height: 150px;
+    max-height: 300px;
+    max-width: 350px;
     overflow-x: hiden;
     overflow-y: scroll;
 
