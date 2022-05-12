@@ -40,8 +40,14 @@
           maxzoom: style.maxzoom,
           layout: {
             visibility: 'visible',
+            'text-size': 16,
+            'text-max-width': 10,
           },
-          paint: {},
+          paint: {
+            'text-color': 'rgba(0,0,0,1)',
+            'text-halo-color': 'rgba(255,255,255,1)',
+            'text-halo-width': 1,
+          },
         }
 
         $map.addLayer(childLayer)
