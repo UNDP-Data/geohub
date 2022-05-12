@@ -12,7 +12,6 @@
     VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { cloneDeep } from 'lodash-es'
-
   import { LayerTypes } from '$lib/constants'
   import type { TreeNode } from '$lib/types'
   import { map, layerList } from '$stores'

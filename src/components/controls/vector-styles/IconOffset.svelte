@@ -1,12 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import RangeSlider from 'svelte-range-slider-pips'
-
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import NumberInput from '../NumberInput.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -17,11 +15,14 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let iconOffsetValues = style.layout && style.layout[propertyName] ? style.layout[propertyName] : [0, 0]
-  let xValues = [iconOffsetValues[0]]
-  let yValues = [iconOffsetValues[1]]
+  let xValue = iconOffsetValues[0]
+  let yValue = iconOffsetValues[1]
+  let minValue = -10
+  let maxValue = 10
+  let step = 1
 
-  $: xValues, setIconOffset()
-  $: yValues, setIconOffset()
+  $: xValue, setIconOffset()
+  $: yValue, setIconOffset()
 
   const setIconOffset = () => {
     if (style.type !== LayerTypes.SYMBOL) return
@@ -29,7 +30,7 @@
     if (!newStyle.layout) {
       newStyle.layout = {}
     }
-    iconOffsetValues = [xValues[0], yValues[0]]
+    iconOffsetValues = [xValue, yValue]
     newStyle.layout[propertyName] = iconOffsetValues
     $map.setLayoutProperty(layerId, propertyName, iconOffsetValues)
 
@@ -38,34 +39,20 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <StyleControlGroup title="Icon Offset">
-    <p>X offset</p>
-    <div class="slider">
-      <RangeSlider
-        bind:values={xValues}
-        float
-        min={-10}
-        max={10}
-        step={0.1}
-        pips
-        first="label"
-        last="label"
-        rest={false} />
+  <div class="columns is-flex is-vcentered">
+    <div class="column is-2">
+      <div class="is-size-6">X offset</div>
     </div>
-    <p>Y offset</p>
-    <div class="slider">
-      <RangeSlider
-        bind:values={yValues}
-        float
-        min={-10}
-        max={10}
-        step={0.1}
-        pips
-        first="label"
-        last="label"
-        rest={false} />
+    <div class="column">
+      <NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
     </div>
-  </StyleControlGroup>
+    <div class="column is-2">
+      <div class="is-size-6">Y offset</div>
+    </div>
+    <div class="column">
+      <NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
+    </div>
+  </div>
 {/if}
 
 <style lang="scss">

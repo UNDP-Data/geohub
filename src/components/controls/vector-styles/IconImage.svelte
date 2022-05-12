@@ -5,8 +5,6 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Dialog, { Title, Content } from '@smui/dialog'
   import { onMount } from 'svelte'
-
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import VectorLegendSymbol from '$components/controls/VectorLegendSymbol.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
@@ -50,11 +48,9 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <StyleControlGroup title="Icon Image">
-    <div class="icon-button" on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
-      <VectorLegendSymbol bind:updateLegend {layer} />
-    </div>
-  </StyleControlGroup>
+  <div class="icon-button" on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
+    <VectorLegendSymbol bind:updateLegend {layer} />
+  </div>
 {/if}
 
 <Dialog bind:open={isIconListPanelVisible} selection aria-labelledby="list-title" aria-describedby="list-content">

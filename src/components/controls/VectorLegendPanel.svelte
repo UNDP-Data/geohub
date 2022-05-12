@@ -8,7 +8,6 @@
   import IconColor from '$components/controls/vector-styles/IconColor.svelte'
   import IconIgnorePlacement from '$components/controls/vector-styles/IconIgnorePlacement.svelte'
   import IconImage from '$components/controls/vector-styles/IconImage.svelte'
-  import IconKeepUpright from '$components/controls/vector-styles/IconKeepUpright.svelte'
   import IconOffset from '$components/controls/vector-styles/IconOffset.svelte'
   import IconOverlap from '$components/controls/vector-styles/IconOverlap.svelte'
   import IconSize from '$components/controls/vector-styles/IconSize.svelte'
@@ -17,41 +16,84 @@
   import LineDasharray from '$components/controls/vector-styles/LineDasharray.svelte'
   import LineJoin from '$components/controls/vector-styles/LineJoin.svelte'
   import LineWidth from '$components/controls/vector-styles/LineWidth.svelte'
-  import VectorLegendSymbol from '$components/controls/VectorLegendSymbol.svelte'
-  import { LayerInitialValues } from '$lib/constants'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { map } from '$stores'
 
   export let isLegendPanelVisible = false
   export let layer: Layer = LayerInitialValues
-
-  let updateLegend = () => undefined
-
-  const onStyleChange = () => {
-    updateLegend()
-  }
+  const layerId = layer.definition.id
+  const style: LayerSpecification = $map
+    .getStyle()
+    .layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 </script>
 
 {#if isLegendPanelVisible === true}
   <div class="action">
-    <VectorLegendSymbol bind:updateLegend {layer} />
-    <LineWidth on:change={onStyleChange} {layer} />
-    <LineBlur on:change={onStyleChange} {layer} />
-    <LineColor on:change={onStyleChange} {layer} />
-    <LineDasharray on:change={onStyleChange} {layer} />
-    <LineJoin on:change={onStyleChange} {layer} />
-    <FillColor on:change={onStyleChange} {layer} />
-    <FillOutlineColor on:change={onStyleChange} {layer} />
-    <IconImage on:change={onStyleChange} {layer} />
-    <IconColor on:change={onStyleChange} {layer} />
-    <IconSize on:change={onStyleChange} {layer} />
-    <IconOverlap on:change={onStyleChange} {layer} />
-    <IconKeepUpright on:change={onStyleChange} {layer} />
-    <IconIgnorePlacement on:change={onStyleChange} {layer} />
-    <IconOffset on:change={onStyleChange} {layer} />
-    <HeatmapColor on:change={onStyleChange} {layer} />
-    <HeatmapIntensity on:change={onStyleChange} {layer} />
-    <HeatmapRadius on:change={onStyleChange} {layer} />
-    <HeatmapWeight on:change={onStyleChange} {layer} />
+    {#if style.type === LayerTypes.LINE}
+      <LineWidth {layer} />
+      <LineBlur {layer} />
+      <LineColor {layer} />
+      <LineDasharray {layer} />
+      <LineJoin {layer} />
+    {:else if style.type === LayerTypes.FILL}
+      <FillColor {layer} />
+      <FillOutlineColor {layer} />
+    {:else if style.type === LayerTypes.SYMBOL}
+      <div class="columns is-flex is-vcentered">
+        <div class="column is-2">
+          <div class="is-size-6">Icon</div>
+        </div>
+        <div class="column">
+          <div>
+            <IconImage {layer} />
+          </div>
+        </div>
+        <div class="column">
+          <div class="is-size-6">Size</div>
+        </div>
+        <div class="column is-5">
+          <div>
+            <IconSize {layer} />
+          </div>
+        </div>
+      </div>
+      <div class="columns is-flex is-vcentered">
+        <div class="column is-2">
+          <div class="is-size-6">Color</div>
+        </div>
+        <div class="column">
+          <div>
+            <IconColor {layer} />
+          </div>
+        </div>
+        <div class="column">
+          <div class="is-size-6">Overlap</div>
+        </div>
+        <div class="column is-5">
+          <div>
+            <IconOverlap {layer} />
+          </div>
+        </div>
+      </div>
+      <IconOffset {layer} />
+      <div class="columns is-flex is-vcentered">
+        <div class="column is-3">
+          <div class="is-size-6">Ignore placement</div>
+        </div>
+        <div class="column">
+          <div>
+            <IconIgnorePlacement {layer} />
+          </div>
+        </div>
+      </div>
+    {:else if style.type === LayerTypes.HEATMAP}
+      <HeatmapColor {layer} />
+      <HeatmapIntensity {layer} />
+      <HeatmapRadius {layer} />
+      <HeatmapWeight {layer} />
+    {/if}
   </div>
 {/if}
 

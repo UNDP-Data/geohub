@@ -1,12 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import { Label } from '@smui/common'
   import FormField from '@smui/form-field'
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
   import Switch from '@smui/switch'
-
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -18,6 +14,15 @@
   const propertyName = 'icon-keep-upright'
   const propertyNameSymbolPlacement = 'symbol-placement'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+  let parentType = LayerTypes.SYMBOL
+
+  const parentLayer = layer.parent
+  if (parentLayer) {
+    const parentStyle = $map
+      .getStyle()
+      .layers.filter((layer: LayerSpecification) => layer.id === parentLayer.definition.id)[0]
+    parentType = parentStyle.type
+  }
 
   let checked = style.layout && style.layout[propertyName] ? style.layout[propertyName] : false
   let choices = ['point', 'line', 'line-center']
@@ -60,20 +65,33 @@
   }
 </script>
 
-{#if style.type === LayerTypes.SYMBOL}
-  <StyleControlGroup title="Icon Keep Upright">
-    <FormField>
-      <Switch bind:checked />
-      <span slot="label">Enable icon keep upright</span>
-    </FormField>
-    <br />
-    Symbol placement needs to be set 'line' or 'line-center' if this is enabled.
-  </StyleControlGroup>
-  <StyleControlGroup title="Symbol placement">
-    <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
-      <Segment {segment}>
-        <Label>{segment}</Label>
-      </Segment>
-    </SegmentedButton>
-  </StyleControlGroup>
+{#if style.type === LayerTypes.SYMBOL && [LayerTypes.LINE, LayerTypes.FILL].includes(parentType)}
+  <div class="container">
+    <div class="row is-flex">
+      <div class="column is-4">
+        <div class="is-size-6">Keep Upright</div>
+      </div>
+      <div class="column">
+        <FormField>
+          <Switch bind:checked />
+        </FormField>
+      </div>
+    </div>
+    {#if checked}
+      <div class="row is-flex">
+        <div class="column is-4">
+          <div class="is-size-6">Symbol Placement</div>
+        </div>
+        <div class="column is-8">
+          <div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
+            <select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
+              {#each choices as choice}
+                <option class="legend-text" value={choice}>{choice}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
+      </div>
+    {/if}
+  </div>
 {/if}

@@ -47,6 +47,7 @@ export interface Layer {
   unique?: UniqueLegend
   expression?: string
   children?: Layer[]
+  parent?: Layer
   legendType?: string
 }
 
