@@ -1106,6 +1106,19 @@
     "@smui/floating-label" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
+"@smui/paper@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui/paper/-/paper-6.0.0-beta.16.tgz#00056cd039e1d411f81fd1268981f07cc1021f7c"
+  integrity sha512-b103emE4DoN6ZuZk5jHD7TbROJYGo3rsfbZlmzUG9plPcOL5rhGVkLhB8m3oWlLqLNG0vl6kJPLiHe2qYny66g==
+  dependencies:
+    "@material/elevation" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/typography" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
 "@smui/radio@^6.0.0-beta.16":
   version "6.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/@smui/radio/-/radio-6.0.0-beta.16.tgz#bd5ad76b1987d2b21c14af326baf7e9c2e388177"
