@@ -27,7 +27,7 @@
     operators: ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0', '(', ')'],
   }
 
-  const functionsList  = {
+  const functionsList = {
     title: 'Functions',
     operators: ['where(cond, true, false)', 'sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs'],
   }
