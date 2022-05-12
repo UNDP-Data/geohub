@@ -3,7 +3,6 @@
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
   import { map } from '$stores'
-
   import TextField from '$components/controls/vector-styles/TextField.svelte'
   import TextColor from '$components/controls/vector-styles/TextColor.svelte'
   import TextHaloCalor from '$components/controls/vector-styles/TextHaloCalor.svelte'
@@ -12,6 +11,7 @@
   import TextSize from '$components/controls/vector-styles/TextSize.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import IconKeepUpright from './vector-styles/IconKeepUpright.svelte'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -63,6 +63,7 @@
           info: layer.info,
           visible: true,
           url: layer.url,
+          parent: layer,
         }
 
         layer.children = [targetLayer, ...layer.children]
@@ -168,6 +169,9 @@
               <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
             </div>
           </div>
+        </div>
+        <div class="columns is-flex is-vcentered">
+          <IconKeepUpright on:change={onStyleChange} bind:layer={targetLayer} />
         </div>
       </div>
     {/if}

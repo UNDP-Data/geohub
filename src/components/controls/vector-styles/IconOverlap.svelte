@@ -1,10 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { Label } from '@smui/common'
-  import SegmentedButton, { Segment } from '@smui/segmented-button'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -36,11 +32,11 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <StyleControlGroup title="Icon Overlap">
-    <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
-      <Segment {segment}>
-        <Label>{segment}</Label>
-      </Segment>
-    </SegmentedButton>
-  </StyleControlGroup>
+  <div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
+    <select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
+      {#each choices as choice}
+        <option class="legend-text" value={choice}>{choice}</option>
+      {/each}
+    </select>
+  </div>
 {/if}
