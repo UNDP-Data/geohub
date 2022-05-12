@@ -1,35 +1,32 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
 
-  import Slider from '$components/controls/vector-styles/Slider.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import { map } from '$stores'
+  import NumberInput from '../NumberInput.svelte'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   export let layer: Layer = LayerInitialValues
+  const layerId = layer.definition.id
+  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   const dispatch = createEventDispatcher()
-  const onStyleChange = () => {
-    dispatch('change')
-  }
 
-  let defaultValue = 10
+  let propertyName = 'text-max-width'
+  let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
   let layerType = LayerTypes.SYMBOL
   let maxValue = 20
   let minValue = 0
-  let propertyName = 'text-max-width'
-  let propertyType = 'layout'
   let stepValue = 1
-  let titleName = 'Text Max Width'
+
+  $: value, setValue()
+
+  const setValue = () => {
+    if (style.type !== layerType) return
+    $map.setLayoutProperty(layerId, propertyName, value)
+    dispatch('change')
+  }
 </script>
 
-<Slider
-  {layer}
-  on:change={onStyleChange}
-  bind:layerType
-  bind:propertyName
-  bind:titleName
-  bind:defaultValue
-  bind:minValue
-  bind:maxValue
-  bind:stepValue
-  bind:propertyType />
+<NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />

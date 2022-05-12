@@ -19,6 +19,13 @@
     confirmDeleteLayerDialogVisible = false
 
     setTimeout(() => {
+      const layer = $layerList.filter((item) => item.definition.id === layerId)[0]
+      if (layer.children && layer.children.length > 0) {
+        layer.children.forEach((child) => {
+          $map.removeLayer(child.definition.id)
+        })
+        layer.children = []
+      }
       $layerList = $layerList.filter((item) => item.definition.id !== layerId)
       $map.removeLayer(layerId)
     }, 200)

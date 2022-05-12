@@ -28,6 +28,14 @@
     const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
     $layerList[layerIndex] = layerClone
     isLayerVisible = !isLayerVisible
+
+    if (layer.children && layer.children.length > 0) {
+      layer.children.forEach((child) => {
+        if (!$map.getLayer(child.definition.id)) return
+        $map.setLayoutProperty(child.definition.id, 'visibility', visibility)
+        child.visible = isLayerVisible
+      })
+    }
   }
 </script>
 

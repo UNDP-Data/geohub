@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -27,9 +26,7 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <StyleControlGroup title="Text Color">
-    <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-  </StyleControlGroup>
+  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
 {/if}
 
 <style lang="scss">

@@ -17,6 +17,7 @@
   export let propertyType = 'paint'
   export let stepValue: number
   export let titleName: string
+  export let styleControlGroupDisabled = false
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
@@ -46,7 +47,22 @@
 </script>
 
 {#if style.type === layerType}
-  <StyleControlGroup title={titleName}>
+  {#if !styleControlGroupDisabled}
+    <StyleControlGroup title={titleName}>
+      <div class="range-slider">
+        <RangeSlider
+          bind:values
+          float
+          min={minValue}
+          max={maxValue}
+          step={stepValue}
+          pips
+          first="label"
+          last="label"
+          rest={false} />
+      </div>
+    </StyleControlGroup>
+  {:else}
     <div class="range-slider">
       <RangeSlider
         bind:values
@@ -59,7 +75,7 @@
         last="label"
         rest={false} />
     </div>
-  </StyleControlGroup>
+  {/if}
 {/if}
 
 <style lang="scss">
