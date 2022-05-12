@@ -8,9 +8,6 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import Fa from 'svelte-fa'
-  import { faCircleMinus } from '@fortawesome/free-solid-svg-icons/faCircleMinus'
-  import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import { cloneDeep, debounce } from 'lodash-es'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
@@ -25,10 +22,13 @@
   import { updateParamsInURL } from '$lib/helper'
   import type { IntervalLegendColorMapRow, Layer, LayerInfo } from '$lib/types'
   import { map } from '$stores'
+  import NumberInput from './controls/NumberInput.svelte'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
   export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
+  export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
+  export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
 
   let definition:
     | RasterLayerSpecification
@@ -125,13 +125,8 @@
     updateParamsInURL(definition, layerURL, updatedParams)
   }, 500)
 
-  const handleIncrementDecrementClasses = (operation: string) => {
-    if (operation === '+' && numberOfClasses < COLOR_CLASS_COUNT_MAXIMUM) {
-      numberOfClasses++
-    }
-    if (operation === '-' && numberOfClasses > COLOR_CLASS_COUNT_MINIMUM) {
-      numberOfClasses--
-    }
+  const handleIncrementDecrementClasses = (e: CustomEvent) => {
+    numberOfClasses = e.detail.value
 
     const layerConfigClone = cloneDeep(layerConfig)
     layerConfigClone.intervals.numberOfClasses = numberOfClasses
@@ -180,27 +175,11 @@
     </div>
     <div class="column number-classes">
       <div class="is-size-6 is-flex is-justify-content-center">Number of Classess</div>
-      <div class="container is-flex is-justify-content-center">
-        <div class="row">
-          <div
-            class={`minus ${numberOfClasses === COLOR_CLASS_COUNT_MINIMUM ? 'disabled' : ''}`}
-            on:click={() => handleIncrementDecrementClasses('-')}
-            alt="Decrease number of classes"
-            title="Decrease number of classes">
-            <Fa icon={faCircleMinus} />
-          </div>
-          <div class="tag is-info is-light is-medium" alt="Number of Classes" title="Number of Classes">
-            {numberOfClasses}
-          </div>
-          <div
-            class={`plus ${numberOfClasses === COLOR_CLASS_COUNT_MAXIMUM ? 'disabled' : ''}`}
-            on:click={() => handleIncrementDecrementClasses('+')}
-            alt="Increase number of classes"
-            title="Increase number of classes">
-            <Fa icon={faCirclePlus} />
-          </div>
-        </div>
-      </div>
+      <NumberInput
+        bind:value={numberOfClasses}
+        bind:minValue={colorClassCountMin}
+        bind:maxValue={colorClassCountMax}
+        on:change={handleIncrementDecrementClasses} />
     </div>
   </div>
 
@@ -219,38 +198,6 @@
   .intervals-view-container {
     .controls {
       margin-bottom: 10px !important;
-
-      .number-classes {
-        .container {
-          display: flex;
-          height: 40px;
-          justify-content: center;
-
-          .row {
-            display: flex;
-            align-items: center;
-
-            .minus,
-            .plus {
-              cursor: pointer;
-            }
-
-            .disabled {
-              cursor: default;
-              opacity: 0.1;
-            }
-
-            .tag {
-              -moz-user-select: none;
-              -ms-user-select: none;
-              -webkit-user-select: none;
-              margin-left: 10px;
-              margin-right: 10px;
-              user-select: none;
-            }
-          }
-        }
-      }
     }
   }
 </style>
