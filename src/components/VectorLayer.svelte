@@ -4,7 +4,7 @@
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
-  import { faTag } from '@fortawesome/free-solid-svg-icons/faTag'
+  import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
   import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
@@ -29,7 +29,7 @@
   let tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
-    { label: TabNames.LABEL, icon: faTag, active: false },
+    { label: TabNames.LABEL, icon: faTextHeight, active: false },
     { label: TabNames.ZOOM, icon: faMagnifyingGlassLocation, active: false },
     { label: TabNames.STYLEJSON, icon: faPenToSquare, active: false },
   ]
