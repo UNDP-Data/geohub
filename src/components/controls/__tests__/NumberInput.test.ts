@@ -1,5 +1,5 @@
 import { describe, beforeEach, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, within, type RenderResult } from '@testing-library/svelte'
+import { cleanup, fireEvent, render, type RenderResult } from '@testing-library/svelte'
 
 import NumberInput from '$components/controls/NumberInput.svelte'
 
