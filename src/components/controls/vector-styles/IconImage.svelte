@@ -51,7 +51,7 @@
 
 {#if style.type === LayerTypes.SYMBOL}
   <StyleControlGroup title="Icon Image">
-    <div on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
+    <div class="icon-button" on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
       <VectorLegendSymbol bind:updateLegend {layer} />
     </div>
   </StyleControlGroup>
@@ -85,6 +85,21 @@
 
 <style lang="scss">
   @use '@material/image-list/index' as image-list;
+
+  .icon-button {
+    border: solid 0.5px #1c1c1c;
+    background-color: white;
+    width: 32px;
+    height: 32px;
+    padding-top: 3px;
+    padding-left: 3px;
+    cursor: pointer;
+
+    @media (prefers-color-scheme: dark) {
+      border: solid 0.5px #ffffff;
+    }
+  }
+
   .imageList {
     max-height: 300px;
     max-width: 350px;
