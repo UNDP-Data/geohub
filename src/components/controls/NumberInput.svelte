@@ -23,7 +23,7 @@
 </script>
 
 <div class="column number-classes">
-  <div class="container is-flex is-justify-content-center">
+  <div class="container is-flex is-justify-content-center" data-testid="number-input-view-container">
     <div class="row">
       <div
         class={`minus ${value === minValue ? 'disabled' : ''}`}
