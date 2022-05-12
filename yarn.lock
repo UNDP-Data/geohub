@@ -2152,11 +2152,6 @@ d3-array@3.1.1:
   resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-3.1.0.tgz#395b2833dfac71507f12ac2f7af23bf819de24e2"
   integrity sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==
 
-d3-color@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-2.0.0.tgz#8d625cab42ed9b8f601a1760a389f7ea9189d62e"
-  integrity sha512-SPXi0TSKPD4g9tw0NMZFnR95XVgUZiBH+uUTqQuDu1OsE2zomHU7ho0FISciaPvosimixwHFl3WHLGabv6dDgQ==
-
 d3-delaunay@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/d3-delaunay/-/d3-delaunay-6.0.2.tgz#7fd3717ad0eade2fc9939f4260acfb503f984e92"
@@ -4551,13 +4546,6 @@ svelte-check@^2.7.0:
     source-map "^0.7.3"
     svelte-preprocess "^4.0.0"
     typescript "*"
-
-svelte-colorpick@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/svelte-colorpick/-/svelte-colorpick-0.1.7.tgz#2f7c5a886d8dc191559b1fc141b84f5e8491acba"
-  integrity sha512-2E7nbweSdl81LtFm8z/hpWEv52cU1jSIiYgTpSpanaBWNiFxr+QT4QMlxFASE/LWACFbm1Xe37ACnIwHxWfr9Q==
-  dependencies:
-    d3-color "^2.0.0"
 
 svelte-fa@^2.4.0:
   version "2.4.0"
