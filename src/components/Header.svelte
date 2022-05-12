@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
+  import TopAppBar, { Row, Section, Title, AutoAdjust, type TopAppBarComponentDev } from '@smui/top-app-bar'
   import Fa from 'svelte-fa'
   import { faBookmark } from '@fortawesome/free-regular-svg-icons/faBookmark'
   import { faMoon } from '@fortawesome/free-regular-svg-icons/faMoon'
@@ -14,7 +14,7 @@
   export let panelOpen = true
 
   let darkTheme: boolean
-  let topAppBar: any
+  let topAppBar: TopAppBarComponentDev
 
   onMount(() => {
     window.matchMedia('(prefers-color-scheme: light)')

@@ -151,6 +151,10 @@
   .colormap-editor {
     margin-bottom: $input-margin;
 
+    .column.end {
+      margin-left: 5px;
+    }
+
     .color-picker {
       margin-right: $input-margin;
     }

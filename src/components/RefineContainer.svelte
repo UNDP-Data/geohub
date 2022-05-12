@@ -202,6 +202,7 @@
     .numbers,
     .logical,
     .comparison,
+    .functions,
     .arithmetic {
       > div {
         margin-bottom: 5px;

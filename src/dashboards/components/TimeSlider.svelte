@@ -8,7 +8,10 @@
 
   export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
-  export let electricitySelected
+  export let electricitySelected = {
+    name: '',
+    icon: '',
+  }
 
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
