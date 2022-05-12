@@ -27,18 +27,18 @@
     <div
       class={`minus ${value === minValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('-')}
-      alt="Decrease number of classes"
-      title="Decrease number of classes">
+      alt="Decrease number"
+      title="Decrease number">
       <Fa icon={faCircleMinus} />
     </div>
-    <div class="tag is-info is-light is-medium" alt="Number of Classes" title="Number of Classes">
+    <div class="tag is-info is-light is-medium" alt="Number Label" title="Number Label">
       {value}
     </div>
     <div
       class={`plus ${value === maxValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('+')}
-      alt="Increase number of classes"
-      title="Increase number of classes">
+      alt="Increase number"
+      title="Increase number">
       <Fa icon={faCirclePlus} />
     </div>
   </div>

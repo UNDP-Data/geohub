@@ -26,7 +26,7 @@ describe('Intervals Legend', () => {
   })
 
   it('should display the number of classes', () => {
-    const numberOfClasses = sut.getByTitle('Number of Classes')
+    const numberOfClasses = sut.getByTitle('Number Label')
     expect(numberOfClasses).toBeDefined()
     expect(numberOfClasses).toHaveTextContent('5')
 
@@ -34,8 +34,8 @@ describe('Intervals Legend', () => {
     expect(colorMapRows.length).toEqual(5)
   })
 
-  it('should decrease the the number of classes upon click of decrease button', async () => {
-    const decreaseClassesButton = sut.getByTitle('Decrease number of classes')
+  it('should decrease the number of classes upon click of decrease button', async () => {
+    const decreaseClassesButton = sut.getByTitle('Decrease number')
     expect(decreaseClassesButton).toBeDefined()
     let colorMapRows = sut.getAllByTestId('intervals-legend-color-map-row-container')
     expect(colorMapRows.length).toEqual(5)
@@ -56,9 +56,9 @@ describe('Intervals Legend', () => {
     expect(within(colorMapRows[2]).getByTitle('End Value')).toHaveValue(103)
   })
 
-  it('should increase the the number of classes upon click of increase button', async () => {
+  it('should increase the number of classes upon click of increase button', async () => {
     vi.useRealTimers()
-    const increaseClassesButton = sut.getByTitle('Increase number of classes')
+    const increaseClassesButton = sut.getByTitle('Increase number')
     expect(increaseClassesButton).toBeDefined()
 
     // number of classes updated

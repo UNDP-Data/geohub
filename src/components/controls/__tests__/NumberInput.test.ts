@@ -21,13 +21,13 @@ describe('Number Input : Default Values', () => {
     expect(viewContainer).toBeDefined()
   })
 
-  it('should display the number of classes', () => {
-    const numberOfClasses = sut.getByTitle('Number of Classes')
+  it('should display the number', () => {
+    const numberOfClasses = sut.getByTitle('Number Label')
     expect(numberOfClasses).toBeDefined()
     expect(numberOfClasses).toHaveTextContent('5')
   })
 
-  it('should decrease the the number of classes upon click of decrease button and fire a dispatch event', async () => {
+  it('should decrease the number upon click of decrease button and fire a dispatch event', async () => {
     const mockNumberInputEvent = vi.fn()
     let dispatchContent = []
 
@@ -36,15 +36,15 @@ describe('Number Input : Default Values', () => {
       dispatchContent = event.detail
     })
 
-    const decreaseClassesButton = sut.getByTitle('Decrease number of classes')
+    const decreaseClassesButton = sut.getByTitle('Decrease number')
     expect(decreaseClassesButton).toBeDefined()
     await fireEvent.click(decreaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('4')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('4')
     expect(mockNumberInputEvent).toHaveBeenCalled()
     expect(dispatchContent).toEqual({ value: 4 })
   })
 
-  it('should increase the the number of classes upon click of increase button and fire a dispatch event', async () => {
+  it('should increase the number upon click of increase button and fire a dispatch event', async () => {
     const mockNumberInputEvent = vi.fn()
     let dispatchContent = []
 
@@ -53,10 +53,10 @@ describe('Number Input : Default Values', () => {
       dispatchContent = event.detail
     })
 
-    const increaseClassesButton = sut.getByTitle('Increase number of classes')
+    const increaseClassesButton = sut.getByTitle('Increase number')
     expect(increaseClassesButton).toBeDefined()
     await fireEvent.click(increaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('6')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6')
     expect(mockNumberInputEvent).toHaveBeenCalled()
     expect(dispatchContent).toEqual({ value: 6 })
   })
@@ -80,32 +80,32 @@ describe('Number Input : Min/Max Values', () => {
     expect(viewContainer).toBeDefined()
   })
 
-  it('should display the number of classes', () => {
-    const numberOfClasses = sut.getByTitle('Number of Classes')
+  it('should display the number', () => {
+    const numberOfClasses = sut.getByTitle('Number Label')
     expect(numberOfClasses).toBeDefined()
     expect(numberOfClasses).toHaveTextContent('3')
   })
 
-  it('should decrease the the number of classes upon click of decrease button to the minimum', async () => {
-    const decreaseClassesButton = sut.getByTitle('Decrease number of classes')
+  it('should decrease the number upon click of decrease button to the minimum', async () => {
+    const decreaseClassesButton = sut.getByTitle('Decrease number')
     expect(decreaseClassesButton).toBeDefined()
     await fireEvent.click(decreaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('2')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('2')
     await fireEvent.click(decreaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('2')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('2')
 
-    expect(sut.getByTitle('Decrease number of classes')).toHaveClass('minus disabled')
+    expect(sut.getByTitle('Decrease number')).toHaveClass('minus disabled')
   })
 
-  it('should increase the the number of classes upon click of increase button to the maximum', async () => {
-    const increaseClassesButton = sut.getByTitle('Increase number of classes')
+  it('should increase the number of classes upon click of increase button to the maximum', async () => {
+    const increaseClassesButton = sut.getByTitle('Increase number')
     expect(increaseClassesButton).toBeDefined()
     await fireEvent.click(increaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('4')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('4')
     await fireEvent.click(increaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('4')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('4')
 
-    expect(sut.getByTitle('Increase number of classes')).toHaveClass('plus disabled')
+    expect(sut.getByTitle('Increase number')).toHaveClass('plus disabled')
   })
 })
 
@@ -128,28 +128,28 @@ describe('Number Input : Step Values', () => {
     expect(viewContainer).toBeDefined()
   })
 
-  it('should display the number of classes', () => {
-    const numberOfClasses = sut.getByTitle('Number of Classes')
+  it('should display the number', () => {
+    const numberOfClasses = sut.getByTitle('Number Label')
     expect(numberOfClasses).toBeDefined()
     expect(numberOfClasses).toHaveTextContent('6')
   })
 
-  it('should decrease the the number of classes upon click of decrease button to the minimum', async () => {
-    const decreaseClassesButton = sut.getByTitle('Decrease number of classes')
+  it('should decrease the number upon click of decrease button to the minimum', async () => {
+    const decreaseClassesButton = sut.getByTitle('Decrease number')
     expect(decreaseClassesButton).toBeDefined()
     await fireEvent.click(decreaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('4')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('4')
     await fireEvent.click(decreaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('2')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('2')
   })
 
-  it('should increase the the number of classes upon click of increase button to the maximum', async () => {
-    const increaseClassesButton = sut.getByTitle('Increase number of classes')
+  it('should increase the number of classes upon click of increase button to the maximum', async () => {
+    const increaseClassesButton = sut.getByTitle('Increase number')
     expect(increaseClassesButton).toBeDefined()
     await fireEvent.click(increaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('8')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('8')
     await fireEvent.click(increaseClassesButton)
-    expect(sut.getByTitle('Number of Classes')).toHaveTextContent('10')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('10')
   })
 })
 
