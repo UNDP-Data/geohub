@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createEventDispatcher } from 'svelte'
-  import Select, { Option } from '@smui/select'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerMetadata } from '$lib/types'
@@ -41,6 +40,7 @@
     } else {
       textFieldValue = layerIdList[0]
     }
+    setTextField()
   }
 
   const setTextField = () => {
@@ -64,13 +64,11 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <div>
-    <Select bind:value={textFieldValue} variant="outlined">
-      {#if layerIdList}
-        {#each layerIdList as id}
-          <Option value={id}>{id}</Option>
-        {/each}
-      {/if}
-    </Select>
+  <div class="select is-rounded  \is-justify-content-center" style="height: 30px;width:100%">
+    <select bind:value={textFieldValue} style="width: 100%;" alt="text-field" title="Text field for label">
+      {#each layerIdList as id}
+        <option class="legend-text" value={id}>{id}</option>
+      {/each}
+    </select>
   </div>
 {/if}
