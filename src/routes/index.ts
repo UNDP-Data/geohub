@@ -1,9 +1,9 @@
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import type { ServiceListContainersOptions } from '@azure/storage-blob'
 
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
-import type { Bucket } from '$lib/types'
 import { BucketType } from '$lib/constants'
+import type { Bucket } from '$lib/types'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
 
 const account = AZURE_STORAGE_ACCOUNT
 const accountKey = AZURE_STORAGE_ACCESS_KEY
@@ -57,6 +57,8 @@ const listContainers = async () => {
 
 export async function get() {
   return {
-    body: await listContainers(),
+    body: {
+      buckets: await listContainers(),
+    },
   }
 }
