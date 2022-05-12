@@ -23,7 +23,6 @@
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
-  let selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
   let showTooltip = false
 
   // hide colormap picker if change in layer list
@@ -36,6 +35,7 @@
 
   onMount(() => {
     layerHasUniqueValues = hasLayerUniqueValues()
+    layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
   })
 
   const handleLegendToggleClick = () => {
@@ -46,10 +46,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS) {
-      selectedLegendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    if (layer.legendType === DynamicLayerLegendTypes.CONTINUOUS) {
+      layer.legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
     } else {
-      selectedLegendType = DynamicLayerLegendTypes.CONTINUOUS
+      layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
   }
 
@@ -92,15 +92,15 @@
 
 <div class="columns" data-testid="raster-legend-view-container">
   <div class="column is-10">
-    {#if selectedLegendType === DynamicLayerLegendTypes.CONTINUOUS}
+    {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
         <ContinuousLegend bind:layerConfig={layer} />
       </div>
-    {:else if selectedLegendType === DynamicLayerLegendTypes.INTERVALS}
+    {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
         <IntervalsLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
       </div>
-    {:else if selectedLegendType === DynamicLayerLegendTypes.UNIQUE}
+    {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
         <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
       </div>
