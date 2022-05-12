@@ -5,7 +5,7 @@
 
   export let layer: Layer
 
-  let expression = ''
+  let expression = layer.expression
 
   const arithmetic = {
     title: 'Arithmetic',
