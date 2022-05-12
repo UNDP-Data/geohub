@@ -18,9 +18,7 @@
     if (operation === '-' && value > minValue) {
       value = value - step
     }
-    dispatch('change', {
-      value: value,
-    })
+    dispatch('change', { value })
   }
 </script>
 
