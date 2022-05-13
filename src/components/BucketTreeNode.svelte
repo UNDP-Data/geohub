@@ -21,7 +21,7 @@
   import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
 
-  import SelectLayerStyleDialog from '$components/controls/SelectLayerStyleDialog.svelte'
+  import AddLayerModal from '$components/controls/AddLayerModal.svelte'
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
@@ -33,7 +33,7 @@
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
-  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages } from '$stores'
+  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -45,7 +45,7 @@
   let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
-  let SelectLayerStyleDialogVisible: boolean
+  let isAddLayerModalVisible: boolean
   let showTooltip = false
   let tooltipTimer: ReturnType<typeof setTimeout>
 
@@ -179,8 +179,8 @@
         layerMeta.json = JSON.parse(layerMeta.json)
       }
       node.metadata = layerMeta
-      SelectLayerStyleDialogVisible = true
-
+      isAddLayerModalVisible = true
+      $modalVisible = true
       $indicatorProgress = false
 
       setTimeout(function () {
@@ -511,7 +511,7 @@
   {/each}
 {/if}
 
-<SelectLayerStyleDialog bind:SelectLayerStyleDialogVisible {tree} />
+<AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
 <style lang="scss">
   .node-container {

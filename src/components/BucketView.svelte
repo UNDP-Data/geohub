@@ -5,7 +5,7 @@
   import BucketCardFilter from '$components/BucketCardFilter.svelte'
   import BucketFilter from '$components/BucketFilter.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
-  import { bucketList, indicatorProgress, treeBucket } from '$stores'
+  import { bucketList, indicatorProgress, modalVisible, treeBucket } from '$stores'
 
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
@@ -68,7 +68,7 @@
   <div class="columns cards-tree-container is-gapless">
     <div class="column" style="max-width: 112px;">
       <div class="columns">
-        <div class="column cards" data-testid="buckets-container">
+        <div class="column cards" data-testid="buckets-container" style={$modalVisible ? 'z-index: 1;' : ''}>
           <div class="card-filter" data-testid="buckets-filter-container">
             <BucketCardFilter on:click={handleBucketCardFilterClick} />
           </div>
