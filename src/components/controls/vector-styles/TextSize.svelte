@@ -32,7 +32,6 @@
 
 <LabelSettingsItem title="Text Size">
   <NumberInput
-    data-testid="number-input-view-container"
     bind:value
     bind:minValue
     bind:maxValue
