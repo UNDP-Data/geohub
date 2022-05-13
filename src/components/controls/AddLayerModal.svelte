@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Autocomplete from '@smui-extra/autocomplete'
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
-  import Chip, { Set, Text } from '@smui/chips'
+  import { onMount } from 'svelte'
+
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
@@ -12,76 +10,69 @@
     VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { cloneDeep } from 'lodash-es'
+
   import { LayerTypes } from '$lib/constants'
   import type { TreeNode } from '$lib/types'
-  import { map, layerList } from '$stores'
+  import { map, layerList, modalVisible } from '$stores'
 
-  export let SelectLayerStyleDialogVisible = false
-  export let tree: TreeNode
+  export let isModalVisible = false
+  export let treeNode: TreeNode
 
-  let layerIdList: string[]
   let layerType = LayerTypes.LINE
-  let layerTypes = []
-  let selectedLayerId: string | undefined = tree.label
-  let tileSourceId = tree.path
+  let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
+  let selectedLayerId: string | undefined = treeNode.label
+  let tileSourceId = treeNode.path
 
-  $: SelectLayerStyleDialogVisible, init()
-  $: selectedLayerId, setLayerTypeList()
-  $: layerIdList, setLayerTypeList()
+  onMount(() => {
+    setLayerTypeList()
+  })
 
-  const init = async () => {
-    if (SelectLayerStyleDialogVisible !== true) return
-    const vector_layers = tree.metadata.json.vector_layers
-    layerIdList = vector_layers.map((l) => {
-      return l.id
-    })
-  }
-
-  const getLayerTypeFromGeomType = (geomType: string) => {
-    if (geomType.toLowerCase().includes('point')) return LayerTypes.SYMBOL
-    if (geomType.toLowerCase().includes('linestring')) return LayerTypes.LINE
-    if (geomType.toLowerCase().includes('polygon')) return LayerTypes.FILL
-    if (geomType.toLowerCase().includes('multipoint')) return LayerTypes.SYMBOL
-    if (geomType.toLowerCase().includes('multilinestring')) return LayerTypes.LINE
-    if (geomType.toLowerCase().includes('multipolygon')) return LayerTypes.FILL
+  $: {
+    if (isModalVisible) {
+      setLayerTypeList()
+    }
   }
 
   const setLayerTypeList = () => {
-    if (selectedLayerId && tree.metadata) {
-      const tilestats = tree.metadata.json.tilestats
+    if (selectedLayerId && treeNode.metadata) {
+      const tilestats = treeNode.metadata.json.tilestats
+
       if (tilestats) {
         const layer = tilestats.layers.find((layer) => layer.layer == selectedLayerId)
+
         if (layer) {
-          const type = getLayerTypeFromGeomType(layer.geometry)
-          switch (type) {
-            case LayerTypes.LINE:
-              layerTypes = [LayerTypes.LINE]
-              break
-            case LayerTypes.FILL:
-              layerTypes = [LayerTypes.LINE, LayerTypes.FILL]
-              break
-            case LayerTypes.SYMBOL:
-              layerTypes = [LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-              break
-            default:
-              break
+          layerType = getLayerTypeFromGeometryType(layer.geometry)
+
+          if (layerType === LayerTypes.LINE) {
+            layerTypes = [LayerTypes.LINE]
+          } else if (layerType === LayerTypes.FILL) {
+            layerTypes = [LayerTypes.LINE, LayerTypes.FILL]
+          } else if (layerType === LayerTypes.SYMBOL) {
+            layerTypes = [LayerTypes.SYMBOL, LayerTypes.HEATMAP]
           }
-          layerType = type
-          return
         }
       }
     }
-    layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-    layerType = LayerTypes.LINE
+
+    layerTypes.sort((a, b) => a.localeCompare(b))
   }
 
-  const addLayer = async () => {
+  const getLayerTypeFromGeometryType = (geometryType: string) => {
+    if (geometryType.toLowerCase().includes('point')) return LayerTypes.SYMBOL
+    if (geometryType.toLowerCase().includes('linestring')) return LayerTypes.LINE
+    if (geometryType.toLowerCase().includes('polygon')) return LayerTypes.FILL
+    if (geometryType.toLowerCase().includes('multipoint')) return LayerTypes.SYMBOL
+    if (geometryType.toLowerCase().includes('multilinestring')) return LayerTypes.LINE
+    if (geometryType.toLowerCase().includes('multipolygon')) return LayerTypes.FILL
+  }
+
+  const handleAddClick = async () => {
     if (!$map.getSource(tileSourceId)) {
       const layerSource: VectorSourceSpecification = {
         type: LayerTypes.VECTOR,
-        tiles: [tree.url],
-        minzoom: tree.metadata.minzoom | 0,
-        maxzoom: tree.metadata.maxzoom | 24,
+        tiles: [treeNode.url],
+        minzoom: treeNode.metadata.minzoom | 0,
+        maxzoom: treeNode.metadata.maxzoom | 24,
       }
       if (!(tileSourceId in $map.getStyle().sources)) {
         $map.addSource(tileSourceId, layerSource)
@@ -178,18 +169,22 @@
         return
     }
 
-    layerDefinition.minzoom = Number(tree.metadata.minzoom && tree.metadata.minzoom >= 0 ? tree.metadata.minzoom : 0)
-    layerDefinition.maxzoom = Number(tree.metadata.maxzoom && tree.metadata.maxzoom <= 24 ? tree.metadata.maxzoom : 24)
+    layerDefinition.minzoom = Number(
+      treeNode.metadata.minzoom && treeNode.metadata.minzoom >= 0 ? treeNode.metadata.minzoom : 0,
+    )
+    layerDefinition.maxzoom = Number(
+      treeNode.metadata.maxzoom && treeNode.metadata.maxzoom <= 24 ? treeNode.metadata.maxzoom : 24,
+    )
 
-    const layerName = tree.path.split('/')[tree.path.split('/').length - 2]
+    const layerName = treeNode.path.split('/')[treeNode.path.split('/').length - 2]
     $layerList = [
       {
         name: layerName,
         definition: layerDefinition,
         type: LayerTypes.VECTOR,
-        info: tree.metadata,
+        info: treeNode.metadata,
         visible: true,
-        url: tree.url,
+        url: treeNode.url,
       },
       ...$layerList,
     ]
@@ -206,6 +201,13 @@
         $layerList[layerIndex] = layerClone
       }
     })
+
+    handleCancel()
+  }
+
+  const handleCancel = () => {
+    isModalVisible = false
+    $modalVisible = false
   }
 
   const getLayerTypeLabel = (layerType: LayerTypes) => {
@@ -224,43 +226,59 @@
   }
 </script>
 
-<Dialog bind:open={SelectLayerStyleDialogVisible} surface$style="width: 350px;">
-  <Title>Add Layer</Title>
-  <ContentDialog>
-    <div class="columns is-flex is-vcentered">
-      <div class="column is-4">
-        <div class="title is-size-5">Layer ID</div>
-      </div>
-      <div class="column">
-        <div>
-          <Autocomplete combobox options={layerIdList} bind:value={selectedLayerId} textfield$variant="outlined" />
+{#if isModalVisible}
+  <div class="modal is-active" data-testid="add-layer-view-container">
+    <div class="modal-background" />
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Add Layer</p>
+        <button class="delete" aria-label="close" on:click={handleCancel} />
+      </header>
+      <section class="modal-card-body">
+        <div class="field">
+          <label for="layer-id" class="label">Layer ID</label>
+          <div class="control">
+            <input class="input" type="text" id="layer-id" bind:value={selectedLayerId} />
+          </div>
         </div>
-      </div>
+        <div class="field">
+          <label class="label" for="layer-types">Layer Types</label>
+          {#each layerTypes as selectLayerType}
+            <div class="control" style="margin-top: 5px;">
+              <label class="radio" for="layer-type">
+                <div class="columns is-gapless is-vcentered">
+                  <div class="column">
+                    <input type="radio" name="layer-type" bind:group={layerType} value={selectLayerType} />
+                  </div>
+                  <div class="column" style="margin-left: 10px; margin-bottom: 3px;">
+                    {getLayerTypeLabel(selectLayerType)}
+                  </div>
+                </div>
+              </label>
+            </div>
+          {/each}
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button
+          class="button is-success"
+          disabled={selectedLayerId.length === 0 ? true : false}
+          on:click={handleAddClick}>Add</button>
+        <button class="button" on:click={handleCancel}>Cancel</button>
+      </footer>
     </div>
-    <div class="columns is-flex is-vcentered">
-      <div class="column is-4">
-        <div class="title is-size-5">Layer Type</div>
-      </div>
-      <div class="column">
-        <Set chips={layerTypes} let:chip choice bind:selected={layerType}>
-          <Chip {chip}>
-            <Text>{getLayerTypeLabel(chip)}</Text>
-          </Chip>
-        </Set>
-      </div>
-    </div>
-  </ContentDialog>
-  <ActionsDialog>
-    <Button>
-      <LabelButton>Cancel</LabelButton>
-    </Button>
-    {#if selectedLayerId && layerIdList && layerIdList.includes(selectedLayerId)}
-      <Button on:click={() => addLayer()}>
-        <LabelButton>Add</LabelButton>
-      </Button>
-    {/if}
-  </ActionsDialog>
-</Dialog>
+  </div>
+{/if}
 
 <style lang="scss">
+  .modal {
+    .modal-card {
+      width: 450px;
+
+      input[type='text'] {
+        max-width: 250px;
+        width: 250px;
+      }
+    }
+  }
 </style>
