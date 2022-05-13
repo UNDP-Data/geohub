@@ -6,6 +6,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
 
   import MaplibreColorPicker from './MaplibreColorPicker.svelte'
+  import LabelSettingsItem from './LabelSettingsItem.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -26,10 +27,9 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <div style="display: flex; justify-content: space-between; margin-top: 10px">
-    <span style="margin-right: 5px">Text Halo color: </span>
+  <LabelSettingsItem title="Text Halo Color">
     <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-  </div>
+  </LabelSettingsItem>
 {/if}
 
 <style lang="scss">

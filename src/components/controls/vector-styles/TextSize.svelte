@@ -6,6 +6,7 @@
   import { map } from '$stores'
   import NumberInput from '../NumberInput.svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import LabelSettingsItem from './LabelSettingsItem.svelte'
 
   export let layer: Layer = LayerInitialValues
   const layerId = layer.definition.id
@@ -29,7 +30,6 @@
   }
 </script>
 
-<div style="display: flex; justify-content: space-between ; align-items: center; margin-top: 10px">
-  <span style="margin-right: 5px">Text Size</span>
+<LabelSettingsItem title="Text Size">
   <NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />
-</div>
+</LabelSettingsItem>

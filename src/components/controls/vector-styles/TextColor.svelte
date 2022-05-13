@@ -6,6 +6,7 @@
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import MaplibreColorPicker from './MaplibreColorPicker.svelte'
+  import LabelSettingsItem from './LabelSettingsItem.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -26,10 +27,9 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-    <span style="margin-right: 5px">Pick label color: </span>
+  <LabelSettingsItem title="Pick label color: ">
     <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-  </div>
+  </LabelSettingsItem>
 {/if}
 
 <style lang="scss">
