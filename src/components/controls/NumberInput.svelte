@@ -24,27 +24,27 @@
 </script>
 
 <div class="container is-flex is-justify-content-center" data-testid="number-input-view-container">
-<div class="row">
-  <div
-    class={`minus ${value === minValue ? 'disabled' : ''}`}
-    on:click={() => handleIncrementDecrementClasses('-')}
-    alt="Decrease number"
-    title="Decrease number">
-    <Fa icon={faCircleMinus} />
-  </div>
-  <div class="tag is-info is-light is-medium" alt="Number Label" title="Number Label">
-    {value}
-  </div>
-  <div
-    class={`plus ${value === maxValue ? 'disabled' : ''}`}
-    on:click={() => handleIncrementDecrementClasses('+')}
-    alt="Increase number"
-    title="Increase number">
-    <Fa icon={faCirclePlus} />
+  <div class="row">
+    <div
+      class={`minus ${value === minValue ? 'disabled' : ''}`}
+      on:click={() => handleIncrementDecrementClasses('-')}
+      alt="Decrease number"
+      title="Decrease number">
+      <Fa icon={faCircleMinus} />
+    </div>
+    <div class="tag is-info is-light is-medium" alt="Number Label" title="Number Label">
+      {value}
+    </div>
+    <div
+      class={`plus ${value === maxValue ? 'disabled' : ''}`}
+      on:click={() => handleIncrementDecrementClasses('+')}
+      alt="Increase number"
+      title="Increase number">
+      <Fa icon={faCirclePlus} />
+    </div>
   </div>
 </div>
 
-</div>
 <style lang="scss">
   //.container {
   //  display: flex;
