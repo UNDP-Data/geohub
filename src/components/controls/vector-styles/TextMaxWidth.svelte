@@ -29,4 +29,7 @@
   }
 </script>
 
-<NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px">
+  <span style="margin-right: 5px">Max Width</span>
+  <NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />
+</div>

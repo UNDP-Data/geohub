@@ -64,11 +64,13 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
+  <div class="select is-justify-content-center" style="height: 30px;width:100%">
     <select bind:value={textFieldValue} style="width: 100%;" alt="text-field" title="Text field for label">
-      {#each layerIdList as id}
-        <option class="legend-text" value={id}>{id}</option>
-      {/each}
+      <optgroup label="Choose Field">
+        {#each layerIdList as id}
+          <option class="legend-text" value={id}>{id}</option>
+        {/each}
+      </optgroup>
     </select>
   </div>
 {/if}

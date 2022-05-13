@@ -26,7 +26,10 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
+  <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+    <span style="margin-right: 5px">Pick label color: </span>
+    <MaplibreColorPicker {rgba} on:change={handleSetColor} />
+  </div>
 {/if}
 
 <style lang="scss">

@@ -66,32 +66,56 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL && [LayerTypes.LINE, LayerTypes.FILL].includes(parentType)}
-  <div class="container">
-    <div class="row is-flex">
-      <div class="column is-4">
-        <div class="is-size-6">Keep Upright</div>
-      </div>
-      <div class="column">
-        <FormField>
-          <Switch bind:checked />
-        </FormField>
-      </div>
-    </div>
-    {#if checked}
-      <div class="row is-flex">
-        <div class="column is-4">
-          <div class="is-size-6">Symbol Placement</div>
-        </div>
-        <div class="column is-8">
-          <div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
-            <select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
-              {#each choices as choice}
-                <option class="legend-text" value={choice}>{choice}</option>
-              {/each}
-            </select>
-          </div>
-        </div>
-      </div>
-    {/if}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px">
+    <span>Keep Upright</span>
+    <FormField class="upright-switch">
+      <Switch bind:checked />
+    </FormField>
   </div>
+  <!--  <div class="container">-->
+  <!--    <div class="row is-flex">-->
+  <!--      <div class="column is-4">-->
+  <!--        <div class="is-size-6">Keep Upright</div>-->
+  <!--      </div>-->
+  <!--      <div class="column">-->
+  <!--        <FormField>-->
+  <!--          <Switch bind:checked />-->
+  <!--        </FormField>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--    {#if checked}-->
+  <!--      <div class="row is-flex">-->
+  <!--        <div class="column is-4">-->
+  <!--          <div class="is-size-6">Symbol Placement</div>-->
+  <!--        </div>-->
+  <!--        <div class="column is-8">-->
+  <!--          <div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">-->
+  <!--            <select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">-->
+  <!--              {#each choices as choice}-->
+  <!--                <option class="legend-text" value={choice}>{choice}</option>-->
+  <!--              {/each}-->
+  <!--            </select>-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    {/if}-->
+  {#if checked}
+    <div class="select is-justify-content-center" style="height: 30px;width:100%">
+      <select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
+        <optgroup label="Select Placement">
+          {#each choices as choice}
+            <option class="legend-text" value={choice}>{choice}</option>
+          {/each}
+        </optgroup>
+      </select>
+    </div>
+  {/if}
+  <!--  </div>-->
 {/if}
+
+<style lang="scss">
+  :global(.upright-switch) {
+    height: 40px;
+    width: 40px;
+  }
+</style>

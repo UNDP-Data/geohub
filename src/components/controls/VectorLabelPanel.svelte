@@ -12,6 +12,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import IconKeepUpright from './vector-styles/IconKeepUpright.svelte'
+  import StyleControlGroup from '../control-groups/StyleControlGroup.svelte'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -107,73 +108,109 @@
 </script>
 
 {#if isLabelPanelVisible === true}
-  <div class="action">
-    <div class="columns is-flex is-vcentered">
-      <div class="column is-3">
-        <FormField>
-          <Switch bind:checked={enabledTextLabel} />
-        </FormField>
-      </div>
-      {#if enabledTextLabel === true}
-        <div class="column is-vcentered">
-          <div>
-            <TextField on:change={onStyleChange} bind:layer={targetLayer} {enabledTextLabel} />
-          </div>
-        </div>
-      {/if}
+  <!--  <div class="action">-->
+  <!--    <div class="columns is-flex is-vcentered">-->
+  <!--      <div class="column is-3">-->
+  <!--        <FormField>-->
+  <!--          <Switch bind:checked={enabledTextLabel} />-->
+  <!--        </FormField>-->
+  <!--      </div>-->
+  <!--      {#if enabledTextLabel === true}-->
+  <!--        <div class="column is-vcentered">-->
+  <!--          <div>-->
+  <!--            <TextField on:change={onStyleChange} bind:layer={targetLayer} {enabledTextLabel} />-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--      {/if}-->
+  <!--    </div>-->
+  <!--    {#if enabledTextLabel === true}-->
+  <!--      <div class="container notification is-secondary">-->
+  <!--        <div class="columns is-flex is-vcentered">-->
+  <!--          <div class="column is-3">-->
+  <!--            <div class="is-size-6">Font color</div>-->
+  <!--          </div>-->
+  <!--          <div class="column">-->
+  <!--            <div>-->
+  <!--              <TextColor on:change={onStyleChange} bind:layer={targetLayer} />-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--          <div class="column is-2">-->
+  <!--            <div class="is-size-6">Font size</div>-->
+  <!--          </div>-->
+  <!--          <div class="column">-->
+  <!--            <div>-->
+  <!--              <TextSize on:change={onStyleChange} bind:layer={targetLayer} />-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--        <div class="columns is-flex is-vcentered">-->
+  <!--          <div class="column is-3">-->
+  <!--            <div class="is-size-6">Halo color</div>-->
+  <!--          </div>-->
+  <!--          <div class="column">-->
+  <!--            <div>-->
+  <!--              <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--          <div class="column is-2">-->
+  <!--            <div class="is-size-6">Halo width</div>-->
+  <!--          </div>-->
+  <!--          <div class="column">-->
+  <!--            <div>-->
+  <!--              <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--        <div class="columns is-flex is-vcentered">-->
+  <!--          <div class="column is-7">-->
+  <!--            <div class="is-size-6">Text Max Width</div>-->
+  <!--          </div>-->
+  <!--          <div class="column">-->
+  <!--            <div>-->
+  <!--              <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--        <div class="columns is-flex is-vcentered">-->
+  <!--          <IconKeepUpright on:change={onStyleChange} bind:layer={targetLayer} />-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    {/if}-->
+  <!--  </div>-->
+
+  <div style="display: flex; margin-top: 5px;">
+    <span>Show Labels: </span>
+    <FormField class="label-switch">
+      <Switch bind:checked={enabledTextLabel} />
+    </FormField>
+  </div>
+  {#if enabledTextLabel === true}
+    <div style="margin-top: 10px; display: flex">
+      <span>Label field</span>
+      <TextField on:change={onStyleChange} bind:layer={targetLayer} {enabledTextLabel} />
     </div>
-    {#if enabledTextLabel === true}
-      <div class="container notification is-secondary">
-        <div class="columns is-flex is-vcentered">
-          <div class="column is-3">
-            <div class="is-size-6">Font color</div>
-          </div>
-          <div class="column">
-            <div>
-              <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
-            </div>
-          </div>
-          <div class="column is-2">
-            <div class="is-size-6">Font size</div>
-          </div>
-          <div class="column">
-            <div>
-              <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
-            </div>
-          </div>
-        </div>
-        <div class="columns is-flex is-vcentered">
-          <div class="column is-3">
-            <div class="is-size-6">Halo color</div>
-          </div>
-          <div class="column">
-            <div>
-              <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
-            </div>
-          </div>
-          <div class="column is-2">
-            <div class="is-size-6">Halo width</div>
-          </div>
-          <div class="column">
-            <div>
-              <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
-            </div>
-          </div>
-        </div>
-        <div class="columns is-flex is-vcentered">
-          <div class="column is-7">
-            <div class="is-size-6">Text Max Width</div>
-          </div>
-          <div class="column">
-            <div>
-              <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
-            </div>
-          </div>
-        </div>
-        <div class="columns is-flex is-vcentered">
+  {/if}
+  {#if enabledTextLabel === true}
+    <StyleControlGroup title="Label Settings">
+      <div class="columns">
+        <div class="column">
+          <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
+          <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
           <IconKeepUpright on:change={onStyleChange} bind:layer={targetLayer} />
         </div>
+        <div class="column">
+          <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
+          <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
+          <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
+        </div>
       </div>
-    {/if}
-  </div>
+    </StyleControlGroup>
+  {/if}
 {/if}
+
+<style lang="scss">
+  :global(.label-switch) {
+    height: 20px;
+    width: 20px;
+  }
+</style>

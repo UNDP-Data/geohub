@@ -12,11 +12,11 @@
 <style lang="scss">
   .style-editing-box {
     position: relative;
-    margin: 2em 0;
+    margin: 1em 0;
     padding: 1em 1em 0.5em 1em;
     border: solid 0.5px #1c1c1c;
     border-radius: 8px;
-
+    min-height: 100px;
     @media (prefers-color-scheme: dark) {
       border: solid 0.5px #ffffff;
     }

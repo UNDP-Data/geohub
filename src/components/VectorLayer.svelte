@@ -97,8 +97,8 @@
   @import '../styles/bulma.css';
 
   .vector-layer-container {
-    margin-left: 15px;
-    margin-bottom: 20px;
+    margin-left: 5px;
+    margin-bottom: 10px;
 
     .panel-tabs {
       padding-top: 10px;
@@ -113,7 +113,7 @@
     }
 
     .panel-content {
-      padding: 25px;
+      padding: 0;
     }
   }
 </style>
