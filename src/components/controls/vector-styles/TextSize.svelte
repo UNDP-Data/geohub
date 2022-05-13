@@ -31,5 +31,11 @@
 </script>
 
 <LabelSettingsItem title="Text Size">
-  <NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />
+  <NumberInput
+    data-testid="number-input-view-container"
+    bind:value
+    bind:minValue
+    bind:maxValue
+    bind:step={stepValue}
+    on:change={setValue} />
 </LabelSettingsItem>
