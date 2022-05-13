@@ -10,6 +10,7 @@
     VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import { cloneDeep } from 'lodash-es'
+  import Autocomplete from '@smui-extra/autocomplete'
 
   import { LayerTypes } from '$lib/constants'
   import type { TreeNode } from '$lib/types'
@@ -18,14 +19,11 @@
   export let isModalVisible = false
   export let treeNode: TreeNode
 
+  let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
   let selectedLayerId: string | undefined = treeNode.label
   let tileSourceId = treeNode.path
-
-  onMount(() => {
-    setLayerTypeList()
-  })
 
   $: {
     if (isModalVisible) {
@@ -34,6 +32,9 @@
   }
 
   const setLayerTypeList = () => {
+    const vectorLayers = treeNode.metadata.json.vector_layers
+    layerIdList = vectorLayers.map((layer) => layer.id)
+
     if (selectedLayerId && treeNode.metadata) {
       const tilestats = treeNode.metadata.json.tilestats
 
@@ -55,15 +56,18 @@
     }
 
     layerTypes.sort((a, b) => a.localeCompare(b))
+    layerType = layerTypes[0]
   }
 
   const getLayerTypeFromGeometryType = (geometryType: string) => {
-    if (geometryType.toLowerCase().includes('point')) return LayerTypes.SYMBOL
-    if (geometryType.toLowerCase().includes('linestring')) return LayerTypes.LINE
-    if (geometryType.toLowerCase().includes('polygon')) return LayerTypes.FILL
-    if (geometryType.toLowerCase().includes('multipoint')) return LayerTypes.SYMBOL
-    if (geometryType.toLowerCase().includes('multilinestring')) return LayerTypes.LINE
-    if (geometryType.toLowerCase().includes('multipolygon')) return LayerTypes.FILL
+    if (geometryType.toLowerCase().includes('point') || geometryType.toLowerCase().includes('multipoint'))
+      return LayerTypes.SYMBOL
+
+    if (geometryType.toLowerCase().includes('linestring') || geometryType.toLowerCase().includes('multilinestring'))
+      return LayerTypes.LINE
+
+    if (geometryType.toLowerCase().includes('polygon') || geometryType.toLowerCase().includes('multipolygon'))
+      return LayerTypes.FILL
   }
 
   const handleAddClick = async () => {
@@ -217,7 +221,7 @@
       case LayerTypes.FILL:
         return 'Polygon'
       case LayerTypes.SYMBOL:
-        return 'Symbol'
+        return 'Point'
       case LayerTypes.HEATMAP:
         return 'Heatmap'
       default:
@@ -232,25 +236,41 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Add Layer</p>
-        <button class="delete" aria-label="close" on:click={handleCancel} />
+        <button
+          class="delete"
+          aria-label="close"
+          alt="Close Add Layer Button"
+          title="Close Add Layer Button"
+          on:click={handleCancel} />
       </header>
       <section class="modal-card-body">
         <div class="field">
           <label for="layer-id" class="label">Layer ID</label>
           <div class="control">
-            <input class="input" type="text" id="layer-id" bind:value={selectedLayerId} />
+            <Autocomplete
+              combobox
+              options={layerIdList}
+              bind:value={selectedLayerId}
+              textfield$variant="outlined"
+              textfield$style="height: 32px; width: 250px;" />
           </div>
         </div>
-        <div class="field">
+        <div class="field layer-type">
           <label class="label" for="layer-types">Layer Types</label>
           {#each layerTypes as selectLayerType}
             <div class="control" style="margin-top: 5px;">
               <label class="radio" for="layer-type">
-                <div class="columns is-gapless is-vcentered">
+                <div class="columns is-gapless is-vcentered layer-type">
                   <div class="column">
-                    <input type="radio" name="layer-type" bind:group={layerType} value={selectLayerType} />
+                    <input
+                      type="radio"
+                      name="layer-type"
+                      bind:group={layerType}
+                      value={selectLayerType}
+                      alt={`${selectLayerType} option`}
+                      title={`${selectLayerType} option`} />
                   </div>
-                  <div class="column" style="margin-left: 10px; margin-bottom: 3px;">
+                  <div class="column layer-type-label">
                     {getLayerTypeLabel(selectLayerType)}
                   </div>
                 </div>
@@ -263,8 +283,11 @@
         <button
           class="button is-success"
           disabled={selectedLayerId.length === 0 ? true : false}
+          alt="Add Layer Button"
+          title="Add Layer Button"
           on:click={handleAddClick}>Add</button>
-        <button class="button" on:click={handleCancel}>Cancel</button>
+        <button class="button" alt="Close Add Layer Button" title="Close Layer Button" on:click={handleCancel}
+          >Cancel</button>
       </footer>
     </div>
   </div>
@@ -275,9 +298,15 @@
     .modal-card {
       width: 450px;
 
-      input[type='text'] {
-        max-width: 250px;
-        width: 250px;
+      .layer-type {
+        .control {
+          margin-top: 5px;
+        }
+
+        .layer-type-label {
+          margin-bottom: 3px;
+          margin-left: 10px;
+        }
       }
     }
   }
