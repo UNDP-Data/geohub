@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
@@ -22,11 +20,11 @@
   let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-  let selectedLayerId: string | undefined = treeNode.label
-  let tileSourceId = treeNode.path
+  let selectedLayerId: string | undefined = treeNode?.label
+  let tileSourceId = treeNode?.path
 
   $: {
-    if (isModalVisible) {
+    if (isModalVisible && treeNode) {
       setLayerTypeList()
     }
   }
@@ -82,6 +80,7 @@
         $map.addSource(tileSourceId, layerSource)
       }
     }
+
     const layerId = `${selectedLayerId}-${uuidv4()}`
     let layerDefinition:
       | LineLayerSpecification
@@ -246,8 +245,9 @@
       <section class="modal-card-body">
         <div class="field">
           <label for="layer-id" class="label">Layer ID</label>
-          <div class="control">
+          <div class="control" data-testid="layer-id-input">
             <Autocomplete
+              id="Layer ID input"
               combobox
               options={layerIdList}
               bind:value={selectedLayerId}
@@ -258,6 +258,7 @@
         <div class="field layer-type">
           <label class="label" for="layer-types">Layer Types</label>
           {#each layerTypes as selectLayerType}
+            {@const layerTypeLabel = getLayerTypeLabel(selectLayerType)}
             <div class="control" style="margin-top: 5px;">
               <label class="radio" for="layer-type">
                 <div class="columns is-gapless is-vcentered layer-type">
@@ -267,11 +268,11 @@
                       name="layer-type"
                       bind:group={layerType}
                       value={selectLayerType}
-                      alt={`${selectLayerType} option`}
-                      title={`${selectLayerType} option`} />
+                      alt={`${layerTypeLabel} Option`}
+                      title={`${layerTypeLabel} Option`} />
                   </div>
                   <div class="column layer-type-label">
-                    {getLayerTypeLabel(selectLayerType)}
+                    {layerTypeLabel}
                   </div>
                 </div>
               </label>

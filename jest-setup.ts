@@ -2,7 +2,6 @@ import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 import { Map } from 'maplibre-gl'
 import { map } from './src/stores'
-
 vi.mock('maplibre-gl/dist/maplibre-gl', () => ({
   Map: vi.fn(() => ({
     getSource: () => {
