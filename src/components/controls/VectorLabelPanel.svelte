@@ -107,7 +107,7 @@
 </script>
 
 {#if isLabelPanelVisible === true}
-  <div class="action">
+  <div class="action" data-testid="vector-label-panel-container">
     <div class="columns is-flex is-vcentered">
       <div class="column is-3">
         <FormField>
