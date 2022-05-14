@@ -30,7 +30,7 @@
 </script>
 
 {#if isLegendPanelVisible === true}
-  <div class="action">
+  <div class="action" data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
       <LineWidth {layer} />
       <LineBlur {layer} />

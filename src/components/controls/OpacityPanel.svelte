@@ -42,7 +42,7 @@
 </script>
 
 {#if isOpacityPanelVisible === true}
-  <div class="action">
+  <div class="action" data-testid="opacity-panel-container">
     <div class="range-slider">
       <RangeSlider
         bind:values={rangeSliderValues}

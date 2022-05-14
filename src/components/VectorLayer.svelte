@@ -3,16 +3,12 @@
   import Fa from 'svelte-fa'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-  import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare'
   import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
-  import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassLocation'
 
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
-  import VectorStyleJsonPanel from '$components/controls/VectorStyleJsonPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import ZoomLevelPanel from '$components/controls/ZoomLevelPanel.svelte'
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
@@ -22,24 +18,17 @@
   let isLabelPanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-  let isStyleJsonPanelVisible = false
-  let isZoomLevelPanelVisible = false
-  let onStyleChange = () => undefined
 
   let tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
-    { label: TabNames.OPACITY, icon: faDroplet, active: false },
     { label: TabNames.LABEL, icon: faTextHeight, active: false },
-    { label: TabNames.ZOOM, icon: faMagnifyingGlassLocation, active: false },
-    { label: TabNames.STYLEJSON, icon: faPenToSquare, active: false },
+    { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
 
   $: {
-    isLegendPanelVisible = false
     isLabelPanelVisible = false
+    isLegendPanelVisible = false
     isOpacityPanelVisible = false
-    isStyleJsonPanelVisible = false
-    isZoomLevelPanelVisible = false
 
     switch (activeTab) {
       case TabNames.LEGEND:
@@ -51,20 +40,13 @@
       case TabNames.OPACITY:
         isOpacityPanelVisible = true
         break
-      case TabNames.ZOOM:
-        isZoomLevelPanelVisible = true
-        break
-      case TabNames.STYLEJSON:
-        isStyleJsonPanelVisible = true
-        onStyleChange()
-        break
       default:
         break
     }
   }
 </script>
 
-<div class="vector-layer-container" transition:fade>
+<div class="vector-layer-container" transition:fade data-testid="vector-layer-view-container">
   <nav class="panel">
     <p class="panel-heading">
       <LayerNameGroup {layer} />
@@ -74,7 +56,9 @@
         <a
           href={'#'}
           on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
-          class={activeTab === tab.label ? 'is-active' : ''}>
+          class={activeTab === tab.label ? 'is-active' : ''}
+          alt={`${tab.label} Tab Link`}
+          title={`${tab.label} Tab Link`}>
           <span>
             <Fa icon={tab.icon} size="sm" />
           </span>
@@ -87,8 +71,6 @@
       <VectorLegendPanel {layer} {isLegendPanelVisible} />
       <VectorLabelPanel {layer} {isLabelPanelVisible} />
       <OpacityPanel {layer} {isOpacityPanelVisible} />
-      <ZoomLevelPanel {layer} {isZoomLevelPanelVisible} />
-      <VectorStyleJsonPanel {layer} {isStyleJsonPanelVisible} bind:onStyleChange />
     </p>
   </nav>
 </div>
