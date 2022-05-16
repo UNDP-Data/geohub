@@ -1,6 +1,9 @@
 import { describe, beforeEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, within, render, type RenderResult } from '@testing-library/svelte'
+import { get } from 'svelte/store'
+
 import AddLayerModal from '$components/controls/AddLayerModal.svelte'
+import { modalVisible } from '$stores'
 import treeNodeData from './_treeNode.json'
 
 beforeEach(cleanup)
@@ -45,14 +48,13 @@ describe('Add Layer : Modal Visible', () => {
   })
 
   it('should hide the modal upon click of close', async () => {
-    let viewContainer = sut.queryByTestId('add-layer-view-container')
+    const viewContainer = sut.queryByTestId('add-layer-view-container')
     expect(viewContainer).not.toBeNull()
 
     const closeButton = sut.getByTitle('Close Layer Button')
     expect(closeButton).toBeDefined()
     await fireEvent.click(closeButton)
 
-    viewContainer = sut.queryByTestId('add-layer-view-container')
-    expect(viewContainer).toBeNull()
+    expect(get(modalVisible)).toEqual(false)
   })
 })
