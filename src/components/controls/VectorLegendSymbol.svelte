@@ -30,11 +30,11 @@
             const img = document.createElement('img')
             img.src = symbol.attributes.style.backgroundImage.replace('url(', '').replace(')', '')
             img.alt = layerId
-            img.style.cssText = `height: 24px;`
+            img.style.cssText = `height: 20px;`
             div.appendChild(img)
           }
           const divBackground = document.createElement('div')
-          divBackground.style.height = '24px'
+          divBackground.style.height = '20px'
           divBackground.style.width = '50px'
           divBackground.style.backgroundColor = symbol.attributes.style.backgroundColor
           divBackground.style.backgroundPosition = symbol.attributes.style.backgroundPosition
@@ -52,13 +52,13 @@
                 const img = document.createElement('img')
                 img.src = icon.src
                 img.alt = layerId
-                img.style.cssText = `height: 24px;`
+                img.style.cssText = `height: 20px;`
                 legendSymbolContainer.appendChild(img)
               }
             })
           } else {
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-            svg.style.cssText = 'height: 24px;'
+            svg.style.cssText = 'height: 20px;'
             svg.setAttributeNS(null, 'version', '1.1')
             Object.keys(symbol.attributes).forEach((k) => {
               svg.setAttribute(k, symbol.attributes[k])

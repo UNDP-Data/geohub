@@ -95,7 +95,8 @@
     }
 
     .panel-content {
-      padding: 25px;
+      padding: 10px;
+      padding-top: 15px;
     }
   }
 </style>

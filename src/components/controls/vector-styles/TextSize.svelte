@@ -1,24 +1,24 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
+  import NumberInput from '$components/controls/NumberInput.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import NumberInput from '../NumberInput.svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   export let layer: Layer = LayerInitialValues
+
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  const dispatch = createEventDispatcher()
-
-  let propertyName = 'text-size'
-  let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 16
   let layerType = LayerTypes.SYMBOL
   let maxValue = 32
   let minValue = 0
+  let propertyName = 'text-size'
   let stepValue = 0.5
+  let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 16
 
   $: value, setValue()
 

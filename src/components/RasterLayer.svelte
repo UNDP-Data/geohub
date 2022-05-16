@@ -98,6 +98,7 @@
 
     .panel-content {
       padding: 10px;
+      padding-top: 15px;
     }
   }
 </style>
