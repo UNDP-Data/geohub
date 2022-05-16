@@ -234,7 +234,7 @@
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Add Layer</p>
+        <p class="modal-card-title has-text-weight-bold">Add Layer</p>
         <button
           class="delete"
           aria-label="close"

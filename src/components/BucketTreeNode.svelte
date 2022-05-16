@@ -496,9 +496,13 @@
         <div class="label">{clean(label)}</div>
         <div class="description">{layerInfoMetadata?.description}</div>
         <div class="source is-size-6">
-          <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source}
+          <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source
+            ? layerInfoMetadata.source
+            : 'N/A'}
         </div>
-        <div class="unit is-size-6"><span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit}</div>
+        <div class="unit is-size-6">
+          <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
+        </div>
       </div>
     </div>
     <div id="arrow" data-popper-arrow />

@@ -20,10 +20,12 @@
         <Wrapper>
           <div>{name}</div>
           <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
-            <div class="label">{clean(name)}</div>
-            <div class="description">{layerInfoMetadata?.description ? layerInfoMetadata?.description : 'N/A'}</div>
-            <div class="unit is-size-7">
-              <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : ''}
+            <div class="label has-text-left">{clean(name)}</div>
+            <div class="description has-text-left">
+              {layerInfoMetadata?.description ? layerInfoMetadata?.description : 'N/A'}
+            </div>
+            <div class="unit is-size-7 has-text-left">
+              <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
             </div>
           </Tooltip>
         </Wrapper>
