@@ -280,15 +280,21 @@
           {/each}
         </div>
       </section>
-      <footer class="modal-card-foot">
-        <button
-          class="button is-success"
-          disabled={selectedLayerId.length === 0 ? true : false}
-          alt="Add Layer Button"
-          title="Add Layer Button"
-          on:click={handleAddClick}>Add</button>
-        <button class="button" alt="Close Add Layer Button" title="Close Layer Button" on:click={handleCancel}
-          >Cancel</button>
+      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+        <div>
+          <button class="button" alt="Close Add Layer Button" title="Close Layer Button" on:click={handleCancel}>
+            Cancel
+          </button>
+
+          <button
+            class="button is-success"
+            disabled={selectedLayerId.length === 0 ? true : false}
+            alt="Add Layer Button"
+            title="Add Layer Button"
+            on:click={handleAddClick}>
+            Add
+          </button>
+        </div>
       </footer>
     </div>
   </div>
