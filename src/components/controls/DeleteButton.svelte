@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
@@ -42,7 +43,7 @@
 </Wrapper>
 
 {#if confirmDeleteLayerDialogVisible}
-  <div class="modal is-active" data-testid="delete-layer-view-container">
+  <div class="modal is-active" data-testid="delete-layer-view-container" transition:fade>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">

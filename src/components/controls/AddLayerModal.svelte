@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
@@ -230,7 +231,7 @@
 </script>
 
 {#if isModalVisible}
-  <div class="modal is-active" data-testid="add-layer-view-container">
+  <div class="modal is-active" data-testid="add-layer-view-container" transition:fade>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
