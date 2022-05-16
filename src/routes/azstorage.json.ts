@@ -77,8 +77,11 @@ const listContainer = async (containerName: string, relPath: string) => {
       let geomType: string
       if (isVectorTile) {
         const vectorLayerInfo = await fetchUrl(`${bclient.url}${ACCOUNT_SAS_TOKEN_URL.search}`)
-        const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
-        geomType = vectorTileMeta.tilestats.layers[0].geometry
+
+        if (vectorLayerInfo?.json) {
+          const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
+          geomType = vectorTileMeta.tilestats.layers[0].geometry
+        }
       }
       containerChildren.push({
         label: childLabel,
