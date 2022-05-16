@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Dialog, { Title, Content as ContentDialog, Actions as ActionsDialog } from '@smui/dialog'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
@@ -14,7 +12,7 @@
 
   let confirmDeleteLayerDialogVisible = false
 
-  const removeLayer = () => {
+  const handleDelete = () => {
     const layerId = layer.definition.id
     confirmDeleteLayerDialogVisible = false
 
@@ -30,6 +28,10 @@
       $map.removeLayer(layerId)
     }, 200)
   }
+
+  const handleCancel = () => {
+    confirmDeleteLayerDialogVisible = false
+  }
 </script>
 
 <Wrapper>
@@ -39,24 +41,50 @@
   <Tooltip showDelay={300} hideDelay={100} yPos="above">Delete layer</Tooltip>
 </Wrapper>
 
-<Dialog bind:open={confirmDeleteLayerDialogVisible}>
-  <Title>Delete Layer</Title>
-  <ContentDialog>
-    Are you sure you want to delete this layer?<br /><br />
-    {clean(layer.name)}
-  </ContentDialog>
-  <ActionsDialog>
-    <Button>
-      <LabelButton>No</LabelButton>
-    </Button>
-    <Button on:click={() => removeLayer()}>
-      <LabelButton>Yes</LabelButton>
-    </Button>
-  </ActionsDialog>
-</Dialog>
+{#if confirmDeleteLayerDialogVisible}
+  <div class="modal is-active" data-testid="delete-layer-view-container">
+    <div class="modal-background" />
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Delete Layer</p>
+        <button
+          class="delete"
+          aria-label="close"
+          alt="Close Delete Layer Button"
+          title="Close Delete Layer Button"
+          on:click={handleCancel} />
+      </header>
+      <section class="modal-card-body is-size-6 has-text-weight-normal">
+        <div class="has-text-weight-medium">Are you sure you want to delete this layer?</div>
+        <br />
+        {clean(layer.name)}
+      </section>
+      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+        <div>
+          <button
+            class="button"
+            alt="Cancel Delete Layer Button"
+            title="Cancel Delete Layer Button"
+            on:click={handleCancel}>
+            Cancel
+          </button>
+
+          <button class="button is-danger" alt="Delete Layer Button" title="Delete Layer Button" on:click={handleDelete}
+            >Delete</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+{/if}
 
 <style lang="scss">
   @import '../../styles/button-icons-selected.scss';
+
+  .modal {
+    .modal-card {
+      width: 450px;
+    }
+  }
 
   :global(.mdc-button__label) {
     @media (prefers-color-scheme: dark) {
