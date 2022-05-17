@@ -7,6 +7,7 @@
   import Fa from 'svelte-fa'
   import { faPlugCircleBolt } from '@fortawesome/free-solid-svg-icons/faPlugCircleBolt'
   import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
+  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import Button from '@smui/button'
   import Paper from '@smui/paper'
   import FormField from '@smui/form-field'
@@ -17,8 +18,8 @@
     FillLayerSpecification,
     RasterLayerSpecification,
     HeatmapLayerSpecification,
-    GeoJSONSourceSpecification,
     RasterSourceSpecification,
+    VectorSourceSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
@@ -31,14 +32,15 @@
   const AZURE_URL = 'https://undp-geohub-blob-afg3dscuh3g6cffx.z01.azurefd.net'
   const AERIAL_BING_URL = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
 
-  const RWI_URL = `${AZURE_URL}/test/rwi/rwi_adm1.geojson?${TOKEN}`
+  const POVERTY_URL = [`${AZURE_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`]
 
-  let RWI_ID = 'rwi'
+  let POVERTY_ID = 'poverty'
   const ADM_ID = 'admin'
   const HREA_ID = 'HREA'
   const HREA_NODATA = -3.3999999521443642e38
   const ML_ID = 'ML'
   const ML_NODATA = 0
+  const NONE_ID = 'NONE'
   const PRIMARY = '#1f77b4'
   const SECONDARY = '#ff7f0e'
   const GREY = '#808080'
@@ -67,6 +69,7 @@
   let electricityChoices = [
     { name: HREA_ID, icon: faPlugCircleBolt },
     { name: ML_ID, icon: faLaptopCode },
+    { name: NONE_ID, icon: faBan },
   ]
   let electricitySelected = electricityChoices[0]
   let interactChoices = ['Admin', 'Point']
@@ -85,8 +88,8 @@
   $: layerOpacity, setLayerOpacity()
 
   const setLayerOpacity = () => {
-    if ($map && $map.getLayer(RWI_ID)) {
-      $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    if ($map && $map.getLayer(POVERTY_ID)) {
+      $map.setPaintProperty(POVERTY_ID, 'heatmap-opacity', layerOpacity)
     }
   }
 
@@ -445,85 +448,26 @@
   }
 
   const initHeatmap = () => {
-    if (!$map.getSource(RWI_ID)) {
-      const layerSource: GeoJSONSourceSpecification = {
-        type: 'geojson',
-        data: RWI_URL,
-        maxzoom: 9,
+    if (!$map.getSource(POVERTY_ID)) {
+      const layerSource: VectorSourceSpecification = {
+        type: 'vector',
+        tiles: POVERTY_URL,
+        maxzoom: 10,
       }
-      $map.addSource(RWI_ID, layerSource)
+      $map.addSource(POVERTY_ID, layerSource)
     }
 
-    if (!$map.getLayer(RWI_ID)) {
+    if (!$map.getLayer(POVERTY_ID)) {
       const layerDefinition: HeatmapLayerSpecification = {
-        id: RWI_ID,
+        id: POVERTY_ID,
         type: LayerTypes.HEATMAP,
-        source: RWI_ID,
+        source: POVERTY_ID,
+        'source-layer': POVERTY_ID + '_points',
         layout: { visibility: 'none' },
         paint: {
-          'heatmap-weight': {
-            property: RWI_ID,
-            type: 'exponential',
-            stops: [
-              [-0.855, 0],
-              [1.06009, 1],
-            ],
-          },
-          // use sequential color palette to use exponentially as the weight increases
-          'heatmap-color': [
-            'interpolate',
-            ['linear'],
-            ['heatmap-density'],
-            0,
-            'rgba(0,140,0,0)',
-            0.1,
-            'rgb(104,255,0)',
-            0.2,
-            'rgb(150,255,0)',
-            0.3,
-            'rgb(195,255,0)',
-            0.4,
-            'rgb(255,255,0)',
-            0.5,
-            'rgb(255,222,0)',
-            0.6,
-            'rgb(255,208,0)',
-            0.7,
-            'rgb(255,180,0)',
-            0.8,
-            'rgb(255,132,0)',
-            0.9,
-            'rgb(255,80,0)',
-            1.0,
-            'rgb(255,0,0)',
-          ],
-          // increase intensity as zoom level increases
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          'heatmap-intensity': {
-            stops: [
-              [2, 1],
-              [4, 3],
-              [6, 5],
-            ],
-          },
-          // increase radius as zoom increases
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          'heatmap-radius': {
-            stops: [
-              [0, 5],
-              [1, 15],
-              [2, 30],
-              [3, 40],
-              [4, 50],
-              [5, 60],
-              [6, 70],
-              [7, 100],
-              [8, 120],
-              [9, 140],
-            ],
-          },
+          'heatmap-weight': ['interpolate', ['exponential', 2], ['get', POVERTY_ID], 0, 0, 2.022, 1],
+          'heatmap-intensity': ['interpolate', ['exponential', 2], ['zoom'], 0, 0, 10, 5],
+          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 0, 10, 30],
         },
       }
       $map.addLayer(layerDefinition)
@@ -539,14 +483,14 @@
         break
       }
     }
-    $map.moveLayer(RWI_ID, firstSymbolId)
+    $map.moveLayer(POVERTY_ID, firstSymbolId)
   }
 
   const loadHeatmap = () => {
     if (!$map) return
     initHeatmap()
-    $map.setLayoutProperty(RWI_ID, 'visibility', heatmapChecked ? 'visible' : 'none')
-    $map.setPaintProperty(RWI_ID, 'heatmap-opacity', layerOpacity)
+    $map.setLayoutProperty(POVERTY_ID, 'visibility', heatmapChecked ? 'visible' : 'none')
+    $map.setPaintProperty(POVERTY_ID, 'heatmap-opacity', layerOpacity)
     moveHeatmap()
   }
 
@@ -638,13 +582,12 @@
                 <TimeSlider
                   bind:electricitySelected
                   bind:loadLayer={loadRasterLayer}
-                  bind:BEFORE_LAYER_ID={RWI_ID}
+                  bind:BEFORE_LAYER_ID={POVERTY_ID}
                   {AZURE_URL} />
               </div>
-              <p class="title-text">Poverty</p>
               <FormField>
                 <Checkbox bind:checked={heatmapChecked} />
-                <span slot="label">Show Heatmap</span>
+                <p class="title-text">Poverty</p>
               </FormField>
               {#if heatmapChecked}
                 <div class="action">

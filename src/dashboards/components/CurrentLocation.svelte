@@ -1,6 +1,7 @@
 <script lang="ts">
   import { map } from '../stores'
 
+  const ADM_ID = 'admin'
   let isContainerVisible = false
   let adm0Name = null
   let adm1Name = null
@@ -11,14 +12,23 @@
   $: {
     if ($map) {
       $map.on('styledata', updateLocation)
-      $map.on('move', updateLocation)
+      $map.on('mousemove', ADM_ID, updateLocation)
+      $map.on('mouseleave', ADM_ID, clearLocation)
     }
   }
 
-  const updateLocation = () => {
+  const clearLocation = () => {
+    isContainerVisible = false
+    adm0Name = null
+    adm1Name = null
+    adm2Name = null
+    adm3Name = null
+    adm4Name = null
+  }
+
+  const updateLocation = (e) => {
     if ($map.getLayer('admin')) {
-      const point = $map.project($map.getCenter())
-      const features = $map.queryRenderedFeatures(point, { layers: ['admin'] })
+      const features = $map.queryRenderedFeatures(e.point, { layers: ['admin'] })
       if (features.length > 0) {
         adm0Name = features[0].properties.adm0_name
         adm1Name = features[0].properties.adm1_name
