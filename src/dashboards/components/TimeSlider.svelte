@@ -38,9 +38,14 @@
         minValue = 2012
         maxValue = 2019
         break
+      case 'NONE':
+        minValue = 2012
+        maxValue = 2020
+        break
       default:
         break
     }
+    loadLayer()
   }
 
   export const getHreaUrl = (y: number) => {
@@ -56,7 +61,13 @@
     const yearValue = rangeSliderValues[0]
     year.update(() => yearValue)
     let url = electricitySelected.name === 'HREA' ? getHreaUrl($year) : getMlUrl($year)
-    loadRasterLayer(url)
+    if (electricitySelected.name === 'NONE') removeRasterLayer()
+    else loadRasterLayer(url)
+  }
+
+  const removeRasterLayer = () => {
+    if ($map.getLayer(UNDP_DASHBOARD_RASTER_LAYER_ID)) $map.removeLayer(UNDP_DASHBOARD_RASTER_LAYER_ID)
+    if ($map.getSource(UNDP_DASHBOARD_RASTER_SOURCE_ID)) $map.removeSource(UNDP_DASHBOARD_RASTER_SOURCE_ID)
   }
 
   const loadRasterLayer = async (url: string) => {
@@ -105,7 +116,7 @@
       }
     }
 
-    if ($map.getLayer(layerDefinition.id)) $map.removeLayer(layerDefinition.id)
+    if ($map.getLayer(UNDP_DASHBOARD_RASTER_LAYER_ID)) $map.removeLayer(UNDP_DASHBOARD_RASTER_LAYER_ID)
     if ($map.getSource(UNDP_DASHBOARD_RASTER_SOURCE_ID)) $map.removeSource(UNDP_DASHBOARD_RASTER_SOURCE_ID)
 
     $map.addSource(UNDP_DASHBOARD_RASTER_SOURCE_ID, layerSource)
@@ -114,16 +125,18 @@
 </script>
 
 <div class="slider">
-  <RangeSlider
-    bind:values={rangeSliderValues}
-    float
-    min={minValue}
-    max={maxValue}
-    step={1}
-    pips
-    pipstep={2}
-    first="label"
-    last="label"
-    rest="label"
-    all={true} />
+  {#if electricitySelected.name !== 'NONE'}
+    <RangeSlider
+      bind:values={rangeSliderValues}
+      float
+      min={minValue}
+      max={maxValue}
+      step={1}
+      pips
+      pipstep={2}
+      first="label"
+      last="label"
+      rest="label"
+      all={true} />
+  {/if}
 </div>

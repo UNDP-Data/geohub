@@ -42,12 +42,11 @@
     </Section>
     <Section align="end">
       <Wrapper>
-        <div class="icon" on:click={() => location.href="/dashboards"}>
+        <div class="icon" on:click={() => (location.href = '/dashboards')}>
           <Fa icon={faChalkboardUser} size="lg" />
         </div>
         <Tooltip showDelay={500} hideDelay={500} yPos="below">UNDP Dashboards</Tooltip>
       </Wrapper>
-
 
       <Wrapper>
         <StyleDownloader />
