@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
@@ -25,6 +26,7 @@
 
   export let isLegendPanelVisible = false
   export let layer: Layer = LayerInitialValues
+
   const layerId = layer.definition.id
   const style: LayerSpecification = $map
     .getStyle()
@@ -39,12 +41,10 @@
   }
 
   let isLegendSwitchAnimate = false
-
-  import Card, { PrimaryAction } from '@smui/card'
 </script>
 
 {#if isLegendPanelVisible === true}
-  <div class="action" data-testid="vector-legend-panel-container">
+  <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
       <LineWidth {layer} />
       <LineBlur {layer} />
@@ -82,9 +82,7 @@
         </div>
       </div>
 
-      <div class="columns separator">
-        <div class="column" />
-      </div>
+      <div class="is-divider separator" />
 
       <div class="columns second-row">
         <div class="column is-4 color">
@@ -100,6 +98,15 @@
           </div>
         </div>
       </div>
+
+      <div class="columns third-row">
+        <div class="column">
+          <div class="field">
+            <input id="switchAdvancedSettings" type="checkbox" name="switchSmall" class="switch is-small is-rounded is-info" />
+            <label for="switchAdvancedSettings" class="is-size-6">Advanced Settings</label>
+          </div>
+        </div>
+      </div>
     {:else if style.type === LayerTypes.HEATMAP}
       <HeatmapColor {layer} />
       <HeatmapIntensity {layer} />
@@ -110,65 +117,63 @@
 {/if}
 
 <style lang="scss">
-  .first-row {
-    margin-bottom: 0;
+  @import '../../styles/bulma-switch.min.css';
+  @import '../../styles/bulma-divider.min.css';
 
-    .icon-image {
-      div:first-child {
-        margin-bottom: 5px;
+  .vector-legend-panel-container {
+    margin-bottom: 15px;
+
+    .first-row {
+      margin-bottom: 0;
+
+      .icon-image {
+        div:first-child {
+          margin-bottom: 5px;
+        }
+
+        div:second-child {
+          height: 30px;
+        }
       }
 
-      div:second-child {
-        height: 30px;
+      .legend-toggle {
+        padding-left: 25px;
+        padding-top: 25px;
+
+        .toggle-container {
+          margin-left: 3.5px;
+        }
       }
     }
 
-    .legend-toggle {
+    .separator {
+      margin-top: 10px;
+      margin-bottom: 25px;
+    }
+
+    .second-row {
+      margin-top: -20px;
+      margin-bottom: 0;
+
+      .color {
+        div:first-child {
+          margin-bottom: 5px;
+        }
+      }
+
+      .overlap-priority {
+        div:first-child {
+          margin: 0;
+        }
+
+        div {
+          padding-right: 30px;
+        }
+      }
+    }
+
+    .third-row {
       padding-left: 25px;
-      padding-top: 25px;
-
-      .toggle-container {
-        margin-left: 3.5px;
-      }
-    }
-  }
-
-  $separator: 1px solid whitesmoke;
-  $separator-dark: 1px solid #ccc;
-
-  .separator {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 5px;
-
-    .column {
-      border-top: $separator;
-
-      @media (prefers-color-scheme: dark) {
-        border-top: $separator-dark;
-      }
-    }
-  }
-
-  .second-row {
-    margin-top: -20px;
-
-    .color {
-      div:first-child {
-        margin-bottom: 5px;
-      }
-    }
-
-    .overlap-priority {
-      div:first-child {
-        margin: 0;
-      }
-
-      div {
-        padding-right: 30px;
-      }
     }
   }
 </style>

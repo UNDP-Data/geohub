@@ -16,7 +16,7 @@
   onMount(async () => {
     const newMap = new Map({
       container,
-      style: 'https://undp-data.github.io/style/style.json',
+      style: 'https://raw.githubusercontent.com/openmaptiles/dark-matter-gl-style/master/style.json',
       center: [0, 0],
       zoom: 3,
       hash: true,
