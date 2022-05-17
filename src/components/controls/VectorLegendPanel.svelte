@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
@@ -12,8 +13,9 @@
   import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte'
   import IconColor from '$components/controls/vector-styles/IconColor.svelte'
   import IconImage from '$components/controls/vector-styles/IconImage.svelte'
-  import IconSize from '$components/controls/vector-styles/IconSize.svelte'
+  import IconOffset from '$components/controls/vector-styles/IconOffset.svelte'
   import IconOverlap from '$components/controls/vector-styles/IconOverlap.svelte'
+  import IconSize from '$components/controls/vector-styles/IconSize.svelte'
   import LineBlur from '$components/controls/vector-styles/LineBlur.svelte'
   import LineColor from '$components/controls/vector-styles/LineColor.svelte'
   import LineDasharray from '$components/controls/vector-styles/LineDasharray.svelte'
@@ -41,6 +43,13 @@
   }
 
   let isLegendSwitchAnimate = false
+  let isAdvancedSettings = false
+
+  $: {
+    if (isAdvancedSettings === false) {
+      $map.setLayoutProperty(layerId, 'icon-offset', [0, 0])
+    }
+  }
 </script>
 
 {#if isLegendPanelVisible === true}
@@ -99,14 +108,27 @@
         </div>
       </div>
 
-      <div class="columns third-row">
+      <div class="columns third-row advanced-settings">
         <div class="column">
           <div class="field">
-            <input id="switchAdvancedSettings" type="checkbox" name="switchSmall" class="switch is-small is-rounded is-info" />
+            <input
+              id="switchAdvancedSettings"
+              type="checkbox"
+              name="switchSmall"
+              class="switch is-small is-rounded is-info"
+              bind:checked={isAdvancedSettings} />
             <label for="switchAdvancedSettings" class="is-size-6">Advanced Settings</label>
           </div>
         </div>
       </div>
+
+      {#if isAdvancedSettings}
+        <div class="columns forth-row" transition:slide={{ duration: 750 }}>
+          <div class="column">
+            <IconOffset {layer} />
+          </div>
+        </div>
+      {/if}
     {:else if style.type === LayerTypes.HEATMAP}
       <HeatmapColor {layer} />
       <HeatmapIntensity {layer} />
@@ -147,7 +169,7 @@
     }
 
     .separator {
-      margin-top: 10px;
+      margin-top: 0;
       margin-bottom: 25px;
     }
 
@@ -174,6 +196,24 @@
 
     .third-row {
       padding-left: 25px;
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .forth-row {
+      border: 1px solid #ccc;
+      margin-left: 25px;
+      margin-right: 5px;
+
+      div:first-child {
+        padding: 0;
+        padding-top: 5px;
+      }
     }
   }
 </style>
