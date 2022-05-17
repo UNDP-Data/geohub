@@ -1,25 +1,25 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import NumberInput from '../NumberInput.svelte'
 
-  const dispatch = createEventDispatcher()
-
   export let layer: Layer = LayerInitialValues
 
+  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'icon-offset'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let iconOffsetValues = style.layout && style.layout[propertyName] ? style.layout[propertyName] : [0, 0]
+  let maxValue = 10
+  let minValue = -10
+  let step = 1
   let xValue = iconOffsetValues[0]
   let yValue = iconOffsetValues[1]
-  let minValue = -10
-  let maxValue = 10
-  let step = 1
 
   $: xValue, setIconOffset()
   $: yValue, setIconOffset()
@@ -39,21 +39,32 @@
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <div class="columns is-flex is-vcentered">
-    <div class="column is-2">
-      <div class="is-size-6">X offset</div>
+  <div class="columns is-gapless" style="margin-bottom: 0;">
+    <div class="column">
+      <div class="is-flex is-justify-content-center">Horizontal</div>
+      <div class="is-flex is-justify-content-center">
+        <NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
+      </div>
     </div>
     <div class="column">
-      <NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
+      <div class="is-flex is-justify-content-center">Vertical</div>
+      <div class="is-flex is-justify-content-center">
+        <NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
+      </div>
     </div>
-    <div class="column is-2">
-      <div class="is-size-6">Y offset</div>
-    </div>
-    <div class="column">
-      <NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
-    </div>
+  </div>
+  <div class="columns is-gapless is-size-7" style="padding-left: 5px; padding-bottom: 5px; padding-top: 5px;">
+    <div class="column">Icon offset from center point</div>
   </div>
 {/if}
 
 <style lang="scss">
+  div {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 </style>

@@ -83,10 +83,10 @@
   @use '@material/image-list/index' as image-list;
 
   .icon-button {
-    border: solid 0.5px #1c1c1c;
+    border: solid 0.5px #ccc;
     background-color: white;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     padding-top: 3px;
     padding-left: 3px;
     cursor: pointer;
