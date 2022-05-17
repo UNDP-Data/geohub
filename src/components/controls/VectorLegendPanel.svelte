@@ -72,13 +72,13 @@
       <div class="columns first-row">
         <div class="column is-4 icon-image">
           <div class="is-flex is-justify-content-center">Icon</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
             <IconImage {layer} />
           </div>
         </div>
         <div class="column is-4">
           <div class="is-flex is-justify-content-center">Size</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="is-flex is-justify-content-center" style="z-index: 1; position: relative;">
             <IconSize {layer} />
           </div>
         </div>
@@ -91,7 +91,7 @@
                 </PrimaryAction>
               </Card>
             </div>
-            <Tooltip showDelay={1000} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
+            <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
           </Wrapper>
         </div>
       </div>
@@ -100,7 +100,7 @@
 
       <div class="columns second-row">
         <div class="column is-4 color">
-          <div class="is-flex is-justify-content-center ">Color</div>
+          <div class="is-flex is-justify-content-center">Color</div>
           <div class="is-flex is-justify-content-center">
             <IconColor {layer} />
           </div>
@@ -213,7 +213,7 @@
     .forth-row {
       border: 1px solid #ccc;
       margin-left: 25px;
-      margin-right: 5px;
+      margin-right: 25px;
 
       div:first-child {
         padding: 0;

@@ -1,118 +1,190 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
-  import ImageList, { Item } from '@smui/image-list'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
-  import Dialog, { Title, Content } from '@smui/dialog'
   import { onMount } from 'svelte'
-  import VectorLegendSymbol from '$components/controls/VectorLegendSymbol.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { fade } from 'svelte/transition'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import LegendSymbol from '@watergis/legend-symbol'
+  import { createPopperActions } from 'svelte-popperjs'
+
+  import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
+  import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
+  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
-  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   let isIconListPanelVisible = false
-  let updateLegend = () => undefined
-
-  $: iconImage, setIconImage()
+  let legendSymbolContainer: HTMLElement = document.createElement('div')
 
   onMount(async () => {
     updateLegend()
   })
 
-  const onClick = (e: MouseEvent) => {
-    const element = e.target as HTMLInputElement
-    iconImage = element.value
-    isIconListPanelVisible = false
-    setIconImage()
-    updateLegend()
+  const updateLegend = () => {
+    $map.setLayoutProperty(layerId, propertyName, iconImage)
+    const mapLayers = $map.getStyle().layers
+    const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
+
+    const symbol = LegendSymbol({ zoom: $map.getZoom(), layer: mapLayerByLayerId })
+    legendSymbolContainer.innerHTML = ''
+    if (symbol) {
+      switch (symbol.element) {
+        case 'div': {
+          const div = document.createElement('div')
+          if (
+            symbol.attributes.style.backgroundImage &&
+            !['url(undefined)', 'url(null)'].includes(symbol.attributes.style.backgroundImage)
+          ) {
+            const img = document.createElement('img')
+            img.src = symbol.attributes.style.backgroundImage.replace('url(', '').replace(')', '')
+            img.alt = layerId
+            img.style.cssText = `height: 20px;`
+            div.appendChild(img)
+          }
+          const divBackground = document.createElement('div')
+          divBackground.style.height = '20px'
+          divBackground.style.width = '150px'
+          divBackground.style.backgroundColor = symbol.attributes.style.backgroundColor
+          divBackground.style.backgroundPosition = symbol.attributes.style.backgroundPosition
+          divBackground.style.backgroundSize = symbol.attributes.style.backgroundSize
+          divBackground.style.backgroundRepeat = symbol.attributes.style.backgroundRepeat
+          divBackground.style.opacity = symbol.attributes.style.opacity
+          div.appendChild(divBackground)
+          legendSymbolContainer.appendChild(div)
+          break
+        }
+        case 'svg': {
+          if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
+            $spriteImageList.find((icon) => {
+              if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
+                const img = document.createElement('img')
+                img.src = icon.src
+                img.alt = layerId
+                img.style.cssText = `height: 24px; width: 24px;`
+                legendSymbolContainer.appendChild(img)
+              }
+            })
+          } else {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+            svg.style.cssText = 'height: 20px;'
+            svg.setAttributeNS(null, 'version', '1.1')
+            Object.keys(symbol.attributes).forEach((k) => {
+              svg.setAttribute(k, symbol.attributes[k])
+              let group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+              symbol.children.forEach((child) => {
+                var c = document.createElementNS('http://www.w3.org/2000/svg', child.element)
+                Object.keys(child.attributes).forEach((k2) => {
+                  c.setAttributeNS(null, k2, child.attributes[k2])
+                })
+                group.appendChild(c)
+              })
+              svg.appendChild(group)
+            })
+            legendSymbolContainer.appendChild(svg)
+          }
+          break
+        }
+        default: {
+          break
+        }
+      }
+    }
   }
 
-  const setIconImage = () => {
-    if (style.type !== LayerTypes.SYMBOL) return
-    const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.layout) {
-      newStyle.layout = {}
+  const handleClosePopup = () => {
+    isIconListPanelVisible = !isIconListPanelVisible
+  }
+
+  const handleIconClick = (event: CustomEvent) => {
+    if (event?.detail?.spriteImageAlt) {
+      isIconListPanelVisible = false
+      iconImage = event.detail.spriteImageAlt
+      updateLegend()
     }
-    newStyle.layout[propertyName] = iconImage
-    $map.setLayoutProperty(layerId, propertyName, iconImage)
-    dispatch('change')
+  }
+
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'right-end',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [-25, -5],
+        },
+      },
+    ],
   }
 </script>
 
-{#if style.type === LayerTypes.SYMBOL}
-  <div class="icon-button" on:click={() => (isIconListPanelVisible = !isIconListPanelVisible)}>
-    <VectorLegendSymbol bind:updateLegend {layer} />
+<div class="icon-button" use:popperRef on:click={handleClosePopup}>
+  <IconImagePickerCard bind:legendSymbolContainer iconImageAlt={iconImage} />
+</div>
+
+{#if isIconListPanelVisible}
+  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+    <IconImagePicker on:handleIconClick={handleIconClick} on:handleClosePopup={handleClosePopup} />
+
+    <div id="arrow" data-popper-arrow />
   </div>
 {/if}
 
-<Dialog bind:open={isIconListPanelVisible} selection aria-labelledby="list-title" aria-describedby="list-content">
-  <Title id="list-title">Icon images</Title>
-  <Content id="list-content">
-    <div class="imageList">
-      <ImageList>
-        {#each $spriteImageList as icon}
-          <Item>
-            <Wrapper>
-              <div class="icon">
-                <input
-                  type="image"
-                  src={icon.src}
-                  alt={icon.alt}
-                  style="width:24px;height:24px"
-                  value={icon.alt}
-                  on:click={onClick} />
-              </div>
-              <Tooltip>{icon.alt}</Tooltip>
-            </Wrapper>
-          </Item>
-        {/each}
-      </ImageList>
-    </div>
-  </Content>
-</Dialog>
-
 <style lang="scss">
-  @use '@material/image-list/index' as image-list;
-
   .icon-button {
-    border: solid 0.5px #ccc;
-    background-color: white;
-    width: 28px;
-    height: 28px;
-    padding-top: 3px;
-    padding-left: 3px;
-    cursor: pointer;
+    width: 65px;
+  }
+
+  $tooltip-background: #fff;
+
+  #tooltip {
+    background: $tooltip-background;
+    border-radius: 7.5px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    max-height: 460px;
+    max-width: 440px;
+    padding-top: 10px;
+    padding: 15px;
+    position: absolute;
+    inset: -10px auto auto 0px !important;
+    width: 460px;
 
     @media (prefers-color-scheme: dark) {
-      border: solid 0.5px #ffffff;
+      background: #212125;
     }
-  }
 
-  .imageList {
-    max-height: 300px;
-    max-width: 350px;
-    overflow-x: hiden;
-    overflow-y: scroll;
+    #arrow,
+    #arrow::before {
+      background: $tooltip-background;
+      height: 18px;
+      left: -4.5px;
+      position: absolute;
+      width: 18px;
 
-    position: relative;
-    margin: 1em 0;
-    padding: 1em 1em 0.5em 1em;
-    border: solid 0.5px #1c1c1c;
-    border-radius: 4px;
-  }
-  .icon {
-    padding: 1em;
-  }
-  .icon :hover {
-    border: 2px solid #ffae00;
-    background-color: #fac45178;
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
+    }
+
+    #arrow {
+      visibility: visible;
+    }
+
+    #arrow::before {
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      content: '';
+      transform: rotate(45deg);
+      visibility: visible;
+    }
   }
 </style>
