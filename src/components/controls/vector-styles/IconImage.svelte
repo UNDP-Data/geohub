@@ -102,7 +102,6 @@
 
   const handleIconClick = (event: CustomEvent) => {
     if (event?.detail?.spriteImageAlt) {
-      isIconListPanelVisible = false
       iconImage = event.detail.spriteImageAlt
       updateLegend()
     }
@@ -131,7 +130,10 @@
 
 {#if isIconListPanelVisible}
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-    <IconImagePicker on:handleIconClick={handleIconClick} on:handleClosePopup={handleClosePopup} />
+    <IconImagePicker
+      on:handleIconClick={handleIconClick}
+      on:handleClosePopup={handleClosePopup}
+      iconImageAlt={iconImage} />
 
     <div id="arrow" data-popper-arrow />
   </div>
