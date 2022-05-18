@@ -16,7 +16,7 @@
 
   let maxValue = 5
   let minValue = 0
-  let stepValue = 1
+  let stepValue = 0.25
   let value = 1
 </script>
 
