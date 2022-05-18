@@ -101,13 +101,13 @@
       <div class="columns second-row">
         <div class="column is-4 color">
           <div class="is-flex is-justify-content-center">Color</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
             <IconColor {layer} />
           </div>
         </div>
         <div class="column overlap-priority">
           <div class="is-flex is-justify-content-center">Overlap Priority</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="is-flex is-justify-content-center" style="z-index: 1; position: relative;">
             <IconOverlap {layer} />
           </div>
         </div>

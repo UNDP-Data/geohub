@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import RangeSlider from 'svelte-range-slider-pips'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
@@ -9,7 +8,6 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
@@ -19,9 +17,7 @@
   $: selected, setIconOverlap()
 
   const setIconOverlap = () => {
-    if (style.type !== LayerTypes.SYMBOL) return
     $map.setLayoutProperty(layerId, 'icon-overlap', choices[selected[0]])
-    dispatch('change')
   }
 </script>
 
