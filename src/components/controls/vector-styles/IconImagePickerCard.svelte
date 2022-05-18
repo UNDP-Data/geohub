@@ -9,14 +9,15 @@
   export let isSelected = false
 </script>
 
-<div class="card" data-testid="icon-picker-card-container">
+<div class="card" data-testid="icon-image-picker-card-container">
   <div class="card-content">
     <div class="media is-flex is-justify-content-center">
       <figure class={`image is-24x24 ${isSelected ? '' : 'is-clickable'}`} data-testid="icon-figure">
         {#if legendSymbolContainer}
-          <div bind:this={legendSymbolContainer} />
+          <div data-testid="legend-symbol-container" bind:this={legendSymbolContainer} />
         {:else}
           <input
+            data-testid="icon-image"
             type="image"
             src={iconImageSrc}
             alt={clean(iconImageAlt)}
