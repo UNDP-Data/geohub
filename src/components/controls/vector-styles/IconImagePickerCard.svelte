@@ -6,8 +6,7 @@
   export let iconImageAlt: string
   export let iconImageSrc = null
   export let legendSymbolContainer: HTMLElement
-
-  let isSelected = false
+  export let isSelected = false
 </script>
 
 <div class="card" data-testid="icon-picker-card-container">
@@ -32,7 +31,7 @@
         {clean(iconImageAlt)}
       </div>
       {#if isSelected}
-        <div class="column is-size-8 selected" alt="Icon Selected" title="Icon Selected">
+        <div class="selected" alt="Icon Selected" title="Icon Selected">
           <Fa icon={faCheck} />
         </div>
       {/if}
@@ -41,26 +40,30 @@
 </div>
 
 <style lang="scss">
-  .card-content {
-    padding: 5px;
+  .card {
+    cursor: pointer;
 
-    .media {
-      margin: 0;
-    }
+    .card-content {
+      padding: 5px;
 
-    .sprite-image-title {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 75px;
-      width: 75px;
-    }
+      .media {
+        margin: 0;
+      }
 
-    .selected {
-      color: hsl(141, 53%, 53%);
-      position: relative;
-      right: 2px;
-      top: 1.5px;
+      .sprite-image-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 75px;
+        width: 75px;
+      }
+
+      .selected {
+        color: hsl(141, 53%, 53%);
+        position: absolute;
+        right: 5px;
+        top: 3px;
+      }
     }
   }
 </style>
