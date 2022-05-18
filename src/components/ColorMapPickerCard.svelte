@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import chroma from 'chroma-js'
   import Fa from 'svelte-fa'
   import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
 
