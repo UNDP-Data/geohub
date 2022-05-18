@@ -299,6 +299,81 @@
     hoveredStateId = null
   }
 
+  const getAdminGeoJSONUrl = (admin_props) => {
+    const lvl = getAdminLevel()
+    const filtered = Object.keys(admin_props)
+      .filter((key) => key.includes(lvl) && key.endsWith('id'))
+      .reduce((obj, key) => {
+        obj['admin_id'] = admin_props[key]
+        return obj
+      }, {})
+    const { admin_id } = filtered
+    return `${AZURE_URL}/admin/adm${lvl}_polygons_geojson/${admin_id}.geojson`
+  }
+
+  const getAdminStats = async (e) => {
+    const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
+    const total = electricitySelected.name == 'HREA' ? 1 : 255
+
+    const features = $map.queryRenderedFeatures(e.point, { layers: [ADM_ID] })
+    if (features.length > 0) {
+      controller.abort()
+      controller = new AbortController()
+      const { type, geometry, properties } = features[0].toJSON()
+      //const geoJSON = { type, geometry, properties }
+      const adminIdUrl = getAdminGeoJSONUrl(features[0].toJSON().properties)
+      const apiUrlParams = { url: lurl, geojson_url: adminIdUrl }
+
+      const config = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        //mode: 'no-cors',
+        signal: controller.signal,
+      }
+
+      const url = `${API_URL}/geojsonstats?${new URLSearchParams(apiUrlParams).toString()}`
+      //const url = `http://localhost:8000/hrea/geojsonstats?${new URLSearchParams(apiUrlParams).toString()}`
+      // const stats = await fetchUrl(url, config)
+      // console.log(JSON.stringify(stats, null, '\t'))
+      adminHistogram = []
+      adminHistogramStep = 1
+      adminHistogramAdmin = ''
+      renderAdminCharts()
+      try {
+        const response = await fetch(url, config)
+        if (response.ok) {
+          const result = await response.json()
+          //console.log(JSON.stringify(result, null, '\t'))
+          const {
+            histogram: [values, bins],
+          } = result['1']
+          adminHistogramAdmin = [
+            properties.adm0_name,
+            properties.adm1_name,
+            properties.adm2_name,
+            properties.adm3_name,
+            properties.adm4_name,
+          ]
+            .filter(Boolean)
+            .join(', ')
+          adminHistogramStep = (bins[1] - bins[0]) / total
+          adminHistogram = values.map((x, i) => ({
+            count: x,
+            bin1: bins[i] / total,
+            bin2: bins[i + 1] / total,
+          }))
+          renderAdminCharts()
+        } else {
+          throw new Error(`Network response was ${response}`)
+        }
+      } catch (error) {
+        console.error(error.name, error.message)
+      }
+    }
+  }
+
   const geoJSONStats = async (e) => {
     const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
     const total = electricitySelected.name == 'HREA' ? 1 : 255
@@ -427,7 +502,7 @@
     $map.on('mouseleave', ADM_ID, onAdminMouseLeave)
     $map.on('zoom', onAdminZoom)
     $map.off('click', onPointClick)
-    $map.on('click', geoJSONStats)
+    $map.on('click', getAdminStats)
     renderAdminCharts()
   }
 
@@ -436,7 +511,7 @@
     $map.off('mouseleave', ADM_ID, onAdminMouseLeave)
     $map.off('zoom', onAdminZoom)
     $map.on('click', onPointClick)
-    $map.off('click', geoJSONStats)
+    $map.off('click', getAdminStats)
     renderPointCharts()
   }
 
