@@ -71,13 +71,13 @@
   }
 </script>
 
-<div data-testid="icon-image-picker">
+<div data-testid="icon-image-picker-container">
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
       <div class="tabs">
         <ul>
           {#each iconGroupsByLetter as iconGroup}
-            <li class={activeIconGroupId === iconGroup.id ? 'is-active' : ''}>
+            <li class={activeIconGroupId === iconGroup.id ? 'is-active' : ''} data-testid="group-letter-tab">
               <a href={'#'} on:click={() => handleSetActiveIconGroup(iconGroup.id)}>
                 {iconGroup.id.toUpperCase()}
               </a>
@@ -99,7 +99,9 @@
               <li
                 on:click={() => {
                   handleIconClick(spriteImage.alt)
-                }}>
+                }}
+                alt="Icon Picker Card"
+                title="Icon Picker Card">
                 <IconImagePickerCard
                   legendSymbolContainer={undefined}
                   iconImageAlt={spriteImage.alt}

@@ -91,6 +91,8 @@
       colorValues[colorValues.length - 1].color = generateColorObject(val)
     }
   }
+
+  console.log(colorValues)
 </script>
 
 {#if style.type === LayerTypes.HEATMAP}
