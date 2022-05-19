@@ -1,14 +1,7 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
   import Slider from '$components/controls/vector-styles/Slider.svelte'
-
-  import type { Layer } from '$lib/types'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-
-  const dispatch = createEventDispatcher()
-  const onStyleChange = () => {
-    dispatch('change')
-  }
+  import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
 
@@ -23,7 +16,7 @@
 
 <Slider
   {layer}
-  on:change={onStyleChange}
+  styleControlGroupDisabled={true}
   bind:layerType
   bind:propertyName
   bind:titleName

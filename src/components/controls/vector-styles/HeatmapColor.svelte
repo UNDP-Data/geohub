@@ -1,18 +1,21 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import chroma from 'chroma-js'
-  import Ripple from '@smui/ripple'
 
-  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import HeatmapColorRow from '$components/controls/vector-styles/HeatmapColorRow.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import type { Layer } from '$lib/types'
+  import type { Color, Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
+  let colorPickerVisibleIndex: number
 
-  const defaultValue = [
+  const layerId = layer.definition.id
+  const propertyName = 'heatmap-color'
+  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+  const heatMapDataColorIndexStart = 3
+  const heatMapDefaultValues = [
     'interpolate',
     ['linear'],
     ['heatmap-density'],
@@ -29,15 +32,29 @@
     1,
     'rgb(255,0,0)',
   ]
-  const dispatch = createEventDispatcher()
-  const layerId = layer.definition.id
-  const propertyName = 'heatmap-color'
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let colorIndex: number
   let colorValues = []
-  let heatmapColor = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultValue
-  let showToolTip = false
+  let heatMapValues = style.paint && style.paint[propertyName] ? style.paint[propertyName] : heatMapDefaultValues
+
+  onMount(() => {
+    colorValues = getColorValues()
+  })
+
+  const getColorValues = () => {
+    const colorRows = heatMapValues.slice(heatMapDataColorIndexStart)
+    const colorRowsValues = []
+    colorRows.map((value: string, index: number) => {
+      if (index % 2 === 0) {
+        colorRowsValues.push({
+          index: index / 2,
+          value,
+          color: generateColorObject(colorRows[index + 1]) as Color,
+        })
+      }
+    })
+
+    return colorRowsValues
+  }
 
   const generateColorObject = (rgbColor: string) => {
     let String = rgbColor.replace('rgba(', '').replace('rgb(', '').replace(')', '')
@@ -58,85 +75,28 @@
     }
   }
 
-  const setColor = () => {
+  const handleChangeColorMap = () => {
     if (style.type !== LayerTypes.HEATMAP) return
-    for (let i = 0; i < colorValues.length; i++) {
-      const value = colorValues[i]
-      heatmapColor[value.seq] = value.value
-      const r = value.color.r
-      const g = value.color.g
-      const b = value.color.b
-      const a = value.color.a
-      let colorValue = `rgba(${r},${g},${b},${a})`
-      if (i === 0) {
-        const rgb = [value.color.r, value.color.g, value.color.b]
-        colorValue = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`
-      }
-      heatmapColor[value.seq + 1] = colorValue
-    }
-    const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.paint) {
-      newStyle.paint = {}
-    }
-    newStyle.paint[propertyName] = heatmapColor
-    $map.setPaintProperty(layerId, propertyName, heatmapColor)
-    dispatch('change')
+
+    colorValues.forEach((row) => {
+      const colorValue = `rgba(${row.color.r},${row.color.g},${row.color.b},${row.index === 0 ? 0 : row.color.a})`
+      heatMapValues[row.index * 2 + heatMapDataColorIndexStart + 1] = colorValue
+    })
+
+    $map.setPaintProperty(layerId, propertyName, heatMapValues)
   }
 
-  for (let i = 3; i < heatmapColor.length; i++) {
-    const val = heatmapColor[i]
-    if (typeof val === 'number') {
-      colorValues.push({ seq: i, value: val })
-    } else if (typeof val === 'string') {
-      colorValues[colorValues.length - 1].color = generateColorObject(val)
-    }
+  const handleColorPickerClick = (event: CustomEvent) => {
+    colorPickerVisibleIndex = event.detail.index
   }
-
-  console.log(colorValues)
 </script>
 
 {#if style.type === LayerTypes.HEATMAP}
-  <StyleControlGroup title="Heatmap Color">
-    <table>
-      {#each colorValues as colorValue, index}
-        <tr>
-          <td class="color-table-td">
-            {#if showToolTip}
-              <div class={showToolTip && colorIndex === index ? 'tooltipshown' : 'tooltiphidden'}>
-                <DefaultColorPicker
-                  bind:color={colorValues[index].color}
-                  on:closeColorPicker={() => (showToolTip = false)}
-                  on:changeColor={setColor} />
-              </div>
-            {/if}
-            <div
-              use:Ripple={{ surface: true }}
-              on:click={() => {
-                showToolTip = !showToolTip
-                colorIndex = index
-              }}
-              style="width: 32px; height: 32px; border:1px solid grey; cursor:pointer; background: rgba({colorValues[
-                index
-              ].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[index].color.a})" />
-          </td>
-          <td class="color-table-td"
-            >rgba({colorValues[index].color.r},{colorValues[index].color.g},{colorValues[index].color.b}, {colorValues[
-              index
-            ].color.a})</td>
-        </tr>
-      {/each}
-    </table>
-  </StyleControlGroup>
+  {#each colorValues as colorValueRow}
+    <HeatmapColorRow
+      bind:colorRow={colorValueRow}
+      {colorPickerVisibleIndex}
+      on:clickColorPicker={handleColorPickerClick}
+      on:changeColorMap={handleChangeColorMap} />
+  {/each}
 {/if}
-
-<style>
-  .color-table-td {
-    text-align: center;
-    vertical-align: middle;
-    padding-right: 5px;
-    padding-left: 5px;
-  }
-  :global(.tooltiphidden) {
-    display: none !important;
-  }
-</style>

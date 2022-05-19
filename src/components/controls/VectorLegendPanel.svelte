@@ -178,10 +178,40 @@
         </div>
       {/if}
     {:else if style.type === LayerTypes.HEATMAP}
-      <HeatmapColor {layer} />
-      <HeatmapIntensity {layer} />
-      <HeatmapRadius {layer} />
-      <HeatmapWeight {layer} />
+      <div class="columns first-row">
+        <div class="column heat-map-color">
+          <div class="is-flex is-justify-content-center">Heatmap Color</div>
+          <div>
+            <HeatmapColor {layer} />
+          </div>
+        </div>
+        <div class="column">
+          <div class="columns first-row">
+            <div class="column" style="padding-bottom: 3px;">
+              <div class="is-flex is-justify-content-center">Heatmap Intensity</div>
+              <div class="is-flex is-justify-content-center">
+                <HeatmapIntensity {layer} />
+              </div>
+            </div>
+          </div>
+          <div class="columns first-row">
+            <div class="column" style="padding-bottom: 3px;">
+              <div class="is-flex is-justify-content-center">Heatmap Radius</div>
+              <div class="is-flex is-justify-content-center">
+                <HeatmapRadius {layer} />
+              </div>
+            </div>
+          </div>
+          <div class="columns first-row">
+            <div class="column"  style="padding-bottom: 3px;">
+              <div class="is-flex is-justify-content-center">Heatmap Weight</div>
+              <div class="is-flex is-justify-content-center">
+                <HeatmapWeight {layer} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     {/if}
   </div>
 {/if}
@@ -196,6 +226,7 @@
     .first-row {
       margin-bottom: 0;
 
+      .heat-map-color,
       .line-color,
       .line-dash,
       .line-join,
