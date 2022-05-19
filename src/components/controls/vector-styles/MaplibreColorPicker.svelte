@@ -40,7 +40,3 @@
   use:Ripple={{ surface: true }}
   on:click={() => (showToolTip = !showToolTip)}
   style="width: 20px; height: 20px; background: {rgba}; cursor: pointer;" />
-
-<style lang="scss">
-  @use '@material/image-list/index' as image-list;
-</style>

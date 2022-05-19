@@ -66,8 +66,20 @@
       <LineDasharray {layer} />
       <LineJoin {layer} />
     {:else if style.type === LayerTypes.FILL}
-      <FillColor {layer} />
-      <FillOutlineColor {layer} />
+      <div class="columns first-row">
+        <div class="column fill-color" style="padding-left: 50px;">
+          <div class="is-flex is-justify-content-center">Fill Color</div>
+          <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
+            <FillColor {layer} />
+          </div>
+        </div>
+        <div class="column fill-outline-color" style="padding-right: 50px;">
+          <div class="is-flex is-justify-content-center">Fill Outline Color</div>
+          <div class="is-flex is-justify-content-center" style="z-index: 1; position: relative;">
+            <FillOutlineColor {layer} />
+          </div>
+        </div>
+      </div>
     {:else if style.type === LayerTypes.SYMBOL}
       <div class="columns first-row">
         <div class="column is-4 icon-image">
@@ -153,7 +165,9 @@
     .first-row {
       margin-bottom: 0;
 
-      .icon-image {
+      .icon-image,
+      .fill-color,
+      .fill-outline-color {
         div:first-child {
           margin-bottom: 5px;
         }
