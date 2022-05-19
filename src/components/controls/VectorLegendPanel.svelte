@@ -203,7 +203,7 @@
             </div>
           </div>
           <div class="columns first-row">
-            <div class="column"  style="padding-bottom: 3px;">
+            <div class="column" style="padding-bottom: 3px;">
               <div class="is-flex is-justify-content-center">Heatmap Weight</div>
               <div class="is-flex is-justify-content-center">
                 <HeatmapWeight {layer} />
