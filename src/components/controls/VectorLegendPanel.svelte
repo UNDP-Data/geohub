@@ -58,7 +58,7 @@
 </script>
 
 {#if isLegendPanelVisible === true}
-  <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container" >
+  <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
       <div class="columns first-row">
         <div class="column line-color">

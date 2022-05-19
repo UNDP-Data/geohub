@@ -3,7 +3,6 @@
 
   let pages = []
   for (let page in modules) {
-    console.log(page)
     let path = page.replace('.svelte', '').replace('./', '/')
     pages.push({
       title: path.substring(page.lastIndexOf('/')),

@@ -13,17 +13,7 @@
     if ($map) {
       $map.on('styledata', updateLocation)
       $map.on('mousemove', ADM_ID, updateLocation)
-      $map.on('mouseleave', ADM_ID, clearLocation)
     }
-  }
-
-  const clearLocation = () => {
-    isContainerVisible = false
-    adm0Name = null
-    adm1Name = null
-    adm2Name = null
-    adm3Name = null
-    adm4Name = null
   }
 
   const updateLocation = (e) => {
