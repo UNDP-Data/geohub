@@ -78,6 +78,12 @@ export interface IntervalLegendColorMapRow {
   end?: number | string
 }
 
+export interface HeatmapColorRow {
+  index?: number
+  color?: Color
+  value?: number
+}
+
 export interface LayerInfo {
   band_descriptions?: string[]
   band_metadata?: string[]
