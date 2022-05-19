@@ -58,13 +58,44 @@
 </script>
 
 {#if isLegendPanelVisible === true}
-  <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container">
+  <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container" >
     {#if style.type === LayerTypes.LINE}
-      <LineWidth {layer} />
-      <LineBlur {layer} />
-      <LineColor {layer} />
-      <LineDasharray {layer} />
-      <LineJoin {layer} />
+      <div class="columns first-row">
+        <div class="column line-color">
+          <div class="is-flex is-justify-content-center">Line Color</div>
+          <div class="is-flex is-justify-content-center">
+            <LineColor {layer} />
+          </div>
+        </div>
+      </div>
+      <div class="columns first-row">
+        <div class="column line-width">
+          <div class="is-flex is-justify-content-center">Line Width</div>
+          <div class="is-flex is-justify-content-center">
+            <LineWidth {layer} />
+          </div>
+        </div>
+        <div class="column line-blur">
+          <div class="is-flex is-justify-content-center">Line Blur</div>
+          <div class="is-flex is-justify-content-center">
+            <LineBlur {layer} />
+          </div>
+        </div>
+      </div>
+      <div class="columns first-row">
+        <div class="column line-dash">
+          <div class="is-flex is-justify-content-center">Line Dash</div>
+          <div class="is-flex is-justify-content-center">
+            <LineDasharray {layer} />
+          </div>
+        </div>
+        <div class="column line-join">
+          <div class="is-flex is-justify-content-center">Line Join</div>
+          <div class="is-flex is-justify-content-center">
+            <LineJoin {layer} />
+          </div>
+        </div>
+      </div>
     {:else if style.type === LayerTypes.FILL}
       <div class="columns first-row">
         <div class="column fill-color" style="padding-left: 50px;">
@@ -165,11 +196,14 @@
     .first-row {
       margin-bottom: 0;
 
+      .line-color,
+      .line-dash,
+      .line-join,
       .icon-image,
       .fill-color,
       .fill-outline-color {
         div:first-child {
-          margin-bottom: 5px;
+          margin-bottom: 10px;
         }
 
         div:second-child {
