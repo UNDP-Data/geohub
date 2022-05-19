@@ -237,6 +237,7 @@
     map.subscribe(() => {
       if ($map) {
         $map.on('load', () => {
+          setContentContainerMargin(drawerWidth)
           loadLayers()
         })
       }
