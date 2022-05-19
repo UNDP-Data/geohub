@@ -153,13 +153,14 @@
     border: 1px solid #ccc;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-size: 13px;
+    inset: auto auto 0px -10px !important;
     max-height: 300px;
-    max-width: 460px;
+    max-width: 470px;
     padding-top: 10px;
     padding: 15px;
     position: absolute;
     top: 10px;
-    width: 460px;
+    width: 470px;
 
     @media (prefers-color-scheme: dark) {
       background: #212125;
