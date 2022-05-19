@@ -102,13 +102,23 @@
   }
 
   .card-color {
-    max-height: 145px;
+    max-height: 150px;
     overflow-y: auto;
 
     ul {
       display: flex;
       flex-flow: row wrap;
       gap: 15px;
+
+      li {
+        cursor: pointer;
+        padding: 1px;
+
+        &:hover {
+          padding: 0;
+          border: 1px solid hsl(204, 86%, 53%);
+        }
+      }
     }
   }
 </style>
