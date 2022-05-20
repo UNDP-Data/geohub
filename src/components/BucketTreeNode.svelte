@@ -475,7 +475,7 @@
           </div>
           <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
             <Wrapper>
-              <Fa icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
+              <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
             </Wrapper>
           </div>

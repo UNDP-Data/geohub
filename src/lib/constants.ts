@@ -1,9 +1,8 @@
-import { faDrawPolygon } from '@fortawesome/free-solid-svg-icons/faDrawPolygon'
-import { faBraille } from '@fortawesome/free-solid-svg-icons/faBraille'
 import { faBacon } from '@fortawesome/free-solid-svg-icons/faBacon'
 import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
-// import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe'
 import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
+import { faCubesStacked } from '@fortawesome/free-solid-svg-icons/faCubesStacked'
+import { faVectorSquare } from '@fortawesome/free-solid-svg-icons/faVectorSquare'
 
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
@@ -73,7 +72,7 @@ export const LayerIconTypes = [
   {
     id: 'point',
     label: 'Point',
-    icon: faBraille,
+    icon: faCubesStacked,
     color: 'lightseagreen',
   },
   {
@@ -85,7 +84,7 @@ export const LayerIconTypes = [
   {
     id: 'polygon',
     label: 'Polygon',
-    icon: faDrawPolygon,
+    icon: faVectorSquare,
     color: 'crimson',
   },
   {
@@ -98,7 +97,7 @@ export const LayerIconTypes = [
     id: 'raster',
     label: 'Raster',
     icon: faWindows,
-    color: 'nightblue',
+    color: '#0b0b45',
   },
 ]
 
