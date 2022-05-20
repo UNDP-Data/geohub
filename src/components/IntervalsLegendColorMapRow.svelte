@@ -166,7 +166,6 @@
     .discrete {
       cursor: pointer;
       height: 20px;
-      padding: 1px;
       width: 20px;
 
       &:hover {

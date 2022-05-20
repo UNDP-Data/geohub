@@ -63,7 +63,7 @@
       <div class="columns first-row">
         <div class="column line-color">
           <div class="is-flex is-justify-content-center">Line Color</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
             <LineColor {layer} />
           </div>
         </div>
