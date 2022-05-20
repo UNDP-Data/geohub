@@ -166,7 +166,13 @@
     .discrete {
       cursor: pointer;
       height: 20px;
+      padding: 1px;
       width: 20px;
+
+      &:hover {
+        padding: 0;
+        border: 1px solid hsl(204, 86%, 53%);
+      }
     }
 
     .tooltip-hidden {
