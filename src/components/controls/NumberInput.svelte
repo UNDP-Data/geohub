@@ -72,6 +72,7 @@
         margin-left: 10px;
         margin-right: 10px;
         user-select: none;
+        width: 40px;
       }
     }
   }

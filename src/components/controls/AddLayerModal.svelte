@@ -312,6 +312,7 @@
         }
 
         .layer-type-label {
+          cursor: default;
           margin-bottom: 3px;
           margin-left: 10px;
         }

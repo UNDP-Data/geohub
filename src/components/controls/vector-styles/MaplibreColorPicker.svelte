@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Ripple from '@smui/ripple'
   import chroma from 'chroma-js'
 
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
@@ -36,7 +35,18 @@
     <DefaultColorPicker bind:color on:closeColorPicker={() => (showToolTip = false)} on:changeColor={setColor} />
   </div>
 {/if}
-<div
-  use:Ripple={{ surface: true }}
-  on:click={() => (showToolTip = !showToolTip)}
-  style="width: 20px; height: 20px; background: {rgba}; cursor: pointer;" />
+<div class="color-palette" on:click={() => (showToolTip = !showToolTip)} style="background: {rgba};" />
+
+<style lang="scss">
+  .color-palette {
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    cursor: pointer;
+
+    &:hover {
+      padding: 0;
+      border: 1px solid hsl(204, 86%, 53%);
+    }
+  }
+</style>
