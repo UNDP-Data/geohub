@@ -10,11 +10,7 @@
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Layer, Sprite } from '$lib/types'
   import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
-  import type {
-    LayerSpecification,
-    RasterSourceSpecification,
-    VectorSourceSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
 
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
@@ -101,7 +97,7 @@
     map.update(() => newMap)
   })
 
-  const beforeStyleChanged = (e: CustomEvent) => {
+  const beforeStyleChanged = () => {
     const latestStyle = $map.getStyle()
     $layerList.forEach((layer: Layer) => {
       if (latestStyle.sources[layer.definition.source]) {
@@ -114,7 +110,7 @@
     })
   }
 
-  const styleChanged = (e: CustomEvent) => {
+  const styleChanged = () => {
     $layerList.forEach((layer: Layer) => {
       if (!$map.getSource(layer.definition.source)) {
         $map.addSource(layer.definition.source, layer.source)
