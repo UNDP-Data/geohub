@@ -8,8 +8,13 @@
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
   import { LayerTypes, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
-  import type { Sprite } from '$lib/types'
+  import type { Layer, Sprite } from '$lib/types'
   import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
+  import type {
+    LayerSpecification,
+    RasterSourceSpecification,
+    VectorSourceSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types'
 
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
@@ -96,8 +101,42 @@
     map.update(() => newMap)
   })
 
+  const beforeStyleChanged = (e: CustomEvent) => {
+    const latestStyle = $map.getStyle()
+    $layerList.forEach((layer: Layer) => {
+      if (latestStyle.sources[layer.definition.source]) {
+        layer.source = JSON.parse(JSON.stringify(latestStyle.sources[layer.definition.source]))
+      }
+      if ($map.getLayer(layer.definition.id)) {
+        const _layer = latestStyle.layers.filter((l: LayerSpecification) => l.id === layer.definition.id)[0]
+        layer.definition = JSON.parse(JSON.stringify(_layer))
+      }
+    })
+  }
+
   const styleChanged = (e: CustomEvent) => {
-    console.log(e.detail.style)
+    $layerList.forEach((layer: Layer) => {
+      if (!$map.getSource(layer.definition.source)) {
+        $map.addSource(layer.definition.source, layer.source)
+      }
+      if (!$map.getLayer(layer.definition.id)) {
+        if (layer.source.type === LayerTypes.RASTER) {
+          let firstSymbolId = undefined
+          for (const l of $map.getStyle().layers) {
+            if (l.type === 'symbol') {
+              firstSymbolId = l.id
+              break
+            }
+          }
+          $map.addLayer(layer.definition, firstSymbolId)
+        } else {
+          $map.addLayer(layer.definition)
+        }
+        layer.children?.forEach((child: Layer) => {
+          $map.addLayer(child.definition)
+        })
+      }
+    })
   }
 </script>
 
@@ -114,6 +153,7 @@
   bind:stylePrimary={styles[0]}
   bind:styleSecondary={styles[1]}
   on:styleChanged={styleChanged}
+  on:beforestyleChanged={beforeStyleChanged}
   bind:map={$map} />
 
 <MapQueryInfoPanel bind:mapMouseEvent />

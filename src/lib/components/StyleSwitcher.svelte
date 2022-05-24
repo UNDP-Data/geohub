@@ -36,6 +36,10 @@
   const changeStyle = () => {
     if (!map) return
 
+    dispatch('beforestyleChanged', {
+      style: activeStyle,
+    })
+
     if (!activeStyle) {
       activeStyle = JSON.parse(JSON.stringify(stylePrimary))
     }

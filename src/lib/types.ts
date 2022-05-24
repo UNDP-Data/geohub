@@ -6,6 +6,8 @@ import type {
   FillLayerSpecification,
   SymbolLayerSpecification,
   HeatmapLayerSpecification,
+  RasterSourceSpecification,
+  VectorSourceSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types'
 import type { ClassificationMethodTypes, StatusTypes } from './constants'
 
@@ -49,6 +51,7 @@ export interface Layer {
   children?: Layer[]
   parent?: Layer
   legendType?: string
+  source?: VectorSourceSpecification | RasterSourceSpecification
 }
 
 export interface ContinuousLegend {

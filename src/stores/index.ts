@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store'
+import type { Map as MaplibreMap } from 'maplibre-gl'
 import type { BannerMessage, Bucket, Layer, SpriteImage, TreeNode } from '$lib/types'
 
 // dynamic layer list
@@ -14,7 +15,7 @@ export const modalVisible = writable(false)
 export const layerList = writable(<Layer[]>[])
 
 // map store for maplibre-gl object
-export const map = writable(null)
+export const map = writable<MaplibreMap>(null)
 
 // tree store for buckets
 export const treeBucket = writable(<TreeNode[]>[])
