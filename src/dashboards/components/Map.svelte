@@ -3,9 +3,9 @@
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
 
   import CurrentLocation from './CurrentLocation.svelte'
-  import StyleSwicher from './StyleSwitcher.svelte'
+  import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
-  import type { StyleDefinition } from '$lib/types'
+  import { styles } from '$lib/constants'
   import { map } from '../stores'
 
   const dispatch = createEventDispatcher()
@@ -14,16 +14,6 @@
   let aerialBingTiles = []
   let mapContainer: HTMLDivElement
   let newMap: Map
-  let styles: StyleDefinition[] = [
-    {
-      title: 'Carto',
-      uri: 'https://undp-data.github.io/style/style.json',
-    },
-    {
-      title: 'Bing Aerial',
-      uri: 'https://undp-data.github.io/style/aerialstyle.json',
-    },
-  ]
 
   const getQuadkey = (z: number, x: number, y: number): string => {
     let quadkey = '',
@@ -54,7 +44,7 @@
 
     newMap = new Map({
       container: mapContainer,
-      style: 'https://undp-data.github.io/style/style.json',
+      style: styles[0].uri,
       center: [0, 0],
       zoom: 3,
       hash: true,
@@ -85,7 +75,11 @@
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation />
-<StyleSwicher bind:stylePrimary={styles[0]} bind:styleSecondary={styles[1]} on:styleChanged={styleChanged} />
+<StyleSwicher
+  bind:stylePrimary={styles[0]}
+  bind:styleSecondary={styles[1]}
+  on:styleChanged={styleChanged}
+  bind:map={$map} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';

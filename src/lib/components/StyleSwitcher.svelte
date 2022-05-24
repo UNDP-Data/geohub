@@ -4,12 +4,12 @@
   import { Map } from 'maplibre-gl'
 
   import type { StyleDefinition } from '$lib/types'
-  import { map } from '../stores'
 
   export let stylePrimary: StyleDefinition
   export let styleSecondary: StyleDefinition
 
   const dispatch = createEventDispatcher()
+  export let map: Map
 
   let activeStyle: StyleDefinition
   let buttonStyle: StyleDefinition
@@ -34,7 +34,11 @@
   })
 
   const changeStyle = () => {
-    if (!$map) return
+    if (!map) return
+
+    dispatch('beforestyleChanged', {
+      style: activeStyle,
+    })
 
     if (!activeStyle) {
       activeStyle = JSON.parse(JSON.stringify(stylePrimary))
@@ -51,7 +55,7 @@
       buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
     }
 
-    $map.setStyle(activeStyle.uri)
+    map.setStyle(activeStyle.uri)
     if (!mapToggle) {
       createMap(mainContainerId, buttonStyle.uri)
     } else {

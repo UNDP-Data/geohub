@@ -27,6 +27,8 @@
 
   const updateLegend = () => {
     $map.setLayoutProperty(layerId, propertyName, iconImage)
+    $map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)')
+    $map.setPaintProperty(layerId, 'icon-halo-width', 1)
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
