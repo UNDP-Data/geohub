@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
 
-  import CurrentLocation from './CurrentLocation.svelte'
+  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
   import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
   import { styles } from '$lib/constants'
@@ -74,7 +74,7 @@
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
-<CurrentLocation />
+<CurrentLocation bind:map={$map} />
 <StyleSwicher
   bind:stylePrimary={styles[0]}
   bind:styleSecondary={styles[1]}
