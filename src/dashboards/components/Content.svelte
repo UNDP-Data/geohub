@@ -6,7 +6,7 @@
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import vegaEmbed from 'vega-embed'
   import AdminLayer from '$lib/adminLayer'
-  import IntroPanel from './introPanel.svelte'
+  import IntroductionPanel from './IntroductionPanel.svelte'
   import PovertyControl from './PovertyControl.svelte'
   import ElectricityControl from './ElectricityControl.svelte'
 
@@ -399,7 +399,7 @@
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Content style="padding: 15px; overflow: visible;">
           <p class="heading-text">UNDP Electricity Dashboard</p>
-          <IntroPanel bind:showIntro />
+          <IntroductionPanel bind:showIntro />
 
           {#if !showIntro}
             <StyleControlGroup title="Layers">
