@@ -18,6 +18,7 @@
   import TimeSlider from './TimeSlider.svelte'
   import vegaEmbed from 'vega-embed'
   import AdminLayer from '$lib/adminLayer'
+  import IntroPanel from './IntroPanel.svelte'
 
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
@@ -53,6 +54,7 @@
   let adminHistogramStep = 1
 
   let showIntro = true
+  $: showIntro, adminInteraction()
   let heatmapChecked = false
   $: heatmapChecked, loadHeatmap()
   let electricityChoices = [
@@ -78,11 +80,6 @@
     if ($map && $map.getLayer(POVERTY_ID)) {
       $map.setPaintProperty(POVERTY_ID, 'heatmap-opacity', layerOpacity)
     }
-  }
-
-  const hideIntro = () => {
-    showIntro = false
-    adminInteraction()
   }
 
   $: {
@@ -469,24 +466,7 @@
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Content style="padding: 15px; overflow: visible;">
           <p class="heading-text">UNDP Electricity Dashboard</p>
-          {#if showIntro}
-            <Paper>
-              <p>
-                Welcome to the UNDP GeoHub dashboard. This site serves as a simplified preview to familiarize users with
-                data being prepared for the full-fledged GeoHub web app launching soon. Presented here is a High
-                Resolution Electricity Access (HREA) created by the University of Michigan, used to support the 2030
-                Social Development Goal (SDG) number 7: ensuring access to affordable, reliable, sustainable and modern
-                energy for all.
-              </p>
-              <p>
-                This map displays two types of electricity access layers, with an optional poverty heatmap which can be
-                overlaid. Layer statistics can be explored by either hovering over the map, showing values for the
-                layers underneath the mouse, or by drawing a circle, providing summaries of the values contained within.
-              </p>
-              <br />
-              <Button variant="raised" on:click={hideIntro}>Explore Data</Button>
-            </Paper>
-          {/if}
+          <IntroPanel bind:showIntro />
 
           {#if !showIntro}
             <StyleControlGroup title="Layers">
