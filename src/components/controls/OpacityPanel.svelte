@@ -4,6 +4,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import type { X } from 'vega-lite/build/src/channel'
 
   export let layer: Layer = LayerInitialValues
   export let isOpacityPanelVisible = false
@@ -14,25 +15,33 @@
   let rangeSliderValues = [layerOpacity * 100]
 
   $: layerOpacity = rangeSliderValues[0] / 100
-  $: layerOpacity, setLayerOpacity()
+  $: layerOpacity, setOpacity()
 
-  const setLayerOpacity = () => {
-    if (layer.definition.type === LayerTypes.RASTER) {
-      $map.setPaintProperty(layerId, 'raster-opacity', layerOpacity)
+  const setOpacity = () => {
+    layer.children?.forEach((child: Layer) => {
+      setLayerOpacity(child)
+    })
+    setLayerOpacity(layer)
+  }
+
+  const setLayerOpacity = (target: Layer) => {
+    const id = target.definition.id
+    if (target.definition.type === LayerTypes.RASTER) {
+      $map.setPaintProperty(id, 'raster-opacity', layerOpacity)
     } else {
-      switch (layer.definition.type) {
+      switch (target.definition.type) {
         case LayerTypes.SYMBOL:
-          $map.setPaintProperty(layerId, 'icon-opacity', layerOpacity)
-          $map.setPaintProperty(layerId, 'text-opacity', layerOpacity)
+          $map.setPaintProperty(id, 'icon-opacity', layerOpacity)
+          $map.setPaintProperty(id, 'text-opacity', layerOpacity)
           break
         case LayerTypes.LINE:
-          $map.setPaintProperty(layerId, 'line-opacity', layerOpacity)
+          $map.setPaintProperty(id, 'line-opacity', layerOpacity)
           break
         case LayerTypes.FILL:
-          $map.setPaintProperty(layerId, 'fill-opacity', layerOpacity)
+          $map.setPaintProperty(id, 'fill-opacity', layerOpacity)
           break
         case LayerTypes.HEATMAP:
-          $map.setPaintProperty(layerId, 'heatmap-opacity', layerOpacity)
+          $map.setPaintProperty(id, 'heatmap-opacity', layerOpacity)
           break
         default:
           break
