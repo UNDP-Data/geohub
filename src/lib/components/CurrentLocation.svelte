@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { map } from '../stores'
+  import type { Map } from 'maplibre-gl'
 
+  export let map: Map
   const ADM_ID = 'admin'
   let isContainerVisible = false
   let adm0Name = null
@@ -10,15 +11,15 @@
   let adm4Name = null
 
   $: {
-    if ($map) {
-      $map.on('styledata', updateLocation)
-      $map.on('mousemove', ADM_ID, updateLocation)
+    if (map) {
+      map.on('styledata', updateLocation)
+      map.on('mousemove', ADM_ID, updateLocation)
     }
   }
 
   const updateLocation = (e) => {
-    if ($map.getLayer('admin')) {
-      const features = $map.queryRenderedFeatures(e.point, { layers: ['admin'] })
+    if (map.getLayer(ADM_ID)) {
+      const features = map.queryRenderedFeatures(e.point, { layers: [ADM_ID] })
       if (features.length > 0) {
         adm0Name = features[0].properties.adm0_name
         adm1Name = features[0].properties.adm1_name

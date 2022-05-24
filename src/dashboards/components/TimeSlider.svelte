@@ -5,12 +5,13 @@
   import { LayerTypes } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
   import { map, year } from '../stores'
+  import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
   export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
-  export let electricitySelected = {
-    name: '',
-    icon: '',
+  export let electricitySelected: {
+    name: string
+    icon: IconDefinition
   }
 
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT

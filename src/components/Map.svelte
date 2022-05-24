@@ -11,9 +11,13 @@
   import type { Layer, Sprite } from '$lib/types'
   import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
+  import AdminLayer from '$lib/adminLayer'
 
+  const AZURE_URL = import.meta.env.VITE_AZURE_URL
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
+  let adminLayer: AdminLayer = null
 
   onMount(async () => {
     const newMap = new Map({
@@ -93,9 +97,18 @@
           spriteImageList.update(() => iconList)
         })
     })
-
     map.update(() => newMap)
+    initAdminLayer()
   })
+
+  const initAdminLayer = () => {
+    if (!$map) return
+    if (!adminLayer) {
+      adminLayer = new AdminLayer($map, AZURE_URL)
+    }
+    adminLayer.load()
+    adminLayer.setInteraction()
+  }
 
   const beforeStyleChanged = () => {
     const latestStyle = $map.getStyle()
@@ -142,6 +155,7 @@
         })
       }
     })
+    initAdminLayer()
   }
 </script>
 
@@ -154,6 +168,7 @@
     <slot />
   {/if}
 </div>
+<CurrentLocation bind:map={$map} />
 <StyleSwicher
   bind:stylePrimary={styles[0]}
   bind:styleSecondary={styles[1]}
