@@ -174,7 +174,7 @@
       </div>
     </div>
     <div class="column number-classes">
-      <div class="is-size-6 is-flex is-justify-content-center">Number of Classess</div>
+      <div class="is-size-6 is-flex is-justify-content-center">Number of Classes</div>
       <NumberInput
         bind:value={numberOfClasses}
         bind:minValue={colorClassCountMin}
