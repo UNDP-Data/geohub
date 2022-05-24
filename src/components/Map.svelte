@@ -104,8 +104,17 @@
         layer.source = JSON.parse(JSON.stringify(latestStyle.sources[layer.definition.source]))
       }
       if ($map.getLayer(layer.definition.id)) {
-        const _layer = latestStyle.layers.filter((l: LayerSpecification) => l.id === layer.definition.id)[0]
-        layer.definition = JSON.parse(JSON.stringify(_layer))
+        layer.definition = JSON.parse(
+          JSON.stringify(latestStyle.layers.filter((l: LayerSpecification) => l.id === layer.definition.id)[0]),
+        )
+
+        layer.children?.forEach((child) => {
+          if ($map.getLayer(child.definition.id)) {
+            child.definition = JSON.parse(
+              JSON.stringify(latestStyle.layers.filter((l: LayerSpecification) => l.id === child.definition.id)[0]),
+            )
+          }
+        })
       }
     })
   }

@@ -67,6 +67,12 @@
         }
 
         layer.children = [targetLayer, ...layer.children]
+      } else {
+        $map.setLayoutProperty(targetLayerId, 'text-size', 16)
+        $map.setLayoutProperty(targetLayerId, 'text-max-width', 10)
+        $map.setPaintProperty(targetLayerId, 'text-color', 'rgba(0,0,0,1)')
+        $map.setPaintProperty(targetLayerId, 'text-halo-color', 'rgba(255,255,255,1)')
+        $map.setPaintProperty(targetLayerId, 'text-halo-width', 1)
       }
       return
     }
