@@ -4,12 +4,9 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import type { X } from 'vega-lite/build/src/channel'
 
   export let layer: Layer = LayerInitialValues
   export let isOpacityPanelVisible = false
-
-  const layerId = layer.definition.id
 
   let layerOpacity = 1
   let rangeSliderValues = [layerOpacity * 100]
