@@ -21,6 +21,30 @@
     }
     dispatch('change', { value })
   }
+
+  // round number based on length of decimal places
+  const round = (val: number, exp: number) => {
+    if (typeof exp === 'undefined' || +exp === 0) return Math.round(val)
+
+    val = +val
+    exp = +exp
+
+    if (isNaN(val) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN
+
+    // Shift
+    let val2 = val.toString().split('e')
+    val = Math.round(+(val2[0] + 'e' + (val2[1] ? +val2[1] + exp : exp)))
+
+    // Shift back
+    val2 = val.toString().split('e')
+    return +(val2[0] + 'e' + (val2[1] ? +val2[1] - exp : -exp))
+  }
+
+  // number of decimal places
+  const countDecimals = (val: number) => {
+    if (Math.floor(val) !== val) return val.toString().split('.')[1].length || 0
+    return 0
+  }
 </script>
 
 <div class="container is-flex is-justify-content-center" data-testid="number-input-view-container">
@@ -33,7 +57,7 @@
       <Fa icon={faCircleMinus} />
     </div>
     <div class="tag is-info is-light is-medium" alt="Number Label" title="Number Label">
-      {value}
+      {round(value, countDecimals(step)).toFixed(countDecimals(step))}
     </div>
     <div
       class={`plus ${value === maxValue ? 'disabled' : ''}`}
