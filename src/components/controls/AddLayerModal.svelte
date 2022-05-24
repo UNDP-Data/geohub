@@ -101,7 +101,7 @@
           layout: {
             visibility: 'visible',
             'icon-image': 'circle',
-            'icon-size': 0.8,
+            'icon-size': 1,
           },
         }
         break

@@ -115,6 +115,11 @@ export enum DynamicLayerLegendTypes {
   INTERVALS = 'intervals',
 }
 
+export enum VectorLayerSymbolLegendTypes {
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced',
+}
+
 export enum DynamicLayerResolutionTypes {
   HIGHEST = 'highest',
   LOWEST = 'lowest',

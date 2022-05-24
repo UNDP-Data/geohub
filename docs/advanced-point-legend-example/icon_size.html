@@ -52,9 +52,9 @@
               property: "capacity",
               type: "interval",
               stops: [
-                [0, 0],
-                [20, 10],
-                [55, 55],
+                [0, 2], // capacity: 0 - 20, size: 0
+                [20, 10], // capacity: 20 - 55, size: 10
+                [55, 20],  // capacity: 55 -> n, size: 20
               ],
             },
           },
