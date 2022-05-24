@@ -3,18 +3,13 @@
   import Drawer, { AppContent, Content } from '@smui/drawer'
   import { map, year } from '../stores'
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
-  import Fa from 'svelte-fa'
-  import { faPlugCircleBolt } from '@fortawesome/free-solid-svg-icons/faPlugCircleBolt'
-  import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
-  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import TimeSlider from './TimeSlider.svelte'
   import vegaEmbed from 'vega-embed'
   import AdminLayer from '$lib/adminLayer'
   import IntroPanel from './introPanel.svelte'
   import PovertyControl from './PovertyControl.svelte'
+  import ElectricityControl from './ElectricityControl.svelte'
 
-  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
   const AZURE_URL = import.meta.env.VITE_AZURE_URL
 
@@ -23,17 +18,16 @@
   const HREA_NODATA = -3.3999999521443642e38
   const ML_ID = 'ML'
   const ML_NODATA = 0
-  const NONE_ID = 'NONE'
   const PRIMARY = '#1f77b4'
   const SECONDARY = '#ff7f0e'
   const GREY = '#808080'
   let adminLayer: AdminLayer = null
 
-  export const getHreaUrl = (y) => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
+  let getHreaUrl = (y: number): string => {
+    return
   }
-  export const getMlUrl = (y) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
+  let getMlUrl = (y: number): string => {
+    return
   }
 
   export let drawerOpen = false
@@ -54,12 +48,7 @@
     loadHeatmap()
   }
 
-  let electricityChoices = [
-    { name: HREA_ID, icon: faPlugCircleBolt },
-    { name: ML_ID, icon: faLaptopCode },
-    { name: NONE_ID, icon: faBan },
-  ]
-  let electricitySelected = electricityChoices[0]
+  let electricitySelected
   let interactChoices = ['Admin', 'Point']
   let interactSelected = interactChoices[0]
   let drawerWidth = 355
@@ -414,26 +403,7 @@
 
           {#if !showIntro}
             <StyleControlGroup title="Layers">
-              <p class="title-text">Electricity Access</p>
-              <SegmentedButton
-                segments={electricityChoices}
-                let:segment
-                singleSelect
-                bind:selected={electricitySelected}>
-                <Segment {segment}>
-                  <div class="icon">
-                    <Fa icon={segment.icon} size="lg" />
-                  </div>
-                  <Label>{segment.name}</Label>
-                </Segment>
-              </SegmentedButton>
-              <div class="raster-time-slider">
-                <TimeSlider
-                  bind:electricitySelected
-                  bind:loadLayer={loadRasterLayer}
-                  bind:BEFORE_LAYER_ID={POVERTY_ID}
-                  {AZURE_URL} />
-              </div>
+              <ElectricityControl bind:electricitySelected bind:loadRasterLayer bind:getHreaUrl bind:getMlUrl />
               <PovertyControl bind:loadHeatmap bind:POVERTY_ID />
             </StyleControlGroup>
 
@@ -445,7 +415,7 @@
               </SegmentedButton>
               {#if interactSelected === 'Admin'}
                 <br /><br />
-                <div class="title-text">{electricitySelected.name} Histogram - {$year}</div>
+                <div class="title-text">{electricitySelected?.name} Histogram - {$year}</div>
                 <div class="title-text">{adminHistogramAdmin}</div>
                 <div id="admin-histogram" />
               {/if}
@@ -586,21 +556,11 @@
     }
   }
 
-  .raster-time-slider {
-    padding-top: 1em;
-    padding-bottom: 1em;
-  }
-
   .chart-container {
     display: flex;
   }
 
   .chart-item {
     flex-grow: 1;
-  }
-
-  .icon {
-    padding-left: 10px;
-    padding-right: 20px;
   }
 </style>
