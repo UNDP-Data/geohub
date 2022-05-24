@@ -17,7 +17,7 @@
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 
-  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
 
@@ -208,10 +208,12 @@
           colormap_name: DEFAULT_COLORMAP,
         }
 
-        const layerSource = {
+        const layerSource: RasterSourceSpecification = {
           type: LayerTypes.RASTER,
           tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
           tileSize: 256,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           bounds: layerInfo['bounds'],
           attribution:
             'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
@@ -256,6 +258,7 @@
             },
             expression: '',
             legendType: '',
+            source: layerSource,
           },
           ...$layerList,
         ]

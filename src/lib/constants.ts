@@ -3,6 +3,7 @@ import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
 import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
 import { faCubesStacked } from '@fortawesome/free-solid-svg-icons/faCubesStacked'
 import { faVectorSquare } from '@fortawesome/free-solid-svg-icons/faVectorSquare'
+import type { StyleDefinition } from '$lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
@@ -147,3 +148,14 @@ export enum BucketType {
   INTERNAL = 'internal',
   EXTERNAL = 'external',
 }
+
+export const styles: StyleDefinition[] = [
+  {
+    title: 'Carto',
+    uri: 'https://undp-data.github.io/style/style.json',
+  },
+  {
+    title: 'Bing Aerial',
+    uri: 'https://undp-data.github.io/style/aerialstyle.json',
+  },
+]

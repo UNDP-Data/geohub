@@ -176,6 +176,7 @@ describe('Number Input : Float Step Values', () => {
     const numberOfClasses = sut.getByTitle('Number Label')
     expect(numberOfClasses).toBeDefined()
     expect(numberOfClasses).toHaveTextContent('6')
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6.0')
   })
 
   it('should decrease the number upon click of decrease button to the minimum', async () => {
@@ -194,5 +195,20 @@ describe('Number Input : Float Step Values', () => {
     expect(sut.getByTitle('Number Label')).toHaveTextContent('6.1')
     await fireEvent.click(increaseClassesButton)
     expect(sut.getByTitle('Number Label')).toHaveTextContent('6.2')
+  })
+
+  it('should display the same number of decimal places as step', async () => {
+    const increaseClassesButton = sut.getByTitle('Increase number')
+    await fireEvent.click(increaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6.1')
+
+    const decreaseClassesButton = sut.getByTitle('Decrease number')
+    await fireEvent.click(decreaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6.0')
+
+    await fireEvent.click(decreaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('5.9')
+    await fireEvent.click(increaseClassesButton)
+    expect(sut.getByTitle('Number Label')).toHaveTextContent('6.0')
   })
 })

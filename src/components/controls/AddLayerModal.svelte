@@ -70,8 +70,9 @@
   }
 
   const handleAddClick = async () => {
+    let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
-      const layerSource: VectorSourceSpecification = {
+      layerSource = {
         type: LayerTypes.VECTOR,
         tiles: [treeNode.url],
         minzoom: treeNode.metadata.minzoom | 0,
@@ -80,6 +81,8 @@
       if (!(tileSourceId in $map.getStyle().sources)) {
         $map.addSource(tileSourceId, layerSource)
       }
+    } else {
+      layerSource = JSON.parse(JSON.stringify($map.getStyle().sources[tileSourceId]))
     }
 
     const layerId = `${selectedLayerId}-${uuidv4()}`
@@ -189,6 +192,7 @@
         info: treeNode.metadata,
         visible: true,
         url: treeNode.url,
+        source: layerSource,
       },
       ...$layerList,
     ]
@@ -200,6 +204,8 @@
       const layer = $layerList.find((layer) => layer.definition.id == layerDefinition.id)
       if (layer) {
         const layerClone = cloneDeep(layer)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         layerClone.features = e.features.length > 0 ? e.features[0].properties : []
         const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerDefinition.id)
         $layerList[layerIndex] = layerClone
