@@ -29,10 +29,11 @@ export const updateParamsInURL = (
     layerURL.searchParams.set(key, params[key])
   })
   const mapStore = get(map)
-  mapStore.getSource(definition.source).tiles = [decodeURI(layerURL.toString())]
-  mapStore?.style?.sourceCaches[definition.source].clearTiles()
-  mapStore?.style?.sourceCaches[definition.source].update(mapStore.transform)
-  mapStore?.triggerRepaint()
+  const style = mapStore.getStyle()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  style.sources[definition.source].tiles = [decodeURI(layerURL.toString())]
+  mapStore.setStyle(style)
 }
 
 /**
