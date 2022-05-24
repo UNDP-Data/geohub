@@ -5,7 +5,7 @@
   import CurrentLocation from './CurrentLocation.svelte'
   import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
-  import type { StyleDefinition } from '$lib/types'
+  import { styles } from '$lib/constants'
   import { map } from '../stores'
 
   const dispatch = createEventDispatcher()
@@ -14,16 +14,6 @@
   let aerialBingTiles = []
   let mapContainer: HTMLDivElement
   let newMap: Map
-  let styles: StyleDefinition[] = [
-    {
-      title: 'Carto',
-      uri: 'https://undp-data.github.io/style/style.json',
-    },
-    {
-      title: 'Bing Aerial',
-      uri: 'https://undp-data.github.io/style/aerialstyle.json',
-    },
-  ]
 
   const getQuadkey = (z: number, x: number, y: number): string => {
     let quadkey = '',

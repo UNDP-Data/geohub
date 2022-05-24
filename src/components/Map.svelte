@@ -6,9 +6,10 @@
   import '@watergis/maplibre-gl-export/css/styles.css'
   import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
-  import { LayerTypes } from '$lib/constants'
+  import { LayerTypes, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
+  import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
 
   let container: HTMLDivElement
   let mapMouseEvent: MapMouseEvent
@@ -16,7 +17,7 @@
   onMount(async () => {
     const newMap = new Map({
       container,
-      style: 'https://undp-data.github.io/style/style.json',
+      style: styles[0].uri,
       center: [0, 0],
       zoom: 3,
       hash: true,
@@ -94,6 +95,10 @@
 
     map.update(() => newMap)
   })
+
+  const styleChanged = (e: CustomEvent) => {
+    console.log(e.detail.style)
+  }
 </script>
 
 <svelte:head>
@@ -105,6 +110,11 @@
     <slot />
   {/if}
 </div>
+<StyleSwicher
+  bind:stylePrimary={styles[0]}
+  bind:styleSecondary={styles[1]}
+  on:styleChanged={styleChanged}
+  bind:map={$map} />
 
 <MapQueryInfoPanel bind:mapMouseEvent />
 
