@@ -3,7 +3,7 @@
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
 
   import CurrentLocation from './CurrentLocation.svelte'
-  import StyleSwicher from './StyleSwitcher.svelte'
+  import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
   import { fetchUrl } from '$lib/helper'
   import type { StyleDefinition } from '$lib/types'
   import { map } from '../stores'
@@ -85,7 +85,11 @@
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation />
-<StyleSwicher bind:stylePrimary={styles[0]} bind:styleSecondary={styles[1]} on:styleChanged={styleChanged} />
+<StyleSwicher
+  bind:stylePrimary={styles[0]}
+  bind:styleSecondary={styles[1]}
+  on:styleChanged={styleChanged}
+  bind:map={$map} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
