@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
