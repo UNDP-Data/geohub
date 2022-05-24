@@ -12,30 +12,20 @@
   import Paper from '@smui/paper'
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
-  import { fetchUrl } from '$lib/helper'
-  import type {
-    SourceSpecification,
-    FillLayerSpecification,
-    RasterLayerSpecification,
-    HeatmapLayerSpecification,
-    RasterSourceSpecification,
-    VectorSourceSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { HeatmapLayerSpecification, VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import RangeSlider from 'svelte-range-slider-pips'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import TimeSlider from './TimeSlider.svelte'
   import vegaEmbed from 'vega-embed'
+  import AdminLayer from '$lib/adminLayer'
 
   const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
-  const BING_MAPS_KEY = import.meta.env.VITE_BINGMAP_KEY
-  const AZURE_URL = 'https://undp-geohub-blob-afg3dscuh3g6cffx.z01.azurefd.net'
-  const AERIAL_BING_URL = 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1'
+  const AZURE_URL = import.meta.env.VITE_AZURE_URL
 
   const POVERTY_URL = [`${AZURE_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`]
 
   let POVERTY_ID = 'poverty'
-  const ADM_ID = 'admin'
   const HREA_ID = 'HREA'
   const HREA_NODATA = -3.3999999521443642e38
   const ML_ID = 'ML'
@@ -44,6 +34,7 @@
   const PRIMARY = '#1f77b4'
   const SECONDARY = '#ff7f0e'
   const GREY = '#808080'
+  let adminLayer: AdminLayer = null
 
   export const getHreaUrl = (y) => {
     return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
@@ -53,7 +44,6 @@
   }
 
   export let drawerOpen = false
-  let hoveredStateId = null
 
   let controller = new AbortController()
   let pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
@@ -61,7 +51,6 @@
   let adminHistogram = []
   let adminHistogramAdmin = ''
   let adminHistogramStep = 1
-  let adminLevel = 0
 
   let showIntro = true
   let heatmapChecked = false
@@ -76,8 +65,6 @@
   let interactSelected = interactChoices[0]
   let drawerWidth = 355
   let isResizingDrawer = false
-  let bingAerialLayerMeta = undefined
-  let aerialBingTiles = []
 
   let layerOpacity = 1
   let rangeSliderValues = [layerOpacity * 100]
@@ -107,8 +94,6 @@
       setContentContainerMargin(0)
     }
   }
-
-  const getAdminLayer = () => `adm${adminLevel}_polygons`
 
   const getDonutSpec = (value, color) => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
@@ -192,44 +177,11 @@
     },
   })
 
-  const loadAdminLayer = () => {
-    const lvl = getAdminLevel()
-    const layerSource: SourceSpecification = {
-      type: LayerTypes.VECTOR,
-      maxzoom: 10,
-      promoteId: `adm${lvl}_id`,
-      tiles: [`${AZURE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`],
-    }
-    const layerFill: FillLayerSpecification = {
-      id: ADM_ID,
-      type: LayerTypes.FILL,
-      source: ADM_ID,
-      'source-layer': `adm${lvl}_polygons`,
-      paint: {
-        'fill-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          'hsla(0, 0%, 0%, 0.25)',
-          'hsla(0, 0%, 0%, 0)',
-        ],
-        'fill-outline-color': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          'hsla(0, 0%, 0%, 1)',
-          'hsla(0, 0%, 0%, 0)',
-        ],
-      },
-    }
-    $map.getLayer(ADM_ID) && $map.removeLayer(ADM_ID)
-    $map.getSource(ADM_ID) && $map.removeSource(ADM_ID)
-    $map.addSource(ADM_ID, layerSource)
-    $map.addLayer(layerFill)
-  }
-
   export function loadLayers() {
     loadRasterLayer()
     loadHeatmap()
-    loadAdminLayer()
+    adminLayer = new AdminLayer($map, AZURE_URL)
+    adminLayer.load()
   }
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
@@ -262,46 +214,8 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
-  const onAdminMouseMove = (e) => {
-    if (e.features.length > 0) {
-      if (hoveredStateId) {
-        $map.setFeatureState(
-          {
-            source: ADM_ID,
-            sourceLayer: getAdminLayer(),
-            id: hoveredStateId,
-          },
-          { hover: false },
-        )
-      }
-      hoveredStateId = e.features[0].id
-      $map.setFeatureState(
-        {
-          source: ADM_ID,
-          sourceLayer: getAdminLayer(),
-          id: hoveredStateId,
-        },
-        { hover: true },
-      )
-    }
-  }
-
-  const onAdminMouseLeave = () => {
-    if (hoveredStateId) {
-      $map.setFeatureState(
-        {
-          source: ADM_ID,
-          sourceLayer: getAdminLayer(),
-          id: hoveredStateId,
-        },
-        { hover: false },
-      )
-    }
-    hoveredStateId = null
-  }
-
   const getAdminGeoJSONUrl = (admin_props) => {
-    const lvl = getAdminLevel()
+    const lvl = adminLayer?.getAdminLevel()
     const filtered = Object.keys(admin_props)
       .filter((key) => key.includes(lvl) && key.endsWith('id'))
       .reduce((obj, key) => {
@@ -316,7 +230,7 @@
     const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
     const total = electricitySelected.name == 'HREA' ? 1 : 255
 
-    const features = $map.queryRenderedFeatures(e.point, { layers: [ADM_ID] })
+    const features = $map.queryRenderedFeatures(e.point, { layers: [adminLayer.getAdminID()] })
     if (features.length > 0) {
       controller.abort()
       controller = new AbortController()
@@ -379,7 +293,7 @@
     const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
     const total = electricitySelected.name == 'HREA' ? 1 : 255
     const apiUrlParams = { url: lurl }
-    const features = $map.queryRenderedFeatures(e.point, { layers: [ADM_ID] })
+    const features = $map.queryRenderedFeatures(e.point, { layers: [adminLayer.getAdminID()] })
     if (features.length > 0) {
       controller.abort()
       controller = new AbortController()
@@ -465,26 +379,6 @@
     }
   }
 
-  const getAdminLevel = () => {
-    const zoom = $map.getZoom()
-    if (zoom < 4) return 0
-    if (zoom < 7) return 1
-    if (zoom < 9) return 2
-    return 3
-  }
-
-  const onAdminZoom = ({ originalEvent }) => {
-    const zoom = $map.getZoom()
-    if (adminLevel !== 0 && zoom < 4) loadAdminLayer()
-    else if (adminLevel !== 1 && zoom >= 4 && zoom < 7) loadAdminLayer()
-    else if (adminLevel !== 2 && zoom >= 7 && zoom < 9) loadAdminLayer()
-    else if (adminLevel !== 3 && zoom >= 9) loadAdminLayer()
-    adminLevel = getAdminLevel()
-    const point = [originalEvent.layerX, originalEvent.layerY]
-    const features = $map.queryRenderedFeatures(point, { layers: [ADM_ID] })
-    if (features.length > 0) onAdminMouseMove({ features })
-  }
-
   const renderPointCharts = () => {
     const options = { actions: false, renderer: 'svg' }
     vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], PRIMARY), options)
@@ -498,19 +392,14 @@
   }
 
   const adminInteraction = () => {
-    adminLevel = getAdminLevel()
-    $map.on('mousemove', ADM_ID, onAdminMouseMove)
-    $map.on('mouseleave', ADM_ID, onAdminMouseLeave)
-    $map.on('zoom', onAdminZoom)
+    adminLayer?.setInteraction()
     $map.off('click', onPointClick)
     $map.on('click', getAdminStats)
     renderAdminCharts()
   }
 
   const pointInteraction = () => {
-    $map.off('mousemove', ADM_ID, onAdminMouseMove)
-    $map.off('mouseleave', ADM_ID, onAdminMouseLeave)
-    $map.off('zoom', onAdminZoom)
+    adminLayer?.removeInteraction()
     $map.on('click', onPointClick)
     $map.off('click', getAdminStats)
     renderPointCharts()
@@ -568,46 +457,6 @@
     $map.setLayoutProperty(POVERTY_ID, 'visibility', heatmapChecked ? 'visible' : 'none')
     $map.setPaintProperty(POVERTY_ID, 'heatmap-opacity', layerOpacity)
     moveHeatmap()
-  }
-
-  const addBingAerialLayer = async () => {
-    if (aerialBingTiles.length == 0) {
-      bingAerialLayerMeta = await fetchUrl(
-        `https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=${BING_MAPS_KEY}`,
-      )
-      const { resources } = bingAerialLayerMeta.resourceSets[0]
-      const imageUrlSubdomains = resources[0].imageUrlSubdomains
-      aerialBingTiles = imageUrlSubdomains.map((el) => {
-        return AERIAL_BING_URL.replace('{subdomain}', el)
-      })
-    }
-    const layerSource: RasterSourceSpecification = {
-      type: 'raster',
-      tiles: aerialBingTiles,
-      tileSize: 256,
-      attribution: 'Layer powered by Microsoft',
-    }
-    if (!('BING' in $map.getStyle().sources)) {
-      console.log('adding Bing aerial')
-      $map.addSource('BING', layerSource)
-
-      const layerDefinition: RasterLayerSpecification = {
-        id: 'bing',
-        type: 'raster',
-        source: 'BING',
-        minzoom: 0,
-        maxzoom: 22,
-        layout: {
-          visibility: 'visible',
-        },
-      }
-      $map.addLayer(layerDefinition)
-    } else {
-      const vis = $map.getLayoutProperty('bing', 'visibility')
-      const visibility = vis === 'visible' ? 'none' : 'visible'
-      console.log(vis, visibility)
-      $map.setLayoutProperty('bing', 'visibility', visibility)
-    }
   }
 </script>
 
