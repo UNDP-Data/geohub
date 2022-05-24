@@ -2,7 +2,7 @@
   import type { Map } from 'maplibre-gl'
 
   export let map: Map
-  let ADM_ID = 'admin'
+  const ADM_ID = 'admin'
   let isContainerVisible = false
   let adm0Name = null
   let adm1Name = null
