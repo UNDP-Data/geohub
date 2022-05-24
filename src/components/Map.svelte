@@ -98,20 +98,21 @@
   })
 
   const beforeStyleChanged = () => {
-    const getLayer = (id) => {
-      latestStyle.layers.filter((l: LayerSpecification) => l.id === id)[0]
-    }
     const latestStyle = $map.getStyle()
     $layerList.forEach((layer: Layer) => {
       if (latestStyle.sources[layer.definition.source]) {
         layer.source = JSON.parse(JSON.stringify(latestStyle.sources[layer.definition.source]))
       }
       if ($map.getLayer(layer.definition.id)) {
-        layer.definition = JSON.parse(JSON.stringify(getLayer(layer.definition.id)))
+        layer.definition = JSON.parse(
+          JSON.stringify(latestStyle.layers.filter((l: LayerSpecification) => l.id === layer.definition.id)[0]),
+        )
 
         layer.children?.forEach((child) => {
           if ($map.getLayer(child.definition.id)) {
-            child.definition = JSON.parse(JSON.stringify(getLayer(child.definition.id)))
+            child.definition = JSON.parse(
+              JSON.stringify(latestStyle.layers.filter((l: LayerSpecification) => l.id === child.definition.id)[0]),
+            )
           }
         })
       }
