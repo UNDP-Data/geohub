@@ -44,7 +44,7 @@
 
     newMap = new Map({
       container: mapContainer,
-      style: 'https://undp-data.github.io/style/style.json',
+      style: styles[0].uri,
       center: [0, 0],
       zoom: 3,
       hash: true,
