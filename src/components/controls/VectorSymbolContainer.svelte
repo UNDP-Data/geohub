@@ -12,7 +12,13 @@
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
   import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
-  import { VectorLayerSymbolLegendTypes, VectorLayerSymbolLegendApplyToTypes } from '$lib/constants'
+  import {
+    ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
+    DEFAULT_COLORMAP,
+    VectorLayerSymbolLegendTypes,
+    VectorLayerSymbolLegendApplyToTypes,
+  } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
 
@@ -24,6 +30,8 @@
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
+  let layerMin: number
+  let layerMax: number
   let showTooltip = false
 
   // hide colormap picker if change in layer list
@@ -36,6 +44,14 @@
 
   onMount(() => {
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
+    layer.colorMapName = DEFAULT_COLORMAP
+    layer.intervals = {
+      classification: ClassificationMethodTypes.NATURAL_BREAK,
+      numberOfClasses: COLOR_CLASS_COUNT,
+      colorMapRows: [],
+      propertyName: '',
+      applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+    }
   })
 
   const handleLegendToggleClick = () => {
@@ -98,7 +114,7 @@
       </div>
     {:else if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorSymbolAdvanced bind:layer bind:applyToOption />
+        <VectorSymbolAdvanced bind:layer bind:applyToOption bind:layerMin bind:layerMax />
       </div>
     {/if}
   </div>
@@ -130,9 +146,15 @@
       </div>
     {/if}
 
-    {#if showTooltip}
+    {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} on:handleClosePopup={handleClosePopup} {layer} />
+        {layerMin}, {layerMax}
+        <ColorMapPicker
+          on:handleColorMapClick={handleColorMapClick}
+          on:handleClosePopup={handleClosePopup}
+          {layer}
+          {layerMin}
+          {layerMax} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}

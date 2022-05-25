@@ -2,58 +2,49 @@
   import chroma from 'chroma-js'
   import { Jenks } from 'jenks'
 
+  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import TextField from '$components/controls/vector-styles/TextField.svelte'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
-    LayerInitialValues,
-    COLOR_CLASS_COUNT,
-    COLOR_CLASS_COUNT_MINIMUM,
     COLOR_CLASS_COUNT_MAXIMUM,
+    COLOR_CLASS_COUNT_MINIMUM,
+    LayerInitialValues,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import type { Layer, VectorLayerTileStatLayer, VectorLayerTileStatAttribute } from '$lib/types'
+  import type {
+    IntervalLegendColorMapRow,
+    Layer,
+    VectorLayerTileStatAttribute,
+    VectorLayerTileStatLayer,
+  } from '$lib/types'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
+  export let layerMax: number
+  export let layerMin: number
 
-  const layerId = layer.definition.id
-  const CLASSIFICATION_METHOD_NATURAL_BREAKS = 'Natural Breaks'
   const classificationMethodsDefault = [
-    { name: CLASSIFICATION_METHOD_NATURAL_BREAKS, code: ClassificationMethodTypes.NATURAL_BREAK },
+    { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let numberOfClasses = layer?.intervals?.numberOfClasses ? layer.intervals.numberOfClasses : COLOR_CLASS_COUNT
-  let numberOfClassesMax = COLOR_CLASS_COUNT_MAXIMUM
-  let numberOfClassesMin = COLOR_CLASS_COUNT_MINIMUM
-  let classificationMethod = layer?.intervals?.classification
-    ? layer.intervals.classification
-    : ClassificationMethodTypes.NATURAL_BREAK
+  let classificationMethod = layer.intervals.classification
   let classificationMethods = classificationMethodsDefault
-  let propertyName = layer?.intervals?.propertyName ? layer.intervals.propertyName : ''
-  let propertyValues = []
+  let colorPickerVisibleIndex: number
+  let numberOfClasses = layer.intervals.numberOfClasses
+  let propertyName = layer.intervals.propertyName
 
-  $: if (applyToOption && layer?.intervals?.applyToOption) {
+  $: if (applyToOption) {
     layer.intervals.applyToOption = applyToOption
   }
 
   const handlePropertyChange = (e: CustomEvent) => {
     console.log('handlePropertyChange')
     propertyName = e.detail.textFieldValue
-
-    if (!layer?.intervals) {
-      layer.intervals = {
-        classification: classificationMethod,
-        numberOfClasses,
-        colorMapRows: [],
-        propertyName,
-        applyToOption,
-      }
-    }
-
+    layer.intervals.propertyName = e.detail.textFieldValue
     calculatePropertyValues()
   }
 
@@ -72,7 +63,6 @@
   const calculatePropertyValues = () => {
     // set to default values
     classificationMethods = classificationMethodsDefault
-    propertyValues = []
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -117,17 +107,50 @@
                 })
             }
 
+            const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+            const propertyValues = []
+
             // create interval list (start / end)
             for (let i = 0; i < intervalList.length - 1; i++) {
-              propertyValues.push({
+              const row: IntervalLegendColorMapRow = {
                 index: i,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore:next-line
+                color: [...scaleColorList(intervalList[i]).rgb(), 255],
                 start: intervalList[i],
                 end: intervalList[i + 1],
-              })
+              }
+
+              propertyValues.push(row)
             }
+
+            if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+              layerMax = Math.max.apply(null, values)
+              layerMin = Math.min.apply(null, values)
+            }
+
+            layer.intervals.colorMapRows = propertyValues
           }
         }
       }
+    }
+  }
+
+  const handleColorPickerClick = (event: CustomEvent) => {
+    colorPickerVisibleIndex = event.detail.index
+  }
+
+  const handleChangeIntervalValues = (event: CustomEvent) => {
+    const rowIndex = event.detail.index
+    const inputType = event.detail.id
+    const inputValue = event.detail.value
+
+    if (inputType === 'start' && rowIndex !== 0) {
+      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+    }
+
+    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
+      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
     }
   }
 </script>
@@ -167,8 +190,8 @@
       <div class="is-flex is-justify-content-center">
         <NumberInput
           bind:value={numberOfClasses}
-          bind:minValue={numberOfClassesMin}
-          bind:maxValue={numberOfClassesMax}
+          minValue={COLOR_CLASS_COUNT_MINIMUM}
+          maxValue={COLOR_CLASS_COUNT_MAXIMUM}
           on:change={handleIncrementDecrementClasses} />
       </div>
     </div>
@@ -204,13 +227,15 @@
   <div class="columns panel-icon-color-size">
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div class="column size">
-        <div class="subtitle is-size-6">ICON COLOR</div>
         <div>
-          {#each propertyValues as propertyValue}
-            <div class="columns">
-              <div class="column">{propertyValue.start}</div>
-              <div class="column">{propertyValue.end}</div>
-            </div>
+          {#each layer.intervals.colorMapRows as colorMapRow}
+            <IntervalsLegendColorMapRow
+              bind:colorMapRow
+              {layer}
+              {colorPickerVisibleIndex}
+              on:clickColorPicker={handleColorPickerClick}
+              on:changeColorMap={() => undefined}
+              on:changeIntervalValues={handleChangeIntervalValues} />
           {/each}
         </div>
       </div>
@@ -220,10 +245,10 @@
       <div class="column size">
         <div class="subtitle is-size-6">ICON SIZE</div>
         <div>
-          {#each propertyValues as propertyValue}
+          {#each layer.intervals.colorMapRows as colorMapRow}
             <div class="columns">
-              <div class="column">{propertyValue.start}</div>
-              <div class="column">{propertyValue.end}</div>
+              <div class="column">{colorMapRow.start}</div>
+              <div class="column">{colorMapRow.end}</div>
             </div>
           {/each}
         </div>
