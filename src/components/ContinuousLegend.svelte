@@ -12,7 +12,7 @@
   import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
-  import type { Layer, LayerInfo } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
 
   export let layerConfig: Layer = LayerInitialValues
@@ -23,7 +23,7 @@
     | FillLayerSpecification
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
-  let info: LayerInfo
+  let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
   let activeColorMapName = layerConfig.colorMapName
 
