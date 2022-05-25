@@ -120,6 +120,11 @@ export enum VectorLayerSymbolLegendTypes {
   ADVANCED = 'advanced',
 }
 
+export enum VectorLayerSymbolLegendApplyToTypes {
+  ICON_COLOR = 'Icon color',
+  ICON_SIZE = 'Icon size',
+}
+
 export enum DynamicLayerResolutionTypes {
   HIGHEST = 'highest',
   LOWEST = 'lowest',

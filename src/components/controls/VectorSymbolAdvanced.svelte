@@ -1,4 +1,6 @@
 <script lang="ts">
+  import NumberInput from '$components/controls/NumberInput.svelte'
+  import TextField from '$components/controls/vector-styles/TextField.svelte'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
@@ -6,13 +8,15 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MINIMUM,
     COLOR_CLASS_COUNT_MAXIMUM,
+    VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  import NumberInput from '$components/controls/NumberInput.svelte'
-  import TextField from '$components/controls/vector-styles/TextField.svelte'
-
   export let layer: Layer = LayerInitialValues
+  export let applyToOption: string
+  export let numberOfClasses = COLOR_CLASS_COUNT
+  export let numberOfClassesMax = COLOR_CLASS_COUNT_MAXIMUM
+  export let numberOfClassesMin = COLOR_CLASS_COUNT_MINIMUM
 
   const layerId = layer.definition.id
 
@@ -22,18 +26,23 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  const handlePropertyChange = () => {}
+  $: if (applyToOption) handleApplyToChange()
 
-  const handleClassificationChange = () => {}
+  const handlePropertyChange = () => {
+    console.log('handlePropertyChange')
+  }
 
-  const handleIncrementDecrementClasses = () => {}
+  const handleClassificationChange = () => {
+    console.log('handleClassificationChange')
+  }
 
-  export let numberOfClasses = COLOR_CLASS_COUNT
-  export let numberOfClassesMax = COLOR_CLASS_COUNT_MAXIMUM
-  export let numberOfClassesMin = COLOR_CLASS_COUNT_MINIMUM
+  const handleIncrementDecrementClasses = () => {
+    console.log('handleIncrementDecrementClasses')
+  }
 
-  const optionsApplyTo = ['icon size', 'icon color']
-  let optionsApplyToSelected = 'icon size'
+  const handleApplyToChange = () => {
+    console.log('handleApplyToChange')
+  }
 </script>
 
 <div class="symbol-advanced-container">
@@ -51,7 +60,6 @@
           <select
             bind:value={classificationMethod}
             on:change={handleClassificationChange}
-            style="width: 114px;"
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
@@ -67,7 +75,7 @@
 
   <div class="columns classes-size-color">
     <div class="column number-classes">
-      <div class="is-flex is-justify-content-center">Classes</div>
+      <div class="is-flex is-justify-content-center">Number of Classes</div>
       <div class="is-flex is-justify-content-center">
         <NumberInput
           bind:value={numberOfClasses}
@@ -77,17 +85,17 @@
       </div>
     </div>
 
-    <div class="column icon-size-color">
+    <div class="column apply-to">
       <div class="is-flex is-justify-content-center">Apply To</div>
       <div class="is-flex is-justify-content-center">
-        <div>
-          {#each optionsApplyTo as optionApplyTo}
+        <div style="margin-bottom: 0px;">
+          {#each Object.values(VectorLayerSymbolLegendApplyToTypes) as optionApplyTo}
             <div class="columns is-gapless" style="margin-bottom: 0;">
               <div class="column">
                 <input
                   type="radio"
                   name="layer-type"
-                  bind:group={optionsApplyToSelected}
+                  bind:group={applyToOption}
                   value={optionApplyTo}
                   alt={`${optionApplyTo} Option`}
                   title={`${optionApplyTo} Option`} />
@@ -101,6 +109,18 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="is-divider separator" />
+
+  <div class="columns panel-icon-color-size">
+    {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+      <div class="column color">ICON COLOR</div>
+    {/if}
+
+    {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE}
+      <div class="column size">ICON SIZE</div>
+    {/if}
   </div>
 </div>
 
@@ -120,7 +140,12 @@
       margin-bottom: 10px;
     }
 
-    .icon-size-color {
+    .classification,
+    .property,
+    .number-classes,
+    .apply-to {
+      padding-bottom: 0;
+
       div:first-child {
         margin-bottom: 10px;
       }
