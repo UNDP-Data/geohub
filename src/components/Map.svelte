@@ -78,6 +78,7 @@
     })
 
     newMap.on('load', () => {
+      initAdminLayer()
       const styleUrl = newMap.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
       const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
       promise
@@ -100,7 +101,6 @@
         })
     })
     map.update(() => newMap)
-    initAdminLayer()
   })
 
   const initAdminLayer = () => {
