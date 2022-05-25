@@ -8,6 +8,7 @@
 
   export let layer: Layer = LayerInitialValues
   export let enabledTextLabel = false
+  export let hasLayerListNumbersOnly = false
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
@@ -33,6 +34,17 @@
     // @ts-ignore
     vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
     layerIdList = Object.keys(vectorLayerMeta.fields)
+
+    if (hasLayerListNumbersOnly) {
+      layerIdList.forEach((key) => {
+        if (vectorLayerMeta.fields[key] !== 'Number') {
+          delete vectorLayerMeta.fields[key]
+        }
+      })
+
+      layerIdList = Object.keys(vectorLayerMeta.fields)
+    }
+
     const styleValue: string[] = style.layout && style.layout[propertyName] ? style.layout[propertyName] : ['get', '']
 
     if (styleValue.length > 1 && styleValue[0] === 'get' && styleValue[1].length > 0) {

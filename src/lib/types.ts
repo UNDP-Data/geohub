@@ -39,7 +39,7 @@ export interface Layer {
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
   type?: string
-  info?: LayerInfo | VectorTileMetadata
+  info?: RasterTileMetadata | VectorTileMetadata
   visible?: boolean | true
   url?: string
   features?: []
@@ -63,6 +63,8 @@ export interface IntervalLegend {
   classification?: ClassificationMethodTypes
   numberOfClasses?: number
   colorMapRows?: IntervalLegendColorMapRow[]
+  propertyName?: string
+  applyToOption?: string
 }
 
 export interface UniqueLegend {
@@ -87,7 +89,7 @@ export interface HeatmapColorRow {
   value?: number
 }
 
-export interface LayerInfo {
+export interface RasterTileMetadata {
   band_descriptions?: string[]
   band_metadata?: string[]
   bounds?: [] | string

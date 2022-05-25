@@ -32,7 +32,7 @@
     DEFAULT_COLORMAP,
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
-  import type { BannerMessage, TreeNode, LayerInfo, LayerInfoMetadata } from '$lib/types'
+  import type { BannerMessage, TreeNode, RasterTileMetadata, LayerInfoMetadata } from '$lib/types'
   import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
   export let level = 0
@@ -187,7 +187,7 @@
         loadingLayer = false
       }, 350)
     } else {
-      let layerInfo: LayerInfo = {}
+      let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
       const b64EncodedUrl = getBase64EncodedUrl(url)
       layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
@@ -346,8 +346,7 @@
           //layerInfo here is the whole metadata.json so the propes needs to be extracted into a new object
           metadata = <LayerInfoMetadata>{
             description: layerInfo.description,
-            source: layerInfo.source,
-            unit: layerInfo.unit,
+            source: layerInfo.attribution,
           }
 
           setLayerMetaDataStore(layerPathHash, metadata)
@@ -503,9 +502,11 @@
             ? layerInfoMetadata.source
             : 'N/A'}
         </div>
-        <div class="unit is-size-6">
-          <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
-        </div>
+        {#if layerInfoMetadata?.unit}
+          <div class="unit is-size-6">
+            <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
+          </div>
+        {/if}
       </div>
     </div>
     <div id="arrow" data-popper-arrow />

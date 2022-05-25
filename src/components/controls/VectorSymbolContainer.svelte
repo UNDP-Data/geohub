@@ -18,7 +18,9 @@
 
   export let layer: Layer
 
-  let applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  let applyToOption = layer?.intervals?.applyToOption
+    ? layer.intervals.applyToOption
+    : VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
