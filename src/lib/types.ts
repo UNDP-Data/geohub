@@ -63,6 +63,8 @@ export interface IntervalLegend {
   classification?: ClassificationMethodTypes
   numberOfClasses?: number
   colorMapRows?: IntervalLegendColorMapRow[]
+  propertyName?: string
+  applyToOption?: string
 }
 
 export interface UniqueLegend {

@@ -44,7 +44,7 @@
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">{icon.label}</Tooltip>
               </Wrapper>
             </div> -->
-            {name}
+            <span style="padding-left: 5px;">{name}</span>
           </div>
           <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
             <div class="label has-text-left">{clean(name)}</div>
