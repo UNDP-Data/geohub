@@ -134,7 +134,7 @@
       <LayerOrderButtons {layer} bind:mapLayerIndex />
     </div>
 
-    {#if $layerList.length > 1}
+    {#if layer.type === LayerTypes.RASTER && $layerList.length > 1}
       <Wrapper>
         <div class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
           <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="sm" />
