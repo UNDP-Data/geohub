@@ -1,4 +1,5 @@
 <script lang="ts">
+  import chroma from 'chroma-js'
   import { Jenks } from 'jenks'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
@@ -14,33 +15,63 @@
   } from '$lib/constants'
   import type { Layer, VectorLayerTileStatLayer, VectorLayerTileStatAttribute } from '$lib/types'
 
-  export let layer: Layer = LayerInitialValues
   export let applyToOption: string
-  export let numberOfClasses = COLOR_CLASS_COUNT
-  export let numberOfClassesMax = COLOR_CLASS_COUNT_MAXIMUM
-  export let numberOfClassesMin = COLOR_CLASS_COUNT_MINIMUM
+  export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
-
-  let classificationMethod = ClassificationMethodTypes.EQUIDISTANT
-  let classificationMethods = [
+  const CLASSIFICATION_METHOD_NATURAL_BREAKS = 'Natural Breaks'
+  const classificationMethodsDefault = [
+    { name: CLASSIFICATION_METHOD_NATURAL_BREAKS, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
+  let numberOfClasses = layer?.intervals?.numberOfClasses ? layer.intervals.numberOfClasses : COLOR_CLASS_COUNT
+  let numberOfClassesMax = COLOR_CLASS_COUNT_MAXIMUM
+  let numberOfClassesMin = COLOR_CLASS_COUNT_MINIMUM
+  let classificationMethod = layer?.intervals?.classification
+    ? layer.intervals.classification
+    : ClassificationMethodTypes.NATURAL_BREAK
+  let classificationMethods = classificationMethodsDefault
+  let propertyName = layer?.intervals?.propertyName ? layer.intervals.propertyName : ''
   let propertyValues = []
-  let propertyName: string
 
-  $: if (applyToOption) handleApplyToChange()
+  $: if (applyToOption && layer?.intervals?.applyToOption) {
+    layer.intervals.applyToOption = applyToOption
+  }
 
   const handlePropertyChange = (e: CustomEvent) => {
     console.log('handlePropertyChange')
     propertyName = e.detail.textFieldValue
+
+    if (!layer?.intervals) {
+      layer.intervals = {
+        classification: classificationMethod,
+        numberOfClasses,
+        colorMapRows: [],
+        propertyName,
+        applyToOption,
+      }
+    }
+
+    calculatePropertyValues()
+  }
+
+  const handleClassificationChange = () => {
+    console.log('handleClassificationChange')
+    layer.intervals.classification = classificationMethod
+    calculatePropertyValues()
+  }
+
+  const handleIncrementDecrementClasses = () => {
+    console.log('handleIncrementDecrementClasses')
+    layer.intervals.numberOfClasses = numberOfClasses
     calculatePropertyValues()
   }
 
   const calculatePropertyValues = () => {
-    console.clear()
+    // set to default values
+    classificationMethods = classificationMethodsDefault
     propertyValues = []
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -61,36 +92,43 @@
           const values = tileStatLayerAttribute.values
 
           if (values.length > 0) {
-            const naturalBreaks = new Jenks(values, numberOfClasses).naturalBreak()
-            const naturalBreaksRowValues = []
-
-            for (let i = 0; i < naturalBreaks.length - 1; i++) {
-              naturalBreaksRowValues.push({
-                index: i,
-                start: naturalBreaks[i],
-                end: naturalBreaks[i + 1],
-              })
+            // add log classification method if min value greater than zero
+            if (Math.min.apply(null, values) > 0) {
+              classificationMethods = [
+                ...classificationMethods,
+                ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+              ]
             }
 
-            propertyValues = naturalBreaksRowValues
-            console.table(propertyValues)
+            let intervalList = []
+
+            // get interval list based on classification method
+            if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
+              intervalList = new Jenks(values, numberOfClasses).naturalBreak()
+            } else {
+              intervalList = chroma
+                .limits(
+                  [Math.min.apply(null, values), Math.max.apply(null, values)],
+                  classificationMethod,
+                  numberOfClasses,
+                )
+                .map((element) => {
+                  return Number(element.toFixed(2))
+                })
+            }
+
+            // create interval list (start / end)
+            for (let i = 0; i < intervalList.length - 1; i++) {
+              propertyValues.push({
+                index: i,
+                start: intervalList[i],
+                end: intervalList[i + 1],
+              })
+            }
           }
         }
       }
     }
-  }
-
-  const handleClassificationChange = () => {
-    console.log('handleClassificationChange')
-  }
-
-  const handleIncrementDecrementClasses = () => {
-    console.log('handleIncrementDecrementClasses')
-    calculatePropertyValues()
-  }
-
-  const handleApplyToChange = () => {
-    console.log('handleApplyToChange')
   }
 </script>
 
@@ -99,7 +137,7 @@
     <div class="column property">
       <div class="is-flex is-justify-content-center">Property</div>
       <div class="is-flex is-justify-content-center">
-        <TextField on:change={handlePropertyChange} bind:layer enabledTextLabel={true} />
+        <TextField on:change={handlePropertyChange} bind:layer enabledTextLabel={true} hasLayerListNumbersOnly={true} />
       </div>
     </div>
     <div class="column classification">
@@ -109,6 +147,7 @@
           <select
             bind:value={classificationMethod}
             on:change={handleClassificationChange}
+            style="width: 130px;"
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
