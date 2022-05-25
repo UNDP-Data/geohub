@@ -20,7 +20,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
   } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
-  import type { IntervalLegendColorMapRow, Layer, LayerInfo } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
   import NumberInput from './controls/NumberInput.svelte'
 
@@ -36,7 +36,7 @@
     | LineLayerSpecification
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
-  let info: LayerInfo
+  let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
 
   const layerMax = Number(info.band_metadata[0][1]['STATISTICS_MAXIMUM'])
