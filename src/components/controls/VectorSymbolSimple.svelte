@@ -114,12 +114,11 @@
     }
 
     .separator {
-      margin-top: 0;
-      margin-bottom: 25px;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     .icon-color-overlap {
-      margin-top: -20px;
       margin-bottom: 0;
 
       .color {

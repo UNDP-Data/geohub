@@ -12,12 +12,13 @@
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
   import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
-  import { VectorLayerSymbolLegendTypes } from '$lib/constants'
+  import { VectorLayerSymbolLegendTypes, VectorLayerSymbolLegendApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
 
   export let layer: Layer
 
+  let applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
@@ -95,7 +96,7 @@
       </div>
     {:else if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorSymbolAdvanced bind:layer />
+        <VectorSymbolAdvanced bind:layer bind:applyToOption />
       </div>
     {/if}
   </div>
@@ -112,7 +113,7 @@
     </Wrapper>
     <br />
 
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
+    {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div
         class="toggle-container"
         use:popperRef
