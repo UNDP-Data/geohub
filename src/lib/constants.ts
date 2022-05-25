@@ -3,6 +3,7 @@ import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
 import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
 import { faCubesStacked } from '@fortawesome/free-solid-svg-icons/faCubesStacked'
 import { faVectorSquare } from '@fortawesome/free-solid-svg-icons/faVectorSquare'
+import { faBraille } from '@fortawesome/free-solid-svg-icons/faBraille'
 import type { StyleDefinition } from '$lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
@@ -99,6 +100,12 @@ export const LayerIconTypes = [
     label: 'Raster',
     icon: faWindows,
     color: '#0b0b45',
+  },
+  {
+    id: 'heatmap',
+    label: 'Heatmap',
+    icon: faBraille,
+    color: 'crimson',
   },
 ]
 
