@@ -78,6 +78,7 @@ export default class AdminLayer {
   }
 
   private onAdminZoom({ originalEvent }) {
+    if (!originalEvent) return
     const zoom = this.map.getZoom()
     if (this.adminLevel !== 0 && zoom < 4) this.load()
     else if (this.adminLevel !== 1 && zoom >= 4 && zoom < 7) this.load()
