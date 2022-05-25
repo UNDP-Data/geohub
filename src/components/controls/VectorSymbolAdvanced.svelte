@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Jenks } from 'jenks'
+
   import NumberInput from '$components/controls/NumberInput.svelte'
   import TextField from '$components/controls/vector-styles/TextField.svelte'
   import {
@@ -10,7 +12,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import type { Layer } from '$lib/types'
+  import type { Layer, VectorLayerTileStatLayer, VectorLayerTileStatAttribute } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
   export let applyToOption: string
@@ -26,10 +28,56 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
+  let propertyValues = []
+  let propertyName: string
+
   $: if (applyToOption) handleApplyToChange()
 
-  const handlePropertyChange = () => {
+  const handlePropertyChange = (e: CustomEvent) => {
     console.log('handlePropertyChange')
+    propertyName = e.detail.textFieldValue
+    calculatePropertyValues()
+  }
+
+  const calculatePropertyValues = () => {
+    console.clear()
+    propertyValues = []
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const tilestats = layer?.info?.json?.tilestats
+
+    if (tilestats) {
+      const tileStatLayer = tilestats?.layers.find(
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+      )
+
+      if (tileStatLayer) {
+        const tileStatLayerAttribute = tileStatLayer.attributes.find(
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertyName,
+        )
+
+        if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
+          const values = tileStatLayerAttribute.values
+
+          if (values.length > 0) {
+            const naturalBreaks = new Jenks(values, numberOfClasses).naturalBreak()
+            const naturalBreaksRowValues = []
+
+            for (let i = 0; i < naturalBreaks.length - 1; i++) {
+              naturalBreaksRowValues.push({
+                index: i,
+                start: naturalBreaks[i],
+                end: naturalBreaks[i + 1],
+              })
+            }
+
+            propertyValues = naturalBreaksRowValues
+            console.table(propertyValues)
+          }
+        }
+      }
+    }
   }
 
   const handleClassificationChange = () => {
@@ -38,6 +86,7 @@
 
   const handleIncrementDecrementClasses = () => {
     console.log('handleIncrementDecrementClasses')
+    calculatePropertyValues()
   }
 
   const handleApplyToChange = () => {
@@ -115,11 +164,31 @@
 
   <div class="columns panel-icon-color-size">
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
-      <div class="column color">ICON COLOR</div>
+      <div class="column size">
+        <div class="subtitle is-size-6">ICON COLOR</div>
+        <div>
+          {#each propertyValues as propertyValue}
+            <div class="columns">
+              <div class="column">{propertyValue.start}</div>
+              <div class="column">{propertyValue.end}</div>
+            </div>
+          {/each}
+        </div>
+      </div>
     {/if}
 
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE}
-      <div class="column size">ICON SIZE</div>
+      <div class="column size">
+        <div class="subtitle is-size-6">ICON SIZE</div>
+        <div>
+          {#each propertyValues as propertyValue}
+            <div class="columns">
+              <div class="column">{propertyValue.start}</div>
+              <div class="column">{propertyValue.end}</div>
+            </div>
+          {/each}
+        </div>
+      </div>
     {/if}
   </div>
 </div>

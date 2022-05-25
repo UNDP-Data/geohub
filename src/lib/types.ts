@@ -130,24 +130,26 @@ export interface VectorTileMetadata {
     vector_layers: VectorLayerMetadata[]
     tilestats?: {
       layerCount: number
-      layers: [
-        {
-          layer: string
-          geometry: string
-          count: number
-          attributeCount: number
-          attributes: {
-            attribute: string
-            count: number
-            type: string
-            values: string[] | number[]
-          }
-        },
-      ]
+      layers: VectorLayerTileStatLayer[]
     }
   }
   band_metadata?: string[]
   nodata_value?: number
+}
+
+export interface VectorLayerTileStatLayer {
+  layer: string
+  geometry: string
+  count: number
+  attributeCount: number
+  attributes: VectorLayerTileStatAttribute
+}
+
+export interface VectorLayerTileStatAttribute {
+  attribute: string
+  count: number
+  type: string
+  values: string[] | number[]
 }
 
 export interface LayerInfoMetadata {

@@ -59,7 +59,9 @@
     $map.setLayoutProperty(layerId, 'text-radial-offset', 0.5)
     $map.setLayoutProperty(layerId, 'text-justify', 'auto')
 
-    dispatch('change')
+    dispatch('change', {
+      textFieldValue,
+    })
   }
 </script>
 
