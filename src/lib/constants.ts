@@ -47,7 +47,7 @@ export enum ClassificationMethodNames {
   EQUIDISTANT = 'Equidistant',
   QUANTILE = 'Quantile',
   LOGARITHMIC = 'Logarithmic',
-  NATURAL_BREAK = 'NATURAL_BREAKS',
+  NATURAL_BREAK = 'Natural Breaks',
 }
 
 export const LayerInitialValues = {

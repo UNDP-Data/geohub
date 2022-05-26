@@ -17,6 +17,29 @@ const layer: Layer = {
       // @ts-ignore:next-line
       ['1', {}],
     ],
+    stats: {
+      1: {
+        min: 100,
+        max: 103,
+        mean: 101.48582891160865,
+        count: 15454,
+        sum: 1568362,
+        std: 1.1227380530818927,
+        median: 101,
+        majority: 100,
+        minority: 101,
+        unique: 4,
+        histogram: [
+          [4000, 0, 0, 3756, 0, 0, 3888, 0, 0, 3810],
+          [100, 100.3, 100.6, 100.9, 101.2, 101.5, 101.8, 102.1, 102.4, 102.7, 103],
+        ],
+        valid_percent: 3.2,
+        masked_pixels: 467874,
+        valid_pixels: 15454,
+        percentile_98: 103,
+        percentile_2: 100,
+      },
+    },
   },
   colorMapName: DEFAULT_COLORMAP,
   continuous: {
