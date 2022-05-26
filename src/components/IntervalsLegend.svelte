@@ -51,6 +51,7 @@
   ]
   let colorMapName = layerConfig.colorMapName
 
+  // update color intervals upon change of color map name
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName

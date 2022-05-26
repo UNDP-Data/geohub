@@ -43,14 +43,18 @@
   }
 
   onMount(() => {
+    // set default values
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
-    layer.colorMapName = DEFAULT_COLORMAP
-    layer.intervals = {
-      classification: ClassificationMethodTypes.NATURAL_BREAK,
-      numberOfClasses: COLOR_CLASS_COUNT,
-      colorMapRows: [],
-      propertyName: '',
-      applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
+
+    if (layer?.intervals === undefined) {
+      layer.intervals = {
+        classification: ClassificationMethodTypes.NATURAL_BREAK,
+        numberOfClasses: COLOR_CLASS_COUNT,
+        colorMapRows: [],
+        propertyName: '',
+        applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+      }
     }
   })
 
@@ -68,12 +72,6 @@
       layer.legendType = VectorLayerSymbolLegendTypes.SIMPLE
     }
   }
-
-  // const hasLayerUniqueValues = () => {
-  //   const stats = layer.info.band_metadata[0][1]
-  //   const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
-  //   return val
-  // }
 
   const [popperRef, popperContent] = createPopperActions({
     placement: 'right-end',
@@ -148,7 +146,6 @@
 
     {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        {layerMin}, {layerMax}
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
