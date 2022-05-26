@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import chroma from 'chroma-js'
+  import { debounce } from 'lodash-es'
   import { Jenks } from 'jenks'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
@@ -33,34 +35,70 @@
 
   let classificationMethod = layer.intervals.classification
   let classificationMethods = classificationMethodsDefault
+  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertyName = layer.intervals.propertyName
 
+  // update layer store upon change of apply to option
   $: if (applyToOption) {
     layer.intervals.applyToOption = applyToOption
   }
 
+  // update color intervals upon change of color map name
+  $: {
+    if (layer && colorMapName !== layer.colorMapName) {
+      colorMapName = layer.colorMapName
+      setIntervalValues()
+    }
+  }
+
+  onMount(() => {
+    setIntervalValues()
+  })
+
   const handlePropertyChange = (e: CustomEvent) => {
     console.log('handlePropertyChange')
-    propertyName = e.detail.textFieldValue
     layer.intervals.propertyName = e.detail.textFieldValue
-    calculatePropertyValues()
+    setIntervalValues()
   }
 
   const handleClassificationChange = () => {
     console.log('handleClassificationChange')
     layer.intervals.classification = classificationMethod
-    calculatePropertyValues()
+    setIntervalValues()
   }
 
   const handleIncrementDecrementClasses = () => {
     console.log('handleIncrementDecrementClasses')
     layer.intervals.numberOfClasses = numberOfClasses
-    calculatePropertyValues()
+    setIntervalValues()
   }
 
-  const calculatePropertyValues = () => {
+  // encode colormap and update url parameters
+  const handleParamsUpdate = debounce(() => {
+    console.log('handleParamsUpdate')
+  }, 500)
+
+  const handleColorPickerClick = (event: CustomEvent) => {
+    console.log(event)
+    colorPickerVisibleIndex = event.detail.index
+  }
+
+  const handleChangeIntervalValues = (event: CustomEvent) => {
+    const rowIndex = event.detail.index
+    const inputType = event.detail.id
+    const inputValue = event.detail.value
+
+    if (inputType === 'start' && rowIndex !== 0) {
+      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+    }
+
+    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
+      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    }
+  }
+
+  const setIntervalValues = () => {
     // set to default values
     classificationMethods = classificationMethodsDefault
 
@@ -75,7 +113,7 @@
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
 
         if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
@@ -133,24 +171,6 @@
           }
         }
       }
-    }
-  }
-
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
-
-  const handleChangeIntervalValues = (event: CustomEvent) => {
-    const rowIndex = event.detail.index
-    const inputType = event.detail.id
-    const inputValue = event.detail.value
-
-    if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
-    }
-
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
     }
   }
 </script>
@@ -231,7 +251,7 @@
               {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
-              on:changeColorMap={() => undefined}
+              on:changeColorMap={handleParamsUpdate}
               on:changeIntervalValues={handleChangeIntervalValues} />
           {/each}
         </div>
