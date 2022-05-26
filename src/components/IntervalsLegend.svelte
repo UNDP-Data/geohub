@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
+  import { Jenks } from 'jenks'
+  import { NO_RANDOM_SAMPLING_POINTS } from '$lib/constants'
   import type {
     FillLayerSpecification,
     LineLayerSpecification,
@@ -47,6 +49,7 @@
 
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
   let classificationMethods = [
+    { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
@@ -261,7 +264,7 @@
       const val = (bins[i] + bins[i + 1]) * 0.5
       mid_bins[i] = val
     }
-    const rarr = [...Array(5000)].map((e) => Math.random())
+    const rarr = [...Array(NO_RANDOM_SAMPLING_POINTS)].map((e) => Math.random())
     //console.log(mid_bins)
     const cdf = cumsum(counts)
     //console.log(cdf)
@@ -273,14 +276,23 @@
     const random_sample = rarr.map((v) => {
       return mid_bins[goodBinarySearch(ncdf, v, 0, 0)]
     })
+    let intervalList = []
 
-    //const intervalList = chroma.limits([layerMin, layerMax], classificationMethod, numberOfClasses).map((element) => {
-    const intervalList = chroma
-      .limits([layerMin, ...random_sample, layerMax], classificationMethod, numberOfClasses)
-      .map((element) => {
-        return Number(element.toFixed(2))
-      })
-    //console.log(intervalList)
+    // get interval list based on classification method
+    if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
+      intervalList = new Jenks([layerMin, ...random_sample, layerMax], numberOfClasses)
+        .naturalBreak()
+        .map((element) => {
+          return Number(element.toFixed(2))
+        })
+    } else {
+      intervalList = chroma
+        .limits([layerMin, ...random_sample, layerMax], classificationMethod, numberOfClasses)
+        .map((element) => {
+          return Number(element.toFixed(2))
+        })
+    }
+
     const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
     const colorMap = []
 
