@@ -54,6 +54,29 @@ export interface Layer {
   source?: VectorSourceSpecification | RasterSourceSpecification
 }
 
+export interface RasterLayerStats {
+  [band_no: string]: BandStatistics
+}
+
+export interface BandStatistics {
+  min: number
+  max: number
+  mean: number
+  count: number
+  sum: number
+  std: number
+  median: number
+  majority: number
+  minority: number
+  unique: number
+  histogram: []
+  valid_percent: number
+  masked_pixels: number
+  valid_pixels: number
+  percentile_98: number
+  percentile_2: number
+}
+
 export interface ContinuousLegend {
   minimum: number
   maximum: number
@@ -104,6 +127,7 @@ export interface RasterTileMetadata {
   nodata_value?: number
   overviews?: []
   width?: number
+  stats?: RasterLayerStats
 }
 
 export interface VectorLayerMetadata {
