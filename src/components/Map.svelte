@@ -108,7 +108,7 @@
 
     if (!$map) return
     if (!adminLayer) {
-      adminLayer = new AdminLayer($map, AZURE_URL)
+      adminLayer = new AdminLayer($map, AZURE_URL, false)
     }
     adminLayer.load()
     adminLayer.setInteraction()
