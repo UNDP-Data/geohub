@@ -129,7 +129,12 @@
 
     {#if showTooltip}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <ColorMapPicker on:handleColorMapClick={handleColorMapClick} on:handleClosePopup={handleClosePopup} {layer} />
+        <ColorMapPicker
+          on:handleColorMapClick={handleColorMapClick}
+          on:handleClosePopup={handleClosePopup}
+          {layer}
+          layerMin={Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])}
+          layerMax={Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}

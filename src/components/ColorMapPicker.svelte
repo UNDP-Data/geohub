@@ -10,6 +10,8 @@
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layer: Layer
+  export let layerMax: number
+  export let layerMin: number
   let numberOfClasses = layer.intervals.numberOfClasses
 
   $: {
@@ -19,8 +21,6 @@
   }
 
   const dispatch = createEventDispatcher()
-  const layerMax = Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
-  const layerMin = Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
   const colorMapTypes = [
     { name: ColorMapTypes.SEQUENTIAL, codes: SequentialColormaps },
     { name: ColorMapTypes.DIVERGING, codes: DivergingColorMaps },
