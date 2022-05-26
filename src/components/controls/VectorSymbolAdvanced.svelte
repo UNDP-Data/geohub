@@ -163,39 +163,6 @@
         <TextField on:change={handlePropertyChange} bind:layer enabledTextLabel={true} hasLayerListNumbersOnly={true} />
       </div>
     </div>
-    <div class="column classification">
-      <div class="is-flex is-justify-content-center">Classification</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
-          <select
-            bind:value={classificationMethod}
-            on:change={handleClassificationChange}
-            style="width: 130px;"
-            alt="Classification Methods"
-            title="Classification Methods">
-            {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
-            {/each}
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="is-divider separator" />
-
-  <div class="columns classes-size-color">
-    <div class="column number-classes">
-      <div class="is-flex is-justify-content-center">Number of Classes</div>
-      <div class="is-flex is-justify-content-center">
-        <NumberInput
-          bind:value={numberOfClasses}
-          minValue={COLOR_CLASS_COUNT_MINIMUM}
-          maxValue={COLOR_CLASS_COUNT_MAXIMUM}
-          on:change={handleIncrementDecrementClasses} />
-      </div>
-    </div>
-
     <div class="column apply-to">
       <div class="is-flex is-justify-content-center">Apply To</div>
       <div class="is-flex is-justify-content-center">
@@ -223,6 +190,36 @@
   </div>
 
   <div class="is-divider separator" />
+
+  <div class="columns classes-size-color">
+    <div class="column classification">
+      <div class="is-flex is-justify-content-center">Classification</div>
+      <div class="is-flex is-justify-content-center">
+        <div class="select is-rounded is-justify-content-center">
+          <select
+            bind:value={classificationMethod}
+            on:change={handleClassificationChange}
+            style="width: 110px;"
+            alt="Classification Methods"
+            title="Classification Methods">
+            {#each classificationMethods as classificationMethod}
+              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="column number-classes">
+      <div class="is-flex is-justify-content-center">Number of Classes</div>
+      <div class="is-flex is-justify-content-center">
+        <NumberInput
+          bind:value={numberOfClasses}
+          minValue={COLOR_CLASS_COUNT_MINIMUM}
+          maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+          on:change={handleIncrementDecrementClasses} />
+      </div>
+    </div>
+  </div>
 
   <div class="columns panel-icon-color-size">
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
