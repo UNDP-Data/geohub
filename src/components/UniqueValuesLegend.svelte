@@ -7,13 +7,13 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types'
+  } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { debounce } from 'lodash-es'
 
   import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { updateParamsInURL } from '$lib/helper'
+  import { updateParamsInURL, remapInputValue } from '$lib/helper'
   import type { Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
 
@@ -64,7 +64,7 @@
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
-        colorMap[remap(key, layerMin, layerMax)] = color
+        colorMap[remapInputValue(key, layerMin, layerMax)] = color
         colorMapRows.push({ index, color, start: key, end: row.name })
         index++
       })
@@ -74,7 +74,7 @@
       // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
-        colorMap[remap(row.start, layerMin, layerMax)] = row.color
+        colorMap[remapInputValue(row.start, layerMin, layerMax)] = row.color
       })
     }
 
@@ -93,12 +93,6 @@
         }
       })
     }
-  }
-
-  const remap = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
-    const percent = (input - oldMin) / (oldMax - oldMin)
-    const rescaled = percent * (newMax - newMin) + newMin
-    return rescaled | 0
   }
 
   const handleParamsUpdate = debounce(() => {

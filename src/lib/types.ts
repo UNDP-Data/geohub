@@ -8,7 +8,7 @@ import type {
   HeatmapLayerSpecification,
   RasterSourceSpecification,
   VectorSourceSpecification,
-} from '@maplibre/maplibre-gl-style-spec/types'
+} from '@maplibre/maplibre-gl-style-spec/types.g'
 import type { ClassificationMethodTypes, StatusTypes } from './constants'
 
 export interface Tree {
@@ -164,7 +164,7 @@ export interface Error {
   code: string
 }
 
-export interface LayerIcon {
+export interface Layericon {
   id: string
   label: string
   icon: IconProp

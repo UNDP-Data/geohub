@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import { debounce } from 'lodash-es'
   import { Jenks } from 'jenks'
+  import { debounce } from 'lodash-es'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
@@ -18,9 +19,12 @@
   import type {
     IntervalLegendColorMapRow,
     Layer,
+    SpriteImage,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
+  import { remapInputValue } from '$lib/helper'
+  import { map, spriteImageList } from '$stores'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
@@ -33,6 +37,7 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
+  let icon: SpriteImage
   let classificationMethod = layer.intervals.classification
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
@@ -53,8 +58,18 @@
   }
 
   onMount(() => {
+    icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     setIntervalValues()
   })
+
+  const getIconImageName = () => {
+    const propertyName = 'icon-image'
+    const style = $map
+      .getStyle()
+      .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
+    const iconImageName = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+    return iconImageName
+  }
 
   const handlePropertyChange = (e: CustomEvent) => {
     console.log('handlePropertyChange')
@@ -260,15 +275,29 @@
 
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE}
       <div class="column size">
-        <div class="subtitle is-size-6">ICON SIZE</div>
-        <div>
-          {#each layer.intervals.colorMapRows as colorMapRow}
-            <div class="columns">
-              <div class="column">{colorMapRow.start}</div>
-              <div class="column">{colorMapRow.end}</div>
-            </div>
-          {/each}
-        </div>
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Icon</th>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each layer.intervals.colorMapRows as row}
+              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 50)}
+              <tr>
+                <td class="has-text-centered">
+                  {#if icon}
+                    <img src={icon.src} alt={icon.alt} style={`width: ${size}px; height: ${size}px;`} />
+                  {/if}
+                </td>
+                <td>{row.start}</td>
+                <td>{row.end}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       </div>
     {/if}
   </div>
@@ -303,6 +332,10 @@
 
     input[type='radio'] {
       cursor: pointer;
+    }
+
+    .size {
+      padding-left: 15px;
     }
   }
 </style>
