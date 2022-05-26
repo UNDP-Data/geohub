@@ -101,7 +101,7 @@
           layout: {
             visibility: 'visible',
             'icon-image': 'circle',
-            'icon-size': 0.8,
+            'icon-size': 1,
           },
         }
         break
@@ -234,6 +234,10 @@
         return layerType
     }
   }
+
+  const handleLayerTypeClick = (type: string) => {
+    layerType = type as LayerTypes
+  }
 </script>
 
 {#if isModalVisible}
@@ -278,7 +282,7 @@
                       alt={`${layerTypeLabel} Option`}
                       title={`${layerTypeLabel} Option`} />
                   </div>
-                  <div class="column layer-type-label">
+                  <div class="column layer-type-label" on:click={() => handleLayerTypeClick(selectLayerType)}>
                     {layerTypeLabel}
                   </div>
                 </div>
@@ -318,7 +322,7 @@
         }
 
         .layer-type-label {
-          cursor: default;
+          cursor: pointer;
           margin-bottom: 3px;
           margin-left: 10px;
         }

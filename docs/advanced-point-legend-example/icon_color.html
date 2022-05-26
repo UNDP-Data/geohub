@@ -51,13 +51,12 @@
             "circle-radius": 10,
             "circle-color": {
               property: "population",
-              // Could be identity, exponential, interval, categorical
-              type: "interval",
+              type: "interval", // Could be identity, exponential, interval, categorical
               stops: [
                 [0, "red"],
-                [100000, "blue"], // When 10 - 100
-                [500000, "cyan"], // When 100 - 500 - the next stop, Cyan
-                [1000000, "green"], // When 500 and above, green
+                [100000, "blue"], // When 100000 - 500000
+                [500000, "cyan"], // When 500000 - 1000000 - the next stop, Cyan
+                [1000000, "green"], // When 1000000 and above, green
               ],
             },
           },

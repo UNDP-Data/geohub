@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import { createEventDispatcher } from 'svelte'
 
@@ -8,6 +9,7 @@
 
   export let layer: Layer = LayerInitialValues
   export let enabledTextLabel = false
+  export let hasLayerListNumbersOnly = false
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
@@ -22,6 +24,10 @@
   $: textFieldValue, setTextField()
   $: enabledTextLabel, setDefaultTextField()
 
+  onMount(() => {
+    setDefaultTextField()
+  })
+
   const setDefaultTextField = () => {
     if (!enabledTextLabel) {
       vectorLayerMeta = null
@@ -33,6 +39,17 @@
     // @ts-ignore
     vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
     layerIdList = Object.keys(vectorLayerMeta.fields)
+
+    if (hasLayerListNumbersOnly) {
+      layerIdList.forEach((key) => {
+        if (vectorLayerMeta.fields[key] !== 'Number') {
+          delete vectorLayerMeta.fields[key]
+        }
+      })
+
+      layerIdList = Object.keys(vectorLayerMeta.fields)
+    }
+
     const styleValue: string[] = style.layout && style.layout[propertyName] ? style.layout[propertyName] : ['get', '']
 
     if (styleValue.length > 1 && styleValue[0] === 'get' && styleValue[1].length > 0) {
@@ -59,12 +76,14 @@
     $map.setLayoutProperty(layerId, 'text-radial-offset', 0.5)
     $map.setLayoutProperty(layerId, 'text-justify', 'auto')
 
-    dispatch('change')
+    dispatch('change', {
+      textFieldValue,
+    })
   }
 </script>
 
 {#if style.type === LayerTypes.SYMBOL}
-  <div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
+  <div class="select is-rounded is-justify-content-center" style="height: 30px;width:100%">
     <select bind:value={textFieldValue} style="width: 100%;" alt="text-field" title="Text field for label">
       {#each layerIdList as id}
         <option class="legend-text" value={id}>{id}</option>

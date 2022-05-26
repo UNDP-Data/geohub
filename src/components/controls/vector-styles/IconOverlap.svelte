@@ -8,16 +8,17 @@
 
   export let layer: Layer = LayerInitialValues
 
+  const choices = ['never', 'always', 'cooperative']
   const layerId = layer.definition.id
+  const propertyName = 'icon-overlap'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let choices = ['never', 'always', 'cooperative']
-  let selected = [choices.findIndex((choice) => choice === 'never')]
+  let selected = [choices.findIndex((choice) => choice === $map.getLayoutProperty(layerId, propertyName))]
 
   $: selected, setIconOverlap()
 
   const setIconOverlap = () => {
-    $map.setLayoutProperty(layerId, 'icon-overlap', choices[selected[0]])
+    $map.setLayoutProperty(layerId, propertyName, choices[selected[0]])
   }
 </script>
 

@@ -14,7 +14,7 @@
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
-  import type { Layer, LayerInfo, UniqueLegendColorMapRow } from '$lib/types'
+  import type { Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
 
   export let colorPickerVisibleIndex: number
@@ -26,7 +26,7 @@
     | LineLayerSpecification
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
-  let info: LayerInfo
+  let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
 
   const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])

@@ -1,18 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
   import { cloneDeep } from 'lodash-es'
-
+  import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
   import '@watergis/maplibre-gl-export/css/styles.css'
-  import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
+
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
+  import AdminLayer from '$lib/adminLayer'
+  import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
+  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
   import { LayerTypes, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Layer, Sprite } from '$lib/types'
-  import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
 
+  const AZURE_URL = import.meta.env.VITE_AZURE_URL
+
+  let adminLayer: AdminLayer = null
   let container: HTMLDivElement
+  let isStyleSwitcherVisible = false
   let mapMouseEvent: MapMouseEvent
 
   onMount(async () => {
@@ -72,6 +78,7 @@
     })
 
     newMap.on('load', () => {
+      initAdminLayer()
       const styleUrl = newMap.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
       const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
       promise
@@ -93,9 +100,19 @@
           spriteImageList.update(() => iconList)
         })
     })
-
     map.update(() => newMap)
   })
+
+  const initAdminLayer = () => {
+    isStyleSwitcherVisible = true
+
+    if (!$map) return
+    if (!adminLayer) {
+      adminLayer = new AdminLayer($map, AZURE_URL)
+    }
+    adminLayer.load()
+    adminLayer.setInteraction()
+  }
 
   const beforeStyleChanged = () => {
     const latestStyle = $map.getStyle()
@@ -142,6 +159,7 @@
         })
       }
     })
+    initAdminLayer()
   }
 </script>
 
@@ -154,12 +172,16 @@
     <slot />
   {/if}
 </div>
-<StyleSwicher
-  bind:stylePrimary={styles[0]}
-  bind:styleSecondary={styles[1]}
-  on:styleChanged={styleChanged}
-  on:beforestyleChanged={beforeStyleChanged}
-  bind:map={$map} />
+<CurrentLocation bind:map={$map} />
+
+{#if isStyleSwitcherVisible}
+  <StyleSwicher
+    bind:stylePrimary={styles[0]}
+    bind:styleSecondary={styles[1]}
+    on:styleChanged={styleChanged}
+    on:beforestyleChanged={beforeStyleChanged}
+    bind:map={$map} />
+{/if}
 
 <MapQueryInfoPanel bind:mapMouseEvent />
 

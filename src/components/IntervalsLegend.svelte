@@ -8,7 +8,7 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types'
-  import { cloneDeep, debounce, take } from 'lodash-es'
+  import { cloneDeep, debounce } from 'lodash-es'
   import { fetchUrl } from '$lib/helper'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
@@ -21,7 +21,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
   } from '$lib/constants'
   import { updateParamsInURL } from '$lib/helper'
-  import type { IntervalLegendColorMapRow, Layer, LayerInfo, RasterLayerStats } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, RasterLayerStats } from '$lib/types'
   import { map, layerList } from '$stores'
   import NumberInput from './controls/NumberInput.svelte'
 
@@ -37,7 +37,7 @@
     | LineLayerSpecification
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
-  let info: LayerInfo
+  let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
 
   const layerMax = Number(info.band_metadata[0][1]['STATISTICS_MAXIMUM'])
@@ -52,6 +52,7 @@
   ]
   let colorMapName = layerConfig.colorMapName
 
+  // update color intervals upon change of color map name
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
@@ -373,7 +374,7 @@
       </div>
     </div>
     <div class="column number-classes">
-      <div class="is-size-6 is-flex is-justify-content-center">Number of Classess</div>
+      <div class="is-size-6 is-flex is-justify-content-center">Number of Classes</div>
       <NumberInput
         bind:value={numberOfClasses}
         bind:minValue={colorClassCountMin}

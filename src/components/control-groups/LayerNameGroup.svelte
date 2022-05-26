@@ -1,13 +1,31 @@
 <script lang="ts">
   import Tooltip, { Wrapper } from '@smui/tooltip'
-
+  import Fa from 'svelte-fa'
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
-  import { LayerInitialValues } from '$lib/constants'
+  import { LayerIconTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
   import { clean, hash } from '$lib/helper'
   import type { Layer } from '$lib/types'
   import { layerMetadata } from '$stores'
 
   export let layer: Layer = LayerInitialValues
+
+  let icon = LayerIconTypes.find((icon) => icon.id === layer.type)
+  if (layer.type === LayerTypes.VECTOR) {
+    switch (layer.definition.type) {
+      case 'fill':
+        icon = LayerIconTypes.find((icon) => icon.id === 'polygon')
+        break
+      case 'line':
+        icon = LayerIconTypes.find((icon) => icon.id === 'line')
+        break
+      case 'symbol':
+        icon = LayerIconTypes.find((icon) => icon.id === 'point')
+        break
+      case 'heatmap':
+        icon = LayerIconTypes.find((icon) => icon.id === 'heatmap')
+        break
+    }
+  }
 
   const name = clean(layer.name)
   const layerInfoMetadata = $layerMetadata.get(hash(layer.definition.source))
@@ -18,7 +36,16 @@
     <div class="layer-header-name">
       <div class="layer-name">
         <Wrapper>
-          <div>{name}</div>
+          <div>
+            <Fa icon={icon.icon} size="sm" primaryColor={icon.color} />
+            <!-- <div class="icon" alt={icon.label} title={icon.label}>
+              <Wrapper>
+                <Fa icon={icon.icon} size="sm" primaryColor={icon.color} />
+                <Tooltip showDelay={500} hideDelay={100} yPos="above">{icon.label}</Tooltip>
+              </Wrapper>
+            </div> -->
+            <span style="padding-left: 5px;">{name}</span>
+          </div>
           <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
             <div class="label has-text-left">{clean(name)}</div>
             <div class="description has-text-left">

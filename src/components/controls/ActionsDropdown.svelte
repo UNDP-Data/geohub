@@ -5,17 +5,19 @@
 <script lang="ts">
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LngLatBoundsLike } from 'maplibre-gl'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import { fade } from 'svelte/transition'
   import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
   import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
+  import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
   import { createPopperActions } from 'svelte-popperjs'
 
   import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
-  import { LayerInitialValues } from '$lib/constants'
-  import type { Layer } from '$lib/types'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types'
   import { dynamicLayers, layerList, map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
@@ -84,6 +86,28 @@
   const handleTooltipClick = () => {
     showTooltip = !showTooltip
   }
+
+  const handleZoomToLayerClick = () => {
+    let bounds: LngLatBoundsLike
+    if (layer.type === LayerTypes.RASTER) {
+      const metadata: RasterTileMetadata = layer.info
+      bounds = [
+        [Number(metadata.bounds[0]), Number(metadata.bounds[1])],
+        [Number(metadata.bounds[2]), Number(metadata.bounds[3])],
+      ]
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const metadata: VectorTileMetadata = layer.info
+      const boundsArray = metadata.bounds.split(',')
+      bounds = [
+        [Number(boundsArray[0]), Number(boundsArray[1])],
+        [Number(boundsArray[2]), Number(boundsArray[3])],
+      ]
+    }
+    $map.fitBounds(bounds)
+    showTooltip = false
+  }
 </script>
 
 <div class="icon-selected" use:popperRef on:click={handleTooltipClick} style="margin-right: 0; cursor: pointer;">
@@ -92,6 +116,15 @@
 
 {#if showTooltip}
   <div transition:fade class="dropdown" use:popperContent={popperOptions} data-testid="tooltip">
+    <div style="padding-left: 5px;">
+      <Wrapper>
+        <div class="icon-selected" on:click={handleZoomToLayerClick}>
+          <Fa icon={faMagnifyingGlass} size="sm" />
+        </div>
+        <Tooltip showDelay={500} hideDelay={500} yPos="above">Zoom to layer</Tooltip>
+      </Wrapper>
+    </div>
+
     <div>
       <Tag type="is-info" size="is-small">
         {mapLayerIndex} / {mapLayerLength}
@@ -101,7 +134,7 @@
       <LayerOrderButtons {layer} bind:mapLayerIndex />
     </div>
 
-    {#if $layerList.length > 1}
+    {#if layer.type === LayerTypes.RASTER && $layerList.length > 1}
       <Wrapper>
         <div class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
           <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="sm" />

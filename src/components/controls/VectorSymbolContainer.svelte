@@ -10,19 +10,28 @@
   import { cloneDeep } from 'lodash-es'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
-  import ContinuousLegend from '$components/ContinuousLegend.svelte'
-  import IntervalsLegend from '$components/IntervalsLegend.svelte'
-  import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
+  import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
+  import {
+    ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
+    DEFAULT_COLORMAP,
+    VectorLayerSymbolLegendTypes,
+    VectorLayerSymbolLegendApplyToTypes,
+  } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
 
   export let layer: Layer
 
+  let applyToOption = layer?.intervals?.applyToOption
+    ? layer.intervals.applyToOption
+    : VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
-  let layerHasUniqueValues = false
   let layerListCount = $layerList.length
+  let layerMin: number
+  let layerMax: number
   let showTooltip = false
 
   // hide colormap picker if change in layer list
@@ -34,8 +43,19 @@
   }
 
   onMount(() => {
-    layerHasUniqueValues = hasLayerUniqueValues()
-    layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
+    // set default values
+    layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
+    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
+
+    if (layer?.intervals === undefined) {
+      layer.intervals = {
+        classification: ClassificationMethodTypes.NATURAL_BREAK,
+        numberOfClasses: COLOR_CLASS_COUNT,
+        colorMapRows: [],
+        propertyName: '',
+        applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+      }
+    }
   })
 
   const handleLegendToggleClick = () => {
@@ -46,17 +66,11 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === DynamicLayerLegendTypes.CONTINUOUS) {
-      layer.legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    if (layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
+      layer.legendType = VectorLayerSymbolLegendTypes.ADVANCED
     } else {
-      layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+      layer.legendType = VectorLayerSymbolLegendTypes.SIMPLE
     }
-  }
-
-  const hasLayerUniqueValues = () => {
-    const stats = layer.info.band_metadata[0][1]
-    const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
-    return val
   }
 
   const [popperRef, popperContent] = createPopperActions({
@@ -92,17 +106,13 @@
 
 <div class="columns" data-testid="raster-legend-view-container">
   <div class="column is-10">
-    {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
+    {#if layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE}
       <div transition:slide>
-        <ContinuousLegend bind:layerConfig={layer} />
+        <VectorSymbolSimple bind:layer />
       </div>
-    {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
+    {:else if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
       <div transition:slide>
-        <IntervalsLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
-      </div>
-    {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
-      <div transition:slide>
-        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
+        <VectorSymbolAdvanced bind:layer bind:applyToOption bind:layerMin bind:layerMax />
       </div>
     {/if}
   </div>
@@ -119,22 +129,29 @@
     </Wrapper>
     <br />
 
-    <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
-      <Card>
-        <PrimaryAction style="padding: 10px;">
-          <Fa icon={faPalette} style="font-size: 16px;" />
-        </PrimaryAction>
-      </Card>
-    </div>
+    {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+      <div
+        class="toggle-container"
+        use:popperRef
+        on:click={handleClosePopup}
+        data-testid="colormap-toggle-container"
+        transition:fade>
+        <Card>
+          <PrimaryAction style="padding: 10px;">
+            <Fa icon={faPalette} style="font-size: 16px;" />
+          </PrimaryAction>
+        </Card>
+      </div>
+    {/if}
 
-    {#if showTooltip}
+    {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
-          layerMin={Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])} />
+          {layerMin}
+          {layerMax} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}
