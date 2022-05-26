@@ -6,12 +6,14 @@ export default class AdminLayer {
   private ADM_ID = 'admin'
   private adminLevel = 0
   private hoveredStateId = null
+  private isHover: boolean
 
   private map: Map
 
-  constructor(map: Map, baseUrl: string) {
+  constructor(map: Map, baseUrl: string, isHover = true) {
     this.map = map
     this.BASE_URL = baseUrl
+    this.isHover = isHover
   }
 
   public getAdminID() {
@@ -109,7 +111,7 @@ export default class AdminLayer {
           sourceLayer: this.getAdminLayer(),
           id: this.hoveredStateId,
         },
-        { hover: true },
+        { hover: this.isHover },
       )
     }
   }
@@ -122,7 +124,7 @@ export default class AdminLayer {
           sourceLayer: this.getAdminLayer(),
           id: this.hoveredStateId,
         },
-        { hover: false },
+        { hover: this.isHover },
       )
     }
     this.hoveredStateId = null
