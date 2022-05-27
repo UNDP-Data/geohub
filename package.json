@@ -65,6 +65,7 @@
     "@turf/distance": "^6.5.0",
     "@types/chroma-js": "^2.1.3",
     "@types/colormap": "^2.3.1",
+    "@types/d3-format": "^3.0.1",
     "@types/geojson": "^7946.0.8",
     "@types/lodash": "^4.14.182",
     "@types/lodash-es": "^4.17.6",
