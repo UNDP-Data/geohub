@@ -50,6 +50,7 @@
   // update layer store upon change of apply to option
   $: if (applyToOption) {
     layer.intervals.applyToOption = applyToOption
+    updateMap()
   }
 
   // update color intervals upon change of color map name
@@ -198,15 +199,45 @@
               propertySelectValues.push(row)
             }
 
-            if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
-              layerMax = Math.max.apply(null, values)
-              layerMin = Math.min.apply(null, values)
-            }
-
+            layerMax = Math.max.apply(null, values)
+            layerMin = Math.min.apply(null, values)
             layer.intervals.colorMapRows = propertySelectValues
+
+            updateMap()
           }
         }
       }
+    }
+  }
+
+  const updateMap = () => {
+    console.log('updateMap')
+
+    const stops = layer.intervals.colorMapRows.map((row) => {
+      return [
+        row.start,
+        layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+          ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+          : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
+      ]
+    })
+
+    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+      $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
+      $map.setPaintProperty(layer.definition.id, 'icon-color', {
+        property: layer.intervals.propertyName,
+        type: 'interval',
+        stops,
+      })
+    }
+
+    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE) {
+      $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+      $map.setLayoutProperty(layer.definition.id, 'icon-size', {
+        property: layer.intervals.propertyName,
+        type: 'interval',
+        stops,
+      })
     }
   }
 </script>
