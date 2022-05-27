@@ -113,7 +113,7 @@
 
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {
-    console.log('handleParamsUpdate')
+    updateMap()
   }, 500)
 
   const handleColorPickerClick = (event: CustomEvent) => {
@@ -195,10 +195,8 @@
                 start: intervalList[i],
                 end: intervalList[i + 1],
               }
-
               propertySelectValues.push(row)
             }
-
             layerMax = Math.max.apply(null, values)
             layerMin = Math.min.apply(null, values)
             layer.intervals.colorMapRows = propertySelectValues
