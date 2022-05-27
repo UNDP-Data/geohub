@@ -13,7 +13,7 @@
   $: {
     if (map) {
       map.on('styledata', updateLocation)
-      map.on('mousemove', ADM_ID, updateLocation)
+      map.on('mousemove', updateLocation)
     }
   }
 
@@ -27,7 +27,14 @@
         adm3Name = features[0].properties.adm3_name
         adm4Name = features[0].properties.adm4_name
         isContainerVisible = Boolean(features[0].properties.adm0_name)
-      } else isContainerVisible = false
+      } else {
+        adm0Name = null
+        adm1Name = null
+        adm2Name = null
+        adm3Name = null
+        adm4Name = null
+        isContainerVisible = false
+      }
     }
   }
 </script>
