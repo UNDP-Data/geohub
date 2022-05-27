@@ -81,8 +81,7 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
-    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-    propertySelectOptions.forEach((key) => {
+    Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
         delete vectorLayerMeta.fields[key]
       }
@@ -94,30 +93,25 @@
   }
 
   const handlePropertyChange = () => {
-    console.log('handlePropertyChange')
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
   const handleClassificationChange = () => {
-    console.log('handleClassificationChange')
     layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 
   const handleIncrementDecrementClasses = () => {
-    console.log('handleIncrementDecrementClasses')
     layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
-  // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {
-    console.log('handleParamsUpdate')
+    updateMap()
   }, 500)
 
   const handleColorPickerClick = (event: CustomEvent) => {
-    console.log(event)
     colorPickerVisibleIndex = event.detail.index
   }
 
@@ -133,6 +127,8 @@
     if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
       layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
     }
+
+    updateMap()
   }
 
   const setIntervalValues = () => {
@@ -211,8 +207,6 @@
   }
 
   const updateMap = () => {
-    console.log('updateMap')
-
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
+  import { format } from 'd3-format'
   import { map, year } from '../stores'
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
@@ -151,7 +152,7 @@
         field: 'value',
         type: 'quantitative',
         axis: null,
-        // scale: { domain: [0, 1] },
+        scale: { domain: [0, 1] },
       },
       tooltip: { field: 'percent', type: 'qualitative' },
       xOffset: { field: 'category' },
@@ -396,12 +397,22 @@
   }
 
   const renderAdminCharts = () => {
+    adminHistogramAdmin = [
+      $adminStore.adm4_name,
+      $adminStore.adm3_name,
+      $adminStore.adm2_name,
+      $adminStore.adm1_name,
+      $adminStore.adm0_name,
+    ]
+      .filter(Boolean)
+      .join(', ')
     const options = { actions: false, renderer: 'svg' }
     adminHistogram = []
     for (let i = 2020; i >= 2012; i--) {
-      adminHistogram.push({ year: i, value: $adminStore[`ppp_hrea_${i}`], category: HREA_ID })
+      adminHistogram.push({ year: i, value: $adminStore[`hrea_${i}`], category: HREA_ID })
     }
     vegaEmbed('#admin-histogram', getAdminSpec(adminHistogram), options)
+    vegaEmbed('#admin-pie', getDonutSpec($adminStore[`hrea_${$year}`], PRIMARY), options)
   }
 
   const adminInteraction = () => {
@@ -457,6 +468,14 @@
                 <br /><br />
                 <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
                 <div class="title-text">{adminHistogramAdmin}</div>
+                {#if $adminStore[`ppp_${$year}`]}
+                  <div class="title-text">
+                    <b>{format('.3s')($adminStore[`ppp_hrea_${$year}`])}</b>
+                    fully electrified
+                  </div>
+                  <div class="title-text"><b>{format('.3s')($adminStore[`ppp_${$year}`])}</b> total</div>
+                {/if}
+                <div id="admin-pie" />
                 <div id="admin-histogram" />
               {/if}
               {#if interactSelected === 'Point'}
