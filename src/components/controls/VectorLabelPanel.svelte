@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { LayerSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { map } from '$stores'
+  import { layerLabelled, map } from '$stores'
   import TextField from '$components/controls/vector-styles/TextField.svelte'
   import TextColor from '$components/controls/vector-styles/TextColor.svelte'
   import TextHaloCalor from '$components/controls/vector-styles/TextHaloCalor.svelte'
@@ -105,6 +105,9 @@
     }
   }
 
+  const onTextChange = (e) => {
+    $layerLabelled[parentLayerId] = e.detail.textFieldValue !== ''
+  }
   const onStyleChange = () => {
     updateLegend()
   }
@@ -115,7 +118,7 @@
     <div class="columns is-vcentered first-row">
       <div class="column text-field">
         <div class="is-flex is-justify-content-center" style="position: relative;">
-          <TextField on:change={onStyleChange} bind:layer={targetLayer} />
+          <TextField on:change={onTextChange} bind:layer={targetLayer} />
         </div>
       </div>
       <div class="is-divider-vertical" />

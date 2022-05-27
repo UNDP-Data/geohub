@@ -66,7 +66,9 @@
       $map.setLayoutProperty(layerId, 'text-justify', undefined)
     }
 
-    dispatch('change')
+    dispatch('change', {
+      textFieldValue,
+    })
   }
 </script>
 
