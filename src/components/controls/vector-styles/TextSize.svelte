@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'

@@ -17,7 +17,7 @@
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 
-  import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
 

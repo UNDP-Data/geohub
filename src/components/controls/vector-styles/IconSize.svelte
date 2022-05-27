@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
   import { LayerInitialValues } from '$lib/constants'

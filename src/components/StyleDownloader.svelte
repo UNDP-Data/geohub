@@ -6,7 +6,7 @@
   import Textfield from '@smui/textfield'
   import Fa from 'svelte-fa'
   import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
-  import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import { downloadFile } from '$lib/helper'
   import type { Layer } from '$lib/types'

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
   import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'

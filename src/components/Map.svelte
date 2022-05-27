@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { cloneDeep } from 'lodash-es'
   import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'

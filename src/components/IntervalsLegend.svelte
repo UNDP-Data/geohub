@@ -9,7 +9,7 @@
     RasterLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types'
+  } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { cloneDeep, debounce } from 'lodash-es'
   import { fetchUrl } from '$lib/helper'
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LayerSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
   import { map } from '$stores'

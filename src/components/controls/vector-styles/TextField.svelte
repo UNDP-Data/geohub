@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { createEventDispatcher } from 'svelte'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'

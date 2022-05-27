@@ -5,7 +5,7 @@ import type {
   LineLayerSpecification,
   SymbolLayerSpecification,
   HeatmapLayerSpecification,
-} from '@maplibre/maplibre-gl-style-spec/types'
+} from '@maplibre/maplibre-gl-style-spec/types.g'
 
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'

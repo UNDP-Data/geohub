@@ -13,7 +13,7 @@
   import LineWidth from '$components/controls/vector-styles/LineWidth.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { map } from '$stores'
 
   export let isLegendPanelVisible = false

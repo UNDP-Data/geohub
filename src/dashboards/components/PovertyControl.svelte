@@ -3,7 +3,7 @@
   import { map } from '../stores'
   import FormField from '@smui/form-field'
   import Checkbox from '@smui/checkbox'
-  import type { HeatmapLayerSpecification, VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { HeatmapLayerSpecification, VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import RangeSlider from 'svelte-range-slider-pips'
 
   const AZURE_URL = import.meta.env.VITE_AZURE_URL

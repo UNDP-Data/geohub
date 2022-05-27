@@ -6,7 +6,7 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types'
+  } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { debounce } from 'lodash-es'
 
   import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'

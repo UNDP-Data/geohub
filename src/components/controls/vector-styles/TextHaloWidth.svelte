@@ -5,7 +5,7 @@
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import NumberInput from '../NumberInput.svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types'
+  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   export let layer: Layer = LayerInitialValues
   const layerId = layer.definition.id
