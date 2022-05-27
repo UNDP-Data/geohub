@@ -72,8 +72,7 @@
     const style = $map
       .getStyle()
       .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
-    const iconImageName = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
-    return iconImageName
+    return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   }
 
   const setPropertySelectOptions = () => {
@@ -191,10 +190,8 @@
                 start: intervalList[i],
                 end: intervalList[i + 1],
               }
-
               propertySelectValues.push(row)
             }
-
             layerMax = Math.max.apply(null, values)
             layerMin = Math.min.apply(null, values)
             layer.intervals.colorMapRows = propertySelectValues
