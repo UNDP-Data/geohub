@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
@@ -17,8 +18,14 @@
   let stepValue = 0.25
   let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
 
+  onMount(() => {
+    value = layer.iconSize ? layer.iconSize : 1
+    setValue()
+  })
+
   const setValue = () => {
     $map.setLayoutProperty(layer.definition.id, propertyName, value)
+    layer.iconSize = value
   }
 </script>
 

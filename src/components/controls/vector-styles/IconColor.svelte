@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
@@ -12,12 +13,17 @@
   const propertyName = 'icon-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
   const defaultColor = `rgba(0,0,0,1)`
+  let rgba = defaultColor
 
-  let rgba = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor
+  onMount(() => {
+    rgba = layer.iconColor ? layer.iconColor : defaultColor
+    $map.setPaintProperty(layerId, propertyName, rgba)
+  })
 
   const handleSetColor = (e: CustomEvent) => {
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
+      layer.iconColor = e.detail.color
     }
   }
 </script>
