@@ -6,6 +6,7 @@
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import vegaEmbed from 'vega-embed'
   import AdminLayer from '$lib/adminLayer'
+  import { adminStore } from '$lib/stores/admin'
   import IntroductionPanel from './IntroductionPanel.svelte'
   import PovertyControl from './PovertyControl.svelte'
   import ElectricityControl from './ElectricityControl.svelte'
@@ -125,6 +126,41 @@
         scale: {
           domain: [HREA_ID, ML_ID],
           range: [PRIMARY, SECONDARY],
+        },
+      },
+    },
+  })
+
+  const getAdminSpec = (values) => ({
+    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+    width: 278,
+    height: 120,
+    view: { stroke: 'transparent' },
+    background: null,
+    data: { values },
+    mark: { type: 'bar' },
+    encoding: {
+      x: {
+        field: 'year',
+        axis: { title: false, labelColor: GREY },
+        scale: {
+          domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+        },
+      },
+      y: {
+        field: 'value',
+        type: 'quantitative',
+        axis: null,
+        // scale: { domain: [0, 1] },
+      },
+      tooltip: { field: 'percent', type: 'qualitative' },
+      xOffset: { field: 'category' },
+      color: {
+        field: 'category',
+        legend: null,
+        scale: {
+          domain: [HREA_ID],
+          range: [PRIMARY],
         },
       },
     },
@@ -361,20 +397,24 @@
 
   const renderAdminCharts = () => {
     const options = { actions: false, renderer: 'svg' }
-    vegaEmbed('#admin-histogram', getHistogramSpec(adminHistogram), options)
+    adminHistogram = []
+    for (let i = 2020; i >= 2012; i--) {
+      adminHistogram.push({ year: i, value: $adminStore[`ppp_hrea_${i}`], category: HREA_ID })
+    }
+    vegaEmbed('#admin-histogram', getAdminSpec(adminHistogram), options)
   }
 
   const adminInteraction = () => {
     adminLayer?.setInteraction()
     $map.off('click', onPointClick)
-    $map.on('click', getAdminStats)
+    $map.on('mousemove', renderAdminCharts)
     renderAdminCharts()
   }
 
   const pointInteraction = () => {
     adminLayer?.removeInteraction()
     $map.on('click', onPointClick)
-    $map.off('click', getAdminStats)
+    $map.off('mousemove', getAdminStats)
     renderPointCharts()
   }
 
@@ -415,7 +455,7 @@
               </SegmentedButton>
               {#if interactSelected === 'Admin'}
                 <br /><br />
-                <div class="title-text">{electricitySelected?.name} Histogram - {$year}</div>
+                <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
                 <div class="title-text">{adminHistogramAdmin}</div>
                 <div id="admin-histogram" />
               {/if}
