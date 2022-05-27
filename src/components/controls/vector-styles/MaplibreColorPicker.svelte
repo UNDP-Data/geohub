@@ -43,6 +43,11 @@
     height: 20px;
     padding: 1px;
     cursor: pointer;
+    border: 1px solid hsl(0, 0%, 0%);
+
+    @media (prefers-color-scheme: dark) {
+      border: 1px solid hsl(0, 0%, 100%);
+    }
 
     &:hover {
       padding: 0;
