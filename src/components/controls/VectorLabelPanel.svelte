@@ -149,7 +149,7 @@
         </StyleControlGroup>
       </div>
       <div class="column is-6 p-1">
-        <StyleControlGroup title="Font">
+        <StyleControlGroup title="Halo">
           <div class="columns first-row">
             <div class="column halo-color">
               <div class="is-flex is-justify-content-center">Color:</div>
