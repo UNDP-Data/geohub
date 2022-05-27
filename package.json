@@ -79,6 +79,7 @@
     "bulma": "^0.9.4",
     "chroma-js": "^2.4.2",
     "colormap": "^2.3.2",
+    "d3-format": "^3.1.0",
     "dotenv": "^16.0.1",
     "esbuild": "^0.14.39",
     "eslint": "^8.16.0",
