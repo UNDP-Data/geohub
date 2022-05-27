@@ -4,6 +4,7 @@
   import { createEventDispatcher } from 'svelte'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   export let color: Color
 
@@ -20,7 +21,7 @@
   $: color, changeColor()
 </script>
 
-<div class="raster-color-picker-container" data-testid="raster-color-picker-container">
+<div class="raster-color-picker-container" data-testid="raster-color-picker-container" use:clickOutside={handleClose}>
   <div class="close is-clickable" alt="Close Color Picker" title="Close Color Picker" on:click={handleClose}>
     <Fa icon={faXmark} size="sm" />
   </div>
