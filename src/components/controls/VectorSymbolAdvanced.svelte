@@ -7,7 +7,6 @@
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import TextField from '$components/controls/vector-styles/TextField.svelte'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
@@ -20,6 +19,7 @@
     IntervalLegendColorMapRow,
     Layer,
     SpriteImage,
+    VectorLayerMetadata,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
@@ -37,12 +37,15 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let icon: SpriteImage
   let classificationMethod = layer.intervals.classification
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
+  let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
+  let propertySelectOptions: string[] = []
+  let propertySelectValue: string = null
+  let vectorLayerMeta: VectorLayerMetadata
 
   // update layer store upon change of apply to option
   $: if (applyToOption) {
@@ -59,6 +62,7 @@
 
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
+    setPropertySelectOptions()
     setIntervalValues()
   })
 
@@ -71,9 +75,26 @@
     return iconImageName
   }
 
-  const handlePropertyChange = (e: CustomEvent) => {
+  const setPropertySelectOptions = () => {
+    const metadata = layer.info
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
+    propertySelectOptions.forEach((key) => {
+      if (vectorLayerMeta.fields[key] !== 'Number') {
+        delete vectorLayerMeta.fields[key]
+      }
+    })
+
+    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
+    propertySelectValue = propertySelectOptions[0]
+    layer.intervals.propertyName = propertySelectValue
+  }
+
+  const handlePropertyChange = () => {
     console.log('handlePropertyChange')
-    layer.intervals.propertyName = e.detail.textFieldValue
+    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
@@ -161,7 +182,7 @@
             }
 
             const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
-            const propertyValues = []
+            const propertySelectValues = []
 
             // create interval list (start / end)
             for (let i = 0; i < intervalList.length - 1; i++) {
@@ -174,7 +195,7 @@
                 end: intervalList[i + 1],
               }
 
-              propertyValues.push(row)
+              propertySelectValues.push(row)
             }
 
             if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
@@ -182,7 +203,7 @@
               layerMin = Math.min.apply(null, values)
             }
 
-            layer.intervals.colorMapRows = propertyValues
+            layer.intervals.colorMapRows = propertySelectValues
           }
         }
       }
@@ -195,7 +216,18 @@
     <div class="column property">
       <div class="is-flex is-justify-content-center">Property</div>
       <div class="is-flex is-justify-content-center">
-        <TextField on:change={handlePropertyChange} bind:layer enabledTextLabel={true} hasLayerListNumbersOnly={true} />
+        <div class="select is-rounded is-justify-content-center">
+          <select
+            bind:value={propertySelectValue}
+            on:change={handlePropertyChange}
+            style="width: 110px;"
+            alt="Property Options"
+            title="Property Options">
+            {#each propertySelectOptions as propertySelectOption}
+              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+            {/each}
+          </select>
+        </div>
       </div>
     </div>
     <div class="column apply-to">
