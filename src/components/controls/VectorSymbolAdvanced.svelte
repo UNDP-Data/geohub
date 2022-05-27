@@ -72,8 +72,7 @@
     const style = $map
       .getStyle()
       .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
-    const iconImageName = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
-    return iconImageName
+    return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   }
 
   const setPropertySelectOptions = () => {
