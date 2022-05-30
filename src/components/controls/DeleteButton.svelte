@@ -1,5 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+  import Keydown from 'svelte-keydown'
+  import { clickOutside } from 'svelte-use-click-outside'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
@@ -35,6 +37,8 @@
   }
 </script>
 
+<Keydown paused={!confirmDeleteLayerDialogVisible} on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
+
 <Wrapper>
   <div class="container icon-selected" title="Delete layer" on:click={() => (confirmDeleteLayerDialogVisible = true)}>
     <Fa icon={faTrash} size="sm" />
@@ -43,7 +47,11 @@
 </Wrapper>
 
 {#if confirmDeleteLayerDialogVisible}
-  <div class="modal is-active" data-testid="delete-layer-view-container" transition:fade>
+  <div
+    class="modal is-active"
+    data-testid="delete-layer-view-container"
+    transition:fade
+    use:clickOutside={handleCancel}>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
