@@ -8,7 +8,7 @@
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
-  export let decimalPoisition = undefined
+  export let decimalPosition = undefined
   export let fieldType: string = undefined
 
   const dispatch = createEventDispatcher()
@@ -27,19 +27,19 @@
     setDefaultTextField()
   })
 
-  $: decimalPoisition, setDesimalPosition()
+  $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
       let propertyValue: any = ['get', textFieldValue]
       if (fieldType && ['number', 'float'].includes(fieldType)) {
-        if (!decimalPoisition) {
-          decimalPoisition = 1
+        if (!decimalPosition) {
+          decimalPosition = 1
         }
         propertyValue = [
           'number-format',
           ['get', textFieldValue],
-          { 'min-fraction-digits': decimalPoisition, 'max-fraction-digits': decimalPoisition },
+          { 'min-fraction-digits': decimalPosition, 'max-fraction-digits': decimalPosition },
         ]
       } else if (fieldType && fieldType === 'integer') {
         propertyValue = [

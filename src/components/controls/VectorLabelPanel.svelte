@@ -22,7 +22,7 @@
   let targetLayerId = layer.definition.id
   let targetLayer = layer
   let fieldType: string
-  let decimalPoisition: number
+  let decimalPosition: number
   const style: LayerSpecification = $map
     .getStyle()
     .layers.filter((layer: LayerSpecification) => layer.id === parentLayerId)[0]
@@ -124,7 +124,7 @@
     <div class="columns is-vcentered first-row">
       <div class="column text-field">
         <div class="is-flex is-justify-content-center" style="position: relative;">
-          <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPoisition />
+          <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPosition />
         </div>
       </div>
     </div>
@@ -144,7 +144,7 @@
         </div>
         <div class="column decimal-position">
           <div class="is-flex is-justify-content-center" style="position: relative;">
-            <NumberFormat on:change={onStyleChange} bind:decimalPoisition />
+            <NumberFormat on:change={onStyleChange} bind:decimalPosition />
           </div>
         </div>
       {/if}
