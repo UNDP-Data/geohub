@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { cleanup, render, fireEvent } from '@testing-library/svelte'
 
-import TestExample from '../TestExample.svelte'
+import TestExample from '$components/TestExample.svelte'
 
 beforeEach(cleanup)
 

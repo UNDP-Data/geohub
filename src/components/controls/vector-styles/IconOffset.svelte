@@ -5,7 +5,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import NumberInput from '../NumberInput.svelte'
+  import NumberInput from '$components/controls/NumberInput.svelte'
 
   export let layer: Layer = LayerInitialValues
 
