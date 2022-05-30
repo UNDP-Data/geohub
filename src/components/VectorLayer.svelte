@@ -81,6 +81,7 @@
   .vector-layer-container {
     margin-left: 15px;
     margin-bottom: 20px;
+    min-width: min-content;
 
     .panel-tabs {
       padding-top: 10px;
