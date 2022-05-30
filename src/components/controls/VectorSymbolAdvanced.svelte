@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import { Jenks } from 'jenks'
+  import { Jenks } from '$lib/jenks'
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
