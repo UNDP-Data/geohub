@@ -85,9 +85,6 @@
 </div>
 
 <style lang="scss">
-  @import '../../styles/bulma-switch.min.css';
-  @import '../../styles/bulma-divider.min.css';
-
   .symbol-simple-container {
     .bring-to-front {
       z-index: 10;

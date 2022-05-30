@@ -55,8 +55,6 @@
 </div>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
-
   .grouped {
     display: flex;
     justify-content: left;
