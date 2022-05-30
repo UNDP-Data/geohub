@@ -30,7 +30,7 @@
 {#if style.type === LayerTypes.LINE}
   <div style="width: 60%;">
     {#each choices as choice}
-      <div class="columns is-gapless" style="margin-bottom: 5px;">
+      <div class="columns is-gapless mb-1">
         <div class="column is-4">
           <input
             type="radio"

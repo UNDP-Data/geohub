@@ -125,7 +125,7 @@
           </PrimaryAction>
         </Card>
       </div>
-      <Tooltip showDelay={1000} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
+      <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
     </Wrapper>
     <br />
 
