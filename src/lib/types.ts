@@ -170,7 +170,7 @@ export interface VectorLayerTileStatLayer {
   geometry: string
   count: number
   attributeCount: number
-  attributes: VectorLayerTileStatAttribute
+  attributes: VectorLayerTileStatAttribute[]
 }
 
 export interface VectorLayerTileStatAttribute {
