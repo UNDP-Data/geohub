@@ -152,13 +152,13 @@
         <StyleControlGroup title="Font">
           <div class="columns first-row">
             <div class="column text-color">
-              <div class="is-flex is-justify-content-center">Color:</div>
+              <div class="has-text-centered">Color:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
               </div>
             </div>
             <div class="column text-size">
-              <div class="is-flex is-justify-content-center">Size:</div>
+              <div class="has-text-centered">Size:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
               </div>
@@ -170,13 +170,13 @@
         <StyleControlGroup title="Halo">
           <div class="columns first-row">
             <div class="column halo-color">
-              <div class="is-flex is-justify-content-center">Color:</div>
+              <div class="has-text-centered">Color:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
               </div>
             </div>
             <div class="column halo-size">
-              <div class="is-flex is-justify-content-center">Size:</div>
+              <div class="has-text-centered">Size:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
               </div>
@@ -190,7 +190,7 @@
       <div class="is-divider m-0 pb-3" />
       <div class="columns first-row">
         <div class="column is-5">
-          <div class="is-flex is-justify-content-center">Label position relative to geometry:</div>
+          <div class="has-text-centered">Label position relative to geometry:</div>
         </div>
         <div class="column is-4">
           <div class="is-flex is-justify-content-center" style="position: relative;">
