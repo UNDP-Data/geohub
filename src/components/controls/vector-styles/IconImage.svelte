@@ -4,6 +4,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import LegendSymbol from '@watergis/legend-symbol'
   import { createPopperActions } from 'svelte-popperjs'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
@@ -131,7 +132,12 @@
 </div>
 
 {#if isIconListPanelVisible}
-  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+  <div
+    id="tooltip"
+    data-testid="tooltip"
+    use:popperContent={popperOptions}
+    use:clickOutside={handleClosePopup}
+    transition:fade>
     <IconImagePicker
       on:handleIconClick={handleIconClick}
       on:handleClosePopup={handleClosePopup}
