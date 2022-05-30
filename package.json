@@ -104,6 +104,7 @@
     "svelte-body": "^1.3.6",
     "svelte-check": "^2.7.1",
     "svelte-fa": "^2.4.0",
+    "svelte-keydown": "^0.5.0",
     "svelte-ktippy": "^1.2.1",
     "svelte-moveable": "^0.21.8",
     "svelte-popperjs": "^1.2.10",
