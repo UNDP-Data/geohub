@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import { Jenks } from 'jenks'
+  import { Jenks } from '$lib/jenks'
   import { NO_RANDOM_SAMPLING_POINTS } from '$lib/constants'
   import type {
     FillLayerSpecification,

@@ -4,10 +4,12 @@
   import { createEventDispatcher } from 'svelte'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import type { Layer, VectorLayerMetadata } from '$lib/types'
+  import type { Layer, VectorLayerMetadata, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
+  export let decimalPoisition = undefined
+  export let fieldType: string = undefined
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
@@ -25,6 +27,33 @@
     setDefaultTextField()
   })
 
+  $: decimalPoisition, setDesimalPosition()
+  const setDesimalPosition = () => {
+    if (textFieldValue) {
+      fieldType = getFieldDataType(textFieldValue)
+      let propertyValue: any = ['get', textFieldValue]
+      if (fieldType && ['number', 'float'].includes(fieldType)) {
+        if (!decimalPoisition) {
+          decimalPoisition = 1
+        }
+        propertyValue = [
+          'number-format',
+          ['get', textFieldValue],
+          { 'min-fraction-digits': decimalPoisition, 'max-fraction-digits': decimalPoisition },
+        ]
+      } else if (fieldType && fieldType === 'integer') {
+        propertyValue = [
+          'number-format',
+          ['get', textFieldValue],
+          { 'min-fraction-digits': 0, 'max-fraction-digits': 0 },
+        ]
+      }
+      $map.setLayoutProperty(layerId, propertyName, propertyValue)
+    } else {
+      $map.setLayoutProperty(layerId, propertyName, undefined)
+    }
+  }
+
   const setDefaultTextField = () => {
     if (!vectorLayerMeta) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -32,28 +61,62 @@
       vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
       layerIdList = Object.keys(vectorLayerMeta.fields)
     }
-
-    const styleValue: string[] = style.layout && style.layout[propertyName] ? style.layout[propertyName] : ['get', '']
-
-    if (styleValue.length > 1 && styleValue[0] === 'get' && styleValue[1].length > 0) {
-      textFieldValue = styleValue[1]
-    } else {
-      textFieldValue = ''
-    }
+    textFieldValue = getCurrentValue()
     setTextField()
+  }
+
+  const getCurrentValue = () => {
+    let value = ''
+    if (style.layout && style.layout[propertyName]) {
+      const values: any = style.layout[propertyName]
+      for (let i = 0; i < values.length; i++) {
+        const expression = values[i]
+        if (Array.isArray(expression)) {
+          if (expression[0] === 'get') {
+            value = expression[1]
+            break
+          }
+        } else if (expression === 'get') {
+          value = values[i + 1]
+          break
+        }
+      }
+    }
+    return value
+  }
+
+  const isInt = (n: number) => {
+    return Number(n) === n && n % 1 === 0
+  }
+
+  const getFieldDataType = (fieldName: string) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const tilestats = layer?.info?.json?.tilestats
+    if (tilestats) {
+      const tileStatLayer = tilestats?.layers.find(
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+      )
+      if (tileStatLayer) {
+        const tileStatLayerAttribute = tileStatLayer.attributes.find(
+          (val: VectorLayerTileStatAttribute) => val.attribute === fieldName,
+        )
+        let type = tileStatLayerAttribute.type
+        if (tileStatLayerAttribute.type === 'number') {
+          tileStatLayerAttribute.values.forEach((val: number) => {
+            type = isInt(val) ? 'interger' : 'float'
+          })
+        }
+        return type
+      }
+    }
   }
 
   const setTextField = () => {
     if (style.type !== LayerTypes.SYMBOL) return
 
-    const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.layout) {
-      newStyle.layout = {}
-    }
     if (textFieldValue) {
-      const propertyValue = ['get', textFieldValue]
-      newStyle.layout[propertyName] = propertyValue
-      $map.setLayoutProperty(layerId, propertyName, propertyValue)
+      setDesimalPosition()
 
       // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
       $map.setLayoutProperty(layerId, 'text-variable-anchor', ['top', 'bottom', 'left', 'right'])

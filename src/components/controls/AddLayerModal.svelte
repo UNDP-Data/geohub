@@ -1,5 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+  import Keydown from 'svelte-keydown'
+  import { clickOutside } from 'svelte-use-click-outside'
   import { v4 as uuidv4 } from 'uuid'
   import type {
     LineLayerSpecification,
@@ -240,8 +242,10 @@
   }
 </script>
 
+<Keydown paused={!isModalVisible} on:Escape={() => (isModalVisible = false)} />
+
 {#if isModalVisible}
-  <div class="modal is-active" data-testid="add-layer-view-container" transition:fade>
+  <div class="modal is-active" data-testid="add-layer-view-container" transition:fade use:clickOutside={handleCancel}>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
