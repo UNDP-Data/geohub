@@ -27,7 +27,6 @@
         break
     }
   }
-
   const name = clean(layer.name)
   const layerInfoMetadata = $layerMetadata.get(hash(layer.definition.source))
 </script>
@@ -45,11 +44,11 @@
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">{icon.label}</Tooltip>
               </Wrapper>
             </div> -->
-            <span style="padding-left: 5px;"
-              >{name}
-              {#if $layerLabelled[layer.definition.id] === true}
+            <span style="padding-left: 5px;">
+              {#if $layerLabelled[layer.definition.id]}
                 <span class="tag is-info"><Fa icon={faTextHeight} /></span>
               {/if}
+              {name}
             </span>
           </div>
           <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
