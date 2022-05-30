@@ -16,7 +16,7 @@ describe('colorMapStyle', () => {
     const style = colormaps.colorMapStyle(ColorMapTypes.SEQUENTIAL, 'viridis', 100, 103, 5, false)
 
     expect(style).toEqual(
-      'height: 15px; width:250px; background: linear-gradient(90deg, #3f4a8a,#2c768f,#1f9d8a,#96d647,#fee825);',
+      'height: 15px; width:250px; background: linear-gradient(90deg, #3f4a8a,#2c768f,#1f9d8a,#96d647,#fee825); cursor: default !important;',
     )
   })
 })
