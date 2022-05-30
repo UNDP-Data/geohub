@@ -66,7 +66,7 @@ export const colorMapStyle = (
   if (isCardStyle) {
     style = `height: calc(1px * 30); width: calc(2px * 30); background: linear-gradient(90deg, ${colorMap});`
   } else {
-    style = `height: 15px; width:250px; background: linear-gradient(90deg, ${colorMap});`
+    style = `height: 15px; width:250px; background: linear-gradient(90deg, ${colorMap}); cursor: default !important;`
   }
 
   return style

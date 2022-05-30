@@ -13,6 +13,7 @@
   import { cloneDeep, debounce } from 'lodash-es'
   import { fetchUrl } from '$lib/helper'
 
+  import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import {
     ClassificationMethodNames,
@@ -25,7 +26,6 @@
   import { updateParamsInURL } from '$lib/helper'
   import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, RasterLayerStats } from '$lib/types'
   import { map, layerList } from '$stores'
-  import NumberInput from './controls/NumberInput.svelte'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
@@ -371,7 +371,7 @@
 <div class="intervals-view-container" data-testid="intervals-view-container">
   <div class="columns is-gapless controls" on:click={() => (colorPickerVisibleIndex = -1)}>
     <div class="column classification">
-      <div class="is-size-6 is-flex is-justify-content-center" style="margin-bottom: 5px;">Classification</div>
+      <div class="has-text-centered pb-2">Classification</div>
       <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
         <select
           bind:value={classificationMethod}
@@ -386,7 +386,7 @@
       </div>
     </div>
     <div class="column number-classes">
-      <div class="is-size-6 is-flex is-justify-content-center">Number of Classes</div>
+      <div class="has-text-centered">Number of Classes</div>
       <NumberInput
         bind:value={numberOfClasses}
         bind:minValue={colorClassCountMin}
