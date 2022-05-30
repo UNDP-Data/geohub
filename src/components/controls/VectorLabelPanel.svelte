@@ -12,7 +12,7 @@
   import type { Layer } from '$lib/types'
   import SymbolPlacement from './vector-styles/SymbolPlacement.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import NumberFormat from './vector-styles/NumberFormat.svelte'
+  import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
   import { map } from '$stores'
 
   export let isLabelPanelVisible = false
@@ -127,7 +127,7 @@
     <div class="is-divider m-0" />
     <div class="columns is-vcentered first-row">
       <div class="column is-3">
-        <div class="is-size-6 is-flex is-justify-content-center">Text wrap max Width:</div>
+        <div class="has-text-centered">Text wrap max Width:</div>
       </div>
       <div class="column text-max-width">
         <div class="is-flex is-justify-content-center" style="position: relative;">
@@ -136,7 +136,7 @@
       </div>
       {#if fieldType && ['number', 'float'].includes(fieldType)}
         <div class="column is-2">
-          <div class="is-size-6 is-flex is-justify-content-center">Decimal Position:</div>
+          <div class="has-text-centered">Decimal Position:</div>
         </div>
         <div class="column decimal-position">
           <div class="is-flex is-justify-content-center" style="position: relative;">
