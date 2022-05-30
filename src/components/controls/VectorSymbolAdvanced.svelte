@@ -15,6 +15,7 @@
     LayerInitialValues,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
+  import { remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -23,7 +24,6 @@
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
-  import { remapInputValue } from '$lib/helper'
   import { map, spriteImageList } from '$stores'
 
   export let applyToOption: string
@@ -234,9 +234,9 @@
 </script>
 
 <div class="symbol-advanced-container">
-  <div class="columns property-classification">
-    <div class="column property">
-      <div class="is-flex is-justify-content-center">Property</div>
+  <div class="columns">
+    <div class="column">
+      <div class="has-text-centered pb-2">Property</div>
       <div class="is-flex is-justify-content-center">
         <div class="select is-rounded is-justify-content-center">
           <select
@@ -252,13 +252,13 @@
         </div>
       </div>
     </div>
-    <div class="column apply-to">
-      <div class="is-flex is-justify-content-center">Apply To</div>
+    <div class="column">
+      <div class="has-text-centered pb-2">Apply To</div>
       <div class="is-flex is-justify-content-center">
-        <div style="margin-bottom: 0px;">
+        <div class="mb-0">
           {#each Object.values(VectorLayerSymbolLegendApplyToTypes) as optionApplyTo}
-            <div class="columns is-gapless" style="margin-bottom: 0;">
-              <div class="column">
+            <div class="columns is-gapless mb-1">
+              <div class="column is-2">
                 <input
                   type="radio"
                   name="layer-type"
@@ -267,8 +267,7 @@
                   alt={`${optionApplyTo} Option`}
                   title={`${optionApplyTo} Option`} />
               </div>
-              <div class="column is-1" />
-              <div class="column is-10" style="position: relative; top: -2px;">
+              <div class="column ml-2" style="position: relative; top: -2px;">
                 {optionApplyTo}
               </div>
             </div>
@@ -278,11 +277,11 @@
     </div>
   </div>
 
-  <div class="is-divider separator" />
+  <div class="is-divider separator mb-4" style="margin-right: -56px;" />
 
-  <div class="columns classes-size-color">
-    <div class="column classification">
-      <div class="is-flex is-justify-content-center">Classification</div>
+  <div class="columns" style="margin-right: -56px;">
+    <div class="column">
+      <div class="has-text-centered pb-2">Classification</div>
       <div class="is-flex is-justify-content-center">
         <div class="select is-rounded is-justify-content-center">
           <select
@@ -298,8 +297,8 @@
         </div>
       </div>
     </div>
-    <div class="column number-classes">
-      <div class="is-flex is-justify-content-center">Number of Classes</div>
+    <div class="column">
+      <div class="has-text-centered">Number of Classes</div>
       <div class="is-flex is-justify-content-center">
         <NumberInput
           bind:value={numberOfClasses}
@@ -310,7 +309,7 @@
     </div>
   </div>
 
-  <div class="columns panel-icon-color-size">
+  <div class="columns" style="margin-right: -56px;">
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div class="column size">
         <div>
@@ -368,22 +367,6 @@
   }
 
   .symbol-advanced-container {
-    .separator {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-
-    .classification,
-    .property,
-    .number-classes,
-    .apply-to {
-      padding-bottom: 0;
-
-      div:first-child {
-        margin-bottom: 10px;
-      }
-    }
-
     input[type='radio'] {
       cursor: pointer;
     }

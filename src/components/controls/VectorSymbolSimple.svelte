@@ -31,30 +31,30 @@
 <div class="symbol-simple-container">
   <div class="columns icon-size">
     <div class="column is-4 icon-image">
-      <div class="is-flex is-justify-content-center">Icon</div>
+      <div class="has-text-centered pb-2">Icon</div>
       <div class="is-flex is-justify-content-center bring-to-front">
         <IconImage {layer} />
       </div>
     </div>
     <div class="column is-8">
-      <div class="is-flex is-justify-content-center">Size</div>
+      <div class="has-text-centered">Size</div>
       <div class="is-flex is-justify-content-center send-to-back">
         <IconSize {layer} />
       </div>
     </div>
   </div>
 
-  <div class="is-divider separator" />
+  <div class="is-divider separator mt-3 mb-3" style="margin-right: -56px;" />
 
-  <div class="columns icon-color-overlap">
+  <div class="columns icon-color-overlap" style="margin-right: -56px;">
     <div class="column color">
-      <div class="is-flex is-justify-content-center">Color</div>
+      <div class="has-text-centered pb-2">Color</div>
       <div class="is-flex is-justify-content-center bring-to-front">
         <IconColor {layer} />
       </div>
     </div>
     <div class="column is-9 overlap-priority">
-      <div class="is-flex is-justify-content-center">Overlap Priority</div>
+      <div class="has-text-centered">Overlap Priority</div>
       <div class="is-flex is-justify-content-center send-to-back">
         <IconOverlap {layer} />
       </div>
@@ -76,7 +76,7 @@
   </div>
 
   {#if isAdvancedSettings}
-    <div class="columns icon-offset" transition:slide={{ duration: 750 }}>
+    <div class="columns icon-offset pb-4" transition:slide={{ duration: 750 }}>
       <div class="column">
         <IconOffset {layer} on:change={handleIconOffset} />
       </div>
@@ -97,49 +97,6 @@
     .send-to-back {
       z-index: 1;
       position: relative;
-    }
-
-    .icon-size {
-      margin-bottom: 0;
-
-      .icon-image {
-        div:first-child {
-          margin-bottom: 10px;
-        }
-
-        div:second-child {
-          height: 30px;
-        }
-      }
-    }
-
-    .separator {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-
-    .icon-color-overlap {
-      margin-bottom: 0;
-
-      .color {
-        margin-right: 25px;
-
-        div:first-child {
-          margin-bottom: 5px;
-        }
-      }
-
-      .overlap-priority {
-        margin-right: -25px;
-
-        div:first-child {
-          margin: 0;
-        }
-
-        div {
-          padding-right: 30px;
-        }
-      }
     }
 
     .advanced-settings {

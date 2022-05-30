@@ -27,7 +27,7 @@
     <RangeSlider
       bind:values={selected}
       min={0}
-      formatter={(v) => choices[v]}
+      formatter={(v) => choices[v].toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase())}
       max={choices.length - 1}
       all="label"
       pips />
