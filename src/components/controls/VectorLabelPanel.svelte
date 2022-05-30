@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { LayerSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { map } from '$stores'
+
   import TextField from '$components/controls/vector-styles/TextField.svelte'
   import TextColor from '$components/controls/vector-styles/TextColor.svelte'
   import TextHaloCalor from '$components/controls/vector-styles/TextHaloCalor.svelte'
@@ -13,6 +13,7 @@
   import SymbolPlacement from './vector-styles/SymbolPlacement.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import NumberFormat from './vector-styles/NumberFormat.svelte'
+  import { map } from '$stores'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -30,6 +31,7 @@
   onMount(() => {
     initialiseTextLabel()
   })
+
   const initialiseTextLabel = () => {
     if (style.type !== LayerTypes.SYMBOL) {
       targetLayerId = `${parentLayerId}-label`
@@ -143,6 +145,7 @@
         </div>
       {/if}
     </div>
+
     <div class="is-divider m-0" />
     <div class="columns">
       <div class="column is-6 p-1">
@@ -182,6 +185,7 @@
         </StyleControlGroup>
       </div>
     </div>
+
     {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
       <div class="is-divider m-0 pb-3" />
       <div class="columns first-row">
