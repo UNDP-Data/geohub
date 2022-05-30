@@ -3263,11 +3263,6 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-jenks@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/jenks/-/jenks-1.0.3.tgz#ffad2d02252d74fe95634410193985a222566edb"
-  integrity sha512-deUozIVPNBkkojc4GPzOxCBsRSgWhl3KYB3P/vUmuwMZ9pW4jNGDEc24hKOcnr1BQbH9KziKSv/1JsJZndewtw==
-
 jest-diff@^27.5.1:
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/jest-diff/-/jest-diff-27.5.1.tgz#a07f5011ac9e6643cf8a95a462b7b1ecf6680def"
