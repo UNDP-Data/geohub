@@ -31,3 +31,6 @@ export const spriteImageList = writable(<SpriteImage[]>[])
 
 // store metadata
 export const layerMetadata = writable(new Map())
+
+// layer labelled
+export const layerLabelled = writable(new Map())

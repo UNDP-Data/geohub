@@ -5,7 +5,8 @@
   import { LayerIconTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
   import { clean, hash } from '$lib/helper'
   import type { Layer } from '$lib/types'
-  import { layerMetadata } from '$stores'
+  import { layerLabelled, layerMetadata } from '$stores'
+  import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
 
   export let layer: Layer = LayerInitialValues
 
@@ -26,7 +27,6 @@
         break
     }
   }
-
   const name = clean(layer.name)
   const layerInfoMetadata = $layerMetadata.get(hash(layer.definition.source))
 </script>
@@ -44,7 +44,12 @@
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">{icon.label}</Tooltip>
               </Wrapper>
             </div> -->
-            <span style="padding-left: 5px;">{name}</span>
+            <span style="padding-left: 5px;">
+              {#if $layerLabelled[layer.definition.id]}
+                <span class="tag is-info"><Fa icon={faTextHeight} /></span>
+              {/if}
+              {name}
+            </span>
           </div>
           <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
             <div class="label has-text-left">{clean(name)}</div>

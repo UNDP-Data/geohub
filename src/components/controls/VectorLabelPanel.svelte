@@ -13,7 +13,7 @@
   import SymbolPlacement from './vector-styles/SymbolPlacement.svelte'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
   import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
-  import { map } from '$stores'
+  import { layerLabelled, map } from '$stores'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -113,6 +113,10 @@
   const onStyleChange = () => {
     updateLegend()
   }
+
+  const onTextChange = (e) => {
+    $layerLabelled[parentLayerId] = e.detail.textFieldValue !== ''
+  }
 </script>
 
 {#if isLabelPanelVisible === true}
@@ -120,7 +124,7 @@
     <div class="columns is-vcentered first-row">
       <div class="column text-field">
         <div class="is-flex is-justify-content-center" style="position: relative;">
-          <TextField on:change={onStyleChange} bind:layer={targetLayer} bind:fieldType bind:decimalPoisition />
+          <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPoisition />
         </div>
       </div>
     </div>
