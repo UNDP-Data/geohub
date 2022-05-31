@@ -236,7 +236,11 @@
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
+      if (zoomLevel === undefined) {
+        zoomLevel = $map.getZoom()
+      }
       const newStops = stops.map((item, index) => [item[0], item[1] / zoomLevel])
+
       // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
