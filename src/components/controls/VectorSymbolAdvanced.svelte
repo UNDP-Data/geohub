@@ -48,9 +48,10 @@
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
+  let zoomLevel
 
   // update layer store upon change of apply to option
-  $: if (applyToOption) {
+  $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
     updateMap()
   }
@@ -63,16 +64,20 @@
     }
   }
 
+  // Initially set the zoomLevel to the initial value
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
+    zoomLevel = $map.getZoom()
+    layer.zoomLevel = zoomLevel
     setCssIconFilter()
     setPropertySelectOptions()
     setIntervalValues()
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor).rgba()
-    cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
+    // const rgba = chroma(layer.iconColor).rgba()
+    console.log(layer.iconColor)
+    // cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
   const getIconImageName = () => {
@@ -93,9 +98,9 @@
         delete vectorLayerMeta.fields[key]
       }
     })
-
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-    propertySelectValue = propertySelectOptions[0]
+    // propertySelectValue = propertySelectOptions[0]
+    propertySelectValue = layer.intervals.propertyName === '' ? propertySelectOptions[0] : layer.intervals.propertyName
     layer.intervals.propertyName = propertySelectValue
   }
 
@@ -231,11 +236,9 @@
     }
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE) {
-      // TODO: Need to generate new stops with zoom level
-      const newStops = stops.map((item, index) => [item[0], item[1] / $map.getZoom()])
-      console.log('newstops', newStops)
-      console.log(stops)
-      $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+      // Generate new stops based on the zoomLevel
+      const newStops = stops.map((item, index) => [item[0], item[1] / zoomLevel])
+      // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
@@ -245,7 +248,15 @@
     }
   }
 
-  $map.on('zoom', () => updateMap())
+  // If zoomLevel Changes, updateMap
+  $: {
+    if (zoomLevel !== layer.zoomLevel) {
+      updateMap()
+    }
+  }
+
+  // On Zoom change the zoomLevel variable
+  $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
 <div class="symbol-advanced-container">
@@ -365,6 +376,7 @@
                 </td>
                 <td>{row.start}</td>
                 <td>{row.end}</td>
+                <p>{size}</p>
               </tr>
             {/each}
           </tbody>
