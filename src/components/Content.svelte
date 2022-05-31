@@ -1,19 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import Banner, { Label as LabelBanner } from '@smui/banner'
-  import Button from '@smui/button'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
   import LinearProgress from '@smui/linear-progress'
   import Tab, { Label } from '@smui/tab'
   import TabBar from '@smui/tab-bar'
-  import Fa from 'svelte-fa'
-  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import { StatusTypes, TabNames } from '$lib/constants'
-  import { layerList, indicatorProgress, map, bannerMessages } from '$stores'
+  import { TabNames } from '$lib/constants'
+  import { layerList, indicatorProgress, map } from '$stores'
+  import BannerMessageControl from './BannerMessageControl.svelte'
 
   export let drawerOpen = false
 
@@ -21,7 +17,6 @@
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
-  let showBanner = false
   let tabs = [TabNames.BUCKETS, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
@@ -32,16 +27,6 @@
       } catch (e) {} // eslint-disable-line
     } else {
       setContentContainerMargin(0)
-    }
-  }
-
-  // show banner when content store available
-  $: {
-    if ($bannerMessages.length > 0) {
-      showBanner = false
-      setTimeout(() => {
-        showBanner = true
-      }, 500)
     }
   }
 
@@ -67,13 +52,6 @@
 
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
-
-  const hideBanner = () => {
-    setTimeout(() => {
-      showBanner = false
-    }, 150)
-    $bannerMessages = []
-  }
 </script>
 
 <div class="content-container">
@@ -119,29 +97,7 @@
   </Drawer>
 
   <AppContent class="app-content">
-    <Banner bind:open={showBanner} fixed mobileStacked content$style={`max-width: max-content; height:`}>
-      <LabelBanner
-        slot="label"
-        style="font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 60px;">
-        {#each $bannerMessages as row}
-          <div class="banner-container">
-            <div class="icon">
-              {#if row.type === StatusTypes.INFO}
-                <Fa icon={faCircleInfo} size="2x" primaryColor="hsl(204, 86%, 53%)" />
-              {:else if row.type === StatusTypes.DANGER}
-                <Fa icon={faBan} size="2x" primaryColor="hsl(348, 100%, 61%)" />
-              {/if}
-            </div>
-            <div class="content">
-              <div class="subtitle">{row.title}</div>
-              <div class="message">{row.message}</div>
-            </div>
-          </div>
-        {/each}
-      </LabelBanner>
-      <Button slot="actions" on:click={() => hideBanner()}>Dismiss</Button>
-    </Banner>
-
+    <BannerMessageControl />
     <main class="main-content">
       <slot />
     </main>
@@ -222,34 +178,6 @@
         align-items: center;
         pointer-events: none;
         color: black;
-      }
-    }
-  }
-
-  .banner-container {
-    align-items: center;
-    display: flex;
-    gap: 20px;
-    justify-content: left;
-    margin-bottom: 20px;
-
-    .content {
-      .subtitle {
-        margin: 0;
-        margin-bottom: 10px;
-
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-
-      .message {
-        background: #fff;
-
-        @media (prefers-color-scheme: dark) {
-          background: #212125;
-          color: white;
-        }
       }
     }
   }
