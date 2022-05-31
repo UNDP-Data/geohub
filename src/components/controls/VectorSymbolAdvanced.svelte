@@ -71,7 +71,7 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor).rgba()
+    const rgba = chroma(layer.iconColor ? layer.iconColor : '#000000').rgba()
     cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
@@ -221,7 +221,7 @@
       ]
     })
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
       $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
       $map.setPaintProperty(layer.definition.id, 'icon-color', {
         property: layer.intervals.propertyName,
@@ -230,7 +230,7 @@
       })
     }
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE) {
+    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
