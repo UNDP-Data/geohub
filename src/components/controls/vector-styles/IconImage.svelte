@@ -5,6 +5,8 @@
   import LegendSymbol from '@watergis/legend-symbol'
   import { createPopperActions } from 'svelte-popperjs'
   import { clickOutside } from 'svelte-use-click-outside'
+  import chroma from 'chroma-js'
+  import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
@@ -21,6 +23,12 @@
   let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   let isIconListPanelVisible = false
   let legendSymbolContainer: HTMLElement = document.createElement('div')
+
+  $: {
+    if (layer && layer.iconColor) {
+      updateLegend()
+    }
+  }
 
   onMount(async () => {
     updateLegend()
@@ -65,14 +73,17 @@
           if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
             $spriteImageList.find((icon) => {
               if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
+                const rgba = chroma(layer.iconColor ? layer.iconColor : '#000000').rgba()
+                const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
                 const img = document.createElement('img')
                 img.src = icon.src
                 img.alt = layerId
-                img.style.cssText = `height: 24px; width: 24px;`
+                img.style.cssText = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
                 legendSymbolContainer.appendChild(img)
               }
             })
           } else {
+            console.log(2)
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
             svg.style.cssText = 'height: 20px;'
             svg.setAttributeNS(null, 'version', '1.1')
