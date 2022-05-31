@@ -4,6 +4,7 @@
   import { Jenks } from '$lib/jenks'
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
@@ -41,6 +42,7 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
+  let cssIconFilter: string
   let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
@@ -63,9 +65,15 @@
 
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
+    setCssIconFilter()
     setPropertySelectOptions()
     setIntervalValues()
   })
+
+  const setCssIconFilter = () => {
+    const rgba = chroma(layer.iconColor).rgba()
+    cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
+  }
 
   const getIconImageName = () => {
     const propertyName = 'icon-image'
@@ -212,6 +220,7 @@
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
+
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
       $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
       $map.setPaintProperty(layer.definition.id, 'icon-color', {
@@ -227,6 +236,7 @@
       console.log('newstops', newStops)
       console.log(stops)
       $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+      $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
         type: 'interval',
@@ -347,7 +357,10 @@
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
-                    <img src={icon.src} alt={icon.alt} style={`width: ${size}px; height: ${size}px;`} />
+                    <img
+                      src={icon.src}
+                      alt={icon.alt}
+                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>

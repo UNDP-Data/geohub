@@ -68,6 +68,6 @@ describe('Intervals Legend : Color Map : Open/Close Color Picker', () => {
   })
 
   it('should display the color map picker', async () => {
-    expect(within(viewContainer).getByTestId('raster-color-picker-container')).toBeVisible()
+    expect(within(viewContainer).getByTestId('default-color-picker-container')).toBeVisible()
   })
 })

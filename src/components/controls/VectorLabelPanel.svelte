@@ -122,27 +122,23 @@
 {#if isLabelPanelVisible === true}
   <div class="action" data-testid="vector-label-panel-container">
     <div class="columns is-vcentered first-row">
-      <div class="column text-field">
+      <div class="column text-field is-full">
         <div class="is-flex is-justify-content-center" style="position: relative;">
           <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPosition />
         </div>
       </div>
     </div>
     <div class="is-divider m-0" />
-    <div class="columns is-vcentered first-row">
-      <div class="column is-3">
+    <div class="columns is-flex is-vcentered first-row">
+      <div class="column is-half pr-0 pl-0">
         <div class="has-text-centered">Text wrap max Width:</div>
-      </div>
-      <div class="column text-max-width">
         <div class="is-flex is-justify-content-center" style="position: relative;">
           <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
         </div>
       </div>
       {#if fieldType && ['number', 'float'].includes(fieldType)}
-        <div class="column is-2">
+        <div class="column is-half pr-0 pl-0">
           <div class="has-text-centered">Decimal Position:</div>
-        </div>
-        <div class="column decimal-position">
           <div class="is-flex is-justify-content-center" style="position: relative;">
             <NumberFormat on:change={onStyleChange} bind:decimalPosition />
           </div>
@@ -152,16 +148,16 @@
 
     <div class="is-divider m-0" />
     <div class="columns">
-      <div class="column is-6 p-1">
+      <div class="column is-half pr-1 pl-1 pt-0 pb-0">
         <StyleControlGroup title="Font">
           <div class="columns first-row">
-            <div class="column text-color">
+            <div class="column text-color pr-0 pl-0">
               <div class="has-text-centered">Color:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
               </div>
             </div>
-            <div class="column text-size">
+            <div class="column text-size pr-0 pl-0">
               <div class="has-text-centered">Size:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
@@ -170,16 +166,16 @@
           </div>
         </StyleControlGroup>
       </div>
-      <div class="column is-6 p-1">
+      <div class="column is-half pr-1 pl-1 pt-0 pb-0">
         <StyleControlGroup title="Halo">
           <div class="columns first-row">
-            <div class="column halo-color">
+            <div class="column halo-color pr-0 pl-0">
               <div class="has-text-centered">Color:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
               </div>
             </div>
-            <div class="column halo-size">
+            <div class="column halo-size pr-0 pl-0">
               <div class="has-text-centered">Size:</div>
               <div class="is-flex is-justify-content-center" style="position: relative;">
                 <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />

@@ -38,12 +38,6 @@
         <Wrapper>
           <div>
             <Fa icon={icon.icon} size="sm" primaryColor={icon.color} />
-            <!-- <div class="icon" alt={icon.label} title={icon.label}>
-              <Wrapper>
-                <Fa icon={icon.icon} size="sm" primaryColor={icon.color} />
-                <Tooltip showDelay={500} hideDelay={100} yPos="above">{icon.label}</Tooltip>
-              </Wrapper>
-            </div> -->
             <span style="padding-left: 5px;">
               {#if $layerLabelled[layer.definition.id]}
                 <span class="tag is-info"><Fa icon={faTextHeight} /></span>

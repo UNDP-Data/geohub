@@ -84,8 +84,8 @@
       promise
         .then(([dataUrl, json]) => {
           const sprite: Sprite = {
-            dataUrl: dataUrl,
-            json: json,
+            dataUrl,
+            json,
           }
           return sprite
         })
