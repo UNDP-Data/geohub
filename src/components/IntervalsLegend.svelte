@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
   import { Jenks } from '$lib/jenks'
-  import { NO_RANDOM_SAMPLING_POINTS } from '$lib/constants'
+  import { NO_RANDOM_SAMPLING_POINTS, TITILER_API_ENDPOINT } from '$lib/constants'
   import type {
     FillLayerSpecification,
     LineLayerSpecification,
@@ -231,7 +231,7 @@
 
   onMount(async () => {
     if (!('stats' in info)) {
-      const statsURL = `${layerURL.origin}/hrea/statistics?url=${layerURL.searchParams.get('url')}`
+      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
       info = { ...info, stats: layerStats }
       layerConfig = { ...layerConfig, info: info }

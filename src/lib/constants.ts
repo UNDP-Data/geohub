@@ -173,3 +173,5 @@ export const styles: StyleDefinition[] = [
     uri: 'https://undp-data.github.io/style/aerialstyle.json',
   },
 ]
+
+export const TITILER_API_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
