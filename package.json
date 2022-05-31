@@ -88,6 +88,7 @@
     "eslint-plugin-svelte3": "^4.0.0",
     "geodesy-fn": "^1.0.1",
     "geojson": "^0.5.0",
+    "hex-to-css-filter": "^5.4.0",
     "husky": "^8.0.1",
     "image-clipper": "^0.4.4",
     "jsdom": "^19.0.0",

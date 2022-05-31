@@ -3205,6 +3205,13 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hex-to-css-filter@^5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/hex-to-css-filter/-/hex-to-css-filter-5.4.0.tgz#7dcc5b18cf93ecdabf5b6967108a6bc11496d216"
+  integrity sha512-hqdJXxsUebj+JDxaz4Lkw+ZkUcYIr4UJlcGYV6waFfQqfUqc2yCY6OE0gAPJtZAZ8vA8AKvkdyq6pvgHBdhdCA==
+  dependencies:
+    tslib "^2.3.0"
+
 html-encoding-sniffer@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-1.0.2.tgz#e70d84b94da53aa375e11fe3a351be6642ca46f8"
@@ -4769,7 +4776,7 @@ tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.3, tslib@^2.1.0, tslib@^2.2.0, tslib@^2.3.1, tslib@^2.4.0:
+tslib@^2.0.3, tslib@^2.1.0, tslib@^2.2.0, tslib@^2.3.0, tslib@^2.3.1, tslib@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
