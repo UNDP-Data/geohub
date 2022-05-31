@@ -9,7 +9,7 @@
   import LayerList from '$components/LayerList.svelte'
   import { TabNames } from '$lib/constants'
   import { layerList, indicatorProgress, map } from '$stores'
-  import BannerMessage from './BannerMessage.svelte'
+  import BannerMessageControl from './BannerMessageControl.svelte'
 
   export let drawerOpen = false
 
@@ -97,7 +97,7 @@
   </Drawer>
 
   <AppContent class="app-content">
-    <BannerMessage />
+    <BannerMessageControl />
     <main class="main-content">
       <slot />
     </main>
