@@ -3,6 +3,7 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
+  import { createPopperActions } from 'svelte-popperjs'
 
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
   import type { Color, HeatmapColorRow } from '$lib/types'
@@ -77,6 +78,22 @@
       showToolTip = false
     }
   }
+
+  const [popperRef, popperContent] = createPopperActions({
+    placement: 'right-end',
+    strategy: 'fixed',
+  })
+
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [10, 25],
+        },
+      },
+    ],
+  }
 </script>
 
 <div class="columns is-vcentered is-gapless color-editor" data-testid="heatmap-color-map-row-container">
@@ -87,11 +104,13 @@
       title="Color Map Control"
       on:click={() => handleColorPickerClick()}
       class="discrete"
+      use:popperRef
       style={colorPickerStyle} />
 
     {#if showToolTip && color}
-      <div class={`tooltip`} transition:fade>
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
       </div>
     {/if}
   </div>
@@ -123,10 +142,6 @@
       margin-right: $input-margin;
     }
 
-    .minimum {
-      margin-right: $input-margin;
-    }
-
     .discrete {
       cursor: pointer;
       height: 20px;
@@ -138,12 +153,49 @@
         border: 1px solid hsl(204, 86%, 53%);
       }
     }
+  }
 
-    .tooltip {
-      left: 19px;
-      position: relative;
-      top: -20px;
-      z-index: 10;
+  $tooltip-background: #fff;
+
+  #tooltip {
+    background: $tooltip-background;
+    border-radius: 7.5px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    height: 230px;
+    inset: auto auto 0px -10px !important;
+    position: relative;
+    width: 170px;
+    z-index: 100;
+
+    @media (prefers-color-scheme: dark) {
+      background: #212125;
+    }
+
+    #arrow,
+    #arrow::before {
+      background: $tooltip-background;
+      height: 18px;
+      left: -4.5px;
+      position: absolute;
+      width: 18px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #212125;
+      }
+    }
+
+    #arrow {
+      visibility: visible;
+    }
+
+    #arrow::before {
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      content: '';
+      transform: rotate(45deg);
+      visibility: visible;
     }
   }
 </style>
