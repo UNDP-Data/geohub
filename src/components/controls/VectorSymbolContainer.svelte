@@ -8,6 +8,7 @@
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
@@ -145,7 +146,12 @@
     {/if}
 
     {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        use:clickOutside={handleClosePopup}
+        transition:fade>
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}

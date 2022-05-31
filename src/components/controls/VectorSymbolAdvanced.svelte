@@ -75,9 +75,8 @@
   })
 
   const setCssIconFilter = () => {
-    // const rgba = chroma(layer.iconColor).rgba()
-    console.log(layer.iconColor)
-    // cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
+    const rgba = chroma(layer.iconColor ? layer.iconColor : '#000000').rgba()
+    cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
   const getIconImageName = () => {
@@ -226,7 +225,7 @@
       ]
     })
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
       $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
       $map.setPaintProperty(layer.definition.id, 'icon-color', {
         property: layer.intervals.propertyName,
@@ -235,7 +234,7 @@
       })
     }
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE) {
+    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
       const newStops = stops.map((item, index) => [item[0], item[1] / zoomLevel])
       // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
@@ -376,7 +375,6 @@
                 </td>
                 <td>{row.start}</td>
                 <td>{row.end}</td>
-                <p>{size}</p>
               </tr>
             {/each}
           </tbody>
