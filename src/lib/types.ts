@@ -54,6 +54,7 @@ export interface Layer {
   source?: VectorSourceSpecification | RasterSourceSpecification
   iconSize?: number
   iconColor?: string
+  zoomLevel?: number
 }
 
 export interface RasterLayerStats {
