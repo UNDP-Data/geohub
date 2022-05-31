@@ -30,6 +30,7 @@
     LayerTypes,
     StatusTypes,
     DEFAULT_COLORMAP,
+    TITILER_API_ENDPOINT,
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import type { BannerMessage, TreeNode, RasterTileMetadata, LayerInfoMetadata } from '$lib/types'
@@ -41,7 +42,6 @@
   const dispatch = createEventDispatcher()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
-  const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
   let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
@@ -96,7 +96,7 @@
         childNodes.map((node) => {
           const layerURL = new URL(node.url)
           const infoURI: string = node.isRaster
-            ? `${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`
+            ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
             : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
                 layerURL.search
               }`
@@ -190,7 +190,7 @@
       let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
       const b64EncodedUrl = getBase64EncodedUrl(url)
-      layerInfo = await fetchUrl(`${titilerApiUrl}/info?url=${b64EncodedUrl}`)
+      layerInfo = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
@@ -210,7 +210,7 @@
 
         const layerSource: RasterSourceSpecification = {
           type: LayerTypes.RASTER,
-          tiles: [`${titilerApiUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
+          tiles: [`${TITILER_API_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
           tileSize: 256,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -326,7 +326,7 @@
         // get metadata from endpoint
         const layerURL = new URL(url)
         const infoURI: string = isRaster
-          ? `${titilerApiUrl}/info?url=${getBase64EncodedUrl(node.url)}`
+          ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
           : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
               layerURL.search
             }`
