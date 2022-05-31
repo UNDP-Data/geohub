@@ -223,7 +223,7 @@
     }
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE) {
-      $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+      $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
         type: 'interval',
