@@ -212,25 +212,30 @@
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
-
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
       $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
       $map.setPaintProperty(layer.definition.id, 'icon-color', {
         property: layer.intervals.propertyName,
         type: 'interval',
-        stops,
+        stops: stops,
       })
     }
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE) {
+      // TODO: Need to generate new stops with zoom level
+      const newStops = stops.map((item, index) => [item[0], item[1] / $map.getZoom()])
+      console.log('newstops', newStops)
+      console.log(stops)
       $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
         type: 'interval',
-        stops,
+        stops: newStops,
       })
     }
   }
+
+  $map.on('zoom', () => updateMap())
 </script>
 
 <div class="symbol-advanced-container">
@@ -338,7 +343,7 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row}
-              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 50)}
+              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
