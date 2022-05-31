@@ -704,6 +704,25 @@
     "@material/theme" "^13.0.0"
     tslib "^2.1.0"
 
+"@material/snackbar@^13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@material/snackbar/-/snackbar-13.0.0.tgz#63798b832c6931ecb99350c9ef99ac23a7e47f18"
+  integrity sha512-z59aYCeMWWEbsUU04QDZN4CxzCCOp3OIc5tzrdqnY3qRq4wwApxncf7RKKKSU2K6WTEWfdHHOc7aNX8kqlDmUg==
+  dependencies:
+    "@material/animation" "^13.0.0"
+    "@material/base" "^13.0.0"
+    "@material/button" "^13.0.0"
+    "@material/dom" "^13.0.0"
+    "@material/elevation" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/icon-button" "^13.0.0"
+    "@material/ripple" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/typography" "^13.0.0"
+    tslib "^2.1.0"
+
 "@material/switch@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@material/switch/-/switch-13.0.0.tgz#9f25a6fc2a45344ecdc86f6545e95359f5f0c770"
@@ -1184,6 +1203,20 @@
     "@smui/menu" "^6.0.0-beta.16"
     "@smui/menu-surface" "^6.0.0-beta.16"
     "@smui/notched-outline" "^6.0.0-beta.16"
+    "@smui/ripple" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
+"@smui/snackbar@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui/snackbar/-/snackbar-6.0.0-beta.16.tgz#88a34071cad590f5784be90bdddb8e95be03d787"
+  integrity sha512-px509mEoSZYa0QoVD/PyecsX9duXH0pfnhrWe1HrQ4A7NzqFBgFsbt+N7z6C84LVQYZ5GNZ2E6YVMrPMm+CvZw==
+  dependencies:
+    "@material/dom" "^13.0.0"
+    "@material/feature-targeting" "^13.0.0"
+    "@material/snackbar" "^13.0.0"
+    "@smui/button" "^6.0.0-beta.16"
+    "@smui/common" "^6.0.0-beta.16"
+    "@smui/icon-button" "^6.0.0-beta.16"
     "@smui/ripple" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
