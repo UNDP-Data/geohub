@@ -14,6 +14,7 @@
   import { updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
+  import { onMount } from 'svelte'
 
   export let layerConfig: Layer = LayerInitialValues
 
@@ -36,13 +37,13 @@
   let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
   let step = (layerMax - layerMin) * 1e-2
 
+  onMount(() => {
+    setSliderState()
+  })
+  // the reactive statement below will update map whenever the colormap changes or the legend was switched.
+  // quite a tricky business
   $: {
-    if (rangeSliderValues) {
-      setSliderState()
-    }
-  }
-  $: {
-    if (layerConfig) {
+    if (activeColorMapName !== layerConfig.colorMapName || (layerURL.searchParams.has('colormap') && layerConfig)) {
       activeColorMapName = layerConfig.colorMapName
       numberOfClasses = layerConfig.intervals.numberOfClasses
       rescaleColorMap()
@@ -52,6 +53,7 @@
 
   const rescaleColorMap = () => {
     if (layerURL.searchParams.has('colormap')) {
+      //console.log('rescale color map')
       let params = {}
       layerURL.searchParams.delete('colormap')
       if (!layerURL.searchParams.has('rescale')) {
@@ -72,6 +74,10 @@
       })
       updateParamsInURL(definition, layerURL, params)
     }
+  }
+  const onSliderStop = () => {
+    updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })
+    setSliderState()
   }
 
   const setSliderState = debounce(() => {
@@ -105,7 +111,7 @@
       first="label"
       last="label"
       rest={false}
-      on:stop={updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })} />
+      on:stop={onSliderStop} />
   </div>
 </div>
 
