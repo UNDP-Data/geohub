@@ -49,7 +49,7 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-  let sizeArray
+  let sizeArray: number[]
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -367,7 +367,6 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
-              <!--              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}-->
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
