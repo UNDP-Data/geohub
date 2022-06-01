@@ -134,6 +134,16 @@ export enum VectorLayerSymbolLegendApplyToTypes {
   ICON_SIZE = 'Icon size',
 }
 
+export enum VectorLayerLineLegendTypes {
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced',
+}
+
+export enum VectorLayerLineLegendApplyToTypes {
+  LINE_COLOR = 'Line color',
+  LINE_WIDTH = 'Line width',
+}
+
 export enum DynamicLayerResolutionTypes {
   HIGHEST = 'highest',
   LOWEST = 'lowest',

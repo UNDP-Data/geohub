@@ -2,6 +2,7 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import VectorSymbolContainer from '$components/controls/VectorSymbolContainer.svelte'
+  import VectorLineContainer from '$components/controls/VectorLineContainer.svelte'
   import FillColor from '$components/controls/vector-styles/FillColor.svelte'
   import FillOutlineColor from '$components/controls/vector-styles/FillOutlineColor.svelte'
   import HeatmapColor from '$components/controls/vector-styles/HeatmapColor.svelte'
@@ -29,7 +30,8 @@
 {#if isLegendPanelVisible === true}
   <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
-      <div class="columns">
+      <VectorLineContainer bind:layer />
+      <!-- <div class="columns">
         <div class="column">
           <div class="has-text-centered pb-2">Line Color</div>
           <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
@@ -64,7 +66,7 @@
             <LineJoin {layer} />
           </div>
         </div>
-      </div>
+      </div> -->
     {:else if style.type === LayerTypes.FILL}
       <div class="columns">
         <div class="column" style="padding-left: 50px;">

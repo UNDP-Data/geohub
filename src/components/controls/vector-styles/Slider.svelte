@@ -36,6 +36,7 @@
       newStyle[propertyType] = {}
     }
     newStyle[propertyType][propertyName] = values[0]
+
     if (propertyType === 'paint') {
       $map.setPaintProperty(layerId, propertyName, values[0])
     } else {
