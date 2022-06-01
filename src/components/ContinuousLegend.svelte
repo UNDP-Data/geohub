@@ -44,8 +44,10 @@
   // quite a tricky business
   $: {
     if (activeColorMapName !== layerConfig.colorMapName || (layerURL.searchParams.has('colormap') && layerConfig)) {
+      
       activeColorMapName = layerConfig.colorMapName
       numberOfClasses = layerConfig.intervals.numberOfClasses
+      layerConfig.intervals.colorMapRows = []
       rescaleColorMap()
       updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
     }
