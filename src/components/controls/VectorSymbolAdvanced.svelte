@@ -49,7 +49,7 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-
+  let sizeArray
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -240,7 +240,7 @@
         zoomLevel = $map.getZoom()
       }
       const newStops = stops.map((item, index) => [item[0], item[1] / zoomLevel])
-
+      sizeArray = newStops.map((item, index) => item[1] * 15)
       // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
@@ -366,15 +366,15 @@
             </tr>
           </thead>
           <tbody>
-            {#each layer.intervals.colorMapRows as row}
-              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
+            {#each layer.intervals.colorMapRows as row, index}
+              <!--              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}-->
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
+                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>
