@@ -149,7 +149,6 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const tilestats = layer?.info?.json?.tilestats
-
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
@@ -162,7 +161,6 @@
 
         if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
           const values = tileStatLayerAttribute.values
-
           if (values.length > 0) {
             // add log classification method if min value greater than zero
             if (Math.min.apply(null, values) > 0) {
@@ -176,7 +174,7 @@
 
             // get interval list based on classification method
             if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
-              intervalList = new Jenks(values, numberOfClasses).naturalBreak()
+              intervalList = new Jenks(values, numberOfClasses).naturalBreak().map((item) => Number(item.toFixed(2)))
             } else {
               intervalList = chroma
                 .limits(
@@ -240,22 +238,23 @@
         zoomLevel = $map.getZoom()
       }
 
-      const zoomSteps = []
-
-      for (let z = 1; z <= 20; z = z + 20 / numberOfClasses) {
-        zoomSteps.push(z)
-      }
       const ends = layer.intervals.colorMapRows.map((item, index) => item.end)
-      const newstops = zoomSteps.map((item, index) => [
-        {
-          zoom: item,
-          value: ends[index],
-        },
-        stops[index][1],
-      ])
-      const newStops = stops.map((item, index) => item)
 
-      console.log(JSON.stringify(newstops))
+      const rationOfRadiitoTheFirst = ends.slice(1).map((item, index) => item / ends[0])
+
+      rationOfRadiitoTheFirst.unshift(1) // Add 1 to
+
+      // console.log("realRatios: ", rationOfRadiitoTheFirst)
+
+      if (zoomLevel === undefined) {
+        zoomLevel = $map.getZoom()
+      }
+      const newStops = stops.map((item, index) => [
+        item[0],
+        (rationOfRadiitoTheFirst[index] as number) * (zoomLevel / 10),
+      ])
+      sizeArray = newStops.map((item) => (item[1] as number) * 15)
+
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
@@ -381,14 +380,13 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
-              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 50)}
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
+                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>
