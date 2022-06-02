@@ -30,7 +30,7 @@
     <div class="column">
       <div class="pb-2">Line Pattern</div>
       <div class="is-flex is-justify-content-center">
-        <LinePattern {layer} />
+        <LinePattern bind:layer />
       </div>
     </div>
   </div>

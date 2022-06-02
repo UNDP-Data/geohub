@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { isEqual, sortBy } from 'lodash-es'
+  import chroma from 'chroma-js'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
@@ -8,13 +9,15 @@
 
   export let layer: Layer = LayerInitialValues
 
+  const defaultColor = `rgba(53, 175, 109, 1)`
+  let linePatternColorRgba = layer.iconColor ? layer.iconColor : defaultColor
   const propertyName = 'line-dasharray'
   const layerId = layer.definition.id
   const lineTypes = [
-    { title: 'solid', value: [1] },
-    { title: 'dash', value: [10, 4] },
-    { title: 'dash-dot', value: [10, 3, 2, 3] },
-    { title: 'dot', value: [1, 5, 1] },
+    { title: 'solid', value: [1], pattern: '______' },
+    { title: 'dash', value: [10, 4], pattern: '_____&nbsp;&nbsp;' },
+    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '_____&nbsp;&nbsp;_&nbsp;&nbsp;' },
+    { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_' },
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
   let lineType = (
@@ -25,13 +28,16 @@
 
   $: lineType, setLineType()
 
+  // change line pattern color upon change of line color
+  $: if (layer.iconColor) linePatternColorRgba = layer.iconColor
+
   const setLineType = () => {
     if (style.type !== LayerTypes.LINE || lineType === undefined) return
     $map.setPaintProperty(layerId, propertyName, lineTypes.find((item) => item.title === lineType).value)
   }
 </script>
 
-<div style="width: 100%;">
+<div class="line-pattern-view-container" data-testid="line-pattern-view-container">
   {#each lineTypes as type}
     <div class="columns is-gapless mb-1">
       <div class="column is-1">
@@ -43,9 +49,27 @@
           alt={`${type.title} Option`}
           title={`${type.title} Option`} />
       </div>
-      <div class="column" style="position: relative; top: -2px">
+      <div class="column" style="position: relative; top: -2px; left: 5px;">
         {type.title}
+      </div>
+      <div
+        class="column is-8 is-size-7 has-text-weight-bold line-pattern-sample"
+        style={`color: ${chroma(linePatternColorRgba).hex()};`}>
+        {@html type.pattern}{@html type.pattern}
       </div>
     </div>
   {/each}
 </div>
+
+<style lang="scss">
+  .line-pattern-view-container {
+    width: 100%;
+
+    .line-pattern-sample {
+      font-family: monospace;
+      left: 10px;
+      position: relative;
+      top: -4px;
+    }
+  }
+</style>
