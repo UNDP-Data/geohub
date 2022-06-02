@@ -19,12 +19,12 @@
     <div class="column is-7">
       <div class="has-text-centered">Line Width</div>
       <div class="is-flex is-justify-content-center send-to-back">
-        <LineWidth {layer} />
+        <LineWidth bind:layer />
       </div>
     </div>
   </div>
 
-  <div class="is-divider separator mt-3 mb-3" />
+  <div class="is-divider separator mt-3 mb-3" style="margin-right: -56px;"/>
 
   <div class="columns line-pattern pl-2">
     <div class="column">
