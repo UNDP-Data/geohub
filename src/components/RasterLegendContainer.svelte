@@ -119,14 +119,16 @@
       <Tooltip showDelay={1000} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
     </Wrapper>
     <br />
-
-    <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
-      <Card>
-        <PrimaryAction style="padding: 10px;">
-          <Fa icon={faPalette} style="font-size: 16px;" />
-        </PrimaryAction>
-      </Card>
-    </div>
+    <Wrapper>
+      <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
+        <Card>
+          <PrimaryAction style="padding: 10px;">
+            <Fa icon={faPalette} style="font-size: 16px;" />
+          </PrimaryAction>
+        </Card>
+      </div>
+      <Tooltip showDelay={1000} hideDelay={0} yPos="above">Change color map</Tooltip>
+    </Wrapper>
 
     {#if showTooltip}
       <div
