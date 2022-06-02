@@ -3,8 +3,6 @@
   import chroma from 'chroma-js'
   import { Jenks } from '$lib/jenks'
   import { debounce } from 'lodash-es'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
@@ -20,12 +18,11 @@
   import type {
     IntervalLegendColorMapRow,
     Layer,
-    SpriteImage,
     VectorLayerMetadata,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
-  import { map, spriteImageList } from '$stores'
+  import { map } from '$stores'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
@@ -43,7 +40,6 @@
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
-  let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
