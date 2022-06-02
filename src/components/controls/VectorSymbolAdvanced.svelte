@@ -238,21 +238,24 @@
         zoomLevel = $map.getZoom()
       }
 
-      const ends = layer.intervals.colorMapRows.map((item, index) => item.end)
+      // Ends are the
+      const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
+      const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => item / intervalEnds[0])
 
-      const rationOfRadiitoTheFirst = ends.slice(1).map((item, index) => item / ends[0])
-
-      rationOfRadiitoTheFirst.unshift(1) // Add 1 to
-
-      // console.log("realRatios: ", rationOfRadiitoTheFirst)
+      // Add 1 to the ratio array
+      ratioOfRadiustoTheFirstEnd.unshift(1)
 
       if (zoomLevel === undefined) {
         zoomLevel = $map.getZoom()
       }
+
+      // newStops array, that takes into considerarion the ratio and the zoomLevel
       const newStops = stops.map((item, index) => [
         item[0],
-        (rationOfRadiitoTheFirst[index] as number) * (zoomLevel / 10),
+        (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
       ])
+
+      // sizeArray is used in the legend only. To make the legend icons size equal to what is displayed on the map
       sizeArray = newStops.map((item) => (item[1] as number) * 15)
 
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
