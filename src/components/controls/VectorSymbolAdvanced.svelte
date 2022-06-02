@@ -239,9 +239,23 @@
       if (zoomLevel === undefined) {
         zoomLevel = $map.getZoom()
       }
-      const newStops = stops.map((item, index) => [item[0], item[1] / zoomLevel])
-      sizeArray = newStops.map((item, index) => item[1] * 15)
-      // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+
+      const zoomSteps = []
+
+      for (let z = 1; z <= 20; z = z + 20 / numberOfClasses) {
+        zoomSteps.push(z)
+      }
+      const ends = layer.intervals.colorMapRows.map((item, index) => item.end)
+      const newstops = zoomSteps.map((item, index) => [
+        {
+          zoom: item,
+          value: ends[index],
+        },
+        stops[index][1],
+      ])
+      const newStops = stops.map((item, index) => item)
+
+      console.log(JSON.stringify(newstops))
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
@@ -367,13 +381,14 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
+              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 50)}
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
+                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>
