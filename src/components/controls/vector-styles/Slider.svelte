@@ -44,7 +44,7 @@
     }
 
     dispatch('change', {
-      value: values[0]
+      value: values[0],
     })
   }
 </script>

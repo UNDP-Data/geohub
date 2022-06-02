@@ -24,7 +24,7 @@
     </div>
   </div>
 
-  <div class="is-divider separator mt-3 mb-3" style="margin-right: -56px;"/>
+  <div class="is-divider separator mt-3 mb-3" style="margin-right: -56px;" />
 
   <div class="columns line-pattern pl-2">
     <div class="column">
