@@ -54,16 +54,14 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
   let colorMapName = layerConfig.colorMapName
-  
+
   // update color intervals upon change of color map name
   $: {
-    if (layerConfig && colorMapName !== layerConfig.colorMapName ) {
+    if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
       reclassifyImage()
     }
   }
-
-
 
   const goodBinarySearch = (array: Array<number>, sValue: number, ARG_start = 0, ARG_len = 0) => {
     // Range of [start, start+len): only start is inclusive. It works
@@ -244,23 +242,22 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
-    
+
     const bins: number[] = info.stats['1'].histogram[1]
     const counts: number[] = info.stats['1'].histogram[0]
-    
+
     let mid_bins: number[] = []
     for (let i = 0; i < bins.length - 1; i++) {
       const val = (bins[i] + bins[i + 1]) * 0.5
       mid_bins[i] = val
     }
     const rarr = [...Array(NO_RANDOM_SAMPLING_POINTS)].map((e) => Math.random())
-    
+
     const cdf = cumsum(counts)
-    
+
     const ncdf = cdf.map((val) => {
       return val / cdf[cdf.length - 1]
     })
-    
 
     const random_sample = rarr.map((v) => {
       return mid_bins[goodBinarySearch(ncdf, v, 0, 0)]
@@ -308,13 +305,11 @@
       }
 
       colorMap.push(row)
-      
     }
 
     layerConfig.intervals.colorMapRows = colorMap
     layerConfig.intervals.classification = classificationMethod
     handleParamsUpdate()
-    
   }
 
   // encode colormap and update url parameters
