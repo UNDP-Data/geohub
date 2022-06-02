@@ -3,14 +3,13 @@
   import { isEqual, sortBy } from 'lodash-es'
   import chroma from 'chroma-js'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { DEFAULT_LINE_COLOR, LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = `rgba(53, 175, 109, 1)`
-  let linePatternColorRgba = layer.iconColor ? layer.iconColor : defaultColor
+  const defaultColor = DEFAULT_LINE_COLOR
   const propertyName = 'line-dasharray'
   const layerId = layer.definition.id
   const lineTypes = [
@@ -20,6 +19,8 @@
     { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_' },
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+
+  let linePatternColorRgba = layer.iconColor ? layer.iconColor : defaultColor
   let lineType = (
     style?.paint[propertyName]
       ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))

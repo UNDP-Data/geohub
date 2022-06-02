@@ -11,6 +11,7 @@
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
+    DEFAULT_LINE_COLOR,
     LayerInitialValues,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
@@ -70,7 +71,7 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : '#35AF6D').rgba()
+    const rgba = chroma(layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR).rgba()
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
@@ -228,7 +229,7 @@
 
       const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
       sizeArray = newStops.map((item) => item[1] * 10)
-      $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : 'black')
+      $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
       $map.setPaintProperty(layer.definition.id, 'line-width', {
         property: layer.intervals.propertyName,
         type: 'interval',
