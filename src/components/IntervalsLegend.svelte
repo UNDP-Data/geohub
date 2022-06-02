@@ -63,18 +63,6 @@
     }
   }
 
-  function refSort(targetData, refData) {
-    var indices = Object.keys(refData)
-    indices.sort(function (indexA, indexB) {
-      if (refData[indexA] < refData[indexB]) return -1
-      if (refData[indexA] > refData[indexB]) return 1
-      return 0
-    })
-    return indices.map(function (i) {
-      return targetData[i]
-    })
-  }
-
   const goodBinarySearch = (array: Array<number>, sValue: number, ARG_start = 0, ARG_len = 0) => {
     // Range of [start, start+len): only start is inclusive. It works
     // similarly to "...".substr(start, len).indexOf(sValue)
@@ -255,23 +243,21 @@
       isClassificationMethodEdited = true
     }
 
-    //console.log('reclass')
     const bins: number[] = info.stats['1'].histogram[1]
     const counts: number[] = info.stats['1'].histogram[0]
-    //console.log(counts, bins)
+
     let mid_bins: number[] = []
     for (let i = 0; i < bins.length - 1; i++) {
       const val = (bins[i] + bins[i + 1]) * 0.5
       mid_bins[i] = val
     }
     const rarr = [...Array(NO_RANDOM_SAMPLING_POINTS)].map((e) => Math.random())
-    //console.log(mid_bins)
+
     const cdf = cumsum(counts)
-    //console.log(cdf)
+
     const ncdf = cdf.map((val) => {
       return val / cdf[cdf.length - 1]
     })
-    //console.log(ncdf)
 
     const random_sample = rarr.map((v) => {
       return mid_bins[goodBinarySearch(ncdf, v, 0, 0)]
