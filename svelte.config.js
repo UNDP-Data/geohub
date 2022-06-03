@@ -4,7 +4,12 @@ import preprocess from 'svelte-preprocess'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  preprocess: preprocess({}),
+  compilerOptions: {
+    enableSourcemap: true,
+  },
+  preprocess: preprocess({
+    sourceMap: true,
+  }),
   kit: {
     adapter: adapter({
       out: 'build',
@@ -18,7 +23,7 @@ const config = {
       test: {
         threads: false,
         globals: true,
-        environment: "jsdom",
+        environment: 'jsdom',
         setupFiles: ['./jest-setup.ts'],
         deps: {
           inline: [/@smui/],
