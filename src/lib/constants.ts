@@ -8,6 +8,7 @@ import type { StyleDefinition } from '$lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
+export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
 export const STRING_COMPARE_THRESHOLD = 0.25
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MINIMUM = 2
@@ -132,6 +133,16 @@ export enum VectorLayerSymbolLegendTypes {
 export enum VectorLayerSymbolLegendApplyToTypes {
   ICON_COLOR = 'Icon color',
   ICON_SIZE = 'Icon size',
+}
+
+export enum VectorLayerLineLegendTypes {
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced',
+}
+
+export enum VectorLayerLineLegendApplyToTypes {
+  LINE_COLOR = 'Line color',
+  LINE_WIDTH = 'Line width',
 }
 
 export enum DynamicLayerResolutionTypes {

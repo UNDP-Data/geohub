@@ -36,13 +36,16 @@
       newStyle[propertyType] = {}
     }
     newStyle[propertyType][propertyName] = values[0]
+
     if (propertyType === 'paint') {
       $map.setPaintProperty(layerId, propertyName, values[0])
     } else {
       $map.setLayoutProperty(layerId, propertyName, values[0])
     }
 
-    dispatch('change')
+    dispatch('change', {
+      value: values[0],
+    })
   }
 </script>
 

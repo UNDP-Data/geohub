@@ -2,17 +2,13 @@
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import VectorSymbolContainer from '$components/controls/VectorSymbolContainer.svelte'
+  import VectorLineContainer from '$components/controls/VectorLineContainer.svelte'
   import FillColor from '$components/controls/vector-styles/FillColor.svelte'
   import FillOutlineColor from '$components/controls/vector-styles/FillOutlineColor.svelte'
   import HeatmapColor from '$components/controls/vector-styles/HeatmapColor.svelte'
   import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte'
   import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte'
   import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte'
-  import LineBlur from '$components/controls/vector-styles/LineBlur.svelte'
-  import LineColor from '$components/controls/vector-styles/LineColor.svelte'
-  import LineDasharray from '$components/controls/vector-styles/LineDasharray.svelte'
-  import LineJoin from '$components/controls/vector-styles/LineJoin.svelte'
-  import LineWidth from '$components/controls/vector-styles/LineWidth.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -29,42 +25,7 @@
 {#if isLegendPanelVisible === true}
   <div class="vector-legend-panel-container" data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
-      <div class="columns">
-        <div class="column">
-          <div class="has-text-centered pb-2">Line Color</div>
-          <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
-            <LineColor {layer} />
-          </div>
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <div class="has-text-centered">Line Width</div>
-          <div class="is-flex is-justify-content-center">
-            <LineWidth {layer} />
-          </div>
-        </div>
-        <div class="column">
-          <div class="has-text-centered">Line Blur</div>
-          <div class="is-flex is-justify-content-center">
-            <LineBlur {layer} />
-          </div>
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <div class="has-text-centered pb-2">Line Dash</div>
-          <div class="is-flex is-justify-content-center">
-            <LineDasharray {layer} />
-          </div>
-        </div>
-        <div class="column">
-          <div class="has-text-centered pb-2">Line Join</div>
-          <div class="is-flex is-justify-content-center">
-            <LineJoin {layer} />
-          </div>
-        </div>
-      </div>
+      <VectorLineContainer bind:layer />
     {:else if style.type === LayerTypes.FILL}
       <div class="columns">
         <div class="column" style="padding-left: 50px;">

@@ -3,8 +3,6 @@
   import chroma from 'chroma-js'
   import { Jenks } from '$lib/jenks'
   import { debounce } from 'lodash-es'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
@@ -13,19 +11,19 @@
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
+    DEFAULT_LINE_COLOR,
     LayerInitialValues,
-    VectorLayerSymbolLegendApplyToTypes,
+    VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
   import { remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
-    SpriteImage,
     VectorLayerMetadata,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
-  import { map, spriteImageList } from '$stores'
+  import { map } from '$stores'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
@@ -43,7 +41,6 @@
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
-  let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
@@ -66,7 +63,6 @@
 
   // Initially set the zoomLevel to the initial value
   onMount(() => {
-    icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
@@ -75,16 +71,8 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : '#000000').rgba()
-    cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
-  }
-
-  const getIconImageName = () => {
-    const propertyName = 'icon-image'
-    const style = $map
-      .getStyle()
-      .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
-    return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+    const rgba = chroma(layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR).rgba()
+    cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
   const setPropertySelectOptions = () => {
@@ -98,7 +86,6 @@
       }
     })
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-    // propertySelectValue = propertySelectOptions[0]
     propertySelectValue = layer.intervals.propertyName === '' ? propertySelectOptions[0] : layer.intervals.propertyName
     layer.intervals.propertyName = propertySelectValue
   }
@@ -219,31 +206,31 @@
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
-        layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+        layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
-      $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
-      $map.setPaintProperty(layer.definition.id, 'icon-color', {
+    if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR && stops.length > 0) {
+      $map.setPaintProperty(layer.definition.id, 'line-width', 1)
+      $map.setPaintProperty(layer.definition.id, 'line-color', {
         property: layer.intervals.propertyName,
         type: 'interval',
         stops: stops,
       })
     }
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
-      // Generate new stops based on the zoomLevel
+    if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH && stops.length > 0) {
+      // generate remapped stops based on the zoom level
       if (zoomLevel === undefined) {
         zoomLevel = $map.getZoom()
       }
-      const newStops = stops.map((item) => [item[0], (item[1] as number) / zoomLevel])
-      sizeArray = newStops.map((item) => (item[1] as number) * 15)
-      // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
-      $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
-      $map.setLayoutProperty(layer.definition.id, 'icon-size', {
+
+      const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
+      sizeArray = newStops.map((item) => item[1] * 10)
+      $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
+      $map.setPaintProperty(layer.definition.id, 'line-width', {
         property: layer.intervals.propertyName,
         type: 'interval',
         stops: newStops,
@@ -262,7 +249,7 @@
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
-<div class="symbol-advanced-container">
+<div class="line-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>
@@ -285,7 +272,7 @@
       <div class="has-text-centered pb-2">Apply To</div>
       <div class="is-flex is-justify-content-center">
         <div class="mb-0">
-          {#each Object.values(VectorLayerSymbolLegendApplyToTypes) as optionApplyTo}
+          {#each Object.values(VectorLayerLineLegendApplyToTypes) as optionApplyTo}
             <div class="columns is-gapless mb-1">
               <div class="column is-2">
                 <input
@@ -339,7 +326,7 @@
   </div>
 
   <div class="columns" style="margin-right: -56px;">
-    {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div class="column size">
         <div>
           {#each layer.intervals.colorMapRows as colorMapRow}
@@ -355,12 +342,12 @@
       </div>
     {/if}
 
-    {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE}
+    {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH}
       <div class="column size">
         <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
           <thead>
             <tr>
-              <th>Icon</th>
+              <th>Line</th>
               <th>Start</th>
               <th>End</th>
             </tr>
@@ -369,12 +356,7 @@
             {#each layer.intervals.colorMapRows as row, index}
               <tr>
                 <td class="has-text-centered">
-                  {#if icon}
-                    <img
-                      src={icon.src}
-                      alt={icon.alt}
-                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
-                  {/if}
+                  <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
                 </td>
                 <td>{row.start}</td>
                 <td>{row.end}</td>
@@ -397,7 +379,7 @@
     user-select: none;
   }
 
-  .symbol-advanced-container {
+  .line-advanced-container {
     input[type='radio'] {
       cursor: pointer;
     }
