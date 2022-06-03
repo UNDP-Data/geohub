@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content } from '@smui/drawer'
-  import { format } from 'd3-format'
   import { map, year } from '../stores'
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
@@ -192,6 +191,7 @@
     loadHeatmap()
     adminLayer = new AdminLayer($map, AZURE_URL)
     adminLayer.load()
+    adminLayer.setInteraction()
   }
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
@@ -468,18 +468,6 @@
                 <br /><br />
                 <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
                 <div class="title-text">{adminHistogramAdmin}</div>
-                {#if $adminStore[`ppp_${$year}`]}
-                  <div class="title-text">
-                    <b
-                      >{format('.3s')($adminStore[`ppp_hrea_${$year}`])
-                        .replace('NaNM', 'N/A')
-                        .replace('NaNk', 'N/A')}</b>
-                    fully electrified
-                  </div>
-                  <div class="title-text">
-                    <b>{format('.3s')($adminStore[`ppp_${$year}`]).replace('G', 'B')}</b> total
-                  </div>
-                {/if}
                 <div id="admin-pie" />
                 <div id="admin-histogram" />
               {/if}
