@@ -255,9 +255,6 @@
         (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
       ])
 
-      // sizeArray is used in the legend only. To make the legend icons size equal to what is displayed on the map
-      sizeArray = newStops.map((item) => (item[1] as number) * 15)
-
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
@@ -383,13 +380,14 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
+              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
+                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>
