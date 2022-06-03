@@ -55,6 +55,8 @@ export interface Layer {
   iconSize?: number
   iconColor?: string
   lineWidth?: number
+  fillColor?: string
+  fillOutlineColor?: string
   zoomLevel?: number
 }
 

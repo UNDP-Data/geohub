@@ -9,6 +9,7 @@ import type { StyleDefinition } from '$lib/types'
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
 export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
+export const DEFAULT_FILL_COLOR = 'rgba(110, 110, 110, 1)'
 export const STRING_COMPARE_THRESHOLD = 0.25
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MINIMUM = 2
