@@ -54,7 +54,7 @@
   }
 
   export const getMlUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Access/Electricity_access_${y}.tif?${TOKEN}`
+    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${TOKEN}`
   }
 
   export function loadLayer() {
