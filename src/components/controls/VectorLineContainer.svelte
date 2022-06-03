@@ -34,6 +34,7 @@
   let layerMin: number
   let layerMax: number
   let showTooltip = false
+  let layerNumberProperties = 0
 
   // hide colormap picker if change in layer list
   $: {
@@ -57,6 +58,8 @@
         applyToOption: VectorLayerLineLegendApplyToTypes.LINE_COLOR,
       }
     }
+
+    layerNumberProperties = getLayerNumberProperties()
   })
 
   const handleLegendToggleClick = () => {
@@ -103,10 +106,23 @@
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
   }
+
+  const getLayerNumberProperties = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const vectorLayerMeta = layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    Object.keys(vectorLayerMeta.fields).forEach((key) => {
+      if (vectorLayerMeta.fields[key] !== 'Number') {
+        delete vectorLayerMeta.fields[key]
+      }
+    })
+
+    return Object.keys(vectorLayerMeta.fields).length
+  }
 </script>
 
 <div class="columns" data-testid="vector-line-view-container">
-  <div class="column is-10">
+  <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorLineSimple bind:layer />
@@ -118,17 +134,19 @@
     {/if}
   </div>
   <div class="columm legend-toggle" transition:slide>
-    <Wrapper>
-      <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
-        <Card>
-          <PrimaryAction style="padding: 10px;">
-            <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
-          </PrimaryAction>
-        </Card>
-      </div>
-      <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
-    </Wrapper>
-    <br />
+    {#if layerNumberProperties > 0}
+      <Wrapper>
+        <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
+          <Card>
+            <PrimaryAction style="padding: 10px;">
+              <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
+            </PrimaryAction>
+          </Card>
+        </div>
+        <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
+      </Wrapper>
+      <br />
+    {/if}
 
     {#if layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div
