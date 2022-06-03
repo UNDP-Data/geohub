@@ -38,6 +38,7 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
+  let defaultLineColor = DEFAULT_LINE_COLOR
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
@@ -199,11 +200,18 @@
   }
 
   const updateMap = () => {
-    const stops = layer.intervals.colorMapRows.map((row) => {
-      return [row.start, chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')]
+    const stops = layer.intervals.colorMapRows.map((row, index) => {
+      const rgb = chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+
+      // set default line color to be middle of colors
+      if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
+        defaultLineColor = rgb
+      }
+
+      return [row.start, rgb]
     })
 
-    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', DEFAULT_LINE_COLOR)
+    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultLineColor)
     $map.setPaintProperty(layer.definition.id, 'fill-color', {
       property: layer.intervals.propertyName,
       type: 'interval',

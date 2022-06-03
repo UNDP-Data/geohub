@@ -160,6 +160,7 @@
 
         if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
           const values = tileStatLayerAttribute.values
+
           if (values.length > 0) {
             // add log classification method if min value greater than zero
             if (Math.min.apply(null, values) > 0) {
