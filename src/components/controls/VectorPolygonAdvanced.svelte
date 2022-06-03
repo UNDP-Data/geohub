@@ -23,7 +23,6 @@
   } from '$lib/types'
   import { map } from '$stores'
 
-  export let applyToOption: string
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
@@ -44,12 +43,6 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-
-  // update layer store upon change of apply to option
-  $: if (applyToOption !== layer.intervals.applyToOption) {
-    layer.intervals.applyToOption = applyToOption
-    updateMap()
-  }
 
   // update color intervals upon change of color map name
   $: {

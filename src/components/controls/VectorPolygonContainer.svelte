@@ -17,17 +17,13 @@
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
     DEFAULT_COLORMAP,
-    VectorLayerLineLegendTypes,
-    VectorLayerLineLegendApplyToTypes,
+    VectorLayerPolygonLegendTypes,
   } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
 
   export let layer: Layer
 
-  let applyToOption = layer?.intervals?.applyToOption
-    ? layer.intervals.applyToOption
-    : VectorLayerLineLegendApplyToTypes.LINE_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
@@ -46,7 +42,7 @@
 
   onMount(() => {
     // set default values
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerLineLegendTypes.SIMPLE
+    layer.legendType = layer.legendType ? layer.legendType : VectorLayerPolygonLegendTypes.SIMPLE
     layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
 
     if (layer?.intervals === undefined) {
@@ -55,7 +51,6 @@
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
         propertyName: '',
-        applyToOption: VectorLayerLineLegendApplyToTypes.LINE_COLOR,
       }
     }
 
@@ -70,10 +65,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerLineLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerLineLegendTypes.ADVANCED
+    if (layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE) {
+      layer.legendType = VectorLayerPolygonLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerLineLegendTypes.SIMPLE
+      layer.legendType = VectorLayerPolygonLegendTypes.SIMPLE
     }
   }
 
@@ -121,15 +116,15 @@
   }
 </script>
 
-<div class="columns" data-testid="vector-line-view-container">
+<div class="columns" data-testid="vector-polygon-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
+    {#if layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorPolygonSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerLineLegendTypes.ADVANCED}
+    {:else if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorPolygonAdvanced bind:layer bind:applyToOption bind:layerMin bind:layerMax />
+        <VectorPolygonAdvanced bind:layer bind:layerMin bind:layerMax />
       </div>
     {/if}
   </div>
@@ -148,7 +143,7 @@
       <br />
     {/if}
 
-    {#if layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         class="toggle-container"
         use:popperRef
@@ -163,7 +158,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if showTooltip && layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         id="tooltip"
         data-testid="tooltip"

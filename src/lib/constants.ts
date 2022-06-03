@@ -144,6 +144,11 @@ export enum VectorLayerLineLegendTypes {
   ADVANCED = 'advanced',
 }
 
+export enum VectorLayerPolygonLegendTypes {
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced',
+}
+
 export enum VectorLayerLineLegendApplyToTypes {
   LINE_COLOR = 'Line color',
   LINE_WIDTH = 'Line width',
