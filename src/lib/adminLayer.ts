@@ -35,32 +35,32 @@ export default class AdminLayer {
       source: this.ADM_ID,
       'source-layer': `adm${lvl}_polygons`,
       paint: {
-        // 'fill-color': [
-        //   'case',
-        //   ['boolean', ['feature-state', 'hover'], false],
-        //   'hsla(0, 0%, 0%, 0.25)',
-        //   'hsla(0, 0%, 0%, 0)',
-        // ],
         'fill-color': [
           'case',
-          ['==', ['get', 'hrea_2020'], null],
+          ['boolean', ['feature-state', 'hover'], false],
+          'hsla(0, 0%, 0%, 0.25)',
           'hsla(0, 0%, 0%, 0)',
-          [
-            'interpolate',
-            ['linear'],
-            ['get', 'hrea_2020'],
-            0,
-            ['to-color', '#d7191c'],
-            0.25,
-            ['to-color', '#fdae61'],
-            0.5,
-            ['to-color', '#ffffbf'],
-            0.75,
-            ['to-color', '#abd9e9'],
-            1,
-            ['to-color', '#2c7bb6'],
-          ],
         ],
+        // 'fill-color': [
+        //   'case',
+        //   ['==', ['get', 'hrea_2020'], null],
+        //   'hsla(0, 0%, 0%, 0)',
+        //   [
+        //     'interpolate',
+        //     ['linear'],
+        //     ['get', 'hrea_2020'],
+        //     0,
+        //     ['to-color', '#d7191c'],
+        //     0.25,
+        //     ['to-color', '#fdae61'],
+        //     0.5,
+        //     ['to-color', '#ffffbf'],
+        //     0.75,
+        //     ['to-color', '#abd9e9'],
+        //     1,
+        //     ['to-color', '#2c7bb6'],
+        //   ],
+        // ],
         // 'fill-opacity': ['interpolate', ['linear'], ['get', 'ppp_hrea_2020'], 0, 0, 1e2, 1],
         'fill-outline-color': [
           'case',
@@ -108,8 +108,8 @@ export default class AdminLayer {
     if (this.adminLevel !== 0 && zoom < 3) this.load()
     else if (this.adminLevel !== 1 && zoom >= 3 && zoom < 4) this.load()
     else if (this.adminLevel !== 2 && zoom >= 4 && zoom < 5) this.load()
-    else if (this.adminLevel !== 2 && zoom >= 5 && zoom < 6) this.load()
-    else if (this.adminLevel !== 3 && zoom >= 6) this.load()
+    else if (this.adminLevel !== 3 && zoom >= 5 && zoom < 6) this.load()
+    else if (this.adminLevel !== 4 && zoom >= 6) this.load()
     this.adminLevel = this.getAdminLevel()
     const point: PointLike = [originalEvent.layerX, originalEvent.layerY]
     const features = this.map.queryRenderedFeatures(point, { layers: [this.ADM_ID] })

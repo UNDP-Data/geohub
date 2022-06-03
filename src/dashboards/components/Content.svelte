@@ -425,7 +425,7 @@
   const pointInteraction = () => {
     adminLayer?.removeInteraction()
     $map.on('click', onPointClick)
-    $map.off('mousemove', getAdminStats)
+    $map.off('mousemove', renderAdminCharts)
     renderPointCharts()
   }
 
