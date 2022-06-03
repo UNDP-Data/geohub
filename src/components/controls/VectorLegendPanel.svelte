@@ -4,8 +4,6 @@
   import VectorSymbolContainer from '$components/controls/VectorSymbolContainer.svelte'
   import VectorLineContainer from '$components/controls/VectorLineContainer.svelte'
   import VectorPolygonContainer from '$components/controls/VectorPolygonContainer.svelte'
-  // import FillColor from '$components/controls/vector-styles/FillColor.svelte'
-  // import FillOutlineColor from '$components/controls/vector-styles/FillOutlineColor.svelte'
   import HeatmapColor from '$components/controls/vector-styles/HeatmapColor.svelte'
   import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte'
   import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte'
@@ -29,20 +27,6 @@
       <VectorLineContainer bind:layer />
     {:else if style.type === LayerTypes.FILL}
       <VectorPolygonContainer bind:layer />
-      <!-- <div class="columns">
-        <div class="column" style="padding-left: 50px;">
-          <div class="has-text-centered pb-2">Fill Color</div>
-          <div class="is-flex is-justify-content-center" style="z-index: 10; position: relative;">
-            <FillColor {layer} />
-          </div>
-        </div>
-        <div class="column fill-outline-color" style="padding-right: 50px;">
-          <div class="has-text-centered pb-2">Fill Outline Color</div>
-          <div class="is-flex is-justify-content-center" style="z-index: 1; position: relative;">
-            <FillOutlineColor {layer} />
-          </div>
-        </div>
-      </div> -->
     {:else if style.type === LayerTypes.SYMBOL}
       <VectorSymbolContainer bind:layer />
     {:else if style.type === LayerTypes.HEATMAP}

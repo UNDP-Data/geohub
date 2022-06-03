@@ -49,7 +49,6 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-  let sizeArray: number[]
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption

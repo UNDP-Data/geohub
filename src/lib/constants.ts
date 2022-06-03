@@ -68,6 +68,9 @@ export const LayerInitialValues = {
   },
   expression: '',
   legendType: '',
+  iconColor: DEFAULT_LINE_COLOR,
+  fillColor: DEFAULT_FILL_COLOR,
+  fillOutlineColor: DEFAULT_LINE_COLOR,
 }
 
 export enum ErrorMessages {
