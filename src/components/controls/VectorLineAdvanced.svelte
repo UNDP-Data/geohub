@@ -228,7 +228,8 @@
       }
 
       const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
-      sizeArray = newStops.map((item) => item[1] * 10)
+
+      sizeArray = newStops.map((item) => item[1])
       $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
       $map.setPaintProperty(layer.definition.id, 'line-width', {
         property: layer.intervals.propertyName,
