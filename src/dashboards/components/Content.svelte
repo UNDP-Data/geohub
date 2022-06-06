@@ -459,11 +459,13 @@
             </StyleControlGroup>
 
             <StyleControlGroup title="Statistics">
-              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
-                <Segment {segment}>
-                  <Label>{segment}</Label>
-                </Segment>
-              </SegmentedButton>
+              <div class="centered">
+                <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
+                  <Segment {segment}>
+                    <Label>{segment}</Label>
+                  </Segment>
+                </SegmentedButton>
+              </div>
               {#if interactSelected === 'Admin'}
                 <br /><br />
                 <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
