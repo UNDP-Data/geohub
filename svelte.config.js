@@ -17,6 +17,9 @@ const config = {
       ssr: {
         noExternal: [/^@material(?:-extra)?\//, 'vega-embed'],
       },
+      optimizeDeps: {
+        include: ['fast-deep-equal', 'clone', 'semver', 'json-stringify-pretty-compact', 'fast-json-stable-stringify'],
+      },
       test: {
         threads: false,
         globals: true,
