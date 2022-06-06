@@ -1,31 +1,33 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { slide, fade } from 'svelte/transition'
   import type { LayerSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
-  import TextField from '$components/controls/vector-styles/TextField.svelte'
+  import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
+  import SymbolPlacement from '$components/controls/vector-styles/SymbolPlacement.svelte'
   import TextColor from '$components/controls/vector-styles/TextColor.svelte'
+  import TextField from '$components/controls/vector-styles/TextField.svelte'
   import TextHaloCalor from '$components/controls/vector-styles/TextHaloCalor.svelte'
   import TextHaloWidth from '$components/controls/vector-styles/TextHaloWidth.svelte'
   import TextMaxWidth from '$components/controls/vector-styles/TextMaxWidth.svelte'
   import TextSize from '$components/controls/vector-styles/TextSize.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import SymbolPlacement from './vector-styles/SymbolPlacement.svelte'
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
   import { layerLabelled, map } from '$stores'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
 
   const parentLayerId = layer.definition.id
-  let targetLayerId = layer.definition.id
-  let targetLayer = layer
-  let fieldType: string
-  let decimalPosition: number
   const style: LayerSpecification = $map
     .getStyle()
     .layers.filter((layer: LayerSpecification) => layer.id === parentLayerId)[0]
+
+  let decimalPosition: number
+  let fieldType: string
+  let isAdvancedSettings = false
+  let targetLayer = layer
+  let targetLayerId = layer.definition.id
   let updateLegend = () => undefined
 
   onMount(() => {
@@ -121,80 +123,85 @@
 
 {#if isLabelPanelVisible === true}
   <div class="action" data-testid="vector-label-panel-container">
-    <div class="columns is-vcentered first-row">
-      <div class="column text-field is-full">
-        <div class="is-flex is-justify-content-center" style="position: relative;">
+    <div class="columns">
+      <div class="column is-5">
+        <div class="has-text-centered pb-2">Property</div>
+        <div class="is-flex is-justify-content-center">
           <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPosition />
         </div>
       </div>
-    </div>
-    <div class="is-divider m-0" />
-    <div class="columns is-flex is-vcentered first-row">
-      <div class="column is-half pr-0 pl-0">
-        <div class="has-text-centered">Text wrap max Width:</div>
-        <div class="is-flex is-justify-content-center" style="position: relative;">
-          <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
-        </div>
-      </div>
+
       {#if fieldType && ['number', 'float'].includes(fieldType)}
-        <div class="column is-half pr-0 pl-0">
-          <div class="has-text-centered">Decimal Position:</div>
-          <div class="is-flex is-justify-content-center" style="position: relative;">
+        <div class="column is-7" transition:fade>
+          <div class="has-text-centered">Number of Decimal Places</div>
+          <div class="is-flex is-justify-content-center">
             <NumberFormat on:change={onStyleChange} bind:decimalPosition />
           </div>
         </div>
       {/if}
     </div>
 
-    <div class="is-divider m-0" />
-    <div class="columns">
-      <div class="column is-half pr-1 pl-1 pt-0 pb-0">
-        <StyleControlGroup title="Font">
-          <div class="columns first-row">
-            <div class="column text-color pr-0 pl-0">
-              <div class="has-text-centered">Color:</div>
-              <div class="is-flex is-justify-content-center" style="position: relative;">
-                <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
-              </div>
-            </div>
-            <div class="column text-size pr-0 pl-0">
-              <div class="has-text-centered">Size:</div>
-              <div class="is-flex is-justify-content-center" style="position: relative;">
-                <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
-              </div>
-            </div>
-          </div>
-        </StyleControlGroup>
+    <div class="columns mb-0 pb-0">
+      <div class="column is-6">
+        <div class="has-text-centered pb-2">Font Color</div>
+        <div class="is-flex is-justify-content-center">
+          <TextColor on:change={onStyleChange} bind:layer={targetLayer} />
+        </div>
       </div>
-      <div class="column is-half pr-1 pl-1 pt-0 pb-0">
-        <StyleControlGroup title="Halo">
-          <div class="columns first-row">
-            <div class="column halo-color pr-0 pl-0">
-              <div class="has-text-centered">Color:</div>
-              <div class="is-flex is-justify-content-center" style="position: relative;">
-                <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
-              </div>
-            </div>
-            <div class="column halo-size pr-0 pl-0">
-              <div class="has-text-centered">Size:</div>
-              <div class="is-flex is-justify-content-center" style="position: relative;">
-                <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
-              </div>
-            </div>
-          </div>
-        </StyleControlGroup>
+      <div class="column is-6">
+        <div class="has-text-centered">Font Size</div>
+        <div class="is-flex is-justify-content-center">
+          <TextSize on:change={onStyleChange} bind:layer={targetLayer} />
+        </div>
       </div>
     </div>
 
-    {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
-      <div class="is-divider m-0 pb-3" />
-      <div class="columns first-row">
-        <div class="column is-5">
-          <div class="has-text-centered">Label position relative to geometry:</div>
+    <div class="columns mb-0 pb-0">
+      <div class="column is-6">
+        <div class="has-text-centered pb-2">Halo Color</div>
+        <div class="is-flex is-justify-content-center">
+          <TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
         </div>
-        <div class="column is-4">
-          <div class="is-flex is-justify-content-center" style="position: relative;">
-            <SymbolPlacement on:change={onStyleChange} bind:layer={targetLayer} />
+      </div>
+      <div class="column is-6">
+        <div class="has-text-centered">Halo Size</div>
+        <div class="is-flex is-justify-content-center">
+          <TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
+        </div>
+      </div>
+    </div>
+
+    <div class="columns advanced-settings">
+      <div class="column">
+        <div class="field">
+          <input
+            id="switchAdvancedSettings"
+            type="checkbox"
+            name="switchSmall"
+            class="switch is-small is-rounded is-info"
+            bind:checked={isAdvancedSettings} />
+          <label for="switchAdvancedSettings" class="is-size-6">Advanced Settings</label>
+        </div>
+      </div>
+    </div>
+
+    {#if isAdvancedSettings}
+      <div class="advanced-settings-container pb-4" transition:slide={{ duration: 750 }}>
+        <div class="columns">
+          {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
+            <div class="column">
+              <div class="has-text-centered pb-2">Label Position Relative to Geometry</div>
+              <div class="is-flex is-justify-content-center">
+                <SymbolPlacement on:change={onStyleChange} bind:layer={targetLayer} />
+              </div>
+            </div>
+          {/if}
+
+          <div class="column">
+            <div class="has-text-centered">Maximum Width Text Wrap</div>
+            <div class="is-flex is-justify-content-center" style="position: relative;">
+              <TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
+            </div>
           </div>
         </div>
       </div>
@@ -203,34 +210,14 @@
 {/if}
 
 <style lang="scss">
-  .first-row {
-    margin-bottom: 0;
+  .advanced-settings-container {
+    padding-left: 15px;
+    padding-right: 15px;
 
-    .text-field {
-      div:first-child {
-        margin: 0px;
-      }
-    }
-
-    .text-max-width,
-    .heat-map-color,
-    .text-color,
-    .halo-color,
-    .decimal-position {
-      div:first-child {
-        margin-bottom: 10px;
-      }
-
-      div:second-child {
-        height: 30px;
-      }
-    }
-
-    .text-size,
-    .halo-size {
-      div:first-child {
-        margin-bottom: 3px;
-      }
+    > .columns {
+      border: 1px solid #ccc;
+      padding: 0;
+      padding-top: 5px;
     }
   }
 </style>
