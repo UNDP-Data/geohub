@@ -6,7 +6,7 @@
   export let povertySelected: boolean
 
   // const vars
-  const povertyLegend = chroma.scale('RdYlBu').colors()
+  const povertyLegend = chroma.scale('RdYlBu').colors().reverse()
 </script>
 
 {#if povertySelected}

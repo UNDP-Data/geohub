@@ -6,7 +6,7 @@
   export let electricitySelected: boolean
 
   // const vars
-  const hreaLegend = chroma.scale('RdYlBu').colors().reverse()
+  const hreaLegend = chroma.scale('RdYlBu').colors()
 </script>
 
 {#if electricitySelected.name !== 'NONE'}
