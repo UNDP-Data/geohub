@@ -3,17 +3,15 @@
   import type { VisualizationSpec } from 'svelte-vega'
   import { VegaLite } from 'svelte-vega'
   import Drawer, { AppContent, Content } from '@smui/drawer'
-  import { map, year } from '../stores'
+  import { map, year, admin } from '../stores'
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import AdminLayer from '$lib/adminLayer'
-  import { adminStore } from '$lib/stores/admin'
+  import { loadAdmin, setInteraction, removeInteraction } from '../utils/adminLayer'
   import IntroductionPanel from './IntroductionPanel.svelte'
   import PovertyControl from './PovertyControl.svelte'
   import ElectricityControl from './ElectricityControl.svelte'
 
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
-  const AZURE_URL = import.meta.env.VITE_AZURE_URL
 
   let POVERTY_ID = 'poverty'
   const HREA_ID = 'HREA'
@@ -23,7 +21,6 @@
   const PRIMARY = '#1f77b4'
   const SECONDARY = '#ff7f0e'
   const GREY = '#808080'
-  let adminLayer: AdminLayer = null
 
   let getHreaUrl = (y: number): string => {
     return
@@ -37,6 +34,7 @@
   let controller = new AbortController()
   let pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
   let pointBarValues = []
+  let adminDonutValue = { [HREA_ID]: 0 }
   let adminHistogram = []
   let adminHistogramAdmin = ''
 
@@ -49,7 +47,7 @@
     loadHeatmap()
   }
 
-  let electricitySelected
+  let electricitySelected: any
   let interactChoices = ['Admin', 'Point']
   let interactSelected = interactChoices[0]
   let drawerWidth = 355
@@ -171,8 +169,7 @@
   export function loadLayers() {
     loadRasterLayer()
     loadHeatmap()
-    adminLayer = new AdminLayer($map, AZURE_URL)
-    adminLayer.load()
+    loadAdmin()
   }
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
@@ -226,12 +223,15 @@
               if (x === $year) {
                 pointDonutValue[name] = responseValue
               }
-              pointBarValues.push({
-                category: name,
-                year: x,
-                value: responseValue,
-                percent: Math.round(responseValue * 100) + '%',
-              })
+              pointBarValues = [
+                ...pointBarValues,
+                {
+                  category: name,
+                  year: x,
+                  value: responseValue,
+                  percent: Math.round(responseValue * 100) + '%',
+                },
+              ]
             })
         }
       }
@@ -239,29 +239,29 @@
   }
 
   const renderAdminCharts = () => {
-    adminHistogramAdmin = [
-      $adminStore.adm4_name,
-      $adminStore.adm3_name,
-      $adminStore.adm2_name,
-      $adminStore.adm1_name,
-      $adminStore.adm0_name,
-    ]
+    adminDonutValue = { [HREA_ID]: $admin[`hrea_${$year}`] }
+    adminHistogramAdmin = [$admin.adm4_name, $admin.adm3_name, $admin.adm2_name, $admin.adm1_name, $admin.adm0_name]
       .filter(Boolean)
       .join(', ')
     adminHistogram = []
     for (let i = 2020; i >= 2012; i--) {
-      adminHistogram.push({ year: i, value: $adminStore[`hrea_${i}`], category: HREA_ID })
+      adminHistogram = [...adminHistogram, { year: i, value: $admin[`hrea_${i}`], category: HREA_ID }]
     }
   }
 
   const adminInteraction = () => {
-    adminLayer?.setInteraction()
+    adminDonutValue = { [HREA_ID]: 0 }
+    adminHistogram = []
+    adminHistogramAdmin = ''
+    setInteraction()
     $map.off('click', onPointClick)
     $map.on('mousemove', renderAdminCharts)
   }
 
   const pointInteraction = () => {
-    adminLayer?.removeInteraction()
+    pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
+    pointBarValues = []
+    removeInteraction()
     $map.on('click', onPointClick)
     $map.off('mousemove', renderAdminCharts)
   }
@@ -310,7 +310,7 @@
                 <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
                 <div class="title-text">{adminHistogramAdmin}</div>
                 <VegaLite
-                  data={getDonutValues($adminStore[`hrea_${$year}`])}
+                  data={getDonutValues(adminDonutValue[HREA_ID])}
                   spec={getDonutSpec(PRIMARY)}
                   options={vegaOptions} />
                 <VegaLite data={{ values: adminHistogram }} spec={getAdminSpec()} options={vegaOptions} />

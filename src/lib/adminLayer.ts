@@ -1,6 +1,5 @@
 import type { Map, SourceSpecification, FillLayerSpecification, PointLike } from 'maplibre-gl'
 import { LayerTypes } from '$lib/constants'
-import { adminStore } from '$lib/stores/admin'
 
 export default class AdminLayer {
   private BASE_URL: string
@@ -104,7 +103,6 @@ export default class AdminLayer {
           },
           { hover: false },
         )
-        adminStore.set({})
       }
       this.hoveredStateId = e.features[0].id
       this.map.setFeatureState(
@@ -115,7 +113,6 @@ export default class AdminLayer {
         },
         { hover: this.isHover },
       )
-      adminStore.set(e.features[0].properties)
     }
   }
 
@@ -129,7 +126,6 @@ export default class AdminLayer {
         },
         { hover: false },
       )
-      adminStore.set({})
     }
     this.hoveredStateId = null
   }
