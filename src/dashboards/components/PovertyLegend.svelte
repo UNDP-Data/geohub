@@ -1,9 +1,12 @@
 <script lang="ts">
+  // imports
   import chroma from 'chroma-js'
 
+  // export vars
+  export let povertySelected: boolean
+
+  // const vars
   const povertyLegend = chroma.scale('RdYlBu').colors()
-  console.log(povertyLegend)
-  export let povertySelected
 </script>
 
 {#if povertySelected}

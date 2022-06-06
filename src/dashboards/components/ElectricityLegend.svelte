@@ -1,7 +1,12 @@
 <script lang="ts">
+  // imports
   import chroma from 'chroma-js'
+
+  // export vars
+  export let electricitySelected: boolean
+
+  // const vars
   const hreaLegend = chroma.scale('RdYlBu').colors().reverse()
-  export let electricitySelected
 </script>
 
 {#if electricitySelected.name !== 'NONE'}
