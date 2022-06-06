@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import type { VisualizationSpec } from 'svelte-vega'
+  import { VegaLite } from 'svelte-vega'
   import Drawer, { AppContent, Content } from '@smui/drawer'
-  import { format } from 'd3-format'
   import { map, year } from '../stores'
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import vegaEmbed from 'vega-embed'
   import AdminLayer from '$lib/adminLayer'
   import { adminStore } from '$lib/stores/admin'
   import IntroductionPanel from './IntroductionPanel.svelte'
@@ -39,7 +39,6 @@
   let pointBarValues = []
   let adminHistogram = []
   let adminHistogramAdmin = ''
-  let adminHistogramStep = 1
 
   let showIntro = true
   $: showIntro, showIntroChanged()
@@ -70,17 +69,19 @@
     }
   }
 
-  const getDonutSpec = (value, color) => ({
+  const getDonutValues = (value) => ({
+    values: [
+      { category: 1, value, percent: Math.round(value * 100) + '%' },
+      { category: 2, value: 1 - value, percent: '' },
+    ],
+  })
+
+  const getDonutSpec = (color): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 120,
     height: 120,
     background: null,
-    data: {
-      values: [
-        { category: 1, value, percent: Math.round(value * 100) + '%' },
-        { category: 2, value: 1 - value, percent: '' },
-      ],
-    },
+    data: { name: 'values' },
     mark: { type: 'arc', innerRadius: 30 },
     encoding: {
       theta: { field: 'value', type: 'quantitative' },
@@ -97,13 +98,13 @@
     },
   })
 
-  const getBarSpec = (values) => ({
+  const getBarSpec = (): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 278,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
-    data: { values },
+    data: { name: 'values' },
     mark: { type: 'bar' },
     encoding: {
       x: {
@@ -132,13 +133,13 @@
     },
   })
 
-  const getAdminSpec = (values) => ({
+  const getAdminSpec = (): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 278,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
-    data: { values },
+    data: { name: 'values' },
     mark: { type: 'bar' },
     encoding: {
       x: {
@@ -164,26 +165,6 @@
           range: [PRIMARY],
         },
       },
-    },
-  })
-
-  const getHistogramSpec = (values) => ({
-    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 278,
-    height: 120,
-    view: { stroke: 'transparent' },
-    background: null,
-    data: { values },
-    mark: { type: 'bar', color: PRIMARY },
-    encoding: {
-      x: {
-        field: 'bin1',
-        type: 'quantitative',
-        bin: { binned: true, step: adminHistogramStep },
-        axis: { title: false, labelColor: GREY, format: '.0%' },
-      },
-      x2: { field: 'bin2' },
-      y: { field: 'count', type: 'quantitative', axis: null },
     },
   })
 
@@ -224,136 +205,6 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
-  const getAdminGeoJSONUrl = (admin_props) => {
-    const lvl = adminLayer?.getAdminLevel()
-    const filtered = Object.keys(admin_props)
-      .filter((key) => key.includes(lvl) && key.endsWith('id'))
-      .reduce((obj, key) => {
-        obj['admin_id'] = admin_props[key]
-        return obj
-      }, {})
-    const { admin_id } = filtered
-    return `${AZURE_URL}/admin/adm${lvl}_polygons_geojson/${admin_id}.geojson`
-  }
-
-  const getAdminStats = async (e) => {
-    const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
-    const total = electricitySelected.name == 'HREA' ? 1 : 255
-
-    const features = $map.queryRenderedFeatures(e.point, { layers: [adminLayer.getAdminID()] })
-    if (features.length > 0) {
-      controller.abort()
-      controller = new AbortController()
-      const { type, geometry, properties } = features[0].toJSON()
-      //const geoJSON = { type, geometry, properties }
-      const adminIdUrl = getAdminGeoJSONUrl(features[0].toJSON().properties)
-      const apiUrlParams = { url: lurl, geojson_url: adminIdUrl }
-
-      const config = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        //mode: 'no-cors',
-        signal: controller.signal,
-      }
-
-      const url = `${API_URL}/geojsonstats?${new URLSearchParams(apiUrlParams).toString()}`
-      //const url = `http://localhost:8000/hrea/geojsonstats?${new URLSearchParams(apiUrlParams).toString()}`
-      // const stats = await fetchUrl(url, config)
-      // console.log(JSON.stringify(stats, null, '\t'))
-      adminHistogram = []
-      adminHistogramStep = 1
-      adminHistogramAdmin = ''
-      renderAdminCharts()
-      try {
-        const response = await fetch(url, config)
-        if (response.ok) {
-          const result = await response.json()
-          //console.log(JSON.stringify(result, null, '\t'))
-          const {
-            histogram: [values, bins],
-          } = result['1']
-          adminHistogramAdmin = [
-            properties.adm0_name,
-            properties.adm1_name,
-            properties.adm2_name,
-            properties.adm3_name,
-            properties.adm4_name,
-          ]
-            .filter(Boolean)
-            .join(', ')
-          adminHistogramStep = (bins[1] - bins[0]) / total
-          adminHistogram = values.map((x, i) => ({
-            count: x,
-            bin1: bins[i] / total,
-            bin2: bins[i + 1] / total,
-          }))
-          renderAdminCharts()
-        } else {
-          throw new Error(`Network response was ${response}`)
-        }
-      } catch (error) {
-        console.error(error.name, error.message)
-      }
-    }
-  }
-
-  const geoJSONStats = async (e) => {
-    const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
-    const total = electricitySelected.name == 'HREA' ? 1 : 255
-    const apiUrlParams = { url: lurl }
-    const features = $map.queryRenderedFeatures(e.point, { layers: [adminLayer.getAdminID()] })
-    if (features.length > 0) {
-      controller.abort()
-      controller = new AbortController()
-      const { type, geometry, properties } = features[0].toJSON()
-      const geoJSON = { type, geometry, properties }
-      const config = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(geoJSON),
-        signal: controller.signal,
-      }
-      const url = `${API_URL}/statistics?${new URLSearchParams(apiUrlParams).toString()}`
-      adminHistogram = []
-      adminHistogramStep = 1
-      adminHistogramAdmin = ''
-      renderAdminCharts()
-      try {
-        const response = await fetch(url, config)
-        if (response.ok) {
-          const result = await response.json()
-          const {
-            histogram: [values, bins],
-          } = result.properties.statistics['1']
-          adminHistogramAdmin = [
-            properties.adm0_name,
-            properties.adm1_name,
-            properties.adm2_name,
-            properties.adm3_name,
-            properties.adm4_name,
-          ]
-            .filter(Boolean)
-            .join(', ')
-          adminHistogramStep = (bins[1] - bins[0]) / total
-          adminHistogram = values.map((x, i) => ({
-            count: x,
-            bin1: bins[i] / total,
-            bin2: bins[i + 1] / total,
-          }))
-          renderAdminCharts()
-        } else {
-          throw new Error('Network response was not ok.')
-        }
-      } catch (error) {
-        console.error(error.name, error.message)
-      }
-    }
-  }
-
   const onPointClick = (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
@@ -362,7 +213,6 @@
     ]
     pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
     pointBarValues = []
-    renderPointCharts()
     controller.abort()
     controller = new AbortController()
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
@@ -382,18 +232,10 @@
                 value: responseValue,
                 percent: Math.round(responseValue * 100) + '%',
               })
-              renderPointCharts()
             })
         }
       }
     }
-  }
-
-  const renderPointCharts = () => {
-    const options = { actions: false, renderer: 'svg' }
-    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], PRIMARY), options)
-    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], SECONDARY), options)
-    vegaEmbed('#point-bar', getBarSpec(pointBarValues), options)
   }
 
   const renderAdminCharts = () => {
@@ -406,27 +248,22 @@
     ]
       .filter(Boolean)
       .join(', ')
-    const options = { actions: false, renderer: 'svg' }
     adminHistogram = []
     for (let i = 2020; i >= 2012; i--) {
       adminHistogram.push({ year: i, value: $adminStore[`hrea_${i}`], category: HREA_ID })
     }
-    vegaEmbed('#admin-histogram', getAdminSpec(adminHistogram), options)
-    vegaEmbed('#admin-pie', getDonutSpec($adminStore[`hrea_${$year}`], PRIMARY), options)
   }
 
   const adminInteraction = () => {
     adminLayer?.setInteraction()
     $map.off('click', onPointClick)
     $map.on('mousemove', renderAdminCharts)
-    renderAdminCharts()
   }
 
   const pointInteraction = () => {
     adminLayer?.removeInteraction()
     $map.on('click', onPointClick)
     $map.off('mousemove', renderAdminCharts)
-    renderPointCharts()
   }
 
   $: interactSelected, loadInteraction()
@@ -439,6 +276,8 @@
   let loadHeatmap = () => {
     return
   }
+
+  let vegaOptions = { actions: false, renderer: 'svg' }
 </script>
 
 <div class="content-container">
@@ -468,34 +307,32 @@
                 <br /><br />
                 <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
                 <div class="title-text">{adminHistogramAdmin}</div>
-                {#if $adminStore[`ppp_${$year}`]}
-                  <div class="title-text">
-                    <b
-                      >{format('.3s')($adminStore[`ppp_hrea_${$year}`])
-                        .replace('NaNM', 'N/A')
-                        .replace('NaNk', 'N/A')}</b>
-                    fully electrified
-                  </div>
-                  <div class="title-text">
-                    <b>{format('.3s')($adminStore[`ppp_${$year}`]).replace('G', 'B')}</b> total
-                  </div>
-                {/if}
-                <div id="admin-pie" />
-                <div id="admin-histogram" />
+                <VegaLite
+                  data={getDonutValues($adminStore[`hrea_${$year}`])}
+                  spec={getDonutSpec(PRIMARY)}
+                  options={vegaOptions} />
+                <VegaLite data={{ values: adminHistogram }} spec={getAdminSpec()} options={vegaOptions} />
               {/if}
               {#if interactSelected === 'Point'}
                 <br /><br />
                 <div class="chart-container">
                   <div class="chart-item">
                     <p class="title-text">HREA - {$year}</p>
-                    <div id="point-donut-1" />
+                    <VegaLite
+                      data={getDonutValues(pointDonutValue[HREA_ID])}
+                      spec={getDonutSpec(PRIMARY)}
+                      options={vegaOptions} />
                   </div>
                   <div class="chart-item">
                     <p class="title-text">ML - {$year}</p>
-                    <div id="point-donut-2" />
+                    <VegaLite
+                      data={getDonutValues(pointDonutValue[ML_ID])}
+                      spec={getDonutSpec(SECONDARY)}
+                      options={vegaOptions} />
                   </div>
                 </div>
                 <div id="point-bar" />
+                <VegaLite data={{ values: pointBarValues }} spec={getBarSpec()} options={vegaOptions} />
               {/if}
             </StyleControlGroup>
           {/if}
