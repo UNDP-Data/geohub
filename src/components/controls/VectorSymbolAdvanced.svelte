@@ -49,7 +49,6 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-  let sizeArray: number[]
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -161,6 +160,7 @@
 
         if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
           const values = tileStatLayerAttribute.values
+
           if (values.length > 0) {
             // add log classification method if min value greater than zero
             if (Math.min.apply(null, values) > 0) {

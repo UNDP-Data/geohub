@@ -1,27 +1,28 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import { onMount } from 'svelte'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
+  import { DEFAULT_FILL_COLOR, LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import MaplibreColorPicker from './MaplibreColorPicker.svelte'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const propertyName = 'fill-outline-color'
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-  const defaultColor = 'rgba(110,110,110,1)'
 
-  let rgba = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor
+  let rgba = DEFAULT_FILL_COLOR
+
+  onMount(() => {
+    rgba = layer.fillOutlineColor ? layer.fillOutlineColor : DEFAULT_FILL_COLOR
+    $map.setPaintProperty(layerId, propertyName, rgba)
+    layer.fillOutlineColor = rgba
+  })
 
   const handleSetColor = (e: CustomEvent) => {
-    if (style.type !== LayerTypes.FILL) return
     rgba = e.detail.color
     $map.setPaintProperty(layerId, propertyName, rgba)
   }
 </script>
 
-{#if style.type === LayerTypes.FILL}
-  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-{/if}
+<MaplibreColorPicker {rgba} on:change={handleSetColor} />
