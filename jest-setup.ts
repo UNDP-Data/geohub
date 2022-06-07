@@ -8,8 +8,23 @@ vi.mock('maplibre-gl/dist/maplibre-gl', () => ({
       return { tiles: ['https://google.com'] }
     },
     triggerRepaint: () => undefined,
+    getStyle: () => {
+      return {
+        sources: undefined,
+        layers: []
+      }
+    },
+    getLayoutProperty: () => undefined,
+    setLayoutProperty: () => undefined,
+    setPaintProperty: () => undefined,
+    getZoom: () => undefined,
+    on: () => undefined,
   })),
 }))
+
+vi.mock('@watergis/legend-symbol', () => ({
+  LegendSymbol: () => undefined}
+))
 
 let container: HTMLDivElement
 map.set(new Map({ container, style: '' }))

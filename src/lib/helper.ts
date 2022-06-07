@@ -31,10 +31,13 @@ export const updateParamsInURL = (
   const mapStore = get(map)
   if ('getStyle' in mapStore) {
     const style = mapStore.getStyle()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    style.sources[definition.source].tiles = [decodeURI(layerURL.toString())]
-    mapStore.setStyle(style)
+
+    if (style?.sources) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      style.sources[definition.source].tiles = [decodeURI(layerURL.toString())]
+      mapStore.setStyle(style)
+    }
   }
 }
 

@@ -91,12 +91,10 @@
   }
 </script>
 
-{#if style.type === LayerTypes.HEATMAP}
-  {#each colorValues as colorValueRow}
-    <HeatmapColorRow
-      bind:colorRow={colorValueRow}
-      {colorPickerVisibleIndex}
-      on:clickColorPicker={handleColorPickerClick}
-      on:changeColorMap={handleChangeColorMap} />
-  {/each}
-{/if}
+{#each colorValues as colorValueRow}
+  <HeatmapColorRow
+    bind:colorRow={colorValueRow}
+    {colorPickerVisibleIndex}
+    on:clickColorPicker={handleColorPickerClick}
+    on:changeColorMap={handleChangeColorMap} />
+{/each}

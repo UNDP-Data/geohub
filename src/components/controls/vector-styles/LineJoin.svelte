@@ -27,22 +27,15 @@
   }
 </script>
 
-{#if style.type === LayerTypes.LINE}
-  <div style="width: 60%;">
-    {#each choices as choice}
-      <div class="columns is-gapless mb-1">
-        <div class="column is-4">
-          <input
-            type="radio"
-            bind:group={selected}
-            value={choice}
-            alt={`${choice} Option`}
-            title={`${choice} Option`} />
-        </div>
-        <div class="column" style="position: relative; top: -2px">
-          {choice}
-        </div>
+<div style="width: 60%;">
+  {#each choices as choice}
+    <div class="columns is-gapless mb-1">
+      <div class="column is-4">
+        <input type="radio" bind:group={selected} value={choice} alt={`${choice} Option`} title={`${choice} Option`} />
       </div>
-    {/each}
-  </div>
-{/if}
+      <div class="column" style="position: relative; top: -2px">
+        {choice}
+      </div>
+    </div>
+  {/each}
+</div>

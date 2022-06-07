@@ -91,6 +91,7 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+
     Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
         delete vectorLayerMeta.fields[key]
@@ -240,7 +241,7 @@
 
       // Ends are the
       const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
-      const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => item / intervalEnds[0])
+      const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => (item as number) / Number(intervalEnds[0]))
 
       // Add 1 to the ratio array
       ratioOfRadiustoTheFirstEnd.unshift(1)
@@ -275,7 +276,7 @@
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
-<div class="symbol-advanced-container">
+<div class="symbol-advanced-container" data-testid="symbol-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>
@@ -288,7 +289,8 @@
             alt="Property Options"
             title="Property Options">
             {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
+                >{propertySelectOption}</option>
             {/each}
           </select>
         </div>
@@ -306,8 +308,8 @@
                   name="layer-type"
                   bind:group={applyToOption}
                   value={optionApplyTo}
-                  alt={`${optionApplyTo} Option`}
-                  title={`${optionApplyTo} Option`} />
+                  alt="Apply To Option"
+                  title="Apply To Option" />
               </div>
               <div class="column ml-2" style="position: relative; top: -2px;">
                 {optionApplyTo}
@@ -333,7 +335,11 @@
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+              <option
+                class="legend-text"
+                alt="Classification Method"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
             {/each}
           </select>
         </div>
@@ -381,7 +387,7 @@
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
               {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
-              <tr>
+              <tr data-testid="icon-size-row-container">
                 <td class="has-text-centered">
                   {#if icon}
                     <img

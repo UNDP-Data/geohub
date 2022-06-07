@@ -29,6 +29,4 @@
   }
 </script>
 
-{#if style.type === LayerTypes.LINE}
-  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-{/if}
+<MaplibreColorPicker {rgba} on:change={handleSetColor} />

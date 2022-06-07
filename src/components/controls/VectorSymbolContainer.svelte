@@ -101,7 +101,7 @@
   }
 </script>
 
-<div class="columns" data-testid="raster-legend-view-container">
+<div class="columns" data-testid="symbol-view-container">
   <div class="column is-10">
     {#if layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE}
       <div transition:slide>
