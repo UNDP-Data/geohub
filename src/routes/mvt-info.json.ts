@@ -26,50 +26,48 @@ const fetchMVTInfo = async (path: string, layerName: string) => {
       const layer = tile.layers[layerName]
 
       // since we are pushing values, we need to force the attributesArray to be empty at this point
-      if (attributesArray.length > 0) {
-        attributesArray = []
-      }
+      attributesArray.length > 0
+        ? (attributesArray = [])
+        : // The layer._keys is a list with all the available attributes in the layer.
+          // Mapping through the attributes to get the attributeArray object
+          layer._keys.map((property) => {
+            propsObj[property] = []
 
-      // The layer._keys is a list with all the available attributes in the layer.
-      // Mapping through the attributes to get the attributeArray object
-      layer._keys.map((property) => {
-        propsObj[property] = []
+            for (let featureIndex = 0; featureIndex < layer.length; featureIndex++) {
+              const feature = layer.feature(featureIndex)
+              layer._keys[property] = propsObj[property].push(feature.properties[property])
+            }
 
-        for (let featureIndex = 0; featureIndex < layer.length; featureIndex++) {
-          const feature = layer.feature(featureIndex)
-          layer._keys[property] = propsObj[property].push(feature.properties[property])
-        }
+            if (isNaN(propsObj[property][0])) {
+              // The first value is not a number, mathematical operations will result in NaN
+              const attribute = {
+                attribute: property,
+                type: String(typeof propsObj[property][0]),
+                count: propsObj[property].length,
+                values: propsObj[property].slice(0, 100),
+              }
+              // Add the attribute to the attributes array
+              attributesArray.push(attribute)
+            } else {
+              // The first value is a number, so assume all values as number
+              // Need to generate the histogram here
+              const histogram = { count: [], bins: [] }
+              arraystat(propsObj[property]).histogram.map((item) => {
+                histogram.bins.push(item.max), histogram.count.push(item.nb)
+              })
+              histogram.bins.unshift(Math.min(...propsObj[property]))
 
-        if (isNaN(propsObj[property][0])) {
-          // The first value is not a number, mathematical operations will result in NaN
-          const attribute = {
-            attribute: property,
-            type: String(typeof propsObj[property][0]),
-            count: propsObj[property].length,
-            values: propsObj[property].slice(0, 100),
-          }
-          // Add the attribute to the attributes array
-          attributesArray.push(attribute)
-        } else {
-          // The first value is a number, so assume all values as number
-          // Need to generate the histogram here
-          const histogram = { count: [], bins: [] }
-          arraystat(propsObj[property]).histogram.map((item) => {
-            histogram.bins.push(item.max), histogram.count.push(item.nb)
+              const attribute = {
+                attribute: property,
+                type: String(typeof propsObj[property][0]),
+                count: propsObj[property].length,
+                min: Math.min(...propsObj[property]),
+                max: Math.max(...propsObj[property]),
+                histogram: histogram,
+              }
+              attributesArray.push(attribute)
+            }
           })
-          histogram.bins.unshift(Math.min(...propsObj[property]))
-
-          const attribute = {
-            attribute: property,
-            type: String(typeof propsObj[property][0]),
-            count: propsObj[property].length,
-            min: Math.min(...propsObj[property]),
-            max: Math.max(...propsObj[property]),
-            histogram: histogram,
-          }
-          attributesArray.push(attribute)
-        }
-      })
     } else {
       // layerName doesn't exist in layers
       attributesArray.push({
