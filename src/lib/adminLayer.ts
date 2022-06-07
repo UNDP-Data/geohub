@@ -1,6 +1,5 @@
 import type { Map, SourceSpecification, FillLayerSpecification, PointLike } from 'maplibre-gl'
 import { LayerTypes } from '$lib/constants'
-import { adminStore } from '$lib/stores/admin'
 
 export default class AdminLayer {
   private BASE_URL: string
@@ -41,27 +40,6 @@ export default class AdminLayer {
           'hsla(0, 0%, 0%, 0.25)',
           'hsla(0, 0%, 0%, 0)',
         ],
-        // 'fill-color': [
-        //   'case',
-        //   ['==', ['get', 'hrea_2020'], null],
-        //   'hsla(0, 0%, 0%, 0)',
-        //   [
-        //     'interpolate',
-        //     ['linear'],
-        //     ['get', 'hrea_2020'],
-        //     0,
-        //     ['to-color', '#d7191c'],
-        //     0.25,
-        //     ['to-color', '#fdae61'],
-        //     0.5,
-        //     ['to-color', '#ffffbf'],
-        //     0.75,
-        //     ['to-color', '#abd9e9'],
-        //     1,
-        //     ['to-color', '#2c7bb6'],
-        //   ],
-        // ],
-        // 'fill-opacity': ['interpolate', ['linear'], ['get', 'ppp_hrea_2020'], 0, 0, 1e2, 1],
         'fill-outline-color': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
@@ -127,7 +105,6 @@ export default class AdminLayer {
           },
           { hover: false },
         )
-        adminStore.set({})
       }
       this.hoveredStateId = e.features[0].id
       this.map.setFeatureState(
@@ -138,7 +115,6 @@ export default class AdminLayer {
         },
         { hover: this.isHover },
       )
-      adminStore.set(e.features[0].properties)
     }
   }
 
@@ -152,7 +128,6 @@ export default class AdminLayer {
         },
         { hover: false },
       )
-      adminStore.set({})
     }
     this.hoveredStateId = null
   }

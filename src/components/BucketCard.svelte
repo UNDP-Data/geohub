@@ -3,8 +3,8 @@
   import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import { fade } from 'svelte/transition'
-  import { createPopperActions } from 'svelte-popperjs'
 
+  import Popper from '$lib/popper'
   import type { Bucket } from '$lib/types'
   import '../styles/font-awesome/all.css'
 
@@ -12,30 +12,15 @@
 
   let showTooltip = false
   let timer: ReturnType<typeof setTimeout>
-
-  const dispatch = createEventDispatcher()
-
-  const [popperRef, popperContent] = createPopperActions({
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper({
     placement: 'right-start',
     strategy: 'fixed',
-  })
-
-  const popperOptions = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      },
-      {
-        name: 'preventOverflow',
-        options: {
-          mainAxis: true,
-        },
-      },
-    ],
-  }
+  }).init()
+  const dispatch = createEventDispatcher()
 
   const handleBucketClick = () => {
     handleMouseLeave()
@@ -96,7 +81,7 @@
 {/if}
 
 <style lang="scss">
-  $tooltip-background: #fff;
+  @import '../styles/popper.scss';
 
   .card-container {
     height: 65px;
@@ -128,19 +113,7 @@
   }
 
   #tooltip {
-    background: $tooltip-background;
-    border-radius: 7.5px;
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    font-size: 13px;
     font-weight: bold;
-    max-width: 250px;
-    padding: 10px;
-    position: relative;
-
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-    }
 
     .columns {
       .is-full {
@@ -168,27 +141,15 @@
 
     #arrow,
     #arrow::before {
+      background: #fff;
+      height: 8px;
+      left: -2.5px;
       position: absolute;
       width: 8px;
-      height: 8px;
-      background: $tooltip-background;
-      left: -2.5px;
 
       @media (prefers-color-scheme: dark) {
         background: #212125;
       }
-    }
-
-    #arrow {
-      visibility: visible;
-    }
-
-    #arrow::before {
-      visibility: visible;
-      content: '';
-      transform: rotate(45deg);
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
     }
   }
 </style>

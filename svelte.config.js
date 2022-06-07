@@ -1,6 +1,7 @@
 import adapter from '@sveltejs/adapter-node'
 import { resolve } from 'path'
 import preprocess from 'svelte-preprocess'
+import json from '@rollup/plugin-json'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,13 +13,17 @@ const config = {
       envPrefix: '',
     }),
     vite: {
+      plugins: [json()],
       ssr: {
-        noExternal: [/^@material(?:-extra)?\//],
+        noExternal: [/^@material(?:-extra)?\//, 'vega-embed'],
+      },
+      optimizeDeps: {
+        include: ['fast-deep-equal', 'clone', 'semver', 'json-stringify-pretty-compact', 'fast-json-stable-stringify'],
       },
       test: {
         threads: false,
         globals: true,
-        environment: "jsdom",
+        environment: 'jsdom',
         setupFiles: ['./jest-setup.ts'],
         deps: {
           inline: [/@smui/],

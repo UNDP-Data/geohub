@@ -18,7 +18,6 @@
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
 
   import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
 
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
@@ -33,6 +32,7 @@
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
+  import Popper from '$lib/popper'
   import type { BannerMessage, TreeNode, RasterTileMetadata, LayerInfoMetadata } from '$lib/types'
   import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
@@ -40,6 +40,17 @@
   export let node: TreeNode
 
   const dispatch = createEventDispatcher()
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'auto',
+      strategy: 'fixed',
+    },
+    [0, -20],
+  ).init()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
   let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
@@ -291,28 +302,6 @@
     dispatch('remove', { node })
   }
 
-  const [popperRef, popperContent] = createPopperActions({
-    placement: 'auto',
-    strategy: 'fixed',
-  })
-
-  const popperOptions = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, -20],
-        },
-      },
-      {
-        name: 'preventOverflow',
-        options: {
-          mainAxis: true,
-        },
-      },
-    ],
-  }
-
   const handleTooltipMouseEnter = () => {
     // delay display of tooltip and create reference for mouse leave event
     tooltipTimer = setTimeout(async () => {
@@ -386,7 +375,6 @@
               <Fa icon={faSync} size="sm" spin />
             {:else}
               <Wrapper>
-                <!-- <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" /> -->
                 <FaLayers size="sm" style="cursor: pointer;">
                   <Fa icon={faLayerGroup} scale={1} />
                   <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:white" />
@@ -448,7 +436,6 @@
               <Fa icon={faSync} size="sm" spin />
             {:else}
               <Wrapper>
-                <!-- <Fa icon={faCirclePlus} size="sm" style="cursor: pointer;" /> -->
                 <FaLayers size="sm" style="cursor: pointer;">
                   <Fa icon={faLayerGroup} scale={1} />
                   <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:white" />
@@ -522,6 +509,8 @@
 <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
 <style lang="scss">
+  @import '../styles/popper.scss';
+
   .node-container {
     align-items: center;
     display: flex;
@@ -560,28 +549,14 @@
     }
   }
 
-  $tooltip-background: #fff;
-
   #tooltip {
-    background: $tooltip-background;
-    border-radius: 7.5px;
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    font-size: 13px;
-    font-weight: bold;
     max-width: 450px;
     width: 450px;
-    min-height: 150px;
-    padding: 15px;
-    padding-top: 10px;
-    position: absolute;
-    top: 10px;
-
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-    }
 
     .columns {
+      z-index: 10;
+      position: relative;
+
       .is-full {
         padding-right: 40px;
 
@@ -611,31 +586,6 @@
           margin-bottom: 15px;
         }
       }
-    }
-
-    #arrow,
-    #arrow::before {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      background: $tooltip-background;
-      left: -4.5px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #212125;
-      }
-    }
-
-    #arrow {
-      visibility: visible;
-    }
-
-    #arrow::before {
-      visibility: visible;
-      content: '';
-      transform: rotate(45deg);
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
     }
   }
 </style>

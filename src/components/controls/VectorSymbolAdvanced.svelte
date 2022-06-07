@@ -49,7 +49,6 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-  let sizeArray: number[]
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -149,7 +148,6 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const tilestats = layer?.info?.json?.tilestats
-
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
@@ -176,7 +174,7 @@
 
             // get interval list based on classification method
             if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
-              intervalList = new Jenks(values, numberOfClasses).naturalBreak()
+              intervalList = new Jenks(values, numberOfClasses).naturalBreak().map((item) => Number(item.toFixed(2)))
             } else {
               intervalList = chroma
                 .limits(
@@ -239,9 +237,24 @@
       if (zoomLevel === undefined) {
         zoomLevel = $map.getZoom()
       }
-      const newStops = stops.map((item) => [item[0], (item[1] as number) / zoomLevel])
-      sizeArray = newStops.map((item) => (item[1] as number) * 15)
-      // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+
+      // Ends are the
+      const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
+      const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => item / intervalEnds[0])
+
+      // Add 1 to the ratio array
+      ratioOfRadiustoTheFirstEnd.unshift(1)
+
+      if (zoomLevel === undefined) {
+        zoomLevel = $map.getZoom()
+      }
+
+      // newStops array, that takes into considerarion the ratio and the zoomLevel
+      const newStops = stops.map((item, index) => [
+        item[0],
+        (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
+      ])
+
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
@@ -367,13 +380,14 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
+              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
               <tr>
                 <td class="has-text-centered">
                   {#if icon}
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
+                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>
