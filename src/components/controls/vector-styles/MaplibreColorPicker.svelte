@@ -52,7 +52,13 @@
   }
 </script>
 
-<div class="color-palette" on:click={handleColorPaletteClick} style="background: {rgba};" use:popperRef />
+<div
+  class="color-palette"
+  on:click={handleColorPaletteClick}
+  alt={rgba}
+  title={rgba}
+  style="background: {rgba};"
+  use:popperRef />
 {#if showToolTip}
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
     <DefaultColorPicker bind:color on:closeColorPicker={handleCloseColorPicker} on:changeColor={setColor} />

@@ -31,8 +31,6 @@
   }
 </script>
 
-{#if style.type === LayerTypes.SYMBOL}
-  <FormField>
-    <Switch bind:checked />
-  </FormField>
-{/if}
+<FormField>
+  <Switch bind:checked />
+</FormField>

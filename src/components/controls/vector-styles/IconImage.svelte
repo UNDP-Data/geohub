@@ -20,7 +20,7 @@
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+  let iconImage = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   let isIconListPanelVisible = false
   let legendSymbolContainer: HTMLElement = document.createElement('div')
 
@@ -53,8 +53,9 @@
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-    const symbol = LegendSymbol({ zoom: $map.getZoom(), layer: mapLayerByLayerId })
+    const symbol = LegendSymbol && LegendSymbol({ zoom: $map.getZoom(), layer: mapLayerByLayerId })
     legendSymbolContainer.innerHTML = ''
+
     if (symbol) {
       switch (symbol.element) {
         case 'div': {
@@ -89,13 +90,13 @@
                 const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
                 const img = document.createElement('img')
                 img.src = icon.src
-                img.alt = layerId
+                img.alt = icon.alt
+                img.title = icon.alt
                 img.style.cssText = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
                 legendSymbolContainer.appendChild(img)
               }
             })
           } else {
-            console.log(2)
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
             svg.style.cssText = 'height: 20px;'
             svg.setAttributeNS(null, 'version', '1.1')

@@ -16,7 +16,7 @@
   let rgba = defaultColor
 
   onMount(() => {
-    rgba = layer.iconColor ? layer.iconColor : defaultColor
+    rgba = layer?.iconColor ? layer.iconColor : defaultColor
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 
@@ -28,6 +28,4 @@
   }
 </script>
 
-{#if style.type === LayerTypes.SYMBOL}
-  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-{/if}
+<MaplibreColorPicker {rgba} on:change={handleSetColor} />
