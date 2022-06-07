@@ -25,9 +25,7 @@
   }
 </script>
 
-{#if style.type === LayerTypes.SYMBOL}
-  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-{/if}
+<MaplibreColorPicker {rgba} on:change={handleSetColor} />
 
 <style lang="scss">
   @use '@material/image-list/index' as image-list;

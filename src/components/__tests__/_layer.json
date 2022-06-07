@@ -4,6 +4,7 @@
      "id":"0ebfd361-8fd3-4d01-84f7-13b620b3e2ff",
      "type":"raster",
      "source":"climate-action/Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif",
+     "source-layer": "NGA_DepRationAdm2",
      "minzoom":0,
      "maxzoom":22,
      "layout":{
@@ -18,6 +19,20 @@
         180.00000000000512,
         86.504412038917
      ],
+     "json" : {
+       "vector_layers" : [
+         {
+          "description": "",
+          "fields": {
+            "COUNT": "Number",
+            "MEAN": "Number",
+            "ORIG_FID": "Number"},
+          "id": "NGA_DepRationAdm2",
+          "maxzoom": 12,
+          "minzoom": 0
+         }
+       ]
+     },
      "minzoom":0,
      "maxzoom":4,
      "band_metadata":[
@@ -105,7 +120,7 @@
          "percentile_2": 100
       }
    }
-     
+
   },
   "visible":true,
   "url":"https://undpngddlsgeohubdev01.blob.core.windows.net/climate-action/Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTExVDAzJTNBMDElM0E1M1omc3I9YiZzcD1yJnNpZz1WTjRSYm5peUFxSU50SWMlMkY3cTRZWnNjYXBQSkN2VnNSZ0o0VzNLdFEzbnclM0Q=",

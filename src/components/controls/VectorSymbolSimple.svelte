@@ -28,7 +28,7 @@
   }
 </script>
 
-<div class="symbol-simple-container">
+<div class="symbol-simple-container" data-testid="symbol-simple-container">
   <div class="columns icon-size">
     <div class="column is-4 icon-image">
       <div class="has-text-centered pb-2">Icon</div>
@@ -66,6 +66,8 @@
       <div class="field">
         <input
           id="switchAdvancedSettings"
+          alt="Advanced Settings Toggle"
+          title="Advanced Settings Toggle"
           type="checkbox"
           name="switchSmall"
           class="switch is-small is-rounded is-info"
@@ -76,7 +78,11 @@
   </div>
 
   {#if isAdvancedSettings}
-    <div class="columns icon-offset pb-4" transition:slide={{ duration: 750 }}>
+    <div
+      class="columns icon-offset pb-4"
+      transition:slide={{ duration: 750 }}
+      alt="Advanced Settings Container"
+      title="Advanced Settings Container">
       <div class="column">
         <IconOffset {layer} on:change={handleIconOffset} />
       </div>

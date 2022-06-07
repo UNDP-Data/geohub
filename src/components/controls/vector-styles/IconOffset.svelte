@@ -14,7 +14,7 @@
   const propertyName = 'icon-offset'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let iconOffsetValues = style.layout && style.layout[propertyName] ? style.layout[propertyName] : [0, 0]
+  let iconOffsetValues = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : [0, 0]
   let maxValue = 10
   let minValue = -10
   let step = 1
@@ -25,38 +25,29 @@
   $: yValue, setIconOffset()
 
   const setIconOffset = () => {
-    if (style.type !== LayerTypes.SYMBOL) return
-    const newStyle = JSON.parse(JSON.stringify(style))
-    if (!newStyle.layout) {
-      newStyle.layout = {}
-    }
-    iconOffsetValues = [xValue, yValue]
-    newStyle.layout[propertyName] = iconOffsetValues
     $map.setLayoutProperty(layerId, propertyName, iconOffsetValues)
 
     dispatch('change')
   }
 </script>
 
-{#if style.type === LayerTypes.SYMBOL}
-  <div class="columns is-gapless" style="margin-bottom: 0;">
-    <div class="column">
-      <div class="is-flex is-justify-content-center">Horizontal</div>
-      <div class="is-flex is-justify-content-center">
-        <NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
-      </div>
-    </div>
-    <div class="column">
-      <div class="is-flex is-justify-content-center">Vertical</div>
-      <div class="is-flex is-justify-content-center">
-        <NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
-      </div>
+<div class="columns is-gapless" style="margin-bottom: 0;">
+  <div class="column" alt="Horizontal Offset" title="Horizontal Offset">
+    <div class="is-flex is-justify-content-center">Horizontal</div>
+    <div class="is-flex is-justify-content-center">
+      <NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
     </div>
   </div>
-  <div class="columns is-gapless is-size-7" style="padding-left: 5px; padding-bottom: 5px; padding-top: 5px;">
-    <div class="column">Icon offset from center point</div>
+  <div class="column" alt="Vertical Offset" title="Vertical Offset">
+    <div class="is-flex is-justify-content-center">Vertical</div>
+    <div class="is-flex is-justify-content-center">
+      <NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
+    </div>
   </div>
-{/if}
+</div>
+<div class="columns is-gapless is-size-7" style="padding-left: 5px; padding-bottom: 5px; padding-top: 5px;">
+  <div class="column">Icon offset from center point</div>
+</div>
 
 <style lang="scss">
   div {

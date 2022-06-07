@@ -5,6 +5,7 @@
   import Checkbox from '@smui/checkbox'
   import type { HeatmapLayerSpecification, VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import RangeSlider from 'svelte-range-slider-pips'
+  import PovertyLegend from './PovertyLegend.svelte'
 
   const AZURE_URL = import.meta.env.VITE_AZURE_URL
   const POVERTY_URL = [`${AZURE_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`]
@@ -72,10 +73,13 @@
   }
 </script>
 
-<FormField>
-  <Checkbox bind:checked={heatmapChecked} />
-  <span slot="label"><p class="title-text">Poverty</p></span>
-</FormField>
+<div class="centered">
+  <FormField>
+    <Checkbox bind:checked={heatmapChecked} />
+    <span slot="label"><p class="title-text">Poverty</p></span>
+  </FormField>
+</div>
+
 {#if heatmapChecked}
   <div class="action">
     <div class="slider">
@@ -92,6 +96,7 @@
         suffix="%" />
     </div>
   </div>
+  <PovertyLegend bind:povertySelected={heatmapChecked} />
 {/if}
 
 <style lang="scss">

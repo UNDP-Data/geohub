@@ -6,7 +6,6 @@
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
-  import { createPopperActions } from 'svelte-popperjs'
   import { cloneDeep } from 'lodash-es'
   import { clickOutside } from 'svelte-use-click-outside'
 
@@ -19,6 +18,7 @@
     DEFAULT_COLORMAP,
     VectorLayerPolygonLegendTypes,
   } from '$lib/constants'
+  import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
 
@@ -39,6 +39,18 @@
       layerListCount = $layerList.length
     }
   }
+
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [10, 15],
+  ).init()
 
   onMount(() => {
     // set default values
@@ -70,22 +82,6 @@
     } else {
       layer.legendType = VectorLayerPolygonLegendTypes.SIMPLE
     }
-  }
-
-  const [popperRef, popperContent] = createPopperActions({
-    placement: 'right-end',
-    strategy: 'fixed',
-  })
-
-  const popperOptions = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [10, 25],
-        },
-      },
-    ],
   }
 
   const handleColorMapClick = (event: CustomEvent) => {
@@ -178,6 +174,8 @@
 </div>
 
 <style lang="scss">
+  @import '../../styles/popper.scss';
+
   .legend-toggle {
     padding-top: 15px;
 
@@ -189,47 +187,7 @@
   $tooltip-background: #fff;
 
   #tooltip {
-    background: $tooltip-background;
-    border-radius: 7.5px;
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    font-size: 13px;
-    inset: auto auto 0px -10px !important;
-    max-height: 300px;
     max-width: 470px;
-    padding-top: 10px;
-    padding: 15px;
-    position: absolute;
-    top: 10px;
     width: 470px;
-
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-    }
-
-    #arrow,
-    #arrow::before {
-      background: $tooltip-background;
-      height: 18px;
-      left: -4.5px;
-      position: absolute;
-      width: 18px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #212125;
-      }
-    }
-
-    #arrow {
-      visibility: visible;
-    }
-
-    #arrow::before {
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
-      content: '';
-      transform: rotate(45deg);
-      visibility: visible;
-    }
   }
 </style>
