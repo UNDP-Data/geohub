@@ -2,14 +2,16 @@
 import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
-import { ErrorMessages } from '../lib/constants'
+
+import { ErrorMessages } from '$lib/constants'
 
 // variables
-let pbf: Pbf
-let tile: VectorTile
 const propsObj = {}
+
 let attributesArray: any[] = []
 let data: any[]
+let pbf: Pbf
+let tile: VectorTile
 
 // fetch vector tiles info from
 const fetchVectorTileInfo = async (path: string, layerName: string) => {
@@ -100,9 +102,9 @@ export async function get(query: any) {
   }
 
   // Both parameters are provided, so go ahead!
-  if (query.url.searchParams.has('path') && query.url.searchParams.has('layername')) {
+  if (query.url.searchParams.has('path') && query.url.searchParams.has('layer_name')) {
     const path = query.url.searchParams.get('path')
-    const layer_name = query.url.searchParams.get('layername')
+    const layer_name = query.url.searchParams.get('layer_name')
 
     // fetch vector tiles info function returns an array
     await fetchVectorTileInfo(path, layer_name)
