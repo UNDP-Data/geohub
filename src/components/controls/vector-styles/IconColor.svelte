@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -12,7 +11,6 @@
   const defaultColor = `rgba(0,0,0,1)`
   const layerId = layer.definition.id
   const propertyName = 'icon-color'
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
   let rgba = defaultColor
 
   onMount(() => {
