@@ -39,14 +39,14 @@
 </script>
 
 <div class="grouped">
-  <Wrapper class="layer-order">
+  <Wrapper>
     <div class="icon-selected" on:click={() => hierachyUp(layerId)}>
       <Fa icon={faChevronUp} size="1x" />
     </div>
     <Tooltip showDelay={300} hideDelay={100} yPos="above">Bring Forward in Map</Tooltip>
   </Wrapper>
   <div style="width: 10px" />
-  <Wrapper class="layer-order">
+  <Wrapper>
     <div class="icon-selected" on:click={() => hierachyDown(layerId)}>
       <Fa icon={faChevronDown} size="1x" />
     </div>
