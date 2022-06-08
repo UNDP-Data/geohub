@@ -77,7 +77,7 @@ export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
   FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
   NO_LAYER_WITH_THAT_NAME = "We couldn't find a layer with that name",
-  VECTOR_INFO_BAD_REQUEST = "Bad Request. Please check if there is a parameter you haven't supplied",
+  VECTOR_INFO_BAD_REQUEST = "Bad Request. Please check the URL or the parameters",
 }
 export const LayerIconTypes = [
   {

@@ -100,9 +100,9 @@ export async function get(query: any) {
   }
 
   // Both parameters are provided, so go ahead!
-  if (query.url.searchParams.has('path') && query.url.searchParams.has('layer_name')) {
+  if (query.url.searchParams.has('path') && query.url.searchParams.has('layername')) {
     const path = query.url.searchParams.get('path')
-    const layer_name = query.url.searchParams.get('layer_name')
+    const layer_name = query.url.searchParams.get('layername')
 
     // fetch vector tiles info function returns an array
     await fetchVectorTileInfo(path, layer_name)
