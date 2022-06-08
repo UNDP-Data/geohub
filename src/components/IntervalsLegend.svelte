@@ -358,7 +358,7 @@
   <div class="columns is-gapless controls" on:click={() => (colorPickerVisibleIndex = -1)}>
     <div class="column classification">
       <div class="has-text-centered pb-2">Classification</div>
-      <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px;">
+      <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px; width: fit-content">
         <select
           bind:value={classificationMethod}
           on:change={(e) => reclassifyImage(e)}

@@ -56,12 +56,14 @@
     const g = rowColor[1]
     const b = rowColor[2]
 
+    // sometimes h is NaN, causing the colorpicker to break
+    // To curb this, force it to zero
     color = {
       r,
       g,
       b,
       hex: chroma([r, g, b]).hex('rgba'),
-      h: chroma([r, g, b]).hsv()[0],
+      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
     }
