@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { describe, expect, it, beforeEach, vi } from 'vitest'
+import { describe, expect, it, beforeEach } from 'vitest'
 import { mockGet, mockFetch } from 'vi-fetch'
 
 import { get } from '../vectorinfo.json'
