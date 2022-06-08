@@ -1808,6 +1808,11 @@ array-union@^2.1.0:
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
   integrity sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
 
+arraystat@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/arraystat/-/arraystat-1.1.4.tgz#4cad4122c52c102ba618273233576379abfb9c2f"
+  integrity sha512-RwsYU1LII+F3ACMvWqW6ur/b/f7RMr63mTDuAmmHkwecSffaHftJAL9QJ2WJ/YEW019oyt2hH3E9SBNW13ez2A==
+
 asn1@~0.2.3:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.6.tgz#0d3a7bb6e64e02a90c0303b31f292868ea09a08d"
