@@ -2,16 +2,17 @@
 import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
+import { ErrorMessages } from '../lib/constants'
 
 // variables
-let pbf
-let tile
+let pbf: Pbf
+let tile: VectorTile
 const propsObj = {}
-let attributesArray = []
-let data
+let attributesArray: any[] = []
+let data: any[]
 
-// fetchMVT
-const fetchMVTInfo = async (path: string, layerName: string) => {
+// fetch vector tiles info from
+const fetchVectorTileInfo = async (path: string, layerName: string) => {
   await fetch(`${path}`)
     .then((response) => response.arrayBuffer())
     .then((arrayBuffer) => (pbf = new Pbf(arrayBuffer)))
@@ -19,7 +20,6 @@ const fetchMVTInfo = async (path: string, layerName: string) => {
 
   try {
     tile = new VectorTile(pbf)
-    console.log(tile)
 
     // eslint-disable-next-line no-prototype-builtins
     if (tile.layers.hasOwnProperty(layerName)) {
@@ -32,12 +32,12 @@ const fetchMVTInfo = async (path: string, layerName: string) => {
       }
       // The layer._keys is a list with all the available attributes in the layer.
       // Mapping through the attributes to get the attributeArray object
-      layer._keys.map((property) => {
+      layer['_keys'].map((property) => {
         propsObj[property] = []
 
         for (let featureIndex = 0; featureIndex < layer.length; featureIndex++) {
           const feature = layer.feature(featureIndex)
-          layer._keys[property] = propsObj[property].push(feature.properties[property])
+          layer['_keys'][property] = propsObj[property].push(feature.properties[property])
         }
 
         if (isNaN(propsObj[property][0])) {
@@ -74,7 +74,7 @@ const fetchMVTInfo = async (path: string, layerName: string) => {
       // layerName doesn't exist in layers
       attributesArray.push({
         code: 500,
-        message: "We couldn't find a layer with that name",
+        message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
       })
     }
   } catch (error) {
@@ -91,10 +91,12 @@ const fetchMVTInfo = async (path: string, layerName: string) => {
 export async function get(query: any) {
   // If either of `path` or `layer_name` parameter is not provided. This is a bad request.
   if (!query.url.searchParams.has('path') || !query.url.searchParams.has('layer_name')) {
-    data = {
-      code: '400',
-      message: "Bad Request. Please check if there is a parameter you haven't supplied",
-    }
+    data = [
+      {
+        code: '400',
+        message: ErrorMessages.VECTOR_INFO_BAD_REQUEST,
+      },
+    ]
   }
 
   // Both parameters are provided, so go ahead!
@@ -102,8 +104,8 @@ export async function get(query: any) {
     const path = query.url.searchParams.get('path')
     const layer_name = query.url.searchParams.get('layer_name')
 
-    // fetchMVTInfo function returns an array
-    await fetchMVTInfo(path, layer_name)
+    // fetch vector tiles info function returns an array
+    await fetchVectorTileInfo(path, layer_name)
       .then((response) => (data = response))
       .catch((reason) => {
         data = reason
