@@ -105,6 +105,15 @@ describe('Vector Symbol Container', () => {
     expect(classficiationMethods.length).toEqual(3)
   })
 
+  it('should display show display the color picker upon click of the color map picker button', async () => {
+    const colorMapPickerButton = sut.getByTestId('colormap-toggle-container')
+    expect(colorMapPickerButton).toBeDefined()
+
+    await fireEvent.click(colorMapPickerButton)
+    const colorMapPicker = sut.getByTestId('color-map-picker')
+    expect(colorMapPicker).toBeDefined()
+  })
+
   it('should display show the advanced panel and icon color/size rows upon click of apply to', async () => {
     const toggleIcon = sut.getByTestId('legend-toggle-container')
     await fireEvent.click(toggleIcon)
