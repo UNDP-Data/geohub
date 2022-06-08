@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import NumberInput from '$components/controls/NumberInput.svelte'
