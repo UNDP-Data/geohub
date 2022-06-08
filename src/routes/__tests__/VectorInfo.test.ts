@@ -59,9 +59,9 @@ describe('Route : Vector Info : Fetch : Fail : No Layer', () => {
       },
     })
 
-    expect(mock).toHaveFetched();
+    expect(mock).toHaveFetched()
     expect(res.body[0].code).toEqual(500)
-    expect(res.body[0].message).toEqual('We couldn\'t find a layer with that name.')
+    expect(res.body[0].message).toEqual("We couldn't find a layer with that name.")
   })
 })
 
@@ -80,6 +80,27 @@ describe('Route : Vector Info : Fetch : Success', () => {
 
     expect(mock).toHaveFetched()
     expect(res.body.length).toEqual(9)
+  })
+
+  it('should return a string property with valid object keys and object types', async () => {
+    const path = 'http://localhost/test.pbf'
+    const searchParams = new URLSearchParams(`path=${path}&layer_name=NGA_DepRationAdm2`)
+    const pbf = fs.readFileSync(`${__dirname}/0.pbf`)
+    mockGet(path).willResolve(pbf)
+    const res = await get({ url: { searchParams } })
+
+    const stringProperties = res.body.filter((item) => item.type === 'string')
+    expect(stringProperties.length).toEqual(6)
+
+    const stringProperty = stringProperties[0]
+    const propertyKeys = ['attribute', 'type', 'count', 'values'].sort()
+    expect(Object.keys(stringProperty).sort()).toEqual(propertyKeys)
+
+    expect(stringProperty.attribute).toBeTypeOf('string')
+    expect(stringProperty.type).toBeTypeOf('string')
+    expect(stringProperty.type).toEqual('string')
+    expect(stringProperty.count).toBeTypeOf('number')
+    expect(stringProperty.values).toBeTypeOf('object')
   })
 
   it('should return a number property with valid object keys and object types', async () => {
