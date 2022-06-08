@@ -112,7 +112,7 @@
   }
 </script>
 
-<div class="columns" data-testid="vector-polygon-view-container">
+<div class="columns" data-testid="polygon-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE}
       <div transition:slide>
