@@ -124,6 +124,7 @@
     "vega": "^5.22.1",
     "vega-embed": "^6.20.8",
     "vega-lite": "^5.2.0",
+    "vi-fetch": "^0.7.1",
     "vitest": "^0.14.1",
     "vitest-svelte-kit": "^0.0.6"
   },
