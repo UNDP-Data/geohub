@@ -250,7 +250,7 @@
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
-<div class="line-advanced-container">
+<div class="line-advanced-container" data-testid="line-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>

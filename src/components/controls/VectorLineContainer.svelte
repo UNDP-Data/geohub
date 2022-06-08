@@ -116,7 +116,7 @@
   }
 </script>
 
-<div class="columns" data-testid="vector-line-view-container">
+<div class="columns" data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>

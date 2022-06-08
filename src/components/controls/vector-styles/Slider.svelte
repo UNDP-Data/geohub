@@ -24,13 +24,13 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let values = [
-    style[propertyType] && style[propertyType][propertyName] ? style[propertyType][propertyName] : defaultValue,
+    style?.[propertyType] && style[propertyType][propertyName] ? style[propertyType][propertyName] : defaultValue,
   ]
 
   $: values, setValue()
 
   const setValue = () => {
-    if (style.type !== layerType) return
+    if (style?.type !== layerType) return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle[propertyType]) {
       newStyle[propertyType] = {}
@@ -49,7 +49,7 @@
   }
 </script>
 
-{#if style.type === layerType}
+{#if style?.type === layerType}
   {#if !styleControlGroupDisabled}
     <StyleControlGroup title={titleName}>
       <div class="range-slider">
