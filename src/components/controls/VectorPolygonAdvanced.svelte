@@ -213,7 +213,7 @@
   }
 </script>
 
-<div class="polygon-advanced-container">
+<div class="polygon-advanced-container" data-testid="polygon-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>
@@ -226,7 +226,8 @@
             alt="Property Options"
             title="Property Options">
             {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
+                >{propertySelectOption}</option>
             {/each}
           </select>
         </div>
@@ -243,7 +244,11 @@
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+              <option
+                class="legend-text"
+                alt="Classification Method"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
             {/each}
           </select>
         </div>
