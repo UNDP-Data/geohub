@@ -31,14 +31,15 @@ export default class IntervalList {
       return val / cdf[cdf.length - 1]
     })
 
-    const rarr = [...Array(NO_RANDOM_SAMPLING_POINTS)].map(() => this.#seed ? this.#seed : Math.random())
+    const rarr = [...Array(NO_RANDOM_SAMPLING_POINTS)].map(() => (this.#seed ? this.#seed : Math.random()))
     this.#randomSample = rarr.map((v) => {
       return this.#midBins[this.#getBinarySearchValue(ncdf, v, 0, 0)]
     })
   }
 
   #cumulativeSum(array: Array<number>) {
-    return array.map((
+    return array.map(
+      (
         (sum) => (value) =>
           (sum += value)
       )(0),
