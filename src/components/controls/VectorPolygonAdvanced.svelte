@@ -13,9 +13,7 @@
     COLOR_CLASS_COUNT_MINIMUM,
     DEFAULT_LINE_COLOR,
     LayerInitialValues,
-    VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
-  import { remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -25,7 +23,6 @@
   } from '$lib/types'
   import { map } from '$stores'
 
-  export let applyToOption: string
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
@@ -40,18 +37,12 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
-  let cssIconFilter: string
+  let defaultLineColor = DEFAULT_LINE_COLOR
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-  let sizeArray: number[]
-  // update layer store upon change of apply to option
-  $: if (applyToOption !== layer.intervals.applyToOption) {
-    layer.intervals.applyToOption = applyToOption
-    updateMap()
-  }
 
   // update color intervals upon change of color map name
   $: {
@@ -61,19 +52,18 @@
     }
   }
 
-  // Initially set the zoomLevel to the initial value
+  // update map upon change of zoom level
+  $: if (zoomLevel !== layer.zoomLevel) updateMap()
+
   onMount(() => {
+    // set the zoom level to the initial value
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
-    setCssIconFilter()
+    $map.on('zoom', () => (zoomLevel = $map.getZoom()))
+
     setPropertySelectOptions()
     setIntervalValues()
   })
-
-  const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR).rgba()
-    cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
-  }
 
   const setPropertySelectOptions = () => {
     const metadata = layer.info
@@ -203,54 +193,27 @@
   }
 
   const updateMap = () => {
-    const stops = layer.intervals.colorMapRows.map((row) => {
-      return [
-        row.start,
-        layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
-          ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
-          : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
-      ]
-    })
+    const stops = layer.intervals.colorMapRows.map((row, index) => {
+      const rgb = chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
 
-    if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR && stops.length > 0) {
-      $map.setPaintProperty(layer.definition.id, 'line-width', 1)
-      $map.setPaintProperty(layer.definition.id, 'line-color', {
-        property: layer.intervals.propertyName,
-        type: 'interval',
-        stops: stops,
-      })
-    }
-
-    if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH && stops.length > 0) {
-      // generate remapped stops based on the zoom level
-      if (zoomLevel === undefined) {
-        zoomLevel = $map.getZoom()
+      // set default line color to be middle of colors
+      if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
+        defaultLineColor = rgb
       }
 
-      const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
+      return [row.start, rgb]
+    })
 
-      sizeArray = newStops.map((item) => item[1])
-      $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
-      $map.setPaintProperty(layer.definition.id, 'line-width', {
-        property: layer.intervals.propertyName,
-        type: 'interval',
-        stops: newStops,
-      })
-    }
+    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultLineColor)
+    $map.setPaintProperty(layer.definition.id, 'fill-color', {
+      property: layer.intervals.propertyName,
+      type: 'interval',
+      stops: stops,
+    })
   }
-
-  // If zoomLevel Changes, updateMap
-  $: {
-    if (zoomLevel !== layer.zoomLevel) {
-      updateMap()
-    }
-  }
-
-  // On Zoom change the zoomLevel variable
-  $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
-<div class="line-advanced-container">
+<div class="polygon-advanced-container" data-testid="polygon-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>
@@ -263,40 +226,13 @@
             alt="Property Options"
             title="Property Options">
             {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
+                >{propertySelectOption}</option>
             {/each}
           </select>
         </div>
       </div>
     </div>
-    <div class="column">
-      <div class="has-text-centered pb-2">Apply To</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="mb-0">
-          {#each Object.values(VectorLayerLineLegendApplyToTypes) as optionApplyTo}
-            <div class="columns is-gapless mb-1">
-              <div class="column is-2">
-                <input
-                  type="radio"
-                  name="layer-type"
-                  bind:group={applyToOption}
-                  value={optionApplyTo}
-                  alt={`${optionApplyTo} Option`}
-                  title={`${optionApplyTo} Option`} />
-              </div>
-              <div class="column ml-2" style="position: relative; top: -2px;">
-                {optionApplyTo}
-              </div>
-            </div>
-          {/each}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="is-divider separator mb-4" style="margin-right: -56px;" />
-
-  <div class="columns" style="margin-right: -56px;">
     <div class="column">
       <div class="has-text-centered pb-2">Classification</div>
       <div class="is-flex is-justify-content-center">
@@ -308,13 +244,22 @@
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+              <option
+                class="legend-text"
+                alt="Classification Method"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
             {/each}
           </select>
         </div>
       </div>
     </div>
-    <div class="column">
+  </div>
+
+  <div class="is-divider separator mb-3 mt-0" />
+
+  <div class="columns" style="margin-right: -56px;">
+    <div class="column pb-0">
       <div class="has-text-centered">Number of Classes</div>
       <div class="is-flex is-justify-content-center">
         <NumberInput
@@ -327,46 +272,19 @@
   </div>
 
   <div class="columns" style="margin-right: -56px;">
-    {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
-      <div class="column size">
-        <div>
-          {#each layer.intervals.colorMapRows as colorMapRow}
-            <IntervalsLegendColorMapRow
-              bind:colorMapRow
-              {layer}
-              {colorPickerVisibleIndex}
-              on:clickColorPicker={handleColorPickerClick}
-              on:changeColorMap={handleParamsUpdate}
-              on:changeIntervalValues={handleChangeIntervalValues} />
-          {/each}
-        </div>
+    <div class="column size">
+      <div>
+        {#each layer.intervals.colorMapRows as colorMapRow}
+          <IntervalsLegendColorMapRow
+            bind:colorMapRow
+            {layer}
+            {colorPickerVisibleIndex}
+            on:clickColorPicker={handleColorPickerClick}
+            on:changeColorMap={handleParamsUpdate}
+            on:changeIntervalValues={handleChangeIntervalValues} />
+        {/each}
       </div>
-    {/if}
-
-    {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH}
-      <div class="column size">
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-          <thead>
-            <tr>
-              <th>Line</th>
-              <th>Start</th>
-              <th>End</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each layer.intervals.colorMapRows as row, index}
-              <tr>
-                <td class="has-text-centered">
-                  <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
-                </td>
-                <td>{row.start}</td>
-                <td>{row.end}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
-    {/if}
+    </div>
   </div>
 </div>
 
@@ -380,11 +298,7 @@
     user-select: none;
   }
 
-  .line-advanced-container {
-    input[type='radio'] {
-      cursor: pointer;
-    }
-
+  .polygon-advanced-container {
     .size {
       padding-left: 15px;
     }

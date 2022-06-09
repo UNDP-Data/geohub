@@ -43,7 +43,9 @@
       $map.setLayoutProperty(layerId, propertyName, values[0])
     }
 
-    dispatch('change')
+    dispatch('change', {
+      value: values[0],
+    })
   }
 </script>
 

@@ -3,9 +3,9 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
-  import { createPopperActions } from 'svelte-popperjs'
 
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
 
   export let colorMapRow: IntervalLegendColorMapRow
@@ -13,6 +13,17 @@
   export let layer: Layer
 
   const dispatch = createEventDispatcher()
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [10, 15],
+  ).init()
 
   let color: Color
   let colorMapName: string
@@ -45,12 +56,14 @@
     const g = rowColor[1]
     const b = rowColor[2]
 
+    // sometimes h is NaN, causing the colorpicker to break
+    // To curb this, force it to zero
     color = {
       r,
       g,
       b,
       hex: chroma([r, g, b]).hex('rgba'),
-      h: chroma([r, g, b]).hsv()[0],
+      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
     }
@@ -100,22 +113,6 @@
       value: parseFloat(value),
     })
   }
-
-  const [popperRef, popperContent] = createPopperActions({
-    placement: 'right-end',
-    strategy: 'fixed',
-  })
-
-  const popperOptions = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [10, 25],
-        },
-      },
-    ],
-  }
 </script>
 
 <div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">
@@ -164,6 +161,8 @@
 </div>
 
 <style lang="scss">
+  @import '../styles/popper.scss';
+
   $input-margin: 5px !important;
 
   .colormap-editor {
@@ -199,47 +198,9 @@
     -moz-appearance: textfield;
   }
 
-  $tooltip-background: #fff;
-
   #tooltip {
-    background: $tooltip-background;
-    border-radius: 7.5px;
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    font-size: 13px;
     height: 230px;
-    inset: auto auto 0px -10px !important;
-    position: relative;
+    padding: 0;
     width: 170px;
-    z-index: 100;
-
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-    }
-
-    #arrow,
-    #arrow::before {
-      background: $tooltip-background;
-      height: 18px;
-      left: -4.5px;
-      position: absolute;
-      width: 18px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #212125;
-      }
-    }
-
-    #arrow {
-      visibility: visible;
-    }
-
-    #arrow::before {
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
-      content: '';
-      transform: rotate(45deg);
-      visibility: visible;
-    }
   }
 </style>

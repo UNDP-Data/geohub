@@ -45,7 +45,7 @@
     </div>
     <Tooltip showDelay={300} hideDelay={100} yPos="above">Bring Forward in Map</Tooltip>
   </Wrapper>
-
+  <div style="width: 10px" />
   <Wrapper>
     <div class="icon-selected" on:click={() => hierachyDown(layerId)}>
       <Fa icon={faChevronDown} size="1x" />
@@ -59,5 +59,9 @@
     display: flex;
     justify-content: left;
     align-items: center;
+  }
+  :global(.icon-selected):hover {
+    background: #aaaaaa;
+    cursor: pointer;
   }
 </style>

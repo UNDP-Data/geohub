@@ -1,6 +1,5 @@
 import type { Map, SourceSpecification, FillLayerSpecification, PointLike } from 'maplibre-gl'
 import { LayerTypes } from '$lib/constants'
-import { adminStore } from '$lib/stores/admin'
 
 export default class AdminLayer {
   private BASE_URL: string
@@ -57,10 +56,11 @@ export default class AdminLayer {
 
   public getAdminLevel() {
     const zoom = this.map.getZoom()
-    if (zoom < 4) return 0
-    if (zoom < 7) return 1
-    if (zoom < 9) return 2
-    return 3
+    if (zoom < 3) return 0
+    if (zoom < 4) return 1
+    if (zoom < 5) return 2
+    if (zoom < 6) return 3
+    return 4
   }
 
   private getAdminLayer() {
@@ -83,10 +83,11 @@ export default class AdminLayer {
   private onAdminZoom({ originalEvent }) {
     if (!originalEvent) return
     const zoom = this.map.getZoom()
-    if (this.adminLevel !== 0 && zoom < 4) this.load()
-    else if (this.adminLevel !== 1 && zoom >= 4 && zoom < 7) this.load()
-    else if (this.adminLevel !== 2 && zoom >= 7 && zoom < 9) this.load()
-    else if (this.adminLevel !== 3 && zoom >= 9) this.load()
+    if (this.adminLevel !== 0 && zoom < 3) this.load()
+    else if (this.adminLevel !== 1 && zoom >= 3 && zoom < 4) this.load()
+    else if (this.adminLevel !== 2 && zoom >= 4 && zoom < 5) this.load()
+    else if (this.adminLevel !== 3 && zoom >= 5 && zoom < 6) this.load()
+    else if (this.adminLevel !== 4 && zoom >= 6) this.load()
     this.adminLevel = this.getAdminLevel()
     const point: PointLike = [originalEvent.layerX, originalEvent.layerY]
     const features = this.map.queryRenderedFeatures(point, { layers: [this.ADM_ID] })
@@ -104,7 +105,6 @@ export default class AdminLayer {
           },
           { hover: false },
         )
-        adminStore.set({})
       }
       this.hoveredStateId = e.features[0].id
       this.map.setFeatureState(
@@ -115,7 +115,6 @@ export default class AdminLayer {
         },
         { hover: this.isHover },
       )
-      adminStore.set(e.features[0].properties)
     }
   }
 
@@ -129,7 +128,6 @@ export default class AdminLayer {
         },
         { hover: false },
       )
-      adminStore.set({})
     }
     this.hoveredStateId = null
   }

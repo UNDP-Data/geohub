@@ -67,6 +67,7 @@
     border-radius: 10px;
     border: 1px solid #ccc;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    color: #4a4a4a;
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
     left: 10px;

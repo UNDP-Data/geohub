@@ -1,19 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import type { VisualizationSpec } from 'svelte-vega'
+  import { VegaLite } from 'svelte-vega'
   import Drawer, { AppContent, Content } from '@smui/drawer'
-  import { format } from 'd3-format'
-  import { map, year } from '../stores'
+  import { map, year, admin } from '../stores'
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import vegaEmbed from 'vega-embed'
-  import AdminLayer from '$lib/adminLayer'
-  import { adminStore } from '$lib/stores/admin'
+  import { loadAdmin, setInteraction, removeInteraction } from '../utils/adminLayer'
   import IntroductionPanel from './IntroductionPanel.svelte'
   import PovertyControl from './PovertyControl.svelte'
   import ElectricityControl from './ElectricityControl.svelte'
 
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
-  const AZURE_URL = import.meta.env.VITE_AZURE_URL
 
   let POVERTY_ID = 'poverty'
   const HREA_ID = 'HREA'
@@ -23,7 +21,8 @@
   const PRIMARY = '#1f77b4'
   const SECONDARY = '#ff7f0e'
   const GREY = '#808080'
-  let adminLayer: AdminLayer = null
+  const HOVER = 'Hover'
+  const CLICK = 'Click'
 
   let getHreaUrl = (y: number): string => {
     return
@@ -37,21 +36,13 @@
   let controller = new AbortController()
   let pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
   let pointBarValues = []
+  let adminDonutValue = { [HREA_ID]: 0 }
   let adminHistogram = []
   let adminHistogramAdmin = ''
-  let adminHistogramStep = 1
-
+  let pointClicked = ''
   let showIntro = true
-  $: showIntro, showIntroChanged()
-
-  const showIntroChanged = () => {
-    if (showIntro === true) return
-    adminInteraction()
-    loadHeatmap()
-  }
-
-  let electricitySelected
-  let interactChoices = ['Admin', 'Point']
+  let electricitySelected: any
+  let interactChoices = [HOVER, CLICK]
   let interactSelected = interactChoices[0]
   let drawerWidth = 355
   let isResizingDrawer = false
@@ -70,17 +61,19 @@
     }
   }
 
-  const getDonutSpec = (value, color) => ({
+  const getDonutValues = (value) => ({
+    values: [
+      { category: 1, value, percent: Math.round(value * 100) + '%' },
+      { category: 2, value: 1 - value, percent: '' },
+    ],
+  })
+
+  const getDonutSpec = (color): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     width: 120,
     height: 120,
     background: null,
-    data: {
-      values: [
-        { category: 1, value, percent: Math.round(value * 100) + '%' },
-        { category: 2, value: 1 - value, percent: '' },
-      ],
-    },
+    data: { name: 'values' },
     mark: { type: 'arc', innerRadius: 30 },
     encoding: {
       theta: { field: 'value', type: 'quantitative' },
@@ -97,18 +90,19 @@
     },
   })
 
-  const getBarSpec = (values) => ({
+  const getBarSpec = (): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 278,
+    padding: 0,
+    width: 258,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
-    data: { values },
-    mark: { type: 'bar' },
+    data: { name: 'values' },
+    mark: 'bar',
     encoding: {
       x: {
         field: 'year',
-        axis: { title: false, labelColor: GREY },
+        axis: { title: null, labelColor: GREY },
         scale: {
           domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
         },
@@ -116,10 +110,10 @@
       y: {
         field: 'value',
         type: 'quantitative',
-        axis: null,
+        axis: { title: null, labelColor: GREY, ticks: false, tickCount: 5, grid: false, format: ',.0%' },
         scale: { domain: [0, 1] },
       },
-      tooltip: { field: 'percent', type: 'qualitative' },
+      tooltip: { field: 'value', type: 'quantitative', format: ',.0%' },
       xOffset: { field: 'category' },
       color: {
         field: 'category',
@@ -132,18 +126,27 @@
     },
   })
 
-  const getAdminSpec = (values) => ({
+  const getAdminSpec = (): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 278,
+    padding: 0,
+    width: 288,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
-    data: { values },
-    mark: { type: 'bar' },
+    data: { name: 'values' },
+    layer: [
+      { mark: 'bar' },
+      {
+        mark: { type: 'text', align: 'center', baseline: 'middle', dy: -10 },
+        encoding: {
+          text: { field: 'value', type: 'quantitative', format: ',.0%' },
+        },
+      },
+    ],
     encoding: {
       x: {
         field: 'year',
-        axis: { title: false, labelColor: GREY },
+        axis: { title: null, labelColor: GREY },
         scale: {
           domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
         },
@@ -151,10 +154,9 @@
       y: {
         field: 'value',
         type: 'quantitative',
-        axis: null,
+        axis: { title: null, grid: false, ticks: false, labels: false },
         scale: { domain: [0, 1] },
       },
-      tooltip: { field: 'percent', type: 'qualitative' },
       xOffset: { field: 'category' },
       color: {
         field: 'category',
@@ -167,32 +169,13 @@
     },
   })
 
-  const getHistogramSpec = (values) => ({
-    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 278,
-    height: 120,
-    view: { stroke: 'transparent' },
-    background: null,
-    data: { values },
-    mark: { type: 'bar', color: PRIMARY },
-    encoding: {
-      x: {
-        field: 'bin1',
-        type: 'quantitative',
-        bin: { binned: true, step: adminHistogramStep },
-        axis: { title: false, labelColor: GREY, format: '.0%' },
-      },
-      x2: { field: 'bin2' },
-      y: { field: 'count', type: 'quantitative', axis: null },
-    },
-  })
-
   export function loadLayers() {
     loadRasterLayer()
-    loadHeatmap()
-    adminLayer = new AdminLayer($map, AZURE_URL)
-    adminLayer.load()
+    setInteraction()
+    adminInteraction()
+    loadAdmin(true)
   }
+
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
@@ -224,136 +207,6 @@
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
 
-  const getAdminGeoJSONUrl = (admin_props) => {
-    const lvl = adminLayer?.getAdminLevel()
-    const filtered = Object.keys(admin_props)
-      .filter((key) => key.includes(lvl) && key.endsWith('id'))
-      .reduce((obj, key) => {
-        obj['admin_id'] = admin_props[key]
-        return obj
-      }, {})
-    const { admin_id } = filtered
-    return `${AZURE_URL}/admin/adm${lvl}_polygons_geojson/${admin_id}.geojson`
-  }
-
-  const getAdminStats = async (e) => {
-    const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
-    const total = electricitySelected.name == 'HREA' ? 1 : 255
-
-    const features = $map.queryRenderedFeatures(e.point, { layers: [adminLayer.getAdminID()] })
-    if (features.length > 0) {
-      controller.abort()
-      controller = new AbortController()
-      const { type, geometry, properties } = features[0].toJSON()
-      //const geoJSON = { type, geometry, properties }
-      const adminIdUrl = getAdminGeoJSONUrl(features[0].toJSON().properties)
-      const apiUrlParams = { url: lurl, geojson_url: adminIdUrl }
-
-      const config = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        //mode: 'no-cors',
-        signal: controller.signal,
-      }
-
-      const url = `${API_URL}/geojsonstats?${new URLSearchParams(apiUrlParams).toString()}`
-      //const url = `http://localhost:8000/hrea/geojsonstats?${new URLSearchParams(apiUrlParams).toString()}`
-      // const stats = await fetchUrl(url, config)
-      // console.log(JSON.stringify(stats, null, '\t'))
-      adminHistogram = []
-      adminHistogramStep = 1
-      adminHistogramAdmin = ''
-      renderAdminCharts()
-      try {
-        const response = await fetch(url, config)
-        if (response.ok) {
-          const result = await response.json()
-          //console.log(JSON.stringify(result, null, '\t'))
-          const {
-            histogram: [values, bins],
-          } = result['1']
-          adminHistogramAdmin = [
-            properties.adm0_name,
-            properties.adm1_name,
-            properties.adm2_name,
-            properties.adm3_name,
-            properties.adm4_name,
-          ]
-            .filter(Boolean)
-            .join(', ')
-          adminHistogramStep = (bins[1] - bins[0]) / total
-          adminHistogram = values.map((x, i) => ({
-            count: x,
-            bin1: bins[i] / total,
-            bin2: bins[i + 1] / total,
-          }))
-          renderAdminCharts()
-        } else {
-          throw new Error(`Network response was ${response}`)
-        }
-      } catch (error) {
-        console.error(error.name, error.message)
-      }
-    }
-  }
-
-  const geoJSONStats = async (e) => {
-    const lurl = electricitySelected.name == 'HREA' ? getHreaUrl($year) : getMlUrl($year)
-    const total = electricitySelected.name == 'HREA' ? 1 : 255
-    const apiUrlParams = { url: lurl }
-    const features = $map.queryRenderedFeatures(e.point, { layers: [adminLayer.getAdminID()] })
-    if (features.length > 0) {
-      controller.abort()
-      controller = new AbortController()
-      const { type, geometry, properties } = features[0].toJSON()
-      const geoJSON = { type, geometry, properties }
-      const config = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(geoJSON),
-        signal: controller.signal,
-      }
-      const url = `${API_URL}/statistics?${new URLSearchParams(apiUrlParams).toString()}`
-      adminHistogram = []
-      adminHistogramStep = 1
-      adminHistogramAdmin = ''
-      renderAdminCharts()
-      try {
-        const response = await fetch(url, config)
-        if (response.ok) {
-          const result = await response.json()
-          const {
-            histogram: [values, bins],
-          } = result.properties.statistics['1']
-          adminHistogramAdmin = [
-            properties.adm0_name,
-            properties.adm1_name,
-            properties.adm2_name,
-            properties.adm3_name,
-            properties.adm4_name,
-          ]
-            .filter(Boolean)
-            .join(', ')
-          adminHistogramStep = (bins[1] - bins[0]) / total
-          adminHistogram = values.map((x, i) => ({
-            count: x,
-            bin1: bins[i] / total,
-            bin2: bins[i + 1] / total,
-          }))
-          renderAdminCharts()
-        } else {
-          throw new Error('Network response was not ok.')
-        }
-      } catch (error) {
-        console.error(error.name, error.message)
-      }
-    }
-  }
-
   const onPointClick = (e) => {
     const { lng, lat } = $map.unproject(e.point)
     const options = [
@@ -362,7 +215,7 @@
     ]
     pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
     pointBarValues = []
-    renderPointCharts()
+    pointClicked = `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`
     controller.abort()
     controller = new AbortController()
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
@@ -376,69 +229,60 @@
               if (x === $year) {
                 pointDonutValue[name] = responseValue
               }
-              pointBarValues.push({
-                category: name,
-                year: x,
-                value: responseValue,
-                percent: Math.round(responseValue * 100) + '%',
-              })
-              renderPointCharts()
+              pointBarValues = [
+                ...pointBarValues,
+                {
+                  category: name,
+                  year: x,
+                  value: responseValue,
+                },
+              ]
             })
         }
       }
     }
   }
 
-  const renderPointCharts = () => {
-    const options = { actions: false, renderer: 'svg' }
-    vegaEmbed('#point-donut-1', getDonutSpec(pointDonutValue[HREA_ID], PRIMARY), options)
-    vegaEmbed('#point-donut-2', getDonutSpec(pointDonutValue[ML_ID], SECONDARY), options)
-    vegaEmbed('#point-bar', getBarSpec(pointBarValues), options)
-  }
-
   const renderAdminCharts = () => {
-    adminHistogramAdmin = [
-      $adminStore.adm4_name,
-      $adminStore.adm3_name,
-      $adminStore.adm2_name,
-      $adminStore.adm1_name,
-      $adminStore.adm0_name,
-    ]
+    adminDonutValue = { [HREA_ID]: $admin[`hrea_${$year}`] }
+    adminHistogramAdmin = [$admin.adm4_name, $admin.adm3_name, $admin.adm2_name, $admin.adm1_name, $admin.adm0_name]
       .filter(Boolean)
       .join(', ')
-    const options = { actions: false, renderer: 'svg' }
     adminHistogram = []
     for (let i = 2020; i >= 2012; i--) {
-      adminHistogram.push({ year: i, value: $adminStore[`hrea_${i}`], category: HREA_ID })
+      adminHistogram = [...adminHistogram, { year: i, value: $admin[`hrea_${i}`], category: HREA_ID }]
     }
-    vegaEmbed('#admin-histogram', getAdminSpec(adminHistogram), options)
-    vegaEmbed('#admin-pie', getDonutSpec($adminStore[`hrea_${$year}`], PRIMARY), options)
   }
 
   const adminInteraction = () => {
-    adminLayer?.setInteraction()
+    adminDonutValue = { [HREA_ID]: 0 }
+    adminHistogram = []
+    adminHistogramAdmin = ''
+    setInteraction()
     $map.off('click', onPointClick)
     $map.on('mousemove', renderAdminCharts)
-    renderAdminCharts()
   }
 
   const pointInteraction = () => {
-    adminLayer?.removeInteraction()
+    pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
+    pointBarValues = []
+    removeInteraction()
     $map.on('click', onPointClick)
-    $map.off('mousemove', getAdminStats)
-    renderPointCharts()
+    $map.off('mousemove', renderAdminCharts)
   }
 
   $: interactSelected, loadInteraction()
   const loadInteraction = () => {
     if (!$map) return
-    if (interactSelected === 'Admin') adminInteraction()
+    if (interactSelected === HOVER) adminInteraction()
     else pointInteraction()
   }
 
   let loadHeatmap = () => {
     return
   }
+
+  let vegaOptions = { actions: false, renderer: 'svg' }
 </script>
 
 <div class="content-container">
@@ -453,49 +297,33 @@
           <IntroductionPanel bind:showIntro />
 
           {#if !showIntro}
-            <StyleControlGroup title="Layers">
+            <StyleControlGroup title="Raw Data - Electricity Access">
               <ElectricityControl bind:electricitySelected bind:loadRasterLayer bind:getHreaUrl bind:getMlUrl />
+            </StyleControlGroup>
+            <StyleControlGroup title="Overlays">
               <PovertyControl bind:loadHeatmap bind:POVERTY_ID />
             </StyleControlGroup>
-
-            <StyleControlGroup title="Statistics">
-              <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
-                <Segment {segment}>
-                  <Label>{segment}</Label>
-                </Segment>
-              </SegmentedButton>
-              {#if interactSelected === 'Admin'}
-                <br /><br />
-                <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
-                <div class="title-text">{adminHistogramAdmin}</div>
-                {#if $adminStore[`ppp_${$year}`]}
-                  <div class="title-text">
-                    <b
-                      >{format('.3s')($adminStore[`ppp_hrea_${$year}`])
-                        .replace('NaNM', 'N/A')
-                        .replace('NaNk', 'N/A')}</b>
-                    fully electrified
-                  </div>
-                  <div class="title-text">
-                    <b>{format('.3s')($adminStore[`ppp_${$year}`]).replace('G', 'B')}</b> total
-                  </div>
-                {/if}
-                <div id="admin-pie" />
-                <div id="admin-histogram" />
+            <StyleControlGroup title="Statistics - Electricity Access">
+              <div class="centered">
+                <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
+                  <Segment {segment}>
+                    <Label>{segment}</Label>
+                  </Segment>
+                </SegmentedButton>
+              </div>
+              {#if interactSelected === HOVER}
+                <br />
+                <div class="title-text">Population fully electrified:</div>
+                <div class="title-text admin-histogram">{adminHistogramAdmin}</div>
+                <br />
+                <VegaLite data={{ values: adminHistogram }} spec={getAdminSpec()} options={vegaOptions} />
               {/if}
-              {#if interactSelected === 'Point'}
-                <br /><br />
-                <div class="chart-container">
-                  <div class="chart-item">
-                    <p class="title-text">HREA - {$year}</p>
-                    <div id="point-donut-1" />
-                  </div>
-                  <div class="chart-item">
-                    <p class="title-text">ML - {$year}</p>
-                    <div id="point-donut-2" />
-                  </div>
-                </div>
-                <div id="point-bar" />
+              {#if interactSelected === CLICK}
+                <br />
+                <div class="title-text">Population fully electrified:</div>
+                <div class="title-text">{pointClicked}</div>
+                <br />
+                <VegaLite data={{ values: pointBarValues }} spec={getBarSpec()} options={vegaOptions} />
               {/if}
             </StyleControlGroup>
           {/if}
@@ -522,6 +350,27 @@
   </AppContent>
 </div>
 
+<!-- <VegaLite
+  data={getDonutValues(adminDonutValue[HREA_ID])}
+  spec={getDonutSpec(PRIMARY)}
+  options={vegaOptions} /> -->
+
+<!-- <div class="chart-container">
+  <div class="chart-item">
+    <p class="title-text">HREA - {$year}</p>
+    <VegaLite
+      data={getDonutValues(pointDonutValue[HREA_ID])}
+      spec={getDonutSpec(PRIMARY)}
+      options={vegaOptions} />
+  </div>
+  <div class="chart-item">
+    <p class="title-text">ML - {$year}</p>
+    <VegaLite
+      data={getDonutValues(pointDonutValue[ML_ID])}
+      spec={getDonutSpec(SECONDARY)}
+      options={vegaOptions} />
+  </div>
+</div> -->
 <style lang="scss">
   @import '../../styles/bulma.css';
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
@@ -620,11 +469,7 @@
     }
   }
 
-  .chart-container {
-    display: flex;
-  }
-
-  .chart-item {
-    flex-grow: 1;
+  .admin-histogram {
+    min-height: 21px;
   }
 </style>

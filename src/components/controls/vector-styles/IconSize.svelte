@@ -16,7 +16,7 @@
   let maxValue = 5
   let minValue = 0
   let stepValue = 0.25
-  let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
+  let value = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
 
   onMount(() => {
     value = layer.iconSize ? layer.iconSize : 1

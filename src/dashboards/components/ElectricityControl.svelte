@@ -5,6 +5,7 @@
   import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import TimeSlider from './TimeSlider.svelte'
+  import ElectricityLegend from './ElectricityLegend.svelte'
 
   const AZURE_URL = import.meta.env.VITE_AZURE_URL
 
@@ -32,15 +33,17 @@
   }
 </script>
 
-<p class="title-text">Electricity Access</p>
-<SegmentedButton segments={electricityChoices} let:segment singleSelect bind:selected={electricitySelected}>
-  <Segment {segment}>
-    <div class="icon">
-      <Fa icon={segment.icon} size="lg" />
-    </div>
-    <Label>{segment.name}</Label>
-  </Segment>
-</SegmentedButton>
+<div class="centered">
+  <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:selected={electricitySelected}>
+    <Segment {segment}>
+      <div class="icon">
+        <Fa icon={segment.icon} size="lg" />
+      </div>
+      <Label>{segment.name}</Label>
+    </Segment>
+  </SegmentedButton>
+  <ElectricityLegend bind:electricitySelected />
+</div>
 <div class="raster-time-slider">
   <TimeSlider
     bind:electricitySelected
@@ -52,16 +55,6 @@
 </div>
 
 <style lang="scss">
-  .title-text {
-    font-size: 14px;
-    color: rgb(1, 1, 1, 0.6);
-    font-weight: normal;
-
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
-
   .raster-time-slider {
     padding-top: 1em;
     padding-bottom: 1em;
@@ -70,5 +63,10 @@
   .icon {
     padding-left: 10px;
     padding-right: 20px;
+  }
+
+  :global(.centered) {
+    width: max-content;
+    margin: auto !important;
   }
 </style>

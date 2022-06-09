@@ -1,18 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { DEFAULT_LINE_COLOR, LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = `rgba(53, 175, 109, 1)`
+  const defaultColor = DEFAULT_LINE_COLOR
   const layerId = layer.definition.id
   const propertyName = 'line-color'
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let rgba = defaultColor
 
@@ -29,6 +27,4 @@
   }
 </script>
 
-{#if style.type === LayerTypes.LINE}
-  <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-{/if}
+<MaplibreColorPicker {rgba} on:change={handleSetColor} />

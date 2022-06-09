@@ -8,6 +8,8 @@ import type { StyleDefinition } from '$lib/types'
 
 export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_TIMEOUT_MS = 60000
+export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
+export const DEFAULT_FILL_COLOR = 'rgba(110, 110, 110, 1)'
 export const STRING_COMPARE_THRESHOLD = 0.25
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MINIMUM = 2
@@ -66,11 +68,16 @@ export const LayerInitialValues = {
   },
   expression: '',
   legendType: '',
+  iconColor: DEFAULT_LINE_COLOR,
+  fillColor: DEFAULT_FILL_COLOR,
+  fillOutlineColor: DEFAULT_LINE_COLOR,
 }
 
 export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
   FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
+  NO_LAYER_WITH_THAT_NAME = "We couldn't find a layer with that name.",
+  VECTOR_INFO_BAD_REQUEST = 'Bad request. Please verify the URL and/or parameters.',
 }
 export const LayerIconTypes = [
   {
@@ -135,6 +142,11 @@ export enum VectorLayerSymbolLegendApplyToTypes {
 }
 
 export enum VectorLayerLineLegendTypes {
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced',
+}
+
+export enum VectorLayerPolygonLegendTypes {
   SIMPLE = 'simple',
   ADVANCED = 'advanced',
 }

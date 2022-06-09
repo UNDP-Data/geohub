@@ -10,14 +10,13 @@
   import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
-  import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
-  import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
+  import VectorPolygonSimple from '$components/controls/VectorPolygonSimple.svelte'
+  import VectorPolygonAdvanced from '$components/controls/VectorPolygonAdvanced.svelte'
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
     DEFAULT_COLORMAP,
-    VectorLayerSymbolLegendTypes,
-    VectorLayerSymbolLegendApplyToTypes,
+    VectorLayerPolygonLegendTypes,
   } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
@@ -25,15 +24,13 @@
 
   export let layer: Layer
 
-  let applyToOption = layer?.intervals?.applyToOption
-    ? layer.intervals.applyToOption
-    : VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
   let layerMin: number
   let layerMax: number
   let showTooltip = false
+  let layerNumberProperties = 0
 
   // hide colormap picker if change in layer list
   $: {
@@ -57,7 +54,7 @@
 
   onMount(() => {
     // set default values
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
+    layer.legendType = layer.legendType ? layer.legendType : VectorLayerPolygonLegendTypes.SIMPLE
     layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
 
     if (layer?.intervals === undefined) {
@@ -66,9 +63,10 @@
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
         propertyName: '',
-        applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
       }
     }
+
+    layerNumberProperties = getLayerNumberProperties()
   })
 
   const handleLegendToggleClick = () => {
@@ -79,10 +77,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerSymbolLegendTypes.ADVANCED
+    if (layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE) {
+      layer.legendType = VectorLayerPolygonLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerSymbolLegendTypes.SIMPLE
+      layer.legendType = VectorLayerPolygonLegendTypes.SIMPLE
     }
   }
 
@@ -99,34 +97,49 @@
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
   }
+
+  const getLayerNumberProperties = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const vectorLayerMeta = layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    Object.keys(vectorLayerMeta.fields).forEach((key) => {
+      if (vectorLayerMeta.fields[key] !== 'Number') {
+        delete vectorLayerMeta.fields[key]
+      }
+    })
+
+    return Object.keys(vectorLayerMeta.fields).length
+  }
 </script>
 
-<div class="columns" data-testid="symbol-view-container">
-  <div class="column is-10">
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE}
+<div class="columns" data-testid="polygon-view-container">
+  <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
+    {#if layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE}
       <div transition:slide>
-        <VectorSymbolSimple bind:layer />
+        <VectorPolygonSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
+    {:else if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorSymbolAdvanced bind:layer bind:applyToOption bind:layerMin bind:layerMax />
+        <VectorPolygonAdvanced bind:layer bind:layerMin bind:layerMax />
       </div>
     {/if}
   </div>
   <div class="columm legend-toggle" transition:slide>
-    <Wrapper>
-      <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
-        <Card>
-          <PrimaryAction style="padding: 10px;">
-            <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
-          </PrimaryAction>
-        </Card>
-      </div>
-      <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
-    </Wrapper>
-    <br />
+    {#if layerNumberProperties > 0}
+      <Wrapper>
+        <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
+          <Card>
+            <PrimaryAction style="padding: 10px;">
+              <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
+            </PrimaryAction>
+          </Card>
+        </div>
+        <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
+      </Wrapper>
+      <br />
+    {/if}
 
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         class="toggle-container"
         use:popperRef
@@ -141,7 +154,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if showTooltip && layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         id="tooltip"
         data-testid="tooltip"

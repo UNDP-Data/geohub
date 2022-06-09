@@ -3,7 +3,6 @@
   import { fade } from 'svelte/transition'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import LegendSymbol from '@watergis/legend-symbol'
-  import { createPopperActions } from 'svelte-popperjs'
   import { clickOutside } from 'svelte-use-click-outside'
   import chroma from 'chroma-js'
   import { hexToCSSFilter } from 'hex-to-css-filter'
@@ -11,6 +10,7 @@
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
   import { LayerInitialValues } from '$lib/constants'
+  import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
 
@@ -20,7 +20,7 @@
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let iconImage = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+  let iconImage = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   let isIconListPanelVisible = false
   let legendSymbolContainer: HTMLElement = document.createElement('div')
 
@@ -34,6 +34,18 @@
     updateLegend()
   })
 
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [-25, -5],
+  ).init()
+
   const updateLegend = () => {
     $map.setLayoutProperty(layerId, propertyName, iconImage)
     $map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)')
@@ -41,8 +53,9 @@
     const mapLayers = $map.getStyle().layers
     const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-    const symbol = LegendSymbol({ zoom: $map.getZoom(), layer: mapLayerByLayerId })
+    const symbol = LegendSymbol && LegendSymbol({ zoom: $map.getZoom(), layer: mapLayerByLayerId })
     legendSymbolContainer.innerHTML = ''
+
     if (symbol) {
       switch (symbol.element) {
         case 'div': {
@@ -77,13 +90,13 @@
                 const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
                 const img = document.createElement('img')
                 img.src = icon.src
-                img.alt = layerId
+                img.alt = icon.alt
+                img.title = icon.alt
                 img.style.cssText = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
                 legendSymbolContainer.appendChild(img)
               }
             })
           } else {
-            console.log(2)
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
             svg.style.cssText = 'height: 20px;'
             svg.setAttributeNS(null, 'version', '1.1')
@@ -120,22 +133,6 @@
       updateLegend()
     }
   }
-
-  const [popperRef, popperContent] = createPopperActions({
-    placement: 'right-end',
-    strategy: 'fixed',
-  })
-
-  const popperOptions = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [-25, -5],
-        },
-      },
-    ],
-  }
 </script>
 
 <div class="icon-button" use:popperRef on:click={handleClosePopup}>
@@ -159,53 +156,14 @@
 {/if}
 
 <style lang="scss">
+  @import '../../../styles/popper.scss';
+
   .icon-button {
     width: 65px;
   }
 
-  $tooltip-background: #fff;
-
   #tooltip {
-    background: $tooltip-background;
-    border-radius: 7.5px;
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    font-size: 13px;
-    max-height: 460px;
     max-width: 440px;
-    padding-top: 10px;
-    padding: 15px;
-    position: absolute;
     inset: -10px auto auto 0px !important;
-    width: 460px;
-
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-    }
-
-    #arrow,
-    #arrow::before {
-      background: $tooltip-background;
-      height: 18px;
-      left: -4.5px;
-      position: absolute;
-      width: 18px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #212125;
-      }
-    }
-
-    #arrow {
-      visibility: visible;
-    }
-
-    #arrow::before {
-      border-bottom: 1px solid #ccc;
-      border-left: 1px solid #ccc;
-      content: '';
-      transform: rotate(45deg);
-      visibility: visible;
-    }
   }
 </style>

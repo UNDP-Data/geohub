@@ -49,7 +49,6 @@
   let propertySelectValue: string = null
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
-  let sizeArray: number[]
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -92,6 +91,7 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+
     Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
         delete vectorLayerMeta.fields[key]
@@ -149,7 +149,6 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const tilestats = layer?.info?.json?.tilestats
-
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
@@ -176,7 +175,7 @@
 
             // get interval list based on classification method
             if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
-              intervalList = new Jenks(values, numberOfClasses).naturalBreak()
+              intervalList = new Jenks(values, numberOfClasses).naturalBreak().map((item) => Number(item.toFixed(2)))
             } else {
               intervalList = chroma
                 .limits(
@@ -239,9 +238,24 @@
       if (zoomLevel === undefined) {
         zoomLevel = $map.getZoom()
       }
-      const newStops = stops.map((item) => [item[0], (item[1] as number) / zoomLevel])
-      sizeArray = newStops.map((item) => (item[1] as number) * 15)
-      // $map.setPaintProperty(layer.definition.id, 'icon-color', 'black')
+
+      // Ends are the
+      const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
+      const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => (item as number) / Number(intervalEnds[0]))
+
+      // Add 1 to the ratio array
+      ratioOfRadiustoTheFirstEnd.unshift(1)
+
+      if (zoomLevel === undefined) {
+        zoomLevel = $map.getZoom()
+      }
+
+      // newStops array, that takes into considerarion the ratio and the zoomLevel
+      const newStops = stops.map((item, index) => [
+        item[0],
+        (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
+      ])
+
       $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
@@ -262,7 +276,7 @@
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
-<div class="symbol-advanced-container">
+<div class="symbol-advanced-container" data-testid="symbol-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>
@@ -275,7 +289,8 @@
             alt="Property Options"
             title="Property Options">
             {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
+                >{propertySelectOption}</option>
             {/each}
           </select>
         </div>
@@ -293,8 +308,8 @@
                   name="layer-type"
                   bind:group={applyToOption}
                   value={optionApplyTo}
-                  alt={`${optionApplyTo} Option`}
-                  title={`${optionApplyTo} Option`} />
+                  alt="Apply To Option"
+                  title="Apply To Option" />
               </div>
               <div class="column ml-2" style="position: relative; top: -2px;">
                 {optionApplyTo}
@@ -320,7 +335,11 @@
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+              <option
+                class="legend-text"
+                alt="Classification Method"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
             {/each}
           </select>
         </div>
@@ -367,13 +386,14 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
-              <tr>
+              {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
+              <tr data-testid="icon-size-row-container">
                 <td class="has-text-centered">
                   {#if icon}
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      style={`width: ${sizeArray[index]}px; height: ${sizeArray[index]}px; filter: ${cssIconFilter}`} />
+                      style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
                   {/if}
                 </td>
                 <td>{row.start}</td>
