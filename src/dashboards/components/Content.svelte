@@ -21,6 +21,8 @@
   const PRIMARY = '#1f77b4'
   const SECONDARY = '#ff7f0e'
   const GREY = '#808080'
+  const HOVER = 'Hover'
+  const CLICK = 'Click'
 
   let getHreaUrl = (y: number): string => {
     return
@@ -37,18 +39,10 @@
   let adminDonutValue = { [HREA_ID]: 0 }
   let adminHistogram = []
   let adminHistogramAdmin = ''
-
+  let pointClicked = ''
   let showIntro = true
-  $: showIntro, showIntroChanged()
-
-  const showIntroChanged = () => {
-    if (showIntro === true) return
-    adminInteraction()
-    loadHeatmap()
-  }
-
   let electricitySelected: any
-  let interactChoices = ['Admin', 'Point']
+  let interactChoices = [HOVER, CLICK]
   let interactSelected = interactChoices[0]
   let drawerWidth = 355
   let isResizingDrawer = false
@@ -98,16 +92,17 @@
 
   const getBarSpec = (): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 278,
+    padding: 0,
+    width: 258,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
     data: { name: 'values' },
-    mark: { type: 'bar' },
+    mark: 'bar',
     encoding: {
       x: {
         field: 'year',
-        axis: { title: false, labelColor: GREY },
+        axis: { title: null, labelColor: GREY },
         scale: {
           domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
         },
@@ -115,10 +110,10 @@
       y: {
         field: 'value',
         type: 'quantitative',
-        axis: null,
+        axis: { title: null, labelColor: GREY, ticks: false, tickCount: 5, grid: false, format: ',.0%' },
         scale: { domain: [0, 1] },
       },
-      tooltip: { field: 'percent', type: 'qualitative' },
+      tooltip: { field: 'value', type: 'quantitative', format: ',.0%' },
       xOffset: { field: 'category' },
       color: {
         field: 'category',
@@ -133,16 +128,25 @@
 
   const getAdminSpec = (): VisualizationSpec => ({
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 278,
+    padding: 0,
+    width: 288,
     height: 120,
     view: { stroke: 'transparent' },
     background: null,
     data: { name: 'values' },
-    mark: { type: 'bar' },
+    layer: [
+      { mark: 'bar' },
+      {
+        mark: { type: 'text', align: 'center', baseline: 'middle', dy: -10 },
+        encoding: {
+          text: { field: 'value', type: 'quantitative', format: ',.0%' },
+        },
+      },
+    ],
     encoding: {
       x: {
         field: 'year',
-        axis: { title: false, labelColor: GREY },
+        axis: { title: null, labelColor: GREY },
         scale: {
           domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
         },
@@ -150,10 +154,9 @@
       y: {
         field: 'value',
         type: 'quantitative',
-        axis: null,
+        axis: { title: null, grid: false, ticks: false, labels: false },
         scale: { domain: [0, 1] },
       },
-      tooltip: { field: 'percent', type: 'qualitative' },
       xOffset: { field: 'category' },
       color: {
         field: 'category',
@@ -168,9 +171,11 @@
 
   export function loadLayers() {
     loadRasterLayer()
-    loadHeatmap()
-    loadAdmin()
+    setInteraction()
+    adminInteraction()
+    loadAdmin(true)
   }
+
   onMount(() => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
@@ -210,6 +215,7 @@
     ]
     pointDonutValue = { [HREA_ID]: 0, [ML_ID]: 0 }
     pointBarValues = []
+    pointClicked = `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`
     controller.abort()
     controller = new AbortController()
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
@@ -229,7 +235,6 @@
                   category: name,
                   year: x,
                   value: responseValue,
-                  percent: Math.round(responseValue * 100) + '%',
                 },
               ]
             })
@@ -269,7 +274,7 @@
   $: interactSelected, loadInteraction()
   const loadInteraction = () => {
     if (!$map) return
-    if (interactSelected === 'Admin') adminInteraction()
+    if (interactSelected === HOVER) adminInteraction()
     else pointInteraction()
   }
 
@@ -292,12 +297,13 @@
           <IntroductionPanel bind:showIntro />
 
           {#if !showIntro}
-            <StyleControlGroup title="Layers">
+            <StyleControlGroup title="Raw Data - Electricity Access">
               <ElectricityControl bind:electricitySelected bind:loadRasterLayer bind:getHreaUrl bind:getMlUrl />
+            </StyleControlGroup>
+            <StyleControlGroup title="Overlays">
               <PovertyControl bind:loadHeatmap bind:POVERTY_ID />
             </StyleControlGroup>
-
-            <StyleControlGroup title="Statistics">
+            <StyleControlGroup title="Statistics - Electricity Access">
               <div class="centered">
                 <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
                   <Segment {segment}>
@@ -305,35 +311,18 @@
                   </Segment>
                 </SegmentedButton>
               </div>
-              {#if interactSelected === 'Admin'}
-                <br /><br />
-                <div class="title-text">{electricitySelected?.name} Electrification - {$year}</div>
-                <div class="title-text">{adminHistogramAdmin}</div>
-                <VegaLite
-                  data={getDonutValues(adminDonutValue[HREA_ID])}
-                  spec={getDonutSpec(PRIMARY)}
-                  options={vegaOptions} />
+              {#if interactSelected === HOVER}
+                <br />
+                <div class="title-text">Population fully electrified:</div>
+                <div class="title-text admin-histogram">{adminHistogramAdmin}</div>
+                <br />
                 <VegaLite data={{ values: adminHistogram }} spec={getAdminSpec()} options={vegaOptions} />
               {/if}
-              {#if interactSelected === 'Point'}
-                <br /><br />
-                <div class="chart-container">
-                  <div class="chart-item">
-                    <p class="title-text">HREA - {$year}</p>
-                    <VegaLite
-                      data={getDonutValues(pointDonutValue[HREA_ID])}
-                      spec={getDonutSpec(PRIMARY)}
-                      options={vegaOptions} />
-                  </div>
-                  <div class="chart-item">
-                    <p class="title-text">ML - {$year}</p>
-                    <VegaLite
-                      data={getDonutValues(pointDonutValue[ML_ID])}
-                      spec={getDonutSpec(SECONDARY)}
-                      options={vegaOptions} />
-                  </div>
-                </div>
-                <div id="point-bar" />
+              {#if interactSelected === CLICK}
+                <br />
+                <div class="title-text">Population fully electrified:</div>
+                <div class="title-text">{pointClicked}</div>
+                <br />
                 <VegaLite data={{ values: pointBarValues }} spec={getBarSpec()} options={vegaOptions} />
               {/if}
             </StyleControlGroup>
@@ -361,6 +350,27 @@
   </AppContent>
 </div>
 
+<!-- <VegaLite
+  data={getDonutValues(adminDonutValue[HREA_ID])}
+  spec={getDonutSpec(PRIMARY)}
+  options={vegaOptions} /> -->
+
+<!-- <div class="chart-container">
+  <div class="chart-item">
+    <p class="title-text">HREA - {$year}</p>
+    <VegaLite
+      data={getDonutValues(pointDonutValue[HREA_ID])}
+      spec={getDonutSpec(PRIMARY)}
+      options={vegaOptions} />
+  </div>
+  <div class="chart-item">
+    <p class="title-text">ML - {$year}</p>
+    <VegaLite
+      data={getDonutValues(pointDonutValue[ML_ID])}
+      spec={getDonutSpec(SECONDARY)}
+      options={vegaOptions} />
+  </div>
+</div> -->
 <style lang="scss">
   @import '../../styles/bulma.css';
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
@@ -457,6 +467,10 @@
     @media (prefers-color-scheme: dark) {
       color: white;
     }
+  }
+
+  .admin-histogram {
+    min-height: 21px;
   }
 
   .chart-container {

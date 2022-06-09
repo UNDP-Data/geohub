@@ -14,7 +14,7 @@
   import type { Layer, Sprite } from '$lib/types'
   import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
 
-  const AZURE_URL = import.meta.env.VITE_AZURE_URL
+  const AZURE_URL = import.meta.env.VITE_ADMIN_URL
 
   let adminLayer: AdminLayer = null
   let container: HTMLDivElement

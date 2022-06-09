@@ -33,7 +33,6 @@
   }
 </script>
 
-<p class="title-text">Electricity Access</p>
 <div class="centered">
   <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:selected={electricitySelected}>
     <Segment {segment}>
