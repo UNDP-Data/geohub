@@ -11,7 +11,7 @@ describe('IntervalList', () => {
     const randomSample = intervalList.getRandomSample()
 
     expect(randomSample).toHaveLength(1000)
-    expect(randomSample.filter(val => val === 102.85)).toHaveLength(1000)
+    expect(randomSample.filter((val) => val === 102.85)).toHaveLength(1000)
   })
 
   it('should return an interval list', () => {
