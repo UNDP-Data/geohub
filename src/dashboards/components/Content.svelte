@@ -472,12 +472,4 @@
   .admin-histogram {
     min-height: 21px;
   }
-
-  .chart-container {
-    display: flex;
-  }
-
-  .chart-item {
-    flex-grow: 1;
-  }
 </style>

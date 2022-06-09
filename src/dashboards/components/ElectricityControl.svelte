@@ -55,16 +55,6 @@
 </div>
 
 <style lang="scss">
-  .title-text {
-    font-size: 14px;
-    color: rgb(1, 1, 1, 0.6);
-    font-weight: normal;
-
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
-
   .raster-time-slider {
     padding-top: 1em;
     padding-bottom: 1em;
