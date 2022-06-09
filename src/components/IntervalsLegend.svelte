@@ -242,9 +242,9 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
-
-    const bins: number[] = info.stats['1'].histogram[1]
-    const counts: number[] = info.stats['1'].histogram[0]
+    const band = Object.keys(info.stats)[0]
+    const bins: number[] = info.stats[band].histogram[1]
+    const counts: number[] = info.stats[band].histogram[0]
 
     let mid_bins: number[] = []
     for (let i = 0; i < bins.length - 1; i++) {
