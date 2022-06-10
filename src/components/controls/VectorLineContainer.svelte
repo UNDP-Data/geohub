@@ -7,7 +7,6 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { cloneDeep } from 'lodash-es'
-  import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import VectorLineSimple from '$components/controls/VectorLineSimple.svelte'
@@ -116,7 +115,7 @@
   }
 </script>
 
-<div class="columns" data-testid="vector-line-view-container">
+<div class="columns" data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>
@@ -159,12 +158,7 @@
     {/if}
 
     {#if showTooltip && layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
-      <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        use:clickOutside={handleClosePopup}
-        transition:fade>
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}

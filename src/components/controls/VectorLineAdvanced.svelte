@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import { Jenks } from '$lib/jenks'
   import { debounce } from 'lodash-es'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
@@ -23,6 +22,7 @@
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
+  import IntervalListHelper from '$lib/intervalList'
   import { map } from '$stores'
 
   export let applyToOption: string
@@ -136,7 +136,6 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const tilestats = layer?.info?.json?.tilestats
-
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
@@ -146,57 +145,46 @@
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
           (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
+        const stats = layer.info.stats as VectorLayerTileStatAttribute[]
+        const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
 
-        if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
-          let values = tileStatLayerAttribute.values
-
-          if (values.length > 0) {
-            // add log classification method if min value greater than zero
-            if (Math.min.apply(null, values) > 0) {
-              classificationMethods = [
-                ...classificationMethods,
-                ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-              ]
-            }
-
-            let intervalList = []
-
-            // get interval list based on classification method
-            if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
-              intervalList = new Jenks(values, numberOfClasses).naturalBreak()
-            } else {
-              intervalList = chroma
-                .limits(
-                  [Math.min.apply(null, values), Math.max.apply(null, values)],
-                  classificationMethod,
-                  numberOfClasses,
-                )
-                .map((element) => {
-                  return Number(element.toFixed(2))
-                })
-            }
-
-            const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
-            const propertySelectValues = []
-
-            // create interval list (start / end)
-            for (let i = 0; i < intervalList.length - 1; i++) {
-              const row: IntervalLegendColorMapRow = {
-                index: i,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore:next-line
-                color: [...scaleColorList(intervalList[i]).rgb(), 255],
-                start: intervalList[i],
-                end: intervalList[i + 1],
-              }
-              propertySelectValues.push(row)
-            }
-            layerMax = Math.max.apply(null, values)
-            layerMin = Math.min.apply(null, values)
-            layer.intervals.colorMapRows = propertySelectValues
-
-            updateMap()
+        if (stat) {
+          if (stat.min > 0) {
+            classificationMethods = [
+              ...classificationMethods,
+              ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+            ]
           }
+
+          const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
+          const randomSample = intervalListHelper.getRandomSample()
+          const intervalList = intervalListHelper.getIntervalList(
+            classificationMethod,
+            stat.min,
+            stat.max,
+            randomSample,
+            numberOfClasses,
+          )
+          const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+          const propertySelectValues = []
+
+          // create interval list (start / end)
+          for (let i = 0; i < intervalList.length - 1; i++) {
+            const row: IntervalLegendColorMapRow = {
+              index: i,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore:next-line
+              color: [...scaleColorList(intervalList[i]).rgb(), 255],
+              start: intervalList[i],
+              end: intervalList[i + 1],
+            }
+            propertySelectValues.push(row)
+          }
+          layerMax = stat.max
+          layerMin = stat.min
+          layer.intervals.colorMapRows = propertySelectValues
+
+          updateMap()
         }
       }
     }
@@ -250,7 +238,7 @@
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 </script>
 
-<div class="line-advanced-container">
+<div class="line-advanced-container" data-testid="line-advanced-container">
   <div class="columns">
     <div class="column">
       <div class="has-text-centered pb-2">Property</div>
@@ -263,7 +251,8 @@
             alt="Property Options"
             title="Property Options">
             {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+              <option alt="Property Option" title="Property Option" class="legend-text" value={propertySelectOption}
+                >{propertySelectOption}</option>
             {/each}
           </select>
         </div>
@@ -281,8 +270,8 @@
                   name="layer-type"
                   bind:group={applyToOption}
                   value={optionApplyTo}
-                  alt={`${optionApplyTo} Option`}
-                  title={`${optionApplyTo} Option`} />
+                  alt="Apply To Option"
+                  title="Apply To Option" />
               </div>
               <div class="column ml-2" style="position: relative; top: -2px;">
                 {optionApplyTo}
@@ -308,7 +297,11 @@
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+              <option
+                class="legend-text"
+                alt="Classification Method"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
             {/each}
           </select>
         </div>
@@ -355,7 +348,7 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
-              <tr>
+              <tr data-testid="line-width-row-container">
                 <td class="has-text-centered">
                   <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
                 </td>

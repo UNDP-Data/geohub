@@ -8,9 +8,9 @@
   import { map } from '../stores'
   import type { HeatmapLayerSpecification, VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import RangeSlider from 'svelte-range-slider-pips'
-  import PovertyLegend1 from './PovertyLegend1.svelte'
-  import PovertyLegend2 from './PovertyLegend2.svelte'
-  import { loadAdmin, setInteraction, removeInteraction } from '../utils/adminLayer'
+  import OverlayLegend1 from './OverlayLegend1.svelte'
+  import OverlayLegend2 from './OverlayLegend2.svelte'
+  import { loadAdmin, setOpacity, getChoropleth } from '../utils/adminLayer'
 
   const AZURE_URL = import.meta.env.VITE_ADMIN_URL
   const POVERTY_URL = [`${AZURE_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`]
@@ -26,7 +26,7 @@
   ]
   export let overlaySelected = overlayChoices[0]
 
-  let layerOpacity = 1
+  let layerOpacity = 0.8
   let rangeSliderValues = [layerOpacity * 100]
   $: layerOpacity = rangeSliderValues[0] / 100
   $: layerOpacity, setLayerOpacity()
@@ -38,28 +38,26 @@
     }
     if ($map && $map.getLayer('admin')) {
       $map.setPaintProperty('admin', 'fill-opacity', layerOpacity)
+      setOpacity(layerOpacity)
     }
   }
 
   const loadLayer = () => {
     $map.getLayer(OVERLAY_ID) && $map.removeLayer(OVERLAY_ID)
     $map.getSource(OVERLAY_ID) && $map.removeSource(OVERLAY_ID)
-    if (overlaySelected.name === ADMIN_ID) {
-      setInteraction()
+    if (overlaySelected.name === ADMIN_ID && !getChoropleth()) {
       loadAdmin(true)
       setLayerOpacity()
     } else if (overlaySelected.name === POVERTY_ID) {
       loadAdmin(false)
-      removeInteraction()
-      initHeatmap()
+      loadPoverty()
       setLayerOpacity()
-    } else {
+    } else if (overlaySelected.name === NONE_ID) {
       loadAdmin(false)
-      removeInteraction()
     }
   }
 
-  const initHeatmap = () => {
+  const loadPoverty = () => {
     if (!$map.getSource(OVERLAY_ID)) {
       const layerSource: VectorSourceSpecification = {
         type: 'vector',
@@ -83,18 +81,6 @@
       }
       $map.addLayer(layerDefinition)
     }
-  }
-
-  const moveOverlay = () => {
-    if (!$map) return
-    let firstSymbolId = undefined
-    for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol') {
-        firstSymbolId = layer.id
-        break
-      }
-    }
-    $map.moveLayer(OVERLAY_ID, firstSymbolId)
   }
 </script>
 
@@ -129,8 +115,8 @@
     </div>
   </div>
 {/if}
-{#if overlaySelected.name === ADMIN_ID}<PovertyLegend1 />{/if}
-{#if overlaySelected.name === POVERTY_ID}<PovertyLegend2 />{/if}
+{#if overlaySelected.name === ADMIN_ID}<OverlayLegend1 />{/if}
+{#if overlaySelected.name === POVERTY_ID}<OverlayLegend2 />{/if}
 
 <br />
 

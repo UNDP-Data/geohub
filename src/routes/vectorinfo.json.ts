@@ -5,12 +5,13 @@ import { ErrorMessages } from '$lib/constants'
 
 const propsObj = {}
 
-let attributesArray = []
 let pbf: Pbf
 let tile: VectorTile
 
 // fetch vector tiles info from
 const fetchVectorTileInfo = async (path: string, layerName: string) => {
+  let attributesArray = []
+
   await fetch(`${path}`)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

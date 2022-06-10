@@ -14,7 +14,8 @@
   import Autocomplete from '@smui-extra/autocomplete'
 
   import { LayerTypes } from '$lib/constants'
-  import type { TreeNode } from '$lib/types'
+  import { fetchUrl } from '$lib/helper'
+  import type { TreeNode, VectorLayerTileStatAttribute } from '$lib/types'
   import { map, layerList, modalVisible } from '$stores'
 
   export let isModalVisible = false
@@ -186,6 +187,11 @@
     )
 
     const layerName = treeNode.path.split('/')[treeNode.path.split('/').length - 2]
+
+    // set vector info stats (number properties)
+    const stats = await getVectorInfo(treeNode.url, layerDefinition, layerName)
+    if (stats) treeNode.metadata.stats = stats
+
     $layerList = [
       {
         name: layerName,
@@ -215,6 +221,21 @@
     })
 
     handleCancel()
+  }
+
+  const getVectorInfo = async (
+    treeNodeUrl: string,
+    layerDefinition:
+      | LineLayerSpecification
+      | FillLayerSpecification
+      | SymbolLayerSpecification
+      | HeatmapLayerSpecification,
+    layerName: string,
+  ) => {
+    const url = new URL(treeNodeUrl)
+    const path = `${url.origin}/${layerDefinition.source}0/0/0.pbf`
+    const data = await fetchUrl(`vectorinfo.json?path=${path}&layer_name=${layerName}`)
+    return data.filter((val: VectorLayerTileStatAttribute) => val.type === 'number')
   }
 
   const handleCancel = () => {
