@@ -1,20 +1,21 @@
-// Imports
 import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
-import { ErrorMessages } from '../lib/constants'
+import { ErrorMessages } from '$lib/constants'
 
-// variables
+const propsObj = {}
+
 let pbf: Pbf
 let tile: VectorTile
-const propsObj = {}
-let attributesArray: any[] = []
-let data: any[]
 
 // fetch vector tiles info from
 const fetchVectorTileInfo = async (path: string, layerName: string) => {
+  let attributesArray = []
+
   await fetch(`${path}`)
-    .then((response) => response.arrayBuffer())
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    .then((response) => (response?.path ? response.json() : response.arrayBuffer()))
     .then((arrayBuffer) => (pbf = new Pbf(arrayBuffer)))
     .catch((error) => (attributesArray = error))
 
@@ -89,28 +90,29 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
 }
 
 export async function get(query: any) {
-  // If either of `path` or `layer_name` parameter is not provided. This is a bad request.
-  if (!query.url.searchParams.has('path') || !query.url.searchParams.has('layer_name')) {
-    data = [
-      {
-        code: '400',
-        message: ErrorMessages.VECTOR_INFO_BAD_REQUEST,
-      },
-    ]
+  if (
+    Object.keys(query).length === 0 ||
+    query.url === undefined ||
+    query.url.searchParams === undefined ||
+    !query.url.searchParams.has('path') ||
+    !query.url.searchParams.has('layer_name')
+  ) {
+    return {
+      code: 400,
+      message: ErrorMessages.VECTOR_INFO_BAD_REQUEST,
+    }
   }
 
-  // Both parameters are provided, so go ahead!
-  if (query.url.searchParams.has('path') && query.url.searchParams.has('layername')) {
-    const path = query.url.searchParams.get('path')
-    const layer_name = query.url.searchParams.get('layername')
+  const path = query.url.searchParams.get('path')
+  const layer_name = query.url.searchParams.get('layer_name')
+  let response = []
 
-    // fetch vector tiles info function returns an array
-    await fetchVectorTileInfo(path, layer_name)
-      .then((response) => (data = response))
-      .catch((reason) => {
-        data = reason
-      })
-  }
+  // fetch vector tiles values
+  await fetchVectorTileInfo(path, layer_name)
+    .then((res) => (response = res))
+    .catch((reason) => {
+      response = reason
+    })
 
-  return { body: data } // Returns an array of items
+  return { body: response }
 }

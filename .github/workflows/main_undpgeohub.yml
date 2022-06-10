@@ -39,6 +39,7 @@ jobs:
           envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
           envkey_VITE_AZURE_BLOB_TOKEN: ${{ secrets.VITE_AZURE_BLOB_TOKEN }}
           envkey_VITE_AZURE_URL: ${{ secrets.VITE_AZURE_URL }}
+          envkey_VITE_ADMIN_URL: ${{ secrets.VITE_ADMIN_URL }}
 
       # install dependencies
       - name: Install dependencies

@@ -19,6 +19,7 @@ const config = {
       },
       optimizeDeps: {
         include: ['fast-deep-equal', 'clone', 'semver', 'json-stringify-pretty-compact', 'fast-json-stable-stringify'],
+        exclude: ['path'],
       },
       test: {
         threads: false,
