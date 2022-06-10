@@ -67,7 +67,7 @@ describe('Vector Symbol Container', () => {
     expect(classficiationMethods.length).toEqual(3)
   })
 
-  it('should display show display the color picker upon click of the color map picker button', async () => {
+  it('should show the color picker upon click of the color map picker button', async () => {
     const colorMapPickerButton = sut.getByTestId('colormap-toggle-container')
     expect(colorMapPickerButton).toBeDefined()
 
