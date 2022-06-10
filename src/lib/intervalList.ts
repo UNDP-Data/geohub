@@ -1,6 +1,7 @@
 import chroma from 'chroma-js'
 import { ClassificationMethodTypes, NO_RANDOM_SAMPLING_POINTS } from '$lib/constants'
 import { Jenks } from '$lib/jenks'
+import { remapInputValue } from './helper'
 
 export default class IntervalList {
   #bins: number[] = []
@@ -210,6 +211,23 @@ export default class IntervalList {
       intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses).naturalBreak().map((element) => {
         return Number(element.toFixed(2))
       })
+    } else if ((classificationMethod === ClassificationMethodTypes.LOGARITHMIC && layerMin < 1) || layerMax < 1) {
+      // if(1 - layerMin > layerMax - 1){
+      //
+      //   console.log(randomSample)
+      // }
+      const range = layerMax - layerMin
+      const positive = [layerMin, ...randomSample, layerMax].map((v) => {
+        return remapInputValue(v, layerMin, layerMax, 1, 1 + range)
+      })
+      intervalList = chroma
+        .limits(positive, classificationMethod, numberOfClasses)
+        .map((v) => {
+          return remapInputValue(v, 1, 1 + range, layerMin, layerMax)
+        })
+        .map((element) => {
+          return Number(element.toFixed(2))
+        })
     } else {
       intervalList = chroma
         .limits([layerMin, ...randomSample, layerMax], classificationMethod, numberOfClasses)
