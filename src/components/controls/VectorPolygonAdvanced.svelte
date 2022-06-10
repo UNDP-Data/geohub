@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import { Jenks } from '$lib/jenks'
   import { debounce } from 'lodash-es'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
@@ -21,6 +20,7 @@
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
+  import IntervalListHelper from '$lib/intervalList'
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
@@ -126,7 +126,6 @@
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const tilestats = layer?.info?.json?.tilestats
-
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
@@ -136,57 +135,46 @@
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
           (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
+        const stats = layer.info.stats as VectorLayerTileStatAttribute[]
+        const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
 
-        if (tileStatLayerAttribute && tileStatLayerAttribute.type === 'number') {
-          const values = tileStatLayerAttribute.values
-
-          if (values.length > 0) {
-            // add log classification method if min value greater than zero
-            if (Math.min.apply(null, values) > 0) {
-              classificationMethods = [
-                ...classificationMethods,
-                ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-              ]
-            }
-
-            let intervalList = []
-
-            // get interval list based on classification method
-            if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
-              intervalList = new Jenks(values, numberOfClasses).naturalBreak()
-            } else {
-              intervalList = chroma
-                .limits(
-                  [Math.min.apply(null, values), Math.max.apply(null, values)],
-                  classificationMethod,
-                  numberOfClasses,
-                )
-                .map((element) => {
-                  return Number(element.toFixed(2))
-                })
-            }
-
-            const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
-            const propertySelectValues = []
-
-            // create interval list (start / end)
-            for (let i = 0; i < intervalList.length - 1; i++) {
-              const row: IntervalLegendColorMapRow = {
-                index: i,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore:next-line
-                color: [...scaleColorList(intervalList[i]).rgb(), 255],
-                start: intervalList[i],
-                end: intervalList[i + 1],
-              }
-              propertySelectValues.push(row)
-            }
-            layerMax = Math.max.apply(null, values)
-            layerMin = Math.min.apply(null, values)
-            layer.intervals.colorMapRows = propertySelectValues
-
-            updateMap()
+        if (stat) {
+          if (stat.min > 0) {
+            classificationMethods = [
+              ...classificationMethods,
+              ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+            ]
           }
+
+          const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
+          const randomSample = intervalListHelper.getRandomSample()
+          const intervalList = intervalListHelper.getIntervalList(
+            classificationMethod,
+            stat.min,
+            stat.max,
+            randomSample,
+            numberOfClasses,
+          )
+          const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+          const propertySelectValues = []
+
+          // create interval list (start / end)
+          for (let i = 0; i < intervalList.length - 1; i++) {
+            const row: IntervalLegendColorMapRow = {
+              index: i,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore:next-line
+              color: [...scaleColorList(intervalList[i]).rgb(), 255],
+              start: intervalList[i],
+              end: intervalList[i + 1],
+            }
+            propertySelectValues.push(row)
+          }
+          layerMax = stat.max
+          layerMin = stat.min
+          layer.intervals.colorMapRows = propertySelectValues
+
+          updateMap()
         }
       }
     }

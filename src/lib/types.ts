@@ -60,10 +60,6 @@ export interface Layer {
   zoomLevel?: number
 }
 
-export interface RasterLayerStats {
-  [band_no: string]: BandStatistics
-}
-
 export interface BandStatistics {
   min: number
   max: number
@@ -136,6 +132,10 @@ export interface RasterTileMetadata {
   stats?: RasterLayerStats
 }
 
+export interface RasterLayerStats {
+  [band_no: string]: BandStatistics
+}
+
 export interface VectorLayerMetadata {
   id: string
   fields: {
@@ -167,6 +167,7 @@ export interface VectorTileMetadata {
   }
   band_metadata?: string[]
   nodata_value?: number
+  stats?: VectorLayerTileStatAttribute[]
 }
 
 export interface VectorLayerTileStatLayer {
@@ -182,6 +183,12 @@ export interface VectorLayerTileStatAttribute {
   count: number
   type: string
   values: string[] | number[]
+  min?: number
+  max?: number
+  histogram?: {
+    bins: number[]
+    count: number[]
+  }
 }
 
 export interface LayerInfoMetadata {
