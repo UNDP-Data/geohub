@@ -7,7 +7,6 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { cloneDeep } from 'lodash-es'
-  import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
@@ -56,7 +55,6 @@
   ).init()
 
   onMount(() => {
-    // set default values
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
     layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
 
@@ -142,12 +140,7 @@
     {/if}
 
     {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
-      <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        use:clickOutside={handleClosePopup}
-        transition:fade>
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
