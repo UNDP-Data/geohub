@@ -2,7 +2,7 @@
   import Button from '@smui/button'
   import Paper from '@smui/paper'
 
-  export let showIntro = true
+  export let showIntro: boolean
   const hideIntro = () => {
     showIntro = false
   }
