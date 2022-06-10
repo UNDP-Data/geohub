@@ -251,7 +251,8 @@
             alt="Property Options"
             title="Property Options">
             {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" value={propertySelectOption}>{propertySelectOption}</option>
+              <option alt="Property Option" title="Property Option" class="legend-text" value={propertySelectOption}
+                >{propertySelectOption}</option>
             {/each}
           </select>
         </div>
@@ -269,8 +270,8 @@
                   name="layer-type"
                   bind:group={applyToOption}
                   value={optionApplyTo}
-                  alt={`${optionApplyTo} Option`}
-                  title={`${optionApplyTo} Option`} />
+                  alt="Apply To Option"
+                  title="Apply To Option" />
               </div>
               <div class="column ml-2" style="position: relative; top: -2px;">
                 {optionApplyTo}
@@ -296,7 +297,11 @@
             alt="Classification Methods"
             title="Classification Methods">
             {#each classificationMethods as classificationMethod}
-              <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+              <option
+                class="legend-text"
+                alt="Classification Method"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
             {/each}
           </select>
         </div>
@@ -343,7 +348,7 @@
           </thead>
           <tbody>
             {#each layer.intervals.colorMapRows as row, index}
-              <tr>
+              <tr data-testid="line-width-row-container">
                 <td class="has-text-centered">
                   <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
                 </td>

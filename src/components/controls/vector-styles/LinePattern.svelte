@@ -46,9 +46,9 @@
           type="radio"
           bind:group={lineType}
           checked={true}
-          value={type.title}
-          alt={`${type.title} Option`}
-          title={`${type.title} Option`} />
+          alt="Line Option"
+          title="Line Option"
+          value={type.title} />
       </div>
       <div class="column" style="position: relative; top: -2px; left: 5px;">
         {type.title}
