@@ -1,5 +1,12 @@
 import { describe, beforeEach, expect, it } from 'vitest'
-import { cleanup, render, fireEvent, within, type RenderResult } from '@testing-library/svelte'
+import {
+  cleanup,
+  render,
+  fireEvent,
+  waitForElementToBeRemoved,
+  within,
+  type RenderResult,
+} from '@testing-library/svelte'
 
 import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
 import { ClassificationMethodTypes, COLOR_CLASS_COUNT, DEFAULT_COLORMAP } from '$lib/constants'
@@ -84,5 +91,22 @@ describe('Raster Legend Container', () => {
     // show continuous legend type
     await fireEvent.click(toggleIcon)
     expect(within(viewContainer).getByTestId('continous-view-container')).toBeDefined()
+  })
+
+  it('should show / hide the color picker upon click of the color map picker button', async () => {
+    const colorMapPickerButton = sut.getByTestId('colormap-toggle-container')
+    expect(colorMapPickerButton).toBeDefined()
+
+    // show color map picker
+    await fireEvent.click(colorMapPickerButton)
+    const colorMapPicker = sut.getByTestId('color-map-picker')
+    expect(colorMapPicker).toBeDefined()
+
+    // hide color map picker
+    await fireEvent.click(colorMapPickerButton)
+
+    waitForElementToBeRemoved(colorMapPicker, {
+      timeout: 1000,
+    }).then(() => expect(sut.queryByTestId('color-map-picker')).toBeNull())
   })
 })
