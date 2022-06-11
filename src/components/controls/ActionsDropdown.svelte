@@ -6,7 +6,6 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import type { LngLatBoundsLike } from 'maplibre-gl'
-  import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import { fade } from 'svelte/transition'
   import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
@@ -126,9 +125,7 @@
     </div>
 
     <div>
-      <Tag type="is-info" size="is-small">
-        {mapLayerIndex} / {mapLayerLength}
-      </Tag>
+      <span class="tag is-info is-small">{mapLayerIndex} / {mapLayerLength}</span>
     </div>
     <div style="padding-left: 5px;">
       <LayerOrderButtons {layer} bind:mapLayerIndex />

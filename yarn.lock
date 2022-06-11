@@ -111,12 +111,12 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@daybrush/utils@1.6.0", "@daybrush/utils@^1.0.0", "@daybrush/utils@^1.1.1", "@daybrush/utils@^1.3.1", "@daybrush/utils@^1.4.0":
+"@daybrush/utils@1.6.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@daybrush/utils/-/utils-1.6.0.tgz#0dfd2c360764f63380df4ec0d44e176c69f7bbc3"
   integrity sha512-9MjMoOLl1U+l8lXByN3BbLZXf+mktoLyeb6t78Jz2WZ7LRldK0FNg8oW//9giO2hHCUyxS7LX6jS1hToGIfRWA==
 
-"@daybrush/utils@^1.7.0":
+"@daybrush/utils@^1.0.0", "@daybrush/utils@^1.1.1", "@daybrush/utils@^1.3.1", "@daybrush/utils@^1.4.0", "@daybrush/utils@^1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@daybrush/utils/-/utils-1.7.0.tgz#b256b91c78b6b9f4d7e22a02f3f5de01c8272a1d"
   integrity sha512-52QInHXL1tffnEIxURWav7ZoIdhiK6ioQr2tzitZr8Uul0g3X58jdyDG7UeqCAFnbH4bZUp0QSznPSX8fHdZZQ==
@@ -893,7 +893,7 @@
   resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.1.0.tgz#563539048255bbe1a5f4f586a4a10a1bb737f44a"
   integrity sha512-hf+3bwuBwtXsugA2ULBc95qxrOqP2pOekLz34BJhcAKawt94vfeNyUKpYc0lZQ/3sCP6LqRa7UAdHA7i5UODzQ==
 
-"@popperjs/core@^2.11.5", "@popperjs/core@^2.9.0":
+"@popperjs/core@^2.11.5":
   version "2.11.5"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.5.tgz#db5a11bf66bdab39569719555b0f76e138d7bd64"
   integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
@@ -1446,11 +1446,6 @@
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@types/colormap/-/colormap-2.3.1.tgz#2b1d63f58ba541b81b99ad0b743cece7c0ff5f67"
   integrity sha512-GCPa0VCih4kp/TPPkjdjgUG19yCOPbpP9UpjEYTxUnIhaNqMrhlL9wSAyxm0cRfSubT3KUETZ+8vXYn6fmq0OQ==
-
-"@types/d3-format@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-3.0.1.tgz#194f1317a499edd7e58766f96735bdc0216bb89d"
-  integrity sha512-5KY70ifCCzorkLuIkDe0Z9YTf9RR2CjBX1iaJG+rgM/cPP+sO+q9YdQ9WdhQcgPj1EQiJ2/0+yUkkziTG6Lubg==
 
 "@types/estree@0.0.39":
   version "0.0.39"
@@ -3121,10 +3116,10 @@ geojson@^0.5.0:
   resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
   integrity sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==
 
-gesto@^1.7.0:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/gesto/-/gesto-1.8.1.tgz#8a6481235dc0c1ad3f70e759fff937a53264fd70"
-  integrity sha512-FwZ3e4C9cJ3DN1PgeOf9tFQIYzBk5RzavtT2bDzGG51Wbp6+JEGzX4A8VqbgkHVTBlJGaRLdsNKRnH0fIVFsmA==
+gesto@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/gesto/-/gesto-1.9.0.tgz#2500d529a8ac78eec1b2ae79e4be14e7b0f99728"
+  integrity sha512-WxzswA0zAHK+hM5WyR8G6PdIMt2d/TEY1lFfkfhC8YHHLO5pM5k8AyGu8lhwyBnrPntomWgLy3xl+iBzLHelew==
   dependencies:
     "@daybrush/utils" "^1.0.0"
     "@scena/event-emitter" "^1.0.2"
@@ -3820,14 +3815,14 @@ mkdirp@^1.0.3:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-moveable@~0.29.9:
-  version "0.29.9"
-  resolved "https://registry.yarnpkg.com/moveable/-/moveable-0.29.9.tgz#7765b5189b256a408392c83a4aadf34e50356878"
-  integrity sha512-JoZRxVV81rxAaShx/3NloQu4+0AnxFNplH/v38gfO9pKTJc7b1QFqkyuqqA7oOSSTUxktRxUtka9VA88BCcEwA==
+moveable@~0.30.0:
+  version "0.30.0"
+  resolved "https://registry.yarnpkg.com/moveable/-/moveable-0.30.0.tgz#09e6bed4ebaa9a89bf4d1678005b2640d1886837"
+  integrity sha512-WkIccP2vs7oi7Vtf7c8xmduyF7Kb6+lkJwxSOp+Yx3gFFHUdVTQDO8UhJWwuIrlX5eLymk99bIRi+RPttAK2Yg==
   dependencies:
     "@scena/event-emitter" "^1.0.5"
-    react-compat-moveable "~0.17.9"
-    react-moveable "~0.32.9"
+    react-compat-moveable "~0.18.0"
+    react-moveable "~0.33.0"
     react-simple-compat "^1.2.2"
 
 mri@^1.1.0:
@@ -4138,10 +4133,10 @@ react-compat-css-styled@^1.0.8:
     framework-utils "^1.1.0"
     react-css-styled "^1.0.3"
 
-react-compat-moveable@~0.17.9:
-  version "0.17.9"
-  resolved "https://registry.yarnpkg.com/react-compat-moveable/-/react-compat-moveable-0.17.9.tgz#e2befd3f5612e671c418ff3b9912324e26a514c0"
-  integrity sha512-LS9U1K3eCg7aaj+1tvsoriKpL5M2lbg8fyZfGX3knph6I1liw1k4DrrcAljLy6HAhnyY6EUoUjJ21fDgu51PUA==
+react-compat-moveable@~0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/react-compat-moveable/-/react-compat-moveable-0.18.0.tgz#2a16ff00ec1c50add093c04c27a31690ccf060de"
+  integrity sha512-ACEFE/GKtyqzJBSQ1cosZtD6cD2uuwFBsyNF/zIeM/JvF4zGae3cUUVchOpfHBjPBnjqiHjKMAaucMXPOTDosQ==
   dependencies:
     "@daybrush/utils" "^1.7.0"
     "@egjs/agent" "^2.2.1"
@@ -4150,11 +4145,11 @@ react-compat-moveable@~0.17.9:
     "@scena/matrix" "^1.1.1"
     css-to-mat "^1.0.3"
     framework-utils "^1.1.0"
-    gesto "^1.7.0"
+    gesto "^1.9.0"
     overlap-area "^1.0.0"
     react-compat-css-styled "^1.0.8"
     react-css-styled "^1.0.3"
-    react-moveable "~0.32.9"
+    react-moveable "~0.33.0"
 
 react-css-styled@^1.0.3:
   version "1.0.3"
@@ -4169,10 +4164,10 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-moveable@~0.32.9:
-  version "0.32.9"
-  resolved "https://registry.yarnpkg.com/react-moveable/-/react-moveable-0.32.9.tgz#7c6558716a4f921d68d663be577a44182735e604"
-  integrity sha512-657rbOHxBahdHkffcDZ6jU+wqHdSiNRK1wPmjWpXShjOezvd/lUfKCqB/SEW5ICuzOf23LQqO29anTpC+BWvCA==
+react-moveable@~0.33.0:
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/react-moveable/-/react-moveable-0.33.0.tgz#7c233fd9f7158dadc58ecbbd61ced34edf1b394c"
+  integrity sha512-ro8dojnbyxHFpfpDCvYwZFF050bHoaVOKTKk3Kvc1Pz863dF7Ejrd3zjdg4ix4xNbZfNsfRKdz0BHgeZzyyzOg==
   dependencies:
     "@daybrush/utils" "^1.7.0"
     "@egjs/agent" "^2.2.1"
@@ -4182,7 +4177,7 @@ react-moveable@~0.32.9:
     "@scena/matrix" "^1.1.1"
     css-to-mat "^1.0.3"
     framework-utils "^1.1.0"
-    gesto "^1.7.0"
+    gesto "^1.9.0"
     overlap-area "^1.0.0"
     react-css-styled "^1.0.3"
 
@@ -4570,7 +4565,7 @@ strict-uri-encode@^2.0.0:
 string-hash@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/string-hash/-/string-hash-1.1.3.tgz#e8aafc0ac1855b4666929ed7dd1275df5d6c811b"
-  integrity sha1-6Kr8CsGFW0Zmkp7X3RJ1311sgRs=
+  integrity sha512-kJUvRUFK49aub+a7T1nNE66EJbZBMnBgoC1UbCZ5n6bsZKBRga4KgBRTMn/pFkeCZSYtNeSyMxPDM0AXWELk2A==
 
 "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
@@ -4680,20 +4675,13 @@ svelte-keydown@^0.5.0:
   resolved "https://registry.yarnpkg.com/svelte-keydown/-/svelte-keydown-0.5.0.tgz#1315899817ebd7692d625e4bb7719d88c342d402"
   integrity sha512-DgY6AYlKbBocSvjC3kUeNPcStJQOTOCxAGG9ymVHzJdsQ1hRJuB8pcnB4UFH8uH3bAPdYyXXa3LwenLDL41eqQ==
 
-svelte-ktippy@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/svelte-ktippy/-/svelte-ktippy-1.2.1.tgz#32736068fc838b3fc3dd69617a3f296cb9f35353"
-  integrity sha512-++sFw1Erm/fCs54OHsRe8CtgFa9Enf+9bFYxOsSRCnTmWg3xXQfol0xDPY25UZoCSPyUUTOM+XxXcj0b6pwiEQ==
-  dependencies:
-    tippy.js "^6.3.1"
-
-svelte-moveable@^0.21.9:
-  version "0.21.9"
-  resolved "https://registry.yarnpkg.com/svelte-moveable/-/svelte-moveable-0.21.9.tgz#5230c80036690a4b01bca60a52d4f7168c3ab4f5"
-  integrity sha512-+1q6oc32URdiCSDtlr8h+U31q4+MMr7ZG0Jlojy/C0D4yRpOZwuwrOUTIMquZZZIRFaXRq0XJY1PUYHWBpeN/A==
+svelte-moveable@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/svelte-moveable/-/svelte-moveable-0.22.0.tgz#d5be91818a745dc670a810c1118ced56edd1b244"
+  integrity sha512-jUfaQjsuJbPy7V3dw/lz3Eso2ErLwTv5YxnnYyMkt/fvat5Jfwm+sxTt+cKFzKiNgaUMSDi5b6Qx4DnxeqqMww==
   dependencies:
     framework-utils "^1.1.0"
-    moveable "~0.29.9"
+    moveable "~0.30.0"
     rollup-plugin-svelte "^7.1.0"
 
 svelte-popperjs@^1.2.10:
@@ -4800,13 +4788,6 @@ tinyspy@^0.3.0, tinyspy@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/tinyspy/-/tinyspy-0.3.2.tgz#2f95cb14c38089ca690385f339781cd35faae566"
   integrity sha512-2+40EP4D3sFYy42UkgkFFB+kiX2Tg3URG/lVvAZFfLxgGpnWl5qQJuBw1gaLttq8UOS+2p3C0WrhJnQigLTT2Q==
-
-tippy.js@^6.3.1:
-  version "6.3.7"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
-  integrity sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==
-  dependencies:
-    "@popperjs/core" "^2.9.0"
 
 to-regex-range@^5.0.1:
   version "5.0.1"
