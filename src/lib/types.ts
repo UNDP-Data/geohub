@@ -104,7 +104,7 @@ export interface UniqueLegendColorMapRow {
 export interface IntervalLegendColorMapRow {
   index?: number
   color?: number[]
-  start?: number
+  start?: number | string
   end?: number | string
 }
 

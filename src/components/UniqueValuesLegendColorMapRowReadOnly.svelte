@@ -25,7 +25,7 @@
   }
 
   const getColorPickerStyle = (rgb: string) => {
-    return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`
+    return `caret-color:rgb(${rgb}); background-color: rgb(${rgb}); height: 20px;`
   }
 
   // set color of display and dispatch to update map
@@ -62,7 +62,7 @@
 </script>
 
 <div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
-  <div class="column is-1 color-picker">
+  <div class="column is-1 color-picker mr-3">
     <div
       id={`interval-${colorMapRow.index}`}
       class="discrete"

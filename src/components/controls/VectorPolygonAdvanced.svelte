@@ -40,6 +40,7 @@
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let defaultLineColor = DEFAULT_LINE_COLOR
+  let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
@@ -121,8 +122,6 @@
     updateMap()
   }
 
-  let hasUniqueValues = false
-
   const setIntervalValues = () => {
     // set to default values
     classificationMethods = classificationMethodsDefault
@@ -161,7 +160,7 @@
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore:next-line
                 color: [...scaleColorList(i).rgb(), 255],
-                start: Number(stat.values[i]),
+                start: stat.values[i],
                 end: '',
               }
               propertySelectValues.push(row)
