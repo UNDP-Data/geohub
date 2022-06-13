@@ -69,7 +69,7 @@
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-        classificationMethods.splice(3, 1)
+        layerConfig.intervals.classification = classificationMethod
       } else {
         classificationMethod = ClassificationMethodTypes.LOGARITHMIC
         layerConfig.intervals.classification = classificationMethod
