@@ -43,10 +43,12 @@
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
+
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
+    { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
   let colorMapName = layerConfig.colorMapName
   // update color intervals upon change of color map name
@@ -67,19 +69,10 @@
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-        if (layerMin > 0) {
-          classificationMethods = [
-            ...classificationMethods,
-            ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-          ]
-        }
+        layerConfig.intervals.classification = classificationMethod
       } else {
-        // Layer is highly skewed
-        classificationMethods = [
-          ...classificationMethods,
-          ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-        ]
         classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+        layerConfig.intervals.classification = classificationMethod
       }
 
       layerConfig = { ...layerConfig, info: info }
