@@ -36,7 +36,8 @@
   const changeStyle = () => {
     if (!map) return
 
-    !map.getLayer('index') && map.addLayer(indexStyle, 'background')
+    var firstLayerId = map.getStyle().layers[0].id
+    !map.getLayer('index') && map.addLayer(indexStyle, firstLayerId)
 
     if (activeStyle.title === stylePrimary.title) {
       activeStyle = styleSecondary
