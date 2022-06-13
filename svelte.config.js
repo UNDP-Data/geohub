@@ -1,7 +1,7 @@
 import adapter from '@sveltejs/adapter-node'
 import { resolve } from 'path'
 import preprocess from 'svelte-preprocess'
-import json from '@rollup/plugin-json'
+// import json from '@rollup/plugin-json'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -13,7 +13,7 @@ const config = {
       envPrefix: '',
     }),
     vite: {
-      plugins: [json()],
+      // plugins: [json()],
       ssr: {
         noExternal: [/^@material(?:-extra)?\//, 'vega-embed'],
       },

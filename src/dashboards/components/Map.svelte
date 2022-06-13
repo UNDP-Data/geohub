@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { onMount } from 'svelte'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
 
   import CurrentLocation from '$lib/components/CurrentLocation.svelte'
   import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
   import { styles } from '$lib/constants'
   import { map } from '../stores'
-
-  const dispatch = createEventDispatcher()
 
   let mapContainer: HTMLDivElement
   let newMap: Map
@@ -36,21 +34,11 @@
 
     map.update(() => newMap)
   })
-
-  export function styleChanged(e: CustomEvent) {
-    dispatch('styleChanged', {
-      style: e.detail.style,
-    })
-  }
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation bind:map={$map} />
-<StyleSwicher
-  bind:stylePrimary={styles[0]}
-  bind:styleSecondary={styles[1]}
-  on:styleChanged={styleChanged}
-  bind:map={$map} />
+<StyleSwicher bind:map={$map} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';

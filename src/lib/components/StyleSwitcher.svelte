@@ -1,22 +1,24 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { onMount } from 'svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Map } from 'maplibre-gl'
-
+  import { styles } from '$lib/constants'
   import type { StyleDefinition } from '$lib/types'
+  import stylePrimaryData from '$lib/style.json'
+  import styleSecondaryData from '$lib/aerialstyle.json'
 
-  export let stylePrimary: StyleDefinition
-  export let styleSecondary: StyleDefinition
+  let stylePrimary: StyleDefinition = styles[0]
+  let styleSecondary: StyleDefinition = styles[1]
+  let activeStyle: StyleDefinition = styles[0]
+  let buttonStyle: StyleDefinition = styles[1]
+  const indexStyle = { id: 'index', type: 'background', layout: { visibility: 'none' } }
 
-  const dispatch = createEventDispatcher()
   export let map: Map
 
-  let activeStyle: StyleDefinition
-  let buttonStyle: StyleDefinition
   let mainContainerId = 'main-switch-container'
   let mapToggle: Map
 
-  const createMap = (id: string, uri: string) => {
+  const createMiniMap = (id: string, uri: string) => {
     return new Map({
       container: id,
       style: uri,
@@ -28,44 +30,41 @@
   }
 
   onMount(() => {
-    activeStyle = JSON.parse(JSON.stringify(stylePrimary))
-    buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
-    mapToggle = createMap(mainContainerId, buttonStyle.uri)
+    mapToggle = createMiniMap(mainContainerId, buttonStyle.uri)
   })
 
   const changeStyle = () => {
     if (!map) return
 
-    dispatch('beforestyleChanged', {
-      style: activeStyle,
-    })
-
-    if (!activeStyle) {
-      activeStyle = JSON.parse(JSON.stringify(stylePrimary))
-    }
-    if (!buttonStyle) {
-      buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
-    }
+    !map.getLayer('index') && map.addLayer(indexStyle, 'background')
 
     if (activeStyle.title === stylePrimary.title) {
-      activeStyle = JSON.parse(JSON.stringify(styleSecondary))
-      buttonStyle = JSON.parse(JSON.stringify(stylePrimary))
+      activeStyle = styleSecondary
+      buttonStyle = stylePrimary
+      for (const layer of stylePrimaryData.layers) {
+        map.removeLayer(layer.id)
+      }
+      map.addSource('bing', styleSecondaryData.sources.bing)
+      for (const layer of styleSecondaryData.layers) {
+        map.addLayer(layer, 'index')
+      }
     } else {
-      activeStyle = JSON.parse(JSON.stringify(stylePrimary))
-      buttonStyle = JSON.parse(JSON.stringify(styleSecondary))
+      activeStyle = stylePrimary
+      buttonStyle = styleSecondary
+      for (const layer of styleSecondaryData.layers) {
+        map.removeLayer(layer.id)
+      }
+      map.removeSource('bing')
+      for (const layer of stylePrimaryData.layers) {
+        map.addLayer(layer, 'index')
+      }
     }
 
-    map.setStyle(activeStyle.uri)
     if (!mapToggle) {
-      createMap(mainContainerId, buttonStyle.uri)
+      createMiniMap(mainContainerId, buttonStyle.uri)
     } else {
       mapToggle.setStyle(buttonStyle.uri)
     }
-    mapToggle.on('styledata', () => {
-      dispatch('styleChanged', {
-        style: activeStyle,
-      })
-    })
   }
 </script>
 
