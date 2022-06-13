@@ -86,7 +86,7 @@
 
 <div class="centered">
   <SegmentedButton segments={overlayChoices} let:segment singleSelect bind:selected={overlaySelected}>
-    <Segment {segment}>
+    <Segment {segment} title={segment.name}>
       <div class="icon">
         <Fa icon={segment.icon} size="lg" />
       </div>

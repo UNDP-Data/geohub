@@ -139,7 +139,7 @@ export const loadAdmin = (isChoropleth: boolean) => {
 export const reloadAdmin = () => {
   const map = get(mapStore)
   if (choropleth) {
-    map.setPaintProperty('admin', 'fill-color', getFillColor())
+    map.setPaintProperty(ADM_ID, 'fill-color', getFillColor())
   }
 }
 

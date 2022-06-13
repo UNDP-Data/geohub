@@ -111,26 +111,7 @@
     data: { name: 'values' },
     layer: [
       {
-        mark: {
-          type: 'bar',
-          color: {
-            x1: 1,
-            y1: 1,
-            x2: 1,
-            y2: 0,
-            gradient: 'linear',
-            stops: [
-              {
-                offset: 0,
-                color: 'white',
-              },
-              {
-                offset: 1,
-                color: 'darkgreen',
-              },
-            ],
-          },
-        },
+        mark: { type: 'bar', cornerRadiusTopLeft: 5, cornerRadiusTopRight: 5 },
       },
       {
         mark: { type: 'text', align: 'center', baseline: 'middle', dy: -10 },
@@ -173,7 +154,7 @@
     view: { stroke: 'transparent' },
     background: null,
     data: { name: 'values' },
-    mark: 'bar',
+    mark: { type: 'bar', cornerRadiusTopLeft: 3, cornerRadiusTopRight: 3 },
     encoding: {
       x: {
         field: 'year',
