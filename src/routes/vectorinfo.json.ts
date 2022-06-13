@@ -52,20 +52,20 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
           // Add the attribute to the attributes array
           attributesArray.push(attribute)
         } else {
+          const attribute = {
+            attribute: property,
+            type: String(typeof propsObj[property][0]),
+            count: propsObj[property].length,
+            min: Math.min(...propsObj[property]),
+            max: Math.max(...propsObj[property]),
+          }
+
           // The first value is a number, so assume all values as number
           // Look for the unique values, if the number of unique values is less/equal to 25,
           // this is a unique value attribute
           const uniqueValues = [...new Set(propsObj[property])]
           if (uniqueValues.length <= 25) {
-            const attribute = {
-              attribute: property,
-              type: String(typeof propsObj[property][0]),
-              count: propsObj[property].length,
-              min: Math.min(...propsObj[property]),
-              max: Math.max(...propsObj[property]),
-              values: propsObj[property],
-            }
-            attributesArray.push(attribute)
+            attribute['values'] = [...new Set(propsObj[property].sort())]
           } else {
             // There are too many values, this is not a unique values
             // Need to generate the histogram here
@@ -75,16 +75,10 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
             })
             histogram.bins.unshift(Math.min(...propsObj[property]))
 
-            const attribute = {
-              attribute: property,
-              type: String(typeof propsObj[property][0]),
-              count: propsObj[property].length,
-              min: Math.min(...propsObj[property]),
-              max: Math.max(...propsObj[property]),
-              histogram: histogram,
-            }
-            attributesArray.push(attribute)
+            attribute['histogram'] = histogram
           }
+
+          attributesArray.push(attribute)
         }
       })
     } else {

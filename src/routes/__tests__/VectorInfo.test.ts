@@ -131,4 +131,25 @@ describe('Route : Vector Info : Fetch : Success', () => {
     expect(numberProperty.histogram.count.length).toBeGreaterThan(0)
     expect(numberProperty.histogram.bins.length).toBeGreaterThan(0)
   })
+
+  it('should return a number property with unique values, valid object keys and object types', async () => {
+    const path = 'http://localhost/test.pbf'
+    const searchParams = new URLSearchParams(`path=${path}&layer_name=elpov1`)
+    const pbf = fs.readFileSync(`${__dirname}/unique_values.pbf`)
+    mockGet(path).willResolve(pbf)
+    const res = await get({ url: { searchParams } })
+
+    const numberProperties = res.body.filter((item) => item.type === 'number')
+    expect(numberProperties.length).toEqual(4)
+
+    const uniqueValueProperty = numberProperties.find(item => item.attribute === 'eaclass')
+    const propertyKeys = ['attribute', 'type', 'count', 'min', 'max', 'values'].sort()
+    expect(Object.keys(uniqueValueProperty).sort()).toEqual(propertyKeys)
+
+    expect(uniqueValueProperty.count).toEqual(13683)
+    expect(uniqueValueProperty.min).toEqual(0)
+    expect(uniqueValueProperty.max).toEqual(5)
+    expect(uniqueValueProperty.values).toHaveLength(6)
+    expect(uniqueValueProperty.values).toEqual([0, 1, 2, 3, 4, 5])
+  })
 })
