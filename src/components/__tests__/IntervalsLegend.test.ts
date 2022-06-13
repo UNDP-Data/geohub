@@ -83,7 +83,7 @@ describe('Intervals Legend', () => {
   it('should change the start/end values upon change of classification methods', async () => {
     const classificationMethods = sut.getByTitle('Classification Methods')
     expect(classificationMethods).toBeDefined()
-    expect(within(classificationMethods).getAllByRole('option').length).toEqual(3)
+    expect(within(classificationMethods).getAllByRole('option').length).toEqual(4)
     await fireEvent.change(classificationMethods, { target: { value: 'e' } })
 
     const colorMapRows = sut.getAllByTestId('intervals-legend-color-map-row-container')
