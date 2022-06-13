@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
-  import Tag from 'svelma/src/components/Tag/Tag.svelte'
   import { fade } from 'svelte/transition'
 
   import Popper from '$lib/popper'
@@ -72,7 +71,7 @@
     <div class="content is-size-7 tags">
       {#each bucket.tags as tag}
         <span title="tag" style="margin-right: 5px;">
-          <Tag type="is-info is-light" size="is-small">{tag}</Tag>
+          <span class="tag is-info is-small is-light">{tag}</span>
         </span>
       {/each}
     </div>
