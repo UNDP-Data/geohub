@@ -142,7 +142,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     const numberProperties = res.body.filter((item) => item.type === 'number')
     expect(numberProperties.length).toEqual(4)
 
-    const uniqueValueProperty = numberProperties.find(item => item.attribute === 'eaclass')
+    const uniqueValueProperty = numberProperties.find((item) => item.attribute === 'eaclass')
     const propertyKeys = ['attribute', 'type', 'count', 'min', 'max', 'values'].sort()
     expect(Object.keys(uniqueValueProperty).sort()).toEqual(propertyKeys)
 

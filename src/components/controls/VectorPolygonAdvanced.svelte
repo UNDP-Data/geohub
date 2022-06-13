@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
+  import UniqueValuesLegendColorMapRowReadOnly from '$components/UniqueValuesLegendColorMapRowReadOnly.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
@@ -38,6 +40,7 @@
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let defaultLineColor = DEFAULT_LINE_COLOR
+  let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
@@ -137,43 +140,67 @@
         )
         const stats = layer.info.stats as VectorLayerTileStatAttribute[]
         const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+        hasUniqueValues = false
 
         if (stat) {
-          if (stat.min > 0) {
-            classificationMethods = [
-              ...classificationMethods,
-              ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-            ]
-          }
-
-          const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
-          const randomSample = intervalListHelper.getRandomSample()
-          const intervalList = intervalListHelper.getIntervalList(
-            classificationMethod,
-            stat.min,
-            stat.max,
-            randomSample,
-            numberOfClasses,
-          )
-          const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
           const propertySelectValues = []
 
-          // create interval list (start / end)
-          for (let i = 0; i < intervalList.length - 1; i++) {
-            const row: IntervalLegendColorMapRow = {
-              index: i,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore:next-line
-              color: [...scaleColorList(intervalList[i]).rgb(), 255],
-              start: intervalList[i],
-              end: intervalList[i + 1],
-            }
-            propertySelectValues.push(row)
-          }
-          layerMax = stat.max
-          layerMin = stat.min
-          layer.intervals.colorMapRows = propertySelectValues
+          if (stat.attribute === 'eaclass') {
+            hasUniqueValues = true
 
+            const scaleColorList = chroma
+              .scale(colorMapName)
+              .mode('lrgb')
+              .padding([0.25, 0])
+              .domain([0, stat.values.length])
+
+            for (let i = 0; i < stat.values.length; i++) {
+              const row: IntervalLegendColorMapRow = {
+                index: i,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore:next-line
+                color: [...scaleColorList(i).rgb(), 255],
+                start: stat.values[i],
+                end: '',
+              }
+              propertySelectValues.push(row)
+            }
+          } else {
+            if (stat.min > 0) {
+              classificationMethods = [
+                ...classificationMethods,
+                ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+              ]
+            }
+
+            const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
+            const randomSample = intervalListHelper.getRandomSample()
+            const intervalList = intervalListHelper.getIntervalList(
+              classificationMethod,
+              stat.min,
+              stat.max,
+              randomSample,
+              numberOfClasses,
+            )
+            const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+
+            // create interval list (start / end)
+            for (let i = 0; i < intervalList.length - 1; i++) {
+              const row: IntervalLegendColorMapRow = {
+                index: i,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore:next-line
+                color: [...scaleColorList(intervalList[i]).rgb(), 255],
+                start: intervalList[i],
+                end: intervalList[i + 1],
+              }
+              propertySelectValues.push(row)
+            }
+            layerMax = stat.max
+            layerMin = stat.min
+          }
+
+          layer.intervals.colorMapRows = propertySelectValues
           updateMap()
         }
       }
@@ -221,55 +248,67 @@
         </div>
       </div>
     </div>
-    <div class="column">
-      <div class="has-text-centered pb-2">Classification</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
-          <select
-            bind:value={classificationMethod}
-            on:change={handleClassificationChange}
-            style="width: 110px;"
-            alt="Classification Methods"
-            title="Classification Methods">
-            {#each classificationMethods as classificationMethod}
-              <option
-                class="legend-text"
-                alt="Classification Method"
-                title="Classification Method"
-                value={classificationMethod.code}>{classificationMethod.name}</option>
-            {/each}
-          </select>
+    {#if hasUniqueValues === false}
+      <div class="column" transition:fade>
+        <div class="has-text-centered pb-2">Classification</div>
+        <div class="is-flex is-justify-content-center">
+          <div class="select is-rounded is-justify-content-center">
+            <select
+              bind:value={classificationMethod}
+              on:change={handleClassificationChange}
+              style="width: 110px;"
+              alt="Classification Methods"
+              title="Classification Methods">
+              {#each classificationMethods as classificationMethod}
+                <option
+                  class="legend-text"
+                  alt="Classification Method"
+                  title="Classification Method"
+                  value={classificationMethod.code}>{classificationMethod.name}</option>
+              {/each}
+            </select>
+          </div>
         </div>
       </div>
-    </div>
+    {:else}
+      <div class="column" />
+    {/if}
   </div>
 
   <div class="is-divider separator mb-3 mt-0" />
 
-  <div class="columns" style="margin-right: -56px;">
-    <div class="column pb-0">
-      <div class="has-text-centered">Number of Classes</div>
-      <div class="is-flex is-justify-content-center">
-        <NumberInput
-          bind:value={numberOfClasses}
-          minValue={COLOR_CLASS_COUNT_MINIMUM}
-          maxValue={COLOR_CLASS_COUNT_MAXIMUM}
-          on:change={handleIncrementDecrementClasses} />
+  {#if hasUniqueValues === false}
+    <div class="columns" style="margin-right: -56px;" transition:fade>
+      <div class="column pb-0">
+        <div class="has-text-centered">Number of Classes</div>
+        <div class="is-flex is-justify-content-center">
+          <NumberInput
+            bind:value={numberOfClasses}
+            minValue={COLOR_CLASS_COUNT_MINIMUM}
+            maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+            on:change={handleIncrementDecrementClasses} />
+        </div>
       </div>
     </div>
-  </div>
+  {/if}
 
   <div class="columns" style="margin-right: -56px;">
     <div class="column size">
       <div>
         {#each layer.intervals.colorMapRows as colorMapRow}
-          <IntervalsLegendColorMapRow
-            bind:colorMapRow
-            {layer}
-            {colorPickerVisibleIndex}
-            on:clickColorPicker={handleColorPickerClick}
-            on:changeColorMap={handleParamsUpdate}
-            on:changeIntervalValues={handleChangeIntervalValues} />
+          {#if hasUniqueValues}
+            <div class="pl-6">
+              <UniqueValuesLegendColorMapRowReadOnly bind:colorMapRow {layer} />
+            </div>
+          {:else}
+            <IntervalsLegendColorMapRow
+              bind:colorMapRow
+              {layer}
+              {colorPickerVisibleIndex}
+              on:clickColorPicker={handleColorPickerClick}
+              on:changeColorMap={handleParamsUpdate}
+              on:changeIntervalValues={handleChangeIntervalValues} />
+          {/if}
         {/each}
       </div>
     </div>
