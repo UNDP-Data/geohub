@@ -20,9 +20,9 @@
   const NONE_ID = 'none'
 
   let overlayChoices = [
-    { name: ADMIN_ID, icon: faDiceD6 },
-    { name: POVERTY_ID, icon: faHandHoldingUsd },
-    { name: NONE_ID, icon: faBan },
+    { name: ADMIN_ID, icon: faDiceD6, title: 'Administrative Boundaries' },
+    { name: POVERTY_ID, icon: faHandHoldingUsd, title: 'Poverty Heatmap' },
+    { name: NONE_ID, icon: faBan, title: 'None' },
   ]
   export let overlaySelected = overlayChoices[0]
 
@@ -86,7 +86,7 @@
 
 <div class="centered">
   <SegmentedButton segments={overlayChoices} let:segment singleSelect bind:selected={overlaySelected}>
-    <Segment {segment} title={segment.name}>
+    <Segment {segment} title={segment.title}>
       <div class="icon">
         <Fa icon={segment.icon} size="lg" />
       </div>
