@@ -221,36 +221,36 @@
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
-        layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
+        hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
-    if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR && stops.length > 0) {
-      $map.setPaintProperty(layer.definition.id, 'line-width', 1)
-      $map.setPaintProperty(layer.definition.id, 'line-color', {
-        property: layer.intervals.propertyName,
-        type: 'interval',
-        stops: stops,
-      })
-    }
+    if (stops.length > 0) {
+      if (hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+        $map.setPaintProperty(layer.definition.id, 'line-width', 1)
+        $map.setPaintProperty(layer.definition.id, 'line-color', {
+          property: layer.intervals.propertyName,
+          type: 'interval',
+          stops,
+        })
+      } else if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
+        // generate remapped stops based on the zoom level
+        if (zoomLevel === undefined) {
+          zoomLevel = $map.getZoom()
+        }
 
-    if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH && stops.length > 0) {
-      // generate remapped stops based on the zoom level
-      if (zoomLevel === undefined) {
-        zoomLevel = $map.getZoom()
+        const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
+
+        sizeArray = newStops.map((item) => item[1])
+        $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
+        $map.setPaintProperty(layer.definition.id, 'line-width', {
+          property: layer.intervals.propertyName,
+          type: 'interval',
+          stops: newStops,
+        })
       }
-
-      const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
-
-      sizeArray = newStops.map((item) => item[1])
-      $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
-      $map.setPaintProperty(layer.definition.id, 'line-width', {
-        property: layer.intervals.propertyName,
-        type: 'interval',
-        stops: newStops,
-      })
     }
   }
 
