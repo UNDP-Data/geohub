@@ -22,9 +22,9 @@
   }
 
   let electricityChoices = [
-    { name: HREA_ID, icon: faPlugCircleBolt },
-    { name: ML_ID, icon: faLaptopCode },
-    { name: NONE_ID, icon: faBan },
+    { name: HREA_ID, icon: faPlugCircleBolt, title: 'High Resolution Electricity Access' },
+    { name: ML_ID, icon: faLaptopCode, title: 'Machine Learning' },
+    { name: NONE_ID, icon: faBan, title: 'None' },
   ]
   export let electricitySelected = electricityChoices[0]
 
@@ -35,7 +35,7 @@
 
 <div class="centered">
   <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:selected={electricitySelected}>
-    <Segment {segment}>
+    <Segment {segment} title={segment.title}>
       <div class="icon">
         <Fa icon={segment.icon} size="lg" />
       </div>

@@ -194,7 +194,12 @@ const loadAdminChoropleth = () => {
     paint: {
       'fill-color': getFillColor(),
       'fill-opacity': 0.9,
-      'fill-outline-color': 'hsla(0, 0%, 100%, 0.5)',
+      'fill-outline-color': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        'hsla(0, 0%, 0%, 1)',
+        'hsla(0, 0%, 100%, 0.5)',
+      ],
     },
   }
   map.addSource(ADM_ID, layerSource)
