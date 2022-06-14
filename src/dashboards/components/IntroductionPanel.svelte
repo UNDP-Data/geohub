@@ -11,12 +11,11 @@
 {#if showIntro}
   <Paper>
     <p>
-      Welcome to the UNDP GeoHub dashboard. This site serves as a simplified preview to familiarize users with data
-      being prepared for the full-fledged GeoHub web app launching soon. Presented here are two raster layers that
-      display the likelihood of full electrification for a given area: <a
-        href="https://planetarycomputer.microsoft.com/dataset/hrea">High Resolution Electricity Access (HREA)</a> and Machine
-      Learning (ML). These are created by the University of Michigan, used to support the 2030 Social Development Goal (SDG)
-      7: ensuring access to affordable, reliable, sustainable and modern energy for all.
+      Welcome to the UNDP GeoHub dashboard. Presented here are two raster layers that display the likelihood of full
+      electrification for a given area: <a href="https://planetarycomputer.microsoft.com/dataset/hrea"
+        >High Resolution Electricity Access (HREA)</a> and Machine Learning (ML). These are created by the University of
+      Michigan, used to support the 2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable
+      and modern energy for all.
     </p>
     <p>
       Two layers can be overlaid on top of the raw data: a summary of HREA electrification by administrative areas, and
