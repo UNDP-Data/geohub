@@ -2,6 +2,7 @@ import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
 import { ErrorMessages } from '$lib/constants'
+import { mean, std, median } from 'mathjs'
 
 const propsObj = {}
 
@@ -58,6 +59,9 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
             count: propsObj[property].length,
             min: Math.min(...propsObj[property]),
             max: Math.max(...propsObj[property]),
+            mean: mean(propsObj[property]),
+            median: median(propsObj[property]),
+            std: std(propsObj[property]),
           }
 
           // The first value is a number, so assume all values as number
@@ -65,7 +69,12 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
           // this is a unique value attribute
           const uniqueValues = [...new Set(propsObj[property])]
           if (uniqueValues.length <= 25) {
-            attribute['values'] = [...new Set(propsObj[property].sort())]
+            attribute['values'] = [...new Set(propsObj[property])].sort((previous: number, after: number) => {
+              return previous - after
+            })
+            attribute['mean'] = mean(propsObj[property])
+            attribute['median'] = median(propsObj[property])
+            attribute['std'] = std(propsObj[property])
           } else {
             // There are too many values, this is not a unique values
             // Need to generate the histogram here

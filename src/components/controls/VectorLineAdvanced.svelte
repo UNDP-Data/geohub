@@ -33,12 +33,12 @@
   export let layerMin: number
 
   const classificationMethodsDefault = [
-    { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
+    // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let classificationMethod = layer.intervals.classification
+  let classificationMethod
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
@@ -50,6 +50,7 @@
   let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
   let sizeArray: number[]
+  let highlySkewed: boolean
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -71,6 +72,15 @@
     setCssIconFilter()
     setPropertySelectOptions()
     setIntervalValues()
+    if (highlySkewed) {
+      classificationMethods = [
+        ...classificationMethods,
+        ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+      ]
+      classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+    } else {
+      classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+    }
   })
 
   const setCssIconFilter = () => {
@@ -150,14 +160,17 @@
         )
         const stats = layer.info.stats as VectorLayerTileStatAttribute[]
         const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+        const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std'])
+
+        highlySkewed = !(skewness < 1 && skewness > -1)
+
         hasUniqueValues = false
 
         if (stat) {
           const propertySelectValues = []
 
-          if (stat.attribute === 'eaclass') {
+          if (stat.values !== undefined) {
             hasUniqueValues = true
-
             const scaleColorList = chroma
               .scale(colorMapName)
               .mode('lrgb')
@@ -176,12 +189,13 @@
               propertySelectValues.push(row)
             }
           } else {
-            if (stat.min > 0) {
-              classificationMethods = [
-                ...classificationMethods,
-                ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-              ]
-            }
+            // No unique values
+            // if (stat.min > 0) {
+            //   classificationMethods = [
+            //     ...classificationMethods,
+            //     ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+            //   ]
+            // }
 
             const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
             const randomSample = intervalListHelper.getRandomSample()
@@ -211,6 +225,7 @@
           }
 
           layer.intervals.colorMapRows = propertySelectValues
+
           updateMap()
         }
       }

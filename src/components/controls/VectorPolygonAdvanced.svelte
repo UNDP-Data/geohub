@@ -145,7 +145,7 @@
         if (stat) {
           const propertySelectValues = []
 
-          if (stat.attribute === 'eaclass') {
+          if (stat['values'] !== undefined) {
             hasUniqueValues = true
 
             const scaleColorList = chroma
