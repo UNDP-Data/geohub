@@ -55,7 +55,7 @@ describe('Vector line Container', () => {
     const classficiationMethods = within(sut.getByTestId('line-advanced-container')).getAllByTitle(
       'Classification Method',
     )
-    expect(classficiationMethods.length).toEqual(3)
+    expect(classficiationMethods.length).toEqual(2)
   })
 
   it('should display show display the color picker upon click of the color map picker button', async () => {

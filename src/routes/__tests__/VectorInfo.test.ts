@@ -114,7 +114,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     expect(numberProperties.length).toEqual(3)
 
     const numberProperty = numberProperties[0]
-    const propertyKeys = ['attribute', 'type', 'count', 'min', 'max', 'histogram'].sort()
+    const propertyKeys = ['attribute', 'type', 'count', 'min', 'max', 'histogram', 'mean', 'median', 'std'].sort()
     expect(Object.keys(numberProperty).sort()).toEqual(propertyKeys)
 
     const histogramKeys = ['count', 'bins'].sort()
@@ -126,6 +126,9 @@ describe('Route : Vector Info : Fetch : Success', () => {
     expect(numberProperty.count).toBeTypeOf('number')
     expect(numberProperty.min).toBeTypeOf('number')
     expect(numberProperty.max).toBeTypeOf('number')
+    expect(numberProperty.mean).toBeTypeOf('number')
+    expect(numberProperty.median).toBeTypeOf('number')
+    expect(numberProperty.std).toBeTypeOf('number')
     expect(numberProperty.histogram).toBeTypeOf('object')
     expect(numberProperty.histogram.count).toBeTypeOf('object')
     expect(numberProperty.histogram.count.length).toBeGreaterThan(0)
@@ -143,7 +146,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     expect(numberProperties.length).toEqual(4)
 
     const uniqueValueProperty = numberProperties.find((item) => item.attribute === 'eaclass')
-    const propertyKeys = ['attribute', 'type', 'count', 'min', 'max', 'values'].sort()
+    const propertyKeys = ['attribute', 'type', 'count', 'min', 'max', 'values', 'mean', 'median', 'std'].sort()
     expect(Object.keys(uniqueValueProperty).sort()).toEqual(propertyKeys)
 
     expect(uniqueValueProperty.count).toEqual(13683)
