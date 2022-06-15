@@ -9,7 +9,7 @@
 /data
 /package
 coverage
+data/tags.json
 env.ts
 node_modules
 yarn-error.log
-static/tags.json
