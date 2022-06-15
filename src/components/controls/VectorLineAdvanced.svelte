@@ -164,12 +164,11 @@
 
         highlySkewed = !(skewness < 1 && skewness > -1)
 
-        console.log(stat)
         hasUniqueValues = false
 
         if (stat) {
           const propertySelectValues = []
-          console.log(stat)
+
           if (stat.values !== undefined) {
             hasUniqueValues = true
             const scaleColorList = chroma
@@ -234,7 +233,6 @@
   }
 
   const updateMap = () => {
-    console.log(layer.intervals.colorMapRows)
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
@@ -244,7 +242,6 @@
       ]
     })
 
-    console.log(stops)
     if (stops.length > 0) {
       if (hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
         $map.setPaintProperty(layer.definition.id, 'line-width', 1)
