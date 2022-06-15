@@ -72,7 +72,11 @@
       return LayerTypes.FILL
   }
 
+  let addButtonClicked = false
+
   const handleAddClick = async () => {
+    addButtonClicked = true
+
     let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
       layerSource = {
@@ -240,6 +244,7 @@
 
   const handleCancel = () => {
     isModalVisible = false
+    addButtonClicked = false
     $modalVisible = false
   }
 
@@ -324,7 +329,7 @@
 
           <button
             class="button is-success"
-            disabled={selectedLayerId.length === 0 ? true : false}
+            disabled={addButtonClicked || (selectedLayerId.length === 0 ? true : false)}
             alt="Add Layer Button"
             title="Add Layer Button"
             on:click={handleAddClick}>
