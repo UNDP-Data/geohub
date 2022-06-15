@@ -12,3 +12,4 @@ coverage
 env.ts
 node_modules
 yarn-error.log
+static/tags.json
