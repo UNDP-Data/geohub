@@ -199,7 +199,7 @@
   <br />
   <VegaLite data={{ values: adminBarValues }} spec={getAdminSpec()} options={vegaOptions} />
   <div class="subtitle-text">
-    Population in 2022: {format('.3s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
+    Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
   </div>
 {/if}
 {#if interactSelected === CLICK}
