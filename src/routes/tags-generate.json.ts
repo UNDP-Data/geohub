@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { performance } from 'perf_hooks'
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import type { ServiceListContainersOptions, BlockBlobClient, BlobClient } from '@azure/storage-blob'
 
@@ -16,12 +15,13 @@ const excludeContainers = ['test']
 const listContainerOpts: ServiceListContainersOptions = { includeMetadata: true }
 
 let mapTags = new Map()
+let showContainers = false
 
-export async function get() {
+export async function get({ url }) {
   console.clear()
   const startTime = performance.now()
   // const containers = await getRootContainers()
-  const containers = ['mobility', 'climate-action', 'affordable-and-clean-energy']
+  const containers = ['mobility', 'climate-action', 'affordable-and-clean-energy', 'test-tags']
 
   for await (const path of containers) {
     console.log('------------ CONTAINER ', path)
@@ -34,7 +34,13 @@ export async function get() {
     fs.mkdirSync(`${__dirname}/data`)
   }
 
-  fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(Object.fromEntries(mapTags), null, 2))
+  const paramShowContainers = url.searchParams.get('showContainers')
+  if (paramShowContainers && paramShowContainers === 'true') {
+    showContainers = true
+  }
+
+  const body = showContainers ? Object.fromEntries(mapTags) : [...mapTags.keys()].sort()
+  fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(body, null, 2))
 
   const endTime = performance.now()
   console.log(`    `)
@@ -43,7 +49,7 @@ export async function get() {
   console.log(`-------------- ${((endTime - startTime) / 1000).toFixed(2)} seconds`)
 
   return {
-    body: JSON.stringify(Object.fromEntries(mapTags), null, 2),
+    body,
   }
 }
 
