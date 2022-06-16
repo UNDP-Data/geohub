@@ -29,6 +29,11 @@ export async function get() {
   }
 
   mapTags = new Map([...mapTags.entries()].sort())
+
+  if (!fs.existsSync(`${__dirname}/data`)) {
+    fs.mkdirSync(`${__dirname}/data`)
+  }
+
   fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(Object.fromEntries(mapTags), null, 2))
 
   const endTime = performance.now()
@@ -49,9 +54,10 @@ const getRootContainers = async () => {
     if (
       !excludeContainers.includes(container.name) &&
       container.metadata &&
-        'published' in container.metadata &&
-        container.metadata.published === 'true' &&
-        container?.metadata?.label) {
+      'published' in container.metadata &&
+      container.metadata.published === 'true' &&
+      container?.metadata?.label
+    ) {
       containers.push(container.name)
     }
   }
