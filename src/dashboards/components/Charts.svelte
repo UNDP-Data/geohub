@@ -1,6 +1,7 @@
 <script lang="ts">
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import { VegaLite } from 'svelte-vega'
+  import { format } from 'd3-format'
   import type { VisualizationSpec } from 'svelte-vega'
   import { map, admin } from '../stores'
 
@@ -197,6 +198,9 @@
   <div class="title-text stats-location">{adminLocation}</div>
   <br />
   <VegaLite data={{ values: adminBarValues }} spec={getAdminSpec()} options={vegaOptions} />
+  <div class="subtitle-text">
+    Population in 2022: {format('.3s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
+  </div>
 {/if}
 {#if interactSelected === CLICK}
   <br />
@@ -219,5 +223,11 @@
     @media (prefers-color-scheme: dark) {
       color: white;
     }
+  }
+
+  .subtitle-text {
+    font-size: 14px;
+    color: #808080;
+    font-weight: normal;
   }
 </style>
