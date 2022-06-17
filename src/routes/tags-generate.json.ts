@@ -15,7 +15,6 @@ const excludeContainers = ['test']
 const listContainerOpts: ServiceListContainersOptions = { includeMetadata: true }
 
 let mapTags = new Map()
-let showContainers = false
 
 export async function get({ url }) {
   console.clear()
@@ -33,22 +32,28 @@ export async function get({ url }) {
     fs.mkdirSync(`${__dirname}/data`)
   }
 
-  const paramShowContainers = url.searchParams.get('showContainers')
-  if (paramShowContainers && paramShowContainers === 'true') {
-    showContainers = true
+  let tags = []
+
+  if (url.searchParams.get('showContainers') === 'true') {
+    tags = Object.fromEntries(mapTags)
+  } else {
+    tags = [...new Set(mapTags.keys())]
   }
 
-  const body = showContainers ? Object.fromEntries(mapTags) : [...mapTags.keys()].sort()
-  fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(body, null, 2))
+  fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(tags, null, 2))
 
   const endTime = performance.now()
+  const responseTime = endTime - startTime
   console.log(`    `)
-  console.log(Object.fromEntries(mapTags))
+  console.log(tags)
   console.log(`    `)
-  console.log(`-------------- ${((endTime - startTime) / 1000).toFixed(2)} seconds`)
+  console.log(`-------------- ${(responseTime / 1000).toFixed(2)} seconds`)
 
   return {
-    body,
+    body: {
+      tags,
+      responseTime,
+    },
   }
 }
 
