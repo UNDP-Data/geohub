@@ -259,3 +259,21 @@ export interface StyleDefinition {
   title: string
   uri: string
 }
+
+export interface TagsSearchResults {
+  tags: string[]
+  blobCount: number
+  containerCount: number
+  results: {
+    blobs: TagLayer[]
+    containers: string[]
+  }
+  responseTime: number
+}
+
+export interface TagLayer {
+  name: string
+  container: string
+  tags: string[]
+  isVector: boolean
+}
