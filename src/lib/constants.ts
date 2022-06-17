@@ -6,15 +6,17 @@ import { faVectorSquare } from '@fortawesome/free-solid-svg-icons/faVectorSquare
 import { faBraille } from '@fortawesome/free-solid-svg-icons/faBraille'
 import type { StyleDefinition } from '$lib/types'
 
-export const DEFAULT_COLORMAP = 'viridis'
-export const DEFAULT_TIMEOUT_MS = 60000
-export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
-export const DEFAULT_FILL_COLOR = 'rgba(110, 110, 110, 1)'
-export const STRING_COMPARE_THRESHOLD = 0.25
 export const COLOR_CLASS_COUNT = 5
-export const COLOR_CLASS_COUNT_MINIMUM = 2
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
+export const COLOR_CLASS_COUNT_MINIMUM = 2
+export const DEFAULT_COLORMAP = 'viridis'
+export const DEFAULT_FILL_COLOR = 'rgba(110, 110, 110, 1)'
+export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
+export const DEFAULT_TIMEOUT_MS = 60000
 export const NO_RANDOM_SAMPLING_POINTS = 1000
+export const STRING_COMPARE_THRESHOLD = 0.25
+export const TITILER_API_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
+
 export enum TabNames {
   ANALYZE = 'Analyze',
   BUCKETS = 'Buckets',
@@ -196,4 +198,15 @@ export const styles: StyleDefinition[] = [
   },
 ]
 
-export const TITILER_API_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
+export const TagKeys = [
+  'TagKey1',
+  'TagKey2',
+  'TagKey3',
+  'TagKey4',
+  'TagKey5',
+  'TagKey6',
+  'TagKey7',
+  'TagKey8',
+  'TagKey9',
+  'TagKey10',
+]
