@@ -35,6 +35,8 @@ export async function get({ url }) {
         for (const tagKey of TagKeys) {
           for await (const blob of blobServiceClient.findBlobsByTags(`${tagKey}='${tag}'`)) {
             containers.add(blob.containerName)
+            const containerClient = blobServiceClient.getContainerClient(blob.containerName)
+            const tags = await containerClient.getBlobClient(blob.name).getTags()
 
             let isVector = false
             let blobName = blob.name
@@ -45,9 +47,9 @@ export async function get({ url }) {
             }
 
             blobs.push({
-              container: blob.containerName,
               name: blobName,
-              tags: blob.tags,
+              container: blob.containerName,
+              tags: tags.tags,
               isVector,
             })
           }

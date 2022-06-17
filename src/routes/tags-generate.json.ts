@@ -20,8 +20,7 @@ let showContainers = false
 export async function get({ url }) {
   console.clear()
   const startTime = performance.now()
-  // const containers = await getRootContainers()
-  const containers = ['mobility', 'climate-action', 'affordable-and-clean-energy', 'test-tags']
+  const containers = await getRootContainers()
 
   for await (const path of containers) {
     console.log('------------ CONTAINER ', path)
