@@ -1,6 +1,7 @@
 <script lang="ts">
   import Select, { Option } from '@smui/select'
   import Button from '@smui/button'
+  import { downloadFile } from '$lib/helper'
 
   let layers = ['ADM0', 'ADM1', 'ADM2', 'ADM3', 'ADM4']
   let layer = 'ADM0'
@@ -9,13 +10,7 @@
 
   const download = () => {
     const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`
-    const a = document.createElement('a')
-    a.href = url
-    a.download = url.split('/').pop()
-    a.target = '_blank'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    downloadFile(url)
   }
 </script>
 
