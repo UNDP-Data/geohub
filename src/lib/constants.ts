@@ -27,6 +27,7 @@ export enum TabNames {
   REFINE = 'Refine',
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
+  TAGS = 'Search',
 }
 
 export const BucketIntialValues = {

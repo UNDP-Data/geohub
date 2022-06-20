@@ -34,3 +34,5 @@ export const layerMetadata = writable(new Map())
 
 // layer labelled
 export const layerLabelled = writable(new Map())
+
+export const tags = writable([])
