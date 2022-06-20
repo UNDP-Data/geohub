@@ -10,6 +10,7 @@
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
     TITILER_API_ENDPOINT,
+    NO_RANDOM_SAMPLING_POINTS,
   } from '$lib/constants'
   import type {
     FillLayerSpecification,
@@ -43,7 +44,7 @@
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
-
+  let percentile98: number
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
@@ -51,7 +52,7 @@
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
   let colorMapName = layerConfig.colorMapName
-  // update color intervals upon change of color map name
+
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
@@ -61,9 +62,12 @@
 
   onMount(async () => {
     if (!('stats' in info)) {
-      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
+
       info = { ...info, stats: layerStats }
+
+      percentile98 = layerStats['1']['percentile_98']
 
       const skewness = 3 * ((info.stats['1'].mean - info.stats['1'].median) / info.stats['1'].std)
       if (skewness > 1 && skewness > -1) {
@@ -81,6 +85,7 @@
     }
     reclassifyImage()
   })
+
   const reclassifyImage = (e?: CustomEvent) => {
     let isClassificationMethodEdited = false
     if (e) {
@@ -89,40 +94,93 @@
     }
     const bins: number[] = info.stats['1'].histogram[1]
     const counts: number[] = info.stats['1'].histogram[0]
-    const intervalListHelper = new IntervalList(bins, counts)
-    const randomSample = intervalListHelper.getRandomSample()
-
-    const intervalList = intervalListHelper.getIntervalList(
-      classificationMethod,
-      layerMin,
-      layerMax,
-      randomSample,
-      numberOfClasses,
-    )
-    const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
+    const intervalListHelper = new IntervalList(bins.slice(0, bins.length - 1), counts)
     const colorMap = []
-    for (let i = 0; i <= numberOfClasses - 1; i++) {
-      const row: IntervalLegendColorMapRow = {
-        index: i,
+
+    if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
+      const randomSample = intervalListHelper.getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
+
+      // reclassifyForLog()
+      const intervalList = intervalListHelper.getIntervalList(
+        classificationMethod,
+        layerMin,
+        percentile98,
+        randomSample,
+        numberOfClasses,
+      )
+      // intervalList.splice(intervalList.length - 2, intervalList[intervalList.length - 1])
+      const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
+      for (let i = 0; i <= numberOfClasses - 2; i++) {
+        const row: IntervalLegendColorMapRow = {
+          index: i,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore:next-line
+          color: [...scaleColorList(intervalList[i]).rgb(), 255],
+          start:
+            isClassificationMethodEdited == false &&
+            layerConfig.intervals.colorMapRows.length > 0 &&
+            layerConfig.intervals.numberOfClasses === numberOfClasses &&
+            layerConfig.intervals.colorMapRows[i]?.start
+              ? layerConfig.intervals.colorMapRows[i].start
+              : intervalList[i],
+          end:
+            isClassificationMethodEdited == false &&
+            layerConfig.intervals.colorMapRows.length > 0 &&
+            layerConfig.intervals.numberOfClasses === numberOfClasses &&
+            layerConfig.intervals.colorMapRows[i]?.end
+              ? layerConfig.intervals.colorMapRows[i].end
+              : intervalList[i + 1],
+        }
+        colorMap.push(row)
+      }
+      const lastRow: IntervalLegendColorMapRow = {
+        index: numberOfClasses - 1,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
-        color: [...scaleColorList(intervalList[i]).rgb(), 255],
-        start:
-          isClassificationMethodEdited == false &&
-          layerConfig.intervals.colorMapRows.length > 0 &&
-          layerConfig.intervals.numberOfClasses === numberOfClasses &&
-          layerConfig.intervals.colorMapRows[i]?.start
-            ? layerConfig.intervals.colorMapRows[i].start
-            : intervalList[i],
-        end:
-          isClassificationMethodEdited == false &&
-          layerConfig.intervals.colorMapRows.length > 0 &&
-          layerConfig.intervals.numberOfClasses === numberOfClasses &&
-          layerConfig.intervals.colorMapRows[i]?.end
-            ? layerConfig.intervals.colorMapRows[i].end
-            : intervalList[i + 1],
+        color: [...scaleColorList(intervalList[numberOfClasses - 1]).rgb(), 255],
+        start: Math.floor(percentile98),
+        end: Math.ceil(layerMax),
       }
-      colorMap.push(row)
+      colorMap.push(lastRow)
+      const replaceIndex = colorMap[colorMap.length - 2]
+      replaceIndex['end'] = Math.floor(percentile98)
+
+      colorMap.splice(colorMap.length - 2, replaceIndex)
+    } else {
+      const randomSample = intervalListHelper.getRandomSample()
+      console.log(randomSample)
+      const intervalList = intervalListHelper.getIntervalList(
+        classificationMethod,
+        layerMin,
+        layerMax,
+        randomSample,
+        numberOfClasses,
+      )
+
+      const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
+      for (let i = 0; i <= numberOfClasses - 1; i++) {
+        const row: IntervalLegendColorMapRow = {
+          index: i,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore:next-line
+          color: [...scaleColorList(intervalList[i]).rgb(), 255],
+          start:
+            isClassificationMethodEdited == false &&
+            layerConfig.intervals.colorMapRows.length > 0 &&
+            layerConfig.intervals.numberOfClasses === numberOfClasses &&
+            layerConfig.intervals.colorMapRows[i]?.start
+              ? layerConfig.intervals.colorMapRows[i].start
+              : intervalList[i],
+          end:
+            isClassificationMethodEdited == false &&
+            layerConfig.intervals.colorMapRows.length > 0 &&
+            layerConfig.intervals.numberOfClasses === numberOfClasses &&
+            layerConfig.intervals.colorMapRows[i]?.end
+              ? layerConfig.intervals.colorMapRows[i].end
+              : intervalList[i + 1],
+        }
+        colorMap.push(row)
+      }
     }
     layerConfig.intervals.colorMapRows = colorMap
     layerConfig.intervals.classification = classificationMethod
