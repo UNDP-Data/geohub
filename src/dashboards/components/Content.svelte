@@ -8,6 +8,7 @@
   import IntroductionPanel from './IntroductionPanel.svelte'
   import OverlayControl from './OverlayControl.svelte'
   import ElectricityControl from './ElectricityControl.svelte'
+  import DownloadData from './DownloadData.svelte'
 
   export let drawerOpen = false
 
@@ -87,6 +88,9 @@
             </StyleControlGroup>
             <StyleControlGroup title="Statistics - Electricity Access">
               <Charts />
+            </StyleControlGroup>
+            <StyleControlGroup title="Statistics - Download">
+              <DownloadData />
             </StyleControlGroup>
           {/if}
           <div />

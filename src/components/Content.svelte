@@ -7,6 +7,7 @@
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
+  import TagsView from '$components/TagsView.svelte'
   import { TabNames } from '$lib/constants'
   import { layerList, indicatorProgress, map } from '$stores'
   import BannerMessageControl from './BannerMessageControl.svelte'
@@ -17,7 +18,7 @@
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
-  let tabs = [TabNames.BUCKETS, TabNames.LAYERS]
+  let tabs = [TabNames.BUCKETS, TabNames.TAGS, TabNames.LAYERS]
 
   $: hideLinearProgress = !$indicatorProgress
   $: {
@@ -30,7 +31,7 @@
     }
   }
 
-  onMount(() => {
+  onMount(async () => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
   })
@@ -77,6 +78,9 @@
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.BUCKETS}>
             <BucketView />
+          </div>
+          <div hidden={activeTab !== TabNames.TAGS}>
+            <TagsView />
           </div>
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
