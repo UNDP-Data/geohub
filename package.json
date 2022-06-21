@@ -94,6 +94,7 @@
     "hex-to-css-filter": "^5.4.0",
     "husky": "^8.0.1",
     "image-clipper": "^0.4.4",
+    "ioredis": "^5.0.6",
     "jsdom": "^19.0.0",
     "lodash-es": "^4.17.21",
     "maplibre-gl": "^2.1.9",
