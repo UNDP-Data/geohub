@@ -113,7 +113,7 @@
                 <div>
                   <ul>
                     {#each groupedTagSearchResults.get(containerName) as layer}
-                      <li>{layer?.name}</li>
+                      <li>{layer?.label}</li>
                     {/each}
                   </ul>
                 </div>
