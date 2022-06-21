@@ -94,7 +94,7 @@ export async function get({ url }) {
               path = path.replace('metadata.json', '')
             }
 
-            tagKeyBlobs.push({
+            const tag = {
               label,
               path,
               url,
@@ -102,7 +102,14 @@ export async function get({ url }) {
               geomType,
               container: blob.containerName,
               tags: tags.tags,
-            })
+              children: [],
+            }
+
+            if (isRaster) {
+              delete tag.geomType
+            }
+
+            tagKeyBlobs.push(tag)
           }
 
           // await redis.setex(`${tagKey}='${tag}'`, 120, JSON.stringify(tagKeyBlobs))

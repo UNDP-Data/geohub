@@ -4,17 +4,18 @@
   import Fa from 'svelte-fa'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 
+  import BucketTreeNode from '$components/BucketTreeNode.svelte'
   import { TabNames } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
-  import type { TagsSearchResults } from '$lib/types'
+  import type { TagsSearchResults, TagLayer, TreeNode } from '$lib/types'
   import { tags } from '$stores'
 
-  let tagsList = []
   let groupedTagSearchResults = new Map()
   let showSpinner = false
+  let tagsList = []
+  let treeBucket = []
 
   onMount(async () => {
-    console.clear()
     $tags = (await fetchUrl('tags.json')).tags
   })
 
@@ -23,7 +24,7 @@
   }
 
   const handleSearchTags = async () => {
-    console.log('handleSearchTags')
+    const treeBucketClone = []
     showSpinner = true
 
     // sanitize selected tags
@@ -45,11 +46,23 @@
     const sortedArray = [...groupedTagSearchResults].sort(([key1], [key2]) => key1.localeCompare(key2))
     groupedTagSearchResults = new Map(sortedArray)
 
+    // convert map to tree node array
+    for (const label of groupedTagSearchResults.keys()) {
+      const node: TreeNode = {
+        label,
+        children: groupedTagSearchResults.get(label).sort((a: TagLayer, b: TagLayer) => a.label.localeCompare(b.label)),
+        path: `${label}/`,
+        url: null,
+      }
+
+      treeBucketClone.push(node)
+    }
+
+    treeBucket = treeBucketClone
     showSpinner = false
   }
 
   const handleClearTags = () => {
-    console.log('handleClearTags')
     tagsList = []
   }
 </script>
@@ -80,13 +93,13 @@
     <div class="column pl-0">
       <div class="columns is-gapless mb-3">
         <div class="column">
-          <button class="button" disabled={tagsList.length > 0 ? false : true} on:click={handleSearchTags}
+          <button class="button" disabled={showSpinner} on:click={handleSearchTags}
             >Search</button>
         </div>
       </div>
       <div class="columns is-gapless">
         <div class="column">
-          <button class="button" disabled={tagsList.length > 0 ? false : true} on:click={handleClearTags}>Clear</button>
+          <button class="button" disabled={showSpinner} on:click={handleClearTags}>Clear</button>
         </div>
       </div>
     </div>
@@ -106,18 +119,9 @@
 
       {#if showSpinner === false && groupedTagSearchResults.size > 0}
         <div class="is-size-6">
-          {#each Array.from(groupedTagSearchResults.keys()) as containerName}
+          {#each treeBucket as tree}
             <ul class="mb-3">
-              <li>
-                <div class="has-text-weight-bold">{containerName}</div>
-                <div>
-                  <ul>
-                    {#each groupedTagSearchResults.get(containerName) as layer}
-                      <li>{layer?.label}</li>
-                    {/each}
-                  </ul>
-                </div>
-              </li>
+              <BucketTreeNode bind:node={tree} hideCloseButton={true} />
             </ul>
           {/each}
         </div>

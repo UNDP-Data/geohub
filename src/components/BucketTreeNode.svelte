@@ -38,6 +38,7 @@
 
   export let level = 0
   export let node: TreeNode
+  export let hideCloseButton = false
 
   const dispatch = createEventDispatcher()
   const {
@@ -416,7 +417,7 @@
           </div>
         {/if}
 
-        {#if level === 0}
+        {#if level === 0 && hideCloseButton === false}
           <div
             alt="Remove container"
             title="Remove container"
