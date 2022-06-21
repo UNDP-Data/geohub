@@ -1,8 +1,12 @@
 import fs from 'fs'
 import path from 'path'
 // import Redis from 'ioredis'
-import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-
+import azure, {
+  BlobSASPermissions,
+  BlobServiceClient,
+  generateBlobSASQueryParameters,
+  StorageSharedKeyCredential,
+} from '@azure/storage-blob'
 import {
   AZURE_STORAGE_ACCOUNT,
   AZURE_STORAGE_ACCESS_KEY,
@@ -10,6 +14,7 @@ import {
   // AZURE_REDIS_CACHEKEY,
 } from '$lib/variables'
 import { TagKeys } from '$lib/constants'
+import { fetchUrl } from '$lib/helper'
 import type { TagLayer } from '$lib/types'
 
 const __dirname = path.resolve()
@@ -26,8 +31,11 @@ export async function get({ url }) {
   const startTime = performance.now()
   const blobs = []
   let tagsFilteredParam = []
-
-  // const redis = new Redis(`rediss://:${AZURE_REDIS_CACHEKEY}@${AZURE_REDIS_HOSTNAME}:6380`)
+  const accountSasTokenUri = blobServiceClient.generateAccountSasUrl(
+    new Date(new Date().valueOf() + 86400000),
+    azure.AccountSASPermissions.parse('r'),
+    'o',
+  )
 
   // get tags parameter
   if (url.searchParams.get('tags')) {
@@ -52,20 +60,48 @@ export async function get({ url }) {
             containers.add(blob.containerName)
             const containerClient = blobServiceClient.getContainerClient(blob.containerName)
             const tags = await containerClient.getBlobClient(blob.name).getTags()
+            const sasToken = generateBlobSASQueryParameters(
+              {
+                containerName: blob.containerName,
+                blobName: blob.name,
+                expiresOn: new Date(new Date().valueOf() + 86400000),
+                permissions: BlobSASPermissions.parse('r'),
+              },
+              sharedKeyCredential,
+            )
 
-            let isVector = false
-            let blobName = blob.name
+            let isRaster = true
+            let path = `${blob.containerName}/${blob.name}`
+            let label = path.split('/')[path.split('/').length - 1]
+            let geomType = null
+            let url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path}?${sasToken}`
 
             if (blob.name.endsWith('metadata.json')) {
-              isVector = true
-              blobName = blob.name.split('/').at(-2)
+              const vectorLayerInfo = await fetchUrl(url)
+              const accountSasTokenUrl = new URL(accountSasTokenUri)
+
+              if (vectorLayerInfo?.json) {
+                const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
+                geomType = vectorTileMeta.tilestats.layers[0].geometry
+              }
+
+              isRaster = false
+              label = blob.name.split('/').at(-2)
+              url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path.replace(
+                'metadata.json',
+                '{z}/{x}/{y}.pbf',
+              )}${accountSasTokenUrl.search}`
+              path = path.replace('metadata.json', '')
             }
 
             tagKeyBlobs.push({
-              name: blobName,
+              label,
+              path,
+              url,
+              isRaster,
+              geomType,
               container: blob.containerName,
               tags: tags.tags,
-              isVector,
             })
           }
 
@@ -73,6 +109,8 @@ export async function get({ url }) {
           // } else {
           //   tagKeyBlobs = data
           // }
+
+          tagKeyBlobs.sort((a, b) => a.label.localeCompare(b.label))
 
           tagKeyBlobs.forEach((tagKeyBlob: TagLayer) => {
             blobs.push(tagKeyBlob)

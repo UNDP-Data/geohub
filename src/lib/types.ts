@@ -272,8 +272,11 @@ export interface TagsSearchResults {
 }
 
 export interface TagLayer {
-  name: string
+  label: string
+  path: string
+  url: string
+  isRaster: boolean
+  geomType: string
   container: string
   tags: string[]
-  isVector: boolean
 }
