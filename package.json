@@ -103,6 +103,7 @@
     "pbf": "^3.2.1",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
+    "redis": "^4.1.0",
     "smui-theme": "^6.0.0-beta.16",
     "svelte": "^3.48.0",
     "svelte-awesome-color-picker": "^0.0.10",

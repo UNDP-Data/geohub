@@ -1,9 +1,17 @@
 import fs from 'fs'
 import path from 'path'
+import redis from 'redis'
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
+import {
+  AZURE_STORAGE_ACCOUNT,
+  AZURE_STORAGE_ACCESS_KEY,
+  AZURE_REDIS_HOSTNAME,
+  AZURE_REDIS_CACHEKEY,
+} from '$lib/variables'
 import { TagKeys } from '$lib/constants'
+import type { TagLayer } from '$lib/types'
+
 
 const __dirname = path.resolve()
 const tagsFile = `${__dirname}/data/tags.json`
@@ -20,6 +28,13 @@ export async function get({ url }) {
   const blobs = []
   let tagsFilteredParam = []
 
+  const cacheConnection = redis.createClient({
+    // rediss for TLS
+    url: 'rediss://' + AZURE_REDIS_HOSTNAME + ':6380',
+    password: AZURE_REDIS_CACHEKEY,
+  })
+  await cacheConnection.connect()
+
   // get tags parameter
   if (url.searchParams.get('tags')) {
     const tagsParam = url.searchParams.get('tags').split(',')
@@ -33,30 +48,45 @@ export async function get({ url }) {
 
       for (const tag of tagsFilteredParam) {
         for (const tagKey of TagKeys) {
-          for await (const blob of blobServiceClient.findBlobsByTags(`${tagKey}='${tag}'`)) {
-            containers.add(blob.containerName)
-            const containerClient = blobServiceClient.getContainerClient(blob.containerName)
-            const tags = await containerClient.getBlobClient(blob.name).getTags()
+          let tagKeyBlobs = JSON.parse(await cacheConnection.get(`${tagKey}='${tag}'`))
 
-            let isVector = false
-            let blobName = blob.name
+          if (tagKeyBlobs === null) {
+            tagKeyBlobs = []
 
-            if (blob.name.endsWith('metadata.json')) {
-              isVector = true
-              blobName = blob.name.split('/').at(-2)
+            for await (const blob of blobServiceClient.findBlobsByTags(`${tagKey}='${tag}'`)) {
+              containers.add(blob.containerName)
+              const containerClient = blobServiceClient.getContainerClient(blob.containerName)
+              const tags = await containerClient.getBlobClient(blob.name).getTags()
+
+              let isVector = false
+              let blobName = blob.name
+
+              if (blob.name.endsWith('metadata.json')) {
+                isVector = true
+                blobName = blob.name.split('/').at(-2)
+              }
+
+              tagKeyBlobs.push({
+                name: blobName,
+                container: blob.containerName,
+                tags: tags.tags,
+                isVector,
+              })
             }
 
-            blobs.push({
-              name: blobName,
-              container: blob.containerName,
-              tags: tags.tags,
-              isVector,
-            })
+            await cacheConnection.setEx(`${tagKey}='${tag}'`, 120, JSON.stringify(tagKeyBlobs))
           }
+
+          tagKeyBlobs.forEach((tagKeyBlob:TagLayer) => {
+            blobs.push(tagKeyBlob)
+            containers.add(tagKeyBlob.container)
+          })
         }
       }
     }
   }
+
+  await cacheConnection.disconnect()
 
   const endTime = performance.now()
   console.log(`    `)
