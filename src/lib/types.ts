@@ -104,7 +104,7 @@ export interface UniqueLegendColorMapRow {
 export interface IntervalLegendColorMapRow {
   index?: number
   color?: number[]
-  start?: number
+  start?: number | string
   end?: number | string
 }
 
@@ -258,4 +258,22 @@ export interface Color {
 export interface StyleDefinition {
   title: string
   uri: string
+}
+
+export interface TagsSearchResults {
+  tags: string[]
+  blobCount: number
+  containerCount: number
+  results: {
+    blobs: TagLayer[]
+    containers: string[]
+  }
+  responseTime: number
+}
+
+export interface TagLayer {
+  name: string
+  container: string
+  tags: string[]
+  isVector: boolean
 }

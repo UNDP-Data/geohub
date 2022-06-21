@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import { cloneDeep } from 'lodash-es'
   import maplibregl, { Map, MapMouseEvent } from 'maplibre-gl'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
@@ -11,7 +10,7 @@
   import CurrentLocation from '$lib/components/CurrentLocation.svelte'
   import { LayerTypes, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
-  import type { Layer, Sprite } from '$lib/types'
+  import type { Sprite } from '$lib/types'
   import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
 
   const AZURE_URL = import.meta.env.VITE_ADMIN_URL
@@ -113,54 +112,6 @@
     adminLayer.load()
     adminLayer.setInteraction()
   }
-
-  const beforeStyleChanged = () => {
-    const latestStyle = $map.getStyle()
-    $layerList.forEach((layer: Layer) => {
-      if (latestStyle.sources[layer.definition.source]) {
-        layer.source = JSON.parse(JSON.stringify(latestStyle.sources[layer.definition.source]))
-      }
-      if ($map.getLayer(layer.definition.id)) {
-        layer.definition = JSON.parse(
-          JSON.stringify(latestStyle.layers.filter((l: LayerSpecification) => l.id === layer.definition.id)[0]),
-        )
-
-        layer.children?.forEach((child) => {
-          if ($map.getLayer(child.definition.id)) {
-            child.definition = JSON.parse(
-              JSON.stringify(latestStyle.layers.filter((l: LayerSpecification) => l.id === child.definition.id)[0]),
-            )
-          }
-        })
-      }
-    })
-  }
-
-  const styleChanged = () => {
-    $layerList.forEach((layer: Layer) => {
-      if (!$map.getSource(layer.definition.source)) {
-        $map.addSource(layer.definition.source, layer.source)
-      }
-      if (!$map.getLayer(layer.definition.id)) {
-        if (layer.source.type === LayerTypes.RASTER) {
-          let firstSymbolId = undefined
-          for (const l of $map.getStyle().layers) {
-            if (l.type === 'symbol') {
-              firstSymbolId = l.id
-              break
-            }
-          }
-          $map.addLayer(layer.definition, firstSymbolId)
-        } else {
-          $map.addLayer(layer.definition)
-        }
-        layer.children?.forEach((child: Layer) => {
-          $map.addLayer(child.definition)
-        })
-      }
-    })
-    initAdminLayer()
-  }
 </script>
 
 <svelte:head>
@@ -175,12 +126,7 @@
 <CurrentLocation bind:map={$map} />
 
 {#if isStyleSwitcherVisible}
-  <StyleSwicher
-    bind:stylePrimary={styles[0]}
-    bind:styleSecondary={styles[1]}
-    on:styleChanged={styleChanged}
-    on:beforestyleChanged={beforeStyleChanged}
-    bind:map={$map} />
+  <StyleSwicher bind:map={$map} />
 {/if}
 
 <MapQueryInfoPanel bind:mapMouseEvent />

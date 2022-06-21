@@ -1,6 +1,7 @@
 import chroma from 'chroma-js'
-import { ClassificationMethodTypes, NO_RANDOM_SAMPLING_POINTS } from '$lib/constants'
+import { ClassificationMethodTypes } from '$lib/constants'
 import { Jenks } from '$lib/jenks'
+import { remapInputValue } from './helper'
 
 export default class IntervalList {
   #bins: number[] = []
@@ -8,12 +9,13 @@ export default class IntervalList {
   #midBins: number[] = []
   #randomSample: number[] = []
   #seed: number
+  #sampleFromInterval: number[]
 
   constructor(bins: number[], counts: number[], seed: number = undefined) {
     this.#bins = bins
     this.#counts = counts
     this.#seed = seed
-
+    this.#sampleFromInterval
     this.#setMidBins()
     this.#setRandomSample()
   }
@@ -25,16 +27,19 @@ export default class IntervalList {
   }
 
   #setRandomSample() {
-    // cumulative distribution function
-    const cdf = this.#cumulativeSum(this.#counts)
-    const ncdf = cdf.map((val) => {
-      return val / cdf[cdf.length - 1]
+    const sum = this.#counts.reduce((a, b) => a + b, 0)
+    const probList = this.#counts.map((item) => item / sum) // percentages of values. Need to calculate how many
+    const randomSampleInts = []
+    probList.map((probability, index) => {
+      const numberOfItems = probability * 1000 // how many values exist within a cerain interval considering 1000 values
+      const randomIntsList = this.getSampleFromInterval(
+        this.#bins[index],
+        this.#bins[index] + 1,
+        Math.ceil(numberOfItems),
+      )
+      randomSampleInts.push(...randomIntsList)
     })
-
-    const rarr = [...Array(NO_RANDOM_SAMPLING_POINTS)].map(() => (this.#seed ? this.#seed : Math.random()))
-    this.#randomSample = rarr.map((v) => {
-      return this.#midBins[this.#getBinarySearchValue(ncdf, v, 0, 0)]
-    })
+    this.#randomSample = [...new Set(randomSampleInts)]
   }
 
   #cumulativeSum(array: Array<number>) {
@@ -197,6 +202,16 @@ export default class IntervalList {
     return this.#randomSample
   }
 
+  getSampleFromInterval(intervalStart: number, intervalEnd: number, numberOfItems: number) {
+    const randomSamplesFromInterval = []
+
+    // Number of items per interval
+    while (randomSamplesFromInterval.length < numberOfItems) {
+      const randomInt = Math.floor(Math.random() * (intervalEnd - intervalStart + 1)) + intervalStart
+      randomSamplesFromInterval.push(randomInt)
+    }
+    return randomSamplesFromInterval
+  }
   getIntervalList(
     classificationMethod: ClassificationMethodTypes,
     layerMin: number,
@@ -204,12 +219,25 @@ export default class IntervalList {
     randomSample: number[],
     numberOfClasses: number,
   ) {
-    let intervalList = []
+    let intervalList: number[]
 
     if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
       intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses).naturalBreak().map((element) => {
         return Number(element.toFixed(2))
       })
+    } else if ((classificationMethod === ClassificationMethodTypes.LOGARITHMIC && layerMin < 1) || layerMax < 1) {
+      const range = layerMax - layerMin
+      const positive = [layerMin, ...randomSample, layerMax].map((v) => {
+        return remapInputValue(v, layerMin, layerMax, 1, 1 + range)
+      })
+      intervalList = chroma
+        .limits(positive, classificationMethod, numberOfClasses)
+        .map((v) => {
+          return remapInputValue(v, 1, 1 + range, layerMin, layerMax)
+        })
+        .map((element) => {
+          return Number(element.toFixed(2))
+        })
     } else {
       intervalList = chroma
         .limits([layerMin, ...randomSample, layerMax], classificationMethod, numberOfClasses)

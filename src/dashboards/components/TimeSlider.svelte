@@ -5,6 +5,7 @@
   import { LayerTypes } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
   import { map, year } from '../stores'
+  import { reloadAdmin } from '../utils/adminLayer'
   import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
   export let AZURE_URL: string
@@ -49,11 +50,11 @@
     loadLayer()
   }
 
-  export const getHreaUrl = (y: number) => {
+  const getHreaUrl = (y: number) => {
     return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
   }
 
-  export const getMlUrl = (y: number) => {
+  const getMlUrl = (y: number) => {
     return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${TOKEN}`
   }
 
@@ -64,6 +65,7 @@
     let url = electricitySelected.name === 'HREA' ? getHreaUrl($year) : getMlUrl($year)
     if (electricitySelected.name === 'NONE') removeRasterLayer()
     else loadRasterLayer(url)
+    reloadAdmin()
   }
 
   const removeRasterLayer = () => {

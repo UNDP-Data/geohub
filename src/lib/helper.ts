@@ -10,7 +10,6 @@ import type {
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
-
 import type { BannerMessage, SpriteIcon, SpriteImage } from './types'
 import { bannerMessages, map } from '$stores'
 import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'

@@ -2,16 +2,24 @@ import type { SourceSpecification, FillLayerSpecification, LineLayerSpecificatio
 import { LayerTypes } from '$lib/constants'
 import { admin } from '../stores/index'
 import { get } from 'svelte/store'
-import { map as dashboardMap } from '../stores/index'
+import { map as mapStore, year as yearStore } from '../stores/index'
 
 const BASE_URL = import.meta.env.VITE_ADMIN_URL
 const ADM_ID = 'admin'
 const ADM0_ID = 'admin0'
 let adminLevel = 0
 let hoveredStateId = null
+let choropleth = true
+let opacity = 0.8
+
+export const getChoropleth = () => choropleth
+
+export const setOpacity = (value: number) => {
+  opacity = value
+}
 
 const getAdminLevel = () => {
-  const map = get(dashboardMap)
+  const map = get(mapStore)
   const zoom = map.getZoom()
   if (zoom < 3) return 0
   if (zoom < 4) return 1
@@ -24,23 +32,20 @@ const getAdminLayer = () => {
   return `adm${adminLevel}_polygons`
 }
 
-const onAdminZoom = ({ originalEvent }) => {
-  const map = get(dashboardMap)
-  if (!originalEvent) return
-  const zoom = map.getZoom()
-  if (adminLevel !== 0 && zoom < 3) loadAdmin(true)
-  else if (adminLevel !== 1 && zoom >= 3 && zoom < 4) loadAdmin(true)
-  else if (adminLevel !== 2 && zoom >= 4 && zoom < 5) loadAdmin(true)
-  else if (adminLevel !== 3 && zoom >= 5 && zoom < 6) loadAdmin(true)
-  else if (adminLevel !== 4 && zoom >= 6) loadAdmin(true)
-  adminLevel = getAdminLevel()
-  const point: PointLike = [originalEvent.layerX, originalEvent.layerY]
-  const features = map.queryRenderedFeatures(point, { layers: [ADM_ID] })
-  if (features.length > 0) onAdminMouseMove({ features })
+export const onInteraction = () => {
+  const map = get(mapStore)
+  map.on('mousemove', ADM_ID, onMouseMove)
+  map.on('mouseleave', ADM_ID, onMouseLeave)
 }
 
-const onAdminMouseMove = (e) => {
-  const map = get(dashboardMap)
+export const offInteraction = () => {
+  const map = get(mapStore)
+  map.off('mousemove', ADM_ID, onMouseMove)
+  map.off('mouseleave', ADM_ID, onMouseLeave)
+}
+
+const onMouseMove = (e) => {
+  const map = get(mapStore)
   if (e.features.length > 0) {
     if (hoveredStateId) {
       map.setFeatureState(
@@ -66,8 +71,8 @@ const onAdminMouseMove = (e) => {
   }
 }
 
-const onAdminMouseLeave = () => {
-  const map = get(dashboardMap)
+const onMouseLeave = () => {
+  const map = get(mapStore)
   if (hoveredStateId) {
     map.setFeatureState(
       {
@@ -82,8 +87,24 @@ const onAdminMouseLeave = () => {
   hoveredStateId = null
 }
 
+const onZoom = ({ originalEvent }) => {
+  const map = get(mapStore)
+  if (!originalEvent) return
+  const zoom = map.getZoom()
+  if (adminLevel !== 0 && zoom < 3) loadAdmin(choropleth)
+  else if (adminLevel !== 1 && zoom >= 3 && zoom < 4) loadAdmin(choropleth)
+  else if (adminLevel !== 2 && zoom >= 4 && zoom < 5) loadAdmin(choropleth)
+  else if (adminLevel !== 3 && zoom >= 5 && zoom < 6) loadAdmin(choropleth)
+  else if (adminLevel !== 4 && zoom >= 6) loadAdmin(choropleth)
+  adminLevel = getAdminLevel()
+  const point: PointLike = [originalEvent.layerX, originalEvent.layerY]
+  const features = map.queryRenderedFeatures(point, { layers: [ADM_ID] })
+  if (features.length > 0) onMouseMove({ features })
+  map.setPaintProperty(ADM_ID, 'fill-opacity', opacity)
+}
+
 const loadAdmin0 = () => {
-  const map = get(dashboardMap)
+  const map = get(mapStore)
   const layerSource: SourceSpecification = {
     type: LayerTypes.VECTOR,
     maxzoom: 10,
@@ -104,24 +125,60 @@ const loadAdmin0 = () => {
   map.addLayer(layerLine)
 }
 
-export const loadAdmin = (choropleth: boolean) => {
+export const loadAdmin = (isChoropleth: boolean) => {
+  const map = get(mapStore)
+  choropleth = isChoropleth
+  adminLevel = getAdminLevel()
   unloadAdmin()
   if (choropleth) loadAdminChoropleth()
-  else {
-    loadAdminHover()
+  else loadAdminHover()
+  onInteraction()
+  map.on('zoom', onZoom)
+}
+
+export const reloadAdmin = () => {
+  const map = get(mapStore)
+  if (choropleth) {
+    map.setPaintProperty(ADM_ID, 'fill-color', getFillColor())
   }
 }
 
 export const unloadAdmin = () => {
-  const map = get(dashboardMap)
+  const map = get(mapStore)
+  offInteraction()
+  map.off('zoom', onZoom)
   map.getLayer(ADM0_ID) && map.removeLayer(ADM0_ID)
   map.getSource(ADM0_ID) && map.removeSource(ADM0_ID)
   map.getLayer(ADM_ID) && map.removeLayer(ADM_ID)
   map.getSource(ADM_ID) && map.removeSource(ADM_ID)
 }
 
+const getFillColor = () => {
+  const year = get(yearStore) || 2020
+  return [
+    'case',
+    ['==', ['get', `hrea_${year}`], null],
+    'hsla(0, 0%, 0%, 0)',
+    [
+      'interpolate',
+      ['linear'],
+      ['get', `hrea_${year}`],
+      0,
+      ['to-color', '#d7191c'],
+      0.25,
+      ['to-color', '#fdae61'],
+      0.5,
+      ['to-color', '#ffffbf'],
+      0.75,
+      ['to-color', '#abd9e9'],
+      1,
+      ['to-color', '#2c7bb6'],
+    ],
+  ]
+}
+
 const loadAdminChoropleth = () => {
-  const map = get(dashboardMap)
+  const map = get(mapStore)
   const lvl = getAdminLevel()
   const layerSource: SourceSpecification = {
     type: LayerTypes.VECTOR,
@@ -135,37 +192,24 @@ const loadAdminChoropleth = () => {
     source: ADM_ID,
     'source-layer': `adm${lvl}_polygons`,
     paint: {
-      'fill-color': [
-        'case',
-        ['==', ['get', 'hrea_2020'], null],
-        'hsla(0, 0%, 0%, 0)',
-        [
-          'interpolate',
-          ['linear'],
-          ['get', 'hrea_2020'],
-          0,
-          ['to-color', '#d7191c'],
-          0.25,
-          ['to-color', '#fdae61'],
-          0.5,
-          ['to-color', '#ffffbf'],
-          0.75,
-          ['to-color', '#abd9e9'],
-          1,
-          ['to-color', '#2c7bb6'],
-        ],
-      ],
+      'fill-color': getFillColor(),
       'fill-opacity': 0.9,
-      'fill-outline-color': 'hsla(0, 0%, 100%, 0.5)',
+      'fill-outline-color': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        'hsla(0, 0%, 0%, 1)',
+        'hsla(0, 0%, 100%, 0.5)',
+      ],
     },
   }
   map.addSource(ADM_ID, layerSource)
+  map.getLayer(ADM_ID) && map.removeLayer(ADM_ID)
   map.addLayer(layerFill)
   loadAdmin0()
 }
 
 export const loadAdminHover = () => {
-  const map = get(dashboardMap)
+  const map = get(mapStore)
   const lvl = getAdminLevel()
   const layerSource: SourceSpecification = {
     type: LayerTypes.VECTOR,
@@ -182,7 +226,7 @@ export const loadAdminHover = () => {
       'fill-color': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
-        'hsla(0, 0%, 0%, 0.25)',
+        'hsla(0, 0%, 0%, 0.05)',
         'hsla(0, 0%, 0%, 0)',
       ],
       'fill-outline-color': [
@@ -195,19 +239,4 @@ export const loadAdminHover = () => {
   }
   map.addSource(ADM_ID, layerSource)
   map.addLayer(layerFill)
-}
-
-export const setInteraction = () => {
-  const map = get(dashboardMap)
-  adminLevel = getAdminLevel()
-  map.on('mousemove', ADM_ID, onAdminMouseMove)
-  map.on('mouseleave', ADM_ID, onAdminMouseLeave)
-  map.on('zoom', onAdminZoom)
-}
-
-export const removeInteraction = () => {
-  const map = get(dashboardMap)
-  map.off('mousemove', ADM_ID, onAdminMouseMove)
-  map.off('mouseleave', ADM_ID, onAdminMouseLeave)
-  map.off('zoom', onAdminZoom)
 }
