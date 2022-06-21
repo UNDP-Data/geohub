@@ -200,13 +200,13 @@ export const styles: StyleDefinition[] = [
 ]
 
 export const TagKeys = [
-  'sdg-goal',
-  'sdg-target',
+  'sdg_goal',
+  'sdg_target',
   'theme',
   'extent',
   'resolution',
   'granularity',
-  'year',
+  'year_value',
   'name1',
   'name2',
   'name3',
