@@ -1,22 +1,18 @@
 import fs from 'fs'
 import path from 'path'
-// import Redis from 'ioredis'
+import NodeCache from 'node-cache'
 import azure, {
   BlobSASPermissions,
   BlobServiceClient,
   generateBlobSASQueryParameters,
   StorageSharedKeyCredential,
 } from '@azure/storage-blob'
-import {
-  AZURE_STORAGE_ACCOUNT,
-  AZURE_STORAGE_ACCESS_KEY,
-  // AZURE_REDIS_HOSTNAME,
-  // AZURE_REDIS_CACHEKEY,
-} from '$lib/variables'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
 import { TagKeys } from '$lib/constants'
 import { fetchUrl } from '$lib/helper'
 import type { TagLayer } from '$lib/types'
 
+const nodeCache = new NodeCache()
 const __dirname = path.resolve()
 const tagsFile = `${__dirname}/data/tags.json`
 const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
@@ -50,72 +46,72 @@ export async function get({ url }) {
 
       for (const tag of tagsFilteredParam) {
         for (const tagKey of TagKeys) {
-          // const data = JSON.parse(await redis.get(`${tagKey}='${tag}'`))
-          const tagKeyBlobs = []
+          const cacheValue = nodeCache.get(`${tagKey}='${tag}'`) as string
+          let tagKeyBlobs = []
 
-          // if (data === null) {
-          //   tagKeyBlobs = []
+          if (cacheValue) {
+            tagKeyBlobs = JSON.parse(cacheValue)
+          } else {
+            tagKeyBlobs = []
 
-          for await (const blob of blobServiceClient.findBlobsByTags(`${tagKey}='${tag}'`)) {
-            containers.add(blob.containerName)
-            const containerClient = blobServiceClient.getContainerClient(blob.containerName)
-            const tags = await containerClient.getBlobClient(blob.name).getTags()
-            const sasToken = generateBlobSASQueryParameters(
-              {
-                containerName: blob.containerName,
-                blobName: blob.name,
-                expiresOn: new Date(new Date().valueOf() + 86400000),
-                permissions: BlobSASPermissions.parse('r'),
-              },
-              sharedKeyCredential,
-            )
+            for await (const blob of blobServiceClient.findBlobsByTags(`${tagKey}='${tag}'`)) {
+              containers.add(blob.containerName)
+              const containerClient = blobServiceClient.getContainerClient(blob.containerName)
+              const tags = await containerClient.getBlobClient(blob.name).getTags()
+              const sasToken = generateBlobSASQueryParameters(
+                {
+                  containerName: blob.containerName,
+                  blobName: blob.name,
+                  expiresOn: new Date(new Date().valueOf() + 86400000),
+                  permissions: BlobSASPermissions.parse('r'),
+                },
+                sharedKeyCredential,
+              )
 
-            let isRaster = true
-            let path = `${blob.containerName}/${blob.name}`
-            let label = path.split('/')[path.split('/').length - 1]
-            let geomType = null
-            let url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path}?${sasToken}`
+              let isRaster = true
+              let path = `${blob.containerName}/${blob.name}`
+              let label = path.split('/')[path.split('/').length - 1]
+              let geomType = null
+              let url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path}?${sasToken}`
 
-            if (blob.name.endsWith('metadata.json')) {
-              const vectorLayerInfo = await fetchUrl(url)
-              const accountSasTokenUrl = new URL(accountSasTokenUri)
+              if (blob.name.endsWith('metadata.json')) {
+                const vectorLayerInfo = await fetchUrl(url)
+                const accountSasTokenUrl = new URL(accountSasTokenUri)
 
-              if (vectorLayerInfo?.json) {
-                const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
-                geomType = vectorTileMeta.tilestats.layers[0].geometry
+                if (vectorLayerInfo?.json) {
+                  const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
+                  geomType = vectorTileMeta.tilestats.layers[0].geometry
+                }
+
+                isRaster = false
+                label = blob.name.split('/').at(-2)
+                url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path.replace(
+                  'metadata.json',
+                  '{z}/{x}/{y}.pbf',
+                )}${accountSasTokenUrl.search}`
+                path = path.replace('metadata.json', '')
               }
 
-              isRaster = false
-              label = blob.name.split('/').at(-2)
-              url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path.replace(
-                'metadata.json',
-                '{z}/{x}/{y}.pbf',
-              )}${accountSasTokenUrl.search}`
-              path = path.replace('metadata.json', '')
+              const tag = {
+                label,
+                path,
+                url,
+                isRaster,
+                geomType,
+                container: blob.containerName,
+                tags: tags.tags,
+                children: [],
+              }
+
+              if (isRaster) {
+                delete tag.geomType
+              }
+
+              tagKeyBlobs.push(tag)
             }
 
-            const tag = {
-              label,
-              path,
-              url,
-              isRaster,
-              geomType,
-              container: blob.containerName,
-              tags: tags.tags,
-              children: [],
-            }
-
-            if (isRaster) {
-              delete tag.geomType
-            }
-
-            tagKeyBlobs.push(tag)
+            nodeCache.set(`${tagKey}='${tag}'`, JSON.stringify(tagKeyBlobs), 5*60)
           }
-
-          // await redis.setex(`${tagKey}='${tag}'`, 120, JSON.stringify(tagKeyBlobs))
-          // } else {
-          //   tagKeyBlobs = data
-          // }
 
           tagKeyBlobs.sort((a, b) => a.label.localeCompare(b.label))
 
@@ -127,8 +123,6 @@ export async function get({ url }) {
       }
     }
   }
-
-  // await redis.disconnect()
 
   const endTime = performance.now()
   console.log(`    `)
