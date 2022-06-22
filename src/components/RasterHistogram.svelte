@@ -1,6 +1,7 @@
 <script lang="ts">
   import { VegaLite } from 'svelte-vega'
-  import type VisualizationSpec, { View } from 'svelte-vega'
+  import { View } from 'svelte-vega'
+  import type VisualizationSpec from 'svelte-vega'
   import { onMount } from 'svelte'
   import { TITILER_API_ENDPOINT } from '../lib/constants'
   import { fetchUrl } from '../lib/helper'
