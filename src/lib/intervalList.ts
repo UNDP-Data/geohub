@@ -207,8 +207,8 @@ export default class IntervalList {
 
     // Number of items per interval
     while (randomSamplesFromInterval.length < numberOfItems) {
-      const randomInt = Math.random() * (intervalEnd - intervalStart + 1) + intervalStart
-      randomSamplesFromInterval.push(Number(randomInt.toFixed(2)))
+      const randomInt = Math.floor(Math.random() * (intervalEnd - intervalStart + 1)) + intervalStart
+      randomSamplesFromInterval.push(randomInt)
     }
     return randomSamplesFromInterval
   }
