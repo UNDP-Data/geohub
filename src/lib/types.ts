@@ -25,6 +25,7 @@ export interface TreeNode {
   isRaster?: boolean
   geomType?: string
   metadata?: VectorTileMetadata
+  tags?: string[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

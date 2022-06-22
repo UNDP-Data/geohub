@@ -495,6 +495,14 @@
             <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
           </div>
         {/if}
+
+        <div class="content is-size-7 tags pt-3">
+          {#each Object.values(node.tags) as tag}
+            <span title="tag" style="margin-right: 5px; font-weight: bold;">
+              <span class="tag is-info is-small is-light">{tag}</span>
+            </span>
+          {/each}
+        </div>
       </div>
     </div>
     <div id="arrow" data-popper-arrow />
