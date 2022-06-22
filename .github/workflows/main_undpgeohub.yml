@@ -34,8 +34,6 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         with:
           envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
-          envkey_AZURE_REDIS_HOSTNAME: ${{ secrets.AZURE_REDIS_HOSTNAME }}
-          envkey_AZURE_REDIS_CACHEKEY: ${{ secrets.AZURE_REDIS_CACHEKEY }}
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
           envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
