@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { createClient } from 'redis'
+// import Redis from 'ioredis'
 import azure, {
   BlobSASPermissions,
   BlobServiceClient,
@@ -10,8 +10,8 @@ import azure, {
 import {
   AZURE_STORAGE_ACCOUNT,
   AZURE_STORAGE_ACCESS_KEY,
-  AZURE_REDIS_HOSTNAME,
-  AZURE_REDIS_CACHEKEY,
+  // AZURE_REDIS_HOSTNAME,
+  // AZURE_REDIS_CACHEKEY,
 } from '$lib/variables'
 import { TagKeys } from '$lib/constants'
 import { fetchUrl } from '$lib/helper'
@@ -25,18 +25,6 @@ const blobServiceClient = new BlobServiceClient(
   sharedKeyCredential,
 )
 
-// const redis = new Redis(`rediss://:${AZURE_REDIS_CACHEKEY}@${AZURE_REDIS_HOSTNAME}:6380`)
-
-const client = createClient({
-  url: `rediss://:${AZURE_REDIS_CACHEKEY}@${AZURE_REDIS_HOSTNAME}:6380`,
-  socket: {
-    tls: true,
-    servername: AZURE_REDIS_HOSTNAME,
-} ,
-})
-
-
-
 export async function get({ url }) {
   const containers = new Set()
   console.clear()
@@ -48,8 +36,6 @@ export async function get({ url }) {
     azure.AccountSASPermissions.parse('r'),
     'o',
   )
-  await client.connect()
-  await client.setEx('2', 20, 'message')
 
   // get tags parameter
   if (url.searchParams.get('tags')) {
@@ -142,7 +128,7 @@ export async function get({ url }) {
     }
   }
 
-  await client.disconnect()
+  // await redis.disconnect()
 
   const endTime = performance.now()
   console.log(`    `)
@@ -152,7 +138,6 @@ export async function get({ url }) {
 
   return {
     body: {
-      redis: `rediss://:${AZURE_REDIS_CACHEKEY}@${AZURE_REDIS_HOSTNAME}:6380`,
       tags: tagsFilteredParam,
       blobCount: blobs.length,
       containerCount: [...containers].length,
