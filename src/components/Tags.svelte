@@ -342,15 +342,17 @@
 
   {#if tags.length > 0}
     {#each tags as tag, i}
-      <span class="svelte-tags-input-tag">
-        {#if typeof tag === 'string'}
-          {tag}
-        {:else}
-          {tag[autoCompleteKey]}
-        {/if}
-        {#if !disable}
-          <span class="svelte-tags-input-tag-remove" on:click={() => removeTag(i)}> &#215;</span>
-        {/if}
+      <span class="svelte-tags-input-tag" title="tag">
+        <span class="tag is-info is-small is-light">
+          {#if typeof tag === 'string'}
+            {tag}
+          {:else}
+            {tag[autoCompleteKey]}
+          {/if}
+          {#if !disable}
+            <span class="svelte-tags-input-tag-remove" on:click={() => removeTag(i)}> &#215;</span>
+          {/if}
+        </span>
       </span>
     {/each}
   {/if}
@@ -455,6 +457,7 @@
     border-radius: 5px;
     margin-right: 5px;
     margin-top: 5px;
+    font-weight: bold;
   }
 
   /*.svelte-tags-input-tag:hover {

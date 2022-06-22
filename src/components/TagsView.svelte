@@ -1,14 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import Tags from '$components/Tags.svelte'
+  import { fade } from 'svelte/transition'
   import Fa from 'svelte-fa'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
+  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
+  import Tags from '$components/Tags.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
-  import { TabNames } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
   import type { TagsSearchResults, TagLayer, TreeNode } from '$lib/types'
   import { tags } from '$stores'
+
+  const MAX_TAGS = 4
 
   let groupedTagSearchResults = new Map()
   let showSpinner = false
@@ -64,24 +67,39 @@
 
   const handleClearTags = () => {
     tagsList = []
+    treeBucket = []
   }
 </script>
 
 <div class="tags-view-container pl-5" data-testid="tags-view-container">
-  <div class="title is-size-4">
-    {TabNames.TAGS}
+  <div class="title is-size-4 mb-4">
+    Keywords
     <div class="is-divider separator mt-1 mb-1" />
+
+    {#if tagsList.length === MAX_TAGS}
+      <div
+        class="columns mt-2 ml-0 mr-0"
+        style="background-color: whitesmoke; padding: 5px; padding-top: 10px;"
+        transition:fade>
+        <div class="column is-1 is-size-6 has-text-weight-normal">
+          <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
+        </div>
+        <div class="column is-size-6 has-text-weight-normal">
+          A maximum of {MAX_TAGS} keywords can be selected.
+        </div>
+      </div>
+    {/if}
   </div>
   <div class="columns search">
     <div class="column is-9 tags-list" style="position: relative; z-index: 10;">
       <Tags
         on:tags={handleTags}
         addKeys={[9, 13]}
-        maxTags={4}
+        maxTags={MAX_TAGS}
         splitWith={'/'}
         onlyUnique={true}
         removeKeys={[27]}
-        placeholder={'Enter a keyword...'}
+        placeholder={'Select a keyword...'}
         autoComplete={$tags}
         tags={tagsList}
         allowBlur={true}
@@ -93,8 +111,7 @@
     <div class="column pl-0">
       <div class="columns is-gapless mb-3">
         <div class="column">
-          <button class="button" disabled={showSpinner} on:click={handleSearchTags}
-            >Search</button>
+          <button class="button" disabled={showSpinner} on:click={handleSearchTags}>Search</button>
         </div>
       </div>
       <div class="columns is-gapless">
@@ -108,7 +125,7 @@
   <div class="columns tree pt-2">
     <div class="column">
       <div class="title is-size-4">
-        Results
+        Buckets / Layers
         <div class="is-divider separator mt-1 mb-1" />
       </div>
       {#if showSpinner}
