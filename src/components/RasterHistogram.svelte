@@ -1,7 +1,5 @@
 <script lang="ts">
   import { VegaLite } from 'svelte-vega'
-  import { View } from 'svelte-vega'
-  import type VisualizationSpec from 'svelte-vega'
   import { onMount } from 'svelte'
   import { TITILER_API_ENDPOINT } from '../lib/constants'
   import { fetchUrl } from '../lib/helper'
@@ -55,29 +53,68 @@
     interval.push(1.1 * rangeFromBins)
 
     interval.slice(1).map((item, index) => {
-      table.push({ interval: Number(item.toFixed(2)), probability: Number(probability[index].toFixed(2)) })
+      table.push({
+        interval: Number(item.toFixed(2)),
+        probability: Number(probability[index].toFixed(2)),
+        counts: Number(counts[index].toFixed(2)),
+      })
     })
 
     data = { table: table }
+    console.log(data)
   })
 
-  let viewVL: View
-  let specVL: VisualizationSpec = {
+  let viewVL
+  let specVL = {
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     padding: 6,
     width: 250,
     height: 120,
+    background: null,
+    view: { stroke: 'transparent' },
     data: {
       name: 'table',
     },
     mark: {
       name: 'marks',
-      type: 'area',
+      type: 'bar',
+      // fill: {"value": "steelblue"}
     },
     encoding: {
-      x: { field: 'interval', type: 'nominal' },
-      y: { field: 'probability', type: 'quantitative' },
+      x: {
+        axis: { orient: 'bottom', grid: false, gridWidth: 0, titleColor: '#85A9C5' },
+        field: 'interval',
+        type: 'nominal',
+      },
+      // y: { axis: { orient: 'right', grid:false, "gridWidth": 0, }, field: 'probability', type: 'quantitative' },
+      // y2: { axis: { orient: 'left' }, field: 'counts', type: 'linear' }
     },
+    layer: [
+      {
+        mark: { opacity: 1, type: 'line', color: '#000000' },
+        encoding: {
+          y: {
+            aggregate: 'max',
+            field: 'probability',
+            title: 'Probability',
+            axis: { titleColor: '#85C5A6', orient: 'right' },
+          },
+        },
+      },
+      {
+        mark: { stroke: '#85A9C5', type: 'bar' },
+        encoding: {
+          y: {
+            aggregate: 'average',
+            field: 'counts',
+            title: 'Counts',
+            axis: { titleColor: '#85A9C5', orient: 'left' },
+          },
+        },
+      },
+    ],
+
+    resolve: { scale: { y: 'independent' } },
     scales: [
       {
         name: 'y',
@@ -88,21 +125,9 @@
         type: 'point',
       },
     ],
-    axes: [
-      {
-        scale: 'y',
-        orient: 'right',
-        zindex: 0,
-      },
-      {
-        scale: 'x',
-        orient: 'bottom',
-        zindex: 0,
-      },
-    ],
   }
 
-  const vegaOptions = { actions: true, renderer: 'svg' }
+  const vegaOptions = { actions: false, renderer: 'svg' }
 </script>
 
 <main>
