@@ -500,7 +500,7 @@
           {#if node.tags}
             {#each Object.values(node.tags) as tag}
               <span title="tag" style="margin-right: 5px; font-weight: bold;">
-                <span class="tag is-info is-small is-light">{tag}</span>
+                <span class="tag is-info is-small is-light">{clean(tag)}</span>
               </span>
             {/each}
           {/if}
