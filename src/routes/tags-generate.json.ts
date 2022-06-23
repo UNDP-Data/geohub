@@ -40,6 +40,8 @@ export async function get({ url }) {
     tags = [...new Set(mapTags.keys())]
   }
 
+  tags.sort((a: string, b: string) => a.localeCompare(b))
+
   fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(tags, null, 2))
 
   const endTime = performance.now()
