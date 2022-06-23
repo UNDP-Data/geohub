@@ -110,7 +110,7 @@ export async function get({ url }) {
               tagKeyBlobs.push(tag)
             }
 
-            nodeCache.set(`${tagKey}='${tag}'`, JSON.stringify(tagKeyBlobs), 5*60)
+            nodeCache.set(`${tagKey}='${tag}'`, JSON.stringify(tagKeyBlobs), 5 * 60)
           }
 
           tagKeyBlobs.sort((a, b) => a.label.localeCompare(b.label))
