@@ -11,7 +11,7 @@
   import type { TagsSearchResults, TagLayer, TreeNode } from '$lib/types'
   import { tags } from '$stores'
 
-  const MAX_TAGS = 4
+  const MAX_TAGS = 10
 
   let groupedTagSearchResults = new Map()
   let showSpinner = false
@@ -116,7 +116,8 @@
       </div>
       <div class="columns is-gapless">
         <div class="column">
-          <button class="button" disabled={showSpinner} on:click={handleClearTags}>Clear</button>
+          <button class="button" disabled={showSpinner || tagsList.length === 0} on:click={handleClearTags}
+            >Clear</button>
         </div>
       </div>
     </div>
@@ -150,9 +151,5 @@
 <style lang="scss">
   .tags-view-container .button {
     width: 75px;
-  }
-
-  :global(.svelte-tags-input-layout) {
-    height: 75px;
   }
 </style>
