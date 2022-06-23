@@ -49,6 +49,7 @@ export async function get({ url }) {
           const cacheValue = nodeCache.get(`${tagKey}='${tag}'`) as string
           let tagKeyBlobs = []
 
+          // check for cached key/value
           if (cacheValue) {
             tagKeyBlobs = JSON.parse(cacheValue)
           } else {
@@ -74,6 +75,7 @@ export async function get({ url }) {
               let geomType = null
               let url = `${`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`}/${path}?${sasToken}`
 
+              // vector blob
               if (blob.name.endsWith('metadata.json')) {
                 const vectorLayerInfo = await fetchUrl(url)
                 const accountSasTokenUrl = new URL(accountSasTokenUri)
@@ -110,7 +112,8 @@ export async function get({ url }) {
               tagKeyBlobs.push(tag)
             }
 
-            nodeCache.set(`${tagKey}='${tag}'`, JSON.stringify(tagKeyBlobs), 5*60)
+            // save tags to cache
+            nodeCache.set(`${tagKey}='${tag}'`, JSON.stringify(tagKeyBlobs), 60 * 60)
           }
 
           tagKeyBlobs.sort((a, b) => a.label.localeCompare(b.label))
