@@ -20,6 +20,10 @@
 
   onMount(async () => {
     $tags = (await fetchUrl('tags.json')).tags
+
+    if ($tags && $tags.length > 0) {
+      $tags = $tags.sort((a: string, b: string) => a.localeCompare(b))
+    }
   })
 
   const handleTags = (event: CustomEvent) => {
