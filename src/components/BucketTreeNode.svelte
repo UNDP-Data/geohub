@@ -497,11 +497,13 @@
         {/if}
 
         <div class="content is-size-7 tags pt-3">
-          {#each Object.values(node.tags) as tag}
-            <span title="tag" style="margin-right: 5px; font-weight: bold;">
-              <span class="tag is-info is-small is-light">{tag}</span>
-            </span>
-          {/each}
+          {#if node.tags}
+            {#each Object.values(node.tags) as tag}
+              <span title="tag" style="margin-right: 5px; font-weight: bold;">
+                <span class="tag is-info is-small is-light">{tag}</span>
+              </span>
+            {/each}
+          {/if}
         </div>
       </div>
     </div>
