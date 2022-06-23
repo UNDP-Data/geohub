@@ -44,7 +44,7 @@
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
-  let percentile98: number
+  let percentile98: number = layerConfig.percentile98
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
@@ -68,7 +68,7 @@
       info = { ...info, stats: layerStats }
 
       percentile98 = layerStats['1']['percentile_98']
-
+      layerConfig.percentile98 = percentile98
       const skewness = 3 * ((info.stats['1'].mean - info.stats['1'].median) / info.stats['1'].std)
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
@@ -147,7 +147,7 @@
 
       colorMap.splice(colorMap.length - 2, replaceIndex)
     } else {
-      const randomSample = intervalListHelper.getRandomSample()
+      const randomSample = intervalListHelper.getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
       const intervalList = intervalListHelper.getIntervalList(
         classificationMethod,
         layerMin,
@@ -155,7 +155,6 @@
         randomSample,
         numberOfClasses,
       )
-
       const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
       for (let i = 0; i <= numberOfClasses - 1; i++) {
         const row: IntervalLegendColorMapRow = {
