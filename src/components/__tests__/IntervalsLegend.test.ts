@@ -49,11 +49,11 @@ describe('Intervals Legend', () => {
     expect(colorMapRows.length).toEqual(3)
 
     expect(within(colorMapRows[0]).getByTitle('Start Value')).toHaveValue(100)
-    expect(within(colorMapRows[0]).getByTitle('End Value')).toHaveValue(101.23)
-    expect(within(colorMapRows[1]).getByTitle('Start Value')).toHaveValue(101.23)
-    expect(within(colorMapRows[1]).getByTitle('End Value')).toHaveValue(102.47)
-    expect(within(colorMapRows[2]).getByTitle('Start Value')).toHaveValue(102.47)
-    expect(within(colorMapRows[2]).getByTitle('End Value')).toHaveValue(103.7)
+    expect(within(colorMapRows[0]).getByTitle('End Value')).toHaveValue(101)
+    expect(within(colorMapRows[1]).getByTitle('Start Value')).toHaveValue(101)
+    expect(within(colorMapRows[1]).getByTitle('End Value')).toHaveValue(102)
+    expect(within(colorMapRows[2]).getByTitle('Start Value')).toHaveValue(102)
+    expect(within(colorMapRows[2]).getByTitle('End Value')).toHaveValue(103)
   })
 
   it('should increase the number of classes upon click of increase button', async () => {
@@ -75,9 +75,9 @@ describe('Intervals Legend', () => {
 
     // input values updated
     expect(within(colorMapRows[0]).getByTitle('Start Value')).toHaveValue(100)
-    expect(within(colorMapRows[0]).getByTitle('End Value')).toHaveValue(100.53)
-    expect(within(colorMapRows[6]).getByTitle('Start Value')).toHaveValue(103.17)
-    expect(within(colorMapRows[6]).getByTitle('End Value')).toHaveValue(103.7)
+    expect(within(colorMapRows[0]).getByTitle('End Value')).toHaveValue(100.43)
+    expect(within(colorMapRows[6]).getByTitle('Start Value')).toHaveValue(102.57)
+    expect(within(colorMapRows[6]).getByTitle('End Value')).toHaveValue(103)
   })
 
   it('should change the start/end values upon change of classification methods', async () => {
@@ -88,9 +88,9 @@ describe('Intervals Legend', () => {
 
     const colorMapRows = sut.getAllByTestId('intervals-legend-color-map-row-container')
     expect(within(colorMapRows[0]).getByTitle('Start Value')).toHaveValue(100)
-    expect(within(colorMapRows[0]).getByTitle('End Value')).toHaveValue(100.74)
-    expect(within(colorMapRows[4]).getByTitle('Start Value')).toHaveValue(102.96)
-    expect(within(colorMapRows[4]).getByTitle('End Value')).toHaveValue(103.7)
+    expect(within(colorMapRows[0]).getByTitle('End Value')).toHaveValue(100.6)
+    expect(within(colorMapRows[4]).getByTitle('Start Value')).toHaveValue(102.4)
+    expect(within(colorMapRows[4]).getByTitle('End Value')).toHaveValue(103)
   })
 
   it('should change the start/end value upon change of start/end value', async () => {

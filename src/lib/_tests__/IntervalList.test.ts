@@ -27,7 +27,7 @@ describe('IntervalList', () => {
       5,
     )
 
-    expect(intervalList).toEqual([13, 14, 2459, 4904, 7349, 12238])
+    expect(intervalList).toEqual([13, 13, 2458, 4903, 7348, 12238])
   })
 
   it('should return an interval list : equidistant', () => {
@@ -43,7 +43,7 @@ describe('IntervalList', () => {
       3,
     )
 
-    expect(intervalList).toEqual([100, 101.23, 102.47, 103.7])
+    expect(intervalList).toEqual([100, 101, 102, 103])
   })
 
   it('should return an interval list : logarithmic', () => {
@@ -75,6 +75,6 @@ describe('IntervalList', () => {
       8,
     )
 
-    expect(intervalList).toEqual([20, 20.13, 40.98, 101.24, 101.85, 102.4, 102.77, 103.59, 134])
+    expect(intervalList).toEqual([20, 20, 60, 100.25, 101, 101.75, 102.5, 110.75, 134])
   })
 })
