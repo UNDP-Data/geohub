@@ -36,9 +36,9 @@
     const probability = counts.map((item) => item / sum)
     const interval = layerStats[band]['histogram'][1]
 
-    const maxFromBins = Math.max(...interval)
-    const minFromBins = Math.min(...interval)
-    const rangeFromBins = maxFromBins - minFromBins
+    for (let i = 0; i < interval.length - 1; i++) {
+      interval[i] = (interval[i] + interval[i + 1]) * 0.5
+    }
 
     counts.unshift(0)
     counts.push(0)
@@ -49,9 +49,6 @@
       probability.push(0)
     }
 
-    interval.unshift(interval[0] - 0.1 * rangeFromBins)
-    interval.push(1.1 * rangeFromBins)
-
     interval.slice(1).map((item, index) => {
       table.push({
         interval: Number(item.toFixed(2)),
@@ -61,15 +58,15 @@
     })
 
     data = { table: table }
-    console.log(data)
   })
 
   let viewVL
   let specVL = {
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    padding: 6,
-    width: 250,
+    padding: 0,
+    width: 200,
     height: 120,
+    title: 'Probability and Counts Graph of Layer',
     background: null,
     view: { stroke: 'transparent' },
     data: {
@@ -78,11 +75,18 @@
     mark: {
       name: 'marks',
       type: 'bar',
-      // fill: {"value": "steelblue"}
     },
     encoding: {
       x: {
-        axis: { orient: 'bottom', grid: false, gridWidth: 0, titleColor: '#85A9C5' },
+        axis: {
+          orient: 'bottom',
+          grid: false,
+          gridWidth: 0,
+          titleColor: '#000000',
+          ticks: true,
+          labelFontStyle: 'Proxima Nova, Sans Serif',
+          titleFontStyle: 'Proxima Nova, Sans Serif',
+        },
         field: 'interval',
         type: 'nominal',
       },
@@ -100,13 +104,13 @@
         },
       },
       {
-        mark: { opacity: 1, type: 'line', color: '#85C5A6' },
+        mark: { opacity: 1, type: 'line', color: '#f55c5c', interpolate: 'basis' },
         encoding: {
           y: {
             aggregate: 'max',
             field: 'probability',
             title: 'Probability',
-            axis: { titleColor: '#85C5A6', orient: 'right' },
+            axis: { titleColor: '#f55c5c', orient: 'right' },
           },
         },
       },
@@ -135,7 +139,7 @@
 <style>
   main {
     text-align: center;
-    padding: 1em;
+    padding: 0;
     max-width: 240px;
     margin: 0 auto;
   }
