@@ -53,7 +53,7 @@ export async function get({ url }) {
     body: {
       tags,
       responseTime,
-      date: Math.trunc(Date.now()/1000),
+      date: Math.trunc(Date.now() / 1000),
     },
   }
 }
