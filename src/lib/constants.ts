@@ -28,6 +28,7 @@ export enum TabNames {
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
   TAGS = 'Search',
+  HISTOGRAM = 'Histogram',
 }
 
 export const BucketIntialValues = {

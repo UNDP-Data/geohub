@@ -148,7 +148,6 @@
       colorMap.splice(colorMap.length - 2, replaceIndex)
     } else {
       const randomSample = intervalListHelper.getRandomSample()
-      console.log(randomSample)
       const intervalList = intervalListHelper.getIntervalList(
         classificationMethod,
         layerMin,
