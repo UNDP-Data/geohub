@@ -86,21 +86,8 @@
         field: 'interval',
         type: 'nominal',
       },
-      // y: { axis: { orient: 'right', grid:false, "gridWidth": 0, }, field: 'probability', type: 'quantitative' },
-      // y2: { axis: { orient: 'left' }, field: 'counts', type: 'linear' }
     },
     layer: [
-      {
-        mark: { opacity: 1, type: 'line', color: '#000000' },
-        encoding: {
-          y: {
-            aggregate: 'max',
-            field: 'probability',
-            title: 'Probability',
-            axis: { titleColor: '#85C5A6', orient: 'right' },
-          },
-        },
-      },
       {
         mark: { stroke: '#85A9C5', type: 'bar' },
         encoding: {
@@ -109,6 +96,17 @@
             field: 'counts',
             title: 'Counts',
             axis: { titleColor: '#85A9C5', orient: 'left' },
+          },
+        },
+      },
+      {
+        mark: { opacity: 1, type: 'line', color: '#85C5A6' },
+        encoding: {
+          y: {
+            aggregate: 'max',
+            field: 'probability',
+            title: 'Probability',
+            axis: { titleColor: '#85C5A6', orient: 'right' },
           },
         },
       },
