@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { bannerMessages } from '$stores'
 import * as helper from '../helper'
 import type { BannerMessage } from '$lib/types'
+import { ClassificationMethodTypes } from '../constants'
 
 describe('stringifyStyleJSON', () => {
   it('should return a string', () => {
@@ -160,5 +161,52 @@ describe('remapInputValue', () => {
   it('should remap with new scale', () => {
     const value = helper.remapInputValue(15, 5, 200, 50, 1000)
     expect(Math.floor(value)).toEqual(98)
+  })
+})
+
+describe('getSampleFromInterval', () => {
+  it('should have the length of the resulting array be equal to the numberOfItems', () => {
+    const samplesList = helper.getSampleFromInterval(0, 1, 1000)
+    expect(samplesList.length).toEqual(1000)
+  })
+})
+
+describe('getSampleFromInterval', () => {
+  it('should have the length of the resulting array be equal to the numberOfItems', () => {
+    const samplesList = helper.getSampleFromInterval(0, 1, 1000)
+    expect(samplesList).toHaveLength(1000)
+  })
+})
+
+describe('getIntervalList', () => {
+  it('should return an interval list : natural breaks', () => {
+    const randomSample = helper.getSampleFromInterval(1, 120, 1000)
+    const samplesList = helper.getIntervalList(ClassificationMethodTypes.NATURAL_BREAK, 1, 1000, randomSample, 5)
+    expect(samplesList).toHaveLength(6)
+  })
+  it('should return an interval list : equidistant', () => {
+    const randomSample = helper.getSampleFromInterval(1, 120, 1000)
+    const samplesList = helper.getIntervalList(ClassificationMethodTypes.EQUIDISTANT, 1, 1000, randomSample, 5)
+    expect(samplesList).toEqual([1, 200.8, 400.6, 600.4, 800.2, 1000])
+  })
+  it('should return an interval list : quantile', () => {
+    const randomSample = helper.getSampleFromInterval(1, 120, 1000)
+    const samplesList = helper.getIntervalList(ClassificationMethodTypes.QUANTILE, 1, 1000, randomSample, 5)
+    expect(samplesList).toHaveLength(6)
+  })
+  it('should return an interval list : logarithmic', () => {
+    const randomSample = helper.getSampleFromInterval(1, 120, 1000)
+    const samplesList = helper.getIntervalList(ClassificationMethodTypes.LOGARITHMIC, 1, 1000, randomSample, 5)
+    expect(samplesList).toEqual([1, 3.98, 15.85, 63.1, 251.19, 1000])
+  })
+  it('should return an interval list : logarithmic', () => {
+    const randomSample = helper.getSampleFromInterval(-23, 120, 1000)
+    const samplesList = helper.getIntervalList(ClassificationMethodTypes.LOGARITHMIC, -23, 1000, randomSample, 8)
+    expect(samplesList).toEqual([-23, -21.62, -18.34, -10.55, 8, 52.11, 157.02, 406.54, 1000])
+  })
+  it('should return an interval list : logarithmic', () => {
+    const randomSample = helper.getSampleFromInterval(0, 1, 1000)
+    const samplesList = helper.getIntervalList(ClassificationMethodTypes.LOGARITHMIC, 0, 1, randomSample, 5)
+    expect(samplesList).toEqual([0, 0.15, 0.32, 0.52, 0.74, 1])
   })
 })

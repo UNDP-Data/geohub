@@ -12,7 +12,9 @@ import Clipper from 'image-clipper'
 import mime from 'mime'
 import type { BannerMessage, SpriteIcon, SpriteImage } from './types'
 import { bannerMessages, map } from '$stores'
-import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
+import { ClassificationMethodTypes, DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
+import { Jenks } from './jenks'
+import chroma from 'chroma-js'
 
 export const updateParamsInURL = (
   definition:
@@ -153,11 +155,11 @@ export const hash = (val: string, seed = 0) => {
  * @param val String to clean
  */
 export const clean = (val: string) => {
-  const clean = val
+  // apply start/title case
+  return val
     .replace(/[_-]/g, ' ') // remove underscore and hyphen
     .replace(/\.[^/.]+$/, '') // remove extension
-    .replace(/\b\w/g, (str) => str.toUpperCase()) // apply start/title case
-  return clean
+    .replace(/\b\w/g, (str) => str.toUpperCase())
 }
 /**
  * Rescale input value based on min/max of old/new scale
@@ -170,4 +172,49 @@ export const clean = (val: string) => {
 export const remapInputValue = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
   const percent = (input - oldMin) / (oldMax - oldMin)
   return percent * (newMax - newMin) + newMin
+}
+
+export const getSampleFromInterval = (intervalStart: number, intervalEnd: number, numberOfItems: number) => {
+  const randomSamplesFromInterval = []
+
+  while (randomSamplesFromInterval.length < numberOfItems) {
+    const randomValue = remapInputValue(Math.random(), 0, 1, intervalStart, intervalEnd)
+    randomSamplesFromInterval.push(randomValue)
+  }
+  return randomSamplesFromInterval
+}
+
+export const getIntervalList = (
+  classificationMethod: ClassificationMethodTypes,
+  layerMin: number,
+  layerMax: number,
+  randomSample: number[],
+  numberOfClasses: number,
+) => {
+  let intervalList: number[]
+  if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
+    intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses).naturalBreak().map((element) => {
+      return Number(element.toFixed(2))
+    })
+  } else if ((classificationMethod === ClassificationMethodTypes.LOGARITHMIC && layerMin < 1) || layerMax < 1) {
+    const range = layerMax - layerMin
+    const positive = [layerMin, ...randomSample, layerMax].map((v) => {
+      return remapInputValue(v, layerMin, layerMax, 1, 1 + range)
+    })
+    intervalList = chroma
+      .limits(positive, classificationMethod, numberOfClasses)
+      .map((v) => {
+        return remapInputValue(v, 1, 1 + range, layerMin, layerMax)
+      })
+      .map((element) => {
+        return Number(element.toFixed(2))
+      })
+  } else {
+    intervalList = chroma
+      .limits([layerMin, ...randomSample, layerMax], classificationMethod, numberOfClasses)
+      .map((element) => {
+        return Number(element.toFixed(2))
+      })
+  }
+  return intervalList
 }
