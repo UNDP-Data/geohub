@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import IntervalList from '$lib/intervalList'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
@@ -20,7 +19,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { cloneDeep, debounce } from 'lodash-es'
-  import { fetchUrl, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getIntervalList, getSampleFromInterval, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
@@ -92,21 +91,13 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
-    const bins: number[] = info.stats['1'].histogram[1]
-    const counts: number[] = info.stats['1'].histogram[0]
-    const intervalListHelper = new IntervalList(bins.slice(0, bins.length - 1), counts)
+
     const colorMap = []
 
     if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-      const randomSample = intervalListHelper.getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
+      const randomSample = getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
 
-      const intervalList = intervalListHelper.getIntervalList(
-        classificationMethod,
-        layerMin,
-        percentile98,
-        randomSample,
-        numberOfClasses,
-      )
+      const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
 
       // intervalList.splice(intervalList.length - 2, intervalList[intervalList.length - 1])
       const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
@@ -147,14 +138,8 @@
 
       colorMap.splice(colorMap.length - 2, replaceIndex)
     } else {
-      const randomSample = intervalListHelper.getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
-      const intervalList = intervalListHelper.getIntervalList(
-        classificationMethod,
-        layerMin,
-        layerMax,
-        randomSample,
-        numberOfClasses,
-      )
+      const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
+      const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
       const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
       for (let i = 0; i <= numberOfClasses - 1; i++) {
         const row: IntervalLegendColorMapRow = {

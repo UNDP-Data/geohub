@@ -13,9 +13,10 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
+    NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import { remapInputValue } from '$lib/helper'
+  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -24,7 +25,6 @@
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
-  import IntervalListHelper from '$lib/intervalList'
   import { map, spriteImageList } from '$stores'
 
   export let applyToOption: string
@@ -168,16 +168,8 @@
               ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
             ]
           }
-
-          const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
-          const randomSample = intervalListHelper.getRandomSample()
-          const intervalList = intervalListHelper.getIntervalList(
-            classificationMethod,
-            stat.min,
-            stat.max,
-            randomSample,
-            numberOfClasses,
-          )
+          const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+          const intervalList = getIntervalList(classificationMethod, stat.min, stat.max, randomSample, numberOfClasses)
           const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
           const propertySelectValues = []
 
