@@ -207,12 +207,7 @@ export default class IntervalList {
 
     // Number of items per interval
     while (randomSamplesFromInterval.length < numberOfItems) {
-      let randomValue
-      if (intervalStart === 0 && intervalEnd === 1) {
-        randomValue = Math.random()
-      } else {
-        randomValue = remapInputValue(Math.random(), 0, 1, intervalStart, intervalEnd)
-      }
+      const randomValue = remapInputValue(Math.random(), 0, 1, intervalStart, intervalEnd)
       randomSamplesFromInterval.push(randomValue)
     }
     return randomSamplesFromInterval

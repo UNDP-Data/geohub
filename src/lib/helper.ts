@@ -1,10 +1,10 @@
 import * as helper from './helper'
 import type {
-  RasterLayerSpecification,
   FillLayerSpecification,
-  LineLayerSpecification,
-  SymbolLayerSpecification,
   HeatmapLayerSpecification,
+  LineLayerSpecification,
+  RasterLayerSpecification,
+  SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec/types.g'
 
 import { get } from 'svelte/store'
@@ -169,6 +169,5 @@ export const clean = (val: string) => {
  */
 export const remapInputValue = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
   const percent = (input - oldMin) / (oldMax - oldMin)
-  const rescaled = percent * (newMax - newMin) + newMin
-  return rescaled | 0
+  return percent * (newMax - newMin) + newMin
 }
