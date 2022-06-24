@@ -100,7 +100,6 @@
     if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
       const randomSample = intervalListHelper.getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
 
-      // reclassifyForLog()
       const intervalList = intervalListHelper.getIntervalList(
         classificationMethod,
         layerMin,
@@ -108,6 +107,7 @@
         randomSample,
         numberOfClasses,
       )
+
       // intervalList.splice(intervalList.length - 2, intervalList[intervalList.length - 1])
       const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
       for (let i = 0; i <= numberOfClasses - 2; i++) {
