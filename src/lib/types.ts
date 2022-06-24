@@ -243,6 +243,7 @@ export interface Bucket {
   type: BucketType
   tags: string[]
   selected?: boolean | false
+  items?: []
 }
 
 export interface Color {

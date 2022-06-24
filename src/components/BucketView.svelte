@@ -27,7 +27,7 @@
           id: bucket.id,
           children: [],
           isRaster: false,
-          label: bucket.path.slice(0, -1),
+          label: bucket.tags.find((tag) => tag === 'STAC') ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
         },
       ]
