@@ -155,11 +155,11 @@ export const hash = (val: string, seed = 0) => {
  * @param val String to clean
  */
 export const clean = (val: string) => {
-  const clean = val
+  // apply start/title case
+  return val
     .replace(/[_-]/g, ' ') // remove underscore and hyphen
     .replace(/\.[^/.]+$/, '') // remove extension
-    .replace(/\b\w/g, (str) => str.toUpperCase()) // apply start/title case
-  return clean
+    .replace(/\b\w/g, (str) => str.toUpperCase())
 }
 /**
  * Rescale input value based on min/max of old/new scale
