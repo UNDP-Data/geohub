@@ -34,7 +34,7 @@
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import Popper from '$lib/popper'
   import type { BannerMessage, TreeNode, RasterTileMetadata, LayerInfoMetadata } from '$lib/types'
-  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
+  import { map, bucketList, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -91,7 +91,10 @@
   const updateTreeStore = async () => {
     setProgressIndicator(true)
 
-    const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
+    const treeData = tree.isStac
+      ? await fetchUrl(`stac.json?id=${tree.id}`)
+      : await fetchUrl(`azstorage.json?path=${tree.path}`)
+
     if (treeData) {
       //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
       // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
@@ -313,33 +316,51 @@
       if ($layerMetadata.has(layerPathHash)) {
         metadata = $layerMetadata.get(layerPathHash)
       } else {
-        // get metadata from endpoint
-        const layerURL = new URL(url)
-        const infoURI: string = isRaster
-          ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
-          : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
-              layerURL.search
-            }`
-        const layerInfo = await fetchUrl(infoURI)
+        if (node.isStac) {
+          const bucketStac = $bucketList.find(bucket => bucket.id === node.path.split('/')[0])
+          const itemsUrl = []
+          itemsUrl.push(bucketStac.url)
+          itemsUrl.push(node.path.split('/')[1])
+          itemsUrl.push('items')
+          itemsUrl.push(node.label)
+          const layerInfo = await fetchUrl(itemsUrl.join('/'))
 
-        if (isRaster) {
-          if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+          metadata = <LayerInfoMetadata>{
+            description: layerInfo?.properties?.description,
+            source: layerInfo?.properties?.platform,
+            unit: 'N/A',
+          }
+
+        } else {
+          // get metadata from endpoint
+          const layerURL = new URL(url)
+          const infoURI: string = isRaster
+            ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
+            : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
+                layerURL.search
+              }`
+          const layerInfo = await fetchUrl(infoURI)
+
+
+          if (isRaster) {
+            if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+              metadata = <LayerInfoMetadata>{
+                description: layerInfo.band_metadata[0][1]['Description'],
+                source: layerInfo.band_metadata[0][1]['Source'],
+                unit: layerInfo.band_metadata[0][1]['Unit'],
+              }
+
+              setLayerMetaDataStore(layerPathHash, metadata)
+            }
+          } else {
+            //layerInfo here is the whole metadata.json so the propes needs to be extracted into a new object
             metadata = <LayerInfoMetadata>{
-              description: layerInfo.band_metadata[0][1]['Description'],
-              source: layerInfo.band_metadata[0][1]['Source'],
-              unit: layerInfo.band_metadata[0][1]['Unit'],
+              description: layerInfo.description,
+              source: layerInfo.attribution,
             }
 
             setLayerMetaDataStore(layerPathHash, metadata)
           }
-        } else {
-          //layerInfo here is the whole metadata.json so the propes needs to be extracted into a new object
-          metadata = <LayerInfoMetadata>{
-            description: layerInfo.description,
-            source: layerInfo.attribution,
-          }
-
-          setLayerMetaDataStore(layerPathHash, metadata)
         }
       }
 

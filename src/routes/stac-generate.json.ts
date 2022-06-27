@@ -28,7 +28,7 @@ export async function get() {
       }
 
       // filter collections with COG / child items
-      const data = await fetchUrl(catalog.path)
+      const data = await fetchUrl(catalog.url)
       const collectionsWithCog = data.collections.filter((collection) => {
         if (Object.prototype.hasOwnProperty.call(collection, 'item_assets')) {
           for (const itemAssetType of Object.keys(collection.item_assets)) {
@@ -56,7 +56,7 @@ export async function get() {
         }
 
         // get items for each collection
-        const item = await fetchUrl(`${catalog.path}/${collection.id}/items`)
+        const item = await fetchUrl(`${catalog.url}/${collection.id}/items?limit=50`)
         const features = item.features
 
         if (features.length > 0) {
