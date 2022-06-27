@@ -6,7 +6,8 @@
 .vscode/
 /.svelte-kit
 /build
-/data
+/data/tags.json
+/data/stac-*
 /package
 coverage
 data/tags.json
