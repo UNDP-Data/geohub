@@ -21,14 +21,17 @@
     const isBucketInTree = $treeBucket.some((node) => node.path === bucket.path)
 
     if (isBucketInTree === false) {
+      const isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
+
       treeBucketUpdated = [
         ...$treeBucket,
         {
           id: bucket.id,
-          children: [],
-          isRaster: false,
-          label: bucket.tags.find((tag) => tag === 'STAC') ? bucket.label : bucket.path.slice(0, -1),
+          isRaster: true,
+          isStac: isBucketStac,
+          label: isBucketStac ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
+          children: [],
         },
       ]
     } else {

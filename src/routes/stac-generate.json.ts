@@ -23,6 +23,7 @@ export async function get() {
         label: catalog.label,
         path: `${catalog.id}/`,
         url: null,
+        isStac: true,
         children: [],
       }
 
@@ -50,6 +51,7 @@ export async function get() {
           path: `${catalog.id}/${cog.id}/`,
           url: null,
           isRaster: false,
+          isStac: true,
           children: [],
         }
 
@@ -74,6 +76,7 @@ export async function get() {
                   path,
                   url: assetItem.href,
                   isRaster: true,
+                  isStac: true,
                 }
 
                 collectionLayers.push(layer)
