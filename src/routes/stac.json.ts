@@ -5,17 +5,22 @@ import type { TreeNode } from '$lib/types'
 
 const __dirname = path.resolve()
 
-export async function get() {
+export async function get({ url }) {
   const startTime = performance.now()
 
   const files = fs.readdirSync(`${__dirname}/data/`)
   const tree = []
 
-  for (const file of files) {
-    if (file.startsWith('stac-')) {
-      const stacFile = `${__dirname}/data/${file}`
-      const stacData = JSON.parse(fs.readFileSync(stacFile, 'utf8')) as TreeNode[]
-      tree.push(stacData)
+  const stacIds = JSON.parse(fs.readFileSync(`${__dirname}/data/stac.json`, 'utf8')).map((catalog) => catalog.id)
+  const paramId = url.searchParams.get('id')
+
+  if (paramId && stacIds.includes(paramId)) {
+    tree.push(getStacFileData(`stac-${paramId}.json`))
+  } else {
+    for (const file of files) {
+      if (file.startsWith('stac-')) {
+        tree.push(getStacFileData(file))
+      }
     }
   }
 
@@ -27,4 +32,9 @@ export async function get() {
       responseTime: endTime - startTime,
     },
   }
+}
+
+const getStacFileData = (file: string) => {
+  const stacFile = `${__dirname}/data/${file}`
+  return JSON.parse(fs.readFileSync(stacFile, 'utf8')) as TreeNode[]
 }
