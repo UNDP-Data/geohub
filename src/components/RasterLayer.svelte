@@ -11,6 +11,8 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
+  import RasterHistogram from './RasterHistogram.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -18,12 +20,12 @@
   let isRefinePanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
-
+  let isHistogramPanelVisible = false
   $: {
     isLegendPanelVisible = false
     isRefinePanelVisible = false
     isOpacityPanelVisible = false
-
+    isHistogramPanelVisible = false
     switch (activeTab) {
       case TabNames.LEGEND:
         isLegendPanelVisible = true
@@ -34,6 +36,9 @@
       case TabNames.OPACITY:
         isOpacityPanelVisible = true
         break
+      case TabNames.HISTOGRAM:
+        isHistogramPanelVisible = true
+        break
       default:
         break
     }
@@ -41,6 +46,7 @@
 
   const tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
+    { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
     { label: TabNames.REFINE, icon: faCalculator, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
@@ -68,6 +74,9 @@
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
         <RasterLegendContainer bind:layer />
+      {/if}
+      {#if isHistogramPanelVisible}
+        <RasterHistogram bind:layer />
       {/if}
       {#if isRefinePanelVisible === true}
         <RefineContainer bind:layer />

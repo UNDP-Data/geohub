@@ -28,6 +28,7 @@ export enum TabNames {
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
   TAGS = 'Search',
+  HISTOGRAM = 'Histogram',
 }
 
 export const BucketIntialValues = {
@@ -71,6 +72,7 @@ export const LayerInitialValues = {
   },
   expression: '',
   legendType: '',
+  percentile98: undefined,
   iconColor: DEFAULT_LINE_COLOR,
   fillColor: DEFAULT_FILL_COLOR,
   fillOutlineColor: DEFAULT_LINE_COLOR,
@@ -200,13 +202,13 @@ export const styles: StyleDefinition[] = [
 ]
 
 export const TagKeys = [
-  'sdg-goal',
-  'sdg-target',
+  'sdg_goal',
+  'sdg_target',
   'theme',
   'extent',
   'resolution',
   'granularity',
-  'year',
+  'year_value',
   'name1',
   'name2',
   'name3',

@@ -40,6 +40,8 @@ export async function get({ url }) {
     tags = [...new Set(mapTags.keys())]
   }
 
+  tags.sort((a: string, b: string) => a.localeCompare(b))
+
   fs.writeFileSync(`${__dirname}/data/tags.json`, JSON.stringify(tags, null, 2))
 
   const endTime = performance.now()
@@ -53,6 +55,7 @@ export async function get({ url }) {
     body: {
       tags,
       responseTime,
+      date: Math.trunc(Date.now() / 1000),
     },
   }
 }
@@ -105,9 +108,11 @@ const setMapTags = async (path: string, blobClient: BlockBlobClient | BlobClient
 
   if (tagValues.length > 0) {
     for (const tag of tagValues) {
+      // if tag does not exist, add to map
       if (!mapTags.has(tag)) {
         mapTags.set(tag, [path])
       } else {
+        // merge pre-existing container(s)
         const containers = [...mapTags.get(tag), path]
         const uniqueSet = new Set(containers)
         mapTags.set(tag, [...uniqueSet])

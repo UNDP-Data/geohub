@@ -25,6 +25,7 @@ export interface TreeNode {
   isRaster?: boolean
   geomType?: string
   metadata?: VectorTileMetadata
+  tags?: string[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -272,8 +273,11 @@ export interface TagsSearchResults {
 }
 
 export interface TagLayer {
-  name: string
+  label: string
+  path: string
+  url: string
+  isRaster: boolean
+  geomType: string
   container: string
   tags: string[]
-  isVector: boolean
 }

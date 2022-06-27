@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import IntervalList from '$lib/intervalList'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
@@ -20,7 +19,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { cloneDeep, debounce } from 'lodash-es'
-  import { fetchUrl, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getIntervalList, getSampleFromInterval, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
@@ -44,7 +43,7 @@
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
-  let percentile98: number
+  let percentile98: number = layerConfig.percentile98
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
@@ -64,12 +63,12 @@
     if (!('stats' in info)) {
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-
+      const band = Object.keys(layerConfig.info.stats)[0]
       info = { ...info, stats: layerStats }
 
-      percentile98 = layerStats['1']['percentile_98']
-
-      const skewness = 3 * ((info.stats['1'].mean - info.stats['1'].median) / info.stats['1'].std)
+      percentile98 = layerStats[band]['percentile_98']
+      layerConfig.percentile98 = percentile98
+      const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
@@ -92,23 +91,13 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
-    const band = Object.keys(layerConfig.info.stats)[0]
-    const bins: number[] = info.stats[band].histogram[1]
-    const counts: number[] = info.stats[band].histogram[0]
-    const intervalListHelper = new IntervalList(bins.slice(0, bins.length - 1), counts)
     const colorMap = []
 
     if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-      const randomSample = intervalListHelper.getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
+      const randomSample = getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
 
-      // reclassifyForLog()
-      const intervalList = intervalListHelper.getIntervalList(
-        classificationMethod,
-        layerMin,
-        percentile98,
-        randomSample,
-        numberOfClasses,
-      )
+      const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
+
       // intervalList.splice(intervalList.length - 2, intervalList[intervalList.length - 1])
       const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
       for (let i = 0; i <= numberOfClasses - 2; i++) {
@@ -148,16 +137,8 @@
 
       colorMap.splice(colorMap.length - 2, replaceIndex)
     } else {
-      const randomSample = intervalListHelper.getRandomSample()
-      console.log(randomSample)
-      const intervalList = intervalListHelper.getIntervalList(
-        classificationMethod,
-        layerMin,
-        layerMax,
-        randomSample,
-        numberOfClasses,
-      )
-
+      const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
+      const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
       const scaleColorList = chroma.scale(layerConfig.colorMapName).classes(intervalList)
       for (let i = 0; i <= numberOfClasses - 1; i++) {
         const row: IntervalLegendColorMapRow = {

@@ -14,6 +14,7 @@
     COLOR_CLASS_COUNT_MINIMUM,
     DEFAULT_LINE_COLOR,
     LayerInitialValues,
+    NO_RANDOM_SAMPLING_POINTS,
   } from '$lib/constants'
   import type {
     IntervalLegendColorMapRow,
@@ -22,8 +23,8 @@
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
-  import IntervalListHelper from '$lib/intervalList'
   import { map } from '$stores'
+  import { getIntervalList, getSampleFromInterval } from '../../lib/helper'
 
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
@@ -173,9 +174,8 @@
               ]
             }
 
-            const intervalListHelper = new IntervalListHelper(stat.histogram.bins, stat.histogram.count)
-            const randomSample = intervalListHelper.getRandomSample()
-            const intervalList = intervalListHelper.getIntervalList(
+            const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+            const intervalList = getIntervalList(
               classificationMethod,
               stat.min,
               stat.max,

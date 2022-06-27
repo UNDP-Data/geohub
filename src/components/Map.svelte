@@ -18,7 +18,7 @@
   let adminLayer: AdminLayer = null
   let container: HTMLDivElement
   let isStyleSwitcherVisible = false
-  let mapMouseEvent: MapMouseEvent
+  let mapMouseEvent: MapMouseEvent = null
 
   onMount(async () => {
     const newMap = new Map({

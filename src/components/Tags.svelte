@@ -1,6 +1,7 @@
 <script>
   // https://github.com/sunnypol92/svelte-bulma-tag-input
   import { createEventDispatcher } from 'svelte'
+  import { clean } from '$lib/helper'
 
   const dispatch = createEventDispatcher()
 
@@ -342,15 +343,17 @@
 
   {#if tags.length > 0}
     {#each tags as tag, i}
-      <span class="svelte-tags-input-tag">
-        {#if typeof tag === 'string'}
-          {tag}
-        {:else}
-          {tag[autoCompleteKey]}
-        {/if}
-        {#if !disable}
-          <span class="svelte-tags-input-tag-remove" on:click={() => removeTag(i)}> &#215;</span>
-        {/if}
+      <span class="svelte-tags-input-tag" title="tag">
+        <span class="tag is-info is-small is-light">
+          {#if typeof tag === 'string'}
+            {clean(tag)}
+          {:else}
+            {clean(tag[autoCompleteKey])}
+          {/if}
+          {#if !disable}
+            <span class="svelte-tags-input-tag-remove" on:click={() => removeTag(i)}> &#215;</span>
+          {/if}
+        </span>
       </span>
     {/each}
   {/if}
@@ -379,7 +382,7 @@
           tabindex="-1"
           on:keydown={(e) => navigateAutoComplete(e, index, arrelementsmatch.length, element.label)}
           on:click={() => addTag(element.label)}>
-          {@html element.search}
+          {@html clean(element.search)}
         </li>
       {/each}
     </ul>
@@ -455,6 +458,7 @@
     border-radius: 5px;
     margin-right: 5px;
     margin-top: 5px;
+    font-weight: bold;
   }
 
   /*.svelte-tags-input-tag:hover {

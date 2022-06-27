@@ -38,6 +38,7 @@
 
   export let level = 0
   export let node: TreeNode
+  export let hideCloseButton = false
 
   const dispatch = createEventDispatcher()
   const {
@@ -416,7 +417,7 @@
           </div>
         {/if}
 
-        {#if level === 0}
+        {#if level === 0 && hideCloseButton === false}
           <div
             alt="Remove container"
             title="Remove container"
@@ -494,6 +495,16 @@
             <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
           </div>
         {/if}
+
+        <div class="content is-size-7 tags pt-3">
+          {#if node.tags}
+            {#each Object.values(node.tags) as tag}
+              <span title="tag" style="margin-right: 5px; font-weight: bold;">
+                <span class="tag is-info is-small is-light">{clean(tag)}</span>
+              </span>
+            {/each}
+          {/if}
+        </div>
       </div>
     </div>
     <div id="arrow" data-popper-arrow />
