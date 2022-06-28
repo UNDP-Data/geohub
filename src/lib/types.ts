@@ -245,6 +245,7 @@ export interface Bucket {
   tags: string[]
   selected?: boolean | false
   items?: []
+  url?: string
 }
 
 export interface Color {

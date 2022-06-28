@@ -9,13 +9,16 @@ export async function get({ url }) {
   const startTime = performance.now()
 
   const files = fs.readdirSync(`${__dirname}/data/`)
-  const tree = []
+  let tree = []
 
   const stacIds = JSON.parse(fs.readFileSync(`${__dirname}/data/stac.json`, 'utf8')).map((catalog) => catalog.id)
   const paramId = url.searchParams.get('id')
 
   if (paramId && stacIds.includes(paramId)) {
-    tree.push(getStacFileData(`stac-${paramId}.json`))
+    tree = getStacFileData(`stac-${paramId}.json`)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore:next-line
+    tree.children = tree.children.sort((a, b) => a.label.localeCompare(b.label))
   } else {
     for (const file of files) {
       if (file.startsWith('stac-')) {
