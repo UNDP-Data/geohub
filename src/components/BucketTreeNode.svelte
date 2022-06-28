@@ -204,7 +204,27 @@
     } else {
       let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
-      const b64EncodedUrl = getBase64EncodedUrl(url)
+      let b64EncodedUrl:string
+
+      // ** TODO **
+      // 1. misconfigured server - COGs
+          /**
+           * <Error>
+              <Code>ResourceNotFound</Code>
+              <Message>The specified resource does not exist. RequestId:3b0db3c7-101e-0042-23f2-8a5da0000000 Time:2022-06-28T13:22:30.1066451Z</Message>
+            </Error>
+          */
+
+      // 2. band_metadata not returning stats min/max
+
+      if (node.isStac && node.path.split('/')[0] === 'msft') {
+        const collectionId = node.path.split('/')[1]
+        const res = await fetchUrl(`https://planetarycomputer.microsoft.com/api/sas/v1/token/${collectionId}`)
+        b64EncodedUrl = `${node.url}?${res.token}`
+      } else {
+        b64EncodedUrl = getBase64EncodedUrl(url)
+      }
+
       layerInfo = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
