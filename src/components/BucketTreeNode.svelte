@@ -16,6 +16,8 @@
   import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
+  import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
+  import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
 
   import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { cloneDeep } from 'lodash-es'
@@ -24,11 +26,13 @@
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
+    DEFAULT_COLORMAP,
     ErrorMessages,
     LayerIconTypes,
     LayerTypes,
+    STAC_PAGINATION_PREV,
+    STAC_PAGINATION_NEXT,
     StatusTypes,
-    DEFAULT_COLORMAP,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
@@ -90,15 +94,26 @@
 
   const updateTreeStore = async () => {
     setProgressIndicator(true)
+    let treeData = []
 
-    const treeData = tree.isStac
-      ? await fetchUrl(`stac.json?id=${tree.id}`)
-      : await fetchUrl(`azstorage.json?path=${tree.path}`)
+    if (tree.isStac) {
+      const catalogId = node.path.split('/')[0]
+      treeData = await fetchUrl(
+        `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
+          .split('/')
+          .pop()
+          .replace(/\.[^/.]+$/, '')}`,
+      )
+    } else {
+      treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
+    }
 
     if (treeData) {
       //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
       // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
       // potentially invalid layers from the tree!!!!
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
       node = treeData.tree
       // the info endpoint returns metadata for rasters. the same needs to be implemented for
       // vector data with the difference that the metadata will be coming from .metadata.json
@@ -111,7 +126,7 @@
         childNodes.map((node) => {
           const layerURL = new URL(node.url)
           const infoURI: string = node.isRaster
-            ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
+            ? `${TITILER_API_ENDPOINT}/info?url=${node.isStac ? node.url : getBase64EncodedUrl(node.url)}`
             : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
                 layerURL.search
               }`
@@ -125,14 +140,33 @@
           response.data.then((layerInfo) => {
             const layerPathHash = hash(response.node.path)
             if (response.node.isRaster) {
-              if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-                const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
-                  description: layerInfo.band_metadata[0][1]['Description'],
-                  source: layerInfo.band_metadata[0][1]['Source'],
-                  unit: layerInfo.band_metadata[0][1]['Unit'],
-                }
+              if (response.node.isStac) {
+                const bucketStac = $bucketList.find((bucket) => bucket.id === response.node.path.split('/')[0])
+                const itemsUrl = []
+                itemsUrl.push(bucketStac.url)
+                itemsUrl.push(response.node.path.split('/')[1])
+                itemsUrl.push('items')
+                itemsUrl.push(response.node.label)
 
-                setLayerMetaDataStore(layerPathHash, metadata)
+                fetchUrl(itemsUrl.join('/')).then((layerInfo) => {
+                  const metadata = <LayerInfoMetadata>{
+                    description: layerInfo?.properties?.description,
+                    source: layerInfo?.properties?.platform,
+                    unit: 'N/A',
+                  }
+
+                  setLayerMetaDataStore(layerPathHash, metadata)
+                })
+              } else {
+                if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+                  const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
+                    description: layerInfo.band_metadata[0][1]['Description'],
+                    source: layerInfo.band_metadata[0][1]['Source'],
+                    unit: layerInfo.band_metadata[0][1]['Unit'],
+                  }
+
+                  setLayerMetaDataStore(layerPathHash, metadata)
+                }
               }
             } else {
               const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
@@ -204,11 +238,11 @@
     } else {
       let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
-      let b64EncodedUrl:string
+      let b64EncodedUrl: string
 
       // ** TODO **
       // 1. misconfigured server - COGs
-          /**
+      /**
            * <Error>
               <Code>ResourceNotFound</Code>
               <Message>The specified resource does not exist. RequestId:3b0db3c7-101e-0042-23f2-8a5da0000000 Time:2022-06-28T13:22:30.1066451Z</Message>
@@ -218,9 +252,7 @@
       // 2. band_metadata not returning stats min/max
 
       if (node.isStac && node.path.split('/')[0] === 'msft') {
-        const collectionId = node.path.split('/')[1]
-        const res = await fetchUrl(`https://planetarycomputer.microsoft.com/api/sas/v1/token/${collectionId}`)
-        b64EncodedUrl = `${node.url}?${res.token}`
+        b64EncodedUrl = `${node.url}`
       } else {
         b64EncodedUrl = getBase64EncodedUrl(url)
       }
@@ -337,7 +369,7 @@
         metadata = $layerMetadata.get(layerPathHash)
       } else {
         if (node.isStac) {
-          const bucketStac = $bucketList.find(bucket => bucket.id === node.path.split('/')[0])
+          const bucketStac = $bucketList.find((bucket) => bucket.id === node.path.split('/')[0])
           const itemsUrl = []
           itemsUrl.push(bucketStac.url)
           itemsUrl.push(node.path.split('/')[1])
@@ -350,7 +382,6 @@
             source: layerInfo?.properties?.platform,
             unit: 'N/A',
           }
-
         } else {
           // get metadata from endpoint
           const layerURL = new URL(url)
@@ -360,7 +391,6 @@
                 layerURL.search
               }`
           const layerInfo = await fetchUrl(infoURI)
-
 
           if (isRaster) {
             if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
@@ -405,6 +435,21 @@
     if (tooltipTimer) clearTimeout(tooltipTimer)
     showTooltip = false
   }
+
+  let stacPaginationAction = ''
+  let stacPaginationLabel = ''
+
+  const handleStacPagination = (action: string) => {
+    stacPaginationAction = action
+
+    if (action === STAC_PAGINATION_PREV) {
+      stacPaginationLabel = children[0].label
+    } else if (action === STAC_PAGINATION_NEXT) {
+      stacPaginationLabel = children[children.length - 1].label
+    }
+
+    updateTreeStore()
+  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
@@ -445,7 +490,9 @@
             {/if}
           </div>
           <div class="name">
-            {clean(label)}
+            <div class="columns">
+              <div class="column">{clean(label)}</div>
+            </div>
           </div>
         {/if}
 
@@ -498,7 +545,7 @@
             alt="Download Layer Data"
             style="cursor: pointer;"
             title="Download Layer Data"
-            on:click={() => downloadFile(url)}>
+            on:click={() => downloadFile(node.isStac ? url.split(/[?#]/)[0] : url)}>
             <Wrapper>
               <Fa icon={faDownload} size="sm" />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
@@ -515,6 +562,30 @@
             {clean(label)}
           </div>
         {/if}
+      </div>
+    {/if}
+
+    {#if expanded && level > 0 && isRaster && node.isStac}
+      <div class="columns pl-4 pb-2 pt-2">
+        <div class="column is-flex is-flex-direction-row">
+          <div
+            on:click={() => handleStacPagination(STAC_PAGINATION_PREV)}
+            class={`pr-3 ${tree.paginationDirectionDisabled === STAC_PAGINATION_PREV ? 'disabled' : 'is-clickable'}`}
+            alt="Previous layers"
+            title="Previous layers">
+            <Fa icon={faBackward} size="sm" />
+          </div>
+          &nbsp;
+          <div
+            on:click={() => handleStacPagination(STAC_PAGINATION_NEXT)}
+            class={`is-clickable ${
+              tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT ? 'disabled' : 'is-clickable'
+            }`}
+            alt="Next layers"
+            title="Next layers">
+            <Fa icon={faForward} size="sm" />
+          </div>
+        </div>
       </div>
     {/if}
   </div>
@@ -599,6 +670,11 @@
         color: rgb(138, 20, 20);
       }
     }
+  }
+
+  .disabled {
+    cursor: default;
+    opacity: 0.15;
   }
 
   #tooltip {
