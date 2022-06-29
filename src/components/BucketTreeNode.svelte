@@ -149,32 +149,34 @@
                 itemsUrl.push(response.node.label)
 
                 fetchUrl(itemsUrl.join('/')).then((layerInfo) => {
-                  const metadata = <LayerInfoMetadata>{
-                    description: layerInfo?.properties?.description,
-                    source: layerInfo?.properties?.platform,
-                    unit: 'N/A',
-                  }
+                  let description = ''
 
-                  setLayerMetaDataStore(layerPathHash, metadata)
+                  if (layerInfo?.properties?.description === undefined) {
+                    fetchUrl(itemsUrl.slice(0, -2).join('/')).then((val) => {
+                      description = val?.description === undefined ? 'N/A' : val.description
+                      setLayerMetaDataStore(description, layerInfo?.properties?.platform, 'N/A', layerPathHash)
+                    })
+                  } else {
+                    setLayerMetaDataStore(
+                      layerInfo.properties.description,
+                      layerInfo?.properties?.platform,
+                      'N/A',
+                      layerPathHash,
+                    )
+                  }
                 })
               } else {
                 if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-                  const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
-                    description: layerInfo.band_metadata[0][1]['Description'],
-                    source: layerInfo.band_metadata[0][1]['Source'],
-                    unit: layerInfo.band_metadata[0][1]['Unit'],
-                  }
-
-                  setLayerMetaDataStore(layerPathHash, metadata)
+                  setLayerMetaDataStore(
+                    layerInfo.band_metadata[0][1]['Description'],
+                    layerInfo.band_metadata[0][1]['Source'],
+                    layerInfo.band_metadata[0][1]['Unit'],
+                    layerPathHash,
+                  )
                 }
               }
             } else {
-              const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
-                description: layerInfo.description,
-                source: layerInfo.source,
-                unit: undefined,
-              }
-              setLayerMetaDataStore(layerPathHash, metadata)
+              setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
             }
           })
         })
@@ -193,7 +195,13 @@
     return `${base}?${btoa(sign)}`
   }
 
-  const setLayerMetaDataStore = (layerPathHash: number, metadata: LayerInfoMetadata) => {
+  const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
+    const metadata = <LayerInfoMetadata>{
+      description,
+      source,
+      unit,
+    }
+
     const layerMetadataClone = cloneDeep($layerMetadata)
     layerMetadataClone.set(layerPathHash, metadata)
     $layerMetadata = layerMetadataClone
@@ -369,19 +377,25 @@
         metadata = $layerMetadata.get(layerPathHash)
       } else {
         if (node.isStac) {
+          let description = ''
+
           const bucketStac = $bucketList.find((bucket) => bucket.id === node.path.split('/')[0])
           const itemsUrl = []
           itemsUrl.push(bucketStac.url)
           itemsUrl.push(node.path.split('/')[1])
           itemsUrl.push('items')
           itemsUrl.push(node.label)
-          const layerInfo = await fetchUrl(itemsUrl.join('/'))
+          let layerInfo = await fetchUrl(itemsUrl.join('/'))
 
-          metadata = <LayerInfoMetadata>{
-            description: layerInfo?.properties?.description,
-            source: layerInfo?.properties?.platform,
-            unit: 'N/A',
+          if (layerInfo?.properties?.description === undefined) {
+            layerInfo = await fetchUrl(itemsUrl.slice(0, -2).join('/'))
+            description = layerInfo?.description === undefined ? 'N/A' : layerInfo.description
+          } else {
+            description = layerInfo.properties.description
           }
+
+          const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
+          setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
         } else {
           // get metadata from endpoint
           const layerURL = new URL(url)
@@ -394,24 +408,19 @@
 
           if (isRaster) {
             if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-              metadata = <LayerInfoMetadata>{
-                description: layerInfo.band_metadata[0][1]['Description'],
-                source: layerInfo.band_metadata[0][1]['Source'],
-                unit: layerInfo.band_metadata[0][1]['Unit'],
-              }
-
-              setLayerMetaDataStore(layerPathHash, metadata)
+              setLayerMetaDataStore(
+                layerInfo.band_metadata[0][1]['Description'],
+                layerInfo.band_metadata[0][1]['Source'],
+                layerInfo.band_metadata[0][1]['Unit'],
+                layerPathHash,
+              )
             }
           } else {
-            //layerInfo here is the whole metadata.json so the propes needs to be extracted into a new object
-            metadata = <LayerInfoMetadata>{
-              description: layerInfo.description,
-              source: layerInfo.attribution,
-            }
-
-            setLayerMetaDataStore(layerPathHash, metadata)
+            setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
           }
         }
+
+        metadata = $layerMetadata.get(layerPathHash)
       }
 
       if (metadata) {
