@@ -3,6 +3,7 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
 
+  import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
 
@@ -35,6 +36,18 @@
       setColorFromProp()
     }
   }
+
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [10, 15],
+  ).init()
 
   // set color based on default value
   const setColorFromProp = () => {
@@ -86,17 +99,18 @@
     <div
       id={`interval-${colorMapRow.index}`}
       on:click={() => handleColorPickerClick()}
+      use:popperRef
       class="discrete"
       alt="Color Map Control"
       title="Color Map Control"
       style={colorPickerStyle} />
-
-    {#if showToolTip}
-      <div class={`tooltip`} transition:fade>
-        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-      </div>
-    {/if}
   </div>
+  {#if showToolTip && color}
+    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+      <div id="arrow" data-popper-arrow />
+    </div>
+  {/if}
 
   <div class="column is-1 minimum">
     <input
@@ -120,6 +134,8 @@
 </div>
 
 <style lang="scss">
+  @import '../styles/popper.scss';
+
   $input-margin: 5px !important;
 
   .colormap-editor {
@@ -137,17 +153,17 @@
       cursor: pointer;
       height: 20px !important;
       width: 20px;
-    }
 
-    .tooltip-hidden {
-      display: none !important;
+      &:hover {
+        padding: 0;
+        border: 1px solid hsl(204, 86%, 53%);
+      }
     }
+  }
 
-    .tooltip {
-      left: 19px;
-      position: relative;
-      top: -20px;
-      z-index: 10;
-    }
+  #tooltip {
+    height: 230px;
+    padding: 0;
+    width: 170px;
   }
 </style>
