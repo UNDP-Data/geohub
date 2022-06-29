@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import UniqueValuesLegendColorMapRowReadOnly from '$components/UniqueValuesLegendColorMapRowReadOnly.svelte'
+  import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
@@ -372,7 +372,13 @@
         <div>
           {#each layer.intervals.colorMapRows as colorMapRow}
             <div class="pl-6">
-              <UniqueValuesLegendColorMapRowReadOnly bind:colorMapRow {layer} />
+              <UniqueValuesLegendColorMapRow
+                bind:colorMapRow
+                {layer}
+                {colorPickerVisibleIndex}
+                on:clickColorPicker={handleColorPickerClick}
+                on:changeColorMap={handleParamsUpdate}
+                on:changeIntervalValues={handleChangeIntervalValues} />
             </div>
           {/each}
         </div>
