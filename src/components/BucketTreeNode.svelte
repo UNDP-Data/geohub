@@ -538,9 +538,13 @@
             use:popperRef
             on:mouseenter={() => handleTooltipMouseEnter()}
             on:mouseleave={() => handleToolipMouseLeave()}>
-
             {#if node.isStac}
-              {clean(path.split('/').pop().replace(/\.[^/.]+$/, ""))}
+              {clean(
+                path
+                  .split('/')
+                  .pop()
+                  .replace(/\.[^/.]+$/, ''),
+              )}
             {:else}
               {clean(label)}
             {/if}
@@ -660,6 +664,12 @@
 
       @media (prefers-color-scheme: dark) {
         color: white;
+      }
+
+      .columns .column {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
 
