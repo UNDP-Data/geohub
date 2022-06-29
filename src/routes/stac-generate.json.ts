@@ -23,6 +23,7 @@ export async function get() {
         label: catalog.label,
         path: `${catalog.id}/`,
         url: null,
+        isRaster: true,
         isStac: true,
         children: [],
       }
@@ -50,43 +51,9 @@ export async function get() {
           label: cog.title,
           path: `${catalog.id}/${cog.id}/`,
           url: null,
-          isRaster: false,
+          isRaster: true,
           isStac: true,
           children: [],
-        }
-
-        // get items for each collection
-        const item = await fetchUrl(`${catalog.url}/${collection.id}/items?limit=50`)
-        const features = item.features
-
-        if (features.length > 0) {
-          const collectionLayers = []
-
-          // get all COG for features
-          for (const feat of item.features) {
-            const assets = feat.assets
-
-            for (const assetKey of Object.keys(assets)) {
-              if (assets[assetKey].type === COG_MIME_TYPE) {
-                const assetItem = assets[assetKey]
-                const file = new URL(assetItem.href).pathname.split('/').pop()
-                const path = `${catalog.id}/${cog.id}/${file}`
-                const layer: TreeNode = {
-                  label: feat.id,
-                  path,
-                  url: assetItem.href,
-                  isRaster: true,
-                  isStac: true,
-                }
-
-                collectionLayers.push(layer)
-              }
-            }
-          }
-
-          // sort collection by label value
-          collectionLayers.sort((a: TreeNode, b: TreeNode) => a.label.localeCompare(b.label))
-          collection.children = collectionLayers
         }
 
         collections.push(collection)
