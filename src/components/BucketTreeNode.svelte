@@ -104,6 +104,8 @@
           .pop()
           .replace(/\.[^/.]+$/, '')}`,
       )
+    } else if (tree.isMartin) {
+      treeData = await fetchUrl(`martin.json?path=${tree.path}&label=${tree.label}`)
     } else {
       treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
     }

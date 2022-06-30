@@ -27,6 +27,7 @@ export interface TreeNode {
   metadata?: VectorTileMetadata
   tags?: string[]
   isStac?: boolean
+  isMartin?: boolean
   paginationDirectionDisabled?: string
 }
 
