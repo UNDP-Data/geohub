@@ -5,7 +5,7 @@
 
   const operators = {
     title: 'Operators',
-    operators: ['==', '!=', '>', '>=', '<', '<=', 'in', '!in', ','],
+    operators: ['any', 'all', 'none'],
   }
 
   const handleOperatorClick = (op) => {
@@ -16,7 +16,7 @@
 </script>
 
 <div class=" column " style="width: 30%;">
-  <div style="border-bottom: 1px solid grey">Comparison</div>
+  <div style="border-bottom: 1px solid grey">Combining</div>
 
   <div class="setmembership" b style="margin-top: 5%">
     <div class="buttons" style="display: flex; ">
