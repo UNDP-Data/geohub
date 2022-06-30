@@ -16,6 +16,8 @@
   import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
+  import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
+  import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
 
   import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { cloneDeep } from 'lodash-es'
@@ -24,17 +26,19 @@
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
+    DEFAULT_COLORMAP,
     ErrorMessages,
     LayerIconTypes,
     LayerTypes,
+    STAC_PAGINATION_PREV,
+    STAC_PAGINATION_NEXT,
     StatusTypes,
-    DEFAULT_COLORMAP,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
   import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import Popper from '$lib/popper'
   import type { BannerMessage, TreeNode, RasterTileMetadata, LayerInfoMetadata } from '$lib/types'
-  import { map, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
+  import { map, bucketList, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -90,12 +94,26 @@
 
   const updateTreeStore = async () => {
     setProgressIndicator(true)
+    let treeData = []
 
-    const treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
+    if (tree.isStac) {
+      const catalogId = node.path.split('/')[0]
+      treeData = await fetchUrl(
+        `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
+          .split('/')
+          .pop()
+          .replace(/\.[^/.]+$/, '')}`,
+      )
+    } else {
+      treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
+    }
+
     if (treeData) {
       //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
       // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
       // potentially invalid layers from the tree!!!!
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
       node = treeData.tree
       // the info endpoint returns metadata for rasters. the same needs to be implemented for
       // vector data with the difference that the metadata will be coming from .metadata.json
@@ -108,7 +126,7 @@
         childNodes.map((node) => {
           const layerURL = new URL(node.url)
           const infoURI: string = node.isRaster
-            ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
+            ? `${TITILER_API_ENDPOINT}/info?url=${node.isStac ? node.url : getBase64EncodedUrl(node.url)}`
             : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
                 layerURL.search
               }`
@@ -122,22 +140,43 @@
           response.data.then((layerInfo) => {
             const layerPathHash = hash(response.node.path)
             if (response.node.isRaster) {
-              if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-                const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
-                  description: layerInfo.band_metadata[0][1]['Description'],
-                  source: layerInfo.band_metadata[0][1]['Source'],
-                  unit: layerInfo.band_metadata[0][1]['Unit'],
-                }
+              if (response.node.isStac) {
+                const bucketStac = $bucketList.find((bucket) => bucket.id === response.node.path.split('/')[0])
+                const itemsUrl = []
+                itemsUrl.push(bucketStac.url)
+                itemsUrl.push(response.node.path.split('/')[1])
+                itemsUrl.push('items')
+                itemsUrl.push(response.node.label)
 
-                setLayerMetaDataStore(layerPathHash, metadata)
+                fetchUrl(itemsUrl.join('/')).then((layerInfo) => {
+                  let description = ''
+
+                  if (layerInfo?.properties?.description === undefined) {
+                    fetchUrl(itemsUrl.slice(0, -2).join('/')).then((val) => {
+                      description = val?.description === undefined ? 'N/A' : val.description
+                      setLayerMetaDataStore(description, layerInfo?.properties?.platform, 'N/A', layerPathHash)
+                    })
+                  } else {
+                    setLayerMetaDataStore(
+                      layerInfo.properties.description,
+                      layerInfo?.properties?.platform,
+                      'N/A',
+                      layerPathHash,
+                    )
+                  }
+                })
+              } else {
+                if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+                  setLayerMetaDataStore(
+                    layerInfo.band_metadata[0][1]['Description'],
+                    layerInfo.band_metadata[0][1]['Source'],
+                    layerInfo.band_metadata[0][1]['Unit'],
+                    layerPathHash,
+                  )
+                }
               }
             } else {
-              const metadata: LayerInfoMetadata = <LayerInfoMetadata>{
-                description: layerInfo.description,
-                source: layerInfo.source,
-                unit: undefined,
-              }
-              setLayerMetaDataStore(layerPathHash, metadata)
+              setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
             }
           })
         })
@@ -156,7 +195,13 @@
     return `${base}?${btoa(sign)}`
   }
 
-  const setLayerMetaDataStore = (layerPathHash: number, metadata: LayerInfoMetadata) => {
+  const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
+    const metadata = <LayerInfoMetadata>{
+      description,
+      source,
+      unit,
+    }
+
     const layerMetadataClone = cloneDeep($layerMetadata)
     layerMetadataClone.set(layerPathHash, metadata)
     $layerMetadata = layerMetadataClone
@@ -201,7 +246,25 @@
     } else {
       let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
-      const b64EncodedUrl = getBase64EncodedUrl(url)
+      let b64EncodedUrl: string
+
+      // ** TODO **
+      // 1. misconfigured server - COGs
+      /**
+           * <Error>
+              <Code>ResourceNotFound</Code>
+              <Message>The specified resource does not exist. RequestId:3b0db3c7-101e-0042-23f2-8a5da0000000 Time:2022-06-28T13:22:30.1066451Z</Message>
+            </Error>
+          */
+
+      // 2. band_metadata not returning stats min/max
+
+      if (node.isStac && node.path.split('/')[0] === 'msft') {
+        b64EncodedUrl = `${node.url}`
+      } else {
+        b64EncodedUrl = getBase64EncodedUrl(url)
+      }
+
       layerInfo = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
@@ -313,34 +376,51 @@
       if ($layerMetadata.has(layerPathHash)) {
         metadata = $layerMetadata.get(layerPathHash)
       } else {
-        // get metadata from endpoint
-        const layerURL = new URL(url)
-        const infoURI: string = isRaster
-          ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
-          : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
-              layerURL.search
-            }`
-        const layerInfo = await fetchUrl(infoURI)
+        if (node.isStac) {
+          let description = ''
 
-        if (isRaster) {
-          if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-            metadata = <LayerInfoMetadata>{
-              description: layerInfo.band_metadata[0][1]['Description'],
-              source: layerInfo.band_metadata[0][1]['Source'],
-              unit: layerInfo.band_metadata[0][1]['Unit'],
-            }
+          const bucketStac = $bucketList.find((bucket) => bucket.id === node.path.split('/')[0])
+          const itemsUrl = []
+          itemsUrl.push(bucketStac.url)
+          itemsUrl.push(node.path.split('/')[1])
+          itemsUrl.push('items')
+          itemsUrl.push(node.label)
+          let layerInfo = await fetchUrl(itemsUrl.join('/'))
 
-            setLayerMetaDataStore(layerPathHash, metadata)
+          if (layerInfo?.properties?.description === undefined) {
+            layerInfo = await fetchUrl(itemsUrl.slice(0, -2).join('/'))
+            description = layerInfo?.description === undefined ? 'N/A' : layerInfo.description
+          } else {
+            description = layerInfo.properties.description
           }
+
+          const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
+          setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
         } else {
-          //layerInfo here is the whole metadata.json so the propes needs to be extracted into a new object
-          metadata = <LayerInfoMetadata>{
-            description: layerInfo.description,
-            source: layerInfo.attribution,
-          }
+          // get metadata from endpoint
+          const layerURL = new URL(url)
+          const infoURI: string = isRaster
+            ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
+            : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
+                layerURL.search
+              }`
+          const layerInfo = await fetchUrl(infoURI)
 
-          setLayerMetaDataStore(layerPathHash, metadata)
+          if (isRaster) {
+            if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+              setLayerMetaDataStore(
+                layerInfo.band_metadata[0][1]['Description'],
+                layerInfo.band_metadata[0][1]['Source'],
+                layerInfo.band_metadata[0][1]['Unit'],
+                layerPathHash,
+              )
+            }
+          } else {
+            setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+          }
         }
+
+        metadata = $layerMetadata.get(layerPathHash)
       }
 
       if (metadata) {
@@ -363,6 +443,21 @@
   const handleToolipMouseLeave = () => {
     if (tooltipTimer) clearTimeout(tooltipTimer)
     showTooltip = false
+  }
+
+  let stacPaginationAction = ''
+  let stacPaginationLabel = ''
+
+  const handleStacPagination = (action: string) => {
+    stacPaginationAction = action
+
+    if (action === STAC_PAGINATION_PREV) {
+      stacPaginationLabel = children[0].label
+    } else if (action === STAC_PAGINATION_NEXT) {
+      stacPaginationLabel = children[children.length - 1].label
+    }
+
+    updateTreeStore()
   }
 </script>
 
@@ -404,7 +499,9 @@
             {/if}
           </div>
           <div class="name">
-            {clean(label)}
+            <div class="columns">
+              <div class="column">{clean(label)}</div>
+            </div>
           </div>
         {/if}
 
@@ -450,14 +547,23 @@
             use:popperRef
             on:mouseenter={() => handleTooltipMouseEnter()}
             on:mouseleave={() => handleToolipMouseLeave()}>
-            {clean(label)}
+            {#if node.isStac}
+              {clean(
+                path
+                  .split('/')
+                  .pop()
+                  .replace(/\.[^/.]+$/, ''),
+              )}
+            {:else}
+              {clean(label)}
+            {/if}
           </div>
           <div
             class="icon"
             alt="Download Layer Data"
             style="cursor: pointer;"
             title="Download Layer Data"
-            on:click={() => downloadFile(url)}>
+            on:click={() => downloadFile(node.isStac ? url.split(/[?#]/)[0] : url)}>
             <Wrapper>
               <Fa icon={faDownload} size="sm" />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
@@ -474,6 +580,30 @@
             {clean(label)}
           </div>
         {/if}
+      </div>
+    {/if}
+
+    {#if expanded && level > 0 && isRaster && node.isStac}
+      <div class="columns pl-4 pb-2 pt-2">
+        <div class="column is-flex is-flex-direction-row">
+          <div
+            on:click={() => handleStacPagination(STAC_PAGINATION_PREV)}
+            class={`pr-3 ${tree.paginationDirectionDisabled === STAC_PAGINATION_PREV ? 'disabled' : 'is-clickable'}`}
+            alt="Previous layers"
+            title="Previous layers">
+            <Fa icon={faBackward} size="sm" />
+          </div>
+          &nbsp;
+          <div
+            on:click={() => handleStacPagination(STAC_PAGINATION_NEXT)}
+            class={`is-clickable ${
+              tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT ? 'disabled' : 'is-clickable'
+            }`}
+            alt="Next layers"
+            title="Next layers">
+            <Fa icon={faForward} size="sm" />
+          </div>
+        </div>
       </div>
     {/if}
   </div>
@@ -544,6 +674,12 @@
       @media (prefers-color-scheme: dark) {
         color: white;
       }
+
+      .columns .column {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
 
     .icon {
@@ -558,6 +694,11 @@
         color: rgb(138, 20, 20);
       }
     }
+  }
+
+  .disabled {
+    cursor: default;
+    opacity: 0.15;
   }
 
   #tooltip {

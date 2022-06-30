@@ -63,6 +63,7 @@ jobs:
           cp package.json build/.
           cp yarn.lock build/.
           mv node_modules build/.
+          mv data build/.
 
       - name: 'Deploy to Azure'
         id: deploy-to-webapp

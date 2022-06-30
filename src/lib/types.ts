@@ -26,6 +26,8 @@ export interface TreeNode {
   geomType?: string
   metadata?: VectorTileMetadata
   tags?: string[]
+  isStac?: boolean
+  paginationDirectionDisabled?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -243,6 +245,8 @@ export interface Bucket {
   type: BucketType
   tags: string[]
   selected?: boolean | false
+  items?: []
+  url?: string
 }
 
 export interface Color {
