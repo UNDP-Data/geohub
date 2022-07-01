@@ -24,7 +24,7 @@
   let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-  let selectedLayerId: string | undefined = treeNode.isMartin ? treeNode?.path : treeNode?.label
+  let selectedLayerId: string | undefined = treeNode?.isMartin ? treeNode?.path : treeNode?.label
   let tileSourceId = treeNode?.path
 
   $: {
