@@ -6,40 +6,50 @@ export async function get({ url }) {
 
   const containerLabel = url.searchParams.get('label')
   const containerPath = url.searchParams.get('path')
+  const isSchema = url.searchParams.get('isschema')
 
   const indexData = await fetchUrl(`${containerPath}`)
-  const schemas = []
-  Object.keys(indexData).forEach((id) => {
-    const table = indexData[id]
-    let schema: TreeNode = schemas.find((s) => s.label === table.schema)
-    if (!schema) {
-      schema = {
-        label: table.schema,
-        path: table.schema,
-        url: null,
-        children: [],
-        isRaster: false,
-        isStac: false,
-        isMartin: true,
+  const children = []
+  if (isSchema === 'true') {
+    Object.keys(indexData).forEach((id) => {
+      const table = indexData[id]
+      if (table.schema === containerLabel) {
+        const chjld: TreeNode = {
+          label: table.table,
+          path: table.id,
+          url: containerPath.replace('index', table.id),
+          children: [],
+          isRaster: false,
+          isStac: false,
+          isMartin: true,
+        }
+        children.push(chjld)
       }
-      schemas.push(schema)
-    }
+    })
+  } else {
+    Object.keys(indexData).forEach((id) => {
+      const table = indexData[id]
+      let schema: TreeNode = children.find((s) => s.label === table.schema)
+      if (!schema) {
+        schema = {
+          label: table.schema,
+          path: containerPath,
+          url: null,
+          children: [],
+          isRaster: false,
+          isStac: false,
+          isMartin: true,
+        }
+        children.push(schema)
+      }
+    })
+  }
 
-    const layer: TreeNode = {
-      label: table.table,
-      path: table.table,
-      url: `${containerPath.replace('index', table.id)}`,
-      isRaster: false,
-      isStac: false,
-      isMartin: true,
-    }
-    schema.children.push(layer)
-  })
   const tree: TreeNode = {
     label: containerLabel,
     path: containerPath,
     url: null,
-    children: schemas,
+    children: children,
     isRaster: false,
     isStac: false,
     isMartin: true,

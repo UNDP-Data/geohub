@@ -79,12 +79,20 @@
 
     let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
-      layerSource = {
-        type: LayerTypes.VECTOR,
-        tiles: [treeNode.url],
-        minzoom: treeNode.metadata.minzoom | 0,
-        maxzoom: treeNode.metadata.maxzoom | 24,
+      if (treeNode.isMartin) {
+        layerSource = {
+          type: LayerTypes.VECTOR,
+          url: treeNode.url,
+        }
+      } else {
+        layerSource = {
+          type: LayerTypes.VECTOR,
+          tiles: [treeNode.url],
+          minzoom: treeNode.metadata.minzoom | 0,
+          maxzoom: treeNode.metadata.maxzoom | 24,
+        }
       }
+
       if (!(tileSourceId in $map.getStyle().sources)) {
         $map.addSource(tileSourceId, layerSource)
       }
