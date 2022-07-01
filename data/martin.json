@@ -6,7 +6,7 @@
         "url": "https://martin.undpgeohub.org",
         "label": "Martin Vector Tiles API",
         "description": "Dynamic vector tiles sources from PostGIS database",
-        "icon": "fa-solid fa-layer-group",
+        "icon": "fa-solid fa-database",
         "type": "external",
         "tags": ["martin", "API", "UNDP"],
         "selected": false
