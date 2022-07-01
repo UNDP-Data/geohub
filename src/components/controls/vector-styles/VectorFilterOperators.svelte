@@ -15,10 +15,8 @@
   }
 </script>
 
-<div class=" column " style="width: 30%;">
-  <div style="border-bottom: 1px solid grey">Comparison</div>
-
-  <div class="setmembership" b style="margin-top: 5%">
+<div class=" column">
+  <div class="setmembership">
     <div class="buttons" style="display: flex; ">
       {#each operators.operators as operator}
         <button class="button is-small" on:click={() => handleOperatorClick(operator)} alt={operator} title={operator}>

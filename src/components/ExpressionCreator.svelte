@@ -27,6 +27,7 @@
   ).init()
 
   let showTooltip: boolean
+  let activeOperatorsTab = 'Numbers'
 
   const operatorSelected = (e) => {
     expression = expression.concat(e.detail.operator)
@@ -34,6 +35,11 @@
       text: e,
     })
   }
+
+  const handleSetOperatorType = (type) => {
+    activeOperatorsTab = type
+  }
+  const operatorTypes = ['Numbers', 'Comparison', 'Combining']
 </script>
 
 <div
@@ -53,14 +59,38 @@
 </div>
 {#if showTooltip}
   <div style="z-index: 999;" id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-    <div class="card" style="width: 400px">
+    <div class="card" style="width: 350px">
       <div class="card-content">
+        <div class="tabs">
+          <ul>
+            {#each operatorTypes as type}
+              <li class={activeOperatorsTab === type ? 'is-active' : ''}>
+                <a on:click={() => handleSetOperatorType(type)}>{type}</a>
+              </li>
+            {/each}
+          </ul>
+          <button
+            on:click={() => (showTooltip = false)}
+            id="close"
+            style="border:1px solid red"
+            class="button is-small">
+            <span id="closex" style="color: red">X</span>
+          </button>
+        </div>
+
         <div class="content">
-          <div class="columns" style="justify-content: space-between">
+          {#if activeOperatorsTab === 'Numbers'}
             <NumberButtons on:valueclicked={operatorSelected} />
+          {:else if activeOperatorsTab === 'Comparison'}
             <VectorFilterOperators on:operatorselected={operatorSelected} />
+          {:else}
             <VectorCombineOperators on:operatorselected={operatorSelected} />
-          </div>
+          {/if}
+          <!--          <div class="columns" style="justify-content: space-between">-->
+          <!--            <NumberButtons on:valueclicked={operatorSelected} />-->
+          <!--            <VectorFilterOperators on:operatorselected={operatorSelected} />-->
+          <!--            <VectorCombineOperators on:operatorselected={operatorSelected} />-->
+          <!--          </div>-->
         </div>
       </div>
     </div>
@@ -69,4 +99,10 @@
 {/if}
 
 <style lang="scss">
+  #close:hover {
+    background: maroon;
+  }
+  #closex:hover {
+    color: white;
+  }
 </style>

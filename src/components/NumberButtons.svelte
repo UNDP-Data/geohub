@@ -15,10 +15,8 @@
   }
 </script>
 
-<div class="column" style="width: 30%">
-  <div style="border-bottom: 1px solid grey">Numbers</div>
-
-  <div class="numbers" style="margin-top: 5%">
+<div class="column">
+  <div class="numbers">
     <div class="buttons">
       {#each numbers.operators as operator}
         <button class="button is-small" on:click={() => handleValuesClick(operator)} alt={operator} title={operator}>
