@@ -198,7 +198,7 @@
       treeNode.metadata.maxzoom && treeNode.metadata.maxzoom <= 24 ? treeNode.metadata.maxzoom : 24,
     )
 
-    const layerName = treeNode.path.split('/')[treeNode.path.split('/').length - 2]
+    const layerName = treeNode.isMartin ? treeNode.label : treeNode.path.split('/')[treeNode.path.split('/').length - 2]
 
     // set vector info stats (number properties)
     const stats = await getVectorInfo(treeNode.url, layerDefinition, layerName)
