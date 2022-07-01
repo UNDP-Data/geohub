@@ -32,6 +32,7 @@ export enum TabNames {
   ZOOM = 'Zoom',
   TAGS = 'Search',
   HISTOGRAM = 'Histogram',
+  FILTER = 'Filter',
 }
 
 export const BucketIntialValues = {

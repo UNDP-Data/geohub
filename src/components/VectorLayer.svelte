@@ -9,18 +9,23 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
+  import VectorFilterPanel from '$components/controls/VectorFilterPanel.svelte'
+
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
 
   export let layer: Layer = LayerInitialValues
 
   let activeTab = ''
-  let isLabelPanelVisible = false
-  let isLegendPanelVisible = false
-  let isOpacityPanelVisible = false
+  let isLabelPanelVisible: boolean
+  let isLegendPanelVisible: boolean
+  let isOpacityPanelVisible: boolean
+  let isFilterPanelVisible: boolean
 
   let tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
+    { label: TabNames.FILTER, icon: faFilter, active: false },
     { label: TabNames.LABEL, icon: faTextHeight, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
@@ -29,10 +34,13 @@
     isLabelPanelVisible = false
     isLegendPanelVisible = false
     isOpacityPanelVisible = false
-
+    isFilterPanelVisible = false
     switch (activeTab) {
       case TabNames.LEGEND:
         isLegendPanelVisible = true
+        break
+      case TabNames.FILTER:
+        isFilterPanelVisible = true
         break
       case TabNames.LABEL:
         isLabelPanelVisible = true
@@ -69,6 +77,7 @@
 
     <p class="panel-content">
       <VectorLegendPanel {layer} {isLegendPanelVisible} />
+      <VectorFilterPanel {layer} {isFilterPanelVisible} />
       <VectorLabelPanel {layer} {isLabelPanelVisible} />
       <OpacityPanel {layer} {isOpacityPanelVisible} />
     </p>
