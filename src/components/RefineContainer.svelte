@@ -201,7 +201,7 @@
     .expression,
     .numbers,
     .logical,
-    .comparison,
+    .existential,
     .functions,
     .arithmetic {
       > div {
