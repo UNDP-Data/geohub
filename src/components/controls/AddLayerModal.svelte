@@ -24,7 +24,7 @@
   let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-  let selectedLayerId: string | undefined = treeNode?.label
+  let selectedLayerId: string | undefined = treeNode.isMartin ? treeNode?.path : treeNode?.label
   let tileSourceId = treeNode?.path
 
   $: {
@@ -80,9 +80,14 @@
     let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
       if (treeNode.isMartin) {
+        const tilejson = await fetchUrl(treeNode.url)
+        // URL of tiles inside tileJSON from martin is http, hence we cannot use tileJSON directly because of CORS issue.
         layerSource = {
           type: LayerTypes.VECTOR,
-          url: treeNode.url,
+          scheme: tilejson.scheme,
+          tiles: tilejson.tiles.map((url) => url.replace('http', 'https')),
+          minzoom: tilejson.minzoom,
+          maxzoom: tilejson.maxzoom,
         }
       } else {
         layerSource = {
