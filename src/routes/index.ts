@@ -15,11 +15,12 @@ const __dirname = path.resolve()
 
 export async function get() {
   const stacContainers = getStacContainers()
+  const martinContainers = getMartinContainers()
   const buckets = await listContainers()
 
   return {
     body: {
-      buckets: [...stacContainers, ...buckets],
+      buckets: [...stacContainers, ...martinContainers, ...buckets],
     },
   }
 }
@@ -69,9 +70,8 @@ const listContainers = async () => {
   return bucketList
 }
 
-const getStacContainers = () => {
+const getExternalContainers = (filePath: string) => {
   let containers = []
-  const filePath = `${__dirname}/data/stac.json`
 
   if (fs.existsSync(filePath)) {
     containers = JSON.parse(fs.readFileSync(filePath, 'utf8'))
@@ -82,4 +82,14 @@ const getStacContainers = () => {
   }
 
   return containers
+}
+
+const getStacContainers = () => {
+  const filePath = `${__dirname}/data/stac.json`
+  return getExternalContainers(filePath)
+}
+
+const getMartinContainers = () => {
+  const filePath = `${__dirname}/data/martin.json`
+  return getExternalContainers(filePath)
 }

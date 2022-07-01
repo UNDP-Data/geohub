@@ -22,6 +22,7 @@
 
     if (isBucketInTree === false) {
       const isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
+      const isBucketMartin = bucket.tags.find((tag: string) => tag.toLowerCase() === 'martin') ? true : false
 
       treeBucketUpdated = [
         ...$treeBucket,
@@ -29,7 +30,8 @@
           id: bucket.id,
           isRaster: true,
           isStac: isBucketStac,
-          label: isBucketStac ? bucket.label : bucket.path.slice(0, -1),
+          isMartin: isBucketMartin,
+          label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
           children: [],
         },

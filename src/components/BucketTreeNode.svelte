@@ -104,6 +104,10 @@
           .pop()
           .replace(/\.[^/.]+$/, '')}`,
       )
+    } else if (tree.isMartin) {
+      treeData = await fetchUrl(
+        `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
+      )
     } else {
       treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
     }
@@ -121,15 +125,17 @@
       //const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
       //const vectorChildNodes = node.children.filter((item) => item.url !== null && !item.isRaster)
       const childNodes = node.children.filter((item) => item.url !== null)
-
       Promise.all(
         childNodes.map((node) => {
           const layerURL = new URL(node.url)
-          const infoURI: string = node.isRaster
+          let infoURI: string = node.isRaster
             ? `${TITILER_API_ENDPOINT}/info?url=${node.isStac ? node.url : getBase64EncodedUrl(node.url)}`
             : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
                 layerURL.search
               }`
+          if (node.isMartin) {
+            infoURI = node.url
+          }
           return {
             data: fetchUrl(infoURI),
             node,
@@ -226,16 +232,41 @@
 
     if (!isRaster) {
       const layerURL = new URL(url)
-      const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
-        '{z}/{x}/{y}.pbf',
-        'metadata.json',
-      )}${layerURL.search}`
+      if (!node.isMartin) {
+        const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
+          '{z}/{x}/{y}.pbf',
+          'metadata.json',
+        )}${layerURL.search}`
 
-      const layerMeta = await fetchUrl(metaURI)
-      if (layerMeta.json) {
-        layerMeta.json = JSON.parse(layerMeta.json)
+        const layerMeta = await fetchUrl(metaURI)
+        if (layerMeta.json) {
+          layerMeta.json = JSON.parse(layerMeta.json)
+        }
+        node.metadata = layerMeta
+      } else {
+        const tilejson = await fetchUrl(url)
+        node.metadata = {
+          name: tilejson.name,
+          format: 'pbf',
+          center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
+            tilejson.minzoom
+          }`,
+          bounds: `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`,
+          minzoom: tilejson.minzoom,
+          maxzoom: tilejson.maxzoom,
+        }
+        const metadataAll = await fetchUrl(url.replace(node.path, 'index'))
+        const metadata = metadataAll[node.path]
+        node.metadata.json = {
+          vector_layers: [
+            {
+              id: metadata.id,
+              fields: metadata.properties,
+            },
+          ],
+        }
       }
-      node.metadata = layerMeta
+
       isAddLayerModalVisible = true
       $modalVisible = true
       $indicatorProgress = false
