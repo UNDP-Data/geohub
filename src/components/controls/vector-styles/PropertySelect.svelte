@@ -4,9 +4,9 @@
   export let layer
 
   const metadata = layer.info
-  const layerI = metadata.json.tilestats.layers.find((l) => l.layer === layer.definition['source-layer'])
+  const vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
 
-  const propertySelectOptions = layerI['attributes'].map((attr) => attr.attribute)
+  const propertySelectOptions = Object.keys(vectorLayerMeta.fields)
   const dispatch = createEventDispatcher()
   let propertySelectValue: string = null
 
