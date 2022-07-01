@@ -86,11 +86,6 @@
           {:else}
             <VectorCombineOperators on:operatorselected={operatorSelected} />
           {/if}
-          <!--          <div class="columns" style="justify-content: space-between">-->
-          <!--            <NumberButtons on:valueclicked={operatorSelected} />-->
-          <!--            <VectorFilterOperators on:operatorselected={operatorSelected} />-->
-          <!--            <VectorCombineOperators on:operatorselected={operatorSelected} />-->
-          <!--          </div>-->
         </div>
       </div>
     </div>
