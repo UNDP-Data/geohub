@@ -257,6 +257,18 @@
         }
         const metadataAll = await fetchUrl(url.replace(node.path, 'index'))
         const metadata = metadataAll[node.path]
+        Object.keys(metadata.properties).forEach((key) => {
+          const dataType = metadata.properties[key]
+          switch (dataType) {
+            case 'varchar':
+              metadata.properties[key] = 'String'
+              break
+            case 'float8':
+            case 'int4':
+              metadata.properties[key] = 'Number'
+              break
+          }
+        })
         node.metadata.json = {
           vector_layers: [
             {

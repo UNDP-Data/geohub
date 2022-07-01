@@ -250,8 +250,12 @@
     layerName: string,
   ) => {
     const url = new URL(treeNodeUrl)
-    const path = `${url.origin}/${layerDefinition.source}0/0/0.pbf`
-    const data = await fetchUrl(`vectorinfo.json?path=${path}&layer_name=${layerName}`)
+    const path = treeNode.isMartin
+      ? `${treeNodeUrl.replace('.json', '/0/0/0.pbf')}`
+      : `${url.origin}/${layerDefinition.source}0/0/0.pbf`
+    const data = await fetchUrl(
+      `vectorinfo.json?path=${path}&layer_name=${treeNode.isMartin ? treeNode.path : layerName}`,
+    )
     return data.filter((val: VectorLayerTileStatAttribute) => val.type === 'number')
   }
 
