@@ -232,7 +232,6 @@
 
     if (!isRaster) {
       const layerURL = new URL(url)
-      console.log(layerURL)
       if (!node.isMartin) {
         const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
           '{z}/{x}/{y}.pbf',
