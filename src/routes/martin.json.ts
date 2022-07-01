@@ -1,5 +1,3 @@
-import fs from 'fs'
-
 import { fetchUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
 

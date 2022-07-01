@@ -32,7 +32,7 @@
           isStac: isBucketStac,
           isMartin: isBucketMartin,
           label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
-          path: isBucketMartin ? `${bucket.url}/${bucket.path}` : bucket.path,
+          path: bucket.path,
           children: [],
         },
       ]
