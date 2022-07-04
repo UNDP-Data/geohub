@@ -9,6 +9,7 @@
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   export let expression
 
@@ -58,7 +59,13 @@
   </Wrapper>
 </div>
 {#if showTooltip}
-  <div style="z-index: 999;" id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+  <div
+    style="z-index: 999;"
+    id="tooltip"
+    data-testid="tooltip"
+    use:popperContent={popperOptions}
+    use:clickOutside={() => (showTooltip = false)}
+    transition:fade>
     <div class="card" style="width: 350px">
       <div class="card-content">
         <div class="tabs">
