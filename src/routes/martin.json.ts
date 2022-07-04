@@ -1,5 +1,6 @@
 import { fetchUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
+import { TransferableGridIndex } from 'maplibre-gl'
 
 export async function get({ url }) {
   const startTime = performance.now()
@@ -14,9 +15,22 @@ export async function get({ url }) {
     Object.keys(indexData).forEach((id) => {
       const table = indexData[id]
       if (table.schema === containerLabel) {
+        let geomType: string
+        switch (table.geometry_type.toLowerCase()) {
+          case 'multipoint':
+            geomType = 'point'
+            break
+          case 'multilinestring':
+            geomType = 'line'
+            break
+          case 'multipolygon':
+            geomType = 'polygon'
+            break
+        }
         const chjld: TreeNode = {
           label: table.table,
           path: table.id,
+          geomType: geomType,
           url: containerPath.replace('index', table.id),
           children: [],
           isRaster: false,

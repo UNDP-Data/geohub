@@ -43,6 +43,7 @@
     RasterTileMetadata,
     LayerInfoMetadata,
     VectorLayerTileStatLayer,
+    VectorTileMetadata,
   } from '$lib/types'
   import { map, bucketList, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
@@ -133,17 +134,10 @@
       const childNodes = node.children.filter((item) => item.url !== null)
       Promise.all(
         childNodes.map((node) => {
-          const layerURL = new URL(node.url)
-          let infoURI: string = node.isRaster
-            ? `${TITILER_API_ENDPOINT}/info?url=${node.isStac ? node.url : getBase64EncodedUrl(node.url)}`
-            : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
-                layerURL.search
-              }`
-          if (node.isMartin) {
-            infoURI = node.url
-          }
           return {
-            data: fetchUrl(infoURI),
+            data: node.isRaster
+              ? fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${node.isStac ? node.url : getBase64EncodedUrl(node.url)}`)
+              : getVectorMetadata(node),
             node,
           }
         }),
@@ -231,73 +225,79 @@
     $indicatorProgress = state
   }
 
+  const getVectorMetadata = async (node: TreeNode) => {
+    let data: VectorTileMetadata
+    if (!node.isMartin) {
+      const layerURL = new URL(node.url)
+      const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
+        '{z}/{x}/{y}.pbf',
+        'metadata.json',
+      )}${layerURL.search}`
+
+      const layerMeta = await fetchUrl(metaURI)
+      if (layerMeta.json) {
+        layerMeta.json = JSON.parse(layerMeta.json)
+      }
+      data = layerMeta
+    } else {
+      const tilejson = await fetchUrl(node.url)
+      data = {
+        name: tilejson.name,
+        format: 'pbf',
+        center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
+          tilejson.minzoom
+        }`,
+        bounds: `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`,
+        minzoom: tilejson.minzoom,
+        maxzoom: tilejson.maxzoom,
+      }
+      const metadataAll = await fetchUrl(node.url.replace(node.path, 'index'))
+      const metadata = metadataAll[node.path]
+      Object.keys(metadata.properties).forEach((key) => {
+        const dataType = metadata.properties[key]
+        switch (dataType) {
+          case 'varchar':
+            metadata.properties[key] = 'String'
+            break
+          case 'float8':
+          case 'int4':
+            metadata.properties[key] = 'Number'
+            break
+        }
+      })
+
+      const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
+      const tilestatsLayer: VectorLayerTileStatLayer = {
+        layer: node.path,
+        geometry: metadata.geometry_type,
+        count: null,
+        attributeCount: stats.length,
+        attributes: stats,
+      }
+
+      data.json = {
+        vector_layers: [
+          {
+            id: metadata.id,
+            fields: metadata.properties,
+          },
+        ],
+        tilestats: {
+          layerCount: 1,
+          layers: [tilestatsLayer],
+        },
+      }
+    }
+    return data
+  }
+
   const loadLayer = async () => {
     setProgressIndicator(true)
     const tileSourceId = path
     const layerId = uuidv4()
 
     if (!isRaster) {
-      const layerURL = new URL(url)
-      if (!node.isMartin) {
-        const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
-          '{z}/{x}/{y}.pbf',
-          'metadata.json',
-        )}${layerURL.search}`
-
-        const layerMeta = await fetchUrl(metaURI)
-        if (layerMeta.json) {
-          layerMeta.json = JSON.parse(layerMeta.json)
-        }
-        node.metadata = layerMeta
-      } else {
-        const tilejson = await fetchUrl(url)
-        node.metadata = {
-          name: tilejson.name,
-          format: 'pbf',
-          center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
-            tilejson.minzoom
-          }`,
-          bounds: `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`,
-          minzoom: tilejson.minzoom,
-          maxzoom: tilejson.maxzoom,
-        }
-        const metadataAll = await fetchUrl(url.replace(node.path, 'index'))
-        const metadata = metadataAll[node.path]
-        Object.keys(metadata.properties).forEach((key) => {
-          const dataType = metadata.properties[key]
-          switch (dataType) {
-            case 'varchar':
-              metadata.properties[key] = 'String'
-              break
-            case 'float8':
-            case 'int4':
-              metadata.properties[key] = 'Number'
-              break
-          }
-        })
-
-        const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
-        const tilestatsLayer: VectorLayerTileStatLayer = {
-          layer: node.path,
-          geometry: metadata.geometry_type,
-          count: null,
-          attributeCount: stats.length,
-          attributes: stats,
-        }
-
-        node.metadata.json = {
-          vector_layers: [
-            {
-              id: metadata.id,
-              fields: metadata.properties,
-            },
-          ],
-          tilestats: {
-            layerCount: 1,
-            layers: [tilestatsLayer],
-          },
-        }
-      }
+      node.metadata = await getVectorMetadata(node)
 
       isAddLayerModalVisible = true
       $modalVisible = true
