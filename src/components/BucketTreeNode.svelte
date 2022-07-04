@@ -35,9 +35,15 @@
     StatusTypes,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
-  import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
+  import { fetchUrl, hash, clean, downloadFile, getVectorInfo } from '$lib/helper'
   import Popper from '$lib/popper'
-  import type { BannerMessage, TreeNode, RasterTileMetadata, LayerInfoMetadata } from '$lib/types'
+  import type {
+    BannerMessage,
+    TreeNode,
+    RasterTileMetadata,
+    LayerInfoMetadata,
+    VectorLayerTileStatLayer,
+  } from '$lib/types'
   import { map, bucketList, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
 
   export let level = 0
@@ -269,6 +275,16 @@
               break
           }
         })
+
+        const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
+        const tilestatsLayer: VectorLayerTileStatLayer = {
+          layer: node.path,
+          geometry: metadata.geometry_type,
+          count: null,
+          attributeCount: stats.length,
+          attributes: stats,
+        }
+
         node.metadata.json = {
           vector_layers: [
             {
@@ -276,6 +292,10 @@
               fields: metadata.properties,
             },
           ],
+          tilestats: {
+            layerCount: 1,
+            layers: [tilestatsLayer],
+          },
         }
       }
 
