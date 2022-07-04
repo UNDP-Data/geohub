@@ -1,8 +1,8 @@
 <script lang="ts">
-  import NumberButtons from './NumberButtons.svelte'
-  import VectorFilterOperators from './controls/vector-styles/VectorFilterOperators.svelte'
-  import VectorCombineOperators from './controls/VectorCombineOperators.svelte'
-  import Popper from '../lib/popper'
+  import NumberButtons from '../NumberButtons.svelte'
+  import VectorFilterOperators from './VectorFilterOperators.svelte'
+  import VectorCombineOperators from './VectorCombineOperators.svelte'
+  import Popper from '$lib/popper'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Card, { PrimaryAction } from '@smui/card'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'

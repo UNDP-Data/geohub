@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { map } from '../stores'
+  import { map } from '$stores'
   import Fa from 'svelte-fa'
   import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons/faDeleteLeft'
 
