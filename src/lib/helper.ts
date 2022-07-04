@@ -10,7 +10,7 @@ import type {
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
-import type { BannerMessage, SpriteIcon, SpriteImage } from './types'
+import type { BannerMessage, SpriteIcon, SpriteImage, TreeNode, VectorLayerTileStatAttribute } from './types'
 import { bannerMessages, map } from '$stores'
 import { ClassificationMethodTypes, DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 import { Jenks } from './jenks'
@@ -217,4 +217,15 @@ export const getIntervalList = (
       })
   }
   return intervalList
+}
+
+/**
+ * get tilestats data for specified layer from vector tile
+ * @param pbfPath vector tile path. path of 0/0/0.pbf should be used
+ * @param layerName layer name on vector tile
+ * @returns tilestats information
+ */
+export const getVectorInfo = async (pbfPath: string, layerName: string) => {
+  const data = await fetchUrl(`vectorinfo.json?path=${pbfPath}&layer_name=${layerName}`)
+  return data.filter((val: VectorLayerTileStatAttribute) => val.type === 'number')
 }
