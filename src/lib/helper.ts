@@ -10,7 +10,7 @@ import type {
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
-import type { BannerMessage, SpriteIcon, SpriteImage, TreeNode, VectorLayerTileStatAttribute } from './types'
+import type { BannerMessage, SpriteIcon, SpriteImage, VectorLayerTileStatAttribute } from './types'
 import { bannerMessages, map } from '$stores'
 import { ClassificationMethodTypes, DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 import { Jenks } from './jenks'

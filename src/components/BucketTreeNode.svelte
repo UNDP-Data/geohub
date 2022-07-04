@@ -35,7 +35,7 @@
     StatusTypes,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
-  import { fetchUrl, hash, clean, downloadFile, getVectorInfo } from '$lib/helper'
+  import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
   import Popper from '$lib/popper'
   import type {
     BannerMessage,
@@ -45,7 +45,16 @@
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import { map, bucketList, layerList, layerMetadata, indicatorProgress, bannerMessages, modalVisible } from '$stores'
+  import {
+    map,
+    bucketList,
+    layerList,
+    layerMetadata,
+    indicatorProgress,
+    bannerMessages,
+    modalVisible,
+    martinIndex,
+  } from '$stores'
 
   export let level = 0
   export let node: TreeNode
@@ -251,8 +260,8 @@
         minzoom: tilejson.minzoom,
         maxzoom: tilejson.maxzoom,
       }
-      const metadataAll = await fetchUrl(node.url.replace(node.path, 'index'))
-      const metadata = metadataAll[node.path]
+
+      const metadata = $martinIndex[node.path]
       Object.keys(metadata.properties).forEach((key) => {
         const dataType = metadata.properties[key]
         switch (dataType) {
@@ -266,13 +275,13 @@
         }
       })
 
-      const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
+      // const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
       const tilestatsLayer: VectorLayerTileStatLayer = {
         layer: node.path,
-        geometry: metadata.geometry_type,
+        geometry: node.geomType,
         count: null,
-        attributeCount: stats.length,
-        attributes: stats,
+        attributeCount: null,
+        attributes: null,
       }
 
       data.json = {

@@ -19,6 +19,7 @@ export const TITILER_API_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
 export const STAC_PAGINATION_PREV = 'prev'
 export const STAC_PAGINATION_NEXT = 'next'
 export const STAC_PAGINATION_LIMIT = 15
+export const MARTIN_API_ENDPOINT = import.meta.env.VITE_MARTIN_API_ENDPOINT
 
 export enum TabNames {
   ANALYZE = 'Analyze',
