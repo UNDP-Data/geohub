@@ -1,7 +1,7 @@
 <script lang="ts">
   import PropertySelect from './vector-styles/PropertySelect.svelte'
-  import FilterExpression from '../FilterExpression.svelte'
-  import ExpressionCreator from '../ExpressionCreator.svelte'
+  import VectorFilterExpression from './vector-styles/VectorFilterExpression.svelte'
+  import VectorFilterExpressionCreator from './vector-styles/VectorFilterExpressionCreator.svelte'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -21,9 +21,9 @@
   <div>
     <div class="columns" style="align-items: center">
       <PropertySelect {layer} on:select={propertySelected} />
-      <ExpressionCreator bind:expression />
+      <VectorFilterExpressionCreator bind:expression />
     </div>
-    <FilterExpression {layer} bind:expression />
+    <VectorFilterExpression {layer} bind:expression />
   </div>
 {/if}
 
