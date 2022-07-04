@@ -277,6 +277,10 @@
 
   // On Zoom change the zoomLevel variable
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
+
+  const handleApplyToClick = (type: string) => {
+    applyToOption = type
+  }
 </script>
 
 <div class="line-advanced-container" data-testid="line-advanced-container">
@@ -315,7 +319,10 @@
                     alt="Apply To Option"
                     title="Apply To Option" />
                 </div>
-                <div class="column ml-2" style="position: relative; top: -2px;">
+                <div
+                  class="column ml-2 applyto-title"
+                  style="position: relative; top: -2px;"
+                  on:click={() => handleApplyToClick(optionApplyTo)}>
                   {optionApplyTo}
                 </div>
               </div>
@@ -441,6 +448,10 @@
 
     .size {
       padding-left: 15px;
+    }
+
+    .applyto-title {
+      cursor: grab;
     }
   }
 </style>
