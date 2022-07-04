@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import type { Map as MaplibreMap } from 'maplibre-gl'
-import type { BannerMessage, Bucket, Layer, SpriteImage, TreeNode } from '$lib/types'
+import type { BannerMessage, Bucket, Layer, MartinLayerMetadata, SpriteImage, TreeNode } from '$lib/types'
 
 // dynamic layer list
 export const dynamicLayers = writable([])
@@ -36,3 +36,5 @@ export const layerMetadata = writable(new Map())
 export const layerLabelled = writable(new Map())
 
 export const tags = writable([])
+
+export const martinIndex = writable<{ [key: string]: MartinLayerMetadata }>(null)
