@@ -36,11 +36,15 @@
     if (style?.type !== LayerTypes.LINE || lineType === undefined) return
     $map.setPaintProperty(layerId, propertyName, lineTypes.find((item) => item.title === lineType).value)
   }
+
+  const handleLineTypeClick = (type: string) => {
+    lineType = type
+  }
 </script>
 
 <div class="line-pattern-view-container" data-testid="line-pattern-view-container">
   {#each lineTypes as type}
-    <div class="columns is-gapless mb-1">
+    <div class="columns is-gapless mb-1 line-pattern" on:click={() => handleLineTypeClick(type.title)}>
       <div class="column is-1">
         <input
           type="radio"
@@ -65,6 +69,10 @@
 <style lang="scss">
   .line-pattern-view-container {
     width: 100%;
+
+    .line-pattern {
+      cursor: grab;
+    }
 
     .line-pattern-sample {
       font-family: monospace;
