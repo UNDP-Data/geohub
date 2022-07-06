@@ -2,13 +2,16 @@
   import { map } from '$stores'
   import Fa from 'svelte-fa'
   import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons/faDeleteLeft'
+  import { groupByN } from '$lib/helper'
 
   export let layer
-
   export let expression = ''
+
+  let warnWrongExpression: boolean
 
   const handleClearExpression = () => {
     expression = ''
+    warnWrongExpression = false
     $map.setFilter(layer.definition.id, null)
   }
 
@@ -17,35 +20,59 @@
   }
 
   const handleApplyExpression = () => {
-    const re = /[a-zA-Z0-9]+,(?:<=|<|>=|>|!=|==|has|!has),[0-9]+/
-    if (re.test(expression)) {
+    const complexExpression = /^[(any)|(all)|(none)]+,([\w]+,(?:<=|<|>=|>|!=|==)+,[\d]+,)+$/
+    const re = /^[\w]+,[(==)|(!=)|(<)|(>)|(<=)|(>=)]+,[\d]+$/
+
+    if (re.exec(expression)) {
+      console.log('Simple Expression Passed')
+      warnWrongExpression = false
       const expList = expression.split(',')
-      console.log(expList)
       if (isNaN(Number(expList[2]))) {
         // The value cannot be converted to a number
         $map.setFilter(layer.definition.id, [expList[1], ['get', expList[0]], expList[2]])
       } else {
         $map.setFilter(layer.definition.id, [expList[1], ['get', expList[0]], Number(expList[2])])
       }
+    } else if (complexExpression.exec(expression.concat(','))) {
+      warnWrongExpression = false
+      console.log('Complex Expression Passed')
+      const expList = expression.split(',')
+      const combineOperator = expList[0]
+      const groupedExpressions = groupByN(3, expList.slice(1))
+
+      // generate a filter expression that has all the expressions
+      const filtersList = []
+      groupedExpressions.map((item) => {
+        filtersList.push([item[1], ['get', item[0]], Number(item[2])])
+      })
+      console.log(...filtersList)
+      $map.setFilter(layer.definition.id, [combineOperator, ...filtersList])
     } else {
-      // Todo: Warn the user of an invalid expression!!
-      console.log('REGEX Failed')
+      warnWrongExpression = true
     }
   }
 </script>
 
 <div class="expression">
-  <div class="is-size-7 has-text-weight-semibold">Filter expression</div>
+  <div class="is-size-7 has-text-weight-semibold">Filter expression: property, operation, value</div>
   <div class="columns">
-    <div class="column is-7">
-      <input
-        placeholder="Property, Operation, Value"
-        class="input is-small is-rounded"
-        bind:value={expression}
-        type="text"
-        maxlength="100"
-        alt="Expression input"
-        title="Expression input" />
+    <div class="column is-7" style="display: flex; align-items: center">
+      <div class="control has-icons-right">
+        <input
+          style={warnWrongExpression ? 'border:1px solid red' : 'border:1px solid grey'}
+          placeholder="Property, Operation, Value"
+          class="input is-small is-rounded"
+          bind:value={expression}
+          type="text"
+          maxlength="100"
+          alt="Expression input"
+          title="Expression input" />
+        {#if warnWrongExpression}
+          <span class="icon is-small is-right">
+            <i style="color:red;" class="fas fa-x fa-xs" />
+          </span>
+        {/if}
+      </div>
     </div>
     <div class="column">
       <button class="button is-small" on:click={handleDeleteValue} alt="Delete" title="Delete">
