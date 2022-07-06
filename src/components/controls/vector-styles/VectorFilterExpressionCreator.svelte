@@ -66,9 +66,9 @@
     use:popperContent={popperOptions}
     use:clickOutside={() => (showTooltip = false)}
     transition:fade>
-    <div class="card" style="width: 350px">
-      <div class="card-content">
-        <div class="tabs">
+    <div class="card" style="width: 300px">
+      <div class="card-content" style="padding: 0">
+        <div class="tabs" style="margin:0">
           <ul>
             {#each operatorTypes as type}
               <li class={activeOperatorsTab === type ? 'is-active' : ''}>

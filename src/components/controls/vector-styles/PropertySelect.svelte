@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  const defaultProperty = {}
+</script>
+
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
 

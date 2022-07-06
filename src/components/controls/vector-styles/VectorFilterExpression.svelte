@@ -6,13 +6,13 @@
 
   export let layer
   export let expression = ''
-
+  let layerId = layer.definition.id
   let warnWrongExpression: boolean
 
   const handleClearExpression = () => {
     expression = ''
     warnWrongExpression = false
-    $map.setFilter(layer.definition.id, null)
+    $map.setFilter(layerId, null)
   }
 
   const handleDeleteValue = () => {
@@ -24,18 +24,11 @@
     const re = /^[\w]+,[(==)|(!=)|(<)|(>)|(<=)|(>=)]+,[+-]?([0-9]*[.])?[0-9]+$/
 
     if (re.exec(expression)) {
-      console.log('Simple Expression Passed')
       warnWrongExpression = false
       const expList = expression.split(',')
-      if (isNaN(Number(expList[2]))) {
-        // The value cannot be converted to a number
-        $map.setFilter(layer.definition.id, [expList[1], ['get', expList[0]], expList[2]])
-      } else {
-        $map.setFilter(layer.definition.id, [expList[1], ['get', expList[0]], Number(expList[2])])
-      }
+      $map.setFilter(layerId, [expList[1], ['get', expList[0]], Number(expList[2])])
     } else if (complexExpression.exec(expression.concat(','))) {
       warnWrongExpression = false
-      console.log('Complex Expression Passed')
       const expList = expression.split(',')
       const combineOperator = expList[0]
       const groupedExpressions = groupByN(3, expList.slice(1))
@@ -45,8 +38,7 @@
       groupedExpressions.map((item) => {
         filtersList.push([item[1], ['get', item[0]], Number(item[2])])
       })
-      console.log(...filtersList)
-      $map.setFilter(layer.definition.id, [combineOperator, ...filtersList])
+      $map.setFilter(layerId, [combineOperator, ...filtersList])
     } else {
       warnWrongExpression = true
     }

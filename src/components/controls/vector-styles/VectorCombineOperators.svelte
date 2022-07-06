@@ -5,7 +5,11 @@
 
   const operators = {
     title: 'Operators',
-    operators: ['any', 'all', 'none'],
+    operators: [
+      { title: 'AND', operation: 'all' },
+      { title: 'OR', operation: 'any' },
+      { title: 'NOR', operation: 'none' },
+    ],
   }
 
   const handleOperatorClick = (op) => {
@@ -19,8 +23,12 @@
   <div class="setmembership">
     <div class="buttons" style="display: flex; ">
       {#each operators.operators as operator}
-        <button class="button is-small" on:click={() => handleOperatorClick(operator)} alt={operator} title={operator}>
-          <span>{operator}</span>
+        <button
+          class="button is-small"
+          on:click={() => handleOperatorClick(operator.operation)}
+          alt={operator.title}
+          title={operator.title}>
+          <span>{operator.title}</span>
         </button>
       {/each}
     </div>
