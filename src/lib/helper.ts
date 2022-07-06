@@ -230,7 +230,7 @@ export const getVectorInfo = async (pbfPath: string, layerName: string) => {
   return data.filter((val: VectorLayerTileStatAttribute) => val.type === 'number')
 }
 
-export const groupByN = (n, data) => {
+export const groupByN = (n: number, data: any[]) => {
   const result = []
   for (let i = 0; i < data.length; i += n) result.push(data.slice(i, i + n))
   return result
