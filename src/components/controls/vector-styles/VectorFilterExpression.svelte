@@ -20,8 +20,8 @@
   }
 
   const handleApplyExpression = () => {
-    const complexExpression = /^[(any)|(all)|(none)]+,([\w]+,(?:<=|<|>=|>|!=|==)+,[\d]+,)+$/
-    const re = /^[\w]+,[(==)|(!=)|(<)|(>)|(<=)|(>=)]+,[\d]+$/
+    const complexExpression = /^[(any)|(all)|(none)]+,([\w]+,(?:<=|<|>=|>|!=|==)+,[+-]?([0-9]*[.])?[0-9]+,)+$/
+    const re = /^[\w]+,[(==)|(!=)|(<)|(>)|(<=)|(>=)]+,[+-]?([0-9]*[.])?[0-9]+$/
 
     if (re.exec(expression)) {
       console.log('Simple Expression Passed')
