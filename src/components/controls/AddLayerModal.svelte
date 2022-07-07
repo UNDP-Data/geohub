@@ -212,7 +212,14 @@
         : `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`,
       treeNode.isMartin ? treeNode.path : layerName,
     )
-    if (stats) treeNode.metadata.stats = stats
+    if (stats) {
+      treeNode.metadata.stats = stats
+      if (treeNode.isMartin) {
+        const layer = treeNode.metadata.json.tilestats.layers.find((l) => l.layer === treeNode.path)
+        layer.attributeCount = stats.length
+        layer.attributes = stats
+      }
+    }
 
     $layerList = [
       {
