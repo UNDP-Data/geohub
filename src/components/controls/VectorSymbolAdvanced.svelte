@@ -90,7 +90,9 @@
     const metadata = layer.info
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    vectorLayerMeta = JSON.parse(
+      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
+    )
 
     Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
