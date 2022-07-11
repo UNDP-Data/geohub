@@ -101,13 +101,15 @@
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
           (val: VectorLayerTileStatAttribute) => val.attribute === fieldName,
         )
-        let type = tileStatLayerAttribute.type
-        if (tileStatLayerAttribute.type === 'number') {
-          tileStatLayerAttribute.values.forEach((val: number) => {
-            type = isInt(val) ? 'interger' : 'float'
-          })
+        if (tileStatLayerAttribute) {
+          let type = tileStatLayerAttribute.type
+          if (tileStatLayerAttribute.type === 'number') {
+            tileStatLayerAttribute.values.forEach((val: number) => {
+              type = isInt(val) ? 'interger' : 'float'
+            })
+          }
+          return type
         }
-        return type
       }
     }
   }
