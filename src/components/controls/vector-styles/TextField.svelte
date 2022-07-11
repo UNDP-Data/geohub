@@ -104,9 +104,15 @@
         if (tileStatLayerAttribute) {
           let type = tileStatLayerAttribute.type
           if (tileStatLayerAttribute.type === 'number') {
-            tileStatLayerAttribute.values.forEach((val: number) => {
-              type = isInt(val) ? 'interger' : 'float'
-            })
+            if (tileStatLayerAttribute.values && tileStatLayerAttribute.values.length > 0) {
+              tileStatLayerAttribute.values.forEach((val: number) => {
+                type = isInt(val) ? 'interger' : 'float'
+              })
+            } else if (tileStatLayerAttribute.min) {
+              type = isInt(tileStatLayerAttribute.min) ? 'interger' : 'float'
+            } else {
+              type = 'integer'
+            }
           }
           return type
         }
