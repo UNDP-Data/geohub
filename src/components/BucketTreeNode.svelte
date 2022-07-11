@@ -144,9 +144,7 @@
       Promise.all(
         childNodes.map((node) => {
           return {
-            data: node.isRaster
-              ? fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${node.isStac ? node.url : getBase64EncodedUrl(node.url)}`)
-              : getVectorMetadata(node),
+            data: node.isRaster ? getRasterMetadata(node) : getVectorMetadata(node),
             node,
           }
         }),
@@ -210,6 +208,16 @@
     return `${base}?${btoa(sign)}`
   }
 
+  const getBase64EncodedUrlforSTAC = (node: TreeNode) => {
+    let b64EncodedUrl
+    if (node.isStac && node.path.split('/')[0] === 'msft') {
+      b64EncodedUrl = `${node.url}`
+    } else {
+      b64EncodedUrl = getBase64EncodedUrl(url)
+    }
+    return b64EncodedUrl
+  }
+
   const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
     const metadata = <LayerInfoMetadata>{
       description,
@@ -232,6 +240,36 @@
   const setProgressIndicator = (state: boolean) => {
     loadingLayer = state
     $indicatorProgress = state
+  }
+
+  const getRasterMetadata = async (node: TreeNode) => {
+    let b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
+    const data: RasterTileMetadata = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
+
+    if (
+      data &&
+      data.band_metadata &&
+      data.band_metadata.length > 0 &&
+      Object.keys(data.band_metadata[0][1]).length === 0
+    ) {
+      const statistics = await fetchUrl(`${TITILER_API_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
+      if (statistics) {
+        for (let i = 0; i < data.band_metadata.length; i++) {
+          const bandValue = data.band_metadata[i][0]
+          const bandDetails = statistics[bandValue]
+          if (bandDetails) {
+            data.band_metadata[i][1] = {
+              STATISTICS_MAXIMUM: `${bandDetails.max}`,
+              STATISTICS_MEAN: `${bandDetails.mean}`,
+              STATISTICS_MINIMUM: `${bandDetails.min}`,
+              STATISTICS_STDDEV: `${bandDetails.std}`,
+              STATISTICS_VALID_PERCENT: `${bandDetails.valid_percent}`,
+            }
+          }
+        }
+      }
+    }
+    return data
   }
 
   const getVectorMetadata = async (node: TreeNode) => {
@@ -330,14 +368,20 @@
           */
 
       // 2. band_metadata not returning stats min/max
+      b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
+      layerInfo = await getRasterMetadata(node)
 
-      if (node.isStac && node.path.split('/')[0] === 'msft') {
-        b64EncodedUrl = `${node.url}`
-      } else {
-        b64EncodedUrl = getBase64EncodedUrl(url)
+      if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
+        const bannerErrorMessage: BannerMessage = {
+          type: StatusTypes.WARNING,
+          title: 'Whoops! Something went wrong.',
+          message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
+        }
+        bannerMessages.update((data) => [...data, bannerErrorMessage])
+        $indicatorProgress = false
+        loadingLayer = false
+        throw new Error(JSON.stringify(layerInfo))
       }
-
-      layerInfo = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
       const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
