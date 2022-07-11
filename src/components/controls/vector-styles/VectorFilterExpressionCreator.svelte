@@ -31,15 +31,30 @@
   let activeOperatorsTab = 'Numbers'
 
   const operatorSelected = (e) => {
-    expression = expression.concat(e.detail.operator)
-    dispatch('input', {
-      text: e,
+    // expression = expression.concat(e.detail.operator)
+    dispatch('operatorselected', {
+      operator: e.detail.operator,
+    })
+  }
+
+  const numberSelected = (e) => {
+    // expression = expression.concat(e.detail.number)
+    dispatch('numberselected', {
+      number: e.detail.number,
+    })
+  }
+
+  const combineOperatorSelected = (e) => {
+    // expression = expression.concat(e.detail.operator)
+    dispatch('combineoperatorselected', {
+      operator: e.detail.operator,
     })
   }
 
   const handleSetOperatorType = (type) => {
     activeOperatorsTab = type
   }
+
   const operatorTypes = ['Numbers', 'Comparison', 'Combining']
 </script>
 
@@ -47,7 +62,6 @@
   on:click={() => {
     showTooltip = !showTooltip
   }}
-  data-testid="rexpr-logical"
   use:popperRef>
   <Wrapper>
     <Card>
@@ -58,6 +72,7 @@
     <Tooltip showDelay={100} hideDelay={0} yPos="above">Operators</Tooltip>
   </Wrapper>
 </div>
+
 {#if showTooltip}
   <div
     style="z-index: 999;"
@@ -87,11 +102,11 @@
 
         <div class="content">
           {#if activeOperatorsTab === 'Numbers'}
-            <NumberButtons on:valueclicked={operatorSelected} />
+            <NumberButtons on:valueclicked={numberSelected} />
           {:else if activeOperatorsTab === 'Comparison'}
             <VectorFilterOperators on:operatorselected={operatorSelected} />
           {:else}
-            <VectorCombineOperators on:operatorselected={operatorSelected} />
+            <VectorCombineOperators on:operatorselected={combineOperatorSelected} />
           {/if}
         </div>
       </div>
