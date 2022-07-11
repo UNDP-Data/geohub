@@ -120,7 +120,7 @@ export interface HeatmapColorRow {
 
 export interface RasterTileMetadata {
   band_descriptions?: string[]
-  band_metadata?: string[]
+  band_metadata?: string[] | BandMetadata[]
   bounds?: [] | string
   colorinterp?: []
   count?: number
@@ -134,6 +134,14 @@ export interface RasterTileMetadata {
   overviews?: []
   width?: number
   stats?: RasterLayerStats
+}
+
+export interface BandMetadata {
+  STATISTICS_MAXIMUM?: number
+  STATISTICS_MEAN?: number
+  STATISTICS_MINIMUM: number
+  STATISTICS_STDDEV: number
+  STATISTICS_VALID_PERCENT: number
 }
 
 export interface RasterLayerStats {
