@@ -371,6 +371,18 @@
       b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
       layerInfo = await getRasterMetadata(node)
 
+      if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
+        const bannerErrorMessage: BannerMessage = {
+          type: StatusTypes.WARNING,
+          title: 'Whoops! Something went wrong.',
+          message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
+        }
+        bannerMessages.update((data) => [...data, bannerErrorMessage])
+        $indicatorProgress = false
+        loadingLayer = false
+        throw new Error(JSON.stringify(layerInfo))
+      }
+
       const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
 
