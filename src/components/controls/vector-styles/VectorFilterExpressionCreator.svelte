@@ -1,7 +1,6 @@
 <script lang="ts">
-  import NumberButtons from '../NumberButtons.svelte'
-  import VectorFilterOperators from './VectorFilterOperators.svelte'
-  import VectorCombineOperators from './VectorCombineOperators.svelte'
+  import NumberButtons from '$components/controls/NumberButtons.svelte'
+  import VectorFilterOperators from '$components/controls/vector-styles/VectorFilterOperators.svelte'
   import Popper from '$lib/popper'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Card, { PrimaryAction } from '@smui/card'
@@ -11,9 +10,11 @@
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
 
-  export let expression
+  let showTooltip: boolean
+  let activeOperatorsTab = 'Numbers'
 
   const dispatch = createEventDispatcher()
+  const operatorTypes = ['Numbers', 'Comparison']
 
   const {
     ref: popperRef,
@@ -27,35 +28,21 @@
     [0, 0],
   ).init()
 
-  let showTooltip: boolean
-  let activeOperatorsTab = 'Numbers'
-
   const operatorSelected = (e) => {
-    // expression = expression.concat(e.detail.operator)
     dispatch('operatorselected', {
       operator: e.detail.operator,
     })
   }
 
   const numberSelected = (e) => {
-    // expression = expression.concat(e.detail.number)
     dispatch('numberselected', {
       number: e.detail.number,
-    })
-  }
-
-  const combineOperatorSelected = (e) => {
-    // expression = expression.concat(e.detail.operator)
-    dispatch('combineoperatorselected', {
-      operator: e.detail.operator,
     })
   }
 
   const handleSetOperatorType = (type) => {
     activeOperatorsTab = type
   }
-
-  const operatorTypes = ['Numbers', 'Comparison', 'Combining']
 </script>
 
 <div
@@ -103,10 +90,8 @@
         <div class="content">
           {#if activeOperatorsTab === 'Numbers'}
             <NumberButtons on:valueclicked={numberSelected} />
-          {:else if activeOperatorsTab === 'Comparison'}
-            <VectorFilterOperators on:operatorselected={operatorSelected} />
           {:else}
-            <VectorCombineOperators on:operatorselected={combineOperatorSelected} />
+            <VectorFilterOperators on:operatorselected={operatorSelected} />
           {/if}
         </div>
       </div>
