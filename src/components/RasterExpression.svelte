@@ -19,9 +19,11 @@
     switch (activeTab) {
       case 'Advanced':
         isAdvancedPanelVisible = true
+        isSimplePanelVisible = false
         break
       case 'Simple':
         isSimplePanelVisible = true
+        isAdvancedPanelVisible = false
         break
 
       default:
@@ -52,7 +54,7 @@
   <div class="block" />
   <p>
     {#if isSimplePanelVisible === true}
-      <RasterExpressionSimple {layer} />
+      <RasterExpressionSimple bind:layer />
     {/if}
     {#if isAdvancedPanelVisible}
       <RefineContainer bind:layer />

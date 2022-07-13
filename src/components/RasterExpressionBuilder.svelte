@@ -3,48 +3,29 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faDiagramProject } from '@fortawesome/free-solid-svg-icons/faDiagramProject'
+  // import { faDiagramProject } from '@fortawesome/free-solid-svg-icons/faDiagramProject'
   import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
   import { faPlusMinus } from '@fortawesome/free-solid-svg-icons/faPlusMinus'
   import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
   import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
-
-  import type { Layer } from '$lib/types'
+  // import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
+  import OpCat from '$components/raster/OpCat.svelte'
+  import type { Layer, OperatorCategory } from '$lib/types'
 
   let activeOperatorCategory = ''
   export let layer: Layer
-  export let layerMax: number
-  export let layerMin: number
-  let numberOfClasses = layer.intervals.numberOfClasses
 
-  $: {
-    if (layer) {
-      numberOfClasses = layer.intervals.numberOfClasses
-    }
-  }
+  const layerMin = Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
+  const layerMax = Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
 
   const dispatch = createEventDispatcher()
-  const operatorCategories = [
+  const operatorCategories: Array<OperatorCategory> = [
     {
       name: 'arithmetic',
-      title: 'Arithmetic operators',
+      title: 'Arithmetic',
       icon: faPlusMinus,
       operators: ['*', '/', '+', '-', '%', '**'],
       isVisible: true,
-    },
-    {
-      name: 'comparison',
-      title: 'Comparison operators',
-      icon: faEquals,
-      operators: ['=', '!=', '>=', '<', '>', '<='],
-      isVisible: false,
-    },
-    {
-      name: 'logical',
-      title: 'Logical operators',
-      icon: faDiagramProject,
-      operators: ['&', '~', '|'],
-      isVisible: false,
     },
     {
       name: 'numbers',
@@ -54,24 +35,47 @@
       isVisible: false,
     },
     {
+      name: 'comparison',
+      title: 'Comparison',
+      icon: faEquals,
+      operators: ['=', '!=', '>=', '<', '>', '<='],
+      isVisible: false,
+    },
+    // {
+    //   name: 'logical',
+    //   title: 'Logical',
+    //   icon: faDiagramProject,
+    //   operators: ['&', '~', '|'],
+    //   isVisible: false,
+    // },
+
+    {
       name: 'functions',
       title: 'Functions',
       icon: faSquareRootVariable,
-      operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs'],
+      operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'where'],
       isVisible: false,
     },
   ]
-  const ncols = 2
-  const nrows = 3
 
-  // const handleSetActiveColorMapType = (colorMapType: ColorMapTypes) => {
-  //   activeColorMapType = colorMapType
-  // }
+  $: visOperators = operatorCategories
+    .filter((el) => el.isVisible)
+    .sort((a, b) => {
+      if (a.operators.length > b.operators.length) {
+        return -1
+      }
+      if (a.operators.length < b.operators.length) {
+        return 1
+      }
+      if (a.operators.length === b.operators.length) {
+        return 0
+      }
+    })
 
-  const handleColorMapClick = (colorMapName: string) => {
-    if (colorMapName !== layer.colorMapName) {
-      dispatch('handleColorMapClick', { colorMapName })
-      layer.colorMapName = colorMapName
+  const handleOperatorClick = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator: string = event.detail.operator
+      dispatch('handleOperatorClick', { operator })
     }
   }
 
@@ -80,10 +84,63 @@
   }
 </script>
 
-<div data-testid="color-map-picker">
-  <div class="columns is-vcentered is-mobile">
-    <div class="column is-11">
-      <div class="tabs">
+<div class="content">
+  <div class="stats message is-info is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
+    <div id="stats-title" class="stats-content message-header">Statistics</div>
+    <div class="stats-content">Min:</div>
+    <div class="stats-content">{layerMin}</div>
+    <div class="stats-content">Max:</div>
+    <div class="stats-content">{layerMax}</div>
+  </div>
+  <div>
+    <div data-testid="expression-builder">
+      <div class="columns is-centered is-mobile">
+        <div class="column is-11 ">
+          <div class="tabs">
+            <ul>
+              {#each Object.values(operatorCategories) as operatorCategory}
+                <li class={activeOperatorCategory === operatorCategory.name ? 'is-active' : ''}>
+                  <Wrapper>
+                    <a
+                      href={'#'}
+                      on:click={() => {
+                        activeOperatorCategory = operatorCategory.name
+                        operatorCategory.isVisible = !operatorCategory.isVisible
+                      }}>
+                      <Fa icon={operatorCategory.icon} style="font-size: 16px;" />
+                    </a>
+                    <Tooltip showDelay={100} hideDelay={0} yPos="above">{operatorCategory.title}</Tooltip>
+                  </Wrapper>
+                </li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+        <div
+          class="column is-1 close"
+          alt="Close Colormap Picker"
+          title="Close Colormap Picker"
+          on:click={handleClosePopup}>
+          <Fa icon={faXmark} />
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      {#each operatorCategories as operCat}
+        <OpCat on:operatorButtonClick={handleOperatorClick} operatorCategory={operCat} />
+      {/each}
+    </div>
+  </div>
+</div>
+
+<!-- <div id="operator-categories" data-testid="operator-categories" >
+  <div class="columns is-vcentered is-mobile ">
+    <div class="column is-3 is-size-8 has-text-weight-semibold pl-3 pr-3">
+      Operators:
+    </div>
+    <div class="column is-8 " style="border:0px solid blue">
+      
+      <div class="tabs" >
         <ul>
           {#each Object.values(operatorCategories) as operatorCategory}
             <li class={activeOperatorCategory === operatorCategory.name ? 'is-active' : ''}>
@@ -105,58 +162,51 @@
     </div>
     <div
       class="column is-1 close"
-      alt="Close Colormap Picker"
-      title="Close Colormap Picker"
+      alt="Close Expression Builder"
+      title="Close Expression Builder"
       on:click={handleClosePopup}>
       <Fa icon={faXmark} />
     </div>
+    
   </div>
-  <!-- {#each Array(nrows) as _, i}
-    <div class="columns is-3 is-centered">
-      {#each Array(ncols) as _, j}
-        <div class="column is-3  ">
-          {[ i, j, (j+1)*i + j]}
-        </div>  
-      {/each}
-    </div>  
+  <div class="columns  is-mobile is-centered">
     
-    
-  {/each} -->
-
-  <!-- {#each operatorCategories as operCat}
-    <div class={operCat.isVisible ? 'content' : 'is-hidden'} >
-      {#each operCat.operators as operator}
-        <button class="button is-small " on:click={() =>{console.log(operator)}} alt={operator} title={operator}>
-          <span>{operator}</span>
-        </button>
-      {/each}
+    <div class="column is-3 ">
+        
+        <div class="columns">
+            <div class="column is-12 is-size-8 has-text-weight-bold has-text-centered">Statistics</div>
+        </div>
+       
+          <div class="columns is-centered is-vcentered">
+            <div class="column is-size-6 is-6  has-text-weight-semibold">Min:</div>
+            <div class="column is-6 ">{layerMin}</div>
+          </div>
+        
+          <div class="columns has-background-info-light">
+            <div class="column is-size-6 is-6  has-text-weight-semibold">Max:</div>
+            <div id="ov" class="column is-6 ">{layerMax}</div>
+          </div>
     </div>
-  {/each} -->
-
-  <!-- <div class="columns">
-    <div class="column card-color">
-      <ul class="is-size-6">
-        {#each colorMapTypes as colorMapType}
-          {#if activeColorMapType === colorMapType.name}
-            {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as colorMapName}
-              <li on:click={() => handleColorMapClick(colorMapName)}>
-                <ColorMapPickerCard
-                  {colorMapName}
-                  colorMapType={ColorMapTypes.SEQUENTIAL}
-                  {layerMax}
-                  {layerMin}
-                  {numberOfClasses}
-                  isSelected={layer.colorMapName === colorMapName ? true : false} />
-              </li>
-            {/each}
-          {/if}
+    
+   
+    
+    
+    <div class="column is-9">
+      <div class="container">
+        {#each visOperators as operCat}
+            <OpCat on:operatorButtonClick={handleOperatorClick} operatorCategory={operCat}></OpCat>
+            
         {/each}
-      </ul>
+      </div>
     </div>
-  </div> -->
-</div>
+  </div>
 
+  
+</div> -->
 <style lang="scss">
+  #operator-categories {
+    z-index: -1;
+  }
   .tabs {
     li {
       a {
@@ -168,24 +218,49 @@
     cursor: pointer;
   }
 
-  .card-color {
-    max-height: 150px;
-    overflow-y: auto;
+  .container {
+    padding: 3px;
+    display: grid;
+    align-content: space-around;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(2, minmax(100px, auto));
+    //grid-template-columns: repeat(2, auto);
+    grid-auto-rows: auto;
+    justify-items: center;
+    grid-gap: 2px;
+    border-left: 1px solid lightgray;
 
-    ul {
-      display: flex;
-      flex-flow: row wrap;
-      gap: 15px;
+    //background-color: lightcyan;
+    // color: #444;
+  }
 
-      li {
-        cursor: pointer;
-        padding: 1px;
+  #ov {
+    text-overflow: ellipsis;
+  }
 
-        &:hover {
-          padding: 0;
-          border: 1px solid hsl(204, 86%, 53%);
-        }
-      }
-    }
+  .content {
+    display: grid;
+    grid-template-columns: minmax(50px, max-content) 3fr;
+    gap: 5px;
+    grid-template-rows: minmax(50px, 1fr) auto;
+  }
+  .stats {
+    align-content: flex-start;
+    display: grid;
+    gap: 2px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-row: 1/2;
+  }
+  #stats-title {
+    grid-column: 1/-1;
+    align-items: flex-end;
+    grid-template-rows: 30px;
+  }
+  .stats-content {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-bottom: 1px solid lightblue;
+    background-color: white;
   }
 </style>

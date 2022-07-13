@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { containers } from './../containers.ts'
+
   import RasterExpressionBuilder from '$components/RasterExpressionBuilder.svelte'
   import { updateParamsInURL } from '$lib/helper'
   import { fade, slide } from 'svelte/transition'
@@ -9,11 +11,8 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
-  import { faDiagramProject } from '@fortawesome/free-solid-svg-icons/faDiagramProject'
-  import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
-  import { faPlusMinus } from '@fortawesome/free-solid-svg-icons/faPlusMinus'
-  import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
-  import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
+
+  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
 
   export let layer: Layer
 
@@ -28,9 +27,18 @@
     {
       placement: 'right-end',
       strategy: 'fixed',
+      padding: 0,
+      margin: 0,
     },
     [10, 15],
   ).init()
+
+  const handleOperator = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator = event.detail.operator
+      console.log(operator)
+    }
+  }
 </script>
 
 <div class="container">
@@ -56,7 +64,7 @@
         <Wrapper>
           <Card>
             <PrimaryAction style="padding: 10px;">
-              <Fa icon={faSquareRootVariable} style="font-size: 16px;" />
+              <Fa icon={faCalculator} style="font-size: 16px;" />
             </PrimaryAction>
           </Card>
           <Tooltip showDelay={100} hideDelay={0} yPos="above">Expression builder</Tooltip>
@@ -66,16 +74,12 @@
     {#if showExpressionBuilder}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <RasterExpressionBuilder
-          on:handleColorMapClick={() => {
-            console.log('click')
-          }}
+          on:handleOperatorClick={handleOperator}
           on:handleClosePopup={() => {
             showExpressionBuilder = !showExpressionBuilder
           }}
-          {layer}
-          layerMin={Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])} />
-        <div id="arrow" data-popper-arrow />
+          {layer} />
+        <!-- <div id="arrow" data-popper-arrow /> -->
       </div>
     {/if}
   </div>
@@ -120,6 +124,9 @@
   @import '../styles/popper.scss';
   #tooltip {
     max-height: 300px;
-    max-width: 470px;
+    //height:100px;
+    max-width: 550px;
+    //width: 300px;
+    //overflow-y: scroll;
   }
 </style>
