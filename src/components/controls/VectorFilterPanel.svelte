@@ -57,17 +57,24 @@
   }
 
   $: alteringIndex, (numbers = '')
-  $: {
-    if (expressionsArray == [{}]) {
+  $: expressionsArray, resetProperty()
+
+  // reset properties when the last expression is removed
+  const resetProperty = () => {
+    if (Object.keys(expressionsArray[0]).length === 0) {
       $map.setFilter(layerId, null)
+      propertySelectValue = null
     }
   }
 
+  // If a number is selected, add it to the numbers string and to the under-edit expression
   const numberSelected = (e) => {
     numbers = numbers.concat(e.detail.number)
     expressionsArray[alteringIndex]['value'] = numbers
   }
 
+  // Apply expression to layer
+  // Todo: Sometimes, there is an error when applying the expression. Need to show this to the user.
   const handleApplyExpression = () => {
     if (expressionsArray.length === 1) {
       //Simple Expression
@@ -98,6 +105,7 @@
     }
   }
 
+  // Remove an operation/property/value from the expression when the x-button in the tag is clicked
   const removeOperation = (key, index) => {
     delete expressionsArray[index][String(key)]
     if (key === 'value') {
@@ -106,9 +114,15 @@
     expressionsArray = [...expressionsArray]
     if (Object.keys(expressionsArray[index]).length < 1) {
       alteringIndex = alteringIndex - 1
+      expressionsArray = [...expressionsArray.slice(0, index)]
+      // if there is only one expression, enable all combining operator buttons
+      if (expressionsArray.length < 2) {
+        selectedCombiningOperator = null
+      }
     }
   }
 
+  // Clear all expressions applied to the layer and reset the UI
   const handleClearExpression = () => {
     $map.setFilter(layerId, null)
     alteringIndex = 0
@@ -117,6 +131,7 @@
     numbers = ''
   }
 
+  // Add an operator to an expression when one is clicked
   const handleOperatorClick = (op) => {
     combiningOperatorTitle = op.title
     selectedCombiningOperator = op.operation
@@ -126,11 +141,15 @@
       expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
     }
   }
+
+  // Add an empty expression to the list of expressions when the plus(+) button is clicked
   const addExpression = () => {
     alteringIndex = expressionsArray.length
     expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
   }
 
+  // Remove a single expression from the expression. It does not reset map if the
+  // expression was already applied
   const removeThisExpression = (exp) => {
     const index = expressionsArray.indexOf(exp)
     numbers = ''
@@ -139,6 +158,8 @@
     expressionsArray = expressionsArray.length < 1 ? [...expressionsArray, {}] : [...expressionsArray]
   }
 
+  // Switches the editable expression to the clicked
+  // and enables the user to edit a single expression when the edit(button with pen) button is clicked
   const editThisExpression = (exp) => {
     alteringIndex = expressionsArray.indexOf(exp)
   }
