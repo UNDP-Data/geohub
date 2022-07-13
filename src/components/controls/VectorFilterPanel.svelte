@@ -11,7 +11,9 @@
   let alteringIndex = 0
   let expressionsArray = [{}]
   let numbers = ''
-  let selectedCombiningOperator = 'all'
+  let selectedCombiningOperator
+  let notificationShown = false
+  let combiningOperatorTitle
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -21,14 +23,22 @@
   ]
 
   const propertySelected = (e) => {
+    console.log(alteringIndex)
+    alteringIndex < 0 ? (alteringIndex = 0) : alteringIndex
     expressionsArray[alteringIndex]['property'] = e.detail.prop
   }
 
   const operatorSelected = (e) => {
+    alteringIndex < 0 ? (alteringIndex = 0) : alteringIndex
     expressionsArray[alteringIndex]['operator'] = e.detail.operator
   }
 
   $: alteringIndex, (numbers = '')
+  $: {
+    if (expressionsArray == [{}]) {
+      $map.setFilter(layerId, null)
+    }
+  }
 
   const numberSelected = (e) => {
     numbers = numbers.concat(e.detail.number)
@@ -39,20 +49,20 @@
     if (expressionsArray.length === 1) {
       //Simple Expression
       $map.setFilter(layerId, [
-        expressionsArray[0].operator,
-        ['get', expressionsArray[0].property],
-        Number(expressionsArray[0].value),
+        expressionsArray[0]['operator'],
+        ['get', expressionsArray[0]['property']],
+        Number(expressionsArray[0]['value']),
       ])
     } else if (expressionsArray.length > 1) {
       // complex expression
       const properties = expressionsArray.map((expression) => {
-        return expression.property
+        return expression['property']
       })
       const operators = expressionsArray.map((expression) => {
-        return expression.operator
+        return expression['operator']
       })
       const values = expressionsArray.map((expression) => {
-        return expression.value
+        return expression['value']
       })
       const expressions = []
       for (let i = 0; i < expressionsArray.length; i++) {
@@ -66,8 +76,14 @@
   }
 
   const removeOperation = (key, index) => {
-    delete expressionsArray[index][key]
-    expressionsArray = [...expressionsArray.splice(index, 1, expressionsArray[index][key])]
+    delete expressionsArray[index][String(key)]
+    if (key === 'value') {
+      numbers = ''
+    }
+    expressionsArray = [...expressionsArray]
+    if (Object.keys(expressionsArray[index]).length < 1) {
+      alteringIndex = alteringIndex - 1
+    }
   }
 
   const handleClearExpression = () => {
@@ -78,14 +94,30 @@
     numbers = ''
   }
 
+  const handleOperatorClick = (op) => {
+    combiningOperatorTitle = op.title
+    selectedCombiningOperator = op.operation
+    notificationShown = true
+    if (expressionsArray.length === 1) {
+      alteringIndex = expressionsArray.length
+      expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
+    }
+  }
   const addExpression = () => {
     alteringIndex = expressionsArray.length
     expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
   }
 
-  const removeLastExpression = () => {
-    expressionsArray = [...expressionsArray.splice(alteringIndex, 1)]
+  const removeThisExpression = (exp) => {
+    const index = expressionsArray.indexOf(exp)
+    numbers = ''
+    expressionsArray.splice(index, 1)
     alteringIndex = alteringIndex - 1
+    expressionsArray = expressionsArray.length < 1 ? [...expressionsArray, {}] : [...expressionsArray]
+  }
+
+  const editThisExpression = (exp) => {
+    alteringIndex = expressionsArray.indexOf(exp)
   }
 </script>
 
@@ -107,56 +139,66 @@
             {/if}
             <div id="expression-tags">
               {#each Object.keys(expression) as key}
-                <div style="margin: 2px">
-                  <span class="tag is-info is-medium"
+                <div style="margin: 2px; display: flex; align-items: center">
+                  <span
+                    class="tag is-small {key === 'property'
+                      ? 'is-info'
+                      : key === 'value'
+                      ? 'is-warning'
+                      : 'is-primary'}"
                     >{expression[key] !== '' ? expression[key] : ''}
                     <button on:click={() => removeOperation(key, index)} class="delete is-small" />
                   </span>
                 </div>
               {/each}
             </div>
+            {#if Object.keys(expression).length}
+              <span>&nbsp;&nbsp;</span>
+              <a style="text-decoration: none" on:click={() => removeThisExpression(expression)} class="tag is-small"
+                ><i class="fa fa-trash" /></a>
+              <span>&nbsp;&nbsp;</span>
+              <a
+                style="text-decoration: none"
+                on:click={() => editThisExpression(expression)}
+                class="tag is-small {index === alteringIndex ? 'is-danger' : ''}"><i class="fa fa-pen" /></a>
+              {#if index === expressionsArray.length - 1}
+                <span>&nbsp;&nbsp;</span>
+                <a style="text-decoration: none" on:click={addExpression} class="tag is-small"
+                  ><i class="fa fa-plus" /></a>
+              {/if}
+            {/if}
           </div>
+          {#if selectedCombiningOperator !== undefined && expressionsArray[index + 1] !== undefined}
+            <div style="margin-left: 30%" class="tag is-medium is-primary is-light">
+              <span>{combiningOperatorTitle}</span>
+            </div>
+          {/if}
         {/each}
       </div>
-
-      <div style="display: flex; align-items: center; justify-content: space-around; margin-top: 10%">
-        {#if expressionsArray.length > 1}
+      <div style="display: flex; align-items: center; justify-content: right; margin-top: 10%">
+        {#each combiningOperators as operator}
           <button
-            class="button is-light is-small is-vcentered"
-            on:click={removeLastExpression}
-            alt="Remove expression button"
-            title="Remove Last Expression"><i class="fas fa-minus" /></button>
-        {/if}
+            style="margin:1% {selectedCombiningOperator === operator.operation ? 'background:red' : 'background:blue'}"
+            disabled={(selectedCombiningOperator === operator.operation) | (expressionsArray.length < 1)}
+            class="button is-light is-small is-vcentered is-success"
+            on:click={() => {
+              handleOperatorClick(operator)
+            }}
+            alt="Combining operator button"
+            title="Combining operator button">{operator.title}</button>
+        {/each}
         <button
-          class="button is-light is-small is-vcentered"
-          on:click={addExpression}
-          alt="Add expression button"
-          title="Add expression button"><i class="fas fa-plus" /></button>
-        {#if expressionsArray.length > 1}
-          <div class="select is-rounded is-flex is-justify-content-left">
-            <select bind:value={selectedCombiningOperator} class="is-small" style="border: none">
-              {#each combiningOperators as operator}
-                <option value={operator.operation}>{operator.title}</option>
-              {/each}
-            </select>
-          </div>
-        {/if}
-
-        <button
+          style="margin:1%"
           class="button is-info is-light is-small"
           on:click={handleApplyExpression}
           alt="Apply expression button"
           title="Apply expression button">Apply</button>
         <button
-          class="button is-vcentered is-small"
+          style="margin:1%"
+          class="button is-light is-light is-small"
           on:click={handleClearExpression}
-          data-testid="filter-clear-button"
-          alt="Clear expression button"
-          title="Clear expression button">
-          <span class="icon">
-            <i class="fas fa-xmark" />
-          </span>
-        </button>
+          alt="Apply expression button"
+          title="Apply expression button">Clear</button>
       </div>
     {/if}
   </div>
