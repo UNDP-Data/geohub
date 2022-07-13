@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
@@ -43,7 +44,7 @@
   }
 </script>
 
-<div data-testid="color-map-picker">
+<div data-testid="color-map-picker" use:clickOutside={handleClosePopup}>
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
       <div class="tabs">

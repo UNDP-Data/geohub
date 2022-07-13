@@ -14,8 +14,8 @@
   import Autocomplete from '@smui-extra/autocomplete'
 
   import { LayerTypes } from '$lib/constants'
-  import { fetchUrl } from '$lib/helper'
-  import type { TreeNode, VectorLayerTileStatAttribute } from '$lib/types'
+  import { fetchUrl, getVectorInfo } from '$lib/helper'
+  import type { TreeNode } from '$lib/types'
   import { map, layerList, modalVisible } from '$stores'
 
   export let isModalVisible = false
@@ -24,7 +24,7 @@
   let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-  let selectedLayerId: string | undefined = treeNode?.label
+  let selectedLayerId: string | undefined = treeNode?.isMartin ? treeNode?.path : treeNode?.label
   let tileSourceId = treeNode?.path
 
   $: {
@@ -79,12 +79,25 @@
 
     let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
-      layerSource = {
-        type: LayerTypes.VECTOR,
-        tiles: [treeNode.url],
-        minzoom: treeNode.metadata.minzoom | 0,
-        maxzoom: treeNode.metadata.maxzoom | 24,
+      if (treeNode.isMartin) {
+        const tilejson = await fetchUrl(treeNode.url)
+        // URL of tiles inside tileJSON from martin is http, hence we cannot use tileJSON directly because of CORS issue.
+        layerSource = {
+          type: LayerTypes.VECTOR,
+          scheme: tilejson.scheme,
+          tiles: tilejson.tiles.map((url) => url.replace('http', 'https')),
+          minzoom: tilejson.minzoom,
+          maxzoom: tilejson.maxzoom,
+        }
+      } else {
+        layerSource = {
+          type: LayerTypes.VECTOR,
+          tiles: [treeNode.url],
+          minzoom: treeNode.metadata.minzoom | 0,
+          maxzoom: treeNode.metadata.maxzoom | 24,
+        }
       }
+
       if (!(tileSourceId in $map.getStyle().sources)) {
         $map.addSource(tileSourceId, layerSource)
       }
@@ -190,11 +203,23 @@
       treeNode.metadata.maxzoom && treeNode.metadata.maxzoom <= 24 ? treeNode.metadata.maxzoom : 24,
     )
 
-    const layerName = treeNode.path.split('/')[treeNode.path.split('/').length - 2]
+    const layerName = treeNode.isMartin ? treeNode.label : treeNode.path.split('/')[treeNode.path.split('/').length - 2]
 
     // set vector info stats (number properties)
-    const stats = await getVectorInfo(treeNode.url, layerDefinition, layerName)
-    if (stats) treeNode.metadata.stats = stats
+    const stats = await getVectorInfo(
+      treeNode.isMartin
+        ? `${treeNode.url.replace('.json', '/0/0/0.pbf')}`
+        : `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`,
+      treeNode.isMartin ? treeNode.path : layerName,
+    )
+    if (stats) {
+      treeNode.metadata.stats = stats
+      if (treeNode.isMartin) {
+        const layer = treeNode.metadata.json.tilestats.layers.find((l) => l.layer === treeNode.path)
+        layer.attributeCount = stats.length
+        layer.attributes = stats
+      }
+    }
 
     $layerList = [
       {
@@ -225,21 +250,6 @@
     })
 
     handleCancel()
-  }
-
-  const getVectorInfo = async (
-    treeNodeUrl: string,
-    layerDefinition:
-      | LineLayerSpecification
-      | FillLayerSpecification
-      | SymbolLayerSpecification
-      | HeatmapLayerSpecification,
-    layerName: string,
-  ) => {
-    const url = new URL(treeNodeUrl)
-    const path = `${url.origin}/${layerDefinition.source}0/0/0.pbf`
-    const data = await fetchUrl(`vectorinfo.json?path=${path}&layer_name=${layerName}`)
-    return data.filter((val: VectorLayerTileStatAttribute) => val.type === 'number')
   }
 
   const handleCancel = () => {

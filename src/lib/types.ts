@@ -26,6 +26,9 @@ export interface TreeNode {
   geomType?: string
   metadata?: VectorTileMetadata
   tags?: string[]
+  isStac?: boolean
+  isMartin?: boolean
+  paginationDirectionDisabled?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -117,7 +120,7 @@ export interface HeatmapColorRow {
 
 export interface RasterTileMetadata {
   band_descriptions?: string[]
-  band_metadata?: string[]
+  band_metadata?: string[] | BandMetadata[]
   bounds?: [] | string
   colorinterp?: []
   count?: number
@@ -131,6 +134,14 @@ export interface RasterTileMetadata {
   overviews?: []
   width?: number
   stats?: RasterLayerStats
+}
+
+export interface BandMetadata {
+  STATISTICS_MAXIMUM?: number
+  STATISTICS_MEAN?: number
+  STATISTICS_MINIMUM: number
+  STATISTICS_STDDEV: number
+  STATISTICS_VALID_PERCENT: number
 }
 
 export interface RasterLayerStats {
@@ -243,6 +254,8 @@ export interface Bucket {
   type: BucketType
   tags: string[]
   selected?: boolean | false
+  items?: []
+  url?: string
 }
 
 export interface Color {
@@ -288,4 +301,17 @@ export interface OperatorCategory {
   icon: IconDefinition
   operators: Array<string>
   isVisible: boolean
+}
+
+export interface MartinLayerMetadata {
+  id: string
+  schema: string
+  table: string
+  srid: number
+  geometry_column: string
+  bounds: number[]
+  extent: number
+  buffer: number
+  geometry_type: string
+  properties: { [key: string]: string }
 }

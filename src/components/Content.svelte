@@ -8,9 +8,10 @@
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TagsView from '$components/TagsView.svelte'
-  import { TabNames } from '$lib/constants'
-  import { layerList, indicatorProgress, map } from '$stores'
+  import { MARTIN_API_ENDPOINT, TabNames } from '$lib/constants'
+  import { layerList, indicatorProgress, map, martinIndex } from '$stores'
   import BannerMessageControl from './BannerMessageControl.svelte'
+  import { fetchUrl } from '$lib/helper'
 
   export let drawerOpen = false
 
@@ -34,6 +35,7 @@
   onMount(async () => {
     document.addEventListener('mousemove', (e) => handleMousemove(e))
     document.addEventListener('mouseup', handleMouseup)
+    getMartinIndex()
   })
 
   const setContentContainerMargin = (margin: number) => {
@@ -53,6 +55,12 @@
 
   const handleMousedown = () => (isResizingDrawer = true)
   const handleMouseup = () => (isResizingDrawer = false)
+
+  const getMartinIndex = async () => {
+    if ($martinIndex) return
+    const data = await fetchUrl(`${MARTIN_API_ENDPOINT}/index.json`)
+    martinIndex.update(() => data)
+  }
 </script>
 
 <div class="content-container">

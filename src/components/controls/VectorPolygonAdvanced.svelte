@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import UniqueValuesLegendColorMapRowReadOnly from '$components/UniqueValuesLegendColorMapRowReadOnly.svelte'
+  import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
@@ -73,7 +73,9 @@
     const metadata = layer.info
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    vectorLayerMeta = JSON.parse(
+      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
+    )
     Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
         delete vectorLayerMeta.fields[key]
@@ -298,7 +300,13 @@
         {#each layer.intervals.colorMapRows as colorMapRow}
           {#if hasUniqueValues}
             <div class="pl-6">
-              <UniqueValuesLegendColorMapRowReadOnly bind:colorMapRow {layer} />
+              <UniqueValuesLegendColorMapRow
+                bind:colorMapRow
+                {layer}
+                {colorPickerVisibleIndex}
+                on:clickColorPicker={handleColorPickerClick}
+                on:changeColorMap={handleParamsUpdate}
+                on:changeIntervalValues={handleChangeIntervalValues} />
             </div>
           {:else}
             <IntervalsLegendColorMapRow

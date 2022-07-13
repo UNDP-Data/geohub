@@ -104,7 +104,9 @@
   const getLayerNumberProperties = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const vectorLayerMeta = layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    const vectorLayerMeta = JSON.parse(
+      JSON.stringify(layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
+    )
     Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
         delete vectorLayerMeta.fields[key]

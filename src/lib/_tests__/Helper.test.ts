@@ -210,3 +210,14 @@ describe('getIntervalList', () => {
     expect(samplesList).toEqual([0, 0.15, 0.32, 0.52, 0.74, 1])
   })
 })
+describe('groupByN', () => {
+  it('should group the data in chunks on N', () => {
+    const groupedList = helper.groupByN(3, [2, 5, 33, 5, 33, 6, 8, 4, 5, 6, 7, 8])
+    expect(groupedList).toEqual([
+      [2, 5, 33],
+      [5, 33, 6],
+      [8, 4, 5],
+      [6, 7, 8],
+    ])
+  })
+})

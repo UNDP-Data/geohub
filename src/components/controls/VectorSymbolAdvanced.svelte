@@ -90,7 +90,9 @@
     const metadata = layer.info
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
+    vectorLayerMeta = JSON.parse(
+      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
+    )
 
     Object.keys(vectorLayerMeta.fields).forEach((key) => {
       if (vectorLayerMeta.fields[key] !== 'Number') {
@@ -255,6 +257,10 @@
 
   // On Zoom change the zoomLevel variable
   $map.on('zoom', () => (zoomLevel = $map.getZoom()))
+
+  const handleApplyToClick = (type: string) => {
+    applyToOption = type
+  }
 </script>
 
 <div class="symbol-advanced-container" data-testid="symbol-advanced-container">
@@ -292,7 +298,10 @@
                   alt="Apply To Option"
                   title="Apply To Option" />
               </div>
-              <div class="column ml-2" style="position: relative; top: -2px;">
+              <div
+                class="column ml-2 applyto-title"
+                style="position: relative; top: -2px;"
+                on:click={() => handleApplyToClick(optionApplyTo)}>
                 {optionApplyTo}
               </div>
             </div>
@@ -405,6 +414,10 @@
 
     .size {
       padding-left: 15px;
+    }
+
+    .applyto-title {
+      cursor: grab;
     }
   }
 </style>
