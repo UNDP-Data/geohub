@@ -1,15 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
 
-  export let layer
+  export let propertySelectValue
+  export let showEmptyFields = false
+  export let propertySelectOptions
 
-  const metadata = layer.info
-  const vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
   let selectedIndex = []
   let disabled
-  const propertySelectOptions = Object.keys(vectorLayerMeta.fields)
   const dispatch = createEventDispatcher()
-  let propertySelectValue: string = null
 
   const propertyChanged = () => {
     selectedIndex = [...selectedIndex, propertySelectOptions.indexOf(propertySelectValue)]
@@ -27,8 +25,8 @@
   }
 </script>
 
-<div style="width: 80%; display: flex; align-items: center">
-  <div class="is-size-7 has-text-weight-semibold" style="padding: 2px">Property:</div>
+<div style="width: 70%; display: flex; align-items: center; justify-content: left">
+  <div class="is-size-7 has-text-weight-semibold">Property:</div>
   <div class="select is-rounded is-flex is-justify-content-left">
     <select
       style="width: 100%"
@@ -36,6 +34,9 @@
       bind:value={propertySelectValue}
       alt="Property Options"
       title="Property Options">
+      {#if showEmptyFields}
+        <option class="legend-text" alt="Property Option" title="Property Option" value={''} />
+      {/if}
       {#each propertySelectOptions as propertySelectOption}
         <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
           >{propertySelectOption}</option>

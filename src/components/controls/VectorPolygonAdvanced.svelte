@@ -25,6 +25,7 @@
   } from '$lib/types'
   import { map } from '$stores'
   import { getIntervalList, getSampleFromInterval } from '../../lib/helper'
+  import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
@@ -64,7 +65,7 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     $map.on('zoom', () => (zoomLevel = $map.getZoom()))
-
+    // setPropertySelectOptions()
     setPropertySelectOptions()
     setIntervalValues()
   })
@@ -86,7 +87,8 @@
     layer.intervals.propertyName = propertySelectValue
   }
 
-  const handlePropertyChange = () => {
+  const handlePropertyChange = (e) => {
+    propertySelectValue = e.detail.prop
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
@@ -142,6 +144,7 @@
           (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
         const stats = layer.info.stats as VectorLayerTileStatAttribute[]
+        console.log(tileStatLayerAttribute)
         const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
         hasUniqueValues = false
 
@@ -232,24 +235,7 @@
 
 <div class="polygon-advanced-container" data-testid="polygon-advanced-container">
   <div class="columns">
-    <div class="column">
-      <div class="has-text-centered pb-2">Property</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
-          <select
-            bind:value={propertySelectValue}
-            on:change={handlePropertyChange}
-            style="width: 110px;"
-            alt="Property Options"
-            title="Property Options">
-            {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
-                >{propertySelectOption}</option>
-            {/each}
-          </select>
-        </div>
-      </div>
-    </div>
+    <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
     {#if hasUniqueValues === false}
       <div class="column" transition:fade>
         <div class="has-text-centered pb-2">Classification</div>

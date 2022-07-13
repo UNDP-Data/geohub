@@ -6,6 +6,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerMetadata, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
+  import PropertySelect from './PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let decimalPosition = undefined
@@ -20,6 +21,7 @@
   let layerIdList: string[] = []
   let textFieldValue = ''
   let vectorLayerMeta: VectorLayerMetadata
+  let showEmptyFields = true
 
   $: textFieldValue, setTextField()
 
@@ -143,11 +145,8 @@
   }
 </script>
 
-<div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
-  <select bind:value={textFieldValue} style="width: 100%;" alt="text-field" title="Text field for label">
-    <option class="legend-text" value={''} />
-    {#each layerIdList as id}
-      <option class="legend-text" value={id}>{id}</option>
-    {/each}
-  </select>
-</div>
+<PropertySelect
+  bind:showEmptyFields
+  bind:propertySelectValue={textFieldValue}
+  bind:propertySelectOptions={layerIdList}
+  on:select={setTextField} />
