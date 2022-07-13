@@ -112,6 +112,7 @@
     "svelte-fa": "^3.0.2",
     "svelte-keydown": "^0.5.0",
     "svelte-moveable": "^0.22.0",
+    "svelte-notifications": "^0.9.95",
     "svelte-popperjs": "^1.2.10",
     "svelte-preprocess": "^4.10.7",
     "svelte-range-slider-pips": "^2.0.3",

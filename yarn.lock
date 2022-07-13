@@ -4740,6 +4740,11 @@ svelte-moveable@^0.22.0:
     moveable "~0.30.0"
     rollup-plugin-svelte "^7.1.0"
 
+svelte-notifications@^0.9.95:
+  version "0.9.95"
+  resolved "https://registry.yarnpkg.com/svelte-notifications/-/svelte-notifications-0.9.95.tgz#f8cfae5133c148f9aa7e04049cd5a0a26b9750ce"
+  integrity sha512-lG+b9BH4cUDs6vjNI1vWfoAgsUca3POden08/ZlgyCSkUuuXGYPbhr3d9MF3piMjYWEA94fsyvZPDLFuxcacSg==
+
 svelte-popperjs@^1.2.10:
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/svelte-popperjs/-/svelte-popperjs-1.2.10.tgz#d78d694bde0508c61d52415d2a02db6024bb5952"

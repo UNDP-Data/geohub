@@ -1,7 +1,6 @@
 <script lang="ts">
-  import NumberButtons from '../NumberButtons.svelte'
-  import VectorFilterOperators from './VectorFilterOperators.svelte'
-  import VectorCombineOperators from './VectorCombineOperators.svelte'
+  import NumberButtons from '$components/controls/NumberButtons.svelte'
+  import VectorFilterOperators from '$components/controls/vector-styles/VectorFilterOperators.svelte'
   import Popper from '$lib/popper'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Card, { PrimaryAction } from '@smui/card'
@@ -11,9 +10,11 @@
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
 
-  export let expression
+  let showTooltip: boolean
+  let activeOperatorsTab = 'Numbers'
 
   const dispatch = createEventDispatcher()
+  const operatorTypes = ['Numbers', 'Comparison']
 
   const {
     ref: popperRef,
@@ -27,27 +28,27 @@
     [0, 0],
   ).init()
 
-  let showTooltip: boolean
-  let activeOperatorsTab = 'Numbers'
-
   const operatorSelected = (e) => {
-    expression = expression.concat(e.detail.operator)
-    dispatch('input', {
-      text: e,
+    dispatch('operatorselected', {
+      operator: e.detail.operator,
+    })
+  }
+
+  const numberSelected = (e) => {
+    dispatch('numberselected', {
+      number: e.detail.number,
     })
   }
 
   const handleSetOperatorType = (type) => {
     activeOperatorsTab = type
   }
-  const operatorTypes = ['Numbers', 'Comparison', 'Combining']
 </script>
 
 <div
   on:click={() => {
     showTooltip = !showTooltip
   }}
-  data-testid="rexpr-logical"
   use:popperRef>
   <Wrapper>
     <Card>
@@ -58,6 +59,7 @@
     <Tooltip showDelay={100} hideDelay={0} yPos="above">Operators</Tooltip>
   </Wrapper>
 </div>
+
 {#if showTooltip}
   <div
     style="z-index: 999;"
@@ -66,9 +68,9 @@
     use:popperContent={popperOptions}
     use:clickOutside={() => (showTooltip = false)}
     transition:fade>
-    <div class="card" style="width: 350px">
-      <div class="card-content">
-        <div class="tabs">
+    <div class="card" style="width: 300px">
+      <div class="card-content" style="padding: 0">
+        <div class="tabs" style="margin:0">
           <ul>
             {#each operatorTypes as type}
               <li class={activeOperatorsTab === type ? 'is-active' : ''}>
@@ -87,11 +89,9 @@
 
         <div class="content">
           {#if activeOperatorsTab === 'Numbers'}
-            <NumberButtons on:valueclicked={operatorSelected} />
-          {:else if activeOperatorsTab === 'Comparison'}
-            <VectorFilterOperators on:operatorselected={operatorSelected} />
+            <NumberButtons on:valueclicked={numberSelected} />
           {:else}
-            <VectorCombineOperators on:operatorselected={operatorSelected} />
+            <VectorFilterOperators on:operatorselected={operatorSelected} />
           {/if}
         </div>
       </div>

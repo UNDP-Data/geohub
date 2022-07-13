@@ -5,12 +5,12 @@
 
   const numbers = {
     title: 'Numbers',
-    operators: ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0', '(', ')'],
+    operators: ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0', '(', ')', '.'],
   }
 
   const handleValuesClick = (val) => {
     dispatch('valueclicked', {
-      operator: val,
+      number: val,
     })
   }
 </script>
@@ -18,9 +18,9 @@
 <div class="column">
   <div class="numbers">
     <div class="buttons">
-      {#each numbers.operators as operator}
-        <button class="button is-small" on:click={() => handleValuesClick(operator)} alt={operator} title={operator}>
-          <span>{operator}</span>
+      {#each numbers.operators as number}
+        <button class="button is-small" on:click={() => handleValuesClick(number)} alt={number} title={number}>
+          <span>{number}</span>
         </button>
       {/each}
     </div>

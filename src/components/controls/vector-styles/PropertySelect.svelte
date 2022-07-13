@@ -5,12 +5,16 @@
 
   const metadata = layer.info
   const vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
-
+  let selectedIndex = []
+  let disabled
   const propertySelectOptions = Object.keys(vectorLayerMeta.fields)
   const dispatch = createEventDispatcher()
   let propertySelectValue: string = null
 
   const propertyChanged = () => {
+    selectedIndex = [...selectedIndex, propertySelectOptions.indexOf(propertySelectValue)]
+    disabled = selectedIndex.indexOf(propertySelectValue) < -1 ? 'false' : 'false'
+
     dispatch('select', {
       prop: propertySelectValue,
     })
