@@ -26,6 +26,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map, spriteImageList } from '$stores'
+  import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
@@ -105,7 +106,8 @@
     layer.intervals.propertyName = propertySelectValue
   }
 
-  const handlePropertyChange = () => {
+  const handlePropertyChange = (e) => {
+    propertySelectValue = e.detail.prop
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
@@ -265,24 +267,7 @@
 
 <div class="symbol-advanced-container" data-testid="symbol-advanced-container">
   <div class="columns">
-    <div class="column">
-      <div class="has-text-centered pb-2">Property</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
-          <select
-            bind:value={propertySelectValue}
-            on:change={handlePropertyChange}
-            style="width: 110px;"
-            alt="Property Options"
-            title="Property Options">
-            {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
-                >{propertySelectOption}</option>
-            {/each}
-          </select>
-        </div>
-      </div>
-    </div>
+    <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
     <div class="column">
       <div class="has-text-centered pb-2">Apply To</div>
       <div class="is-flex is-justify-content-center">

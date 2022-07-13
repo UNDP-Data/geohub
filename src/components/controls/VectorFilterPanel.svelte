@@ -2,6 +2,7 @@
   import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
   import VectorFilterExpressionCreator from '$components/controls/vector-styles/VectorFilterExpressionCreator.svelte'
   import { map } from '$stores'
+  import { onMount } from 'svelte'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -14,6 +15,9 @@
   let selectedCombiningOperator
   let notificationShown = false
   let combiningOperatorTitle
+  let vectorLayerMeta
+  let propertySelectOptions: string[] = []
+  let propertySelectValue
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -22,8 +26,27 @@
     { title: 'NOR', operation: 'none' },
   ]
 
+  onMount(() => {
+    setPropertySelectOptions()
+  })
+
+  const setPropertySelectOptions = () => {
+    const metadata = layer.info
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    vectorLayerMeta = JSON.parse(
+      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
+    )
+    Object.keys(vectorLayerMeta.fields).forEach((key) => {
+      if (vectorLayerMeta.fields[key] !== 'Number') {
+        delete vectorLayerMeta.fields[key]
+      }
+    })
+    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
+  }
+
   const propertySelected = (e) => {
-    console.log(alteringIndex)
+    propertySelectValue = e.detail.prop
     alteringIndex < 0 ? (alteringIndex = 0) : alteringIndex
     expressionsArray[alteringIndex]['property'] = e.detail.prop
   }
@@ -124,7 +147,7 @@
 {#if isFilterPanelVisible === true}
   <div style="display: block;">
     <div class="columns" style="align-items: center">
-      <PropertySelect {layer} on:select={propertySelected} />
+      <PropertySelect bind:propertySelectValue bind:propertySelectOptions on:select={propertySelected} />
       <VectorFilterExpressionCreator
         on:numberselected={numberSelected}
         on:operatorselected={operatorSelected}
@@ -139,7 +162,7 @@
             {/if}
             <div id="expression-tags">
               {#each Object.keys(expression) as key}
-                <div style="margin: 2px; display: flex; align-items: center">
+                <div style="margin: 2px; display: flex; align-items: center; justify-content: space-around">
                   <span
                     class="tag is-small {key === 'property'
                       ? 'is-info'
@@ -153,16 +176,13 @@
               {/each}
             </div>
             {#if Object.keys(expression).length}
-              <span>&nbsp;&nbsp;</span>
               <a style="text-decoration: none" on:click={() => removeThisExpression(expression)} class="tag is-small"
                 ><i class="fa fa-trash" /></a>
-              <span>&nbsp;&nbsp;</span>
               <a
                 style="text-decoration: none"
                 on:click={() => editThisExpression(expression)}
                 class="tag is-small {index === alteringIndex ? 'is-danger' : ''}"><i class="fa fa-pen" /></a>
               {#if index === expressionsArray.length - 1}
-                <span>&nbsp;&nbsp;</span>
                 <a style="text-decoration: none" on:click={addExpression} class="tag is-small"
                   ><i class="fa fa-plus" /></a>
               {/if}

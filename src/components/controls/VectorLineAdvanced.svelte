@@ -26,6 +26,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
+  import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
@@ -105,7 +106,8 @@
     layer.intervals.propertyName = propertySelectValue
   }
 
-  const handlePropertyChange = () => {
+  const handlePropertyChange = (e) => {
+    propertySelectValue = e.detail.prop
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
@@ -287,24 +289,7 @@
 
 <div class="line-advanced-container" data-testid="line-advanced-container">
   <div class="columns">
-    <div class="column">
-      <div class="has-text-centered pb-2">Property</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
-          <select
-            bind:value={propertySelectValue}
-            on:change={handlePropertyChange}
-            style="width: 110px;"
-            alt="Property Options"
-            title="Property Options">
-            {#each propertySelectOptions as propertySelectOption}
-              <option alt="Property Option" title="Property Option" class="legend-text" value={propertySelectOption}
-                >{propertySelectOption}</option>
-            {/each}
-          </select>
-        </div>
-      </div>
-    </div>
+    <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
     {#if hasUniqueValues === false}
       <div class="column" transition:fade>
         <div class="has-text-centered pb-2">Apply To</div>
