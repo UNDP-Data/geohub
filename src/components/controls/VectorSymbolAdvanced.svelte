@@ -21,7 +21,6 @@
     IntervalLegendColorMapRow,
     Layer,
     SpriteImage,
-    VectorLayerMetadata,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
@@ -46,9 +45,7 @@
   let cssIconFilter: string
   let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
-  let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
@@ -70,7 +67,8 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    setPropertySelectOptions()
+    propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
+    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   })
 
@@ -85,25 +83,6 @@
       .getStyle()
       .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
     return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
-  }
-
-  const setPropertySelectOptions = () => {
-    const metadata = layer.info
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    vectorLayerMeta = JSON.parse(
-      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-
-    Object.keys(vectorLayerMeta.fields).forEach((key) => {
-      if (vectorLayerMeta.fields[key] !== 'Number') {
-        delete vectorLayerMeta.fields[key]
-      }
-    })
-    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-    // propertySelectValue = propertySelectOptions[0]
-    propertySelectValue = layer.intervals.propertyName === '' ? propertySelectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
@@ -269,7 +248,7 @@
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
-      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
+      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} {layer} showOnlyNumberFields={true} />
     </div>
     <div class="column">
       <div class="has-text-centered pb-2">Apply To</div>

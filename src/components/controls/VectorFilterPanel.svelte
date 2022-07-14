@@ -2,7 +2,6 @@
   import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
   import VectorFilterExpressionCreator from '$components/controls/vector-styles/VectorFilterExpressionCreator.svelte'
   import { bannerMessages, map } from '$stores'
-  import { onMount } from 'svelte'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
 
@@ -17,8 +16,6 @@
   let selectedCombiningOperator
   let notificationShown = false
   let combiningOperatorTitle
-  let vectorLayerMeta
-  let propertySelectOptions: string[] = []
   let propertySelectValue
   let filteringError = false
 
@@ -29,27 +26,9 @@
     { title: 'NOR', operation: 'none' },
   ]
 
-  onMount(() => {
-    setPropertySelectOptions()
-  })
-
-  const setPropertySelectOptions = () => {
-    const metadata = layer.info
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    vectorLayerMeta = JSON.parse(
-      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-    Object.keys(vectorLayerMeta.fields).forEach((key) => {
-      if (vectorLayerMeta.fields[key] !== 'Number') {
-        delete vectorLayerMeta.fields[key]
-      }
-    })
-    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-  }
-
   const propertySelected = (e) => {
     propertySelectValue = e.detail.prop
+    if (propertySelectValue === '') return
     alteringIndex < 0 ? (alteringIndex = 0) : alteringIndex
     expressionsArray[alteringIndex]['property'] = e.detail.prop
   }
@@ -201,7 +180,7 @@
     <div class="columns" style="align-items: center">
       <div style="width:70%; margin-left: 10%">
         <div>Property:</div>
-        <PropertySelect bind:propertySelectValue on:select={propertySelected} bind:propertySelectOptions />
+        <PropertySelect bind:propertySelectValue on:select={propertySelected} {layer} showEmptyFields={true} />
       </div>
       <VectorFilterExpressionCreator
         on:numberselected={numberSelected}
@@ -254,7 +233,7 @@
         {#each combiningOperators as operator}
           <button
             style="margin:1% {selectedCombiningOperator === operator.operation ? 'background:red' : 'background:blue'}"
-            disabled={(selectedCombiningOperator === operator.operation) | (expressionsArray.length < 1)}
+            disabled={selectedCombiningOperator === operator.operation || expressionsArray.length < 1}
             class="button is-light is-small is-vcentered is-success"
             on:click={() => {
               handleOperatorClick(operator)

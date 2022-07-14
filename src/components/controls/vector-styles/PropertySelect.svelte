@@ -1,28 +1,48 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
 
+  export let layer
   export let propertySelectValue
   export let showEmptyFields = false
-  export let propertySelectOptions
+  export let showOnlyNumberFields = false
+  let propertySelectOptions
 
-  let selectedIndex = []
-  let disabled
   const dispatch = createEventDispatcher()
 
-  const propertyChanged = () => {
-    selectedIndex = [...selectedIndex, propertySelectOptions.indexOf(propertySelectValue)]
-    disabled = selectedIndex.indexOf(propertySelectValue) < -1 ? 'false' : 'false'
+  onMount(() => {
+    setPropertyList()
+  })
 
+  const setPropertyList = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const vectorLayerMeta = JSON.parse(
+      JSON.stringify(layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
+    )
+    if (showOnlyNumberFields === true) {
+      Object.keys(vectorLayerMeta.fields).forEach((key) => {
+        if (vectorLayerMeta.fields[key] !== 'Number') {
+          delete vectorLayerMeta.fields[key]
+        }
+      })
+    }
+    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
+    if (showEmptyFields === true) {
+      propertySelectOptions = ['', ...propertySelectOptions]
+    }
+    propertySelectValue =
+      !propertySelectValue || propertySelectValue !== '' ? propertySelectOptions[0] : propertySelectOptions
+    propertyChanged()
+  }
+
+  const propertyChanged = () => {
     dispatch('select', {
       prop: propertySelectValue,
     })
   }
 
-  $: {
-    if (propertySelectValue !== null) {
-      propertySelectValue, propertyChanged()
-    }
-  }
+  $: propertySelectValue, propertyChanged()
 </script>
 
 <div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">
@@ -33,13 +53,12 @@
       bind:value={propertySelectValue}
       alt="Property Options"
       title="Property Options">
-      {#if showEmptyFields}
-        <option class="legend-text" alt="Property Option" title="Property Option" value={''} />
+      {#if propertySelectOptions}
+        {#each propertySelectOptions as propertySelectOption}
+          <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
+            >{propertySelectOption}</option>
+        {/each}
       {/if}
-      {#each propertySelectOptions as propertySelectOption}
-        <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
-          >{propertySelectOption}</option>
-      {/each}
     </select>
   </div>
 </div>

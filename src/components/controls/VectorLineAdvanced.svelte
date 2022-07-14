@@ -21,7 +21,6 @@
   import type {
     IntervalLegendColorMapRow,
     Layer,
-    VectorLayerMetadata,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
@@ -46,9 +45,7 @@
   let cssIconFilter: string
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
-  let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
   let sizeArray: number[]
   let highlySkewed: boolean
@@ -71,7 +68,9 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    setPropertySelectOptions()
+    console.log(propertySelectValue, layer.intervals.propertyName)
+    propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
+    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
     if (highlySkewed) {
       classificationMethods = [
@@ -89,24 +88,8 @@
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
-  const setPropertySelectOptions = () => {
-    const metadata = layer.info
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    vectorLayerMeta = JSON.parse(
-      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-    Object.keys(vectorLayerMeta.fields).forEach((key) => {
-      if (vectorLayerMeta.fields[key] !== 'Number') {
-        delete vectorLayerMeta.fields[key]
-      }
-    })
-    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-    propertySelectValue = layer.intervals.propertyName === '' ? propertySelectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = propertySelectValue
-  }
-
   const handlePropertyChange = (e) => {
+    console.log(propertySelectValue, e.detail.prop)
     propertySelectValue = e.detail.prop
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
@@ -162,74 +145,76 @@
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
           (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
-        const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-        const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
-        const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std'])
+        if (tileStatLayerAttribute) {
+          const stats = layer.info.stats as VectorLayerTileStatAttribute[]
+          const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+          const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std'])
 
-        highlySkewed = !(skewness < 1 && skewness > -1)
+          highlySkewed = !(skewness < 1 && skewness > -1)
 
-        hasUniqueValues = false
+          hasUniqueValues = false
 
-        if (stat) {
-          const propertySelectValues = []
+          if (stat) {
+            const propertySelectValues = []
 
-          if (stat.values !== undefined) {
-            hasUniqueValues = true
-            const scaleColorList = chroma
-              .scale(colorMapName)
-              .mode('lrgb')
-              .padding([0.25, 0])
-              .domain([0, stat.values.length])
+            if (stat.values !== undefined) {
+              hasUniqueValues = true
+              const scaleColorList = chroma
+                .scale(colorMapName)
+                .mode('lrgb')
+                .padding([0.25, 0])
+                .domain([0, stat.values.length])
 
-            for (let i = 0; i < stat.values.length; i++) {
-              const row: IntervalLegendColorMapRow = {
-                index: i,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore:next-line
-                color: [...scaleColorList(i).rgb(), 255],
-                start: stat.values[i],
-                end: '',
+              for (let i = 0; i < stat.values.length; i++) {
+                const row: IntervalLegendColorMapRow = {
+                  index: i,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore:next-line
+                  color: [...scaleColorList(i).rgb(), 255],
+                  start: stat.values[i],
+                  end: '',
+                }
+                propertySelectValues.push(row)
               }
-              propertySelectValues.push(row)
-            }
-          } else {
-            // No unique values
-            // if (stat.min > 0) {
-            //   classificationMethods = [
-            //     ...classificationMethods,
-            //     ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-            //   ]
-            // }
+            } else {
+              // No unique values
+              // if (stat.min > 0) {
+              //   classificationMethods = [
+              //     ...classificationMethods,
+              //     ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+              //   ]
+              // }
 
-            const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-            const intervalList = getIntervalList(
-              classificationMethod,
-              stat.min,
-              stat.max,
-              randomSample,
-              numberOfClasses,
-            )
-            const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+              const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+              const intervalList = getIntervalList(
+                classificationMethod,
+                stat.min,
+                stat.max,
+                randomSample,
+                numberOfClasses,
+              )
+              const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
 
-            // create interval list (start / end)
-            for (let i = 0; i < intervalList.length - 1; i++) {
-              const row: IntervalLegendColorMapRow = {
-                index: i,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore:next-line
-                color: [...scaleColorList(intervalList[i]).rgb(), 255],
-                start: intervalList[i],
-                end: intervalList[i + 1],
+              // create interval list (start / end)
+              for (let i = 0; i < intervalList.length - 1; i++) {
+                const row: IntervalLegendColorMapRow = {
+                  index: i,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore:next-line
+                  color: [...scaleColorList(intervalList[i]).rgb(), 255],
+                  start: intervalList[i],
+                  end: intervalList[i + 1],
+                }
+                propertySelectValues.push(row)
               }
-              propertySelectValues.push(row)
+              layerMax = stat.max
+              layerMin = stat.min
             }
-            layerMax = stat.max
-            layerMin = stat.min
+
+            layer.intervals.colorMapRows = propertySelectValues
+
+            updateMap()
           }
-
-          layer.intervals.colorMapRows = propertySelectValues
-
-          updateMap()
         }
       }
     }
@@ -291,7 +276,7 @@
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
-      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
+      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} {layer} showOnlyNumberFields={true} />
     </div>
     {#if hasUniqueValues === false}
       <div class="column" transition:fade>

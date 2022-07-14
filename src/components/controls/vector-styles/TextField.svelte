@@ -4,7 +4,7 @@
   import { createEventDispatcher } from 'svelte'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import type { Layer, VectorLayerMetadata, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
+  import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
 
@@ -14,13 +14,10 @@
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
-  const metadata = layer.info
   const propertyName = 'text-field'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let layerIdList: string[] = []
   let textFieldValue = ''
-  let vectorLayerMeta: VectorLayerMetadata
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
@@ -57,12 +54,6 @@
   }
 
   const setDefaultTextField = () => {
-    if (!vectorLayerMeta) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
-      layerIdList = Object.keys(vectorLayerMeta.fields)
-    }
     textFieldValue = getCurrentValue()
     setTextField()
   }
@@ -145,8 +136,4 @@
   }
 </script>
 
-<PropertySelect
-  bind:showEmptyFields
-  bind:propertySelectValue={textFieldValue}
-  bind:propertySelectOptions={layerIdList}
-  on:select={setTextField} />
+<PropertySelect bind:showEmptyFields bind:propertySelectValue={textFieldValue} {layer} on:select={setTextField} />
