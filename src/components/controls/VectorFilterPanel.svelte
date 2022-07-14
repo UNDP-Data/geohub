@@ -1,12 +1,10 @@
 <script lang="ts">
   import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
   import VectorFilterExpressionCreator from '$components/controls/vector-styles/VectorFilterExpressionCreator.svelte'
-  import { map } from '$stores'
+  import { bannerMessages, map } from '$stores'
   import { onMount } from 'svelte'
-  import { ErrorMessages } from '$lib/constants'
-  import Popper from '$lib/popper'
-  import { fade } from 'svelte/transition'
-  import { clickOutside } from 'svelte-use-click-outside'
+  import { ErrorMessages, StatusTypes } from '$lib/constants'
+  import type { BannerMessage } from '$lib/types'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -23,19 +21,6 @@
   let propertySelectOptions: string[] = []
   let propertySelectValue
   let filteringError = false
-  let showErrorTooltip = false
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-end',
-      strategy: 'fixed',
-    },
-    [0, 0],
-  ).init()
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -135,9 +120,15 @@
     } else {
       // No expression
     }
-    $map.on('error', (e) => {
+    $map.on('error', () => {
       // This error is thrown when the expression is not valid.
       filteringError = true
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.DANGER,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.MAP_FILTER_NOT_APPLIED,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
     })
   }
 
@@ -218,26 +209,6 @@
         bind:expression />
     </div>
     {#if expressionsArray.length > 0}
-      {#if filteringError}
-        <span
-          use:popperRef
-          on:click={() => (showErrorTooltip = !showErrorTooltip)}
-          style="margin-left: 85%"
-          class="tag is-danger is-light">
-          <i class="fa fa-exclamation-circle" />
-        </span>
-        {#if showErrorTooltip}
-          <div
-            use:popperContent={popperOptions}
-            use:clickOutside={() => (filteringError = false)}
-            transition:fade
-            class="notification is-danger">
-            <button on:click={() => (filteringError = false)} class="delete" />
-            {ErrorMessages.MAP_FILTER_NOT_APPLIED}
-          </div>
-        {/if}
-      {/if}
-
       <div style="display: block">
         {#each expressionsArray as expression, index}
           <div style="display: flex; align-items: center">
