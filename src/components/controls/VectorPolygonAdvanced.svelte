@@ -144,7 +144,6 @@
           (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
         const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-        console.log(tileStatLayerAttribute)
         const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
         hasUniqueValues = false
 

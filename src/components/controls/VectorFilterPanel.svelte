@@ -3,6 +3,10 @@
   import VectorFilterExpressionCreator from '$components/controls/vector-styles/VectorFilterExpressionCreator.svelte'
   import { map } from '$stores'
   import { onMount } from 'svelte'
+  import { ErrorMessages } from '$lib/constants'
+  import Popper from '$lib/popper'
+  import { fade } from 'svelte/transition'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -18,6 +22,20 @@
   let vectorLayerMeta
   let propertySelectOptions: string[] = []
   let propertySelectValue
+  let filteringError = false
+  let showErrorTooltip = false
+
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [0, 0],
+  ).init()
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -98,11 +116,14 @@
       for (let i = 0; i < expressionsArray.length; i++) {
         expressions.push([operators[i], ['get', properties[i]], Number(values[i])])
       }
-      console.log(expressions)
       $map.setFilter(layerId, [selectedCombiningOperator, ...expressions])
     } else {
       // No expression
     }
+    $map.on('error', (e) => {
+      // This error is thrown when the expression is not valid.
+      filteringError = true
+    })
   }
 
   // Remove an operation/property/value from the expression when the x-button in the tag is clicked
@@ -178,6 +199,26 @@
         bind:expression />
     </div>
     {#if expressionsArray.length > 0}
+      {#if filteringError}
+        <span
+          use:popperRef
+          on:click={() => (showErrorTooltip = !showErrorTooltip)}
+          style="margin-left: 85%"
+          class="tag is-danger is-light">
+          <i class="fa fa-exclamation-circle" />
+        </span>
+        {#if showErrorTooltip}
+          <div
+            use:popperContent={popperOptions}
+            use:clickOutside={() => (filteringError = false)}
+            transition:fade
+            class="notification is-danger">
+            <button on:click={() => (filteringError = false)} class="delete" />
+            {ErrorMessages.MAP_FILTER_NOT_APPLIED}
+          </div>
+        {/if}
+      {/if}
+
       <div style="display: block">
         {#each expressionsArray as expression, index}
           <div style="display: flex; align-items: center">
@@ -236,7 +277,9 @@
           class="button is-info is-light is-small"
           on:click={handleApplyExpression}
           alt="Apply expression button"
-          title="Apply expression button">Apply</button>
+          title="Apply expression button"
+          >Apply
+        </button>
         <button
           style="margin:1%"
           class="button is-light is-light is-small"
