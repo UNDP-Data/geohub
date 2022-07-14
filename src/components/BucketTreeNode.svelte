@@ -294,10 +294,16 @@
         const dataType = metadata.properties[key]
         switch (dataType) {
           case 'varchar':
+          case 'text':
+          case 'char':
+          case 'name':
             metadata.properties[key] = 'String'
             break
+          case 'float4':
           case 'float8':
+          case 'int2':
           case 'int4':
+          case 'numeric':
             metadata.properties[key] = 'Number'
             break
         }
