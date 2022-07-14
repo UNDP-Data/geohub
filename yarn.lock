@@ -963,6 +963,19 @@
     "@smui/textfield" "^6.0.0-beta.16"
     svelte2tsx "^0.5.5"
 
+"@smui-extra/badge@^6.0.0-beta.16":
+  version "6.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@smui-extra/badge/-/badge-6.0.0-beta.16.tgz#f36b0c7d2390b36375e96ca3b08804cb8c10ccfe"
+  integrity sha512-yVm90zodAY/9o3u0rE3KuNoegciVv+InV0gVAwJYEFRvjjsamwCUf853pvfaKqMksdT+dsReIAycrw/4Zdv3fQ==
+  dependencies:
+    "@material/feature-targeting" "^13.0.0"
+    "@material/rtl" "^13.0.0"
+    "@material/shape" "^13.0.0"
+    "@material/theme" "^13.0.0"
+    "@material/typography" "^13.0.0"
+    "@smui/common" "^6.0.0-beta.16"
+    svelte2tsx "^0.5.5"
+
 "@smui/banner@^6.0.0-beta.16":
   version "6.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/@smui/banner/-/banner-6.0.0-beta.16.tgz#c4e6c18c1470183683108073604ef149d4672d29"

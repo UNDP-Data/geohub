@@ -1,22 +1,32 @@
 <script lang="ts">
+  import Badge from '@smui-extra/badge'
   import Banner, { Label as LabelBanner } from '@smui/banner'
-  import Button from '@smui/button'
+  import Button, { Label as LabelButton } from '@smui/button'
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
 
   import { StatusTypes } from '$lib/constants'
   import { bannerMessages } from '$stores'
+  import type { BannerMessage } from '$lib/types'
 
-  let showBanner = false
+  $: showBanner = $bannerMessages.length > 0 ? true : false
+  let currentBannerMessage: BannerMessage
+  let position: 'inset' | 'middle' | 'outset' = 'middle'
+  let align: 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' = 'top-end'
 
   // show banner when content store available
   $: {
-    if ($bannerMessages.length > 0) {
-      showBanner = false
-      setTimeout(() => {
-        showBanner = true
-      }, 500)
+    if (showBanner === true && !currentBannerMessage) {
+      currentBannerMessage = $bannerMessages.shift()
+    }
+  }
+
+  const showNextBanner = () => {
+    if ($bannerMessages.length === 0) {
+      hideBanner()
+    } else {
+      currentBannerMessage = $bannerMessages.shift()
     }
   }
 
@@ -25,31 +35,37 @@
       showBanner = false
     }, 150)
     $bannerMessages = []
+    currentBannerMessage = undefined
   }
 </script>
 
-<Banner bind:open={showBanner} fixed mobileStacked content$style={`max-width: max-content; height:`}>
-  <LabelBanner
-    slot="label"
-    style="font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 60px;">
-    {#each $bannerMessages as row}
+{#if currentBannerMessage}
+  <Banner bind:open={showBanner} fixed mobileStacked content$style={`max-width: max-content; height:`}>
+    <LabelBanner
+      slot="label"
+      style="font-family: ProximaNova, sans-serif; font-size: 13px; max-width: 600px; min-height: 60px;">
       <div class="banner-container">
         <div class="icon">
-          {#if row.type === StatusTypes.INFO}
+          {#if currentBannerMessage.type === StatusTypes.INFO}
             <Fa icon={faCircleInfo} size="2x" primaryColor="hsl(204, 86%, 53%)" />
-          {:else if row.type === StatusTypes.DANGER}
+          {:else if currentBannerMessage.type === StatusTypes.DANGER}
             <Fa icon={faBan} size="2x" primaryColor="hsl(348, 100%, 61%)" />
           {/if}
         </div>
         <div class="content">
-          <div class="subtitle">{row.title}</div>
-          <div class="message">{row.message}</div>
+          <div class="subtitle">{currentBannerMessage.title}</div>
+          <div class="message">{currentBannerMessage.message}</div>
         </div>
       </div>
-    {/each}
-  </LabelBanner>
-  <Button slot="actions" on:click={() => hideBanner()}>Dismiss</Button>
-</Banner>
+    </LabelBanner>
+    <Button slot="actions" on:click={() => showNextBanner()}>
+      <LabelButton>Dismiss</LabelButton>
+      {#if $bannerMessages.length > 0}
+        <Badge {position} {align} aria-label="unread message count">{$bannerMessages.length}</Badge>
+      {/if}
+    </Button>
+  </Banner>
+{/if}
 
 <style lang="scss">
   .banner-container {
