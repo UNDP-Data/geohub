@@ -208,17 +208,6 @@
     return `${base}?${btoa(sign)}`
   }
 
-  const getBase64EncodedUrlforSTAC = (node: TreeNode) => {
-    let b64EncodedUrl
-    if (node.isStac && node.path.split('/')[0] === 'msft') {
-      b64EncodedUrl = `${node.url}`
-    } else {
-      if (!url) url = node.url
-      b64EncodedUrl = getBase64EncodedUrl(url)
-    }
-    return b64EncodedUrl
-  }
-
   const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
     const metadata = <LayerInfoMetadata>{
       description,
@@ -244,7 +233,7 @@
   }
 
   const getRasterMetadata = async (node: TreeNode) => {
-    let b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
+    let b64EncodedUrl = getBase64EncodedUrl(node.url)
     const data: RasterTileMetadata = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
     if (
@@ -369,7 +358,7 @@
           */
 
       // 2. band_metadata not returning stats min/max
-      b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
+      b64EncodedUrl = getBase64EncodedUrl(node.url)
       layerInfo = await getRasterMetadata(node)
 
       if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
