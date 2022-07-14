@@ -213,6 +213,7 @@
     if (node.isStac && node.path.split('/')[0] === 'msft') {
       b64EncodedUrl = `${node.url}`
     } else {
+      if (!url) url = node.url
       b64EncodedUrl = getBase64EncodedUrl(url)
     }
     return b64EncodedUrl
