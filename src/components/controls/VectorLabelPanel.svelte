@@ -125,6 +125,7 @@
   <div class="action" data-testid="vector-label-panel-container">
     <div class="columns">
       <div class="column is-12">
+        <span>Property:&nbsp;</span>
         <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPosition />
       </div>
     </div>

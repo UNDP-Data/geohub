@@ -168,7 +168,10 @@
 {#if isFilterPanelVisible === true}
   <div style="display: block;">
     <div class="columns" style="align-items: center">
-      <PropertySelect bind:propertySelectValue bind:propertySelectOptions on:select={propertySelected} />
+      <div style="width:70%; margin-left: 10%">
+        <div>Property:</div>
+        <PropertySelect bind:propertySelectValue on:select={propertySelected} bind:propertySelectOptions />
+      </div>
       <VectorFilterExpressionCreator
         on:numberselected={numberSelected}
         on:operatorselected={operatorSelected}
