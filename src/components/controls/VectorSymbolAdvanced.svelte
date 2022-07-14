@@ -267,7 +267,10 @@
 
 <div class="symbol-advanced-container" data-testid="symbol-advanced-container">
   <div class="columns">
-    <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
+    <div style="width: 50%; padding: 5%">
+      <div class="has-text-centered pb-2">Property:</div>
+      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
+    </div>
     <div class="column">
       <div class="has-text-centered pb-2">Apply To</div>
       <div class="is-flex is-justify-content-center">

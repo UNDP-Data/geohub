@@ -1,8 +1,10 @@
 <script lang="ts">
   import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
   import VectorFilterExpressionCreator from '$components/controls/vector-styles/VectorFilterExpressionCreator.svelte'
-  import { map } from '$stores'
+  import { bannerMessages, map } from '$stores'
   import { onMount } from 'svelte'
+  import { ErrorMessages, StatusTypes } from '$lib/constants'
+  import type { BannerMessage } from '$lib/types'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -18,6 +20,7 @@
   let vectorLayerMeta
   let propertySelectOptions: string[] = []
   let propertySelectValue
+  let filteringError = false
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -64,6 +67,10 @@
     if (Object.keys(expressionsArray[0]).length === 0) {
       $map.setFilter(layerId, null)
       propertySelectValue = null
+      // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, null)
+        : null
     }
   }
 
@@ -74,7 +81,6 @@
   }
 
   // Apply expression to layer
-  // Todo: Sometimes, there is an error when applying the expression. Need to show this to the user.
   const handleApplyExpression = () => {
     if (expressionsArray.length === 1) {
       //Simple Expression
@@ -83,6 +89,14 @@
         ['get', expressionsArray[0]['property']],
         Number(expressionsArray[0]['value']),
       ])
+      // Check if the label layer exists and if true, update the label layer with the new filter
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, [
+            expressionsArray[0]['operator'],
+            ['get', expressionsArray[0]['property']],
+            Number(expressionsArray[0]['value']),
+          ])
+        : null
     } else if (expressionsArray.length > 1) {
       // complex expression
       const properties = expressionsArray.map((expression) => {
@@ -98,11 +112,24 @@
       for (let i = 0; i < expressionsArray.length; i++) {
         expressions.push([operators[i], ['get', properties[i]], Number(values[i])])
       }
-      console.log(expressions)
       $map.setFilter(layerId, [selectedCombiningOperator, ...expressions])
+      // Check if the label layer exists and if true, update the label layer with the new filter
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, [selectedCombiningOperator, ...expressions])
+        : null
     } else {
       // No expression
     }
+    $map.on('error', () => {
+      // This error is thrown when the expression is not valid.
+      filteringError = true
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.DANGER,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.MAP_FILTER_NOT_APPLIED,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+    })
   }
 
   // Remove an operation/property/value from the expression when the x-button in the tag is clicked
@@ -129,6 +156,10 @@
     expressionsArray = [{}]
     expressionsArray.splice(alteringIndex, 1, {})
     numbers = ''
+    // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+    $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+      ? $map.setFilter(`${layerId}-label`, null)
+      : null
   }
 
   // Add an operator to an expression when one is clicked
@@ -168,7 +199,10 @@
 {#if isFilterPanelVisible === true}
   <div style="display: block;">
     <div class="columns" style="align-items: center">
-      <PropertySelect bind:propertySelectValue bind:propertySelectOptions on:select={propertySelected} />
+      <div style="width:70%; margin-left: 10%">
+        <div>Property:</div>
+        <PropertySelect bind:propertySelectValue on:select={propertySelected} bind:propertySelectOptions />
+      </div>
       <VectorFilterExpressionCreator
         on:numberselected={numberSelected}
         on:operatorselected={operatorSelected}
@@ -233,7 +267,9 @@
           class="button is-info is-light is-small"
           on:click={handleApplyExpression}
           alt="Apply expression button"
-          title="Apply expression button">Apply</button>
+          title="Apply expression button"
+          >Apply
+        </button>
         <button
           style="margin:1%"
           class="button is-light is-light is-small"
