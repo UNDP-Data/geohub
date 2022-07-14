@@ -82,6 +82,10 @@
     if (Object.keys(expressionsArray[0]).length === 0) {
       $map.setFilter(layerId, null)
       propertySelectValue = null
+      // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, null)
+        : null
     }
   }
 
@@ -92,7 +96,6 @@
   }
 
   // Apply expression to layer
-  // Todo: Sometimes, there is an error when applying the expression. Need to show this to the user.
   const handleApplyExpression = () => {
     if (expressionsArray.length === 1) {
       //Simple Expression
@@ -101,6 +104,14 @@
         ['get', expressionsArray[0]['property']],
         Number(expressionsArray[0]['value']),
       ])
+      // Check if the label layer exists and if true, update the label layer with the new filter
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, [
+            expressionsArray[0]['operator'],
+            ['get', expressionsArray[0]['property']],
+            Number(expressionsArray[0]['value']),
+          ])
+        : null
     } else if (expressionsArray.length > 1) {
       // complex expression
       const properties = expressionsArray.map((expression) => {
@@ -117,6 +128,10 @@
         expressions.push([operators[i], ['get', properties[i]], Number(values[i])])
       }
       $map.setFilter(layerId, [selectedCombiningOperator, ...expressions])
+      // Check if the label layer exists and if true, update the label layer with the new filter
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, [selectedCombiningOperator, ...expressions])
+        : null
     } else {
       // No expression
     }
@@ -150,6 +165,10 @@
     expressionsArray = [{}]
     expressionsArray.splice(alteringIndex, 1, {})
     numbers = ''
+    // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+    $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+      ? $map.setFilter(`${layerId}-label`, null)
+      : null
   }
 
   // Add an operator to an expression when one is clicked
