@@ -144,7 +144,6 @@
           (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
         )
         const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-        console.log(tileStatLayerAttribute)
         const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
         hasUniqueValues = false
 
@@ -235,7 +234,10 @@
 
 <div class="polygon-advanced-container" data-testid="polygon-advanced-container">
   <div class="columns">
-    <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
+    <div style="width: 50%; padding: 5%">
+      <div class="has-text-centered pb-2">Property:</div>
+      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} bind:propertySelectOptions />
+    </div>
     {#if hasUniqueValues === false}
       <div class="column" transition:fade>
         <div class="has-text-centered pb-2">Classification</div>

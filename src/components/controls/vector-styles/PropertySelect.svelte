@@ -25,8 +25,7 @@
   }
 </script>
 
-<div style="width: 70%; display: flex; align-items: center; justify-content: left">
-  <div class="is-size-7 has-text-weight-semibold">Property:</div>
+<div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">
   <div class="select is-rounded is-flex is-justify-content-left">
     <select
       style="width: 100%"
