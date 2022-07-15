@@ -767,7 +767,7 @@
   .node-container {
     align-items: center;
     display: flex;
-    height: 22px;
+    height: auto;
     justify-content: left;
 
     .load-layer {
@@ -776,12 +776,12 @@
     }
 
     .name {
-      height: 19.5px;
       overflow: hidden;
       padding-left: 5px;
       text-overflow: ellipsis;
-      white-space: nowrap;
       width: 100%;
+      text-align: justify;
+      text-justify: inter-word;
 
       @media (prefers-color-scheme: dark) {
         color: white;
