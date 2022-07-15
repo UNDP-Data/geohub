@@ -69,7 +69,7 @@ export async function get({ url }) {
             const file = new URL(assetItem.href).pathname.split('/').pop()
             const path = `${catalog.id}/${container.id}/${file}`
             const layer: TreeNode = {
-              label: `${feat.id}-${assetItem.title}`,
+              label: feat.id,
               path,
               url: assetItem.href + '?' + res.token,
               isRaster: true,

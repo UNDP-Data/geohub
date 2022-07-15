@@ -659,7 +659,16 @@
             use:popperRef
             on:mouseenter={() => handleTooltipMouseEnter()}
             on:mouseleave={() => handleToolipMouseLeave()}>
-            {clean(label)}
+            {#if node.isStac}
+              {clean(
+                path
+                  .split('/')
+                  .pop()
+                  .replace(/\.[^/.]+$/, ''),
+              )}
+            {:else}
+              {clean(label)}
+            {/if}
           </div>
           <div
             class="icon"
