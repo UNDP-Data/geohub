@@ -21,6 +21,7 @@
 
     setTimeout(() => {
       const layer = $layerList.filter((item) => item.definition.id === layerId)[0]
+      const delSourceId = layer.definition.source
       if (layer.children && layer.children.length > 0) {
         layer.children.forEach((child) => {
           $map.removeLayer(child.definition.id)
@@ -29,6 +30,10 @@
       }
       $layerList = $layerList.filter((item) => item.definition.id !== layerId)
       $map.removeLayer(layerId)
+      const layerListforDelSource = $layerList.filter((item) => item.definition.source === delSourceId)
+      if (layerListforDelSource.length === 0) {
+        $map.removeSource(delSourceId)
+      }
     }, 200)
   }
 
