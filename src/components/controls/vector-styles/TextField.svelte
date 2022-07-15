@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { createEventDispatcher } from 'svelte'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import type { Layer, VectorLayerMetadata, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
+  import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
 
@@ -14,20 +13,13 @@
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
-  const metadata = layer.info
   const propertyName = 'text-field'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let layerIdList: string[] = []
   let textFieldValue = ''
-  let vectorLayerMeta: VectorLayerMetadata
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
-
-  onMount(() => {
-    setDefaultTextField()
-  })
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
@@ -56,15 +48,11 @@
     }
   }
 
-  const setDefaultTextField = () => {
-    if (!vectorLayerMeta) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
-      layerIdList = Object.keys(vectorLayerMeta.fields)
-    }
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return
     textFieldValue = getCurrentValue()
     setTextField()
+    return textFieldValue
   }
 
   const getCurrentValue = () => {
@@ -148,5 +136,6 @@
 <PropertySelect
   bind:showEmptyFields
   bind:propertySelectValue={textFieldValue}
-  bind:propertySelectOptions={layerIdList}
-  on:select={setTextField} />
+  {layer}
+  on:select={setTextField}
+  {setDefaultProperty} />
