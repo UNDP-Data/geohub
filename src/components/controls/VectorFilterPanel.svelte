@@ -26,10 +26,17 @@
     { title: 'NOR', operation: 'none' },
   ]
 
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    propertySelectValue = propertySelectValue === '' ? selectOptions[0] : propertySelectValue
+    return propertySelectValue
+  }
+
   const propertySelected = (e) => {
     propertySelectValue = e.detail.prop
-    if (propertySelectValue === '') return
+    if (!propertySelectValue || propertySelectValue === '') return
     alteringIndex < 0 ? (alteringIndex = 0) : alteringIndex
+    if (propertySelectValue === '') return
     expressionsArray[alteringIndex]['property'] = e.detail.prop
   }
 
@@ -180,7 +187,13 @@
     <div class="columns" style="align-items: center">
       <div style="width:70%; margin-left: 10%">
         <div>Property:</div>
-        <PropertySelect bind:propertySelectValue on:select={propertySelected} {layer} showEmptyFields={true} />
+        <PropertySelect
+          bind:propertySelectValue
+          on:select={propertySelected}
+          {layer}
+          showEmptyFields={true}
+          showOnlyNumberFields={true}
+          {setDefaultProperty} />
       </div>
       <VectorFilterExpressionCreator
         on:numberselected={numberSelected}

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { createEventDispatcher } from 'svelte'
 
@@ -21,10 +20,6 @@
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
-
-  onMount(() => {
-    setDefaultTextField()
-  })
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
@@ -53,9 +48,11 @@
     }
   }
 
-  const setDefaultTextField = () => {
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return
     textFieldValue = getCurrentValue()
     setTextField()
+    return textFieldValue
   }
 
   const getCurrentValue = () => {
@@ -136,4 +133,9 @@
   }
 </script>
 
-<PropertySelect bind:showEmptyFields bind:propertySelectValue={textFieldValue} {layer} on:select={setTextField} />
+<PropertySelect
+  bind:showEmptyFields
+  bind:propertySelectValue={textFieldValue}
+  {layer}
+  on:select={setTextField}
+  {setDefaultProperty} />

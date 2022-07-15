@@ -31,9 +31,13 @@
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]
     }
-    propertySelectValue =
-      !propertySelectValue || propertySelectValue !== '' ? propertySelectOptions[0] : propertySelectOptions
+    propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()
+  }
+
+  export let setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    return selectOptions[0]
   }
 
   const propertyChanged = () => {

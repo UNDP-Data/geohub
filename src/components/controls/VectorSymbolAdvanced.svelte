@@ -67,8 +67,8 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
-    layer.intervals.propertyName = propertySelectValue
+    // propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
+    // layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   })
 
@@ -83,6 +83,14 @@
       .getStyle()
       .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
     return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+  }
+
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
+    layer.intervals.propertyName = defaultValue
+    setIntervalValues()
+    return defaultValue
   }
 
   const handlePropertyChange = (e) => {
@@ -248,7 +256,12 @@
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
-      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} {layer} showOnlyNumberFields={true} />
+      <PropertySelect
+        bind:propertySelectValue
+        on:select={handlePropertyChange}
+        {layer}
+        showOnlyNumberFields={true}
+        {setDefaultProperty} />
     </div>
     <div class="column">
       <div class="has-text-centered pb-2">Apply To</div>

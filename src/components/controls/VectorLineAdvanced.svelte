@@ -68,10 +68,6 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    console.log(propertySelectValue, layer.intervals.propertyName)
-    propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
-    layer.intervals.propertyName = propertySelectValue
-    setIntervalValues()
     if (highlySkewed) {
       classificationMethods = [
         ...classificationMethods,
@@ -88,8 +84,15 @@
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
+    layer.intervals.propertyName = defaultValue
+    setIntervalValues()
+    return defaultValue
+  }
+
   const handlePropertyChange = (e) => {
-    console.log(propertySelectValue, e.detail.prop)
     propertySelectValue = e.detail.prop
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
@@ -276,7 +279,12 @@
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
-      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} {layer} showOnlyNumberFields={true} />
+      <PropertySelect
+        bind:propertySelectValue
+        on:select={handlePropertyChange}
+        {layer}
+        showOnlyNumberFields={true}
+        {setDefaultProperty} />
     </div>
     {#if hasUniqueValues === false}
       <div class="column" transition:fade>

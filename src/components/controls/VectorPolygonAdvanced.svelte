@@ -62,10 +62,15 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     $map.on('zoom', () => (zoomLevel = $map.getZoom()))
-    propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
-    layer.intervals.propertyName = propertySelectValue
-    setIntervalValues()
   })
+
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
+    layer.intervals.propertyName = defaultValue
+    setIntervalValues()
+    return defaultValue
+  }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
@@ -218,7 +223,12 @@
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
-      <PropertySelect bind:propertySelectValue on:select={handlePropertyChange} {layer} showOnlyNumberFields={true} />
+      <PropertySelect
+        bind:propertySelectValue
+        on:select={handlePropertyChange}
+        {layer}
+        showOnlyNumberFields={true}
+        {setDefaultProperty} />
     </div>
     {#if hasUniqueValues === false}
       <div class="column" transition:fade>
