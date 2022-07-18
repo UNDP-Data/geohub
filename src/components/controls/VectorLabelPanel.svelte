@@ -124,23 +124,19 @@
 {#if isLabelPanelVisible === true}
   <div class="action" data-testid="vector-label-panel-container">
     <div class="columns">
-      <div class="column is-5">
-        <div class="has-text-centered pb-2">Property</div>
+      <div class="column is-12">
+        <span>Property:&nbsp;</span>
+        <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPosition />
+      </div>
+    </div>
+    {#if fieldType && ['number', 'float'].includes(fieldType)}
+      <div class="column is-7" transition:fade>
+        <div class="has-text-centered">Number of Decimal Places</div>
         <div class="is-flex is-justify-content-center">
-          <TextField on:change={onTextChange} bind:layer={targetLayer} bind:fieldType bind:decimalPosition />
+          <NumberFormat on:change={onStyleChange} bind:decimalPosition />
         </div>
       </div>
-
-      {#if fieldType && ['number', 'float'].includes(fieldType)}
-        <div class="column is-7" transition:fade>
-          <div class="has-text-centered">Number of Decimal Places</div>
-          <div class="is-flex is-justify-content-center">
-            <NumberFormat on:change={onStyleChange} bind:decimalPosition />
-          </div>
-        </div>
-      {/if}
-    </div>
-
+    {/if}
     <div class="columns mb-0 pb-0">
       <div class="column is-6">
         <div class="has-text-centered pb-2">Font Color</div>

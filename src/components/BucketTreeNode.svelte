@@ -208,16 +208,6 @@
     return `${base}?${btoa(sign)}`
   }
 
-  const getBase64EncodedUrlforSTAC = (node: TreeNode) => {
-    let b64EncodedUrl
-    if (node.isStac && node.path.split('/')[0] === 'msft') {
-      b64EncodedUrl = `${node.url}`
-    } else {
-      b64EncodedUrl = getBase64EncodedUrl(url)
-    }
-    return b64EncodedUrl
-  }
-
   const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
     const metadata = <LayerInfoMetadata>{
       description,
@@ -243,7 +233,7 @@
   }
 
   const getRasterMetadata = async (node: TreeNode) => {
-    let b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
+    let b64EncodedUrl = getBase64EncodedUrl(node.url)
     const data: RasterTileMetadata = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
     if (
@@ -304,10 +294,16 @@
         const dataType = metadata.properties[key]
         switch (dataType) {
           case 'varchar':
+          case 'text':
+          case 'char':
+          case 'name':
             metadata.properties[key] = 'String'
             break
+          case 'float4':
           case 'float8':
+          case 'int2':
           case 'int4':
+          case 'numeric':
             metadata.properties[key] = 'Number'
             break
         }
@@ -368,7 +364,7 @@
           */
 
       // 2. band_metadata not returning stats min/max
-      b64EncodedUrl = getBase64EncodedUrlforSTAC(node)
+      b64EncodedUrl = getBase64EncodedUrl(node.url)
       layerInfo = await getRasterMetadata(node)
 
       if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
@@ -679,7 +675,7 @@
             alt="Download Layer Data"
             style="cursor: pointer;"
             title="Download Layer Data"
-            on:click={() => downloadFile(node.isStac ? url.split(/[?#]/)[0] : url)}>
+            on:click={() => downloadFile(url)}>
             <Wrapper>
               <Fa icon={faDownload} size="sm" />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
@@ -771,7 +767,7 @@
   .node-container {
     align-items: center;
     display: flex;
-    height: 22px;
+    height: auto;
     justify-content: left;
 
     .load-layer {
@@ -780,12 +776,12 @@
     }
 
     .name {
-      height: 19.5px;
       overflow: hidden;
       padding-left: 5px;
       text-overflow: ellipsis;
-      white-space: nowrap;
       width: 100%;
+      text-align: justify;
+      text-justify: inter-word;
 
       @media (prefers-color-scheme: dark) {
         color: white;

@@ -227,7 +227,7 @@ export const getIntervalList = (
  */
 export const getVectorInfo = async (pbfPath: string, layerName: string) => {
   const data = await fetchUrl(`vectorinfo.json?path=${pbfPath}&layer_name=${layerName}`)
-  return data.filter((val: VectorLayerTileStatAttribute) => val.type === 'number')
+  return data
 }
 
 export const groupByN = (n: number, data: any[]) => {

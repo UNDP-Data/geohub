@@ -1,7 +1,9 @@
 <script lang="ts">
   import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
   import VectorFilterExpressionCreator from '$components/controls/vector-styles/VectorFilterExpressionCreator.svelte'
-  import { map } from '$stores'
+  import { bannerMessages, map } from '$stores'
+  import { ErrorMessages, StatusTypes } from '$lib/constants'
+  import type { BannerMessage } from '$lib/types'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -14,6 +16,8 @@
   let selectedCombiningOperator
   let notificationShown = false
   let combiningOperatorTitle
+  let propertySelectValue
+  let filteringError = false
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -22,9 +26,17 @@
     { title: 'NOR', operation: 'none' },
   ]
 
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    propertySelectValue = propertySelectValue === '' ? selectOptions[0] : propertySelectValue
+    return propertySelectValue
+  }
+
   const propertySelected = (e) => {
-    console.log(alteringIndex)
+    propertySelectValue = e.detail.prop
+    if (!propertySelectValue || propertySelectValue === '') return
     alteringIndex < 0 ? (alteringIndex = 0) : alteringIndex
+    if (propertySelectValue === '') return
     expressionsArray[alteringIndex]['property'] = e.detail.prop
   }
 
@@ -34,17 +46,27 @@
   }
 
   $: alteringIndex, (numbers = '')
-  $: {
-    if (expressionsArray == [{}]) {
+  $: expressionsArray, resetProperty()
+
+  // reset properties when the last expression is removed
+  const resetProperty = () => {
+    if (Object.keys(expressionsArray[0]).length === 0) {
       $map.setFilter(layerId, null)
+      propertySelectValue = null
+      // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, null)
+        : null
     }
   }
 
+  // If a number is selected, add it to the numbers string and to the under-edit expression
   const numberSelected = (e) => {
     numbers = numbers.concat(e.detail.number)
     expressionsArray[alteringIndex]['value'] = numbers
   }
 
+  // Apply expression to layer
   const handleApplyExpression = () => {
     if (expressionsArray.length === 1) {
       //Simple Expression
@@ -53,6 +75,14 @@
         ['get', expressionsArray[0]['property']],
         Number(expressionsArray[0]['value']),
       ])
+      // Check if the label layer exists and if true, update the label layer with the new filter
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, [
+            expressionsArray[0]['operator'],
+            ['get', expressionsArray[0]['property']],
+            Number(expressionsArray[0]['value']),
+          ])
+        : null
     } else if (expressionsArray.length > 1) {
       // complex expression
       const properties = expressionsArray.map((expression) => {
@@ -68,13 +98,27 @@
       for (let i = 0; i < expressionsArray.length; i++) {
         expressions.push([operators[i], ['get', properties[i]], Number(values[i])])
       }
-      console.log(expressions)
       $map.setFilter(layerId, [selectedCombiningOperator, ...expressions])
+      // Check if the label layer exists and if true, update the label layer with the new filter
+      $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+        ? $map.setFilter(`${layerId}-label`, [selectedCombiningOperator, ...expressions])
+        : null
     } else {
       // No expression
     }
+    $map.on('error', () => {
+      // This error is thrown when the expression is not valid.
+      filteringError = true
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.DANGER,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.MAP_FILTER_NOT_APPLIED,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+    })
   }
 
+  // Remove an operation/property/value from the expression when the x-button in the tag is clicked
   const removeOperation = (key, index) => {
     delete expressionsArray[index][String(key)]
     if (key === 'value') {
@@ -83,17 +127,28 @@
     expressionsArray = [...expressionsArray]
     if (Object.keys(expressionsArray[index]).length < 1) {
       alteringIndex = alteringIndex - 1
+      expressionsArray = [...expressionsArray.slice(0, index)]
+      // if there is only one expression, enable all combining operator buttons
+      if (expressionsArray.length < 2) {
+        selectedCombiningOperator = null
+      }
     }
   }
 
+  // Clear all expressions applied to the layer and reset the UI
   const handleClearExpression = () => {
     $map.setFilter(layerId, null)
     alteringIndex = 0
     expressionsArray = [{}]
     expressionsArray.splice(alteringIndex, 1, {})
     numbers = ''
+    // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+    $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+      ? $map.setFilter(`${layerId}-label`, null)
+      : null
   }
 
+  // Add an operator to an expression when one is clicked
   const handleOperatorClick = (op) => {
     combiningOperatorTitle = op.title
     selectedCombiningOperator = op.operation
@@ -103,11 +158,15 @@
       expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
     }
   }
+
+  // Add an empty expression to the list of expressions when the plus(+) button is clicked
   const addExpression = () => {
     alteringIndex = expressionsArray.length
     expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
   }
 
+  // Remove a single expression from the expression. It does not reset map if the
+  // expression was already applied
   const removeThisExpression = (exp) => {
     const index = expressionsArray.indexOf(exp)
     numbers = ''
@@ -116,6 +175,8 @@
     expressionsArray = expressionsArray.length < 1 ? [...expressionsArray, {}] : [...expressionsArray]
   }
 
+  // Switches the editable expression to the clicked
+  // and enables the user to edit a single expression when the edit(button with pen) button is clicked
   const editThisExpression = (exp) => {
     alteringIndex = expressionsArray.indexOf(exp)
   }
@@ -124,7 +185,16 @@
 {#if isFilterPanelVisible === true}
   <div style="display: block;">
     <div class="columns" style="align-items: center">
-      <PropertySelect {layer} on:select={propertySelected} />
+      <div style="width:70%; margin-left: 10%">
+        <div>Property:</div>
+        <PropertySelect
+          bind:propertySelectValue
+          on:select={propertySelected}
+          {layer}
+          showEmptyFields={true}
+          showOnlyNumberFields={true}
+          {setDefaultProperty} />
+      </div>
       <VectorFilterExpressionCreator
         on:numberselected={numberSelected}
         on:operatorselected={operatorSelected}
@@ -139,7 +209,7 @@
             {/if}
             <div id="expression-tags">
               {#each Object.keys(expression) as key}
-                <div style="margin: 2px; display: flex; align-items: center">
+                <div style="margin: 2px; display: flex; align-items: center; justify-content: space-around">
                   <span
                     class="tag is-small {key === 'property'
                       ? 'is-info'
@@ -153,16 +223,13 @@
               {/each}
             </div>
             {#if Object.keys(expression).length}
-              <span>&nbsp;&nbsp;</span>
               <a style="text-decoration: none" on:click={() => removeThisExpression(expression)} class="tag is-small"
                 ><i class="fa fa-trash" /></a>
-              <span>&nbsp;&nbsp;</span>
               <a
                 style="text-decoration: none"
                 on:click={() => editThisExpression(expression)}
                 class="tag is-small {index === alteringIndex ? 'is-danger' : ''}"><i class="fa fa-pen" /></a>
               {#if index === expressionsArray.length - 1}
-                <span>&nbsp;&nbsp;</span>
                 <a style="text-decoration: none" on:click={addExpression} class="tag is-small"
                   ><i class="fa fa-plus" /></a>
               {/if}
@@ -179,7 +246,7 @@
         {#each combiningOperators as operator}
           <button
             style="margin:1% {selectedCombiningOperator === operator.operation ? 'background:red' : 'background:blue'}"
-            disabled={(selectedCombiningOperator === operator.operation) | (expressionsArray.length < 1)}
+            disabled={selectedCombiningOperator === operator.operation || expressionsArray.length < 1}
             class="button is-light is-small is-vcentered is-success"
             on:click={() => {
               handleOperatorClick(operator)
@@ -192,7 +259,9 @@
           class="button is-info is-light is-small"
           on:click={handleApplyExpression}
           alt="Apply expression button"
-          title="Apply expression button">Apply</button>
+          title="Apply expression button"
+          >Apply
+        </button>
         <button
           style="margin:1%"
           class="button is-light is-light is-small"

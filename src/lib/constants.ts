@@ -88,6 +88,7 @@ export enum ErrorMessages {
   FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
   NO_LAYER_WITH_THAT_NAME = "We couldn't find a layer with that name.",
   VECTOR_INFO_BAD_REQUEST = 'Bad request. Please verify the URL and/or parameters.',
+  MAP_FILTER_NOT_APPLIED = 'The map filter was not applied. Please check the that all filters are valid.',
 }
 export const LayerIconTypes = [
   {

@@ -21,11 +21,11 @@
     IntervalLegendColorMapRow,
     Layer,
     SpriteImage,
-    VectorLayerMetadata,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map, spriteImageList } from '$stores'
+  import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let applyToOption: string
   export let layer: Layer = LayerInitialValues
@@ -45,9 +45,7 @@
   let cssIconFilter: string
   let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectOptions: string[] = []
   let propertySelectValue: string = null
-  let vectorLayerMeta: VectorLayerMetadata
   let zoomLevel: number
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
@@ -69,7 +67,8 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    setPropertySelectOptions()
+    // propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
+    // layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   })
 
@@ -86,26 +85,16 @@
     return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   }
 
-  const setPropertySelectOptions = () => {
-    const metadata = layer.info
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    vectorLayerMeta = JSON.parse(
-      JSON.stringify(metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-
-    Object.keys(vectorLayerMeta.fields).forEach((key) => {
-      if (vectorLayerMeta.fields[key] !== 'Number') {
-        delete vectorLayerMeta.fields[key]
-      }
-    })
-    propertySelectOptions = Object.keys(vectorLayerMeta.fields)
-    // propertySelectValue = propertySelectOptions[0]
-    propertySelectValue = layer.intervals.propertyName === '' ? propertySelectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = propertySelectValue
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return ''
+    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
+    layer.intervals.propertyName = defaultValue
+    setIntervalValues()
+    return defaultValue
   }
 
-  const handlePropertyChange = () => {
+  const handlePropertyChange = (e) => {
+    propertySelectValue = e.detail.prop
     layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
@@ -265,23 +254,14 @@
 
 <div class="symbol-advanced-container" data-testid="symbol-advanced-container">
   <div class="columns">
-    <div class="column">
-      <div class="has-text-centered pb-2">Property</div>
-      <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
-          <select
-            bind:value={propertySelectValue}
-            on:change={handlePropertyChange}
-            style="width: 110px;"
-            alt="Property Options"
-            title="Property Options">
-            {#each propertySelectOptions as propertySelectOption}
-              <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
-                >{propertySelectOption}</option>
-            {/each}
-          </select>
-        </div>
-      </div>
+    <div style="width: 50%; padding: 5%">
+      <div class="has-text-centered pb-2">Property:</div>
+      <PropertySelect
+        bind:propertySelectValue
+        on:select={handlePropertyChange}
+        {layer}
+        showOnlyNumberFields={true}
+        {setDefaultProperty} />
     </div>
     <div class="column">
       <div class="has-text-centered pb-2">Apply To</div>

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { createEventDispatcher } from 'svelte'
 
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
-  import type { Layer, VectorLayerMetadata, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
+  import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
+  import PropertySelect from './PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let decimalPosition = undefined
@@ -13,19 +13,13 @@
 
   const dispatch = createEventDispatcher()
   const layerId = layer.definition.id
-  const metadata = layer.info
   const propertyName = 'text-field'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let layerIdList: string[] = []
   let textFieldValue = ''
-  let vectorLayerMeta: VectorLayerMetadata
+  let showEmptyFields = true
 
   $: textFieldValue, setTextField()
-
-  onMount(() => {
-    setDefaultTextField()
-  })
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
@@ -54,15 +48,11 @@
     }
   }
 
-  const setDefaultTextField = () => {
-    if (!vectorLayerMeta) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      vectorLayerMeta = metadata.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])
-      layerIdList = Object.keys(vectorLayerMeta.fields)
-    }
+  const setDefaultProperty = (selectOptions: string[]) => {
+    if (selectOptions.length === 0) return
     textFieldValue = getCurrentValue()
     setTextField()
+    return textFieldValue
   }
 
   const getCurrentValue = () => {
@@ -143,11 +133,9 @@
   }
 </script>
 
-<div class="select is-rounded  is-justify-content-center" style="height: 30px;width:100%">
-  <select bind:value={textFieldValue} style="width: 100%;" alt="text-field" title="Text field for label">
-    <option class="legend-text" value={''} />
-    {#each layerIdList as id}
-      <option class="legend-text" value={id}>{id}</option>
-    {/each}
-  </select>
-</div>
+<PropertySelect
+  bind:showEmptyFields
+  bind:propertySelectValue={textFieldValue}
+  {layer}
+  on:select={setTextField}
+  {setDefaultProperty} />
