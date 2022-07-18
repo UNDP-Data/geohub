@@ -6,7 +6,8 @@
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
-  import RefineContainer from '$components/RefineContainer.svelte'
+  //import RefineContainer from '$components/RefineContainer.svelte'
+  import RasterExpression from '$components/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import { LayerInitialValues, TabNames } from '$lib/constants'
@@ -79,7 +80,8 @@
         <RasterHistogram bind:layer />
       {/if}
       {#if isRefinePanelVisible === true}
-        <RefineContainer bind:layer />
+        <!-- <RefineContainer bind:layer /> -->
+        <RasterExpression bind:layer />
       {/if}
       <OpacityPanel {layer} {isOpacityPanelVisible} />
     </p>

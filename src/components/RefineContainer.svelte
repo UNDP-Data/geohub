@@ -1,11 +1,15 @@
 <script lang="ts">
+  import { DynamicLayerLegendTypes } from '$lib/constants'
+
   import { updateParamsInURL } from '$lib/helper'
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterLayerStats } from '$lib/types'
   import { map } from '$stores'
+  import { fetchUrl } from '$lib/helper'
 
   export let layer: Layer
 
   let expression = layer.expression
+  const band = 'b1'
 
   const arithmetic = {
     title: 'Arithmetic',
@@ -29,30 +33,72 @@
 
   const functionsList = {
     title: 'Functions',
-    operators: ['where(cond, true, false)', 'sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs'],
+    operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs'],
   }
 
+  const handleFunctions = (func: string) => {
+    expression = expression.concat(`${func}()`)
+  }
+
+  const handleRemoveExpression = async () => {
+    const layerSrc = $map.getSource(layer.definition.source)
+    const layerURL = new URL(layerSrc.tiles[0])
+    expression = ''
+    layer.expression = expression
+    //handleApplyExpression()
+    if (layerURL.searchParams.has('expression')) {
+      let updatedParams = {}
+      const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
+      const stats: RasterLayerStats = await fetchUrl(statsUrl.toString())
+      layer.info.stats = stats
+      const band = Object.keys(layer.info.stats)[0]
+      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
+        updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
+        layer.continuous.minimum = Number(layer.info.stats[band].min)
+        layer.continuous.maximum = Number(layer.info.stats[band].max)
+      }
+      layerURL.searchParams.delete('expression')
+      updateParamsInURL(layer.definition, layerURL, updatedParams)
+    }
+  }
   const handleClearExpression = () => {
     expression = ''
-    handleApplyExpression()
+    console.clear()
   }
 
+  const handleWhere = () => {
+    expression = `where(${band},true, false)`
+  }
+  const handleNumber = (num: string) => {
+    expression = expression.concat(num)
+  }
   const handleAddOperator = (val: string) => {
     expression = expression.concat(val)
   }
 
-  const handleApplyExpression = () => {
-    const layerSrc = $map.getSource(layer.definition.source)
-    const layerURL = new URL(layerSrc.tiles[0])
-    let updatedParams = {}
-
+  const handleApplyExpression = async () => {
     if (expression && expression.length > 0) {
+      const layerSrc = $map.getSource(layer.definition.source)
+      const layerURL = new URL(layerSrc.tiles[0])
+      let updatedParams = {}
+      const exprStatUrl = new URL(
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
+          expression,
+        )}`,
+      )
+      const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
+      layer.info.stats = exprStats
       layer.expression = expression
-      updatedParams = Object.assign({ expression: layer.expression })
+      const band = Object.keys(exprStats)[0]
+      updatedParams = { expression: layer.expression }
+      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
+        updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
+        layer.continuous.minimum = Number(layer.info.stats[band].min)
+        layer.continuous.maximum = Number(layer.info.stats[band].max)
+      }
+      layerURL.searchParams.delete('expression')
+      updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
-
-    layerURL.searchParams.delete('expression')
-    updateParamsInURL(layer.definition, layerURL, updatedParams)
   }
 </script>
 
@@ -63,11 +109,7 @@
         <div class="is-size-7 has-text-weight-semibold">{numbers.title}</div>
         <div class="buttons">
           {#each numbers.operators as operator}
-            <button
-              class="button is-small"
-              on:click={() => handleAddOperator(operator)}
-              alt={operator}
-              title={operator}>
+            <button class="button is-small " on:click={() => handleNumber(operator)} alt={operator} title={operator}>
               <span>{operator}</span>
             </button>
           {/each}
@@ -77,14 +119,17 @@
         <div class="is-size-7 has-text-weight-semibold">{functionsList.title}</div>
         <div class="buttons">
           {#each functionsList.operators as operator}
-            <button
-              class="button is-small"
-              on:click={() => handleAddOperator(operator)}
-              alt={operator}
-              title={operator}>
+            <button class="button is-small" on:click={() => handleFunctions(operator)} alt={operator} title={operator}>
               <span>{operator}</span>
             </button>
           {/each}
+          <button
+            class="button is-small"
+            on:click={handleWhere}
+            alt="where(cond,true,false)"
+            title="where(cond,true,false)">
+            <span>where</span>
+          </button>
         </div>
       </div>
     </div>
@@ -121,11 +166,11 @@
 
       <div class="arithmetic">
         <div class="is-size-7 has-text-weight-semibold">{arithmetic.title}</div>
-        <div class="buttons">
+        <div class="buttons ">
           {#each arithmetic.operators as operator}
             <button
               class="button is-small"
-              on:click={() => handleAddOperator(operator)}
+              on:click={() => handleAddOperator(`${operator}`)}
               alt={operator}
               title={operator}>
               <span>{operator}</span>
@@ -133,12 +178,19 @@
           {/each}
         </div>
       </div>
+      <button
+        class="button is-small is-info"
+        on:click={() => handleAddOperator('b1')}
+        alt="Current layer"
+        title="Current layer. Add">
+        <span>Current layer</span>
+      </button>
     </div>
   </div>
   <div class="expression">
     <div class="is-size-7 has-text-weight-semibold">Expression</div>
     <div class="columns">
-      <div class="column is-7">
+      <div class="column is-12">
         <input
           class="input is-small is-rounded"
           bind:value={expression}
@@ -147,18 +199,29 @@
           alt="Expression input"
           title="Expression input" />
       </div>
+    </div>
+    <div class="columns">
       <div class="column">
         <button
           class="button is-info is-light is-small"
           on:click={handleApplyExpression}
-          alt="Apply expression button"
-          title="Apply expression button">Apply</button>
+          alt="Apply expression"
+          title="Apply expression">
+          Apply
+        </button>
+        <button
+          class="button is-info is-light is-small"
+          on:click={handleClearExpression}
+          alt="Clear expression"
+          title="Clear expression">
+          Clear
+        </button>
         <button
           class="button is-vcentered is-small"
-          on:click={handleClearExpression}
+          on:click={handleRemoveExpression}
           data-testid="filter-clear-button"
-          alt="Clear expression button"
-          title="Clear expression button">
+          alt="Remove expression"
+          title="Remove expression">
           <span class="icon">
             <i class="fas fa-xmark" />
           </span>
@@ -173,7 +236,7 @@
     padding-left: 10px;
 
     > div {
-      margin-bottom: 15px;
+      margin-bottom: 0px;
     }
 
     .comparison,
@@ -185,7 +248,7 @@
 
     .functions {
       button {
-        min-width: 40px;
+        width: 30px;
       }
     }
 
