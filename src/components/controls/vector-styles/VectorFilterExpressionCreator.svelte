@@ -9,12 +9,30 @@
   import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
+  import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
+  import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
 
+  export let propertyStats: number[]
   let showTooltip: boolean
   let activeOperatorsTab = 'Numbers'
 
   const dispatch = createEventDispatcher()
-  const operatorTypes = ['Numbers', 'Comparison']
+  const operatorTypes = [
+    {
+      name: 'numbers',
+      title: 'Numbers',
+      icon: faArrowDown19,
+      operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')'],
+      isVisible: false,
+    },
+    {
+      name: 'comparison',
+      title: 'Comparison',
+      icon: faEquals,
+      operators: ['=', '!=', '>=', '<', '>', '<='],
+      isVisible: false,
+    },
+  ]
 
   const {
     ref: popperRef,
@@ -70,11 +88,13 @@
     transition:fade>
     <div class="card" style="width: 300px">
       <div class="card-content" style="padding: 0">
-        <div class="tabs" style="margin:0">
+        <div class="tabs is-centered" style="margin:0">
           <ul>
             {#each operatorTypes as type}
-              <li class={activeOperatorsTab === type ? 'is-active' : ''}>
-                <a on:click={() => handleSetOperatorType(type)}>{type}</a>
+              <li class={activeOperatorsTab === type.title ? 'is-active' : ''}>
+                <a on:click={() => handleSetOperatorType(type.title)}>
+                  <Fa icon={type.icon} />
+                </a>
               </li>
             {/each}
           </ul>
@@ -87,7 +107,14 @@
           </button>
         </div>
 
-        <div class="content">
+        <div class="content" style="display: flex; align-items: center; justify-content: space-between">
+          <div class="stats message is-info is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
+            <div id="stats-title" class="stats-content message-header">Statistics</div>
+            <div class="stats-content">Min:</div>
+            <div class="stats-content">{propertyStats[0]}</div>
+            <div class="stats-content">Max:</div>
+            <div class="stats-content">{propertyStats[1]}</div>
+          </div>
           {#if activeOperatorsTab === 'Numbers'}
             <NumberButtons on:valueclicked={numberSelected} />
           {:else}

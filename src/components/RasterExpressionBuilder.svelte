@@ -96,7 +96,7 @@
     <div data-testid="expression-builder">
       <div class="columns is-centered is-mobile">
         <div class="column is-11 ">
-          <div class="tabs">
+          <div class="tabs is-centered">
             <ul>
               {#each Object.values(operatorCategories) as operatorCategory}
                 <li class={activeOperatorCategory === operatorCategory.name ? 'is-active' : ''}>
@@ -244,19 +244,19 @@
     gap: 5px;
     grid-template-rows: minmax(50px, 1fr) auto;
   }
-  .stats {
+  :global(.stats) {
     align-content: flex-start;
     display: grid;
     gap: 2px;
     grid-template-columns: repeat(2, 1fr);
     grid-row: 1/2;
   }
-  #stats-title {
+  :global(#stats-title) {
     grid-column: 1/-1;
     align-items: flex-end;
     grid-template-rows: 30px;
   }
-  .stats-content {
+  :global(.stats-content) {
     display: flex;
     justify-content: center;
     align-content: center;

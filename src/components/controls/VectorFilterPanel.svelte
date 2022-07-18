@@ -18,6 +18,7 @@
   let combiningOperatorTitle
   let propertySelectValue
   let filteringError = false
+  let propertyStats = []
 
   const layerId = layer.definition.id
   const combiningOperators = [
@@ -47,6 +48,21 @@
 
   $: alteringIndex, (numbers = '')
   $: expressionsArray, resetProperty()
+  $: propertySelectValue, getMinMaxForProperty()
+
+  // Every time the property is changed, get the min and max values for the property
+  // for the purpose to display the min and max values to the user
+  const getMinMaxForProperty = () => {
+    if (propertySelectValue !== null) {
+      const min = layer.info.json.tilestats.layers[0].attributes.filter(
+        (attr) => attr.attribute === propertySelectValue,
+      )[0].min
+      const max = layer.info.json.tilestats.layers[0].attributes.filter(
+        (attr) => attr.attribute === propertySelectValue,
+      )[0].max
+      propertyStats = [Math.floor(min), Math.floor(max)]
+    }
+  }
 
   // reset properties when the last expression is removed
   const resetProperty = () => {
@@ -163,6 +179,7 @@
   const addExpression = () => {
     alteringIndex = expressionsArray.length
     expressionsArray = [...expressionsArray, { property: '', operator: '', value: '' }]
+    combiningOperatorTitle === null ? (combiningOperatorTitle = 'AND') : combiningOperatorTitle
   }
 
   // Remove a single expression from the expression. It does not reset map if the
@@ -191,11 +208,12 @@
           bind:propertySelectValue
           on:select={propertySelected}
           {layer}
-          showEmptyFields={true}
+          showEmptyFields={false}
           showOnlyNumberFields={true}
           {setDefaultProperty} />
       </div>
       <VectorFilterExpressionCreator
+        bind:propertyStats
         on:numberselected={numberSelected}
         on:operatorselected={operatorSelected}
         bind:expression />

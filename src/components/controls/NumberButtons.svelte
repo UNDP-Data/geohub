@@ -15,7 +15,7 @@
   }
 </script>
 
-<div class="column">
+<div class="column is-centered">
   <div class="numbers">
     <div class="buttons">
       {#each numbers.operators as number}

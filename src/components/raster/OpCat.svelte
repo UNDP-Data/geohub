@@ -6,7 +6,7 @@
 </script>
 
 <div class={operatorCategory.isVisible ? 'content' : 'is-hidden'}>
-  <div class="is-size-7 has-text-weight-semibold pl-3">{operatorCategory.title}</div>
+  <div class="is-size-7 has-text-weight-semibold pl-3 has-text-centered">{operatorCategory.title}</div>
   <div class="category">
     {#each operatorCategory.operators as operator}
       <div class="oper">
