@@ -89,7 +89,12 @@
       let values = []
 
       if (layer.type === LayerTypes.RASTER) {
-        const layerData = await fetchUrl(`${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`)
+        const queryURL = !layer.expression
+          ? `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`
+          : `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}&expression=${encodeURIComponent(layer.expression)}`
+
+        const layerData = await fetchUrl(queryURL)
+
         let layerHasNoDataValue = false
 
         if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true

@@ -1,4 +1,4 @@
-import type { IconProp } from '@fortawesome/fontawesome-svg-core'
+import type { IconDefinition, IconProp } from '@fortawesome/fontawesome-svg-core'
 import type { BucketType } from '$lib/constants'
 import type {
   RasterLayerSpecification,
@@ -293,6 +293,14 @@ export interface TagLayer {
   geomType: string
   container: string
   tags: string[]
+}
+
+export interface OperatorCategory {
+  name: string
+  title: string
+  icon: IconDefinition
+  operators: Array<string>
+  isVisible: boolean
 }
 
 export interface MartinLayerMetadata {

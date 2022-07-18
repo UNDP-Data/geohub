@@ -14,7 +14,6 @@
   import { updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
-  import { onMount } from 'svelte'
 
   export let layerConfig: Layer = LayerInitialValues
 
@@ -27,9 +26,19 @@
   let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
   let activeColorMapName = layerConfig.colorMapName
+  let layerMin = NaN
+  let layerMax = NaN
 
-  const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
-  const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
+  if ('stats' in info) {
+    const band = Object.keys(info.stats)[0]
+    layerMin = Number(info.stats[band].min)
+    layerMax = Number(info.stats[band].max)
+  } else {
+    const [band, bandMetaStats] = info['band_metadata'][0]
+    layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
+    layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
+  }
+
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
@@ -37,18 +46,16 @@
   let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
   let step = (layerMax - layerMin) * 1e-2
 
-  onMount(() => {
-    setSliderState()
-  })
   // the reactive statement below will update map whenever the colormap changes or the legend was switched.
   // quite a tricky business
+
   $: {
     if (activeColorMapName !== layerConfig.colorMapName || (layerURL.searchParams.has('colormap') && layerConfig)) {
-      activeColorMapName = layerConfig.colorMapName
-      numberOfClasses = layerConfig.intervals.numberOfClasses
-      layerConfig.intervals.colorMapRows = []
+      //console.log(`layerURL has changed ${layerURL.searchParams.get('rescale')} ${layerMin} - ${layerMax}` )
       rescaleColorMap()
       updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
+      activeColorMapName = layerConfig.colorMapName // this re-renders the continuous legend
+      layerConfig.intervals.colorMapRows = [] // this re-remders the intervals legend classes properly
     }
   }
 

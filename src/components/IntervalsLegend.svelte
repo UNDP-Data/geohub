@@ -63,12 +63,12 @@
     if (!('stats' in info)) {
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-
+      const band = Object.keys(layerConfig.info.stats)[0]
       info = { ...info, stats: layerStats }
 
-      percentile98 = layerStats['1']['percentile_98']
+      percentile98 = layerStats[band]['percentile_98']
       layerConfig.percentile98 = percentile98
-      const skewness = 3 * ((info.stats['1'].mean - info.stats['1'].median) / info.stats['1'].std)
+      const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
@@ -91,7 +91,6 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
-
     const colorMap = []
 
     if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
