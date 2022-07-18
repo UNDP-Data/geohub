@@ -60,7 +60,7 @@
       const max = layer.info.json.tilestats.layers[0].attributes.filter(
         (attr) => attr.attribute === propertySelectValue,
       )[0].max
-      propertyStats = [Math.floor(min), Math.floor(max)]
+      propertyStats = [min == undefined ? '' : Math.floor(min), max == undefined ? '' : Math.ceil(max)]
     }
   }
 

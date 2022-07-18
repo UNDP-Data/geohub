@@ -41,13 +41,6 @@
       operators: ['=', '!=', '>=', '<', '>', '<='],
       isVisible: false,
     },
-    // {
-    //   name: 'logical',
-    //   title: 'Logical',
-    //   icon: faDiagramProject,
-    //   operators: ['&', '~', '|'],
-    //   isVisible: false,
-    // },
 
     {
       name: 'functions',

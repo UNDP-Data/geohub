@@ -19,17 +19,13 @@
   const dispatch = createEventDispatcher()
   const operatorTypes = [
     {
-      name: 'numbers',
       title: 'Numbers',
       icon: faArrowDown19,
-      operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')'],
       isVisible: false,
     },
     {
-      name: 'comparison',
       title: 'Comparison',
       icon: faEquals,
-      operators: ['=', '!=', '>=', '<', '>', '<='],
       isVisible: false,
     },
   ]
@@ -80,13 +76,13 @@
 
 {#if showTooltip}
   <div
-    style="z-index: 999;"
+    style="z-index: 999; width: 300px"
     id="tooltip"
     data-testid="tooltip"
     use:popperContent={popperOptions}
     use:clickOutside={() => (showTooltip = false)}
     transition:fade>
-    <div class="card" style="width: 300px">
+    <div class="card">
       <div class="card-content" style="padding: 0">
         <div class="tabs is-centered" style="margin:0">
           <ul>
