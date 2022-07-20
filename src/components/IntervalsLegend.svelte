@@ -63,8 +63,9 @@
     if (!('stats' in info)) {
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-      const band = Object.keys(layerConfig.info.stats)[0]
+
       info = { ...info, stats: layerStats }
+      const band = Object.keys(info.stats)[0]
 
       percentile98 = layerStats[band]['percentile_98']
       layerConfig.percentile98 = percentile98
