@@ -14,6 +14,18 @@ export async function get() {
 
   const COG_MIME_TYPE = 'image/tiff; application=geotiff; profile=cloud-optimized'
 
+  // some collection from microsoft planetary computer STAC has a bad data source.
+  // if the name is added in this list, the API will create stac-msft.json without those collection
+  const IGNORE_COLLECTION_LIST = [
+    'modis',
+    'planet-nicfi',
+    'jrc-gsw',
+    'cop-dem-glo-90',
+    'cop-dem-glo-30',
+    'gnatsgo-rasters',
+    'alos-fnf-mosaic',
+  ]
+
   if (fs.existsSync(filePath)) {
     const catalogues = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Bucket[]
 
@@ -46,6 +58,10 @@ export async function get() {
       const collections = []
 
       for (const cog of collectionsWithCog) {
+        const isIgnore = IGNORE_COLLECTION_LIST.find(
+          (collectionName) => cog.id.toLowerCase().indexOf(collectionName) !== -1,
+        )
+        if (isIgnore) continue
         const collection: TreeNode = {
           id: cog.id,
           label: cog.title,

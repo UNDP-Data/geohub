@@ -36,7 +36,7 @@
     StatusTypes,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
-  import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
+  import { fetchUrl, hash, clean, downloadFile, getBase64EncodedUrl } from '$lib/helper'
   import Popper from '$lib/popper'
   import type {
     BannerMessage,
@@ -205,10 +205,10 @@
     return LayerIconTypes.find((icon) => layerGeomType.toLowerCase().includes(icon.id))
   }
 
-  const getBase64EncodedUrl = (url: string) => {
-    const [base, sign] = url.split('?')
-    return `${base}?${btoa(sign)}`
-  }
+  // const getBase64EncodedUrl = (url: string) => {
+  //   const [base, sign] = url.split('?')
+  //   return `${base}?${btoa(sign)}`
+  // }
 
   const setLayerMetaDataStore = (
     description: string,
