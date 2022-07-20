@@ -10,7 +10,7 @@ import type {
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
-import type { BannerMessage, SpriteIcon, SpriteImage, VectorLayerTileStatAttribute } from './types'
+import type { BannerMessage, RasterTileMetadata, SpriteIcon, SpriteImage, VectorLayerTileStatAttribute } from './types'
 import { bannerMessages, map } from '$stores'
 import { ClassificationMethodTypes, DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
 import { Jenks } from './jenks'
@@ -244,4 +244,21 @@ export const groupByN = (n: number, data: any[]) => {
 export const getBase64EncodedUrl = (url: string) => {
   const [base, sign] = url.split('?')
   return `${base}?${btoa(sign)}`
+}
+
+/**
+ * Get active band index number from RasterTileMetadata object
+ * if `active_band_no` property is not defined, 0 is returned as default.
+ * @param metadata RasterTileMetadata object
+ * @returns active band index number
+ */
+export const getActiveBandIndex = (metadata: RasterTileMetadata) => {
+  let bandIndex = -1
+  if (metadata.active_band_no) {
+    bandIndex = Object.keys(metadata.band_metadata).indexOf(metadata.active_band_no)
+  } else {
+    bandIndex = 0
+    metadata.active_band_no = metadata.band_metadata[bandIndex][0]
+  }
+  return bandIndex
 }
