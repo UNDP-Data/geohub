@@ -235,3 +235,13 @@ export const groupByN = (n: number, data: any[]) => {
   for (let i = 0; i < data.length; i += n) result.push(data.slice(i, i + n))
   return result
 }
+
+/**
+ * Get URL with base 64 encoded signature
+ * @param url url with signature
+ * @returns url after base 64 encoded signature
+ */
+export const getBase64EncodedUrl = (url: string) => {
+  const [base, sign] = url.split('?')
+  return `${base}?${btoa(sign)}`
+}
