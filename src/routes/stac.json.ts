@@ -66,6 +66,7 @@ export async function get({ url }) {
         for (const assetKey of Object.keys(assets)) {
           if (assets[assetKey].type === COG_MIME_TYPE) {
             const assetItem = assets[assetKey]
+            if (!assetItem.href) continue
             const file = new URL(assetItem.href).pathname.split('/').pop()
             const path = `${catalog.id}/${container.id}/${file}`
             const layer: TreeNode = {
