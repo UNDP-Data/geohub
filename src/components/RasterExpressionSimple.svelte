@@ -144,7 +144,7 @@
       let updatedParams = {}
       const exprStatUrl = new URL(
         `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
-          `where(${complexExpressions[0].band}${complexExpressions[0].operator}${complexExpressions[0].value}, ${trueStatement.statement}, ${falseStatement.statement});`,
+          `where(b1${complexExpressions[0].operator}${complexExpressions[0].value}, ${trueStatement.statement}, ${falseStatement.statement});`,
         )}`,
       )
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
@@ -199,7 +199,7 @@
         {#each Object.keys(simpleExpression) as key}
           <span
             style="cursor: pointer; margin: 1%; display: {simpleExpression[key] ? '' : 'none'}"
-            class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
+            class="tag is-large {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
             {simpleExpression[key]}
             <button
               style="display:{key === 'band' ? 'none' : null}"
@@ -219,7 +219,12 @@
             {expression.band ? expression.band : 'b1'}
             {expression.operator ? expression.operator : ''}
             {expression.value ? expression.value : ''}
-            <button on:click={() => (complexExpressions[0] = {})} class="delete is-small" />
+            <button
+              on:click={() => {
+                complexExpressions[0] = {}
+                numbers = ''
+              }}
+              class="delete is-small" />
           </span>
           <span
             on:click={() => (trueStatement.status = !trueStatement.status)}
