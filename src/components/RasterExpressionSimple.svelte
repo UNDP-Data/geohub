@@ -19,10 +19,7 @@
   let numbers = ''
   let expression = ''
   let simpleExpressionAvailable = layer.simpleExpressionAvailable || true
-
   let simpleExpression = {}
-
-  let complexExpression = 'where,'
   let complexExpressions = [{}]
   let simpleExpressionEditingIndex = 0
   complexExpressions[simpleExpressionEditingIndex].band = 'b1'
@@ -89,7 +86,6 @@
       // pass
     } else {
       complexExpressions[simpleExpressionEditingIndex].operator = event.detail.operator
-      complexExpression = complexExpression.concat(event.detail.operator).concat(',')
     }
     expression = expression.concat(event.detail.operator)
   }
@@ -98,7 +94,6 @@
     simpleExpressionAvailable = false
     layer.simpleExpressionAvailable = simpleExpressionAvailable
     simpleExpression = {}
-    complexExpression = 'where'
   }
 
   const handleNumberButtonClick = (event: CustomEvent) => {
@@ -190,14 +185,6 @@
     complexExpressions = [{}]
   }
 
-  const makeSelected = (item) => {
-    if (simpleExpressionAvailable) {
-      selectedIndex = Object.keys(simpleExpression).indexOf(item)
-    } else {
-      selectedIndex = Object.keys(complexExpression).indexOf(item)
-    }
-  }
-
   const handleRemoveItem = (key) => {
     key === 'value' ? (numbers = '') : null
     delete simpleExpression[key]
@@ -227,7 +214,6 @@
         </span>
         {#each complexExpressions as expression, index}
           <span
-            on:click={() => makeSelected(expression)}
             style="cursor: pointer; margin: 1%;"
             class="tag is-warning is-medium {selectedIndex === index ? 'is-danger' : 'is-success'}">
             {expression.band ? expression.band : 'b1'}
