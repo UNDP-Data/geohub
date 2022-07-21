@@ -77,6 +77,7 @@ export const LayerInitialValues = {
   },
   expression: '',
   legendType: '',
+  simpleExpressionAvailable: true,
   percentile98: undefined,
   iconColor: DEFAULT_LINE_COLOR,
   fillColor: DEFAULT_FILL_COLOR,

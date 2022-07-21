@@ -3,14 +3,13 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  // import { faDiagramProject } from '@fortawesome/free-solid-svg-icons/faDiagramProject'
   import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
   import { faPlusMinus } from '@fortawesome/free-solid-svg-icons/faPlusMinus'
   import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
   import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
-  // import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
   import OpCat from '$components/raster/OpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
+  import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
 
   let activeOperatorCategory = ''
   export let layer: Layer
@@ -26,28 +25,38 @@
       icon: faPlusMinus,
       operators: ['*', '/', '+', '-', '%', '**'],
       isVisible: true,
+      disabled: false,
     },
     {
       name: 'numbers',
       title: 'Numbers',
       icon: faArrowDown19,
-      operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')'],
-      isVisible: false,
+      operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')'],
+      isVisible: true,
+      disabled: false,
     },
     {
       name: 'comparison',
       title: 'Comparison',
       icon: faEquals,
       operators: ['=', '!=', '>=', '<', '>', '<='],
-      isVisible: false,
+      isVisible: true,
+      disabled: false,
     },
-
+    // {
+    //   name: 'logical',
+    //   title: 'Logical',
+    //   icon: faChartColumn,
+    //   operators: ['AND', 'OR', 'NOR', 'NAND', 'XOR', 'NOT'],
+    //   isVisible: true,
+    // },
     {
       name: 'functions',
       title: 'Functions',
       icon: faSquareRootVariable,
       operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'where'],
-      isVisible: false,
+      isVisible: true,
+      disabled: false,
     },
   ]
 
@@ -69,6 +78,33 @@
     if (event?.detail?.operator) {
       const operator: string = event.detail.operator
       dispatch('handleOperatorClick', { operator })
+    }
+  }
+
+  const handleArithmeticButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator: string = event.detail.operator
+      dispatch('handleArithmeticButtonClick', { operator })
+    }
+  }
+  const handleComparisonButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator: string = event.detail.operator
+      dispatch('handleComparisonButtonClick', { operator })
+    }
+  }
+  const handleFunctionsButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator === 'where') {
+      dispatch('handleWhereFunctionClick', { operator: 'where' })
+    } else {
+      const operator: string = event.detail.operator
+      dispatch('handleFunctionButtonClick', { operator })
+    }
+  }
+  const handleNumberButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator: string = event.detail.operator
+      dispatch('handleNumberButtonClick', { operator })
     }
   }
 
@@ -120,7 +156,12 @@
     </div>
     <div class="container">
       {#each operatorCategories as operCat}
-        <OpCat on:operatorButtonClick={handleOperatorClick} operatorCategory={operCat} />
+        <OpCat
+          on:NumbersButtonClick={handleNumberButtonClick}
+          on:ArithmeticButtonClick={handleArithmeticButtonClick}
+          on:ComparisonButtonClick={handleComparisonButtonClick}
+          on:FunctionsButtonClick={handleFunctionsButtonClick}
+          operatorCategory={operCat} />
       {/each}
     </div>
   </div>

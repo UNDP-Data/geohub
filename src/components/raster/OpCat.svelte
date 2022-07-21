@@ -13,7 +13,7 @@
         <button
           class="button is-small fixedw "
           on:click={() => {
-            dispatch('operatorButtonClick', { operator })
+            dispatch(`${operatorCategory.title}ButtonClick`, { operator })
           }}
           alt={operator}
           title={operator}>
