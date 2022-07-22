@@ -19,7 +19,7 @@
     SymbolLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types.g'
   import { cloneDeep, debounce } from 'lodash-es'
-  import { fetchUrl, getIntervalList, getSampleFromInterval, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, getIntervalList, getSampleFromInterval, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
@@ -38,8 +38,9 @@
     | HeatmapLayerSpecification
   let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
-  const layerMax = Number(info.band_metadata[0][1]['STATISTICS_MAXIMUM'])
-  const layerMin = Number(info.band_metadata[0][1]['STATISTICS_MINIMUM'])
+  const bandIndex = getActiveBandIndex(info)
+  const layerMax = Number(info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'])
+  const layerMin = Number(info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
@@ -65,7 +66,7 @@
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
 
       info = { ...info, stats: layerStats }
-      const band = Object.keys(info.stats)[0]
+      const band = info.active_band_no
 
       percentile98 = layerStats[band]['percentile_98']
       layerConfig.percentile98 = percentile98
