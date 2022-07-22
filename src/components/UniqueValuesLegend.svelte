@@ -13,7 +13,7 @@
   import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { updateParamsInURL, remapInputValue } from '$lib/helper'
+  import { updateParamsInURL, remapInputValue, getActiveBandIndex } from '$lib/helper'
   import type { Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
 
@@ -27,10 +27,12 @@
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
   let info: RasterTileMetadata
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
   ;({ definition, info } = layerConfig)
-
-  const layerMin = Number(info['band_metadata'][0][1]['STATISTICS_MINIMUM'])
-  const layerMax = Number(info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])
+  const bandIndex = getActiveBandIndex(info)
+  const layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
+  const layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
@@ -55,7 +57,7 @@
 
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-      const layerUniqueValues = JSON.parse(layerConfig.info.band_metadata[0][1]['STATISTICS_UNIQUE_VALUES'])
+      const layerUniqueValues = JSON.parse(info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'])
       colorMap = {}
       let index = 0
 
