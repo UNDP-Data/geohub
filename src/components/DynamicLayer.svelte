@@ -13,6 +13,7 @@
   import { dynamicLayers, layerList, map } from '$stores'
   import Calculator from '$components/raster/Calculator.svelte'
   import { DynamicLayerLegendTypes, DynamicLayerResolutionTypes, LayerTypes } from '$lib/constants'
+  import { getActiveBandIndex } from '$lib/helper'
 
   export let open = false
 
@@ -38,8 +39,11 @@
   const setLayerExpression = () => {
     if (clickedLayer) {
       const inputLayer = $layerList.find((layer) => layer.definition.id === clickedLayer)
-      layerMinimum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2))
-      layerMaximum = Number(Number(inputLayer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2))
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const bandIndex = getActiveBandIndex(inputLayer.info)
+      layerMinimum = Number(Number(inputLayer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM']).toFixed(2))
+      layerMaximum = Number(Number(inputLayer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM']).toFixed(2))
 
       layerStep = (layerMaximum - layerMinimum) * 1e-2
       layerStep = parseFloat(layerStep.toFixed(2))
