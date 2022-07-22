@@ -11,12 +11,15 @@
   // import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
   import OpCat from '$components/raster/OpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
+  import { getActiveBandIndex } from '$lib/helper'
 
   let activeOperatorCategory = ''
   export let layer: Layer
-
-  const layerMin = Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
-  const layerMax = Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const bandIndex = getActiveBandIndex(layer.info)
+  const layerMin = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM']).toFixed(2)
+  const layerMax = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM']).toFixed(2)
 
   const dispatch = createEventDispatcher()
   const operatorCategories: Array<OperatorCategory> = [
