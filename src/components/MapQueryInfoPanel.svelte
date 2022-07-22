@@ -16,7 +16,7 @@
   import { layerList, map } from '$stores'
   import type { Layer } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { downloadFile, fetchUrl } from '$lib/helper'
+  import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
 
@@ -89,9 +89,11 @@
       let values = []
 
       if (layer.type === LayerTypes.RASTER) {
-        const queryURL = !layer.expression
-          ? `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}`
-          : `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}&expression=${encodeURIComponent(layer.expression)}`
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const bandIndex = getActiveBandIndex(layer.info)
+        const baseUrl = `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
+        const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
         const layerData = await fetchUrl(queryURL)
 
