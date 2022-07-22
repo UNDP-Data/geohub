@@ -1,15 +1,20 @@
 <script lang="ts">
   import { DynamicLayerLegendTypes } from '$lib/constants'
 
-  import { updateParamsInURL } from '$lib/helper'
-  import type { Layer, RasterLayerStats } from '$lib/types'
+  import { getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
   import { fetchUrl } from '$lib/helper'
 
   export let layer: Layer
+  let info: RasterTileMetadata
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+  ;({ info } = layer)
 
   let expression = layer.expression
-  const band = 'b1'
+  const bandIndex = getActiveBandIndex(info)
+  const band = `b${bandIndex + 1}`
 
   const arithmetic = {
     title: 'Arithmetic',
@@ -50,12 +55,12 @@
       let updatedParams = {}
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
       const stats: RasterLayerStats = await fetchUrl(statsUrl.toString())
-      layer.info.stats = stats
-      const band = Object.keys(layer.info.stats)[0]
+      info.stats = stats
+      const band = info.active_band_no
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
-        layer.continuous.minimum = Number(layer.info.stats[band].min)
-        layer.continuous.maximum = Number(layer.info.stats[band].max)
+        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+        layer.continuous.minimum = Number(info.stats[band].min)
+        layer.continuous.maximum = Number(info.stats[band].max)
       }
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
@@ -87,14 +92,14 @@
         )}`,
       )
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-      layer.info.stats = exprStats
+      info.stats = exprStats
       layer.expression = expression
       const band = Object.keys(exprStats)[0]
       updatedParams = { expression: layer.expression }
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
-        layer.continuous.minimum = Number(layer.info.stats[band].min)
-        layer.continuous.maximum = Number(layer.info.stats[band].max)
+        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+        layer.continuous.minimum = Number(info.stats[band].min)
+        layer.continuous.maximum = Number(info.stats[band].max)
       }
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
@@ -180,7 +185,7 @@
       </div>
       <button
         class="button is-small is-info"
-        on:click={() => handleAddOperator('b1')}
+        on:click={() => handleAddOperator(`${band}`)}
         alt="Current layer"
         title="Current layer. Add">
         <span>Current layer</span>
