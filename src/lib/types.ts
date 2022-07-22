@@ -134,6 +134,7 @@ export interface RasterTileMetadata {
   overviews?: []
   width?: number
   stats?: RasterLayerStats
+  active_band_no: string
 }
 
 export interface BandMetadata {

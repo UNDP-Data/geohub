@@ -16,6 +16,7 @@
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
+  import { getActiveBandIndex } from '$lib/helper'
 
   export let layer: Layer
 
@@ -24,6 +25,9 @@
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  let bandIndex = getActiveBandIndex(layer.info)
 
   // hide colormap picker if change in layer list
   $: {
@@ -66,7 +70,7 @@
   }
 
   const hasLayerUniqueValues = () => {
-    const stats = layer.info.band_metadata[0][1]
+    const stats = layer.info.band_metadata[bandIndex][1]
     const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
     return val
   }
@@ -131,8 +135,8 @@
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
-          layerMin={Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM'])} />
+          layerMin={Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])}
+          layerMax={Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}

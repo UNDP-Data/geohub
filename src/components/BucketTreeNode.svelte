@@ -36,7 +36,7 @@
     StatusTypes,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
-  import { fetchUrl, hash, clean, downloadFile, getBase64EncodedUrl } from '$lib/helper'
+  import { fetchUrl, hash, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import Popper from '$lib/popper'
   import type {
     BannerMessage,
@@ -181,10 +181,11 @@
                 })
               } else {
                 if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+                  const bandIndex = getActiveBandIndex(layerInfo)
                   setLayerMetaDataStore(
-                    layerInfo.band_metadata[0][1]['Description'],
-                    layerInfo.band_metadata[0][1]['Source'],
-                    layerInfo.band_metadata[0][1]['Unit'],
+                    layerInfo.band_metadata[bandIndex][1]['Description'],
+                    layerInfo.band_metadata[bandIndex][1]['Source'],
+                    layerInfo.band_metadata[bandIndex][1]['Unit'],
                     layerPathHash,
                     false,
                   )
@@ -392,8 +393,9 @@
         throw new Error(JSON.stringify(layerInfo))
       }
 
-      const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
+      const bandIndex = getActiveBandIndex(layerInfo)
+      const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
       if (layerBandMetadataMin && layerBandMetadataMax) {
         const titilerApiUrlParams = {
@@ -533,10 +535,11 @@
 
           if (isRaster) {
             if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+              const bandIndex = getActiveBandIndex(layerInfo)
               setLayerMetaDataStore(
-                layerInfo.band_metadata[0][1]['Description'],
-                layerInfo.band_metadata[0][1]['Source'],
-                layerInfo.band_metadata[0][1]['Unit'],
+                layerInfo.band_metadata[bandIndex][1]['Description'],
+                layerInfo.band_metadata[bandIndex][1]['Source'],
+                layerInfo.band_metadata[bandIndex][1]['Unit'],
                 layerPathHash,
                 true,
               )
