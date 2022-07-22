@@ -2,13 +2,19 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
-  import { LayerIconTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, hash } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled, layerMetadata } from '$stores'
+  import { layerLabelled, layerMetadata, layerList } from '$stores'
   import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
+  let info: RasterTileMetadata
+  let bandName = ''
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  ;({ info } = layer)
 
   let icon = LayerIconTypes.find((icon) => icon.id === layer.type)
   if (layer.type === LayerTypes.VECTOR) {
@@ -28,13 +34,12 @@
     }
   }
 
-  let bandName = ''
-  if (layer.definition.type === 'raster') {
-    let info: RasterTileMetadata
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-    ;({ info } = layer)
-    bandName = `B${info.active_band_no}`
+  $: $layerList, setBand()
+
+  const setBand = () => {
+    if (layer.definition.type === 'raster') {
+      bandName = `B${info?.active_band_no}`
+    }
   }
 
   const name = clean(layer.name)
