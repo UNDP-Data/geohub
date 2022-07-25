@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { cloneDeep } from 'lodash-es'
+  import { v4 as uuidv4 } from 'uuid'
+  import { getActiveBandIndex } from '$lib/helper'
 
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -13,12 +15,23 @@
   $: selected, setActiveBand()
   const setActiveBand = () => {
     if (!info) return
-    info.active_band_no = selected
-    layer = { ...layer, info: info }
-    const layers = $layerList.filter((l) => layer.definition.id !== l.definition.id)
-    layerList.set([layer, ...layers])
+    if (info.active_band_no === selected) return
 
-    updateLayerSource()
+    const newLayer = cloneDeep(layer)
+    const layerId = uuidv4()
+    newLayer.definition.id = layerId
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    updateLayerInfo(newLayer.info, selected)
+
+    const currentLayerIndex = $layerList.indexOf(layer)
+    $layerList.splice(currentLayerIndex, 0, newLayer)
+
+    // layerList.set([newLayer, ...$layerList])
+    $map.addLayer(newLayer.definition, layer.definition.id)
+
+    deleteOldLayer(layer.definition.id)
   }
 
   if (layer.definition.type === 'raster') {
@@ -31,7 +44,7 @@
     }
   }
 
-  const updateLayerSource = () => {
+  const updateLayerInfo = (metadata: RasterTileMetadata, bandName: string) => {
     const layerSrc = $map.getSource(layer.definition.source)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -40,12 +53,24 @@
       let params = {}
       layerURL.searchParams.delete('bidx')
 
-      params = Object.assign(params, { bidx: getActiveBandIndex(info) + 1 })
+      metadata.active_band_no = bandName
+      const bandIndex = getActiveBandIndex(metadata)
+
+      params = Object.assign(params, { bidx: bandIndex + 1 })
+
+      const layerBandMetadataMin = metadata.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = metadata.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
+      params = Object.assign(params, { rescale: `${layerBandMetadataMin},${layerBandMetadataMax}` })
+
       Object.keys(params).forEach((key) => {
         layerURL.searchParams.set(key, params[key])
       })
-      updateParamsInURL(layer.definition, layerURL, params)
     }
+  }
+
+  const deleteOldLayer = (oldLayerId) => {
+    $layerList = $layerList.filter((item) => item.definition.id !== oldLayerId)
+    $map.removeLayer(oldLayerId)
   }
 </script>
 

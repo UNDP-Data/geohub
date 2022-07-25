@@ -16,6 +16,10 @@
   // @ts-ignore
   ;({ info } = layer)
 
+  if (layer.definition.type === 'raster') {
+    bandName = `B${info?.active_band_no}`
+  }
+
   let icon = LayerIconTypes.find((icon) => icon.id === layer.type)
   if (layer.type === LayerTypes.VECTOR) {
     switch (layer.definition.type) {
@@ -31,14 +35,6 @@
       case 'heatmap':
         icon = LayerIconTypes.find((icon) => icon.id === 'heatmap')
         break
-    }
-  }
-
-  $: $layerList, setBand()
-
-  const setBand = () => {
-    if (layer.definition.type === 'raster') {
-      bandName = `B${info?.active_band_no}`
     }
   }
 
