@@ -18,6 +18,8 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types'
   import { dynamicLayers, layerList, map } from '$stores'
+  import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
@@ -107,6 +109,10 @@
     $map.fitBounds(bounds)
     showTooltip = false
   }
+
+  const handleClose = () => {
+    showTooltip = false
+  }
 </script>
 
 <div class="icon-selected" use:popperRef on:click={handleTooltipClick} style="margin-right: 0; cursor: pointer;">
@@ -114,13 +120,25 @@
 </div>
 
 {#if showTooltip}
-  <div transition:fade class="dropdown" use:popperContent={popperOptions} data-testid="tooltip">
+  <div
+    transition:fade
+    class="dropdown"
+    use:popperContent={popperOptions}
+    data-testid="tooltip"
+    use:clickOutside={handleClose}>
     <div style="padding-left: 5px;">
       <Wrapper>
         <div class="icon-selected" on:click={handleZoomToLayerClick}>
           <Fa icon={faMagnifyingGlass} size="sm" />
         </div>
         <Tooltip showDelay={500} hideDelay={500} yPos="above">Zoom to layer</Tooltip>
+      </Wrapper>
+    </div>
+
+    <div style="padding-left: 5px;">
+      <Wrapper>
+        <RasterBandSelector {layer} />
+        <Tooltip showDelay={500} hideDelay={500} yPos="above">Change raster band</Tooltip>
       </Wrapper>
     </div>
 
