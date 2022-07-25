@@ -21,15 +21,19 @@
   let simpleExpressionAvailable = layer.simpleExpressionAvailable || true
   let simpleExpression = {}
   let complexExpressions = [{}]
-  let simpleExpressionEditingIndex = 0
-  complexExpressions[simpleExpressionEditingIndex].band = 'b1'
+  let underEditIndex = 0
+  let editingExpressionIndex = 0
+  complexExpressions[editingExpressionIndex].band = 'band1 '
   let selectedIndex
+
+  let expressions = [{}]
+
   let trueStatement = {
-    status: false,
+    underEdit: false,
     statement: '',
   }
   let falseStatement = {
-    status: false,
+    underEdit: false,
     statement: '',
   }
   let statement = ''
@@ -48,11 +52,13 @@
     [10, 15],
   ).init()
 
+  $: simpleExpressionAvailable, (numbers = '')
+
   const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       if (event?.detail?.operator) {
-        simpleExpression.band = 'b1'
-        simpleExpression.operator = event.detail.operator
+        expressions[0].band = 'band1 '
+        expressions[0].operator = event.detail.operator
       }
     } else {
       // pass
@@ -64,28 +70,35 @@
       if (event?.detail?.operator) {
         const operator = event.detail.operator
         numbers = numbers.concat(operator)
-        simpleExpression.band = 'b1'
-        simpleExpression.value = numbers
+        expressions[0].band = 'band1 '
+        expressions[0].value = numbers
+        console.log(expressions)
+        // simpleExpression.band = 'band1 '
+        // simpleExpression.value = numbers
       }
     } else {
-      if (trueStatement.status) {
+      const operator = event.detail.operator
+      numbers = numbers.concat(operator)
+      expressions[editingExpressionIndex].band = 'band1 '
+      expressions[editingExpressionIndex].value = numbers
+      if (trueStatement.underEdit) {
         statement = statement.concat(event.detail.operator)
         trueStatement.statement = statement
-      } else if (falseStatement.status) {
+      } else if (falseStatement.underEdit) {
         falseStatement.statement = falseStatement.statement.concat(event.detail.operator)
       } else {
         numbers = numbers.concat(event.detail.operator)
-        complexExpressions[simpleExpressionEditingIndex].value = numbers
+        expressions[editingExpressionIndex].value = numbers
       }
     }
   }
   const handleComparisonButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
-      complexExpressions[simpleExpressionEditingIndex].band = 'b1'
-      complexExpressions[simpleExpressionEditingIndex].operator = event.detail.operator
-      // pass
+      // comparison operator is not available in simple expression.
     } else {
-      complexExpressions[simpleExpressionEditingIndex].operator = event.detail.operator
+      expressions[editingExpressionIndex].band = 'band1 '
+      expressions[editingExpressionIndex].operator = event.detail.operator
+      // complexExpressions[editingExpressionIndex].operator = event.detail.operator
     }
     expression = expression.concat(event.detail.operator)
   }
@@ -93,7 +106,13 @@
   const handleWhereButtonClick = () => {
     simpleExpressionAvailable = false
     layer.simpleExpressionAvailable = simpleExpressionAvailable
-    simpleExpression = {}
+    if (expressions.length === 1) {
+      expressions[0] = {
+        band: 'band1 ',
+        operator: '',
+        value: '',
+      }
+    }
   }
 
   const handleNumberButtonClick = (event: CustomEvent) => {
@@ -101,34 +120,37 @@
     if (simpleExpressionAvailable) {
       if (event?.detail?.operator) {
         numbers = numbers.concat(event.detail.operator)
-        simpleExpression.value = numbers
+        // simpleExpression.value = numbers
+        expressions[editingExpressionIndex].band = 'b1 '
+        expressions[editingExpressionIndex].value = numbers
+        console.log(expressions)
       }
     } else {
-      // Now that the where function is available, we check for the status of the true and false statements
-      if (trueStatement.status) {
-        statement = statement.concat(event.detail.operator)
-        trueStatement.statement = statement
-      } else if (falseStatement.status) {
+      if (trueStatement.underEdit) {
+        trueStatement.statement = trueStatement.statement.concat(event.detail.operator)
+      } else if (falseStatement.underEdit) {
         falseStatement.statement = falseStatement.statement.concat(event.detail.operator)
       } else {
         numbers = numbers.concat(event.detail.operator)
-        complexExpressions[simpleExpressionEditingIndex].value = numbers
+        expressions[editingExpressionIndex].value = numbers
       }
     }
   }
 
   const applyExpression = async () => {
     if (simpleExpressionAvailable) {
-      if (simpleExpression.operator && simpleExpression.value) {
+      if (expressions[0].operator && expressions[0].value) {
         let updatedParams = {}
+
         const exprStatUrl = new URL(
           `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
-            `${simpleExpression.band}${simpleExpression.operator}${simpleExpression.value}`,
+            `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
           )}`,
         )
+        console.log(exprStatUrl)
         const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
         layer.info.stats = exprStats
-        layer.expression = `${simpleExpression.band},${simpleExpression.operator},${simpleExpression.value}`
+        layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
         const band = Object.keys(exprStats)[0]
         updatedParams = { expression: layer.expression.replaceAll(',', '') }
         if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
@@ -163,6 +185,8 @@
   }
 
   const clearAppliedExpression = async () => {
+    simpleExpressionAvailable = true
+    expressions = [{}]
     const layerSrc = $map.getSource(layer.definition.source)
     const layerURL = new URL(layerSrc.tiles[0])
     expression = ''
@@ -181,26 +205,53 @@
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
-    simpleExpression = {}
-    complexExpressions = [{}]
   }
 
   const handleRemoveItem = (key) => {
-    key === 'value' ? (numbers = '') : null
-    delete simpleExpression[key]
-    simpleExpression = simpleExpression
+    if (simpleExpressionAvailable) {
+      key === 'value' ? (numbers = '') : null
+      delete expressions[0][key]
+      expressions = expressions
+    }
+  }
+
+  const removeWhereExpression = () => {
+    simpleExpressionAvailable = true
+    expressions = [{}]
+  }
+
+  const addNewCondition = () => {
+    expressions = [
+      ...expressions,
+      {
+        band: 'b1 ',
+        operator: '',
+        value: '',
+      },
+    ]
+    editingExpressionIndex = expressions.length - 1
+  }
+  const removeConditionAtIndex = (index) => {
+    expressions = expressions.filter((_, i) => i !== editingExpressionIndex)
+    editingExpressionIndex = expressions.length - 1
+    expressions.length < 1 ? (numbers = '') : null
+  }
+
+  const changeEditingIndexTo = (index) => {
+    editingExpressionIndex = index
+    numbers = ''
   }
 </script>
 
 <div class="container">
   <div class="columns">
-    <div class="column is-9" style="border: 1px dotted #e6e9f7">
+    <div class="column is-10" style="border: 1px dotted #e6e9f7">
       {#if simpleExpressionAvailable}
-        {#each Object.keys(simpleExpression) as key}
+        {#each Object.keys(expressions[0]) as key}
           <span
-            style="cursor: pointer; margin: 1%; display: {simpleExpression[key] ? '' : 'none'}"
+            style="cursor: pointer; margin: 1%;"
             class="tag is-large {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
-            {simpleExpression[key]}
+            {expressions[0][`${key}`]}
             <button
               style="display:{key === 'band' ? 'none' : null}"
               on:click={() => handleRemoveItem(key)}
@@ -208,39 +259,49 @@
           </span>
         {/each}
       {:else}
-        <span style="cursor: pointer; margin: 1%;" class="tag is-medium is-link"
-          >where
-          <button on:click={() => (simpleExpressionAvailable = true)} class="delete is-small" />
-        </span>
-        {#each complexExpressions as expression, index}
+        <div class="column" style="width: 90%; margin: auto">
+          <div style="width: 50%; margin: auto; display: flex; align-items: center; justify-content: space-evenly">
+            <span style="cursor: pointer; margin: 1%;" class="tag is-large is-link">where </span>
+            <button on:click={addNewCondition} class="button is-small is-light is-primary"
+              ><i class="fa fa-plus" /></button>
+          </div>
+
+          {#each expressions as expression, index}
+            <div style="display: flex; align-items: center">
+              {#each Object.keys(expression) as oper}
+                <span
+                  class="tag is-medium {editingExpressionIndex === index ? 'is-warning' : 'is-dark'}"
+                  style="margin: 2%; border: {editingExpressionIndex === index ? '1px solid red' : null}">
+                  {expression[`${oper}`]}
+                </span>
+              {/each}
+              <button on:click={() => removeConditionAtIndex(index)} class="button is-small is-light is-primary"
+                ><i class="fa fa-x" /></button>
+              <button on:click={() => changeEditingIndexTo(index)} class="button is-small is-light is-primary"
+                ><i class="fa fa-pen" /></button>
+            </div>
+          {/each}
+        </div>
+        <div style="display: flex; justify-content: space-evenly">
           <span
-            style="cursor: pointer; margin: 1%;"
-            class="tag is-warning is-medium {selectedIndex === index ? 'is-danger' : 'is-success'}">
-            {expression.band ? expression.band : 'b1'}
-            {expression.operator ? expression.operator : ''}
-            {expression.value ? expression.value : ''}
-            <button
-              on:click={() => {
-                complexExpressions[0] = {}
-                numbers = ''
-              }}
-              class="delete is-small" />
-          </span>
-          <span
-            on:click={() => (trueStatement.status = !trueStatement.status)}
-            style="cursor:pointer; border: {trueStatement.status ? '2px solid blue' : 'none'}"
+            on:click={() => {
+              trueStatement.underEdit = !trueStatement.underEdit
+            }}
+            style="cursor:pointer; border: {trueStatement.underEdit ? '2px solid blue' : 'none'}"
             class="tag is-medium is-success">
             {trueStatement.statement.length > 0 ? trueStatement.statement : ''}
             <button on:click={() => (trueStatement.statement = '')} class="delete is-small" />
           </span>
           <span
-            on:click={() => (falseStatement.status = !falseStatement.status)}
-            style="cursor:pointer; border: {falseStatement.status ? '2px solid blue' : 'none'}"
+            on:click={() => {
+              falseStatement.underEdit = !falseStatement.underEdit
+            }}
+            style="cursor:pointer; border: {falseStatement.underEdit ? '2px solid blue' : 'none'}"
             class="tag is-medium is-danger"
             >{falseStatement.statement.length > 0 ? falseStatement.statement : ''}
             <button on:click={() => (falseStatement.statement = '')} class="delete is-small" />
           </span>
-        {/each}
+        </div>
       {/if}
     </div>
     <div class="column is-3">
