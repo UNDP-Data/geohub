@@ -1,6 +1,3 @@
-<script lang="ts" context="module">
-</script>
-
 <script lang="ts">
   import RasterExpressionBuilder from '$components/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
@@ -11,10 +8,10 @@
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
-  import { map } from '$stores'
+  import { DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
+  import { bannerMessages, map } from '$stores'
   import { clickOutside } from 'svelte-use-click-outside'
-  import type { RasterTileMetadata } from '$lib/types'
+  import type { RasterTileMetadata, BannerMessage } from '$lib/types'
 
   export let layer: Layer
 
@@ -147,21 +144,54 @@
   }
 
   const applyExpression = async () => {
-    if (simpleExpressionAvailable) {
-      if (expressions[0].operator && expressions[0].value) {
+    try {
+      if (simpleExpressionAvailable) {
+        if (expressions[0].operator && expressions[0].value) {
+          let updatedParams = {}
+
+          const exprStatUrl = new URL(
+            `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
+              `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
+            )}`,
+          )
+          const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
+          layer.info.stats = exprStats
+          layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
+          const band = Object.keys(exprStats)[bandIndex]
+          // console.log(band)
+          updatedParams = { expression: layer.expression.replaceAll(',', '') }
+          if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
+            updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
+            layer.continuous.minimum = Number(layer.info.stats[band].min)
+            layer.continuous.maximum = Number(layer.info.stats[band].max)
+          }
+          layerURL.searchParams.delete('expression')
+          updateParamsInURL(layer.definition, layerURL, updatedParams)
+        }
+      } else {
+        // simple expression is not available.
         let updatedParams = {}
+        const expList = expressions.map((expr) => `(${expr.band}${expr.operator}${expr.value})`)
+        const complexExpression = expList
+          .map((item, index) => {
+            if (index === 0) {
+              return item
+            } else {
+              return `${combiningOperators[index - 1]} ${item}`
+            }
+          })
+          .join('')
 
         const exprStatUrl = new URL(
           `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
-            `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
+            `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
           )}`,
         )
         const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
         layer.info.stats = exprStats
-        layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
+        layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
         const band = Object.keys(exprStats)[bandIndex]
-        // console.log(band)
-        updatedParams = { expression: layer.expression.replaceAll(',', '') }
+        updatedParams = { expression: layer.expression }
         if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
           updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
           layer.continuous.minimum = Number(layer.info.stats[band].min)
@@ -170,37 +200,13 @@
         layerURL.searchParams.delete('expression')
         updateParamsInURL(layer.definition, layerURL, updatedParams)
       }
-    } else {
-      // simple expression is not available.
-      let updatedParams = {}
-      const expList = expressions.map((expr) => `(${expr.band}${expr.operator}${expr.value})`)
-      const complexExpression = expList
-        .map((item, index) => {
-          if (index === 0) {
-            return item
-          } else {
-            return `${combiningOperators[index - 1]} ${item}`
-          }
-        })
-        .join('')
-
-      const exprStatUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
-          `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
-        )}`,
-      )
-      const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-      layer.info.stats = exprStats
-      layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
-      const band = Object.keys(exprStats)[bandIndex]
-      updatedParams = { expression: layer.expression }
-      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
-        layer.continuous.minimum = Number(layer.info.stats[band].min)
-        layer.continuous.maximum = Number(layer.info.stats[band].max)
+    } catch (e) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.DANGER,
+        title: 'Expression Error',
+        message: ErrorMessages.EXPRESSION_INVALID,
       }
-      layerURL.searchParams.delete('expression')
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
     }
   }
 
