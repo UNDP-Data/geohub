@@ -1,10 +1,9 @@
 <script lang="ts">
   import { DynamicLayerLegendTypes } from '$lib/constants'
 
-  import { getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
-  import { fetchUrl } from '$lib/helper'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -54,8 +53,7 @@
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
-      const stats: RasterLayerStats = await fetchUrl(statsUrl.toString())
-      info.stats = stats
+      info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
         updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
@@ -94,7 +92,7 @@
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
       info.stats = exprStats
       layer.expression = expression
-      const band = Object.keys(exprStats)[0]
+      const band = Object.keys(exprStats)[bandIndex]
       updatedParams = { expression: layer.expression }
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
         updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]

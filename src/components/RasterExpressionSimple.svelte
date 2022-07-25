@@ -35,7 +35,7 @@
   let expression = ''
   let simpleExpressionAvailable = true
   let editingExpressionIndex = 0
-  let expressions = [{}]
+  let expressions = layer.expressions || [{}]
   let combiningOperators = []
 
   // For complex expressions, ie the complex `where` expression
@@ -70,6 +70,7 @@
   // to an empty string
   $: simpleExpressionAvailable, (numbers = '')
   $: editingExpressionIndex, (numbers = '')
+  $: expressions, (layer.expressions = expressions)
 
   // Whenever the arithmetic operator is clicked, add it to the operator
   // only when the simple expression is available. Complex expression will
@@ -159,6 +160,7 @@
         layer.info.stats = exprStats
         layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
         const band = Object.keys(exprStats)[bandIndex]
+        // console.log(band)
         updatedParams = { expression: layer.expression.replaceAll(',', '') }
         if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
           updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
@@ -190,7 +192,7 @@
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
       layer.info.stats = exprStats
       layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
-      const band = Object.keys(exprStats)[0]
+      const band = Object.keys(exprStats)[bandIndex]
       updatedParams = { expression: layer.expression }
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
         updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
@@ -215,7 +217,7 @@
       let updatedParams = {}
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
       layer.info.stats = await fetchUrl(statsUrl.toString())
-      const band = Object.keys(layer.info.stats)[0]
+      const band = Object.keys(layer.info.stats)[bandIndex]
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
         updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
         layer.continuous.minimum = Number(layer.info.stats[band].min)
