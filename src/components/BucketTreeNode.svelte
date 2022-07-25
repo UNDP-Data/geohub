@@ -23,6 +23,7 @@
   import { cloneDeep } from 'lodash-es'
 
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
+  import BucketTreeNodeCard from '$components/BucketTreeNodeCard.svelte'
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
@@ -35,7 +36,7 @@
     StatusTypes,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
-  import { fetchUrl, hash, clean, downloadFile } from '$lib/helper'
+  import { fetchUrl, hash, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import Popper from '$lib/popper'
   import type {
     BannerMessage,
@@ -78,7 +79,6 @@
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let isAddLayerModalVisible: boolean
-  let showTooltip = false
   let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
@@ -167,7 +167,7 @@
                   if (layerInfo?.properties?.description === undefined) {
                     fetchUrl(itemsUrl.slice(0, -2).join('/')).then((val) => {
                       description = val?.description === undefined ? 'N/A' : val.description
-                      setLayerMetaDataStore(description, layerInfo?.properties?.platform, 'N/A', layerPathHash)
+                      setLayerMetaDataStore(description, layerInfo?.properties?.platform, 'N/A', layerPathHash, false)
                     })
                   } else {
                     setLayerMetaDataStore(
@@ -175,21 +175,24 @@
                       layerInfo?.properties?.platform,
                       'N/A',
                       layerPathHash,
+                      false,
                     )
                   }
                 })
               } else {
                 if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+                  const bandIndex = getActiveBandIndex(layerInfo)
                   setLayerMetaDataStore(
-                    layerInfo.band_metadata[0][1]['Description'],
-                    layerInfo.band_metadata[0][1]['Source'],
-                    layerInfo.band_metadata[0][1]['Unit'],
+                    layerInfo.band_metadata[bandIndex][1]['Description'],
+                    layerInfo.band_metadata[bandIndex][1]['Source'],
+                    layerInfo.band_metadata[bandIndex][1]['Unit'],
                     layerPathHash,
+                    false,
                   )
                 }
               }
             } else {
-              setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+              setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash, false)
             }
           })
         })
@@ -203,19 +206,30 @@
     return LayerIconTypes.find((icon) => layerGeomType.toLowerCase().includes(icon.id))
   }
 
-  const getBase64EncodedUrl = (url: string) => {
-    const [base, sign] = url.split('?')
-    return `${base}?${btoa(sign)}`
-  }
+  // const getBase64EncodedUrl = (url: string) => {
+  //   const [base, sign] = url.split('?')
+  //   return `${base}?${btoa(sign)}`
+  // }
 
-  const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
+  const setLayerMetaDataStore = (
+    description: string,
+    source: string,
+    unit: string,
+    layerPathHash: number,
+    visible: boolean,
+  ) => {
     const metadata = <LayerInfoMetadata>{
       description,
       source,
       unit,
+      visible,
     }
-
     const layerMetadataClone = cloneDeep($layerMetadata)
+    Object.entries(layerMetadataClone).forEach((key) => {
+      const value = layerMetadataClone.get(key)
+      value.visible = false
+      layerMetadataClone.set(key, value)
+    })
     layerMetadataClone.set(layerPathHash, metadata)
     $layerMetadata = layerMetadataClone
     return
@@ -379,8 +393,9 @@
         throw new Error(JSON.stringify(layerInfo))
       }
 
-      const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
+      const bandIndex = getActiveBandIndex(layerInfo)
+      const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
       if (layerBandMetadataMin && layerBandMetadataMax) {
         const titilerApiUrlParams = {
@@ -507,7 +522,7 @@
           }
 
           const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
-          setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
+          setLayerMetaDataStore(description, source, 'N/A', layerPathHash, true)
         } else {
           // get metadata from endpoint
           const layerURL = new URL(url)
@@ -520,15 +535,17 @@
 
           if (isRaster) {
             if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
+              const bandIndex = getActiveBandIndex(layerInfo)
               setLayerMetaDataStore(
-                layerInfo.band_metadata[0][1]['Description'],
-                layerInfo.band_metadata[0][1]['Source'],
-                layerInfo.band_metadata[0][1]['Unit'],
+                layerInfo.band_metadata[bandIndex][1]['Description'],
+                layerInfo.band_metadata[bandIndex][1]['Source'],
+                layerInfo.band_metadata[bandIndex][1]['Unit'],
                 layerPathHash,
+                true,
               )
             }
           } else {
-            setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+            setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash, true)
           }
         }
 
@@ -540,21 +557,22 @@
           description: metadata.description,
           source: metadata.source,
           unit: metadata.unit,
+          visible: true,
         }
       }
-
-      showTooltip = true
     }, 200)
 
     // hide popover after 5 seconds
     setTimeout(() => {
-      handleToolipMouseLeave
+      handleTooltipMouseLeave
     }, 5000)
   }
 
-  const handleToolipMouseLeave = () => {
+  const handleTooltipMouseLeave = () => {
     if (tooltipTimer) clearTimeout(tooltipTimer)
-    showTooltip = false
+    if (layerInfoMetadata) {
+      layerInfoMetadata.visible = false
+    }
   }
 
   let stacPaginationAction = ''
@@ -595,7 +613,7 @@
             class="name vector"
             use:popperRef
             on:mouseenter={() => handleTooltipMouseEnter()}
-            on:mouseleave={() => handleToolipMouseLeave()}>
+            on:mouseleave={() => handleTooltipMouseLeave()}>
             {clean(label)}
           </div>
         {:else}
@@ -658,7 +676,7 @@
             class="name raster"
             use:popperRef
             on:mouseenter={() => handleTooltipMouseEnter()}
-            on:mouseleave={() => handleToolipMouseLeave()}>
+            on:mouseleave={() => handleTooltipMouseLeave()}>
             {#if node.isStac}
               {clean(
                 path
@@ -721,34 +739,9 @@
   </div>
 </li>
 
-{#if showTooltip}
+{#if layerInfoMetadata?.visible}
   <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-    <div class="columns is-vcentered is-mobile">
-      <div class="column is-full">
-        <div class="label">{clean(label)}</div>
-        <div class="description">{layerInfoMetadata?.description}</div>
-        <div class="source is-size-6">
-          <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source
-            ? layerInfoMetadata.source
-            : 'N/A'}
-        </div>
-        {#if layerInfoMetadata?.unit}
-          <div class="unit is-size-6">
-            <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
-          </div>
-        {/if}
-
-        <div class="content is-size-7 tags pt-3">
-          {#if node.tags}
-            {#each Object.values(node.tags) as tag}
-              <span title="tag" style="margin-right: 5px; font-weight: bold;">
-                <span class="tag is-info is-small is-light">{clean(tag)}</span>
-              </span>
-            {/each}
-          {/if}
-        </div>
-      </div>
-    </div>
+    <BucketTreeNodeCard bind:layerInfoMetadata bind:node />
     <div id="arrow" data-popper-arrow />
   </div>
 {/if}
@@ -815,41 +808,5 @@
 
   #tooltip {
     max-width: 450px;
-    width: 450px;
-
-    .columns {
-      z-index: 10;
-      position: relative;
-
-      .is-full {
-        padding-right: 40px;
-
-        .description,
-        .source,
-        .unit {
-          font-weight: normal;
-          color: #000;
-          margin-bottom: 10px;
-
-          @media (prefers-color-scheme: dark) {
-            color: #fff;
-          }
-        }
-
-        .label {
-          border-bottom: 1px solid #ccc;
-          padding-bottom: 5px;
-          margin-bottom: 10px;
-
-          @media (prefers-color-scheme: dark) {
-            color: #fff;
-          }
-        }
-
-        .description {
-          margin-bottom: 15px;
-        }
-      }
-    }
   }
 </style>

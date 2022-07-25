@@ -9,13 +9,16 @@
   import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
   import OpCat from '$components/raster/OpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
+  import { getActiveBandIndex } from '$lib/helper'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
 
   let activeOperatorCategory = ''
   export let layer: Layer
-
-  const layerMin = Number(layer.info['band_metadata'][0][1]['STATISTICS_MINIMUM']).toFixed(2)
-  const layerMax = Number(layer.info['band_metadata'][0][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const bandIndex = getActiveBandIndex(layer.info)
+  const layerMin = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM']).toFixed(2)
+  const layerMax = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM']).toFixed(2)
 
   const dispatch = createEventDispatcher()
   const operatorCategories: Array<OperatorCategory> = [
@@ -43,13 +46,7 @@
       isVisible: true,
       disabled: false,
     },
-    // {
-    //   name: 'logical',
-    //   title: 'Logical',
-    //   icon: faChartColumn,
-    //   operators: ['AND', 'OR', 'NOR', 'NAND', 'XOR', 'NOT'],
-    //   isVisible: true,
-    // },
+
     {
       name: 'functions',
       title: 'Functions',

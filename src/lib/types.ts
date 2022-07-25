@@ -135,6 +135,7 @@ export interface RasterTileMetadata {
   overviews?: []
   width?: number
   stats?: RasterLayerStats
+  active_band_no: string
 }
 
 export interface BandMetadata {
@@ -208,6 +209,7 @@ export interface LayerInfoMetadata {
   source?: string
   description?: string
   unit?: string
+  visible: boolean
 }
 
 export interface Error {

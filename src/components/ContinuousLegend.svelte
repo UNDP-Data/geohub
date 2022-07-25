@@ -11,7 +11,7 @@
 
   import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { updateParamsInURL } from '$lib/helper'
+  import { getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
 
@@ -29,12 +29,13 @@
   let layerMin = NaN
   let layerMax = NaN
 
+  const bandIndex = getActiveBandIndex(info)
   if ('stats' in info) {
-    const band = Object.keys(info.stats)[0]
+    const band = Object.keys(info.stats)[bandIndex]
     layerMin = Number(info.stats[band].min)
     layerMax = Number(info.stats[band].max)
   } else {
-    const [band, bandMetaStats] = info['band_metadata'][0]
+    const [band, bandMetaStats] = info['band_metadata'][bandIndex]
     layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }

@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 
-import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT, STAC_PAGINATION_LIMIT } from '$lib/constants'
-import { fetchUrl } from '$lib/helper'
+import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT, STAC_PAGINATION_LIMIT, TITILER_API_ENDPOINT } from '$lib/constants'
+import { fetchUrl, getBase64EncodedUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
 
 const __dirname = path.resolve()
@@ -66,12 +66,22 @@ export async function get({ url }) {
         for (const assetKey of Object.keys(assets)) {
           if (assets[assetKey].type === COG_MIME_TYPE) {
             const assetItem = assets[assetKey]
+            if (!assetItem.href) continue
             const file = new URL(assetItem.href).pathname.split('/').pop()
             const path = `${catalog.id}/${container.id}/${file}`
+            const url = `${assetItem.href}?${res.token}`
+
+            const b64EncodedUrl = getBase64EncodedUrl(url)
+            const resTitiler = await fetch(`${TITILER_API_ENDPOINT}/bounds?url=${b64EncodedUrl}`)
+            if (resTitiler.status === 500) {
+              // some COG is invalid to use. skip to add the data if titiler api returns 500.
+              continue
+            }
+
             const layer: TreeNode = {
               label: feat.id,
               path,
-              url: assetItem.href + '?' + res.token,
+              url: url,
               isRaster: true,
               isStac: true,
             }

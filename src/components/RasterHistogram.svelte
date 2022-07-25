@@ -4,7 +4,7 @@
   import { TITILER_API_ENDPOINT } from '../lib/constants'
   import { fetchUrl } from '../lib/helper'
   import { map } from '../stores'
-  import {
+  import type {
     FillLayerSpecification,
     HeatmapLayerSpecification,
     LineLayerSpecification,
@@ -30,7 +30,7 @@
   onMount(async () => {
     const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_interval=20`
     const layerStats = await fetchUrl(statsURL)
-    const band = Object.keys(layerStats)[0]
+    const band = info.active_band_no
     const counts = layerStats[band]['histogram'][0]
     const sum = counts.reduce((a, b) => a + b, 0)
     const probability = counts.map((item) => item / sum)

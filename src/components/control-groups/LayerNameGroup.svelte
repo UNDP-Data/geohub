@@ -4,7 +4,7 @@
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
   import { LayerIconTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
   import { clean, hash } from '$lib/helper'
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerLabelled, layerMetadata } from '$stores'
   import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
 
@@ -27,6 +27,16 @@
         break
     }
   }
+
+  let bandName = ''
+  if (layer.definition.type === 'raster') {
+    let info: RasterTileMetadata
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+    ;({ info } = layer)
+    bandName = `B${info.active_band_no}`
+  }
+
   const name = clean(layer.name)
   const layerInfoMetadata = $layerMetadata.get(hash(layer.definition.source))
 </script>
@@ -42,6 +52,11 @@
           {/if}
         </span>
       </div>
+      {#if layer.definition.type === 'raster'}
+        <div style="display: flex; align-items: center">
+          <span class="tag is-success">{bandName}</span>
+        </div>
+      {/if}
       <div class="layer-name">
         <Wrapper>
           <div>
