@@ -10,7 +10,6 @@
   import OpCat from '$components/raster/OpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
   import { getActiveBandIndex } from '$lib/helper'
-  import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
 
   let activeOperatorCategory = ''
   export let layer: Layer

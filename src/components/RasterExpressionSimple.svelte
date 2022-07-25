@@ -10,6 +10,7 @@
   import { fetchUrl, updateParamsInURL } from '$lib/helper'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import { map } from '$stores'
+  import { string } from 'mathjs'
   export let layer: Layer
 
   const layerSrc = $map.getSource(layer.definition.source)
@@ -19,15 +20,12 @@
   let numbers = ''
   let expression = ''
   let simpleExpressionAvailable = layer.simpleExpressionAvailable || true
-  let simpleExpression = {}
   let complexExpressions = [{}]
-  let underEditIndex = 0
   let editingExpressionIndex = 0
-  complexExpressions[editingExpressionIndex].band = 'band1 '
-  let selectedIndex
+  complexExpressions[editingExpressionIndex].band = 'b1 '
 
   let expressions = [{}]
-
+  let combiningOperators = []
   let trueStatement = {
     underEdit: false,
     statement: '',
@@ -53,11 +51,12 @@
   ).init()
 
   $: simpleExpressionAvailable, (numbers = '')
+  $: editingExpressionIndex, (numbers = '')
 
   const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       if (event?.detail?.operator) {
-        expressions[0].band = 'band1 '
+        expressions[0].band = 'b1 '
         expressions[0].operator = event.detail.operator
       }
     } else {
@@ -70,16 +69,13 @@
       if (event?.detail?.operator) {
         const operator = event.detail.operator
         numbers = numbers.concat(operator)
-        expressions[0].band = 'band1 '
+        expressions[0].band = 'b1 '
         expressions[0].value = numbers
-        console.log(expressions)
-        // simpleExpression.band = 'band1 '
-        // simpleExpression.value = numbers
       }
     } else {
       const operator = event.detail.operator
       numbers = numbers.concat(operator)
-      expressions[editingExpressionIndex].band = 'band1 '
+      expressions[editingExpressionIndex].band = 'b1 '
       expressions[editingExpressionIndex].value = numbers
       if (trueStatement.underEdit) {
         statement = statement.concat(event.detail.operator)
@@ -96,7 +92,7 @@
     if (simpleExpressionAvailable) {
       // comparison operator is not available in simple expression.
     } else {
-      expressions[editingExpressionIndex].band = 'band1 '
+      expressions[editingExpressionIndex].band = 'b1 '
       expressions[editingExpressionIndex].operator = event.detail.operator
       // complexExpressions[editingExpressionIndex].operator = event.detail.operator
     }
@@ -108,7 +104,7 @@
     layer.simpleExpressionAvailable = simpleExpressionAvailable
     if (expressions.length === 1) {
       expressions[0] = {
-        band: 'band1 ',
+        band: 'b1 ',
         operator: '',
         value: '',
       }
@@ -164,14 +160,27 @@
     } else {
       // simple expression is not available.
       let updatedParams = {}
+      const expList = expressions.map((expr) => `(${expr.band}${expr.operator}${expr.value})`)
+      console.log(...expList)
+      const complexExpression = expList
+        .map((item, index) => {
+          if (index === 0) {
+            return item
+          } else {
+            return `${combiningOperators[index - 1]} ${item}`
+          }
+        })
+        .join('')
+
+      console.log(complexExpression)
       const exprStatUrl = new URL(
         `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
-          `where(b1${complexExpressions[0].operator}${complexExpressions[0].value}, ${trueStatement.statement}, ${falseStatement.statement});`,
+          `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
         )}`,
       )
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
       layer.info.stats = exprStats
-      layer.expression = `where(${complexExpressions[0].band}${complexExpressions[0].operator}${complexExpressions[0].value}, ${trueStatement.statement}, ${falseStatement.statement});`
+      layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
       const band = Object.keys(exprStats)[0]
       updatedParams = { expression: layer.expression }
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
@@ -231,10 +240,15 @@
     ]
     editingExpressionIndex = expressions.length - 1
   }
+
   const removeConditionAtIndex = (index) => {
     expressions = expressions.filter((_, i) => i !== editingExpressionIndex)
     editingExpressionIndex = expressions.length - 1
-    expressions.length < 1 ? (numbers = '') : null
+    combiningOperators = combiningOperators.filter((_, i) => i !== index)
+    if (expressions.length < 1) {
+      numbers = ''
+      combiningOperators = []
+    }
   }
 
   const changeEditingIndexTo = (index) => {
@@ -261,24 +275,36 @@
       {:else}
         <div class="column" style="width: 90%; margin: auto">
           <div style="width: 50%; margin: auto; display: flex; align-items: center; justify-content: space-evenly">
-            <span style="cursor: pointer; margin: 1%;" class="tag is-large is-link">where </span>
-            <button on:click={addNewCondition} class="button is-small is-light is-primary"
-              ><i class="fa fa-plus" /></button>
+            <span style="cursor: pointer; margin: .5%;" class="tag is-medium is-link">where </span>
+            <button
+              style="display: {expressions.length > 0 ? 'none' : ''}"
+              on:click={addNewCondition}
+              class="button is-small is-light is-primary"><i class="fa fa-plus" /></button>
           </div>
-
           {#each expressions as expression, index}
-            <div style="display: flex; align-items: center">
-              {#each Object.keys(expression) as oper}
-                <span
-                  class="tag is-medium {editingExpressionIndex === index ? 'is-warning' : 'is-dark'}"
-                  style="margin: 2%; border: {editingExpressionIndex === index ? '1px solid red' : null}">
-                  {expression[`${oper}`]}
-                </span>
-              {/each}
-              <button on:click={() => removeConditionAtIndex(index)} class="button is-small is-light is-primary"
-                ><i class="fa fa-x" /></button>
-              <button on:click={() => changeEditingIndexTo(index)} class="button is-small is-light is-primary"
-                ><i class="fa fa-pen" /></button>
+            <div style="display: block; width: 100%">
+              <div style="display: flex; align-items: center">
+                {#each Object.keys(expression) as oper}
+                  <span class="tag is-medium is-warning" style="margin: .5%;">
+                    {expression[`${oper}`]}
+                  </span>
+                {/each}
+                <button on:click={() => removeConditionAtIndex(index)} class="button is-small is-light is-danger"
+                  ><i class="fa fa-x" /></button>
+                <button
+                  on:click={() => changeEditingIndexTo(index)}
+                  class="button is-small is-light {index === editingExpressionIndex ? 'is-info' : 'is-dark'}"
+                  ><i class="fa fa-pen" /></button>
+                <button
+                  style="display: {index === expressions.length - 1 ? '' : 'none'}"
+                  on:click={addNewCondition}
+                  class="button is-small is-light is-primary"><i class="fa fa-plus" /></button>
+              </div>
+              <div
+                style="width:20%; margin-left:30%; display: {index === expressions.length - 1 ? 'none' : ''}"
+                class="tag is-small is-primary is-light">
+                {combiningOperators[index] !== undefined ? combiningOperators[index] : ''}
+              </div>
             </div>
           {/each}
         </div>
@@ -339,9 +365,21 @@
   </div>
   <div class="columns" style="width: 100%">
     <div class="column" style="width: 100%; justify-content: space-between">
-      <button class="button is-primary is-light is-small" on:click={() => console.log('AND')}> AND </button>
-      <button class="button is-primary is-light is-small" on:click={() => console.log('OR')}> OR </button>
-      <button class="button is-primary is-light is-small" on:click={() => console.log('NOT')}> NOT </button>
+      <button
+        class="button is-primary is-light is-small"
+        on:click={() => (combiningOperators = [...combiningOperators, '&'])}>
+        AND
+      </button>
+      <button
+        class="button is-primary is-light is-small"
+        on:click={() => (combiningOperators = [...combiningOperators, '|'])}>
+        OR
+      </button>
+      <button
+        class="button is-primary is-light is-small"
+        on:click={() => (combiningOperators = [...combiningOperators, '~'])}>
+        NOT
+      </button>
       <button
         class="button is-info is-light is-small"
         on:click={applyExpression}
