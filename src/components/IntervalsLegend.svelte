@@ -81,8 +81,10 @@
       }
 
       layerConfig = { ...layerConfig, info: info }
-      const layers = $layerList.filter((layer) => layerConfig.definition.id !== layer.definition.id)
-      layerList.set([layerConfig, ...layers])
+      const layers = $layerList.map((layer) => {
+        return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
+      })
+      layerList.set([...layers])
     }
     reclassifyImage()
   })

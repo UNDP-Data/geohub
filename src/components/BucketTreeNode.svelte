@@ -402,7 +402,7 @@
           scale: 1,
           TileMatrixSetId: 'WebMercatorQuad',
           url: b64EncodedUrl,
-          bidx: 1,
+          bidx: bandIndex + 1,
           unscale: false,
           resampling: 'nearest',
           rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
