@@ -70,13 +70,6 @@
       }
     })
 
-  const handleOperatorClick = (event: CustomEvent) => {
-    if (event?.detail?.operator) {
-      const operator: string = event.detail.operator
-      dispatch('handleOperatorClick', { operator })
-    }
-  }
-
   const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator) {
       const operator: string = event.detail.operator

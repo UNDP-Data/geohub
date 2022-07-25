@@ -90,6 +90,7 @@ export enum ErrorMessages {
   NO_LAYER_WITH_THAT_NAME = "We couldn't find a layer with that name.",
   VECTOR_INFO_BAD_REQUEST = 'Bad request. Please verify the URL and/or parameters.',
   MAP_FILTER_NOT_APPLIED = 'The map filter was not applied. Please check the that all filters are valid.',
+  EXPRESSION_INVALID = 'The Raster Expression appears to be Invalid. Please check it and try again.',
 }
 export const LayerIconTypes = [
   {

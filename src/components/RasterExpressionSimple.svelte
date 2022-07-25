@@ -1,3 +1,6 @@
+<script lang="ts" context="module">
+</script>
+
 <script lang="ts">
   import RasterExpressionBuilder from '$components/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
@@ -7,25 +10,36 @@
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import { DynamicLayerLegendTypes } from '$lib/constants'
   import { map } from '$stores'
-  import { string } from 'mathjs'
+  import { clickOutside } from 'svelte-use-click-outside'
+  import type { RasterTileMetadata } from '$lib/types'
+
   export let layer: Layer
+
+  let info: RasterTileMetadata
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+  ;({ info } = layer)
 
   const layerSrc = $map.getSource(layer.definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
+  const bandIndex = getActiveBandIndex(info)
+  const band = `b${bandIndex + 1}`
 
   let showExpressionBuilder = false
+
+  // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable = layer.simpleExpressionAvailable || true
-  let complexExpressions = [{}]
+  let simpleExpressionAvailable = true
   let editingExpressionIndex = 0
-  complexExpressions[editingExpressionIndex].band = 'b1 '
-
   let expressions = [{}]
   let combiningOperators = []
+
+  // For complex expressions, ie the complex `where` expression
+  // true and false statements
   let trueStatement = {
     underEdit: false,
     statement: '',
@@ -34,8 +48,10 @@
     underEdit: false,
     statement: '',
   }
+  // This var will populate the true and false statements
   let statement = ''
 
+  // PopperJS
   const {
     ref: popperRef,
     options: popperOptions,
@@ -50,13 +66,18 @@
     [10, 15],
   ).init()
 
+  // If change between the simple and complex expression, reset the numbers var
+  // to an empty string
   $: simpleExpressionAvailable, (numbers = '')
   $: editingExpressionIndex, (numbers = '')
 
+  // Whenever the arithmetic operator is clicked, add it to the operator
+  // only when the simple expression is available. Complex expression will
+  // not take any arithmetic operators.
   const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       if (event?.detail?.operator) {
-        expressions[0].band = 'b1 '
+        expressions[0].band = band
         expressions[0].operator = event.detail.operator
       }
     } else {
@@ -64,18 +85,12 @@
     }
   }
 
+  // Whenever the number is clicked, concatenate it to the numbers var
   const handleFunctionButtonClick = (event: CustomEvent) => {
-    if (simpleExpressionAvailable) {
-      if (event?.detail?.operator) {
-        const operator = event.detail.operator
-        numbers = numbers.concat(operator)
-        expressions[0].band = 'b1 '
-        expressions[0].value = numbers
-      }
-    } else {
+    if (event?.detail?.operator) {
       const operator = event.detail.operator
       numbers = numbers.concat(operator)
-      expressions[editingExpressionIndex].band = 'b1 '
+      expressions[editingExpressionIndex].band = band
       expressions[editingExpressionIndex].value = numbers
       if (trueStatement.underEdit) {
         statement = statement.concat(event.detail.operator)
@@ -92,9 +107,8 @@
     if (simpleExpressionAvailable) {
       // comparison operator is not available in simple expression.
     } else {
-      expressions[editingExpressionIndex].band = 'b1 '
+      expressions[editingExpressionIndex].band = band
       expressions[editingExpressionIndex].operator = event.detail.operator
-      // complexExpressions[editingExpressionIndex].operator = event.detail.operator
     }
     expression = expression.concat(event.detail.operator)
   }
@@ -104,7 +118,7 @@
     layer.simpleExpressionAvailable = simpleExpressionAvailable
     if (expressions.length === 1) {
       expressions[0] = {
-        band: 'b1 ',
+        band: band,
         operator: '',
         value: '',
       }
@@ -117,9 +131,7 @@
       if (event?.detail?.operator) {
         numbers = numbers.concat(event.detail.operator)
         // simpleExpression.value = numbers
-        expressions[editingExpressionIndex].band = 'b1 '
         expressions[editingExpressionIndex].value = numbers
-        console.log(expressions)
       }
     } else {
       if (trueStatement.underEdit) {
@@ -143,11 +155,10 @@
             `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
           )}`,
         )
-        console.log(exprStatUrl)
         const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
         layer.info.stats = exprStats
         layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
-        const band = Object.keys(exprStats)[0]
+        const band = Object.keys(exprStats)[bandIndex]
         updatedParams = { expression: layer.expression.replaceAll(',', '') }
         if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
           updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
@@ -161,7 +172,6 @@
       // simple expression is not available.
       let updatedParams = {}
       const expList = expressions.map((expr) => `(${expr.band}${expr.operator}${expr.value})`)
-      console.log(...expList)
       const complexExpression = expList
         .map((item, index) => {
           if (index === 0) {
@@ -172,7 +182,6 @@
         })
         .join('')
 
-      console.log(complexExpression)
       const exprStatUrl = new URL(
         `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
           `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
@@ -195,6 +204,7 @@
 
   const clearAppliedExpression = async () => {
     simpleExpressionAvailable = true
+    editingExpressionIndex = 0
     expressions = [{}]
     const layerSrc = $map.getSource(layer.definition.source)
     const layerURL = new URL(layerSrc.tiles[0])
@@ -224,16 +234,11 @@
     }
   }
 
-  const removeWhereExpression = () => {
-    simpleExpressionAvailable = true
-    expressions = [{}]
-  }
-
   const addNewCondition = () => {
     expressions = [
       ...expressions,
       {
-        band: 'b1 ',
+        band: band,
         operator: '',
         value: '',
       },
@@ -349,7 +354,12 @@
       </div>
     </div>
     {#if showExpressionBuilder}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade
+        use:clickOutside={() => (showExpressionBuilder = false)}>
         <RasterExpressionBuilder
           on:handleComparisonButtonClick={handleComparisonButtonClick}
           on:handleFunctionButtonClick={handleFunctionButtonClick}
