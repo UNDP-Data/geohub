@@ -3,12 +3,10 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  // import { faDiagramProject } from '@fortawesome/free-solid-svg-icons/faDiagramProject'
   import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
   import { faPlusMinus } from '@fortawesome/free-solid-svg-icons/faPlusMinus'
   import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
   import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
-  // import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
   import OpCat from '$components/raster/OpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
   import { getActiveBandIndex } from '$lib/helper'
@@ -29,20 +27,23 @@
       icon: faPlusMinus,
       operators: ['*', '/', '+', '-', '%', '**'],
       isVisible: true,
+      disabled: false,
     },
     {
       name: 'numbers',
       title: 'Numbers',
       icon: faArrowDown19,
-      operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')'],
-      isVisible: false,
+      operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')'],
+      isVisible: true,
+      disabled: false,
     },
     {
       name: 'comparison',
       title: 'Comparison',
       icon: faEquals,
       operators: ['=', '!=', '>=', '<', '>', '<='],
-      isVisible: false,
+      isVisible: true,
+      disabled: false,
     },
 
     {
@@ -50,7 +51,8 @@
       title: 'Functions',
       icon: faSquareRootVariable,
       operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'where'],
-      isVisible: false,
+      isVisible: true,
+      disabled: false,
     },
   ]
 
@@ -68,10 +70,30 @@
       }
     })
 
-  const handleOperatorClick = (event: CustomEvent) => {
+  const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator) {
       const operator: string = event.detail.operator
-      dispatch('handleOperatorClick', { operator })
+      dispatch('handleArithmeticButtonClick', { operator })
+    }
+  }
+  const handleComparisonButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator: string = event.detail.operator
+      dispatch('handleComparisonButtonClick', { operator })
+    }
+  }
+  const handleFunctionsButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator === 'where') {
+      dispatch('handleWhereFunctionClick', { operator: 'where' })
+    } else {
+      const operator: string = event.detail.operator
+      dispatch('handleFunctionButtonClick', { operator })
+    }
+  }
+  const handleNumberButtonClick = (event: CustomEvent) => {
+    if (event?.detail?.operator) {
+      const operator: string = event.detail.operator
+      dispatch('handleNumberButtonClick', { operator })
     }
   }
 
@@ -123,82 +145,17 @@
     </div>
     <div class="container">
       {#each operatorCategories as operCat}
-        <OpCat on:operatorButtonClick={handleOperatorClick} operatorCategory={operCat} />
+        <OpCat
+          on:NumbersButtonClick={handleNumberButtonClick}
+          on:ArithmeticButtonClick={handleArithmeticButtonClick}
+          on:ComparisonButtonClick={handleComparisonButtonClick}
+          on:FunctionsButtonClick={handleFunctionsButtonClick}
+          operatorCategory={operCat} />
       {/each}
     </div>
   </div>
 </div>
 
-<!-- <div id="operator-categories" data-testid="operator-categories" >
-  <div class="columns is-vcentered is-mobile ">
-    <div class="column is-3 is-size-8 has-text-weight-semibold pl-3 pr-3">
-      Operators:
-    </div>
-    <div class="column is-8 " style="border:0px solid blue">
-      
-      <div class="tabs" >
-        <ul>
-          {#each Object.values(operatorCategories) as operatorCategory}
-            <li class={activeOperatorCategory === operatorCategory.name ? 'is-active' : ''}>
-              <Wrapper>
-                <a
-                  href={'#'}
-                  on:click={() => {
-                    activeOperatorCategory = operatorCategory.name
-                    operatorCategory.isVisible = !operatorCategory.isVisible
-                  }}>
-                  <Fa icon={operatorCategory.icon} style="font-size: 16px;" />
-                </a>
-                <Tooltip showDelay={100} hideDelay={0} yPos="above">{operatorCategory.title}</Tooltip>
-              </Wrapper>
-            </li>
-          {/each}
-        </ul>
-      </div>
-    </div>
-    <div
-      class="column is-1 close"
-      alt="Close Expression Builder"
-      title="Close Expression Builder"
-      on:click={handleClosePopup}>
-      <Fa icon={faXmark} />
-    </div>
-    
-  </div>
-  <div class="columns  is-mobile is-centered">
-    
-    <div class="column is-3 ">
-        
-        <div class="columns">
-            <div class="column is-12 is-size-8 has-text-weight-bold has-text-centered">Statistics</div>
-        </div>
-       
-          <div class="columns is-centered is-vcentered">
-            <div class="column is-size-6 is-6  has-text-weight-semibold">Min:</div>
-            <div class="column is-6 ">{layerMin}</div>
-          </div>
-        
-          <div class="columns has-background-info-light">
-            <div class="column is-size-6 is-6  has-text-weight-semibold">Max:</div>
-            <div id="ov" class="column is-6 ">{layerMax}</div>
-          </div>
-    </div>
-    
-   
-    
-    
-    <div class="column is-9">
-      <div class="container">
-        {#each visOperators as operCat}
-            <OpCat on:operatorButtonClick={handleOperatorClick} operatorCategory={operCat}></OpCat>
-            
-        {/each}
-      </div>
-    </div>
-  </div>
-
-  
-</div> -->
 <style lang="scss">
   #operator-categories {
     z-index: -1;

@@ -52,6 +52,8 @@ export interface Layer {
   intervals?: IntervalLegend
   unique?: UniqueLegend
   expression?: string
+  expressions?: [] // This is to maintain the state of the expression editor. Different from expression.
+  simpleExpressionAvailable?: boolean
   children?: Layer[]
   parent?: Layer
   legendType?: string
@@ -303,6 +305,7 @@ export interface OperatorCategory {
   icon: IconDefinition
   operators: Array<string>
   isVisible: boolean
+  disabled: boolean
 }
 
 export interface MartinLayerMetadata {
@@ -316,4 +319,12 @@ export interface MartinLayerMetadata {
   buffer: number
   geometry_type: string
   properties: { [key: string]: string }
+}
+
+export type ArithmeticOperator = '*' | '/' | '+' | '-' | '%' | '**'
+
+export interface RasterSimpleExpression {
+  band: string
+  operator: ArithmeticOperator
+  value: number
 }
