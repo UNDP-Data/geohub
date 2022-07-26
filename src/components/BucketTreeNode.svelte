@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte'
-  import { fade, slide } from 'svelte/transition'
+  import { slide } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
@@ -20,10 +20,9 @@
   import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
 
   import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { cloneDeep } from 'lodash-es'
 
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
-  import BucketTreeNodeCard from '$components/BucketTreeNodeCard.svelte'
+  import BucketTreeNodeCardButton from '$components/BucketTreeNodeCardButton.svelte'
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
@@ -36,8 +35,7 @@
     StatusTypes,
     TITILER_API_ENDPOINT,
   } from '$lib/constants'
-  import { fetchUrl, hash, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
-  import Popper from '$lib/popper'
+  import { fetchUrl, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
     BannerMessage,
     TreeNode,
@@ -46,40 +44,20 @@
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import {
-    map,
-    bucketList,
-    layerList,
-    layerMetadata,
-    indicatorProgress,
-    bannerMessages,
-    modalVisible,
-    martinIndex,
-  } from '$stores'
+  import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
 
   export let level = 0
   export let node: TreeNode
   export let hideCloseButton = false
 
   const dispatch = createEventDispatcher()
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'auto',
-      strategy: 'fixed',
-    },
-    [0, -20],
-  ).init()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
   let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let isAddLayerModalVisible: boolean
-  let tooltipTimer: ReturnType<typeof setTimeout>
+  // let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
   $: ({ label, children, path, url, isRaster, geomType } = tree)
@@ -150,8 +128,7 @@
         }),
       ).then((responses) => {
         responses.forEach((response) => {
-          response.data.then((layerInfo) => {
-            const layerPathHash = hash(response.node.path)
+          response.data.then(() => {
             if (response.node.isRaster) {
               if (response.node.isStac) {
                 const bucketStac = $bucketList.find((bucket) => bucket.id === response.node.path.split('/')[0])
@@ -160,39 +137,7 @@
                 itemsUrl.push(response.node.path.split('/')[1])
                 itemsUrl.push('items')
                 itemsUrl.push(response.node.label)
-
-                fetchUrl(itemsUrl.join('/')).then((layerInfo) => {
-                  let description = ''
-
-                  if (layerInfo?.properties?.description === undefined) {
-                    fetchUrl(itemsUrl.slice(0, -2).join('/')).then((val) => {
-                      description = val?.description === undefined ? 'N/A' : val.description
-                      setLayerMetaDataStore(description, layerInfo?.properties?.platform, 'N/A', layerPathHash, false)
-                    })
-                  } else {
-                    setLayerMetaDataStore(
-                      layerInfo.properties.description,
-                      layerInfo?.properties?.platform,
-                      'N/A',
-                      layerPathHash,
-                      false,
-                    )
-                  }
-                })
-              } else {
-                if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-                  const bandIndex = getActiveBandIndex(layerInfo)
-                  setLayerMetaDataStore(
-                    layerInfo.band_metadata[bandIndex][1]['Description'],
-                    layerInfo.band_metadata[bandIndex][1]['Source'],
-                    layerInfo.band_metadata[bandIndex][1]['Unit'],
-                    layerPathHash,
-                    false,
-                  )
-                }
               }
-            } else {
-              setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash, false)
             }
           })
         })
@@ -204,35 +149,6 @@
 
   const getVectorLayerIcon = (layerGeomType: string) => {
     return LayerIconTypes.find((icon) => layerGeomType.toLowerCase().includes(icon.id))
-  }
-
-  // const getBase64EncodedUrl = (url: string) => {
-  //   const [base, sign] = url.split('?')
-  //   return `${base}?${btoa(sign)}`
-  // }
-
-  const setLayerMetaDataStore = (
-    description: string,
-    source: string,
-    unit: string,
-    layerPathHash: number,
-    visible: boolean,
-  ) => {
-    const metadata = <LayerInfoMetadata>{
-      description,
-      source,
-      unit,
-      visible,
-    }
-    const layerMetadataClone = cloneDeep($layerMetadata)
-    Object.entries(layerMetadataClone).forEach((key) => {
-      const value = layerMetadataClone.get(key)
-      value.visible = false
-      layerMetadataClone.set(key, value)
-    })
-    layerMetadataClone.set(layerPathHash, metadata)
-    $layerMetadata = layerMetadataClone
-    return
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -493,88 +409,6 @@
     dispatch('remove', { node })
   }
 
-  const handleTooltipMouseEnter = () => {
-    // delay display of tooltip and create reference for mouse leave event
-    tooltipTimer = setTimeout(async () => {
-      const layerPathHash = hash(path)
-      let metadata: LayerInfoMetadata
-
-      // get existing metadata from store
-      if ($layerMetadata.has(layerPathHash)) {
-        metadata = $layerMetadata.get(layerPathHash)
-      } else {
-        if (node.isStac) {
-          let description = ''
-
-          const bucketStac = $bucketList.find((bucket) => bucket.id === node.path.split('/')[0])
-          const itemsUrl = []
-          itemsUrl.push(bucketStac.url)
-          itemsUrl.push(node.path.split('/')[1])
-          itemsUrl.push('items')
-          itemsUrl.push(node.label)
-          let layerInfo = await fetchUrl(itemsUrl.join('/'))
-
-          if (layerInfo?.properties?.description === undefined) {
-            layerInfo = await fetchUrl(itemsUrl.slice(0, -2).join('/'))
-            description = layerInfo?.description === undefined ? 'N/A' : layerInfo.description
-          } else {
-            description = layerInfo.properties.description
-          }
-
-          const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
-          setLayerMetaDataStore(description, source, 'N/A', layerPathHash, true)
-        } else {
-          // get metadata from endpoint
-          const layerURL = new URL(url)
-          const infoURI: string = isRaster
-            ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
-            : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
-                layerURL.search
-              }`
-          const layerInfo = await fetchUrl(infoURI)
-
-          if (isRaster) {
-            if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
-              const bandIndex = getActiveBandIndex(layerInfo)
-              setLayerMetaDataStore(
-                layerInfo.band_metadata[bandIndex][1]['Description'],
-                layerInfo.band_metadata[bandIndex][1]['Source'],
-                layerInfo.band_metadata[bandIndex][1]['Unit'],
-                layerPathHash,
-                true,
-              )
-            }
-          } else {
-            setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash, true)
-          }
-        }
-
-        metadata = $layerMetadata.get(layerPathHash)
-      }
-
-      if (metadata) {
-        layerInfoMetadata = {
-          description: metadata.description,
-          source: metadata.source,
-          unit: metadata.unit,
-          visible: true,
-        }
-      }
-    }, 200)
-
-    // hide popover after 5 seconds
-    setTimeout(() => {
-      handleTooltipMouseLeave
-    }, 5000)
-  }
-
-  const handleTooltipMouseLeave = () => {
-    if (tooltipTimer) clearTimeout(tooltipTimer)
-    if (layerInfoMetadata) {
-      layerInfoMetadata.visible = false
-    }
-  }
-
   let stacPaginationAction = ''
   let stacPaginationLabel = ''
 
@@ -609,11 +443,7 @@
               </Wrapper>
             {/if}
           </div>
-          <div
-            class="name vector"
-            use:popperRef
-            on:mouseenter={() => handleTooltipMouseEnter()}
-            on:mouseleave={() => handleTooltipMouseLeave()}>
+          <div class="name vector">
             {clean(label)}
           </div>
         {:else}
@@ -636,6 +466,7 @@
         {/if}
 
         {#if url}
+          <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
           <div class="icon" alt={iconVector.label} title={iconVector.label}>
             <Wrapper>
               <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
@@ -672,11 +503,7 @@
               </Wrapper>
             {/if}
           </div>
-          <div
-            class="name raster"
-            use:popperRef
-            on:mouseenter={() => handleTooltipMouseEnter()}
-            on:mouseleave={() => handleTooltipMouseLeave()}>
+          <div class="name raster">
             {#if node.isStac}
               {clean(
                 path
@@ -688,6 +515,7 @@
               {clean(label)}
             {/if}
           </div>
+          <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
           <div
             class="icon"
             alt="Download Layer Data"
@@ -738,13 +566,6 @@
     {/if}
   </div>
 </li>
-
-{#if layerInfoMetadata?.visible}
-  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-    <BucketTreeNodeCard bind:layerInfoMetadata bind:node />
-    <div id="arrow" data-popper-arrow />
-  </div>
-{/if}
 
 {#if expanded && children}
   {#each children as child}
@@ -804,9 +625,5 @@
   .disabled {
     cursor: default;
     opacity: 0.15;
-  }
-
-  #tooltip {
-    max-width: 450px;
   }
 </style>
