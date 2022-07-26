@@ -107,9 +107,9 @@
           <div class="stats message is-info is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
             <div id="stats-title" class="stats-content message-header">Statistics</div>
             <div class="stats-content">Min:</div>
-            <div class="stats-content">{propertyStats[0]}</div>
+            <div class="stats-content">{propertyStats[0] !== undefined ? propertyStats[0] : ''}</div>
             <div class="stats-content">Max:</div>
-            <div class="stats-content">{propertyStats[1]}</div>
+            <div class="stats-content">{propertyStats[1] !== undefined ? propertyStats[1] : ''}</div>
           </div>
           {#if activeOperatorsTab === 'Numbers'}
             <NumberButtons on:valueclicked={numberSelected} />
