@@ -1,17 +1,17 @@
 <script lang="ts">
   import RasterExpressionBuilder from '$components/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
-  import type { Layer, RasterLayerStats } from '$lib/types'
+  import type { BannerMessage, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import { DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, map } from '$stores'
   import { clickOutside } from 'svelte-use-click-outside'
-  import type { RasterTileMetadata, BannerMessage } from '$lib/types'
+  import { debounce } from 'lodash-es'
 
   export let layer: Layer
 
@@ -24,7 +24,6 @@
   const layerURL = new URL(layerSrc.tiles[0])
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
-
   let showExpressionBuilder = false
 
   // Vars for expression
@@ -164,7 +163,20 @@
             updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
             layer.continuous.minimum = Number(layer.info.stats[band].min)
             layer.continuous.maximum = Number(layer.info.stats[band].max)
+          } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
+            layer.percentile98 = layer.info.stats[band].percentile_98
+            layer.intervals.colorMapRows = generateColorMap(
+              layer,
+              layer.info.stats[band].min,
+              layer.info.stats[band].max,
+              layer.intervals.numberOfClasses,
+              layer.intervals.classification,
+              true,
+              layer.info.stats[band].percentile_98,
+            )
+            handleParamsUpdate()
           }
+          // Delete the expression in the url if already exists and update the url
           layerURL.searchParams.delete('expression')
           updateParamsInURL(layer.definition, layerURL, updatedParams)
         }
@@ -197,6 +209,13 @@
           layer.continuous.minimum = Number(layer.info.stats[band].min)
           layer.continuous.maximum = Number(layer.info.stats[band].max)
         }
+        // Need to convert the legend type to unique values.
+        layer.legendType = DynamicLayerLegendTypes.UNIQUE
+        layer.info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'] = [
+          { value: Number(trueStatement.statement), name: trueStatement.statement },
+          { value: Number(falseStatement.statement), name: falseStatement.statement },
+        ]
+        // ToDo: Set unique values to the layer with STATISTIC_UNIQUE_VALUES
         layerURL.searchParams.delete('expression')
         updateParamsInURL(layer.definition, layerURL, updatedParams)
       }
@@ -214,8 +233,6 @@
     simpleExpressionAvailable = true
     editingExpressionIndex = 0
     expressions = [{}]
-    const layerSrc = $map.getSource(layer.definition.source)
-    const layerURL = new URL(layerSrc.tiles[0])
     expression = ''
     layer.expression = expression
     //handleApplyExpression()
@@ -228,6 +245,17 @@
         updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
         layer.continuous.minimum = Number(layer.info.stats[band].min)
         layer.continuous.maximum = Number(layer.info.stats[band].max)
+      } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
+        layer.intervals.colorMapRows = generateColorMap(
+          layer,
+          layer.info.stats[band].min,
+          layer.info.stats[band].max,
+          layer.intervals.numberOfClasses,
+          layer.intervals.classification,
+          true,
+          layer.info.stats[band].percentile_98,
+        )
+        handleParamsUpdate()
       }
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
@@ -268,6 +296,16 @@
     editingExpressionIndex = index
     numbers = ''
   }
+
+  const handleParamsUpdate = debounce(() => {
+    const encodeColorMapRows = JSON.stringify(
+      layer.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
+    )
+    layerURL.searchParams.delete('colormap_name')
+    layerURL.searchParams.delete('rescale')
+    const updatedParams = Object.assign({ colormap: encodeColorMapRows })
+    updateParamsInURL(layer.definition, layerURL, updatedParams)
+  }, 500)
 </script>
 
 <div class="container">

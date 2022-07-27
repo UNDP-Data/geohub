@@ -57,12 +57,13 @@
 
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-      const layerUniqueValues = JSON.parse(info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'])
+      const layerUniqueValues = info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
       colorMap = {}
       let index = 0
 
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
         const key = row.value
+        console.log(row.value)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
@@ -72,7 +73,7 @@
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
-
+      console.log(colorMapRows)
       // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
