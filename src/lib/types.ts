@@ -210,7 +210,6 @@ export interface LayerInfoMetadata {
   source?: string
   description?: string
   unit?: string
-  visible: boolean
 }
 
 export interface Error {

@@ -14,6 +14,7 @@
 
   export let layerInfoMetadata: LayerInfoMetadata = undefined
   export let node: TreeNode
+  let showTooltip = false
 
   const {
     ref: popperRef,
@@ -54,7 +55,7 @@
         }
 
         const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
-        setLayerMetaDataStore(description, source, 'N/A', layerPathHash, true)
+        setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
       } else {
         // get metadata from endpoint
         const layerURL = new URL(node.url)
@@ -73,11 +74,10 @@
               layerInfo.band_metadata[bandIndex][1]['Source'],
               layerInfo.band_metadata[bandIndex][1]['Unit'],
               layerPathHash,
-              true,
             )
           }
         } else {
-          setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash, true)
+          setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
         }
       }
 
@@ -89,37 +89,29 @@
         description: metadata.description,
         source: metadata.source,
         unit: metadata.unit,
-        visible: true,
       }
     }
   }
 
-  const setLayerMetaDataStore = (
-    description: string,
-    source: string,
-    unit: string,
-    layerPathHash: number,
-    visible: boolean,
-  ) => {
+  const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
     const metadata = <LayerInfoMetadata>{
       description,
       source,
       unit,
-      visible,
     }
-    const layerMetadataClone = cloneDeep($layerMetadata)
-    Object.entries(layerMetadataClone).forEach((key) => {
-      const value = layerMetadataClone.get(key)
-      value.visible = false
-      layerMetadataClone.set(key, value)
-    })
-    layerMetadataClone.set(layerPathHash, metadata)
-    $layerMetadata = layerMetadataClone
-    return
+    $layerMetadata.set(layerPathHash, metadata)
   }
 
   const handleClose = () => {
-    layerInfoMetadata.visible = false
+    showTooltip = false
+  }
+
+  $: {
+    if (showTooltip === true) {
+      ShowBucketTreeNodeCard()
+    } else {
+      setTimeout(handleClose, 100)
+    }
   }
 </script>
 
@@ -128,23 +120,21 @@
   alt="Show more detailed information"
   title="how more detailed information"
   use:popperRef
-  on:click={() => {
-    ShowBucketTreeNodeCard()
-  }}>
+  on:click={() => (showTooltip = !showTooltip)}>
   <Wrapper>
-    <Fa icon={faCircleInfo} size="sm" />
-    <Tooltip showDelay={0} hideDelay={100} yPos="above">Show more detailed information</Tooltip>
+    <Fa icon={showTooltip ? faXmark : faCircleInfo} size="sm" />
+    <Tooltip showDelay={0} hideDelay={100} yPos="above">{`${showTooltip ? 'Hide' : 'Show'} infomation`}</Tooltip>
   </Wrapper>
 </div>
 
-{#if layerInfoMetadata?.visible}
+{#if showTooltip}
   <div
     id="tooltip"
     data-testid="tooltip"
     use:popperContent={popperOptions}
     transition:fade
     use:clickOutside={handleClose}>
-    <div class="close is-clickable" alt="Close popup" title="Close popup" on:click={handleClose}>
+    <div class="close is-clickable" alt="Close" title="Close" on:click={handleClose}>
       <Fa icon={faXmark} size="sm" />
     </div>
 
