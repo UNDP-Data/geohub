@@ -29,7 +29,7 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable = true
+  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable
   let editingExpressionIndex = 0
   let expressions = layer.expressions || [{}]
   let combiningOperators = []
@@ -85,10 +85,7 @@
   // Whenever the number is clicked, concatenate it to the numbers var
   const handleFunctionButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator) {
-      const operator = event.detail.operator
-      numbers = numbers.concat(operator)
       expressions[editingExpressionIndex].band = band
-      expressions[editingExpressionIndex].value = numbers
       if (trueStatement.underEdit) {
         statement = statement.concat(event.detail.operator)
         trueStatement.statement = statement
@@ -407,6 +404,7 @@
         transition:fade
         use:clickOutside={() => (showExpressionBuilder = false)}>
         <RasterExpressionBuilder
+          bind:simpleExpressionAvailable
           on:handleComparisonButtonClick={handleComparisonButtonClick}
           on:handleFunctionButtonClick={handleFunctionButtonClick}
           on:handleArithmeticButtonClick={handleArithmeticButtonClick}

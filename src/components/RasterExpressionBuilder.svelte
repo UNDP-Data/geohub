@@ -13,6 +13,7 @@
 
   let activeOperatorCategory = ''
   export let layer: Layer
+  export let simpleExpressionAvailable = true
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const bandIndex = getActiveBandIndex(layer.info)
@@ -27,7 +28,7 @@
       icon: faPlusMinus,
       operators: ['*', '/', '+', '-', '%', '**'],
       isVisible: true,
-      disabled: false,
+      disabled: !simpleExpressionAvailable,
     },
     {
       name: 'numbers',
@@ -43,7 +44,7 @@
       icon: faEquals,
       operators: ['=', '!=', '>=', '<', '>', '<='],
       isVisible: true,
-      disabled: false,
+      disabled: simpleExpressionAvailable,
     },
 
     {

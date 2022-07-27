@@ -11,6 +11,7 @@
     {#each operatorCategory.operators as operator}
       <div class="oper">
         <button
+          disabled={operatorCategory.disabled}
           class="button is-small fixedw "
           on:click={() => {
             dispatch(`${operatorCategory.title}ButtonClick`, { operator })
