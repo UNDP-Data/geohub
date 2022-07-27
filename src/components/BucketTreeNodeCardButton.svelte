@@ -178,6 +178,10 @@
 <style lang="scss">
   @import '../styles/popper.scss';
 
+  .icon {
+    cursor: pointer;
+  }
+
   .bucket-card {
     text-align: justify;
     text-justify: inter-word;
