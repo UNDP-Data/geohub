@@ -26,7 +26,7 @@
     [0, 20],
   ).init()
 
-  const handShowBucketTreeNodeCard = async () => {
+  const ShowBucketTreeNodeCard = async () => {
     const layerPathHash = hash(node.path)
     let metadata: LayerInfoMetadata
 
@@ -128,7 +128,7 @@
   title="how more detailed information"
   use:popperRef
   on:click={() => {
-    handShowBucketTreeNodeCard()
+    ShowBucketTreeNodeCard()
   }}>
   <Wrapper>
     <Fa icon={faCircleInfo} size="sm" />
