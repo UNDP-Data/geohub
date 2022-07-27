@@ -3,6 +3,7 @@
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
+  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { LayerInfoMetadata, TreeNode } from '$lib/types'
   import { clean, fetchUrl, getActiveBandIndex, getBase64EncodedUrl, hash } from '$lib/helper'
@@ -143,6 +144,10 @@
     use:popperContent={popperOptions}
     transition:fade
     use:clickOutside={handleClose}>
+    <div class="close is-clickable" alt="Close popup" title="Close popup" on:click={handleClose}>
+      <Fa icon={faXmark} size="sm" />
+    </div>
+
     <div class="bucket-card">
       <div class="columns is-vcentered is-mobile">
         <div class="column is-full">
@@ -223,5 +228,10 @@
 
   #tooltip {
     max-width: 450px;
+
+    .close {
+      text-align: right;
+      z-index: 100;
+    }
   }
 </style>
