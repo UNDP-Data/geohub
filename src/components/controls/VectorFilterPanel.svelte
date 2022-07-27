@@ -91,6 +91,7 @@
         ['get', expressionsArray[0]['property']],
         Number(expressionsArray[0]['value']),
       ])
+
       // Check if the label layer exists and if true, update the label layer with the new filter
       $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
         ? $map.setFilter(`${layerId}-label`, [
@@ -122,16 +123,22 @@
     } else {
       // No expression
     }
-    $map.on('error', () => {
-      // This error is thrown when the expression is not valid.
-      filteringError = true
-      const bannerErrorMessage: BannerMessage = {
-        type: StatusTypes.DANGER,
-        title: 'Whoops! Something went wrong.',
-        message: ErrorMessages.MAP_FILTER_NOT_APPLIED,
-      }
-      bannerMessages.update((data) => [...data, bannerErrorMessage])
+
+    $map.on('error', (err: ErrorEvent) => {
+      showBannerMessage(err.error)
     })
+  }
+
+  const showBannerMessage = (error: Error) => {
+    // This error is thrown when the expression is not valid.
+    filteringError = true
+    const bannerErrorMessage: BannerMessage = {
+      type: StatusTypes.WARNING,
+      title: 'Whoops! Something went wrong.',
+      message: ErrorMessages.MAP_FILTER_NOT_APPLIED,
+      error,
+    }
+    bannerMessages.update((data) => [...data, bannerErrorMessage])
   }
 
   // Remove an operation/property/value from the expression when the x-button in the tag is clicked
