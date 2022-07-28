@@ -594,8 +594,8 @@
       padding-left: 5px;
       text-overflow: ellipsis;
       width: 100%;
-      text-align: justify;
-      text-justify: inter-word;
+      //text-align: justify;
+      //text-justify: inter-word;
 
       @media (prefers-color-scheme: dark) {
         color: white;
