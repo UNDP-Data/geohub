@@ -219,8 +219,9 @@
         type: StatusTypes.DANGER,
         title: 'Expression Error',
         message: ErrorMessages.EXPRESSION_INVALID,
+        error: e,
       }
-      $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
+      bannerMessages.update((current) => [...current, bannerErrorMessage])
     }
   }
 
