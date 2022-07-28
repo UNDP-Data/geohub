@@ -10,7 +10,6 @@
   import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import { DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, map } from '$stores'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { debounce } from 'lodash-es'
 
   export let layer: Layer
@@ -29,7 +28,7 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable
+  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable || true
   let editingExpressionIndex = 0
   let expressions = layer.expressions || [{}]
   let combiningOperators = []
@@ -154,7 +153,6 @@
           layer.info.stats = exprStats
           layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
           const band = Object.keys(exprStats)[bandIndex]
-          // console.log(band)
           updatedParams = { expression: layer.expression.replaceAll(',', '') }
           if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
             updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
@@ -397,12 +395,7 @@
       </div>
     </div>
     {#if showExpressionBuilder}
-      <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        transition:fade
-        use:clickOutside={() => (showExpressionBuilder = false)}>
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <RasterExpressionBuilder
           bind:simpleExpressionAvailable
           on:handleComparisonButtonClick={handleComparisonButtonClick}
@@ -420,16 +413,19 @@
   <div class="columns" style="width: 100%">
     <div class="column" style="width: 100%; justify-content: space-between">
       <button
+        style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button is-primary is-light is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '&'])}>
         AND
       </button>
       <button
+        style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button is-primary is-light is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '|'])}>
         OR
       </button>
       <button
+        style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button is-primary is-light is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '~'])}>
         NOT
