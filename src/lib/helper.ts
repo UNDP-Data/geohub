@@ -104,6 +104,7 @@ export async function fetchUrl(url: string) {
       type: StatusTypes.DANGER,
       title: 'Whoops! Something went wrong.',
       message: ErrorMessages.FETCH_TIMEOUT,
+      error: error,
     }
     bannerMessages.update((data) => [...data, bannerErrorMessage])
     return null

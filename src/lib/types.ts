@@ -211,12 +211,11 @@ export interface LayerInfoMetadata {
   source?: string
   description?: string
   unit?: string
-  visible: boolean
 }
 
-export interface Error {
-  code: string
-}
+// export interface Error {
+//   code: string
+// }
 
 export interface Layericon {
   id: string
@@ -247,6 +246,7 @@ export interface BannerMessage {
   type: StatusTypes
   title: string
   message: string
+  error?: Error
 }
 
 export interface Bucket {
