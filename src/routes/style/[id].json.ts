@@ -1,4 +1,5 @@
-import { Pool } from 'pg'
+import pkg from 'pg'
+const { Pool } = pkg
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
