@@ -59,8 +59,7 @@
     style.center = [center.lng, center.lat]
     style.bearing = $map.getBearing()
     style.pitch = $map.getPitch()
-
-    // const json = JSON.stringify(style, null, 2)
+    style.zoom = $map.getZoom()
 
     const data = {
       name: style.name,
@@ -73,7 +72,6 @@
     })
     const resjson = await res.json()
     styleURL = resjson.url
-    // downloadFile(fileName, json)
   }
 
   const handleClose = () => {
