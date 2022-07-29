@@ -9,7 +9,7 @@
   import { faChalkboardUser } from '@fortawesome/free-solid-svg-icons/faChalkboardUser'
   import Tooltip, { Wrapper } from '@smui/tooltip'
 
-  import StyleDownloader from '$components/StyleDownloader.svelte'
+  import StyleShare from '$components/StyleShare.svelte'
 
   export let drawerOpen = true
   export let panelOpen = true
@@ -49,7 +49,7 @@
       </Wrapper>
 
       <Wrapper>
-        <StyleDownloader />
+        <StyleShare />
         <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
       </Wrapper>
 
