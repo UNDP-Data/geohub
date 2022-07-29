@@ -179,6 +179,8 @@
         // simple expression is not available.
         let updatedParams = {}
         const expList = expressions.map((expr) => `(${expr.band}${expr.operator}${expr.value})`)
+
+        // This will combine the user inputs into one big complex expression string
         const complexExpression = expList
           .map((item, index) => {
             if (index === 0) {
