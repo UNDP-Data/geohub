@@ -35,7 +35,6 @@
       icon: faArrowDown19,
       operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')'],
       isVisible: true,
-      disabled: false,
     },
     {
       name: 'comparison',
@@ -44,7 +43,6 @@
       operators: ['=', '!=', '>=', '<', '>', '<='],
       isVisible: true,
     },
-
     {
       name: 'functions',
       title: 'Functions',
@@ -145,6 +143,7 @@
     <div class="container">
       {#each operatorCategories as operCat}
         <OpCat
+          bind:simpleExpressionAvailable
           on:NumbersButtonClick={handleNumberButtonClick}
           on:ArithmeticButtonClick={handleArithmeticButtonClick}
           on:ComparisonButtonClick={handleComparisonButtonClick}

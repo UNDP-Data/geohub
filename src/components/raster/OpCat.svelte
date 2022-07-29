@@ -3,6 +3,7 @@
   import type { OperatorCategory } from '$lib/types'
   export let operatorCategory: OperatorCategory
   const dispatch = createEventDispatcher()
+  export let simpleExpressionAvailable
 </script>
 
 <div class={operatorCategory.isVisible ? 'content' : 'is-hidden'}>
@@ -11,6 +12,8 @@
     {#each operatorCategory.operators as operator}
       <div class="oper">
         <button
+          disabled={(operatorCategory.name === 'arithmetic' && !simpleExpressionAvailable) ||
+            (operatorCategory.name === 'comparison' && simpleExpressionAvailable)}
           class="button is-small fixedw "
           on:click={() => {
             dispatch(`${operatorCategory.title}ButtonClick`, { operator })
