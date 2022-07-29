@@ -10,9 +10,22 @@ import type {
 import { get } from 'svelte/store'
 import Clipper from 'image-clipper'
 import mime from 'mime'
-import type { BannerMessage, RasterTileMetadata, SpriteIcon, SpriteImage, VectorLayerTileStatAttribute } from './types'
+import type {
+  BannerMessage,
+  IntervalLegendColorMapRow,
+  Layer,
+  RasterTileMetadata,
+  SpriteIcon,
+  SpriteImage,
+} from './types'
 import { bannerMessages, map } from '$stores'
-import { ClassificationMethodTypes, DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from './constants'
+import {
+  ClassificationMethodTypes,
+  DEFAULT_TIMEOUT_MS,
+  ErrorMessages,
+  NO_RANDOM_SAMPLING_POINTS,
+  StatusTypes,
+} from './constants'
 import { Jenks } from './jenks'
 import chroma from 'chroma-js'
 
@@ -53,7 +66,7 @@ export const stringifyStyleJSON = (style: JSON): string => {
 
 export const loadImageToDataUrl = async (url: string): Promise<string> => {
   const blob = await fetch(url).then((r) => r.blob())
-  const dataUrl: string = await new Promise((resolve) => {
+  return await new Promise((resolve) => {
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === 'string') {
@@ -62,7 +75,6 @@ export const loadImageToDataUrl = async (url: string): Promise<string> => {
     }
     reader.readAsDataURL(blob)
   })
-  return dataUrl
 }
 
 export const clipSprite = (url: string, id: string, icon: SpriteIcon): Promise<SpriteImage> => {
@@ -227,8 +239,7 @@ export const getIntervalList = (
  * @returns tilestats information
  */
 export const getVectorInfo = async (pbfPath: string, layerName: string) => {
-  const data = await fetchUrl(`vectorinfo.json?path=${pbfPath}&layer_name=${layerName}`)
-  return data
+  return await fetchUrl(`vectorinfo.json?path=${pbfPath}&layer_name=${layerName}`)
 }
 
 export const groupByN = (n: number, data: any[]) => {
@@ -269,4 +280,85 @@ export const getActiveBandIndex = (metadata: RasterTileMetadata) => {
     metadata.active_band_no = metadata.band_metadata[bandIndex][0]
   }
   return bandIndex
+}
+
+export const generateColorMap = (
+  layer: Layer,
+  layerMin: number,
+  layerMax: number,
+  numberOfClasses: number,
+  classificationMethod: ClassificationMethodTypes,
+  isClassificationMethodEdited: boolean,
+  percentile98: number,
+) => {
+  const colorMap = []
+  if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
+    const randomSample = getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
+    const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
+    const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+    for (let i = 0; i <= numberOfClasses - 2; i++) {
+      const row: IntervalLegendColorMapRow = {
+        index: i,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        color: [...scaleColorList(intervalList[i]).rgb(), 255],
+        start:
+          isClassificationMethodEdited == false &&
+          layer.intervals.colorMapRows.length > 0 &&
+          layer.intervals.numberOfClasses === numberOfClasses &&
+          layer.intervals.colorMapRows[i]?.start
+            ? layer.intervals.colorMapRows[i].start
+            : intervalList[i],
+        end:
+          isClassificationMethodEdited == false &&
+          layer.intervals.colorMapRows.length > 0 &&
+          layer.intervals.numberOfClasses === numberOfClasses &&
+          layer.intervals.colorMapRows[i]?.end
+            ? layer.intervals.colorMapRows[i].end
+            : intervalList[i + 1],
+      }
+      colorMap.push(row)
+    }
+    const lastRow: IntervalLegendColorMapRow = {
+      index: numberOfClasses - 1,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      color: [...scaleColorList(intervalList[numberOfClasses - 1]).rgb(), 255],
+      start: Math.floor(percentile98),
+      end: Math.ceil(layerMax),
+    }
+    colorMap.push(lastRow)
+    const replaceIndex = colorMap[colorMap.length - 2]
+    replaceIndex['end'] = Math.floor(percentile98)
+
+    colorMap.splice(colorMap.length - 2, replaceIndex)
+  } else {
+    const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
+    const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
+    const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+    for (let i = 0; i <= numberOfClasses - 1; i++) {
+      const row: IntervalLegendColorMapRow = {
+        index: i,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        color: [...scaleColorList(intervalList[i]).rgb(), 255],
+        start:
+          isClassificationMethodEdited == false &&
+          layer.intervals.colorMapRows.length > 0 &&
+          layer.intervals.numberOfClasses === numberOfClasses &&
+          layer.intervals.colorMapRows[i]?.start
+            ? layer.intervals.colorMapRows[i].start
+            : intervalList[i],
+        end:
+          isClassificationMethodEdited == false &&
+          layer.intervals.colorMapRows.length > 0 &&
+          layer.intervals.numberOfClasses === numberOfClasses &&
+          layer.intervals.colorMapRows[i]?.end
+            ? layer.intervals.colorMapRows[i].end
+            : intervalList[i + 1],
+      }
+      colorMap.push(row)
+    }
+  }
+  return colorMap
 }

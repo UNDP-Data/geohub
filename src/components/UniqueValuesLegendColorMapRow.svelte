@@ -121,7 +121,6 @@
       type="text"
       value={colorMapRow.start} />
   </div>
-
   <div class="column maximum">
     <input
       id="maximum"

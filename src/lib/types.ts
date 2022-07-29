@@ -64,6 +64,7 @@ export interface Layer {
   fillColor?: string
   fillOutlineColor?: string
   zoomLevel?: number
+  percentile98?: number
 }
 
 export interface BandStatistics {

@@ -66,17 +66,17 @@
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
-        colorMap[remapInputValue(key, layerMin, layerMax)] = color
+
+        colorMap[parseInt(remapInputValue(key, layerMin, layerMax))] = color
         colorMapRows.push({ index, color, start: key, end: row.name })
         index++
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
-
       // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
-        colorMap[remapInputValue(row.start, layerMin, layerMax)] = row.color
+        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax))] = row.color
       })
     }
 

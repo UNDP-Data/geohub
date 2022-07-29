@@ -13,6 +13,7 @@
 
   let activeOperatorCategory = ''
   export let layer: Layer
+  export let simpleExpressionAvailable
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const bandIndex = getActiveBandIndex(layer.info)
@@ -27,7 +28,6 @@
       icon: faPlusMinus,
       operators: ['*', '/', '+', '-', '%', '**'],
       isVisible: true,
-      disabled: false,
     },
     {
       name: 'numbers',
@@ -43,7 +43,6 @@
       icon: faEquals,
       operators: ['=', '!=', '>=', '<', '>', '<='],
       isVisible: true,
-      disabled: false,
     },
 
     {
@@ -52,7 +51,6 @@
       icon: faSquareRootVariable,
       operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'where'],
       isVisible: true,
-      disabled: false,
     },
   ]
 
@@ -84,6 +82,7 @@
   }
   const handleFunctionsButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator === 'where') {
+      simpleExpressionAvailable = false
       dispatch('handleWhereFunctionClick', { operator: 'where' })
     } else {
       const operator: string = event.detail.operator

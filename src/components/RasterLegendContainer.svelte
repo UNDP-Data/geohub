@@ -71,8 +71,7 @@
 
   const hasLayerUniqueValues = () => {
     const stats = layer.info.band_metadata[bandIndex][1]
-    const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
-    return val
+    return Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
   }
 
   const handleColorMapClick = (event: CustomEvent) => {
