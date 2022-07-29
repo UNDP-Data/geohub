@@ -51,7 +51,7 @@
       new MaplibreLegendControl(
         {},
         {
-          showDefault: true,
+          showDefault: false,
           showCheckbox: true,
           reverseOrder: true,
           onlyRendered: true,
