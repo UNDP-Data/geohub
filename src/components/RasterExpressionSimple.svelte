@@ -208,10 +208,10 @@
         }
         // Need to convert the legend type to unique values.
         layer.legendType = DynamicLayerLegendTypes.UNIQUE
-        layer.info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'] = [
-          { value: Number(trueStatement.statement), name: trueStatement.statement },
-          { value: Number(falseStatement.statement), name: falseStatement.statement },
-        ]
+        layer.info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'] = JSON.stringify([
+          { value: trueStatement.statement, name: trueStatement.statement },
+          { value: falseStatement.statement, name: falseStatement.statement },
+        ])
         // ToDo: Set unique values to the layer with STATISTIC_UNIQUE_VALUES
         layerURL.searchParams.delete('expression')
         updateParamsInURL(layer.definition, layerURL, updatedParams)

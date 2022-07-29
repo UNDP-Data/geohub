@@ -121,15 +121,15 @@
       type="text"
       value={colorMapRow.start} />
   </div>
-  <!--  <div class="column maximum">-->
-  <!--    <input-->
-  <!--      id="maximum"-->
-  <!--      alt="End Value"-->
-  <!--      title="End Value"-->
-  <!--      class="input is-small is-static"-->
-  <!--      type="text"-->
-  <!--      value={colorMapRow.end} />-->
-  <!--  </div>-->
+  <div class="column maximum">
+    <input
+      id="maximum"
+      alt="End Value"
+      title="End Value"
+      class="input is-small is-static"
+      type="text"
+      value={colorMapRow.end} />
+  </div>
 </div>
 
 <style lang="scss">

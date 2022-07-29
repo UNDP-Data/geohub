@@ -57,7 +57,7 @@
 
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-      const layerUniqueValues = info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+      const layerUniqueValues = JSON.parse(info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'])
       colorMap = {}
       let index = 0
 
