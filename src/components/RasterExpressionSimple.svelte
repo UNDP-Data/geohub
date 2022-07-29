@@ -1,17 +1,16 @@
 <script lang="ts">
   import RasterExpressionBuilder from '$components/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
-  import type { Layer, RasterLayerStats } from '$lib/types'
+  import type { BannerMessage, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import { DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, map } from '$stores'
-  import { clickOutside } from 'svelte-use-click-outside'
-  import type { RasterTileMetadata, BannerMessage } from '$lib/types'
+  import { debounce } from 'lodash-es'
 
   export let layer: Layer
 
@@ -24,13 +23,12 @@
   const layerURL = new URL(layerSrc.tiles[0])
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
-
   let showExpressionBuilder = false
 
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable = true
+  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable || true
   let editingExpressionIndex = 0
   let expressions = layer.expressions || [{}]
   let combiningOperators = []
@@ -86,10 +84,7 @@
   // Whenever the number is clicked, concatenate it to the numbers var
   const handleFunctionButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator) {
-      const operator = event.detail.operator
-      numbers = numbers.concat(operator)
       expressions[editingExpressionIndex].band = band
-      expressions[editingExpressionIndex].value = numbers
       if (trueStatement.underEdit) {
         statement = statement.concat(event.detail.operator)
         trueStatement.statement = statement
@@ -158,13 +153,25 @@
           layer.info.stats = exprStats
           layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
           const band = Object.keys(exprStats)[bandIndex]
-          // console.log(band)
           updatedParams = { expression: layer.expression.replaceAll(',', '') }
           if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
             updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
             layer.continuous.minimum = Number(layer.info.stats[band].min)
             layer.continuous.maximum = Number(layer.info.stats[band].max)
+          } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
+            layer.percentile98 = layer.info.stats[band].percentile_98
+            layer.intervals.colorMapRows = generateColorMap(
+              layer,
+              layer.info.stats[band].min,
+              layer.info.stats[band].max,
+              layer.intervals.numberOfClasses,
+              layer.intervals.classification,
+              true,
+              layer.info.stats[band].percentile_98,
+            )
+            handleParamsUpdate()
           }
+          // Delete the expression in the url if already exists and update the url
           layerURL.searchParams.delete('expression')
           updateParamsInURL(layer.definition, layerURL, updatedParams)
         }
@@ -172,6 +179,8 @@
         // simple expression is not available.
         let updatedParams = {}
         const expList = expressions.map((expr) => `(${expr.band}${expr.operator}${expr.value})`)
+
+        // This will combine the user inputs into one big complex expression string
         const complexExpression = expList
           .map((item, index) => {
             if (index === 0) {
@@ -197,6 +206,13 @@
           layer.continuous.minimum = Number(layer.info.stats[band].min)
           layer.continuous.maximum = Number(layer.info.stats[band].max)
         }
+        // Need to convert the legend type to unique values.
+        layer.legendType = DynamicLayerLegendTypes.UNIQUE
+        layer.info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'] = JSON.stringify([
+          { value: trueStatement.statement, name: trueStatement.statement },
+          { value: falseStatement.statement, name: falseStatement.statement },
+        ])
+        // ToDo: Set unique values to the layer with STATISTIC_UNIQUE_VALUES
         layerURL.searchParams.delete('expression')
         updateParamsInURL(layer.definition, layerURL, updatedParams)
       }
@@ -205,8 +221,9 @@
         type: StatusTypes.DANGER,
         title: 'Expression Error',
         message: ErrorMessages.EXPRESSION_INVALID,
+        error: e,
       }
-      $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
+      bannerMessages.update((current) => [...current, bannerErrorMessage])
     }
   }
 
@@ -214,8 +231,6 @@
     simpleExpressionAvailable = true
     editingExpressionIndex = 0
     expressions = [{}]
-    const layerSrc = $map.getSource(layer.definition.source)
-    const layerURL = new URL(layerSrc.tiles[0])
     expression = ''
     layer.expression = expression
     //handleApplyExpression()
@@ -228,6 +243,17 @@
         updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
         layer.continuous.minimum = Number(layer.info.stats[band].min)
         layer.continuous.maximum = Number(layer.info.stats[band].max)
+      } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
+        layer.intervals.colorMapRows = generateColorMap(
+          layer,
+          layer.info.stats[band].min,
+          layer.info.stats[band].max,
+          layer.intervals.numberOfClasses,
+          layer.intervals.classification,
+          true,
+          layer.info.stats[band].percentile_98,
+        )
+        handleParamsUpdate()
       }
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
@@ -268,6 +294,16 @@
     editingExpressionIndex = index
     numbers = ''
   }
+
+  const handleParamsUpdate = debounce(() => {
+    const encodeColorMapRows = JSON.stringify(
+      layer.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
+    )
+    layerURL.searchParams.delete('colormap_name')
+    layerURL.searchParams.delete('rescale')
+    const updatedParams = Object.assign({ colormap: encodeColorMapRows })
+    updateParamsInURL(layer.definition, layerURL, updatedParams)
+  }, 500)
 </script>
 
 <div class="container">
@@ -362,13 +398,9 @@
       </div>
     </div>
     {#if showExpressionBuilder}
-      <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        transition:fade
-        use:clickOutside={() => (showExpressionBuilder = false)}>
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <RasterExpressionBuilder
+          bind:simpleExpressionAvailable
           on:handleComparisonButtonClick={handleComparisonButtonClick}
           on:handleFunctionButtonClick={handleFunctionButtonClick}
           on:handleArithmeticButtonClick={handleArithmeticButtonClick}
@@ -384,16 +416,19 @@
   <div class="columns" style="width: 100%">
     <div class="column" style="width: 100%; justify-content: space-between">
       <button
+        style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button is-primary is-light is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '&'])}>
         AND
       </button>
       <button
+        style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button is-primary is-light is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '|'])}>
         OR
       </button>
       <button
+        style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button is-primary is-light is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '~'])}>
         NOT
