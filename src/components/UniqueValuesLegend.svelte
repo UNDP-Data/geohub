@@ -57,7 +57,11 @@
 
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-      const layerUniqueValues = JSON.parse(info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'])
+      const uValues = info.stats[info.active_band_no]['histogram'][1]
+      const layerUniqueValues = uValues.map((v) => {
+        return { name: v, value: v }
+      })
+
       colorMap = {}
       let index = 0
 
@@ -66,7 +70,9 @@
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
-        colorMap[remapInputValue(key, layerMin, layerMax)] = color
+
+        colorMap[parseInt(remapInputValue(key, layerMin, layerMax))] = color
+        //colorMap[key] = color
         colorMapRows.push({ index, color, start: key, end: row.name })
         index++
       })
@@ -76,7 +82,7 @@
       // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
-        colorMap[remapInputValue(row.start, layerMin, layerMax)] = row.color
+        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax))] = row.color
       })
     }
 
@@ -125,4 +131,12 @@
 </div>
 
 <style lang="scss">
+  .unique-view-container1 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    // grid-template-rows: repeat(auto-fill, 120px);
+    // grid-row-gap: .5em;
+    // grid-column-gap: 1em;
+  }
 </style>

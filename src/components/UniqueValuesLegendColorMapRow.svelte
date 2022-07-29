@@ -115,22 +115,23 @@
   <div class="column is-1 minimum">
     <input
       id="minimum"
-      alt="Start Value"
-      title="Start Value"
+      alt="value"
+      title="value"
       class="input is-small is-static"
       type="text"
       value={colorMapRow.start} />
   </div>
-
-  <div class="column maximum">
-    <input
-      id="maximum"
-      alt="End Value"
-      title="End Value"
-      class="input is-small is-static"
-      type="text"
-      value={colorMapRow.end} />
-  </div>
+  {#if colorMapRow.start != colorMapRow.end}
+    <div class="column maximum">
+      <input
+        id="maximum"
+        alt="label"
+        title="label"
+        class="input is-small is-static"
+        type="text"
+        value={colorMapRow.end} />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
