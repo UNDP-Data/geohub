@@ -19,7 +19,6 @@
   const bandIndex = getActiveBandIndex(layer.info)
   const layerMin = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM']).toFixed(2)
   const layerMax = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM']).toFixed(2)
-
   const dispatch = createEventDispatcher()
   const operatorCategories: Array<OperatorCategory> = [
     {

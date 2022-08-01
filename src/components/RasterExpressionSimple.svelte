@@ -28,7 +28,7 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable || true
+  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable
   let editingExpressionIndex = 0
   let expressions = layer.expressions || [{}]
   let combiningOperators = []
@@ -160,6 +160,9 @@
             layer.continuous.maximum = Number(layer.info.stats[band].max)
           } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
             layer.percentile98 = layer.info.stats[band].percentile_98
+            info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'] = layer.info.stats[band].max
+            info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'] = layer.info.stats[band].min
+
             layer.intervals.colorMapRows = generateColorMap(
               layer,
               layer.info.stats[band].min,
@@ -239,11 +242,19 @@
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
       layer.info.stats = await fetchUrl(statsUrl.toString())
       const band = Object.keys(layer.info.stats)[bandIndex]
+
+      // resetting the percentile_98 parameter to the default value.
+      layer.percentile98 = layer.info.stats[band].percentile_98
+
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
         updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
         layer.continuous.minimum = Number(layer.info.stats[band].min)
         layer.continuous.maximum = Number(layer.info.stats[band].max)
       } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
+        info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'] = Number(layer.info.stats[band].max)
+        info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'] = Number(layer.info.stats[band].min)
+
+        // generate new colormaps with the default values.
         layer.intervals.colorMapRows = generateColorMap(
           layer,
           layer.info.stats[band].min,
@@ -251,7 +262,7 @@
           layer.intervals.numberOfClasses,
           layer.intervals.classification,
           true,
-          layer.info.stats[band].percentile_98,
+          layer.percentile98,
         )
         handleParamsUpdate()
       }

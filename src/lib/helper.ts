@@ -329,8 +329,8 @@ export const generateColorMap = (
     }
     colorMap.push(lastRow)
     const replaceIndex = colorMap[colorMap.length - 2]
-    replaceIndex['end'] = Math.floor(percentile98)
 
+    replaceIndex['end'] = Math.floor(percentile98)
     colorMap.splice(colorMap.length - 2, replaceIndex)
   } else {
     const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
