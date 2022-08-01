@@ -28,7 +28,8 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable || true
+  let simpleExpressionAvailable: boolean =
+    layer.simpleExpressionAvailable === undefined ? true : layer.simpleExpressionAvailable
   let editingExpressionIndex = 0
   let expressions = layer.expressions || [{}]
   let combiningOperators = []
@@ -81,7 +82,7 @@
     }
   }
 
-  // Whenever the number is clicked, concatenate it to the numbers var
+  // Whenever the function is clicked, concatenate it to the numbers var
   const handleFunctionButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator) {
       expressions[editingExpressionIndex].band = band
@@ -96,6 +97,8 @@
       }
     }
   }
+
+  // Whenever the comparison operator is clicked, update the expression object in the operator property
   const handleComparisonButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       // comparison operator is not available in simple expression.
@@ -106,6 +109,7 @@
     expression = expression.concat(event.detail.operator)
   }
 
+  // Whenever the where button is clicked, create a new complex expression
   const handleWhereButtonClick = () => {
     simpleExpressionAvailable = false
     layer.simpleExpressionAvailable = simpleExpressionAvailable
@@ -118,6 +122,7 @@
     }
   }
 
+  // Whenever the number button is clicked, concatenate it to the numbers
   const handleNumberButtonClick = (event: CustomEvent) => {
     expression = expression.concat(numbers).concat(',')
     if (simpleExpressionAvailable) {
@@ -138,6 +143,7 @@
     }
   }
 
+  // Apply the expression
   const applyExpression = async () => {
     try {
       if (simpleExpressionAvailable) {
@@ -160,6 +166,9 @@
             layer.continuous.maximum = Number(layer.info.stats[band].max)
           } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
             layer.percentile98 = layer.info.stats[band].percentile_98
+            info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'] = layer.info.stats[band].max
+            info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'] = layer.info.stats[band].min
+
             layer.intervals.colorMapRows = generateColorMap(
               layer,
               layer.info.stats[band].min,
@@ -227,23 +236,32 @@
     }
   }
 
+  // Clear the expression, reset the map, legend and other relevant components to the initial state when without the expression
   const clearAppliedExpression = async () => {
     simpleExpressionAvailable = true
+    layer.simpleExpressionAvailable = simpleExpressionAvailable
     editingExpressionIndex = 0
     expressions = [{}]
     expression = ''
     layer.expression = expression
-    //handleApplyExpression()
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
       layer.info.stats = await fetchUrl(statsUrl.toString())
       const band = Object.keys(layer.info.stats)[bandIndex]
+
+      // resetting the percentile_98 parameter to the default value.
+      layer.percentile98 = layer.info.stats[band].percentile_98
+
       if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
         updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
         layer.continuous.minimum = Number(layer.info.stats[band].min)
         layer.continuous.maximum = Number(layer.info.stats[band].max)
       } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
+        info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'] = Number(layer.info.stats[band].max)
+        info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'] = Number(layer.info.stats[band].min)
+
+        // generate new colormaps with the default values.
         layer.intervals.colorMapRows = generateColorMap(
           layer,
           layer.info.stats[band].min,
@@ -251,7 +269,7 @@
           layer.intervals.numberOfClasses,
           layer.intervals.classification,
           true,
-          layer.info.stats[band].percentile_98,
+          layer.percentile98,
         )
         handleParamsUpdate()
       }
@@ -260,6 +278,7 @@
     }
   }
 
+  // Remove a single tag when the x icon is clicked
   const handleRemoveItem = (key) => {
     if (simpleExpressionAvailable) {
       key === 'value' ? (numbers = '') : null
@@ -268,6 +287,7 @@
     }
   }
 
+  // For complex exressiosn, add a new condition to the array of expression
   const addNewCondition = () => {
     expressions = [
       ...expressions,
@@ -280,6 +300,7 @@
     editingExpressionIndex = expressions.length - 1
   }
 
+  // remove an entire expression when the X button is available in the case of complex expressions
   const removeConditionAtIndex = (index) => {
     expressions = expressions.filter((_, i) => i !== editingExpressionIndex)
     editingExpressionIndex = expressions.length - 1
@@ -290,11 +311,13 @@
     }
   }
 
+  // Change the editable expression to the most recent one where the button with pen icon is clicked
   const changeEditingIndexTo = (index) => {
     editingExpressionIndex = index
     numbers = ''
   }
 
+  // update parameters in url
   const handleParamsUpdate = debounce(() => {
     const encodeColorMapRows = JSON.stringify(
       layer.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
@@ -313,7 +336,7 @@
         {#each Object.keys(expressions[0]) as key}
           <span
             style="cursor: pointer; margin: 1%;"
-            class="tag is-large {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
+            class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
             {expressions[0][`${key}`]}
             <button
               style="display:{key === 'band' ? 'none' : null}"

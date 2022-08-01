@@ -306,7 +306,6 @@ export interface OperatorCategory {
   icon: IconDefinition
   operators: Array<string>
   isVisible: boolean
-  disabled: boolean
 }
 
 export interface MartinLayerMetadata {

@@ -19,7 +19,6 @@
   const bandIndex = getActiveBandIndex(layer.info)
   const layerMin = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM']).toFixed(2)
   const layerMax = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM']).toFixed(2)
-
   const dispatch = createEventDispatcher()
   const operatorCategories: Array<OperatorCategory> = [
     {
@@ -35,7 +34,6 @@
       icon: faArrowDown19,
       operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')'],
       isVisible: true,
-      disabled: false,
     },
     {
       name: 'comparison',
@@ -44,7 +42,6 @@
       operators: ['=', '!=', '>=', '<', '>', '<='],
       isVisible: true,
     },
-
     {
       name: 'functions',
       title: 'Functions',
@@ -145,6 +142,7 @@
     <div class="container">
       {#each operatorCategories as operCat}
         <OpCat
+          bind:simpleExpressionAvailable
           on:NumbersButtonClick={handleNumberButtonClick}
           on:ArithmeticButtonClick={handleArithmeticButtonClick}
           on:ComparisonButtonClick={handleComparisonButtonClick}
