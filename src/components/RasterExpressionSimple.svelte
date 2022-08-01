@@ -82,7 +82,7 @@
     }
   }
 
-  // Whenever the number is clicked, concatenate it to the numbers var
+  // Whenever the function is clicked, concatenate it to the numbers var
   const handleFunctionButtonClick = (event: CustomEvent) => {
     if (event?.detail?.operator) {
       expressions[editingExpressionIndex].band = band
@@ -97,6 +97,8 @@
       }
     }
   }
+
+  // Whenever the comparison operator is clicked, update the expression object in the operator property
   const handleComparisonButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       // comparison operator is not available in simple expression.
@@ -107,6 +109,7 @@
     expression = expression.concat(event.detail.operator)
   }
 
+  // Whenever the where button is clicked, create a new complex expression
   const handleWhereButtonClick = () => {
     simpleExpressionAvailable = false
     layer.simpleExpressionAvailable = simpleExpressionAvailable
@@ -119,6 +122,7 @@
     }
   }
 
+  // Whenever the number button is clicked, concatenate it to the numbers
   const handleNumberButtonClick = (event: CustomEvent) => {
     expression = expression.concat(numbers).concat(',')
     if (simpleExpressionAvailable) {
@@ -139,6 +143,7 @@
     }
   }
 
+  // Apply the expression
   const applyExpression = async () => {
     try {
       if (simpleExpressionAvailable) {
@@ -231,6 +236,7 @@
     }
   }
 
+  // Clear the expression, reset the map, legend and other relevant components to the initial state when without the expression
   const clearAppliedExpression = async () => {
     simpleExpressionAvailable = true
     layer.simpleExpressionAvailable = simpleExpressionAvailable
@@ -272,6 +278,7 @@
     }
   }
 
+  // Remove a single tag when the x icon is clicked
   const handleRemoveItem = (key) => {
     if (simpleExpressionAvailable) {
       key === 'value' ? (numbers = '') : null
@@ -280,6 +287,7 @@
     }
   }
 
+  // For complex exressiosn, add a new condition to the array of expression
   const addNewCondition = () => {
     expressions = [
       ...expressions,
@@ -292,6 +300,7 @@
     editingExpressionIndex = expressions.length - 1
   }
 
+  // remove an entire expression when the X button is available in the case of complex expressions
   const removeConditionAtIndex = (index) => {
     expressions = expressions.filter((_, i) => i !== editingExpressionIndex)
     editingExpressionIndex = expressions.length - 1
@@ -302,11 +311,13 @@
     }
   }
 
+  // Change the editable expression to the most recent one where the button with pen icon is clicked
   const changeEditingIndexTo = (index) => {
     editingExpressionIndex = index
     numbers = ''
   }
 
+  // update parameters in url
   const handleParamsUpdate = debounce(() => {
     const encodeColorMapRows = JSON.stringify(
       layer.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
