@@ -336,7 +336,7 @@
         {#each Object.keys(expressions[0]) as key}
           <span
             style="cursor: pointer; margin: 1%;"
-            class="tag is-large {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
+            class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
             {expressions[0][`${key}`]}
             <button
               style="display:{key === 'band' ? 'none' : null}"
