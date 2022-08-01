@@ -140,6 +140,5 @@
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
-
   }
 </style>
