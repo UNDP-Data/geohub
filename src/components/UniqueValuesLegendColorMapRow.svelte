@@ -94,7 +94,39 @@
   }
 </script>
 
-<div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
+<div class="columns is-vcentered colormap-editor" data-testid="unique-legend-color-map-row-container">
+  <div class="column is-3 color-picker">
+    <div
+      id={`interval-${colorMapRow.index}`}
+      on:click={() => handleColorPickerClick()}
+      use:popperRef
+      class="discrete"
+      alt="Color Picker"
+      title="Color Picker"
+      style={colorPickerStyle} />
+  </div>
+  {#if showToolTip && color}
+    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+      <div id="arrow" data-popper-arrow />
+    </div>
+  {/if}
+  {#if colorMapRow.start != colorMapRow.end}
+    <div class="column  ">
+      &#x21A6; {colorMapRow.start}
+    </div>
+    <div class="column maximum">
+      - {colorMapRow.end}
+    </div>
+  {:else}
+    <div class="column is-2 minimum">&#x21A6;</div>
+    <div class="column is-11 minimum">
+      {colorMapRow.start}
+    </div>
+  {/if}
+</div>
+
+<!-- <div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
   <div class="column is-1 color-picker">
     <div
       id={`interval-${colorMapRow.index}`}
@@ -132,12 +164,11 @@
         value={colorMapRow.end} />
     </div>
   {/if}
-</div>
-
+</div> -->
 <style lang="scss">
   @import '../styles/popper.scss';
 
-  $input-margin: 5px !important;
+  $input-margin: 0px !important;
 
   .colormap-editor {
     margin-bottom: $input-margin;
@@ -147,7 +178,7 @@
     }
 
     .minimum {
-      margin-right: $input-margin;
+      //margin-right: $input-margin;
     }
 
     .discrete {

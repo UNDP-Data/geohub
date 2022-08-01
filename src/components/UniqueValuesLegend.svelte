@@ -57,6 +57,7 @@
 
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
+
       const uValues = info.stats[info.active_band_no]['histogram'][1]
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
@@ -119,6 +120,7 @@
   }
 </script>
 
+<div class="is-divider" data-content="Unique values" />
 <div class="unique-view-container" data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
@@ -131,12 +133,15 @@
 </div>
 
 <style lang="scss">
-  .unique-view-container1 {
+  .unique-view-container {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(10px, auto);
+    grid-auto-flow: row;
+    grid-template-columns: auto auto;
     // grid-template-rows: repeat(auto-fill, 120px);
     // grid-row-gap: .5em;
     // grid-column-gap: 1em;
+    border: 0px solid red;
   }
 </style>
