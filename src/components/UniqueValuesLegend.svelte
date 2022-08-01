@@ -134,14 +134,12 @@
 
 <style lang="scss">
   .unique-view-container {
-    width: 100%;
-    display: grid;
-    grid-auto-rows: minmax(10px, auto);
-    grid-auto-flow: row;
-    grid-template-columns: auto auto;
-    // grid-template-rows: repeat(auto-fill, 120px);
-    // grid-row-gap: .5em;
-    // grid-column-gap: 1em;
-    border: 0px solid red;
+    //width: 100%;
+    height: 330px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+
   }
 </style>
