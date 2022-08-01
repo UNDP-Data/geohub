@@ -28,7 +28,8 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable: boolean = layer.simpleExpressionAvailable
+  let simpleExpressionAvailable: boolean =
+    layer.simpleExpressionAvailable === undefined ? true : layer.simpleExpressionAvailable
   let editingExpressionIndex = 0
   let expressions = layer.expressions || [{}]
   let combiningOperators = []
@@ -232,11 +233,11 @@
 
   const clearAppliedExpression = async () => {
     simpleExpressionAvailable = true
+    layer.simpleExpressionAvailable = simpleExpressionAvailable
     editingExpressionIndex = 0
     expressions = [{}]
     expression = ''
     layer.expression = expression
-    //handleApplyExpression()
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
