@@ -67,15 +67,14 @@
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
       const layerStats = await fetchUrl(statsURL)
       // const band = info.active_band_no
-      
     }
     if (!('stats' in info)) {
-        info = { ...info, stats: layerStats }
-        layer = { ...layer, info: info }
-        const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : layer
-        })
-        layerList.set([...layers])
+      info = { ...info, stats: layerStats }
+      layer = { ...layer, info: info }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : layer
+      })
+      layerList.set([...layers])
     }
 
     layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
@@ -97,7 +96,7 @@
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
     const bandName = Object.keys(layer.info.stats)
-    
+
     layerHasUniqueValues = Number(layer.info.stats[bandName]['unique']) > COLOR_CLASS_COUNT_MAXIMUM ? false : true
     console.log(`evaluating UV ${layerHasUniqueValues}`)
 

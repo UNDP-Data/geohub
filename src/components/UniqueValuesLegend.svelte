@@ -64,7 +64,7 @@
       layerMax = layerConfig.info.stats[bandName]['max']
       setColorMap()
       const uValues = info.stats[bandName]['histogram'][1]
-      
+
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
       })
