@@ -135,7 +135,7 @@
 <style lang="scss">
   .unique-view-container {
     //width: 100%;
-    height: 330px;
+    max-height: 330px;
     display: flex;
     align-items: center;
     flex-direction: column;
