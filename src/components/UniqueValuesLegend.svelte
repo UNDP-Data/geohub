@@ -31,8 +31,8 @@
     // @ts-ignore
   ;({ definition, info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
-  const layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
+  let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
+  let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
@@ -54,11 +54,17 @@
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
     setColorMap()
-
+    if (layerURL.searchParams.has('rescale')) {
+      layerURL.searchParams.delete('rescale')
+    }
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-
-      const uValues = info.stats[info.active_band_no]['histogram'][1]
+      const bandName = Object.keys(layerConfig.info.stats)
+      layerMin = layerConfig.info.stats[bandName]['min']
+      layerMax = layerConfig.info.stats[bandName]['max']
+      setColorMap()
+      const uValues = info.stats[bandName]['histogram'][1]
+      
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
       })
@@ -72,7 +78,7 @@
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
 
-        colorMap[parseInt(remapInputValue(key, layerMin, layerMax))] = color
+        colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
         //colorMap[key] = color
         colorMapRows.push({ index, color, start: key, end: row.name })
         index++
@@ -83,7 +89,7 @@
       // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
-        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax))] = row.color
+        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
     }
 

@@ -3,7 +3,7 @@
 
   import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
-  import { map } from '$stores'
+  import { map, layerList } from '$stores'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -63,6 +63,11 @@
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
+    const nlayer = { ...layer, info: info }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
   }
   const handleClearExpression = () => {
     expression = ''
@@ -89,6 +94,10 @@
           expression,
         )}`,
       )
+      console.log(exprStatUrl.searchParams.get('expression').includes('where'))
+      if (exprStatUrl.searchParams.get('expression').includes('where') ) {
+        exprStatUrl.searchParams.append('categorical', 'true')
+      }
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
       info.stats = exprStats
       layer.expression = expression
@@ -101,6 +110,13 @@
       }
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
+
+      
+      const nlayer = { ...layer, info: info }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
     }
   }
 </script>
