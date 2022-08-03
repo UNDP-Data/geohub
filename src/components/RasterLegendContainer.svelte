@@ -121,10 +121,16 @@
 
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
+      // const layerClone = cloneDeep(layer)
+      // layerClone.colorMapName = event.detail.colorMapName
+      // layer = layerClone
       colorPickerVisibleIndex = -1
+      //TODO write new layer to store
+      const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
     }
   }
 

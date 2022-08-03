@@ -42,7 +42,8 @@
 
   // reclassify upon change of color map (color map picker)
   $: {
-    if (layerConfig && colorMapName !== layerConfig.colorMapName) {
+    //if (layerConfig && colorMapName !== layerConfig.colorMapName) {
+    if (layerConfig) {
       colorMapName = layerConfig.colorMapName
       reclassifyImage()
     }

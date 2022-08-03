@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
   import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
@@ -55,12 +55,22 @@
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
-      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
-        layer.continuous.minimum = Number(info.stats[band].min)
-        layer.continuous.maximum = Number(info.stats[band].max)
-      }
+      const bandName = Object.keys(layer.info.stats)
+      
+      //overwrite CL logic
+      updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+      layer.continuous.minimum = Number(info.stats[band].min)
+      layer.continuous.maximum = Number(info.stats[band].max)
+      
       layerURL.searchParams.delete('expression')
+      if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM ) {
+
+        layerURL.searchParams.delete('colormap')
+        layerURL.searchParams.set('colormap_name', layer.colorMapName)
+        layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+
+      }
+      
       updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
     const nlayer = { ...layer, info: info }
@@ -103,11 +113,11 @@
       layer.expression = expression
       const band = Object.keys(exprStats)[bandIndex]
       updatedParams = { expression: layer.expression }
-      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
-        layer.continuous.minimum = Number(info.stats[band].min)
-        layer.continuous.maximum = Number(info.stats[band].max)
-      }
+      //overwrite CL logic
+      updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+      layer.continuous.minimum = Number(info.stats[band].min)
+      layer.continuous.maximum = Number(info.stats[band].max)
+      
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
 
