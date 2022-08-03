@@ -7,7 +7,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * Delete style.json which is stored in PostgreSQL database
  * DELETE: ./style/{id}
  */
-export async function del({ params }) {
+export async function DELETE({ params }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {

@@ -21,7 +21,7 @@ const blobServiceClient = new BlobServiceClient(
   sharedKeyCredential,
 )
 
-export async function get({ url }) {
+export async function GET({ url }) {
   const containers = new Set()
   console.clear()
   const startTime = performance.now()

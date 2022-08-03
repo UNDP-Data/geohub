@@ -7,7 +7,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * Get style.json which is stored in PostgreSQL database
  * GET: ./style/{id}.json
  */
-export async function get({ params }) {
+export async function GET({ params }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {

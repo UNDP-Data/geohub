@@ -1,8 +1,8 @@
 <script lang="ts">
   import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
-  import VisualizationSpec, { VegaLite } from 'svelte-vega'
+  import type { VisualizationSpec } from 'svelte-vega'
+  import { VegaLite } from 'svelte-vega'
   import { format } from 'd3-format'
-  // import type { VisualizationSpec } from 'svelte-vega'
   import { map, admin } from '../stores'
 
   const API_URL = import.meta.env.VITE_TITILER_ENDPOINT

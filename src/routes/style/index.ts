@@ -16,7 +16,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  *   }
  * ]
  */
-export async function get({ url }) {
+export async function GET({ url }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -72,7 +72,7 @@ export async function get({ url }) {
  *   style: [style.json]
  * }
  */
-export async function post({ request, url }) {
+export async function POST({ request, url }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {

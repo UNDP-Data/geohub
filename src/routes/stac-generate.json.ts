@@ -6,7 +6,7 @@ import type { Bucket, TreeNode } from '$lib/types'
 
 const __dirname = path.resolve()
 
-export async function get() {
+export async function GET() {
   const startTime = performance.now()
 
   const filePath = `${__dirname}/data/stac.json`

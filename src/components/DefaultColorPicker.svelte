@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
-  import type { Color } from 'svelte-awesome-color-picker/type/types'
+  import ColorPicker from 'svelte-awesome-color-picker'
+  import type { Color } from 'svelte-awesome-color-picker'
   import { createEventDispatcher } from 'svelte'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'

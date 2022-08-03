@@ -16,7 +16,7 @@ const listContainerOpts: ServiceListContainersOptions = { includeMetadata: true 
 
 let mapTags = new Map()
 
-export async function get({ url }) {
+export async function GET({ url }) {
   console.clear()
   const startTime = performance.now()
   const containers = await getRootContainers()

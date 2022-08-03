@@ -8,7 +8,7 @@ import type { TreeNode } from '$lib/types'
 const __dirname = path.resolve()
 const COG_MIME_TYPE = 'image/tiff; application=geotiff; profile=cloud-optimized'
 
-export async function get({ url }) {
+export async function GET({ url }) {
   const startTime = performance.now()
   let tree: TreeNode = {}
 
