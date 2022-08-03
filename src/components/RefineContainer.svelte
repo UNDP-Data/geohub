@@ -56,21 +56,19 @@
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
       const bandName = Object.keys(layer.info.stats)
-      
+
       //overwrite CL logic
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
       layer.continuous.minimum = Number(info.stats[band].min)
       layer.continuous.maximum = Number(info.stats[band].max)
-      
-      layerURL.searchParams.delete('expression')
-      if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM ) {
 
+      layerURL.searchParams.delete('expression')
+      if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
         layerURL.searchParams.delete('colormap')
         layerURL.searchParams.set('colormap_name', layer.colorMapName)
         layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
-
       }
-      
+
       updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
     const nlayer = { ...layer, info: info }
@@ -117,7 +115,7 @@
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
       layer.continuous.minimum = Number(info.stats[band].min)
       layer.continuous.maximum = Number(info.stats[band].max)
-      
+
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
 
