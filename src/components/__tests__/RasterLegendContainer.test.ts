@@ -80,18 +80,18 @@ describe('Raster Legend Container', () => {
     expect(within(viewContainer).getByTestId('continous-view-container')).toBeDefined()
   })
 
-  it('should toggle between continuous / intervals legend types upon click of toggle icon', async () => {
-    const toggleIcon = within(viewContainer).getByTestId('legend-toggle-container')
-    expect(toggleIcon).toBeDefined()
+  // it('should toggle between continuous / intervals legend types upon click of toggle icon', async () => {
+  //   const toggleIcon = within(viewContainer).getByTestId('legend-toggle-container')
+  //   expect(toggleIcon).toBeDefined()
 
-    // show intervals legend type
-    await fireEvent.click(toggleIcon)
-    expect(within(viewContainer).getByTestId('intervals-view-container')).toBeDefined()
+  //   // show intervals legend type
+  //   await fireEvent.click(toggleIcon)
+  //   expect(within(viewContainer).getByTestId('intervals-view-container')).toBeDefined()
 
-    // show continuous legend type
-    await fireEvent.click(toggleIcon)
-    expect(within(viewContainer).getByTestId('continous-view-container')).toBeDefined()
-  })
+  //   // show continuous legend type
+  //   await fireEvent.click(toggleIcon)
+  //   expect(within(viewContainer).getByTestId('continous-view-container')).toBeDefined()
+  // })
 
   it('should show / hide the color picker upon click of the color map picker button', async () => {
     const colorMapPickerButton = sut.getByTestId('colormap-toggle-container')

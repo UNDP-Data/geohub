@@ -12,13 +12,32 @@
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
-  import { layerList } from '$stores'
-  import { getActiveBandIndex } from '$lib/helper'
+  import { layerList, map } from '$stores'
+  import { getActiveBandIndex, fetchUrl } from '$lib/helper'
+  import { TITILER_API_ENDPOINT } from '../lib/constants'
+  import type {
+    FillLayerSpecification,
+    HeatmapLayerSpecification,
+    LineLayerSpecification,
+    RasterLayerSpecification,
+    SymbolLayerSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   export let layer: Layer
+
+  let definition:
+    | RasterLayerSpecification
+    | FillLayerSpecification
+    | LineLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification
+  let info
+  ;({ definition, info } = layer)
+  const layerSrc = $map.getSource(definition.source)
+  const layerURL = new URL(layerSrc.tiles[0])
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -37,8 +56,27 @@
     }
   }
 
-  onMount(() => {
-    layerHasUniqueValues = hasLayerUniqueValues()
+  onMount(async () => {
+    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+    const layerStats = await fetchUrl(statsURL)
+    const band = info.active_band_no
+
+    layerHasUniqueValues = Number(layerStats[band]['unique']) > COLOR_CLASS_COUNT_MAXIMUM ? false : true
+    console.log(`Layer UV ${layerHasUniqueValues}`)
+    if (layerHasUniqueValues) {
+      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
+      const layerStats = await fetchUrl(statsURL)
+      // const band = info.active_band_no
+    }
+    if (!('stats' in info)) {
+      info = { ...info, stats: layerStats }
+      layer = { ...layer, info: info }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : layer
+      })
+      layerList.set([...layers])
+    }
+
     layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
   })
 
@@ -57,6 +95,10 @@
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
+    const bandName = Object.keys(layer.info.stats)
+
+    layerHasUniqueValues = Number(layer.info.stats[bandName]['unique']) > COLOR_CLASS_COUNT_MAXIMUM ? false : true
+    console.log(`evaluating UV ${layerHasUniqueValues}`)
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
@@ -69,17 +111,26 @@
     }
   }
 
-  const hasLayerUniqueValues = () => {
-    const stats = layer.info.band_metadata[bandIndex][1]
-    return Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
-  }
+  // const hasLayerUniqueValues = () => {
+  //   //const stats = layer.info.band_metadata[bandIndex][1]
+  //   const stats = layer.info
+  //   const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
+  //   console.log(`is u ${JSON.stringify(stats, null, '\t')}`)
+  //   return val
+  // }
 
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
+      // const layerClone = cloneDeep(layer)
+      // layerClone.colorMapName = event.detail.colorMapName
+      // layer = layerClone
       colorPickerVisibleIndex = -1
+      //TODO write new layer to store
+      const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
     }
   }
 
