@@ -2,7 +2,7 @@ import fs from 'fs'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { mockGet, mockFetch } from 'vi-fetch'
 
-import { get } from '../vectorinfo.json'
+import { GET } from '../vectorinfo.json'
 
 beforeEach(() => {
   mockFetch.clearAll()
@@ -10,13 +10,13 @@ beforeEach(() => {
 
 describe('Route : Vector Info : Parameter Errors', () => {
   it('should return an error if no url parameters', async () => {
-    const res = await get({})
+    const res = await GET({})
     expect(res.code).toEqual(400)
     expect(res.message).toEqual('Bad request. Please verify the URL and/or parameters.')
   })
 
   it('should return an error if url attribute missing searchParams', async () => {
-    const res = await get({
+    const res = await GET({
       url: undefined,
     })
     expect(res.code).toEqual(400)
@@ -24,7 +24,7 @@ describe('Route : Vector Info : Parameter Errors', () => {
   })
 
   it('should return an error if searchParams missing path or layer name parameters', async () => {
-    const res = await get({
+    const res = await GET({
       url: {
         searchParams: undefined,
       },
@@ -36,7 +36,7 @@ describe('Route : Vector Info : Parameter Errors', () => {
   it('should return an error if searchParams missing path or layer name parameters', async () => {
     const searchParams = new URLSearchParams('foo=1&bar=2')
 
-    const res = await get({
+    const res = await GET({
       url: {
         searchParams,
       },
@@ -53,7 +53,7 @@ describe('Route : Vector Info : Fetch : Fail : No Layer', () => {
     const searchParams = new URLSearchParams(`path=${path}&layer_name=NGA_DepRationAdm2`)
     const mock = mockGet(path).willResolve()
 
-    const res = await get({
+    const res = await GET({
       url: {
         searchParams,
       },
@@ -72,7 +72,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     const pbf = fs.readFileSync(`${__dirname}/0.pbf`)
     const mock = mockGet(path).willResolve(pbf)
 
-    const res = await get({
+    const res = await GET({
       url: {
         searchParams,
       },
@@ -87,7 +87,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     const searchParams = new URLSearchParams(`path=${path}&layer_name=NGA_DepRationAdm2`)
     const pbf = fs.readFileSync(`${__dirname}/0.pbf`)
     mockGet(path).willResolve(pbf)
-    const res = await get({ url: { searchParams } })
+    const res = await GET({ url: { searchParams } })
 
     const stringProperties = res.body.filter((item) => item.type === 'string')
     expect(stringProperties.length).toEqual(6)
@@ -108,7 +108,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     const searchParams = new URLSearchParams(`path=${path}&layer_name=NGA_DepRationAdm2`)
     const pbf = fs.readFileSync(`${__dirname}/0.pbf`)
     mockGet(path).willResolve(pbf)
-    const res = await get({ url: { searchParams } })
+    const res = await GET({ url: { searchParams } })
 
     const numberProperties = res.body.filter((item) => item.type === 'number')
     expect(numberProperties.length).toEqual(3)
@@ -140,7 +140,7 @@ describe('Route : Vector Info : Fetch : Success', () => {
     const searchParams = new URLSearchParams(`path=${path}&layer_name=elpov1`)
     const pbf = fs.readFileSync(`${__dirname}/unique_values.pbf`)
     mockGet(path).willResolve(pbf)
-    const res = await get({ url: { searchParams } })
+    const res = await GET({ url: { searchParams } })
 
     const numberProperties = res.body.filter((item) => item.type === 'number')
     expect(numberProperties.length).toEqual(4)

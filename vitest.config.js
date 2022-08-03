@@ -1,3 +1,8 @@
-import { extractFromSvelteConfig } from "vitest-svelte-kit"
+import { defineConfig } from 'vite'
+import viteConfig from './vite.config.js'
 
-export default extractFromSvelteConfig()
+export default defineConfig({
+    optimizeDeps: viteConfig.optimizeDeps,
+    test: viteConfig.test,
+    resolve: viteConfig.resolve
+})
