@@ -42,7 +42,7 @@
 
   // reclassify upon change of color map (color map picker)
   $: {
-    //if (layerConfig && colorMapName !== layerConfig.colorMapName) {
+    // if (layerConfig && colorMapName !== layerConfig.colorMapName) {
     if (layerConfig) {
       colorMapName = layerConfig.colorMapName
       reclassifyImage()
@@ -65,7 +65,6 @@
       layerMax = layerConfig.info.stats[bandName]['max']
       setColorMap()
       const uValues = info.stats[bandName]['histogram'][1]
-
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
       })

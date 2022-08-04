@@ -37,8 +37,22 @@
   let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const layerMax = Number(info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'])
-  const layerMin = Number(info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'])
+
+  let layerMax
+  let layerMin
+  if ('stats' in info) {
+    const band = Object.keys(info.stats)[bandIndex]
+    layerMin = Number(info.stats[band].min)
+    layerMax = Number(info.stats[band].max)
+    console.log('Stats in info', layerMax, layerMin)
+  } else {
+    const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+    layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
+    layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
+    console.log('No Stats in info', layerMax, layerMin)
+  }
+
+  console.log(layerMax, layerMin)
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
@@ -59,10 +73,10 @@
   }
 
   onMount(async () => {
+    console.log('Mounted!!')
     if (!('stats' in info)) {
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-
       info = { ...info, stats: layerStats }
       const band = info.active_band_no
 
@@ -93,6 +107,7 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
+    console.log(layerMax, layerMin)
     layerConfig.intervals.colorMapRows = generateColorMap(
       layerConfig,
       layerMin,

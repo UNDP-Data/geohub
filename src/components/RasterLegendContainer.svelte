@@ -111,19 +111,8 @@
     }
   }
 
-  // const hasLayerUniqueValues = () => {
-  //   //const stats = layer.info.band_metadata[bandIndex][1]
-  //   const stats = layer.info
-  //   const val = Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
-  //   console.log(`is u ${JSON.stringify(stats, null, '\t')}`)
-  //   return val
-  // }
-
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      // const layerClone = cloneDeep(layer)
-      // layerClone.colorMapName = event.detail.colorMapName
-      // layer = layerClone
       colorPickerVisibleIndex = -1
       //TODO write new layer to store
       const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
