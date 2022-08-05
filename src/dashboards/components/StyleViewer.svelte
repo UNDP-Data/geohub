@@ -4,8 +4,12 @@
   import { page } from '$app/stores'
   import { map } from '../stores'
   import { MaplibreLegendControl } from '@watergis/maplibre-gl-legend'
+  import AdminLayer from '$lib/adminLayer'
+  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
 
+  const AZURE_URL = import.meta.env.VITE_ADMIN_URL
   let mapContainer: HTMLDivElement
+  let adminLayer: AdminLayer = null
 
   onMount(async () => {
     const tmpMap = new Map({
@@ -87,12 +91,23 @@
       map.update(() => tmpMap)
       tmpMap.on('load', async () => {
         await addControls()
+        initAdminLayer()
       })
     }
+  }
+
+  const initAdminLayer = () => {
+    if (!$map) return
+    if (!adminLayer) {
+      adminLayer = new AdminLayer($map, AZURE_URL, false)
+    }
+    adminLayer.load()
+    adminLayer.setInteraction()
   }
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
+<CurrentLocation bind:map={$map} />
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
