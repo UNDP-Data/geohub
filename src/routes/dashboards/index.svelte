@@ -52,6 +52,10 @@
     display: flex;
   }
 
+  .content {
+    color: white;
+  }
+
   @media (prefers-color-scheme: dark) {
     .hero {
       background: #212125;
