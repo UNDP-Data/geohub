@@ -78,7 +78,9 @@
         const rgba: number[] = chroma(colorSelected['hex']).rgba()
         colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
         colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
-        dispatch('changeColorMap')
+        dispatch('changeColorMap', {
+          color,
+        })
       } catch (e) {
         console.log(e)
       }

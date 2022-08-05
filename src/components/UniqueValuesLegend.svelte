@@ -40,10 +40,8 @@
   let colorMapName = layerConfig.colorMapName
   let layerColorMap: chroma.Scale = undefined
 
-  // reclassify upon change of color map (color map picker)
   $: {
-    // if (layerConfig && colorMapName !== layerConfig.colorMapName) {
-    if (layerConfig) {
+    if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
       reclassifyImage()
     }
@@ -69,7 +67,6 @@
         return { name: v, value: v }
       })
 
-      colorMap = {}
       let index = 0
 
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
@@ -85,15 +82,13 @@
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
-
-      // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
         colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
     }
 
-    handleParamsUpdate()
+    handleParamsUpdate(colorMap)
   }
 
   const setColorMap = () => {
@@ -110,8 +105,8 @@
     }
   }
 
-  const handleParamsUpdate = debounce(() => {
-    const encodeColorMapRows = JSON.stringify(colorMap)
+  const handleParamsUpdate = debounce((cmap) => {
+    const encodeColorMapRows = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
@@ -121,7 +116,15 @@
     colorPickerVisibleIndex = event.detail.index
   }
 
-  const handleChangeColorMap = () => {
+  const handleChangeColorMap = (e) => {
+    const valuesList = Object.keys(colorMap)
+    colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
+    layerConfig.unique.colorMapRows.splice(colorPickerVisibleIndex, 1, {
+      index: colorPickerVisibleIndex,
+      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255],
+      start: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].start,
+      end: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].end,
+    })
     reclassifyImage(true)
   }
 </script>

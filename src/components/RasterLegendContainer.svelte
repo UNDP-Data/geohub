@@ -61,12 +61,10 @@
     const layerStats = await fetchUrl(statsURL)
     const band = info.active_band_no
 
-    layerHasUniqueValues = Number(layerStats[band]['unique']) > COLOR_CLASS_COUNT_MAXIMUM ? false : true
-    console.log(`Layer UV ${layerHasUniqueValues}`)
+    layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
     if (layerHasUniqueValues) {
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
-      const layerStats = await fetchUrl(statsURL)
-      // const band = info.active_band_no
+      await fetchUrl(statsURL)
     }
     if (!('stats' in info)) {
       info = { ...info, stats: layerStats }
@@ -98,7 +96,6 @@
     const bandName = Object.keys(layer.info.stats)
 
     layerHasUniqueValues = Number(layer.info.stats[bandName]['unique']) > COLOR_CLASS_COUNT_MAXIMUM ? false : true
-    console.log(`evaluating UV ${layerHasUniqueValues}`)
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
