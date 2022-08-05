@@ -12,6 +12,7 @@
 </script>
 
 <script lang="ts">
+  import { Pagination } from 'carbon-components-svelte'
   import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
@@ -19,11 +20,29 @@
   import { onMount } from 'svelte'
 
   let styleList
+  let totalItemsCount = -1
+  let defaultPage = 1
+  let defaultPageSize = 5
 
   onMount(async () => {
-    const res = await fetch('../style')
-    styleList = await res.json()
+    const res = await fetch(`../style/count`)
+    const json = await res.json()
+    totalItemsCount = json.count
+
+    await updateStylePage(defaultPage, defaultPageSize)
   })
+
+  const handlePagination = async (e) => {
+    const page = e.detail.page
+    const pageSize = e.detail.pageSize
+    await updateStylePage(page, pageSize)
+  }
+
+  const updateStylePage = async (page: number, pageSize: number) => {
+    const offset = page * pageSize - pageSize
+    const res = await fetch(`../style?limit=${pageSize}&offset=${offset}`)
+    styleList = await res.json()
+  }
 </script>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;">
@@ -52,6 +71,14 @@
         {/each}
       </div>
     </div>
+    {#if totalItemsCount > 1}
+      <Pagination
+        totalItems={totalItemsCount}
+        pageSizes={[5, 10, 25, 50]}
+        pageSize={defaultPageSize}
+        page={defaultPage}
+        on:update={handlePagination} />
+    {/if}
   {/if}
   <footer style="background: #121212; margin-bottom: 0!important;" class="footer">
     <div class="content has-text-centered">
@@ -61,6 +88,8 @@
 </div>
 
 <style lang="scss">
+  @import 'carbon-components-svelte/css/white.css';
+
   .hero-body {
     background: darkslategrey;
   }

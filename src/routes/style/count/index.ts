@@ -23,7 +23,9 @@ export async function get() {
       headers: {
         'access-control-allow-origin': '*',
       },
-      body: res.rows[0].count,
+      body: {
+        count: res.rows[0].count,
+      },
     }
   } catch (err) {
     return {
