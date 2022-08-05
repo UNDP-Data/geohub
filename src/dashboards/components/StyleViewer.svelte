@@ -6,10 +6,12 @@
   import { MaplibreLegendControl } from '@watergis/maplibre-gl-legend'
   import AdminLayer from '$lib/adminLayer'
   import CurrentLocation from '$lib/components/CurrentLocation.svelte'
+  import MapQueryInfoControl from './MapQueryInfoControl.svelte'
 
   const AZURE_URL = import.meta.env.VITE_ADMIN_URL
   let mapContainer: HTMLDivElement
   let adminLayer: AdminLayer = null
+  let isMapLoaded = false
 
   onMount(async () => {
     const tmpMap = new Map({
@@ -70,7 +72,6 @@
     if (url) {
       const res = await fetch(url)
       const styleJSON = await res.json()
-
       $map.remove()
 
       const tmpMap = new Map({
@@ -92,6 +93,7 @@
       tmpMap.on('load', async () => {
         await addControls()
         initAdminLayer()
+        isMapLoaded = true
       })
     }
   }
@@ -108,6 +110,9 @@
 
 <div class="map" id="map" bind:this={mapContainer} />
 <CurrentLocation bind:map={$map} />
+{#if isMapLoaded}
+  <MapQueryInfoControl bind:map={$map} />
+{/if}
 
 <style>
   @import 'maplibre-gl/dist/maplibre-gl.css';
