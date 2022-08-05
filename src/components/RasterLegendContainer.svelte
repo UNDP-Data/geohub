@@ -6,7 +6,6 @@
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
-  import { cloneDeep } from 'lodash-es'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'

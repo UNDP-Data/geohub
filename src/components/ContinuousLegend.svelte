@@ -110,7 +110,7 @@
   }, 500)
 </script>
 
-<div class="group" data-testid="continous-view-container">
+<div class="group" data-testid="continuous-view-container">
   <div class="active-color-map">
     <ColorMapPickerCard
       colorMapName={activeColorMapName}
