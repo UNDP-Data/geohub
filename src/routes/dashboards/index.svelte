@@ -12,37 +12,9 @@
 </script>
 
 <script lang="ts">
-  import { Pagination } from 'carbon-components-svelte'
-  import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
+  import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
-
-  import { onMount } from 'svelte'
-
-  let styleList
-  let totalItemsCount = -1
-  let defaultPage = 1
-  let defaultPageSize = 5
-
-  onMount(async () => {
-    const res = await fetch(`../style/count`)
-    const json = await res.json()
-    totalItemsCount = json.count
-
-    await updateStylePage(defaultPage, defaultPageSize)
-  })
-
-  const handlePagination = async (e) => {
-    const page = e.detail.page
-    const pageSize = e.detail.pageSize
-    await updateStylePage(page, pageSize)
-  }
-
-  const updateStylePage = async (page: number, pageSize: number) => {
-    const offset = page * pageSize - pageSize
-    const res = await fetch(`../style?limit=${pageSize}&offset=${offset}`)
-    styleList = await res.json()
-  }
 </script>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;">
@@ -60,26 +32,7 @@
       {/each}
     </div>
   </div>
-  {#if styleList && styleList.length > 0}
-    <header class="card-header">
-      <p class="card-header-title">Saved map styles</p>
-    </header>
-    <div class="sub-section">
-      <div style="width: 90%; display: flex; flex-wrap: wrap; margin: auto;">
-        {#each styleList as style}
-          <DashboardMapStyleCard {style} />
-        {/each}
-      </div>
-    </div>
-    {#if totalItemsCount > 1}
-      <Pagination
-        totalItems={totalItemsCount}
-        pageSizes={[5, 10, 25, 50]}
-        pageSize={defaultPageSize}
-        page={defaultPage}
-        on:update={handlePagination} />
-    {/if}
-  {/if}
+  <MapStyleCardList />
   <footer style="background: #121212; margin-bottom: 0!important;" class="footer">
     <div class="content has-text-centered">
       <p>&copy UNDP 2022</p>
@@ -99,12 +52,6 @@
     display: flex;
   }
 
-  .sub-section {
-    width: 100%;
-    height: max-content;
-    display: flex;
-  }
-
   @media (prefers-color-scheme: dark) {
     .hero {
       background: #212125;
@@ -114,19 +61,6 @@
     }
     .footer {
       background: #121212 !important;
-    }
-  }
-
-  .card-header {
-    margin-top: 20px;
-    background: darkslategrey;
-  }
-  .card-header-title {
-    font-family: ProximaNova, sans-serif;
-    text-transform: capitalize;
-    color: white;
-    @media (prefers-color-scheme: dark) {
-      color: white;
     }
   }
 </style>
