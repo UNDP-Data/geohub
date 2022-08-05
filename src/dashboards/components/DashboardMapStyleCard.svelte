@@ -22,6 +22,7 @@
   export let style: MapStyle
   let mapContainer: HTMLDivElement
   let nodeRef
+  let map: Map
 
   const {
     ref: popperRef,
@@ -42,7 +43,7 @@
     const res = await fetch(style.style)
     const styleJSON = await res.json()
 
-    new Map({
+    map = new Map({
       container: mapContainer,
       style: style.style,
       center: styleJSON.center ? styleJSON.center : [0, 0],
@@ -51,6 +52,18 @@
       interactive: false,
     })
   })
+
+  $: style, updateStyle()
+  const updateStyle = async () => {
+    if (!style) return
+    if (!map) return
+    const res = await fetch(style.style)
+    const styleJSON = await res.json()
+
+    map.setStyle(style.style)
+    map.setCenter(styleJSON.center ? styleJSON.center : [0, 0])
+    map.setZoom(styleJSON.zoom ? styleJSON.zoom : 4)
+  }
 
   const handleDeleteStyle = () => {
     fetch(`../style/${style.id}`, {
