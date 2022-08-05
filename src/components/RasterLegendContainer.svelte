@@ -16,7 +16,7 @@
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
   import { getActiveBandIndex, fetchUrl } from '$lib/helper'
-  import { TITILER_API_ENDPOINT } from '../lib/constants'
+  import { TITILER_API_ENDPOINT } from '$lib/constants'
   import type {
     FillLayerSpecification,
     HeatmapLayerSpecification,
@@ -46,6 +46,8 @@
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
+
+  console.log(bandIndex)
 
   // hide colormap picker if change in layer list
   $: {
@@ -92,9 +94,13 @@
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
-    const bandName = Object.keys(layer.info.stats)
-
-    layerHasUniqueValues = Number(layer.info.stats[bandName]['unique']) > COLOR_CLASS_COUNT_MAXIMUM ? false : true
+    let bandName
+    try {
+      bandName = Object.keys(layer.info.stats)
+    } catch (e) {
+      console.log(e)
+    }
+    layerHasUniqueValues = Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
@@ -110,7 +116,6 @@
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
       colorPickerVisibleIndex = -1
-      //TODO write new layer to store
       const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
       const layers = $layerList.map((lyr) => {
         return layer.definition.id !== lyr.definition.id ? lyr : nlayer
@@ -125,7 +130,7 @@
   }
 </script>
 
-<div class="columns" data-testid="raster-legend-view-container">
+<div class="columns">
   <div class="column is-10">
     {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
@@ -170,8 +175,8 @@
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
-          layerMin={Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])} />
+          layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
+          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}
