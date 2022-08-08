@@ -78,7 +78,9 @@
         const rgba: number[] = chroma(colorSelected['hex']).rgba()
         colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
         colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
-        dispatch('changeColorMap')
+        dispatch('changeColorMap', {
+          color,
+        })
       } catch (e) {
         console.log(e)
       }
@@ -94,7 +96,39 @@
   }
 </script>
 
-<div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
+<div class="columns is-vcentered colormap-editor" data-testid="unique-legend-color-map-row-container">
+  <div class="column is-3 color-picker">
+    <div
+      id={`interval-${colorMapRow.index}`}
+      on:click={() => handleColorPickerClick()}
+      use:popperRef
+      class="discrete"
+      alt="Color Picker"
+      title="Color Picker"
+      style={colorPickerStyle} />
+  </div>
+  {#if showToolTip && color}
+    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+      <div id="arrow" data-popper-arrow />
+    </div>
+  {/if}
+  {#if colorMapRow.start != colorMapRow.end}
+    <div class="column  ">
+      &#x21A6; {colorMapRow.start}
+    </div>
+    <div class="column maximum">
+      - {colorMapRow.end}
+    </div>
+  {:else}
+    <div class="column is-2 minimum">&#x21A6;</div>
+    <div class="column is-11 minimum">
+      {colorMapRow.start}
+    </div>
+  {/if}
+</div>
+
+<!-- <div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
   <div class="column is-1 color-picker">
     <div
       id={`interval-${colorMapRow.index}`}
@@ -115,27 +149,28 @@
   <div class="column is-1 minimum">
     <input
       id="minimum"
-      alt="Start Value"
-      title="Start Value"
+      alt="value"
+      title="value"
       class="input is-small is-static"
       type="text"
       value={colorMapRow.start} />
   </div>
-  <div class="column maximum">
-    <input
-      id="maximum"
-      alt="End Value"
-      title="End Value"
-      class="input is-small is-static"
-      type="text"
-      value={colorMapRow.end} />
-  </div>
-</div>
-
+  {#if colorMapRow.start != colorMapRow.end}
+    <div class="column maximum">
+      <input
+        id="maximum"
+        alt="label"
+        title="label"
+        class="input is-small is-static"
+        type="text"
+        value={colorMapRow.end} />
+    </div>
+  {/if}
+</div> -->
 <style lang="scss">
   @import '../styles/popper.scss';
 
-  $input-margin: 5px !important;
+  $input-margin: 0px !important;
 
   .colormap-editor {
     margin-bottom: $input-margin;
@@ -145,7 +180,7 @@
     }
 
     .minimum {
-      margin-right: $input-margin;
+      //margin-right: $input-margin;
     }
 
     .discrete {

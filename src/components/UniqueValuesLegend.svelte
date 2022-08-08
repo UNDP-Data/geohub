@@ -31,8 +31,8 @@
     // @ts-ignore
   ;({ definition, info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
-  const layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
+  let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
+  let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
 
@@ -40,7 +40,6 @@
   let colorMapName = layerConfig.colorMapName
   let layerColorMap: chroma.Scale = undefined
 
-  // reclassify upon change of color map (color map picker)
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
@@ -54,11 +53,20 @@
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
     setColorMap()
-
+    if (layerURL.searchParams.has('rescale')) {
+      layerURL.searchParams.delete('rescale')
+    }
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-      const layerUniqueValues = JSON.parse(info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'])
-      colorMap = {}
+      const bandName = Object.keys(layerConfig.info.stats)
+      layerMin = layerConfig.info.stats[bandName]['min']
+      layerMax = layerConfig.info.stats[bandName]['max']
+      setColorMap()
+      const uValues = info.stats[bandName]['histogram'][1]
+      const layerUniqueValues = uValues.map((v) => {
+        return { name: v, value: v }
+      })
+
       let index = 0
 
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
@@ -67,20 +75,20 @@
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
 
-        colorMap[parseInt(remapInputValue(key, layerMin, layerMax))] = color
+        colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
+        //colorMap[key] = color
         colorMapRows.push({ index, color, start: key, end: row.name })
         index++
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
-      // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
-        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax))] = row.color
+        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
     }
 
-    handleParamsUpdate()
+    handleParamsUpdate(colorMap)
   }
 
   const setColorMap = () => {
@@ -97,8 +105,8 @@
     }
   }
 
-  const handleParamsUpdate = debounce(() => {
-    const encodeColorMapRows = JSON.stringify(colorMap)
+  const handleParamsUpdate = debounce((cmap) => {
+    const encodeColorMapRows = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
@@ -108,11 +116,20 @@
     colorPickerVisibleIndex = event.detail.index
   }
 
-  const handleChangeColorMap = () => {
+  const handleChangeColorMap = (e) => {
+    const valuesList = Object.keys(colorMap)
+    colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
+    layerConfig.unique.colorMapRows.splice(colorPickerVisibleIndex, 1, {
+      index: colorPickerVisibleIndex,
+      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255],
+      start: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].start,
+      end: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].end,
+    })
     reclassifyImage(true)
   }
 </script>
 
+<div class="is-divider" data-content="Unique values" />
 <div class="unique-view-container" data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
@@ -125,4 +142,12 @@
 </div>
 
 <style lang="scss">
+  .unique-view-container {
+    //width: 100%;
+    max-height: 330px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 </style>

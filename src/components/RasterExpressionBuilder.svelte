@@ -39,7 +39,7 @@
       name: 'comparison',
       title: 'Comparison',
       icon: faEquals,
-      operators: ['=', '!=', '>=', '<', '>', '<='],
+      operators: ['==', '!=', '>=', '<', '>', '<='],
       isVisible: true,
     },
     {

@@ -8,6 +8,7 @@
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
+  import { updateParamsInURL } from '../lib/helper'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layer: Layer
@@ -80,7 +81,7 @@
                   {layerMax}
                   {layerMin}
                   {numberOfClasses}
-                  isSelected={layer.colorMapName === colorMapName ? true : false} />
+                  isSelected={layer.colorMapName === colorMapName} />
               </li>
             {/each}
           {/if}

@@ -28,7 +28,7 @@
   let data
 
   onMount(async () => {
-    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_interval=20`
+    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
     const layerStats = await fetchUrl(statsURL)
     const band = info.active_band_no
     const counts = layerStats[band]['histogram'][0]

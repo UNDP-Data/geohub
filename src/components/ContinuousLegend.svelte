@@ -1,5 +1,6 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
+  import { onMount } from 'svelte'
   import type {
     RasterLayerSpecification,
     FillLayerSpecification,
@@ -44,7 +45,15 @@
   const layerURL = new URL(layerSrc.tiles[0])
 
   let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
+  console.log(
+    `setting rangeSlider ${[
+      layerConfig.continuous.minimum,
+      layerConfig.continuous.maximum,
+    ]} <> ${layerMin} - ${layerMax} `,
+  )
+  // this ensures the slider state is is set to layer min max
   let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
+
   let step = (layerMax - layerMin) * 1e-2
 
   // the reactive statement below will update map whenever the colormap changes or the legend was switched.
@@ -52,13 +61,19 @@
 
   $: {
     if (activeColorMapName !== layerConfig.colorMapName || (layerURL.searchParams.has('colormap') && layerConfig)) {
+      //if (activeColorMapName !== layerConfig.colorMapName || layerConfig) {
       //console.log(`layerURL has changed ${layerURL.searchParams.get('rescale')} ${layerMin} - ${layerMax}` )
       rescaleColorMap()
       updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
       activeColorMapName = layerConfig.colorMapName // this re-renders the continuous legend
       layerConfig.intervals.colorMapRows = [] // this re-remders the intervals legend classes properly
+      // [layerConfig.continuous.minimum, layerConfig.continuous.maximum] = [layerMin, layerMax]
     }
   }
+
+  onMount(() => {
+    console.log('mounting')
+  })
 
   const rescaleColorMap = () => {
     if (layerURL.searchParams.has('colormap')) {
@@ -95,7 +110,7 @@
   }, 500)
 </script>
 
-<div class="group" data-testid="continous-view-container">
+<div class="group" data-testid="continuous-view-container">
   <div class="active-color-map">
     <ColorMapPickerCard
       colorMapName={activeColorMapName}
