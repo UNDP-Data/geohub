@@ -7,9 +7,6 @@
   export let activeTab: string
 </script>
 
-<svelte:head>
-  <link href="https://fonts.googleapis.com/css?family=Gelasio" rel="stylesheet" />
-</svelte:head>
 <div class="tabs" style="margin-top: 20px;">
   <ul style="border-bottom: none" data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
     {#each tabs as tab}
