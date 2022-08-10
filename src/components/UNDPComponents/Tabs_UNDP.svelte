@@ -1,13 +1,25 @@
 <script lang="ts">
+  import { TabNames } from '$lib/constants'
+  import { layerList } from '$stores'
+  import Fa from 'svelte-fa'
+
   export let tabs
-  export let activeTab
+  export let activeTab: string
 </script>
 
+<svelte:head>
+  <link href="https://fonts.googleapis.com/css?family=Gelasio" rel="stylesheet" />
+</svelte:head>
 <div class="tabs" style="margin-top: 20px;">
   <ul style="border-bottom: none" data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
     {#each tabs as tab}
-      <li class="tabs-title {tab.title === activeTab ? 'active-tab' : null}">
-        <a on:click={() => (activeTab = tab.title)} href="#tab-3" aria-selected="true">{tab.title}</a>
+      <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
+        <a on:click={() => (activeTab = tab.label)} href="#{tab.label}" aria-selected="true"
+          >{tab.label}
+          {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
+            ({$layerList.length})
+          {/if}
+        </a>
       </li>
     {/each}
   </ul>
@@ -39,5 +51,10 @@
   .active-tab {
     border-bottom: 2px solid $dark-red;
     color: white;
+  }
+
+  @font-face {
+    font-family: ProximaNova;
+    src: url('../fonts/proxima/ProximaNova-Regular.otf') format('opentype');
   }
 </style>

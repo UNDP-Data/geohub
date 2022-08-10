@@ -18,8 +18,7 @@
   let drawerWidth = 355
   let hideLinearProgress = true
   let isResizingDrawer = false
-  // let tabs = [TabNames.BUCKETS, TabNames.TAGS, TabNames.LAYERS]
-  let tabs = [{ title: 'Buckets' }, { title: 'Search' }, { title: 'Layers' }]
+  let tabs = [{ label: TabNames.BUCKETS }, { label: TabNames.TAGS }, { label: TabNames.LAYERS }]
   $: hideLinearProgress = !$indicatorProgress
   $: {
     if (drawerOpen) {
