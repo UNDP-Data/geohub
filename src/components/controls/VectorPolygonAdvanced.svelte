@@ -238,7 +238,7 @@
             <select
               bind:value={classificationMethod}
               on:change={handleClassificationChange}
-              style="width: 110px;"
+              style="width: 110px; border-color: #D12800"
               alt="Classification Methods"
               title="Classification Methods">
               {#each classificationMethods as classificationMethod}

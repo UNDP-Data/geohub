@@ -193,4 +193,7 @@
       margin-bottom: 10px !important;
     }
   }
+  :global(.select:not(.is-multiple):not(.is-loading)::after) {
+    border-color: #ff0000;
+  }
 </style>

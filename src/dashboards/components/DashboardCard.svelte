@@ -1,85 +1,30 @@
 <script lang="ts">
-  export let title: string
-  export let link: string
-
-  // This should not be hardcoded
-  export let description = 'Electricity Access for populations all over the world'
-  import Ripple from '@smui/ripple'
+  export let title = 'Electricity Dashboard'
+  export let link
+  export let description = 'UNDP Data Electricity Dashboard'
 </script>
 
-<a class="dashboard-card-link" href={link} style="max-width: 20%; min-width: 300px; padding: 20px; ">
-  <div class="card one-page" style="background: white;">
-    <header class="card-header">
-      <p class="card-header-title">
-        {title}
-        dashboard
-      </p>
-    </header>
-    <div class="card-content">
-      <div class="card-image">
-        <figure class="image is-4by3">
-          <img class="dashboard-image" src="electricity-snapshot.jpg" alt={'Placeholder image'} />
-        </figure>
+<div class="cell medium-4" style="width: fit-content; margin: 2% auto auto 2%;">
+  <div class="content-card">
+    <a href="#">
+      <h6>{title}</h6>
+      <div class="image">
+        <img style="width: 350px; height: 200px;" src="electricity-snapshot.jpg" alt="electricity-snapshot.jpg" />
       </div>
-      <div class="content">{description}</div>
-    </div>
-    <footer class="card-footer" use:Ripple={{ surface: true }}>
-      <a href={link} class="card-footer-item">Open {title} dashboard</a>
-    </footer>
+      <div class="content-caption">
+        <h5>{description}</h5>
+        <span class="cta__link cta--space">
+          Open Dashboard
+          <i />
+        </span>
+      </div>
+    </a>
   </div>
-</a>
+</div>
 
 <style lang="scss">
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
-
-  .one-page {
-    width: 100%;
-    cursor: pointer;
-    border-radius: 10px;
-    @media (prefers-color-scheme: dark) {
-      border: solid 0.5px #212125;
-      background: #212125;
-    }
-  }
-  .one-page:hover {
-    background: mintcream !important;
-  }
-  .dashboard-image:hover {
-    -webkit-filter: blur(4px); /* Chrome, Safari, Opera */
-    filter: blur(4px);
-  }
-  .dashboard-image {
-    filter: grayscale(100%);
-    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-  }
-  .card-header {
-    background: darkslategrey;
-  }
-  .card-header-title {
-    font-family: ProximaNova, sans-serif;
-    text-transform: capitalize;
-    color: white;
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
-  .content {
-    font-family: ProximaNova, sans-serif;
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
-  .card-footer {
-    font-family: ProximaNova, sans-serif;
-    border-top: 1px solid grey;
-    .card-footer-item {
-      color: white;
-    }
-    .card-footer-item {
-      color: darkslategrey;
-    }
-    .card-footer-item:hover {
-      color: #4a4a4a;
-    }
-  }
+  @import 'static/base-minimal.min';
+  @import 'static/cta-link.min';
+  @import 'static/content-card.min';
+  @import 'static/buttons.min';
 </style>

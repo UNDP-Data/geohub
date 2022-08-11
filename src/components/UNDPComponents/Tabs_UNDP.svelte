@@ -23,6 +23,7 @@
 </div>
 
 <style lang="scss">
+  @import 'static/fonts';
   $dark-red: #d12800;
   $dark-azure: #00c1ff;
   $gray-700: #232e3d;
@@ -48,10 +49,5 @@
   .active-tab {
     border-bottom: 2px solid $dark-red;
     color: white;
-  }
-
-  @font-face {
-    font-family: ProximaNova;
-    src: url('../fonts/proxima/ProximaNova-Regular.otf') format('opentype');
   }
 </style>

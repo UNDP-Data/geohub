@@ -71,9 +71,9 @@
   }
   .icon {
     cursor: pointer;
+    margin-right: 10%;
   }
   .fa-icon {
-    margin-right: 0.5rem;
     color: $dark-azure;
   }
 </style>
