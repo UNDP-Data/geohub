@@ -1,12 +1,12 @@
 <script lang="ts">
   export let title = 'Electricity Dashboard'
   export let link
-  export let description = 'UNDP Data Electricity Dashboard'
+  export let description = 'GeoHub Electricity Dashboard'
 </script>
 
 <div class="cell medium-4" style="width: fit-content; margin: 2% auto auto 2%;">
   <div class="content-card">
-    <a href="#">
+    <a href={link}>
       <h6>{title}</h6>
       <div class="image">
         <img style="width: 350px; height: 200px;" src="electricity-snapshot.jpg" alt="electricity-snapshot.jpg" />

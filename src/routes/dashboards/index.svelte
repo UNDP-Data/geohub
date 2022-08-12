@@ -21,8 +21,8 @@
   <DashboardHeader />
   <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: 8vh; height: 22vh">
     <div style="margin-left:5%; padding-top:2%">
-      <p class="title" style="margin-bottom: 10px;">Gallery</p>
-      <div style="width: 120px; height: 5px; background: grey; " />
+      <p class="title">Dashboards Gallery</p>
+      <div style="width: 120px; height: 5px; background: black; " />
     </div>
   </div>
   <div class="main-section" style="height: max-content; min-height: 60vh">
@@ -31,21 +31,10 @@
       style="width: 100%; margin-left: 2%; margin-right: 2%">
       {#each pages as page}
         <DashboardCard bind:title={page.title} bind:link={page.link} />
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
   </div>
   <DashboardFooter />
-  <!--  <footer style="background: #006EB5; margin-bottom: 0!important; height:10vh" class="footer">-->
-  <!--    <div class="content has-text-centered">-->
-  <!--      <p style='font-family: ProximaNova; color: white'>&copy 2022 United Nations Development Programme</p>-->
-  <!--    </div>-->
-  <!--  </footer>-->
 </div>
 
 <style lang="scss">
