@@ -32,11 +32,14 @@
       electrification for a single pixel only.
     </p>
     <br />
-    <Button variant="raised" on:click={hideIntro}>Explore Data</Button>
+    <a class="button button-primary" role="button" href="#" on:click={hideIntro}> Explore Data </a>
+    <!--    <Button variant="raised" on:click={hideIntro}>Explore Data</Button>-->
   </Paper>
 {/if}
 
 <style lang="scss">
+  @import '../src/styles/undp-design/buttons.min';
+  @import '../src/styles/undp-design/base-minimal.min';
   p {
     padding: 10px;
     border-radius: 5px;

@@ -38,8 +38,8 @@
 </div>
 
 <style lang="scss">
-  @import 'static/base-minimal.min';
-  @import 'static/fonts';
+  @import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/fonts.css';
   .cell {
     width: 20%;
     height: 100px;

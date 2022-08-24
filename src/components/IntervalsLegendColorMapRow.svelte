@@ -98,13 +98,13 @@
   const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
+    // const value = e.target.textContent
 
     if (id === 'start') {
-      colorMapRow.start = parseFloat(value)
+      colorMapRow.start = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
     }
-
     if (id === 'end') {
-      colorMapRow.end = parseFloat(value)
+      colorMapRow.end = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
     }
 
     dispatch('changeIntervalValues', {
@@ -115,8 +115,10 @@
   }
 </script>
 
-<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">
-  <div class="column is-1 color-picker">
+<!--<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">-->
+
+<div class="grid-x">
+  <div class="cell small-2">
     <div
       id={`interval-${colorMapRow?.index}`}
       alt="Color Map Control"
@@ -124,47 +126,65 @@
       use:popperRef
       on:click={() => handleColorPickerClick()}
       class="discrete"
-      style={colorPickerStyle} />
+      style="{colorPickerStyle}; width:20px; height:20px" />
+    {#if showToolTip && color}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
   </div>
-  {#if showToolTip && color}
-    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-      <div id="arrow" data-popper-arrow />
-    </div>
-  {/if}
-
-  <div class="column start">
-    <input
-      id="start"
-      alt="Start Value"
-      title="Start Value"
-      class="input is-small"
-      type="number"
-      min="-1000000"
-      max="1000000"
-      value={colorMapRow?.start}
-      on:input={handleInput} />
+  <div class="cell small-3">
+    <!--    <div-->
+    <!--      id="start"-->
+    <!--      contenteditable='true'-->
+    <!--      bind:textContent={colorMapRow.start}-->
+    <!--      on:input={handleInput}-->
+    <!--    >-->
+    <!--      {colorMapRow.start}-->
+    <!--    </div>-->
+    <input style="border: none" id="start" type="number" value={colorMapRow.start} on:input={handleInput} />
   </div>
-
-  <div class="column end">
-    <input
-      id="end"
-      alt="End Value"
-      title="End Value"
-      class="input is-small"
-      type="number"
-      min="-1000000"
-      max="1000000"
-      value={colorMapRow?.end}
-      on:input={handleInput} />
+  <div class="cell small-2">—</div>
+  <div class="cell small-3">
+    <!--    <div-->
+    <!--      id="end"-->
+    <!--      contenteditable='true'-->
+    <!--      bind:textContent={colorMapRow.end}-->
+    <!--      on:input={handleInput}-->
+    <!--    >-->
+    <!--      {colorMapRow.end}-->
+    <!--    </div>-->
+    <input style="border: none" id="end" type="number" value={colorMapRow.end} on:input={handleInput} />
   </div>
 </div>
 
 <style lang="scss">
   @import '../styles/popper.scss';
+  @import '../styles/undp-design/base-minimal.min';
 
   $input-margin: 5px !important;
 
+  .cell {
+    padding: 0 !important;
+    margin-top: 2%;
+  }
+
+  .discrete {
+    cursor: pointer !important;
+    height: 20px;
+    width: 20px;
+  }
+
+  .discrete:hover {
+    padding: 0;
+    border: 1px solid hsl(204, 86%, 53%);
+  }
+
+  input:focus {
+    outline: none;
+    background: rgb(220, 220, 220, 0.3);
+  }
   .colormap-editor {
     margin-bottom: $input-margin;
 
@@ -177,7 +197,7 @@
     }
 
     .discrete {
-      cursor: pointer;
+      cursor: pointer !important;
       height: 20px;
       width: 20px;
 

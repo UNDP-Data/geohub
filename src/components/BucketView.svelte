@@ -144,8 +144,8 @@
 
       .cards {
         z-index: 10;
-        max-width: 90px;
-        width: 90px;
+        max-width: fit-content;
+        width: fit-content;
       }
 
       .tree {

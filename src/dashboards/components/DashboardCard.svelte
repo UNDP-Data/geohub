@@ -23,8 +23,8 @@
 </div>
 
 <style lang="scss">
-  @import 'static/base-minimal.min';
-  @import 'static/cta-link.min';
-  @import 'static/content-card.min';
-  @import 'static/buttons.min';
+  @import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/cta-link.min.css';
+  @import '../../styles/undp-design/content-card.min.css';
+  @import '../../styles/undp-design/buttons.min.css';
 </style>

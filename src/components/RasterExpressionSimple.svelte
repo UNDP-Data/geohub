@@ -155,8 +155,9 @@
           const exprStatUrl = new URL(
             `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
-            )}`,
+            )};`,
           )
+          console.log(exprStatUrl)
           const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
           info.stats = exprStats
           layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`

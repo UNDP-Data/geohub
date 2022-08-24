@@ -85,6 +85,11 @@
 </div>
 
 <style lang="scss">
+  $gray-700: #232e3d;
+  $dark-red: #d12800;
+  .is-active {
+    border-bottom: 2px solid $dark-red !important;
+  }
   .vector-layer-container {
     margin-left: 15px;
     margin-bottom: 20px;
@@ -95,6 +100,10 @@
 
       a {
         margin-right: 5px;
+        font-weight: bold;
+        text-transform: capitalize;
+        color: $gray-700;
+        font-family: ProximaNova, sans-serif;
 
         span {
           margin-right: 3px;

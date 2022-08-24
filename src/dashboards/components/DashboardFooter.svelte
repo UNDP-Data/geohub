@@ -28,6 +28,6 @@
 </footer>
 
 <style lang="scss">
-  @import 'static/base-minimal.min';
-  @import 'static/footer.min';
+  @import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/footer.min.css';
 </style>

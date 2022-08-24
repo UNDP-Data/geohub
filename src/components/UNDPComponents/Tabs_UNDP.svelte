@@ -23,7 +23,7 @@
 </div>
 
 <style lang="scss">
-  @import 'static/fonts';
+  @import '../../styles/undp-design/fonts.css';
   $dark-red: #d12800;
   $dark-azure: #00c1ff;
   $gray-700: #232e3d;

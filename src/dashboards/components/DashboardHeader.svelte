@@ -23,7 +23,7 @@
 </header>
 
 <style lang="scss">
-  @import 'static/base-minimal.min';
-  @import 'static/country-site-header.min';
-  @import 'static/mobile-nav.min';
+  @import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/country-site-header.min.css';
+  @import '../../styles/undp-design/mobile-nav.min.css';
 </style>

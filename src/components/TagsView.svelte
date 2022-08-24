@@ -115,7 +115,9 @@
     <div class="column pl-0">
       <div class="columns is-gapless mb-3">
         <div class="column">
-          <button class="button" disabled={showSpinner} on:click={handleSearchTags}>Search</button>
+          <button class="button" disabled={showSpinner} on:click={handleSearchTags}>
+            <i class="fas fa-search" />
+          </button>
         </div>
       </div>
       <div class="columns is-gapless">
