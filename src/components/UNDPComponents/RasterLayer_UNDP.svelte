@@ -6,7 +6,6 @@
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
-  //import RefineContainer from '$components/RefineContainer.svelte'
   import RasterExpression from '$components/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
@@ -14,7 +13,6 @@
   import type { Layer } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/RasterHistogram.svelte'
-  import Tabs_UNDP from '$components/UNDPComponents/Tabs_UNDP.svelte'
 
   export let layer: Layer = LayerInitialValues
 

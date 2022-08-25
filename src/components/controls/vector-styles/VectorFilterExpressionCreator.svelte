@@ -8,9 +8,9 @@
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
   import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
+  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
   export let propertyStats: number[]
   let showTooltip: boolean
@@ -80,27 +80,27 @@
     id="tooltip"
     data-testid="tooltip"
     use:popperContent={popperOptions}
-    use:clickOutside={() => (showTooltip = false)}
     transition:fade>
     <div class="card">
       <div class="card-content" style="padding: 0">
         <div class="tabs is-centered" style="margin:0">
-          <ul>
+          <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
             {#each operatorTypes as type}
-              <li class={activeOperatorsTab === type.title ? 'is-active' : ''}>
-                <a on:click={() => handleSetOperatorType(type.title)}>
-                  <Fa icon={type.icon} />
+              <li class={activeOperatorsTab === type.title ? 'is-active tabs-title' : 'tabs-title'}>
+                <a style="border: none;" on:click={() => handleSetOperatorType(type.title)}>
+                  <Fa icon={type.icon} style="color: #232E3D" />
                 </a>
               </li>
             {/each}
           </ul>
-          <button
-            on:click={() => (showTooltip = false)}
-            id="close"
-            style="border:1px solid red"
-            class="button is-small">
-            <span id="closex" style="color: red">X</span>
-          </button>
+          <div
+            style="cursor: pointer"
+            class="column is-1 close"
+            alt="Close Colormap Picker"
+            title="Close Colormap Picker"
+            on:click={() => (showTooltip = false)}>
+            <Fa icon={faXmark} />
+          </div>
         </div>
 
         <div class="content" style="display: flex; align-items: center; justify-content: space-between">
@@ -124,6 +124,8 @@
 {/if}
 
 <style lang="scss">
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/undp-design/tab.min';
   #close:hover {
     background: maroon;
   }

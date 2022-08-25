@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Fa from 'svelte-fa'
+  import { faHome } from '@fortawesome/free-solid-svg-icons/faHome'
 </script>
 
 <header class="country-header">
@@ -16,6 +18,13 @@
             <span>GeoHub</span>
             <span>Dashboards</span>
           </div>
+        </div>
+        <div
+          title="Open GeoHub Web Application"
+          class="cell large-3 small-3 top-right"
+          style="cursor: pointer;"
+          on:click={() => window.open('/')}>
+          <Fa icon={faHome} />
         </div>
       </div>
     </div>

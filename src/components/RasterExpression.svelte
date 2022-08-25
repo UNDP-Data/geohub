@@ -63,6 +63,9 @@
 </nav>
 
 <style lang="scss">
+  .is-active {
+    border-bottom: 2px solid #d12800;
+  }
   .raster-layer-container {
     margin-left: 15px;
     margin-bottom: 20px;
@@ -71,6 +74,8 @@
       padding-top: 10px;
 
       a {
+        color: #232e3d;
+        font-family: ProximaNova;
         margin-right: 5px;
 
         span {

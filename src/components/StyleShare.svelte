@@ -92,8 +92,8 @@
 </script>
 
 {#if $layerList.length > 0}
-  <div class="icon" on:click={() => open()}>
-    <Fa icon={faShare} size="lg" style="color: #006EB5" />
+  <div style="margin-left: 2%" class="icon" on:click={() => open()}>
+    <Fa icon={faShare} size="lg" />
   </div>
 {/if}
 

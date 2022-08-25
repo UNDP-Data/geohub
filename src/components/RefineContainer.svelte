@@ -205,7 +205,7 @@
         </div>
       </div>
       <button
-        class="button is-small is-info"
+        class="button is-small button-primary"
         on:click={() => handleAddOperator(`${band}`)}
         alt="Current layer"
         title="Current layer. Add">
@@ -258,6 +258,12 @@
 </div>
 
 <style lang="scss">
+  .button-primary {
+    background-color: #d12800;
+    color: #fff;
+    border: 1px solid #d12800;
+  }
+
   .refine-view-container {
     padding-left: 10px;
 
