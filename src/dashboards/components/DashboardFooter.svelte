@@ -2,7 +2,7 @@
   const currentYear = new Date().getFullYear()
 </script>
 
-<footer class="footer">
+<footer class="footer" style="background: #006eb5">
   <div class="grid-x">
     <div class="cell medium-10 medium-offset-1">
       <div class="grid-x footer-head">

@@ -70,6 +70,7 @@
       method: 'POST',
       body: JSON.stringify(data),
     })
+    console.log(res)
     const resjson = await res.json()
     styleURL = resjson.url
   }
@@ -92,7 +93,7 @@
 
 {#if $layerList.length > 0}
   <div class="icon" on:click={() => open()}>
-    <Fa icon={faShare} size="lg" />
+    <Fa icon={faShare} size="lg" style="color: #006EB5" />
   </div>
 {/if}
 

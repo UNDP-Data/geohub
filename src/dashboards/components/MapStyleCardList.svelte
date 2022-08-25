@@ -2,6 +2,9 @@
   import { onMount } from 'svelte'
   import { Pagination } from 'carbon-components-svelte'
   import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
+  import 'carbon-components-svelte/css/all.css'
+  import 'carbon-components-svelte/css/g100.css'
+  import 'carbon-components-svelte/css/white.css'
 
   let styleList
   let totalItemsCount = -1
@@ -30,11 +33,12 @@
 </script>
 
 {#if styleList && styleList.length > 0}
-  <header class="card-header">
-    <p class="card-header-title">Saved map styles</p>
-  </header>
-  <div class="section">
-    <div style="width: 90%; display: flex; flex-wrap: wrap; margin: auto;">
+  <div style="width: fit-content; margin:auto;">
+    <h3>Saved Map Styles</h3>
+  </div>
+
+  <div class="content-card-container">
+    <div class="grid-x grid-margin-x small-up-1 medium-up-3 large-up-5 content-card-wrapper">
       {#each styleList as style}
         <DashboardMapStyleCard {style} />
       {/each}
@@ -51,22 +55,4 @@
 {/if}
 
 <style lang="scss">
-  .section {
-    width: 100%;
-    height: max-content;
-    display: flex;
-  }
-
-  .card-header {
-    margin-top: 20px;
-    background: darkslategrey;
-  }
-  .card-header-title {
-    font-family: ProximaNova, sans-serif;
-    text-transform: capitalize;
-    color: white;
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
 </style>

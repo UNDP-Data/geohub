@@ -15,6 +15,7 @@
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
   import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
+  import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
 </script>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
@@ -33,12 +34,13 @@
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
+    <MapStyleCardList />
   </div>
   <DashboardFooter />
 </div>
 
 <style lang="scss">
-  @import '../../styles/undp-design/base-minimal.min.css';
+  //@import '../../styles/undp-design/base-minimal.min.css';
   @import '../../styles/undp-design/fonts.css';
   .cell {
     width: 20%;
