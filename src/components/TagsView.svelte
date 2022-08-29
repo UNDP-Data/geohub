@@ -115,11 +115,7 @@
     <div class="column pl-0">
       <div class="columns is-gapless mb-3">
         <div class="column">
-          <button
-            style="background: #D12800; border: none"
-            class="button"
-            disabled={showSpinner}
-            on:click={handleSearchTags}>
+          <button class="button primary-button" disabled={showSpinner} on:click={handleSearchTags}>
             <i class="fas fa-search" style="color: white;" />
           </button>
         </div>
@@ -127,8 +123,7 @@
       <div class="columns is-gapless">
         <div class="column">
           <button
-            style="background: #3288CE; color: white; font-weight: bolder; border: none"
-            class="button"
+            class="button secondary-button"
             disabled={showSpinner || tagsList.length === 0}
             on:click={handleClearTags}>Clear</button>
         </div>

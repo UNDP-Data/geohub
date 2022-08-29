@@ -32,7 +32,9 @@
       electrification for a single pixel only.
     </p>
     <br />
-    <a class="button button-primary" role="button" href="#" on:click={hideIntro}> Explore Data </a>
+    <a style="border-radius: 0px" class="button button-primary" role="button" href="#" on:click={hideIntro}>
+      Explore Data
+    </a>
     <!--    <Button variant="raised" on:click={hideIntro}>Explore Data</Button>-->
   </Paper>
 {/if}
