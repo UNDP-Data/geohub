@@ -50,7 +50,7 @@
 </script>
 
 <div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">
-  <div class="select is-rounded is-flex is-justify-content-left">
+  <div class="select is-flex is-justify-content-left">
     <select
       style="width: 100%"
       class="is-small"

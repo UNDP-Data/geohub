@@ -205,7 +205,7 @@
         </div>
       </div>
       <button
-        class="button is-small is-info"
+        class="button is-small button-primary"
         on:click={() => handleAddOperator(`${band}`)}
         alt="Current layer"
         title="Current layer. Add">
@@ -227,16 +227,16 @@
       </div>
     </div>
     <div class="columns">
-      <div class="column">
+      <div class="column" style="width: fit-content; margin-left: auto">
         <button
-          class="button is-info is-light is-small"
+          class="button primary-button is-small"
           on:click={handleApplyExpression}
           alt="Apply expression"
           title="Apply expression">
           Apply
         </button>
         <button
-          class="button is-info is-light is-small"
+          class="button secondary-button is-small"
           on:click={handleClearExpression}
           alt="Clear expression"
           title="Clear expression">
@@ -258,6 +258,12 @@
 </div>
 
 <style lang="scss">
+  .button-primary {
+    background-color: #d12800;
+    color: #fff;
+    border: 1px solid #d12800;
+  }
+
   .refine-view-container {
     padding-left: 10px;
 

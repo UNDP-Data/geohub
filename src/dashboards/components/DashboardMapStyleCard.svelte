@@ -30,7 +30,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'bottom',
+      placement: 'bottom-end',
       strategy: 'absolute',
     },
     [-30, 0],
@@ -90,6 +90,7 @@
         }
         bannerMessages.update((data) => [...data, bannerErrorMessage])
       })
+    confirmDeleteDialogVisible = false
   }
 
   const handleClose = () => {
@@ -103,93 +104,101 @@
   }
 </script>
 
-<div bind:this={nodeRef}>
-  <div class="card">
-    <a href={style.viewer} target="_blank">
-      <div class="card-image">
-        <div class="map" id="map" bind:this={mapContainer} />
-      </div>
-    </a>
-    <div class="card-content">
-      <div class="media">
-        <div class="media-content">
-          <a href={style.viewer} target="_blank">
-            <p class="title is-5">{style.name}</p>
-          </a>
-        </div>
-        <div class="container icon" use:popperRef on:click={() => (showContextMenu = !showContextMenu)}>
-          <Fa icon={faEllipsisVertical} size="sm" />
-        </div>
-      </div>
-
+<div class="cell small-3" bind:this={nodeRef}>
+  <div class="content-card">
+    <a href="#">
       <a href={style.viewer} target="_blank">
-        <div class="content">
-          <Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+        <h6>{style.name}</h6>
+        <div class="image">
+          <div class="map" id="map" bind:this={mapContainer} />
         </div>
       </a>
-    </div>
-  </div>
 
-  {#if showContextMenu}
-    <div
-      id="tooltip"
-      data-testid="tooltip"
-      use:popperContent={popperOptions}
-      transition:fade
-      use:clickOutside={handleClose}>
-      <aside class="menu">
-        <ul class="menu-list">
-          <li
-            on:click={() => {
-              confirmDeleteDialogVisible = true
-            }}>
-            <a>Delete</a>
-          </li>
-        </ul>
-      </aside>
-    </div>
-  {/if}
-
-  {#if confirmDeleteDialogVisible}
-    <div class="modal is-active" transition:fade use:clickOutside={() => (confirmDeleteDialogVisible = false)}>
-      <div class="modal-background" />
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Delete Style</p>
-          <button
-            class="delete"
-            aria-label="close"
-            alt="Close"
-            title="Close"
-            on:click={() => (confirmDeleteDialogVisible = false)} />
-        </header>
-        <section class="modal-card-body is-size-6 has-text-weight-normal">
-          <div class="has-text-weight-medium">Are you sure you want to delete this style?</div>
-          <br />
-          {style.name}
-        </section>
-        <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-          <div>
-            <button
-              class="button"
-              alt="Cancel Delete Layer Button"
-              title="Cancel Delete Layer Button"
-              on:click={() => (confirmDeleteDialogVisible = false)}>
-              Cancel
-            </button>
-
-            <button class="button is-danger" alt="Delete" title="Delete" on:click={handleDeleteStyle}>Delete</button>
+      <div class="content-caption">
+        <a href={style.viewer} target="_blank">
+          <span class="cta__link cta--space">
+            View Style
+            <i />
+          </span>
+        </a>
+        {#if showContextMenu}
+          <div
+            id="tooltip"
+            data-testid="tooltip"
+            use:popperContent={popperOptions}
+            transition:fade
+            use:clickOutside={handleClose}>
+            <aside class="menu">
+              <div>
+                <button
+                  class="button is-small"
+                  on:click={() => {
+                    confirmDeleteDialogVisible = true
+                  }}>
+                  DELETE
+                </button>
+              </div>
+            </aside>
           </div>
-        </footer>
+        {/if}
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div class="content">
+            <Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+          </div>
+          <div class="container icon" use:popperRef on:click={() => (showContextMenu = !showContextMenu)}>
+            <Fa icon={faEllipsisVertical} size="sm" />
+          </div>
+        </div>
       </div>
-    </div>
-  {/if}
+    </a>
+  </div>
 </div>
 
+{#if confirmDeleteDialogVisible}
+  <div class="modal is-active" transition:fade use:clickOutside={() => (confirmDeleteDialogVisible = false)}>
+    <div class="modal-background" />
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Delete Style</p>
+        <button
+          class="delete"
+          aria-label="close"
+          alt="Close"
+          title="Close"
+          on:click={() => (confirmDeleteDialogVisible = false)} />
+      </header>
+      <section class="modal-card-body is-size-6 has-text-weight-normal">
+        <div class="has-text-weight-medium">Are you sure you want to delete this style?</div>
+        <br />
+        {style.name}
+      </section>
+      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+        <div>
+          <button
+            class="button"
+            alt="Cancel Delete Layer Button"
+            title="Cancel Delete Layer Button"
+            on:click={() => (confirmDeleteDialogVisible = false)}>
+            Cancel
+          </button>
+          <button class="button is-danger" alt="Delete" title="Delete" on:click={handleDeleteStyle}>Delete</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+{/if}
+
+<!--</div>-->
 <style lang="scss">
   @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
   @import '../../styles/popper.scss';
+  //@import '../../styles/undp-design/base-minimal.min';
+  //@import '../../styles/undp-design/modal.min';
 
+  #delete-style:hover {
+    cursor: pointer;
+    background: rgba(255, 0, 0, 0.1);
+  }
   .card {
     margin: 5px;
     padding: 5px;

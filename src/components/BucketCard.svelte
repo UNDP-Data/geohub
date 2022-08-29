@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import { fade } from 'svelte/transition'
-
   import Popper from '$lib/popper'
   import type { Bucket } from '$lib/types'
   import '../styles/font-awesome/all.css'

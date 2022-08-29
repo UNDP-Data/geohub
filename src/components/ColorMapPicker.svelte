@@ -8,7 +8,6 @@
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import { updateParamsInURL } from '../lib/helper'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layer: Layer
@@ -49,10 +48,10 @@
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
       <div class="tabs">
-        <ul>
+        <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
           {#each Object.values(ColorMapTypes) as colorMapType}
-            <li class={activeColorMapType === colorMapType ? 'is-active' : ''}>
-              <a href={'#'} on:click={() => handleSetActiveColorMapType(colorMapType)}>
+            <li class={activeColorMapType === colorMapType ? 'is-active tabs-title' : 'tabs-title'}>
+              <a style="border: none" href={'#'} on:click={() => handleSetActiveColorMapType(colorMapType)}>
                 {colorMapType}
               </a>
             </li>
@@ -92,6 +91,8 @@
 </div>
 
 <style lang="scss">
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/undp-design/tab.min';
   .tabs {
     li {
       a {

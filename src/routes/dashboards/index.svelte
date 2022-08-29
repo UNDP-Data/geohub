@@ -12,59 +12,40 @@
 </script>
 
 <script lang="ts">
-  import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
+  import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
+  import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
 </script>
 
-<div style="height: 100vh!important; width: 100%; overflow-y: auto;">
-  <section class="hero is-primary is-medium">
-    <DashboardHeader />
-    <div class="hero-body">
-      <p class="title" style="margin-bottom: 10px;">Gallery</p>
-      <div style="width: 120px; height: 5px; background: grey; " />
+<div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
+  <DashboardHeader />
+  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: 8vh; height: 22vh">
+    <div style="margin-left:5%; padding-top:2%">
+      <p class="title">Dashboards Gallery</p>
+      <div style="width: 120px; height: 5px; background: black; " />
     </div>
-  </section>
-  <div class="main-section">
-    <div style="width: 90%; display: flex; flex-wrap: wrap; margin: auto;">
+  </div>
+  <div class="main-section" style="height: max-content; min-height: 60vh">
+    <div
+      class="grid-x small-up-2 medium-up-4 large-up-6 content-card-wrapper"
+      style="width: 100%; margin-left: 2%; margin-right: 2%">
       {#each pages as page}
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
+    <MapStyleCardList />
   </div>
-  <MapStyleCardList />
-  <footer style="background: #121212; margin-bottom: 0!important;" class="footer">
-    <div class="content has-text-centered">
-      <p>&copy UNDP 2022</p>
-    </div>
-  </footer>
+  <DashboardFooter />
 </div>
 
 <style lang="scss">
-  @import 'carbon-components-svelte/css/white.css';
-
-  .hero-body {
-    background: darkslategrey;
-  }
-  .main-section {
-    width: 100%;
-    height: max-content;
-    display: flex;
-  }
-
-  .content {
-    color: white;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .hero {
-      background: #212125;
-    }
-    .main-section {
-      background: #4a4a4a;
-    }
-    .footer {
-      background: #121212 !important;
-    }
+  //@import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/fonts.css';
+  .cell {
+    width: 20%;
+    height: 100px;
+    background: red;
+    margin-top: 2%;
   }
 </style>

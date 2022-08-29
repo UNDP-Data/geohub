@@ -133,7 +133,7 @@
 
 <style lang="scss">
   .map {
-    height: 100%;
+    height: 92vh;
     width: 100%;
   }
 </style>

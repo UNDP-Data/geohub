@@ -111,17 +111,18 @@
       <div class="columns is-centered is-mobile">
         <div class="column is-11 ">
           <div class="tabs is-centered">
-            <ul>
+            <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
               {#each Object.values(operatorCategories) as operatorCategory}
-                <li class={activeOperatorCategory === operatorCategory.name ? 'is-active' : ''}>
+                <li class={activeOperatorCategory === operatorCategory.name ? 'is-active tabs-title' : 'tabs-title'}>
                   <Wrapper>
                     <a
+                      style="border: none;"
                       href={'#'}
                       on:click={() => {
                         activeOperatorCategory = operatorCategory.name
                         operatorCategory.isVisible = !operatorCategory.isVisible
                       }}>
-                      <Fa icon={operatorCategory.icon} style="font-size: 16px;" />
+                      <Fa icon={operatorCategory.icon} style="font-size: 16px; color: #232E3D" />
                     </a>
                     <Tooltip showDelay={100} hideDelay={0} yPos="above">{operatorCategory.title}</Tooltip>
                   </Wrapper>
@@ -154,6 +155,9 @@
 </div>
 
 <style lang="scss">
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/undp-design/tab.min';
+
   #operator-categories {
     z-index: -1;
   }
