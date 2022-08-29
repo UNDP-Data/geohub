@@ -19,38 +19,42 @@
   import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
-
-  let isDataContainerVisible = false
+  export let isDataContainerVisible: boolean
+  // let isDataContainerVisible = false
   let isValuesRounded = true
   let layerValuesData = []
-  let mapQueryInfoControl = null
   let marker: Marker
 
   const iconSize = 'lg'
   const noDataLabel = 'N/A'
   const frame = { translate: [0, 0] }
 
+  // $:{
+  //   if(mapMouseEvent){
+  //     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
+  //   }
+  // }
   // layer change
-  $: {
-    const layersVisible = $layerList.filter((layer) => layer.visible === true)
-    layerValuesExpanded = []
-
-    if ($map !== null) {
-      if (layersVisible.length > 0) {
-        if (mapQueryInfoControl !== null && $map.hasControl(mapQueryInfoControl) === false) {
-          $map.addControl(mapQueryInfoControl, 'top-right')
-        }
-      } else {
-        mapMouseEvent = null
-        if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
-        resetMapQueryInfo()
-      }
-    }
-  }
+  // $: {
+  //   const layersVisible = $layerList.filter((layer) => layer.visible === true)
+  //   layerValuesExpanded = []
+  //
+  //   if ($map !== null) {
+  //     if (layersVisible.length > 0) {
+  //       if (mapQueryInfoControl !== null && $map.hasControl(mapQueryInfoControl) === false) {
+  //         $map.addControl(mapQueryInfoControl, 'top-right')
+  //       }
+  //     } else {
+  //       mapMouseEvent = null
+  //       if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
+  //       resetMapQueryInfo()
+  //     }
+  //   }
+  // }
 
   // mouse click on map
   $: {
-    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
+    if (mapMouseEvent?.lngLat) {
       const layersVisible = $layerList.filter((layer) => layer.visible === true)
 
       if (layersVisible.length > 0) {
@@ -175,46 +179,7 @@
     downloadFile(filename, data)
   }
 
-  // eslint-disable-next-line
-  function MapQueryInfoControl() {}
-
-  MapQueryInfoControl.prototype.onAdd = function (map: Map) {
-    this.map = map
-    this.container = document.createElement('div')
-    this.container.title = 'Query Layer Information'
-    this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
-
-    this.queryInfoContainer = document.createElement('div')
-    this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
-    this.container.appendChild(this.queryInfoContainer)
-
-    this.button = document.createElement('button')
-    this.button.classList.add('mapboxgl-query-info-control')
-    this.button.type = 'button'
-    this.button.addEventListener('click', () => {
-      if (isDataContainerVisible === false) {
-        map.getCanvas().style.cursor = 'crosshair'
-        isDataContainerVisible = true
-      } else {
-        resetMapQueryInfo()
-      }
-    })
-    this.container.appendChild(this.button)
-
-    return this.container
-  }
-
-  MapQueryInfoControl.prototype.onRemove = function () {
-    if (!this.container || !this.container.parentNode || !this.map || !this.button) {
-      return
-    }
-    this.container.parentNode.removeChild(this.container)
-    this.map = undefined
-  }
-
   onMount(async () => {
-    mapQueryInfoControl = new MapQueryInfoControl()
-
     new Moveable(document.body, {
       className: 'moveable-control',
       draggable: true,
@@ -252,7 +217,7 @@
   let layerValuesExpanded = []
 </script>
 
-<div id="data-container" class="data-container target" hidden={!isDataContainerVisible}>
+<div id="data-container" class="data-container target" hidden={isDataContainerVisible === false}>
   <div id="header" class="header">
     <div class="name">Query Information</div>
 
@@ -421,7 +386,7 @@
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
-    left: 10px;
+    right: 10px;
     min-height: 250px;
     min-width: 325px;
     padding: 10px;
