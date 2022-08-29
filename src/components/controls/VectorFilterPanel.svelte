@@ -272,7 +272,7 @@
           <button
             style="margin:1% {selectedCombiningOperator === operator.operation ? 'background:red' : 'background:blue'}"
             disabled={selectedCombiningOperator === operator.operation || expressionsArray.length < 1}
-            class="button is-light is-small is-vcentered is-success"
+            class="button is-small other-button"
             on:click={() => {
               handleOperatorClick(operator)
             }}
@@ -280,8 +280,8 @@
             title="Combining operator button">{operator.title}</button>
         {/each}
         <button
-          style="margin:1%"
-          class="button is-info is-light is-small"
+          style="margin:1%;"
+          class="button primary-button is-small"
           on:click={handleApplyExpression}
           alt="Apply expression button"
           title="Apply expression button"
@@ -289,7 +289,7 @@
         </button>
         <button
           style="margin:1%"
-          class="button is-light is-light is-small"
+          class="button is-small secondary-button"
           on:click={handleClearExpression}
           alt="Apply expression button"
           title="Apply expression button">Clear</button>
@@ -299,6 +299,26 @@
 {/if}
 
 <style lang="scss">
+  :global(.primary-button) {
+    background: #d12800 !important;
+    border-color: #d12800 !important;
+    border-radius: 0px !important;
+    color: white !important;
+  }
+  :global(.secondary-button) {
+    background: #3288ce !important;
+    border-color: #3288ce !important;
+    border-radius: 0px !important;
+    color: white !important;
+  }
+
+  :global(.other-button) {
+    background: #b5d5f5 !important;
+    border-color: #b5d5f5 !important;
+    border-radius: 0px !important;
+    color: white !important;
+  }
+
   #expression-tags {
     display: flex;
     align-items: center;

@@ -227,16 +227,16 @@
       </div>
     </div>
     <div class="columns">
-      <div class="column">
+      <div class="column" style="width: fit-content; margin-left: auto">
         <button
-          class="button is-info is-light is-small"
+          class="button primary-button is-small"
           on:click={handleApplyExpression}
           alt="Apply expression"
           title="Apply expression">
           Apply
         </button>
         <button
-          class="button is-info is-light is-small"
+          class="button secondary-button is-small"
           on:click={handleClearExpression}
           alt="Clear expression"
           title="Clear expression">

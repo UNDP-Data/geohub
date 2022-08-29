@@ -336,14 +336,14 @@
         style="background: white">
         <div>
           <button
-            class="button button-secondary"
+            class="button secondary-button"
             alt="Close Add Layer Button"
             title="Close Layer Button"
             on:click={handleCancel}>
             Cancel
           </button>
           <button
-            class="button button button-primary"
+            class="button primary-button"
             role="button"
             disabled={addButtonClicked || (selectedLayerId.length === 0 ? true : false)}
             alt="Add Layer Button"

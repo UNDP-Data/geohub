@@ -76,15 +76,18 @@
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
         <div>
           <button
-            class="button"
+            class="button secondary-button"
             alt="Cancel Delete Layer Button"
             title="Cancel Delete Layer Button"
             on:click={handleCancel}>
             Cancel
           </button>
 
-          <button class="button is-danger" alt="Delete Layer Button" title="Delete Layer Button" on:click={handleDelete}
-            >Delete</button>
+          <button
+            class="button primary-button"
+            alt="Delete Layer Button"
+            title="Delete Layer Button"
+            on:click={handleDelete}>Delete</button>
         </div>
       </footer>
     </div>

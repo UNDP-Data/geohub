@@ -134,27 +134,16 @@
       </div>
     {/if}
   </div>
-  <div class="cell small-3">
-    <!--    <div-->
-    <!--      id="start"-->
-    <!--      contenteditable='true'-->
-    <!--      bind:textContent={colorMapRow.start}-->
-    <!--      on:input={handleInput}-->
-    <!--    >-->
-    <!--      {colorMapRow.start}-->
-    <!--    </div>-->
-    <input style="border: none" id="start" type="number" value={colorMapRow.start} on:input={handleInput} />
+  <div class="cell small-4">
+    <input
+      style="border: none; width: fit-content"
+      id="start"
+      type="number"
+      value={colorMapRow.start}
+      on:input={handleInput} />
   </div>
   <div class="cell small-2">—</div>
-  <div class="cell small-3">
-    <!--    <div-->
-    <!--      id="end"-->
-    <!--      contenteditable='true'-->
-    <!--      bind:textContent={colorMapRow.end}-->
-    <!--      on:input={handleInput}-->
-    <!--    >-->
-    <!--      {colorMapRow.end}-->
-    <!--    </div>-->
+  <div class="cell small-4">
     <input style="border: none" id="end" type="number" value={colorMapRow.end} on:input={handleInput} />
   </div>
 </div>

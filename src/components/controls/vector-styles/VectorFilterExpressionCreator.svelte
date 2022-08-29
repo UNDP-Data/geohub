@@ -65,9 +65,9 @@
   }}
   use:popperRef>
   <Wrapper>
-    <Card>
+    <Card style="background: #D12800">
       <PrimaryAction style="padding: 10px;">
-        <Fa icon={faCalculator} style="font-size: 16px;" />
+        <Fa icon={faCalculator} style="font-size: 16px; color:white" />
       </PrimaryAction>
     </Card>
     <Tooltip showDelay={100} hideDelay={0} yPos="above">Operators</Tooltip>

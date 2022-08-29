@@ -114,9 +114,9 @@
   <div class="columm legend-toggle" transition:slide>
     <Wrapper>
       <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
-        <Card>
+        <Card style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
+            <Fa icon={faRetweet} style="font-size: 16px; color:white" spin={isLegendSwitchAnimate} />
           </PrimaryAction>
         </Card>
       </div>
@@ -131,9 +131,9 @@
         on:click={handleClosePopup}
         data-testid="colormap-toggle-container"
         transition:fade>
-        <Card>
+        <Card style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faPalette} style="font-size: 16px;" />
+            <Fa icon={faPalette} style="font-size: 16px; color:white" />
           </PrimaryAction>
         </Card>
       </div>

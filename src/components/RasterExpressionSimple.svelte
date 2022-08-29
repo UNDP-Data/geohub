@@ -379,24 +379,23 @@
         </div>
       {/if}
     </div>
-    <div class="column is-3">
-      <div
-        style="width: 50%"
-        on:click={() => {
-          showExpressionBuilder = !showExpressionBuilder
-        }}
-        data-testid="expression-builder-button"
-        use:popperRef>
-        <Wrapper>
-          <Card>
-            <PrimaryAction style="padding: 10px;">
-              <Fa icon={faCalculator} style="font-size: 16px;" />
-            </PrimaryAction>
-          </Card>
-          <Tooltip showDelay={100} hideDelay={0} yPos="above">Expression builder</Tooltip>
-        </Wrapper>
-      </div>
+    <!--    <div class="column">-->
+    <div
+      on:click={() => {
+        showExpressionBuilder = !showExpressionBuilder
+      }}
+      data-testid="expression-builder-button"
+      use:popperRef>
+      <Wrapper>
+        <Card style="background: #D12800">
+          <PrimaryAction style="padding: 10px;">
+            <Fa icon={faCalculator} style="font-size: 16px; color: white" />
+          </PrimaryAction>
+        </Card>
+        <Tooltip showDelay={100} hideDelay={0} yPos="above">Expression builder</Tooltip>
+      </Wrapper>
     </div>
+    <!--    </div>-->
     {#if showExpressionBuilder}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <RasterExpressionBuilder
@@ -413,35 +412,35 @@
       </div>
     {/if}
   </div>
-  <div class="columns" style="width: 100%">
-    <div class="column" style="width: 100%; justify-content: space-between">
+  <div class="columns" style="width: fit-content">
+    <div class="column" style="width: 100%; justify-content: space-between; margin-left: auto">
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
-        class="button is-primary is-light is-small"
+        class="button other-button is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '&'])}>
         AND
       </button>
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
-        class="button is-primary is-light is-small"
+        class="button other-button is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '|'])}>
         OR
       </button>
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
-        class="button is-primary is-light is-small"
+        class="button other-button is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '~'])}>
         NOT
       </button>
       <button
-        class="button is-info is-light is-small"
+        class="button primary-button is-small"
         on:click={applyExpression}
         alt="Apply expression"
         title="Apply expression">
         Apply
       </button>
       <button
-        class="button is-info is-light is-small"
+        class="button secondary-button is-small"
         on:click={clearAppliedExpression}
         alt="Clear expression"
         title="Clear expression">
