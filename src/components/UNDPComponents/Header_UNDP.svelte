@@ -6,6 +6,7 @@
   import StyleShare from '../StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Section } from '@smui/top-app-bar'
+  import '../../styles/undp-design/variables.scss'
 
   export let drawerOpen = true
 
@@ -57,7 +58,7 @@
             <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
           </Wrapper>
         </div>
-        <div style="margin-left: 5%; cursor: pointer">
+        <div style="margin-left: 5%; cursor: pointer;">
           <Wrapper>
             <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
               <Fa icon={faBars} size="lg" />
@@ -75,10 +76,14 @@
 <style lang="scss">
   @import '../../styles/undp-design/base-minimal.min';
   @import '../../styles/undp-design/country-site-header.min';
+  @import '../../styles/undp-design/variables.scss';
 
-  $dark-azure: #00c1ff;
+  //.bars-icon{
+  //  background: $color-azure!important;
+  //}
+
   .header {
-    background-color: #f5f5f5;
+    background-color: $color-gray-200;
     padding: 0;
     margin: 0;
     height: 8vh;
@@ -98,7 +103,7 @@
   }
 
   .fa-icon {
-    color: $dark-azure;
+    color: $color-azure;
   }
   .title {
     font-size: 1.5rem;
