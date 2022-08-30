@@ -32,3 +32,109 @@ $color-light-pink: #ffb4ae;
 $color-silvery-moonlight: #ced0d3;
 $color-shuttle-gray: #55606f;
 $color-ebony-clay: #232e3e;
+
+// FONT SIZE
+$font-size-12: 0.75rem;
+$font-size-14: 0.875rem;
+$font-size-16: 1rem;
+$font-size-20: 1.25rem;
+$font-size-24: 1.5rem;
+$font-size-25: 1.563rem;
+$font-size-26: 1.625rem;
+$font-size-32: 2rem;
+$font-size-35: 2.188rem;
+
+// FONTS FAMLIY
+$Font-Family-ProximaNova: 'ProximaNova', sans-serif;
+$Font-Family-SohneBreit: 'SohneBreit', $Font-Family-ProximaNova;
+$Font-Family-NotoSans: 'NotoSans', sans-serif;
+
+// SPACING variables
+$spacing-01: 0.125rem;
+$spacing-02: 0.25rem;
+$spacing-03: 0.5rem;
+$spacing-04: 0.75rem;
+$spacing-05: 1rem;
+$spacing-06: 1.5rem;
+$spacing-07: 2rem;
+$spacing-08: 2.5rem;
+$spacing-09: 3rem;
+$spacing-10: 4rem;
+$spacing-11: 5rem;
+$spacing-12: 6rem;
+$spacing-13: 10rem;
+$spacing-36: 2.25rem;
+$spacing-44: 2.75rem;
+$spacing-50: 3.125rem;
+$spacing-60: 3.75rem;
+$spacing-70: 4.375rem;
+$spacing-76: 4.75rem;
+$spacing-90: 5.625rem;
+$spacing-100: 6.25rem;
+$spacing-136: 8.5rem;
+$spacing-330: 20.625rem;
+$spacing-320: 20rem;
+$spacing-400: 25rem;
+
+// Width variables
+$width-150: 9.375rem;
+$width-180: 11.25rem;
+$width-600: 37.5rem;
+$width-705: 44.0625rem;
+$width-840: 52.5rem;
+$width-900: 56.25rem;
+$width-1096: 68.5rem;
+$width-1440: 90rem;
+
+// Header height
+$header-height-xlarge: 115px;
+$header-height-medium: 75px;
+
+// GRADIENT COLOR LIST
+$yellow-gradient: $color-yellow 30%, rgba(255, 235, 0, 0) 110%;
+$red-gradient: $color-red 30%, rgb(240, 49, 49, 0) 110%;
+$green-gradient: $color-green 30%, rgba(0, 0, 0, 0) 110%;
+$blue-gradient: $color-azure 30%, rgb(101, 204, 244, 0) 110%;
+
+//SDG color
+$sdg-red: #e5243b;
+$sdg-mustard: #dda63a;
+$sdg-kelly-green: #4c9f38;
+$sdg-dark-red: #c5192d;
+$sdg-red-orange: #ff3a21;
+$sdg-bright-blue: #26bde2;
+$sdg-yellow: #fcc30b;
+$sdg-burgundy-red: #a21942;
+$sdg-orange: #fd6925;
+$sdg-magenta: #dd1367;
+$sdg-golden-yellow: #fd9d24;
+$sdg-dark-mustard: #bf8b2e;
+$sdg-dark-green: #3f7e44;
+$sdg-blue: #0a97d9;
+$sdg-lime-green: #56c02b;
+$sdg-royal-blue: #00689d;
+$sdg-navy-blue: #19486a;
+
+//SDG hover color
+$sdg-hover-red: #dc9099;
+$sdg-hover-mustard: #d3bb8a;
+$sdg-hover-kelly-green: #9fd092;
+$sdg-hover-dark-red: #ce8f97;
+$sdg-hover-red-orange: #ce9890;
+$sdg-hover-bright-blue: #9ac8d3;
+$sdg-hover-yellow: #d3c79d;
+$sdg-hover-burgundy-red: #ce94a6;
+$sdg-hover-orange: #d2aa98;
+$sdg-hover-magenta: #c994aa;
+$sdg-hover-golden-yellow: #c7b094;
+$sdg-hover-dark-mustard: #ceba98;
+$sdg-hover-dark-green: #a2d7a6;
+$sdg-hover-blue: #a1c6d7;
+$sdg-hover-lime-green: #abce9e;
+$sdg-hover-royal-blue: #748f9d;
+$sdg-hover-navy-blue: #a2c2d8;
+
+$author-image-radius: 50%;
+
+// language selectors
+$cyrillic: ":lang(bg),:lang(be),:lang(kk),:lang(ky),:lang(mk),:lang(mn),:lang(ru),:lang(sr),:lang(uk)";
