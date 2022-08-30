@@ -32,7 +32,7 @@
   <section>
     <div style="display: flex; justify-content: space-between; align-items: center">
       <div class="logo-div">
-        <a style="background:none;" href="https://undpgeohub.org" class="logo" tabIndex="0">
+        <a style="background:none;" href="https://undpgeohub.org" class="logo" tabIndex="-1">
           <img style="height: 8vh;" src="undp-images/undp-logo-blue.svg" alt="GeoHub | UNDP" loading="lazy" />
         </a>
         <div class="site-title" style="margin-left: 5px">
