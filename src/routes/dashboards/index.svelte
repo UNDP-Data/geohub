@@ -41,7 +41,7 @@
 
 <style lang="scss">
   //@import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/fonts.css';
+  //@import '../../styles/undp-design/fonts.css';
   .cell {
     width: 20%;
     height: 100px;
