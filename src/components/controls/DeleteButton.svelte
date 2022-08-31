@@ -11,7 +11,7 @@
   import { layerList, map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
-
+  import Keydown from 'svelte-keydown'
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {
