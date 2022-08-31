@@ -74,19 +74,21 @@
     const layerStats: RasterLayerStats = await fetchUrl(statsURL)
     info = { ...info, stats: layerStats }
     const band = info.active_band_no
-
     percentile98 = layerStats[band]['percentile_98']
     layerConfig.percentile98 = percentile98
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
-    if (skewness > 1 && skewness > -1) {
-      // Layer isn't higly skewed.
-      classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-      layerConfig.intervals.classification = classificationMethod
+    if (layerConfig.intervals.classification !== ClassificationMethodTypes.LOGARITHMIC) {
+      //pass
     } else {
-      classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-      layerConfig.intervals.classification = classificationMethod
+      if (skewness > 1 && skewness > -1) {
+        // Layer isn't higly skewed.
+        classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
+        layerConfig.intervals.classification = classificationMethod
+      } else {
+        classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+        layerConfig.intervals.classification = classificationMethod
+      }
     }
-
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
       return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
