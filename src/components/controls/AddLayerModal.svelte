@@ -16,7 +16,7 @@
   import { fetchUrl, getVectorInfo } from '$lib/helper'
   import type { TreeNode } from '$lib/types'
   import { map, layerList, modalVisible } from '$stores'
-
+  import Keydown from 'svelte-keydown'
   export let isModalVisible = false
   export let treeNode: TreeNode
 
