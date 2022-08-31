@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import Keydown from 'svelte-keydown'
   import { clickOutside } from 'svelte-use-click-outside'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
@@ -12,7 +11,7 @@
   import { layerList, map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
-
+  import Keydown from 'svelte-keydown'
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {

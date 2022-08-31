@@ -1,17 +1,89 @@
 <script lang="ts">
   import { TabNames } from '$lib/constants'
   import { layerList } from '$stores'
-  import Fa from 'svelte-fa'
+  import Tab from '@smui/tab/src/Tab.svelte'
 
   export let tabs
   export let activeTab: string
+  let eventsEnabled = false
+
+  const onKeyDown1 = (e) => {
+    const cond = (element) => element.label == activeTab
+    const activeIndex = tabs.findIndex(cond)
+
+    if (eventsEnabled) {
+      if (e.keyCode == 39 && activeIndex < 2) {
+        activeTab = tabs[activeIndex + 1].label
+
+        document.getElementById(`tab-${activeIndex + 1}`).focus()
+      }
+      if (e.keyCode == 39 && activeIndex == 2) {
+        activeTab = tabs[0].label
+      }
+
+      if (e.keyCode == 37 && activeIndex > 0) {
+        activeTab = tabs[activeIndex - 1].label
+
+        document.getElementById(`tab-${activeIndex - 1}`).focus()
+      }
+      if (e.keyCode == 37 && activeIndex == 0) {
+        activeTab = tabs[tabs.length - 1].label
+      }
+      let nindex
+      if (e.keyCode == 39) {
+        nindex = activeIndex + 1
+      } else if (e.keyCode == 37) {
+        nindex = activeIndex - 1
+      }
+      console.log(e.keyCode, activeIndex, nindex % 3)
+    }
+  }
+
+  const onKeyDown = (e) => {
+    const cond = (element) => element.label === activeTab
+    const activeIndex = tabs.findIndex(cond)
+    //console.log(activeTab,activeIndex)
+    if (eventsEnabled) {
+      let nindex
+
+      if (e.keyCode == 39) {
+        nindex = (activeIndex + 1) % tabs.length
+      }
+
+      if (e.keyCode == 37) {
+        const nindex1 = (-activeIndex + 1) % tabs.length
+        nindex = (3 - nindex1) % 3
+      }
+
+      //console.log(activeIndex, nindex)
+      activeTab = tabs[nindex].label
+      document.getElementById(`tab-${nindex}`).focus()
+    }
+  }
+  const onFocusIn = () => {
+    eventsEnabled = true
+    //console.log('START LISTENING TO KEYBOARD')
+  }
+  const onFocusOut = () => {
+    eventsEnabled = false
+    //console.log('STOP LISTENING TO KEYBOARD')
+  }
 </script>
 
-<div class="tabs" style="margin-top: 20px;">
-  <ul style="border-bottom: none" data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
-    {#each tabs as tab}
+<div class="tabs" style="margin-top: 20px;" role="navigation" title="navigation" aria-label="navigation">
+  <ul style="border-bottom: none" data-deep-link="true" data-tabs="true" id="tablist" role="tablist">
+    {#each tabs as tab, i}
       <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
-        <a on:click={() => (activeTab = tab.label)} href="#{tab.label}" aria-selected="true"
+        <a
+          on:focusin={onFocusIn}
+          on:focusout={onFocusOut}
+          on:click={() => (activeTab = tab.label)}
+          href="#{tab.label}"
+          aria-selected="true"
+          role="tab"
+          aria-controls="tab{i}"
+          id="tab-{i}"
+          tabindex={i + 2}
           >{tab.label}
           {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
             ({$layerList.length})
@@ -21,6 +93,8 @@
     {/each}
   </ul>
 </div>
+
+<svelte:window on:keydown={onKeyDown} />
 
 <style lang="scss">
   //@import '../../styles/undp-design/fonts.css';

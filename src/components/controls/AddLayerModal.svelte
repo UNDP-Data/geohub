@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import Keydown from 'svelte-keydown'
   import { clickOutside } from 'svelte-use-click-outside'
   import { v4 as uuidv4 } from 'uuid'
   import type {
@@ -17,7 +16,7 @@
   import { fetchUrl, getVectorInfo } from '$lib/helper'
   import type { TreeNode } from '$lib/types'
   import { map, layerList, modalVisible } from '$stores'
-
+  import Keydown from 'svelte-keydown'
   export let isModalVisible = false
   export let treeNode: TreeNode
 
