@@ -42,22 +42,24 @@
   const onKeyDown = (e) => {
     const cond = (element) => element.label === activeTab
     const activeIndex = tabs.findIndex(cond)
-    //console.log(activeTab,activeIndex)
+
     if (eventsEnabled) {
       let nindex
 
       if (e.keyCode == 39) {
         nindex = (activeIndex + 1) % tabs.length
+        activeTab = tabs[nindex].label
+        document.getElementById(`tab-${nindex}`).focus()
       }
 
       if (e.keyCode == 37) {
         const nindex1 = (-activeIndex + 1) % tabs.length
         nindex = (3 - nindex1) % 3
+        activeTab = tabs[nindex].label
+        document.getElementById(`tab-${nindex}`).focus()
       }
 
       //console.log(activeIndex, nindex)
-      activeTab = tabs[nindex].label
-      document.getElementById(`tab-${nindex}`).focus()
     }
   }
   const onFocusIn = () => {
