@@ -5,7 +5,7 @@
   import Popper from '$lib/popper'
   import type { Bucket } from '$lib/types'
   import '../styles/font-awesome/all.css'
-
+  import Keydown from 'svelte-keydown'
   export let bucket: Bucket
 
   let showTooltip = false
@@ -35,6 +35,22 @@
     if (timer) clearTimeout(timer)
     showTooltip = false
   }
+
+  const handleFocusIn = () => {
+    //console.log(`bucket ${bucket.label} got focus`)
+    handleMouseEnter()
+  }
+  const handleFocusOut = () => {
+    //console.log(`bucket ${bucket.label} got focus`)
+    handleMouseLeave()
+  }
+  const handleKP = (e) => {
+    if (e.keyCode == 13) {
+      //console.log(`bucket ${bucket.label} GOT ENTER`)
+      handleMouseLeave()
+      handleBucketClick()
+    }
+  }
 </script>
 
 <div
@@ -43,7 +59,10 @@
   use:popperRef
   on:click={() => handleBucketClick()}
   on:mouseenter={() => handleMouseEnter()}
-  on:mouseleave={() => handleMouseLeave()}>
+  on:mouseleave={() => handleMouseLeave()}
+  on:focusin={() => handleFocusIn()}
+  on:focusout={() => handleFocusOut()}
+  on:keydown={handleKP}>
   <Card>
     <PrimaryAction on:click={() => undefined}>
       <div class="icon-container">

@@ -13,6 +13,7 @@
   const handleBucketClick = async (event: CustomEvent) => {
     $indicatorProgress = true
     const bucket = event.detail.bucket
+    console.log(bucket.label)
     bucket.selected = !bucket.selected
     const bucketIndex = $bucketList.findIndex((node) => node.id === bucket.id)
     $bucketList[bucketIndex] = bucket
@@ -58,6 +59,10 @@
 
   const handleBucketCardFilterClick = (event: CustomEvent) => {
     bucketCardFilterSelected = event.detail.bucketCardFilterSelected
+  }
+
+  const onKeyDown = (e) => {
+    console.log(e)
   }
 </script>
 
