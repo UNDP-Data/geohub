@@ -74,9 +74,9 @@
 </header>
 
 <style lang="scss">
-  @import '../../styles/undp-design/base-minimal.min';
-  @import '../../styles/undp-design/country-site-header.min';
-  @import '../../styles/undp-design/variables.scss';
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/undp-design/country-site-header.min';
+  @import 'src/styles/undp-design/variables.scss';
 
   //.bars-icon{
   //  background: $color-azure!important;

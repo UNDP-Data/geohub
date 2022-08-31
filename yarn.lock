@@ -4948,11 +4948,6 @@ svelte-hmr@^0.14.12:
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.14.12.tgz#a127aec02f1896500b10148b2d4d21ddde39973f"
   integrity sha512-4QSW/VvXuqVcFZ+RhxiR8/newmwOCTlbYIezvkeN6302YFRE8cXy0naamHcjz8Y9Ce3ITTZtrHrIL0AGfyo61w==
 
-svelte-keydown@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/svelte-keydown/-/svelte-keydown-0.5.0.tgz#1315899817ebd7692d625e4bb7719d88c342d402"
-  integrity sha512-DgY6AYlKbBocSvjC3kUeNPcStJQOTOCxAGG9ymVHzJdsQ1hRJuB8pcnB4UFH8uH3bAPdYyXXa3LwenLDL41eqQ==
-
 svelte-moveable@^0.22.0:
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/svelte-moveable/-/svelte-moveable-0.22.0.tgz#d5be91818a745dc670a810c1118ced56edd1b244"
