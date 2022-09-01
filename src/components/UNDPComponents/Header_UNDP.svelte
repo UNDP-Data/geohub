@@ -5,7 +5,6 @@
   import Fa from 'svelte-fa'
   import StyleShare from '../StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import '../../styles/undp-design/variables.scss'
 
   export let drawerOpen = true
 
@@ -37,7 +36,7 @@
 <header class="header">
   <section>
     <div style="display: flex; justify-content: space-between; align-items: center" role="button">
-      <div class="logo-div">
+      <div class="logo-div" aria-label="UNDP Logo">
         <a style="background:none;" href="https://undpgeohub.org" class="logo" tabIndex="-1">
           <img style="height: 8vh;" src="undp-images/undp-logo-blue.svg" alt="GeoHub | UNDP" loading="lazy" />
         </a>
@@ -45,7 +44,10 @@
           <span style="color: #232E3D" class="title">GeoHub</span>
         </div>
       </div>
-      <div style="margin-right: 5%; width: fit-content; display: flex!important;" role="button">
+      <div
+        style="margin-right: 5%; width: fit-content; display: flex!important;"
+        role="button"
+        aria-label="Open Dashboards">
         <div
           style="cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
@@ -59,7 +61,7 @@
           </Wrapper>
         </div>
 
-        <div style="margin-left: 5%; cursor: pointer" role="button">
+        <div style="margin-left: 5%; cursor: pointer" role="button" aria-label="Share the current style">
           <Wrapper>
             <StyleShare bind:share />
             <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
@@ -69,7 +71,8 @@
           style="margin-left: 5%; cursor: pointer;"
           on:click={() => (drawerOpen = !drawerOpen)}
           on:keydown={onKeyPressed}
-          tabindex="0">
+          tabindex="0"
+          aria-label="Alter Side Panel">
           <Wrapper>
             <div class="icon">
               <Fa icon={faBars} size="lg" />
