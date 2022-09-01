@@ -36,7 +36,7 @@
 </svelte:head>
 <header class="header">
   <section>
-    <div style="display: flex; justify-content: space-between; align-items: center">
+    <div style="display: flex; justify-content: space-between; align-items: center" role="button">
       <div class="logo-div">
         <a style="background:none;" href="https://undpgeohub.org" class="logo" tabIndex="-1">
           <img style="height: 8vh;" src="undp-images/undp-logo-blue.svg" alt="GeoHub | UNDP" loading="lazy" />
@@ -45,7 +45,7 @@
           <span style="color: #232E3D" class="title">GeoHub</span>
         </div>
       </div>
-      <div style="margin-right: 5%; width: fit-content; display: flex!important;">
+      <div style="margin-right: 5%; width: fit-content; display: flex!important;" role="button">
         <div
           style="cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
@@ -59,7 +59,7 @@
           </Wrapper>
         </div>
 
-        <div style="margin-left: 5%; cursor: pointer">
+        <div style="margin-left: 5%; cursor: pointer" role="button">
           <Wrapper>
             <StyleShare bind:share />
             <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
