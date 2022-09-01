@@ -32,6 +32,7 @@
   export let onlyAutocomplete
   export let labelText
   export let labelShow
+  export let hideOptions
 
   let layoutElement
 
@@ -189,7 +190,11 @@
   }
 
   function onFocus() {
+    hideOptions = false
     layoutElement.classList.add('focus')
+  }
+  function onFocusIn() {
+    hideOptions = false
   }
 
   function onBlur(e, tag) {
@@ -336,22 +341,41 @@
   function uniqueID() {
     return 'sti_' + Math.random().toString(36).substring(2, 11)
   }
+
+  const handleEnterClick = (e) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
 </script>
 
-<div class="svelte-tags-input-layout" class:sti-layout-disable={disable} bind:this={layoutElement}>
+<div
+  class="svelte-tags-input-layout"
+  class:sti-layout-disable={disable}
+  bind:this={layoutElement}
+  aria-label="Keyword Search">
   <label for={id} class={labelShow ? '' : 'sr-only'}>{labelText}</label>
 
   {#if tags.length > 0}
     {#each tags as tag, i}
       <span class="svelte-tags-input-tag" title="tag">
-        <span class="tag is-info is-small is-light">
+        <span
+          class="tag is-info is-small is-light"
+          aria-label={typeof tag === 'string' ? clean(tag) : clean(tag[autoCompleteKey])}>
           {#if typeof tag === 'string'}
             {clean(tag)}
           {:else}
             {clean(tag[autoCompleteKey])}
           {/if}
           {#if !disable}
-            <span class="svelte-tags-input-tag-remove" on:click={() => removeTag(i)}> &#215;</span>
+            <span
+              tabindex="0"
+              role="button"
+              aria-label="Remove tag"
+              class="svelte-tags-input-tag-remove"
+              on:click={() => removeTag(i)}
+              on:keydown={handleEnterClick}>
+              &#215;</span>
           {/if}
         </span>
       </span>
@@ -367,6 +391,7 @@
     on:paste={onPaste}
     on:drop={onDrop}
     on:focus={onFocus}
+    on:focusin={onFocusIn}
     on:blur={(e) => onBlur(e, tag)}
     on:click={onClick}
     class="svelte-tags-input"
@@ -375,10 +400,12 @@
 </div>
 
 {#if autoComplete && arrelementsmatch.length > 0}
-  <div class="svelte-tags-input-matchs-parent">
+  <div class="svelte-tags-input-matchs-parent" hidden={hideOptions}>
     <ul id="{id}_matchs" class="svelte-tags-input-matchs">
       {#each arrelementsmatch as element, index}
         <li
+          aria-label={element.label}
+          title={element.label}
           tabindex="-1"
           on:keydown={(e) => navigateAutoComplete(e, index, arrelementsmatch.length, element.label)}
           on:click={() => addTag(element.label)}>

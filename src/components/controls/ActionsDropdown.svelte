@@ -20,6 +20,7 @@
   import { dynamicLayers, layerList, map } from '$stores'
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
   import { clickOutside } from 'svelte-use-click-outside'
+  import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
@@ -113,10 +114,35 @@
   const handleClose = () => {
     showTooltip = false
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      showTooltip = !showTooltip
+    }
+  }
+  const handleZoomKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleZoomToLayerClick()
+    }
+  }
 </script>
 
-<div class="icon-selected" use:popperRef on:click={handleTooltipClick} style="margin-right: 0; cursor: pointer;">
-  <Fa icon={faChevronRight} size="sm" />
+<div
+  class="icon-selected"
+  title="Show Options"
+  tabindex="0"
+  aria-label="Show Options"
+  role="button"
+  use:popperRef
+  on:click={handleTooltipClick}
+  on:keydown={handleKeyDown}
+  style="margin-right: 0; cursor: pointer;">
+  {#if showTooltip}
+    <Fa icon={faChevronLeft} />
+  {/if}
+  {#if !showTooltip}
+    <Fa icon={faChevronRight} />
+  {/if}
 </div>
 
 {#if showTooltip}
@@ -128,7 +154,14 @@
     use:clickOutside={handleClose}>
     <div style="padding-left: 5px;">
       <Wrapper>
-        <div class="icon-selected" on:click={handleZoomToLayerClick}>
+        <div
+          class="icon-selected"
+          title="Zoom To Layer"
+          aria-label="Zoom To Layer"
+          tabindex="0"
+          role="button"
+          on:click={handleZoomToLayerClick}
+          on:keydown={handleZoomKeyDown}>
           <Fa icon={faMagnifyingGlass} size="sm" />
         </div>
         <Tooltip showDelay={500} hideDelay={500} yPos="above">Zoom to layer</Tooltip>
