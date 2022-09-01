@@ -12,7 +12,7 @@
   let darkTheme: boolean
   let share: boolean
 
-  const reactToEnter = (e: any) => {
+  const onKeyPressed = (e: any) => {
     if (e.key === 'Enter') {
       e.target.click()
     }
@@ -49,7 +49,7 @@
         <div
           style="cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
-          on:keydown={reactToEnter}
+          on:keydown={onKeyPressed}
           tabindex="0">
           <Wrapper>
             <div style="margin-right: 20px!important;" class="icon">
@@ -68,7 +68,7 @@
         <div
           style="margin-left: 5%; cursor: pointer;"
           on:click={() => (drawerOpen = !drawerOpen)}
-          on:keydown={reactToEnter}
+          on:keydown={onKeyPressed}
           tabindex="0">
           <Wrapper>
             <div class="icon">

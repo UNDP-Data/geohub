@@ -81,7 +81,7 @@
     await share()
   }
 
-  const reactToEnter = (e: any) => {
+  const onKeyPressed = (e: any) => {
     if (e.key === 'Enter') {
       e.target.click()
     }
@@ -96,7 +96,7 @@
 </script>
 
 {#if $layerList.length > 0}
-  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={reactToEnter} tabindex="0">
+  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={onKeyPressed} tabindex="0">
     <Fa icon={faShare} size="lg" />
   </div>
 {/if}
