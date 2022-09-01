@@ -5,12 +5,18 @@
   import Fa from 'svelte-fa'
   import StyleShare from '../StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import { Section } from '@smui/top-app-bar'
   import '../../styles/undp-design/variables.scss'
 
   export let drawerOpen = true
 
   let darkTheme: boolean
+  let share: boolean
+
+  const reactToEnter = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
 
   onMount(() => {
     window.matchMedia('(prefers-color-scheme: light)')
@@ -40,12 +46,13 @@
         </div>
       </div>
       <div style="margin-right: 5%; width: fit-content; display: flex!important;">
-        <div style="cursor: pointer">
+        <div
+          style="cursor: pointer"
+          on:click={() => window.open('/dashboards', '_blank')}
+          on:keydown={reactToEnter}
+          tabindex="0">
           <Wrapper>
-            <div
-              style="margin-right: 20px!important;"
-              class="icon"
-              on:click={() => window.open('/dashboards', '_blank')}>
+            <div style="margin-right: 20px!important;" class="icon">
               <Fa icon={faChalkboardUser} size="lg" />
             </div>
             <Tooltip showDelay={500} hideDelay={500} yPos="below">UNDP Dashboards</Tooltip>
@@ -54,13 +61,17 @@
 
         <div style="margin-left: 5%; cursor: pointer">
           <Wrapper>
-            <StyleShare />
+            <StyleShare bind:share />
             <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
           </Wrapper>
         </div>
-        <div style="margin-left: 5%; cursor: pointer;">
+        <div
+          style="margin-left: 5%; cursor: pointer;"
+          on:click={() => (drawerOpen = !drawerOpen)}
+          on:keydown={reactToEnter}
+          tabindex="0">
           <Wrapper>
-            <div class="icon" on:click={() => (drawerOpen = !drawerOpen)}>
+            <div class="icon">
               <Fa icon={faBars} size="lg" />
             </div>
             <Tooltip showDelay={500} hideDelay={500} yPos="below">

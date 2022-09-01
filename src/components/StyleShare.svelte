@@ -1,8 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
-  import List, { Item, Graphic, Text } from '@smui/list'
-  import Radio from '@smui/radio'
   import Textfield from '@smui/textfield'
   import Fa from 'svelte-fa'
   import { faShare } from '@fortawesome/free-solid-svg-icons/faShare'
@@ -83,6 +81,12 @@
     await share()
   }
 
+  const reactToEnter = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
+
   const handleCopy = () => {
     textCopyButton = 'copied'
     setTimeout(() => {
@@ -92,7 +96,7 @@
 </script>
 
 {#if $layerList.length > 0}
-  <div style="margin-left: 2%" class="icon" on:click={() => open()}>
+  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={reactToEnter} tabindex="0">
     <Fa icon={faShare} size="lg" />
   </div>
 {/if}
