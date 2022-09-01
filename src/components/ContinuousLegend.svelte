@@ -51,7 +51,7 @@
       layerConfig.continuous.maximum,
     ]} <> ${layerMin} - ${layerMax} `,
   )
-  // this ensures the slider state is is set to layer min max
+  // this ensures the slider state is set to layer min max
   let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
 
   let step = (layerMax - layerMin) * 1e-2
