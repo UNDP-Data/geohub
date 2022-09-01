@@ -36,18 +36,43 @@
       $map.triggerRepaint()
     }
   }
+
+  const handleUpKeyEnter = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      hierachyUp(layerId)
+    }
+  }
+
+  const handleDownKeyEnter = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      hierachyDown(layerId)
+    }
+  }
 </script>
 
 <div class="grouped">
   <Wrapper>
-    <div class="icon-selected" on:click={() => hierachyUp(layerId)}>
+    <div
+      class="icon-selected"
+      title="Bring Layer Up"
+      aria-label="Bring Layer Up"
+      tabindex="0"
+      role="button"
+      on:click={() => hierachyUp(layerId)}
+      on:keydown={handleUpKeyEnter}>
       <Fa class="arrow-icon" icon={faChevronUp} size="1x" />
     </div>
     <Tooltip showDelay={300} hideDelay={100} yPos="above">Bring Forward in Map</Tooltip>
   </Wrapper>
   <div style="width: 10px" />
   <Wrapper>
-    <div class="icon-selected" on:click={() => hierachyDown(layerId)}>
+    <div
+      class="icon-selected"
+      title="Bring Layer Down"
+      aria-label="Bring Layer Down"
+      tabindex="0"
+      on:click={() => hierachyDown(layerId)}
+      on:keydown={handleDownKeyEnter}>
       <Fa class="arrow-icon" icon={faChevronDown} size="1x" />
     </div>
     <Tooltip showDelay={300} hideDelay={100} yPos="above">Send Backward in Map</Tooltip>
@@ -68,6 +93,10 @@
     color: grey !important;
   }
   :global(.arrow-icon):hover {
+    color: black !important;
+  }
+
+  :global(.arrow-icon):focus {
     color: black !important;
   }
 </style>
