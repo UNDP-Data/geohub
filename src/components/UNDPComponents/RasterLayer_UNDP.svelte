@@ -21,6 +21,7 @@
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
+
   $: {
     isLegendPanelVisible = false
     isRefinePanelVisible = false
@@ -50,6 +51,40 @@
     { label: TabNames.REFINE, icon: faCalculator, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      setLeftActiveTab(activeTab)
+    }
+    if (event.key === 'ArrowRight') {
+      setRightActiveTab(activeTab)
+    }
+  }
+
+  const setLeftActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex - 1
+    if (nextTabIndex < 0) {
+      activeTab = tabs[tabs.length - 1].label
+      document.getElementById(activeTab)?.focus()
+    } else {
+      activeTab = tabs[nextTabIndex].label
+      document.getElementById(activeTab)?.focus()
+    }
+  }
+
+  const setRightActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex + 1
+    const nextTab = tabs[nextTabIndex]
+    if (nextTab) {
+      activeTab = nextTab.label
+      document.getElementById(activeTab)?.focus()
+    } else {
+      activeTab = tabs[0].label
+      document.getElementById(activeTab)?.focus()
+    }
+  }
 </script>
 
 <div class="raster-layer-container" transition:fade>
@@ -57,9 +92,13 @@
     <p class="panel-heading">
       <LayerNameGroup {layer} />
     </p>
-    <p class="panel-tabs">
-      {#each tabs as tab}
+    <p class="panel-tabs" tabindex="0">
+      {#each tabs as tab, index}
         <a
+          role="tab"
+          aria-label={tab.label}
+          id={`${tab.label}`}
+          on:keydown={handleKeyDown}
           href={'#'}
           on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
           class={activeTab === tab.label ? 'is-active' : ''}>
