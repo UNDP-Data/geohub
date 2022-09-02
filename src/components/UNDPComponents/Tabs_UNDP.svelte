@@ -7,36 +7,38 @@
   export let activeTab: string
   let eventsEnabled = false
 
-  const onKeyDown = (e) => {
-    const cond = (element) => element.label === activeTab
-    const activeIndex = tabs.findIndex(cond)
-
-    if (eventsEnabled) {
-      let nindex
-
-      if (e.keyCode == 39) {
-        nindex = (activeIndex + 1) % tabs.length
-        activeTab = tabs[nindex].label
-        document.getElementById(`tab-${nindex}`).focus()
-      }
-
-      if (e.keyCode == 37) {
-        const nindex1 = (-activeIndex + 1) % tabs.length
-        nindex = (3 - nindex1) % 3
-        activeTab = tabs[nindex].label
-        document.getElementById(`tab-${nindex}`).focus()
-      }
-
-      //console.log(activeIndex, nindex)
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      setLeftActiveTab(activeTab)
+    }
+    if (event.key === 'ArrowRight') {
+      setRightActiveTab(activeTab)
     }
   }
-  const onFocusIn = () => {
-    eventsEnabled = true
-    //console.log('START LISTENING TO KEYBOARD')
+
+  const setLeftActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex - 1
+    if (nextTabIndex < 0) {
+      activeTab = tabs[tabs.length - 1].label
+      document.getElementById(`tab-${activeTab}`)?.focus()
+    } else {
+      activeTab = tabs[nextTabIndex].label
+      document.getElementById(`tab-${activeTab}`)?.focus()
+    }
   }
-  const onFocusOut = () => {
-    eventsEnabled = false
-    //console.log('STOP LISTENING TO KEYBOARD')
+
+  const setRightActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex + 1
+    const nextTab = tabs[nextTabIndex]
+    if (nextTab) {
+      activeTab = nextTab.label
+      document.getElementById(`tab-${activeTab}`)?.focus()
+    } else {
+      activeTab = tabs[0].label
+      document.getElementById(`tab-${activeTab}`)?.focus()
+    }
   }
 </script>
 
@@ -45,14 +47,13 @@
     {#each tabs as tab, i}
       <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
         <a
-          on:focusin={onFocusIn}
-          on:focusout={onFocusOut}
+          on:keydown={handleKeyDown}
           on:click={() => (activeTab = tab.label)}
           href="#{tab.label}"
           aria-selected="true"
           role="tab"
           aria-controls="tab{i}"
-          id="tab-{i}"
+          id="tab-{tab.label}"
           tabindex={i + 2}
           >{tab.label}
           {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
@@ -64,8 +65,7 @@
   </ul>
 </div>
 
-<svelte:window on:keydown={onKeyDown} />
-
+<!--<svelte:window on:keydown={onKeyDown} />-->
 <style lang="scss">
   //@import '../../styles/undp-design/fonts.css';
   $dark-red: #d12800;

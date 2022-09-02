@@ -47,8 +47,6 @@
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
 
-  console.log(bandIndex)
-
   // hide colormap picker if change in layer list
   $: {
     if (layerListCount !== $layerList.length) {
@@ -128,6 +126,17 @@
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
   }
+
+  const handleEnterKeyForSwitch = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleLegendToggleClick()
+    }
+  }
+  const handleEnterKeyForColor = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleClosePopup()
+    }
+  }
 </script>
 
 <div class="columns">
@@ -148,8 +157,12 @@
   </div>
   <div class="columm legend-toggle" transition:slide>
     <Wrapper>
-      <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
-        <Card style="background: #D12800;">
+      <div
+        class="toggle-container"
+        aria-label="Switch Legend Type"
+        on:click={handleLegendToggleClick}
+        data-testid="legend-toggle-container">
+        <Card on:keydown={handleEnterKeyForSwitch} style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
             <Fa icon={faRetweet} style="font-size: 16px; color: white" spin={isLegendSwitchAnimate} />
           </PrimaryAction>
@@ -159,8 +172,13 @@
     </Wrapper>
     <br />
     <Wrapper>
-      <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
-        <Card style="background: #D12800;">
+      <div
+        class="toggle-container"
+        aria-label="Open Color Map"
+        use:popperRef
+        on:click={handleClosePopup}
+        data-testid="colormap-toggle-container">
+        <Card on:keydown={handleEnterKeyForColor} style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
             <Fa icon={faPalette} style="font-size: 16px; color: white" />
           </PrimaryAction>

@@ -39,12 +39,25 @@
   const handleCancel = () => {
     confirmDeleteLayerDialogVisible = false
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      confirmDeleteLayerDialogVisible = true
+    }
+  }
 </script>
 
 <Keydown paused={!confirmDeleteLayerDialogVisible} on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
 
 <Wrapper>
-  <div class="container icon-selected" title="Delete layer" on:click={() => (confirmDeleteLayerDialogVisible = true)}>
+  <div
+    class="container icon-selected"
+    tabindex="0"
+    role="button"
+    title="Delete layer"
+    aria-label="Delete layer"
+    on:click={() => (confirmDeleteLayerDialogVisible = true)}
+    on:keydown={handleKeyDown}>
     <Fa icon={faTrash} size="sm" />
   </div>
   <Tooltip showDelay={300} hideDelay={100} yPos="above">Delete layer</Tooltip>
