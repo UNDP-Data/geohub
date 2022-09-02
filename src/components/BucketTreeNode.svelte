@@ -49,7 +49,7 @@
   export let level = 0
   export let node: TreeNode
   export let hideCloseButton = false
-
+  export let ti = 0
   const dispatch = createEventDispatcher()
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
@@ -568,7 +568,7 @@
 </li>
 
 {#if expanded && children}
-  {#each children as child}
+  {#each children as child, ti}
     <svelte:self node={child} level={level + 1} />
   {/each}
 {/if}

@@ -13,6 +13,7 @@
   const handleBucketClick = async (event: CustomEvent) => {
     $indicatorProgress = true
     const bucket = event.detail.bucket
+
     bucket.selected = !bucket.selected
     const bucketIndex = $bucketList.findIndex((node) => node.id === bucket.id)
     $bucketList[bucketIndex] = bucket
@@ -96,10 +97,14 @@
             {/each}
           {/if}
         </div>
-        <div class="column separator" style="" />
+        <div class="column separator" />
       </div>
     </div>
-    <div class="column is-three-quarters tree" data-testid="tree-container" style="overflow-y: auto">
+    <div
+      id="tree-container"
+      class="column is-three-quarters tree"
+      data-testid="tree-container"
+      style="overflow-y: auto">
       {#if $treeBucket.length === 0}
         <div class="title is-size-4">Welcome to GeoHub</div>
         <div class="subtitle is-size-5">
@@ -110,11 +115,18 @@
           and download.
         </div>
       {:else}
-        {#each $treeBucket as tree}
-          <ul>
-            <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
-          </ul>
-        {/each}
+        <nav>
+          {#each $treeBucket as tree}
+            <ul
+              id={tree.label
+                .split(' ')
+                .map((el) => el.toLowerCase())
+                .join('-')}
+              label={tree.label}>
+              <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
+            </ul>
+          {/each}
+        </nav>
       {/if}
     </div>
   </div>

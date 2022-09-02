@@ -7,38 +7,6 @@
   export let activeTab: string
   let eventsEnabled = false
 
-  const onKeyDown1 = (e) => {
-    const cond = (element) => element.label == activeTab
-    const activeIndex = tabs.findIndex(cond)
-
-    if (eventsEnabled) {
-      if (e.keyCode == 39 && activeIndex < 2) {
-        activeTab = tabs[activeIndex + 1].label
-
-        document.getElementById(`tab-${activeIndex + 1}`).focus()
-      }
-      if (e.keyCode == 39 && activeIndex == 2) {
-        activeTab = tabs[0].label
-      }
-
-      if (e.keyCode == 37 && activeIndex > 0) {
-        activeTab = tabs[activeIndex - 1].label
-
-        document.getElementById(`tab-${activeIndex - 1}`).focus()
-      }
-      if (e.keyCode == 37 && activeIndex == 0) {
-        activeTab = tabs[tabs.length - 1].label
-      }
-      let nindex
-      if (e.keyCode == 39) {
-        nindex = activeIndex + 1
-      } else if (e.keyCode == 37) {
-        nindex = activeIndex - 1
-      }
-      console.log(e.keyCode, activeIndex, nindex % 3)
-    }
-  }
-
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {
       setLeftActiveTab(activeTab)
