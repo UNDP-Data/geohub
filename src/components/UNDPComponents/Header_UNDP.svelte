@@ -52,7 +52,7 @@
           style="cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
           on:keydown={onKeyPressed}
-          tabindex="0">
+          tabindex="1">
           <Wrapper>
             <div style="margin-right: 20px!important;" class="icon">
               <Fa icon={faChalkboardUser} size="lg" />
@@ -71,7 +71,7 @@
           style="margin-left: 5%; cursor: pointer;"
           on:click={() => (drawerOpen = !drawerOpen)}
           on:keydown={onKeyPressed}
-          tabindex="0"
+          tabindex="1"
           aria-label="Alter Side Panel">
           <Wrapper>
             <div class="icon">

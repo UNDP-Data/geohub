@@ -96,7 +96,7 @@
 </script>
 
 {#if $layerList.length > 0}
-  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={onKeyPressed} tabindex="0">
+  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={onKeyPressed} tabindex="1">
     <Fa icon={faShare} size="lg" />
   </div>
 {/if}
