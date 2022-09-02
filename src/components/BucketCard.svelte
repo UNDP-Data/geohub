@@ -5,8 +5,12 @@
   import Popper from '$lib/popper'
   import type { Bucket } from '$lib/types'
   import '../styles/font-awesome/all.css'
-  import Keydown from 'svelte-keydown'
+
   export let bucket: Bucket
+  const treeId = bucket.label
+    .split(' ')
+    .map((el) => el.toLowerCase())
+    .join('-')
 
   let showTooltip = false
   let timer: ReturnType<typeof setTimeout>
@@ -50,6 +54,25 @@
       handleMouseLeave()
       handleBucketClick()
     }
+
+    if (e.keyCode == 39) {
+      //console.log( `will focus on ${bucket.label} ${treeId} ${bucket.id}`)
+      const ulTree = document.getElementById(treeId)
+      if (ulTree !== null) {
+        ulTree.setAttribute('tabindex', '0')
+        ulTree.focus()
+        ulTree.addEventListener('keydown', (e) => {
+          //console.log(`moving focus to bucket`)
+          if (e.key == 'ArrowLeft') {
+            const bucketDiv = document.getElementById(bucket.id)
+            //console.log(bucketDiv)
+            bucketDiv.focus()
+            bucketDiv.setAttribute('tabindex', '0')
+            //bucketDiv.blur()
+          }
+        })
+      }
+    }
   }
 </script>
 
@@ -63,7 +86,7 @@
   on:focusin={() => handleFocusIn()}
   on:focusout={() => handleFocusOut()}
   on:keydown={handleKP}>
-  <Card>
+  <Card id={bucket.id}>
     <PrimaryAction on:click={() => undefined}>
       <div class="icon-container">
         <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
