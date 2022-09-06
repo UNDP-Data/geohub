@@ -88,11 +88,15 @@
     apiUrlParams.set('bidx', '1')
     apiUrlParams.set('unscale', 'false')
     apiUrlParams.set('resampling', 'nearest')
-    //apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`)
-    apiUrlParams.set('expression', `where(b1<0.8,0,1);`)
     apiUrlParams.set('return_mask', 'true')
-    //apiUrlParams.set('colormap_name', 'rdylbu')
-    apiUrlParams.set('colormap', '{"0":[12,12,12,255],"1":[242,166,4,255]}')
+    if (electricitySelected.name == 'HREA') {
+      apiUrlParams.set('expression', `where(b1<0.8,0,1);`)
+      apiUrlParams.set('colormap', '{"0":[12,12,12,255],"1":[242,166,4,255]}')
+    }
+    if (electricitySelected.name == 'ML') {
+      apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`)
+      apiUrlParams.set('colormap_name', 'rdylbu')
+    }
 
     const layerSource: SourceSpecification = {
       type: LayerTypes.RASTER,

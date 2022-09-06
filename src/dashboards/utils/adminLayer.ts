@@ -186,7 +186,6 @@ const getFillColor = () => {
 const loadAdminChoropleth = () => {
   const map = get(mapStore)
   const lvl = getAdminLevel()
-  console.log(`lvl is ${lvl}`)
   let maxzoom = 0
   let minzoom = 3
   if (lvl == 1) {
