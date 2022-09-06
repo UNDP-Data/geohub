@@ -40,11 +40,11 @@
   }
 
   const getHreaUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/High_Resolution_Electricity_Access/Electricity_Access/Electricity_access_estimate_${y}.tif?${TOKEN}`
+    return `${AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${TOKEN}`
   }
 
   const getMlUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${TOKEN}`
+    return `${AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${TOKEN}`
   }
 
   const adminInteraction = () => {
