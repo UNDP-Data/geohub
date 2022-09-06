@@ -220,6 +220,7 @@
           {setDefaultProperty} />
       </div>
       <VectorFilterExpressionCreator
+        bind:layer
         bind:propertyStats
         on:numberselected={numberSelected}
         on:operatorselected={operatorSelected}

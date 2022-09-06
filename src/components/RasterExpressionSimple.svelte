@@ -304,7 +304,9 @@
   }
 
   const handleEnterKey = (e: any) => {
-    e.target.click()
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
   }
 </script>
 
@@ -315,6 +317,7 @@
         {#each Object.keys(expressions[0]) as key}
           <span
             style="cursor: pointer; margin: 1%;"
+            tabindex="0"
             class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
             {expressions[0][`${key}`]}
             <button
@@ -365,7 +368,9 @@
               trueStatement.underEdit = !trueStatement.underEdit
               falseStatement.underEdit = !trueStatement.underEdit
             }}
+            on:keydown={handleEnterKey}
             style="cursor:pointer; border: {trueStatement.underEdit ? '2px solid blue' : 'none'}"
+            tabindex="0"
             class="tag is-medium is-success">
             {trueStatement.statement.length > 0 ? trueStatement.statement : ''}
             <button on:click={() => (trueStatement.statement = '')} class="delete is-small" />
@@ -375,8 +380,10 @@
               falseStatement.underEdit = !falseStatement.underEdit
               trueStatement.underEdit = !falseStatement.underEdit
             }}
+            on:keydown={handleEnterKey}
             style="cursor:pointer; border: {falseStatement.underEdit ? '2px solid blue' : 'none'}"
             class="tag is-medium is-danger"
+            tabindex="0"
             >{falseStatement.statement.length > 0 ? falseStatement.statement : ''}
             <button on:click={() => (falseStatement.statement = '')} class="delete is-small" />
           </span>

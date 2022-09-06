@@ -96,6 +96,11 @@
   const handleClosePopup = () => {
     dispatch('handleClosePopup')
   }
+  const handleEnterKey = (event: any) => {
+    if (event.key === 'Enter') {
+      event.target.click()
+    }
+  }
 </script>
 
 <div class="content">
@@ -132,10 +137,14 @@
           </div>
         </div>
         <div
+          tabindex="0"
           class="column is-1 close"
-          alt="Close Colormap Picker"
-          title="Close Colormap Picker"
-          on:click={handleClosePopup}>
+          alt="Close Expression Builder"
+          title="Close Expression Builder"
+          role="button"
+          aria-label="Close Expression Builder"
+          on:click={handleClosePopup}
+          on:keydown={handleEnterKey}>
           <Fa icon={faXmark} />
         </div>
       </div>
