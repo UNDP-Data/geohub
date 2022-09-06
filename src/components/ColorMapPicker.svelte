@@ -42,6 +42,12 @@
   const handleClosePopup = () => {
     dispatch('handleClosePopup')
   }
+
+  const handleEnterKey = (event: any) => {
+    if (event.key === 'Enter') {
+      event.target.click()
+    }
+  }
 </script>
 
 <div data-testid="color-map-picker" use:clickOutside={handleClosePopup}>
@@ -73,7 +79,7 @@
         {#each colorMapTypes as colorMapType}
           {#if activeColorMapType === colorMapType.name}
             {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as colorMapName}
-              <li on:click={() => handleColorMapClick(colorMapName)}>
+              <li on:click={() => handleColorMapClick(colorMapName)} on:keydown={handleEnterKey}>
                 <ColorMapPickerCard
                   {colorMapName}
                   colorMapType={ColorMapTypes.SEQUENTIAL}

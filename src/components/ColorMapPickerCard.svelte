@@ -24,7 +24,7 @@
   }
 </script>
 
-<div class="card" data-testid="color-map-picker-card-container">
+<div class="card" data-testid="color-map-picker-card-container" tabindex="0">
   <div class="card-content">
     <div class="media">
       <figure
