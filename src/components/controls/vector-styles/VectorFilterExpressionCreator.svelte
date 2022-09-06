@@ -57,12 +57,19 @@
   const handleSetOperatorType = (type) => {
     activeOperatorsTab = type
   }
+
+  const handleEnterKey = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
 </script>
 
 <div
   on:click={() => {
     showTooltip = !showTooltip
   }}
+  on:keydown={handleEnterKey}
   use:popperRef>
   <Wrapper>
     <Card style="background: #D12800">
@@ -87,7 +94,12 @@
           <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
             {#each operatorTypes as type}
               <li class={activeOperatorsTab === type.title ? 'is-active tabs-title' : 'tabs-title'}>
-                <a style="border: none;" on:click={() => handleSetOperatorType(type.title)}>
+                <a
+                  style="border: none;"
+                  on:click={() => handleSetOperatorType(type.title)}
+                  on:keydown={handleEnterKey}
+                  role="tab"
+                  tabindex="0">
                   <Fa icon={type.icon} style="color: #232E3D" />
                 </a>
               </li>
