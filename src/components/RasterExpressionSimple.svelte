@@ -302,6 +302,10 @@
     editingExpressionIndex = index
     numbers = ''
   }
+
+  const handleEnterKey = (e: any) => {
+    e.target.click()
+  }
 </script>
 
 <div class="container">
@@ -384,6 +388,7 @@
       on:click={() => {
         showExpressionBuilder = !showExpressionBuilder
       }}
+      on:keydown={handleEnterKey}
       data-testid="expression-builder-button"
       use:popperRef>
       <Wrapper>
