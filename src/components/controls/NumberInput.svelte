@@ -45,6 +45,12 @@
     if (Math.floor(val) !== val) return val.toString().split('.')[1].length || 0
     return 0
   }
+
+  const handleEnterKey = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
 </script>
 
 <div class="container is-flex is-justify-content-center" data-testid="number-input-view-container">
@@ -52,6 +58,8 @@
     <div
       class={`minus ${value === minValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('-')}
+      on:keydown={handleEnterKey}
+      tabindex="0"
       alt="Decrease number"
       title="Decrease number">
       <Fa icon={faCircleMinus} />
@@ -62,6 +70,8 @@
     <div
       class={`plus ${value === maxValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('+')}
+      on:keydown={handleEnterKey}
+      tabindex="0"
       alt="Increase number"
       title="Increase number">
       <Fa icon={faCirclePlus} />

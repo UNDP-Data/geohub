@@ -35,6 +35,40 @@
     { label: 'Simple', icon: faThumbsUp, active: true },
     { label: 'Advanced', icon: faMagnifyingGlassPlus, active: false },
   ]
+
+  const handleArrowKey = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      setLeftActiveTab(activeTab)
+    }
+    if (event.key === 'ArrowRight') {
+      setRightActiveTab(activeTab)
+    }
+  }
+
+  const setLeftActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex - 1
+    if (nextTabIndex < 0) {
+      activeTab = tabs[tabs.length - 1].label
+      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+    } else {
+      activeTab = tabs[nextTabIndex].label
+      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+    }
+  }
+
+  const setRightActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex + 1
+    const nextTab = tabs[nextTabIndex]
+    if (nextTab) {
+      activeTab = nextTab.label
+      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+    } else {
+      activeTab = tabs[0].label
+      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+    }
+  }
 </script>
 
 <nav class="block">
@@ -42,7 +76,11 @@
     {#each tabs as tab}
       <a
         href={'#'}
+        role="tab"
+        aria-label={tab.label}
+        id={`expression-${tab.label}-${layer.definition.id}`}
         on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
+        on:keydown={handleArrowKey}
         class={activeTab === tab.label ? 'is-active' : ''}>
         <span>
           <Fa icon={tab.icon} size="sm" />

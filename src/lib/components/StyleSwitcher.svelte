@@ -68,6 +68,12 @@
       mapToggle.setStyle(buttonStyle.uri)
     }
   }
+
+  const handleEnterKey = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
 </script>
 
 <div class="main-switch-container">
@@ -77,7 +83,9 @@
       id={mainContainerId}
       on:click={() => {
         changeStyle()
-      }} />
+      }}
+      on:keydown={handleEnterKey} />
+
     {#if buttonStyle}
       <Tooltip yPos="above">{buttonStyle.title}</Tooltip>
     {/if}
