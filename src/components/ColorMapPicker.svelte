@@ -48,6 +48,40 @@
       event.target.click()
     }
   }
+
+  const handleArrowKey = (event: any) => {
+    if (event.key === 'ArrowLeft') {
+      setLeftActiveTab(activeColorMapType)
+    }
+    if (event.key === 'ArrowRight') {
+      setRightActiveTab(activeColorMapType)
+    }
+  }
+
+  const setLeftActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = colorMapTypes.findIndex((tab) => tab.name === currentActiveTab)
+    const nextTabIndex = currentTabIndex - 1
+    if (nextTabIndex < 0) {
+      activeColorMapType = colorMapTypes[colorMapTypes.length - 1].name
+      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+    } else {
+      activeColorMapType = colorMapTypes[nextTabIndex].name
+      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+    }
+  }
+
+  const setRightActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = colorMapTypes.findIndex((tab) => tab.name === currentActiveTab)
+    const nextTabIndex = currentTabIndex + 1
+    const nextTab = colorMapTypes[nextTabIndex]
+    if (nextTab) {
+      activeColorMapType = nextTab.name
+      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+    } else {
+      activeColorMapType = colorMapTypes[0].name
+      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+    }
+  }
 </script>
 
 <div data-testid="color-map-picker" use:clickOutside={handleClosePopup}>
@@ -57,7 +91,13 @@
         <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
           {#each Object.values(ColorMapTypes) as colorMapType}
             <li class={activeColorMapType === colorMapType ? 'is-active tabs-title' : 'tabs-title'}>
-              <a style="border: none" href={'#'} on:click={() => handleSetActiveColorMapType(colorMapType)}>
+              <a
+                style="border: none"
+                role="tab"
+                id={`${colorMapType}-${layer.definition.id}`}
+                href={'#'}
+                on:click={() => handleSetActiveColorMapType(colorMapType)}
+                on:keydown={handleArrowKey}>
                 {colorMapType}
               </a>
             </li>
@@ -66,10 +106,12 @@
       </div>
     </div>
     <div
+      tabindex="0"
       class="column is-1 close"
       alt="Close Colormap Picker"
       title="Close Colormap Picker"
-      on:click={handleClosePopup}>
+      on:click={handleClosePopup}
+      on:keydown={handleEnterKey}>
       <Fa icon={faXmark} />
     </div>
   </div>

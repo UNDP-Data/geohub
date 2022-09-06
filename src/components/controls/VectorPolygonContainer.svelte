@@ -111,6 +111,12 @@
 
     return Object.keys(vectorLayerMeta.fields).length
   }
+
+  const handleEnterKey = (event: any) => {
+    if (event.key === 'Enter') {
+      event.target.click()
+    }
+  }
 </script>
 
 <div class="columns" data-testid="polygon-view-container">
@@ -128,7 +134,11 @@
   <div class="columm legend-toggle" transition:slide>
     {#if layerNumberProperties > 0}
       <Wrapper>
-        <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
+        <div
+          class="toggle-container"
+          on:click={handleLegendToggleClick}
+          on:keydown={handleEnterKey}
+          data-testid="legend-toggle-container">
           <Card style="background: #D12800;">
             <PrimaryAction style="padding: 10px;">
               <Fa icon={faRetweet} style="font-size: 16px; color:white" spin={isLegendSwitchAnimate} />
@@ -145,6 +155,7 @@
         class="toggle-container"
         use:popperRef
         on:click={handleClosePopup}
+        on:keydown={handleEnterKey}
         data-testid="colormap-toggle-container"
         transition:fade>
         <Card style="background: #D12800;">
