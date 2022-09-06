@@ -15,7 +15,7 @@
       container: mapContainer,
       style: styles[0].uri,
       center: [0, 0],
-      zoom: 3,
+      zoom: 2.5,
       hash: true,
       attributionControl: false,
     })
