@@ -37,7 +37,7 @@
   ;({ definition, info } = layer)
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
-
+  let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
@@ -57,13 +57,13 @@
 
   onMount(async () => {
     const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
-    const layerStats = await fetchUrl(statsURL)
+    layerStats = await fetchUrl(statsURL)
     const band = info.active_band_no
 
     layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
     if (layerHasUniqueValues) {
       const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
-      await fetchUrl(statsURL)
+      layerStats = await fetchUrl(statsURL)
     }
     if (!('stats' in info)) {
       info = { ...info, stats: layerStats }
@@ -98,7 +98,8 @@
     } catch (e) {
       console.log(e)
     }
-    layerHasUniqueValues = Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
+    layerHasUniqueValues =
+      Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !layer.info.dtype.startsWith('float')
 
     setTimeout(() => {
       isLegendSwitchAnimate = false

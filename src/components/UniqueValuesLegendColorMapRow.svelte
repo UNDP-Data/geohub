@@ -96,8 +96,8 @@
   }
 </script>
 
-<div class="columns is-vcentered colormap-editor" data-testid="unique-legend-color-map-row-container">
-  <div class="column is-3 color-picker">
+<div class="grid-x grid-margin-x medium-up-3">
+  <div class="cell">
     <div
       id={`interval-${colorMapRow.index}`}
       on:click={() => handleColorPickerClick()}
@@ -113,81 +113,24 @@
       <div id="arrow" data-popper-arrow />
     </div>
   {/if}
-  {#if colorMapRow.start != colorMapRow.end}
-    <div class="column  ">
-      &#x21A6; {colorMapRow.start}
-    </div>
-    <div class="column maximum">
-      - {colorMapRow.end}
-    </div>
-  {:else}
-    <div class="column is-2 minimum">&#x21A6;</div>
-    <div class="column is-11 minimum">
-      {colorMapRow.start}
-    </div>
-  {/if}
+  <div class="cell">&#x2014;</div>
+  <div class="cell">
+    {colorMapRow.end}
+  </div>
 </div>
 
-<!-- <div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
-  <div class="column is-1 color-picker">
-    <div
-      id={`interval-${colorMapRow.index}`}
-      on:click={() => handleColorPickerClick()}
-      use:popperRef
-      class="discrete"
-      alt="Color Map Control"
-      title="Color Map Control"
-      style={colorPickerStyle} />
-  </div>
-  {#if showToolTip && color}
-    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-      <div id="arrow" data-popper-arrow />
-    </div>
-  {/if}
-
-  <div class="column is-1 minimum">
-    <input
-      id="minimum"
-      alt="value"
-      title="value"
-      class="input is-small is-static"
-      type="text"
-      value={colorMapRow.start} />
-  </div>
-  {#if colorMapRow.start != colorMapRow.end}
-    <div class="column maximum">
-      <input
-        id="maximum"
-        alt="label"
-        title="label"
-        class="input is-small is-static"
-        type="text"
-        value={colorMapRow.end} />
-    </div>
-  {/if}
-</div> -->
 <style lang="scss">
-  @import '../styles/popper.scss';
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/popper.scss';
 
   $input-margin: 0px !important;
 
-  .colormap-editor {
-    margin-bottom: $input-margin;
-
-    .color-picker {
-      margin-right: $input-margin;
-    }
-
-    .minimum {
-      //margin-right: $input-margin;
-    }
-
+  .cell {
+    margin-top: 2%;
+    cursor: pointer;
     .discrete {
-      cursor: pointer;
-      height: 20px !important;
       width: 20px;
-
+      height: 20px;
       &:hover {
         padding: 0;
         border: 1px solid hsl(204, 86%, 53%);
