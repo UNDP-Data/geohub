@@ -158,6 +158,7 @@
   <div class="columm legend-toggle" transition:slide>
     <Wrapper>
       <div
+        role="button"
         class="toggle-container"
         aria-label="Switch Legend Type"
         on:click={handleLegendToggleClick}
@@ -173,8 +174,9 @@
     <br />
     <Wrapper>
       <div
+        role="button"
         class="toggle-container"
-        aria-label="Open Color Map"
+        aria-label="Open Color Scheme Picker"
         use:popperRef
         on:click={handleClosePopup}
         data-testid="colormap-toggle-container">

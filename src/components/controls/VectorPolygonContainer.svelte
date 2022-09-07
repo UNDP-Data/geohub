@@ -135,7 +135,9 @@
     {#if layerNumberProperties > 0}
       <Wrapper>
         <div
+          role="button"
           class="toggle-container"
+          aria-label="Switch legend type button"
           on:click={handleLegendToggleClick}
           on:keydown={handleEnterKey}
           data-testid="legend-toggle-container">
@@ -152,7 +154,9 @@
 
     {#if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
+        role="button"
         class="toggle-container"
+        aria-label="Open color scheme picker"
         use:popperRef
         on:click={handleClosePopup}
         on:keydown={handleEnterKey}

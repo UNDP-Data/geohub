@@ -136,6 +136,7 @@
 
     .panel-tabs {
       padding-top: 10px;
+      border: none;
 
       a {
         margin-right: 5px;

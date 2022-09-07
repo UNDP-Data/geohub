@@ -378,6 +378,7 @@
 </div>
 
 <style lang="scss">
+  @import '../../styles/undp-design/radio.min';
   div {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
