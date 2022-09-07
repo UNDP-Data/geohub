@@ -48,4 +48,16 @@
     background: red;
     margin-top: 2%;
   }
+  :global(.primary-button) {
+    background: #d12800 !important;
+    border-color: #d12800 !important;
+    border-radius: 0px !important;
+    color: white !important;
+  }
+  :global(.secondary-button) {
+    background: #3288ce !important;
+    border-color: #3288ce !important;
+    border-radius: 0px !important;
+    color: white !important;
+  }
 </style>

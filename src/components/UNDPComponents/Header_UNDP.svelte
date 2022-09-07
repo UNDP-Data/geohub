@@ -44,11 +44,10 @@
           <span style="color: #232E3D" class="title">GeoHub</span>
         </div>
       </div>
-      <div
-        style="margin-right: 5%; width: fit-content; display: flex!important;"
-        role="button"
-        aria-label="Open Dashboards">
+      <div style="margin-right: 5%; width: fit-content; display: flex!important;">
         <div
+          role="button"
+          aria-label="Open GeoHub Dashboards"
           style="cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
           on:keydown={onKeyPressed}
@@ -72,7 +71,8 @@
           on:click={() => (drawerOpen = !drawerOpen)}
           on:keydown={onKeyPressed}
           tabindex="1"
-          aria-label="Alter Side Panel">
+          role="button"
+          aria-label={drawerOpen ? 'Close side panel' : 'Open side panel'}>
           <Wrapper>
             <div class="icon">
               <Fa icon={faBars} size="lg" />

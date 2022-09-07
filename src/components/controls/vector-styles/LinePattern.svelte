@@ -67,6 +67,8 @@
 </div>
 
 <style lang="scss">
+  @import '../../../styles/undp-design/radio.min';
+
   .line-pattern-view-container {
     width: 100%;
 

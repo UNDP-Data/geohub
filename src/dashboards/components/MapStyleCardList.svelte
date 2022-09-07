@@ -37,8 +37,8 @@
     <h3>Saved Map Styles</h3>
   </div>
 
-  <div class="content-card-container">
-    <div class="grid-x grid-margin-x small-up-1 medium-up-3 large-up-5 content-card-wrapper">
+  <div class="content-card-container" style="margin-left: 10%; margin-right: 10%; margin-top: 5%; margin-bottom: 5%;">
+    <div class="grid-x grid-margin-x small-up-1 medium-up-2 large-up-4 content-card-wrapper">
       {#each styleList as style}
         <DashboardMapStyleCard {style} />
       {/each}
