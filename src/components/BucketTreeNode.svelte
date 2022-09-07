@@ -435,6 +435,8 @@
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         {#if url}
+          <!-- The modal is located here so the focus is set to ne next element -->
+          <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
           <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
@@ -469,6 +471,7 @@
               <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
             {/if}
           </a>
+
           <div class="name">
             <div class="columns">
               <div class="column">{clean(label)}</div>
@@ -583,8 +586,6 @@
     <svelte:self node={child} level={level + 1} />
   {/each}
 {/if}
-
-<AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
 <style lang="scss">
   @import '../styles/popper.scss';
