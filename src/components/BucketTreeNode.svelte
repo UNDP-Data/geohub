@@ -59,10 +59,11 @@
   // let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
-  $: ({ label, children, path, url, isRaster, geomType } = tree)
+  $: ({ label, children, path, url, isRaster, geomType, id } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-
+  const bid = level == 0 ? node.id : null
+  //console.log(`${bid} ${JSON.stringify(node)}`)
   onMount(() => {
     if (level === 0) toggleExpansion()
     if (geomType !== undefined) {
@@ -407,6 +408,21 @@
   const handleRemoveBucket = () => {
     dispatch('remove', { node })
   }
+  const handleKD = (event: KeyboardEvent) => {
+    if (event.key == 'Enter') {
+      const bucketDiv = document.getElementById(bid)
+      //console.log(bucketDiv)
+      bucketDiv.setAttribute('tabindex', '0')
+      bucketDiv.focus()
+      bucketDiv.blur()
+
+      handleRemoveBucket()
+      //const id = document.activeElement.id
+      // if (id !== bid) {
+      //   console.log(`failed ${id} ${bid}`)
+      // }
+    }
+  }
 
   let stacPaginationAction = ''
   let stacPaginationLabel = ''
@@ -495,7 +511,8 @@
             style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
             href="#"
             role="button"
-            on:click={() => handleRemoveBucket()}>
+            on:click={handleRemoveBucket}
+            on:keydown={handleKD}>
             <Fa icon={faWindowClose} size="sm" />
           </a>
         {/if}

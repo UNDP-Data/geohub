@@ -13,7 +13,7 @@
   const handleBucketClick = async (event: CustomEvent) => {
     $indicatorProgress = true
     const bucket = event.detail.bucket
-
+    //console.log(JSON.stringify(bucket))
     bucket.selected = !bucket.selected
     const bucketIndex = $bucketList.findIndex((node) => node.id === bucket.id)
     $bucketList[bucketIndex] = bucket
