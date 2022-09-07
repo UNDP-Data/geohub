@@ -10,7 +10,6 @@
   import Popper from '$lib/popper'
   import { layerMetadata, bucketList } from '$stores'
   import { TITILER_API_ENDPOINT } from '$lib/constants'
-  import { cloneDeep } from 'lodash-es'
 
   export let layerInfoMetadata: LayerInfoMetadata = undefined
   export let node: TreeNode
@@ -25,7 +24,7 @@
       placement: 'right',
       strategy: 'fixed',
     },
-    [0, 20],
+    [0, 5],
   ).init()
 
   const ShowBucketTreeNodeCard = async () => {
@@ -113,14 +112,21 @@
       setTimeout(handleClose, 100)
     }
   }
+
+  const handleEnterKeyForInfo = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      showTooltip = !showTooltip
+    }
+  }
 </script>
 
 <div
   class="icon"
   alt="Show more detailed information"
-  title="how more detailed information"
+  title="Show more detailed information"
   use:popperRef
-  on:click={() => (showTooltip = !showTooltip)}>
+  on:click={() => (showTooltip = !showTooltip)}
+  on:keydown={handleEnterKeyForInfo}>
   <Wrapper>
     <Fa icon={showTooltip ? faXmark : faCircleInfo} size="sm" />
     <Tooltip showDelay={0} hideDelay={100} yPos="above">{`${showTooltip ? 'Hide' : 'Show'} infomation`}</Tooltip>

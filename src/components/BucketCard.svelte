@@ -55,7 +55,7 @@
       handleBucketClick()
     }
 
-    if (e.keyCode == 39) {
+    if (e.key == 'ArrowRight') {
       //console.log( `will focus on ${bucket.label} ${treeId} ${bucket.id}`)
       const ulTree = document.getElementById(treeId)
       if (ulTree !== null) {
@@ -66,8 +66,8 @@
           if (e.key == 'ArrowLeft') {
             const bucketDiv = document.getElementById(bucket.id)
             //console.log(bucketDiv)
-            bucketDiv.focus()
             bucketDiv.setAttribute('tabindex', '0')
+            bucketDiv.focus()
             //bucketDiv.blur()
           }
         })
