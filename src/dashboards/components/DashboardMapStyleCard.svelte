@@ -97,6 +97,12 @@
     showContextMenu = false
   }
 
+  const handleEnterKey = (e) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
+
   $: {
     if (showContextMenu !== true) {
       setTimeout(handleClose, 100)
@@ -104,23 +110,20 @@
   }
 </script>
 
-<div class="cell small-3" bind:this={nodeRef}>
-  <div class="content-card">
+<div aria-label={`${style.name} style`} class="cell small-3" bind:this={nodeRef}>
+  <div class="content-card" style="border: none">
     <a href="#">
-      <a href={style.viewer} target="_blank">
+      <div style="display: flex; align-items: center; justify-content: space-between">
         <h6>{style.name}</h6>
-        <div class="image">
-          <div class="map" id="map" bind:this={mapContainer} />
+        <div
+          aria-label="Open Delete Context Menu"
+          tabindex="0"
+          class="container icon"
+          use:popperRef
+          on:click={() => (showContextMenu = !showContextMenu)}
+          on:keydown={handleEnterKey}>
+          <Fa icon={faEllipsisVertical} size="sm" />
         </div>
-      </a>
-
-      <div class="content-caption">
-        <a href={style.viewer} target="_blank">
-          <span class="cta__link cta--space">
-            View Style
-            <i />
-          </span>
-        </a>
         {#if showContextMenu}
           <div
             id="tooltip"
@@ -128,25 +131,27 @@
             use:popperContent={popperOptions}
             transition:fade
             use:clickOutside={handleClose}>
-            <aside class="menu">
-              <div>
-                <button
-                  class="button is-small"
-                  on:click={() => {
-                    confirmDeleteDialogVisible = true
-                  }}>
-                  DELETE
-                </button>
-              </div>
+            <aside class="menu" tabindex="1">
+              <button
+                class="button is-small"
+                on:click={() => {
+                  confirmDeleteDialogVisible = true
+                }}>
+                DELETE
+              </button>
             </aside>
           </div>
         {/if}
+      </div>
+      <div on:click={() => window.open(style.viewer)} class="image" id="map" bind:this={mapContainer} />
+      <div class="content-caption">
+        <span tabindex="0" on:click={() => window.open(style.viewer)} class="cta__link cta--space">
+          View Style
+          <i />
+        </span>
         <div style="display: flex; align-items: center; justify-content: space-between">
           <div class="content">
             <Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
-          </div>
-          <div class="container icon" use:popperRef on:click={() => (showContextMenu = !showContextMenu)}>
-            <Fa icon={faEllipsisVertical} size="sm" />
           </div>
         </div>
       </div>
@@ -175,13 +180,13 @@
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
         <div>
           <button
-            class="button"
+            class="button secondary-button"
             alt="Cancel Delete Layer Button"
             title="Cancel Delete Layer Button"
             on:click={() => (confirmDeleteDialogVisible = false)}>
             Cancel
           </button>
-          <button class="button is-danger" alt="Delete" title="Delete" on:click={handleDeleteStyle}>Delete</button>
+          <button class="button primary-button" alt="Delete" title="Delete" on:click={handleDeleteStyle}>Delete</button>
         </div>
       </footer>
     </div>
@@ -192,8 +197,6 @@
 <style lang="scss">
   @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
   @import '../../styles/popper.scss';
-  //@import '../../styles/undp-design/base-minimal.min';
-  //@import '../../styles/undp-design/modal.min';
 
   #delete-style:hover {
     cursor: pointer;

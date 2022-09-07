@@ -20,6 +20,8 @@
           </div>
         </div>
         <div
+          tabindex="0"
+          aria-label="Open GeoHub Web App"
           title="Open GeoHub Web Application"
           class="cell large-3 small-3 top-right"
           style="cursor: pointer;"

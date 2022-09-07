@@ -92,23 +92,25 @@
     <p class="panel-heading">
       <LayerNameGroup {layer} />
     </p>
-    <p class="panel-tabs" tabindex="0">
+    <ul class="panel-tabs" role="tablist" tabindex="0">
       {#each tabs as tab, index}
-        <a
-          role="tab"
-          aria-label={tab.label}
-          id={`${tab.label}-${layer.definition.id}`}
-          on:keydown={handleKeyDown}
-          href={'#'}
-          on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
-          class={activeTab === tab.label ? 'is-active' : ''}>
-          <span>
-            <Fa icon={tab.icon} size="sm" />
-          </span>
-          {tab.label}
-        </a>
+        <li>
+          <a
+            role="tab"
+            aria-label={tab.label}
+            id={`${tab.label}-${layer.definition.id}`}
+            on:keydown={handleKeyDown}
+            href={'#'}
+            on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
+            class={activeTab === tab.label ? 'is-active' : ''}>
+            <span>
+              <Fa icon={tab.icon} size="sm" />
+            </span>
+            {tab.label}
+          </a>
+        </li>
       {/each}
-    </p>
+    </ul>
 
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
@@ -139,6 +141,7 @@
 
     .panel-tabs {
       padding-top: 10px;
+      border: none;
 
       a {
         margin-right: 5px;
