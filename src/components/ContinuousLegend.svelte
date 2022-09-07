@@ -45,12 +45,7 @@
   const layerURL = new URL(layerSrc.tiles[0])
 
   let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
-  console.log(
-    `setting rangeSlider ${[
-      layerConfig.continuous.minimum,
-      layerConfig.continuous.maximum,
-    ]} <> ${layerMin} - ${layerMax} `,
-  )
+
   // this ensures the slider state is set to layer min max
   let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
 
@@ -72,7 +67,7 @@
   }
 
   onMount(() => {
-    console.log('mounting')
+    // pass
   })
 
   const rescaleColorMap = () => {

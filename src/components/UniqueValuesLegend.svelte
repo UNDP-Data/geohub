@@ -68,7 +68,6 @@
       })
 
       let index = 0
-
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
         const key = row.value
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -130,7 +129,7 @@
 </script>
 
 <div class="is-divider" data-content="Unique values" />
-<div class="unique-view-container" data-testid="unique-view-container">
+<div class="grid-x grid-margin-x large-up-3 rows" data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
       bind:colorMapRow
@@ -142,12 +141,8 @@
 </div>
 
 <style lang="scss">
-  .unique-view-container {
-    //width: 100%;
-    max-height: 330px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    flex-wrap: wrap;
+  .rows {
+    width: 50%;
+    margin: 0 auto;
   }
 </style>
