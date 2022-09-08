@@ -168,7 +168,12 @@
 
 <style lang="scss">
   .map {
-    height: 92vh;
+    height: calc(100vh - 82px);
     width: 100%;
+  }
+  @media (max-width: 90em) {
+    .map {
+      height: calc(100vh - 40px);
+    }
   }
 </style>
