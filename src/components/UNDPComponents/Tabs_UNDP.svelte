@@ -43,7 +43,7 @@
 </script>
 
 <div class="tabs" style="margin-top: 20px;" role="navigation" title="navigation" aria-label="navigation">
-  <ul style="border-bottom: none" data-deep-link="true" data-tabs="true" id="tablist" role="tablist">
+  <ul style="border-bottom: none; margin-left: auto" data-deep-link="true" data-tabs="true" id="tablist" role="tablist">
     {#each tabs as tab, i}
       <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
         <a

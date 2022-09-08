@@ -34,14 +34,16 @@
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
+    <hr />
     <MapStyleCardList />
   </div>
   <DashboardFooter />
 </div>
 
 <style lang="scss">
-  //@import '../../styles/undp-design/base-minimal.min.css';
-  //@import '../../styles/undp-design/fonts.css';
+  @import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/fonts.css';
+  @import '../../styles/undp-design/footer.min.css';
   .cell {
     width: 20%;
     height: 100px;
