@@ -40,7 +40,8 @@
         <a style="background:none;" href="https://undpgeohub.org" class="logo" tabIndex="-1">
           <img src="undp-images/undp-logo-blue.svg" alt="GeoHub | UNDP" loading="lazy" />
         </a>
-        <div class="site-title">
+        <div class="site-title" style="width: max-content">
+          <span>UNDP's one stop shop for spatial data and analytics</span>
           <span>GeoHub</span>
         </div>
       </div>
