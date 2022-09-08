@@ -17,12 +17,6 @@
     await updateStylePage(defaultPage, defaultPageSize)
   })
 
-  // const handlePagination = async (e) => {
-  //   const page = e.detail.page
-  //   const pageSize = e.detail.pageSize
-  //   await updateStylePage(page, pageSize)
-  // }
-
   const updateStylePage = async (page: number, pageSize: number) => {
     const offset = page * pageSize - pageSize
     const res = await fetch(`../style?limit=${pageSize}&offset=${offset}`)
