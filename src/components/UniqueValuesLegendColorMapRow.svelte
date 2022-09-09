@@ -113,7 +113,7 @@
       <div id="arrow" data-popper-arrow />
     </div>
   {/if}
-  <div class="cell">&#x2014;</div>
+  <div class="cell">&#x21A6;</div>
   <div class="cell">
     {colorMapRow.end}
   </div>
