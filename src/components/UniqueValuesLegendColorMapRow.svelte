@@ -113,7 +113,7 @@
       <div id="arrow" data-popper-arrow />
     </div>
   {/if}
-  <div class="cell">&#x2014;</div>
+  <div class="cell">&#x21A6;</div>
   <div class="cell">
     {colorMapRow.end}
   </div>
@@ -125,6 +125,9 @@
 
   $input-margin: 0px !important;
 
+  .grid-x {
+    width: 30%;
+  }
   .cell {
     margin-top: 2%;
     cursor: pointer;
@@ -133,7 +136,7 @@
       height: 20px;
       &:hover {
         padding: 0;
-        border: 1px solid hsl(204, 86%, 53%);
+        border: 1px solid rgb(255, 255, 0);
       }
     }
   }

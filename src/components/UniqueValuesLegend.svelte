@@ -129,7 +129,7 @@
 </script>
 
 <div class="is-divider" data-content="Unique values" />
-<div class="grid-x grid-margin-x large-up-3 rows" data-testid="unique-view-container">
+<div class="unique-view-container" data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
       bind:colorMapRow
@@ -142,7 +142,17 @@
 
 <style lang="scss">
   .rows {
-    width: 50%;
-    margin: 0 auto;
+    width: 100%;
+    //margin: 0 auto;
+    max-height: 200px;
+  }
+
+  .unique-view-container {
+    //width: 100%;
+    max-height: 200px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
   }
 </style>

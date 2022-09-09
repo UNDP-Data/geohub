@@ -204,7 +204,7 @@
 
       // set default line color to be middle of colors
       if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
-        defaultLineColor = rgb
+        defaultLineColor = chroma(rgb).darken(2.6).hex()
       }
 
       return [row.start, rgb]
