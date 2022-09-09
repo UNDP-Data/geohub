@@ -167,7 +167,7 @@
 
   .discrete:hover {
     padding: 0;
-    border: 1px solid hsl(204, 86%, 53%);
+    border: 1px solid rgb(255, 255, 0);
   }
 
   input:focus {
