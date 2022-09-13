@@ -168,7 +168,7 @@
 
   :global(.discrete):hover {
     padding: 0;
-    border: 1px solid rgb(255, 255, 0);
+    border: 2px solid rgb(0, 0, 0);
     transform: rotate(90deg);
     animation-name: rotate;
     animation-duration: 1s;

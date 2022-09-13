@@ -174,7 +174,7 @@
         animation-iteration-count: 1;
         animation-timing-function: ease;
         padding: 0;
-        border: 1px solid rgb(255, 255, 0);
+        border: 2px solid rgb(0, 0, 0);
       }
     }
   }
