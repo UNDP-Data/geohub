@@ -19,6 +19,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
+  export let legendLabels
 
   let definition:
     | RasterLayerSpecification
@@ -76,7 +77,7 @@
 
         colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
         //colorMap[key] = color
-        colorMapRows.push({ index, color, start: key, end: row.name })
+        colorMapRows.push({ index, color, start: key, end: legendLabels ? legendLabels[key] : row.value })
         index++
       })
 
@@ -129,7 +130,7 @@
 </script>
 
 <div class="is-divider" data-content="Unique values" />
-<div class="unique-view-container" data-testid="unique-view-container">
+<div class="unique-view-container {legendLabels ? 'height-labels' : 'height'}" data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
       bind:colorMapRow
@@ -143,13 +144,16 @@
 <style lang="scss">
   .rows {
     width: 100%;
-    //margin: 0 auto;
     max-height: 200px;
   }
 
-  .unique-view-container {
-    //width: 100%;
+  .height-labels {
+    max-height: 400px;
+  }
+  .height {
     max-height: 200px;
+  }
+  .unique-view-container {
     display: flex;
     align-items: center;
     flex-direction: column;

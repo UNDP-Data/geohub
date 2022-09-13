@@ -109,15 +109,15 @@
   .content-container {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 82px);
-    margin-top: 82px;
+    height: calc(100% - 80px);
+    margin-top: 84px;
     width: 100%;
   }
 
   @media (max-width: 90em) {
     .content-container {
-      margin-top: 40px;
-      height: calc(100vh - 40px);
+      margin-top: 52px;
+      height: calc(100vh - 52px);
     }
   }
   :global(.app-content) {

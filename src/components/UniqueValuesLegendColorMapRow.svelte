@@ -96,28 +96,55 @@
   }
 </script>
 
-<div class="grid-x grid-margin-x medium-up-3">
-  <div class="cell">
-    <div
-      id={`interval-${colorMapRow.index}`}
-      on:click={() => handleColorPickerClick()}
-      use:popperRef
-      class="discrete"
-      alt="Color Picker"
-      title="Color Picker"
-      style={colorPickerStyle} />
-  </div>
-  {#if showToolTip && color}
-    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-      <div id="arrow" data-popper-arrow />
+{#if colorMapRow.start != colorMapRow.end}
+  <div class="grid-x cell medium-up-3">
+    <div class="cell" style="width:min-content">
+      <div
+        id={`interval-${colorMapRow.index}`}
+        on:click={() => handleColorPickerClick()}
+        use:popperRef
+        class="discrete"
+        alt="Color Picker"
+        title="Color Picker"
+        style={colorPickerStyle} />
+      {#if showToolTip && color}
+        <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+          <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+          <div id="arrow" data-popper-arrow />
+        </div>
+      {/if}
     </div>
-  {/if}
-  <div class="cell">&#x21A6;</div>
-  <div class="cell">
-    {colorMapRow.end}
+    <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
+    <div class="cell" style="width:min-content">&#x21A6;</div>
+    <div class="cell small">
+      {colorMapRow.end}
+    </div>
+    <!--    Todo: When the labels for unique values are present-->
   </div>
-</div>
+{:else}
+  <div class="grid-x grid-margin-x medium-up-3 third">
+    <div class="cell">
+      <div
+        id={`interval-${colorMapRow.index}`}
+        on:click={() => handleColorPickerClick()}
+        use:popperRef
+        class="discrete"
+        alt="Color Picker"
+        title="Color Picker"
+        style={colorPickerStyle} />
+    </div>
+    {#if showToolTip && color}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
+    <div class="cell">&#x21A6;</div>
+    <div class="cell">
+      {colorMapRow.start}
+    </div>
+  </div>
+{/if}
 
 <style lang="scss">
   @import 'src/styles/undp-design/base-minimal.min';
@@ -125,12 +152,17 @@
 
   $input-margin: 0px !important;
 
-  .grid-x {
+  .third {
     width: 30%;
+  }
+
+  .half {
+    width: 50%;
   }
   .cell {
     margin-top: 2%;
     cursor: pointer;
+    width: 80px;
     .discrete {
       width: 20px;
       height: 20px;
