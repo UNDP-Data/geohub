@@ -33,7 +33,6 @@
     STAC_PAGINATION_NEXT,
     StatusTypes,
     TITILER_API_ENDPOINT,
-    MSFT_COLLECTION_URL,
   } from '$lib/constants'
   import { fetchUrl, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
@@ -296,13 +295,11 @@
             </Error>
           */
 
-      // 2. band_metadata not returning stats min/max
-      // console.log(node)
       b64EncodedUrl = getBase64EncodedUrl(node.url)
       layerInfo = await getRasterMetadata(node)
-      const collectionInfo = await fetchUrl(`${MSFT_COLLECTION_URL}/${collectionName}`)
       let classesMap = {}
       if (node.isStac) {
+        const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
         // FixME: There is no standard object for the classes labels.
         try {
           if (collectionInfo.item_assets.map) {
@@ -311,9 +308,15 @@
             classesObj.forEach((item) => {
               classesMap[item['value']] = item['description']
             })
-          } else {
+          } else if (collectionInfo.item_assets.data) {
             // Todo: Tested with Esri 10m Land Cover (10 Class)
             const classesObj = collectionInfo.item_assets.data['file:values']
+            classesObj.forEach((item) => {
+              classesMap[item['values'][0]] = item['summary']
+            })
+          } else {
+            // Todo: Tested for LandCover of Canada
+            const classesObj = collectionInfo.item_assets.landcover['file:values']
             classesObj.forEach((item) => {
               classesMap[item['values'][0]] = item['summary']
             })

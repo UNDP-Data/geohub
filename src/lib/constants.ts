@@ -16,7 +16,6 @@ export const DEFAULT_TIMEOUT_MS = 60000
 export const NO_RANDOM_SAMPLING_POINTS = 1000
 export const STRING_COMPARE_THRESHOLD = 0.25
 export const TITILER_API_ENDPOINT = import.meta.env.VITE_TITILER_ENDPOINT
-export const MSFT_COLLECTION_URL = import.meta.env.VITE_MSFT_COLLECTION_URL
 export const STAC_PAGINATION_PREV = 'prev'
 export const STAC_PAGINATION_NEXT = 'next'
 export const STAC_PAGINATION_LIMIT = 5
