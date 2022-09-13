@@ -20,6 +20,31 @@
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
 
+  // Todo:Object to test labels design
+  // const legendLabels = {
+  //   11:'forest',
+  //   12:'shrubland',
+  //   21:'grassland',
+  //   22:'wetland',
+  //   23:'cropland',
+  //   24:'salty lakes',
+  //   25:'freshwater lakes',
+  //   26:'urban',
+  //   31:'snow',
+  //   32:'barren',
+  //   33:'arable land',
+  //   34:'corn',
+  //   35:'cereals',
+  //   41:'vineyards',
+  //   42:'orchards',
+  //   43:'built up areas',
+  //   51:'rural areas',
+  //   52:'sparse rural areas',
+  //   61:'dense urban areas',
+  //   62:'infrastructure',
+  //   63:'industrial areas',
+  // }
+
   let definition:
     | RasterLayerSpecification
     | FillLayerSpecification
@@ -70,13 +95,14 @@
       let index = 0
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
         const key = row.value
+        console.log(row.name, row.value)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
 
         colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
         //colorMap[key] = color
-        colorMapRows.push({ index, color, start: key, end: row.name })
+        colorMapRows.push({ index, color, start: key, end: row.value })
         index++
       })
 
@@ -149,7 +175,7 @@
 
   .unique-view-container {
     //width: 100%;
-    max-height: 200px;
+    max-height: 400px;
     display: flex;
     align-items: center;
     flex-direction: column;

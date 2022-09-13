@@ -173,7 +173,7 @@
   }
   @media (max-width: 90em) {
     .map {
-      height: calc(100vh - 40px);
+      height: calc(100vh - 52px);
     }
   }
 </style>
