@@ -125,6 +125,7 @@
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
   }, 500)
+
   const handleIncrementDecrementClasses = (e: CustomEvent) => {
     numberOfClasses = e.detail.value
     const layerConfigClone = cloneDeep(layerConfig)

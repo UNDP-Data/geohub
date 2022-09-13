@@ -114,7 +114,7 @@
         </div>
       {/if}
     </div>
-    <div class="cell" style="width:min-content">{colorMapRow.start}</div>
+    <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
     <div class="cell" style="width:min-content">&#x21A6;</div>
     <div class="cell small">
       {colorMapRow.end}
@@ -141,7 +141,7 @@
     {/if}
     <div class="cell">&#x21A6;</div>
     <div class="cell">
-      {colorMapRow.end}
+      {colorMapRow.start}
     </div>
   </div>
 {/if}
@@ -162,7 +162,6 @@
   .cell {
     margin-top: 2%;
     cursor: pointer;
-    margin-right: auto;
     width: 80px;
     .discrete {
       width: 20px;

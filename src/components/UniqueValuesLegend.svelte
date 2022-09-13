@@ -19,31 +19,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
-
-  // Todo:Object to test labels design
-  // const legendLabels = {
-  //   11:'forest',
-  //   12:'shrubland',
-  //   21:'grassland',
-  //   22:'wetland',
-  //   23:'cropland',
-  //   24:'salty lakes',
-  //   25:'freshwater lakes',
-  //   26:'urban',
-  //   31:'snow',
-  //   32:'barren',
-  //   33:'arable land',
-  //   34:'corn',
-  //   35:'cereals',
-  //   41:'vineyards',
-  //   42:'orchards',
-  //   43:'built up areas',
-  //   51:'rural areas',
-  //   52:'sparse rural areas',
-  //   61:'dense urban areas',
-  //   62:'infrastructure',
-  //   63:'industrial areas',
-  // }
+  export let legendLabels
 
   let definition:
     | RasterLayerSpecification
@@ -95,14 +71,13 @@
       let index = 0
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
         const key = row.value
-        console.log(row.name, row.value)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
 
         colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
         //colorMap[key] = color
-        colorMapRows.push({ index, color, start: key, end: row.value })
+        colorMapRows.push({ index, color, start: key, end: legendLabels ? legendLabels[key] : row.value })
         index++
       })
 
@@ -155,7 +130,7 @@
 </script>
 
 <div class="is-divider" data-content="Unique values" />
-<div class="unique-view-container" data-testid="unique-view-container">
+<div class="unique-view-container {legendLabels ? 'height-labels' : 'height'}" data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
       bind:colorMapRow
@@ -169,13 +144,16 @@
 <style lang="scss">
   .rows {
     width: 100%;
-    //margin: 0 auto;
     max-height: 200px;
   }
 
-  .unique-view-container {
-    //width: 100%;
+  .height-labels {
     max-height: 400px;
+  }
+  .height {
+    max-height: 200px;
+  }
+  .unique-view-container {
     display: flex;
     align-items: center;
     flex-direction: column;
