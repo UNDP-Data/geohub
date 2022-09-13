@@ -91,6 +91,7 @@
     if (showToolTip === false) {
       dispatch('clickColorPicker', { index: colorMapRow.index })
     } else {
+      dispatch('closeColorPicker')
       showToolTip = false
     }
   }
@@ -162,11 +163,16 @@
   .cell {
     margin-top: 2%;
     cursor: pointer;
+    white-space: nowrap;
     width: 80px;
     .discrete {
       width: 20px;
       height: 20px;
       &:hover {
+        animation-name: rotate;
+        animation-duration: 1s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease;
         padding: 0;
         border: 1px solid rgb(255, 255, 0);
       }
@@ -177,5 +183,14 @@
     height: 230px;
     padding: 0;
     width: 170px;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

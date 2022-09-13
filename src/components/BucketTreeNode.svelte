@@ -33,6 +33,7 @@
     STAC_PAGINATION_NEXT,
     StatusTypes,
     TITILER_API_ENDPOINT,
+    MSFT_COLLECTION_URL,
   } from '$lib/constants'
   import { fetchUrl, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
@@ -282,6 +283,8 @@
     } else {
       let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
+      const collectionName = path.split('/')[path.split('/').length - 2]
+
       let b64EncodedUrl: string
 
       // ** TODO **
@@ -294,9 +297,32 @@
           */
 
       // 2. band_metadata not returning stats min/max
+      // console.log(node)
       b64EncodedUrl = getBase64EncodedUrl(node.url)
       layerInfo = await getRasterMetadata(node)
-
+      const collectionInfo = await fetchUrl(`${MSFT_COLLECTION_URL}/${collectionName}`)
+      let classesMap = {}
+      if (node.isStac) {
+        // FixME: There is no standard object for the classes labels.
+        try {
+          if (collectionInfo.item_assets.map) {
+            // Todo: Tested with ESA WorldCover 2020
+            const classesObj = collectionInfo.item_assets.map['classification:classes']
+            classesObj.forEach((item) => {
+              classesMap[item['value']] = item['description']
+            })
+          } else {
+            // Todo: Tested with Esri 10m Land Cover (10 Class)
+            const classesObj = collectionInfo.item_assets.data['file:values']
+            classesObj.forEach((item) => {
+              classesMap[item['values'][0]] = item['summary']
+            })
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      layerInfo.classesMap = classesMap
       if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
         const bannerErrorMessage: BannerMessage = {
           type: StatusTypes.WARNING,

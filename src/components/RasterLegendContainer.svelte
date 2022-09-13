@@ -43,6 +43,7 @@
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
+  let legendLabels
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
@@ -57,6 +58,9 @@
 
   onMount(async () => {
     const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+    // if(layer.isStac){
+    //   layerCatalogUrl = `https://planetarycomputer.microsoft.com/api/stac/v1/collections/${collectionId}`
+    // }
     layerStats = await fetchUrl(statsURL)
     const band = info.active_band_no
 
@@ -67,6 +71,7 @@
     }
     if (!('stats' in info)) {
       info = { ...info, stats: layerStats }
+      legendLabels = info.classesMap
       layer = { ...layer, info: info }
       const layers = $layerList.map((lyr) => {
         return layer.definition.id !== lyr.definition.id ? lyr : layer
@@ -152,7 +157,7 @@
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
+        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex bind:legendLabels />
       </div>
     {/if}
   </div>

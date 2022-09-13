@@ -134,6 +134,7 @@
     layerConfig.intervals.colorMapRows = []
     reclassifyImage()
   }
+
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index
   }
@@ -183,6 +184,7 @@
       layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
+      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
       on:changeColorMap={handleParamsUpdate}
       on:changeIntervalValues={handleChangeIntervalValues} />
   {/each}
