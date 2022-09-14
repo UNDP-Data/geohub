@@ -126,7 +126,7 @@
     colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
     layerConfig.unique.colorMapRows.splice(colorPickerVisibleIndex, 1, {
       index: colorPickerVisibleIndex,
-      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255],
+      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255 * e.detail.color.a],
       start: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].start,
       end: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].end,
     })
@@ -150,19 +150,14 @@
 </div>
 
 <style lang="scss">
-  .rows {
-    width: 100%;
-    max-height: 200px;
+  .unique-view-container {
+    width: fit-content;
   }
 
-  .height-labels {
-    max-height: 400px;
-  }
   .height {
+    margin-right: auto;
+    margin-left: 20%;
     max-height: 200px;
-  }
-  .unique-view-container {
-    margin-left: 0;
     display: flex;
     align-items: center;
     flex-direction: column;
