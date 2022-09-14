@@ -97,51 +97,47 @@
   }
 </script>
 
-{#if colorMapRow.start != colorMapRow.end}
-  <div class="grid-x cell medium-up-3">
-    <div class="cell" style="width:min-content">
-      <div
-        id={`interval-${colorMapRow.index}`}
-        on:click={() => handleColorPickerClick()}
-        use:popperRef
-        class="discrete"
-        alt="Color Picker"
-        title="Color Picker"
-        style={colorPickerStyle} />
-      {#if showToolTip && color}
-        <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-          <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-          <div id="arrow" data-popper-arrow />
-        </div>
-      {/if}
-    </div>
-    <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
-    <div class="cell" style="width:min-content">&#x21A6;</div>
-    <div class="cell small">
-      {colorMapRow.end}
-    </div>
-    <!--    Todo: When the labels for unique values are present-->
-  </div>
-{:else}
-  <div class="grid-x grid-margin-x medium-up-3 third">
-    <div class="cell">
-      <div
-        id={`interval-${colorMapRow.index}`}
-        on:click={() => handleColorPickerClick()}
-        use:popperRef
-        class="discrete"
-        alt="Color Picker"
-        title="Color Picker"
-        style={colorPickerStyle} />
-    </div>
+{#if colorMapRow.start !== colorMapRow.end}
+  <div class="unique-value">
+    <div
+      id={`interval-${colorMapRow.index}`}
+      on:click={() => handleColorPickerClick()}
+      use:popperRef
+      class="discrete"
+      alt="Color Picker"
+      title="Color Picker"
+      style={colorPickerStyle} />
     {#if showToolTip && color}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}
-    <div class="cell">&#x21A6;</div>
-    <div class="cell">
+    <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
+    <div class="space-arrow" style="width:min-content">&nbsp;&#x21A6;</div>
+    <div class="label-text">
+      {colorMapRow.end}
+    </div>
+    <!--    Todo: When the labels for unique values are present-->
+  </div>
+{:else}
+  <div class="unique-value-no-label">
+    <div
+      id={`interval-${colorMapRow.index}`}
+      on:click={() => handleColorPickerClick()}
+      use:popperRef
+      class="discrete"
+      alt="Color Picker"
+      title="Color Picker"
+      style={colorPickerStyle} />
+    {#if showToolTip && color}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
+    <div class="arrow">&nbsp; &#x21A6;</div>
+    <div class="text">
       {colorMapRow.start}
     </div>
   </div>
@@ -153,28 +149,52 @@
 
   $input-margin: 0px !important;
 
-  .third {
-    width: 30%;
-    //  //width: 80px;
-  }
-
-  .half {
-    width: 50%;
-  }
-  .cell {
-    margin-top: 2%;
-    width: 50%;
-    cursor: pointer;
-    white-space: pre-wrap;
-
+  .unique-value-no-label {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+    justify-items: center;
+    margin-top: 2px;
+    width: max-content;
     .discrete {
       width: 20px;
       height: 20px;
-      &:hover {
-        padding: 0;
-        border: 2px solid rgb(0, 0, 0);
-      }
+      margin-right: auto;
     }
+  }
+
+  .unique-value {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 3fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: 'discrete space-arrow text';
+    grid-gap: 0px 0px;
+    align-items: center;
+    justify-items: center;
+    margin-top: 2px;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+    height: 100%;
+  }
+  .label-text {
+    font-weight: 400;
+    margin-left: 0;
+    margin-right: auto;
+    padding: 0px 0px 0px 0px;
+  }
+  .space-arrow {
+    max-width: max-content;
+    white-space: nowrap;
+    grid-area: space-arrow;
+    margin-right: auto;
+    width: min-content;
+  }
+
+  .discrete {
+    width: 20px;
+    height: 20px;
+    margin-right: auto;
   }
 
   #tooltip {

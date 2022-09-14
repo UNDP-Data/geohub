@@ -150,19 +150,14 @@
 </div>
 
 <style lang="scss">
-  .rows {
-    width: 100%;
-    max-height: 200px;
+  .unique-view-container {
+    width: fit-content;
   }
 
-  .height-labels {
-    max-height: 400px;
-  }
   .height {
+    margin-right: auto;
+    margin-left: 20%;
     max-height: 200px;
-  }
-  .unique-view-container {
-    margin-left: 0;
     display: flex;
     align-items: center;
     flex-direction: column;
