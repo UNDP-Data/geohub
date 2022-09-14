@@ -169,11 +169,6 @@
   :global(.discrete):hover {
     padding: 0;
     border: 2px solid rgb(0, 0, 0);
-    transform: rotate(90deg);
-    animation-name: rotate;
-    animation-duration: 1s;
-    animation-iteration-count: 1;
-    animation-timing-function: ease;
   }
 
   input:focus {
@@ -200,15 +195,6 @@
         padding: 0;
         border: 1px solid hsl(204, 86%, 53%);
       }
-    }
-  }
-
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
     }
   }
 

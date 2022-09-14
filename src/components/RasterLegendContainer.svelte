@@ -43,7 +43,7 @@
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
-  let legendLabels
+  let legendLabels = info.classesMap
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
@@ -71,7 +71,6 @@
     }
     if (!('stats' in info)) {
       info = { ...info, stats: layerStats }
-      legendLabels = info.classesMap
       layer = { ...layer, info: info }
       const layers = $layerList.map((lyr) => {
         return layer.definition.id !== lyr.definition.id ? lyr : layer
