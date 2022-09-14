@@ -19,7 +19,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
-  export let legendLabels = null
+  export let legendLabels = {}
 
   let definition:
     | RasterLayerSpecification
