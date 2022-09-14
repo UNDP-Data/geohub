@@ -126,7 +126,7 @@
     colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
     layerConfig.unique.colorMapRows.splice(colorPickerVisibleIndex, 1, {
       index: colorPickerVisibleIndex,
-      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255],
+      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255 * e.detail.color.a],
       start: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].start,
       end: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].end,
     })
