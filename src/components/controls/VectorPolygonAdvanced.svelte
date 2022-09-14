@@ -23,7 +23,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getIntervalList, getSampleFromInterval } from '../../lib/helper'
+  import { getIntervalList, getSampleFromInterval, remapInputValue } from '../../lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -200,16 +200,23 @@
 
   const updateMap = () => {
     const stops = layer.intervals.colorMapRows.map((row, index) => {
-      const rgb = chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+      const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
+        row.color[3],
+        0,
+        255,
+        0,
+        1,
+      )})`
+      const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
       // set default line color to be middle of colors
       if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
-        defaultLineColor = chroma(rgb).darken(2.6).hex()
+        defaultLineColor = chroma(hex).darken(2.6).hex()
       }
 
       return [row.start, rgb]
     })
-
+    // console.log(stops)
     $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultLineColor)
     $map.setPaintProperty(layer.definition.id, 'fill-color', {
       property: layer.intervals.propertyName,
@@ -295,6 +302,7 @@
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
               on:changeColorMap={handleParamsUpdate}
+              on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
               on:changeIntervalValues={handleChangeIntervalValues} />
           {/if}
         {/each}

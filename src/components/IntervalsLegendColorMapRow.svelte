@@ -70,11 +70,11 @@
   }
 
   const getColorPickerStyle = (rgb: string) => {
-    return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`
+    return `caret-color:rgba(${rgb}); background-color: rgba(${rgb})`
   }
 
   // set color of display and dispatch to update map
-  const updateColorMap = debounce((colorSelected: Color) => {
+  const updateColorMap = (colorSelected: Color) => {
     if (colorSelected) {
       try {
         const rgba: number[] = chroma(colorSelected['hex']).rgba()
@@ -85,7 +85,7 @@
         console.log(e)
       }
     }
-  }, 50)
+  }
 
   const handleColorPickerClick = () => {
     if (showToolTip === false) {
