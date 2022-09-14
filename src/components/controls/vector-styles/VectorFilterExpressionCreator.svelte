@@ -38,7 +38,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right',
       strategy: 'fixed',
     },
     [0, 0],
