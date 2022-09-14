@@ -171,10 +171,6 @@
       width: 20px;
       height: 20px;
       &:hover {
-        animation-name: rotate;
-        animation-duration: 1s;
-        animation-iteration-count: 1;
-        animation-timing-function: ease;
         padding: 0;
         border: 2px solid rgb(0, 0, 0);
       }
@@ -185,14 +181,5 @@
     height: 230px;
     padding: 0;
     width: 170px;
-  }
-
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 </style>
