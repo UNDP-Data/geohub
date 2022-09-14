@@ -155,6 +155,7 @@
 
   .third {
     width: 30%;
+    //  //width: 80px;
   }
 
   .half {
@@ -162,9 +163,10 @@
   }
   .cell {
     margin-top: 2%;
+    width: 50%;
     cursor: pointer;
-    white-space: nowrap;
-    width: 80px;
+    white-space: pre-wrap;
+
     .discrete {
       width: 20px;
       height: 20px;
