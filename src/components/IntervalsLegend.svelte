@@ -178,6 +178,7 @@
         on:change={handleIncrementDecrementClasses} />
     </div>
   </div>
+  <div class="is-divider separator mb-4" />
   {#each layerConfig.intervals.colorMapRows as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
