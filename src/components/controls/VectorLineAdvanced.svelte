@@ -318,8 +318,7 @@
     {/if}
   </div>
 
-  <div class="is-divider separator mb-3 mt-0" />
-
+  <div class="is-divider separator mb-3 mt-0" data-content={hasUniqueValues ? 'Unique Values' : ''} />
   {#if hasUniqueValues === false}
     <div class="columns" style="margin-right: -56px;" transition:fade>
       <div class="column">

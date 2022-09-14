@@ -291,8 +291,6 @@
     </div>
   </div>
 
-  <div class="is-divider separator mb-4" style="margin-right: -56px;" />
-
   <div class="columns" style="margin-right: -56px;">
     <div class="column">
       <div class="has-text-centered pb-2">Classification</div>

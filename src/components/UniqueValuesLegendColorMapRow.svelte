@@ -116,7 +116,7 @@
     <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
     <div class="space-arrow" style="width:min-content">&nbsp;&#x21A6;</div>
     <div class="label-text">
-      {colorMapRow.end}
+      {colorMapRow.end ? colorMapRow.end : colorMapRow.start}
     </div>
     <!--    Todo: When the labels for unique values are present-->
   </div>
