@@ -54,7 +54,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right',
       strategy: 'fixed',
       padding: 0,
       margin: 0,
