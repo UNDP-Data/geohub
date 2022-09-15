@@ -2,8 +2,8 @@
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { debounce } from 'lodash-es'
-
+  import { debounce, isEqual } from 'lodash-es'
+  import { abs } from 'mathjs'
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
@@ -77,10 +77,21 @@
   const updateColorMap = (colorSelected: Color) => {
     if (colorSelected) {
       try {
-        const rgba: number[] = chroma(colorSelected['hex']).rgba()
-        colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
-        colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
-        dispatch('changeColorMap')
+        let rgba: number[] = chroma(colorSelected['hex']).rgba()
+        /*the fix below is necessary becuse the Color picker has some roounding bugs
+          which makde the color returnd change slightly on multiple consecutive invocations
+          and this triggered map rerendering in vain
+        */
+        rgba = [...rgba.slice(0, -1), ...[Number((rgba[3] * 255).toFixed(2))]]
+
+        const delta = rgba.map((el, i) => abs(el - colorMapRow.color[i])).reduce((a, b) => a + b, 0)
+        if (delta > 4) {
+          colorMapRow.color = rgba
+          colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
+          dispatch('changeColorMap', {
+            color,
+          })
+        }
       } catch (e) {
         console.log(e)
       }
