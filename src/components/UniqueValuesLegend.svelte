@@ -49,7 +49,7 @@
   }
 
   onMount(() => {
-    reclassifyImage()
+    layerConfig.unique.colorMapRows.length > 0 ? null : reclassifyImage()
   })
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
@@ -64,6 +64,7 @@
       layerMax = layerConfig.info.stats[bandName]['max']
       setColorMap()
       const uValues = info.stats[bandName]['histogram'][1]
+      console.log(uValues)
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
       })
@@ -87,7 +88,9 @@
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
+      console.log(layerConfig.unique.colorMapRows)
     } else {
+      console.log(layerConfig.unique.colorMapRows)
       layerConfig.unique.colorMapRows.forEach((row) => {
         colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
@@ -110,12 +113,12 @@
     }
   }
 
-  const handleParamsUpdate = debounce((cmap) => {
+  const handleParamsUpdate = (cmap) => {
     const encodeColorMapRows = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
-  }, 500)
+  }
 
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index

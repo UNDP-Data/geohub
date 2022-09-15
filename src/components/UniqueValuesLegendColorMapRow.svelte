@@ -63,7 +63,7 @@
       g,
       b,
       hex: chroma([r, g, b]).hex('rgba'),
-      h: chroma([r, g, b]).hsv()[0],
+      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
     }

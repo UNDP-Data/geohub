@@ -94,7 +94,7 @@
       return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
     })
     layerList.set([...layers])
-    reclassifyImage()
+    layerConfig.intervals.colorMapRows.length > 0 ? null : reclassifyImage()
   })
 
   const reclassifyImage = (e?: CustomEvent) => {
