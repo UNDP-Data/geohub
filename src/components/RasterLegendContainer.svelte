@@ -43,10 +43,11 @@
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
-  let legendLabels = info.classesMap
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
+  let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
   // hide colormap picker if change in layer list
   $: {

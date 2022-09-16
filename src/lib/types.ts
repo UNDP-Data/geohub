@@ -139,7 +139,6 @@ export interface RasterTileMetadata {
   width?: number
   stats?: RasterLayerStats
   active_band_no: string
-  classesMap: object
 }
 
 export interface BandMetadata {
@@ -148,6 +147,7 @@ export interface BandMetadata {
   STATISTICS_MINIMUM: number
   STATISTICS_STDDEV: number
   STATISTICS_VALID_PERCENT: number
+  STATISTICS_UNIQUE_VALUES?: object
 }
 
 export interface RasterLayerStats {
