@@ -8,7 +8,6 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { debounce } from 'lodash-es'
 
   import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
@@ -49,7 +48,7 @@
   }
 
   onMount(() => {
-    layerConfig.unique.colorMapRows.length > 0 ? null : reclassifyImage()
+    layerConfig.unique.colorMapRows.length > 0 ? reclassifyImage(true) : reclassifyImage(false)
   })
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
@@ -90,7 +89,6 @@
       layerConfig.unique.colorMapRows = colorMapRows
       console.log(layerConfig.unique.colorMapRows)
     } else {
-      console.log(layerConfig.unique.colorMapRows)
       layerConfig.unique.colorMapRows.forEach((row) => {
         colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
