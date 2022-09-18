@@ -42,6 +42,7 @@
     LayerInfoMetadata,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
+    BandMetadata,
   } from '$lib/types'
   import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
 
@@ -170,6 +171,7 @@
       data &&
       data.band_metadata &&
       data.band_metadata.length > 0 &&
+      //TODO needs fix: Ioan band
       Object.keys(data.band_metadata[0][1]).length === 0
     ) {
       const statistics = await fetchUrl(`${TITILER_API_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
@@ -297,6 +299,9 @@
 
       b64EncodedUrl = getBase64EncodedUrl(node.url)
       layerInfo = await getRasterMetadata(node)
+
+      const bandIndex = getActiveBandIndex(layerInfo)
+
       let classesMap = {}
       if (node.isStac) {
         const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
@@ -324,8 +329,30 @@
         } catch (e) {
           console.log(e)
         }
+      } else {
+        /*
+        local rasters
+        */
+
+        const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+        try {
+          classesMap = JSON.parse(uvString)
+        } catch (e) {
+          const bannerErrorMessage: BannerMessage = {
+            type: StatusTypes.WARNING,
+            title: 'Whoops! Something went wrong.',
+            message: ErrorMessages.FAILED_TO_PARSE_METADATA,
+          }
+          bannerMessages.update((data) => [...data, bannerErrorMessage])
+          $indicatorProgress = false
+          loadingLayer = false
+          throw new Error(JSON.stringify(uvString))
+        }
       }
-      layerInfo.classesMap = classesMap
+
+      const [bandName, bandMetaStats] = layerInfo.band_metadata[bandIndex]
+      bandMetaStats.STATISTICS_UNIQUE_VALUES = classesMap
+
       if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
         const bannerErrorMessage: BannerMessage = {
           type: StatusTypes.WARNING,
@@ -338,7 +365,6 @@
         throw new Error(JSON.stringify(layerInfo))
       }
 
-      const bandIndex = getActiveBandIndex(layerInfo)
       const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 

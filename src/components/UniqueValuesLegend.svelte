@@ -18,7 +18,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
-  export let legendLabels = {}
+  export let legendLabels
 
   let definition:
     | RasterLayerSpecification
@@ -33,9 +33,9 @@
   const bandIndex = getActiveBandIndex(info)
   let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
   let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
+
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
-
   let colorMap = {}
   let colorMapName = layerConfig.colorMapName
   let layerColorMap: chroma.Scale = undefined
@@ -63,7 +63,7 @@
       layerMax = layerConfig.info.stats[bandName]['max']
       setColorMap()
       const uValues = info.stats[bandName]['histogram'][1]
-      console.log(uValues)
+
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
       })
@@ -87,7 +87,6 @@
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
-      console.log(layerConfig.unique.colorMapRows)
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
         colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
