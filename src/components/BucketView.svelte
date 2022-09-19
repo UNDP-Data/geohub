@@ -71,7 +71,7 @@
     </div>
   {/if}
 
-  <div class="columns cards-tree-container is-gapless">
+  <div class="columns cards-tree-container is-gapless" style="display: flex!important;">
     <div class="column" style="max-width: 112px;">
       <div class="columns">
         <div class="column cards" data-testid="buckets-container" style={$modalVisible ? 'z-index: 1;' : ''}>
