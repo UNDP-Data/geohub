@@ -49,6 +49,8 @@
       prop: propertySelectValue,
     })
   }
+
+  $: propertySelectValue, propertyChanged()
 </script>
 
 <div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">
@@ -56,7 +58,6 @@
     <select
       style="width: 100%"
       class="is-small"
-      on:change={propertyChanged}
       bind:value={propertySelectValue}
       alt="Property Options"
       title="Property Options">
