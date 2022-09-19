@@ -43,8 +43,9 @@
   let defaultLineColor = DEFAULT_LINE_COLOR
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectValue: string = null
+  let propertySelectValue: string = layer.intervals.propertyName
   let zoomLevel: number
+  let inLegend = true
 
   // update color intervals upon change of color map name
   $: {
@@ -231,6 +232,7 @@
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
+        bind:inLegend
         bind:propertySelectValue
         on:select={handlePropertyChange}
         {layer}

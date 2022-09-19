@@ -98,6 +98,7 @@ export interface IntervalLegend {
   colorMapRows?: IntervalLegendColorMapRow[]
   propertyName?: string
   applyToOption?: string
+  propertyOptions?: string[]
 }
 
 export interface UniqueLegend {

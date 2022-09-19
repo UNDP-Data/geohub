@@ -6,15 +6,18 @@
   export let propertySelectValue
   export let showEmptyFields = false
   export let showOnlyNumberFields = false
-  let propertySelectOptions
+  export let inLegend = false
+
+  let propertySelectOptions = inLegend ? layer.intervals.propertyOptions : undefined
 
   const dispatch = createEventDispatcher()
 
   onMount(() => {
-    setPropertyList()
+    inLegend && !propertySelectOptions ? setPropertyList() : null
+    !inLegend ? setPropertyList() : null
   })
 
-  const setPropertyList = () => {
+  function setPropertyList() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const vectorLayerMeta = JSON.parse(
@@ -31,6 +34,7 @@
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]
     }
+    inLegend ? (layer.intervals.propertyOptions = propertySelectOptions) : null
     propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()
   }
@@ -45,8 +49,6 @@
       prop: propertySelectValue,
     })
   }
-
-  $: propertySelectValue, propertyChanged()
 </script>
 
 <div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">
@@ -54,6 +56,7 @@
     <select
       style="width: 100%"
       class="is-small"
+      on:change={propertyChanged}
       bind:value={propertySelectValue}
       alt="Property Options"
       title="Property Options">
