@@ -338,15 +338,15 @@
         try {
           classesMap = JSON.parse(uvString)
         } catch (e) {
-          const bannerErrorMessage: BannerMessage = {
-            type: StatusTypes.WARNING,
-            title: 'Whoops! Something went wrong.',
-            message: ErrorMessages.FAILED_TO_PARSE_METADATA,
-          }
-          bannerMessages.update((data) => [...data, bannerErrorMessage])
-          $indicatorProgress = false
-          loadingLayer = false
-          throw new Error(JSON.stringify(uvString))
+          // const bannerErrorMessage: BannerMessage = {
+          //   type: StatusTypes.WARNING,
+          //   title: 'Whoops! Something went wrong.',
+          //   message: ErrorMessages.FAILED_TO_PARSE_METADATA,
+          // }
+          // bannerMessages.update((data) => [...data, bannerErrorMessage])
+          // $indicatorProgress = false
+          // loadingLayer = false
+          // throw new Error(JSON.stringify(uvString))
         }
       }
 
