@@ -91,11 +91,11 @@
 
     for (const layer of layersVisible) {
       let values = []
-
+      let bandIndex: number = null
       if (layer.type === LayerTypes.RASTER) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const bandIndex = getActiveBandIndex(layer.info)
+        bandIndex = getActiveBandIndex(layer.info)
         const baseUrl = `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
         const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
@@ -120,7 +120,17 @@
       }
 
       layerValuesDataTmp = [
-        ...[{ id: layer.definition.id, name: layer.name, lat, lng, type: layer.type, values }],
+        ...[
+          {
+            id: layer.definition.id,
+            name: layer.name,
+            lat,
+            lng,
+            type: layer.type,
+            values,
+            legendLabels: layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES,
+          },
+        ],
         ...layerValuesDataTmp,
       ]
     }
