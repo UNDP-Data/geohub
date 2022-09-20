@@ -277,7 +277,7 @@
           <tr>
             <th>Layer Name</th>
             <th>Pixel Values</th>
-            <th>Name</th>
+            <th>Label</th>
           </tr>
         </thead>
         <tbody>
