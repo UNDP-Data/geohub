@@ -257,7 +257,7 @@
 
   <div class="container-expand-collapse">
     <div class="content">
-      <table class="table coordinates">
+      <table class="table is-fullwidth coordinates">
         <thead>
           <tr>
             <th>Latitude</th>
@@ -276,8 +276,8 @@
         <thead>
           <tr>
             <th>Layer Name</th>
-            <th>Pixel Value</th>
-            <th>Pixel Name</th>
+            <th>Pixel Values</th>
+            <th>Name</th>
           </tr>
         </thead>
         <tbody>
@@ -293,34 +293,27 @@
                   {layerValue.name}
                 </div>
               </td>
-              {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
-                <td> N/A </td>
-                <td> N/A </td>
+              {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
+                <td class="second-column"> N/A </td>
+                <td class="third-column"> N/A </td>
               {:else if layerValue.type === LayerTypes.RASTER}
-                {#if layerValue.legendLabels.length === 0}
-                  <!-- The legend Labels are absent-->
-                  {#if isValuesRounded === true}
-                    <td class="second-column">
-                      {layerValue.values
-                        .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
-                        .join(', ')}
-                    </td>
-                  {/if}
-                {:else if layerValue.legendLabels.length > 0}
-                  <td>
-                    <div class="name">
-                      {layerValue.values}
-                    </div>
+                {#if isValuesRounded === true}
+                  <td class="second-column">
+                    {layerValue.values
+                      .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
+                      .join(', ')}
                   </td>
-                  <td>
-                    {#if layerValue.legendLabels.length === 0}
-                      N/A
-                    {:else}
-                      <div class="name">
-                        {layerValue.legendLabels}
-                      </div>
-                    {/if}
+                {:else}
+                  <td class="second-column">
+                    {layerValue.values.join(', ')}
                   </td>
+                {/if}
+                {#if layerValue.legendLabels.length > 0}
+                  <td class="third-column">
+                    {layerValue.legendLabels}
+                  </td>
+                {:else}
+                  <td class="third-column"> N/A </td>
                 {/if}
               {:else if layerValue.type === LayerTypes.VECTOR}
                 <td class="second-column">
@@ -484,7 +477,7 @@
       }
       .second-column {
         overflow: hidden;
-        text-align: right;
+        text-align: left;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 125px;
@@ -556,5 +549,12 @@
     background-repeat: no-repeat !important;
     background-size: 75% !important;
     background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>');
+  }
+  .third-column {
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 125px;
   }
 </style>
