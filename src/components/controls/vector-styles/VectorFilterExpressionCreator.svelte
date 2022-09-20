@@ -155,20 +155,19 @@
             <Fa icon={faXmark} />
           </div>
         </div>
-
+        <div style="font-weight: bolder;">STATISTICS</div>
         <div class="content" style="display: flex; align-items: center; justify-content: space-between">
-          <div class="stats message is-info is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
-            <div id="stats-title" class="stats-content message-header">Statistics</div>
-            <div class="stats-content">Min:</div>
-            <div class="stats-content">{propertyStats[0] !== undefined ? propertyStats[0] : ''}</div>
-            <div class="stats-content">Max:</div>
-            <div class="stats-content">{propertyStats[1] !== undefined ? propertyStats[1] : ''}</div>
+          <div class="stats message is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
+            <div class="stats-content">Min: {propertyStats[0] !== undefined ? propertyStats[0] : ''}</div>
+            <div class="stats-content">Max: {propertyStats[1] !== undefined ? propertyStats[1] : ''}</div>
           </div>
-          {#if activeOperatorsTab === 'Numbers'}
-            <NumberButtons on:valueclicked={numberSelected} />
-          {:else}
-            <VectorFilterOperators on:operatorselected={operatorSelected} />
-          {/if}
+          <div style="width: 200px">
+            {#if activeOperatorsTab === 'Numbers'}
+              <NumberButtons on:valueclicked={numberSelected} />
+            {:else}
+              <VectorFilterOperators on:operatorselected={operatorSelected} />
+            {/if}
+          </div>
         </div>
       </div>
     </div>
