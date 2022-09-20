@@ -19,6 +19,8 @@
   const bandIndex = getActiveBandIndex(layer.info)
   const layerMin = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM']).toFixed(2)
   const layerMax = Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM']).toFixed(2)
+  const uniqueValues = layer.info['band_metadata'][bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+
   const dispatch = createEventDispatcher()
   const operatorCategories: Array<OperatorCategory> = [
     {
@@ -104,12 +106,30 @@
 </script>
 
 <div class="content">
-  <div class="stats message is-info is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
-    <div id="stats-title" class="stats-content message-header">Statistics</div>
-    <div class="stats-content">Min:</div>
-    <div class="stats-content">{layerMin}</div>
-    <div class="stats-content">Max:</div>
-    <div class="stats-content">{layerMax}</div>
+  <div
+    class="stats message is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold"
+    style="width: fit-content!important;">
+    {#if Object.keys(uniqueValues).length > 0}
+      <div style="font-weight: bolder;">UNIQUE VALUES</div>
+      <div class="grid buttons-grid">
+        {#each Object.keys(uniqueValues) as value}
+          <button
+            class="grid-item button is-small is-info is-light"
+            on:click={() => dispatch('handleNumberButtonClick', { operator: value })}>
+            {value}
+          </button>
+        {/each}
+      </div>
+    {:else}
+      <div style="display: block">
+        <div style="font-weight: bolder;">STATISTICS</div>
+        <div style="margin: 10px" class="is-divider" />
+        <div>
+          <div>Min: {layerMin}</div>
+          <div>Max: {layerMax}</div>
+        </div>
+      </div>
+    {/if}
   </div>
   <div>
     <div data-testid="expression-builder">
@@ -209,10 +229,10 @@
   }
   :global(.stats) {
     align-content: flex-start;
-    display: grid;
-    gap: 2px;
-    grid-template-columns: repeat(2, 1fr);
-    grid-row: 1/2;
+    //display: grid;
+    //gap: 2px;
+    //grid-template-columns: repeat(2, 1fr);
+    //grid-row: 1/2;
   }
   :global(#stats-title) {
     grid-column: 1/-1;
@@ -225,5 +245,14 @@
     align-content: center;
     border-bottom: 1px solid lightblue;
     background-color: white;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: 2px;
+    grid-row: 2/3;
+    grid-column: 1/-1;
   }
 </style>
