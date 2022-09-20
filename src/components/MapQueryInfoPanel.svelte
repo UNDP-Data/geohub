@@ -91,6 +91,8 @@
 
     for (const layer of layersVisible) {
       let values = []
+      let presentUniqueNames = {}
+      let availableUnique = {}
       let bandIndex: number = null
       if (layer.type === LayerTypes.RASTER) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -100,6 +102,7 @@
         const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
         const layerData = await fetchUrl(queryURL)
+        const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
         let layerHasNoDataValue = false
 
@@ -112,13 +115,15 @@
         }
 
         values = layerHasNoDataValue ? [] : layerData.values
+        presentUniqueNames = values.map((item) => {
+          return (presentUniqueNames[String(item)] = layerUniqueValues[item])
+        })
       } else if (layer.type === LayerTypes.VECTOR) {
         const layerClicked = $layerList.find((layerList) => layerList.definition.id === layer.definition.id)
         if (layerClicked.features) {
           values = layer.features
         }
       }
-
       layerValuesDataTmp = [
         ...[
           {
@@ -128,7 +133,8 @@
             lng,
             type: layer.type,
             values,
-            legendLabels: layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES,
+            // legend labels should correspond to the actual values in the values array
+            legendLabels: presentUniqueNames,
           },
         ],
         ...layerValuesDataTmp,
@@ -136,6 +142,7 @@
     }
 
     layerValuesData = layerValuesDataTmp
+    console.log(layerValuesDataTmp)
     isDataContainerVisible = true
   }
 
@@ -250,7 +257,7 @@
 
   <div class="container-expand-collapse">
     <div class="content">
-      <table class="table is-fullwidth coordinates">
+      <table class="table coordinates">
         <thead>
           <tr>
             <th>Latitude</th>
@@ -269,7 +276,8 @@
         <thead>
           <tr>
             <th>Layer Name</th>
-            <th>Values</th>
+            <th>Pixel Value</th>
+            <th>Pixel Name</th>
           </tr>
         </thead>
         <tbody>
@@ -285,18 +293,33 @@
                   {layerValue.name}
                 </div>
               </td>
-              {#if layerValue.values && layerValue.values.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR)}
-                <td class="second-column"> N/A </td>
+              {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
+                <td> N/A </td>
+                <td> N/A </td>
               {:else if layerValue.type === LayerTypes.RASTER}
-                {#if isValuesRounded === true}
-                  <td class="second-column">
-                    {layerValue.values
-                      .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
-                      .join(', ')}
+                {#if layerValue.legendLabels.length === 0}
+                  <!-- The legend Labels are absent-->
+                  {#if isValuesRounded === true}
+                    <td class="second-column">
+                      {layerValue.values
+                        .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
+                        .join(', ')}
+                    </td>
+                  {/if}
+                {:else if layerValue.legendLabels.length > 0}
+                  <td>
+                    <div class="name">
+                      {layerValue.values}
+                    </div>
                   </td>
-                {:else}
-                  <td class="second-column">
-                    {layerValue.values.join(', ')}
+                  <td>
+                    {#if layerValue.legendLabels.length === 0}
+                      N/A
+                    {:else}
+                      <div class="name">
+                        {layerValue.legendLabels}
+                      </div>
+                    {/if}
                   </td>
                 {/if}
               {:else if layerValue.type === LayerTypes.VECTOR}
@@ -399,9 +422,10 @@
     right: 10px;
     min-height: 250px;
     min-width: 325px;
+    width: fit-content;
     padding: 10px;
     position: absolute;
-    width: 325px;
+    //width: 325px;
 
     .header {
       align-items: right;
@@ -455,7 +479,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 200px;
+          width: 100px;
         }
       }
       .second-column {
