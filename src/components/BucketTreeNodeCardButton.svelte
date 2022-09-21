@@ -10,6 +10,7 @@
   import Popper from '$lib/popper'
   import { layerMetadata, bucketList } from '$stores'
   import { TITILER_API_ENDPOINT } from '$lib/constants'
+  import { onMount } from 'svelte'
 
   export let layerInfoMetadata: LayerInfoMetadata = undefined
   export let node: TreeNode
@@ -27,7 +28,11 @@
     [0, 5],
   ).init()
 
-  const ShowBucketTreeNodeCard = async () => {
+  onMount(() => {
+    // Generate the metadata and store it in the store
+    ShowBucketTreeNodeCard()
+  })
+  export const ShowBucketTreeNodeCard = async () => {
     const layerPathHash = hash(node.path)
     let metadata: LayerInfoMetadata
 
@@ -54,7 +59,7 @@
         }
 
         const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
-        setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
+        await setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
       } else {
         // get metadata from endpoint
         const layerURL = new URL(node.url)
@@ -68,7 +73,7 @@
         if (node.isRaster) {
           if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
             const bandIndex = getActiveBandIndex(layerInfo)
-            setLayerMetaDataStore(
+            await setLayerMetaDataStore(
               layerInfo.band_metadata[bandIndex][1]['Description'],
               layerInfo.band_metadata[bandIndex][1]['Source'],
               layerInfo.band_metadata[bandIndex][1]['Unit'],
@@ -76,7 +81,7 @@
             )
           }
         } else {
-          setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+          await setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
         }
       }
 
@@ -92,7 +97,7 @@
     }
   }
 
-  const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
+  const setLayerMetaDataStore = async (description: string, source: string, unit: string, layerPathHash: number) => {
     const metadata = <LayerInfoMetadata>{
       description,
       source,
