@@ -30,9 +30,10 @@
 
   onMount(() => {
     // Generate the metadata and store it in the store
-    ShowBucketTreeNodeCard()
+    generateTreeNodeMetadata()
   })
-  export const ShowBucketTreeNodeCard = async () => {
+
+  export const generateTreeNodeMetadata = async () => {
     const layerPathHash = hash(node.path)
     let metadata: LayerInfoMetadata
 
@@ -112,7 +113,7 @@
 
   $: {
     if (showTooltip === true) {
-      ShowBucketTreeNodeCard()
+      generateTreeNodeMetadata()
     } else {
       setTimeout(handleClose, 100)
     }
