@@ -108,7 +108,7 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
   return attributesArray
 }
 
-export async function get(query: any) {
+export async function GET(query: any) {
   if (
     Object.keys(query).length === 0 ||
     query.url === undefined ||
@@ -133,5 +133,5 @@ export async function get(query: any) {
       response = reason
     })
 
-  return { body: response }
+  return new Response(JSON.stringify(response))
 }

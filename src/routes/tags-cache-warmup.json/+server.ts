@@ -6,7 +6,7 @@ import { fetchUrl } from '$lib/helper'
 
 const __dirname = path.resolve()
 
-export async function get({ url }) {
+export async function GET({ url }) {
   const startTime = performance.now()
   const filePath = `${__dirname}/data/tags.json`
   const cache = []
@@ -29,10 +29,10 @@ export async function get({ url }) {
 
   const endTime = performance.now()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       cache,
       responseTime: endTime - startTime,
-    },
-  }
+    }),
+  )
 }

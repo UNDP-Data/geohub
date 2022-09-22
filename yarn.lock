@@ -76,7 +76,7 @@
 
 "@azure/storage-blob@^12.11.0":
   version "12.11.0"
-  resolved "https://registry.npmjs.org/@azure/storage-blob/-/storage-blob-12.11.0.tgz"
+  resolved "https://registry.yarnpkg.com/@azure/storage-blob/-/storage-blob-12.11.0.tgz#2e27902ab293715411ab1f7c8fae422ad0b4b827"
   integrity sha512-na+FisoARuaOWaHWpmdtk3FeuTWf2VWamdJ9/TJJzj5ZdXPLC3juoDgFs6XVuJIoK30yuBpyFBEDXVRK4pB7Tg==
   dependencies:
     "@azure/abort-controller" "^1.0.0"
@@ -1015,7 +1015,7 @@
 
 "@smui-extra/autocomplete@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui-extra/autocomplete/-/autocomplete-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui-extra/autocomplete/-/autocomplete-6.1.0.tgz#523ae1c4f95c058d78e1b2d0b5a8fb894abad27c"
   integrity sha512-UOSHo3w4g3XhnGYfRAOidVQvcsrMzA9P3HqU6cQmUQU6adoMdMwWFqv3HBR7rcNrxQUgIeS70pBVL3qw5Azhlg==
   dependencies:
     "@smui/common" "^6.1.0"
@@ -1027,7 +1027,7 @@
 
 "@smui-extra/badge@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui-extra/badge/-/badge-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui-extra/badge/-/badge-6.1.0.tgz#7facfee1766c97916f2e1ea250b101b9e0b693dc"
   integrity sha512-o4MPsksTWaS4WJJExDFTBUq+Zc9CgunIS+I2lARJhDFhW/mIKQ9zwegYS+tS2zIg3D2EsZ79WXGyZxHT0ysHBA==
   dependencies:
     "@material/feature-targeting" "^13.0.0"
@@ -1040,7 +1040,7 @@
 
 "@smui/banner@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/banner/-/banner-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/banner/-/banner-6.1.0.tgz#86455027c5b979f2391af886be5e42257336a9dc"
   integrity sha512-bFqC/GhTml3p/73cePI9QWGeZEM9Z7WcmTg1v0dTsxmisTB/IOhTloW6DGjOmUydD6ID9D1+ggyiVeX2Ub6TWQ==
   dependencies:
     "@material/banner" "^13.0.0"
@@ -1049,7 +1049,7 @@
 
 "@smui/button@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/button/-/button-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/button/-/button-6.1.0.tgz#dcf6036188573ebfdfba270d647ab807c1d7d644"
   integrity sha512-TpMGWBivnc3AVOAf6ldhpyLh7Unnj3A3lQldCg7I2rbMLfiNJR9SGTsPslh7EuVQT0lwuaUFd/i44uT2XUwNdA==
   dependencies:
     "@material/button" "^13.0.0"
@@ -1063,7 +1063,7 @@
 
 "@smui/card@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/card/-/card-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/card/-/card-6.1.0.tgz#ca6db5e4f604df7d07c593c654f004dfd03c8a33"
   integrity sha512-7PmO4abr99sw7EALoZcveutj4a3EuL1nIEVdjUQGuKdmNYZEEfdP7Go74Isjj2X+AeemzstSvWumqJic74uTgA==
   dependencies:
     "@material/card" "^13.0.0"
@@ -1075,7 +1075,7 @@
 
 "@smui/checkbox@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/checkbox/-/checkbox-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/checkbox/-/checkbox-6.1.0.tgz#3e1f3e506be77555f1525f5149002cb0fbf57bcb"
   integrity sha512-hx3cDWF2vCbuLieJnQRJXZYNX41KmSLzRYFrs397lEmxjVw89+IythC8Tnzkqy7FCyaux1wm11k3K31eiyhkVA==
   dependencies:
     "@material/checkbox" "^13.0.0"
@@ -1085,7 +1085,7 @@
 
 "@smui/chips@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/chips/-/chips-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/chips/-/chips-6.1.0.tgz#a5e9572195cfe39999bc0aa63652426bc718c960"
   integrity sha512-EE4FAIZ1VlQhuHLaomQHBcyydoyEureN3qqb0dxvETVCqVPneVK6wwfZUNZhaqk5mK7074SWavjiEcgpv6RZ3w==
   dependencies:
     "@material/chips" "^13.0.0"
@@ -1106,7 +1106,7 @@
 
 "@smui/dialog@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/dialog/-/dialog-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/dialog/-/dialog-6.1.0.tgz#70f052b5b26655d1aece1d599643cadb9c42e35a"
   integrity sha512-0GtyaeiMilrnDeQ7e/QZcKYwswJX8w0V2hSbjG10HN+0FjiZLs6SksEjIisK2mJK8MJtwpvUWrxCVYNMpUTKNg==
   dependencies:
     "@material/button" "^13.0.0"
@@ -1117,7 +1117,7 @@
 
 "@smui/drawer@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/drawer/-/drawer-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/drawer/-/drawer-6.1.0.tgz#815a020b4e2466ef518b406cbd694bfe946f6073"
   integrity sha512-Kv7MYQac6tqI+VUXDb+hoaeoQxXAXw0qrxeUQaGzk126TojSHBocq3yBcfOSTjRwWlJSmBl/0ZQOU+7VXUCiEA==
   dependencies:
     "@material/dom" "^13.0.0"
@@ -1136,7 +1136,7 @@
 
 "@smui/form-field@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/form-field/-/form-field-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/form-field/-/form-field-6.1.0.tgz#7b93dc2f505d1ea3cc1dde1354a834b8b2afa0d2"
   integrity sha512-LsVT7LZAUSYTtogs/OKSekvrv+A3yDTflzQAVeEqvnGbk8DtIdegsOt0ewyP1bCj92GJxQ+NtHSq8GaMWmuGyA==
   dependencies:
     "@material/feature-targeting" "^13.0.0"
@@ -1158,7 +1158,7 @@
 
 "@smui/image-list@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/image-list/-/image-list-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/image-list/-/image-list-6.1.0.tgz#46d473ab620f6a7064d268c758084979cb111390"
   integrity sha512-IJJd0iJGhtqbv1ooERC5sC+jfw5Z5B6oPag8rlSK2ikQml0cTfetfjRcTUK7iHpMLTDpDrwRWsDuBJE5bTLmiA==
   dependencies:
     "@material/image-list" "^13.0.0"
@@ -1176,7 +1176,7 @@
 
 "@smui/linear-progress@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/linear-progress/-/linear-progress-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/linear-progress/-/linear-progress-6.1.0.tgz#10e69e5b3b35d5bdacf04b7524e49358c639c6b5"
   integrity sha512-02NSEeyJyVm4twqZJTsX/RnPC44Jnp/2zsPUG7ogxExKpgLewKb1JcZtl9+BpLQrrcaYDBgldFmyAI3XN7MHpg==
   dependencies:
     "@material/linear-progress" "^13.0.0"
@@ -1229,7 +1229,7 @@
 
 "@smui/paper@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/paper/-/paper-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/paper/-/paper-6.1.0.tgz#7df51bef4825a2b4d26f6c55a133d16d612b5d7e"
   integrity sha512-qvtEu2+vsIBh/hQ6o+8tuSJ9ocW8/4PdlGuSYXMj6jXgyWsmUqWs07ZqDEvCV3oKaXyvnKDFAluUiwFvAswj2A==
   dependencies:
     "@material/elevation" "^13.0.0"
@@ -1242,7 +1242,7 @@
 
 "@smui/radio@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/radio/-/radio-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/radio/-/radio-6.1.0.tgz#770f1902d707862068b97e05bbb387031a72bc98"
   integrity sha512-0KCzt07MNvQOH5TaTa2FObtdExn2xpst62BYXQPWSCeqJ2ghZv6M5FvjK9fqnI1uRChhe/TJ2mb5EroADVvE4Q==
   dependencies:
     "@material/radio" "^13.0.0"
@@ -1262,7 +1262,7 @@
 
 "@smui/segmented-button@^6.1.3":
   version "6.1.3"
-  resolved "https://registry.npmjs.org/@smui/segmented-button/-/segmented-button-6.1.3.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/segmented-button/-/segmented-button-6.1.3.tgz#ff03772d3f49db065fb4a3000365a5048d186b1f"
   integrity sha512-MQ/jcUSpBAsaDBOM+QEmXrQI+88x0gAUKCOok3loLqD5t0XWcnbeZY2lv/3fg1k4JpZqnRqWmpLnetkd4py3SA==
   dependencies:
     "@material/segmented-button" "^13.0.0"
@@ -1272,7 +1272,7 @@
 
 "@smui/select@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/select/-/select-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/select/-/select-6.1.0.tgz#d93ebe8ba9bdb191f05f3fe97f2883c27c241c32"
   integrity sha512-B0kimGW9Q4RWV2j0U9X8jj42qk65WS+7rcQHF0ERHpbDxhhQZrlHh7CwViDHouv3xQjMxfCyeGIXXhRVRqpVbA==
   dependencies:
     "@material/feature-targeting" "^13.0.0"
@@ -1292,7 +1292,7 @@
 
 "@smui/switch@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/switch/-/switch-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/switch/-/switch-6.1.0.tgz#7a6103054bc7cd4e1cc6e642468b6a73f374e5c6"
   integrity sha512-o8VvCOSJIxvJ3JIyaBVuRLDKaEizMe9qH4a/grjfjcl3DxTZe7OwKpjfB3fnPRoHk4puyVd4r6mWBxs9FG5MKA==
   dependencies:
     "@material/feature-targeting" "^13.0.0"
@@ -1304,7 +1304,7 @@
 
 "@smui/tab-bar@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/tab-bar/-/tab-bar-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/tab-bar/-/tab-bar-6.1.0.tgz#984ef08ad0349eabed70eaeb835333ff2ca17258"
   integrity sha512-zvcLLhmQTVSvzlprEjlEviT9rwuUt9OctWbz36E4AHvkAh51hdPng2Ch7cHJv6+LuMQAPEf/+e5xAz//edJSJw==
   dependencies:
     "@material/tab-bar" "^13.0.0"
@@ -1334,7 +1334,7 @@
 
 "@smui/tab@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/tab/-/tab-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/tab/-/tab-6.1.0.tgz#f3036ab6327eb0ba792cd14209aded2cb2f4df2e"
   integrity sha512-hrrISRmc4FLKyb/v7/dNrcVBrR/gwZ0A10sqKH0yevgkem+nFFo3SEvHK8WOeXU07wTi/wPJd9EKqePO4ZQXEw==
   dependencies:
     "@material/tab" "^13.0.0"
@@ -1362,7 +1362,7 @@
 
 "@smui/tooltip@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/tooltip/-/tooltip-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/tooltip/-/tooltip-6.1.0.tgz#cf42c7d9c049a347c3616f20a7bd56cf4e75aa0a"
   integrity sha512-Ki4u/yyEYkxvc8lO2nKZhLTTR4QgwXDV8xEVwVVLpbEyb23uThhAViboTfLQ95jtG+cEqDWlND6vUl1+df1Q0A==
   dependencies:
     "@material/tooltip" "^13.0.0"
@@ -1371,7 +1371,7 @@
 
 "@smui/top-app-bar@^6.1.0":
   version "6.1.0"
-  resolved "https://registry.npmjs.org/@smui/top-app-bar/-/top-app-bar-6.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@smui/top-app-bar/-/top-app-bar-6.1.0.tgz#cb838a72cdf1315eb885461437bf6c7c73c78dd9"
   integrity sha512-ou5LulTUIh6k+jVDYEb29khl3omoOs+spdOo7t2mAyE/zUyvxEtuAAbMHNEZiUOoyFsVrdnqkqdNsqr1k1sEoA==
   dependencies:
     "@material/feature-targeting" "^13.0.0"
@@ -1389,10 +1389,10 @@
     "@rollup/plugin-node-resolve" "^14.1.0"
     rollup "^2.78.1"
 
-"@sveltejs/kit@^1.0.0-next.493":
-  version "1.0.0-next.493"
-  resolved "https://registry.npmjs.org/@sveltejs/kit/-/kit-1.0.0-next.493.tgz"
-  integrity sha512-q46RfW92UBtcWoVPnFtDpaRNRmXrkbuHIePUf0sDItTbXfON29LPblK4LMqyet0ntBW519KZYCc5xH/iGEpKEw==
+"@sveltejs/kit@^1.0.0-next.497":
+  version "1.0.0-next.497"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.497.tgz#51461f7a71a708dfeab2a5ec9c050099d74a0a9c"
+  integrity sha512-7OPZ7/CnKz2M9D5mEFpVQywMdKLX3aVBnw7uLrdxCVkmPlgLCfh5ZfIYGkw/kfUpGTH9+8dhC2qoWnOhmo2k/g==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^1.0.5"
     "@types/cookie" "^0.5.1"
@@ -2129,13 +2129,6 @@ chroma-js@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npmjs.org/chroma-js/-/chroma-js-2.4.2.tgz"
   integrity sha512-U9eDw6+wt7V8z5NncY2jJfZa+hUH8XEj8FQHgFJTrUFnJfXYf4Ml4adI2vXZOjqRDpFWtYVWypDfZwnJ+HIR4A==
-
-chyme@^1.2.3:
-  version "1.2.6"
-  resolved "https://registry.npmjs.org/chyme/-/chyme-1.2.6.tgz"
-  integrity sha512-rhJkFNMWOBk960MQqWiuYgbAoYAT5j+Iv1pEGgy9OApCCzIgfk+r7495FjX32zrnjB6OpLiEqVMZCoaM0CpLpg==
-  dependencies:
-    form-data-to-object "^0.2.0"
 
 cliui@^7.0.2:
   version "7.0.4"
@@ -3029,11 +3022,6 @@ follow-redirects@^1.14.9:
   version "1.15.2"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.2.tgz"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
-
-form-data-to-object@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/form-data-to-object/-/form-data-to-object-0.2.0.tgz"
-  integrity sha512-F10KT6YgIq4CxmiMCZONnYN4PC5ommk8rLb4WmeahqDDszerxVwBrjqjXiedqUfNClMxDHj04KWGRK30aDnIpw==
 
 form-data@^3.0.0:
   version "3.0.1"
@@ -4695,12 +4683,10 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-svelte-awesome-color-picker@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.npmjs.org/svelte-awesome-color-picker/-/svelte-awesome-color-picker-1.2.3.tgz"
-  integrity sha512-PDHIidCO4QzaxGvXMHLruB4ayXLmGEzVQlJcG2XA15S2A0p/hJR9s3ce5PW+0JiWQEtYxV/HTdgNa360hwnPcQ==
-  dependencies:
-    chyme "^1.2.3"
+svelte-awesome-color-picker@0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/svelte-awesome-color-picker/-/svelte-awesome-color-picker-0.0.10.tgz#004a6e86a7eece3416e4c7abb52ae64e0433a708"
+  integrity sha512-9hla0LgUfADMK3UyWv6QrjWff8qduovfAg/3fMzk+lmlDcBIQ/JFVf6a/Pq1YcGTP+LgvgeGNvMX/WwMDc4gvw==
 
 svelte-body@^1.3.6:
   version "1.3.6"

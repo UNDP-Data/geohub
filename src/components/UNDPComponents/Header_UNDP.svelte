@@ -9,7 +9,6 @@
   export let drawerOpen = true
 
   let darkTheme: boolean
-  let share: boolean
 
   const onKeyPressed = (e: any) => {
     if (e.key === 'Enter') {
@@ -63,7 +62,7 @@
 
         <div style="margin-left: 5%; cursor: pointer" role="button" aria-label="Share the current style">
           <Wrapper>
-            <StyleShare bind:share />
+            <StyleShare />
             <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
           </Wrapper>
         </div>

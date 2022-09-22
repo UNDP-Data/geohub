@@ -16,7 +16,7 @@ const listContainerOpts: ServiceListContainersOptions = { includeMetadata: true 
 
 let mapTags = new Map()
 
-export async function get({ url }) {
+export async function GET({ url }) {
   console.clear()
   const startTime = performance.now()
   const containers = await getRootContainers()
@@ -51,13 +51,13 @@ export async function get({ url }) {
   console.log(`    `)
   console.log(`-------------- ${(responseTime / 1000).toFixed(2)} seconds`)
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tags,
       responseTime,
       date: Math.trunc(Date.now() / 1000),
-    },
-  }
+    }),
+  )
 }
 
 const getRootContainers = async () => {

@@ -1,6 +1,5 @@
 import { fetchUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
-import { TransferableGridIndex } from 'maplibre-gl'
 
 export async function get({ url }) {
   const startTime = performance.now()
