@@ -1,19 +1,18 @@
 <script lang="ts">
   import { style } from 'svelte-body'
-  import Header from '../../components/Header.svelte'
-  import Content from '../../components/Content.svelte'
+  import Header_UNDP from '$components/UNDPComponents/Header_UNDP.svelte'
+  import Content_UNDP from '$components/UNDPComponents/Content_UNDP.svelte'
   import Map from '../../components/Map.svelte'
 
   let drawerOpen = true
-  let panelOpen = false
 </script>
 
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Header bind:drawerOpen bind:panelOpen />
-<Content bind:drawerOpen>
+<Header_UNDP bind:drawerOpen />
+<Content_UNDP bind:drawerOpen>
   <Map />
-</Content>
+</Content_UNDP>
 
 <slot />
 

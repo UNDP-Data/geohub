@@ -1,5 +1,6 @@
 import pkg from 'pg'
 const { Pool } = pkg
+import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -36,12 +37,7 @@ export async function GET({ url }) {
 
     const res = await client.query(query)
     if (res.rowCount === 0) {
-      return {
-        status: 404,
-        headers: {
-          'access-control-allow-origin': '*',
-        },
-      }
+      throw error(404)
     }
 
     res.rows.forEach((row) => {
@@ -52,17 +48,9 @@ export async function GET({ url }) {
 
     return new Response(JSON.stringify(res.rows))
   } catch (err) {
-    return new Response(
-      JSON.stringify({
-        message: err.message,
-      }),
-      {
-        status: 400,
-        headers: {
-          'access-control-allow-origin': '*',
-        },
-      },
-    )
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()
@@ -105,17 +93,9 @@ export async function POST({ request, url }) {
       }),
     )
   } catch (err) {
-    return new Response(
-      JSON.stringify({
-        message: err.message,
-      }),
-      {
-        status: 400,
-        headers: {
-          'access-control-allow-origin': '*',
-        },
-      },
-    )
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()

@@ -1,7 +1,7 @@
 import { fetchUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
 
-export async function get({ url }) {
+export async function GET({ url }) {
   const startTime = performance.now()
 
   const containerLabel = url.searchParams.get('label')
@@ -70,10 +70,10 @@ export async function get({ url }) {
 
   const endTime = performance.now()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tree,
       responseTime: endTime - startTime,
-    },
-  }
+    }),
+  )
 }

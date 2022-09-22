@@ -1,5 +1,6 @@
 import pkg from 'pg'
 const { Pool } = pkg
+import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -27,17 +28,9 @@ export async function GET({ params }) {
     const style = res.rows[0].style
     return new Response(JSON.stringify(style))
   } catch (err) {
-    return new Response(
-      JSON.stringify({
-        message: err.message,
-      }),
-      {
-        status: 400,
-        headers: {
-          'access-control-allow-origin': '*',
-        },
-      },
-    )
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()
