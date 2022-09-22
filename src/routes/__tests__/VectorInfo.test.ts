@@ -2,7 +2,7 @@ import fs from 'fs'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { mockGet, mockFetch } from 'vi-fetch'
 
-import { get } from '../vectorinfo.json'
+import { get } from '../vectorinfo.json/+server'
 
 beforeEach(() => {
   mockFetch.clearAll()
