@@ -15,10 +15,10 @@ export async function GET() {
 
   const endTime = performance.now()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tags,
       responseTime: endTime - startTime,
-    },
-  }
+    }),
+  )
 }

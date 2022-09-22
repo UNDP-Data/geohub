@@ -51,13 +51,13 @@ export async function GET({ url }) {
   console.log(`    `)
   console.log(`-------------- ${(responseTime / 1000).toFixed(2)} seconds`)
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tags,
       responseTime,
       date: Math.trunc(Date.now() / 1000),
-    },
-  }
+    }),
+  )
 }
 
 const getRootContainers = async () => {

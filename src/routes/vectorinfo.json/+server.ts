@@ -133,5 +133,5 @@ export async function GET(query: any) {
       response = reason
     })
 
-  return { body: response }
+  return new Response(JSON.stringify(response))
 }

@@ -108,12 +108,12 @@ export async function GET({ url }) {
 
   const endTime = performance.now()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tree,
       responseTime: endTime - startTime,
-    },
-  }
+    }),
+  )
 }
 
 const getStacFileData = (file: string) => {

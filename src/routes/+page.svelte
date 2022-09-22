@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { style } from 'svelte-body'
 
   // Fixme: Start of new redesign components
@@ -18,6 +19,12 @@
 
   export let buckets = [BucketIntialValues as Bucket]
   $bucketList = buckets
+
+  onMount(async () => {
+    const res = await fetch('./buckets.json')
+    const json = await res.json()
+    bucketList.update(() => json.buckets)
+  })
 </script>
 
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />

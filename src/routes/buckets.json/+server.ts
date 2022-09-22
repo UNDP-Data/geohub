@@ -18,11 +18,11 @@ export async function GET() {
   const martinContainers = getMartinContainers()
   const buckets = await listContainers()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       buckets: [...stacContainers, ...martinContainers, ...buckets],
-    },
-  }
+    }),
+  )
 }
 
 const listContainers = async () => {

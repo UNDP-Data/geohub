@@ -1,13 +1,14 @@
 import pkg from 'pg'
 const { Pool } = pkg
+import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
 /**
- * Get style.json which is stored in PostgreSQL database
- * GET: ./style/{id}.json
+ * Delete style.json which is stored in PostgreSQL database
+ * DELETE: ./style/{id}
  */
-export async function GET({ params }) {
+export async function DELETE({ params }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -16,7 +17,7 @@ export async function GET({ params }) {
       throw new Error(`id parameter is required.`)
     }
     const query = {
-      text: `SELECT style FROM geohub.style WHERE id = $1`,
+      text: `DELETE FROM geohub.style WHERE id = $1`,
       values: [styleId],
     }
 
@@ -24,24 +25,16 @@ export async function GET({ params }) {
     if (res.rowCount === 0) {
       throw new Error(`${styleId} does not exist in the database`)
     }
-    const style = res.rows[0].style
-    return {
-      status: 200,
+    return new Response('', {
+      status: 204,
       headers: {
         'access-control-allow-origin': '*',
       },
-      body: style,
-    }
+    })
   } catch (err) {
-    return {
-      status: 400,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: {
-        message: err.message,
-      },
-    }
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()

@@ -1,5 +1,6 @@
 import pkg from 'pg'
 const { Pool } = pkg
+import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -36,12 +37,7 @@ export async function GET({ url }) {
 
     const res = await client.query(query)
     if (res.rowCount === 0) {
-      return {
-        status: 404,
-        headers: {
-          'access-control-allow-origin': '*',
-        },
-      }
+      throw error(404)
     }
 
     res.rows.forEach((row) => {
@@ -50,23 +46,11 @@ export async function GET({ url }) {
       row.viewer = `${url.origin}/viewer?style=${row.style}`
     })
 
-    return {
-      status: 200,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: res.rows,
-    }
+    return new Response(JSON.stringify(res.rows))
   } catch (err) {
-    return {
-      status: 400,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: {
-        message: err.message,
-      },
-    }
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()
@@ -103,25 +87,15 @@ export async function POST({ request, url }) {
       throw new Error('failed to insert to the database.')
     }
     const id = res.rows[0].id
-    return {
-      status: 200,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: {
+    return new Response(
+      JSON.stringify({
         url: `${url.origin}/viewer?style=${url.origin}/style/${id}.json`,
-      },
-    }
+      }),
+    )
   } catch (err) {
-    return {
-      status: 400,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: {
-        message: err.message,
-      },
-    }
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()

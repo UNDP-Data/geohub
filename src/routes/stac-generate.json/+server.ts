@@ -84,10 +84,10 @@ export async function GET() {
 
   const endTime = performance.now()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tree: stacBuckets,
       responseTime: endTime - startTime,
-    },
-  }
+    }),
+  )
 }
