@@ -111,7 +111,7 @@
     "prettier-plugin-svelte": "^2.7.0",
     "smui-theme": "^6.1.3",
     "svelte": "^3.49.0",
-    "svelte-awesome-color-picker": "^1.2.3",
+    "svelte-awesome-color-picker": "0.0.10",
     "svelte-body": "^1.3.6",
     "svelte-check": "^2.8.0",
     "svelte-copy": "^1.2.4",
