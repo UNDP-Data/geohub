@@ -4,7 +4,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "node --max_old_space_size=4096 ./node_modules/vite/bin/vite.js build",
     "package": "svelte-kit package",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
