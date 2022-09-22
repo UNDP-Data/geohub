@@ -28,9 +28,22 @@
   let data
 
   onMount(async () => {
-    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_interval=20`
-    const layerStats = await fetchUrl(statsURL)
+    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+    let layerStats
     const band = info.active_band_no
+    // if(layerURL.searchParams.get('expression')){
+    //   layerStats = await fetchUrl(`${statsURL}&expression=${layerURL.searchParams.get('expression')}`)
+    //   console.log(layerStats)
+    //   if(layerURL.searchParams.get('expression')[-1] === ';'){
+    //     band = layerURL.searchParams.get('expression').slice(0,-1)
+    //   }else{
+    //     band = layerURL.searchParams.get('expression')
+    //   }
+    // }else{
+    //   layerStats = await fetchUrl(statsURL)
+    //   band = info.active_band_no
+    // }
+    layerStats = await fetchUrl(statsURL)
     const counts = layerStats[band]['histogram'][0]
     const sum = counts.reduce((a, b) => a + b, 0)
     const probability = counts.map((item) => item / sum)
@@ -84,8 +97,8 @@
           gridWidth: 0,
           titleColor: '#000000',
           ticks: true,
-          labelFontStyle: 'Proxima Nova, Sans Serif',
-          titleFontStyle: 'Proxima Nova, Sans Serif',
+          labelFontStyle: 'ProximaNova, Sans Serif',
+          titleFontStyle: 'ProximaNova, Sans Serif',
         },
         field: 'interval',
         type: 'nominal',
@@ -104,7 +117,7 @@
         },
       },
       {
-        mark: { opacity: 1, type: 'line', color: '#f55c5c', interpolate: 'basis' },
+        mark: { opacity: 1, type: 'line', color: '#f55c5c', interpolate: 'cardinal' },
         encoding: {
           y: {
             aggregate: 'max',

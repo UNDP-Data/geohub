@@ -10,11 +10,9 @@
   let adm3Name = null
   let adm4Name = null
 
-  $: {
-    if (map) {
-      map.on('styledata', updateLocation)
-      map.on('mousemove', updateLocation)
-    }
+  $: if (map) {
+    map.on('styledata', updateLocation)
+    map.on('mousemove', updateLocation)
   }
 
   const updateLocation = (e) => {
@@ -41,23 +39,21 @@
 
 {#if isContainerVisible}
   <div id="data-container" class="data-container target">
-    <p>
-      {#if adm0Name}
-        {adm0Name}
-      {/if}
-      {#if adm1Name}
-        {'>'} {adm1Name}
-      {/if}
-      {#if adm2Name}
-        {'>'} {adm2Name}
-      {/if}
-      {#if adm3Name}
-        {'>'} {adm3Name}
-      {/if}
-      {#if adm4Name}
-        {'>'} {adm4Name}
-      {/if}
-    </p>
+    {#if adm0Name}
+      {adm0Name}
+    {/if}
+    {#if adm1Name}
+      {'>'} {adm1Name}
+    {/if}
+    {#if adm2Name}
+      {'>'} {adm2Name}
+    {/if}
+    {#if adm3Name}
+      {'>'} {adm3Name}
+    {/if}
+    {#if adm4Name}
+      {'>'} {adm4Name}
+    {/if}
   </div>
 {/if}
 
@@ -74,5 +70,6 @@
     padding: 10px;
     position: absolute;
     top: 10px;
+    z-index: 10;
   }
 </style>

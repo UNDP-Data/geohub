@@ -89,9 +89,17 @@ export default class AdminLayer {
     else if (this.adminLevel !== 3 && zoom >= 5 && zoom < 6) this.load()
     else if (this.adminLevel !== 4 && zoom >= 6) this.load()
     this.adminLevel = this.getAdminLevel()
-    const point: PointLike = [originalEvent.layerX, originalEvent.layerY]
+    let point: PointLike = undefined
+    if (originalEvent.layerX && originalEvent.layerY) {
+      point = [originalEvent.layerX, originalEvent.layerY]
+    } else {
+      const mapCenter = this.map.getCenter()
+      point = [mapCenter.lng, mapCenter.lat]
+    }
     const features = this.map.queryRenderedFeatures(point, { layers: [this.ADM_ID] })
-    if (features.length > 0) this.onAdminMouseMove({ features })
+    if (features.length > 0) {
+      this.onAdminMouseMove({ features })
+    }
   }
 
   onAdminMouseMove(e) {

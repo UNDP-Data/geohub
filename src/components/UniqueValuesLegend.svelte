@@ -8,7 +8,6 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from '@maplibre/maplibre-gl-style-spec/types.g'
-  import { debounce } from 'lodash-es'
 
   import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
@@ -19,6 +18,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
+  export let legendLabels
 
   let definition:
     | RasterLayerSpecification
@@ -31,16 +31,15 @@
     // @ts-ignore
   ;({ definition, info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
-  const layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
+  let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
+  let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
+
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
-
   let colorMap = {}
   let colorMapName = layerConfig.colorMapName
   let layerColorMap: chroma.Scale = undefined
 
-  // reclassify upon change of color map (color map picker)
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       colorMapName = layerConfig.colorMapName
@@ -49,38 +48,52 @@
   }
 
   onMount(() => {
-    reclassifyImage()
+    layerConfig.unique.colorMapRows.length > 0 ? reclassifyImage(true) : reclassifyImage(false)
   })
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
     setColorMap()
-
+    if (layerURL.searchParams.has('rescale')) {
+      layerURL.searchParams.delete('rescale')
+    }
     if (useLayerColorMapRows === false) {
       const colorMapRows = []
-      const layerUniqueValues = JSON.parse(info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'])
-      colorMap = {}
-      let index = 0
+      const bandName = Object.keys(layerConfig.info.stats)
+      layerMin = layerConfig.info.stats[bandName]['min']
+      layerMax = layerConfig.info.stats[bandName]['max']
+      setColorMap()
+      const uValues = info.stats[bandName]['histogram'][1]
 
+      const layerUniqueValues = uValues.map((v) => {
+        return { name: v, value: v }
+      })
+
+      let index = 0
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
         const key = row.value
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:next-line
         const color = [...layerColorMap(key).rgb(), 255]
 
-        colorMap[parseInt(remapInputValue(key, layerMin, layerMax))] = color
-        colorMapRows.push({ index, color, start: key, end: row.name })
+        colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
+        //colorMap[key] = color
+        colorMapRows.push({
+          index,
+          color,
+          start: key,
+          end: Object.keys(legendLabels).length > 0 ? legendLabels[key] : row.value,
+        })
         index++
       })
 
       layerConfig.unique.colorMapRows = colorMapRows
-      // use existing color map rows from layer
     } else {
       layerConfig.unique.colorMapRows.forEach((row) => {
-        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax))] = row.color
+        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
     }
 
-    handleParamsUpdate()
+    handleParamsUpdate(colorMap)
   }
 
   const setColorMap = () => {
@@ -97,32 +110,57 @@
     }
   }
 
-  const handleParamsUpdate = debounce(() => {
-    const encodeColorMapRows = JSON.stringify(colorMap)
+  const handleParamsUpdate = (cmap) => {
+    const encodeColorMapRows = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
-  }, 500)
+  }
 
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index
   }
 
-  const handleChangeColorMap = () => {
+  const handleChangeColorMap = (e) => {
+    const valuesList = Object.keys(colorMap)
+    colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
+    layerConfig.unique.colorMapRows.splice(colorPickerVisibleIndex, 1, {
+      index: colorPickerVisibleIndex,
+      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255 * e.detail.color.a],
+      start: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].start,
+      end: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].end,
+    })
     reclassifyImage(true)
   }
 </script>
 
-<div class="unique-view-container" data-testid="unique-view-container">
+<div class="is-divider" data-content="Unique values" />
+<div
+  class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
+  data-testid="unique-view-container">
   {#each layerConfig.unique.colorMapRows as colorMapRow}
     <UniqueValuesLegendColorMapRow
       bind:colorMapRow
       layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
+      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
       on:changeColorMap={handleChangeColorMap} />
   {/each}
 </div>
 
 <style lang="scss">
+  .unique-view-container {
+    width: fit-content;
+  }
+
+  .height {
+    margin-right: auto;
+    margin-left: 20%;
+    max-height: 200px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 </style>

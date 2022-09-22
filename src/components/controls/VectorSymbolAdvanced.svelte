@@ -291,13 +291,11 @@
     </div>
   </div>
 
-  <div class="is-divider separator mb-4" style="margin-right: -56px;" />
-
   <div class="columns" style="margin-right: -56px;">
     <div class="column">
       <div class="has-text-centered pb-2">Classification</div>
       <div class="is-flex is-justify-content-center">
-        <div class="select is-rounded is-justify-content-center">
+        <div class="select is-justify-content-center">
           <select
             bind:value={classificationMethod}
             on:change={handleClassificationChange}
@@ -378,6 +376,7 @@
 </div>
 
 <style lang="scss">
+  @import '../../styles/undp-design/radio.min';
   div {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

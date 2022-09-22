@@ -8,8 +8,8 @@
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
-  import { DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
-  import { bannerMessages, map } from '$stores'
+  import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
+  import { bannerMessages, layerList, map } from '$stores'
   import { debounce } from 'lodash-es'
 
   export let layer: Layer
@@ -54,7 +54,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right',
       strategy: 'fixed',
       padding: 0,
       margin: 0,
@@ -148,41 +148,35 @@
     try {
       if (simpleExpressionAvailable) {
         if (expressions[0].operator && expressions[0].value) {
+          const layerSrc = $map.getSource(layer.definition.source)
+          const layerURL = new URL(layerSrc.tiles[0])
           let updatedParams = {}
 
           const exprStatUrl = new URL(
             `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
-            )}`,
+            )};`,
           )
+          console.log(exprStatUrl)
           const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-          layer.info.stats = exprStats
+          info.stats = exprStats
           layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
           const band = Object.keys(exprStats)[bandIndex]
           updatedParams = { expression: layer.expression.replaceAll(',', '') }
-          if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-            updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
-            layer.continuous.minimum = Number(layer.info.stats[band].min)
-            layer.continuous.maximum = Number(layer.info.stats[band].max)
-          } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
-            layer.percentile98 = layer.info.stats[band].percentile_98
-            info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'] = layer.info.stats[band].max
-            info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'] = layer.info.stats[band].min
 
-            layer.intervals.colorMapRows = generateColorMap(
-              layer,
-              layer.info.stats[band].min,
-              layer.info.stats[band].max,
-              layer.intervals.numberOfClasses,
-              layer.intervals.classification,
-              true,
-              layer.info.stats[band].percentile_98,
-            )
-            handleParamsUpdate()
-          }
+          updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
+          layer.continuous.minimum = Number(info.stats[band].min)
+          layer.continuous.maximum = Number(info.stats[band].max)
+          layer.percentile98 = info.stats[band].percentile_98
+
           // Delete the expression in the url if already exists and update the url
           layerURL.searchParams.delete('expression')
           updateParamsInURL(layer.definition, layerURL, updatedParams)
+          const nlayer = { ...layer, info: info }
+          const layers = $layerList.map((lyr) => {
+            return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+          })
+          layerList.set([...layers])
         }
       } else {
         // simple expression is not available.
@@ -203,27 +197,26 @@
         const exprStatUrl = new URL(
           `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
             `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
-          )}`,
+          )}&categorical=true`,
         )
+
         const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-        layer.info.stats = exprStats
+        console.log(exprStats)
+        info.stats = exprStats
         layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
         const band = Object.keys(exprStats)[bandIndex]
         updatedParams = { expression: layer.expression }
-        if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-          updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
-          layer.continuous.minimum = Number(layer.info.stats[band].min)
-          layer.continuous.maximum = Number(layer.info.stats[band].max)
-        }
-        // Need to convert the legend type to unique values.
-        layer.legendType = DynamicLayerLegendTypes.UNIQUE
-        layer.info.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'] = JSON.stringify([
-          { value: trueStatement.statement, name: trueStatement.statement },
-          { value: falseStatement.statement, name: falseStatement.statement },
-        ])
-        // ToDo: Set unique values to the layer with STATISTIC_UNIQUE_VALUES
+        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+        layer.continuous.minimum = Number(info.stats[band].min)
+        layer.continuous.maximum = Number(info.stats[band].max)
         layerURL.searchParams.delete('expression')
         updateParamsInURL(layer.definition, layerURL, updatedParams)
+
+        const nlayer = { ...layer, info: info }
+        const layers = $layerList.map((lyr) => {
+          return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+        })
+        layerList.set([...layers])
       }
     } catch (e) {
       const bannerErrorMessage: BannerMessage = {
@@ -247,32 +240,23 @@
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
-      layer.info.stats = await fetchUrl(statsUrl.toString())
-      const band = Object.keys(layer.info.stats)[bandIndex]
+      info.stats = await fetchUrl(statsUrl.toString())
+      const band = info.active_band_no
+      const bandName = Object.keys(layer.info.stats)
 
+      updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+      layer.continuous.minimum = Number(info.stats[band].min)
+      layer.continuous.maximum = Number(info.stats[band].max)
       // resetting the percentile_98 parameter to the default value.
       layer.percentile98 = layer.info.stats[band].percentile_98
 
-      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
-        layer.continuous.minimum = Number(layer.info.stats[band].min)
-        layer.continuous.maximum = Number(layer.info.stats[band].max)
-      } else if (layer.legendType == DynamicLayerLegendTypes.INTERVALS) {
-        info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'] = Number(layer.info.stats[band].max)
-        info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'] = Number(layer.info.stats[band].min)
-
-        // generate new colormaps with the default values.
-        layer.intervals.colorMapRows = generateColorMap(
-          layer,
-          layer.info.stats[band].min,
-          layer.info.stats[band].max,
-          layer.intervals.numberOfClasses,
-          layer.intervals.classification,
-          true,
-          layer.percentile98,
-        )
-        handleParamsUpdate()
+      layerURL.searchParams.delete('expression')
+      if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
+        layerURL.searchParams.delete('colormap')
+        layerURL.searchParams.set('colormap_name', layer.colorMapName)
+        layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
+      layerURL.searchParams.delete('rescale')
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
@@ -313,20 +297,17 @@
 
   // Change the editable expression to the most recent one where the button with pen icon is clicked
   const changeEditingIndexTo = (index) => {
+    trueStatement.underEdit = false
+    falseStatement.underEdit = false
     editingExpressionIndex = index
     numbers = ''
   }
 
-  // update parameters in url
-  const handleParamsUpdate = debounce(() => {
-    const encodeColorMapRows = JSON.stringify(
-      layer.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
-    )
-    layerURL.searchParams.delete('colormap_name')
-    layerURL.searchParams.delete('rescale')
-    const updatedParams = Object.assign({ colormap: encodeColorMapRows })
-    updateParamsInURL(layer.definition, layerURL, updatedParams)
-  }, 500)
+  const handleEnterKey = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
 </script>
 
 <div class="container">
@@ -336,6 +317,7 @@
         {#each Object.keys(expressions[0]) as key}
           <span
             style="cursor: pointer; margin: 1%;"
+            tabindex="0"
             class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
             {expressions[0][`${key}`]}
             <button
@@ -384,8 +366,11 @@
           <span
             on:click={() => {
               trueStatement.underEdit = !trueStatement.underEdit
+              falseStatement.underEdit = !trueStatement.underEdit
             }}
+            on:keydown={handleEnterKey}
             style="cursor:pointer; border: {trueStatement.underEdit ? '2px solid blue' : 'none'}"
+            tabindex="0"
             class="tag is-medium is-success">
             {trueStatement.statement.length > 0 ? trueStatement.statement : ''}
             <button on:click={() => (trueStatement.statement = '')} class="delete is-small" />
@@ -393,33 +378,36 @@
           <span
             on:click={() => {
               falseStatement.underEdit = !falseStatement.underEdit
+              trueStatement.underEdit = !falseStatement.underEdit
             }}
+            on:keydown={handleEnterKey}
             style="cursor:pointer; border: {falseStatement.underEdit ? '2px solid blue' : 'none'}"
             class="tag is-medium is-danger"
+            tabindex="0"
             >{falseStatement.statement.length > 0 ? falseStatement.statement : ''}
             <button on:click={() => (falseStatement.statement = '')} class="delete is-small" />
           </span>
         </div>
       {/if}
     </div>
-    <div class="column is-3">
-      <div
-        style="width: 50%"
-        on:click={() => {
-          showExpressionBuilder = !showExpressionBuilder
-        }}
-        data-testid="expression-builder-button"
-        use:popperRef>
-        <Wrapper>
-          <Card>
-            <PrimaryAction style="padding: 10px;">
-              <Fa icon={faCalculator} style="font-size: 16px;" />
-            </PrimaryAction>
-          </Card>
-          <Tooltip showDelay={100} hideDelay={0} yPos="above">Expression builder</Tooltip>
-        </Wrapper>
-      </div>
+    <!--    <div class="column">-->
+    <div
+      on:click={() => {
+        showExpressionBuilder = !showExpressionBuilder
+      }}
+      on:keydown={handleEnterKey}
+      data-testid="expression-builder-button"
+      use:popperRef>
+      <Wrapper>
+        <Card style="background: #D12800">
+          <PrimaryAction style="padding: 10px;">
+            <Fa icon={faCalculator} style="font-size: 16px; color: white" />
+          </PrimaryAction>
+        </Card>
+        <Tooltip showDelay={100} hideDelay={0} yPos="above">Expression builder</Tooltip>
+      </Wrapper>
     </div>
+    <!--    </div>-->
     {#if showExpressionBuilder}
       <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
         <RasterExpressionBuilder
@@ -436,35 +424,35 @@
       </div>
     {/if}
   </div>
-  <div class="columns" style="width: 100%">
-    <div class="column" style="width: 100%; justify-content: space-between">
+  <div class="columns" style="width: fit-content">
+    <div class="column" style="width: 100%; justify-content: space-between; margin-left: auto">
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
-        class="button is-primary is-light is-small"
+        class="button other-button is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '&'])}>
         AND
       </button>
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
-        class="button is-primary is-light is-small"
+        class="button other-button is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '|'])}>
         OR
       </button>
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
-        class="button is-primary is-light is-small"
+        class="button other-button is-small"
         on:click={() => (combiningOperators = [...combiningOperators, '~'])}>
         NOT
       </button>
       <button
-        class="button is-info is-light is-small"
+        class="button primary-button is-small"
         on:click={applyExpression}
         alt="Apply expression"
         title="Apply expression">
         Apply
       </button>
       <button
-        class="button is-info is-light is-small"
+        class="button secondary-button is-small"
         on:click={clearAppliedExpression}
         alt="Clear expression"
         title="Clear expression">

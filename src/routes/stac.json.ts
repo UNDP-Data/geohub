@@ -84,6 +84,7 @@ export async function GET({ url }) {
               url: url,
               isRaster: true,
               isStac: true,
+              collectionUrl: catalog.url,
             }
 
             if (!collectionLayers.has(path)) {

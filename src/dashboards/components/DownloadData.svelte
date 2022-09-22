@@ -14,21 +14,28 @@
   }
 </script>
 
-<Select bind:value={layer} label="Layer">
-  {#each layers as l}
-    <Option value={l}>{l}</Option>
-  {/each}
-</Select>
-<Select bind:value={format} label="Format">
-  {#each formats as f}
-    <Option value={f}>{f}</Option>
-  {/each}
-</Select>
-<br />
-<br />
-<Button variant="raised" on:click={download}>Download</Button>
-<br />
-<br />
+<div style="display: block; width: 100%">
+  <div class="select">
+    <select bind:value={layer}>
+      {#each layers as l}
+        <option value={l}>{l}</option>
+      {/each}
+    </select>
+  </div>
+  <div class="select">
+    <select bind:value={format}>
+      {#each formats as f}
+        <option value={f}>{f}</option>
+      {/each}
+    </select>
+  </div>
+</div>
 
+<br />
+<br />
+<Button style="background:#D12800; color:white; border-radius: 0" on:click={download}>Download</Button>
+<!--<br />-->
+
+<!--<br />-->
 <style lang="scss">
 </style>

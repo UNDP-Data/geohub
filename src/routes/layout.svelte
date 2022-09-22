@@ -18,6 +18,7 @@
 <slot />
 
 <style global lang="scss">
+  @import 'src/styles/undp-design/fonts';
   body,
   html {
     font-family: ProximaNova, sans-serif;

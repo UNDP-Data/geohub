@@ -5,7 +5,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
 /**
  * Get the list of saved style from PostGIS database
- * GET: ./style
+ * GET: ./style?limit=5&offset=10
  * [
  *   {
  *     "id": 1,
@@ -20,9 +20,18 @@ export async function GET({ url }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
+    const limit = url.searchParams.get('limit')
+    const offset = url.searchParams.get('offset')
+
+    const options = {}
+    if (limit) options['limit'] = limit
+    if (offset) options['offset'] = offset
+
     const query = {
-      text: `SELECT id, name, createdat FROM geohub.style`,
-      values: [],
+      text: `SELECT id, name, createdat FROM geohub.style ORDER BY id ${Object.keys(options)
+        .map((key, index) => `${key} $${index + 1}`)
+        .join(' ')}`,
+      values: [...Object.keys(options).map((key) => options[key])],
     }
 
     const res = await client.query(query)

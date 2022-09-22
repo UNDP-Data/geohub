@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
   import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
-  import { map } from '$stores'
+  import { map, layerList } from '$stores'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -55,14 +55,27 @@
       const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
-      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
-        layer.continuous.minimum = Number(info.stats[band].min)
-        layer.continuous.maximum = Number(info.stats[band].max)
-      }
+      const bandName = Object.keys(layer.info.stats)
+
+      //overwrite CL logic
+      updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+      layer.continuous.minimum = Number(info.stats[band].min)
+      layer.continuous.maximum = Number(info.stats[band].max)
+
       layerURL.searchParams.delete('expression')
+      if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
+        layerURL.searchParams.delete('colormap')
+        layerURL.searchParams.set('colormap_name', layer.colorMapName)
+        layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+      }
+
       updateParamsInURL(layer.definition, layerURL, updatedParams)
     }
+    const nlayer = { ...layer, info: info }
+    const layers = $layerList.map((lyr) => {
+      return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+    })
+    layerList.set([...layers])
   }
   const handleClearExpression = () => {
     expression = ''
@@ -89,18 +102,28 @@
           expression,
         )}`,
       )
+      console.log(exprStatUrl.searchParams.get('expression').includes('where'))
+      if (exprStatUrl.searchParams.get('expression').includes('where')) {
+        exprStatUrl.searchParams.append('categorical', 'true')
+      }
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
       info.stats = exprStats
       layer.expression = expression
       const band = Object.keys(exprStats)[bandIndex]
       updatedParams = { expression: layer.expression }
-      if (layer.legendType == DynamicLayerLegendTypes.CONTINUOUS) {
-        updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
-        layer.continuous.minimum = Number(info.stats[band].min)
-        layer.continuous.maximum = Number(info.stats[band].max)
-      }
+      //overwrite CL logic
+      updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
+      layer.continuous.minimum = Number(info.stats[band].min)
+      layer.continuous.maximum = Number(info.stats[band].max)
+
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
+
+      const nlayer = { ...layer, info: info }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
     }
   }
 </script>
@@ -182,7 +205,7 @@
         </div>
       </div>
       <button
-        class="button is-small is-info"
+        class="button is-small button-primary"
         on:click={() => handleAddOperator(`${band}`)}
         alt="Current layer"
         title="Current layer. Add">
@@ -204,16 +227,16 @@
       </div>
     </div>
     <div class="columns">
-      <div class="column">
+      <div class="column" style="width: fit-content; margin-left: auto">
         <button
-          class="button is-info is-light is-small"
+          class="button primary-button is-small"
           on:click={handleApplyExpression}
           alt="Apply expression"
           title="Apply expression">
           Apply
         </button>
         <button
-          class="button is-info is-light is-small"
+          class="button secondary-button is-small"
           on:click={handleClearExpression}
           alt="Clear expression"
           title="Clear expression">
@@ -235,6 +258,12 @@
 </div>
 
 <style lang="scss">
+  .button-primary {
+    background-color: #d12800;
+    color: #fff;
+    border: 1px solid #d12800;
+  }
+
   .refine-view-container {
     padding-left: 10px;
 

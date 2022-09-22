@@ -2,8 +2,8 @@
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { debounce } from 'lodash-es'
-
+  import { debounce, isEqual } from 'lodash-es'
+  import { abs } from 'mathjs'
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
@@ -70,27 +70,39 @@
   }
 
   const getColorPickerStyle = (rgb: string) => {
-    return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`
+    return `caret-color:rgba(${rgb}); background-color: rgba(${rgb})`
   }
 
   // set color of display and dispatch to update map
-  const updateColorMap = debounce((colorSelected: Color) => {
+  const updateColorMap = (colorSelected: Color) => {
     if (colorSelected) {
       try {
-        const rgba: number[] = chroma(colorSelected['hex']).rgba()
-        colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
-        colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
-        dispatch('changeColorMap')
+        let rgba: number[] = chroma(colorSelected['hex']).rgba()
+        /*the fix below is necessary becuse the Color picker has some roounding bugs
+          which makde the color returnd change slightly on multiple consecutive invocations
+          and this triggered map rerendering in vain
+        */
+        rgba = [...rgba.slice(0, -1), ...[Number((rgba[3] * 255).toFixed(2))]]
+
+        const delta = rgba.map((el, i) => abs(el - colorMapRow.color[i])).reduce((a, b) => a + b, 0)
+        if (delta > 4) {
+          colorMapRow.color = rgba
+          colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
+          dispatch('changeColorMap', {
+            color,
+          })
+        }
       } catch (e) {
         console.log(e)
       }
     }
-  }, 50)
+  }
 
   const handleColorPickerClick = () => {
     if (showToolTip === false) {
       dispatch('clickColorPicker', { index: colorMapRow.index })
     } else {
+      dispatch('closeColorPicker')
       showToolTip = false
     }
   }
@@ -98,13 +110,13 @@
   const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
+    // const value = e.target.textContent
 
     if (id === 'start') {
-      colorMapRow.start = parseFloat(value)
+      colorMapRow.start = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
     }
-
     if (id === 'end') {
-      colorMapRow.end = parseFloat(value)
+      colorMapRow.end = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
     }
 
     dispatch('changeIntervalValues', {
@@ -115,8 +127,10 @@
   }
 </script>
 
-<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">
-  <div class="column is-1 color-picker">
+<!--<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">-->
+
+<div class="grid-x">
+  <div class="cell small-2">
     <div
       id={`interval-${colorMapRow?.index}`}
       alt="Color Map Control"
@@ -124,47 +138,54 @@
       use:popperRef
       on:click={() => handleColorPickerClick()}
       class="discrete"
-      style={colorPickerStyle} />
+      style="{colorPickerStyle}; width:20px; height:20px" />
+    {#if showToolTip && color}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
   </div>
-  {#if showToolTip && color}
-    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-      <div id="arrow" data-popper-arrow />
-    </div>
-  {/if}
-
-  <div class="column start">
+  <div class="cell small-4">
     <input
+      style="border: none; width: fit-content"
       id="start"
-      alt="Start Value"
-      title="Start Value"
-      class="input is-small"
       type="number"
-      min="-1000000"
-      max="1000000"
-      value={colorMapRow?.start}
+      value={colorMapRow.start}
       on:input={handleInput} />
   </div>
-
-  <div class="column end">
-    <input
-      id="end"
-      alt="End Value"
-      title="End Value"
-      class="input is-small"
-      type="number"
-      min="-1000000"
-      max="1000000"
-      value={colorMapRow?.end}
-      on:input={handleInput} />
+  <div class="cell small-2">—</div>
+  <div class="cell small-4">
+    <input style="border: none" id="end" type="number" value={colorMapRow.end} on:input={handleInput} />
   </div>
 </div>
 
 <style lang="scss">
   @import '../styles/popper.scss';
+  @import '../styles/undp-design/base-minimal.min';
 
   $input-margin: 5px !important;
 
+  .cell {
+    padding: 0 !important;
+    margin-top: 2%;
+  }
+
+  .discrete {
+    cursor: pointer !important;
+    height: 20px;
+    width: 20px;
+  }
+
+  :global(.discrete):hover {
+    padding: 0;
+    border: 2px solid rgb(0, 0, 0);
+  }
+
+  input:focus {
+    outline: none;
+    background: rgb(220, 220, 220, 0.3);
+  }
   .colormap-editor {
     margin-bottom: $input-margin;
 
@@ -177,7 +198,7 @@
     }
 
     .discrete {
-      cursor: pointer;
+      cursor: pointer !important;
       height: 20px;
       width: 20px;
 

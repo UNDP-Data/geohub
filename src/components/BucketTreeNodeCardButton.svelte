@@ -10,7 +10,7 @@
   import Popper from '$lib/popper'
   import { layerMetadata, bucketList } from '$stores'
   import { TITILER_API_ENDPOINT } from '$lib/constants'
-  import { cloneDeep } from 'lodash-es'
+  import { onMount } from 'svelte'
 
   export let layerInfoMetadata: LayerInfoMetadata = undefined
   export let node: TreeNode
@@ -25,10 +25,15 @@
       placement: 'right',
       strategy: 'fixed',
     },
-    [0, 20],
+    [0, 5],
   ).init()
 
-  const ShowBucketTreeNodeCard = async () => {
+  onMount(() => {
+    // Generate the metadata and store it in the store
+    generateTreeNodeMetadata()
+  })
+
+  export const generateTreeNodeMetadata = async () => {
     const layerPathHash = hash(node.path)
     let metadata: LayerInfoMetadata
 
@@ -55,7 +60,7 @@
         }
 
         const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
-        setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
+        await setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
       } else {
         // get metadata from endpoint
         const layerURL = new URL(node.url)
@@ -69,7 +74,7 @@
         if (node.isRaster) {
           if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
             const bandIndex = getActiveBandIndex(layerInfo)
-            setLayerMetaDataStore(
+            await setLayerMetaDataStore(
               layerInfo.band_metadata[bandIndex][1]['Description'],
               layerInfo.band_metadata[bandIndex][1]['Source'],
               layerInfo.band_metadata[bandIndex][1]['Unit'],
@@ -77,7 +82,7 @@
             )
           }
         } else {
-          setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+          await setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
         }
       }
 
@@ -93,7 +98,7 @@
     }
   }
 
-  const setLayerMetaDataStore = (description: string, source: string, unit: string, layerPathHash: number) => {
+  const setLayerMetaDataStore = async (description: string, source: string, unit: string, layerPathHash: number) => {
     const metadata = <LayerInfoMetadata>{
       description,
       source,
@@ -108,9 +113,15 @@
 
   $: {
     if (showTooltip === true) {
-      ShowBucketTreeNodeCard()
+      generateTreeNodeMetadata()
     } else {
       setTimeout(handleClose, 100)
+    }
+  }
+
+  const handleEnterKeyForInfo = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      showTooltip = !showTooltip
     }
   }
 </script>
@@ -118,9 +129,10 @@
 <div
   class="icon"
   alt="Show more detailed information"
-  title="how more detailed information"
+  title="Show more detailed information"
   use:popperRef
-  on:click={() => (showTooltip = !showTooltip)}>
+  on:click={() => (showTooltip = !showTooltip)}
+  on:keydown={handleEnterKeyForInfo}>
   <Wrapper>
     <Fa icon={showTooltip ? faXmark : faCircleInfo} size="sm" />
     <Tooltip showDelay={0} hideDelay={100} yPos="above">{`${showTooltip ? 'Hide' : 'Show'} infomation`}</Tooltip>

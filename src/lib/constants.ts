@@ -92,6 +92,7 @@ export enum ErrorMessages {
   MAP_FILTER_NOT_APPLIED = 'The map filter was not applied. Please check the that all filters are valid.',
   EXPRESSION_INVALID = 'The Raster Expression appears to be Invalid. Please check it and try again.',
   NO_STYLE_EXISTS = 'No style id exists in the database',
+  FAILED_TO_PARSE_METADATA = 'Failed to parse JSON from metadata',
 }
 export const LayerIconTypes = [
   {

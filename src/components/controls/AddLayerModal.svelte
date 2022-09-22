@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import Keydown from 'svelte-keydown'
   import { clickOutside } from 'svelte-use-click-outside'
   import { v4 as uuidv4 } from 'uuid'
   import type {
@@ -17,7 +16,7 @@
   import { fetchUrl, getVectorInfo } from '$lib/helper'
   import type { TreeNode } from '$lib/types'
   import { map, layerList, modalVisible } from '$stores'
-
+  import Keydown from 'svelte-keydown'
   export let isModalVisible = false
   export let treeNode: TreeNode
 
@@ -331,14 +330,20 @@
           {/each}
         </div>
       </section>
-      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+      <footer
+        class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end"
+        style="background: white">
         <div>
-          <button class="button" alt="Close Add Layer Button" title="Close Layer Button" on:click={handleCancel}>
+          <button
+            class="button secondary-button"
+            alt="Close Add Layer Button"
+            title="Close Layer Button"
+            on:click={handleCancel}>
             Cancel
           </button>
-
           <button
-            class="button is-success"
+            class="button primary-button"
+            role="button"
             disabled={addButtonClicked || (selectedLayerId.length === 0 ? true : false)}
             alt="Add Layer Button"
             title="Add Layer Button"
@@ -352,6 +357,11 @@
 {/if}
 
 <style lang="scss">
+  @import '../src/styles/undp-design/base-minimal.min';
+  @import '../src/styles/undp-design/radio.min';
+  @import '../src/styles/undp-design/buttons.min';
+  @import '../src/styles/undp-design/fonts';
+
   .modal {
     .modal-card {
       width: 450px;

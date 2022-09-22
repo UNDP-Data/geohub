@@ -29,6 +29,7 @@ export interface TreeNode {
   isStac?: boolean
   isMartin?: boolean
   paginationDirectionDisabled?: string
+  collectionUrl?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -97,6 +98,7 @@ export interface IntervalLegend {
   colorMapRows?: IntervalLegendColorMapRow[]
   propertyName?: string
   applyToOption?: string
+  propertyOptions?: string[]
 }
 
 export interface UniqueLegend {
@@ -146,6 +148,7 @@ export interface BandMetadata {
   STATISTICS_MINIMUM: number
   STATISTICS_STDDEV: number
   STATISTICS_VALID_PERCENT: number
+  STATISTICS_UNIQUE_VALUES?: object
 }
 
 export interface RasterLayerStats {

@@ -23,7 +23,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getIntervalList, getSampleFromInterval } from '../../lib/helper'
+  import { getIntervalList, getSampleFromInterval, remapInputValue } from '../../lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -43,8 +43,9 @@
   let defaultLineColor = DEFAULT_LINE_COLOR
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectValue: string = null
+  let propertySelectValue: string = layer.intervals.propertyName
   let zoomLevel: number
+  let inLegend = true
 
   // update color intervals upon change of color map name
   $: {
@@ -200,16 +201,23 @@
 
   const updateMap = () => {
     const stops = layer.intervals.colorMapRows.map((row, index) => {
-      const rgb = chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+      const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
+        row.color[3],
+        0,
+        255,
+        0,
+        1,
+      )})`
+      const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
       // set default line color to be middle of colors
       if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
-        defaultLineColor = rgb
+        defaultLineColor = chroma(hex).darken(2.6).hex()
       }
 
       return [row.start, rgb]
     })
-
+    // console.log(stops)
     $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultLineColor)
     $map.setPaintProperty(layer.definition.id, 'fill-color', {
       property: layer.intervals.propertyName,
@@ -224,6 +232,7 @@
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
+        bind:inLegend
         bind:propertySelectValue
         on:select={handlePropertyChange}
         {layer}
@@ -234,7 +243,7 @@
       <div class="column" transition:fade>
         <div class="has-text-centered pb-2">Classification</div>
         <div class="is-flex is-justify-content-center">
-          <div class="select is-rounded is-justify-content-center">
+          <div class="select is-justify-content-center">
             <select
               bind:value={classificationMethod}
               on:change={handleClassificationChange}
@@ -257,7 +266,7 @@
     {/if}
   </div>
 
-  <div class="is-divider separator mb-3 mt-0" />
+  <div class="is-divider separator mb-3 mt-0" data-content={hasUniqueValues ? 'Unique Values' : ''} />
 
   {#if hasUniqueValues === false}
     <div class="columns" style="margin-right: -56px;" transition:fade>
@@ -295,6 +304,7 @@
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
               on:changeColorMap={handleParamsUpdate}
+              on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
               on:changeIntervalValues={handleChangeIntervalValues} />
           {/if}
         {/each}

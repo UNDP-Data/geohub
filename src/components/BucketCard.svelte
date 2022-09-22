@@ -2,12 +2,15 @@
   import { createEventDispatcher } from 'svelte'
   import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import { fade } from 'svelte/transition'
-
   import Popper from '$lib/popper'
   import type { Bucket } from '$lib/types'
   import '../styles/font-awesome/all.css'
 
   export let bucket: Bucket
+  const treeId = bucket.label
+    .split(' ')
+    .map((el) => el.toLowerCase())
+    .join('-')
 
   let showTooltip = false
   let timer: ReturnType<typeof setTimeout>
@@ -36,6 +39,41 @@
     if (timer) clearTimeout(timer)
     showTooltip = false
   }
+
+  const handleFocusIn = () => {
+    //console.log(`bucket ${bucket.label} got focus`)
+    handleMouseEnter()
+  }
+  const handleFocusOut = () => {
+    //console.log(`bucket ${bucket.label} got focus`)
+    handleMouseLeave()
+  }
+  const handleKP = (e) => {
+    if (e.keyCode == 13) {
+      //console.log(`bucket ${bucket.label} GOT ENTER`)
+      handleMouseLeave()
+      handleBucketClick()
+    }
+
+    if (e.key == 'ArrowRight') {
+      //console.log( `will focus on ${bucket.label} ${treeId} ${bucket.id}`)
+      const ulTree = document.getElementById(treeId)
+      if (ulTree !== null) {
+        ulTree.setAttribute('tabindex', '0')
+        ulTree.focus()
+        ulTree.addEventListener('keydown', (e) => {
+          //console.log(`moving focus to bucket`)
+          if (e.key == 'ArrowLeft') {
+            const bucketDiv = document.getElementById(bucket.id)
+            //console.log(bucketDiv)
+            bucketDiv.setAttribute('tabindex', '0')
+            bucketDiv.focus()
+            //bucketDiv.blur()
+          }
+        })
+      }
+    }
+  }
 </script>
 
 <div
@@ -44,8 +82,11 @@
   use:popperRef
   on:click={() => handleBucketClick()}
   on:mouseenter={() => handleMouseEnter()}
-  on:mouseleave={() => handleMouseLeave()}>
-  <Card>
+  on:mouseleave={() => handleMouseLeave()}
+  on:focusin={() => handleFocusIn()}
+  on:focusout={() => handleFocusOut()}
+  on:keydown={handleKP}>
+  <Card id={bucket.id}>
     <PrimaryAction on:click={() => undefined}>
       <div class="icon-container">
         <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>

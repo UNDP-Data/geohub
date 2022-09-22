@@ -6,28 +6,48 @@
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
-  import { cloneDeep } from 'lodash-es'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
-  import { layerList } from '$stores'
-  import { getActiveBandIndex } from '$lib/helper'
+  import { layerList, map } from '$stores'
+  import { getActiveBandIndex, fetchUrl } from '$lib/helper'
+  import { TITILER_API_ENDPOINT } from '$lib/constants'
+  import type {
+    FillLayerSpecification,
+    HeatmapLayerSpecification,
+    LineLayerSpecification,
+    RasterLayerSpecification,
+    SymbolLayerSpecification,
+  } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   export let layer: Layer
 
+  let definition:
+    | RasterLayerSpecification
+    | FillLayerSpecification
+    | LineLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification
+  let info
+  ;({ definition, info } = layer)
+  const layerSrc = $map.getSource(definition.source)
+  const layerURL = new URL(layerSrc.tiles[0])
+  let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
+  let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
   // hide colormap picker if change in layer list
   $: {
@@ -37,8 +57,28 @@
     }
   }
 
-  onMount(() => {
-    layerHasUniqueValues = hasLayerUniqueValues()
+  onMount(async () => {
+    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+    // if(layer.isStac){
+    //   layerCatalogUrl = `https://planetarycomputer.microsoft.com/api/stac/v1/collections/${collectionId}`
+    // }
+    layerStats = await fetchUrl(statsURL)
+    const band = info.active_band_no
+
+    layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
+    if (layerHasUniqueValues) {
+      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
+      layerStats = await fetchUrl(statsURL)
+    }
+    if (!('stats' in info)) {
+      info = { ...info, stats: layerStats }
+      layer = { ...layer, info: info }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : layer
+      })
+      layerList.set([...layers])
+    }
+
     layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
   })
 
@@ -57,6 +97,14 @@
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
+    let bandName
+    try {
+      bandName = Object.keys(layer.info.stats)
+    } catch (e) {
+      console.log(e)
+    }
+    layerHasUniqueValues =
+      Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !layer.info.dtype.startsWith('float')
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
@@ -69,17 +117,14 @@
     }
   }
 
-  const hasLayerUniqueValues = () => {
-    const stats = layer.info.band_metadata[bandIndex][1]
-    return Object.prototype.hasOwnProperty.call(stats, 'STATISTICS_UNIQUE_VALUES')
-  }
-
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
       colorPickerVisibleIndex = -1
+      const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
     }
   }
 
@@ -87,9 +132,20 @@
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
   }
+
+  const handleEnterKeyForSwitch = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleLegendToggleClick()
+    }
+  }
+  const handleEnterKeyForColor = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleClosePopup()
+    }
+  }
 </script>
 
-<div class="columns" data-testid="raster-legend-view-container">
+<div class="columns">
   <div class="column is-10">
     {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
@@ -101,16 +157,21 @@
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
+        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex bind:legendLabels />
       </div>
     {/if}
   </div>
   <div class="columm legend-toggle" transition:slide>
     <Wrapper>
-      <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
-        <Card>
+      <div
+        role="button"
+        class="toggle-container"
+        aria-label="Switch Legend Type"
+        on:click={handleLegendToggleClick}
+        data-testid="legend-toggle-container">
+        <Card on:keydown={handleEnterKeyForSwitch} style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
+            <Fa icon={faRetweet} style="font-size: 16px; color: white" spin={isLegendSwitchAnimate} />
           </PrimaryAction>
         </Card>
       </div>
@@ -118,10 +179,16 @@
     </Wrapper>
     <br />
     <Wrapper>
-      <div class="toggle-container" use:popperRef on:click={handleClosePopup} data-testid="colormap-toggle-container">
-        <Card>
+      <div
+        role="button"
+        class="toggle-container"
+        aria-label="Open Color Scheme Picker"
+        use:popperRef
+        on:click={handleClosePopup}
+        data-testid="colormap-toggle-container">
+        <Card on:keydown={handleEnterKeyForColor} style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faPalette} style="font-size: 16px;" />
+            <Fa icon={faPalette} style="font-size: 16px; color: white" />
           </PrimaryAction>
         </Card>
       </div>
@@ -134,8 +201,8 @@
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
-          layerMin={Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])} />
+          layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
+          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])} />
         <div id="arrow" data-popper-arrow />
       </div>
     {/if}

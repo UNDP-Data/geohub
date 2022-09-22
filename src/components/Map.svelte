@@ -19,7 +19,41 @@
   let container: HTMLDivElement
   let isStyleSwitcherVisible = false
   let mapMouseEvent: MapMouseEvent = null
+  let mapQueryInfoControl = null
+  let isDataContainerVisible = true
 
+  // eslint-disable-next-line
+  function MapQueryInfoControl() {}
+
+  MapQueryInfoControl.prototype.onAdd = function (map: Map) {
+    this.map = map
+    this.container = document.createElement('div')
+    this.container.title = 'Query Layer Information'
+    this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
+
+    this.queryInfoContainer = document.createElement('div')
+    this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
+    this.container.appendChild(this.queryInfoContainer)
+
+    this.button = document.createElement('button')
+    this.button.classList.add('mapboxgl-query-info-control')
+    this.button.type = 'button'
+    this.button.addEventListener('click', () => {
+      map.getCanvas().style.cursor = 'crosshair'
+      isDataContainerVisible = !isDataContainerVisible
+    })
+    this.container.appendChild(this.button)
+
+    return this.container
+  }
+
+  MapQueryInfoControl.prototype.onRemove = function () {
+    if (!this.container || !this.container.parentNode || !this.map || !this.button) {
+      return
+    }
+    this.container.parentNode.removeChild(this.container)
+    this.map = undefined
+  }
   onMount(async () => {
     const newMap = new Map({
       container,
@@ -28,10 +62,11 @@
       zoom: 3,
       hash: true,
     })
+    mapQueryInfoControl = new MapQueryInfoControl()
 
     newMap.addControl(new maplibregl.NavigationControl({}), 'top-right')
     newMap.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
-
+    newMap.addControl(mapQueryInfoControl, 'top-right')
     const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
     const exportControl = new MaplibreExportControl({
       PageSize: Size.A4,
@@ -129,11 +164,16 @@
   <StyleSwicher bind:map={$map} />
 {/if}
 
-<MapQueryInfoPanel bind:mapMouseEvent />
+<MapQueryInfoPanel bind:mapMouseEvent bind:isDataContainerVisible />
 
 <style lang="scss">
   .map {
-    height: 100%;
+    height: calc(100vh - 82px);
     width: 100%;
+  }
+  @media (max-width: 90em) {
+    .map {
+      height: calc(100vh - 52px);
+    }
   }
 </style>

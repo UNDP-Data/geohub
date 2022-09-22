@@ -37,8 +37,19 @@
   let info: RasterTileMetadata
   ;({ definition, info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const layerMax = Number(info.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM'])
-  const layerMin = Number(info.band_metadata[bandIndex][1]['STATISTICS_MINIMUM'])
+
+  let layerMax
+  let layerMin
+  if ('stats' in info) {
+    const band = Object.keys(info.stats)[bandIndex]
+    layerMin = Number(info.stats[band].min)
+    layerMax = Number(info.stats[band].max)
+  } else {
+    const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+    layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
+    layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
+  }
+
   const layerSrc = $map.getSource(definition.source)
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
@@ -59,16 +70,16 @@
   }
 
   onMount(async () => {
-    if (!('stats' in info)) {
-      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
-      const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-
-      info = { ...info, stats: layerStats }
-      const band = info.active_band_no
-
-      percentile98 = layerStats[band]['percentile_98']
-      layerConfig.percentile98 = percentile98
-      const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
+    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
+    const layerStats: RasterLayerStats = await fetchUrl(statsURL)
+    info = { ...info, stats: layerStats }
+    const band = info.active_band_no
+    percentile98 = layerStats[band]['percentile_98']
+    layerConfig.percentile98 = percentile98
+    const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
+    if (layerConfig.intervals.classification !== ClassificationMethodTypes.LOGARITHMIC) {
+      //pass
+    } else {
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
@@ -77,14 +88,13 @@
         classificationMethod = ClassificationMethodTypes.LOGARITHMIC
         layerConfig.intervals.classification = classificationMethod
       }
-
-      layerConfig = { ...layerConfig, info: info }
-      const layers = $layerList.map((layer) => {
-        return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
-      })
-      layerList.set([...layers])
     }
-    reclassifyImage()
+    layerConfig = { ...layerConfig, info: info }
+    const layers = $layerList.map((layer) => {
+      return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
+    })
+    layerList.set([...layers])
+    layerConfig.intervals.colorMapRows.length > 0 ? null : reclassifyImage()
   })
 
   const reclassifyImage = (e?: CustomEvent) => {
@@ -115,6 +125,7 @@
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(definition, layerURL, updatedParams)
   }, 500)
+
   const handleIncrementDecrementClasses = (e: CustomEvent) => {
     numberOfClasses = e.detail.value
     const layerConfigClone = cloneDeep(layerConfig)
@@ -123,6 +134,7 @@
     layerConfig.intervals.colorMapRows = []
     reclassifyImage()
   }
+
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index
   }
@@ -144,7 +156,7 @@
   <div class="columns is-gapless controls" on:click={() => (colorPickerVisibleIndex = -1)}>
     <div class="column classification">
       <div class="has-text-centered pb-2">Classification</div>
-      <div class="select is-rounded is-flex is-justify-content-center" style="height: 30px; width: fit-content">
+      <div class="select is-flex is-justify-content-center" style="height: 30px; width: fit-content">
         <select
           bind:value={classificationMethod}
           on:change={(e) => reclassifyImage(e)}
@@ -166,12 +178,14 @@
         on:change={handleIncrementDecrementClasses} />
     </div>
   </div>
+  <div class="is-divider separator mb-4" />
   {#each layerConfig.intervals.colorMapRows as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
       layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
+      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
       on:changeColorMap={handleParamsUpdate}
       on:changeIntervalValues={handleChangeIntervalValues} />
   {/each}
@@ -182,5 +196,8 @@
     .controls {
       margin-bottom: 10px !important;
     }
+  }
+  :global(.select:not(.is-multiple):not(.is-loading)::after) {
+    border-color: #ff0000;
   }
 </style>

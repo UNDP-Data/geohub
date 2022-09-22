@@ -18,7 +18,6 @@
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
   import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
   import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
-
   import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
 
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
@@ -43,6 +42,7 @@
     LayerInfoMetadata,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
+    BandMetadata,
   } from '$lib/types'
   import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
 
@@ -60,10 +60,11 @@
   // let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
-  $: ({ label, children, path, url, isRaster, geomType } = tree)
+  $: ({ label, children, path, url, isRaster, geomType, id } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-
+  const bid = level == 0 ? node.id : null
+  //console.log(`${bid} ${JSON.stringify(node)}`)
   onMount(() => {
     if (level === 0) toggleExpansion()
     if (geomType !== undefined) {
@@ -170,6 +171,7 @@
       data &&
       data.band_metadata &&
       data.band_metadata.length > 0 &&
+      //TODO needs fix: Ioan band
       Object.keys(data.band_metadata[0][1]).length === 0
     ) {
       const statistics = await fetchUrl(`${TITILER_API_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
@@ -282,6 +284,8 @@
     } else {
       let layerInfo: RasterTileMetadata = {}
       const layerName = path.split('/')[path.split('/').length - 1]
+      const collectionName = path.split('/')[path.split('/').length - 2]
+
       let b64EncodedUrl: string
 
       // ** TODO **
@@ -293,9 +297,61 @@
             </Error>
           */
 
-      // 2. band_metadata not returning stats min/max
       b64EncodedUrl = getBase64EncodedUrl(node.url)
       layerInfo = await getRasterMetadata(node)
+
+      const bandIndex = getActiveBandIndex(layerInfo)
+
+      let classesMap = {}
+      if (node.isStac) {
+        const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
+        // FixME: There is no standard object for the classes labels.
+        try {
+          if (collectionInfo.item_assets.map) {
+            // Todo: Tested with ESA WorldCover 2020
+            const classesObj = collectionInfo.item_assets.map['classification:classes']
+            classesObj.forEach((item) => {
+              classesMap[item['value']] = item['description']
+            })
+          } else if (collectionInfo.item_assets.data) {
+            // Todo: Tested with Esri 10m Land Cover (10 Class)
+            const classesObj = collectionInfo.item_assets.data['file:values']
+            classesObj.forEach((item) => {
+              classesMap[item['values'][0]] = item['summary']
+            })
+          } else {
+            // Todo: Tested for LandCover of Canada
+            const classesObj = collectionInfo.item_assets.landcover['file:values']
+            classesObj.forEach((item) => {
+              classesMap[item['values'][0]] = item['summary']
+            })
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      } else {
+        /*
+        local rasters
+        */
+
+        const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+        try {
+          classesMap = JSON.parse(uvString)
+        } catch (e) {
+          // const bannerErrorMessage: BannerMessage = {
+          //   type: StatusTypes.WARNING,
+          //   title: 'Whoops! Something went wrong.',
+          //   message: ErrorMessages.FAILED_TO_PARSE_METADATA,
+          // }
+          // bannerMessages.update((data) => [...data, bannerErrorMessage])
+          // $indicatorProgress = false
+          // loadingLayer = false
+          // throw new Error(JSON.stringify(uvString))
+        }
+      }
+
+      const [bandName, bandMetaStats] = layerInfo.band_metadata[bandIndex]
+      bandMetaStats.STATISTICS_UNIQUE_VALUES = classesMap
 
       if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
         const bannerErrorMessage: BannerMessage = {
@@ -309,7 +365,6 @@
         throw new Error(JSON.stringify(layerInfo))
       }
 
-      const bandIndex = getActiveBandIndex(layerInfo)
       const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
       const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
@@ -408,6 +463,21 @@
   const handleRemoveBucket = () => {
     dispatch('remove', { node })
   }
+  const handleKD = (event: KeyboardEvent) => {
+    if (event.key == 'Enter') {
+      const bucketDiv = document.getElementById(bid)
+      //console.log(bucketDiv)
+      bucketDiv.setAttribute('tabindex', '0')
+      bucketDiv.focus()
+      bucketDiv.blur()
+
+      handleRemoveBucket()
+      //const id = document.activeElement.id
+      // if (id !== bid) {
+      //   console.log(`failed ${id} ${bid}`)
+      // }
+    }
+  }
 
   let stacPaginationAction = ''
   let stacPaginationLabel = ''
@@ -423,6 +493,12 @@
 
     updateTreeStore()
   }
+
+  const handleEnterKeyForDownload = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      downloadFile(url)
+    }
+  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
@@ -430,24 +506,32 @@
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         {#if url}
-          <div alt="Vector" class="load-layer" on:click={loadLayer}>
+          <!-- The modal is located here so the focus is set to ne next element -->
+          <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else}
               <Wrapper>
                 <FaLayers size="sm" style="cursor: pointer;">
                   <Fa icon={faLayerGroup} scale={1} />
-                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:white" />
+                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
                 </FaLayers>
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
             {/if}
-          </div>
+          </a>
+
           <div class="name vector">
             {clean(label)}
           </div>
         {:else}
-          <div class="tree-icon" on:click={() => toggleExpansion()}>
+          <a
+            style="color:gray; margin-left:5px"
+            class="tree-icon"
+            href="#"
+            role="button"
+            on:click={() => toggleExpansion()}>
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else if level === 0}
@@ -457,7 +541,8 @@
             {:else}
               <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
             {/if}
-          </div>
+          </a>
+
           <div class="name">
             <div class="columns">
               <div class="column">{clean(label)}</div>
@@ -467,6 +552,7 @@
 
         {#if url}
           <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
+
           <div class="icon" alt={iconVector.label} title={iconVector.label}>
             <Wrapper>
               <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
@@ -476,33 +562,32 @@
         {/if}
 
         {#if level === 0 && hideCloseButton === false}
-          <div
-            alt="Remove container"
-            title="Remove container"
-            data-testid="remove-container"
-            class="close"
-            style="width: 19.5px; height: 19.5px; cursor: pointer;"
-            on:click={handleRemoveBucket}>
+          <a
+            style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
+            href="#"
+            role="button"
+            on:click={handleRemoveBucket}
+            on:keydown={handleKD}>
             <Fa icon={faWindowClose} size="sm" />
-          </div>
+          </a>
         {/if}
       </div>
     {:else}
       <div class="node-container">
         {#if isRaster}
-          <div alt="Raster" class="load-layer" on:click={loadLayer}>
+          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
             {#if loadingLayer === true}
               <Fa icon={faSync} size="sm" spin />
             {:else}
               <Wrapper>
                 <FaLayers size="sm" style="cursor: pointer;">
                   <Fa icon={faLayerGroup} scale={1} />
-                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:white" />
+                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
                 </FaLayers>
                 <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
               </Wrapper>
             {/if}
-          </div>
+          </a>
           <div class="name raster">
             {#if node.isStac}
               {clean(
@@ -521,7 +606,8 @@
             alt="Download Layer Data"
             style="cursor: pointer;"
             title="Download Layer Data"
-            on:click={() => downloadFile(url)}>
+            on:click={() => downloadFile(url)}
+            on:keydown={handleEnterKeyForDownload}>
             <Wrapper>
               <Fa icon={faDownload} size="sm" />
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
@@ -568,12 +654,10 @@
 </li>
 
 {#if expanded && children}
-  {#each children as child}
+  {#each children as child, ti}
     <svelte:self node={child} level={level + 1} />
   {/each}
 {/if}
-
-<AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
 <style lang="scss">
   @import '../styles/popper.scss';
@@ -594,8 +678,6 @@
       padding-left: 5px;
       text-overflow: ellipsis;
       width: 100%;
-      //text-align: justify;
-      //text-justify: inter-word;
 
       @media (prefers-color-scheme: dark) {
         color: white;

@@ -8,11 +8,13 @@
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
   import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
+  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
+  import type { Layer } from '$lib/types'
 
   export let propertyStats: number[]
+  export let layer: Layer
   let showTooltip: boolean
   let activeOperatorsTab = 'Numbers'
 
@@ -36,7 +38,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right',
       strategy: 'fixed',
     },
     [0, 0],
@@ -57,17 +59,58 @@
   const handleSetOperatorType = (type) => {
     activeOperatorsTab = type
   }
+
+  const handleEnterKey = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      setLeftActiveTab(activeOperatorsTab)
+    }
+    if (event.key === 'ArrowRight') {
+      setRightActiveTab(activeOperatorsTab)
+    }
+  }
+
+  const setLeftActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = operatorTypes.findIndex((tab) => tab.title === currentActiveTab)
+    const nextTabIndex = currentTabIndex - 1
+    if (nextTabIndex < 0) {
+      activeOperatorsTab = operatorTypes[operatorTypes.length - 1].title
+      document.getElementById(`${activeOperatorsTab}-${layer.definition.id}`)?.focus()
+    } else {
+      activeOperatorsTab = operatorTypes[nextTabIndex].title
+      document.getElementById(`${activeOperatorsTab}-${layer.definition.id}`)?.focus()
+    }
+  }
+
+  const setRightActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = operatorTypes.findIndex((tab) => tab.title === currentActiveTab)
+    const nextTabIndex = currentTabIndex + 1
+    const nextTab = operatorTypes[nextTabIndex]
+    if (nextTab) {
+      activeOperatorsTab = nextTab.title
+      document.getElementById(`${activeOperatorsTab}-${layer.definition.id}`)?.focus()
+    } else {
+      activeOperatorsTab = operatorTypes[0].title
+      document.getElementById(`${activeOperatorsTab}-${layer.definition.id}`)?.focus()
+    }
+  }
 </script>
 
 <div
   on:click={() => {
     showTooltip = !showTooltip
   }}
+  on:keydown={handleEnterKey}
   use:popperRef>
   <Wrapper>
-    <Card>
+    <Card style="background: #D12800">
       <PrimaryAction style="padding: 10px;">
-        <Fa icon={faCalculator} style="font-size: 16px;" />
+        <Fa icon={faCalculator} style="font-size: 16px; color:white" />
       </PrimaryAction>
     </Card>
     <Tooltip showDelay={100} hideDelay={0} yPos="above">Operators</Tooltip>
@@ -80,42 +123,51 @@
     id="tooltip"
     data-testid="tooltip"
     use:popperContent={popperOptions}
-    use:clickOutside={() => (showTooltip = false)}
     transition:fade>
     <div class="card">
       <div class="card-content" style="padding: 0">
         <div class="tabs is-centered" style="margin:0">
-          <ul>
+          <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
             {#each operatorTypes as type}
-              <li class={activeOperatorsTab === type.title ? 'is-active' : ''}>
-                <a on:click={() => handleSetOperatorType(type.title)}>
-                  <Fa icon={type.icon} />
+              <li class={activeOperatorsTab === type.title ? 'is-active tabs-title' : 'tabs-title'}>
+                <a
+                  id="{type.title}-{layer.definition.id}"
+                  style="border: none;"
+                  on:click={() => handleSetOperatorType(type.title)}
+                  on:keydown={handleKeyDown}
+                  role="tab"
+                  tabindex="0">
+                  <Fa icon={type.icon} style="color: #232E3D" />
                 </a>
               </li>
             {/each}
           </ul>
-          <button
+          <div
+            tabindex="0"
+            style="cursor: pointer"
+            class="column is-1 close"
+            alt="Close Expression Builder"
+            title="Close Expression Builder"
+            role="button"
+            aria-label="Close Expression Builder"
             on:click={() => (showTooltip = false)}
-            id="close"
-            style="border:1px solid red"
-            class="button is-small">
-            <span id="closex" style="color: red">X</span>
-          </button>
-        </div>
-
-        <div class="content" style="display: flex; align-items: center; justify-content: space-between">
-          <div class="stats message is-info is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
-            <div id="stats-title" class="stats-content message-header">Statistics</div>
-            <div class="stats-content">Min:</div>
-            <div class="stats-content">{propertyStats[0] !== undefined ? propertyStats[0] : ''}</div>
-            <div class="stats-content">Max:</div>
-            <div class="stats-content">{propertyStats[1] !== undefined ? propertyStats[1] : ''}</div>
+            on:keydown={handleEnterKey}>
+            <Fa icon={faXmark} />
           </div>
-          {#if activeOperatorsTab === 'Numbers'}
-            <NumberButtons on:valueclicked={numberSelected} />
-          {:else}
-            <VectorFilterOperators on:operatorselected={operatorSelected} />
-          {/if}
+        </div>
+        <div style="font-weight: bolder;">STATISTICS</div>
+        <div class="content" style="display: flex; align-items: center; justify-content: space-between">
+          <div class="stats message is-normal has-background-white mt-5 is-size-8 has-text-weight-semibold">
+            <div class="stats-content">Min: {propertyStats[0] !== undefined ? propertyStats[0] : ''}</div>
+            <div class="stats-content">Max: {propertyStats[1] !== undefined ? propertyStats[1] : ''}</div>
+          </div>
+          <div style="width: 200px">
+            {#if activeOperatorsTab === 'Numbers'}
+              <NumberButtons on:valueclicked={numberSelected} />
+            {:else}
+              <VectorFilterOperators on:operatorselected={operatorSelected} />
+            {/if}
+          </div>
         </div>
       </div>
     </div>
@@ -124,6 +176,8 @@
 {/if}
 
 <style lang="scss">
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/undp-design/tab.min';
   #close:hover {
     background: maroon;
   }

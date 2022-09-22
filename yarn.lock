@@ -2040,6 +2040,13 @@ canvg@^3.0.6:
     stackblur-canvas "^2.0.0"
     svg-pathdata "^6.0.3"
 
+carbon-components-svelte@^0.67.5:
+  version "0.67.5"
+  resolved "https://registry.yarnpkg.com/carbon-components-svelte/-/carbon-components-svelte-0.67.5.tgz#44d8f13ebaeb97b2744572d85350215f0ad3c765"
+  integrity sha512-2azoyIy5xuWYOW+voMJe5p1J72bi8L+BpxkZR0FXCxv/+eK8wrDySaLRmyeYku/qNcD1/PAm4Fl4JZoakeGW4A==
+  dependencies:
+    flatpickr "4.6.9"
+
 caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
@@ -3023,6 +3030,11 @@ flat-cache@^3.0.4:
   dependencies:
     flatted "^3.1.0"
     rimraf "^3.0.2"
+
+flatpickr@4.6.9:
+  version "4.6.9"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.6.9.tgz#9a13383e8a6814bda5d232eae3fcdccb97dc1499"
+  integrity sha512-F0azNNi8foVWKSF+8X+ZJzz8r9sE1G4hl06RyceIaLvyltKvDl6vqk9Lm/6AUUCi5HWaIjiUbk7UpeE/fOXOpw==
 
 flatted@^3.1.0:
   version "3.2.6"

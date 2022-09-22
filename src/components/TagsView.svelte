@@ -17,6 +17,7 @@
   let showSpinner = false
   let tagsList = []
   let treeBucket = []
+  let hideOptions: boolean
 
   onMount(async () => {
     $tags = (await fetchUrl('tags.json')).tags
@@ -31,6 +32,7 @@
   }
 
   const handleSearchTags = async () => {
+    hideOptions = true
     const treeBucketClone = []
     showSpinner = true
 
@@ -110,18 +112,29 @@
         disable={false}
         minChars={0}
         onlyAutocomplete={true}
-        labelShow={false} />
+        labelShow={false}
+        {hideOptions} />
     </div>
     <div class="column pl-0">
       <div class="columns is-gapless mb-3">
         <div class="column">
-          <button class="button" disabled={showSpinner} on:click={handleSearchTags}>Search</button>
+          <button
+            aria-label="Search Keywords"
+            class="button primary-button"
+            disabled={showSpinner}
+            on:focusin={() => (hideOptions = false)}
+            on:click={handleSearchTags}>
+            <i class="fas fa-search" style="color: white;" />
+          </button>
         </div>
       </div>
       <div class="columns is-gapless">
         <div class="column">
-          <button class="button" disabled={showSpinner || tagsList.length === 0} on:click={handleClearTags}
-            >Clear</button>
+          <button
+            aria-label="Clear Keywords"
+            class="button secondary-button"
+            disabled={showSpinner || tagsList.length === 0}
+            on:click={handleClearTags}>Clear</button>
         </div>
       </div>
     </div>

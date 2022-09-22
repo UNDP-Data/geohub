@@ -1,11 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
-  import chroma from 'chroma-js'
+  import chroma, { rgb } from 'chroma-js'
 
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import { isEqual } from 'lodash-es'
+  import { abs } from 'mathjs'
 
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number
@@ -61,7 +63,7 @@
       g,
       b,
       hex: chroma([r, g, b]).hex('rgba'),
-      h: chroma([r, g, b]).hsv()[0],
+      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
     }
@@ -75,10 +77,21 @@
   const updateColorMap = (colorSelected: Color) => {
     if (colorSelected) {
       try {
-        const rgba: number[] = chroma(colorSelected['hex']).rgba()
-        colorMapRow.color = [...rgba.slice(0, -1), ...[rgba[3] * 255]]
-        colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
-        dispatch('changeColorMap')
+        let rgba: number[] = chroma(colorSelected['hex']).rgba()
+        /*the fix below is necessary becuse the Color picker has some roounding bugs
+          which makde the color returnd change slightly on multiple consecutive invocations
+          and this triggered map rerendering in vain
+        */
+        rgba = [...rgba.slice(0, -1), ...[Number((rgba[3] * 255).toFixed(2))]]
+
+        const delta = rgba.map((el, i) => abs(el - colorMapRow.color[i])).reduce((a, b) => a + b, 0)
+        if (delta > 4) {
+          colorMapRow.color = rgba
+          colorPickerStyle = getColorPickerStyle(chroma(colorSelected['hex']).rgba().join())
+          dispatch('changeColorMap', {
+            color,
+          })
+        }
       } catch (e) {
         console.log(e)
       }
@@ -89,75 +102,110 @@
     if (showToolTip === false) {
       dispatch('clickColorPicker', { index: colorMapRow.index })
     } else {
+      dispatch('closeColorPicker')
       showToolTip = false
     }
   }
 </script>
 
-<div class="columns is-vcentered is-gapless colormap-editor" data-testid="unique-legend-color-map-row-container">
-  <div class="column is-1 color-picker">
+{#if colorMapRow.start !== colorMapRow.end}
+  <div class="unique-value">
     <div
       id={`interval-${colorMapRow.index}`}
       on:click={() => handleColorPickerClick()}
       use:popperRef
       class="discrete"
-      alt="Color Map Control"
-      title="Color Map Control"
+      alt="Color Picker"
+      title="Color Picker"
       style={colorPickerStyle} />
-  </div>
-  {#if showToolTip && color}
-    <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-      <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-      <div id="arrow" data-popper-arrow />
+    {#if showToolTip && color}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
+    <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
+    <div class="space-arrow" style="width:min-content">&nbsp;&#x21A6;</div>
+    <div class="label-text">
+      {colorMapRow.end ? colorMapRow.end : colorMapRow.start}
     </div>
-  {/if}
-
-  <div class="column is-1 minimum">
-    <input
-      id="minimum"
-      alt="Start Value"
-      title="Start Value"
-      class="input is-small is-static"
-      type="text"
-      value={colorMapRow.start} />
+    <!--    Todo: When the labels for unique values are present-->
   </div>
-  <div class="column maximum">
-    <input
-      id="maximum"
-      alt="End Value"
-      title="End Value"
-      class="input is-small is-static"
-      type="text"
-      value={colorMapRow.end} />
+{:else}
+  <div class="unique-value-no-label">
+    <div
+      id={`interval-${colorMapRow.index}`}
+      on:click={() => handleColorPickerClick()}
+      use:popperRef
+      class="discrete"
+      alt="Color Picker"
+      title="Color Picker"
+      style={colorPickerStyle} />
+    {#if showToolTip && color}
+      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
+        <div id="arrow" data-popper-arrow />
+      </div>
+    {/if}
+    <div class="arrow">&nbsp; &#x21A6;</div>
+    <div class="text">
+      {colorMapRow.start}
+    </div>
   </div>
-</div>
+{/if}
 
 <style lang="scss">
-  @import '../styles/popper.scss';
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/popper.scss';
 
-  $input-margin: 5px !important;
+  $input-margin: 0px !important;
 
-  .colormap-editor {
-    margin-bottom: $input-margin;
-
-    .color-picker {
-      margin-right: $input-margin;
-    }
-
-    .minimum {
-      margin-right: $input-margin;
-    }
-
+  .unique-value-no-label {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+    justify-items: center;
+    margin-top: 2px;
+    width: max-content;
     .discrete {
-      cursor: pointer;
-      height: 20px !important;
       width: 20px;
-
-      &:hover {
-        padding: 0;
-        border: 1px solid hsl(204, 86%, 53%);
-      }
+      height: 20px;
+      margin-right: auto;
     }
+  }
+
+  .unique-value {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 3fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: 'discrete space-arrow text';
+    grid-gap: 0px 0px;
+    align-items: center;
+    justify-items: center;
+    margin-top: 2px;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+    height: 100%;
+  }
+  .label-text {
+    font-weight: 400;
+    margin-left: 0;
+    margin-right: auto;
+    padding: 0px 0px 0px 0px;
+  }
+  .space-arrow {
+    max-width: max-content;
+    white-space: nowrap;
+    grid-area: space-arrow;
+    margin-right: auto;
+    width: min-content;
+  }
+
+  .discrete {
+    width: 20px;
+    height: 20px;
+    margin-right: auto;
   }
 
   #tooltip {

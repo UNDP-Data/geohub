@@ -97,6 +97,12 @@
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
   }
+
+  const handleEnterKey = (event: any) => {
+    if (event.key === 'Enter') {
+      event.target.click()
+    }
+  }
 </script>
 
 <div class="columns" data-testid="symbol-view-container">
@@ -113,10 +119,17 @@
   </div>
   <div class="columm legend-toggle" transition:slide>
     <Wrapper>
-      <div class="toggle-container" on:click={handleLegendToggleClick} data-testid="legend-toggle-container">
-        <Card>
+      <div
+        role="button"
+        aria-label="Switch legend type button"
+        class="toggle-container"
+        on:click={handleLegendToggleClick}
+        on:keydown={handleEnterKey}
+        data-testid="legend-toggle-container"
+        on:keydown={handleEnterKey}>
+        <Card style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faRetweet} style="font-size: 16px;" spin={isLegendSwitchAnimate} />
+            <Fa icon={faRetweet} style="font-size: 16px; color:white" spin={isLegendSwitchAnimate} />
           </PrimaryAction>
         </Card>
       </div>
@@ -126,14 +139,17 @@
 
     {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div
+        role="button"
         class="toggle-container"
+        aria-label="Open color scheme picker button"
         use:popperRef
         on:click={handleClosePopup}
+        on:keydown={handleEnterKey}
         data-testid="colormap-toggle-container"
         transition:fade>
-        <Card>
-          <PrimaryAction style="padding: 10px;">
-            <Fa icon={faPalette} style="font-size: 16px;" />
+        <Card style="background: #D12800;">
+          <PrimaryAction style="padding: 10px; ">
+            <Fa icon={faPalette} style="font-size: 16px; color:white" />
           </PrimaryAction>
         </Card>
       </div>

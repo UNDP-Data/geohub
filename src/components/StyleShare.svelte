@@ -1,8 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
-  import List, { Item, Graphic, Text } from '@smui/list'
-  import Radio from '@smui/radio'
   import Textfield from '@smui/textfield'
   import Fa from 'svelte-fa'
   import { faShare } from '@fortawesome/free-solid-svg-icons/faShare'
@@ -70,6 +68,7 @@
       method: 'POST',
       body: JSON.stringify(data),
     })
+    console.log(res)
     const resjson = await res.json()
     styleURL = resjson.url
   }
@@ -82,6 +81,12 @@
     await share()
   }
 
+  const onKeyPressed = (e: any) => {
+    if (e.key === 'Enter') {
+      e.target.click()
+    }
+  }
+
   const handleCopy = () => {
     textCopyButton = 'copied'
     setTimeout(() => {
@@ -91,7 +96,7 @@
 </script>
 
 {#if $layerList.length > 0}
-  <div class="icon" on:click={() => open()}>
+  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={onKeyPressed} tabindex="1">
     <Fa icon={faShare} size="lg" />
   </div>
 {/if}
@@ -110,21 +115,28 @@
             <Textfield bind:value={styleName} label="Style name" />
           </div>
           {#if radioDisabled === false}
-            <List radioList>
-              <Item>
-                <Graphic>
-                  <Radio bind:group={selectedOption} value="all" />
-                </Graphic>
-                <Text>All layers</Text>
-              </Item>
-
-              <Item>
-                <Graphic>
-                  <Radio bind:group={selectedOption} value="geohub" disabled={radioDisabled} />
-                </Graphic>
-                <Text>Only Geohub layers</Text>
-              </Item>
-            </List>
+            <div style="display: block">
+              <div class="radio-input" style="margin: 10%; align-items: center">
+                <input
+                  on:input={() => (selectedOption = 'all')}
+                  checked={selectedOption === 'all'}
+                  type="radio"
+                  name="amount"
+                  value="all"
+                  id="all" />
+                <label for="all"> All Layers </label>
+              </div>
+              <div class="radio-input" style="margin: 10%">
+                <input
+                  on:input={() => (selectedOption = 'geohub')}
+                  checked={selectedOption === 'geohub'}
+                  type="radio"
+                  name="amount"
+                  value="geohub"
+                  id="geohub" />
+                <label for="geohub"> GeoHub </label>
+              </div>
+            </div>
           {/if}
         {:else}
           <div style="width: 100%;">
@@ -136,9 +148,9 @@
       </section>
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
         <div>
-          <button class="button" alt="Close" title="Close" on:click={handleClose}> Cancel </button>
+          <button class="button secondary-button" alt="Close" title="Close" on:click={handleClose}> Cancel </button>
           {#if !styleURL}
-            <button class="button is-success" alt="Share" title="Share" on:click={handleShare}> Share </button>
+            <button class="button primary-button" alt="Share" title="Share" on:click={handleShare}> Share </button>
           {/if}
         </div>
       </footer>
@@ -147,6 +159,9 @@
 {/if}
 
 <style lang="scss">
+  @import 'src/styles/undp-design/base-minimal.min';
+  @import 'src/styles/undp-design/radio.min';
+
   .icon {
     cursor: pointer;
     margin-right: 20px;

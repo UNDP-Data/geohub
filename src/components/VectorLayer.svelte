@@ -52,6 +52,40 @@
         break
     }
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      setLeftActiveTab(activeTab)
+    }
+    if (event.key === 'ArrowRight') {
+      setRightActiveTab(activeTab)
+    }
+  }
+
+  const setLeftActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex - 1
+    if (nextTabIndex < 0) {
+      activeTab = tabs[tabs.length - 1].label
+      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+    } else {
+      activeTab = tabs[nextTabIndex].label
+      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+    }
+  }
+
+  const setRightActiveTab = (currentActiveTab: string) => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
+    const nextTabIndex = currentTabIndex + 1
+    const nextTab = tabs[nextTabIndex]
+    if (nextTab) {
+      activeTab = nextTab.label
+      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+    } else {
+      activeTab = tabs[0].label
+      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+    }
+  }
 </script>
 
 <div class="vector-layer-container" transition:fade data-testid="vector-layer-view-container">
@@ -59,22 +93,27 @@
     <p class="panel-heading">
       <LayerNameGroup {layer} />
     </p>
-    <p class="panel-tabs">
+    <ul class="panel-tabs" role="tablist" tabindex="0">
       {#each tabs as tab}
-        <a
-          href={'#'}
-          on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
-          class={activeTab === tab.label ? 'is-active' : ''}
-          alt={`${tab.label} Tab Link`}
-          title={`${tab.label} Tab Link`}>
-          <span>
-            <Fa icon={tab.icon} size="sm" />
-          </span>
-          {tab.label}
-        </a>
+        <li>
+          <a
+            role="tab"
+            aria-label={tab.label}
+            id={`${tab.label}-${layer.definition.id}`}
+            on:keydown={handleKeyDown}
+            href={'#'}
+            on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
+            class={activeTab === tab.label ? 'is-active' : ''}
+            alt={`${tab.label} Tab Link`}
+            title={`${tab.label} Tab Link`}>
+            <span>
+              <Fa icon={tab.icon} size="sm" />
+            </span>
+            {tab.label}
+          </a>
+        </li>
       {/each}
-    </p>
-
+    </ul>
     <p class="panel-content">
       <VectorLegendPanel {layer} {isLegendPanelVisible} />
       <VectorFilterPanel {layer} {isFilterPanelVisible} />
@@ -85,6 +124,11 @@
 </div>
 
 <style lang="scss">
+  $gray-700: #232e3d;
+  $dark-red: #d12800;
+  .is-active {
+    border-bottom: 2px solid $dark-red !important;
+  }
   .vector-layer-container {
     margin-left: 15px;
     margin-bottom: 20px;
@@ -92,9 +136,14 @@
 
     .panel-tabs {
       padding-top: 10px;
+      border: none;
 
       a {
         margin-right: 5px;
+        font-weight: bold;
+        text-transform: capitalize;
+        color: $gray-700;
+        font-family: ProximaNova, sans-serif;
 
         span {
           margin-right: 3px;

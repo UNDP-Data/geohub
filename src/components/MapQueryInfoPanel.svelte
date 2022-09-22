@@ -19,38 +19,42 @@
   import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
 
   export let mapMouseEvent: MapMouseEvent
-
-  let isDataContainerVisible = false
+  export let isDataContainerVisible: boolean
+  // let isDataContainerVisible = false
   let isValuesRounded = true
   let layerValuesData = []
-  let mapQueryInfoControl = null
   let marker: Marker
 
   const iconSize = 'lg'
   const noDataLabel = 'N/A'
   const frame = { translate: [0, 0] }
 
+  // $:{
+  //   if(mapMouseEvent){
+  //     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
+  //   }
+  // }
   // layer change
-  $: {
-    const layersVisible = $layerList.filter((layer) => layer.visible === true)
-    layerValuesExpanded = []
-
-    if ($map !== null) {
-      if (layersVisible.length > 0) {
-        if (mapQueryInfoControl !== null && $map.hasControl(mapQueryInfoControl) === false) {
-          $map.addControl(mapQueryInfoControl, 'top-right')
-        }
-      } else {
-        mapMouseEvent = null
-        if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
-        resetMapQueryInfo()
-      }
-    }
-  }
+  // $: {
+  //   const layersVisible = $layerList.filter((layer) => layer.visible === true)
+  //   layerValuesExpanded = []
+  //
+  //   if ($map !== null) {
+  //     if (layersVisible.length > 0) {
+  //       if (mapQueryInfoControl !== null && $map.hasControl(mapQueryInfoControl) === false) {
+  //         $map.addControl(mapQueryInfoControl, 'top-right')
+  //       }
+  //     } else {
+  //       mapMouseEvent = null
+  //       if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
+  //       resetMapQueryInfo()
+  //     }
+  //   }
+  // }
 
   // mouse click on map
   $: {
-    if (mapMouseEvent?.lngLat && isDataContainerVisible === true) {
+    if (mapMouseEvent?.lngLat) {
       const layersVisible = $layerList.filter((layer) => layer.visible === true)
 
       if (layersVisible.length > 0) {
@@ -87,15 +91,18 @@
 
     for (const layer of layersVisible) {
       let values = []
-
+      let presentUniqueNames = {}
+      let availableUnique = {}
+      let bandIndex: number = null
       if (layer.type === LayerTypes.RASTER) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const bandIndex = getActiveBandIndex(layer.info)
+        bandIndex = getActiveBandIndex(layer.info)
         const baseUrl = `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
         const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
         const layerData = await fetchUrl(queryURL)
+        const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
         let layerHasNoDataValue = false
 
@@ -108,20 +115,34 @@
         }
 
         values = layerHasNoDataValue ? [] : layerData.values
+        presentUniqueNames = values.map((item) => {
+          return (presentUniqueNames[String(item)] = layerUniqueValues[item])
+        })
       } else if (layer.type === LayerTypes.VECTOR) {
         const layerClicked = $layerList.find((layerList) => layerList.definition.id === layer.definition.id)
         if (layerClicked.features) {
           values = layer.features
         }
       }
-
       layerValuesDataTmp = [
-        ...[{ id: layer.definition.id, name: layer.name, lat, lng, type: layer.type, values }],
+        ...[
+          {
+            id: layer.definition.id,
+            name: layer.name,
+            lat,
+            lng,
+            type: layer.type,
+            values,
+            // legend labels should correspond to the actual values in the values array
+            legendLabels: presentUniqueNames,
+          },
+        ],
         ...layerValuesDataTmp,
       ]
     }
 
     layerValuesData = layerValuesDataTmp
+    console.log(layerValuesDataTmp)
     isDataContainerVisible = true
   }
 
@@ -175,46 +196,7 @@
     downloadFile(filename, data)
   }
 
-  // eslint-disable-next-line
-  function MapQueryInfoControl() {}
-
-  MapQueryInfoControl.prototype.onAdd = function (map: Map) {
-    this.map = map
-    this.container = document.createElement('div')
-    this.container.title = 'Query Layer Information'
-    this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
-
-    this.queryInfoContainer = document.createElement('div')
-    this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
-    this.container.appendChild(this.queryInfoContainer)
-
-    this.button = document.createElement('button')
-    this.button.classList.add('mapboxgl-query-info-control')
-    this.button.type = 'button'
-    this.button.addEventListener('click', () => {
-      if (isDataContainerVisible === false) {
-        map.getCanvas().style.cursor = 'crosshair'
-        isDataContainerVisible = true
-      } else {
-        resetMapQueryInfo()
-      }
-    })
-    this.container.appendChild(this.button)
-
-    return this.container
-  }
-
-  MapQueryInfoControl.prototype.onRemove = function () {
-    if (!this.container || !this.container.parentNode || !this.map || !this.button) {
-      return
-    }
-    this.container.parentNode.removeChild(this.container)
-    this.map = undefined
-  }
-
   onMount(async () => {
-    mapQueryInfoControl = new MapQueryInfoControl()
-
     new Moveable(document.body, {
       className: 'moveable-control',
       draggable: true,
@@ -252,7 +234,7 @@
   let layerValuesExpanded = []
 </script>
 
-<div id="data-container" class="data-container target" hidden={!isDataContainerVisible}>
+<div id="data-container" class="data-container target" hidden={isDataContainerVisible === false}>
   <div id="header" class="header">
     <div class="name">Query Information</div>
 
@@ -294,7 +276,8 @@
         <thead>
           <tr>
             <th>Layer Name</th>
-            <th>Values</th>
+            <th>Pixel Values</th>
+            <th>Label</th>
           </tr>
         </thead>
         <tbody>
@@ -310,8 +293,9 @@
                   {layerValue.name}
                 </div>
               </td>
-              {#if layerValue.values && layerValue.values.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR)}
+              {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
                 <td class="second-column"> N/A </td>
+                <td class="third-column"> N/A </td>
               {:else if layerValue.type === LayerTypes.RASTER}
                 {#if isValuesRounded === true}
                   <td class="second-column">
@@ -323,6 +307,13 @@
                   <td class="second-column">
                     {layerValue.values.join(', ')}
                   </td>
+                {/if}
+                {#if layerValue.legendLabels.length > 0}
+                  <td class="third-column">
+                    {layerValue.legendLabels}
+                  </td>
+                {:else}
+                  <td class="third-column"> N/A </td>
                 {/if}
               {:else if layerValue.type === LayerTypes.VECTOR}
                 <td class="second-column">
@@ -421,12 +412,13 @@
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
-    left: 10px;
+    right: 10px;
     min-height: 250px;
     min-width: 325px;
+    width: fit-content;
     padding: 10px;
     position: absolute;
-    width: 325px;
+    //width: 325px;
 
     .header {
       align-items: right;
@@ -480,12 +472,12 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 200px;
+          width: 100px;
         }
       }
       .second-column {
         overflow: hidden;
-        text-align: right;
+        text-align: left;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 125px;
@@ -557,5 +549,12 @@
     background-repeat: no-repeat !important;
     background-size: 75% !important;
     background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>');
+  }
+  .third-column {
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 125px;
   }
 </style>
