@@ -15,7 +15,8 @@ const config = {
   },
 
   onwarn(warning, defaultHandler) {
-    const warningCodeToIgnore = ['a11y-missing-content', 'a11y-missing-attribute']
+    if (process.env.NODE_ENV === 'production') return
+    const warningCodeToIgnore = ['a11y-missing-content', 'a11y-missing-attribute', 'css-unused-selector']
     if (warningCodeToIgnore.includes(warning.code)) return
 
     defaultHandler(warning)
