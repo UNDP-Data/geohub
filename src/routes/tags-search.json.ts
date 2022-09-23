@@ -1,8 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import NodeCache from 'node-cache'
-import {
-  AccountSASPermissions,
+import azure, {
   BlobSASPermissions,
   BlobServiceClient,
   generateBlobSASQueryParameters,
@@ -22,7 +21,7 @@ const blobServiceClient = new BlobServiceClient(
   sharedKeyCredential,
 )
 
-export async function GET({ url }) {
+export async function get({ url }) {
   const containers = new Set()
   console.clear()
   const startTime = performance.now()
@@ -30,7 +29,7 @@ export async function GET({ url }) {
   let tagsFilteredParam = []
   const accountSasTokenUri = blobServiceClient.generateAccountSasUrl(
     new Date(new Date().valueOf() + 86400000),
-    AccountSASPermissions.parse('r'),
+    azure.AccountSASPermissions.parse('r'),
     'o',
   )
 
@@ -134,8 +133,8 @@ export async function GET({ url }) {
   console.log(`    `)
   console.log(`-------------- ${((endTime - startTime) / 1000).toFixed(2)} seconds`)
 
-  return new Response(
-    JSON.stringify({
+  return {
+    body: {
       tags: tagsFilteredParam,
       blobCount: blobs.length,
       containerCount: [...containers].length,
@@ -144,6 +143,6 @@ export async function GET({ url }) {
         containers: [...containers].sort(),
       },
       responseTime: endTime - startTime,
-    }),
-  )
+    },
+  }
 }

@@ -8,7 +8,7 @@ import type { TreeNode } from '$lib/types'
 const __dirname = path.resolve()
 const COG_MIME_TYPE = 'image/tiff; application=geotiff; profile=cloud-optimized'
 
-export async function GET({ url }) {
+export async function get({ url }) {
   const startTime = performance.now()
   let tree: TreeNode = {}
 
@@ -108,12 +108,12 @@ export async function GET({ url }) {
 
   const endTime = performance.now()
 
-  return new Response(
-    JSON.stringify({
+  return {
+    body: {
       tree,
       responseTime: endTime - startTime,
-    }),
-  )
+    },
+  }
 }
 
 const getStacFileData = (file: string) => {

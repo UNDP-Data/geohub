@@ -3,7 +3,7 @@ import path from 'path'
 
 const __dirname = path.resolve()
 
-export async function GET() {
+export async function get() {
   const startTime = performance.now()
 
   const filePath = `${__dirname}/data/tags.json`
@@ -15,10 +15,10 @@ export async function GET() {
 
   const endTime = performance.now()
 
-  return new Response(
-    JSON.stringify({
+  return {
+    body: {
       tags,
       responseTime: endTime - startTime,
-    }),
-  )
+    },
+  }
 }
