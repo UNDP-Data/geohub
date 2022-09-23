@@ -10,6 +10,9 @@ export default defineConfig({
     threads: false,
     globals: true,
     environment: 'jsdom',
+    exclude: [
+      '**/components/**'
+    ],
     setupFiles: ['./setupTest.ts'],
     // deps: {
     //   inline: [/@smui/],
