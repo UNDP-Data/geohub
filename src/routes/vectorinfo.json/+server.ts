@@ -3,6 +3,7 @@ import Pbf from 'pbf'
 import arraystat from 'arraystat'
 import { ErrorMessages } from '$lib/constants'
 import { mean, std, median } from 'mathjs'
+import { error } from '@sveltejs/kit'
 
 const propsObj = {}
 
@@ -116,10 +117,7 @@ export async function GET(query: any) {
     !query.url.searchParams.has('path') ||
     !query.url.searchParams.has('layer_name')
   ) {
-    return {
-      code: 400,
-      message: ErrorMessages.VECTOR_INFO_BAD_REQUEST,
-    }
+    throw error(400, ErrorMessages.VECTOR_INFO_BAD_REQUEST)
   }
 
   const path = query.url.searchParams.get('path')

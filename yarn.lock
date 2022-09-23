@@ -1436,7 +1436,7 @@
     tiny-glob "^0.2.9"
     undici "^5.8.1"
 
-"@sveltejs/vite-plugin-svelte@^1.0.5":
+"@sveltejs/vite-plugin-svelte@^1.0.5", "@sveltejs/vite-plugin-svelte@^1.0.8":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@sveltejs/vite-plugin-svelte/-/vite-plugin-svelte-1.0.8.tgz#a8ebf58d3efc7bdb9eb8692ef3d78fdc39a6baa8"
   integrity sha512-1xkVTB4pm6zuign858FzVYE9Fdw9MQBOlxrdd85STV0NvTDmcofcRpcrK+zcIyT8SZ2dseHLu8hvDwzssF6RfA==
