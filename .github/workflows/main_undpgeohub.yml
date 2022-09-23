@@ -51,13 +51,13 @@ jobs:
         run: yarn ci:lint
 
       - name: Run Prettier
-        run: yarn ci:prettier
+        run: yarn prettier
 
       - name: Run build
         run: yarn ci:compile
 
       - name: Run unit tests
-        run: yarn ci:test
+        run: yarn test
 
       - name: Copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}

@@ -11,15 +11,6 @@ const config = {
     include: ['fast-deep-equal', 'clone', 'semver', 'json-stringify-pretty-compact', 'fast-json-stable-stringify'],
     exclude: ['path'],
   },
-  // test: {
-  //   threads: false,
-  //   globals: true,
-  //   environment: 'jsdom',
-  //   setupFiles: ['./jest-setup.ts'],
-  //   deps: {
-  //     inline: [/@smui/],
-  //   },
-  // },
   resolve: {
     alias: {
       $components: resolve('./src/components'),

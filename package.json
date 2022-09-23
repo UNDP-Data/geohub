@@ -21,9 +21,7 @@
     "test": "vitest --run --dir src --passWithNoTests --config vitest.config.js",
     "test:watch": "vitest --watch --dir src --passWithNoTests --config vitest.config.js",
     "ci:compile": "node --max_old_space_size=4096 ./node_modules/vite/bin/vite.js build",
-    "ci:lint": "eslint --ignore-path .gitignore . --quiet",
-    "ci:test": "vitest --run --dir src --passWithNoTests --config vitest.config.js --reporter verbose",
-    "ci:prettier": "prettier --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore"
+    "ci:lint": "eslint --ignore-path .gitignore . --quiet"
   },
   "devDependencies": {
     "@azure/storage-blob": "^12.11.0",
@@ -62,7 +60,7 @@
     "@sveltejs/adapter-node": "^1.0.0-next.95",
     "@sveltejs/kit": "^1.0.0-next.499",
     "@sveltejs/vite-plugin-svelte": "^1.0.8",
-    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/svelte": "^3.1.3",
     "@turf/area": "^6.5.0",
     "@turf/bearing": "^6.5.0",

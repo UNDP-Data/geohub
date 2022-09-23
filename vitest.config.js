@@ -10,7 +10,7 @@ export default defineConfig({
     threads: false,
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./jest-setup.ts'],
+    setupFiles: ['./setupTest.ts'],
     // deps: {
     //   inline: [/@smui/],
     // },
