@@ -18,11 +18,11 @@
     "smui-theme-light": "smui-theme compile static/smui.css -i src/styles/theme",
     "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/styles/theme/dark",
     "prepare": "npm run smui-theme-light && npm run smui-theme-dark && husky install",
-    "test": "vitest --run --dir src --passWithNoTests",
-    "test:watch": "vitest --watch --dir src --passWithNoTests",
+    "test": "vitest --run --dir src --passWithNoTests --config vitest.config.js",
+    "test:watch": "vitest --watch --dir src --passWithNoTests --config vitest.config.js",
     "ci:compile": "node --max_old_space_size=4096 ./node_modules/vite/bin/vite.js build",
     "ci:lint": "eslint --ignore-path .gitignore . --quiet",
-    "ci:test": "vitest --run --dir src --passWithNoTests --reporter verbose",
+    "ci:test": "vitest --run --dir src --passWithNoTests --config vitest.config.js --reporter verbose",
     "ci:prettier": "prettier --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore"
   },
   "devDependencies": {

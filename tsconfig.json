@@ -31,5 +31,5 @@
       "$stores": ["src/stores/index.ts"]
     }
   },
-  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.test.ts", "src/**/*.svelte", "vitest.config.js"]
+  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.test.ts", "src/**/*.svelte"]
 }

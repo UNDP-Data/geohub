@@ -1,10 +1,10 @@
-import { sveltekit } from '@sveltejs/kit/vite';
+import { sveltekit } from '@sveltejs/kit/vite'
 import { resolve } from 'path'
 
 /** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [sveltekit()],
-	ssr: {
+  plugins: [sveltekit()],
+  ssr: {
     noExternal: [/^@material(?:-extra)?\//, 'vega-embed'],
   },
   optimizeDeps: {
@@ -26,6 +26,6 @@ const config = {
       $stores: resolve('./src/stores/index.ts'),
     },
   },
-};
+}
 
-export default config;
+export default config
