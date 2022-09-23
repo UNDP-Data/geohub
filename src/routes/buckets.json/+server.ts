@@ -13,16 +13,16 @@ const listContainerOpts: ServiceListContainersOptions = { includeMetadata: true 
 const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
 const __dirname = path.resolve()
 
-export async function get() {
+export async function GET() {
   const stacContainers = getStacContainers()
   const martinContainers = getMartinContainers()
   const buckets = await listContainers()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       buckets: [...stacContainers, ...martinContainers, ...buckets],
-    },
-  }
+    }),
+  )
 }
 
 const listContainers = async () => {

@@ -1,5 +1,6 @@
 import pkg from 'pg'
 const { Pool } = pkg
+import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -7,7 +8,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * Delete style.json which is stored in PostgreSQL database
  * DELETE: ./style/{id}
  */
-export async function del({ params }) {
+export async function DELETE({ params }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -24,22 +25,16 @@ export async function del({ params }) {
     if (res.rowCount === 0) {
       throw new Error(`${styleId} does not exist in the database`)
     }
-    return {
+    return new Response('', {
       status: 204,
       headers: {
         'access-control-allow-origin': '*',
       },
-    }
+    })
   } catch (err) {
-    return {
-      status: 400,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: {
-        message: err.message,
-      },
-    }
+    throw error(400, {
+      message: err.message,
+    })
   } finally {
     client.release()
     pool.end()

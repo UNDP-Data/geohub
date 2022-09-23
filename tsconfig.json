@@ -12,7 +12,7 @@
     "importsNotUsedAsValues": "error",
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "types": ["vi-fetch/matchers"],
+    "types": ["vi-fetch/matchers", "vitest/globals", "@testing-library/jest-dom"],
     /**
 			To have warnings/errors of the Svelte compiler at the correct position,
 			enable source maps by default.
@@ -31,5 +31,5 @@
       "$stores": ["src/stores/index.ts"]
     }
   },
-  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.test.ts", "src/**/*.svelte", "vitest.config.js"]
+  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.test.ts", "src/**/*.svelte"]
 }
