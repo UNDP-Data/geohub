@@ -1,5 +1,4 @@
 import adapter from '@sveltejs/adapter-node'
-import { resolve } from 'path'
 import preprocess from 'svelte-preprocess'
 // import json from '@rollup/plugin-json'
 
