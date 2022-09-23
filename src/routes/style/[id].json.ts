@@ -1,6 +1,5 @@
 import pkg from 'pg'
 const { Pool } = pkg
-import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -8,7 +7,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * Get style.json which is stored in PostgreSQL database
  * GET: ./style/{id}.json
  */
-export async function GET({ params }) {
+export async function get({ params }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -26,11 +25,23 @@ export async function GET({ params }) {
       throw new Error(`${styleId} does not exist in the database`)
     }
     const style = res.rows[0].style
-    return new Response(JSON.stringify(style))
+    return {
+      status: 200,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: style,
+    }
   } catch (err) {
-    throw error(400, {
-      message: err.message,
-    })
+    return {
+      status: 400,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: {
+        message: err.message,
+      },
+    }
   } finally {
     client.release()
     pool.end()

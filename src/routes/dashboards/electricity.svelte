@@ -1,24 +1,24 @@
 <script lang="ts">
   import { style } from 'svelte-body'
-  import Header from '../../components/Header.svelte'
-  import Content from '../../components/Content.svelte'
-  import Map from '../../components/Map.svelte'
-
+  import Content from '../../dashboards/components/Content.svelte'
+  import Map from '../../dashboards/components/Map.svelte'
   let drawerOpen = true
-  let panelOpen = false
+  let loadLayers = () => {
+    return
+  }
 </script>
 
+<svelte:head>
+  <link rel="stylesheet" href="../smui.css" media="(prefers-color-scheme: light)" />
+  <link rel="stylesheet" href="../smui-dark.css" media="screen and (prefers-color-scheme: dark)" />
+</svelte:head>
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Header bind:drawerOpen bind:panelOpen />
-<Content bind:drawerOpen>
-  <Map />
+<Content bind:drawerOpen bind:loadLayers>
+  <Map on:styleChanged={loadLayers} />
 </Content>
 
-<slot />
-
 <style global lang="scss">
-  @import 'src/styles/undp-design/fonts';
   body,
   html {
     font-family: ProximaNova, sans-serif;

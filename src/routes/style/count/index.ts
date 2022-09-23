@@ -1,6 +1,5 @@
 import pkg from 'pg'
 const { Pool } = pkg
-import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -8,7 +7,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * Get the total number of records of style table
  * GET: ./style/count
  */
-export async function GET() {
+export async function get() {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -19,15 +18,25 @@ export async function GET() {
 
     const res = await client.query(query)
 
-    return new Response(
-      JSON.stringify({
+    return {
+      status: 200,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: {
         count: res.rows[0].count,
-      }),
-    )
+      },
+    }
   } catch (err) {
-    throw error(400, {
-      message: err.message,
-    })
+    return {
+      status: 400,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: {
+        message: err.message,
+      },
+    }
   } finally {
     client.release()
     pool.end()

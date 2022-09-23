@@ -1,6 +1,5 @@
 import pkg from 'pg'
 const { Pool } = pkg
-import { error } from '@sveltejs/kit'
 
 const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
 
@@ -17,7 +16,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  *   }
  * ]
  */
-export async function GET({ url }) {
+export async function get({ url }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -37,7 +36,12 @@ export async function GET({ url }) {
 
     const res = await client.query(query)
     if (res.rowCount === 0) {
-      throw error(404)
+      return {
+        status: 404,
+        headers: {
+          'access-control-allow-origin': '*',
+        },
+      }
     }
 
     res.rows.forEach((row) => {
@@ -46,11 +50,23 @@ export async function GET({ url }) {
       row.viewer = `${url.origin}/viewer?style=${row.style}`
     })
 
-    return new Response(JSON.stringify(res.rows))
+    return {
+      status: 200,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: res.rows,
+    }
   } catch (err) {
-    throw error(400, {
-      message: err.message,
-    })
+    return {
+      status: 400,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: {
+        message: err.message,
+      },
+    }
   } finally {
     client.release()
     pool.end()
@@ -65,7 +81,7 @@ export async function GET({ url }) {
  *   style: [style.json]
  * }
  */
-export async function POST({ request, url }) {
+export async function post({ request, url }) {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -87,15 +103,25 @@ export async function POST({ request, url }) {
       throw new Error('failed to insert to the database.')
     }
     const id = res.rows[0].id
-    return new Response(
-      JSON.stringify({
+    return {
+      status: 200,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: {
         url: `${url.origin}/viewer?style=${url.origin}/style/${id}.json`,
-      }),
-    )
+      },
+    }
   } catch (err) {
-    throw error(400, {
-      message: err.message,
-    })
+    return {
+      status: 400,
+      headers: {
+        'access-control-allow-origin': '*',
+      },
+      body: {
+        message: err.message,
+      },
+    }
   } finally {
     client.release()
     pool.end()
