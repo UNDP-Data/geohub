@@ -20,7 +20,7 @@
     "prepare": "npm run smui-theme-light && npm run smui-theme-dark && husky install",
     "test": "vitest --run --dir src --passWithNoTests",
     "test:watch": "vitest --watch --dir src --passWithNoTests",
-    "ci:compile": "vite build",
+    "ci:compile": "node --max_old_space_size=4096 ./node_modules/vite/bin/vite.js build",
     "ci:lint": "eslint --ignore-path .gitignore . --quiet",
     "ci:test": "vitest --run --dir src --passWithNoTests --reporter verbose",
     "ci:prettier": "prettier --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore"
