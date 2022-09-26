@@ -1,11 +1,12 @@
+import type { RequestHandler } from './$types'
 import {
+  AccountSASPermissions,
   BlobServiceClient,
   StorageSharedKeyCredential,
   generateBlobSASQueryParameters,
   BlobSASPermissions,
 } from '@azure/storage-blob'
 
-import azure from '@azure/storage-blob'
 import type { Tree, TreeNode } from '$lib/types'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
 import { fetchUrl } from '$lib/helper'
@@ -31,7 +32,7 @@ const listContainer = async (containerName: string, relPath: string) => {
 
   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
     new Date(new Date().valueOf() + 86400000),
-    azure.AccountSASPermissions.parse('r'),
+    AccountSASPermissions.parse('r'),
     'o',
   )
   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
@@ -144,10 +145,10 @@ const listContainers = async (prefix = '/') => {
   }
 }
 
-export async function get(query: any) {
+export const GET: RequestHandler = async ({ url }) => {
   let path = '/'
-  if (query.url.searchParams.has('path')) {
-    path = !path.endsWith('/') ? `${path}/` : query.url.searchParams.get('path')
+  if (url.searchParams.has('path')) {
+    path = !path.endsWith('/') ? `${path}/` : url.searchParams.get('path')
   }
 
   let tree: Tree
@@ -162,7 +163,5 @@ export async function get(query: any) {
     )
   }
 
-  return {
-    body: tree,
-  }
+  return new Response(JSON.stringify(tree))
 }

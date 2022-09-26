@@ -16,13 +16,16 @@
   let drawerOpen = true
   let panelOpen = false
 
-  export let buckets = [BucketIntialValues as Bucket]
-  $bucketList = buckets
+  /** @type {import('./$types').PageData} */
+  export let data
+  console.log(data)
+  // export let buckets = [BucketIntialValues as Bucket]
+  $bucketList = data.buckets
 </script>
 
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Header_UNDP bind:drawerOpen bind:panelOpen />
+<Header_UNDP bind:drawerOpen />
 <Content_UNDP bind:drawerOpen>
   <Map />
 </Content_UNDP>
