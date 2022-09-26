@@ -7,8 +7,6 @@
   import Content_UNDP from '$components/UNDPComponents/Content_UNDP.svelte'
   //Fixme: End of new redesign components
 
-  import Content from '$components/Content.svelte'
-  import Header from '$components/Header.svelte'
   import Map from '$components/Map.svelte'
   import { BucketIntialValues } from '$lib/constants'
   import type { Bucket } from '$lib/types'
@@ -33,11 +31,7 @@
 <Content_UNDP bind:drawerOpen>
   <Map />
 </Content_UNDP>
-<!--<Header bind:drawerOpen bind:panelOpen />-->
-<!--<Content bind:drawerOpen>-->
-<!--  <Map />-->
 
-<!--</Content>-->
 <style global lang="scss">
   body,
   html {

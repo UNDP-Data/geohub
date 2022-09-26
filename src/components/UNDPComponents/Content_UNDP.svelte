@@ -106,6 +106,8 @@
 </div>
 
 <style lang="scss">
+  @import 'bulma/css/bulma.css';
+
   .content-container {
     display: flex;
     flex-direction: column;
