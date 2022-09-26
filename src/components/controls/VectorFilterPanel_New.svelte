@@ -20,7 +20,7 @@
       placement: 'right',
       strategy: 'fixed',
     },
-    [300, 60],
+    [10, 15],
   ).init()
 
   // vars
@@ -63,26 +63,43 @@
     expressionsArray[currentExpressionIndex]['propertyStats'] = propertyStats
   }
 
-  // Apply expression to layer
-  const handleApplyExpression = () => {
-    // generate mapbox expression from expressionsArray
-    if (expressionsArray.length === 0) return
-    console.log(expressionsArray)
-    const expression = expressionsArray.map((expression) => {
+  const generateExpressionFromExpressionsArray = (expressionsArray) => {
+    return expressionsArray.map((expression) => {
       if (expression['property'] === undefined) return
       if (expression['operation'] === undefined) return
       if (expression['value'] === undefined) return
-      return [expression['operator'], ['get', expression['property']], expression['value']]
+      return [expression['operation'], ['get', expression['property']], Number(expression['value'])]
     })
-    if (expression.length === 1) {
-      $map.setFilter(layerId, expression[0])
-    } else {
-      $map.setFilter(layerId, [selectedCombiningOperator, ...expression])
+  }
+
+  const generateFilterExpression = (expressionsArray) => {
+    const expression = generateExpressionFromExpressionsArray(expressionsArray)
+    if (expression.length === 0) return
+    if (expression.length === 1) return expression[0]
+    return [selectedCombiningOperator, ...expression]
+  }
+
+  // Apply expression to layer
+  const handleApplyExpression = () => {
+    const expression = generateFilterExpression(expressionsArray)
+    if (expression === undefined) {
+      filteringError = true
+      return
     }
-    // Check if the filtered layer has a label layer and if true, apply the filter to the label layer
+    filteringError = false
+    layer.definition.filter = expression
+    $map.setFilter(layerId, expression)
+
+    // if layer has labels, set filter on labels
     $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
       ? $map.setFilter(`${layerId}-label`, expression)
       : null
+
+    console.log(expression)
+    // map.update((map) => {
+    //   map.setFilter(layerId, expression)
+    //   return map
+    // })
 
     $map.on('error', (err: ErrorEvent) => {
       showBannerMessage(err.error)
@@ -115,24 +132,44 @@
     currentExpressionIndex = currentExpressionIndex - 1
     expressionsArray = expressionsArray.length < 1 ? [...expressionsArray, {}] : [...expressionsArray]
   }
+
+  // Clear all expressions applied to the layer and reset the UI
+  const handleClearExpression = () => {
+    $map.setFilter(layerId, null)
+    currentExpressionIndex = 0
+    expressionsArray = [
+      {
+        index: 0,
+        property: '',
+        value: '',
+        operator: '',
+      },
+    ]
+    expressionsArray.splice(currentExpressionIndex, 1, {})
+
+    // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
+    $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
+      ? $map.setFilter(`${layerId}-label`, null)
+      : null
+  }
 </script>
 
 <svelte:head>
   <link rel="stylesheet" href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css" />
 </svelte:head>
 {#if isFilterPanelVisible === true}
-  <div style="display: flex; align-items: center;">
+  <div style="display: flex; align-items: center;" use:popperRef>
     <div class="filter-content" style="width: 90%">
       <div class="static-content-filter">
         <div class="select is-small">
           <select bind:value={selectedCombiningOperator}>
             <option value="all">every filter Matches</option>
-            <option value="or">any filter matches</option>
+            <option value="any">any filter matches</option>
             <option value="none">no filter matches</option>
           </select>
         </div>
         <button on:click={handleApplyExpression} class="button primary-button is-small">Apply</button>
-        <button class="button secondary-button is-small">Clear</button>
+        <button on:click={handleClearExpression} class="button secondary-button is-small">Clear</button>
       </div>
       {#each expressionsArray as expression, index}
         <div class="dynamic-content-filter">
@@ -151,9 +188,9 @@
             <select bind:value={expression.operation}>
               <option>==</option>
               <option>!=</option>
-              <option value=">">&#060;</option>
+              <option value="<">&#060;</option>
               <option value=">=">&#8805;</option>
-              <option value="<">&#062; </option>
+              <option value=">">&#062; </option>
               <option value="<=">&#8804;</option>
               <option value="in">in</option>
               <option value="!in">!in</option>
@@ -163,23 +200,30 @@
           </div>
           {#if showTooltip && expression.property && index === currentExpressionIndex}
             <div
-              class="card"
+              class="card tooltip"
               use:popperContent={popperOptions}
-              use:popperRef
               style="width: max-content; height: fit-content; z-index:99999">
-              <div id="card tooltip">
-                <button style="margin: auto" class="delete" on:click={() => (showTooltip = false)} />
+              <div id="card">
+                <header class="modal-card-head">
+                  <p class="modal-card-title has-text-weight-bold" />
+                  <button
+                    class="delete"
+                    aria-label="close"
+                    alt="Close Tooltip"
+                    title="Close Tooltip"
+                    on:click={() => (showTooltip = false)} />
+                </header>
                 {#if expression.property}
                   <div class="card-content">
                     <div class="content" style="width:100%; height:100%">
                       <!--  Todo: Need to check for existence of the `propertyStats` attribute in the expression -->
                       {#if expression.propertyStats.histogram}
-                        <div style="display: block; vertical-align:  middle">
+                        <div style="display: block;">
                           <VectorHistogram
                             bind:histogram={expression.propertyStats.histogram}
                             bind:propertySelected={expression.property} />
                           <input
-                            style="width: 500px"
+                            style="margin-left: auto; margin-right: auto;"
                             bind:value={expression.value}
                             class="slider is-fullwidth is-small"
                             step={(expression.propertyStats.histogram.bins[
