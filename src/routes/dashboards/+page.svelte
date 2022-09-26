@@ -1,21 +1,15 @@
-<script lang="ts" context="module">
-  const modules = import.meta.glob('./*.svelte')
-
-  let pages = []
-  for (let page in modules) {
-    let path = page.replace('.svelte', '').replace('./', '/')
-    pages.push({
-      title: path.substring(page.lastIndexOf('/')),
-      link: `dashboards${path.includes('index') ? path.replace('index', '') : path}`,
-    })
-  }
-</script>
-
 <script lang="ts">
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
   import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
+
+  let pages = [
+    {
+      title: 'Electricity',
+      link: 'dashboards/electricity',
+    },
+  ]
 </script>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
