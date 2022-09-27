@@ -295,7 +295,7 @@
     <div class="column">
       <div class="has-text-centered pb-2">Classification</div>
       <div class="is-flex is-justify-content-center">
-        <div class="select is-justify-content-center">
+        <div class="select is-small is-justify-content-center">
           <select
             bind:value={classificationMethod}
             on:change={handleClassificationChange}

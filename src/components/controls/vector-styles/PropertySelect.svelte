@@ -53,8 +53,9 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">
-  <div class="select is-flex is-justify-content-left">
+<!--<div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">-->
+<div class="control has-icons-left">
+  <div style="margin-right: 2%" class="select is-flex is-justify-content-left select is-small">
     <select
       style="width: 100%"
       class="is-small"
@@ -69,7 +70,11 @@
       {/if}
     </select>
   </div>
+  <span class="icon is-small is-left">
+    <i style="color:black" class="fas fa-table-list" />
+  </span>
 </div>
 
+<!--</div>-->
 <style lang="scss">
 </style>
