@@ -83,6 +83,7 @@
       ]
     }
     data = { table: table }
+    return data
   }
 
   onMount(async () => {
@@ -91,8 +92,8 @@
   })
 
   $: propertySelected, (specVL = generateSpec(propertySelected))
+  $: propertySelected, (data = generateDataFromHist(histogram))
   $: histogram, generateDataFromHist(histogram)
-  $: propertySelected, generateDataFromHist(histogram)
 
   const vegaOptions = { actions: false, renderer: 'svg' }
 </script>

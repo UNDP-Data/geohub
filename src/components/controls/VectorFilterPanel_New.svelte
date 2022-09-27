@@ -5,6 +5,7 @@
   import type { BannerMessage } from '$lib/types'
   import Popper from '$lib/popper'
   import VectorHistogram from '../VectorHistogram.svelte'
+  import StyleControlGroup from '../control-groups/StyleControlGroup.svelte'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -95,7 +96,6 @@
       ? $map.setFilter(`${layerId}-label`, expression)
       : null
 
-    console.log(expression)
     // map.update((map) => {
     //   map.setFilter(layerId, expression)
     //   return map
@@ -127,6 +127,7 @@
   // Remove a single expression from the expression. It does not reset map if the
   // expression was already applied
   const removeLastExpression = () => {
+    showTooltip = false
     const index = expressionsArray.length - 1
     expressionsArray.splice(index, 1)
     currentExpressionIndex = currentExpressionIndex - 1
@@ -158,19 +159,21 @@
   <link rel="stylesheet" href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css" />
 </svelte:head>
 {#if isFilterPanelVisible === true}
+  <StyleControlGroup title="Define conditions" style="display: flex; align-items: center">
+    <span>Combine rules:</span>
+    <div class="select is-small">
+      <select bind:value={selectedCombiningOperator}>
+        <option value="all">All conditons must be true</option>
+        <option value="any">At least one condition must be true</option>
+      </select>
+    </div>
+    <div class="static-content-filter">
+      <button on:click={addExpression} class="button primary-button is-small">Add condition</button>
+      <button on:click={removeLastExpression} class="button secondary-button is-small">Remove condition</button>
+    </div>
+  </StyleControlGroup>
   <div style="display: flex; align-items: center;" use:popperRef>
     <div class="filter-content" style="width: 90%">
-      <div class="static-content-filter">
-        <div class="select is-small">
-          <select bind:value={selectedCombiningOperator}>
-            <option value="all">every filter Matches</option>
-            <option value="any">any filter matches</option>
-            <option value="none">no filter matches</option>
-          </select>
-        </div>
-        <button on:click={handleApplyExpression} class="button primary-button is-small">Apply</button>
-        <button on:click={handleClearExpression} class="button secondary-button is-small">Clear</button>
-      </div>
       {#each expressionsArray as expression, index}
         <div class="dynamic-content-filter">
           <PropertySelect
@@ -186,8 +189,8 @@
             {setDefaultProperty} />
           <div class="select is-small" style="margin-right:5%;">
             <select bind:value={expression.operation}>
-              <option>==</option>
-              <option>!=</option>
+              <option value="==">==</option>
+              <option value="!=">!=</option>
               <option value="<">&#060;</option>
               <option value=">=">&#8805;</option>
               <option value=">">&#062; </option>
@@ -204,7 +207,7 @@
               use:popperContent={popperOptions}
               style="width: max-content; height: fit-content; z-index:99999">
               <div id="card">
-                <header class="modal-card-head">
+                <header style="padding: 5px; background: white; border: 0" class="modal-card-head">
                   <p class="modal-card-title has-text-weight-bold" />
                   <button
                     class="delete"
@@ -213,7 +216,8 @@
                     title="Close Tooltip"
                     on:click={() => (showTooltip = false)} />
                 </header>
-                {#if expression.property}
+                <!--                Todo: If expression contains a property-->
+                {#if expression.property !== '' && expression.propertyStats}
                   <div class="card-content">
                     <div class="content" style="width:100%; height:100%">
                       <!--  Todo: Need to check for existence of the `propertyStats` attribute in the expression -->
@@ -270,9 +274,9 @@
             placeholder="Value" />
         </div>
       {/each}
-      <div style="width: max-content; margin-top: 5%; margin-left: auto">
-        <button on:click={addExpression} class="button primary-button is-small">Add</button>
-        <button on:click={removeLastExpression} class="button secondary-button is-small">Remove</button>
+      <div class="buttons">
+        <button on:click={handleApplyExpression} class="button primary-button is-small apply">Apply</button>
+        <button on:click={handleClearExpression} class="button secondary-button is-small clear">Clear</button>
       </div>
     </div>
   </div>
@@ -315,6 +319,7 @@
   }
 
   .static-content-filter {
+    margin: 5px;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -331,5 +336,14 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 2px;
+  }
+  :global(.style-editing-box) {
+    margin: 0 !important;
+  }
+
+  .buttons {
+    width: max-content;
+    margin: auto;
+    margin-top: 5%;
   }
 </style>
