@@ -1,17 +1,14 @@
 import type { RequestHandler } from './$types'
 import { error } from '@sveltejs/kit'
-import pkg from 'pg'
-const { Pool } = pkg
-
-const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
+import { pgClient } from '$lib/util'
 
 /**
  * Get style.json which is stored in PostgreSQL database
  * GET: ./style/{id}.json
  */
 export const GET: RequestHandler = async ({ params }) => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const client = pgClient()
+  await client.connect()
   try {
     const styleId = params.id
     if (!styleId) {
@@ -22,16 +19,19 @@ export const GET: RequestHandler = async ({ params }) => {
       values: [styleId],
     }
 
-    const res = await client.query(query)
-    if (res.rowCount === 0) {
+    const res = await client.query(query.text, query.values)
+    if (res.rows.length === 0) {
       throw new Error(`${styleId} does not exist in the database`)
     }
-    const style = res.rows[0].style
+
+    let style
+    for await (const row of res) {
+      style = row.get('style')
+    }
     return new Response(JSON.stringify(style))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
   } finally {
-    client.release()
-    pool.end()
+    await client.end()
   }
 }

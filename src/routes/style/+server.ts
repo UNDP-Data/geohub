@@ -1,9 +1,6 @@
 import type { RequestHandler } from './$types'
 import { error } from '@sveltejs/kit'
-import pkg from 'pg'
-const { Pool } = pkg
-
-const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
+import { pgClient } from '$lib/util'
 
 /**
  * Get the list of saved style from PostGIS database
@@ -19,8 +16,8 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * ]
  */
 export const GET: RequestHandler = async ({ url }) => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const client = pgClient()
+  await client.connect()
   try {
     const limit = url.searchParams.get('limit')
     const offset = url.searchParams.get('offset')
@@ -36,23 +33,31 @@ export const GET: RequestHandler = async ({ url }) => {
       values: [...Object.keys(options).map((key) => options[key])],
     }
 
-    const res = await client.query(query)
-    if (res.rowCount === 0) {
+    const res = await client.query(query.text, query.values)
+    if (res.rows.length === 0) {
       throw error(404)
     }
 
-    res.rows.forEach((row) => {
-      const id = row.id
-      row.style = `${url.origin}/style/${id}.json`
-      row.viewer = `${url.origin}/viewer?style=${row.style}`
-    })
+    const rows = []
+    for await (const row of res) {
+      const _id = row.get('id')
+      const _style = `${url.origin}/style/${_id}.json`
+      const _viewer = `${url.origin}/viewer?style=${_style}`
+      const obj = {
+        id: _id,
+        name: row.get('name'),
+        createdat: row.get('createdat'),
+        style: _style,
+        viewer: _viewer,
+      }
+      rows.push(obj)
+    }
 
-    return new Response(JSON.stringify(res.rows))
+    return new Response(JSON.stringify(rows))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
   } finally {
-    client.release()
-    pool.end()
+    await client.end()
   }
 }
 
@@ -65,8 +70,8 @@ export const GET: RequestHandler = async ({ url }) => {
  * }
  */
 export const POST: RequestHandler = async ({ request, url }) => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const client = pgClient()
+  await client.connect()
   try {
     const body = await request.json()
     if (!body.name) {
@@ -81,11 +86,16 @@ export const POST: RequestHandler = async ({ request, url }) => {
       values: [body.name, JSON.stringify(body.style)],
     }
 
-    const res = await client.query(query)
-    if (res.rowCount === 0) {
+    const res = await client.query(query.text, query.values)
+    if (res.rows.length === 0) {
       throw new Error('failed to insert to the database.')
     }
-    const id = res.rows[0].id
+
+    let id: number
+    for await (const row of res) {
+      id = Number(row.get('id'))
+    }
+
     return new Response(
       JSON.stringify({
         url: `${url.origin}/viewer?style=${url.origin}/style/${id}.json`,
@@ -94,7 +104,6 @@ export const POST: RequestHandler = async ({ request, url }) => {
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
   } finally {
-    client.release()
-    pool.end()
+    await client.end()
   }
 }
