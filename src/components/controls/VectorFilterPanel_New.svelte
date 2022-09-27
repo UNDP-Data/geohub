@@ -159,19 +159,22 @@
   <link rel="stylesheet" href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css" />
 </svelte:head>
 {#if isFilterPanelVisible === true}
-  <StyleControlGroup title="Define conditions" style="display: flex; align-items: center">
-    <span>Combine rules:</span>
-    <div class="select is-small">
-      <select bind:value={selectedCombiningOperator}>
-        <option value="all">All conditons must be true</option>
-        <option value="any">At least one condition must be true</option>
-      </select>
-    </div>
-    <div class="static-content-filter">
-      <button on:click={addExpression} class="button primary-button is-small">Add condition</button>
-      <button on:click={removeLastExpression} class="button secondary-button is-small">Remove condition</button>
-    </div>
-  </StyleControlGroup>
+  <!--  <StyleControlGroup title="Define conditions" style="display: flex; align-items: center;">-->
+  <span style="margin: auto;">Combine rules:</span>
+  <div style="margin: auto;" class="select is-small">
+    <select bind:value={selectedCombiningOperator}>
+      <option value="all">All conditions must be true</option>
+      <option value="any">At least one condition must be true</option>
+    </select>
+  </div>
+  <div class="is-divider separator mb-3 mt-3" />
+  <div class="static-content-filter">
+    <button on:click={addExpression} class="button primary-button is-small">Add condition</button>
+    <button on:click={removeLastExpression} class="button secondary-button is-small">Remove condition</button>
+  </div>
+  <div class="is-divider separator mb-3 mt-3" />
+
+  <!--  </StyleControlGroup>-->
   <div style="display: flex; align-items: center;" use:popperRef>
     <div class="filter-content" style="width: 90%">
       {#each expressionsArray as expression, index}
@@ -338,7 +341,7 @@
     grid-gap: 2px;
   }
   :global(.style-editing-box) {
-    margin: 0 !important;
+    margin: auto !important;
   }
 
   .buttons {
