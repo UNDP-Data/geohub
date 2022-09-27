@@ -103,10 +103,12 @@
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
       isClassificationMethodEdited = true
     }
+    // Fixme: Possible bug in titiler. The Max value is not the real max in some layers
+    // 0.01 is added to the max value as in some layers, the max value is not the real max value.
     layerConfig.intervals.colorMapRows = generateColorMap(
       layerConfig,
       layerMin,
-      layerMax,
+      layerMax + 0.01,
       numberOfClasses,
       classificationMethod,
       isClassificationMethodEdited,
