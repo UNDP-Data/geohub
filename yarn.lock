@@ -1994,6 +1994,11 @@ bulma-o-steps@^1.1.0:
   dependencies:
     bulma "^0.8.2"
 
+bulma-slider@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/bulma-slider/-/bulma-slider-2.0.5.tgz#f84fb0b88704e33b76deac26801d7571c1db6a11"
+  integrity sha512-6woD/1E7q1o5bfEaQjNqpWZaCItC1oHe9bN15WYB2ELqz2gDaJYZkf+rlozGpAYOXQGDQGCCv3y+QuKjx6sQuw==
+
 bulma@^0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/bulma/-/bulma-0.8.2.tgz#5d928f16ed4a84549c2873f95c92c38c69c631a7"
