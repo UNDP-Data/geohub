@@ -18,7 +18,7 @@
         </tr>
       </thead>
       <tr>
-        <td>Selected files</td>
+        <td>Files</td>
         <td>
           <ul>
             {#each selectedFiles.accepted as file}
@@ -28,7 +28,7 @@
         </td>
       </tr>
       <tr>
-        <td>Selected SDG</td>
+        <td>Sustainable Development Goal</td>
         <td>
           {`${selectedSDG.number} - ${selectedSDG.name}`}
         </td>
