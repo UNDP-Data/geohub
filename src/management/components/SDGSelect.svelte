@@ -79,22 +79,11 @@
   }
 </script>
 
-{#if selectedSDG}
-  <div class="columns mr-5 ml-5 is-mobile is-vcentered">
-    <div class="column is-1">
-      <p>Selected:</p>
-    </div>
-    <div class="column">
-      <input class="input" type="text" value={`${selectedSDG.number} - ${selectedSDG.name}`} readonly />
-    </div>
-  </div>
-{/if}
-
-<div class="columns mr-5 ml-5 is-mobile is-multiline is-centered">
+<div class="columns mx-5 is-mobile is-multiline is-centered">
   {#each sdgs as sdg}
-    <div class="column">
+    <div class="column p-1 m-0 sdg-icon {`${selectedSDG && sdg.number === selectedSDG.number ? 'is-active' : ''}`}">
       <figure
-        class="image is-128x128 sdg-icon"
+        class="image is-128x128"
         on:click={() => {
           handleSDGSelect(sdg.number)
         }}>
@@ -107,5 +96,9 @@
 <style lang="scss">
   .sdg-icon {
     cursor: pointer;
+  }
+
+  .is-active {
+    background-color: yellow;
   }
 </style>
