@@ -31,18 +31,6 @@
     const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
     let layerStats
     const band = info.active_band_no
-    // if(layerURL.searchParams.get('expression')){
-    //   layerStats = await fetchUrl(`${statsURL}&expression=${layerURL.searchParams.get('expression')}`)
-    //   console.log(layerStats)
-    //   if(layerURL.searchParams.get('expression')[-1] === ';'){
-    //     band = layerURL.searchParams.get('expression').slice(0,-1)
-    //   }else{
-    //     band = layerURL.searchParams.get('expression')
-    //   }
-    // }else{
-    //   layerStats = await fetchUrl(statsURL)
-    //   band = info.active_band_no
-    // }
     layerStats = await fetchUrl(statsURL)
     const counts = layerStats[band]['histogram'][0]
     const sum = counts.reduce((a, b) => a + b, 0)
@@ -71,6 +59,8 @@
     })
 
     data = { table: table }
+
+    console.log(data)
   })
 
   let viewVL

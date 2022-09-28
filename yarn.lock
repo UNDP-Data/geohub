@@ -2020,6 +2020,23 @@ builtin-modules@^3.3.0:
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-3.3.0.tgz#cae62812b89801e9656336e46223e030386be7b6"
   integrity sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==
 
+bulma-o-steps@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/bulma-o-steps/-/bulma-o-steps-1.1.0.tgz#55ea73169e0f2a6bf502a23b485a012319512a7e"
+  integrity sha512-RelajORQ+tIY+CruowsEUzE6T5W5cbPp8Vskvu6Vgx5W45PcYhoP066Ls7kwMZl8M8djkxg+BcUswkX1a20hzg==
+  dependencies:
+    bulma "^0.8.2"
+
+bulma-slider@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/bulma-slider/-/bulma-slider-2.0.5.tgz#f84fb0b88704e33b76deac26801d7571c1db6a11"
+  integrity sha512-6woD/1E7q1o5bfEaQjNqpWZaCItC1oHe9bN15WYB2ELqz2gDaJYZkf+rlozGpAYOXQGDQGCCv3y+QuKjx6sQuw==
+
+bulma@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/bulma/-/bulma-0.8.2.tgz#5d928f16ed4a84549c2873f95c92c38c69c631a7"
+  integrity sha512-vMM/ijYSxX+Sm+nD7Lmc1UgWDy2JcL2nTKqwgEqXuOMU+IGALbXd5MLt/BcjBAPLIx36TtzhzBcSnOP974gcqA==
+
 bulma@^0.9.4:
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/bulma/-/bulma-0.9.4.tgz#0ca8aeb1847a34264768dba26a064c8be72674a1"
@@ -2579,6 +2596,11 @@ earcut@^2.2.4:
   resolved "https://registry.yarnpkg.com/earcut/-/earcut-2.2.4.tgz#6d02fd4d68160c114825d06890a92ecaae60343a"
   integrity sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==
 
+email-validator@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/email-validator/-/email-validator-2.0.4.tgz#b8dfaa5d0dae28f1b03c95881d904d4e40bfe7ed"
+  integrity sha512-gYCwo7kh5S3IDyZPLZf6hSS0MnZT8QmJFqYvbqlDZSbwdZlY6QZWxJ4i/6UhITOJ4XzyI647Bm2MXKCLqnJ4nQ==
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -2970,6 +2992,13 @@ file-saver@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
   integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
+
+file-selector@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/file-selector/-/file-selector-0.2.4.tgz#7b98286f9dbb9925f420130ea5ed0a69238d4d80"
+  integrity sha512-ZDsQNbrv6qRi1YTDOEWzf5J2KjZ9KMI1Q2SGeTkCJmNNW25Jg4TW4UMcmoqcg4WrAyKRcpBXdbWRxkfrOzVRbA==
+  dependencies:
+    tslib "^2.0.3"
 
 fill-range@^7.0.1:
   version "7.0.1"
@@ -4163,6 +4192,11 @@ prettier@^2.7.1:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
   integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
 
+pretty-bytes@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.0.0.tgz#928be2ad1f51a2e336add8ba764739f9776a8140"
+  integrity sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==
+
 pretty-format@^27.0.0, pretty-format@^27.0.2, pretty-format@^27.5.1:
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-27.5.1.tgz#2181879fdea51a7a5851fb39d920faa63f01d88e"
@@ -4514,6 +4548,11 @@ simple-get@^3.0.3:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
+simple-svelte-autocomplete@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/simple-svelte-autocomplete/-/simple-svelte-autocomplete-2.4.0.tgz#e5dbbfd813ea5e2b004132a2e0bd10abe984057f"
+  integrity sha512-hiYaT04ZP/zTZxKqwG9MefXP5tCN2MjQojuh1JYMT1rRnXOG4yHK7s5nHy1A+xd5v/PAnyb7ohijTsJk2SyfnQ==
+
 sirv@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/sirv/-/sirv-2.0.2.tgz#128b9a628d77568139cff85703ad5497c46a4760"
@@ -4674,7 +4713,7 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-svelte-awesome-color-picker@0.0.10:
+svelte-awesome-color-picker@^0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/svelte-awesome-color-picker/-/svelte-awesome-color-picker-0.0.10.tgz#004a6e86a7eece3416e4c7abb52ae64e0433a708"
   integrity sha512-9hla0LgUfADMK3UyWv6QrjWff8qduovfAg/3fMzk+lmlDcBIQ/JFVf6a/Pq1YcGTP+LgvgeGNvMX/WwMDc4gvw==
@@ -4710,6 +4749,13 @@ svelte-fa@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/svelte-fa/-/svelte-fa-3.0.3.tgz#49aa8627725b2533fb4d109b39cd8e64f7e54b7c"
   integrity sha512-GIikJjcVCD+5Y/x9hZc2R4gvuA0gVftacuWu1a+zVQWSFjFYZ+hhU825x+QNs2slsppfrgmFiUyU9Sz9gj4Rdw==
+
+svelte-file-dropzone@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/svelte-file-dropzone/-/svelte-file-dropzone-1.0.0.tgz#5a2cf0747d90ddcdac6167ebf0b54f62dfc3c4fa"
+  integrity sha512-F2DN+wN2w7bKuUJFYQOFsdtTgaohQ/rNKau5m5n2l3LHJRRIccYS4wpq8f6dz/h5aSxYse3oRclmYdW6FWAfjw==
+  dependencies:
+    file-selector "^0.2.4"
 
 svelte-hmr@^0.15.0:
   version "0.15.0"
@@ -4784,7 +4830,7 @@ svelte2tsx@^0.5.12:
     dedent-js "^1.0.1"
     pascal-case "^3.1.1"
 
-svelte@^3.50.1:
+svelte@^3.50.01:
   version "3.50.1"
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.50.1.tgz#b35fbc5e79ddd71e8bb27c3149ee6ff903841239"
   integrity sha512-bS4odcsdj5D5jEg6riZuMg5NKelzPtmsCbD9RG+8umU03TeNkdWnP6pqbCm0s8UQNBkqk29w/Bdubn3C+HWSwA==

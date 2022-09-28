@@ -14,6 +14,7 @@
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
+  import VectorFilterPanel_New from './controls/VectorFilterPanel_New.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -116,7 +117,7 @@
     </ul>
     <p class="panel-content">
       <VectorLegendPanel {layer} {isLegendPanelVisible} />
-      <VectorFilterPanel {layer} {isFilterPanelVisible} />
+      <VectorFilterPanel_New {layer} {isFilterPanelVisible} />
       <VectorLabelPanel {layer} {isLabelPanelVisible} />
       <OpacityPanel {layer} {isOpacityPanelVisible} />
     </p>

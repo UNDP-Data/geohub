@@ -142,7 +142,6 @@
     }
 
     layerValuesData = layerValuesDataTmp
-    console.log(layerValuesDataTmp)
     isDataContainerVisible = true
   }
 
