@@ -185,14 +185,4 @@
     border: 1px solid #ccc;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
   }
-
-  .metadata-control {
-    position: relative;
-  }
-
-  .condition-tag {
-    position: absolute;
-    top: 7px;
-    right: -20px;
-  }
 </style>
