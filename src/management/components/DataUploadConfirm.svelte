@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Metadata, SDG, UploadFiles } from '../interfaces'
   import prettyBytes from 'pretty-bytes'
+  import { MetadataConfig } from '../constants'
 
   export let selectedFiles: UploadFiles
   export let selectedSDG: SDG
@@ -35,7 +36,7 @@
       {#each Object.keys(metadata) as key}
         {#if metadata[key]}
           <tr>
-            <td>{key}</td>
+            <td>{MetadataConfig[key].title}</td>
             <td>
               {metadata[key]}
             </td>

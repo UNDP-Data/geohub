@@ -1,7 +1,17 @@
 <script lang="ts">
+  import AutoComplete from 'simple-svelte-autocomplete'
   import * as EmailValidator from 'email-validator'
   import type { Metadata } from '../interfaces'
-  import { continentals, countries, dataExtents, regions, resolutions, subnationals, units } from '../constants'
+  import {
+    continentals,
+    countries,
+    dataExtents,
+    MetadataConfig,
+    regions,
+    resolutions,
+    subnationals,
+    units,
+  } from '../constants'
 
   export let metadata: Metadata = {}
   export let metadataFormCompleted = false
@@ -47,13 +57,13 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">SDG Target</label>
+        <label class="label">{MetadataConfig.sdgTarget.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p class="control">
             <input
-              class="input {metadata.sdgTarget && metadata.sdgTarget.length > 0 ? 'is-success' : 'is-danger'}"
+              class="input"
               type="text"
               bind:value={metadata.sdgTarget}
               placeholder="represented by 2-3 keywords extracted from sdg target descriptions" />
@@ -65,13 +75,13 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Theme</label>
+        <label class="label">{MetadataConfig.theme.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p>
             <input
-              class="input {metadata.theme && metadata.theme.length > 0 ? 'is-success' : 'is-danger'}"
+              class="input"
               type="text"
               bind:value={metadata.theme}
               placeholder="the overall theme of the data collection, e.g., vegetation health, pregnancies" />
@@ -84,15 +94,13 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Layer description</label>
+        <label class="label">{MetadataConfig.layerDescription.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p>
             <input
-              class="input {metadata.layerDescription && metadata.layerDescription.length > 0
-                ? 'is-success'
-                : 'is-danger'}"
+              class="input"
               type="text"
               bind:value={metadata.layerDescription}
               placeholder="Description of the dataset" />
@@ -105,18 +113,17 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Year</label>
+        <label class="label">{MetadataConfig.year.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p />
-          <div class="select is-fullwidth is-success">
-            <select bind:value={metadata.year}>
-              {#each yearSelection as y}
-                <option value={y}>{y}</option>
-              {/each}
-            </select>
-          </div>
+          <AutoComplete
+            items={yearSelection}
+            bind:selectedItem={metadata.year}
+            placeholder="Select the unit of the data"
+            showClear={true}
+            lock={true} />
         </div>
       </div>
     </div>
@@ -125,19 +132,16 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Extent</label>
+        <label class="label">{MetadataConfig.extent.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p />
-          <div class="select is-fullwidth {metadata.extent && metadata.extent.length > 0 ? 'is-success' : 'is-danger'}">
-            <select bind:value={metadata.extent}>
-              <option value="">Select extent</option>
-              {#each dataExtents as extent}
-                <option value={extent}>{extent}</option>
-              {/each}
-            </select>
-          </div>
+          <AutoComplete
+            items={dataExtents}
+            bind:selectedItem={metadata.extent}
+            placeholder="Select the geographic coverage of the data"
+            showClear={true} />
         </div>
       </div>
     </div>
@@ -146,22 +150,16 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Resolution</label>
+        <label class="label">{MetadataConfig.resolution.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p />
-          <div
-            class="select is-fullwidth {metadata.resolution && metadata.resolution.length > 0
-              ? 'is-success'
-              : 'is-danger'}">
-            <select bind:value={metadata.resolution}>
-              <option value="">Select region</option>
-              {#each resolutions as resolution}
-                <option value={resolution}>{resolution}</option>
-              {/each}
-            </select>
-          </div>
+          <AutoComplete
+            items={resolutions}
+            bind:selectedItem={metadata.resolution}
+            placeholder="Select the resolution of the data"
+            showClear={true} />
         </div>
       </div>
     </div>
@@ -171,37 +169,36 @@
     <div class="column is-6">
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <label class="label">Granularity</label>
+          <label class="label">{MetadataConfig.granularity.title}</label>
         </div>
         <div class="field-body">
           <div class="field">
             <p />
-            <div
-              class="select is-fullwidth {metadata.granularity && metadata.granularity.length > 0
-                ? 'is-success'
-                : 'is-danger'}">
-              <select bind:value={metadata.granularity}>
-                <option value="">Select granularity</option>
-
-                {#if metadata.extent === 'Continental'}
-                  {#each continentals as continental}
-                    <option value={continental}>{continental}</option>
-                  {/each}
-                {:else if metadata.extent === 'Regional/Subcontinent'}
-                  {#each regions as region}
-                    <option value={region}>{region}</option>
-                  {/each}
-                {:else if metadata.extent === 'Subnational'}
-                  {#each subnationals as subnational}
-                    <option value={subnational}>{subnational}</option>
-                  {/each}
-                {:else if metadata.extent === 'Country'}
-                  {#each countries as country}
-                    <option value={country}>{country}</option>
-                  {/each}
-                {/if}
-              </select>
-            </div>
+            {#if metadata.extent === 'Continental'}
+              <AutoComplete
+                items={continentals}
+                bind:selectedItem={metadata.granularity}
+                placeholder="Select the level of detail at the data"
+                showClear={true} />
+            {:else if metadata.extent === 'Regional/Subcontinent'}
+              <AutoComplete
+                items={regions}
+                bind:selectedItem={metadata.granularity}
+                placeholder="Select the level of detail at the data"
+                showClear={true} />
+            {:else if metadata.extent === 'Subnational'}
+              <AutoComplete
+                items={subnationals}
+                bind:selectedItem={metadata.granularity}
+                placeholder="Select the level of detail at the data"
+                showClear={true} />
+            {:else if metadata.extent === 'Country'}
+              <AutoComplete
+                items={countries}
+                bind:selectedItem={metadata.granularity}
+                placeholder="Select the level of detail at the data"
+                showClear={true} />
+            {/if}
           </div>
         </div>
       </div>
@@ -211,19 +208,16 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Unit</label>
+        <label class="label">{MetadataConfig.unit.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p />
-          <div class="select is-fullwidth {metadata.unit && metadata.unit.length > 0 ? 'is-success' : 'is-danger'}">
-            <select bind:value={metadata.unit}>
-              <option value="">Select unit</option>
-              {#each units as unit}
-                <option value={unit}>{unit}</option>
-              {/each}
-            </select>
-          </div>
+          <AutoComplete
+            items={units}
+            bind:selectedItem={metadata.unit}
+            placeholder="Select the unit of the data"
+            showClear={true} />
         </div>
       </div>
     </div>
@@ -232,16 +226,12 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Source</label>
+        <label class="label">{MetadataConfig.source.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p>
-            <input
-              class="input {metadata.source && metadata.source.length > 0 ? 'is-success' : 'is-danger'}"
-              type="text"
-              bind:value={metadata.source}
-              placeholder="Source of the data" />
+            <input class="input" type="text" bind:value={metadata.source} placeholder="Source of the data" />
           </p>
         </div>
       </div>
@@ -251,16 +241,12 @@
   <div class="column is-6">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">E-mail</label>
+        <label class="label">{MetadataConfig.email.title}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <p>
-            <input
-              class="input {metadata.email && isValidEmail === true ? 'is-success' : 'is-danger'}"
-              type="email"
-              bind:value={metadata.email}
-              placeholder="Contact email" />
+            <input class="input" type="email" bind:value={metadata.email} placeholder="Contact email" />
           </p>
         </div>
       </div>
@@ -269,4 +255,26 @@
 </div>
 
 <style lang="scss">
+  :global(.autocomplete) {
+    width: 100%;
+  }
+
+  :global(.autocomplete-input) {
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    color: #4a4a4a;
+    font-family: ProximaNova, sans-serif;
+    font-size: 11px;
+    height: 40px !important;
+  }
+
+  :global(.autocomplete-list) {
+    top: 5px !important;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+  }
 </style>
