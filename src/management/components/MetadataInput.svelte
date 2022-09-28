@@ -2,17 +2,9 @@
   import AutoComplete from 'simple-svelte-autocomplete'
   import * as EmailValidator from 'email-validator'
   import type { Metadata } from '../interfaces'
-  import {
-    continentals,
-    countries,
-    dataExtents,
-    MetadataConfig,
-    regions,
-    resolutions,
-    subnationals,
-    units,
-  } from '../constants'
+  import { continentals, countries, dataExtents, regions, resolutions, subnationals, units } from '../constants'
   import ConditionTag from './ConditionTag.svelte'
+  import MetadataField from './MetadataField.svelte'
 
   export let metadata: Metadata = {}
   export let metadataFormCompleted = false
@@ -56,232 +48,117 @@
 
 <div class="columns mx-5 is-multiline is-centered">
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.sdgTarget.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p class="control">
-            <input
-              class="input"
-              type="text"
-              bind:value={metadata.sdgTarget}
-              placeholder="represented by 2-3 keywords extracted from sdg target descriptions" />
-          </p>
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.sdgTarget && metadata.sdgTarget.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="sdgTarget" bind:value={metadata.sdgTarget}>
+      <input
+        class="input"
+        type="text"
+        bind:value={metadata.sdgTarget}
+        placeholder="represented by 2-3 keywords extracted from sdg target descriptions" />
+    </MetadataField>
   </div>
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.theme.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p>
-            <input
-              class="input"
-              type="text"
-              bind:value={metadata.theme}
-              placeholder="the overall theme of the data collection, e.g., vegetation health, pregnancies" />
-          </p>
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.theme && metadata.theme.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="theme" bind:value={metadata.theme}>
+      <input
+        class="input"
+        type="text"
+        bind:value={metadata.theme}
+        placeholder="the overall theme of the data collection, e.g., vegetation health, pregnancies" />
+    </MetadataField>
   </div>
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.layerDescription.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p>
-            <input
-              class="input"
-              type="text"
-              bind:value={metadata.layerDescription}
-              placeholder="Description of the dataset" />
-          </p>
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.layerDescription && metadata.layerDescription.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="layerDescription" bind:value={metadata.layerDescription}>
+      <input
+        class="input"
+        type="text"
+        bind:value={metadata.layerDescription}
+        placeholder="Description of the dataset" />
+    </MetadataField>
   </div>
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.year.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p />
-          <AutoComplete
-            items={yearSelection}
-            bind:selectedItem={metadata.year}
-            placeholder="Select the unit of the data"
-            showClear={true}
-            lock={true} />
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.year ? true : false} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="year" bind:value={metadata.year}>
+      <AutoComplete
+        items={yearSelection}
+        bind:selectedItem={metadata.year}
+        placeholder="Select the unit of the data"
+        showClear={true}
+        lock={true} />
+    </MetadataField>
   </div>
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.extent.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p />
-          <AutoComplete
-            items={dataExtents}
-            bind:selectedItem={metadata.extent}
-            placeholder="Select the geographic coverage of the data"
-            showClear={true} />
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.extent && metadata.extent.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="extent" bind:value={metadata.extent}>
+      <AutoComplete
+        items={dataExtents}
+        bind:selectedItem={metadata.extent}
+        placeholder="Select the geographic coverage of the data"
+        showClear={true} />
+    </MetadataField>
   </div>
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.resolution.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p />
-          <AutoComplete
-            items={resolutions}
-            bind:selectedItem={metadata.resolution}
-            placeholder="Select the resolution of the data"
-            showClear={true} />
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.resolution && metadata.resolution.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="resolution" bind:value={metadata.resolution}>
+      <AutoComplete
+        items={resolutions}
+        bind:selectedItem={metadata.resolution}
+        placeholder="Select the resolution of the data"
+        showClear={true} />
+    </MetadataField>
   </div>
 
   {#if metadata.extent && !['', 'Global'].includes(metadata.extent)}
     <div class="column is-6">
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">{MetadataConfig.granularity.title}</label>
-        </div>
-        <div class="field-body">
-          <div class="field metadata-control">
-            <p />
-            {#if metadata.extent === 'Continental'}
-              <AutoComplete
-                items={continentals}
-                bind:selectedItem={metadata.granularity}
-                placeholder="Select the level of detail at the data"
-                showClear={true} />
-            {:else if metadata.extent === 'Regional/Subcontinent'}
-              <AutoComplete
-                items={regions}
-                bind:selectedItem={metadata.granularity}
-                placeholder="Select the level of detail at the data"
-                showClear={true} />
-            {:else if metadata.extent === 'Subnational'}
-              <AutoComplete
-                items={subnationals}
-                bind:selectedItem={metadata.granularity}
-                placeholder="Select the level of detail at the data"
-                showClear={true} />
-            {:else if metadata.extent === 'Country'}
-              <AutoComplete
-                items={countries}
-                bind:selectedItem={metadata.granularity}
-                placeholder="Select the level of detail at the data"
-                showClear={true} />
-            {/if}
-            <div class="condition-tag">
-              <ConditionTag isSuccess={metadata.granularity && metadata.granularity.length > 0} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <MetadataField name="granularity" bind:value={metadata.granularity}>
+        {#if metadata.extent === 'Continental'}
+          <AutoComplete
+            items={continentals}
+            bind:selectedItem={metadata.granularity}
+            placeholder="Select the level of detail at the data"
+            showClear={true} />
+        {:else if metadata.extent === 'Regional/Subcontinent'}
+          <AutoComplete
+            items={regions}
+            bind:selectedItem={metadata.granularity}
+            placeholder="Select the level of detail at the data"
+            showClear={true} />
+        {:else if metadata.extent === 'Subnational'}
+          <AutoComplete
+            items={subnationals}
+            bind:selectedItem={metadata.granularity}
+            placeholder="Select the level of detail at the data"
+            showClear={true} />
+        {:else if metadata.extent === 'Country'}
+          <AutoComplete
+            items={countries}
+            bind:selectedItem={metadata.granularity}
+            placeholder="Select the level of detail at the data"
+            showClear={true} />
+        {/if}
+      </MetadataField>
     </div>
   {/if}
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.unit.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p />
-          <AutoComplete
-            items={units}
-            bind:selectedItem={metadata.unit}
-            placeholder="Select the unit of the data"
-            showClear={true} />
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.unit && metadata.unit.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="unit" bind:value={metadata.unit}>
+      <AutoComplete
+        items={units}
+        bind:selectedItem={metadata.unit}
+        placeholder="Select the unit of the data"
+        showClear={true} />
+    </MetadataField>
   </div>
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.source.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p>
-            <input class="input" type="text" bind:value={metadata.source} placeholder="Source of the data" />
-          </p>
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.source && metadata.source.length > 0} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="source" bind:value={metadata.source}>
+      <input class="input" type="text" bind:value={metadata.source} placeholder="Source of the data" />
+    </MetadataField>
   </div>
 
   <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{MetadataConfig.email.title}</label>
-      </div>
-      <div class="field-body">
-        <div class="field metadata-control">
-          <p>
-            <input class="input" type="email" bind:value={metadata.email} placeholder="Contact email" />
-          </p>
-          <div class="condition-tag">
-            <ConditionTag isSuccess={metadata.email && EmailValidator.validate(metadata.email)} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MetadataField name="email" bind:value={metadata.email}>
+      <input class="input" type="text" bind:value={metadata.email} placeholder="Contact email" />
+    </MetadataField>
   </div>
 </div>
 
