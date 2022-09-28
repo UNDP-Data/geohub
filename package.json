@@ -113,6 +113,7 @@
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "pretty-bytes": "^6.0.0",
+    "simple-svelte-autocomplete": "^2.4.0",
     "smui-theme": "^6.0.0-beta.16",
     "svelte": "^3.48.0",
     "svelte-awesome-color-picker": "^0.0.10",
