@@ -4,6 +4,7 @@
   import SDGSelect from './SDGSelect.svelte'
   import MetadataInput from './MetadataInput.svelte'
   import DataUploadConfirm from './DataUploadConfirm.svelte'
+  import SubmittedForm from './SubmittedForm.svelte'
 
   let steps: DataUploadStep[] = [
     {
@@ -106,9 +107,9 @@
 </script>
 
 {#key currentStep}
-  <div class="columns is-mobile is-vcentered">
-    <div class="column m-5 is-centered">
-      <ul class="steps is-medium">
+  <div class="columns mt-5 is-multiline is-vcentered">
+    <div class="column is-full">
+      <ul class="steps has-content-centered">
         {#each steps as step}
           <li class="steps-segment {`${currentStep.id === step.id ? 'is-active' : ''}`}">
             <span class="steps-marker" />
@@ -120,45 +121,44 @@
         {/each}
       </ul>
     </div>
-  </div>
-
-  <div class="main-content">
-    {#if currentStep.id === 1}
-      <FileDrop bind:files={selectedFiles} />
-    {:else if currentStep.id == 2}
-      <SDGSelect bind:selectedSDG />
-    {:else if currentStep.id == 3}
-      <MetadataInput bind:metadata bind:metadataFormCompleted />
-    {:else if currentStep.id == 4}
-      <DataUploadConfirm bind:selectedFiles bind:selectedSDG bind:metadata />
-    {:else if currentStep.id == 5}
-      <p>not yet ready</p>
-    {/if}
-  </div>
-
-  {#if currentStep.id < steps[steps.length - 1].id}
-    <div class="columns m-5 is-vcentered">
-      <div class="column">
-        {#if currentStep.id > steps[0].id}
-          <button class="button is-light" on:click={handleBack}>Back</button>
-        {/if}
-        {#if isNextButtonEnabled}
-          <button class="button is-primary" on:click={handleNext}>{currentStep.id < 4 ? 'Next' : 'Submit'}</button>
-        {/if}
-      </div>
+    <div class="column is-full">
+      {#if currentStep.id === 1}
+        <FileDrop bind:files={selectedFiles} />
+      {:else if currentStep.id == 2}
+        <SDGSelect bind:selectedSDG />
+      {:else if currentStep.id == 3}
+        <MetadataInput bind:metadata bind:metadataFormCompleted />
+      {:else if currentStep.id == 4}
+        <DataUploadConfirm bind:selectedFiles bind:selectedSDG bind:metadata />
+      {:else if currentStep.id == 5}
+        <SubmittedForm />
+      {/if}
     </div>
-  {/if}
+    <div class="column mx-5 is-full">
+      {#if currentStep.id < steps[steps.length - 1].id}
+        <nav class="level">
+          <div class="level-left">
+            {#if currentStep.id > steps[0].id}
+              <div class="level-item">
+                <button class="button is-light" on:click={handleBack}>Back</button>
+              </div>
+            {/if}
+            {#if isNextButtonEnabled}
+              <div class="level-item">
+                <button class="button is-primary" on:click={handleNext}
+                  >{currentStep.id < 4 ? 'Next' : 'Submit'}</button>
+              </div>
+            {/if}
+          </div>
+        </nav>
+      {/if}
+    </div>
+  </div>
 {/key}
 
 <style lang="scss">
   @import 'bulma/css/bulma.css';
   @import 'bulma-o-steps/bulma-steps.sass';
-
-  $height: calc(100vh - 178px);
-
-  .main-content {
-    max-height: $height;
-  }
 
   .step-select {
     cursor: pointer;

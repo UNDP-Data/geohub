@@ -7,7 +7,7 @@
   export let metadata: Metadata
 </script>
 
-<div class="columns mr-5 ml-5 is-vcentered">
+<div class="columns mx-5 is-vcentered">
   <div class="column is-full is-centered">
     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
       <thead>
@@ -19,9 +19,11 @@
       <tr>
         <td>Selected files</td>
         <td>
-          {#each selectedFiles.accepted as file}
-            {`${file.name} (${prettyBytes(file.size)})`}
-          {/each}
+          <ul>
+            {#each selectedFiles.accepted as file}
+              <li>{`${file.name} (${prettyBytes(file.size)})`}</li>
+            {/each}
+          </ul>
         </td>
       </tr>
       <tr>
