@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
   import type { LngLatBoundsLike } from 'maplibre-gl'
   import { fade } from 'svelte/transition'
   import Fa from 'svelte-fa'

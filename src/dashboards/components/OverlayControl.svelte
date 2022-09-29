@@ -6,7 +6,7 @@
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import { LayerTypes } from '$lib/constants'
   import { map } from '../stores'
-  import type { HeatmapLayerSpecification, VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl'
   import RangeSlider from 'svelte-range-slider-pips'
   import OverlayLegend1 from './OverlayLegend1.svelte'
   import OverlayLegend2 from './OverlayLegend2.svelte'

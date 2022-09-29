@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
   import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'

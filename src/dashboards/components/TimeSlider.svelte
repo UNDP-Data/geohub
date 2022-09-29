@@ -1,6 +1,6 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-  import type { RasterLayerSpecification, SourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl'
 
   import { LayerTypes } from '$lib/constants'
   import { fetchUrl } from '$lib/helper'
