@@ -4,6 +4,5 @@
   "trailingComma": "all",
   "semi": false,
   "bracketSameLine": true,
-  "singleAttributePerLine": true,
-  "plugins": ["prettier-plugin-svelte"]
+  "singleAttributePerLine": true
 }
