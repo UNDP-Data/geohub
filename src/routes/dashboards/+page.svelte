@@ -3,6 +3,7 @@
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
   import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
+  import type { PageData } from './$types'
 
   let pages = [
     {
@@ -10,6 +11,8 @@
       link: 'dashboards/electricity',
     },
   ]
+
+  export let data: PageData
 </script>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
@@ -28,8 +31,14 @@
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
-    <hr />
-    <MapStyleCardList />
+    {#if data}
+      <hr />
+      <MapStyleCardList
+        bind:defaultPage={data.defaultPage}
+        bind:defaultPageSize={data.defaultPageSize}
+        bind:totalItemsCount={data.totalItemsCount}
+        bind:totalPagesCount={data.totalPagesCount} />
+    {/if}
   </div>
   <DashboardFooter />
 </div>

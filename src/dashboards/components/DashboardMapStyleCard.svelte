@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { onMount } from 'svelte'
+  import { page } from '$app/stores'
   import { Map } from 'maplibre-gl'
   import Time from 'svelte-time'
   import Fa from 'svelte-fa'
@@ -15,9 +16,11 @@
     id: string
     name: string
     createdat: string
-    style: string
-    viewer: string
+    style?: string
+    viewer?: string
   }
+
+  const url: URL = $page.url
 
   export let style: MapStyle
   let mapContainer: HTMLDivElement
@@ -40,6 +43,9 @@
   let confirmDeleteDialogVisible = false
 
   onMount(async () => {
+    style.style = `${url.origin}/style/${style.id}.json`
+    style.viewer = `${url.origin}/viewer?style=${style.style}`
+
     const res = await fetch(style.style)
     const styleJSON = await res.json()
 

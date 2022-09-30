@@ -6,17 +6,12 @@
   const url: URL = $page.url
 
   let styleList
-  let totalItemsCount = -1
-  let defaultPage = 1
-  let defaultPageSize = 8
-
-  let totalPagesCount
+  export let totalItemsCount: number
+  export let defaultPage: number
+  export let defaultPageSize: number
+  export let totalPagesCount: number
 
   onMount(async () => {
-    const res = await fetch(`${url.origin}/style/count`)
-    const json = await res.json()
-    totalItemsCount = json.count
-    totalPagesCount = Math.ceil(totalItemsCount / defaultPageSize)
     await updateStylePage(defaultPage, defaultPageSize)
   })
 

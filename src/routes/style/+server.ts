@@ -41,12 +41,6 @@ export const GET: RequestHandler = async ({ url }) => {
       throw error(404)
     }
 
-    res.rows.forEach((row) => {
-      const id = row.id
-      row.style = `${url.origin}/style/${id}.json`
-      row.viewer = `${url.origin}/viewer?style=${row.style}`
-    })
-
     return new Response(JSON.stringify(res.rows))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
