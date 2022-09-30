@@ -1,3 +1,4 @@
+import type { RequestHandler } from './$types'
 import fs from 'fs'
 import path from 'path'
 
@@ -6,7 +7,7 @@ import type { Bucket, TreeNode } from '$lib/types'
 
 const __dirname = path.resolve()
 
-export async function get() {
+export const GET: RequestHandler = async () => {
   const startTime = performance.now()
 
   const filePath = `${__dirname}/data/stac.json`
@@ -84,10 +85,10 @@ export async function get() {
 
   const endTime = performance.now()
 
-  return {
-    body: {
+  return new Response(
+    JSON.stringify({
       tree: stacBuckets,
       responseTime: endTime - startTime,
-    },
-  }
+    }),
+  )
 }

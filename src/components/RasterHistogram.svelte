@@ -10,7 +10,7 @@
     LineLayerSpecification,
     RasterLayerSpecification,
     SymbolLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types.g'
+  } from 'maplibre-gl'
 
   export let layer
 

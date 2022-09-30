@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
   import RangeSlider from 'svelte-range-slider-pips'
 
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'

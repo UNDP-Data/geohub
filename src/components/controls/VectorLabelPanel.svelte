@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { slide, fade } from 'svelte/transition'
-  import type { LayerSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl'
 
   import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
   import SymbolPlacement from '$components/controls/vector-styles/SymbolPlacement.svelte'

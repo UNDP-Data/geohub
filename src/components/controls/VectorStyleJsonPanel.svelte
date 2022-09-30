@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
   import Button, { Label as LabelButton } from '@smui/button'
   import Textfield from '@smui/textfield'
 

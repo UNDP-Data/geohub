@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   import Switch from '@smui/switch'
   import FormField from '@smui/form-field'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'

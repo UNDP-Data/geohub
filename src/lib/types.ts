@@ -8,7 +8,7 @@ import type {
   HeatmapLayerSpecification,
   RasterSourceSpecification,
   VectorSourceSpecification,
-} from '@maplibre/maplibre-gl-style-spec/types.g'
+} from 'maplibre-gl'
 import type { ClassificationMethodTypes, StatusTypes } from './constants'
 
 export interface Tree {

@@ -15,7 +15,7 @@
     LineLayerSpecification,
     RasterLayerSpecification,
     SymbolLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types.g'
+  } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
   import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'

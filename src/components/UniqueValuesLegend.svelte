@@ -7,7 +7,7 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types.g'
+  } from 'maplibre-gl'
 
   import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
