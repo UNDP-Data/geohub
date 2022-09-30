@@ -27,7 +27,28 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'yarn'
+      
+      # pnpm setup
+      # refer to https://github.com/pnpm/action-setup
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       # install dependencies
       - name: Create environment file
@@ -45,25 +66,25 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint
-        run: yarn ci:lint
+        run: pnpm ci:lint
 
       - name: Run Prettier
-        run: yarn ci:prettier
+        run: pnpm ci:prettier
 
       - name: Run build
-        run: yarn ci:compile
+        run: pnpm ci:compile
 
       - name: Run unit tests
-        run: yarn ci:test
+        run: pnpm ci:test
 
       - name: Copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cp package.json build/.
-          cp yarn.lock build/.
+          cp pnpm-lock.yaml build/.
           mv node_modules build/.
           mv data build/.
 
