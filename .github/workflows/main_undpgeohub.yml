@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
   workflow_dispatch:
 
@@ -60,14 +61,24 @@ jobs:
         run: yarn ci:test
 
       - name: Copy package.json / lock files to build folder
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           cp package.json build/.
           cp yarn.lock build/.
           mv node_modules build/.
           mv data build/.
 
-      - name: 'Deploy to Azure'
+      - name: 'Deploy to Azure Web App for undpgeohub-dev'
+        id: deploy-to-webapp-dev
+        uses: azure/webapps-deploy@v2
+        if: ${{ github.ref == 'refs/heads/develop'}}
+        with:
+          app-name: 'undpgeohub-dev'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
+          package: build
+
+      - name: 'Deploy to Azure for undpgeohub'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/main'}}
