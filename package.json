@@ -26,7 +26,6 @@
     "ci:prettier": "prettier --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore"
   },
   "devDependencies": {
-    "@rollup/plugin-json": "^4.1.0",
     "@sveltejs/adapter-node": "^1.0.0-next.96",
     "@sveltejs/kit": "^1.0.0-next.504",
     "@testing-library/jest-dom": "^5.16.5",
@@ -43,7 +42,6 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
-    "esbuild": "^0.15.9",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
@@ -102,7 +100,6 @@
     "bulma": "^0.9.4",
     "bulma-o-steps": "^1.1.0",
     "bulma-slider": "^2.0.5",
-    "carbon-components-svelte": "^0.70.9",
     "chroma-js": "^2.4.2",
     "colormap": "^2.3.2",
     "d3-format": "^3.1.0",
