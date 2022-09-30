@@ -5,11 +5,12 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 ## Installation
 
 You'll need a basic development environment prepared before you can install and run `geohub` on your machine.
-Make sure you have `node`, `nvm`, `yarn` installed before you get to these commands:
+Make sure you have `node`, `nvm`, `pnpm` installed before you get to these commands:
 
 - `nvm use` // to set the needed node version from .nvmrc
-- `yarn run install` // to install dependencies
-- `yarn run start` // to start the SvelteKit on `localhost:3000`
+- `npm install -g pnpm` // to install pnpm
+- `pnpm install` // to install dependencies
+- `pnpm dev` // to start the SvelteKit on `localhost:5173`
 
 Copy and update the environment variables file by running this command and contacting the project manager to obtain the values:
 
@@ -35,16 +36,16 @@ GeoHub uses [SvelteKit](https://kit.svelte.dev/) and it is recommended to use [V
 
 The following commands are useful during development process:
 
-- `yarn run prettier` // prettify files
-- `yarn run check` // run `svelte-check` to find errors, warning and hints
-- `yarn run lint` // runs eslint to find code issues
+- `pnpm prettier` // prettify files
+- `pnpm check` // run `svelte-check` to find errors, warning and hints
+- `pnpm lint` // runs eslint to find code issues
 
 #### Unit Tests
 
 Unit tests are written using [Vitest](https://vitest.dev/), [Testing Library](https://testing-library.com/docs/svelte-testing-library/intro/) and [Jest](https://jestjs.io/)
 
-- `yarn run test` // run all tests
-- `yarn run test:watch` // run only tests that have been changed
+- `pnpm test` // run all tests
+- `pnpm test:watch` // run only tests that have been changed
 
 ### Run GitHub Actions Locally
 
