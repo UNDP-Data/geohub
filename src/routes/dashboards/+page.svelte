@@ -1,21 +1,18 @@
-<script lang="ts" context="module">
-  const modules = import.meta.glob('./*.svelte')
-
-  let pages = []
-  for (let page in modules) {
-    let path = page.replace('.svelte', '').replace('./', '/')
-    pages.push({
-      title: path.substring(page.lastIndexOf('/')),
-      link: `dashboards${path.includes('index') ? path.replace('index', '') : path}`,
-    })
-  }
-</script>
-
 <script lang="ts">
   import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
   import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
+  import type { PageData } from './$types'
+
+  let pages = [
+    {
+      title: 'Electricity',
+      link: 'dashboards/electricity',
+    },
+  ]
+
+  export let data: PageData
 </script>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
@@ -34,8 +31,14 @@
         <DashboardCard bind:title={page.title} bind:link={page.link} />
       {/each}
     </div>
-    <hr />
-    <MapStyleCardList />
+    {#if data}
+      <hr />
+      <MapStyleCardList
+        bind:defaultPage={data.defaultPage}
+        bind:defaultPageSize={data.defaultPageSize}
+        bind:totalItemsCount={data.totalItemsCount}
+        bind:totalPagesCount={data.totalPagesCount} />
+    {/if}
   </div>
   <DashboardFooter />
 </div>
@@ -44,12 +47,7 @@
   @import '../../styles/undp-design/base-minimal.min.css';
   @import '../../styles/undp-design/fonts.css';
   @import '../../styles/undp-design/footer.min.css';
-  .cell {
-    width: 20%;
-    height: 100px;
-    background: red;
-    margin-top: 2%;
-  }
+
   :global(.primary-button) {
     background: #d12800 !important;
     border-color: #d12800 !important;

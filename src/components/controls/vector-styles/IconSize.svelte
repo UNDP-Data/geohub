@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
   import { LayerInitialValues } from '$lib/constants'

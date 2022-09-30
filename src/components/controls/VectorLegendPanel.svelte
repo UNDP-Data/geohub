@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
 
   import VectorSymbolContainer from '$components/controls/VectorSymbolContainer.svelte'
   import VectorLineContainer from '$components/controls/VectorLineContainer.svelte'

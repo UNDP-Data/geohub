@@ -8,7 +8,7 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
     VectorSourceSpecification,
-  } from '@maplibre/maplibre-gl-style-spec/types.g'
+  } from 'maplibre-gl'
   import { cloneDeep } from 'lodash-es'
   import Autocomplete from '@smui-extra/autocomplete'
 

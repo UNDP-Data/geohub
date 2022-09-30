@@ -1,25 +1,23 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { page } from '$app/stores'
   import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
 
-  let styleList
-  let totalItemsCount = -1
-  let defaultPage = 1
-  let defaultPageSize = 8
+  const url: URL = $page.url
 
-  let totalPagesCount
+  let styleList
+  export let totalItemsCount: number
+  export let defaultPage: number
+  export let defaultPageSize: number
+  export let totalPagesCount: number
 
   onMount(async () => {
-    const res = await fetch(`../style/count`)
-    const json = await res.json()
-    totalItemsCount = json.count
-    totalPagesCount = Math.ceil(totalItemsCount / defaultPageSize)
     await updateStylePage(defaultPage, defaultPageSize)
   })
 
   const updateStylePage = async (page: number, pageSize: number) => {
     const offset = page * pageSize - pageSize
-    const res = await fetch(`../style?limit=${pageSize}&offset=${offset}`)
+    const res = await fetch(`${url.origin}/style?limit=${pageSize}&offset=${offset}`)
     styleList = await res.json()
   }
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
-  import type { LayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { LayerSpecification } from 'maplibre-gl'
   import LegendSymbol from '@watergis/legend-symbol'
   import { clickOutside } from 'svelte-use-click-outside'
   import chroma from 'chroma-js'

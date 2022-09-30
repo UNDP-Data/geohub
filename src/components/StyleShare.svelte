@@ -4,7 +4,7 @@
   import Textfield from '@smui/textfield'
   import Fa from 'svelte-fa'
   import { faShare } from '@fortawesome/free-solid-svg-icons/faShare'
-  import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
 
   import type { Layer } from '$lib/types'

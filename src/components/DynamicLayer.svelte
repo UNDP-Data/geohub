@@ -8,7 +8,7 @@
   import HelperText from '@smui/textfield/helper-text'
   import { v4 as uuidv4 } from 'uuid'
   import RangeSlider from 'svelte-range-slider-pips'
-  import type { RasterLayerSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { RasterLayerSpecification } from 'maplibre-gl'
 
   import { dynamicLayers, layerList, map } from '$stores'
   import Calculator from '$components/raster/Calculator.svelte'

@@ -18,7 +18,7 @@
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
   import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
   import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
-  import type { RasterLayerSpecification, RasterSourceSpecification } from '@maplibre/maplibre-gl-style-spec/types.g'
+  import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
   import BucketTreeNodeCardButton from '$components/BucketTreeNodeCardButton.svelte'

@@ -1,3 +1,5 @@
+import type { RequestHandler } from './$types'
+import { error } from '@sveltejs/kit'
 import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
@@ -108,22 +110,18 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
   return attributesArray
 }
 
-export async function get(query: any) {
+export const GET: RequestHandler = async ({ url }) => {
   if (
-    Object.keys(query).length === 0 ||
-    query.url === undefined ||
-    query.url.searchParams === undefined ||
-    !query.url.searchParams.has('path') ||
-    !query.url.searchParams.has('layer_name')
+    url === undefined ||
+    url.searchParams === undefined ||
+    !url.searchParams.has('path') ||
+    !url.searchParams.has('layer_name')
   ) {
-    return {
-      code: 400,
-      message: ErrorMessages.VECTOR_INFO_BAD_REQUEST,
-    }
+    throw error(400, JSON.stringify({ message: ErrorMessages.VECTOR_INFO_BAD_REQUEST }))
   }
 
-  const path = query.url.searchParams.get('path')
-  const layer_name = query.url.searchParams.get('layer_name')
+  const path = url.searchParams.get('path')
+  const layer_name = url.searchParams.get('layer_name')
   let response = []
 
   // fetch vector tiles values
@@ -133,5 +131,5 @@ export async function get(query: any) {
       response = reason
     })
 
-  return { body: response }
+  return new Response(JSON.stringify(response))
 }

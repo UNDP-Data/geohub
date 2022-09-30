@@ -1,3 +1,5 @@
+import type { RequestHandler } from './$types'
+import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
@@ -7,7 +9,7 @@ const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
  * Delete style.json which is stored in PostgreSQL database
  * DELETE: ./style/{id}
  */
-export async function del({ params }) {
+export const DELETE: RequestHandler = async ({ params }) => {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -24,22 +26,11 @@ export async function del({ params }) {
     if (res.rowCount === 0) {
       throw new Error(`${styleId} does not exist in the database`)
     }
-    return {
+    return new Response(undefined, {
       status: 204,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-    }
+    })
   } catch (err) {
-    return {
-      status: 400,
-      headers: {
-        'access-control-allow-origin': '*',
-      },
-      body: {
-        message: err.message,
-      },
-    }
+    throw error(400, JSON.stringify({ message: err.message }))
   } finally {
     client.release()
     pool.end()
