@@ -1,5 +1,3 @@
-import * as dotenv from 'dotenv'
-dotenv.config()
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$env/static/private'
 
-export const AZURE_STORAGE_ACCOUNT: string = process.env.AZURE_STORAGE_ACCOUNT || ''
-export const AZURE_STORAGE_ACCESS_KEY: string = process.env.AZURE_STORAGE_ACCESS_KEY || ''
+export { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY }

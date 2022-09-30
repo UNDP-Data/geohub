@@ -103,7 +103,6 @@
     "chroma-js": "^2.4.2",
     "colormap": "^2.3.2",
     "d3-format": "^3.1.0",
-    "dotenv": "^16.0.2",
     "email-validator": "^2.0.4",
     "geodesy-fn": "^1.0.1",
     "geojson": "^0.5.0",

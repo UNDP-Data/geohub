@@ -2566,11 +2566,6 @@ dompurify@^2.2.0:
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.8.tgz#224fe9ae57d7ebd9a1ae1ac18c1c1ca3f532226f"
   integrity sha512-eVhaWoVibIzqdGYjwsBWodIQIaXFSB+cKDf4cfxLMsK0xiud6SE+/WCVx/Xw/UwQsa4cS3T2eITcdtmTg2UKcw==
 
-dotenv@^16.0.2:
-  version "16.0.2"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.2.tgz#0b0f8652c016a3858ef795024508cddc4bffc5bf"
-  integrity sha512-JvpYKUmzQhYoIFgK2MOnF3bciIZoItIIoryihy0rIA+H4Jy0FmgyKYAHCTN98P5ybGSJcIFbh6QKeJdtZd1qhA==
-
 earcut@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/earcut/-/earcut-2.2.4.tgz#6d02fd4d68160c114825d06890a92ecaae60343a"
