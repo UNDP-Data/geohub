@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'yarn'
+          cache: 'pnpm'
 
       # install dependencies
       - name: Create environment file
@@ -45,25 +45,25 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint
-        run: yarn ci:lint
+        run: pnpm ci:lint
 
       - name: Run Prettier
-        run: yarn ci:prettier
+        run: pnpm ci:prettier
 
       - name: Run build
-        run: yarn ci:compile
+        run: pnpm ci:compile
 
       - name: Run unit tests
-        run: yarn ci:test
+        run: pnpm ci:test
 
       - name: Copy package.json / lock files to build folder
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cp package.json build/.
-          cp yarn.lock build/.
+          cp pnpm-lock.yaml build/.
           mv node_modules build/.
           mv data build/.
 
