@@ -5035,6 +5035,11 @@ svelte-range-slider-pips@^2.0.3:
   resolved "https://registry.yarnpkg.com/svelte-range-slider-pips/-/svelte-range-slider-pips-2.0.3.tgz#c55224f6d03e59ac2051ee90d834cb2e95e508a4"
   integrity sha512-43zYhIZtGZywiS0nJPAFDfQipDz8Hs2lpj6gVU8WbC+NSu0Lu8VINHjDazeLpoa9X/3rMlaVGT2lPO2aTfLc6w==
 
+svelte-step-wizard@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/svelte-step-wizard/-/svelte-step-wizard-0.0.2.tgz#4a8082571349f3f0242e5db6928c15b57a00f6fd"
+  integrity sha512-qpJUqzJwOiKvkMVMnsntdyglMlijRrdrfVFwicc7WV0j8egzszQVXDwzYnXcRyVY7IMLttkWtC+yhVRmwr0cuw==
+
 svelte-time@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/svelte-time/-/svelte-time-0.7.1.tgz#5608f6e12cb9bd61f739026ce006642d649d66be"

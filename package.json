@@ -128,6 +128,7 @@
     "svelte-popperjs": "^1.2.10",
     "svelte-preprocess": "^4.10.7",
     "svelte-range-slider-pips": "^2.0.3",
+    "svelte-step-wizard": "^0.0.2",
     "svelte-time": "^0.7.1",
     "svelte-use-click-outside": "^1.0.0",
     "svelte-vega": "^1.1.1",

@@ -1,11 +1,14 @@
 <script lang="ts">
   import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
+  import StepWizard from 'svelte-step-wizard'
   import { bannerMessages, map } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
   import Popper from '$lib/popper'
   import VectorHistogram from '../VectorHistogram.svelte'
   import StyleControlGroup from '../control-groups/StyleControlGroup.svelte'
+  import PropertySelect_New from './vector-styles/PropertySelect_New.svelte'
+  import PropertySelectButtons from './vector-styles/PropertySelectButtons.svelte'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -179,8 +182,7 @@
     <div class="filter-content" style="width: 90%">
       {#each expressionsArray as expression, index}
         <div class="dynamic-content-filter">
-          <PropertySelect
-            style="margin-right:5%!important;"
+          <PropertySelectButtons
             bind:propertySelectValue={expression.property}
             on:select={(e) => {
               propertySelected(e)
@@ -190,20 +192,21 @@
             showEmptyFields={false}
             showOnlyNumberFields={true}
             {setDefaultProperty} />
-          <div class="select is-small" style="margin-right:5%;">
-            <select bind:value={expression.operation}>
-              <option value="==">==</option>
-              <option value="!=">!=</option>
-              <option value="<">&#060;</option>
-              <option value=">=">&#8805;</option>
-              <option value=">">&#062; </option>
-              <option value="<=">&#8804;</option>
-              <option value="in">in</option>
-              <option value="!in">!in</option>
-              <option value="has">has</option>
-              <option value="!has">!has</option>
-            </select>
-          </div>
+
+          <!--          <div class="select is-small" style="margin-right:5%;">-->
+          <!--            <select bind:value={expression.operation}>-->
+          <!--              <option value="==">==</option>-->
+          <!--              <option value="!=">!=</option>-->
+          <!--              <option value="<">&#060;</option>-->
+          <!--              <option value=">=">&#8805;</option>-->
+          <!--              <option value=">">&#062; </option>-->
+          <!--              <option value="<=">&#8804;</option>-->
+          <!--              <option value="in">in</option>-->
+          <!--              <option value="!in">!in</option>-->
+          <!--              <option value="has">has</option>-->
+          <!--              <option value="!has">!has</option>-->
+          <!--            </select>-->
+          <!--          </div>-->
           {#if showTooltip && expression.property && index === currentExpressionIndex}
             <div
               class="card tooltip"
@@ -332,7 +335,7 @@
     display: flex;
     margin-top: 5%;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
   }
 
   .grid {
