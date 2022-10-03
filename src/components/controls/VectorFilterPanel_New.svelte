@@ -1,36 +1,20 @@
 <script lang="ts">
-  import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte'
   import StepWizard from 'svelte-step-wizard'
   import { bannerMessages, map } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
-  import Popper from '$lib/popper'
-  import VectorHistogram from '../VectorHistogram.svelte'
-  import StyleControlGroup from '../control-groups/StyleControlGroup.svelte'
-  import PropertySelect_New from './vector-styles/PropertySelect_New.svelte'
   import PropertySelectButtons from './vector-styles/PropertySelectButtons.svelte'
   import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte'
+  import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
+  import { getContext, setContext } from 'svelte'
 
   export let isFilterPanelVisible = false
   export let layer
 
   const layerId = layer.definition.id
 
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right',
-      strategy: 'fixed',
-    },
-    [10, 15],
-  ).init()
-
   // vars
   let currentExpressionIndex = 0
-  let showTooltip = false
 
   let singleExpression = {
     index: 0,
@@ -39,25 +23,24 @@
     operator: '',
   }
   // eslint-disable-next-line @typescript-eslint/ban-types
-  let expressionsArray: ({ property: string; index: number; filterValue: string; operator: string } | {})[] = []
+  let expressionsArray: ({ property: string; index: number; filterValue: string; operator: string } | {})[] = [
+    singleExpression,
+  ]
 
   let selectedCombiningOperator
-  let propertySelectValue
+  let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
   let filteringError = false
   let propertyStats
+  let initialStep = 1
 
-  const setDefaultProperty = (selectOptions: string[]) => {
-    if (selectOptions.length === 0) return ''
-    propertySelectValue = propertySelectValue === '' ? selectOptions[0] : propertySelectValue
-    return propertySelectValue
-  }
+  $: console.log('propertyStats', propertyStats)
 
-  const propertySelected = (e) => {
+  const handlePropertySelect = (e) => {
     propertySelectValue = e.detail.prop
-    if (!propertySelectValue || propertySelectValue === '') return
-    currentExpressionIndex < 0 ? (currentExpressionIndex = 0) : currentExpressionIndex
-    if (propertySelectValue === '') return
-    expressionsArray[currentExpressionIndex]['property'] = e.detail.prop
+    // if (!propertySelectValue || propertySelectValue === '') return
+    // currentExpressionIndex < 0 ? (currentExpressionIndex = 0) : currentExpressionIndex
+    // if (propertySelectValue === '') return
+    expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
     layer.children['0'].info.stats.forEach((stat) => {
       if (stat.attribute === propertySelectValue) {
         propertyStats = stat
@@ -98,11 +81,6 @@
       ? $map.setFilter(`${layerId}-label`, expression)
       : null
 
-    // map.update((map) => {
-    //   map.setFilter(layerId, expression)
-    //   return map
-    // })
-
     $map.on('error', (err: ErrorEvent) => {
       showBannerMessage(err.error)
     })
@@ -124,16 +102,6 @@
   const addExpression = () => {
     currentExpressionIndex = expressionsArray.length
     expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
-  }
-
-  // Remove a single expression from the expression. It does not reset map if the
-  // expression was already applied
-  const removeLastExpression = () => {
-    showTooltip = false
-    const index = expressionsArray.length - 1
-    expressionsArray.splice(index, 1)
-    currentExpressionIndex = currentExpressionIndex - 1
-    expressionsArray = expressionsArray.length < 1 ? [...expressionsArray, {}] : [...expressionsArray]
   }
 
   // Clear all expressions applied to the layer and reset the UI
@@ -161,9 +129,14 @@
     // expressionsArray = expressionsArray.filter((expression) => expression['property'] !== undefined)
   }
 
-  const handlePropertySelect = (e) => {
-    propertySelectValue = e.detail.prop
-    console.log(propertySelectValue)
+  const handleCurrentOperation = (e) => {
+    const operation = e.detail.operation
+    console.log(operation)
+    expressionsArray[currentExpressionIndex]['operation'] = operation
+  }
+
+  const handleAddExpression = () => {
+    //pass
   }
 </script>
 
@@ -181,145 +154,81 @@
     <!--    Create new rule Step 1-->
     <StepWizard.Step num={1} let:nextStep>
       <div class="wizard-button-container">
-        <button on:click={nextStep} class="button wizard-button is-small button-primary">
-          New Rule
-          <i class="fa fa-chevron-right wizard-icon" />
-        </button>
-        <button
-          on:click={removeExistingExpressions}
-          class="button wizard-button is-small button-secondary"
-          disabled={expressionsArray.length > 0 ? 'true' : 'false'}>
-          Clear all rules
-        </button>
+        <button on:click={nextStep} class="button wizard-button is-small primary-button"> New Rule </button>
       </div>
     </StepWizard.Step>
     <StepWizard.Step num={2} let:previousStep let:nextStep>
-      <!--    Pick one property from the page-->
-      <!--      <button style='margin-left: 70%' class="button wizard-button is-small other-button">-->
-      <!--        Cancel-->
-      <!--      </button>-->
       <div class="wizard-button-container">
-        <button on:click={previousStep} class="button wizard-button is-small button-secondary">
-          <i class="fa fa-chevron-left wizard-icon" />
-          Go Back
+        <button
+          style="margin-left: auto"
+          on:click={() => ($step = 1)}
+          class="button wizard-button is-small secondary-button">
+          Cancel
         </button>
-        <button on:click={nextStep} class="button wizard-button is-small button-primary">
+      </div>
+      <PropertySelectButtons
+        {layer}
+        bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
+        on:click={nextStep}
+        on:select={handlePropertySelect} />
+    </StepWizard.Step>
+    <StepWizard.Step num={3} let:previousStep let:nextStep>
+      <!--      Pick one operation from the selected-->
+      <div class="wizard-button-container">
+        <button on:click={previousStep} class="button wizard-button is-small primary-button"> Select Property </button>
+        <button
+          on:click={setContext('StepWizard', { initialStep })}
+          class="button wizard-button is-small secondary-button">
+          Cancel
+        </button>
+      </div>
+      <OperationButtons
+        on:click={nextStep}
+        bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
+        on:change={handleCurrentOperation} />
+    </StepWizard.Step>
+    <StepWizard.Step num={4} let:previousStep let:nextStep>
+      <!--      Pick one operation from the selected-->
+      <div class="wizard-button-container">
+        <button on:click={previousStep} class="button wizard-button is-small primary-button">
+          <i class="fa fa-chevron-left wizard-icon" />
           Operation
+        </button>
+        <button on:click={nextStep} class="button wizard-button is-small primary-button">
+          Next
           <i class="fa fa-chevron-right wizard-icon" />
         </button>
       </div>
-      <PropertySelectButtons {layer} {propertySelectValue} on:select={handlePropertySelect} />
+      <ValueInput
+        bind:propertyStats={expressionsArray[currentExpressionIndex]['propertyStats']}
+        bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
+        bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
     </StepWizard.Step>
-    <StepWizard.Step num={3} let:previousStep>
+    <StepWizard.Step num={5} let:previousStep>
       <!--      Pick one operation from the selected-->
-      <button on:click={previousStep}> Go Back </button>
-      <OperationButtons />
+      <div class="wizard-button-container">
+        <button on:click={previousStep} class="button wizard-button is-small primary-button">
+          <i class="fa fa-chevron-left wizard-icon" />
+          Value
+        </button>
+        <button on:click={addExpression} class="button wizard-button is-small primary-button"> Cancel </button>
+      </div>
+      <div class="block-buttons-group">
+        <button on:click={handleApplyExpression} class="button wizard-button is-small primary-button">
+          Apply Expression
+        </button>
+        <button
+          style="margin-top: 5%"
+          on:click={handleAddExpression}
+          class="button wizard-button is-small primary-button">
+          Add New Expression
+        </button>
+      </div>
     </StepWizard.Step>
   </StepWizard>
-  <!--  <span style="margin: auto;">Combine rules:</span>-->
-  <!--  <div style="margin: auto;" class="select is-small">-->
-  <!--    <select bind:value={selectedCombiningOperator}>-->
-  <!--      <option value="all">All conditions must be true</option>-->
-  <!--      <option value="any">At least one condition must be true</option>-->
-  <!--    </select>-->
-  <!--  </div>-->
-  <!--  <div class="is-divider separator mb-3 mt-3" />-->
-  <!--  <div class="static-content-filter">-->
-  <!--    <button on:click={addExpression} class="button primary-button is-small">Add condition</button>-->
-  <!--    <button on:click={removeLastExpression} class="button secondary-button is-small">Remove condition</button>-->
-  <!--  </div>-->
-  <!--  <div class="is-divider separator mb-3 mt-3" />-->
-
-  <!--  &lt;!&ndash;  </StyleControlGroup>&ndash;&gt;-->
-  <!--  <div style="display: flex; align-items: center;" use:popperRef>-->
-  <!--    <div class="filter-content" style="width: 90%">-->
-  <!--      {#each expressionsArray as expression, index}-->
-  <!--        <div class="dynamic-content-filter">-->
-  <!--          <PropertySelectButtons-->
-  <!--            bind:propertySelectValue={expression.property}-->
-  <!--            on:select={(e) => {-->
-  <!--              propertySelected(e)-->
-  <!--              currentExpressionIndex = index-->
-  <!--            }}-->
-  <!--            {layer}-->
-  <!--            showEmptyFields={false}-->
-  <!--            showOnlyNumberFields={true}-->
-  <!--            {setDefaultProperty} />-->
-  <!--          {#if showTooltip && expression.property && index === currentExpressionIndex}-->
-  <!--            <div-->
-  <!--              class="card tooltip"-->
-  <!--              use:popperContent={popperOptions}-->
-  <!--              style="width: max-content; height: fit-content; z-index:99999">-->
-  <!--              <div id="card">-->
-  <!--                <header style="padding: 5px; background: white; border: 0" class="modal-card-head">-->
-  <!--                  <p class="modal-card-title has-text-weight-bold" />-->
-  <!--                  <button-->
-  <!--                    class="delete"-->
-  <!--                    aria-label="close"-->
-  <!--                    alt="Close Tooltip"-->
-  <!--                    title="Close Tooltip"-->
-  <!--                    on:click={() => (showTooltip = false)} />-->
-  <!--                </header>-->
-  <!--                {#if expression.property !== '' && expression.propertyStats}-->
-  <!--                  <div class="card-content">-->
-  <!--                    <div class="content" style="width:100%; height:100%">-->
-  <!--                      {#if expression.propertyStats.histogram}-->
-  <!--                        <div style="display: block;">-->
-  <!--                          <VectorHistogram-->
-  <!--                            bind:histogram={expression.propertyStats.histogram}-->
-  <!--                            bind:propertySelected={expression.property} />-->
-  <!--                          <input-->
-  <!--                            style="margin-left: auto; margin-right: auto;"-->
-  <!--                            bind:value={expression.value}-->
-  <!--                            class="slider is-fullwidth is-small"-->
-  <!--                            step={(expression.propertyStats.histogram.bins[-->
-  <!--                              expression.propertyStats.histogram.bins.length - 1-->
-  <!--                            ] - -->
-  <!--                              expression.propertyStats.histogram.bins[0]) /-->
-  <!--                              10}-->
-  <!--                            min={expression.propertyStats.histogram.bins[0]}-->
-  <!--                            max={expression.propertyStats.histogram.bins[-->
-  <!--                              expression.propertyStats.histogram.bins.length - 1-->
-  <!--                            ]}-->
-  <!--                            type="range" />-->
-  <!--                          <input bind:value={expression.value} class="input is-small" type="text" placeholder="Value" />-->
-  <!--                        </div>-->
-  <!--                      {:else}-->
-  <!--                        <div>Unique Values</div>-->
-  <!--                        <div class="grid" style="width: fit-content">-->
-  <!--                          &lt;!&ndash;                        Todo: This has the unique values and should only set the value and/or replace&ndash;&gt;-->
-  <!--                          {#each expression.propertyStats.values as value}-->
-  <!--                            <div class="grid-item">-->
-  <!--                              <div class="grid-item-content">-->
-  <!--                                <div class="grid-item-content-value">-->
-  <!--                                  <button on:click={() => (expression.value = value)} class="button is-small is-primary"-->
-  <!--                                    >{value}</button>-->
-  <!--                                </div>-->
-  <!--                              </div>-->
-  <!--                            </div>-->
-  <!--                          {/each}-->
-  <!--                        </div>-->
-  <!--                      {/if}-->
-  <!--                    </div>-->
-  <!--                  </div>-->
-  <!--                {/if}-->
-  <!--              </div>-->
-  <!--              <div id="arrow" data-popper-arrow />-->
-  <!--            </div>-->
-  <!--          {/if}-->
-  <!--        </div>-->
-  <!--      {/each}-->
-  <!--      <div class="buttons">-->
-  <!--        <button on:click={handleApplyExpression} class="button primary-button is-small apply">Apply</button>-->
-  <!--        <button on:click={handleClearExpression} class="button secondary-button is-small clear">Clear</button>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
 {/if}
 
 <style lang="scss">
-  //@import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/buttons.min.css';
   @import 'bulma-slider/dist/css/bulma-slider.min.css';
 
   :global(.primary-button) {
@@ -328,6 +237,7 @@
     border-radius: 0px !important;
     color: white !important;
   }
+
   :global(.secondary-button) {
     background: #3288ce !important;
     border-color: #3288ce !important;
@@ -345,10 +255,13 @@
   .wizard-icon {
     margin: 10%;
   }
+
   .filter-content {
     display: block;
   }
-
+  .button {
+    font-weight: bolder;
+  }
   .wizard-button-container {
     display: flex;
     flex-direction: row;
@@ -356,10 +269,12 @@
     align-items: center;
     margin: 10px;
   }
+
   .wizard-button {
     border: none;
     color: white !important;
   }
+
   .condition-text {
     margin: 0px 5px;
     text-align: center;
@@ -387,6 +302,11 @@
     margin: auto !important;
   }
 
+  .block-buttons-group {
+    display: block;
+    width: min-content;
+    margin: auto;
+  }
   .buttons {
     width: max-content;
     margin: auto;

@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
-  import { fade } from 'svelte/transition'
-  import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
 
   export let layer
   export let propertySelectValue
@@ -10,7 +8,6 @@
   export let showOnlyNumberFields = false
   export let inLegend = false
 
-  let showMenu = false
   let propertySelectOptions = inLegend ? layer.intervals.propertyOptions : undefined
 
   const dispatch = createEventDispatcher()
@@ -38,7 +35,7 @@
       propertySelectOptions = ['', ...propertySelectOptions]
     }
     inLegend ? (layer.intervals.propertyOptions = propertySelectOptions) : null
-    propertySelectValue = setDefaultProperty(propertySelectOptions)
+    // propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()
   }
 
@@ -53,17 +50,21 @@
     })
   }
 
+  const handleClick = () => {
+    dispatch('click')
+  }
+
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div class="grid" role="menu">
+<div class="grid" role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       <div
         class="card grid-item vector-property-card {propertySelectOption === propertySelectValue ? 'clicked' : null}"
         on:click={() => (propertySelectValue = propertySelectOption)}>
-        <div class="vector-property-card-content">
-          <span class="property-text">{propertySelectOption}</span>
+        <div class="vector-expression-card-content">
+          <span class="text-centered">{propertySelectOption}</span>
         </div>
       </div>
     {/each}
@@ -91,7 +92,7 @@
   :global(.vector-property-card) {
     margin: 0;
     padding: 0;
-    width: 50px;
+    width: 100%;
     height: 50px;
   }
 
@@ -105,7 +106,7 @@
     border: 2px solid #000;
   }
 
-  :global(.vector-property-card-content) {
+  :global(.vector-expression-card-content) {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -113,7 +114,7 @@
     width: 100%;
   }
 
-  :global(.property-text) {
+  :global(.text-centered) {
     font-size: 10px;
     text-align: center;
     vertical-align: middle;
