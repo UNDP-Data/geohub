@@ -6,7 +6,6 @@
   import PropertySelectButtons from './vector-styles/PropertySelectButtons.svelte'
   import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte'
   import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
-  import { getContext, setContext } from 'svelte'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -32,7 +31,7 @@
   let filteringError = false
   let propertyStats
   let initialStep = 1
-
+  let guard = 0
   $: console.log('propertyStats', propertyStats)
 
   const handlePropertySelect = (e) => {
@@ -146,86 +145,87 @@
 {#if isFilterPanelVisible === true}
   <div class="field" style="margin: auto; display: flex; justify-content: space-between">
     <span class="condition-text">One condition must be true</span>
-    <input id="switchExample" type="checkbox" name="switchExample" class="switch" checked="checked" />
+    <input id="switchExample" type="checkbox" name="switchExample" class="switch" checked />
     <label class="condition-text" for="switchExample">All conditions must be true</label>
   </div>
   <div style="margin:10px" class="is-divider" />
-  <StepWizard initialStep={1}>
-    <!--    Create new rule Step 1-->
-    <StepWizard.Step num={1} let:nextStep>
-      <div class="wizard-button-container">
-        <button on:click={nextStep} class="button wizard-button is-small primary-button"> New Rule </button>
-      </div>
-    </StepWizard.Step>
-    <StepWizard.Step num={2} let:previousStep let:nextStep>
-      <div class="wizard-button-container">
-        <button
-          style="margin-left: auto"
-          on:click={() => ($step = 1)}
-          class="button wizard-button is-small secondary-button">
-          Cancel
-        </button>
-      </div>
-      <PropertySelectButtons
-        {layer}
-        bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-        on:click={nextStep}
-        on:select={handlePropertySelect} />
-    </StepWizard.Step>
-    <StepWizard.Step num={3} let:previousStep let:nextStep>
-      <!--      Pick one operation from the selected-->
-      <div class="wizard-button-container">
-        <button on:click={previousStep} class="button wizard-button is-small primary-button"> Select Property </button>
-        <button
-          on:click={setContext('StepWizard', { initialStep })}
-          class="button wizard-button is-small secondary-button">
-          Cancel
-        </button>
-      </div>
-      <OperationButtons
-        on:click={nextStep}
-        bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
-        on:change={handleCurrentOperation} />
-    </StepWizard.Step>
-    <StepWizard.Step num={4} let:previousStep let:nextStep>
-      <!--      Pick one operation from the selected-->
-      <div class="wizard-button-container">
-        <button on:click={previousStep} class="button wizard-button is-small primary-button">
-          <i class="fa fa-chevron-left wizard-icon" />
-          Operation
-        </button>
-        <button on:click={nextStep} class="button wizard-button is-small primary-button">
-          Next
-          <i class="fa fa-chevron-right wizard-icon" />
-        </button>
-      </div>
-      <ValueInput
-        bind:propertyStats={expressionsArray[currentExpressionIndex]['propertyStats']}
-        bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
-        bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
-    </StepWizard.Step>
-    <StepWizard.Step num={5} let:previousStep>
-      <!--      Pick one operation from the selected-->
-      <div class="wizard-button-container">
-        <button on:click={previousStep} class="button wizard-button is-small primary-button">
-          <i class="fa fa-chevron-left wizard-icon" />
-          Value
-        </button>
-        <button on:click={addExpression} class="button wizard-button is-small primary-button"> Cancel </button>
-      </div>
-      <div class="block-buttons-group">
-        <button on:click={handleApplyExpression} class="button wizard-button is-small primary-button">
-          Apply Expression
-        </button>
-        <button
-          style="margin-top: 5%"
-          on:click={handleAddExpression}
-          class="button wizard-button is-small primary-button">
-          Add New Expression
-        </button>
-      </div>
-    </StepWizard.Step>
-  </StepWizard>
+  {#key guard}
+    <StepWizard initialStep={1}>
+      <!--    Create new rule Step 1-->
+      <StepWizard.Step num={1} let:nextStep>
+        <div class="wizard-button-container">
+          <button on:click={nextStep} class="button wizard-button is-small primary-button"> New Rule </button>
+        </div>
+      </StepWizard.Step>
+      <StepWizard.Step num={2} let:previousStep let:nextStep>
+        <div class="wizard-button-container">
+          <button
+            style="margin-left: auto"
+            on:click={() => {
+              guard = Math.random()
+            }}
+            class="button wizard-button is-small secondary-button">
+            Cancel
+          </button>
+        </div>
+        <PropertySelectButtons
+          {layer}
+          bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
+          on:click={nextStep}
+          on:select={handlePropertySelect} />
+      </StepWizard.Step>
+      <StepWizard.Step num={3} let:previousStep let:nextStep>
+        <!--      Pick one operation from the selected-->
+        <div class="wizard-button-container">
+          <button on:click={previousStep} class="button wizard-button is-small primary-button">
+            Select Property
+          </button>
+          <button
+            on:click={() => {
+              guard = Math.random()
+            }}
+            class="button wizard-button is-small secondary-button">
+            Cancel
+          </button>
+        </div>
+        <OperationButtons
+          on:click={nextStep}
+          bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
+          on:change={handleCurrentOperation} />
+      </StepWizard.Step>
+      <StepWizard.Step num={4} let:previousStep let:nextStep>
+        <!--      Pick one operation from the selected-->
+        <div class="wizard-button-container">
+          <button on:click={previousStep} class="button wizard-button is-small primary-button"> Select rule </button>
+        </div>
+        <ValueInput
+          bind:propertyStats={expressionsArray[currentExpressionIndex]['propertyStats']}
+          bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
+          bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
+      </StepWizard.Step>
+      <StepWizard.Step num={5} let:previousStep>
+        <!--      Pick one operation from the selected-->
+        <div class="wizard-button-container">
+          <button on:click={previousStep} class="button wizard-button is-small primary-button">
+            <i class="fa fa-chevron-left wizard-icon" />
+            Value
+          </button>
+          <button on:click={addExpression} class="button wizard-button is-small primary-button"> Cancel </button>
+        </div>
+        <div class="block-buttons-group">
+          <button on:click={handleApplyExpression} class="button wizard-button is-small primary-button">
+            Apply Expression
+          </button>
+          <button
+            style="margin-top: 5%"
+            on:click={handleAddExpression}
+            class="button wizard-button is-small primary-button">
+            Add New Expression
+          </button>
+        </div>
+      </StepWizard.Step>
+    </StepWizard>
+  {/key}
 {/if}
 
 <style lang="scss">
