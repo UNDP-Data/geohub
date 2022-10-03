@@ -3,7 +3,8 @@ import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
-const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
+import { DATABASE_CONNECTION } from '$lib/variables/private'
+const connectionString = DATABASE_CONNECTION
 
 /**
  * Get the list of saved style from PostGIS database

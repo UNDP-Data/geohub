@@ -1,7 +1,7 @@
 <script lang="ts">
   import { VegaLite } from 'svelte-vega'
   import { onMount } from 'svelte'
-  import { TITILER_API_ENDPOINT } from '../lib/constants'
+  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { fetchUrl } from '../lib/helper'
   import { map } from '../stores'
   import type {
@@ -28,7 +28,7 @@
   let data
 
   onMount(async () => {
-    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+    const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
     let layerStats
     const band = info.active_band_no
     layerStats = await fetchUrl(statsURL)

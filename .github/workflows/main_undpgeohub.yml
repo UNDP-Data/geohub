@@ -14,6 +14,9 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16]
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -23,48 +26,70 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # pnpm setup
+      # refer to https://github.com/pnpm/action-setup
+      - name: pnpm setup
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+          run_install: false
+
       # setup Node
-      - name: Install Node
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
-          cache: 'yarn'
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-      # install dependencies
-      - name: Create environment file
-        uses: SpicyPizza/create-envfile@v1.3
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
         with:
-          envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
-          envkey_VITE_AZURE_BLOB_TOKEN: ${{ secrets.VITE_AZURE_BLOB_TOKEN }}
-          envkey_VITE_AZURE_URL: ${{ secrets.VITE_AZURE_URL }}
-          envkey_VITE_ADMIN_URL: ${{ secrets.VITE_ADMIN_URL }}
-          envkey_VITE_MARTIN_API_ENDPOINT: ${{ secrets.VITE_MARTIN_API_ENDPOINT }}
-          envkey_VITE_DATABASE_CONNECTION: ${{ secrets.VITE_DATABASE_CONNECTION }}
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       # install dependencies
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+
+      # setup environmental variables
+      - name: Create environment file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
+          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
+          envkey_PUBLIC_ADMIN_URL: ${{ secrets.PUBLIC_ADMIN_URL }}
+          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
 
       - name: Run lint
-        run: yarn ci:lint
+        run: pnpm lint
 
       - name: Run Prettier
-        run: yarn ci:prettier
+        run: pnpm format
 
       - name: Run build
-        run: yarn ci:compile
+        run: pnpm build:ci
 
       - name: Run unit tests
-        run: yarn ci:test
+        run: pnpm test
 
       - name: Copy package.json / lock files to build folder
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
+          rm -rf node_modules
+          pnpm install --prod
           cp package.json build/.
-          cp yarn.lock build/.
+          cp pnpm-lock.yaml build/.
           mv node_modules build/.
           mv data build/.
 

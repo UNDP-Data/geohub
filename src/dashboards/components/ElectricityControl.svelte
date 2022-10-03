@@ -6,8 +6,7 @@
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import TimeSlider from './TimeSlider.svelte'
   import ElectricityLegend from './ElectricityLegend.svelte'
-
-  const AZURE_URL = import.meta.env.VITE_AZURE_URL
+  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   let POVERTY_ID = 'poverty'
   const HREA_ID = 'HREA'
@@ -51,7 +50,7 @@
     bind:BEFORE_LAYER_ID={POVERTY_ID}
     bind:getHreaUrl
     bind:getMlUrl
-    {AZURE_URL} />
+    {PUBLIC_AZURE_URL} />
 </div>
 
 <style lang="scss">
