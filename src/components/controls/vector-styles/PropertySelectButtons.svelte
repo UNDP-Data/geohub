@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
+  import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
 
   export let layer
   export let propertySelectValue
@@ -58,8 +59,14 @@
 <div class="grid" role="menu">
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
-      <div class="grid-item">
-        {propertySelectOption}
+      <div
+        class="card vector-property-card {propertySelectOption === propertySelectValue ? 'clicked' : null}"
+        on:click={() => (propertySelectValue = propertySelectOption)}>
+        <div class="icon-container">
+          <div class="vector-property-card-content">
+            <span class="property-text">{propertySelectOption}</span>
+          </div>
+        </div>
       </div>
     {/each}
   {/if}
@@ -68,14 +75,14 @@
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-gap: 2px;
     padding: 2px;
   }
   .grid-item {
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.8);
+    //background-color: rgba(255, 255, 255, 0.8);
+    //border: 1px solid rgba(0, 0, 0, 0.8);
     padding: 2px;
     text-align: center;
   }
@@ -84,5 +91,37 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+
+  :global(.vector-property-card) {
+    margin: 0;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+  }
+
+  .vector-property-card:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  .clicked {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.vector-property-card-content) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  :global(.property-text) {
+    font-size: 10px;
+    text-align: center;
+    margin: auto !important;
+    width: 100%;
+    height: 100%;
   }
 </style>

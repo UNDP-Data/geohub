@@ -156,139 +156,156 @@
       ? $map.setFilter(`${layerId}-label`, null)
       : null
   }
+
+  const removeExistingExpressions = () => {
+    // This function remove all the expressions from the expressions array
+    // expressionsArray = expressionsArray.filter((expression) => expression['property'] !== undefined)
+  }
 </script>
 
 <svelte:head>
   <link rel="stylesheet" href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css" />
 </svelte:head>
 {#if isFilterPanelVisible === true}
-  <!--  <StyleControlGroup title="Define conditions" style="display: flex; align-items: center;">-->
-  <span style="margin: auto;">Combine rules:</span>
-  <div style="margin: auto;" class="select is-small">
-    <select bind:value={selectedCombiningOperator}>
-      <option value="all">All conditions must be true</option>
-      <option value="any">At least one condition must be true</option>
-    </select>
+  <div class="field" style="margin: auto; display: flex; justify-content: space-between">
+    <span class="condition-text">One condition must be true</span>
+    <input id="switchExample" type="checkbox" name="switchExample" class="switch" checked="checked" />
+    <label class="condition-text" for="switchExample">All conditions must be true</label>
   </div>
-  <div class="is-divider separator mb-3 mt-3" />
-  <div class="static-content-filter">
-    <button on:click={addExpression} class="button primary-button is-small">Add condition</button>
-    <button on:click={removeLastExpression} class="button secondary-button is-small">Remove condition</button>
-  </div>
-  <div class="is-divider separator mb-3 mt-3" />
-
-  <!--  </StyleControlGroup>-->
-  <div style="display: flex; align-items: center;" use:popperRef>
-    <div class="filter-content" style="width: 90%">
-      {#each expressionsArray as expression, index}
-        <div class="dynamic-content-filter">
-          <PropertySelectButtons
-            bind:propertySelectValue={expression.property}
-            on:select={(e) => {
-              propertySelected(e)
-              currentExpressionIndex = index
-            }}
-            {layer}
-            showEmptyFields={false}
-            showOnlyNumberFields={true}
-            {setDefaultProperty} />
-
-          <!--          <div class="select is-small" style="margin-right:5%;">-->
-          <!--            <select bind:value={expression.operation}>-->
-          <!--              <option value="==">==</option>-->
-          <!--              <option value="!=">!=</option>-->
-          <!--              <option value="<">&#060;</option>-->
-          <!--              <option value=">=">&#8805;</option>-->
-          <!--              <option value=">">&#062; </option>-->
-          <!--              <option value="<=">&#8804;</option>-->
-          <!--              <option value="in">in</option>-->
-          <!--              <option value="!in">!in</option>-->
-          <!--              <option value="has">has</option>-->
-          <!--              <option value="!has">!has</option>-->
-          <!--            </select>-->
-          <!--          </div>-->
-          {#if showTooltip && expression.property && index === currentExpressionIndex}
-            <div
-              class="card tooltip"
-              use:popperContent={popperOptions}
-              style="width: max-content; height: fit-content; z-index:99999">
-              <div id="card">
-                <header style="padding: 5px; background: white; border: 0" class="modal-card-head">
-                  <p class="modal-card-title has-text-weight-bold" />
-                  <button
-                    class="delete"
-                    aria-label="close"
-                    alt="Close Tooltip"
-                    title="Close Tooltip"
-                    on:click={() => (showTooltip = false)} />
-                </header>
-                <!--                Todo: If expression contains a property-->
-                {#if expression.property !== '' && expression.propertyStats}
-                  <div class="card-content">
-                    <div class="content" style="width:100%; height:100%">
-                      <!--  Todo: Need to check for existence of the `propertyStats` attribute in the expression -->
-                      {#if expression.propertyStats.histogram}
-                        <div style="display: block;">
-                          <VectorHistogram
-                            bind:histogram={expression.propertyStats.histogram}
-                            bind:propertySelected={expression.property} />
-                          <input
-                            style="margin-left: auto; margin-right: auto;"
-                            bind:value={expression.value}
-                            class="slider is-fullwidth is-small"
-                            step={(expression.propertyStats.histogram.bins[
-                              expression.propertyStats.histogram.bins.length - 1
-                            ] -
-                              expression.propertyStats.histogram.bins[0]) /
-                              10}
-                            min={expression.propertyStats.histogram.bins[0]}
-                            max={expression.propertyStats.histogram.bins[
-                              expression.propertyStats.histogram.bins.length - 1
-                            ]}
-                            type="range" />
-                          <input bind:value={expression.value} class="input is-small" type="text" placeholder="Value" />
-                        </div>
-                      {:else}
-                        <div>Unique Values</div>
-                        <div class="grid" style="width: fit-content">
-                          <!--                        Todo: This has the unique values and should only set the value and/or replace-->
-                          {#each expression.propertyStats.values as value}
-                            <div class="grid-item">
-                              <div class="grid-item-content">
-                                <div class="grid-item-content-value">
-                                  <button on:click={() => (expression.value = value)} class="button is-small is-primary"
-                                    >{value}</button>
-                                </div>
-                              </div>
-                            </div>
-                          {/each}
-                        </div>
-                      {/if}
-                    </div>
-                  </div>
-                {/if}
-              </div>
-              <div id="arrow" data-popper-arrow />
-            </div>
-          {/if}
-          <input
-            bind:value={expression.value}
-            on:click={() => (currentExpressionIndex === index ? (showTooltip = true) : (showTooltip = false))}
-            style="width: 50%"
-            class="input is-small"
-            type="text"
-            placeholder="Value" />
-        </div>
-      {/each}
-      <div class="buttons">
-        <button on:click={handleApplyExpression} class="button primary-button is-small apply">Apply</button>
-        <button on:click={handleClearExpression} class="button secondary-button is-small clear">Clear</button>
+  <div style="margin:10px" class="is-divider" />
+  <StepWizard initialStep={1}>
+    <StepWizard.Step num={1} let:nextStep>
+      <div class="wizard-button-container">
+        <button on:click={nextStep} class="button wizard-button is-small button-primary">
+          New Rule
+          <i class="fa fa-chevron-right wizard-icon" />
+        </button>
+        <button on:click={removeExistingExpressions} class="button wizard-button is-small button-secondary">
+          Clear all rules
+        </button>
       </div>
-    </div>
-  </div>
+    </StepWizard.Step>
+    <StepWizard.Step num={2} let:previousStep let:nextStep>
+      <PropertySelectButtons {layer} {propertySelectValue} />
+      <div class="wizard-button-container">
+        <button on:click={previousStep} class="button wizard-button is-small button-secondary">
+          <i class="fa fa-chevron-left wizard-icon" />
+          Go Back
+        </button>
+        <button on:click={nextStep} style="color: white" class="button wizard-button is-small button-primary">
+          Next
+          <i class="fa fa-chevron-right wizard-icon" />
+        </button>
+      </div>
+    </StepWizard.Step>
+    <StepWizard.Step num={3} let:previousStep>
+      <button on:click={previousStep}> Go Back </button>
+    </StepWizard.Step>
+  </StepWizard>
+  <!--  <span style="margin: auto;">Combine rules:</span>-->
+  <!--  <div style="margin: auto;" class="select is-small">-->
+  <!--    <select bind:value={selectedCombiningOperator}>-->
+  <!--      <option value="all">All conditions must be true</option>-->
+  <!--      <option value="any">At least one condition must be true</option>-->
+  <!--    </select>-->
+  <!--  </div>-->
+  <!--  <div class="is-divider separator mb-3 mt-3" />-->
+  <!--  <div class="static-content-filter">-->
+  <!--    <button on:click={addExpression} class="button primary-button is-small">Add condition</button>-->
+  <!--    <button on:click={removeLastExpression} class="button secondary-button is-small">Remove condition</button>-->
+  <!--  </div>-->
+  <!--  <div class="is-divider separator mb-3 mt-3" />-->
+
+  <!--  &lt;!&ndash;  </StyleControlGroup>&ndash;&gt;-->
+  <!--  <div style="display: flex; align-items: center;" use:popperRef>-->
+  <!--    <div class="filter-content" style="width: 90%">-->
+  <!--      {#each expressionsArray as expression, index}-->
+  <!--        <div class="dynamic-content-filter">-->
+  <!--          <PropertySelectButtons-->
+  <!--            bind:propertySelectValue={expression.property}-->
+  <!--            on:select={(e) => {-->
+  <!--              propertySelected(e)-->
+  <!--              currentExpressionIndex = index-->
+  <!--            }}-->
+  <!--            {layer}-->
+  <!--            showEmptyFields={false}-->
+  <!--            showOnlyNumberFields={true}-->
+  <!--            {setDefaultProperty} />-->
+  <!--          {#if showTooltip && expression.property && index === currentExpressionIndex}-->
+  <!--            <div-->
+  <!--              class="card tooltip"-->
+  <!--              use:popperContent={popperOptions}-->
+  <!--              style="width: max-content; height: fit-content; z-index:99999">-->
+  <!--              <div id="card">-->
+  <!--                <header style="padding: 5px; background: white; border: 0" class="modal-card-head">-->
+  <!--                  <p class="modal-card-title has-text-weight-bold" />-->
+  <!--                  <button-->
+  <!--                    class="delete"-->
+  <!--                    aria-label="close"-->
+  <!--                    alt="Close Tooltip"-->
+  <!--                    title="Close Tooltip"-->
+  <!--                    on:click={() => (showTooltip = false)} />-->
+  <!--                </header>-->
+  <!--                {#if expression.property !== '' && expression.propertyStats}-->
+  <!--                  <div class="card-content">-->
+  <!--                    <div class="content" style="width:100%; height:100%">-->
+  <!--                      {#if expression.propertyStats.histogram}-->
+  <!--                        <div style="display: block;">-->
+  <!--                          <VectorHistogram-->
+  <!--                            bind:histogram={expression.propertyStats.histogram}-->
+  <!--                            bind:propertySelected={expression.property} />-->
+  <!--                          <input-->
+  <!--                            style="margin-left: auto; margin-right: auto;"-->
+  <!--                            bind:value={expression.value}-->
+  <!--                            class="slider is-fullwidth is-small"-->
+  <!--                            step={(expression.propertyStats.histogram.bins[-->
+  <!--                              expression.propertyStats.histogram.bins.length - 1-->
+  <!--                            ] - -->
+  <!--                              expression.propertyStats.histogram.bins[0]) /-->
+  <!--                              10}-->
+  <!--                            min={expression.propertyStats.histogram.bins[0]}-->
+  <!--                            max={expression.propertyStats.histogram.bins[-->
+  <!--                              expression.propertyStats.histogram.bins.length - 1-->
+  <!--                            ]}-->
+  <!--                            type="range" />-->
+  <!--                          <input bind:value={expression.value} class="input is-small" type="text" placeholder="Value" />-->
+  <!--                        </div>-->
+  <!--                      {:else}-->
+  <!--                        <div>Unique Values</div>-->
+  <!--                        <div class="grid" style="width: fit-content">-->
+  <!--                          &lt;!&ndash;                        Todo: This has the unique values and should only set the value and/or replace&ndash;&gt;-->
+  <!--                          {#each expression.propertyStats.values as value}-->
+  <!--                            <div class="grid-item">-->
+  <!--                              <div class="grid-item-content">-->
+  <!--                                <div class="grid-item-content-value">-->
+  <!--                                  <button on:click={() => (expression.value = value)} class="button is-small is-primary"-->
+  <!--                                    >{value}</button>-->
+  <!--                                </div>-->
+  <!--                              </div>-->
+  <!--                            </div>-->
+  <!--                          {/each}-->
+  <!--                        </div>-->
+  <!--                      {/if}-->
+  <!--                    </div>-->
+  <!--                  </div>-->
+  <!--                {/if}-->
+  <!--              </div>-->
+  <!--              <div id="arrow" data-popper-arrow />-->
+  <!--            </div>-->
+  <!--          {/if}-->
+  <!--        </div>-->
+  <!--      {/each}-->
+  <!--      <div class="buttons">-->
+  <!--        <button on:click={handleApplyExpression} class="button primary-button is-small apply">Apply</button>-->
+  <!--        <button on:click={handleClearExpression} class="button secondary-button is-small clear">Clear</button>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
 {/if}
 
 <style lang="scss">
+  //@import '../../styles/undp-design/base-minimal.min.css';
+  @import '../../styles/undp-design/buttons.min.css';
   @import 'bulma-slider/dist/css/bulma-slider.min.css';
 
   :global(.primary-button) {
@@ -311,19 +328,28 @@
     color: white !important;
   }
 
-  #expression-tags {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    width: max-content;
-    justify-content: space-around;
-    max-width: 300px;
+  .wizard-icon {
+    margin: 10%;
   }
-
   .filter-content {
     display: block;
   }
 
+  .wizard-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px;
+  }
+  .wizard-button {
+    border: none;
+    color: white;
+  }
+  .condition-text {
+    margin: 0px 5px;
+    text-align: center;
+  }
   .static-content-filter {
     margin: 5px;
     display: flex;
