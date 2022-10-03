@@ -14,6 +14,9 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16]
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -23,34 +26,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # setup Node
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      # setup environmental variables
-      - name: Create environment file
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
-          envkey_VITE_AZURE_BLOB_TOKEN: ${{ secrets.VITE_AZURE_BLOB_TOKEN }}
-          envkey_VITE_AZURE_URL: ${{ secrets.VITE_AZURE_URL }}
-          envkey_VITE_ADMIN_URL: ${{ secrets.VITE_ADMIN_URL }}
-          envkey_VITE_MARTIN_API_ENDPOINT: ${{ secrets.VITE_MARTIN_API_ENDPOINT }}
-          envkey_VITE_DATABASE_CONNECTION: ${{ secrets.VITE_DATABASE_CONNECTION }}
-
       # pnpm setup
       # refer to https://github.com/pnpm/action-setup
-      - uses: pnpm/action-setup@v2.2.2
-        name: Install pnpm
-        id: pnpm-install
+      - name: pnpm setup
+        uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7
+          version: 6
           run_install: false
+
+      # setup Node
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -68,6 +57,20 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # setup environmental variables
+      - name: Create environment file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
+          envkey_VITE_AZURE_BLOB_TOKEN: ${{ secrets.VITE_AZURE_BLOB_TOKEN }}
+          envkey_VITE_AZURE_URL: ${{ secrets.VITE_AZURE_URL }}
+          envkey_VITE_ADMIN_URL: ${{ secrets.VITE_ADMIN_URL }}
+          envkey_VITE_MARTIN_API_ENDPOINT: ${{ secrets.VITE_MARTIN_API_ENDPOINT }}
+          envkey_VITE_DATABASE_CONNECTION: ${{ secrets.VITE_DATABASE_CONNECTION }}
 
       - name: Run lint
         run: pnpm ci:lint
