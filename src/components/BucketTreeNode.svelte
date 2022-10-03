@@ -32,7 +32,6 @@
     STAC_PAGINATION_PREV,
     STAC_PAGINATION_NEXT,
     StatusTypes,
-    TITILER_API_ENDPOINT,
   } from '$lib/constants'
   import { fetchUrl, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
@@ -45,6 +44,7 @@
     BandMetadata,
   } from '$lib/types'
   import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
+  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let level = 0
   export let node: TreeNode
@@ -165,7 +165,7 @@
 
   const getRasterMetadata = async (node: TreeNode) => {
     let b64EncodedUrl = getBase64EncodedUrl(node.url)
-    const data: RasterTileMetadata = await fetchUrl(`${TITILER_API_ENDPOINT}/info?url=${b64EncodedUrl}`)
+    const data: RasterTileMetadata = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
 
     if (
       data &&
@@ -174,7 +174,7 @@
       //TODO needs fix: Ioan band
       Object.keys(data.band_metadata[0][1]).length === 0
     ) {
-      const statistics = await fetchUrl(`${TITILER_API_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
+      const statistics = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
       if (statistics) {
         for (let i = 0; i < data.band_metadata.length; i++) {
           const bandValue = data.band_metadata[i][0]
@@ -383,7 +383,7 @@
 
         const layerSource: RasterSourceSpecification = {
           type: LayerTypes.RASTER,
-          tiles: [`${TITILER_API_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
+          tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
           tileSize: 256,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore

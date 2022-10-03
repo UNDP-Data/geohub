@@ -62,15 +62,14 @@ jobs:
       - name: Create environment file
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          envkey_VITE_TITILER_ENDPOINT: ${{ secrets.VITE_TITILER_ENDPOINT }}
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_VITE_BINGMAP_KEY: ${{ secrets.VITE_BINGMAP_KEY }}
-          envkey_VITE_AZURE_BLOB_TOKEN: ${{ secrets.VITE_AZURE_BLOB_TOKEN }}
-          envkey_VITE_AZURE_URL: ${{ secrets.VITE_AZURE_URL }}
-          envkey_VITE_ADMIN_URL: ${{ secrets.VITE_ADMIN_URL }}
-          envkey_VITE_MARTIN_API_ENDPOINT: ${{ secrets.VITE_MARTIN_API_ENDPOINT }}
-          envkey_VITE_DATABASE_CONNECTION: ${{ secrets.VITE_DATABASE_CONNECTION }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
+          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
+          envkey_PUBLIC_ADMIN_URL: ${{ secrets.PUBLIC_ADMIN_URL }}
+          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
 
       - name: Run lint
         run: pnpm ci:lint

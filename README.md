@@ -18,12 +18,6 @@ Copy and update the environment variables file by running this command and conta
 cp .env.example .env
 ```
 
-```
-AZURE_STORAGE_ACCOUNT=
-AZURE_STORAGE_ACCESS_KEY=
-VITE_TITILER_ENDPOINT=
-```
-
 ## Developer Experience
 
 GeoHub uses [SvelteKit](https://kit.svelte.dev/) and it is recommended to use [Visual Studio Code](https://code.visualstudio.com/) for development coding purposes. Install the following VS Code extensions for the optimal GeoHub developer experience:

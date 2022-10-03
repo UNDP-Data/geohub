@@ -1,16 +1,13 @@
 import fs from 'fs'
 import path from 'path'
-import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import type { ServiceListContainersOptions } from '@azure/storage-blob'
+import { BlobServiceClient, StorageSharedKeyCredential, type ServiceListContainersOptions } from '@azure/storage-blob'
 
 import { BucketType } from '$lib/constants'
 import type { Bucket } from '$lib/types'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
 
-const account = AZURE_STORAGE_ACCOUNT
-const accountKey = AZURE_STORAGE_ACCESS_KEY
 const listContainerOpts: ServiceListContainersOptions = { includeMetadata: true }
-const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
+const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
 const __dirname = path.resolve()
 
 export const load = async () => {
@@ -24,7 +21,7 @@ export const load = async () => {
 }
 
 const listContainers = async () => {
-  const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
+  const blobServiceClient = new BlobServiceClient(`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`, sharedKeyCredential)
   const bucketList: Array<Bucket> = []
 
   for await (const container of blobServiceClient.listContainers(listContainerOpts)) {

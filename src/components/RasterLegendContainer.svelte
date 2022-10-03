@@ -16,7 +16,7 @@
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
   import { getActiveBandIndex, fetchUrl } from '$lib/helper'
-  import { TITILER_API_ENDPOINT } from '$lib/constants'
+  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type {
     FillLayerSpecification,
     HeatmapLayerSpecification,
@@ -58,7 +58,7 @@
   }
 
   onMount(async () => {
-    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+    const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
     // if(layer.isStac){
     //   layerCatalogUrl = `https://planetarycomputer.microsoft.com/api/stac/v1/collections/${collectionId}`
     // }
@@ -67,7 +67,7 @@
 
     layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
     if (layerHasUniqueValues) {
-      const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
+      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
       layerStats = await fetchUrl(statsURL)
     }
     if (!('stats' in info)) {
