@@ -9,6 +9,7 @@
   import StyleControlGroup from '../control-groups/StyleControlGroup.svelte'
   import PropertySelect_New from './vector-styles/PropertySelect_New.svelte'
   import PropertySelectButtons from './vector-styles/PropertySelectButtons.svelte'
+  import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -38,9 +39,7 @@
     operator: '',
   }
   // eslint-disable-next-line @typescript-eslint/ban-types
-  let expressionsArray: ({ property: string; index: number; filterValue: string; operator: string } | {})[] = [
-    singleExpression,
-  ]
+  let expressionsArray: ({ property: string; index: number; filterValue: string; operator: string } | {})[] = []
 
   let selectedCombiningOperator
   let propertySelectValue
@@ -161,6 +160,11 @@
     // This function remove all the expressions from the expressions array
     // expressionsArray = expressionsArray.filter((expression) => expression['property'] !== undefined)
   }
+
+  const handlePropertySelect = (e) => {
+    propertySelectValue = e.detail.prop
+    console.log(propertySelectValue)
+  }
 </script>
 
 <svelte:head>
@@ -174,32 +178,42 @@
   </div>
   <div style="margin:10px" class="is-divider" />
   <StepWizard initialStep={1}>
+    <!--    Create new rule Step 1-->
     <StepWizard.Step num={1} let:nextStep>
       <div class="wizard-button-container">
         <button on:click={nextStep} class="button wizard-button is-small button-primary">
           New Rule
           <i class="fa fa-chevron-right wizard-icon" />
         </button>
-        <button on:click={removeExistingExpressions} class="button wizard-button is-small button-secondary">
+        <button
+          on:click={removeExistingExpressions}
+          class="button wizard-button is-small button-secondary"
+          disabled={expressionsArray.length > 0 ? 'true' : 'false'}>
           Clear all rules
         </button>
       </div>
     </StepWizard.Step>
     <StepWizard.Step num={2} let:previousStep let:nextStep>
-      <PropertySelectButtons {layer} {propertySelectValue} />
+      <!--    Pick one property from the page-->
+      <!--      <button style='margin-left: 70%' class="button wizard-button is-small other-button">-->
+      <!--        Cancel-->
+      <!--      </button>-->
       <div class="wizard-button-container">
         <button on:click={previousStep} class="button wizard-button is-small button-secondary">
           <i class="fa fa-chevron-left wizard-icon" />
           Go Back
         </button>
-        <button on:click={nextStep} style="color: white" class="button wizard-button is-small button-primary">
-          Next
+        <button on:click={nextStep} class="button wizard-button is-small button-primary">
+          Operation
           <i class="fa fa-chevron-right wizard-icon" />
         </button>
       </div>
+      <PropertySelectButtons {layer} {propertySelectValue} on:select={handlePropertySelect} />
     </StepWizard.Step>
     <StepWizard.Step num={3} let:previousStep>
+      <!--      Pick one operation from the selected-->
       <button on:click={previousStep}> Go Back </button>
+      <OperationButtons />
     </StepWizard.Step>
   </StepWizard>
   <!--  <span style="margin: auto;">Combine rules:</span>-->
@@ -344,7 +358,7 @@
   }
   .wizard-button {
     border: none;
-    color: white;
+    color: white !important;
   }
   .condition-text {
     margin: 0px 5px;

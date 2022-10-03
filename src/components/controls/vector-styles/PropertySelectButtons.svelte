@@ -60,12 +60,10 @@
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       <div
-        class="card vector-property-card {propertySelectOption === propertySelectValue ? 'clicked' : null}"
+        class="card grid-item vector-property-card {propertySelectOption === propertySelectValue ? 'clicked' : null}"
         on:click={() => (propertySelectValue = propertySelectOption)}>
-        <div class="icon-container">
-          <div class="vector-property-card-content">
-            <span class="property-text">{propertySelectOption}</span>
-          </div>
+        <div class="vector-property-card-content">
+          <span class="property-text">{propertySelectOption}</span>
         </div>
       </div>
     {/each}
@@ -81,9 +79,6 @@
   }
   .grid-item {
     cursor: pointer;
-    //background-color: rgba(255, 255, 255, 0.8);
-    //border: 1px solid rgba(0, 0, 0, 0.8);
-    padding: 2px;
     text-align: center;
   }
   .button-text {
@@ -107,6 +102,7 @@
 
   .clicked {
     background-color: rgba(0, 0, 0, 0.1);
+    border: 2px solid #000;
   }
 
   :global(.vector-property-card-content) {
@@ -120,8 +116,9 @@
   :global(.property-text) {
     font-size: 10px;
     text-align: center;
-    margin: auto !important;
-    width: 100%;
-    height: 100%;
+    vertical-align: middle;
+    word-break: break-word;
+    width: 90%;
+    height: fit-content;
   }
 </style>
