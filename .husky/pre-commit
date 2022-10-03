@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+pnpm prettier-check
+pnpm build
+pnpm lint

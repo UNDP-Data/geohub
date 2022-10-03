@@ -69,6 +69,7 @@ importers:
       geodesy-fn: ^1.0.1
       geojson: ^0.5.0
       hex-to-css-filter: ^5.4.0
+      husky: ^8.0.1
       image-clipper: ^0.4.4
       jsdom: ^20.0.0
       lodash-es: ^4.17.21
@@ -206,6 +207,7 @@ importers:
       eslint: 8.24.0
       eslint-config-prettier: 8.5.0_eslint@8.24.0
       eslint-plugin-svelte3: 4.0.0_snydkosur25h6rjxszquwacaua
+      husky: 8.0.1
       jsdom: 20.0.0
       node-fetch: 3.2.10
       prettier: 2.7.1
@@ -3432,6 +3434,12 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+
+  /husky/8.0.1:
+    resolution: {integrity: sha512-xs7/chUH/CKdOCs7Zy0Aev9e/dKOMZf3K1Az1nar3tzlv0jfqnYtu235bstsWTmXOR0EfINrPa97yy4Lz6RiKw==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
 
   /iconv-lite/0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
