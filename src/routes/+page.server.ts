@@ -21,7 +21,10 @@ export const load = async () => {
 }
 
 const listContainers = async () => {
-  const blobServiceClient = new BlobServiceClient(`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`, sharedKeyCredential)
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
   const bucketList: Array<Bucket> = []
 
   for await (const container of blobServiceClient.listContainers(listContainerOpts)) {

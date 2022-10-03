@@ -72,16 +72,16 @@ jobs:
           envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
 
       - name: Run lint
-        run: pnpm ci:lint
+        run: pnpm lint
 
       - name: Run Prettier
-        run: pnpm ci:prettier
+        run: pnpm format
 
       - name: Run build
-        run: pnpm ci:compile
+        run: pnpm build:ci
 
       - name: Run unit tests
-        run: pnpm ci:test
+        run: pnpm test
 
       - name: Copy package.json / lock files to build folder
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
