@@ -8,7 +8,7 @@
   import CurrentLocation from '$lib/components/CurrentLocation.svelte'
   import MapQueryInfoControl from './MapQueryInfoControl.svelte'
 
-  const AZURE_URL = import.meta.env.VITE_ADMIN_URL
+  import { PUBLIC_ADMIN_URL } from '$lib/variables/public'
   let mapContainer: HTMLDivElement
   let adminLayer: AdminLayer = null
   let isMapLoaded = false
@@ -101,7 +101,7 @@
   const initAdminLayer = () => {
     if (!$map) return
     if (!adminLayer) {
-      adminLayer = new AdminLayer($map, AZURE_URL, false)
+      adminLayer = new AdminLayer($map, PUBLIC_ADMIN_URL, false)
     }
     adminLayer.load()
     adminLayer.setInteraction()

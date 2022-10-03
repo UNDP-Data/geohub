@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
@@ -7,7 +8,6 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
-    TITILER_API_ENDPOINT,
   } from '$lib/constants'
   import type {
     FillLayerSpecification,
@@ -70,7 +70,7 @@
   }
 
   onMount(async () => {
-    const statsURL = `${TITILER_API_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
+    const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
     const layerStats: RasterLayerStats = await fetchUrl(statsURL)
     info = { ...info, stats: layerStats }
     const band = info.active_band_no

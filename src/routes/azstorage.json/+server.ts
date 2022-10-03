@@ -8,11 +8,10 @@ import {
 } from '@azure/storage-blob'
 
 import type { Tree, TreeNode } from '$lib/types'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
 import { fetchUrl } from '$lib/helper'
-const account = AZURE_STORAGE_ACCOUNT
-const accountKey = AZURE_STORAGE_ACCESS_KEY
-const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey)
+
+const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
 
 const isRasterExtension = (name: string) => {
   const splitAt = name.lastIndexOf('.')
@@ -24,7 +23,10 @@ const isRasterExtension = (name: string) => {
 
 const listContainer = async (containerName: string, relPath: string) => {
   // create storage container
-  const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
 
   // generate account SAS token for vector tiles. This is needed because the
   // blob level SAS tokens have the blob name encoded inside the SAS token and the
@@ -127,7 +129,10 @@ const listContainer = async (containerName: string, relPath: string) => {
 }
 
 const listContainers = async (prefix = '/') => {
-  const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
   const tree: TreeNode = {
     label: 'GeoHub Storage',
     children: <TreeNode[]>[],

@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types'
 import pkg from 'pg'
 const { Pool } = pkg
-const connectionString = import.meta.env.VITE_DATABASE_CONNECTION
+import { DATABASE_CONNECTION } from '$lib/variables/private'
+const connectionString = DATABASE_CONNECTION
 
 export const load: PageServerLoad = async () => {
   const defaultPage = 1
