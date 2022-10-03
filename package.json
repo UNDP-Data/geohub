@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "prettier --plugin-search-dir . --check  \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore && eslint .",
+    "lint": "prettier --plugin-search-dir . --check  \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore && eslint src --fix",
     "format": "prettier --plugin-search-dir . --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore",
     "smui-theme-light": "smui-theme compile static/smui.css -i src/styles/theme -i ./node_modules",
     "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/styles/theme/dark -i ./node_modules",
