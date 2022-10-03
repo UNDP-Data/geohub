@@ -1,5 +1,5 @@
 <script lang="ts">
-  let currentSelectedOperation: string = ''
+  let currentSelectedOperation = ''
 
   const operationOptions = [
     { value: '==', label: 'Equal To' },
