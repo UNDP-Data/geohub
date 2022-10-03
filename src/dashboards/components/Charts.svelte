@@ -6,9 +6,7 @@
   // import type { VisualizationSpec } from 'svelte-vega'
   import { map, admin } from '../stores'
 
-  const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
-  const AZURE_URL = import.meta.env.VITE_AZURE_URL
-  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
+  import { PUBLIC_TITILER_ENDPOINT, PUBLIC_AZURE_BLOB_TOKEN, PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   const HREA_ID = 'HREA'
   const ML_ID = 'ML'
@@ -40,11 +38,11 @@
   }
 
   const getHreaUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${TOKEN}`
+    return `${PUBLIC_AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
   }
 
   const getMlUrl = (y: number) => {
-    return `${AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${TOKEN}`
+    return `${PUBLIC_AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
   }
 
   const adminInteraction = () => {
@@ -74,7 +72,7 @@
     for (const [name, getDataURL, noData, ignoreValue, total] of options) {
       for (let x = 2012; x <= 2020; x++) {
         if (!ignoreValue.includes(x)) {
-          const url = `${API_URL}/point/${lng},${lat}?url=${getDataURL(x)}`
+          const url = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getDataURL(x)}`
           fetch(url, { signal: controller.signal })
             .then((r) => r.json())
             .then((response) => {

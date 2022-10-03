@@ -6,7 +6,8 @@
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TagsView from '$components/TagsView.svelte'
-  import { MARTIN_API_ENDPOINT, TabNames } from '$lib/constants'
+  import { PUBLIC_MARTIN_API_ENDPOINT } from '$lib/variables/public'
+  import { TabNames } from '$lib/constants'
   import { indicatorProgress, map, martinIndex } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import { fetchUrl } from '$lib/helper'
@@ -56,7 +57,7 @@
 
   const getMartinIndex = async () => {
     if ($martinIndex) return
-    const data = await fetchUrl(`${MARTIN_API_ENDPOINT}/index.json`)
+    const data = await fetchUrl(`${PUBLIC_MARTIN_API_ENDPOINT}/index.json`)
     martinIndex.update(() => data)
   }
 </script>

@@ -1,8 +1,8 @@
 import type { RequestHandler } from './$types'
 import fs from 'fs'
 import path from 'path'
-
-import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT, STAC_PAGINATION_LIMIT, TITILER_API_ENDPOINT } from '$lib/constants'
+import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT, STAC_PAGINATION_LIMIT } from '$lib/constants'
 import { fetchUrl, getBase64EncodedUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
 
@@ -73,7 +73,7 @@ export const GET: RequestHandler = async ({ url }) => {
             const url = `${assetItem.href}?${res.token}`
 
             const b64EncodedUrl = getBase64EncodedUrl(url)
-            const resTitiler = await fetch(`${TITILER_API_ENDPOINT}/bounds?url=${b64EncodedUrl}`)
+            const resTitiler = await fetch(`${PUBLIC_TITILER_ENDPOINT}/bounds?url=${b64EncodedUrl}`)
             if (resTitiler.status === 500) {
               // some COG is invalid to use. skip to add the data if titiler api returns 500.
               continue

@@ -12,8 +12,7 @@
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
   import { indicatorProgress, map, layerList, spriteImageList } from '$stores'
-
-  const AZURE_URL = import.meta.env.VITE_ADMIN_URL
+  import { PUBLIC_ADMIN_URL } from '$lib/variables/public'
 
   let adminLayer: AdminLayer = null
   let container: HTMLDivElement
@@ -142,7 +141,7 @@
 
     if (!$map) return
     if (!adminLayer) {
-      adminLayer = new AdminLayer($map, AZURE_URL, false)
+      adminLayer = new AdminLayer($map, PUBLIC_ADMIN_URL, false)
     }
     adminLayer.load()
     adminLayer.setInteraction()

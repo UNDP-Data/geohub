@@ -4,7 +4,7 @@ import { admin } from '../stores/index'
 import { get } from 'svelte/store'
 import { map as mapStore, year as yearStore } from '../stores/index'
 
-const BASE_URL = import.meta.env.VITE_ADMIN_URL
+import { PUBLIC_ADMIN_URL } from '$lib/variables/public'
 const ADM_ID = 'admin'
 const ADM0_ID = 'admin0'
 let adminLevel = 0
@@ -115,7 +115,7 @@ const loadAdmin0 = () => {
     type: LayerTypes.VECTOR,
     maxzoom: 10,
     promoteId: 'adm0_id',
-    tiles: [`${BASE_URL}/admin/adm0_polygons/{z}/{x}/{y}.pbf`],
+    tiles: [`${PUBLIC_ADMIN_URL}/admin/adm0_polygons/{z}/{x}/{y}.pbf`],
   }
   const layerLine: LineLayerSpecification = {
     id: ADM0_ID,
@@ -205,7 +205,7 @@ const loadAdminChoropleth = () => {
     type: LayerTypes.VECTOR,
     maxzoom: 10,
     promoteId: `adm${lvl}_id`,
-    tiles: [`${BASE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`],
+    tiles: [`${PUBLIC_ADMIN_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`],
   }
   const layerFill: FillLayerSpecification = {
     id: ADM_ID,
@@ -238,7 +238,7 @@ export const loadAdminHover = () => {
     type: LayerTypes.VECTOR,
     maxzoom: 10,
     promoteId: `adm${lvl}_id`,
-    tiles: [`${BASE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`],
+    tiles: [`${PUBLIC_ADMIN_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`],
   }
   const layerFill: FillLayerSpecification = {
     id: ADM_ID,

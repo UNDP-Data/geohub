@@ -15,8 +15,7 @@
     icon: IconDefinition
   }
 
-  const API_URL = import.meta.env.VITE_TITILER_ENDPOINT
-  const TOKEN = import.meta.env.VITE_AZURE_BLOB_TOKEN
+  import { PUBLIC_TITILER_ENDPOINT, PUBLIC_AZURE_BLOB_TOKEN } from '$lib/variables/public'
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'
   const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source'
 
@@ -51,11 +50,11 @@
   }
 
   const getHreaUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${TOKEN}`
+    return `${AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
   }
 
   const getMlUrl = (y: number) => {
-    return `${AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${TOKEN}`
+    return `${AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
   }
 
   export function loadLayer() {
@@ -75,7 +74,7 @@
 
   const loadRasterLayer = async (url: string) => {
     if (!$map) return
-    const layerInfo = await fetchUrl(`${API_URL}/info?url=${url}`)
+    const layerInfo = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/info?url=${url}`)
     if (!(layerInfo && layerInfo['band_metadata'])) {
       return
     }
@@ -100,7 +99,7 @@
 
     const layerSource: SourceSpecification = {
       type: LayerTypes.RASTER,
-      tiles: [`${API_URL}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
+      tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
       tileSize: 256,
       bounds: layerInfo['bounds'],
       attribution:

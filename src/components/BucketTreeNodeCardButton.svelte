@@ -9,7 +9,7 @@
   import { clean, fetchUrl, getActiveBandIndex, getBase64EncodedUrl, hash } from '$lib/helper'
   import Popper from '$lib/popper'
   import { layerMetadata, bucketList } from '$stores'
-  import { TITILER_API_ENDPOINT } from '$lib/constants'
+  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount } from 'svelte'
 
   export let layerInfoMetadata: LayerInfoMetadata = undefined
@@ -65,7 +65,7 @@
         // get metadata from endpoint
         const layerURL = new URL(node.url)
         const infoURI: string = node.isRaster
-          ? `${TITILER_API_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
+          ? `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
           : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
               layerURL.search
             }`

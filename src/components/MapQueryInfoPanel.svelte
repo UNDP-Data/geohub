@@ -17,6 +17,7 @@
   import type { Layer } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
+  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let mapMouseEvent: MapMouseEvent
   export let isDataContainerVisible: boolean
@@ -84,7 +85,6 @@
     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
 
     // get layer value(s) at lat/lng of mouse event
-    const titilerApiUrl = import.meta.env.VITE_TITILER_ENDPOINT
     const lat = mapMouseEvent.lngLat?.lat
     const lng = mapMouseEvent.lngLat?.lng
     let layerValuesDataTmp = []
@@ -98,7 +98,7 @@
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         bandIndex = getActiveBandIndex(layer.info)
-        const baseUrl = `${titilerApiUrl}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
+        const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
         const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
         const layerData = await fetchUrl(queryURL)
