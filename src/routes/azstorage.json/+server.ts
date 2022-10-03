@@ -23,7 +23,10 @@ const isRasterExtension = (name: string) => {
 
 const listContainer = async (containerName: string, relPath: string) => {
   // create storage container
-  const blobServiceClient = new BlobServiceClient(`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`, sharedKeyCredential)
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
 
   // generate account SAS token for vector tiles. This is needed because the
   // blob level SAS tokens have the blob name encoded inside the SAS token and the
@@ -126,7 +129,10 @@ const listContainer = async (containerName: string, relPath: string) => {
 }
 
 const listContainers = async (prefix = '/') => {
-  const blobServiceClient = new BlobServiceClient(`https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`, sharedKeyCredential)
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
   const tree: TreeNode = {
     label: 'GeoHub Storage',
     children: <TreeNode[]>[],
