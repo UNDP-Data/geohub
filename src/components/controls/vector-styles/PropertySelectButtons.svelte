@@ -61,10 +61,20 @@
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       <div
+        title='{propertySelectOption}: ({layer.info.json.vector_layers[0].fields[propertySelectOption]})'
         class="card grid-item vector-property-card {propertySelectOption === propertySelectValue ? 'clicked' : null}"
         on:click={() => (propertySelectValue = propertySelectOption)}>
+<!--         Check if the property holds data of string/ number type to display the right value-->
         <div class="vector-expression-card-content">
-          <span class="text-centered">{propertySelectOption}</span>
+<!--          Need to check for the type of data in the property, whether string or number and display the info-->
+          {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
+            <span class='property-info'>123...</span>
+          {:else}
+            <span  class='property-info'>abc ...</span>
+          {/if}
+          <span class="text-centered">
+            {propertySelectOption}
+          </span>
         </div>
       </div>
     {/each}
@@ -88,7 +98,11 @@
     overflow: hidden;
     white-space: nowrap;
   }
-
+  .fa-spell-check{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   :global(.vector-property-card) {
     margin: 0;
     padding: 0;
@@ -106,6 +120,12 @@
     border: 2px solid #000;
   }
 
+  .property-info{
+    position: absolute;
+    font-size: 10px;
+    top: 0;
+    right: 0;
+  }
   :global(.vector-expression-card-content) {
     display: flex;
     justify-content: center;

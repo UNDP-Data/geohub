@@ -2,33 +2,42 @@
   import { createEventDispatcher } from 'svelte'
 
   export let currentSelectedOperation = ''
+  export let stringProperty = false
+  export let numberProperty = false
+  export let disableNonNumericOperators = false
 
   const operationOptions = [
-    { value: '==', label: 'Equal To' },
-    { value: '!=', label: 'Not Equal To' },
-    { value: '<', label: 'Less Than' },
-    { value: '>', label: 'Greater Than' },
-    { value: 'has', label: 'Contains' },
-    { value: '!has', label: 'Excludes' },
+    { value: '==', label: 'Equal To', disabled:false },
+    { value: '!=', label: 'Not Equal To', disabled:false },
+    { value: '<', label: 'Less Than', disabled:stringProperty }, // < disabled when property is string
+    { value: '>', label: 'Greater Than', disabled:stringProperty }, // < disabled when property is string
+    { value: 'in', label: 'Contains', disabled:numberProperty },
+    { value: '!in', label: 'Excludes', disabled:numberProperty },
   ]
 
   const dispatch = createEventDispatcher()
 
   $: currentSelectedOperation, handleOperationChange()
   const handleOperationChange = () => {
+    if(currentSelectedOperation === '==' || currentSelectedOperation === '!='){
+      dispatch('disableTags')
+    }else{
+      dispatch('enableTags')
+    }
     dispatch('change', {
       operation: currentSelectedOperation,
     })
-    dispatch('click')
   }
 </script>
 
 <div class="grid" role="menu">
   {#each operationOptions as operation}
     <div
-      class="card grid-item vector-expression-card {operation.value === currentSelectedOperation ? 'clicked' : null}"
+      disabled='{operation.disabled}'
+      class="card grid-item vector-expression-card {operation.disabled ? 'disabled':null} {operation.value === currentSelectedOperation ? 'clicked' : null}"
       on:click={() => {
-        currentSelectedOperation = operation.value
+        operation.disabled ? null : (currentSelectedOperation = operation.value)
+        operation.disabled ? null : (dispatch('click'))
       }}>
       <div class="vector-expression-card-content">
         <span class="text-centered">{operation.label}</span>
@@ -56,14 +65,21 @@
 
   :global(.text-centered) {
     font-size: 10px;
+    font-weight: bolder;
     text-align: center;
     vertical-align: middle;
     word-break: break-word;
-    width: 90%;
+    text-overflow: ellipsis;
+    width: 100%;
     height: fit-content;
   }
   .clicked {
     background-color: rgba(0, 0, 0, 0.2);
     border: 2px solid #000;
+  }
+  .disabled{
+    opacity: 0.5;
+    background-color: white!important;
+    cursor: not-allowed!important;
   }
 </style>

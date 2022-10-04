@@ -1,9 +1,44 @@
 <script lang="ts">
   import VectorHistogram from '$components/VectorHistogram.svelte'
+  import RangeSlider from 'svelte-range-slider-pips'
+  import Tags from '$components/Tags.svelte'
+  import { createEventDispatcher  } from 'svelte'
 
   export let propertyStats
   export let propertySelectedValue
   export let expressionValue
+  export let acceptSingleTag = true
+
+
+  const dispatch = createEventDispatcher()
+
+  let tagsList = []
+  let optionsList: []
+  let hideOptions: boolean = true
+  let step
+  if(propertyStats.type === 'number') {
+    step = (propertyStats.max - propertyStats.min) / 100
+  }
+  $:{
+    propertyStats.type === 'string' ? optionsList = [...new Set(propertyStats.values)] : optionsList = propertyStats.values
+  }
+
+
+  const onSliderStop = (event) => {
+    dispatch('sliderStop', event.detail)
+    console.log(event.detail)
+    expressionValue = event.detail.value
+  }
+  const handleTags = (event: CustomEvent) => {
+    dispatch('tags', event.detail)
+    tagsList = event.detail.tags
+    expressionValue = tagsList
+  }
+
+//  Todo: Use tags input for includes and excludes operator
+  // Disable includes and excludes for float columns
+  // float always show a slider
+  // float show greater than and less than
 </script>
 
 {#if propertyStats}
@@ -12,47 +47,96 @@
       <div class="content" style="width:100%; height:100%">
         {#if propertyStats.histogram}
           <div style="display: block;">
-            <VectorHistogram bind:histogram={propertyStats.histogram} bind:propertySelected={propertySelectedValue} />
-            <input
-              style="margin-left: auto; margin-right: auto;"
-              bind:value={expressionValue}
-              class="slider is-fullwidth is-small"
-              step={(propertyStats.histogram.bins[propertyStats.histogram.bins.length - 1] -
-                propertyStats.histogram.bins[0]) /
-                10}
+            <RangeSlider
+              bind:values={expressionValue}
+              float
+              range
               min={propertyStats.histogram.bins[0]}
               max={propertyStats.histogram.bins[propertyStats.histogram.bins.length - 1]}
-              type="range" />
-            <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+              pips
+              first="label"
+              last="label"
+              step={step}
+              rest={false}
+              on:stop={onSliderStop} />
           </div>
+            <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
         {:else}
-          <div>Unique Values</div>
-          <div class="grid" style="width: fit-content">
+            {#if propertyStats.type === "string"}
+              <div>
+                <Tags
+                  on:tags={handleTags}
+                  maxTags={acceptSingleTag ? 1 : 100}
+                  addKeys={[9, 13]}
+                  splitWith={'/'}
+                  onlyUnique={true}
+                  removeKeys={[27]}
+                  placeholder={'Select a value...'}
+                  autoComplete={optionsList}
+                  tags={tagsList}
+                  allowBlur={true}
+                  disable={false}
+                  minChars={0}
+                  onlyAutocomplete={true}
+                  labelShow={false}
+                  {acceptSingleTag} />
+                <button class="button is-small primary-button" on:click={() => {dispatch('apply')}}>Confirm Selection</button>
+              </div>
+
+            {:else}
+            {#if propertyStats.values.length < 25}
+              <div class='grid'>
+                {#each propertyStats.values as value}
+                  <div class='grid-item'>
+                    <button
+                      on:click={() =>
+                      {
+                        dispatch('uniqueButton', value)
+                        expressionValue = value
+                      }}
+                      class='button is-info is-small'>
+                      {value}
+                    </button>
+                  </div>
+                {/each}
+              </div>
+              <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+            <!--  Show grid of buttons arranged together-->
+            {:else}
+              <div class="grid" style="width: fit-content">
             {#each propertyStats.values as value}
               <div class="grid-item">
-                <div class="grid-item-content">
-                  <div class="grid-item-content-value">
-                    <button on:click={() => (expressionValue = value)} class="button is-small is-primary"
-                      >{value}</button>
-                  </div>
-                </div>
+                  <button on:click={() => (expressionValue = value)} class="button unique-button is-primary">{value}</button>
               </div>
             {/each}
-          </div>
-          <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+              </div>
+              <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+            {/if}
+            {/if}
         {/if}
       </div>
     </div>
   {/if}
 {/if}
 
+
+
+
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 1px;
   }
 
+  .grid-item{
+    width: 100%!important;
+    height: 100%!important;
+  }
+  .unique-button{
+    width: 100%!important;
+    height: 100%!important;
+  }
   .input {
     margin-top: 5%;
     margin-left: auto;

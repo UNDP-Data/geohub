@@ -32,10 +32,18 @@
   let propertyStats
   let initialStep = 1
   let guard = 0
-  $: console.log('propertyStats', propertyStats)
+  let stringProperty = false
+  let numberProperty = false
+  let acceptSingleTag = true
 
   const handlePropertySelect = (e) => {
     propertySelectValue = e.detail.prop
+    const dataType = layer.info.json.vector_layers[0].fields[propertySelectValue]
+    if(dataType){
+      stringProperty = dataType === 'String'
+      numberProperty = dataType === 'Number' || dataType.includes('int') || dataType.includes('float')
+    }
+
     // if (!propertySelectValue || propertySelectValue === '') return
     // currentExpressionIndex < 0 ? (currentExpressionIndex = 0) : currentExpressionIndex
     // if (propertySelectValue === '') return
@@ -53,12 +61,19 @@
       if (expression['property'] === undefined) return
       if (expression['operation'] === undefined) return
       if (expression['value'] === undefined) return
-      return [expression['operation'], ['get', expression['property']], Number(expression['value'])]
+      if(expression['operation'] === 'in') {
+        return [expression['operation'], ['get', expression['property']], ['literal', expression['value']]]
+      }else if(expression['operation'] === '!in') {
+        return ['!', ['in', ['get', expression['property']], ['literal', expression['value']]]]
+      }else{
+        return [expression['operation'], ['get', expression['property']], isNaN(Number(expression['value'])) ? expression['value'][0] : Number(expression['value'])]
+      }
     })
   }
 
   const generateFilterExpression = (expressionsArray) => {
     const expression = generateExpressionFromExpressionsArray(expressionsArray)
+    console.log(expression)
     if (expression.length === 0) return
     if (expression.length === 1) return expression[0]
     return [selectedCombiningOperator, ...expression]
@@ -67,6 +82,7 @@
   // Apply expression to layer
   const handleApplyExpression = () => {
     const expression = generateFilterExpression(expressionsArray)
+    console.log(expression)
     if (expression === undefined) {
       filteringError = true
       return
@@ -123,19 +139,35 @@
       : null
   }
 
-  const removeExistingExpressions = () => {
-    // This function remove all the expressions from the expressions array
-    // expressionsArray = expressionsArray.filter((expression) => expression['property'] !== undefined)
-  }
 
   const handleCurrentOperation = (e) => {
     const operation = e.detail.operation
-    console.log(operation)
     expressionsArray[currentExpressionIndex]['operation'] = operation
   }
 
   const handleAddExpression = () => {
+    guard = Math.random()
+    currentExpressionIndex = currentExpressionIndex + 1
+    expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
     //pass
+  }
+  const setInitialExpression = () => {
+    currentExpressionIndex = 0
+    expressionsArray = [
+      {
+        index: 0,
+        property: '',
+        value: '',
+        operator: '',
+      },
+    ]
+  }
+  const handleDisableTags = () => {
+    acceptSingleTag = true
+  }
+
+  const handleEnableTags = () => {
+    acceptSingleTag = false
   }
 </script>
 
@@ -155,6 +187,9 @@
       <StepWizard.Step num={1} let:nextStep>
         <div class="wizard-button-container">
           <button on:click={nextStep} class="button wizard-button is-small primary-button"> New Rule </button>
+          {#if expressionsArray[0]['value'] !== undefined}
+            <button on:click={handleClearExpression} class="button wizard-button is-small secondary-button"> Clear Expressions </button>
+          {/if}
         </div>
       </StepWizard.Step>
       <StepWizard.Step num={2} let:previousStep let:nextStep>
@@ -163,6 +198,7 @@
             style="margin-left: auto"
             on:click={() => {
               guard = Math.random()
+              setInitialExpression()
             }}
             class="button wizard-button is-small secondary-button">
             Cancel
@@ -183,13 +219,18 @@
           <button
             on:click={() => {
               guard = Math.random()
+              setInitialExpression()
             }}
             class="button wizard-button is-small secondary-button">
             Cancel
           </button>
         </div>
         <OperationButtons
+          on:enableTags={handleEnableTags}
+          on:disableTags={handleDisableTags}
           on:click={nextStep}
+          bind:numberProperty={numberProperty}
+          bind:stringProperty={stringProperty}
           bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
           on:change={handleCurrentOperation} />
       </StepWizard.Step>
@@ -199,6 +240,10 @@
           <button on:click={previousStep} class="button wizard-button is-small primary-button"> Select rule </button>
         </div>
         <ValueInput
+          on:apply={nextStep}
+          on:uniqueButton={nextStep}
+          on:sliderStop={nextStep}
+          bind:acceptSingleTag={acceptSingleTag}
           bind:propertyStats={expressionsArray[currentExpressionIndex]['propertyStats']}
           bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
           bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
@@ -208,13 +253,23 @@
         <div class="wizard-button-container">
           <button on:click={previousStep} class="button wizard-button is-small primary-button">
             <i class="fa fa-chevron-left wizard-icon" />
-            Value
+            Select Value
           </button>
-          <button on:click={addExpression} class="button wizard-button is-small primary-button"> Cancel </button>
+          <button
+            on:click={() => {
+              guard = Math.random()
+              setInitialExpression()
+            }}
+            class="button wizard-button is-small secondary-button">
+            Cancel
+          </button>
         </div>
         <div class="block-buttons-group">
-          <button on:click={handleApplyExpression} class="button wizard-button is-small primary-button">
-            Apply Expression
+          <button on:click={() => {
+            handleApplyExpression()
+            guard = Math.random()
+          }} class="button wizard-button is-small primary-button">
+            Apply
           </button>
           <button
             style="margin-top: 5%"
