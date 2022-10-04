@@ -169,6 +169,17 @@
   const handleEnableTags = () => {
     acceptSingleTag = false
   }
+
+  let combineOperator = false
+
+  $:{
+    if(combineOperator){
+      selectedCombiningOperator = 'all'
+    }else{
+      selectedCombiningOperator = 'any'
+    }
+  }
+
 </script>
 
 <svelte:head>
@@ -177,7 +188,7 @@
 {#if isFilterPanelVisible === true}
   <div class="field" style="margin: auto; display: flex; justify-content: space-between">
     <span class="condition-text">One condition must be true</span>
-    <input id="switchExample" type="checkbox" name="switchExample" class="switch" checked />
+    <input bind:checked={combineOperator} id="switchExample" type="checkbox" name="switchExample" class="switch" />
     <label class="condition-text" for="switchExample">All conditions must be true</label>
   </div>
   <div style="margin:10px" class="is-divider" />
