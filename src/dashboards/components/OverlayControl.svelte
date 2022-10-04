@@ -12,8 +12,8 @@
   import OverlayLegend2 from './OverlayLegend2.svelte'
   import { loadAdmin, setOpacity, getChoropleth } from '../utils/adminLayer'
 
-  import { PUBLIC_ADMIN_URL } from '$lib/variables/public'
-  const POVERTY_URL = [`${PUBLIC_ADMIN_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`]
+  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
+  const POVERTY_URL = [`${PUBLIC_AZURE_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`]
   const OVERLAY_ID = 'overlay'
   const ADMIN_ID = 'adm'
   export let POVERTY_ID = 'poverty'
