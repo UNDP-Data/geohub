@@ -6,19 +6,11 @@
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import TimeSlider from './TimeSlider.svelte'
   import ElectricityLegend from './ElectricityLegend.svelte'
-  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   let POVERTY_ID = 'poverty'
   const HREA_ID = 'HREA'
   const ML_ID = 'ML'
   const NONE_ID = 'NONE'
-
-  export let getHreaUrl = (y: number): string => {
-    return
-  }
-  export let getMlUrl = (y: number): string => {
-    return
-  }
 
   let electricityChoices = [
     { name: HREA_ID, icon: faPlugCircleBolt, title: 'High Resolution Electricity Access' },
@@ -44,13 +36,7 @@
   <ElectricityLegend bind:electricitySelected />
 </div>
 <div class="raster-time-slider">
-  <TimeSlider
-    bind:electricitySelected
-    bind:loadLayer={loadRasterLayer}
-    bind:BEFORE_LAYER_ID={POVERTY_ID}
-    bind:getHreaUrl
-    bind:getMlUrl
-    {PUBLIC_AZURE_URL} />
+  <TimeSlider bind:electricitySelected bind:loadLayer={loadRasterLayer} bind:BEFORE_LAYER_ID={POVERTY_ID} />
 </div>
 
 <style lang="scss">
