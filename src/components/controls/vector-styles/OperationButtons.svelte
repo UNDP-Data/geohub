@@ -7,21 +7,21 @@
   export let disableNonNumericOperators = false
 
   const operationOptions = [
-    { value: '==', label: 'Equal To', disabled:false },
-    { value: '!=', label: 'Not Equal To', disabled:false },
-    { value: '<', label: 'Less Than', disabled:stringProperty }, // < disabled when property is string
-    { value: '>', label: 'Greater Than', disabled:stringProperty }, // < disabled when property is string
-    { value: 'in', label: 'Contains', disabled:numberProperty },
-    { value: '!in', label: 'Excludes', disabled:numberProperty },
+    { value: '==', label: 'Equal to', disabled: false },
+    { value: '!=', label: 'Different', disabled: false },
+    { value: '<', label: 'Smaller then', disabled: stringProperty }, // < disabled when property is string
+    { value: '>', label: 'Larger then', disabled: stringProperty }, // < disabled when property is string
+    { value: 'in', label: 'Contains', disabled: numberProperty },
+    { value: '!in', label: 'Excludes', disabled: numberProperty },
   ]
 
   const dispatch = createEventDispatcher()
 
   $: currentSelectedOperation, handleOperationChange()
   const handleOperationChange = () => {
-    if(currentSelectedOperation === '==' || currentSelectedOperation === '!='){
+    if (currentSelectedOperation === '==' || currentSelectedOperation === '!=') {
       dispatch('disableTags')
-    }else{
+    } else {
       dispatch('enableTags')
     }
     dispatch('change', {
@@ -33,6 +33,29 @@
 <div class="grid" role="menu">
   {#each operationOptions as operation}
     <div
+      class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} {operation.value ===
+      currentSelectedOperation
+        ? 'has-background-success '
+        : 'has-background-white-ter'}"
+      on:click={() => {
+        operation.disabled ? null : (currentSelectedOperation = operation.value)
+        operation.disabled ? null : dispatch('click')
+      }}>
+      <div class="card-header is-size-6 is-shadowless">
+        <span class="card-header-title is-centered is-v-centered p-1 m-1 has-text-info-dark  ">
+          {operation.label}
+        </span>
+        {#if operation.value === currentSelectedOperation}
+          <span class="icon  ">
+            <i class="fa-solid fa-check has-text-black" />
+          </span>
+        {/if}
+      </div>
+      <div class="content  has-text-danger-dark ">
+        <span class="is-size-7 is-centered" />
+      </div>
+    </div>
+    <!-- <div
       disabled='{operation.disabled}'
       class="card grid-item vector-expression-card {operation.disabled ? 'disabled':null} {operation.value === currentSelectedOperation ? 'clicked' : null}"
       on:click={() => {
@@ -42,16 +65,16 @@
       <div class="vector-expression-card-content">
         <span class="text-centered">{operation.label}</span>
       </div>
-    </div>
+    </div> -->
   {/each}
 </div>
 
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 2px;
-    padding: 2px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 5px;
+    padding: 0px;
   }
   :global(.vector-expression-card) {
     padding: 0;
@@ -77,9 +100,9 @@
     background-color: rgba(0, 0, 0, 0.2);
     border: 2px solid #000;
   }
-  .disabled{
+  .disabled {
     opacity: 0.5;
-    background-color: white!important;
-    cursor: not-allowed!important;
+    background-color: white !important;
+    cursor: not-allowed !important;
   }
 </style>

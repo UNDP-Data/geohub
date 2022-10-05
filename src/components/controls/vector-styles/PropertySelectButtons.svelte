@@ -57,23 +57,36 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
+<div style="height" />
 <div class="grid" role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       <div
-        title='{propertySelectOption}: ({layer.info.json.vector_layers[0].fields[propertySelectOption]})'
-        class="card grid-item vector-property-card {propertySelectOption === propertySelectValue ? 'clicked' : null}"
+        class="card grid-item p-0 m-0 {propertySelectOption === propertySelectValue
+          ? 'has-background-success '
+          : 'has-background-white-ter'}"
         on:click={() => (propertySelectValue = propertySelectOption)}>
-<!--         Check if the property holds data of string/ number type to display the right value-->
-        <div class="vector-expression-card-content">
-<!--          Need to check for the type of data in the property, whether string or number and display the info-->
-          {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
-            <span class='property-info'>123...</span>
-          {:else}
-            <span  class='property-info'>abc ...</span>
-          {/if}
-          <span class="text-centered">
+        <div class="card-header is-size-6 is-shadowless">
+          <span
+            class="card-header-title is-centered p-1 m-1 {propertySelectOption === propertySelectValue
+              ? 'has-text-gray-dark '
+              : 'has-text-info-dark'}   ">
             {propertySelectOption}
+          </span>
+          {#if propertySelectOption === propertySelectValue}
+            <span class="icon  ">
+              <i class="fa-solid fa-check has-text-black" />
+            </span>
+          {/if}
+        </div>
+
+        <div class="content  has-text-danger-dark ">
+          <span class="is-size-7">
+            {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
+              ::numeric::
+            {:else}
+              ::text::
+            {/if}
           </span>
         </div>
       </div>
@@ -84,21 +97,16 @@
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 2px;
-    padding: 2px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+    padding: 0px;
   }
   .grid-item {
     cursor: pointer;
     text-align: center;
   }
-  .button-text {
-    width: 99%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .fa-spell-check{
+
+  .fa-spell-check {
     position: absolute;
     top: 0;
     right: 0;
@@ -120,7 +128,7 @@
     border: 2px solid #000;
   }
 
-  .property-info{
+  .property-info {
     position: absolute;
     font-size: 10px;
     top: 0;
