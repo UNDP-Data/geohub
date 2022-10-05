@@ -87,17 +87,25 @@
             {#if propertyStats.values.length < 25}
               <div class='grid'>
                 {#each propertyStats.values as value}
-                  <div class='grid-item'>
-                    <button
-                      on:click={() =>
+                  <div
+                    class="card grid-item vector-expression-card unique-values-card"
+                    on:click={() =>
                       {
                         dispatch('uniqueButton', value)
                         expressionValue = value
-                      }}
-                      class='button is-info is-small'>
-                      {value}
-                    </button>
+                      }}>
+                    <div class="vector-expression-card-content">
+                      <span class="text-centered">{value}</span>
+                    </div>
                   </div>
+<!--                  <div class='card grid-item'-->
+<!--                       on:click={() =>-->
+<!--                      {-->
+<!--                        dispatch('uniqueButton', value)-->
+<!--                        expressionValue = value-->
+<!--                      }}>-->
+<!--                    <span class='text-centered'>{value}</span>-->
+<!--                  </div>-->
                 {/each}
               </div>
               <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
@@ -133,13 +141,27 @@
     width: 100%!important;
     height: 100%!important;
   }
-  .unique-button{
-    width: 100%!important;
-    height: 100%!important;
-  }
+
   .input {
     margin-top: 5%;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .unique-values-card{
+    height: 50px;
+    width: 50px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .unique-values-card:hover{
+    background-color: #f5f5f5;
   }
 </style>

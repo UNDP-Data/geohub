@@ -280,13 +280,13 @@
             handleApplyExpression()
             guard = Math.random()
           }} class="button wizard-button is-small primary-button">
-            Apply
+            Apply Expression{expressionsArray.length > 1 ? 's' : ''}
           </button>
           <button
             style="margin-top: 5%"
             on:click={handleAddExpression}
             class="button wizard-button is-small primary-button">
-            Add New Expression
+            Add Expression
           </button>
         </div>
       </StepWizard.Step>
@@ -369,7 +369,11 @@
   }
 
   .block-buttons-group {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+
     width: min-content;
     margin: auto;
   }
