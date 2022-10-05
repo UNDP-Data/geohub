@@ -27,12 +27,13 @@
   let optionsList: [] = [...new Set(values.flat())]
   let hideOptions = true
   let step
-  if (propertyStats.type === 'number') {
+  if(propertyStats.type === 'number') {
     step = (propertyStats.max - propertyStats.min) / 100
   }
-  // $:{
-  //   propertyStats.type === 'string' ? optionsList = [...new Set(values.flat())] : optionsList = values.flat()
-  // }
+  $:{
+    propertyStats.type === 'string' ? optionsList = [...new Set(propertyStats.values)] : optionsList = propertyStats.values
+  }
+
 
   const onSliderStop = (event) => {
     dispatch('sliderStop', event.detail)

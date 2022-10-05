@@ -33,28 +33,48 @@
 <div class="grid" role="menu">
   {#each operationOptions as operation}
     <div
-      disabled={operation.disabled}
-      class="card grid-item vector-expression-card {operation.disabled ? 'disabled' : null} {operation.value ===
+      class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} {operation.value ===
       currentSelectedOperation
-        ? 'clicked'
-        : null}"
+        ? 'has-background-success '
+        : 'has-background-white-ter'}"
       on:click={() => {
         operation.disabled ? null : (currentSelectedOperation = operation.value)
         operation.disabled ? null : dispatch('click')
       }}>
+      <div class="card-header is-size-6 is-shadowless">
+        <span class="card-header-title is-centered is-v-centered p-1 m-1 has-text-info-dark  ">
+          {operation.label}
+        </span>
+        {#if operation.value === currentSelectedOperation}
+          <span class="icon  ">
+            <i class="fa-solid fa-check has-text-black" />
+          </span>
+        {/if}
+      </div>
+      <div class="content  has-text-danger-dark ">
+        <span class="is-size-7 is-centered" />
+      </div>
+    </div>
+    <!-- <div
+      disabled='{operation.disabled}'
+      class="card grid-item vector-expression-card {operation.disabled ? 'disabled':null} {operation.value === currentSelectedOperation ? 'clicked' : null}"
+      on:click={() => {
+        operation.disabled ? null : (currentSelectedOperation = operation.value)
+        operation.disabled ? null : (dispatch('click'))
+      }}>
       <div class="vector-expression-card-content">
         <span class="text-centered">{operation.label}</span>
       </div>
-    </div>
+    </div> -->
   {/each}
 </div>
 
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 2px;
-    padding: 2px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 5px;
+    padding: 0px;
   }
   :global(.vector-expression-card) {
     padding: 0;
