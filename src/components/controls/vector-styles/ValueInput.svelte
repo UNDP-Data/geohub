@@ -1,17 +1,15 @@
 <script lang="ts">
-  import VectorHistogram from '$components/VectorHistogram.svelte'
   import RangeSlider from 'svelte-range-slider-pips'
   import Tags from '$components/Tags.svelte'
   import { createEventDispatcher } from 'svelte'
   import { map } from '$stores'
-  import type { MapGeoJSONFeature } from 'maplibre-gl'
 
-  export let propertyStats
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
   export let layer
 
+  let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
   const layerId = layer.definition.id
 
   const dispatch = createEventDispatcher()
@@ -21,19 +19,22 @@
 
   // get the values of the property for each feature
   const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
-  propertyStats.values = values.flat()
 
   let tagsList = []
   let optionsList: [] = [...new Set(values.flat())]
   let hideOptions = true
   let step
-  if(propertyStats.type === 'number') {
-    step = (propertyStats.max - propertyStats.min) / 100
-  }
-  $:{
-    propertyStats.type === 'string' ? optionsList = [...new Set(propertyStats.values)] : optionsList = propertyStats.values
-  }
+  let min
+  let max
+  let calculatedStep
 
+  $: {
+    if (dataType === 'Number' || dataType.includes('int') || dataType.includes('float')) {
+      min = Math.min(...values.flat())
+      max = Math.max(...values.flat())
+      calculatedStep = (max - min) / 100
+    }
+  }
 
   const onSliderStop = (event) => {
     dispatch('sliderStop', event.detail)
@@ -46,107 +47,76 @@
     expressionValue = tagsList
   }
 
-  //  Todo: Use tags input for includes and excludes operator
-  // Disable includes and excludes for float columns
-  // float always show a slider
-  // float show greater than and less than
+  /*
+   * The first check if for the datatype
+   * The second check is for the number of values
+   * */
 </script>
 
-{#if propertyStats}
-  {#if Object.keys(propertyStats).length}
-    <div class="card-content">
-      <div class="content" style="width:100%; height:100%">
-        {#if propertyStats.histogram}
-          <div style="display: block;">
-            <RangeSlider
-              bind:values={expressionValue}
-              float
-              range
-              min={propertyStats.histogram.bins[0]}
-              max={propertyStats.histogram.bins[propertyStats.histogram.bins.length - 1]}
-              pips
-              first="label"
-              last="label"
-              {step}
-              rest={false}
-              on:stop={onSliderStop} />
-          </div>
-          <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
-        {:else if propertyStats.type === 'string'}
-          <div>
-            <Tags
-              on:tags={handleTags}
-              maxTags={acceptSingleTag ? 1 : 100}
-              addKeys={[9, 13]}
-              splitWith={'/'}
-              onlyUnique={true}
-              removeKeys={[27]}
-              placeholder={'Select a value...'}
-              autoComplete={optionsList}
-              tags={tagsList}
-              allowBlur={true}
-              disable={false}
-              minChars={0}
-              onlyAutocomplete={true}
-              labelShow={false}
-              class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
-              {acceptSingleTag} />
-            <button
-              style="margin-top:5%; margin-left: 62%"
-              class="button is-small primary-button"
-              on:click={() => {
-                dispatch('apply')
-              }}>Confirm Selection</button>
-          </div>
-        {:else}
-          <!--{#if propertyStats.values.length < 25}-->
-          <!--  <div class='grid'>-->
-          <!--    {#each propertyStats.values as value}-->
-          <!--      <div-->
-          <!--        class="card grid-item vector-expression-card unique-values-card"-->
-          <!--        on:click={() =>-->
-          <!--          {-->
-          <!--            dispatch('uniqueButton', value)-->
-          <!--            expressionValue = value-->
-          <!--          }}>-->
-          <!--        <div class="vector-expression-card-content">-->
-          <!--          <span class="text-centered">{value}</span>-->
-          <!--        </div>-->
-          <!--      </div>-->
-          <!--    {/each}-->
-          <!--  </div>-->
-          <!--  <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />-->
-          <!--{:else}-->
-          <!--              Range slider with steps being the values-->
+{#if values}
+  <div class="card-content">
+    <div class="content" style="width:100%; height:100%">
+      <!--      -->
+      {#if dataType === 'String'}
+        <div>
+          <Tags
+            on:tags={handleTags}
+            maxTags={acceptSingleTag ? 1 : 100}
+            addKeys={[9, 13]}
+            splitWith={'/'}
+            onlyUnique={true}
+            removeKeys={[27]}
+            placeholder={'Select a value...'}
+            autoComplete={optionsList}
+            tags={tagsList}
+            allowBlur={true}
+            disable={false}
+            minChars={0}
+            onlyAutocomplete={true}
+            labelShow={false}
+            class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
+            {acceptSingleTag} />
+          <button
+            style="margin-top:5%; margin-left: 62%"
+            class="button is-small primary-button"
+            on:click={() => {
+              dispatch('apply')
+            }}>Confirm Selection</button>
+        </div>
+      {:else if optionsList.length > 25}
+        <div style="display: block;">
           <RangeSlider
             bind:values={expressionValue}
             float
             range
-            min={propertyStats.min}
-            max={propertyStats.max}
+            {min}
+            {max}
             pips
             first="label"
             last="label"
-            {step}
-            pipstep={step}
+            {calculatedStep}
             rest={false}
             on:stop={onSliderStop} />
-          <!--              <div class="grid" style="width: fit-content">-->
-          <!--            {#each [...new Set(propertyStats.values)] as value}-->
-          <!--              <div class="grid-item">-->
-          <!--                  <button on:click={() => {-->
-          <!--                    expressionValue = value-->
-          <!--                    dispatch('uniqueButton', value)-->
-          <!--                  }} class="button unique-button is-primary">{value}</button>-->
-          <!--              </div>-->
-          <!--            {/each}-->
-          <!--              </div>-->
-          <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
-          <!--{/if}-->
-        {/if}
-      </div>
+        </div>
+        <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+      {:else}
+        <RangeSlider
+          bind:values={expressionValue}
+          float
+          range
+          {min}
+          {max}
+          pips
+          first="label"
+          last="label"
+          {step}
+          pipstep={step}
+          rest={false}
+          on:stop={onSliderStop} />
+        <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+      {/if}
     </div>
-  {/if}
+  </div>
 {/if}
 
 <style lang="scss">

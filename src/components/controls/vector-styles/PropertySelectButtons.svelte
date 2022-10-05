@@ -57,7 +57,6 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div style="height" />
 <div class="grid" role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}

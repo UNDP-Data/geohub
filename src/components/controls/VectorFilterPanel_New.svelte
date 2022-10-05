@@ -44,10 +44,6 @@
       stringProperty = dataType === 'String'
       numberProperty = dataType === 'Number' || dataType.includes('int') || dataType.includes('float')
     }
-
-    // if (!propertySelectValue || propertySelectValue === '') return
-    // currentExpressionIndex < 0 ? (currentExpressionIndex = 0) : currentExpressionIndex
-    // if (propertySelectValue === '') return
     expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
     layer.children['0'].info.stats.forEach((stat) => {
       if (stat.attribute === propertySelectValue) {
@@ -150,7 +146,7 @@
   }
 
   const handleAddExpression = () => {
-    guard = 2
+    guard = Math.random()
     currentExpressionIndex = currentExpressionIndex + 1
     expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
     //pass
@@ -275,7 +271,6 @@
           on:sliderStop={nextStep}
           bind:layer
           bind:acceptSingleTag
-          bind:propertyStats
           bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
           bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
       </StepWizard.Step>
