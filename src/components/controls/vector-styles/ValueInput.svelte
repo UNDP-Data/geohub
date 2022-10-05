@@ -79,8 +79,9 @@
                   minChars={0}
                   onlyAutocomplete={true}
                   labelShow={false}
+                  class='{acceptSingleTag && tagsList.length > 0 ? "disable":null}'
                   {acceptSingleTag} />
-                <button class="button is-small primary-button" on:click={() => {dispatch('apply')}}>Confirm Selection</button>
+                <button style='margin-top:5%; margin-left: 62%' class="button is-small primary-button" on:click={() => {dispatch('apply')}}>Confirm Selection</button>
               </div>
 
             {:else}
@@ -98,14 +99,6 @@
                       <span class="text-centered">{value}</span>
                     </div>
                   </div>
-<!--                  <div class='card grid-item'-->
-<!--                       on:click={() =>-->
-<!--                      {-->
-<!--                        dispatch('uniqueButton', value)-->
-<!--                        expressionValue = value-->
-<!--                      }}>-->
-<!--                    <span class='text-centered'>{value}</span>-->
-<!--                  </div>-->
                 {/each}
               </div>
               <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
@@ -133,7 +126,7 @@
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-gap: 1px;
   }
 
@@ -163,5 +156,10 @@
 
   .unique-values-card:hover{
     background-color: #f5f5f5;
+  }
+
+  .disable{
+    pointer-events: none;
+    cursor: not-allowed;
   }
 </style>

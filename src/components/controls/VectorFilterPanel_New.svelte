@@ -35,6 +35,8 @@
   let stringProperty = false
   let numberProperty = false
   let acceptSingleTag = true
+  let expressionApplied = false
+
 
   const handlePropertySelect = (e) => {
     propertySelectValue = e.detail.prop
@@ -73,7 +75,6 @@
 
   const generateFilterExpression = (expressionsArray) => {
     const expression = generateExpressionFromExpressionsArray(expressionsArray)
-    console.log(expression)
     if (expression.length === 0) return
     if (expression.length === 1) return expression[0]
     return [selectedCombiningOperator, ...expression]
@@ -81,6 +82,7 @@
 
   // Apply expression to layer
   const handleApplyExpression = () => {
+    expressionApplied = true
     const expression = generateFilterExpression(expressionsArray)
     console.log(expression)
     if (expression === undefined) {
@@ -121,6 +123,7 @@
 
   // Clear all expressions applied to the layer and reset the UI
   const handleClearExpression = () => {
+    expressionApplied = false
     $map.setFilter(layerId, null)
     currentExpressionIndex = 0
     expressionsArray = [
@@ -141,12 +144,11 @@
 
 
   const handleCurrentOperation = (e) => {
-    const operation = e.detail.operation
-    expressionsArray[currentExpressionIndex]['operation'] = operation
+    expressionsArray[currentExpressionIndex]['operation'] = e.detail.operation
   }
 
   const handleAddExpression = () => {
-    guard = Math.random()
+    guard = 2
     currentExpressionIndex = currentExpressionIndex + 1
     expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
     //pass
@@ -197,9 +199,15 @@
       <!--    Create new rule Step 1-->
       <StepWizard.Step num={1} let:nextStep>
         <div class="wizard-button-container">
-          <button on:click={nextStep} class="button wizard-button is-small primary-button"> New Rule </button>
-          {#if expressionsArray[0]['value'] !== undefined}
-            <button on:click={handleClearExpression} class="button wizard-button is-small secondary-button"> Clear Expressions </button>
+          <button
+            on:click={()=>{
+              nextStep()
+            }} class="button wizard-button is-small primary-button">
+            New Rule </button>
+          {#if expressionApplied}
+            <button
+              on:click={handleClearExpression} class="button wizard-button is-small secondary-button">
+              Clear Expressions </button>
           {/if}
         </div>
       </StepWizard.Step>
@@ -248,7 +256,16 @@
       <StepWizard.Step num={4} let:previousStep let:nextStep>
         <!--      Pick one operation from the selected-->
         <div class="wizard-button-container">
-          <button on:click={previousStep} class="button wizard-button is-small primary-button"> Select rule </button>
+          <button on:click={previousStep} class="button wizard-button is-small primary-button">
+            Select rule
+          </button>
+          <button on:click={ () => {
+            guard = Math.random()
+            setInitialExpression()
+          }
+          } class="button wizard-button is-small secondary-button">
+            Cancel
+          </button>
         </div>
         <ValueInput
           on:apply={nextStep}
