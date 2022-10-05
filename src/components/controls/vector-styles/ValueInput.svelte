@@ -2,7 +2,7 @@
   import VectorHistogram from '$components/VectorHistogram.svelte'
   import RangeSlider from 'svelte-range-slider-pips'
   import Tags from '$components/Tags.svelte'
-  import { createEventDispatcher  } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import { map } from '$stores'
   import type { MapGeoJSONFeature } from 'maplibre-gl'
 
@@ -25,15 +25,14 @@
 
   let tagsList = []
   let optionsList: [] = [...new Set(values.flat())]
-  let hideOptions: boolean = true
+  let hideOptions = true
   let step
-  if(propertyStats.type === 'number') {
+  if (propertyStats.type === 'number') {
     step = (propertyStats.max - propertyStats.min) / 100
   }
   // $:{
   //   propertyStats.type === 'string' ? optionsList = [...new Set(values.flat())] : optionsList = values.flat()
   // }
-
 
   const onSliderStop = (event) => {
     dispatch('sliderStop', event.detail)
@@ -46,7 +45,7 @@
     expressionValue = tagsList
   }
 
-//  Todo: Use tags input for includes and excludes operator
+  //  Todo: Use tags input for includes and excludes operator
   // Disable includes and excludes for float columns
   // float always show a slider
   // float show greater than and less than
@@ -67,88 +66,87 @@
               pips
               first="label"
               last="label"
-              step={step}
+              {step}
               rest={false}
               on:stop={onSliderStop} />
           </div>
-            <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+          <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+        {:else if propertyStats.type === 'string'}
+          <div>
+            <Tags
+              on:tags={handleTags}
+              maxTags={acceptSingleTag ? 1 : 100}
+              addKeys={[9, 13]}
+              splitWith={'/'}
+              onlyUnique={true}
+              removeKeys={[27]}
+              placeholder={'Select a value...'}
+              autoComplete={optionsList}
+              tags={tagsList}
+              allowBlur={true}
+              disable={false}
+              minChars={0}
+              onlyAutocomplete={true}
+              labelShow={false}
+              class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
+              {acceptSingleTag} />
+            <button
+              style="margin-top:5%; margin-left: 62%"
+              class="button is-small primary-button"
+              on:click={() => {
+                dispatch('apply')
+              }}>Confirm Selection</button>
+          </div>
         {:else}
-            {#if propertyStats.type === "string"}
-              <div>
-                <Tags
-                  on:tags={handleTags}
-                  maxTags={acceptSingleTag ? 1 : 100}
-                  addKeys={[9, 13]}
-                  splitWith={'/'}
-                  onlyUnique={true}
-                  removeKeys={[27]}
-                  placeholder={'Select a value...'}
-                  autoComplete={optionsList}
-                  tags={tagsList}
-                  allowBlur={true}
-                  disable={false}
-                  minChars={0}
-                  onlyAutocomplete={true}
-                  labelShow={false}
-                  class='{acceptSingleTag && tagsList.length > 0 ? "disable":null}'
-                  {acceptSingleTag} />
-                <button style='margin-top:5%; margin-left: 62%' class="button is-small primary-button" on:click={() => {dispatch('apply')}}>Confirm Selection</button>
-              </div>
-
-            {:else}
-            <!--{#if propertyStats.values.length < 25}-->
-            <!--  <div class='grid'>-->
-            <!--    {#each propertyStats.values as value}-->
-            <!--      <div-->
-            <!--        class="card grid-item vector-expression-card unique-values-card"-->
-            <!--        on:click={() =>-->
-            <!--          {-->
-            <!--            dispatch('uniqueButton', value)-->
-            <!--            expressionValue = value-->
-            <!--          }}>-->
-            <!--        <div class="vector-expression-card-content">-->
-            <!--          <span class="text-centered">{value}</span>-->
-            <!--        </div>-->
-            <!--      </div>-->
-            <!--    {/each}-->
-            <!--  </div>-->
-            <!--  <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />-->
-            <!--{:else}-->
-<!--              Range slider with steps being the values-->
-              <RangeSlider
-                bind:values={expressionValue}
-                float
-                range
-                min={propertyStats.min}
-                max={propertyStats.max}
-                pips
-                first="label"
-                last="label"
-                step={step}
-                pipstep={step}
-                rest={false}
-                on:stop={onSliderStop} />
-<!--              <div class="grid" style="width: fit-content">-->
-<!--            {#each [...new Set(propertyStats.values)] as value}-->
-<!--              <div class="grid-item">-->
-<!--                  <button on:click={() => {-->
-<!--                    expressionValue = value-->
-<!--                    dispatch('uniqueButton', value)-->
-<!--                  }} class="button unique-button is-primary">{value}</button>-->
-<!--              </div>-->
-<!--            {/each}-->
-<!--              </div>-->
-              <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
-            <!--{/if}-->
-            {/if}
+          <!--{#if propertyStats.values.length < 25}-->
+          <!--  <div class='grid'>-->
+          <!--    {#each propertyStats.values as value}-->
+          <!--      <div-->
+          <!--        class="card grid-item vector-expression-card unique-values-card"-->
+          <!--        on:click={() =>-->
+          <!--          {-->
+          <!--            dispatch('uniqueButton', value)-->
+          <!--            expressionValue = value-->
+          <!--          }}>-->
+          <!--        <div class="vector-expression-card-content">-->
+          <!--          <span class="text-centered">{value}</span>-->
+          <!--        </div>-->
+          <!--      </div>-->
+          <!--    {/each}-->
+          <!--  </div>-->
+          <!--  <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />-->
+          <!--{:else}-->
+          <!--              Range slider with steps being the values-->
+          <RangeSlider
+            bind:values={expressionValue}
+            float
+            range
+            min={propertyStats.min}
+            max={propertyStats.max}
+            pips
+            first="label"
+            last="label"
+            {step}
+            pipstep={step}
+            rest={false}
+            on:stop={onSliderStop} />
+          <!--              <div class="grid" style="width: fit-content">-->
+          <!--            {#each [...new Set(propertyStats.values)] as value}-->
+          <!--              <div class="grid-item">-->
+          <!--                  <button on:click={() => {-->
+          <!--                    expressionValue = value-->
+          <!--                    dispatch('uniqueButton', value)-->
+          <!--                  }} class="button unique-button is-primary">{value}</button>-->
+          <!--              </div>-->
+          <!--            {/each}-->
+          <!--              </div>-->
+          <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+          <!--{/if}-->
         {/if}
       </div>
     </div>
   {/if}
 {/if}
-
-
-
 
 <style lang="scss">
   .grid {
@@ -157,9 +155,9 @@
     grid-gap: 1px;
   }
 
-  .grid-item{
-    width: 100%!important;
-    height: 100%!important;
+  .grid-item {
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .input {
@@ -168,7 +166,7 @@
     margin-right: auto;
   }
 
-  .unique-values-card{
+  .unique-values-card {
     height: 50px;
     width: 50px;
     background-color: #fff;
@@ -181,11 +179,11 @@
     cursor: pointer;
   }
 
-  .unique-values-card:hover{
+  .unique-values-card:hover {
     background-color: #f5f5f5;
   }
 
-  .disable{
+  .disable {
     pointer-events: none;
     cursor: not-allowed;
   }

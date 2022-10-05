@@ -7,21 +7,21 @@
   export let disableNonNumericOperators = false
 
   const operationOptions = [
-    { value: '==', label: 'Equal To', disabled:false },
-    { value: '!=', label: 'Not Equal To', disabled:false },
-    { value: '<', label: 'Less Than', disabled:stringProperty }, // < disabled when property is string
-    { value: '>', label: 'Greater Than', disabled:stringProperty }, // < disabled when property is string
-    { value: 'in', label: 'Contains', disabled:numberProperty },
-    { value: '!in', label: 'Excludes', disabled:numberProperty },
+    { value: '==', label: 'Equal To', disabled: false },
+    { value: '!=', label: 'Not Equal To', disabled: false },
+    { value: '<', label: 'Less Than', disabled: stringProperty }, // < disabled when property is string
+    { value: '>', label: 'Greater Than', disabled: stringProperty }, // < disabled when property is string
+    { value: 'in', label: 'Contains', disabled: numberProperty },
+    { value: '!in', label: 'Excludes', disabled: numberProperty },
   ]
 
   const dispatch = createEventDispatcher()
 
   $: currentSelectedOperation, handleOperationChange()
   const handleOperationChange = () => {
-    if(currentSelectedOperation === '==' || currentSelectedOperation === '!='){
+    if (currentSelectedOperation === '==' || currentSelectedOperation === '!=') {
       dispatch('disableTags')
-    }else{
+    } else {
       dispatch('enableTags')
     }
     dispatch('change', {
@@ -33,11 +33,14 @@
 <div class="grid" role="menu">
   {#each operationOptions as operation}
     <div
-      disabled='{operation.disabled}'
-      class="card grid-item vector-expression-card {operation.disabled ? 'disabled':null} {operation.value === currentSelectedOperation ? 'clicked' : null}"
+      disabled={operation.disabled}
+      class="card grid-item vector-expression-card {operation.disabled ? 'disabled' : null} {operation.value ===
+      currentSelectedOperation
+        ? 'clicked'
+        : null}"
       on:click={() => {
         operation.disabled ? null : (currentSelectedOperation = operation.value)
-        operation.disabled ? null : (dispatch('click'))
+        operation.disabled ? null : dispatch('click')
       }}>
       <div class="vector-expression-card-content">
         <span class="text-centered">{operation.label}</span>
@@ -77,9 +80,9 @@
     background-color: rgba(0, 0, 0, 0.2);
     border: 2px solid #000;
   }
-  .disabled{
+  .disabled {
     opacity: 0.5;
-    background-color: white!important;
-    cursor: not-allowed!important;
+    background-color: white !important;
+    cursor: not-allowed !important;
   }
 </style>
