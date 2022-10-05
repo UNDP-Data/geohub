@@ -8,14 +8,13 @@
   import { reloadAdmin } from '../utils/adminLayer'
   import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
-  export let AZURE_URL: string
   export let BEFORE_LAYER_ID = undefined
   export let electricitySelected: {
     name: string
     icon: IconDefinition
   }
 
-  import { PUBLIC_TITILER_ENDPOINT, PUBLIC_AZURE_BLOB_TOKEN } from '$lib/variables/public'
+  import { PUBLIC_TITILER_ENDPOINT, PUBLIC_AZURE_BLOB_TOKEN, PUBLIC_AZURE_URL } from '$lib/variables/public'
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'
   const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source'
 
@@ -50,11 +49,11 @@
   }
 
   const getHreaUrl = (y: number) => {
-    return `${AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
+    return `${PUBLIC_AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
   }
 
   const getMlUrl = (y: number) => {
-    return `${AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
+    return `${PUBLIC_AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`
   }
 
   export function loadLayer() {
