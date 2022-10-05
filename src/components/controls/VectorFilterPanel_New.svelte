@@ -55,7 +55,6 @@
         propertyStats = stat
       }
     })
-    expressionsArray[currentExpressionIndex]['propertyStats'] = propertyStats
   }
 
   const generateExpressionFromExpressionsArray = (expressionsArray) => {
@@ -74,6 +73,7 @@
   }
 
   const generateFilterExpression = (expressionsArray) => {
+    console.log(expressionsArray)
     const expression = generateExpressionFromExpressionsArray(expressionsArray)
     if (expression.length === 0) return
     if (expression.length === 1) return expression[0]
@@ -271,8 +271,9 @@
           on:apply={nextStep}
           on:uniqueButton={nextStep}
           on:sliderStop={nextStep}
+          bind:layer={layer}
           bind:acceptSingleTag={acceptSingleTag}
-          bind:propertyStats={expressionsArray[currentExpressionIndex]['propertyStats']}
+          bind:propertyStats={propertyStats}
           bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
           bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
       </StepWizard.Step>

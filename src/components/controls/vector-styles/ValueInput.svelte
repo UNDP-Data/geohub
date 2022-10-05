@@ -3,25 +3,36 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import Tags from '$components/Tags.svelte'
   import { createEventDispatcher  } from 'svelte'
+  import { map } from '$stores'
+  import type { MapGeoJSONFeature } from 'maplibre-gl'
 
   export let propertyStats
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
+  export let layer
 
+  const layerId = layer.definition.id
 
   const dispatch = createEventDispatcher()
 
+  const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+  const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
+
+  // get the values of the property for each feature
+  const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
+  propertyStats.values = values.flat()
+
   let tagsList = []
-  let optionsList: []
+  let optionsList: [] = [...new Set(values.flat())]
   let hideOptions: boolean = true
   let step
   if(propertyStats.type === 'number') {
     step = (propertyStats.max - propertyStats.min) / 100
   }
-  $:{
-    propertyStats.type === 'string' ? optionsList = [...new Set(propertyStats.values)] : optionsList = propertyStats.values
-  }
+  // $:{
+  //   propertyStats.type === 'string' ? optionsList = [...new Set(values.flat())] : optionsList = values.flat()
+  // }
 
 
   const onSliderStop = (event) => {
@@ -85,34 +96,50 @@
               </div>
 
             {:else}
-            {#if propertyStats.values.length < 25}
-              <div class='grid'>
-                {#each propertyStats.values as value}
-                  <div
-                    class="card grid-item vector-expression-card unique-values-card"
-                    on:click={() =>
-                      {
-                        dispatch('uniqueButton', value)
-                        expressionValue = value
-                      }}>
-                    <div class="vector-expression-card-content">
-                      <span class="text-centered">{value}</span>
-                    </div>
-                  </div>
-                {/each}
-              </div>
+            <!--{#if propertyStats.values.length < 25}-->
+            <!--  <div class='grid'>-->
+            <!--    {#each propertyStats.values as value}-->
+            <!--      <div-->
+            <!--        class="card grid-item vector-expression-card unique-values-card"-->
+            <!--        on:click={() =>-->
+            <!--          {-->
+            <!--            dispatch('uniqueButton', value)-->
+            <!--            expressionValue = value-->
+            <!--          }}>-->
+            <!--        <div class="vector-expression-card-content">-->
+            <!--          <span class="text-centered">{value}</span>-->
+            <!--        </div>-->
+            <!--      </div>-->
+            <!--    {/each}-->
+            <!--  </div>-->
+            <!--  <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />-->
+            <!--{:else}-->
+<!--              Range slider with steps being the values-->
+              <RangeSlider
+                bind:values={expressionValue}
+                float
+                range
+                min={propertyStats.min}
+                max={propertyStats.max}
+                pips
+                first="label"
+                last="label"
+                step={step}
+                pipstep={step}
+                rest={false}
+                on:stop={onSliderStop} />
+<!--              <div class="grid" style="width: fit-content">-->
+<!--            {#each [...new Set(propertyStats.values)] as value}-->
+<!--              <div class="grid-item">-->
+<!--                  <button on:click={() => {-->
+<!--                    expressionValue = value-->
+<!--                    dispatch('uniqueButton', value)-->
+<!--                  }} class="button unique-button is-primary">{value}</button>-->
+<!--              </div>-->
+<!--            {/each}-->
+<!--              </div>-->
               <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
-            <!--  Show grid of buttons arranged together-->
-            {:else}
-              <div class="grid" style="width: fit-content">
-            {#each propertyStats.values as value}
-              <div class="grid-item">
-                  <button on:click={() => (expressionValue = value)} class="button unique-button is-primary">{value}</button>
-              </div>
-            {/each}
-              </div>
-              <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
-            {/if}
+            <!--{/if}-->
             {/if}
         {/if}
       </div>
