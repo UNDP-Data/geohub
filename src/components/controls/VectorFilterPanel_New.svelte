@@ -133,7 +133,7 @@
         operator: '',
       },
     ]
-    expressionsArray.splice(currentExpressionIndex, 1, {})
+    // expressionsArray.splice(currentExpressionIndex, 1, {})
 
     // Check if the filtered layer has a label layer and if true, remove the filter from the label layer
     $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
@@ -203,7 +203,7 @@
             class="button wizard-button is-small primary-button">
             New Rule
           </button>
-          {#if expressionApplied}
+          {#if expressionApplied || expressionsArray[0].value !== ''}
             <button on:click={handleClearExpression} class="button wizard-button is-small secondary-button">
               Clear Expressions
             </button>
