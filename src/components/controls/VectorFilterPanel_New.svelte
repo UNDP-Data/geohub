@@ -170,7 +170,7 @@
     acceptSingleTag = false
   }
 
-  let combineOperator = false
+  let combineOperator = true
 
   $: {
     if (combineOperator) {
