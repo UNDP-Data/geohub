@@ -27,7 +27,7 @@
     singleExpression,
   ]
 
-  let selectedCombiningOperator
+  let selectedCombiningOperator = 'all'
   let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
   let filteringError = false
   let propertyStats
@@ -37,6 +37,7 @@
   let numberProperty = false
   let acceptSingleTag = true
   let expressionApplied = false
+  let customTagsAvailable = false
 
   const handlePropertySelect = (e) => {
     propertySelectValue = e.detail.prop
@@ -54,29 +55,53 @@
   }
 
   const generateExpressionFromExpressionsArray = (expressionsArray) => {
+    let expressions = []
     return expressionsArray.map((expression) => {
       if (expression['property'] === undefined) return
       if (expression['operation'] === undefined) return
       if (expression['value'] === undefined) return
-      if (expression['operation'] === 'in') {
-        return [expression['operation'], ['get', expression['property']], ['literal', expression['value']]]
-      } else if (expression['operation'] === '!in') {
-        return ['!', ['in', ['get', expression['property']], ['literal', expression['value']]]]
+      if (customTagsAvailable) {
+        if (expression['value'].length > 1) {
+          if (expression['operation'] === 'in') {
+            combineOperator = false
+            expressions = expression['value'].map((val) => ['in', val, ['get', expression['property']]])
+            return ['any', ...expressions]
+          }
+          if (expression['operation'] === '!in') {
+            combineOperator = true
+            expressions = expression['value'].map((val) => ['!', ['in', val, ['get', expression['property']]]])
+            return ['all', ...expressions]
+          }
+        }
+        if (expression['value'].length === 1) {
+          if (expression['operation'] === 'in') {
+            return ['in', expression['value'][0], ['get', expression['property']]]
+          }
+          if (expression['operation'] === '!in') {
+            return ['!', ['in', expression['value'][0], ['get', expression['property']]]]
+          }
+        }
       } else {
-        return [
-          expression['operation'],
-          ['get', expression['property']],
-          isNaN(Number(expression['value'])) ? expression['value'][0] : Number(expression['value']),
-        ]
+        if (expression['operation'] === 'in') {
+          return [expression['operation'], ['get', expression['property']], ['literal', expression['value']]]
+        } else if (expression['operation'] === '!in') {
+          return ['!', ['in', ['get', expression['property']], ['literal', expression['value']]]]
+        } else {
+          return [
+            expression['operation'],
+            ['get', expression['property']],
+            isNaN(Number(expression['value'])) ? expression['value'][0] : Number(expression['value']),
+          ]
+        }
       }
     })
   }
 
   const generateFilterExpression = (expressionsArray) => {
-    console.log(expressionsArray)
     const expression = generateExpressionFromExpressionsArray(expressionsArray)
     if (expression.length === 0) return
     if (expression.length === 1) return expression[0]
+    if (customTagsAvailable) return expression
     return [selectedCombiningOperator, ...expression]
   }
 
@@ -84,7 +109,6 @@
   const handleApplyExpression = () => {
     expressionApplied = true
     const expression = generateFilterExpression(expressionsArray)
-    console.log(expression)
     if (expression === undefined) {
       filteringError = true
       return
@@ -179,6 +203,11 @@
       selectedCombiningOperator = 'any'
     }
   }
+
+  const handleCustomTags = (e) => {
+    customTagsAvailable = true
+    expressionsArray[currentExpressionIndex]['value'] = e.detail
+  }
 </script>
 
 <svelte:head>
@@ -267,6 +296,7 @@
         </button>
       </div>
       <ValueInput
+        on:customTags={handleCustomTags}
         on:apply={nextStep}
         on:uniqueButton={nextStep}
         on:sliderStop={nextStep}

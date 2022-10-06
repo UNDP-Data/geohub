@@ -42,15 +42,18 @@
     expressionValue = event.detail.value
   }
   const handleTags = (event: CustomEvent) => {
-    dispatch('tags', event.detail)
     tagsList = event.detail.tags
-    expressionValue = tagsList
+    // filter tags to see if they are in the options list
   }
-
-  /*
-   * The first check if for the datatype
-   * The second check is for the number of values
-   * */
+  const applyTags = () => {
+    dispatch('apply')
+    const filteredTags = tagsList.filter((tag) => !optionsList.includes(tag))
+    if (filteredTags.length > 0) {
+      dispatch('customTags', tagsList)
+    } else {
+      expressionValue = tagsList
+    }
+  }
 </script>
 
 {#if values}
@@ -77,11 +80,10 @@
             class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
             {acceptSingleTag} />
           <button
+            disabled={tagsList.length === 0}
             style="margin-top:5%; margin-left: 62%"
             class="button is-small primary-button"
-            on:click={() => {
-              dispatch('apply')
-            }}>Confirm Selection</button>
+            on:click={applyTags}>Confirm Selection</button>
         </div>
       {:else if optionsList.length > 25}
         <div style="display: block;">

@@ -4,7 +4,6 @@
   import { clean } from '$lib/helper'
   import { clickOutside } from 'svelte-use-click-outside'
 
-
   const dispatch = createEventDispatcher()
 
   let tag = ''
@@ -67,8 +66,11 @@
   function setTag(e) {
     const currentTag = e.target.value
     // if key is enter, add tag
-    if(e.key === 'Enter' && currentTag !== '') {
+    if (e.key === 'Enter' && currentTag !== '') {
       tags = [...tags, currentTag]
+      dispatch('tags', {
+        tags: tags,
+      })
       e.target.value = ''
     }
     // if (addKeys) {
@@ -359,7 +361,7 @@
   class="svelte-tags-input-layout"
   class:sti-layout-disable={disable}
   bind:this={layoutElement}
-  use:clickOutside={() => hideOptions = true}
+  use:clickOutside={() => (hideOptions = true)}
   aria-label="Keyword Search">
   <label for={id} class={labelShow ? '' : 'sr-only'}>{labelText}</label>
 
