@@ -61,15 +61,15 @@
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       <div
-        class="card grid-item p-0 m-0 {propertySelectOption === propertySelectValue
+        class="card grid-item p-0 m-0  {propertySelectOption === propertySelectValue
           ? 'has-background-success '
-          : 'has-background-white-ter'}"
+          : 'has-background-info-dark'}"
         on:click={() => (propertySelectValue = propertySelectOption)}>
         <div class="card-header is-size-6 is-shadowless">
           <span
-            class="card-header-title is-centered p-1 m-1 {propertySelectOption === propertySelectValue
-              ? 'has-text-gray-dark '
-              : 'has-text-info-dark'}   ">
+            class="card-header-title is-centered pb-2 pt-2 m-0 {propertySelectOption === propertySelectValue
+              ? 'has-text-success-darker'
+              : 'has-text-white-ter'} ">
             {propertySelectOption}
           </span>
           {#if propertySelectOption === propertySelectValue}
@@ -79,7 +79,7 @@
           {/if}
         </div>
 
-        <div class="content  has-text-danger-dark ">
+        <div class="content  has-text-danger-dark has-background-info-light pb-2 pt-2 m-0 ">
           <span class="is-size-7">
             {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
               ::numeric::
