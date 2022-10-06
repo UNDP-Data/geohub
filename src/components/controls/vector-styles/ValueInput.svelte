@@ -101,9 +101,7 @@
         <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
       {:else}
         <RangeSlider
-          bind:values={expressionValue}
-          float
-          range
+          bind:values={optionsList.length}
           {min}
           {max}
           pips
