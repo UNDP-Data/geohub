@@ -4,6 +4,7 @@ importers:
 
   .:
     specifiers:
+      '@arkweid/lefthook': ^0.7.7
       '@azure/storage-blob': ^12.11.0
       '@fortawesome/fontawesome-svg-core': ^6.2.0
       '@fortawesome/free-brands-svg-icons': ^6.2.0
@@ -186,6 +187,7 @@ importers:
       vega-embed: 6.21.0_jvjsdlbcvhacgsoum67fqdazqu
       vega-lite: 5.5.0_vega@5.22.1
     devDependencies:
+      '@arkweid/lefthook': 0.7.7
       '@sveltejs/adapter-node': 1.0.0-next.96
       '@sveltejs/kit': 1.0.0-next.507_svelte@3.50.1+vite@3.1.4
       '@sveltejs/vite-plugin-svelte': 1.0.8_svelte@3.50.1+vite@3.1.4
@@ -223,6 +225,15 @@ packages:
 
   /@adobe/css-tools/4.0.1:
     resolution: {integrity: sha512-+u76oB43nOHrF4DDWRLWDCtci7f3QJoEBigemIdIeTi1ODqjx6Tad9NCVnPRwewWlKkVab5PlK8DCtPTyX7S8g==}
+    dev: true
+
+  /@arkweid/lefthook/0.7.7:
+    resolution: {integrity: sha512-Eq30OXKmjxIAIsTtbX2fcF3SNZIXS8yry1u8yty7PQFYRctx04rVlhOJCEB2UmfTh8T2vrOMC9IHHUvvo5zbaQ==}
+    cpu: [x64, arm64, ia32]
+    os: [darwin, linux, win32]
+    deprecated: '@arkweid/lefthook has been renamed to @evilmartians/lefthook, please upgrade to it. You also can use @evilmartians/lefthook-installer'
+    hasBin: true
+    requiresBuild: true
     dev: true
 
   /@azure/abort-controller/1.1.0:
