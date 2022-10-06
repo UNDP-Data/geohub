@@ -1,5 +1,4 @@
 <script lang="ts">
-  import StepWizard from 'svelte-step-wizard'
   import { bannerMessages, map } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
