@@ -28,13 +28,14 @@
   let max
   let calculatedStep
   let sliderValues = []
-
+  let sv: number[] = []
   $: {
     if (dataType === 'Number' || dataType.includes('int') || dataType.includes('float')) {
       min = Math.min(...values.flat())
       max = Math.max(...values.flat())
       sliderValues = [min, max]
       calculatedStep = (max - min) / 100
+      sv[0] = (max - min) * 0.5
     }
   }
 
@@ -59,6 +60,26 @@
 
   const apply = (e) => {
     dispatch('apply')
+  }
+
+  const nFormatter = (num: number, digits = 0) => {
+    const lookup = [
+      { value: 1, symbol: '' },
+      { value: 1e3, symbol: 'k' },
+      { value: 1e6, symbol: 'M' },
+      { value: 1e9, symbol: 'G' },
+      { value: 1e12, symbol: 'T' },
+      { value: 1e15, symbol: 'P' },
+      { value: 1e18, symbol: 'E' },
+    ]
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/
+    var item = lookup
+      .slice()
+      .reverse()
+      .find(function (item) {
+        return num >= item.value
+      })
+    return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0'
   }
 </script>
 
@@ -90,39 +111,43 @@
             class="button is-small primary-button"
             on:click={applyTags}>Confirm Selection</button>
         </div>
-      {:else if optionsList.length > 25}
-        <div style="display: block;">
+      {:else if optionsList.length > 25 || dataType.includes('float')}
+        <div class="range-slider">
           <RangeSlider
-            bind:values={sliderValues}
+            bind:values={sv}
             float
-            range="min"
-            {min}
-            {max}
-            {calculatedStep}
             pips
+            min={Math.min(...optionsList)}
+            max={Math.max(...optionsList)}
+            step={calculatedStep}
+            range="min"
             first="label"
             last="label"
             rest={false}
             on:stop={onSliderStop} />
         </div>
         <button style="margin-top:5%; margin-left: 62%" class="button is-small primary-button" on:click={apply}
-          >Confirm</button>
+          >Use selected</button>
       {:else}
-        <RangeSlider
-          bind:values={sliderValues}
-          float
-          range="min"
-          {min}
-          {max}
-          {step}
-          pips
-          first="label"
-          last="label"
-          pipstep={step}
-          rest={false}
-          on:stop={onSliderStop} />
-        <button style="margin-top:5%; margin-left: 62%" class="button is-small primary-button" on:click={apply}
-          >Confirm</button>
+        <div class="range-slider">
+          <RangeSlider
+            bind:values={sliderValues}
+            float
+            range="min"
+            {min}
+            {max}
+            {step}
+            pips
+            first="label"
+            last="label"
+            pipstep={step}
+            rest={false}
+            on:stop={onSliderStop} />
+        </div>
+        <button class="button is-small secondary-button" on:click={console.log()}>
+          <i class="fa-solid fa-circle-info" /> Info
+        </button>
+        <button class="button is-small primary-button" on:click={apply}> Use selected </button>
       {/if}
     </div>
   </div>
@@ -166,5 +191,12 @@
   .disable {
     pointer-events: none;
     cursor: not-allowed;
+  }
+  .range-slider {
+    --range-handle-focus: #2196f3;
+    --range-handle-inactive: #2196f3;
+    --range-handle: #2196f3;
+    --range-range-inactive: #2196f3;
+    margin: 0;
   }
 </style>
