@@ -91,6 +91,7 @@ export enum ErrorMessages {
   EXPRESSION_INVALID = 'The Raster Expression appears to be Invalid. Please check it and try again.',
   NO_STYLE_EXISTS = 'No style id exists in the database',
   FAILED_TO_PARSE_METADATA = 'Failed to parse JSON from metadata',
+  COMPONENT_NOT_RENDERED = 'Step Component cannot be rendered outside the Wizard component',
 }
 export const LayerIconTypes = [
   {

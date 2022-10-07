@@ -2,7 +2,7 @@
   import { bannerMessages, map } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
-  import PropertySelectButtons from './vector-styles/PropertySelectButtons.svelte'
+  import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte'
   import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte'
   import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
   import Wizard from '$components/control-groups/Wizard.svelte'

@@ -73,32 +73,6 @@
       })
       e.target.value = ''
     }
-    // if (addKeys) {
-    //   addKeys.forEach(function (key) {
-    //     if (key === e.keyCode) {
-    //       if (currentTag) e.preventDefault()
-    //
-    //       /* switch (input.keyCode) {
-    //               case 9:
-    //                   // TAB add first element on the autoComplete list
-    //                   if (autoComplete && document.getElementById(matchsID)) {
-    //                       addTag(document.getElementById(matchsID).querySelectorAll("li")[0].textContent);
-    //                   } else {
-    //                       addTag(currentTag);
-    //                   }
-    //                   break;
-    //               default:
-    //                   addTag(currentTag);
-    //                   break;
-    //               } */
-    //       if (autoComplete && document.getElementById(matchsID)) {
-    //         addTag(document.getElementById(matchsID).querySelectorAll('li')[0].textContent)
-    //       } else {
-    //         addTag(currentTag)
-    //       }
-    //     }
-    //   })
-    // }
 
     if (removeKeys) {
       removeKeys.forEach(function (key) {

@@ -10,11 +10,10 @@
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
   import VectorFilterPanel from '$components/controls/VectorFilterPanel.svelte'
-
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
-  import VectorFilterPanel_New from './controls/VectorFilterPanel_New.svelte'
+  import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -117,7 +116,7 @@
     </ul>
     <p class="panel-content">
       <VectorLegendPanel {layer} {isLegendPanelVisible} />
-      <VectorFilterPanel_New {layer} {isFilterPanelVisible} />
+      <VectorFilterPanelWizard {layer} {isFilterPanelVisible} />
       <VectorLabelPanel {layer} {isLabelPanelVisible} />
       <OpacityPanel {layer} {isOpacityPanelVisible} />
     </p>

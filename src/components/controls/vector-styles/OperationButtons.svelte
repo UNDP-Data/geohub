@@ -1,11 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { each } from 'svelte/internal'
 
   export let currentSelectedOperation = ''
   export let stringProperty = false
   export let numberProperty = false
-  export let disableNonNumericOperators = false
 
   const operationOptions = [
     { value: '==', label: 'Equals', disabled: false, symbol: '=' },
@@ -31,27 +29,6 @@
   }
 </script>
 
-<!-- <div class="columns p-3 is-multiline">
-  {#each operationOptions as operation}
-    <div class="column m-0 p-0  {operation.disabled ? 'disabled' : null} {operation.value ===
-      currentSelectedOperation
-        ? 'has-background-success'
-        : 'has-background-info-light'}"
-      on:click={() => {
-        operation.disabled ? null : (currentSelectedOperation = operation.value)
-        operation.disabled ? null : dispatch('click')
-      }}>
-      <div class="box {operation.value ===
-        currentSelectedOperation
-          ? 'has-background-success'
-          : 'has-background-info-light'} has-text-centered is-clickable">
-        {operation.label}
-      </div>
-      
-
-    </div>
-  {/each}
-</div> -->
 <div class="grid" role="menu">
   {#each operationOptions as operation}
     <div

@@ -45,8 +45,8 @@
 
   const handleTags = (event: CustomEvent) => {
     tagsList = event.detail.tags
-    // filter tags to see if they are in the options list
   }
+
   const applyTags = () => {
     dispatch('apply')
     const filteredTags = tagsList.filter((tag) => !optionsList.includes(tag))
@@ -65,7 +65,6 @@
 {#if values}
   <div class="card-content">
     <div class="content" style="width:100%; height:100%">
-      <!--      -->
       {#if dataType === 'String'}
         <div>
           <Tags

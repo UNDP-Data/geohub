@@ -1,12 +1,19 @@
 <script>
   import { getContext } from 'svelte'
+  import { ErrorMessages, StatusTypes } from '$lib/constants'
+  import { bannerMessages } from '$stores'
 
   export let num
 
   const getWizardContext = () => {
     const context = getContext('Wizard')
     if (!context) {
-      throw new Error('StepWizard compound components cannot be rendered outside the StepWizard component')
+      const bannerErrorMessage = {
+        type: StatusTypes.DANGER,
+        title: 'Error',
+        message: ErrorMessages.COMPONENT_NOT_RENDERED,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
     }
     return context
   }
