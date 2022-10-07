@@ -19,10 +19,8 @@
 
   const open = () => {
     selectedOption = 'all'
-    radioDisabled = false
-    if ($layerList.length === 0) {
-      radioDisabled = true
-    }
+
+    radioDisabled = $layerList.length === 0
     isModalVisible = !isModalVisible
     styleURL = undefined
   }

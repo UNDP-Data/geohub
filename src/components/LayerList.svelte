@@ -3,9 +3,7 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
-  // FixMe: Component commented out to make use of the RasterLayer_UNDP component
   import RasterLayer_UNDP from '$components/UNDPComponents/RasterLayer_UNDP.svelte'
-  // import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
   import { layerList, dynamicLayers } from '$stores'
   import DynamicLayer from '$components/DynamicLayer.svelte'

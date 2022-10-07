@@ -69,30 +69,7 @@
     grid-gap: 5px;
     padding: 0px;
   }
-  :global(.vector-expression-card) {
-    padding: 0;
-    width: 100%;
-    height: 50px;
-  }
-  .vector-expression-card:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
 
-  :global(.text-centered) {
-    font-size: 10px;
-    font-weight: bolder;
-    text-align: center;
-    vertical-align: middle;
-    word-break: break-word;
-    text-overflow: ellipsis;
-    width: 100%;
-    height: fit-content;
-  }
-  .clicked {
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 2px solid #000;
-  }
   .disabled {
     opacity: 0.5;
     background-color: white !important;

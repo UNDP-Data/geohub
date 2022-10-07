@@ -6,7 +6,6 @@
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import RasterLegendContainer from '$components/RasterLegendContainer.svelte'
-  //import RefineContainer from '$components/RefineContainer.svelte'
   import RasterExpression from '$components/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'

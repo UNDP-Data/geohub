@@ -139,12 +139,6 @@
     bannerMessages.update((data) => [...data, bannerErrorMessage])
   }
 
-  // Add an empty expression to the list of expressions when the plus(+) button is clicked
-  const addExpression = () => {
-    currentExpressionIndex = expressionsArray.length
-    expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
-  }
-
   // Clear all expressions applied to the layer and reset the UI
   const handleClearExpression = () => {
     expressionApplied = false
@@ -173,8 +167,8 @@
   const handleAddExpression = () => {
     currentExpressionIndex = currentExpressionIndex + 1
     expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
-    //pass
   }
+
   const setInitialExpression = () => {
     currentExpressionIndex = 0
     expressionsArray = [

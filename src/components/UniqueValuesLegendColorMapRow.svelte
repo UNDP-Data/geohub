@@ -6,7 +6,6 @@
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
-  import { isEqual } from 'lodash-es'
   import { abs } from 'mathjs'
 
   export let colorMapRow: IntervalLegendColorMapRow

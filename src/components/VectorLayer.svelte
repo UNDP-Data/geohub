@@ -4,12 +4,10 @@
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
   import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
-
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import VectorFilterPanel from '$components/controls/VectorFilterPanel.svelte'
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'

@@ -30,29 +30,6 @@
   const noDataLabel = 'N/A'
   const frame = { translate: [0, 0] }
 
-  // $:{
-  //   if(mapMouseEvent){
-  //     marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
-  //   }
-  // }
-  // layer change
-  // $: {
-  //   const layersVisible = $layerList.filter((layer) => layer.visible === true)
-  //   layerValuesExpanded = []
-  //
-  //   if ($map !== null) {
-  //     if (layersVisible.length > 0) {
-  //       if (mapQueryInfoControl !== null && $map.hasControl(mapQueryInfoControl) === false) {
-  //         $map.addControl(mapQueryInfoControl, 'top-right')
-  //       }
-  //     } else {
-  //       mapMouseEvent = null
-  //       if (mapQueryInfoControl) $map.removeControl(mapQueryInfoControl)
-  //       resetMapQueryInfo()
-  //     }
-  //   }
-  // }
-
   // mouse click on map
   $: {
     if (mapMouseEvent?.lngLat) {
