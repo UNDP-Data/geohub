@@ -23,7 +23,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getIntervalList, getSampleFromInterval, remapInputValue } from '../../lib/helper'
+  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues

@@ -2,6 +2,7 @@
   // https://github.com/sunnypol92/svelte-bulma-tag-input
   import { createEventDispatcher } from 'svelte'
   import { clean } from '$lib/helper'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   const dispatch = createEventDispatcher()
 
@@ -64,32 +65,13 @@
 
   function setTag(e) {
     const currentTag = e.target.value
-
-    if (addKeys) {
-      addKeys.forEach(function (key) {
-        if (key === e.keyCode) {
-          if (currentTag) e.preventDefault()
-
-          /* switch (input.keyCode) {
-                  case 9:
-                      // TAB add first element on the autoComplete list
-                      if (autoComplete && document.getElementById(matchsID)) {
-                          addTag(document.getElementById(matchsID).querySelectorAll("li")[0].textContent);
-                      } else {
-                          addTag(currentTag);
-                      }
-                      break;
-                  default:
-                      addTag(currentTag);
-                      break;
-                  } */
-          if (autoComplete && document.getElementById(matchsID)) {
-            addTag(document.getElementById(matchsID).querySelectorAll('li')[0].textContent)
-          } else {
-            addTag(currentTag)
-          }
-        }
+    // if key is enter, add tag
+    if (e.key === 'Enter' && currentTag !== '') {
+      tags = [...tags, currentTag]
+      dispatch('tags', {
+        tags: tags,
       })
+      e.target.value = ''
     }
 
     if (removeKeys) {
@@ -133,8 +115,8 @@
       currentTag = currentTag.trim()
     }
 
-    if (currentTag == '') return
-    if (maxTags && tags.length == maxTags) return
+    if (currentTag === '') return
+    if (maxTags && tags.length === maxTags) return
     if (onlyUnique && tags.includes(currentTag)) return
     if (onlyAutocomplete && arrelementsmatch.length === 0) return
 
@@ -151,7 +133,7 @@
     arrelementsmatch = []
     document.getElementById(id).focus()
 
-    if (maxTags && tags.length == maxTags) {
+    if (maxTags && tags.length === maxTags) {
       document.getElementById(id).readOnly = true
       placeholder = ''
     }
@@ -353,6 +335,7 @@
   class="svelte-tags-input-layout"
   class:sti-layout-disable={disable}
   bind:this={layoutElement}
+  use:clickOutside={() => (hideOptions = true)}
   aria-label="Keyword Search">
   <label for={id} class={labelShow ? '' : 'sr-only'}>{labelText}</label>
 
@@ -400,7 +383,7 @@
 </div>
 
 {#if autoComplete && arrelementsmatch.length > 0}
-  <div class="svelte-tags-input-matchs-parent" hidden={hideOptions}>
+  <div style="z-index: 99" class="svelte-tags-input-matchs-parent" hidden={hideOptions}>
     <ul id="{id}_matchs" class="svelte-tags-input-matchs">
       {#each arrelementsmatch as element, index}
         <li
