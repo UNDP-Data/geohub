@@ -58,18 +58,18 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div class="grid" role="menu" on:click={handleClick}>
+<div style="max-height: 200px; overflow-y: auto" class="grid" role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       <div
         class="card grid-item p-0 m-0  {propertySelectOption === propertySelectValue
-          ? 'has-background-success '
+          ? 'has-background-success'
           : 'has-background-info-dark'}"
         on:click={() => (propertySelectValue = propertySelectOption)}>
         <div class="card-header is-size-6 is-shadowless">
           <span
-            class="card-header-title is-centered pb-2 pt-2 m-0 {propertySelectOption === propertySelectValue
-              ? 'has-text-success-darker'
+            class="card-header-title is-centered p-0 pb-2 pt-2 m-0 {propertySelectOption === propertySelectValue
+              ? 'has-text-info-light'
               : 'has-text-white-ter'} ">
             {propertySelectOption}
           </span>

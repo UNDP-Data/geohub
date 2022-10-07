@@ -228,11 +228,12 @@
             nextStep()
           }}
           class="button wizard-button is-small primary-button">
-          New Rule
+          <i class="fas fa-plus" />
+          &nbsp; New rule
         </button>
         {#if expressionApplied || expressionsArray[0].value !== ''}
-          <button on:click={handleClearExpression} class="button wizard-button is-small secondary-button">
-            Clear Filters
+          <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
+            Clear filter{expressionsArray.length > 1 ? 's' : ''}
           </button>
         {/if}
       </div>
@@ -240,8 +241,8 @@
     <Step num={2} let:prevStep let:nextStep let:setStep>
       <div class="wizard-button-container">
         {#if expressionApplied || expressionsArray[0].value !== ''}
-          <button on:click={handleClearExpression} class="button wizard-button is-small secondary-button">
-            Clear Filters
+          <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
+            Clear filter{expressionsArray.length > 1 ? 's' : ''}
           </button>
         {/if}
         <button
@@ -249,14 +250,15 @@
             setInitialExpression()
             setStep(1)
           }}
-          class="button wizard-button is-small secondary-button">
+          class="button wizard-button is-small primary-button">
           Cancel
         </button>
         <button
           disabled={expressionsArray[currentExpressionIndex].property === ''}
           on:click={nextStep}
           class="button wizard-button is-small primary-button">
-          Next
+          Operators &nbsp;
+          <i class="fa fa-chevron-right" />
         </button>
       </div>
       <PropertySelectButtons
@@ -267,12 +269,16 @@
     <Step num={3} let:prevStep let:nextStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small secondary-button"> Previous </button>
+        <button on:click={prevStep} class="button wizard-button is-small primary-button">
+          <i class="fa fa-chevron-left" />
+          &nbsp; Properties
+        </button>
         <button
           disabled={expressionsArray[currentExpressionIndex].operator === ''}
           on:click={nextStep}
           class="button wizard-button is-small primary-button">
-          Next
+          Values &nbsp;
+          <i class="fa fa-chevron-right" />
         </button>
       </div>
       <OperationButtons
@@ -286,7 +292,9 @@
     <Step num={4} let:prevStep let:nextStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small secondary-button"> Previous</button>
+        <button on:click={prevStep} class="button wizard-button is-small primary-button">
+          <i class="fa fa-chevron-left" />
+          &nbsp; Operators</button>
       </div>
       <ValueInput
         on:apply={nextStep}
@@ -299,15 +307,18 @@
     <Step num={5} let:prevStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small secondary-button"> Previous </button>
+        <button on:click={prevStep} class="button wizard-button is-small primary-button">
+          <i class="fa fa-chevron-left" />
+          &nbsp; Previous
+        </button>
         <button
           on:click={() => {
             handleAddExpression()
             setStep(2)
           }}
-          class="button wizard-button is-small secondary-button">
+          class="button wizard-button is-small primary-button">
           <i class="fa fa-plus" />
-          &nbsp; New Filter
+          &nbsp; New filter
         </button>
         <button
           on:click={() => {
@@ -315,7 +326,8 @@
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
-          Apply Filter
+          <i class="fa fa-hammer" />
+          &nbsp; Apply filter{expressionsArray.length > 1 ? 's' : ''}
         </button>
       </div>
     </Step>
