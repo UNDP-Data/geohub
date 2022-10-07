@@ -10,6 +10,7 @@
   export let layer
 
   let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
+  console.log(layer.info.json.vector_layers[0].fields)
   const layerId = layer.definition.id
 
   const dispatch = createEventDispatcher()
@@ -34,8 +35,11 @@
       min = Math.min(...values.flat())
       max = Math.max(...values.flat())
       sliderValues = [min, max]
-      calculatedStep = (max - min) / 100
-      sv[0] = (max - min) * 0.5
+      calculatedStep =
+        dataType.includes('int') || Number.isInteger(min) ? Math.round((max - min) * 1e-2) | 0 : (max - min) * 1e-2
+
+      sv[0] = dataType.includes('int') || Number.isInteger(min) ? Math.round((max - min) * 0.5) | 0 : (max - min) * 0.5
+      console.log(dataType), calculatedStep
     }
   }
 
@@ -89,6 +93,12 @@
     <div class="content" style="width:100%; height:100%">
       {#if dataType === 'String'}
         <div>
+          {#if acceptSingleTag}
+            <div class="notification has-background-danger-light is-size-6 has-text-danger">
+              <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ \n
+              operators are used
+            </div>
+          {/if}
           <Tags
             on:tags={handleTags}
             maxTags={acceptSingleTag ? 1 : 100}
