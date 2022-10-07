@@ -100,7 +100,7 @@
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 5px;
     padding: 0px;
-    scrollbar-width: thin;          /* "auto" or "thin" */
+    scrollbar-width: thin; /* "auto" or "thin" */
     scrollbar-color: blue orange;
   }
   .grid-item {

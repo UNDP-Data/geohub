@@ -245,8 +245,7 @@
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
-          <i class="fa-solid fa-circle-xmark"></i> &nbsp;Cancel
-        
+          <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
         </button>
         <button
           disabled={expressionsArray[currentExpressionIndex].property === ''}
@@ -270,13 +269,13 @@
           &nbsp; Properties
         </button>
         <button
-        on:click={() => {
-          setInitialExpression()
-          setStep(1)
-        }}
-        class="button wizard-button is-small primary-button">
-        <i class="fa-solid fa-circle-xmark"></i> &nbsp;Cancel
-      </button>
+          on:click={() => {
+            setInitialExpression()
+            setStep(1)
+          }}
+          class="button wizard-button is-small primary-button">
+          <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+        </button>
         <button
           disabled={expressionsArray[currentExpressionIndex].operator === ''}
           on:click={nextStep}
@@ -306,11 +305,11 @@
             setInitialExpression()
             setStep(1)
           }}
-      class="button wizard-button is-small primary-button">
-      <i class="fa-solid fa-circle-xmark"></i> &nbsp;Cancel
-    </button>
+          class="button wizard-button is-small primary-button">
+          <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+        </button>
       </div>
-      
+
       <div class="is-divider separator is-danger" data-content="Select/input a value..." />
       <ValueInput
         on:apply={nextStep}
