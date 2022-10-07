@@ -2,7 +2,7 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import Tags from '$components/Tags.svelte'
   import { createEventDispatcher } from 'svelte'
-  import { map } from '$stores'
+  import { map, filterInputTags } from '$stores'
 
   export let propertySelectedValue
   export let expressionValue
@@ -20,7 +20,7 @@
   // get the values of the property for each feature
   const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
 
-  let tagsList = []
+  $: tagsList = $filterInputTags
   let optionsList: [] = [...new Set(values.flat())]
   let hideOptions = true
   let step
@@ -51,6 +51,7 @@
   const applyTags = () => {
     dispatch('apply')
     const filteredTags = tagsList.filter((tag) => !optionsList.includes(tag))
+    $filterInputTags = [...$filterInputTags, ...filteredTags]
     if (filteredTags.length > 0) {
       dispatch('customTags', tagsList)
     } else {
@@ -65,7 +66,7 @@
   const nFormatter = (num: number, digits = 0) => {
     const lookup = [
       { value: 1, symbol: '' },
-      { value: 1e3, symbol: 'k' },
+      { value: 1e3, symbol: 'K' },
       { value: 1e6, symbol: 'M' },
       { value: 1e9, symbol: 'G' },
       { value: 1e12, symbol: 'T' },
@@ -105,11 +106,18 @@
             labelShow={false}
             class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
             {acceptSingleTag} />
-          <button
-            disabled={tagsList.length === 0}
-            style="margin-top:5%; margin-left: 62%"
-            class="button is-small primary-button"
-            on:click={applyTags}>Confirm Selection</button>
+          <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
+            <div>
+              <button class="button is-rounded is-small is-info">
+                <i class="fa-solid fa-circle-info " />
+              </button>
+            </div>
+            <div>
+              <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
+                >Confirm Selection
+              </button>
+            </div>
+          </div>
         </div>
       {:else if optionsList.length > 25 || dataType.includes('float')}
         <div class="range-slider">
@@ -127,7 +135,8 @@
             on:stop={onSliderStop} />
         </div>
         <button style="margin-top:5%; margin-left: 62%" class="button is-small primary-button" on:click={apply}
-          >Use selected</button>
+          >Use selected
+        </button>
       {:else}
         <div class="range-slider">
           <RangeSlider
@@ -144,9 +153,7 @@
             rest={false}
             on:stop={onSliderStop} />
         </div>
-        <button class="button is-small secondary-button" on:click={console.log()}>
-          <i class="fa-solid fa-circle-info" /> Info
-        </button>
+
         <button class="button is-small primary-button" on:click={apply}> Use selected </button>
       {/if}
     </div>
