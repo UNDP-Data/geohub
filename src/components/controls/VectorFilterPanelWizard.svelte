@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { bannerMessages, map } from '$stores'
+  import { bannerMessages, map, filterInputTags } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
   import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte'
@@ -125,6 +125,9 @@
     $map.on('error', (err: ErrorEvent) => {
       showBannerMessage(err.error)
     })
+    if ($filterInputTags.length > 0) {
+      $filterInputTags = []
+    }
   }
 
   const showBannerMessage = (error: Error) => {
@@ -179,6 +182,9 @@
         operator: '',
       },
     ]
+    if ($filterInputTags.length > 0) {
+      $filterInputTags = []
+    }
   }
   const handleDisableTags = () => {
     acceptSingleTag = true
