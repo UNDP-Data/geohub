@@ -227,7 +227,7 @@
         </button>
         {#if expressionApplied || expressionsArray[0].value !== ''}
           <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
-            Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
+            <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
           </button>
         {/if}
       </div>
