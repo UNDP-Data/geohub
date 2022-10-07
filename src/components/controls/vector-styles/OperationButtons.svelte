@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
+  import { each } from 'svelte/internal'
 
   export let currentSelectedOperation = ''
   export let stringProperty = false
@@ -7,10 +8,10 @@
   export let disableNonNumericOperators = false
 
   const operationOptions = [
-    { value: '==', label: 'Equal To', disabled: false },
-    { value: '!=', label: 'Not Equal To', disabled: false },
-    { value: '<', label: 'Less Than', disabled: stringProperty }, // < disabled when property is string
-    { value: '>', label: 'Greater Than', disabled: stringProperty }, // < disabled when property is string
+    { value: '==', label: 'Equals', disabled: false },
+    { value: '!=', label: 'Differs', disabled: false },
+    { value: '<', label: 'Larger', disabled: stringProperty }, // < disabled when property is string
+    { value: '>', label: 'Smaller', disabled: stringProperty }, // < disabled when property is string
     { value: 'in', label: 'Contains', disabled: numberProperty },
     { value: '!in', label: 'Excludes', disabled: numberProperty },
   ]
@@ -30,42 +31,52 @@
   }
 </script>
 
-<div class="grid" role="menu">
+<!-- <div class="columns p-3 is-multiline">
   {#each operationOptions as operation}
-    <div
-      class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} {operation.value ===
+    <div class="column m-0 p-0  {operation.disabled ? 'disabled' : null} {operation.value ===
       currentSelectedOperation
-        ? 'has-background-success '
-        : 'has-background-white-ter'}"
+        ? 'has-background-success'
+        : 'has-background-info-light'}"
       on:click={() => {
         operation.disabled ? null : (currentSelectedOperation = operation.value)
         operation.disabled ? null : dispatch('click')
       }}>
-      <div class="card-header is-size-6 is-shadowless">
-        <span class="card-header-title is-centered is-v-centered p-1 m-1 has-text-info-dark  ">
-          {operation.label}
-        </span>
-        {#if operation.value === currentSelectedOperation}
-          <span class="icon  ">
-            <i class="fa-solid fa-check has-text-black" />
-          </span>
-        {/if}
+      <div class="box {operation.value ===
+        currentSelectedOperation
+          ? 'has-background-success'
+          : 'has-background-info-light'} has-text-centered is-clickable">
+        {operation.label}
       </div>
-      <div class="content  has-text-danger-dark ">
-        <span class="is-size-7 is-centered" />
-      </div>
+      
+
     </div>
-    <!-- <div
-      disabled='{operation.disabled}'
-      class="card grid-item vector-expression-card {operation.disabled ? 'disabled':null} {operation.value === currentSelectedOperation ? 'clicked' : null}"
+  {/each}
+</div> -->
+<div class="grid" role="menu">
+  {#each operationOptions as operation}
+    <div
+      class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
       on:click={() => {
         operation.disabled ? null : (currentSelectedOperation = operation.value)
-        operation.disabled ? null : (dispatch('click'))
+        operation.disabled ? null : dispatch('click')
       }}>
-      <div class="vector-expression-card-content">
-        <span class="text-centered">{operation.label}</span>
+      <div
+        class="card-header is-size-6  pb-3 pt-3 m-0 {currentSelectedOperation === operation.value
+          ? 'has-background-success'
+          : 'has-background-info-light'} ">
+        <span
+          class="card-header-title is-centered is-v-centered {currentSelectedOperation === operation.value
+            ? 'has-text-success-darker'
+            : 'has-text-info-darker'}  ">
+          {operation.label}
+          {#if currentSelectedOperation === operation.value}
+            <span class="icon  ">
+              <i class="fa-solid fa-check has-text-black" />
+            </span>
+          {/if}
+        </span>
       </div>
-    </div> -->
+    </div>
   {/each}
 </div>
 
