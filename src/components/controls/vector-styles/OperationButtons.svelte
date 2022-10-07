@@ -8,12 +8,12 @@
   export let disableNonNumericOperators = false
 
   const operationOptions = [
-    { value: '==', label: 'Equals', disabled: false },
-    { value: '!=', label: 'Differs', disabled: false },
-    { value: '<', label: 'Larger', disabled: stringProperty }, // < disabled when property is string
-    { value: '>', label: 'Smaller', disabled: stringProperty }, // < disabled when property is string
-    { value: 'in', label: 'Contains', disabled: numberProperty },
-    { value: '!in', label: 'Excludes', disabled: numberProperty },
+    { value: '==', label: 'Equals', disabled: false, symbol: '=' },
+    { value: '!=', label: 'Differs', disabled: false, symbol: '≠' },
+    { value: '<', label: 'Larger', disabled: stringProperty, symbol: '>' }, // < disabled when property is string
+    { value: '>', label: 'Smaller', disabled: stringProperty, symbol: '<' }, // < disabled when property is string
+    { value: 'in', label: 'Contains', disabled: numberProperty, symbol: '⊂' },
+    { value: '!in', label: 'Excludes', disabled: numberProperty, symbol: '⊄' },
   ]
 
   const dispatch = createEventDispatcher()
@@ -61,13 +61,13 @@
         operation.disabled ? null : dispatch('click')
       }}>
       <div
-        class="card-header is-size-6  pb-3 pt-3 m-0 {currentSelectedOperation === operation.value
+        class="card-header is-size-6  pb-0 pt-0 m-0 {currentSelectedOperation === operation.value
           ? 'has-background-success'
-          : 'has-background-info-light'} ">
+          : 'has-background-info-dark'} ">
         <span
           class="card-header-title is-centered is-v-centered {currentSelectedOperation === operation.value
             ? 'has-text-success-darker'
-            : 'has-text-info-darker'}  ">
+            : 'has-text-white-ter'}  ">
           {operation.label}
           {#if currentSelectedOperation === operation.value}
             <span class="icon  ">
@@ -75,6 +75,11 @@
             </span>
           {/if}
         </span>
+      </div>
+      <div class="card-content  p-0 m-0 has-text-centered ">
+        <div class="content is-size-2  p-0 m-0 has-text-weight-bold has-text-danger">
+          {operation.symbol}
+        </div>
       </div>
     </div>
   {/each}
