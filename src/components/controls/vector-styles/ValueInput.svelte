@@ -39,10 +39,10 @@
   }
 
   const onSliderStop = (event) => {
-    dispatch('sliderStop', event.detail)
-    console.log(event.detail)
     expressionValue = event.detail.value
+    dispatch('sliderStop', event.detail)
   }
+
   const handleTags = (event: CustomEvent) => {
     tagsList = event.detail.tags
     // filter tags to see if they are in the options list
@@ -57,7 +57,7 @@
     }
   }
 
-  const apply = () => {
+  const apply = (e) => {
     dispatch('apply')
   }
 </script>
