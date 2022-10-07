@@ -27,11 +27,13 @@
   let min
   let max
   let calculatedStep
+  let sliderValues = []
 
   $: {
     if (dataType === 'Number' || dataType.includes('int') || dataType.includes('float')) {
       min = Math.min(...values.flat())
       max = Math.max(...values.flat())
+      sliderValues = [min, max]
       calculatedStep = (max - min) / 100
     }
   }
@@ -53,6 +55,10 @@
     } else {
       expressionValue = tagsList
     }
+  }
+
+  const apply = () => {
+    dispatch('apply')
   }
 </script>
 
@@ -88,33 +94,36 @@
       {:else if optionsList.length > 25}
         <div style="display: block;">
           <RangeSlider
-            bind:values={expressionValue}
+            bind:values={sliderValues}
             float
-            range
+            range="min"
             {min}
             {max}
+            {calculatedStep}
             pips
             first="label"
             last="label"
-            {calculatedStep}
             rest={false}
             on:stop={onSliderStop} />
         </div>
-        <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+        <button style="margin-top:5%; margin-left: 62%" class="button is-small primary-button" on:click={apply}
+          >Confirm</button>
       {:else}
         <RangeSlider
-          bind:values={expressionValue}
-          range
+          bind:values={sliderValues}
+          float
+          range="min"
           {min}
           {max}
+          {step}
           pips
           first="label"
           last="label"
-          {step}
           pipstep={step}
           rest={false}
           on:stop={onSliderStop} />
-        <input bind:value={expressionValue} class="input is-small" type="text" placeholder="Value" />
+        <button style="margin-top:5%; margin-left: 62%" class="button is-small primary-button" on:click={apply}
+          >Confirm</button>
       {/if}
     </div>
   </div>

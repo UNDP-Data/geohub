@@ -51,6 +51,7 @@
   }
 
   const handleClick = () => {
+    if (propertySelectValue === '') return
     dispatch('click')
   }
 
