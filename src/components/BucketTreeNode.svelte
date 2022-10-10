@@ -56,7 +56,7 @@
   let isAddLayerModalVisible: boolean
 
   $: tree = node
-  $: ({ label, children, path, url, isRaster, geomType, id } = tree)
+  $: ({ label, children, path, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
   const bid = level == 0 ? node.id : null
