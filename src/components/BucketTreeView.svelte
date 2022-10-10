@@ -85,88 +85,120 @@
   }
 </script>
 
-<ul>
-  <!-- transition:slide -->
-  <li>
-    {#if tree.children}
-      <span on:click={toggleExpansion} style="color:gray; margin-left:5px" class="tree-icon">
-        {#if loadingLayer === true}
-          <Fa icon={faSync} size="sm" spin />
-        {:else if level === 0}
-          <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
-        {:else if !expanded}
-          <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
-        {:else}
-          <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
-        {/if}
-        {clean(tree.label)}
-      </span>
-      {#if expanded}
-        {#each tree.children as child}
-          <svelte:self tree={child} level={level + 1} />
-        {/each}
-      {/if}
-    {:else}
-      <span>
-        <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
+<li style="padding-left:{level * 0.75}rem;">
+  <div style="padding-bottom: 5px;">
+    <div class="node-container">
+      {#if tree.children}
+        <span on:click={toggleExpansion} style="color:gray; margin-left:5px" class="tree-icon">
           {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
+          {:else if level === 0}
+            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
+          {:else if !expanded}
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
           {:else}
-            <Wrapper>
-              <FaLayers size="sm" style="cursor: pointer;">
-                <Fa icon={faLayerGroup} scale={1} />
-                <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
-              </FaLayers>
-              <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
-            </Wrapper>
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
           {/if}
-        </a>
+          {clean(tree.label)}
+        </span>
+        {#if expanded}
+          {#each tree.children as child}
+            <svelte:self tree={child} level={level + 1} />
+          {/each}
+        {/if}
+      {:else}
+        <span>
+          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
+            {#if loadingLayer === true}
+              <Fa icon={faSync} size="sm" spin />
+            {:else}
+              <Wrapper>
+                <FaLayers size="sm" style="cursor: pointer;">
+                  <Fa icon={faLayerGroup} scale={1} />
+                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
+                </FaLayers>
+                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
+              </Wrapper>
+            {/if}
+          </a>
 
-        {clean(tree.label)}
+          {clean(tree.label)}
 
-        <BucketTreeNodeCardButton bind:node={tree} />
+          <BucketTreeNodeCardButton bind:node={tree} />
 
-        {#if tree.isRaster}
-          <div
-            class="icon"
-            alt="Download Layer Data"
-            style="cursor: pointer;"
-            title="Download Layer Data"
-            on:click={() => downloadFile(tree.url)}
-            on:keydown={handleEnterKeyForDownload}>
-            <Wrapper>
-              <Fa icon={faDownload} size="sm" />
-              <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
-            </Wrapper>
-
+          {#if tree.isRaster}
+            <div
+              class="icon"
+              alt="Download Layer Data"
+              style="cursor: pointer;"
+              title="Download Layer Data"
+              on:click={() => downloadFile(tree.url)}
+              on:keydown={handleEnterKeyForDownload}>
+              <Wrapper>
+                <Fa icon={faDownload} size="sm" />
+                <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
+              </Wrapper>
+            </div>
             <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
               <Wrapper>
                 <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
                 <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
               </Wrapper>
             </div>
-          </div>
-        {:else}
-          <div class="icon" alt={iconVector.label} title={iconVector.label}>
-            <Wrapper>
-              <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-              <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
-            </Wrapper>
-          </div>
-        {/if}
-      </span>
-    {/if}
-  </li>
-</ul>
+          {:else}
+            <div class="icon" alt={iconVector.label} title={iconVector.label}>
+              <Wrapper>
+                <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
+                <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
+              </Wrapper>
+            </div>
+          {/if}
+        </span>
+      {/if}
+    </div>
+  </div>
+</li>
 
 <style lang="scss">
-  ul {
-    margin: 0;
-    list-style: none;
-    padding-left: 1.2rem;
-    user-select: none;
-  }
-  .no-arrow {
-    padding-left: 1rem;
+  .node-container {
+    align-items: center;
+    // display: flex;
+    height: auto;
+    justify-content: left;
+
+    .load-layer {
+      -webkit-filter: invert(100%);
+      filter: invert(100%);
+    }
+
+    .name {
+      overflow: hidden;
+      padding-left: 5px;
+      text-overflow: ellipsis;
+      width: 100%;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
+
+      .columns .column {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .icon {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .tree-icon {
+      margin-right: 5px;
+
+      @media (prefers-color-scheme: dark) {
+        color: rgb(138, 20, 20);
+      }
+    }
   }
 </style>
