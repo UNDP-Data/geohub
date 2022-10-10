@@ -6,6 +6,7 @@
   import BucketFilter from '$components/BucketFilter.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
   import { bucketList, indicatorProgress, modalVisible, treeBucket } from '$stores'
+  import BucketTreeView from './BucketTreeView.svelte'
 
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
@@ -123,7 +124,8 @@
                 .map((el) => el.toLowerCase())
                 .join('-')}
               label={tree.label}>
-              <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
+              <BucketTreeView bind:tree />
+              <!-- <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} /> -->
             </ul>
           {/each}
         </nav>

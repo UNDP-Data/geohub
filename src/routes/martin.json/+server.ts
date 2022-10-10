@@ -32,7 +32,7 @@ export const GET: RequestHandler = async ({ url }) => {
           path: table.id,
           geomType: geomType,
           url: containerPath.replace('index', table.id),
-          children: [],
+          // children: [],
           isRaster: false,
           isStac: false,
           isMartin: true,
