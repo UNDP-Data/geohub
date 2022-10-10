@@ -505,62 +505,28 @@
   <div style="padding-bottom: 5px;">
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        {#if url}
-          <!-- The modal is located here so the focus is set to ne next element -->
-          <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
-          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
-            {#if loadingLayer === true}
-              <Fa icon={faSync} size="sm" spin />
-            {:else}
-              <Wrapper>
-                <FaLayers size="sm" style="cursor: pointer;">
-                  <Fa icon={faLayerGroup} scale={1} />
-                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
-                </FaLayers>
-                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
-              </Wrapper>
-            {/if}
-          </a>
+        <a
+          style="color:gray; margin-left:5px"
+          class="tree-icon"
+          href="#"
+          role="button"
+          on:click={() => toggleExpansion()}>
+          {#if loadingLayer === true}
+            <Fa icon={faSync} size="sm" spin />
+          {:else if level === 0}
+            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
+          {:else if !expanded}
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
+          {:else}
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
+          {/if}
+        </a>
 
-          <div class="name vector">
-            {clean(label)}
+        <div class="name">
+          <div class="columns">
+            <div class="column">{clean(label)}</div>
           </div>
-        {:else}
-          <a
-            style="color:gray; margin-left:5px"
-            class="tree-icon"
-            href="#"
-            role="button"
-            on:click={() => toggleExpansion()}>
-            {#if loadingLayer === true}
-              <Fa icon={faSync} size="sm" spin />
-            {:else if level === 0}
-              <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
-            {:else if !expanded}
-              <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
-            {:else}
-              <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
-            {/if}
-          </a>
-
-          <div class="name">
-            <div class="columns">
-              <div class="column">{clean(label)}</div>
-            </div>
-          </div>
-        {/if}
-
-        {#if url}
-          <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
-
-          <div class="icon" alt={iconVector.label} title={iconVector.label}>
-            <Wrapper>
-              <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-              <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
-            </Wrapper>
-          </div>
-        {/if}
-
+        </div>
         {#if level === 0 && hideCloseButton === false}
           <a
             style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
@@ -574,20 +540,23 @@
       </div>
     {:else}
       <div class="node-container">
+        <!-- The modal is located here so the focus is set to ne next element -->
+        <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+        <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
+          {#if loadingLayer === true}
+            <Fa icon={faSync} size="sm" spin />
+          {:else}
+            <Wrapper>
+              <FaLayers size="sm" style="cursor: pointer;">
+                <Fa icon={faLayerGroup} scale={1} />
+                <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
+              </FaLayers>
+              <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
+            </Wrapper>
+          {/if}
+        </a>
+
         {#if isRaster}
-          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
-            {#if loadingLayer === true}
-              <Fa icon={faSync} size="sm" spin />
-            {:else}
-              <Wrapper>
-                <FaLayers size="sm" style="cursor: pointer;">
-                  <Fa icon={faLayerGroup} scale={1} />
-                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
-                </FaLayers>
-                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
-              </Wrapper>
-            {/if}
-          </a>
           <div class="name raster">
             {#if node.isStac}
               {clean(
@@ -600,7 +569,15 @@
               {clean(label)}
             {/if}
           </div>
-          <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
+        {:else}
+          <div class="name vector">
+            {clean(label)}
+          </div>
+        {/if}
+
+        <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
+
+        {#if isRaster}
           <div
             class="icon"
             alt="Download Layer Data"
@@ -620,8 +597,11 @@
             </Wrapper>
           </div>
         {:else}
-          <div class="name">
-            {clean(label)}
+          <div class="icon" alt={iconVector.label} title={iconVector.label}>
+            <Wrapper>
+              <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
+              <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
+            </Wrapper>
           </div>
         {/if}
       </div>
