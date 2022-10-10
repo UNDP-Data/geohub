@@ -518,8 +518,6 @@
       </div>
     {:else}
       <div class="node-container">
-        <!-- The modal is located here so the focus is set to ne next element -->
-        <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
         <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
           {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
@@ -533,6 +531,8 @@
             </Wrapper>
           {/if}
         </a>
+        <!-- The modal is located here so the focus is set to ne next element -->
+        <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
         {#if isRaster}
           <div class="name raster">
