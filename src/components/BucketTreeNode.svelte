@@ -11,7 +11,6 @@
   import FaLayers from 'svelte-fa/src/fa-layers.svelte'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
-  import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
@@ -27,13 +26,12 @@
     COLOR_CLASS_COUNT,
     DEFAULT_COLORMAP,
     ErrorMessages,
-    LayerIconTypes,
     LayerTypes,
     STAC_PAGINATION_PREV,
     STAC_PAGINATION_NEXT,
     StatusTypes,
   } from '$lib/constants'
-  import { fetchUrl, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
+  import { fetchUrl, clean, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
     BannerMessage,
     TreeNode,
@@ -41,35 +39,30 @@
     LayerInfoMetadata,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
-    BandMetadata,
   } from '$lib/types'
   import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
+  import BucketTreeNodeDownloadButton from './BucketTreeNodeDownloadButton.svelte'
 
   export let level = 0
   export let node: TreeNode
   export let hideCloseButton = false
 
   const dispatch = createEventDispatcher()
-  const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
-  let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let isAddLayerModalVisible: boolean
-  // let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
-  $: ({ label, children, path, url, isRaster, geomType, id } = tree)
+  $: ({ label, children, path, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
   const bid = level == 0 ? node.id : null
-  //console.log(`${bid} ${JSON.stringify(node)}`)
+
   onMount(() => {
     if (level === 0) toggleExpansion()
-    if (geomType !== undefined) {
-      iconVector = getVectorLayerIcon(geomType)
-    }
   })
 
   onDestroy(() => {
@@ -114,42 +107,9 @@
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore:next-line
       node = treeData.tree
-      // the info endpoint returns metadata for rasters. the same needs to be implemented for
-      // vector data with the difference that the metadata will be coming from .metadata.json
-
-      //const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
-      //const vectorChildNodes = node.children.filter((item) => item.url !== null && !item.isRaster)
-      const childNodes = node.children.filter((item) => item.url !== null)
-      Promise.all(
-        childNodes.map((node) => {
-          return {
-            data: node.isRaster ? getRasterMetadata(node) : getVectorMetadata(node),
-            node,
-          }
-        }),
-      ).then((responses) => {
-        responses.forEach((response) => {
-          response.data.then(() => {
-            if (response.node.isRaster) {
-              if (response.node.isStac) {
-                const bucketStac = $bucketList.find((bucket) => bucket.id === response.node.path.split('/')[0])
-                const itemsUrl = []
-                itemsUrl.push(bucketStac.url)
-                itemsUrl.push(response.node.path.split('/')[1])
-                itemsUrl.push('items')
-                itemsUrl.push(response.node.label)
-              }
-            }
-          })
-        })
-      })
     }
 
     setProgressIndicator(false)
-  }
-
-  const getVectorLayerIcon = (layerGeomType: string) => {
-    return LayerIconTypes.find((icon) => layerGeomType.toLowerCase().includes(icon.id))
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -466,16 +426,11 @@
   const handleKD = (event: KeyboardEvent) => {
     if (event.key == 'Enter') {
       const bucketDiv = document.getElementById(bid)
-      //console.log(bucketDiv)
       bucketDiv.setAttribute('tabindex', '0')
       bucketDiv.focus()
       bucketDiv.blur()
 
       handleRemoveBucket()
-      //const id = document.activeElement.id
-      // if (id !== bid) {
-      //   console.log(`failed ${id} ${bid}`)
-      // }
     }
   }
 
@@ -493,74 +448,34 @@
 
     updateTreeStore()
   }
-
-  const handleEnterKeyForDownload = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      downloadFile(url)
-    }
-  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
   <div style="padding-bottom: 5px;">
     {#if children}
       <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        {#if url}
-          <!-- The modal is located here so the focus is set to ne next element -->
-          <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
-          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
-            {#if loadingLayer === true}
-              <Fa icon={faSync} size="sm" spin />
-            {:else}
-              <Wrapper>
-                <FaLayers size="sm" style="cursor: pointer;">
-                  <Fa icon={faLayerGroup} scale={1} />
-                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
-                </FaLayers>
-                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
-              </Wrapper>
-            {/if}
-          </a>
+        <a
+          style="color:gray; margin-left:5px"
+          class="tree-icon"
+          href="#"
+          role="button"
+          on:click={() => toggleExpansion()}>
+          {#if loadingLayer === true}
+            <Fa icon={faSync} size="sm" spin />
+          {:else if level === 0}
+            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
+          {:else if !expanded}
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
+          {:else}
+            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
+          {/if}
+        </a>
 
-          <div class="name vector">
-            {clean(label)}
+        <div class="name">
+          <div class="columns">
+            <div class="column">{clean(label)}</div>
           </div>
-        {:else}
-          <a
-            style="color:gray; margin-left:5px"
-            class="tree-icon"
-            href="#"
-            role="button"
-            on:click={() => toggleExpansion()}>
-            {#if loadingLayer === true}
-              <Fa icon={faSync} size="sm" spin />
-            {:else if level === 0}
-              <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
-            {:else if !expanded}
-              <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
-            {:else}
-              <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
-            {/if}
-          </a>
-
-          <div class="name">
-            <div class="columns">
-              <div class="column">{clean(label)}</div>
-            </div>
-          </div>
-        {/if}
-
-        {#if url}
-          <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
-
-          <div class="icon" alt={iconVector.label} title={iconVector.label}>
-            <Wrapper>
-              <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-              <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
-            </Wrapper>
-          </div>
-        {/if}
-
+        </div>
         {#if level === 0 && hideCloseButton === false}
           <a
             style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
@@ -574,20 +489,23 @@
       </div>
     {:else}
       <div class="node-container">
+        <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
+          {#if loadingLayer === true}
+            <Fa icon={faSync} size="sm" spin />
+          {:else}
+            <Wrapper>
+              <FaLayers size="sm" style="cursor: pointer;">
+                <Fa icon={faLayerGroup} scale={1} />
+                <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
+              </FaLayers>
+              <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
+            </Wrapper>
+          {/if}
+        </a>
+        <!-- The modal is located here so the focus is set to ne next element -->
+        <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+
         {#if isRaster}
-          <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
-            {#if loadingLayer === true}
-              <Fa icon={faSync} size="sm" spin />
-            {:else}
-              <Wrapper>
-                <FaLayers size="sm" style="cursor: pointer;">
-                  <Fa icon={faLayerGroup} scale={1} />
-                  <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
-                </FaLayers>
-                <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
-              </Wrapper>
-            {/if}
-          </a>
           <div class="name raster">
             {#if node.isStac}
               {clean(
@@ -600,30 +518,15 @@
               {clean(label)}
             {/if}
           </div>
-          <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
-          <div
-            class="icon"
-            alt="Download Layer Data"
-            style="cursor: pointer;"
-            title="Download Layer Data"
-            on:click={() => downloadFile(url)}
-            on:keydown={handleEnterKeyForDownload}>
-            <Wrapper>
-              <Fa icon={faDownload} size="sm" />
-              <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
-            </Wrapper>
-          </div>
-          <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
-            <Wrapper>
-              <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
-              <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
-            </Wrapper>
-          </div>
         {:else}
-          <div class="name">
+          <div class="name vector">
             {clean(label)}
           </div>
         {/if}
+
+        <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
+        <BucketTreeNodeDownloadButton bind:node={tree} />
+        <BucketTreeNodeLegendIcon bind:node={tree} />
       </div>
     {/if}
 
@@ -688,11 +591,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-    }
-
-    .icon {
-      padding-left: 10px;
-      padding-right: 10px;
     }
 
     .tree-icon {
