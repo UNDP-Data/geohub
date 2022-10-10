@@ -13,7 +13,7 @@
     "format": "prettier --plugin-search-dir . --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore",
     "smui-theme-light": "smui-theme compile static/smui.css -i src/styles/theme -i ./node_modules",
     "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/styles/theme/dark -i ./node_modules",
-    "prepare": "pnpm run smui-theme-light && pnpm run smui-theme-dark",
+    "prepare": "pnpm run smui-theme-light && pnpm run smui-theme-dark && lefthook install",
     "test": "vitest --run --dir src --passWithNoTests",
     "test:watch": "vitest --watch --dir src --passWithNoTests",
     "preinstall": "npx only-allow pnpm"
