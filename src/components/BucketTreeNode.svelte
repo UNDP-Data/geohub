@@ -41,9 +41,8 @@
     LayerInfoMetadata,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
-    BandMetadata,
   } from '$lib/types'
-  import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
+  import { map, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let level = 0
@@ -57,14 +56,13 @@
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let isAddLayerModalVisible: boolean
-  // let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
   $: ({ label, children, path, url, isRaster, geomType, id } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
   const bid = level == 0 ? node.id : null
-  //console.log(`${bid} ${JSON.stringify(node)}`)
+
   onMount(() => {
     if (level === 0) toggleExpansion()
     if (geomType !== undefined) {
@@ -89,7 +87,7 @@
 
   const updateTreeStore = async () => {
     setProgressIndicator(true)
-    let treeData = []
+    let treeData
 
     if (tree.isStac) {
       const catalogId = node.path.split('/')[0]
@@ -111,38 +109,7 @@
       //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
       // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
       // potentially invalid layers from the tree!!!!
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
       node = treeData.tree
-      // the info endpoint returns metadata for rasters. the same needs to be implemented for
-      // vector data with the difference that the metadata will be coming from .metadata.json
-
-      //const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
-      //const vectorChildNodes = node.children.filter((item) => item.url !== null && !item.isRaster)
-      const childNodes = node.children.filter((item) => item.url !== null)
-      Promise.all(
-        childNodes.map((node) => {
-          return {
-            data: node.isRaster ? getRasterMetadata(node) : getVectorMetadata(node),
-            node,
-          }
-        }),
-      ).then((responses) => {
-        responses.forEach((response) => {
-          response.data.then(() => {
-            if (response.node.isRaster) {
-              if (response.node.isStac) {
-                const bucketStac = $bucketList.find((bucket) => bucket.id === response.node.path.split('/')[0])
-                const itemsUrl = []
-                itemsUrl.push(bucketStac.url)
-                itemsUrl.push(response.node.path.split('/')[1])
-                itemsUrl.push('items')
-                itemsUrl.push(response.node.label)
-              }
-            }
-          })
-        })
-      })
     }
 
     setProgressIndicator(false)
@@ -350,7 +317,7 @@
         }
       }
 
-      const [bandName, bandMetaStats] = layerInfo.band_metadata[bandIndex]
+      const [bandMetaStats] = layerInfo.band_metadata[bandIndex]
       bandMetaStats.STATISTICS_UNIQUE_VALUES = classesMap
 
       if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
@@ -466,16 +433,11 @@
   const handleKD = (event: KeyboardEvent) => {
     if (event.key == 'Enter') {
       const bucketDiv = document.getElementById(bid)
-      //console.log(bucketDiv)
       bucketDiv.setAttribute('tabindex', '0')
       bucketDiv.focus()
       bucketDiv.blur()
 
       handleRemoveBucket()
-      //const id = document.activeElement.id
-      // if (id !== bid) {
-      //   console.log(`failed ${id} ${bid}`)
-      // }
     }
   }
 
