@@ -114,37 +114,8 @@
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore:next-line
       node = treeData.tree
-      // the info endpoint returns metadata for rasters. the same needs to be implemented for
-      // vector data with the difference that the metadata will be coming from .metadata.json
-
-      //const rasterChildNodes = node.children.filter((item) => item.url !== null && item.isRaster)
-      //const vectorChildNodes = node.children.filter((item) => item.url !== null && !item.isRaster)
-      const childNodes = node.children.filter((item) => item.url !== null)
-      Promise.all(
-        childNodes.map((node) => {
-          return {
-            data: node.isRaster ? getRasterMetadata(node) : getVectorMetadata(node),
-            node,
-          }
-        }),
-      ).then((responses) => {
-        responses.forEach((response) => {
-          response.data.then(() => {
-            if (response.node.isRaster) {
-              if (response.node.isStac) {
-                const bucketStac = $bucketList.find((bucket) => bucket.id === response.node.path.split('/')[0])
-                const itemsUrl = []
-                itemsUrl.push(bucketStac.url)
-                itemsUrl.push(response.node.path.split('/')[1])
-                itemsUrl.push('items')
-                itemsUrl.push(response.node.label)
-              }
-            }
-          })
-        })
-      })
     }
-
+    console.log(node)
     setProgressIndicator(false)
   }
 

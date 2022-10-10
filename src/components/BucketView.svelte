@@ -6,6 +6,7 @@
   import BucketFilter from '$components/BucketFilter.svelte'
   import BucketTreeNode from '$components/BucketTreeNode.svelte'
   import { bucketList, indicatorProgress, modalVisible, treeBucket } from '$stores'
+  import BucketTreeNodeMosaicJson from './BucketTreeNodeMosaicJson.svelte'
 
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
@@ -24,6 +25,7 @@
     if (isBucketInTree === false) {
       const isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
       const isBucketMartin = bucket.tags.find((tag: string) => tag.toLowerCase() === 'martin') ? true : false
+      const isBucketMosaicJson = bucket.tags.find((tag: string) => tag.toLowerCase() === 'mosaic') ? true : false
 
       treeBucketUpdated = [
         ...$treeBucket,
@@ -32,9 +34,12 @@
           isRaster: true,
           isStac: isBucketStac,
           isMartin: isBucketMartin,
+          isMosaic: isBucketMosaicJson,
           label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
+          isParent: true,
           children: [],
+          url: isBucketMosaicJson ? bucket.url : '',
         },
       ]
     } else {
@@ -123,7 +128,11 @@
                 .map((el) => el.toLowerCase())
                 .join('-')}
               label={tree.label}>
-              <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
+              {#if tree.isMosaic === true}
+                <BucketTreeNodeMosaicJson bind:node={tree} on:remove={handleRemoveBucket} />
+              {:else}
+                <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
+              {/if}
             </ul>
           {/each}
         </nav>

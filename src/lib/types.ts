@@ -18,6 +18,7 @@ export interface Tree {
 export interface TreeNode {
   id?: string
   label?: string
+  isParent?: boolean
   children?: Array<TreeNode>
   path?: string
   prefix?: string
@@ -28,6 +29,7 @@ export interface TreeNode {
   tags?: string[]
   isStac?: boolean
   isMartin?: boolean
+  isMosaic?: boolean
   paginationDirectionDisabled?: string
   collectionUrl?: string
 }

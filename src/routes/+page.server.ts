@@ -14,9 +14,10 @@ export const load = async () => {
   const stacContainers = getStacContainers()
   const martinContainers = getMartinContainers()
   const buckets = await listContainers()
+  const stacMosaicContainers = getStacMosaicContainers()
 
   return {
-    buckets: [...stacContainers, ...martinContainers, ...buckets],
+    buckets: [...stacContainers, ...stacMosaicContainers, ...martinContainers, ...buckets],
   }
 }
 
@@ -89,5 +90,10 @@ const getStacContainers = () => {
 
 const getMartinContainers = () => {
   const filePath = `${__dirname}/data/martin.json`
+  return getExternalContainers(filePath)
+}
+
+const getStacMosaicContainers = () => {
+  const filePath = `${__dirname}/data/mosaic-stac.json`
   return getExternalContainers(filePath)
 }

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "mosaic-mspc",
+    "published": true,
+    "path": "mosaic-mspc/",
+    "url": "https://planetarycomputer.microsoft.com/api/stac/v1",
+    "label": "Microsoft Planetary Computer STAC API",
+    "description": "Searchable spatiotemporal metadata describing Earth science datasets hosted by the Microsoft Planetary Computer",
+    "icon": "fa-solid fa-layer-group",
+    "type": "external",
+    "tags": ["STAC", "API", "Microsoft", "Mosaic"],
+    "selected": false
+  }
+]
