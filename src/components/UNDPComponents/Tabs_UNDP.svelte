@@ -5,7 +5,6 @@
 
   export let tabs
   export let activeTab: string
-  let eventsEnabled = false
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {

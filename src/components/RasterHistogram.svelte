@@ -2,8 +2,8 @@
   import { VegaLite } from 'svelte-vega'
   import { onMount } from 'svelte'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { fetchUrl } from '../lib/helper'
-  import { map } from '../stores'
+  import { fetchUrl } from '$lib/helper'
+  import { map } from '$stores'
   import type {
     FillLayerSpecification,
     HeatmapLayerSpecification,

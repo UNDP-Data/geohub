@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { debounce, isEqual } from 'lodash-es'
   import { abs } from 'mathjs'
   import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
   import Popper from '$lib/popper'

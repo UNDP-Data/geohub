@@ -38,3 +38,5 @@ export const layerLabelled = writable(new Map())
 export const tags = writable([])
 
 export const martinIndex = writable<{ [key: string]: MartinLayerMetadata }>(null)
+
+export const filterInputTags = writable([])
