@@ -11,7 +11,6 @@
   import FaLayers from 'svelte-fa/src/fa-layers.svelte'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
   import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
-  import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
   import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
@@ -27,13 +26,12 @@
     COLOR_CLASS_COUNT,
     DEFAULT_COLORMAP,
     ErrorMessages,
-    LayerIconTypes,
     LayerTypes,
     STAC_PAGINATION_PREV,
     STAC_PAGINATION_NEXT,
     StatusTypes,
   } from '$lib/constants'
-  import { fetchUrl, clean, downloadFile, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
+  import { fetchUrl, clean, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
     BannerMessage,
     TreeNode,
@@ -41,11 +39,11 @@
     LayerInfoMetadata,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
-    BandMetadata,
   } from '$lib/types'
   import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
+  import BucketTreeNodeDownloadButton from './BucketTreeNodeDownloadButton.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -56,14 +54,13 @@
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let isAddLayerModalVisible: boolean
-  // let tooltipTimer: ReturnType<typeof setTimeout>
 
   $: tree = node
   $: ({ label, children, path, url, isRaster, geomType, id } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
   const bid = level == 0 ? node.id : null
-  //console.log(`${bid} ${JSON.stringify(node)}`)
+
   onMount(() => {
     if (level === 0) toggleExpansion()
   })
@@ -142,10 +139,6 @@
     }
 
     setProgressIndicator(false)
-  }
-
-  const getVectorLayerIcon = (layerGeomType: string) => {
-    return LayerIconTypes.find((icon) => layerGeomType.toLowerCase().includes(icon.id))
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -462,16 +455,11 @@
   const handleKD = (event: KeyboardEvent) => {
     if (event.key == 'Enter') {
       const bucketDiv = document.getElementById(bid)
-      //console.log(bucketDiv)
       bucketDiv.setAttribute('tabindex', '0')
       bucketDiv.focus()
       bucketDiv.blur()
 
       handleRemoveBucket()
-      //const id = document.activeElement.id
-      // if (id !== bid) {
-      //   console.log(`failed ${id} ${bid}`)
-      // }
     }
   }
 
@@ -488,12 +476,6 @@
     }
 
     updateTreeStore()
-  }
-
-  const handleEnterKeyForDownload = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      downloadFile(url)
-    }
   }
 </script>
 
@@ -572,21 +554,7 @@
         {/if}
 
         <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
-
-        {#if isRaster}
-          <div
-            class="icon"
-            alt="Download Layer Data"
-            style="cursor: pointer;"
-            title="Download Layer Data"
-            on:click={() => downloadFile(url)}
-            on:keydown={handleEnterKeyForDownload}>
-            <Wrapper>
-              <Fa icon={faDownload} size="sm" />
-              <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
-            </Wrapper>
-          </div>
-        {/if}
+        <BucketTreeNodeDownloadButton bind:node={tree} />
         <BucketTreeNodeLegendIcon bind:node={tree} />
       </div>
     {/if}
