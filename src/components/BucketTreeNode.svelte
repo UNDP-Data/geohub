@@ -45,15 +45,14 @@
   } from '$lib/types'
   import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
 
   export let level = 0
   export let node: TreeNode
   export let hideCloseButton = false
 
   const dispatch = createEventDispatcher()
-  const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
-  let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
   let layerInfoMetadata: LayerInfoMetadata
   let loadingLayer = false
   let isAddLayerModalVisible: boolean
@@ -67,9 +66,6 @@
   //console.log(`${bid} ${JSON.stringify(node)}`)
   onMount(() => {
     if (level === 0) toggleExpansion()
-    if (geomType !== undefined) {
-      iconVector = getVectorLayerIcon(geomType)
-    }
   })
 
   onDestroy(() => {
@@ -590,20 +586,8 @@
               <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
             </Wrapper>
           </div>
-          <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
-            <Wrapper>
-              <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
-              <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
-            </Wrapper>
-          </div>
-        {:else}
-          <div class="icon" alt={iconVector.label} title={iconVector.label}>
-            <Wrapper>
-              <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-              <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
-            </Wrapper>
-          </div>
         {/if}
+        <BucketTreeNodeLegendIcon bind:node={tree} />
       </div>
     {/if}
 
@@ -668,11 +652,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-    }
-
-    .icon {
-      padding-left: 10px;
-      padding-right: 10px;
     }
 
     .tree-icon {
