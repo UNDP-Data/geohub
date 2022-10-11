@@ -48,7 +48,6 @@
 
   export let level = 0
   export let node: TreeNode
-  export let hideCloseButton = false
 
   const dispatch = createEventDispatcher()
 
@@ -474,7 +473,7 @@
 
         <BucketTreeNodeLabel bind:node={tree} />
 
-        {#if level === 0 && hideCloseButton === false}
+        {#if level === 0}
           <a
             style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
             href="#"

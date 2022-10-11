@@ -156,7 +156,7 @@
         <div class="is-size-6">
           {#each treeBucket as tree}
             <ul class="mb-3">
-              <BucketTreeNode bind:node={tree} hideCloseButton={true} />
+              <BucketTreeNode bind:node={tree} />
             </ul>
           {/each}
         </div>
