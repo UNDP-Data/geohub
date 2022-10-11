@@ -6,7 +6,7 @@
   import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT } from '$lib/constants'
   import { indicatorProgress } from '$stores'
 
-  import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
+  import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeBranchCloseButton from './BucketTreeBranchCloseButton.svelte'
   import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
   import BucketTreeBranchPagination from './BucketTreeBranchPagination.svelte'
@@ -82,8 +82,7 @@
 {#if tree.children}
   <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
     <BucketTreeBranchIcon bind:loadingLayer bind:level bind:expanded on:toggleExpansion={toggleExpansion} />
-    <BucketTreeNodeLabel bind:node={tree} />
-
+    <BucketTreeLabel bind:node={tree} />
     {#if level === 0}
       <BucketTreeBranchCloseButton on:remove={handleRemoveBucket} />
     {/if}

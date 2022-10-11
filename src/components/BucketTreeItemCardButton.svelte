@@ -12,8 +12,8 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount } from 'svelte'
 
-  export let layerInfoMetadata: LayerInfoMetadata = undefined
   export let node: TreeNode
+  let layerInfoMetadata: LayerInfoMetadata = undefined
   let showTooltip = false
 
   const {
