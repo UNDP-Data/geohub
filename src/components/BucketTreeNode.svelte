@@ -452,8 +452,8 @@
 
 <li style="padding-left:{level * 0.75}rem;">
   <div style="padding-bottom: 5px;">
-    {#if children}
-      <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
+    <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
+      {#if children}
         <a
           style="color:gray; margin-left:5px"
           class="tree-icon"
@@ -486,9 +486,7 @@
             <Fa icon={faWindowClose} size="sm" />
           </a>
         {/if}
-      </div>
-    {:else}
-      <div class="node-container">
+      {:else}
         <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
           {#if loadingLayer === true}
             <Fa icon={faSync} size="sm" spin />
@@ -527,8 +525,8 @@
         <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
         <BucketTreeNodeDownloadButton bind:node={tree} />
         <BucketTreeNodeLegendIcon bind:node={tree} />
-      </div>
-    {/if}
+      {/if}
+    </div>
 
     {#if expanded && level > 0 && isRaster && node.isStac}
       <div class="columns pl-4 pb-2 pt-2">
