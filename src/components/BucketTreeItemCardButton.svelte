@@ -12,8 +12,8 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount } from 'svelte'
 
-  export let layerInfoMetadata: LayerInfoMetadata = undefined
-  export let node: TreeNode
+  export let tree: TreeNode
+  let layerInfoMetadata: LayerInfoMetadata = undefined
   let showTooltip = false
 
   const {
@@ -34,22 +34,22 @@
   })
 
   export const generateTreeNodeMetadata = async () => {
-    const layerPathHash = hash(node.path)
+    const layerPathHash = hash(tree.path)
     let metadata: LayerInfoMetadata
 
     // get existing metadata from store
     if ($layerMetadata.has(layerPathHash)) {
       metadata = $layerMetadata.get(layerPathHash)
     } else {
-      if (node.isStac) {
+      if (tree.isStac) {
         let description = ''
 
-        const bucketStac = $bucketList.find((bucket) => bucket.id === node.path.split('/')[0])
+        const bucketStac = $bucketList.find((bucket) => bucket.id === tree.path.split('/')[0])
         const itemsUrl = []
         itemsUrl.push(bucketStac.url)
-        itemsUrl.push(node.path.split('/')[1])
+        itemsUrl.push(tree.path.split('/')[1])
         itemsUrl.push('items')
-        itemsUrl.push(node.label)
+        itemsUrl.push(tree.label)
         let layerInfo = await fetchUrl(itemsUrl.join('/'))
 
         if (layerInfo?.properties?.description === undefined) {
@@ -63,15 +63,15 @@
         await setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
       } else {
         // get metadata from endpoint
-        const layerURL = new URL(node.url)
-        const infoURI: string = node.isRaster
-          ? `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(node.url)}`
+        const layerURL = new URL(tree.url)
+        const infoURI: string = tree.isRaster
+          ? `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(tree.url)}`
           : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
               layerURL.search
             }`
         const layerInfo = await fetchUrl(infoURI)
 
-        if (node.isRaster) {
+        if (tree.isRaster) {
           if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
             const bandIndex = getActiveBandIndex(layerInfo)
             await setLayerMetaDataStore(
@@ -153,7 +153,7 @@
     <div class="bucket-card">
       <div class="columns is-vcentered is-mobile">
         <div class="column is-full">
-          <div class="label">{clean(node.label)}</div>
+          <div class="label">{clean(tree.label)}</div>
           <div class="description">{layerInfoMetadata?.description}</div>
           <div class="source is-size-6">
             <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source
@@ -167,8 +167,8 @@
           {/if}
 
           <div class="content is-size-7 tags pt-3">
-            {#if node.tags}
-              {#each Object.values(node.tags) as tag}
+            {#if tree.tags}
+              {#each Object.values(tree.tags) as tag}
                 <span title="tag" style="margin-right: 5px; font-weight: bold;">
                   <span class="tag is-info is-small is-light">{clean(tag)}</span>
                 </span>
