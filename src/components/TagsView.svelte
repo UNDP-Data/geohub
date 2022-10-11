@@ -6,7 +6,7 @@
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
   import Tags from '$components/Tags.svelte'
-  import BucketTreeNode from '$components/BucketTreeNode.svelte'
+  import BucketTreeView from '$components/BucketTreeView.svelte'
   import { fetchUrl } from '$lib/helper'
   import type { TagsSearchResults, TagLayer, TreeNode } from '$lib/types'
   import { tags } from '$stores'
@@ -156,7 +156,7 @@
         <div class="is-size-6">
           {#each treeBucket as tree}
             <ul class="mb-3">
-              <BucketTreeNode bind:node={tree} />
+              <BucketTreeView bind:node={tree} />
             </ul>
           {/each}
         </div>
