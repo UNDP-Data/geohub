@@ -34,55 +34,14 @@
   const loadLayer = async () => {
     if (!tree.isRaster) throw new Error('This component can only be used for raster type')
     setProgressIndicator(true)
-    const tileSourceId = tree.path
-    const layerId = uuidv4()
 
-    const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
-    const collectionName = tree.path.split('/')[tree.path.split('/').length - 2]
-
-    const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
     const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
-
     const bandIndex = getActiveBandIndex(layerInfo)
-
-    let classesMap = {}
-    try {
-      if (tree.isStac) {
-        const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
-        // FixME: There is no standard object for the classes labels.
-
-        if (collectionInfo.item_assets.map) {
-          // Todo: Tested with ESA WorldCover 2020
-          const classesObj = collectionInfo.item_assets.map['classification:classes']
-          classesObj.forEach((item) => {
-            classesMap[item['value']] = item['description']
-          })
-        } else if (collectionInfo.item_assets.data) {
-          // Todo: Tested with Esri 10m Land Cover (10 Class)
-          const classesObj = collectionInfo.item_assets.data['file:values']
-          classesObj.forEach((item) => {
-            classesMap[item['values'][0]] = item['summary']
-          })
-        } else {
-          // Todo: Tested for LandCover of Canada
-          const classesObj = collectionInfo.item_assets.landcover['file:values']
-          classesObj.forEach((item) => {
-            classesMap[item['values'][0]] = item['summary']
-          })
-        }
-      } else {
-        // local rasters
-        const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
-        classesMap = JSON.parse(uvString)
-      }
-    } catch (e) {
-      console.log(e)
-    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const [bandName, bandMetaStats] = layerInfo.band_metadata[bandIndex]
-    bandMetaStats.STATISTICS_UNIQUE_VALUES = classesMap
+    bandMetaStats.STATISTICS_UNIQUE_VALUES = await getClassesMap(bandIndex, layerInfo)
 
     if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
       const bannerErrorMessage: BannerMessage = {
@@ -108,6 +67,7 @@
       setProgressIndicator(false)
       throw new Error(ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX)
     }
+    const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -132,10 +92,12 @@
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
     }
 
+    const tileSourceId = tree.path
     if (!(tileSourceId in $map.getStyle().sources)) {
       $map.addSource(tileSourceId, layerSource)
     }
 
+    const layerId = uuidv4()
     const layerDefinition: RasterLayerSpecification = {
       id: layerId,
       type: LayerTypes.RASTER,
@@ -147,6 +109,7 @@
       },
     }
 
+    const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
       {
         name: layerName,
@@ -217,6 +180,44 @@
       }
     }
     return data
+  }
+
+  const getClassesMap = async (bandIndex: number, layerInfo: RasterTileMetadata) => {
+    let classesMap = {}
+    try {
+      if (tree.isStac) {
+        const collectionName = tree.path.split('/')[tree.path.split('/').length - 2]
+        const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
+        // FixME: There is no standard object for the classes labels.
+
+        if (collectionInfo.item_assets.map) {
+          // Todo: Tested with ESA WorldCover 2020
+          const classesObj = collectionInfo.item_assets.map['classification:classes']
+          classesObj.forEach((item) => {
+            classesMap[item['value']] = item['description']
+          })
+        } else if (collectionInfo.item_assets.data) {
+          // Todo: Tested with Esri 10m Land Cover (10 Class)
+          const classesObj = collectionInfo.item_assets.data['file:values']
+          classesObj.forEach((item) => {
+            classesMap[item['values'][0]] = item['summary']
+          })
+        } else {
+          // Todo: Tested for LandCover of Canada
+          const classesObj = collectionInfo.item_assets.landcover['file:values']
+          classesObj.forEach((item) => {
+            classesMap[item['values'][0]] = item['summary']
+          })
+        }
+      } else {
+        // local rasters
+        const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+        classesMap = JSON.parse(uvString)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    return classesMap
   }
 </script>
 
