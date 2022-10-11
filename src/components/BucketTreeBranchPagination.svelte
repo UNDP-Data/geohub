@@ -18,7 +18,7 @@
   }
 </script>
 
-<div class="columns pl-4 pb-2 pt-2">
+<div class="columns pl-4 pb-1 pt-1">
   <div class="column is-flex is-flex-direction-row">
     <div
       on:click={() => handlePagination(STAC_PAGINATION_PREV)}

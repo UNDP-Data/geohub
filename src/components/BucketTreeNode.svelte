@@ -16,8 +16,8 @@
     DEFAULT_COLORMAP,
     ErrorMessages,
     LayerTypes,
-    STAC_PAGINATION_PREV,
-    STAC_PAGINATION_NEXT,
+    // STAC_PAGINATION_PREV,
+    // STAC_PAGINATION_NEXT,
     StatusTypes,
   } from '$lib/constants'
   import { fetchUrl, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
@@ -34,10 +34,11 @@
   import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
   import BucketTreeNodeDownloadButton from './BucketTreeNodeDownloadButton.svelte'
   import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
-  import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
-  import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
+  // import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
+  // import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
-  import BucketTreeNodePagination from './BucketTreeNodePagination.svelte'
+  // import BucketTreeNodePagination from './BucketTreeNodePagination.svelte'
+  import BucketTreeBranch from './BucketTreeBranch.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -63,45 +64,12 @@
 
   const toggleExpansion = () => {
     expanded = expansionState[label] = !expanded
-    if (tree?.children.length === 0) updateTreeStore()
 
     setTimeout(() => {
       if (loadingLayer === true) {
         loadingLayer = false
       }
     }, 2000)
-  }
-
-  const updateTreeStore = async () => {
-    setProgressIndicator(true)
-    let treeData = []
-
-    if (tree.isStac) {
-      const catalogId = node.path.split('/')[0]
-      treeData = await fetchUrl(
-        `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
-          .split('/')
-          .pop()
-          .replace(/\.[^/.]+$/, '')}`,
-      )
-    } else if (tree.isMartin) {
-      treeData = await fetchUrl(
-        `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
-      )
-    } else {
-      treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
-    }
-
-    if (treeData) {
-      //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
-      // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
-      // potentially invalid layers from the tree!!!!
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      node = treeData.tree
-    }
-
-    setProgressIndicator(false)
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
@@ -415,55 +383,32 @@
   const handleRemoveBucket = () => {
     dispatch('remove', { node })
   }
-
-  let stacPaginationAction = ''
-  let stacPaginationLabel = ''
-
-  const handleStacPagination = (event) => {
-    const action = event.detail.action
-    stacPaginationAction = action
-
-    if (action === STAC_PAGINATION_PREV) {
-      stacPaginationLabel = children[0].label
-    } else if (action === STAC_PAGINATION_NEXT) {
-      stacPaginationLabel = children[children.length - 1].label
-    }
-
-    updateTreeStore()
-  }
 </script>
 
 <li style="padding-left:{level * 0.75}rem;">
-  <div style="padding-bottom: 5px;">
-    {#if children}
-      <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <BucketTreeBranchIcon bind:loadingLayer bind:level bind:expanded on:toggleExpansion={toggleExpansion} />
-        <BucketTreeNodeLabel bind:node={tree} />
+  {#if children}
+    <BucketTreeBranch
+      bind:tree={node}
+      bind:loadingLayer
+      bind:level
+      bind:expanded
+      {handleRemoveBucket}
+      {toggleExpansion} />
+  {/if}
+  <!-- <li style="padding-left:{level * 0.75}rem;"> -->
+  {#if !children}
+    <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
+      <BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer}>
+        <!-- The modal is located here so the focus is set to ne next element -->
+        <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+      </BucketTreeItemIcon>
 
-        {#if level === 0}
-          <BucketTreeNodeCloseButton on:remove={handleRemoveBucket} />
-        {/if}
-      </div>
-    {:else}
-      <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-        <BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer}>
-          <!-- The modal is located here so the focus is set to ne next element -->
-          <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
-        </BucketTreeItemIcon>
-
-        <BucketTreeNodeLabel bind:node={tree} />
-        <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
-        <BucketTreeNodeDownloadButton bind:node={tree} />
-        <BucketTreeNodeLegendIcon bind:node={tree} />
-      </div>
-    {/if}
-    {#if expanded && level > 0 && isRaster && node.isStac}
-      <BucketTreeNodePagination
-        disabledPrev={tree.paginationDirectionDisabled === STAC_PAGINATION_PREV}
-        disabledNext={tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT}
-        on:pagination={handleStacPagination} />
-    {/if}
-  </div>
+      <BucketTreeNodeLabel bind:node={tree} />
+      <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
+      <BucketTreeNodeDownloadButton bind:node={tree} />
+      <BucketTreeNodeLegendIcon bind:node={tree} />
+    </div>
+  {/if}
 </li>
 
 {#if children && expanded}
