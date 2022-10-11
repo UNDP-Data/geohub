@@ -472,9 +472,7 @@
         </a>
 
         <div class="name">
-          <div class="columns">
-            <div class="column">{clean(label)}</div>
-          </div>
+          {clean(label)}
         </div>
         {#if level === 0 && hideCloseButton === false}
           <a
@@ -504,7 +502,7 @@
         <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
         {#if isRaster}
-          <div class="name raster">
+          <div class="name">
             {#if node.isStac}
               {clean(
                 path
@@ -517,7 +515,7 @@
             {/if}
           </div>
         {:else}
-          <div class="name vector">
+          <div class="name">
             {clean(label)}
           </div>
         {/if}
@@ -582,12 +580,6 @@
 
       @media (prefers-color-scheme: dark) {
         color: white;
-      }
-
-      .columns .column {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
       }
     }
 
