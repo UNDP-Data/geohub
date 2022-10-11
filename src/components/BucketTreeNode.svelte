@@ -16,8 +16,6 @@
     DEFAULT_COLORMAP,
     ErrorMessages,
     LayerTypes,
-    // STAC_PAGINATION_PREV,
-    // STAC_PAGINATION_NEXT,
     StatusTypes,
   } from '$lib/constants'
   import { fetchUrl, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
@@ -34,10 +32,7 @@
   import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
   import BucketTreeNodeDownloadButton from './BucketTreeNodeDownloadButton.svelte'
   import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
-  // import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
-  // import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
-  // import BucketTreeNodePagination from './BucketTreeNodePagination.svelte'
   import BucketTreeBranch from './BucketTreeBranch.svelte'
 
   export let level = 0
@@ -395,7 +390,6 @@
       {handleRemoveBucket}
       {toggleExpansion} />
   {/if}
-  <!-- <li style="padding-left:{level * 0.75}rem;"> -->
   {#if !children}
     <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
       <BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer}>

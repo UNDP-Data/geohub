@@ -16,10 +16,10 @@
   export let expanded = false
   export let level = 0
   export let loadingLayer = false
-  export let handleRemoveBucket = () => {
+  export let handleRemoveBucket = (): void => {
     throw new Error('Please give the function from the parent component')
   }
-  export let toggleExpansion = () => {
+  export let toggleExpansion = (): void => {
     throw new Error('Please give the function from the parent component')
   }
 
