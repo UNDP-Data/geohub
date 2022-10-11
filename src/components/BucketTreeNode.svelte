@@ -9,10 +9,7 @@
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
   import FaLayers from 'svelte-fa/src/fa-layers.svelte'
-  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
-  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
   import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
-  import { faWindowClose } from '@fortawesome/free-solid-svg-icons/faWindowClose'
   import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
   import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
   import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
@@ -31,7 +28,7 @@
     STAC_PAGINATION_NEXT,
     StatusTypes,
   } from '$lib/constants'
-  import { fetchUrl, clean, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
+  import { fetchUrl, getBase64EncodedUrl, getActiveBandIndex } from '$lib/helper'
   import type {
     BannerMessage,
     TreeNode,
@@ -40,11 +37,13 @@
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import { map, bucketList, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
+  import { map, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
   import BucketTreeNodeDownloadButton from './BucketTreeNodeDownloadButton.svelte'
   import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
+  import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
+  import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -59,7 +58,6 @@
   $: ({ label, children, path, isRaster } = tree)
   $: expanded = expansionState[label] || false
   $: mmap = $map
-  const bid = level == 0 ? node.id : null
 
   onMount(() => {
     if (level === 0) toggleExpansion()
@@ -423,16 +421,6 @@
   const handleRemoveBucket = () => {
     dispatch('remove', { node })
   }
-  const handleKD = (event: KeyboardEvent) => {
-    if (event.key == 'Enter') {
-      const bucketDiv = document.getElementById(bid)
-      bucketDiv.setAttribute('tabindex', '0')
-      bucketDiv.focus()
-      bucketDiv.blur()
-
-      handleRemoveBucket()
-    }
-  }
 
   let stacPaginationAction = ''
   let stacPaginationLabel = ''
@@ -454,34 +442,11 @@
   <div style="padding-bottom: 5px;">
     <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
       {#if children}
-        <a
-          style="color:gray; margin-left:5px"
-          class="tree-icon"
-          href="#"
-          role="button"
-          on:click={() => toggleExpansion()}>
-          {#if loadingLayer === true}
-            <Fa icon={faSync} size="sm" spin />
-          {:else if level === 0}
-            <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
-          {:else if !expanded}
-            <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
-          {:else}
-            <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
-          {/if}
-        </a>
-
+        <BucketTreeBranchIcon bind:loadingLayer bind:level bind:expanded on:toggleExpansion={toggleExpansion} />
         <BucketTreeNodeLabel bind:node={tree} />
 
         {#if level === 0}
-          <a
-            style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
-            href="#"
-            role="button"
-            on:click={handleRemoveBucket}
-            on:keydown={handleKD}>
-            <Fa icon={faWindowClose} size="sm" />
-          </a>
+          <BucketTreeNodeCloseButton on:remove={handleRemoveBucket} />
         {/if}
       {:else}
         <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
@@ -551,14 +516,6 @@
     .load-layer {
       -webkit-filter: invert(100%);
       filter: invert(100%);
-    }
-
-    .tree-icon {
-      margin-right: 5px;
-
-      @media (prefers-color-scheme: dark) {
-        color: rgb(138, 20, 20);
-      }
     }
   }
 

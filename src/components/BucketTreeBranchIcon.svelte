@@ -1,0 +1,39 @@
+<script lang="ts">
+  import { createEventDispatcher } from 'svelte'
+  import Fa from 'svelte-fa'
+  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
+  import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase'
+  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
+
+  const dispatch = createEventDispatcher()
+
+  export let loadingLayer = false
+  export let level = 0
+  export let expanded = false
+
+  const toggleExpansion = () => {
+    dispatch('toggleExpansion')
+  }
+</script>
+
+<a style="color:gray; margin-left:5px" class="tree-icon" href="#" role="button" on:click={() => toggleExpansion()}>
+  {#if loadingLayer === true}
+    <Fa icon={faSync} size="sm" spin />
+  {:else if level === 0}
+    <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
+  {:else if !expanded}
+    <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
+  {:else}
+    <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
+  {/if}
+</a>
+
+<style lang="scss">
+  .tree-icon {
+    margin-right: 5px;
+
+    @media (prefers-color-scheme: dark) {
+      color: rgb(138, 20, 20);
+    }
+  }
+</style>
