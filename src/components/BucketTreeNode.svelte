@@ -6,9 +6,6 @@
   import { onMount, onDestroy, createEventDispatcher } from 'svelte'
   import { slide } from 'svelte/transition'
   import { v4 as uuidv4 } from 'uuid'
-  import Fa from 'svelte-fa'
-  import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
-  import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
   import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
@@ -40,6 +37,7 @@
   import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
   import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
+  import BucketTreeNodePagination from './BucketTreeNodePagination.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -421,7 +419,8 @@
   let stacPaginationAction = ''
   let stacPaginationLabel = ''
 
-  const handleStacPagination = (action: string) => {
+  const handleStacPagination = (event) => {
+    const action = event.detail.action
     stacPaginationAction = action
 
     if (action === STAC_PAGINATION_PREV) {
@@ -436,15 +435,17 @@
 
 <li style="padding-left:{level * 0.75}rem;">
   <div style="padding-bottom: 5px;">
-    <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-      {#if children}
+    {#if children}
+      <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         <BucketTreeBranchIcon bind:loadingLayer bind:level bind:expanded on:toggleExpansion={toggleExpansion} />
         <BucketTreeNodeLabel bind:node={tree} />
 
         {#if level === 0}
           <BucketTreeNodeCloseButton on:remove={handleRemoveBucket} />
         {/if}
-      {:else}
+      </div>
+    {:else}
+      <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
         <BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer}>
           <!-- The modal is located here so the focus is set to ne next element -->
           <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
@@ -454,36 +455,18 @@
         <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
         <BucketTreeNodeDownloadButton bind:node={tree} />
         <BucketTreeNodeLegendIcon bind:node={tree} />
-      {/if}
-    </div>
-
-    {#if expanded && level > 0 && isRaster && node.isStac}
-      <div class="columns pl-4 pb-2 pt-2">
-        <div class="column is-flex is-flex-direction-row">
-          <div
-            on:click={() => handleStacPagination(STAC_PAGINATION_PREV)}
-            class={`pr-3 ${tree.paginationDirectionDisabled === STAC_PAGINATION_PREV ? 'disabled' : 'is-clickable'}`}
-            alt="Previous layers"
-            title="Previous layers">
-            <Fa icon={faBackward} size="sm" />
-          </div>
-          &nbsp;
-          <div
-            on:click={() => handleStacPagination(STAC_PAGINATION_NEXT)}
-            class={`is-clickable ${
-              tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT ? 'disabled' : 'is-clickable'
-            }`}
-            alt="Next layers"
-            title="Next layers">
-            <Fa icon={faForward} size="sm" />
-          </div>
-        </div>
       </div>
+    {/if}
+    {#if expanded && level > 0 && isRaster && node.isStac}
+      <BucketTreeNodePagination
+        disabledPrev={tree.paginationDirectionDisabled === STAC_PAGINATION_PREV}
+        disabledNext={tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT}
+        on:pagination={handleStacPagination} />
     {/if}
   </div>
 </li>
 
-{#if expanded && children}
+{#if children && expanded}
   {#each children as child, ti}
     <svelte:self node={child} level={level + 1} />
   {/each}
@@ -502,10 +485,5 @@
       -webkit-filter: invert(100%);
       filter: invert(100%);
     }
-  }
-
-  .disabled {
-    cursor: default;
-    opacity: 0.15;
   }
 </style>
