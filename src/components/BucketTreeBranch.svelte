@@ -96,7 +96,7 @@
     {/if}
   </div>
 {/if}
-{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac}
+{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac && tree.children.length > 0}
   <BucketTreeBranchPagination
     disabledPrev={tree.paginationDirectionDisabled === STAC_PAGINATION_PREV}
     disabledNext={tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT}

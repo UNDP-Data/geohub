@@ -10,7 +10,7 @@
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
   import { map, layerList, bannerMessages, modalVisible } from '$stores'
-  import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
@@ -40,27 +40,17 @@
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     const collectionName = tree.path.split('/')[tree.path.split('/').length - 2]
 
-    let b64EncodedUrl: string
-
-    // ** TODO **
-    // 1. misconfigured server - COGs
-    /**
-           * <Error>
-              <Code>ResourceNotFound</Code>
-              <Message>The specified resource does not exist. RequestId:3b0db3c7-101e-0042-23f2-8a5da0000000 Time:2022-06-28T13:22:30.1066451Z</Message>
-            </Error>
-          */
-
-    b64EncodedUrl = getBase64EncodedUrl(tree.url)
-    let layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
+    const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
+    const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
 
     const bandIndex = getActiveBandIndex(layerInfo)
 
     let classesMap = {}
-    if (tree.isStac) {
-      const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
-      // FixME: There is no standard object for the classes labels.
-      try {
+    try {
+      if (tree.isStac) {
+        const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
+        // FixME: There is no standard object for the classes labels.
+
         if (collectionInfo.item_assets.map) {
           // Todo: Tested with ESA WorldCover 2020
           const classesObj = collectionInfo.item_assets.map['classification:classes']
@@ -80,28 +70,13 @@
             classesMap[item['values'][0]] = item['summary']
           })
         }
-      } catch (e) {
-        console.log(e)
-      }
-    } else {
-      /*
-        local rasters
-        */
-
-      const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
-      try {
+      } else {
+        // local rasters
+        const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
         classesMap = JSON.parse(uvString)
-      } catch (e) {
-        // const bannerErrorMessage: BannerMessage = {
-        //   type: StatusTypes.WARNING,
-        //   title: 'Whoops! Something went wrong.',
-        //   message: ErrorMessages.FAILED_TO_PARSE_METADATA,
-        // }
-        // bannerMessages.update((data) => [...data, bannerErrorMessage])
-        // $indicatorProgress = false
-        // loadingLayer = false
-        // throw new Error(JSON.stringify(uvString))
       }
+    } catch (e) {
+      console.log(e)
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -123,89 +98,90 @@
     const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
-    if (layerBandMetadataMin && layerBandMetadataMax) {
-      const titilerApiUrlParams = {
-        scale: 1,
-        TileMatrixSetId: 'WebMercatorQuad',
-        url: b64EncodedUrl,
-        bidx: bandIndex + 1,
-        unscale: false,
-        resampling: 'nearest',
-        rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-        return_mask: true,
-        colormap_name: DEFAULT_COLORMAP,
-      }
-
-      const layerSource: RasterSourceSpecification = {
-        type: LayerTypes.RASTER,
-        tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
-        tileSize: 256,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        bounds: layerInfo['bounds'],
-        attribution:
-          'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
-              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
-      }
-
-      if (!(tileSourceId in $map.getStyle().sources)) {
-        $map.addSource(tileSourceId, layerSource)
-      }
-
-      const layerDefinition: RasterLayerSpecification = {
-        id: layerId,
-        type: LayerTypes.RASTER,
-        source: tileSourceId,
-        minzoom: 0,
-        maxzoom: 22,
-        layout: {
-          visibility: 'visible',
-        },
-      }
-
-      $layerList = [
-        {
-          name: layerName,
-          definition: layerDefinition,
-          type: LayerTypes.RASTER,
-          info: layerInfo,
-          visible: true,
-          url: b64EncodedUrl,
-          colorMapName: DEFAULT_COLORMAP,
-          continuous: {
-            minimum: parseFloat(layerBandMetadataMin),
-            maximum: parseFloat(layerBandMetadataMax),
-          },
-          intervals: {
-            classification: ClassificationMethodTypes.EQUIDISTANT,
-            numberOfClasses: COLOR_CLASS_COUNT,
-            colorMapRows: [],
-          },
-          unique: {
-            colorMapRows: [],
-          },
-          expression: '',
-          legendType: '',
-          source: layerSource,
-        },
-        ...$layerList,
-      ]
-      let firstSymbolId = undefined
-      for (const layer of $map.getStyle().layers) {
-        if (layer.type === 'symbol') {
-          firstSymbolId = layer.id
-          break
-        }
-      }
-      $map.addLayer(layerDefinition, firstSymbolId)
-    } else {
+    if (!(layerBandMetadataMin && layerBandMetadataMax)) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.INFO,
         title: 'Whoops! Something went wrong.',
         message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
       }
       $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
+      setProgressIndicator(false)
+      throw new Error(ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX)
     }
+    const titilerApiUrlParams = {
+      scale: 1,
+      TileMatrixSetId: 'WebMercatorQuad',
+      url: b64EncodedUrl,
+      bidx: bandIndex + 1,
+      unscale: false,
+      resampling: 'nearest',
+      rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+      return_mask: true,
+      colormap_name: DEFAULT_COLORMAP,
+    }
+
+    const layerSource: RasterSourceSpecification = {
+      type: LayerTypes.RASTER,
+      tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
+      tileSize: 256,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bounds: layerInfo['bounds'],
+      attribution:
+        'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+    }
+
+    if (!(tileSourceId in $map.getStyle().sources)) {
+      $map.addSource(tileSourceId, layerSource)
+    }
+
+    const layerDefinition: RasterLayerSpecification = {
+      id: layerId,
+      type: LayerTypes.RASTER,
+      source: tileSourceId,
+      minzoom: 0,
+      maxzoom: 22,
+      layout: {
+        visibility: 'visible',
+      },
+    }
+
+    $layerList = [
+      {
+        name: layerName,
+        definition: layerDefinition,
+        type: LayerTypes.RASTER,
+        info: layerInfo,
+        visible: true,
+        url: b64EncodedUrl,
+        colorMapName: DEFAULT_COLORMAP,
+        continuous: {
+          minimum: parseFloat(layerBandMetadataMin),
+          maximum: parseFloat(layerBandMetadataMax),
+        },
+        intervals: {
+          classification: ClassificationMethodTypes.EQUIDISTANT,
+          numberOfClasses: COLOR_CLASS_COUNT,
+          colorMapRows: [],
+        },
+        unique: {
+          colorMapRows: [],
+        },
+        expression: '',
+        legendType: '',
+        source: layerSource,
+      },
+      ...$layerList,
+    ]
+    let firstSymbolId = undefined
+    for (const layer of $map.getStyle().layers) {
+      if (layer.type === 'symbol') {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+    $map.addLayer(layerDefinition, firstSymbolId)
 
     setTimeout(function () {
       setProgressIndicator(false)
@@ -241,12 +217,6 @@
       }
     }
     return data
-  }
-
-  const paramsToQueryString = (params: Record<string, unknown>) => {
-    return Object.keys(params)
-      .map((key) => key + '=' + params[key])
-      .join('&')
   }
 </script>
 
