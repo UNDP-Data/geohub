@@ -44,6 +44,7 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import BucketTreeNodeLegendIcon from './BucketTreeNodeLegendIcon.svelte'
   import BucketTreeNodeDownloadButton from './BucketTreeNodeDownloadButton.svelte'
+  import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -471,9 +472,8 @@
           {/if}
         </a>
 
-        <div class="name">
-          {clean(label)}
-        </div>
+        <BucketTreeNodeLabel bind:node={tree} />
+
         {#if level === 0 && hideCloseButton === false}
           <a
             style="color: gray;width: 19.5px; height: 19.5px; cursor: pointer;"
@@ -501,25 +501,7 @@
         <!-- The modal is located here so the focus is set to ne next element -->
         <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 
-        {#if isRaster}
-          <div class="name">
-            {#if node.isStac}
-              {clean(
-                path
-                  .split('/')
-                  .pop()
-                  .replace(/\.[^/.]+$/, ''),
-              )}
-            {:else}
-              {clean(label)}
-            {/if}
-          </div>
-        {:else}
-          <div class="name">
-            {clean(label)}
-          </div>
-        {/if}
-
+        <BucketTreeNodeLabel bind:node={tree} />
         <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
         <BucketTreeNodeDownloadButton bind:node={tree} />
         <BucketTreeNodeLegendIcon bind:node={tree} />
@@ -570,17 +552,6 @@
     .load-layer {
       -webkit-filter: invert(100%);
       filter: invert(100%);
-    }
-
-    .name {
-      overflow: hidden;
-      padding-left: 5px;
-      text-overflow: ellipsis;
-      width: 100%;
-
-      @media (prefers-color-scheme: dark) {
-        color: white;
-      }
     }
 
     .tree-icon {
