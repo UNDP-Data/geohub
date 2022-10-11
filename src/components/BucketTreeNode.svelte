@@ -39,7 +39,7 @@
   import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
   import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
   import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
-    import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
+  import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -449,7 +449,7 @@
           <!-- The modal is located here so the focus is set to ne next element -->
           <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
         </BucketTreeItemIcon>
-        
+
         <BucketTreeNodeLabel bind:node={tree} />
         <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
         <BucketTreeNodeDownloadButton bind:node={tree} />
