@@ -62,19 +62,19 @@
         if (collectionInfo.item_assets.map) {
           // Todo: Tested with ESA WorldCover 2020
           const classesObj = collectionInfo.item_assets.map['classification:classes']
-          classesObj?.forEach((item) => {
+          classesObj.forEach((item) => {
             classesMap[item['value']] = item['description']
           })
         } else if (collectionInfo.item_assets.data) {
           // Todo: Tested with Esri 10m Land Cover (10 Class)
           const classesObj = collectionInfo.item_assets.data['file:values']
-          classesObj?.forEach((item) => {
+          classesObj.forEach((item) => {
             classesMap[item['values'][0]] = item['summary']
           })
         } else {
           // Todo: Tested for LandCover of Canada
           const classesObj = collectionInfo.item_assets.landcover['file:values']
-          classesObj?.forEach((item) => {
+          classesObj.forEach((item) => {
             classesMap[item['values'][0]] = item['summary']
           })
         }
@@ -90,118 +90,119 @@
       try {
         classesMap = JSON.parse(uvString)
       } catch (e) {
-        const bannerErrorMessage: BannerMessage = {
-          type: StatusTypes.WARNING,
-          title: 'Whoops! Something went wrong.',
-          message: ErrorMessages.FAILED_TO_PARSE_METADATA,
-        }
-        bannerMessages.update((data) => [...data, bannerErrorMessage])
-        setProgressIndicator(false)
-        throw new Error(JSON.stringify(uvString))
+        // const bannerErrorMessage: BannerMessage = {
+        //   type: StatusTypes.WARNING,
+        //   title: 'Whoops! Something went wrong.',
+        //   message: ErrorMessages.FAILED_TO_PARSE_METADATA,
+        // }
+        // bannerMessages.update((data) => [...data, bannerErrorMessage])
+        // $indicatorProgress = false
+        // loadingLayer = false
+        // throw new Error(JSON.stringify(uvString))
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const [bandName, bandMetaStats] = layerInfo.band_metadata[bandIndex]
+    bandMetaStats.STATISTICS_UNIQUE_VALUES = classesMap
+
+    if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      setProgressIndicator(false)
+      throw new Error(JSON.stringify(layerInfo))
+    }
+
+    const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
+    const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
+
+    if (layerBandMetadataMin && layerBandMetadataMax) {
+      const titilerApiUrlParams = {
+        scale: 1,
+        TileMatrixSetId: 'WebMercatorQuad',
+        url: b64EncodedUrl,
+        bidx: bandIndex + 1,
+        unscale: false,
+        resampling: 'nearest',
+        rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+        return_mask: true,
+        colormap_name: DEFAULT_COLORMAP,
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const [bandName, bandMetaStats] = layerInfo.band_metadata[bandIndex]
-      bandMetaStats.STATISTICS_UNIQUE_VALUES = classesMap
-
-      if (!(layerInfo && layerInfo.band_metadata && layerInfo.band_metadata.length > 0)) {
-        const bannerErrorMessage: BannerMessage = {
-          type: StatusTypes.WARNING,
-          title: 'Whoops! Something went wrong.',
-          message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
-        }
-        bannerMessages.update((data) => [...data, bannerErrorMessage])
-        setProgressIndicator(false)
-        throw new Error(JSON.stringify(layerInfo))
-      }
-
-      const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
-
-      if (layerBandMetadataMin && layerBandMetadataMax) {
-        const titilerApiUrlParams = {
-          scale: 1,
-          TileMatrixSetId: 'WebMercatorQuad',
-          url: b64EncodedUrl,
-          bidx: bandIndex + 1,
-          unscale: false,
-          resampling: 'nearest',
-          rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-          return_mask: true,
-          colormap_name: DEFAULT_COLORMAP,
-        }
-
-        const layerSource: RasterSourceSpecification = {
-          type: LayerTypes.RASTER,
-          tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
-          tileSize: 256,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          bounds: layerInfo['bounds'],
-          attribution:
-            'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+      const layerSource: RasterSourceSpecification = {
+        type: LayerTypes.RASTER,
+        tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
+        tileSize: 256,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        bounds: layerInfo['bounds'],
+        attribution:
+          'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
-        }
-
-        if (!(tileSourceId in $map.getStyle().sources)) {
-          $map.addSource(tileSourceId, layerSource)
-        }
-
-        const layerDefinition: RasterLayerSpecification = {
-          id: layerId,
-          type: LayerTypes.RASTER,
-          source: tileSourceId,
-          minzoom: 0,
-          maxzoom: 22,
-          layout: {
-            visibility: 'visible',
-          },
-        }
-
-        $layerList = [
-          {
-            name: layerName,
-            definition: layerDefinition,
-            type: LayerTypes.RASTER,
-            info: layerInfo,
-            visible: true,
-            url: b64EncodedUrl,
-            colorMapName: DEFAULT_COLORMAP,
-            continuous: {
-              minimum: parseFloat(layerBandMetadataMin),
-              maximum: parseFloat(layerBandMetadataMax),
-            },
-            intervals: {
-              classification: ClassificationMethodTypes.EQUIDISTANT,
-              numberOfClasses: COLOR_CLASS_COUNT,
-              colorMapRows: [],
-            },
-            unique: {
-              colorMapRows: [],
-            },
-            expression: '',
-            legendType: '',
-            source: layerSource,
-          },
-          ...$layerList,
-        ]
-        let firstSymbolId = undefined
-        for (const layer of $map.getStyle().layers) {
-          if (layer.type === 'symbol') {
-            firstSymbolId = layer.id
-            break
-          }
-        }
-        $map.addLayer(layerDefinition, firstSymbolId)
-      } else {
-        const bannerErrorMessage: BannerMessage = {
-          type: StatusTypes.INFO,
-          title: 'Whoops! Something went wrong.',
-          message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
-        }
-        $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
       }
+
+      if (!(tileSourceId in $map.getStyle().sources)) {
+        $map.addSource(tileSourceId, layerSource)
+      }
+
+      const layerDefinition: RasterLayerSpecification = {
+        id: layerId,
+        type: LayerTypes.RASTER,
+        source: tileSourceId,
+        minzoom: 0,
+        maxzoom: 22,
+        layout: {
+          visibility: 'visible',
+        },
+      }
+
+      $layerList = [
+        {
+          name: layerName,
+          definition: layerDefinition,
+          type: LayerTypes.RASTER,
+          info: layerInfo,
+          visible: true,
+          url: b64EncodedUrl,
+          colorMapName: DEFAULT_COLORMAP,
+          continuous: {
+            minimum: parseFloat(layerBandMetadataMin),
+            maximum: parseFloat(layerBandMetadataMax),
+          },
+          intervals: {
+            classification: ClassificationMethodTypes.EQUIDISTANT,
+            numberOfClasses: COLOR_CLASS_COUNT,
+            colorMapRows: [],
+          },
+          unique: {
+            colorMapRows: [],
+          },
+          expression: '',
+          legendType: '',
+          source: layerSource,
+        },
+        ...$layerList,
+      ]
+      let firstSymbolId = undefined
+      for (const layer of $map.getStyle().layers) {
+        if (layer.type === 'symbol') {
+          firstSymbolId = layer.id
+          break
+        }
+      }
+      $map.addLayer(layerDefinition, firstSymbolId)
+    } else {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.INFO,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
+      }
+      $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
     }
 
     setTimeout(function () {
