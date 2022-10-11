@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { slide } from 'svelte/transition'
 
   import type { TreeNode } from '$lib/types'
@@ -22,6 +23,13 @@
   export let toggleExpansion = (): void => {
     throw new Error('Please give the function from the parent component')
   }
+
+  onMount(async () => {
+    if (level === 0) {
+      await updateTreeStore()
+      IsExpanded = true
+    }
+  })
 
   $: if (IsExpanded) {
     if (tree?.children.length === 0) updateTreeStore()
