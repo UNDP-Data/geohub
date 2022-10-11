@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition'
-
   import type { TreeNode, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
   import BucketTreeItemCardButton from '$components/BucketTreeItemCardButton.svelte'
@@ -8,11 +6,15 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { indicatorProgress, modalVisible, martinIndex } from '$stores'
+  import { modalVisible, martinIndex } from '$stores'
   import { fetchUrl } from '$lib/helper'
 
   export let tree: TreeNode
   export let isLoading = false
+  export let setProgressIndicator = (state: boolean): void => {
+    throw new Error('Please give the function from the parent component')
+  }
+
   let isAddLayerModalVisible = false
   $: {
     $modalVisible = isAddLayerModalVisible
@@ -103,11 +105,6 @@
       }
     }
     return data
-  }
-
-  const setProgressIndicator = (state: boolean) => {
-    isLoading = state
-    $indicatorProgress = state
   }
 </script>
 

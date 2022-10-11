@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition'
   import { v4 as uuidv4 } from 'uuid'
   import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 
@@ -10,7 +9,7 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { map, layerList, indicatorProgress, bannerMessages, modalVisible, martinIndex } from '$stores'
+  import { map, layerList, bannerMessages, modalVisible } from '$stores'
   import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl } from '$lib/helper'
   import {
     ClassificationMethodTypes,
@@ -24,6 +23,9 @@
 
   export let tree: TreeNode
   export let isLoading = false
+  export let setProgressIndicator = (state: boolean): void => {
+    throw new Error('Please give the function from the parent component')
+  }
   let isAddLayerModalVisible = false
   $: {
     $modalVisible = isAddLayerModalVisible
@@ -239,11 +241,6 @@
       }
     }
     return data
-  }
-
-  const setProgressIndicator = (state: boolean) => {
-    isLoading = state
-    $indicatorProgress = state
   }
 
   const paramsToQueryString = (params: Record<string, unknown>) => {
