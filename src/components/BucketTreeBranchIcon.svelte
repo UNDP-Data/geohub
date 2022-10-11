@@ -9,7 +9,7 @@
 
   export let isLoading = false
   export let level = 0
-  export let expanded = false
+  export let IsExpanded = false
 
   const toggleExpansion = () => {
     dispatch('toggleExpansion')
@@ -21,7 +21,7 @@
     <Fa icon={faSync} size="sm" spin />
   {:else if level === 0}
     <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
-  {:else if !expanded}
+  {:else if !IsExpanded}
     <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
   {:else}
     <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />

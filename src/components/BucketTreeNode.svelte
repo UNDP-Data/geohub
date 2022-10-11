@@ -17,7 +17,7 @@
 
   $: tree = node
   $: ({ label, children } = tree)
-  $: expanded = expansionState[label] || false
+  $: IsExpanded = expansionState[label] || false
 
   onMount(() => {
     if (level === 0) toggleExpansion()
@@ -28,7 +28,7 @@
   })
 
   const toggleExpansion = () => {
-    expanded = expansionState[label] = !expanded
+    IsExpanded = expansionState[label] = !IsExpanded
 
     setTimeout(() => {
       if (isLoading === true) {
@@ -44,14 +44,20 @@
 
 <li style="padding-left:{level * 0.75}rem;">
   {#if children}
-    <BucketTreeBranch bind:tree={node} bind:isLoading bind:level bind:expanded {handleRemoveBucket} {toggleExpansion} />
+    <BucketTreeBranch
+      bind:tree={node}
+      bind:isLoading
+      bind:level
+      bind:IsExpanded
+      {handleRemoveBucket}
+      {toggleExpansion} />
   {:else}
-    <BucketTreeItem bind:tree={node} bind:isLoading bind:expanded />
+    <BucketTreeItem bind:tree={node} bind:isLoading bind:IsExpanded />
   {/if}
 </li>
 
-{#if children && expanded}
-  {#each children as child, ti}
+{#if children && IsExpanded}
+  {#each children as child}
     <svelte:self node={child} level={level + 1} />
   {/each}
 {/if}

@@ -13,7 +13,7 @@
   import { fetchUrl } from '$lib/helper'
 
   export let tree: TreeNode
-  export let expanded = false
+  export let IsExpanded = false
   export let level = 0
   export let isLoading = false
   export let handleRemoveBucket = (): void => {
@@ -23,7 +23,7 @@
     throw new Error('Please give the function from the parent component')
   }
 
-  $: if (expanded) {
+  $: if (IsExpanded) {
     if (tree?.children.length === 0) updateTreeStore()
   }
 
@@ -80,15 +80,15 @@
 </script>
 
 {#if tree.children}
-  <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
-    <BucketTreeBranchIcon bind:isLoading bind:level bind:expanded on:toggleExpansion={toggleExpansion} />
+  <div class="node-container" transition:slide={{ duration: IsExpanded ? 0 : 350 }}>
+    <BucketTreeBranchIcon bind:isLoading bind:level bind:IsExpanded on:toggleExpansion={toggleExpansion} />
     <BucketTreeLabel bind:node={tree} />
     {#if level === 0}
       <BucketTreeBranchCloseButton on:remove={handleRemoveBucket} />
     {/if}
   </div>
 {/if}
-{#if expanded && level > 0 && tree.isRaster && tree.isStac}
+{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac}
   <BucketTreeBranchPagination
     disabledPrev={tree.paginationDirectionDisabled === STAC_PAGINATION_PREV}
     disabledNext={tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT}

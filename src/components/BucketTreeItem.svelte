@@ -7,11 +7,11 @@
 
   export let tree: TreeNode
   export let isLoading = false
-  export let expanded = false
+  export let IsExpanded = false
 </script>
 
 {#if !tree.children}
-  <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
+  <div class="node-container" transition:slide={{ duration: IsExpanded ? 0 : 350 }}>
     {#if tree.isRaster}
       <BucketTreeItemRaster bind:tree bind:isLoading />
     {:else}
