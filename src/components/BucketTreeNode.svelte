@@ -13,7 +13,7 @@
 
   const dispatch = createEventDispatcher()
 
-  let loadingLayer = false
+  let isLoading = false
 
   $: tree = node
   $: ({ label, children } = tree)
@@ -31,8 +31,8 @@
     expanded = expansionState[label] = !expanded
 
     setTimeout(() => {
-      if (loadingLayer === true) {
-        loadingLayer = false
+      if (isLoading === true) {
+        isLoading = false
       }
     }, 2000)
   }
@@ -44,15 +44,9 @@
 
 <li style="padding-left:{level * 0.75}rem;">
   {#if children}
-    <BucketTreeBranch
-      bind:tree={node}
-      bind:loadingLayer
-      bind:level
-      bind:expanded
-      {handleRemoveBucket}
-      {toggleExpansion} />
+    <BucketTreeBranch bind:tree={node} bind:isLoading bind:level bind:expanded {handleRemoveBucket} {toggleExpansion} />
   {:else}
-    <BucketTreeItem bind:tree={node} bind:loadingLayer bind:expanded />
+    <BucketTreeItem bind:tree={node} bind:isLoading bind:expanded />
   {/if}
 </li>
 

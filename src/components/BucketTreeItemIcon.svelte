@@ -9,7 +9,7 @@
 
   const dispatch = createEventDispatcher()
 
-  export let loadingLayer = false
+  export let isLoading = false
 
   const addLayer = () => {
     dispatch('addLayer')
@@ -18,7 +18,7 @@
 
 <div>
   <a class="icon-button" href="#" role="button" on:click={addLayer}>
-    {#if loadingLayer === true}
+    {#if isLoading === true}
       <Fa icon={faSync} size="sm" spin />
     {:else}
       <Wrapper>

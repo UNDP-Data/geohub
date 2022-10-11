@@ -12,7 +12,7 @@
   import { fetchUrl } from '$lib/helper'
 
   export let tree: TreeNode
-  export let loadingLayer = false
+  export let isLoading = false
   let isAddLayerModalVisible = false
   $: {
     $modalVisible = isAddLayerModalVisible
@@ -106,12 +106,12 @@
   }
 
   const setProgressIndicator = (state: boolean) => {
-    loadingLayer = state
+    isLoading = state
     $indicatorProgress = state
   }
 </script>
 
-<BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer}>
+<BucketTreeItemIcon bind:isLoading on:addLayer={loadLayer}>
   <!-- The modal is located here so the focus is set to ne next element -->
   <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 </BucketTreeItemIcon>

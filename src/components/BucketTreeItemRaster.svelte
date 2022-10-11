@@ -23,7 +23,7 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let tree: TreeNode
-  export let loadingLayer = false
+  export let isLoading = false
   let isAddLayerModalVisible = false
   $: {
     $modalVisible = isAddLayerModalVisible
@@ -96,8 +96,7 @@
           message: ErrorMessages.FAILED_TO_PARSE_METADATA,
         }
         bannerMessages.update((data) => [...data, bannerErrorMessage])
-        $indicatorProgress = false
-        loadingLayer = false
+        setProgressIndicator(false)
         throw new Error(JSON.stringify(uvString))
       }
 
@@ -242,7 +241,7 @@
   }
 
   const setProgressIndicator = (state: boolean) => {
-    loadingLayer = state
+    isLoading = state
     $indicatorProgress = state
   }
 
@@ -253,7 +252,7 @@
   }
 </script>
 
-<BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer} />
+<BucketTreeItemIcon bind:isLoading on:addLayer={loadLayer} />
 <BucketTreeLabel bind:node={tree} />
 <BucketTreeItemCardButton bind:node={tree} />
 <BucketTreeItemDownloadButton bind:node={tree} />

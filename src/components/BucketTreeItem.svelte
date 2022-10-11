@@ -6,16 +6,16 @@
   import BucketTreeItemVector from './BucketTreeItemVector.svelte'
 
   export let tree: TreeNode
-  export let loadingLayer = false
+  export let isLoading = false
   export let expanded = false
 </script>
 
 {#if !tree.children}
   <div class="node-container" transition:slide={{ duration: expanded ? 0 : 350 }}>
     {#if tree.isRaster}
-      <BucketTreeItemRaster bind:tree bind:loadingLayer />
+      <BucketTreeItemRaster bind:tree bind:isLoading />
     {:else}
-      <BucketTreeItemVector bind:tree bind:loadingLayer />
+      <BucketTreeItemVector bind:tree bind:isLoading />
     {/if}
   </div>
 {/if}

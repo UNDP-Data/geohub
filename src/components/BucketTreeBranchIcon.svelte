@@ -7,7 +7,7 @@
 
   const dispatch = createEventDispatcher()
 
-  export let loadingLayer = false
+  export let isLoading = false
   export let level = 0
   export let expanded = false
 
@@ -17,7 +17,7 @@
 </script>
 
 <a class="tree-icon" href="#" role="button" on:click={() => toggleExpansion()}>
-  {#if loadingLayer === true}
+  {#if isLoading === true}
     <Fa icon={faSync} size="sm" spin />
   {:else if level === 0}
     <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
