@@ -16,7 +16,7 @@
   }
 </script>
 
-<a style="color:gray; margin-left:5px" class="tree-icon" href="#" role="button" on:click={() => toggleExpansion()}>
+<a class="tree-icon" href="#" role="button" on:click={() => toggleExpansion()}>
   {#if loadingLayer === true}
     <Fa icon={faSync} size="sm" spin />
   {:else if level === 0}
@@ -31,6 +31,8 @@
 <style lang="scss">
   .tree-icon {
     margin-right: 5px;
+    color: gray;
+    margin-left: 5px;
 
     @media (prefers-color-scheme: dark) {
       color: rgb(138, 20, 20);

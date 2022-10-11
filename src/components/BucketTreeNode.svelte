@@ -5,13 +5,8 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte'
   import { slide } from 'svelte/transition'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import { v4 as uuidv4 } from 'uuid'
   import Fa from 'svelte-fa'
-  import FaLayers from 'svelte-fa/src/fa-layers.svelte'
-  import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
-  import { faLayerGroup } from '@fortawesome/free-solid-svg-icons/faLayerGroup'
-  import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus'
   import { faForward } from '@fortawesome/free-solid-svg-icons/faForward'
   import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward'
   import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
@@ -44,6 +39,7 @@
   import BucketTreeNodeLabel from './BucketTreeNodeLabel.svelte'
   import BucketTreeNodeCloseButton from './BucketTreeNodeCloseButton.svelte'
   import BucketTreeBranchIcon from './BucketTreeBranchIcon.svelte'
+    import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
   export let level = 0
   export let node: TreeNode
@@ -449,22 +445,11 @@
           <BucketTreeNodeCloseButton on:remove={handleRemoveBucket} />
         {/if}
       {:else}
-        <a style="color: gray;cursor: pointer;" href="#" role="button" on:click={loadLayer}>
-          {#if loadingLayer === true}
-            <Fa icon={faSync} size="sm" spin />
-          {:else}
-            <Wrapper>
-              <FaLayers size="sm" style="cursor: pointer;">
-                <Fa icon={faLayerGroup} scale={1} />
-                <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
-              </FaLayers>
-              <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
-            </Wrapper>
-          {/if}
-        </a>
-        <!-- The modal is located here so the focus is set to ne next element -->
-        <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
-
+        <BucketTreeItemIcon bind:loadingLayer on:addLayer={loadLayer}>
+          <!-- The modal is located here so the focus is set to ne next element -->
+          <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+        </BucketTreeItemIcon>
+        
         <BucketTreeNodeLabel bind:node={tree} />
         <BucketTreeNodeCardButton bind:layerInfoMetadata bind:node />
         <BucketTreeNodeDownloadButton bind:node={tree} />
