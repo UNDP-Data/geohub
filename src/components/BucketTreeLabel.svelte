@@ -2,25 +2,25 @@
   import { clean } from '$lib/helper'
   import type { TreeNode } from '$lib/types'
 
-  export let node: TreeNode
+  export let tree: TreeNode
 </script>
 
 <div class="name">
-  {#if node.isRaster}
-    {#if node.children}
-      {clean(node.label)}
-    {:else if node.isStac}
+  {#if tree.isRaster}
+    {#if tree.children}
+      {clean(tree.label)}
+    {:else if tree.isStac}
       {clean(
-        node.path
+        tree.path
           .split('/')
           .pop()
           .replace(/\.[^/.]+$/, ''),
       )}
     {:else}
-      {clean(node.label)}
+      {clean(tree.label)}
     {/if}
   {:else}
-    {clean(node.label)}
+    {clean(tree.label)}
   {/if}
 </div>
 

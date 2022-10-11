@@ -6,15 +6,15 @@
   import type { TreeNode } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
 
-  export let node: TreeNode
+  export let tree: TreeNode
 
   const iconRaster = LayerIconTypes.find((icon) => icon.id === LayerTypes.RASTER)
 
   let iconVector = LayerIconTypes.find((icon) => icon.id === LayerTypes.VECTOR)
 
   onMount(() => {
-    if (node.geomType) {
-      iconVector = getVectorLayerIcon(node.geomType)
+    if (tree.geomType) {
+      iconVector = getVectorLayerIcon(tree.geomType)
     }
   })
 
@@ -23,7 +23,7 @@
   }
 </script>
 
-{#if node.isRaster}
+{#if tree.isRaster}
   <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
     <Wrapper>
       <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />

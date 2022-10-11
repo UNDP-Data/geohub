@@ -254,7 +254,7 @@
 </script>
 
 <BucketTreeItemIcon bind:isLoading on:addLayer={loadLayer} />
-<BucketTreeLabel bind:node={tree} />
-<BucketTreeItemCardButton bind:node={tree} />
-<BucketTreeItemDownloadButton bind:node={tree} />
-<BucketTreeItemLegend bind:node={tree} />
+<BucketTreeLabel bind:tree />
+<BucketTreeItemCardButton bind:tree />
+<BucketTreeItemDownloadButton bind:tree />
+<BucketTreeItemLegend bind:tree />

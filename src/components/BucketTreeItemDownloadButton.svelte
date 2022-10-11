@@ -6,22 +6,22 @@
 
   import { downloadFile } from '$lib/helper'
 
-  export let node: TreeNode
+  export let tree: TreeNode
 
   const handleEnterKeyForDownload = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
-      downloadFile(node.url)
+      downloadFile(tree.url)
     }
   }
 </script>
 
-{#if node.isRaster}
+{#if tree.isRaster}
   <div
     class="icon"
     alt="Download Layer Data"
     style="cursor: pointer;"
     title="Download Layer Data"
-    on:click={() => downloadFile(node.url)}
+    on:click={() => downloadFile(tree.url)}
     on:keydown={handleEnterKeyForDownload}>
     <Wrapper>
       <Fa icon={faDownload} size="sm" />

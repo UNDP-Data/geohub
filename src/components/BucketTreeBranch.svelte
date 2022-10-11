@@ -90,7 +90,7 @@
 {#if tree.children}
   <div class="node-container" transition:slide={{ duration: IsExpanded ? 0 : 350 }}>
     <BucketTreeBranchIcon bind:isLoading bind:level bind:IsExpanded on:toggleExpansion={toggleExpansion} />
-    <BucketTreeLabel bind:node={tree} />
+    <BucketTreeLabel bind:tree />
     {#if level === 0}
       <BucketTreeBranchCloseButton on:remove={handleRemoveBucket} />
     {/if}
