@@ -26,16 +26,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # - uses: actions/setup-python@v3
-      # - name: Install dependecies
-      #   working-directory: ./documentation
-      #   run: |
-      #     pip install pipenv
-      #     pipenv install --system
+      - uses: actions/setup-python@v3
+      - name: Install dependecies
+        working-directory: ./documentation
+        run: |
+          pip install pipenv
+          pipenv install --system
 
-      # - name: Build documentation
-      #   working-directory: ./documentation
-      #   run: mkdocs build
+      - name: Build documentation
+        working-directory: ./documentation
+        run: mkdocs build
 
       # pnpm setup
       # refer to https://github.com/pnpm/action-setup

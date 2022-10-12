@@ -2,7 +2,7 @@ site_name: Geohub
 site_description: UNDP's one stop shop for spatial data and analytics
 
 docs_dir: 'docs'
-# site_dir: '../static/docs'
+site_dir: '../static/docs'
 
 # Repository
 repo_name: "undp-data/geohub"
