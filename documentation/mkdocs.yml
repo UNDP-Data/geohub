@@ -1,0 +1,85 @@
+site_name: Geohub
+site_description: UNDP's one stop shop for spatial data and analytics
+
+docs_dir: 'docs'
+site_dir: '../static/docs'
+
+# Repository
+repo_name: "undp-data/geohub"
+repo_url: "https://github.com/undp-data/geohub"
+edit_uri: "https://github.com/UNDP-Data/geohub/blob/main/documentation/docs"
+site_url: "https://undp-data.github.io/geohub/"
+
+# Copyright
+copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Development Programme</a>
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      toggle:
+        icon: octicons/moon-24
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: grey
+      toggle:
+        icon: octicons/sun-24
+        name: Switch to light mode
+  logo: assets/images/undp-logo-blue.svg
+  favicon: assets/images/favicon.svg
+  features:
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - toc.integrate
+    # - navigation.top
+
+extra:
+  social:
+    - icon: "fontawesome/brands/github"
+      link: "https://github.com/undp-data"
+    - icon: "fontawesome/brands/twitter"
+      link: "https://twitter.com/undp"
+
+# These extensions are chosen to be a superset of Pandoc's Markdown.
+# This way, I can write in Pandoc's Markdown and have it be supported here.
+# https://pandoc.org/MANUAL.html
+# https://github.com/kylebarron/cogeo-mosaic/blob/mkdocs/mkdocs.yml#L50-L75
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite:
+      guess_lang: false
+  - def_list
+  - footnotes
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret:
+      insert: false
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.escapeall:
+      hardbreak: true
+      nbsp: true
+  - pymdownx.magiclink:
+      hide_protocol: true
+      repo_url_shortener: true
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Get started: "index.md"
+  - User Guide:
+      - Intro: "userguide/intro.md"
