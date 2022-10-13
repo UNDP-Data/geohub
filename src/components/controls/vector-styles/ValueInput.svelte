@@ -3,19 +3,22 @@
   import Tags from '$components/Tags.svelte'
   import { createEventDispatcher } from 'svelte'
   import { map, filterInputTags } from '$stores'
+  import arraystat from 'arraystat'
 
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
   export let layer
+  export let operator
 
   let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
-  console.log(layer.info.json.vector_layers[0].fields)
+  //console.log(layer.info.json.vector_layers[0].fields)
   const layerId = layer.definition.id
 
   const dispatch = createEventDispatcher()
 
   const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+
   const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
 
   // get the values of the property for each feature
@@ -23,24 +26,45 @@
 
   $: tagsList = $filterInputTags
   let optionsList: [] = [...new Set(values.flat())]
+  const sol = Array.from(optionsList).sort((a, b) => a - b)
+
   let hideOptions = true
   let step
-  let min
-  let max
-  let calculatedStep
-  let sliderValues = []
-  let sv: number[] = []
-  $: {
-    if (dataType === 'Number' || dataType.includes('int') || dataType.includes('float')) {
-      min = Math.min(...values.flat())
-      max = Math.max(...values.flat())
-      sliderValues = [min, max]
-      calculatedStep =
-        dataType.includes('int') || Number.isInteger(min) ? Math.round((max - min) * 1e-2) | 0 : (max - min) * 1e-2
 
-      sv[0] = dataType.includes('int') || Number.isInteger(min) ? Math.round((max - min) * 0.5) | 0 : (max - min) * 0.5
-      console.log(dataType), calculatedStep
-    }
+  const astats = arraystat(sol)
+
+  const nn = 5
+  const min = astats.min
+  const max = astats.max
+  let calculatedStep = Number.isInteger(min) ? (astats.range * 1e-2) | 0 : astats.range * 1e-2
+  const fclosest = (array, goal) =>
+    array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev))
+  const findClosest = (x: number, arr: Array<number>) => {
+    const indexArr = arr.map(function (k) {
+      return Math.abs(k - x)
+    })
+    const min = Math.min.apply(Math, indexArr)
+    return arr[indexArr.indexOf(min)]
+  }
+
+  let sv = [findClosest(astats.median, sol)]
+
+  //console.log(`sv is ${sv}`)
+  let vals: Array<number> = []
+  let svals: Array<number> = []
+
+  let sindex
+  let eindex
+  let closest: number
+  let index: number
+  $: {
+    closest = fclosest(sol, sv[0])
+    index = sol.indexOf(closest)
+    //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
+    sindex = index - nn < 0 ? 0 : index - nn
+    eindex = index + nn > sol.length - 1 ? sol.length : index + nn
+    vals = sol.slice(sindex, eindex)
+    svals = vals.sort()
   }
 
   const onSliderStop = (event) => {
@@ -67,106 +91,111 @@
     dispatch('apply')
   }
 
-  const nFormatter = (num: number, digits = 0) => {
-    const lookup = [
-      { value: 1, symbol: '' },
-      { value: 1e3, symbol: 'K' },
-      { value: 1e6, symbol: 'M' },
-      { value: 1e9, symbol: 'G' },
-      { value: 1e12, symbol: 'T' },
-      { value: 1e15, symbol: 'P' },
-      { value: 1e18, symbol: 'E' },
-    ]
-    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/
-    var item = lookup
-      .slice()
-      .reverse()
-      .find(function (item) {
-        return num >= item.value
-      })
-    return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0'
-  }
+  // const nFormatter = (num: number, digits = 0) => {
+  //   const lookup = [
+  //     { value: 1, symbol: '' },
+  //     { value: 1e3, symbol: 'K' },
+  //     { value: 1e6, symbol: 'M' },
+  //     { value: 1e9, symbol: 'G' },
+  //     { value: 1e12, symbol: 'T' },
+  //     { value: 1e15, symbol: 'P' },
+  //     { value: 1e18, symbol: 'E' },
+  //   ]
+  //   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/
+  //   var item = lookup
+  //     .slice()
+  //     .reverse()
+  //     .find(function (item) {
+  //       return num >= item.value
+  //     })
+  //   return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0'
+  // }
 </script>
 
 {#if values}
-  <div class="card-content">
-    <div class="content" style="width:100%; height:100%">
-      {#if dataType === 'String'}
-        <div>
-          {#if acceptSingleTag}
-            <div class="notification has-background-danger-light is-size-6 has-text-danger">
-              <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ \n
-              operators are used
-            </div>
-          {/if}
-          <Tags
-            on:tags={handleTags}
-            maxTags={acceptSingleTag ? 1 : 100}
-            addKeys={[9, 13]}
-            splitWith={'/'}
-            onlyUnique={true}
-            removeKeys={[27]}
-            placeholder={'Select a value...'}
-            autoComplete={optionsList}
-            tags={tagsList}
-            allowBlur={true}
-            disable={false}
-            minChars={0}
-            onlyAutocomplete={true}
-            labelShow={false}
-            class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
-            {acceptSingleTag} />
-          <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
-            <div>
-              <button class="button is-rounded is-small is-info">
-                <i class="fa-solid fa-circle-info " />
-              </button>
-            </div>
-            <div>
-              <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
-                >Confirm Selection
-              </button>
-            </div>
+  <div class="content" style="width:100%; height:100%">
+    {#if dataType === 'String'}
+      <div>
+        {#if acceptSingleTag}
+          <div class="notification has-background-danger-light is-size-6 has-text-danger">
+            <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ \n operators
+            are used
+          </div>
+        {/if}
+        <Tags
+          on:tags={handleTags}
+          maxTags={acceptSingleTag ? 1 : 100}
+          addKeys={[9, 13]}
+          splitWith={'/'}
+          onlyUnique={true}
+          removeKeys={[27]}
+          placeholder={'Select a value...'}
+          autoComplete={optionsList}
+          tags={tagsList}
+          allowBlur={true}
+          disable={false}
+          minChars={0}
+          onlyAutocomplete={true}
+          labelShow={false}
+          class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
+          {acceptSingleTag} />
+        <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
+          <div>
+            <button class="button is-rounded is-small is-info">
+              <i class="fa-solid fa-circle-info " />
+            </button>
+          </div>
+          <div>
+            <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
+              >Confirm Selection
+            </button>
           </div>
         </div>
-      {:else if optionsList.length > 25 || dataType.includes('float')}
-        <div class="range-slider">
-          <RangeSlider
-            bind:values={sv}
-            float
-            pips
-            min={Math.min(...optionsList)}
-            max={Math.max(...optionsList)}
-            step={calculatedStep}
-            range="min"
-            first="label"
-            last="label"
-            rest={false}
-            on:stop={onSliderStop} />
-        </div>
-        <button style="margin-top:5%; margin-left: 62%" class="button is-small primary-button" on:click={apply}
-          >Use selected
-        </button>
-      {:else}
-        <div class="range-slider">
-          <RangeSlider
-            bind:values={sliderValues}
-            float
-            range="min"
-            {min}
-            {max}
-            {step}
-            pips
-            first="label"
-            last="label"
-            pipstep={step}
-            rest={false}
-            on:stop={onSliderStop} />
-        </div>
+      </div>
+    {:else if !['<', '>'].includes(operator)}
+      <div class="range-slider">
+        <RangeSlider
+          bind:values={sv}
+          float
+          pips={calculatedStep}
+          {min}
+          {max}
+          step={calculatedStep}
+          range="min"
+          first="label"
+          last="label"
+          rest={false} />
+      </div>
 
+      <div class="buttons">
+        {#each svals as v}
+          <button
+            on:click={() => {
+              expressionValue = v
+              apply()
+            }}
+            class="button has-background-info-light">{v}</button>
+        {/each}
+      </div>
+    {:else}
+      <div class="range-slider">
+        <RangeSlider
+          bind:values={sv}
+          float
+          pips={calculatedStep}
+          {min}
+          {max}
+          step={calculatedStep}
+          range="min"
+          first="label"
+          last="label"
+          rest={false}
+          on:stop={onSliderStop} />
+      </div>
+      <div class="columns is-centered pb-2">
         <button class="button is-small primary-button" on:click={apply}> Use selected </button>
-      {/if}
-    </div>
+      </div>
+    {/if}
   </div>
 {/if}
 
