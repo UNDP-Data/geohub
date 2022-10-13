@@ -111,15 +111,15 @@
   .content-container {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 95px);
-    margin-top: 95px;
+    height: calc(100% - 80px);
+    margin-top: 84px;
     width: 100%;
   }
 
   @media (max-width: 90em) {
     .content-container {
-      margin-top: 62px;
-      height: calc(100vh - 62px);
+      margin-top: 52px;
+      height: calc(100vh - 52px);
     }
   }
   :global(.app-content) {
