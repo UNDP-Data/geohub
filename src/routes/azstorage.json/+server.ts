@@ -78,6 +78,7 @@ const listContainer = async (containerName: string, relPath: string) => {
         : null
       // fetch geom type ...there must be a better way to avoid calling get on metadata.json
       let geomType: string
+      let children: TreeNode[] | undefined = []
       if (isVectorTile) {
         const vectorLayerInfo = await fetchUrl(`${bclient.url}${ACCOUNT_SAS_TOKEN_URL.search}`)
 
@@ -85,10 +86,11 @@ const listContainer = async (containerName: string, relPath: string) => {
           const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
           geomType = vectorTileMeta.tilestats.layers[0].geometry
         }
+        children = undefined
       }
       containerChildren.push({
         label: childLabel,
-        children: [],
+        children,
         path: path,
         url: url,
         isRaster: false,
