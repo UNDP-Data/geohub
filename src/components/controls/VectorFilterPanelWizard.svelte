@@ -323,7 +323,8 @@
         bind:layer
         bind:acceptSingleTag
         bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
-        bind:expressionValue={expressionsArray[currentExpressionIndex]['value']} />
+        bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
+        bind:operator={expressionsArray[currentExpressionIndex]['operation']} />
     </Step>
 
     <Step num={5} let:prevStep let:setStep>

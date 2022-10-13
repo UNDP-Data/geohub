@@ -7,7 +7,7 @@
   export let showEmptyFields = false
   export let showOnlyNumberFields = false
   export let inLegend = false
-
+  const design1 = true
   let propertySelectOptions = inLegend ? layer.intervals.propertyOptions : undefined
 
   const dispatch = createEventDispatcher()
@@ -61,35 +61,69 @@
 <div style="max-height: 200px; overflow-y: auto" class="grid" role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
-      <div
-        class="card grid-item p-0 m-0  {propertySelectOption === propertySelectValue
-          ? 'has-background-success'
-          : 'has-background-info-dark'}"
-        on:click={() => (propertySelectValue = propertySelectOption)}>
-        <div class="card-header is-size-6 is-shadowless">
-          <span
-            class="card-header-title is-centered p-0 pb-2 pt-2 m-0 {propertySelectOption === propertySelectValue
-              ? 'has-text-info-light'
-              : 'has-text-white-ter'} ">
-            {propertySelectOption}
-          </span>
-          {#if propertySelectOption === propertySelectValue}
-            <span class="icon  ">
-              <i class="fa-solid fa-check has-text-black" />
+      {#if design1}
+        <div
+          class="card grid-item p-0 m-0 is-clickable  "
+          on:click={() => {
+            propertySelectValue = propertySelectOption
+          }}>
+          <div
+            class="card-header is-size-6  pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
+              ? 'has-background-success'
+              : 'has-background-info-dark'} ">
+            <span
+              class="card-header-title is-centered is-v-centered {propertySelectValue === propertySelectOption
+                ? 'has-text-success-darker'
+                : 'has-text-white-ter'}  ">
+              {propertySelectOption}
+              {#if propertySelectOption === propertySelectValue}
+                <span class="icon  ">
+                  <i class="fa-solid fa-check has-text-black" />
+                </span>
+              {/if}
             </span>
-          {/if}
+          </div>
+          <div class="card-content  p-2 m-0 has-text-centered ">
+            <div class="content is-size-6  p-2 m-0 has-text-weight-bold has-text-danger">
+              {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
+                ::numeric::
+              {:else}
+                ::text::
+              {/if}
+            </div>
+          </div>
         </div>
-
-        <div class="content  has-text-danger-dark has-background-info-light pb-2 pt-2 m-0 ">
-          <span class="is-size-7">
-            {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
-              ::numeric::
-            {:else}
-              ::text::
+      {:else}
+        <div
+          class="card grid-item p-0 m-0  {propertySelectOption === propertySelectValue
+            ? 'has-background-success'
+            : 'has-background-info-dark'}"
+          on:click={() => (propertySelectValue = propertySelectOption)}>
+          <div class="card-header is-size-6 is-shadowless">
+            <span
+              class="card-header-title is-centered p-0 pb-2 pt-2 m-0 {propertySelectOption === propertySelectValue
+                ? 'has-text-info-light'
+                : 'has-text-white-ter'} ">
+              {propertySelectOption}
+            </span>
+            {#if propertySelectOption === propertySelectValue}
+              <span class="icon  ">
+                <i class="fa-solid fa-check has-text-black" />
+              </span>
             {/if}
-          </span>
+          </div>
+
+          <div class="content  has-text-danger-dark has-background-info-light pb-2 pt-2 m-0 ">
+            <span class="is-size-7">
+              {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
+                ::numeric::
+              {:else}
+                ::text::
+              {/if}
+            </span>
+          </div>
         </div>
-      </div>
+      {/if}
     {/each}
   {/if}
 </div>
@@ -97,8 +131,8 @@
 <style lang="scss">
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
     padding: 0px;
     scrollbar-width: thin; /* "auto" or "thin" */
     scrollbar-color: blue orange;
