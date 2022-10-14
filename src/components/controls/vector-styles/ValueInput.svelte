@@ -5,6 +5,8 @@
   import { map, filterInputTags } from '$stores'
   import arraystat from 'arraystat'
 
+  import type { Listener, MapMouseEvent } from 'maplibre-gl'
+
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
@@ -30,7 +32,8 @@
 
   let hideOptions = true
   let step
-
+  let uv: any = undefined
+  let clickFuncs: Listener[] = []
   const astats = arraystat(sol)
 
   const nn = 5
@@ -89,6 +92,31 @@
 
   const apply = (e) => {
     dispatch('apply')
+  }
+
+  const handleMapClick = (e: MapMouseEvent) => {
+    if (e.features) {
+      uv = e.features[0].properties[propertySelectedValue]
+    }
+  }
+
+  const getFromMap = (e: CustomEvent) => {
+    $map.getCanvas().style.cursor = 'crosshair'
+    if (clickFuncs.length == 0) {
+      clickFuncs = [...$map._listeners.click]
+    }
+    for (var func of clickFuncs) {
+      $map.off('click', func)
+    }
+
+    $map.on('click', layerId, handleMapClick)
+  }
+
+  const restoreQ = () => {
+    $map.off('click', layerId, handleMapClick)
+    for (var func of clickFuncs) {
+      $map.on('click', func)
+    }
   }
 
   // const nFormatter = (num: number, digits = 0) => {
@@ -153,7 +181,29 @@
         </div>
       </div>
     {:else if !['<', '>'].includes(operator)}
-      <div class="range-slider">
+      <div class="columns is-centered pb-2">
+        <button class="button is-small primary-button  " on:click={getFromMap}>
+          <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
+        </button>
+      </div>
+      {#if uv}
+        <div class="columns is-centered p-3 ">
+          Selected value: <span class="tag is-danger-light has-text-danger-dark">{uv}</span>
+        </div>
+        <div class="columns is-centered p-2">
+          <button
+            class="button is-small primary-button "
+            on:click={() => {
+              expressionValue = uv
+              apply()
+              restoreQ()
+            }}>
+            <i class="fa fa-thumbs-up" /> Confirm selection
+          </button>
+        </div>
+      {/if}
+
+      <!-- <div class="range-slider">
         <RangeSlider
           bind:values={sv}
           float
@@ -166,7 +216,7 @@
           last="label"
           rest={false} />
       </div>
-
+      
       <div class="buttons">
         {#each svals as v}
           <button
@@ -176,7 +226,7 @@
             }}
             class="button has-background-info-light">{v}</button>
         {/each}
-      </div>
+      </div> -->
     {:else}
       <div class="range-slider">
         <RangeSlider

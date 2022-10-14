@@ -256,8 +256,9 @@
         <button
           disabled={expressionsArray[currentExpressionIndex].property === ''}
           on:click={nextStep}
-          class="button wizard-button is-small primary-button">
-          Operators &nbsp;
+          class="button wizard-button is-small primary-button"
+          title="">
+          Select an operator &nbsp;
           <i class="fa fa-chevron-right" />
         </button>
       </div>
@@ -272,7 +273,7 @@
       <div class="wizard-button-container">
         <button on:click={prevStep} class="button wizard-button is-small primary-button">
           <i class="fa fa-chevron-left" />
-          &nbsp; Properties
+          &nbsp; Back to properties
         </button>
         <button
           on:click={() => {
@@ -286,7 +287,7 @@
           disabled={expressionsArray[currentExpressionIndex].operator === ''}
           on:click={nextStep}
           class="button wizard-button is-small primary-button">
-          Values &nbsp;
+          Pick a value &nbsp;
           <i class="fa fa-chevron-right" />
         </button>
       </div>
@@ -304,7 +305,7 @@
       <div class="wizard-button-container">
         <button on:click={prevStep} class="button wizard-button is-small primary-button">
           <i class="fa fa-chevron-left" />
-          &nbsp; Operators
+          &nbsp; back to pperators
         </button>
         <button
           on:click={() => {
