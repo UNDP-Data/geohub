@@ -26,7 +26,3 @@
 </script>
 
 <MaplibreColorPicker {rgba} on:change={handleSetColor} />
-
-<style lang="scss">
-  @use '@material/image-list/index' as image-list;
-</style>
