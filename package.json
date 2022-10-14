@@ -105,7 +105,6 @@
     "@watergis/maplibre-gl-legend": "^1.2.7",
     "arraystat": "^1.1.4",
     "bignumber.js": "^9.1.0",
-    "bulma": "^0.9.4",
     "bulma-o-steps": "^1.1.0",
     "bulma-slider": "^2.0.5",
     "chroma-js": "^2.4.2",
