@@ -6,14 +6,10 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { modalVisible, martinIndex } from '$stores'
+  import { modalVisible, martinIndex, indicatorProgress } from '$stores'
   import { fetchUrl } from '$lib/helper'
 
   export let tree: TreeNode
-  export let isLoading = false
-  export let setProgressIndicator = (state: boolean): void => {
-    throw new Error('Please give the function from the parent component')
-  }
 
   let isAddLayerModalVisible = false
   $: {
@@ -22,7 +18,7 @@
 
   const loadLayer = async () => {
     if (tree.isRaster) throw new Error('This component can only be used for vector type')
-    setProgressIndicator(true)
+    $indicatorProgress = true
 
     if (!tree.isRaster) {
       tree.metadata = await getVectorMetadata(tree)
@@ -31,7 +27,7 @@
     }
 
     setTimeout(function () {
-      setProgressIndicator(false)
+      $indicatorProgress = false
     }, 350)
   }
 
@@ -108,7 +104,7 @@
   }
 </script>
 
-<BucketTreeItemIcon bind:isLoading on:addLayer={loadLayer}>
+<BucketTreeItemIcon on:addLayer={loadLayer}>
   <!-- The modal is located here so the focus is set to ne next element -->
   <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
 </BucketTreeItemIcon>

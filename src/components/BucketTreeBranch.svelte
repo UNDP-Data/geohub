@@ -16,7 +16,6 @@
   export let tree: TreeNode
   export let IsExpanded = false
   export let level = 0
-  export let isLoading = false
   export let handleRemoveBucket = (): void => {
     throw new Error('Please give the function from the parent component')
   }
@@ -51,13 +50,8 @@
     updateTreeStore()
   }
 
-  const setProgressIndicator = (state: boolean) => {
-    isLoading = state
-    $indicatorProgress = state
-  }
-
   const updateTreeStore = async () => {
-    setProgressIndicator(true)
+    $indicatorProgress = true
     let treeData: { tree: TreeNode }
 
     if (tree.isStac) {
@@ -83,13 +77,13 @@
       tree = treeData.tree
     }
 
-    setProgressIndicator(false)
+    $indicatorProgress = false
   }
 </script>
 
 {#if tree.children}
   <div class="node-container" transition:slide={{ duration: IsExpanded ? 0 : 350 }}>
-    <BucketTreeBranchIcon bind:isLoading bind:level bind:IsExpanded on:toggleExpansion={toggleExpansion} />
+    <BucketTreeBranchIcon bind:level bind:IsExpanded on:toggleExpansion={toggleExpansion} />
     <BucketTreeLabel bind:tree />
     {#if level === 0}
       <BucketTreeBranchCloseButton on:remove={handleRemoveBucket} />
