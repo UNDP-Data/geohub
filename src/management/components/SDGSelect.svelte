@@ -87,6 +87,7 @@
         on:click={() => {
           handleSDGSelect(sdg.number)
         }}>
+        <!-- svelte-ignore a11y-missing-attribute -->
         <img src={`../sdgs/${sdg.number}.png`} />
       </figure>
     </div>

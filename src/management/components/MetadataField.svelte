@@ -21,6 +21,7 @@
 
 <div class="field is-horizontal">
   <div class="field-label is-normal">
+    <!-- svelte-ignore a11y-label-has-associated-control -->
     <label class="label">{MetadataConfig[name].title}</label>
   </div>
   <div class="field-body">

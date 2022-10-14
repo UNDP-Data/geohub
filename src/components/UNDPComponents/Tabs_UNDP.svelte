@@ -1,7 +1,6 @@
 <script lang="ts">
   import { TabNames } from '$lib/constants'
   import { layerList } from '$stores'
-  import Tab from '@smui/tab/src/Tab.svelte'
 
   export let tabs
   export let activeTab: string
@@ -64,9 +63,7 @@
   </ul>
 </div>
 
-<!--<svelte:window on:keydown={onKeyDown} />-->
 <style lang="scss">
-  //@import '../../styles/undp-design/fonts.css';
   $dark-red: #d12800;
   $dark-azure: #00c1ff;
   $gray-700: #232e3d;
