@@ -28,6 +28,7 @@ export interface TreeNode {
   tags?: string[]
   isStac?: boolean
   isMartin?: boolean
+  isMosaicJSON?: boolean
   paginationDirectionDisabled?: string
   collectionUrl?: string
 }
