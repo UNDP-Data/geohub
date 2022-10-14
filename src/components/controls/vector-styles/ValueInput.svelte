@@ -1,253 +1,287 @@
 <script lang="ts">
-  import RangeSlider from 'svelte-range-slider-pips'
-  import Tags from '$components/Tags.svelte'
-  import { createEventDispatcher } from 'svelte'
-  import { map, filterInputTags } from '$stores'
-  import arraystat from 'arraystat'
+	
+    import RangeSlider from 'svelte-range-slider-pips'
+    import Tags from '$components/Tags.svelte'
+    import { createEventDispatcher } from 'svelte'
+    import { map, filterInputTags } from '$stores'
+    import arraystat from 'arraystat'
 
-  import type { Listener, MapMouseEvent } from 'maplibre-gl'
+    import type { Listener, MapMouseEvent } from 'maplibre-gl'
+        import type { VectorLayerTileStatAttribute} from '$lib/types'
 
-  export let propertySelectedValue
-  export let expressionValue
-  export let acceptSingleTag = true
-  export let layer
-  export let operator
+    export let propertySelectedValue
+    export let expressionValue
+    export let acceptSingleTag = true
+    export let layer
+    export let operator
 
-  let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
-  //console.log(layer.info.json.vector_layers[0].fields)
-  const layerId = layer.definition.id
+    let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
+    //console.log(layer.info.json.vector_layers[0].fields)
+    const layerId = layer.definition.id
+    console.log(propertySelectedValue)
+    const attrstats = layer.info.stats.filter((el:VectorLayerTileStatAttribute) => {return el.attribute == propertySelectedValue})[0]
 
-  const dispatch = createEventDispatcher()
+    console.log(JSON.stringify(attrstats, null, '\t'))
+    const hasManyFeatures = attrstats.count > 250
 
-  const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+    const dispatch = createEventDispatcher()
 
-  const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
+    const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+    let hideOptions = true
+    let step
+    let uv: any = undefined
+    let clickFuncs: Listener[] = []
+    let sv
+    let calculatedStep
+    let min
+    let max
+    let vals: Array<number> = []
+    let svals: Array<number> = []
 
-  // get the values of the property for each feature
-  const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
+    let sindex
+    let eindex
+    let closest: number
+    let index: number
+    let sol
+    const nn = 5
+    $: tagsList = $filterInputTags
 
-  $: tagsList = $filterInputTags
-  let optionsList: [] = [...new Set(values.flat())]
-  const sol = Array.from(optionsList).sort((a, b) => a - b)
+    const fclosest = (array, goal) => array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev))
 
-  let hideOptions = true
-  let step
-  let uv: any = undefined
-  let clickFuncs: Listener[] = []
-  const astats = arraystat(sol)
 
-  const nn = 5
-  const min = astats.min
-  const max = astats.max
-  let calculatedStep = Number.isInteger(min) ? (astats.range * 1e-2) | 0 : astats.range * 1e-2
-  const fclosest = (array, goal) =>
-    array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev))
-  const findClosest = (x: number, arr: Array<number>) => {
-    const indexArr = arr.map(function (k) {
-      return Math.abs(k - x)
-    })
-    const min = Math.min.apply(Math, indexArr)
-    return arr[indexArr.indexOf(min)]
-  }
 
-  let sv = [findClosest(astats.median, sol)]
+    if (hasManyFeatures) {
+       
 
-  //console.log(`sv is ${sv}`)
-  let vals: Array<number> = []
-  let svals: Array<number> = []
 
-  let sindex
-  let eindex
-  let closest: number
-  let index: number
-  $: {
-    closest = fclosest(sol, sv[0])
-    index = sol.indexOf(closest)
-    //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
-    sindex = index - nn < 0 ? 0 : index - nn
-    eindex = index + nn > sol.length - 1 ? sol.length : index + nn
-    vals = sol.slice(sindex, eindex)
-    svals = vals.sort()
-  }
-
-  const onSliderStop = (event) => {
-    expressionValue = event.detail.value
-    dispatch('sliderStop', event.detail)
-  }
-
-  const handleTags = (event: CustomEvent) => {
-    tagsList = event.detail.tags
-  }
-
-  const applyTags = () => {
-    dispatch('apply')
-    const filteredTags = tagsList.filter((tag) => !optionsList.includes(tag))
-    $filterInputTags = [...$filterInputTags, ...filteredTags]
-    if (filteredTags.length > 0) {
-      dispatch('customTags', tagsList)
     } else {
-      expressionValue = tagsList
+        const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
+
+        // get the values of the property for each feature
+        const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
+
+
+        let optionsList:number[] = [...new Set(values.flat())]
+        sol = Array.from(optionsList).sort((a, b) => a - b) 
+        const astats = arraystat(sol)
+
+        
+        min = astats.min
+        max = astats.max
+        //                                        negative               0->1 
+        calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2
+    
+        sv = [fclosest(sol, astats.median)]
+        let closest = fclosest(sol, sv[0])
+        index = sol.indexOf(closest)
+        //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
+        sindex = index - nn < 0 ? 0 : index - nn
+        eindex = index + nn > sol.length - 1 ? sol.length : index + nn
+        vals = sol.slice(sindex, eindex)
+        svals = vals.sort()
     }
-  }
 
-  const apply = (e) => {
-    dispatch('apply')
-  }
+    
+    
+    
 
-  const handleMapClick = (e: MapMouseEvent) => {
-    if (e.features) {
-      uv = e.features[0].properties[propertySelectedValue]
-    }
-  }
-
-  const getFromMap = (e: CustomEvent) => {
-    $map.getCanvas().style.cursor = 'crosshair'
-    if (clickFuncs.length == 0) {
-      clickFuncs = [...$map._listeners.click]
-    }
-    for (var func of clickFuncs) {
-      $map.off('click', func)
+    $: {
+        console.log('running needlesly')
+        closest = fclosest(sol, sv[0])
+        index = sol.indexOf(closest)
+        //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
+        sindex = index - nn < 0 ? 0 : index - nn
+        eindex = index + nn > sol.length - 1 ? sol.length : index + nn
+        vals = sol.slice(sindex, eindex)
+        svals = vals.sort()
     }
 
-    $map.on('click', layerId, handleMapClick)
-  }
-
-  const restoreQ = () => {
-    $map.off('click', layerId, handleMapClick)
-    for (var func of clickFuncs) {
-      $map.on('click', func)
+    const onSliderStop = (event) => {
+        expressionValue = event.detail.value
+        dispatch('sliderStop', event.detail)
     }
-  }
 
-  // const nFormatter = (num: number, digits = 0) => {
-  //   const lookup = [
-  //     { value: 1, symbol: '' },
-  //     { value: 1e3, symbol: 'K' },
-  //     { value: 1e6, symbol: 'M' },
-  //     { value: 1e9, symbol: 'G' },
-  //     { value: 1e12, symbol: 'T' },
-  //     { value: 1e15, symbol: 'P' },
-  //     { value: 1e18, symbol: 'E' },
-  //   ]
-  //   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/
-  //   var item = lookup
-  //     .slice()
-  //     .reverse()
-  //     .find(function (item) {
-  //       return num >= item.value
-  //     })
-  //   return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0'
-  // }
+    const handleTags = (event: CustomEvent) => {
+        tagsList = event.detail.tags
+    }
+
+    const applyTags = () => {
+        // dispatch('apply')
+        const filteredTags = tagsList.filter((tag) => !sol.includes(tag))
+        $filterInputTags = [...$filterInputTags, ...filteredTags]
+        if (filteredTags.length > 0) {
+        dispatch('customTags', tagsList)
+        } else {
+        expressionValue = tagsList
+        }
+        apply()
+    }
+
+    const apply = (e) => {
+        dispatch('apply')
+    }
+
+    const handleMapClick = (e: MapMouseEvent) => {
+        if (e.features) {
+        uv = e.features[0].properties[propertySelectedValue]
+        }
+    }
+
+    const getFromMap = (e: CustomEvent) => {
+        $map.getCanvas().style.cursor = 'crosshair'
+        if (clickFuncs.length == 0) {
+        clickFuncs = [...$map._listeners.click]
+        }
+        for (var func of clickFuncs) {
+        $map.off('click', func)
+        }
+
+        $map.on('click', layerId, handleMapClick)
+    }
+
+    const restoreQ = () => {
+        $map.off('click', layerId, handleMapClick)
+        for (var func of clickFuncs) {
+        $map.on('click', func)
+        }
+    }
+
 </script>
 
-{#if values}
-  <div class="content" style="width:100%; height:100%">
-    {#if dataType === 'String'}
-      <div>
-        {#if acceptSingleTag}
-          <div class="notification has-background-danger-light is-size-6 has-text-danger">
-            <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ \n operators
-            are used
-          </div>
-        {/if}
-        <Tags
-          on:tags={handleTags}
-          maxTags={acceptSingleTag ? 1 : 100}
-          addKeys={[9, 13]}
-          splitWith={'/'}
-          onlyUnique={true}
-          removeKeys={[27]}
-          placeholder={'Select a value...'}
-          autoComplete={optionsList}
-          tags={tagsList}
-          allowBlur={true}
-          disable={false}
-          minChars={0}
-          onlyAutocomplete={true}
-          labelShow={false}
-          class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
-          {acceptSingleTag} />
-        <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
-          <div>
-            <button class="button is-rounded is-small is-info">
-              <i class="fa-solid fa-circle-info " />
-            </button>
-          </div>
-          <div>
-            <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
-              >Confirm Selection
-            </button>
-          </div>
-        </div>
-      </div>
-    {:else if !['<', '>'].includes(operator)}
-      <div class="columns is-centered pb-2">
-        <button class="button is-small primary-button  " on:click={getFromMap}>
-          <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
-        </button>
-      </div>
-      {#if uv}
-        <div class="columns is-centered p-3 ">
-          Selected value: <span class="tag is-danger-light has-text-danger-dark">{uv}</span>
-        </div>
-        <div class="columns is-centered p-2">
-          <button
-            class="button is-small primary-button "
-            on:click={() => {
-              expressionValue = uv
-              apply()
-              restoreQ()
-            }}>
-            <i class="fa fa-thumbs-up" /> Confirm selection
-          </button>
-        </div>
-      {/if}
 
-      <!-- <div class="range-slider">
-        <RangeSlider
-          bind:values={sv}
-          float
-          pips={calculatedStep}
-          {min}
-          {max}
-          step={calculatedStep}
-          range="min"
-          first="label"
-          last="label"
-          rest={false} />
-      </div>
-      
-      <div class="buttons">
-        {#each svals as v}
-          <button
-            on:click={() => {
-              expressionValue = v
-              apply()
-            }}
-            class="button has-background-info-light">{v}</button>
-        {/each}
-      </div> -->
-    {:else}
-      <div class="range-slider">
-        <RangeSlider
-          bind:values={sv}
-          float
-          pips={calculatedStep}
-          {min}
-          {max}
-          step={calculatedStep}
-          range="min"
-          first="label"
-          last="label"
-          rest={false}
-          on:stop={onSliderStop} />
-      </div>
-      <div class="columns is-centered pb-2">
-        <button class="button is-small primary-button" on:click={apply}> Use selected </button>
-      </div>
+  <div class="content" style="width:100%; height:100%">
+
+    {#if hasManyFeatures } //many features
+        <div class="columns is-centered pb-2">
+            <button class="button is-small primary-button  " on:click={getFromMap}>
+                <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
+            </button>
+        </div>
+        {#if uv}
+            <div class="is-flex is-flex-direction-column is-align-items-center is-justify-items-center">
+                <div class="notification is-size-6 has-text-centered">
+                    Selected value: <span class="has-text-weight-bold"> {new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(uv)} </span>
+                </div>
+                <div class=" ">
+                    <button
+                    class="button is-small primary-button"
+                    on:click={() => {
+                        expressionValue = uv
+                        apply()
+                        restoreQ()
+                    }}>
+                    <i class="fa fa-hammer" />&nbsp; Apply
+                    </button>
+                </div>
+            </div>
+        
+        {/if}
+
+    {:else} 
+        {min} {max} {calculatedStep}
+        {#if dataType === 'String'}
+            <div>
+                {#if acceptSingleTag}
+                    <div class="notification has-background-danger-light is-size-6 has-text-danger">
+                    <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ operators
+                    are used
+                    </div>
+                {/if}
+                <Tags
+                    on:tags={handleTags}
+                    maxTags={acceptSingleTag ? 1 : 100}
+                    addKeys={[9, 13]}
+                    splitWith={'/'}
+                    onlyUnique={true}
+                    removeKeys={[27]}
+                    placeholder={'Select a value...'}
+                    autoComplete={sol}
+                    tags={tagsList}
+                    allowBlur={true}
+                    disable={false}
+                    minChars={0}
+                    onlyAutocomplete={true}
+                    labelShow={false}
+                    class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
+                    {acceptSingleTag}
+                />
+                <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
+                    <div>
+                    <button class="button is-rounded is-small is-info">
+                        <i class="fa-solid fa-circle-info " />
+                    </button>
+                    </div>
+                    <div>
+                    <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
+                        ><i class="fa fa-hammer" />&nbsp; Apply
+                    </button>
+                    </div>
+                </div>
+            </div>
+        {:else} 
+            {#if !['<', '>'].includes(operator)}
+                
+                    <div class="range-slider">
+                        <RangeSlider
+                            bind:values={sv}
+                            float
+                            pips={calculatedStep}
+                            {min}
+                            {max}
+                            step={calculatedStep}
+                            range="min"
+                            first="label"
+                            last="label"
+                            rest={false}>
+                        </RangeSlider>
+                    </div>
+              
+                
+        
+                <div class="buttons">
+                    {#each svals as v}
+                        <button
+                            on:click={(e) => {
+                                expressionValue = v
+                                apply(e)
+                            }}
+                            class="button has-background-info-light">
+                            {v}
+                        </button>
+                    {/each}
+                </div>
+            {:else}
+                
+                <div class="range-slider">
+                    <RangeSlider
+                    bind:values={sv}
+                    float
+                    pips={calculatedStep}
+                    {min}
+                    {max}
+                    step={calculatedStep}
+                    range="min"
+                    first="label"
+                    last="label"
+                    rest={false}
+                    on:stop={onSliderStop}>
+                    </RangeSlider> 
+                </div>
+                <div class="columns is-centered pb-2">
+                    <button class="button is-small primary-button" on:click={apply}><i class="fa fa-hammer" />&nbsp; Apply</button>
+                </div>
+            {/if}
+            
+        {/if}
     {/if}
+
+    
+      
+    
+      
+    
   </div>
-{/if}
+
 
 <style lang="scss">
   .grid {

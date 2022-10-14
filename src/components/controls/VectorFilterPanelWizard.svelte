@@ -58,37 +58,37 @@
     let expressions = []
     return expressionsArray.map((expression) => {
       if (expression['property'] === undefined) return
-      if (expression['operation'] === undefined) return
+      if (expression['operator'] === undefined) return
       if (expression['value'] === undefined) return
       if (customTagsAvailable) {
         if (expression['value'].length > 1) {
-          if (expression['operation'] === 'in') {
+          if (expression['operator'] === 'in') {
             combineOperator = false
             expressions = expression['value'].map((val) => ['in', val, ['get', expression['property']]])
             return ['any', ...expressions]
           }
-          if (expression['operation'] === '!in') {
+          if (expression['operator'] === '!in') {
             combineOperator = true
             expressions = expression['value'].map((val) => ['!', ['in', val, ['get', expression['property']]]])
             return ['all', ...expressions]
           }
         }
         if (expression['value'].length === 1) {
-          if (expression['operation'] === 'in') {
+          if (expression['operator'] === 'in') {
             return ['in', expression['value'][0], ['get', expression['property']]]
           }
-          if (expression['operation'] === '!in') {
+          if (expression['operator'] === '!in') {
             return ['!', ['in', expression['value'][0], ['get', expression['property']]]]
           }
         }
       } else {
-        if (expression['operation'] === 'in') {
-          return [expression['operation'], ['get', expression['property']], ['literal', expression['value']]]
-        } else if (expression['operation'] === '!in') {
+        if (expression['operator'] === 'in') {
+          return [expression['operator'], ['get', expression['property']], ['literal', expression['value']]]
+        } else if (expression['operator'] === '!in') {
           return ['!', ['in', ['get', expression['property']], ['literal', expression['value']]]]
         } else {
           return [
-            expression['operation'],
+            expression['operator'],
             ['get', expression['property']],
             isNaN(Number(expression['value'])) ? expression['value'][0] : Number(expression['value']),
           ]
@@ -107,6 +107,7 @@
 
   // Apply expression to layer
   const handleApplyExpression = () => {
+    console.log(JSON.stringify(expressionsArray, null, '\t'))
     expressionApplied = true
     const expression = generateFilterExpression(expressionsArray)
     if (expression === undefined) {
@@ -164,7 +165,7 @@
   }
 
   const handleCurrentOperation = (e) => {
-    expressionsArray[currentExpressionIndex]['operation'] = e.detail.operation
+    expressionsArray[currentExpressionIndex]['operator'] = e.detail.operation
   }
 
   const handleAddExpression = () => {
@@ -229,11 +230,11 @@
           }}
           class="button wizard-button is-small primary-button">
           <i class="fas fa-plus" />
-          &nbsp; New rule
+          &nbsp; {expressionsArray[0].value ? 'Add' : 'New rule'}
         </button>
         {#if expressionApplied || expressionsArray[0].value !== ''}
           <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
-            <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
+            <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''} 
           </button>
         {/if}
       </div>
@@ -253,43 +254,46 @@
           class="button wizard-button is-small primary-button">
           <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
         </button>
-        <button
+        <!-- <button
           disabled={expressionsArray[currentExpressionIndex].property === ''}
           on:click={nextStep}
           class="button wizard-button is-small primary-button"
           title="">
           Select an operator &nbsp;
           <i class="fa fa-chevron-right" />
-        </button>
+        </button> -->
       </div>
       <div class="is-divider separator is-danger" data-content="Select a property..." />
       <PropertySelectButtons
         {layer}
         bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-        on:select={handlePropertySelect} />
+        on:select={handlePropertySelect} 
+        on:click={nextStep}/>
     </Step>
     <Step num={3} let:prevStep let:nextStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small primary-button">
-          <i class="fa fa-chevron-left" />
-          &nbsp; Back to properties
+        <button 
+          title="move back to properties"
+          on:click={prevStep} class="button wizard-button is-small secondary-button">
+          <i class="fa fa-angles-left" />&nbsp;Properties
+          
         </button>
         <button
           on:click={() => {
             setInitialExpression()
             setStep(1)
           }}
-          class="button wizard-button is-small primary-button">
+         class="button wizard-button is-small primary-button">
           <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
         </button>
-        <button
+        <!-- <button
           disabled={expressionsArray[currentExpressionIndex].operator === ''}
           on:click={nextStep}
           class="button wizard-button is-small primary-button">
           Pick a value &nbsp;
           <i class="fa fa-chevron-right" />
-        </button>
+        </button> -->
       </div>
       <div class="is-divider separator is-danger" data-content="Select an operator..." />
       <OperationButtons
@@ -298,14 +302,17 @@
         bind:numberProperty
         bind:stringProperty
         bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
-        on:change={handleCurrentOperation} />
+        on:change={handleCurrentOperation} 
+        on:click={nextStep}/>
     </Step>
     <Step num={4} let:prevStep let:nextStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small primary-button">
-          <i class="fa fa-chevron-left" />
-          &nbsp; back to pperators
+        <button on:click={prevStep} 
+          title="move back to operators"
+          class="button wizard-button is-small secondary-button">
+          <i class="fa fa-angles-left" /> &nbsp;Operators
+          
         </button>
         <button
           on:click={() => {
@@ -319,21 +326,23 @@
 
       <div class="is-divider separator is-danger" data-content="Select/input a value..." />
       <ValueInput
-        on:apply={nextStep}
+        on:apply={()=> {handleApplyExpression()
+          setStep(1)}}
         on:customTags={handleCustomTags}
         bind:layer
         bind:acceptSingleTag
         bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
         bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
-        bind:operator={expressionsArray[currentExpressionIndex]['operation']} />
+        bind:operator={expressionsArray[currentExpressionIndex]['operator']}
+         />
     </Step>
-
+    <!-- this is commented because it is not used anymore
     <Step num={5} let:prevStep let:setStep>
-      <!--      Pick one operation from the selected-->
+      
       <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small primary-button">
+        <button on:click={prevStep} class="button wizard-button is-small secondary-button">
           <i class="fa fa-chevron-left" />
-          &nbsp; Previous
+          &nbsp; Pick a value
         </button>
         <button
           on:click={() => {
@@ -355,6 +364,7 @@
         </button>
       </div>
     </Step>
+  -->
   </Wizard>
 {/if}
 

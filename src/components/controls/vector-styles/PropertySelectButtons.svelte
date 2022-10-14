@@ -58,37 +58,44 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div style="max-height: 200px; overflow-y: auto" class="grid" role="menu" on:click={handleClick}>
+<div style="max-height: 200px; overflow-y: auto" class="grid pt-5 pb-5" role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       {#if design1}
         <div
           class="card grid-item p-0 m-0 is-clickable  "
           on:click={() => {
-            propertySelectValue = propertySelectOption
-          }}>
+            propertySelectValue = propertySelectOption;
+            handleClick
+          }}
+          title={layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() === 'string'
+            ? 'text property, ex: "Mombassa"'
+            : 'numeric property, ex: 43256.55 '}
+          >
           <div
             class="card-header is-size-6  pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
               ? 'has-background-success'
               : 'has-background-info-dark'} ">
             <span
               class="card-header-title is-centered is-v-centered {propertySelectValue === propertySelectOption
-                ? 'has-text-success-darker'
+                ? 'has-text-white-ter'
                 : 'has-text-white-ter'}  ">
               {propertySelectOption}
               {#if propertySelectOption === propertySelectValue}
-                <span class="icon  ">
-                  <i class="fa-solid fa-check has-text-black" />
+                <span class="icon ">
+                  <i class="fa-solid fa-check" />
                 </span>
               {/if}
             </span>
           </div>
-          <div class="card-content  p-2 m-0 has-text-centered ">
-            <div class="content is-size-6  p-2 m-0 has-text-weight-bold has-text-danger">
-              {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
-                ::numeric::
+          <div class="card-content has-text-centered ">
+            <div class="content is-size-4 has-text-weight-bold ">
+              
+              {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() !== 'string'}
+                <span  class="tag has-background-danger-dark has-text-white p-1 m-0 ">123456</span>
               {:else}
-                ::text::
+              <span class="tag has-background-danger-dark has-text-white p-2 m-0 ">Abcdef</span>
+                
               {/if}
             </div>
           </div>
@@ -115,10 +122,10 @@
 
           <div class="content  has-text-danger-dark has-background-info-light pb-2 pt-2 m-0 ">
             <span class="is-size-7">
-              {#if layer.info.json.vector_layers[0].fields[propertySelectOption] === 'Number'}
-                ::numeric::
+              {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowercase() !== 'string'}
+                ...12345...
               {:else}
-                ::text::
+                ...abcde...
               {/if}
             </span>
           </div>
