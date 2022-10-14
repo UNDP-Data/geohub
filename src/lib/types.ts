@@ -264,6 +264,7 @@ export interface Bucket {
   selected?: boolean | false
   items?: []
   url?: string
+  sdg?: number
 }
 
 export interface Color {

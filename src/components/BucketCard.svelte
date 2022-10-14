@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Card, { Content as ContentCard, PrimaryAction } from '@smui/card'
   import { fade } from 'svelte/transition'
   import Popper from '$lib/popper'
   import type { Bucket } from '$lib/types'
@@ -76,25 +75,23 @@
   }
 </script>
 
-<div
-  class="card-container"
-  data-testid="card-container"
-  use:popperRef
-  on:click={() => handleBucketClick()}
-  on:mouseenter={() => handleMouseEnter()}
-  on:mouseleave={() => handleMouseLeave()}
-  on:focusin={() => handleFocusIn()}
-  on:focusout={() => handleFocusOut()}
-  on:keydown={handleKP}>
-  <Card id={bucket.id}>
-    <PrimaryAction on:click={() => undefined}>
-      <div class="icon-container">
-        <ContentCard style={`${bucket.selected === true ? 'opacity: 0.2' : ''}`}>
-          <i class={`icon ${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
-        </ContentCard>
-      </div>
-    </PrimaryAction>
-  </Card>
+<div class="container card-container">
+  <button
+    class="button p-1 icon-button"
+    style={`${bucket.selected === true ? 'opacity: 0.4' : ''}`}
+    use:popperRef
+    on:click={() => handleBucketClick()}
+    on:mouseenter={() => handleMouseEnter()}
+    on:mouseleave={() => handleMouseLeave()}
+    on:focusin={() => handleFocusIn()}
+    on:focusout={() => handleFocusOut()}
+    on:keydown={handleKP}>
+    {#if bucket.icon.startsWith('http')}
+      <img src={bucket.icon} alt={bucket.label} />
+    {:else}
+      <i class={`fa-icon ${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
+    {/if}
+  </button>
 </div>
 
 {#if showTooltip}
@@ -124,30 +121,19 @@
   @import '../styles/popper.scss';
 
   .card-container {
-    height: 65px;
     margin: 0;
-    padding-bottom: 0px;
-    padding-top: 0px;
-    padding: 10px;
-    width: 70px;
+    padding: 5px;
 
-    .card {
-      margin-bottom: 15px;
-      margin-left: 15px;
+    .icon-button {
+      width: 52px;
+      height: 52px;
     }
 
-    .icon-container {
+    .fa-icon {
+      color: #000;
+
       @media (prefers-color-scheme: dark) {
-        border-radius: 7.5px;
-        border: 1px solid #ccc;
-      }
-
-      .icon {
-        color: #000;
-
-        @media (prefers-color-scheme: dark) {
-          color: #ccc;
-        }
+        color: #ccc;
       }
     }
   }
