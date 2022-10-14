@@ -60,10 +60,7 @@
 </script>
 
 <div class="content-container">
-  <Drawer
-    variant="dismissible"
-    bind:open={drawerOpen}
-    style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow:visible;">
+  <Drawer variant="dismissible" bind:open={drawerOpen} style="width: {drawerWidth}px; max-width: {drawerWidth}px;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Header style="border-bottom: none;">
@@ -118,6 +115,11 @@
       height: calc(100vh - 52px);
     }
   }
+
+  :global(.mdc-drawer__content) {
+    overflow: hidden;
+  }
+
   :global(.app-content) {
     flex: auto;
     overflow: hidden;
@@ -144,7 +146,7 @@
     position: absolute;
     display: flex;
     width: 100%;
-    overflow: auto;
+    overflow: hidden;
     z-index: 0;
     flex-grow: 1;
 
@@ -155,7 +157,7 @@
       overflow: hidden;
 
       .drawer-content {
-        overflow: auto;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         flex-basis: 100%;

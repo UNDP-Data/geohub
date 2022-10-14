@@ -36,15 +36,17 @@
   <DynamicLayer bind:open />
 {/if}
 
-{#each $layerList as layer (layer.definition.id)}
-  {#if layer.type === LayerTypes.RASTER}
-    <RasterLayer_UNDP {layer} />
-    <!--     FixMe: Component commented out to make use of the RasterLayer_UNDP component-->
-    <!--    <RasterLayer {layer} />-->
-  {:else if layer.type === LayerTypes.VECTOR}
-    <VectorLayer {layer} />
-  {/if}
-{/each}
+<div class="layer-list">
+  {#each $layerList as layer (layer.definition.id)}
+    {#if layer.type === LayerTypes.RASTER}
+      <RasterLayer_UNDP {layer} />
+      <!--     FixMe: Component commented out to make use of the RasterLayer_UNDP component-->
+      <!--    <RasterLayer {layer} />-->
+    {:else if layer.type === LayerTypes.VECTOR}
+      <VectorLayer {layer} />
+    {/if}
+  {/each}
+</div>
 
 <style lang="scss">
   :global(.smui-paper__content) {
@@ -74,5 +76,11 @@
         padding-left: 15px;
       }
     }
+  }
+
+  $height: calc(100vh - 120px);
+  .layer-list {
+    overflow-y: auto;
+    height: $height;
   }
 </style>

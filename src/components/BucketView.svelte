@@ -102,35 +102,33 @@
         <div class="column separator" />
       </div>
     </div>
-    <div
-      id="tree-container"
-      class="column is-three-quarters tree"
-      data-testid="tree-container"
-      style="overflow-y: auto">
-      {#if $treeBucket.length === 0}
-        <div class="title is-size-4">Welcome to GeoHub</div>
-        <div class="subtitle is-size-5">
-          This UNDP data repository features a range of innovative tools to visualise, analyse, and download data.
-        </div>
-        <div class="subtitle is-size-5">
-          Select an icon to the left, to explore the data. Click on each icon to see data available for visualisation
-          and download.
-        </div>
-      {:else}
-        <LinearProgress indeterminate bind:closed={hideLinearProgress} />
-        <nav>
-          {#each $treeBucket as tree}
-            <ul
-              id={tree.label
-                .split(' ')
-                .map((el) => el.toLowerCase())
-                .join('-')}
-              label={tree.label}>
-              <BucketTreeView bind:node={tree} on:remove={handleRemoveBucket} />
-            </ul>
-          {/each}
-        </nav>
-      {/if}
+    <div class="column is-three-quarters">
+      <LinearProgress indeterminate bind:closed={hideLinearProgress} />
+      <div id="tree-container" class="tree" data-testid="tree-container">
+        {#if $treeBucket.length === 0}
+          <div class="title is-size-4">Welcome to GeoHub</div>
+          <div class="subtitle is-size-5">
+            This UNDP data repository features a range of innovative tools to visualise, analyse, and download data.
+          </div>
+          <div class="subtitle is-size-5">
+            Select an icon to the left, to explore the data. Click on each icon to see data available for visualisation
+            and download.
+          </div>
+        {:else}
+          <nav>
+            {#each $treeBucket as tree}
+              <ul
+                id={tree.label
+                  .split(' ')
+                  .map((el) => el.toLowerCase())
+                  .join('-')}
+                label={tree.label}>
+                <BucketTreeView bind:node={tree} on:remove={handleRemoveBucket} />
+              </ul>
+            {/each}
+          </nav>
+        {/if}
+      </div>
     </div>
   </div>
 </div>
@@ -138,6 +136,8 @@
 <style lang="scss">
   $separator: 1px solid whitesmoke;
   $separator-dark: 1px solid #ccc;
+
+  $height: calc(100vh - 120px);
 
   .view-container {
     .filter-container {
@@ -161,10 +161,14 @@
         z-index: 10;
         max-width: fit-content;
         width: fit-content;
+        overflow-y: auto;
+        height: $height;
       }
 
       .tree {
         z-index: 1;
+        overflow-y: auto;
+        height: $height;
 
         .title {
           margin-bottom: 30px;
