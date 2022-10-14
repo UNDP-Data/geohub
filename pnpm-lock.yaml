@@ -21,7 +21,6 @@ importers:
       '@smui/dialog': ^6.1.4
       '@smui/drawer': ^6.1.4
       '@smui/form-field': ^6.1.4
-      '@smui/image-list': ^6.1.4
       '@smui/linear-progress': ^6.1.4
       '@smui/list': ^6.1.4
       '@smui/menu': ^6.2.0
@@ -29,7 +28,6 @@ importers:
       '@smui/segmented-button': ^6.1.4
       '@smui/select': ^6.2.0
       '@smui/switch': ^6.1.4
-      '@smui/tab': ^6.1.4
       '@smui/textfield': ^6.1.4
       '@smui/tooltip': ^6.1.4
       '@sveltejs/adapter-node': ^1.0.0-next.96
@@ -129,7 +127,6 @@ importers:
       '@smui/dialog': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/drawer': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/form-field': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      '@smui/image-list': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/linear-progress': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/list': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/menu': 6.2.0_qy6w2iv5hnh55blsjuu7uihyzm
@@ -137,7 +134,6 @@ importers:
       '@smui/segmented-button': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/select': 6.2.0_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/switch': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      '@smui/tab': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/textfield': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/tooltip': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@turf/area': 6.5.0
@@ -759,16 +755,6 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /@material/image-list/13.0.0:
-    resolution: {integrity: sha512-D78QKpK5JmO6zrbsSYt1YfRlkqzzduDTe6BstS0efUFS1CA11hrqwQFoMaR1L1dw2U3CQ/CP22bBMSZVV9aU6A==}
-    dependencies:
-      '@material/feature-targeting': 13.0.0
-      '@material/shape': 13.0.0
-      '@material/theme': 13.0.0
-      '@material/typography': 13.0.0
-      tslib: 2.4.0
-    dev: false
-
   /@material/line-ripple/13.0.0:
     resolution: {integrity: sha512-5djBRXrd1+SiMVUTWr4rD6xv+/qTaGGmgUS5GytBE5mczvnEwcPmM4PzF+HNj2TS+wvNvIfRjRmUzWO2Z6w2lA==}
     dependencies:
@@ -929,30 +915,6 @@ packages:
       '@material/shape': 13.0.0
       '@material/theme': 13.0.0
       '@material/tokens': 13.0.0
-      tslib: 2.4.0
-    dev: false
-
-  /@material/tab-indicator/13.0.0:
-    resolution: {integrity: sha512-T6Q4zCdl374rQgNLrAIc8+sy8ax6fbNTZRb+oJgShzjVz4wH9OLk6LX1RREHEeWiZt69nTqeR4yU6/6xFX+Kjw==}
-    dependencies:
-      '@material/animation': 13.0.0
-      '@material/base': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/theme': 13.0.0
-      tslib: 2.4.0
-    dev: false
-
-  /@material/tab/13.0.0:
-    resolution: {integrity: sha512-7tziMFiyiFZner39h6ue6A6rfJhz8LDyeVPYfdAMe8ZO8GT+PczDr5yuectamR8fNBE7Fk9Bj/KvIOx+LjKgDg==}
-    dependencies:
-      '@material/base': 13.0.0
-      '@material/elevation': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/ripple': 13.0.0
-      '@material/rtl': 13.0.0
-      '@material/tab-indicator': 13.0.0
-      '@material/theme': 13.0.0
-      '@material/typography': 13.0.0
       tslib: 2.4.0
     dev: false
 
@@ -1290,17 +1252,6 @@ packages:
       - typescript
     dev: false
 
-  /@smui/image-list/6.1.4_qy6w2iv5hnh55blsjuu7uihyzm:
-    resolution: {integrity: sha512-v52fqVzwqeOvwuJNnk16vHK3QTeS62EZoycSyUMpdf0AeG3DLzIOVo5+CkQ7xuvIFpWve59i5pmOsn29fteMsg==}
-    dependencies:
-      '@material/image-list': 13.0.0
-      '@smui/common': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      svelte2tsx: 0.5.18_qy6w2iv5hnh55blsjuu7uihyzm
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
   /@smui/line-ripple/6.1.4_qy6w2iv5hnh55blsjuu7uihyzm:
     resolution: {integrity: sha512-IUbapkBPyrybkUEEZVLpBs6HXXHN3v1aHewFPI7KvHU4a+Ho7EIqWpAHn8wc8SSX2knC2/HeGtpNycAAW127Tw==}
     dependencies:
@@ -1444,30 +1395,6 @@ packages:
       '@material/theme': 13.0.0
       '@smui/common': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/ripple': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      svelte2tsx: 0.5.18_qy6w2iv5hnh55blsjuu7uihyzm
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/tab-indicator/6.1.4_qy6w2iv5hnh55blsjuu7uihyzm:
-    resolution: {integrity: sha512-yb79eJe/5X7X9rzcO9vZG+QDUsyvXSGWaonpsD4n9PUtWYG56pmar1LAwsVTYJw3nAqZZuGyLDC8/O6qCrd2Tg==}
-    dependencies:
-      '@material/tab-indicator': 13.0.0
-      '@smui/common': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      svelte2tsx: 0.5.18_qy6w2iv5hnh55blsjuu7uihyzm
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/tab/6.1.4_qy6w2iv5hnh55blsjuu7uihyzm:
-    resolution: {integrity: sha512-vxxJ31XDArQPhGEq4M4CNeQH9i09xJxBEX3cTr34lP3IXih3RQ1TTw1a8xzC137FsJERGm3ii72CKHpPpnyFkA==}
-    dependencies:
-      '@material/tab': 13.0.0
-      '@smui/common': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      '@smui/ripple': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      '@smui/tab-indicator': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       svelte2tsx: 0.5.18_qy6w2iv5hnh55blsjuu7uihyzm
     transitivePeerDependencies:
       - svelte
