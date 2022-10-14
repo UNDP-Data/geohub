@@ -9,7 +9,7 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { map, layerList, bannerMessages, modalVisible } from '$stores'
+  import { map, layerList, bannerMessages, modalVisible, indicatorProgress } from '$stores'
   import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
     ClassificationMethodTypes,
@@ -22,10 +22,7 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let tree: TreeNode
-  export let isLoading = false
-  export let setProgressIndicator = (state: boolean): void => {
-    throw new Error('Please give the function from the parent component')
-  }
+
   let isAddLayerModalVisible = false
   $: {
     $modalVisible = isAddLayerModalVisible
@@ -33,7 +30,7 @@
 
   const loadLayer = async () => {
     if (!tree.isRaster) throw new Error('This component can only be used for raster type')
-    setProgressIndicator(true)
+    $indicatorProgress = true
 
     const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
     const bandIndex = getActiveBandIndex(layerInfo)
@@ -50,7 +47,7 @@
         message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
       }
       bannerMessages.update((data) => [...data, bannerErrorMessage])
-      setProgressIndicator(false)
+      $indicatorProgress = false
       throw new Error(JSON.stringify(layerInfo))
     }
 
@@ -64,7 +61,7 @@
         message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
       }
       $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
-      setProgressIndicator(false)
+      $indicatorProgress = false
       throw new Error(ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX)
     }
     const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
@@ -147,7 +144,7 @@
     $map.addLayer(layerDefinition, firstSymbolId)
 
     setTimeout(function () {
-      setProgressIndicator(false)
+      $indicatorProgress = false
     }, 350)
   }
 
@@ -221,7 +218,7 @@
   }
 </script>
 
-<BucketTreeItemIcon bind:isLoading on:addLayer={loadLayer} />
+<BucketTreeItemIcon on:addLayer={loadLayer} />
 <BucketTreeLabel bind:tree />
 <BucketTreeItemCardButton bind:tree />
 <BucketTreeItemDownloadButton bind:tree />

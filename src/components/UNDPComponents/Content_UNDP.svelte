@@ -1,14 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
-  import LinearProgress from '@smui/linear-progress'
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TagsView from '$components/TagsView.svelte'
   import { PUBLIC_MARTIN_API_ENDPOINT } from '$lib/variables/public'
   import { TabNames } from '$lib/constants'
-  import { indicatorProgress, map, martinIndex } from '$stores'
+  import { map, martinIndex } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import { fetchUrl } from '$lib/helper'
   import Tabs_UNDP from './Tabs_UNDP.svelte'
@@ -17,10 +16,8 @@
 
   let activeTab = TabNames.BUCKETS
   let drawerWidth = 355
-  let hideLinearProgress = true
   let isResizingDrawer = false
   let tabs = [{ label: TabNames.BUCKETS }, { label: TabNames.TAGS }, { label: TabNames.LAYERS }]
-  $: hideLinearProgress = !$indicatorProgress
   $: {
     if (drawerOpen) {
       try {
@@ -69,7 +66,6 @@
     style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow:visible;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
-        <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header style="border-bottom: none;">
           <Tabs_UNDP bind:activeTab bind:tabs />
         </Header>
