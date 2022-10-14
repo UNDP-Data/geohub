@@ -77,7 +77,7 @@
 
 <div class="container card-container">
   <button
-    class="button icon-button"
+    class="button p-1 icon-button"
     style={`${bucket.selected === true ? 'opacity: 0.4' : ''}`}
     use:popperRef
     on:click={() => handleBucketClick()}
@@ -125,8 +125,8 @@
     padding: 5px;
 
     .icon-button {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
     }
 
     .fa-icon {

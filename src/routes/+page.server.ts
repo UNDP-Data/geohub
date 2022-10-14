@@ -65,13 +65,17 @@ const listContainers = async (urlOrigin: string) => {
         type: BucketType.INTERNAL,
         tags,
         selected: false,
+        sdg: container.metadata.sdg ? Number(container.metadata.sdg) : 999,
       }
 
       bucketList.push(bucket)
     }
   }
 
-  bucketList.sort((a, b) => a.label !== undefined && a.label.localeCompare(b.label))
+  // sort by SDG number. Non SDG buckets are following SDG bucket.
+  bucketList.sort((a, b) => {
+    return a.sdg < b.sdg ? -1 : 1
+  })
 
   return bucketList
 }
