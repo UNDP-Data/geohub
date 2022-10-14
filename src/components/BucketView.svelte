@@ -1,5 +1,6 @@
 <script lang="ts">
   import { slide } from 'svelte/transition'
+  import LinearProgress from '@smui/linear-progress'
 
   import BucketCard from '$components/BucketCard.svelte'
   import BucketCardFilter from '$components/BucketCardFilter.svelte'
@@ -7,6 +8,7 @@
   import BucketTreeView from '$components/BucketTreeView.svelte'
   import { bucketList, indicatorProgress, modalVisible, treeBucket } from '$stores'
 
+  $: hideLinearProgress = !$indicatorProgress
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
 
@@ -115,6 +117,7 @@
           and download.
         </div>
       {:else}
+        <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <nav>
           {#each $treeBucket as tree}
             <ul
