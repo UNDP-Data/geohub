@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { bannerMessages } from '$stores'
 import * as helper from '../helper'
-import type { BannerMessage } from '$lib/types'
 import { ClassificationMethodTypes } from '../constants'
 
 describe('stringifyStyleJSON', () => {

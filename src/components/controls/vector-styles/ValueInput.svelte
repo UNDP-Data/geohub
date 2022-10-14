@@ -28,9 +28,6 @@
   let optionsList: [] = [...new Set(values.flat())]
   const sol = Array.from(optionsList).sort((a, b) => a - b)
 
-  let hideOptions = true
-  let step
-
   const astats = arraystat(sol)
 
   const nn = 5
@@ -87,7 +84,7 @@
     }
   }
 
-  const apply = (e) => {
+  const apply = () => {
     dispatch('apply')
   }
 

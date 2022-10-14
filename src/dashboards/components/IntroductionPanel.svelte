@@ -31,6 +31,7 @@
       electrification for a single pixel only.
     </p>
     <br />
+    <!-- svelte-ignore a11y-invalid-attribute -->
     <a style="border-radius: 0px" class="button button-primary" role="button" href="#" on:click={hideIntro}>
       Explore Data
     </a>

@@ -90,22 +90,13 @@ const onMouseLeave = () => {
 const onZoom = ({ originalEvent }) => {
   const map = get(mapStore)
   if (!originalEvent) return
-  const zoom = map.getZoom()
   loadAdmin(choropleth)
-  //console.log(`zoom is ${zoom}`)
-  // if (adminLevel !== 0 && zoom < 3) loadAdmin(choropleth)
-  // else if (adminLevel !== 1 && zoom >= 3 && zoom < 4) loadAdmin(choropleth)
-  // else if (adminLevel !== 2 && zoom >= 4 && zoom < 5) loadAdmin(choropleth)
-  // else if (adminLevel !== 3 && zoom >= 5 && zoom < 6) loadAdmin(choropleth)
-  // else if (adminLevel !== 4 && zoom >= 6) loadAdmin(choropleth)
+
   adminLevel = getAdminLevel()
   const point: PointLike = [originalEvent.layerX, originalEvent.layerY]
   const features = map.queryRenderedFeatures(point, { layers: [ADM_ID] })
   if (features.length > 0) onMouseMove({ features })
-  //const l = map.getLayer(ADM_ID)
 
-  //if(l) console.log(`mz is ${l.minzoom} ${l.maxzoom}`)
-  //if (zoom>=10) opacity = 0
   map.setPaintProperty(ADM_ID, 'fill-opacity', opacity)
 }
 
@@ -187,18 +178,17 @@ const loadAdminChoropleth = () => {
   const map = get(mapStore)
   const lvl = getAdminLevel()
   let maxzoom = 0
-  let minzoom = 3
   if (lvl == 1) {
-    ;(minzoom = 3), (maxzoom = 6)
+    maxzoom = 6
   }
   if (lvl == 2) {
-    ;(minzoom = 6), (maxzoom = 9)
+    maxzoom = 9
   }
   if (lvl == 3) {
-    ;(minzoom = 9), (maxzoom = 11)
+    maxzoom = 11
   }
   if (lvl == 4) {
-    ;(minzoom = 11), (maxzoom = 12)
+    maxzoom = 12
   }
 
   const layerSource: SourceSpecification = {
