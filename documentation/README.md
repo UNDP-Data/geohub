@@ -22,7 +22,7 @@ pipenv run serve
 1. Clone this repository: git clone https://github.com/UNDP-Data/geohub
 1. Move to documentation folder: `cd documentation`
 1. Build the container: `docker build . -t geohub-docs`
-1. Run it: `docker run -it -v ${PWD}/docs:/opt/app/docs -p 8000:8000 geohub-docs`
+1. Run it: `docker run -it -v ${PWD}:/opt/app -p 8000:8000 geohub-docs`
 1. Point your browser to the serving endpoint at http://localhost:8000.
 
 The server will automatically live-reload with any change made to the local `./docs` directory.
