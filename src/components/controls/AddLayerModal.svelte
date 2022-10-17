@@ -84,7 +84,7 @@
         layerSource = {
           type: LayerTypes.VECTOR,
           scheme: tilejson.scheme,
-          tiles: tilejson.tiles.map((url) => url.replace('http', 'https')),
+          tiles: tilejson.tiles,
           minzoom: tilejson.minzoom,
           maxzoom: tilejson.maxzoom,
         }
