@@ -6,5 +6,5 @@ Vector data comprises of point, lines and polygon layers
 
 Raster data acquired from different sources have been converted to Cloud Optimized GeoTiffs (COG) which allows users to stream just the portion of data that it needs, improving processing times and creating real-time workflows previously not possible. 
 
-![data_type.png](../assets/data/data_type.png)
+![data_type.png](../assets/data/data_type.png)geohub
 
