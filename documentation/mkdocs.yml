@@ -81,5 +81,5 @@ plugins:
 
 nav:
   - Get started: "index.md"
-  - User Guide:
-      - Intro: "userguide/intro.md"
+  - Data:
+      - Intro: "data/intro.md"

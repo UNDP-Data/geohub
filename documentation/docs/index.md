@@ -1,17 +1,7 @@
 # Welcome to Geohub
 
-[Geohub](https://geohub.data.undp.org) is UNDP's one stop shop for spatial data and analytics
+[UNDP GeoHub](https://geohub.data.undp.org/) is a repository of a wide array of data sets of the most recent time span available at your fingertips! The UNDP GeoHub is a centralized ecosystem of geospatial data and services to support development policy makers.  It allows for a user-friendly and improved accessibility for visualization, compute dynamic statistics, and download the data you most desire. With our repository you also can request to share your valuable data and create a platform for an informative and data friendly future! ​ 
 
-<!-- ## Commands
+It connects geospatial knowledge and knowhow across the organization to enhance evidence-based decision making with relevant data-led insights. 
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files. -->
+This downloadable manual has been developed to walk you through the key tools and functions of the UNDP GeoHub. For further questions and inquires, do not hesitate to contact us at support@geohub.org. 
