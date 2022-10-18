@@ -30,6 +30,15 @@
 
   const loadLayer = async () => {
     if (!tree.isRaster) throw new Error('This component can only be used for raster type')
+
+    if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
+      throw new Error('MosaicJSON feature is not yet implemented')
+    } else {
+      await loadRasterLayer()
+    }
+  }
+
+  const loadRasterLayer = async () => {
     $indicatorProgress = true
 
     const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
@@ -221,5 +230,7 @@
 <BucketTreeItemIcon on:addLayer={loadLayer} />
 <BucketTreeLabel bind:tree />
 <BucketTreeItemCardButton bind:tree />
-<BucketTreeItemDownloadButton bind:tree />
+{#if !(tree.isStac && tree.isMosaicJSON)}
+  <BucketTreeItemDownloadButton bind:tree />
+{/if}
 <BucketTreeItemLegend bind:tree />

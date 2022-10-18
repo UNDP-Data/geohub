@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import fs from 'fs'
-import type { StacCollection, StacItemFeatureCollection } from '$lib/StacType'
+import type { StacCollection, StacItemFeature, StacItemFeatureCollection } from '$lib/StacType'
 import type { TreeNode } from '$lib/types'
 
 import path from 'path'
@@ -12,27 +12,24 @@ export const GET: RequestHandler = async ({ url }) => {
   const catalogIds = url.searchParams.get('id')
   const containerPath = url.searchParams.get('path')
 
-  const catalogId = catalogIds.split(',')[0]
-  console.log(catalogId)
-  console.log(containerPath)
+  const catalogId = catalogIds.split('_')[0]
+  const collectionId = catalogIds.split('_')[1]
 
   let catalog: TreeNode = catalogues.find((catalog) => catalog.id === catalogId)
   if (!catalog) {
     throw error(400, { message: `${catalogId} is invalid` })
   }
 
-  const baseUrl = catalog.url
-
+  const baseUrl = `${catalog.url}${catalog.path}`
   if (catalog.path === containerPath) {
     // /api/stac/v1/collections
-    const apiUrl = `${baseUrl}${catalog.path}`
-    const collections = await getCollections(apiUrl)
+    const collections = await getCollections(baseUrl)
     catalog.children = []
     collections.forEach((collection) => {
       catalog.children.push({
-        id: `${catalog.id},${collection.id}`,
+        id: `${catalog.id}_${collection.id}`,
         label: collection.title,
-        path: `${apiUrl}/${collection.id}/items?limit=1`,
+        path: `collection_${collection.id}`,
         url: undefined,
         isRaster: true,
         isStac: true,
@@ -40,42 +37,63 @@ export const GET: RequestHandler = async ({ url }) => {
         children: [],
       })
     })
-  } else {
+  } else if (containerPath.toLowerCase().indexOf('collection') > -1) {
     // /api/stac/v1/collections/{collection_id}/items?limit=1
-    const item = await getItem(containerPath)
-    console.log(item)
+    const apiUrl = `${baseUrl}/${collectionId}/items?limit=1`
+    const item = await getItem(apiUrl)
     const collectionUrl = item.links.find((link) => link.rel === 'collection').href
-    console.log(collectionUrl)
+    const rootUrl = item.links.find((link) => link.rel === 'root').href
     const collection = await getCollection(collectionUrl)
     catalog = {
-      id: `${catalog.id},${collection.id}`,
+      id: `${catalog.id}_${collectionId}`,
       label: collection.title,
-      path: `${baseUrl}/${collection.id}/items?limit=1`,
+      path: `collection_${collectionId}`,
       url: undefined,
       isRaster: true,
       isStac: true,
       isMosaicJSON: true,
       children: [],
     }
-    Object.keys(item.assets).forEach((key) => {
-      const asset = item.assets[key]
+
+    // const itemUrl = item.links.find((link) => link.rel === 'self').href
+    // console.log(itemUrl)
+    // const itemDetail = await getItemDetail(itemUrl)
+    // console.log(itemDetail.assets)
+    const itemProperties = item.properties
+    Object.keys(item.assets).forEach((assetName) => {
+      const asset = item.assets[assetName]
       if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
-      const searchUrl = `${baseUrl}/search?collections=${
-        collection.id
-      }&sortby=${'datetime'}&limit=${20}&filter=${encodeURIComponent(
-        JSON.stringify({ op: '<=', args: [{ property: 'eo:cloud_cover' }, 10] }),
-      )}`
+      // generate URL for search API except bbox parameter
+      // bbox needs to be specified from frontend based on the current viewing.
+      let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${20}`
+      if (itemProperties['eo:cloud_cover']) {
+        searchUrl = `${searchUrl}&filter=${JSON.stringify({ op: '<=', args: [{ property: 'eo:cloud_cover' }, 10] })}`
+      }
+      let description = `
+        ${collection.description}
+        `
+      if (collection.summaries && collection.summaries['eo:bands']) {
+        const band = collection.summaries['eo:bands'].find((band) => band.name === assetName)
+        if (band && band.description) {
+          description = band.description
+        }
+      }
+
       catalog.children.push({
-        id: `${catalog.id},${collection.id},${key}`,
+        id: `${catalog.id}_${collectionId}_${assetName}`,
         label: asset.title,
-        path: `${collection.id}-${key}`,
+        description: description,
+        path: `asset-${assetName}`,
         url: searchUrl,
         isRaster: true,
         isStac: true,
         isMosaicJSON: true,
-        children: [],
+        // children: [],
       })
     })
+  } else {
+    // others
+    throw error(400, { message: 'Bad request' })
   }
   // console.log(catalog)
 
@@ -103,4 +121,10 @@ const getItem = async (url: string) => {
   const res = await fetch(url)
   const fc: StacItemFeatureCollection = await res.json()
   return fc.features[0]
+}
+
+const getItemDetail = async (url: string) => {
+  const res = await fetch(url)
+  const json: StacItemFeature = await res.json()
+  return json
 }

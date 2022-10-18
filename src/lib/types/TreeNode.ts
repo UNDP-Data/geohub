@@ -16,4 +16,5 @@ export interface TreeNode {
   paginationDirectionDisabled?: string
   collectionUrl?: string
   isMosaicJSON?: boolean
+  description?: string
 }

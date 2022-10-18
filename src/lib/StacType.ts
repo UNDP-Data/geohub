@@ -45,6 +45,17 @@ export interface StacCollection {
     name: string
     roles: string[]
   }[]
+  summaries: {
+    gsd: number[]
+    'eo:bands': {
+      name: string
+      description: string
+      gsd?: number
+      common_name?: string
+      center_wavelength?: number
+      full_width_half_max?: number
+    }[]
+  }
   description: string
   stac_version: string
   item_assets?: {
@@ -92,6 +103,7 @@ export interface StacItemFeature {
       type: string
       roles: string[]
       gsd: number
+      description: string
     }
   }
   geometry: GeoJSON.Geometry

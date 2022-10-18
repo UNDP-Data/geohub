@@ -10,12 +10,16 @@
     {#if tree.children}
       {clean(tree.label)}
     {:else if tree.isStac}
-      {clean(
-        tree.path
-          .split('/')
-          .pop()
-          .replace(/\.[^/.]+$/, ''),
-      )}
+      {#if tree.isMosaicJSON}
+        {clean(tree.label)}
+      {:else}
+        {clean(
+          tree.path
+            .split('/')
+            .pop()
+            .replace(/\.[^/.]+$/, ''),
+        )}
+      {/if}
     {:else}
       {clean(tree.label)}
     {/if}
