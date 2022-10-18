@@ -15,4 +15,5 @@ export interface TreeNode {
   isMartin?: boolean
   paginationDirectionDisabled?: string
   collectionUrl?: string
+  isMosaicJSON?: boolean
 }
