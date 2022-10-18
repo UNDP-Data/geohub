@@ -80,6 +80,10 @@ plugins:
   - search
 
 nav:
-  - Get started: "index.md"
-  - User Guide:
-      - Intro: "userguide/intro.md"
+  - "Get started": "index.md"
+  - Data:
+    - Intro: "data/intro.md"
+    - Data_structure: "data/data structure.md"
+    - Special_buckets: "data/special_buckets.md"
+  - Visualization:
+    - Map_view: "visualization/map_view.md"
