@@ -54,7 +54,6 @@
     $indicatorProgress = true
     let treeData: { tree: TreeNode }
 
-    console.log(tree)
     if (tree.isStac) {
       if (tree.isMosaicJSON) {
         treeData = await fetchUrl(`stac?id=${tree.id}&path=${tree.path}`)

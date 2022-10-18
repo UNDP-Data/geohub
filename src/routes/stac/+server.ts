@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import fs from 'fs'
-import type { StacCollection, StacItemFeature, StacItemFeatureCollection } from '$lib/StacType'
-import type { TreeNode } from '$lib/types'
+import type { StacCollection, StacItemFeature, StacItemFeatureCollection, TreeNode } from '$lib/types'
 
 import path from 'path'
 const __dirname = path.resolve()
@@ -11,6 +10,9 @@ export const GET: RequestHandler = async ({ url }) => {
   const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/mosaic-stac.json`, 'utf8'))
   const catalogIds = url.searchParams.get('id')
   const containerPath = url.searchParams.get('path')
+
+  // because of limitation of URL length, set 15 as limit of COGs
+  const LIMIT = 10
 
   const catalogId = catalogIds.split('_')[0]
   const collectionId = catalogIds.split('_')[1]
@@ -65,7 +67,7 @@ export const GET: RequestHandler = async ({ url }) => {
       if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
       // generate URL for search API except bbox parameter
       // bbox needs to be specified from frontend based on the current viewing.
-      let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${20}`
+      let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${LIMIT}`
       if (itemProperties['eo:cloud_cover']) {
         searchUrl = `${searchUrl}&filter=${JSON.stringify({ op: '<=', args: [{ property: 'eo:cloud_cover' }, 10] })}`
       }
@@ -83,7 +85,7 @@ export const GET: RequestHandler = async ({ url }) => {
         id: `${catalog.id}_${collectionId}_${assetName}`,
         label: asset.title,
         description: description,
-        path: `asset-${assetName}`,
+        path: `${assetName}`,
         url: searchUrl,
         isRaster: true,
         isStac: true,

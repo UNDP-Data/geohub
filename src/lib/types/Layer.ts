@@ -10,6 +10,7 @@ import type {
 import type { ContinuousLegend } from './ContinuousLegend'
 import type { IntervalLegend } from './IntervalLegend'
 import type { RasterTileMetadata } from './RasterTileMetadata'
+import type { TreeNode } from './TreeNode'
 import type { UniqueLegend } from './UniqueLegend'
 import type { VectorTileMetadata } from './VectorTileMetadata'
 
@@ -44,4 +45,5 @@ export interface Layer {
   fillOutlineColor?: string
   zoomLevel?: number
   percentile98?: number
+  tree?: TreeNode
 }
