@@ -45,12 +45,13 @@
           class="card-header-title is-centered is-v-centered {currentSelectedOperation === operation.value
             ? 'has-text-white-ter'
             : 'has-text-white-ter'}  ">
-          {operation.label}
+         
           {#if currentSelectedOperation === operation.value}
             <span class="icon  ">
               <i class="fa-solid fa-check" />
             </span>
           {/if}
+          {operation.label}
         </span>
       </div>
       <div class="card-content  p-0 m-0 has-text-centered ">

@@ -58,19 +58,19 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div style="max-height: 200px; overflow-y: auto" class="grid-wrapper" role="menu" on:click={handleClick}>
+<div style="max-height: 200px; overflow-y: auto" class="grid-wrapper " role="menu" on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       {#if design1}
         <div 
-            class="grid-item card p-0 m-0 is-info is-clickable  has-text-centered"
+            class="grid-item card  m-010 is-info is-clickable  has-text-centered"
             on:click={() => {
               propertySelectValue = propertySelectOption;
               handleClick
             }}
             title={layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() === 'string'
-            ? `${clean(propertySelectOption)}, textual property`
-            : ` ${clean(propertySelectOption)0}, numeric property`}
+            ? `${clean(propertySelectOption)}, text property`
+            : ` ${clean(propertySelectOption)}, numeric property`}
           >
           <div
             class="card-header is-size-6  pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
@@ -80,25 +80,43 @@
               class="card-header-title grid-item is-centered is-v-centered {propertySelectValue === propertySelectOption
                 ? 'has-text-white-ter'
                 : 'has-text-white-ter'}  ">
-              {clean(propertySelectOption)}
+              
               {#if propertySelectOption === propertySelectValue}
                 <span class="icon ">
                   <i class="fa-solid fa-check" />
                 </span>
               {/if}
+              {clean(propertySelectOption)}
             </span>
           </div>
-          <div class="card-content has-text-centered ">
+          {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() !== 'string'}
+              
+                <span class="fa-stack fa-2x has-text-danger-dark">
+                  <i class="fa-solid fa-square fa-stack-2x"></i>
+                  <i class="fa-solid fa-list-ol fa-stack-1x fa-inverse" />
+                </span>
+              
+               
+              {:else}
+                <span class="fa-stack fa-2x has-text-danger-dark">
+                  <i class="fa-solid fa-square fa-stack-2x"></i>
+                  <i class="fa-solid fa-t fa-stack-1x fa-inverse" />
+                </span>
+                
+                
+              {/if}
+          <!-- <div class="card-content has-text-centered ">
             <div class="content has-text-weight-bold ">
               
               {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() !== 'string'}
                 <span  class="tag is-size-6 has-background-danger-dark has-text-white p-1 m-0 ">123456</span>
+                
               {:else}
               <span class="tag is-size-6 has-background-danger-dark has-text-white p-2 m-0 ">Abcdef</span>
                 
               {/if}
             </div>
-          </div>
+          </div> -->
             
           
         </div>
@@ -178,7 +196,7 @@
 <style lang="scss">
   .grid-wrapper {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
     //display: grid;
     //grid-auto-columns: minmax(2, auto);
