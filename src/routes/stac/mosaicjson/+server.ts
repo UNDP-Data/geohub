@@ -5,13 +5,22 @@ import { getBase64EncodedUrl } from '$lib/helper'
 
 const TITILER_MOSAIC_ENDPOINT = PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')
 
+import { v4 as uuidv4 } from 'uuid'
+import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
+const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
+
+import fs from 'fs'
+import path from 'path'
+const __dirname = path.resolve()
+
 export const GET: RequestHandler = async ({ url }) => {
   const searchUrl = url.searchParams.get('url')
   const bbox: number[] = JSON.parse(url.searchParams.get('bbox'))
   const asset = url.searchParams.get('asset')
 
-  const itemUrls = await searchStacItemUrls(searchUrl, bbox, asset)
-  const mosaicJsonUrl = createTitilerMosaicJsonEndpoint(itemUrls)
+  const searchResult = await searchStacItemUrls(searchUrl, bbox, asset)
+  const mosaicJsonUrl = await createTitilerMosaicJsonEndpoint(searchResult.urls, searchResult.filter)
   const tileJsonUrl = createMosaicTileJson(mosaicJsonUrl)
   return new Response(
     JSON.stringify({
@@ -96,14 +105,32 @@ const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: stri
   fc.features.forEach((f) => {
     itemUrls.push(`${f.assets[targetAsset].href}?${sasToken}`)
   })
-  return itemUrls
+  return {
+    urls: itemUrls,
+    filter: JSON.stringify(payload),
+  }
 }
 
-const createTitilerMosaicJsonEndpoint = (urls: string[]) => {
-  const url = `${TITILER_MOSAIC_ENDPOINT}/create?${urls
-    .map((url, index) => `${index > 0 ? '&' : ''}url=${getBase64EncodedUrl(url)}`)
-    .join('')}`
-  return url
+const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) => {
+  const payload = {
+    url: urls,
+    minzoom: 0,
+    maxzoom: 22,
+    attribution: `<a target="_top" rel="noopener" href="http://undp.org">United Nations Development Programme</a>`,
+  }
+  const res = await fetch(`${TITILER_MOSAIC_ENDPOINT}/create`, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(JSON.parse(JSON.stringify(payload))),
+  })
+  const json = await res.json()
+
+  const blobUrl = await storeMosaicJson2Blob(json, filter)
+  console.log(`mosaicjson was generated at: ${blobUrl}`)
+  return blobUrl
 }
 
 const createMosaicTileJson = (mosaicJsonurl: string) => {
@@ -120,4 +147,51 @@ const getMsStacToken = async (originUrl: string) => {
   const json = await res.json()
   const token = json.token
   return token
+}
+
+const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
+  // create storage container
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
+
+  const containerName = 'mosaicjson'
+
+  const containerClient = blobServiceClient.getContainerClient(containerName)
+
+  const blobName = `${uuidv4()}.json`
+  const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
+
+  const tmpDir = path.resolve(`${__dirname}/tmp/`)
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir)
+  }
+
+  const localFileWithPath = path.resolve(tmpDir, blobName)
+  fs.writeFileSync(localFileWithPath, JSON.stringify(mosaicjson))
+
+  // upload options
+  const uploadOptions = {
+    tags: {
+      filter: JSON.parse(filter).filter.args[0].args[1],
+      createdBy: 'GeoHub API',
+      createdOn: new Date().toDateString(),
+    },
+  }
+
+  // upload file to blob storage
+  await blockBlobClient.uploadFile(localFileWithPath, uploadOptions)
+  // console.log(`${blobName} succeeded`);
+
+  fs.unlinkSync(localFileWithPath)
+
+  const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
+    new Date(new Date().valueOf() + 86400000),
+    AccountSASPermissions.parse('r'),
+    'o',
+  )
+  const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
+
+  return `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}${ACCOUNT_SAS_TOKEN_URL.search}`
 }

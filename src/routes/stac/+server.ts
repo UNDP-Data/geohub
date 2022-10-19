@@ -11,8 +11,8 @@ export const GET: RequestHandler = async ({ url }) => {
   const catalogIds = url.searchParams.get('id')
   const containerPath = url.searchParams.get('path')
 
-  // because of limitation of URL length, set 15 as limit of COGs
-  const LIMIT = 10
+  // because of limitation of URL length, set 50 as limit of COGs
+  const LIMIT = 50
 
   const catalogId = catalogIds.split('_')[0]
   const collectionId = catalogIds.split('_')[1]
