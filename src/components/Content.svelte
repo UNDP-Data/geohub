@@ -10,7 +10,7 @@
   import { map, martinIndex } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import { fetchUrl } from '$lib/helper'
-  import Tabs_UNDP from './Tabs_UNDP.svelte'
+  import Tabs from './Tabs.svelte'
 
   export let drawerOpen = false
 
@@ -64,7 +64,7 @@
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Header style="border-bottom: none;">
-          <Tabs_UNDP bind:activeTab bind:tabs />
+          <Tabs bind:activeTab bind:tabs />
         </Header>
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.BUCKETS}>

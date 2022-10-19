@@ -3,7 +3,7 @@
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
   import { faChalkboardUser } from '@fortawesome/free-solid-svg-icons/faChalkboardUser'
   import Fa from 'svelte-fa'
-  import StyleShare from '../StyleShare.svelte'
+  import StyleShare from './StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
 
   export let drawerOpen = true
