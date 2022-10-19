@@ -3,7 +3,7 @@
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
-  import RasterLayer_UNDP from '$components/UNDPComponents/RasterLayer_UNDP.svelte'
+  import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
   import { layerList, dynamicLayers } from '$stores'
   import DynamicLayer from '$components/DynamicLayer.svelte'
@@ -39,8 +39,8 @@
 <div class="layer-list">
   {#each $layerList as layer (layer.definition.id)}
     {#if layer.type === LayerTypes.RASTER}
-      <RasterLayer_UNDP {layer} />
-      <!--     FixMe: Component commented out to make use of the RasterLayer_UNDP component-->
+      <RasterLayer {layer} />
+      <!--     FixMe: Component commented out to make use of the RasterLayer component-->
       <!--    <RasterLayer {layer} />-->
     {:else if layer.type === LayerTypes.VECTOR}
       <VectorLayer {layer} />
