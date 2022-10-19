@@ -22,8 +22,72 @@ export const GET: RequestHandler = async ({ url }) => {
 }
 
 const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: string) => {
-  const apiUrl = `${url}&bbox=${bbox.join(',')}`
-  const res = await fetch(apiUrl)
+  // convert GET url to Post url for /search api
+  const _url = new URL(url)
+  const collections = _url.searchParams.get('collections')
+  const sortby = _url.searchParams.get('sortby')
+  const limit = _url.searchParams.get('limit')
+  const filter = _url.searchParams.get('filter')
+  const baseUrl = `${_url.origin}${_url.pathname}`
+  const payload = {
+    'filter-lang': 'cql2-json',
+    filter: {
+      op: 'and',
+      args: [
+        {
+          op: '=',
+          args: [
+            {
+              property: 'collection',
+            },
+            collections,
+          ],
+        },
+        {
+          op: 's_intersects',
+          args: [
+            {
+              property: 'geometry',
+            },
+            {
+              type: 'Polygon',
+              coordinates: [
+                [
+                  [bbox[0], bbox[1]],
+                  [bbox[2], bbox[1]],
+                  [bbox[2], bbox[3]],
+                  [bbox[0], bbox[3]],
+                  [bbox[0], bbox[1]],
+                ],
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    limit: limit,
+    sortby: [
+      {
+        field: sortby,
+        direction: 'asc',
+      },
+    ],
+  }
+  if (filter) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    payload.filter.args.push(JSON.parse(filter))
+  }
+
+  const res = await fetch(baseUrl, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(JSON.parse(JSON.stringify(payload))),
+  })
+
   const fc: StacItemFeatureCollection = await res.json()
   const itemUrls: string[] = []
 
@@ -43,10 +107,8 @@ const createTitilerMosaicJsonEndpoint = (urls: string[]) => {
 }
 
 const createMosaicTileJson = (mosaicJsonurl: string) => {
-  const rio_formula = 'gamma G 1.85 gamma B 1.95 sigmoidal RGB 35 0.13 saturation 1.15'
-  const url = `${TITILER_MOSAIC_ENDPOINT}/tilejson.json?url=${encodeURIComponent(
-    mosaicJsonurl,
-  )}&resampling=nearest&color_formula=${encodeURIComponent(rio_formula)}`
+  // const rio_formula = 'gamma G 1.85 gamma B 1.95 sigmoidal RGB 35 0.13 saturation 1.15'
+  const url = `${TITILER_MOSAIC_ENDPOINT}/tilejson.json?url=${encodeURIComponent(mosaicJsonurl)}&resampling=nearest`
   return url
 }
 

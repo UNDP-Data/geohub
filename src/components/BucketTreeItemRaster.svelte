@@ -47,7 +47,7 @@
         message: ErrorMessages.TOO_SMALL_ZOOM_LEVEL,
       }
       bannerMessages.update((data) => [...data, bannerErrorMessage])
-      throw new Error(ErrorMessages.TOO_SMALL_ZOOM_LEVEL)
+      return
     }
     $indicatorProgress = true
 
@@ -112,7 +112,6 @@
     $map.addLayer(layerDefinition, firstSymbolId)
 
     $indicatorProgress = false
-    // throw new Error('MosaicJSON feature is not yet implemented')
   }
 
   const loadRasterLayer = async () => {

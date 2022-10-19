@@ -57,19 +57,16 @@ export const GET: RequestHandler = async ({ url }) => {
       children: [],
     }
 
-    // const itemUrl = item.links.find((link) => link.rel === 'self').href
-    // console.log(itemUrl)
-    // const itemDetail = await getItemDetail(itemUrl)
-    // console.log(itemDetail.assets)
     const itemProperties = item.properties
     Object.keys(item.assets).forEach((assetName) => {
       const asset = item.assets[assetName]
       if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
       // generate URL for search API except bbox parameter
       // bbox needs to be specified from frontend based on the current viewing.
+      // this search URL does not work, it needs to be converted to POST version from query params specified by frontend.
       let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${LIMIT}`
       if (itemProperties['eo:cloud_cover']) {
-        searchUrl = `${searchUrl}&filter=${JSON.stringify({ op: '<=', args: [{ property: 'eo:cloud_cover' }, 10] })}`
+        searchUrl = `${searchUrl}&filter=${JSON.stringify({ op: '<=', args: [{ property: 'eo:cloud_cover' }, 5] })}`
       }
       let description = `
         ${collection.description}
@@ -97,7 +94,6 @@ export const GET: RequestHandler = async ({ url }) => {
     // others
     throw error(400, { message: 'Bad request' })
   }
-  // console.log(catalog)
 
   return new Response(
     JSON.stringify({
@@ -123,10 +119,4 @@ const getItem = async (url: string) => {
   const res = await fetch(url)
   const fc: StacItemFeatureCollection = await res.json()
   return fc.features[0]
-}
-
-const getItemDetail = async (url: string) => {
-  const res = await fetch(url)
-  const json: StacItemFeature = await res.json()
-  return json
 }
