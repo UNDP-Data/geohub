@@ -97,7 +97,7 @@ const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: stri
     body: JSON.stringify(JSON.parse(JSON.stringify(payload))),
   })
   if (!res.ok) {
-    throw error(res.status, { message: res.statusText})
+    throw error(res.status, { message: res.statusText })
   }
 
   const fc: StacItemFeatureCollection = await res.json()
@@ -130,7 +130,7 @@ const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) =
     body: JSON.stringify(JSON.parse(JSON.stringify(payload))),
   })
   if (!res.ok) {
-    throw error(res.status, { message: res.statusText})
+    throw error(res.status, { message: res.statusText })
   }
   const json = await res.json()
 
@@ -151,7 +151,7 @@ const getMsStacToken = async (originUrl: string) => {
   const url = `${_url.origin}/api/sas/v1/token/${collectionId}`
   const res = await fetch(url)
   if (!res.ok) {
-    throw error(res.status, { message: res.statusText})
+    throw error(res.status, { message: res.statusText })
   }
   const json = await res.json()
   const token = json.token
