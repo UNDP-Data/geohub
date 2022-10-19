@@ -72,29 +72,33 @@
       let availableUnique = {}
       let bandIndex: number = null
       if (layer.type === LayerTypes.RASTER) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        bandIndex = getActiveBandIndex(layer.info)
-        const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
-        const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
+        if (layer.tree && layer.tree.isMosaicJSON) {
+          throw new Error('TODO: Implement querying to mosaicjson')
+        } else {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          bandIndex = getActiveBandIndex(layer.info)
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
+          const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
-        const layerData = await fetchUrl(queryURL)
-        const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
+          const layerData = await fetchUrl(queryURL)
+          const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
-        let layerHasNoDataValue = false
+          let layerHasNoDataValue = false
 
-        if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true
+          if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true
 
-        if (layerHasNoDataValue === false) {
-          for (const value of layerData.values) {
-            if (value === layer.info.nodata_value) layerHasNoDataValue = true
+          if (layerHasNoDataValue === false) {
+            for (const value of layerData.values) {
+              if (value === layer.info.nodata_value) layerHasNoDataValue = true
+            }
           }
-        }
 
-        values = layerHasNoDataValue ? [] : layerData.values
-        presentUniqueNames = values.map((item) => {
-          return (presentUniqueNames[String(item)] = layerUniqueValues[item])
-        })
+          values = layerHasNoDataValue ? [] : layerData.values
+          presentUniqueNames = values.map((item) => {
+            return (presentUniqueNames[String(item)] = layerUniqueValues[item])
+          })
+        }
       } else if (layer.type === LayerTypes.VECTOR) {
         const layerClicked = $layerList.find((layerList) => layerList.definition.id === layer.definition.id)
         if (layerClicked.features) {

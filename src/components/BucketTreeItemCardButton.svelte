@@ -42,25 +42,29 @@
       metadata = $layerMetadata.get(layerPathHash)
     } else {
       if (tree.isStac) {
-        let description = ''
-
-        const bucketStac = $bucketList.find((bucket) => bucket.id === tree.path.split('/')[0])
-        const itemsUrl = []
-        itemsUrl.push(bucketStac.url)
-        itemsUrl.push(tree.path.split('/')[1])
-        itemsUrl.push('items')
-        itemsUrl.push(tree.label)
-        let layerInfo = await fetchUrl(itemsUrl.join('/'))
-
-        if (layerInfo?.properties?.description === undefined) {
-          layerInfo = await fetchUrl(itemsUrl.slice(0, -2).join('/'))
-          description = layerInfo?.description === undefined ? 'N/A' : layerInfo.description
+        if (tree.isMosaicJSON) {
+          await setLayerMetaDataStore(tree.description, clean(tree.id.split('_')[1]), 'N/A', layerPathHash)
         } else {
-          description = layerInfo.properties.description
-        }
+          let description = ''
 
-        const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
-        await setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
+          const bucketStac = $bucketList.find((bucket) => bucket.id === tree.path.split('/')[0])
+          const itemsUrl = []
+          itemsUrl.push(bucketStac.url)
+          itemsUrl.push(tree.path.split('/')[1])
+          itemsUrl.push('items')
+          itemsUrl.push(tree.label)
+          let layerInfo = await fetchUrl(itemsUrl.join('/'))
+
+          if (layerInfo?.properties?.description === undefined) {
+            layerInfo = await fetchUrl(itemsUrl.slice(0, -2).join('/'))
+            description = layerInfo?.description === undefined ? 'N/A' : layerInfo.description
+          } else {
+            description = layerInfo.properties.description
+          }
+
+          const source = layerInfo?.properties?.platform === undefined ? 'N/A' : layerInfo.properties.platform
+          await setLayerMetaDataStore(description, source, 'N/A', layerPathHash)
+        }
       } else {
         // get metadata from endpoint
         const layerURL = new URL(tree.url)

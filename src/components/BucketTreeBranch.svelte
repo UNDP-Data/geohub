@@ -55,13 +55,17 @@
     let treeData: { tree: TreeNode }
 
     if (tree.isStac) {
-      const catalogId = tree.path.split('/')[0]
-      treeData = await fetchUrl(
-        `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
-          .split('/')
-          .pop()
-          .replace(/\.[^/.]+$/, '')}`,
-      )
+      if (tree.isMosaicJSON) {
+        treeData = await fetchUrl(`stac?id=${tree.id}&path=${tree.path}`)
+      } else {
+        const catalogId = tree.path.split('/')[0]
+        treeData = await fetchUrl(
+          `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
+            .split('/')
+            .pop()
+            .replace(/\.[^/.]+$/, '')}`,
+        )
+      }
     } else if (tree.isMartin) {
       treeData = await fetchUrl(
         `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
@@ -90,7 +94,7 @@
     {/if}
   </div>
 {/if}
-{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac && tree.children.length > 0}
+{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac && !tree.isMosaicJSON && tree.children.length > 0}
   <BucketTreeBranchPagination
     disabledPrev={tree.paginationDirectionDisabled === STAC_PAGINATION_PREV}
     disabledNext={tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT}

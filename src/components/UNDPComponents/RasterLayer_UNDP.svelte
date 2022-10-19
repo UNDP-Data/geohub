@@ -16,6 +16,8 @@
 
   export let layer: Layer = LayerInitialValues
 
+  $: tree = layer.tree
+
   let activeTab = ''
   let isRefinePanelVisible = false
   let isLegendPanelVisible = false
@@ -45,12 +47,19 @@
     }
   }
 
-  const tabs = [
+  let tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
     { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
     { label: TabNames.REFINE, icon: faCalculator, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
+
+  $: {
+    if (tree && tree.isMosaicJSON) {
+      // disable other menus since they are not working for mosaicjson layer currently
+      tabs = [{ label: TabNames.OPACITY, icon: faDroplet, active: false }]
+    }
+  }
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {

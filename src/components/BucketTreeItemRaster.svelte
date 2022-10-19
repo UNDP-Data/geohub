@@ -30,6 +30,102 @@
 
   const loadLayer = async () => {
     if (!tree.isRaster) throw new Error('This component can only be used for raster type')
+
+    if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
+      await loadMosaicJsonLayer()
+    } else {
+      await loadRasterLayer()
+    }
+  }
+
+  const loadMosaicJsonLayer = async () => {
+    const zoom = $map.getZoom()
+    if (zoom < 5) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.TOO_SMALL_ZOOM_LEVEL,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      return
+    }
+    $indicatorProgress = true
+
+    const bounds = $map.getBounds()
+    const bbox = [
+      bounds.getSouthWest().lng,
+      bounds.getSouthWest().lat,
+      bounds.getNorthEast().lng,
+      bounds.getNorthEast().lat,
+    ]
+    const mosaicjsonRes = await fetchUrl(
+      `stac/mosaicjson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
+    )
+
+    const layerSource: RasterSourceSpecification = {
+      type: LayerTypes.RASTER,
+      url: mosaicjsonRes.tilejson,
+      attribution:
+        'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+    }
+
+    const tileSourceId = tree.id
+    if (!(tileSourceId in $map.getStyle().sources)) {
+      $map.addSource(tileSourceId, layerSource)
+    }
+
+    const layerId = uuidv4()
+    const layerDefinition: RasterLayerSpecification = {
+      id: layerId,
+      type: LayerTypes.RASTER,
+      source: tileSourceId,
+      minzoom: 0,
+      maxzoom: 22,
+      layout: {
+        visibility: 'visible',
+      },
+    }
+
+    const layerInfo = await getMosaicJsonMetadata(mosaicjsonRes.tilejson)
+    const b64EncodedUrl: string = getBase64EncodedUrl(mosaicjsonRes.tilejson)
+    const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
+    $layerList = [
+      {
+        name: layerName,
+        definition: layerDefinition,
+        type: LayerTypes.RASTER,
+        info: layerInfo,
+        visible: true,
+        url: b64EncodedUrl,
+        source: layerSource,
+        tree: tree,
+      },
+      ...$layerList,
+    ]
+
+    let firstSymbolId = undefined
+    for (const layer of $map.getStyle().layers) {
+      if (layer.type === 'symbol') {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+    $map.addLayer(layerDefinition, firstSymbolId)
+
+    $indicatorProgress = false
+  }
+
+  const getMosaicJsonMetadata = async (tilejsonUrl: string) => {
+    const tilejson = await fetchUrl(tilejsonUrl)
+
+    const data: RasterTileMetadata = {
+      bounds: tilejson.bounds,
+    }
+    return data
+  }
+
+  const loadRasterLayer = async () => {
     $indicatorProgress = true
 
     const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
@@ -131,6 +227,7 @@
         expression: '',
         legendType: '',
         source: layerSource,
+        tree: tree,
       },
       ...$layerList,
     ]
@@ -221,5 +318,7 @@
 <BucketTreeItemIcon on:addLayer={loadLayer} />
 <BucketTreeLabel bind:tree />
 <BucketTreeItemCardButton bind:tree />
-<BucketTreeItemDownloadButton bind:tree />
+{#if !(tree.isStac && tree.isMosaicJSON)}
+  <BucketTreeItemDownloadButton bind:tree />
+{/if}
 <BucketTreeItemLegend bind:tree />

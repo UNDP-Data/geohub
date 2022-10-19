@@ -24,9 +24,12 @@
     const isBucketInTree = $treeBucket.some((node) => node.path === bucket.path)
 
     if (isBucketInTree === false) {
-      const isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
+      let isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
       const isBucketMartin = bucket.tags.find((tag: string) => tag.toLowerCase() === 'martin') ? true : false
-
+      const isBucketMosaic = bucket.tags.find((tag: string) => tag.toLowerCase() === 'mosaicjson') ? true : false
+      if (isBucketMosaic === true) {
+        isBucketStac = true
+      }
       treeBucketUpdated = [
         ...$treeBucket,
         {
@@ -34,6 +37,7 @@
           isRaster: true,
           isStac: isBucketStac,
           isMartin: isBucketMartin,
+          isMosaicJSON: isBucketMosaic,
           label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
           children: [],
