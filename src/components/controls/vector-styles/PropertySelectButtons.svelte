@@ -63,7 +63,7 @@
     {#each propertySelectOptions as propertySelectOption}
       {#if design1}
         <div 
-            class="grid-item card  m-010 is-info is-clickable  has-text-centered"
+            class="grid-item card  m-10 is-info is-clickable  has-text-centered "
             on:click={() => {
               propertySelectValue = propertySelectOption;
               handleClick
@@ -89,22 +89,27 @@
               {clean(propertySelectOption)}
             </span>
           </div>
-          {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() !== 'string'}
+          <div class="content is-small">
+            {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() !== 'string'}
               
                 <span class="fa-stack fa-2x has-text-danger-dark">
                   <i class="fa-solid fa-square fa-stack-2x"></i>
                   <i class="fa-solid fa-list-ol fa-stack-1x fa-inverse" />
                 </span>
               
-               
+              
               {:else}
                 <span class="fa-stack fa-2x has-text-danger-dark">
                   <i class="fa-solid fa-square fa-stack-2x"></i>
                   <i class="fa-solid fa-t fa-stack-1x fa-inverse" />
+                  
                 </span>
                 
                 
-              {/if}
+                
+          {/if}
+          </div>
+          
           <!-- <div class="card-content has-text-centered ">
             <div class="content has-text-weight-bold ">
               
@@ -218,6 +223,7 @@
     // text-align: center;
   }
 
+  
   // .fa-spell-check {
   //   position: absolute;
   //   top: 0;
