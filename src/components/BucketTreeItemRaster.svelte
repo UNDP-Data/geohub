@@ -87,6 +87,7 @@
       },
     }
 
+    const layerInfo = await getMosaicJsonMetadata(mosaicjsonRes.tilejson)
     const b64EncodedUrl: string = getBase64EncodedUrl(mosaicjsonRes.tilejson)
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
@@ -94,6 +95,7 @@
         name: layerName,
         definition: layerDefinition,
         type: LayerTypes.RASTER,
+        info: layerInfo,
         visible: true,
         url: b64EncodedUrl,
         source: layerSource,
@@ -112,6 +114,15 @@
     $map.addLayer(layerDefinition, firstSymbolId)
 
     $indicatorProgress = false
+  }
+
+  const getMosaicJsonMetadata = async (tilejsonUrl: string) => {
+    const tilejson = await fetchUrl(tilejsonUrl)
+
+    const data: RasterTileMetadata = {
+      bounds: tilejson.bounds,
+    }
+    return data
   }
 
   const loadRasterLayer = async () => {
