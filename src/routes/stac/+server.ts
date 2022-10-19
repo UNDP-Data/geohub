@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import fs from 'fs'
-import type { StacCollection, StacItemFeature, StacItemFeatureCollection, TreeNode } from '$lib/types'
+import type { StacCollection, StacItemFeatureCollection, TreeNode } from '$lib/types'
 
 import path from 'path'
 const __dirname = path.resolve()
@@ -104,6 +104,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
 const getCollections = async (url: string) => {
   const res = await fetch(url)
+  if (!res.ok) {
+    throw error(res.status, { message: res.statusText })
+  }
   const collection = await res.json()
   const collections: StacCollection[] = collection.collections
   return collections
@@ -111,12 +114,18 @@ const getCollections = async (url: string) => {
 
 const getCollection = async (url: string) => {
   const res = await fetch(url)
+  if (!res.ok) {
+    throw error(res.status, { message: res.statusText })
+  }
   const collection: StacCollection = await res.json()
   return collection
 }
 
 const getItem = async (url: string) => {
   const res = await fetch(url)
+  if (!res.ok) {
+    throw error(res.status, { message: res.statusText })
+  }
   const fc: StacItemFeatureCollection = await res.json()
   return fc.features[0]
 }
