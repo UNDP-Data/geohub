@@ -153,7 +153,7 @@
       {/if}
 
       {#if showSpinner === false && groupedTagSearchResults.size > 0}
-        <div class="is-size-6">
+        <div class="is-size-6 tag-result">
           {#each treeBucket as tree}
             <ul class="mb-3">
               <BucketTreeView bind:node={tree} />
@@ -168,5 +168,11 @@
 <style lang="scss">
   .tags-view-container .button {
     width: 75px;
+  }
+  $height: calc(100vh - 300px);
+
+  .tag-result {
+    overflow-y: auto;
+    height: $height;
   }
 </style>

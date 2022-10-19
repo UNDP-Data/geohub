@@ -9,7 +9,6 @@ pre-push:
       run: pnpm build
 
 pre-commit:
-  parallel: true
   commands:
     lint:
       tags: lint

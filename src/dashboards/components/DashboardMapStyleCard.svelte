@@ -118,6 +118,7 @@
 
 <div class="cell small-3" bind:this={nodeRef}>
   <div class="content-card" style="border: none">
+    <!-- svelte-ignore a11y-invalid-attribute -->
     <a href="#" aria-label={style.name}>
       <div style="display: flex; align-items: center; justify-content: space-between">
         <h6>{style.name}</h6>
@@ -137,6 +138,7 @@
             use:popperContent={popperOptions}
             transition:fade
             use:clickOutside={handleClose}>
+            <!-- svelte-ignore a11y-positive-tabindex -->
             <aside class="menu" tabindex="1">
               <button
                 class="button is-small"

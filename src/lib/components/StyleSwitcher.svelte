@@ -36,7 +36,7 @@
   const changeStyle = () => {
     if (!map) return
 
-    map.removeLayer(indexStyle.id)
+    if (map.getLayer(indexStyle.id)) map.removeLayer(indexStyle.id)
     const firstLayerId = map.getStyle().layers[0].id
     map.addLayer(indexStyle, firstLayerId)
 
@@ -44,7 +44,7 @@
       activeStyle = styleSecondary
       buttonStyle = stylePrimary
       for (const layer of stylePrimaryData.layers) {
-        map.removeLayer(layer.id)
+        if (map.getLayer(layer.id)) map.removeLayer(layer.id)
       }
       map.addSource('bing', styleSecondaryData.sources.bing)
       for (const layer of styleSecondaryData.layers) {
@@ -54,7 +54,7 @@
       activeStyle = stylePrimary
       buttonStyle = styleSecondary
       for (const layer of styleSecondaryData.layers) {
-        map.removeLayer(layer.id)
+        if (map.getLayer(layer.id)) map.removeLayer(layer.id)
       }
       map.removeSource('bing')
       for (const layer of stylePrimaryData.layers) {
@@ -69,9 +69,9 @@
     }
   }
 
-  const handleEnterKey = (e: any) => {
+  const handleEnterKey = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      e.target.click()
+      changeStyle()
     }
   }
 </script>

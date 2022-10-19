@@ -1,26 +1,23 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Drawer, { AppContent, Content, Header } from '@smui/drawer'
-  import LinearProgress from '@smui/linear-progress'
 
   import BucketView from '$components/BucketView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import TagsView from '$components/TagsView.svelte'
   import { PUBLIC_MARTIN_API_ENDPOINT } from '$lib/variables/public'
   import { TabNames } from '$lib/constants'
-  import { indicatorProgress, map, martinIndex } from '$stores'
+  import { map, martinIndex } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import { fetchUrl } from '$lib/helper'
-  import Tabs_UNDP from './Tabs_UNDP.svelte'
+  import Tabs from './Tabs.svelte'
 
   export let drawerOpen = false
 
   let activeTab = TabNames.BUCKETS
   let drawerWidth = 355
-  let hideLinearProgress = true
   let isResizingDrawer = false
   let tabs = [{ label: TabNames.BUCKETS }, { label: TabNames.TAGS }, { label: TabNames.LAYERS }]
-  $: hideLinearProgress = !$indicatorProgress
   $: {
     if (drawerOpen) {
       try {
@@ -63,15 +60,11 @@
 </script>
 
 <div class="content-container">
-  <Drawer
-    variant="dismissible"
-    bind:open={drawerOpen}
-    style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow:visible;">
+  <Drawer variant="dismissible" bind:open={drawerOpen} style="width: {drawerWidth}px; max-width: {drawerWidth}px;">
     <div class="drawer-container">
       <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
-        <LinearProgress indeterminate bind:closed={hideLinearProgress} />
         <Header style="border-bottom: none;">
-          <Tabs_UNDP bind:activeTab bind:tabs />
+          <Tabs bind:activeTab bind:tabs />
         </Header>
         <Content style="padding-right: 15px;">
           <div hidden={activeTab !== TabNames.BUCKETS}>
@@ -107,7 +100,7 @@
 </div>
 
 <style lang="scss">
-  @import '../../styles/bulma.css';
+  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
   .content-container {
     display: flex;
     flex-direction: column;
@@ -122,6 +115,11 @@
       height: calc(100vh - 52px);
     }
   }
+
+  :global(.mdc-drawer__content) {
+    overflow: hidden;
+  }
+
   :global(.app-content) {
     flex: auto;
     overflow: hidden;
@@ -148,7 +146,7 @@
     position: absolute;
     display: flex;
     width: 100%;
-    overflow: auto;
+    overflow: hidden;
     z-index: 0;
     flex-grow: 1;
 
@@ -159,7 +157,7 @@
       overflow: hidden;
 
       .drawer-content {
-        overflow: auto;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         flex-basis: 100%;

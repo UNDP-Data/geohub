@@ -15,3 +15,5 @@ env.ts
 node_modules
 yarn-error.log
 static/docs
+static/smui*.css
+tmp/

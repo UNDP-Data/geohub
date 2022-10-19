@@ -92,6 +92,7 @@ export enum ErrorMessages {
   NO_STYLE_EXISTS = 'No style id exists in the database',
   FAILED_TO_PARSE_METADATA = 'Failed to parse JSON from metadata',
   COMPONENT_NOT_RENDERED = 'Step Component cannot be rendered outside the Wizard component',
+  TOO_SMALL_ZOOM_LEVEL = 'Please zoom in more than zoom level: 5 in order to load the layer',
 }
 export const LayerIconTypes = [
   {

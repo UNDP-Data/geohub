@@ -16,7 +16,6 @@
   export let tree: TreeNode
   export let IsExpanded = false
   export let level = 0
-  export let isLoading = false
   export let handleRemoveBucket = (): void => {
     throw new Error('Please give the function from the parent component')
   }
@@ -51,23 +50,22 @@
     updateTreeStore()
   }
 
-  const setProgressIndicator = (state: boolean) => {
-    isLoading = state
-    $indicatorProgress = state
-  }
-
   const updateTreeStore = async () => {
-    setProgressIndicator(true)
+    $indicatorProgress = true
     let treeData: { tree: TreeNode }
 
     if (tree.isStac) {
-      const catalogId = tree.path.split('/')[0]
-      treeData = await fetchUrl(
-        `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
-          .split('/')
-          .pop()
-          .replace(/\.[^/.]+$/, '')}`,
-      )
+      if (tree.isMosaicJSON) {
+        treeData = await fetchUrl(`stac?id=${tree.id}&path=${tree.path}`)
+      } else {
+        const catalogId = tree.path.split('/')[0]
+        treeData = await fetchUrl(
+          `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
+            .split('/')
+            .pop()
+            .replace(/\.[^/.]+$/, '')}`,
+        )
+      }
     } else if (tree.isMartin) {
       treeData = await fetchUrl(
         `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
@@ -83,20 +81,20 @@
       tree = treeData.tree
     }
 
-    setProgressIndicator(false)
+    $indicatorProgress = false
   }
 </script>
 
 {#if tree.children}
   <div class="node-container" transition:slide={{ duration: IsExpanded ? 0 : 350 }}>
-    <BucketTreeBranchIcon bind:isLoading bind:level bind:IsExpanded on:toggleExpansion={toggleExpansion} />
+    <BucketTreeBranchIcon bind:level bind:IsExpanded on:toggleExpansion={toggleExpansion} />
     <BucketTreeLabel bind:tree />
     {#if level === 0}
       <BucketTreeBranchCloseButton on:remove={handleRemoveBucket} />
     {/if}
   </div>
 {/if}
-{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac && tree.children.length > 0}
+{#if IsExpanded && level > 0 && tree.isRaster && tree.isStac && !tree.isMosaicJSON && tree.children.length > 0}
   <BucketTreeBranchPagination
     disabledPrev={tree.paginationDirectionDisabled === STAC_PAGINATION_PREV}
     disabledNext={tree.paginationDirectionDisabled === STAC_PAGINATION_NEXT}

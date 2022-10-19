@@ -9,7 +9,7 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { map, layerList, bannerMessages, modalVisible } from '$stores'
+  import { map, layerList, bannerMessages, modalVisible, indicatorProgress } from '$stores'
   import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
     ClassificationMethodTypes,
@@ -22,10 +22,7 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let tree: TreeNode
-  export let isLoading = false
-  export let setProgressIndicator = (state: boolean): void => {
-    throw new Error('Please give the function from the parent component')
-  }
+
   let isAddLayerModalVisible = false
   $: {
     $modalVisible = isAddLayerModalVisible
@@ -33,7 +30,103 @@
 
   const loadLayer = async () => {
     if (!tree.isRaster) throw new Error('This component can only be used for raster type')
-    setProgressIndicator(true)
+
+    if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
+      await loadMosaicJsonLayer()
+    } else {
+      await loadRasterLayer()
+    }
+  }
+
+  const loadMosaicJsonLayer = async () => {
+    const zoom = $map.getZoom()
+    if (zoom < 5) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: ErrorMessages.TOO_SMALL_ZOOM_LEVEL,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      return
+    }
+    $indicatorProgress = true
+
+    const bounds = $map.getBounds()
+    const bbox = [
+      bounds.getSouthWest().lng,
+      bounds.getSouthWest().lat,
+      bounds.getNorthEast().lng,
+      bounds.getNorthEast().lat,
+    ]
+    const mosaicjsonRes = await fetchUrl(
+      `stac/mosaicjson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
+    )
+
+    const layerSource: RasterSourceSpecification = {
+      type: LayerTypes.RASTER,
+      url: mosaicjsonRes.tilejson,
+      attribution:
+        'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+    }
+
+    const tileSourceId = tree.id
+    if (!(tileSourceId in $map.getStyle().sources)) {
+      $map.addSource(tileSourceId, layerSource)
+    }
+
+    const layerId = uuidv4()
+    const layerDefinition: RasterLayerSpecification = {
+      id: layerId,
+      type: LayerTypes.RASTER,
+      source: tileSourceId,
+      minzoom: 0,
+      maxzoom: 22,
+      layout: {
+        visibility: 'visible',
+      },
+    }
+
+    const layerInfo = await getMosaicJsonMetadata(mosaicjsonRes.tilejson)
+    const b64EncodedUrl: string = getBase64EncodedUrl(mosaicjsonRes.tilejson)
+    const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
+    $layerList = [
+      {
+        name: layerName,
+        definition: layerDefinition,
+        type: LayerTypes.RASTER,
+        info: layerInfo,
+        visible: true,
+        url: b64EncodedUrl,
+        source: layerSource,
+        tree: tree,
+      },
+      ...$layerList,
+    ]
+
+    let firstSymbolId = undefined
+    for (const layer of $map.getStyle().layers) {
+      if (layer.type === 'symbol') {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+    $map.addLayer(layerDefinition, firstSymbolId)
+
+    $indicatorProgress = false
+  }
+
+  const getMosaicJsonMetadata = async (tilejsonUrl: string) => {
+    const tilejson = await fetchUrl(tilejsonUrl)
+
+    const data: RasterTileMetadata = {
+      bounds: tilejson.bounds,
+    }
+    return data
+  }
+
+  const loadRasterLayer = async () => {
+    $indicatorProgress = true
 
     const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
     const bandIndex = getActiveBandIndex(layerInfo)
@@ -50,7 +143,7 @@
         message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
       }
       bannerMessages.update((data) => [...data, bannerErrorMessage])
-      setProgressIndicator(false)
+      $indicatorProgress = false
       throw new Error(JSON.stringify(layerInfo))
     }
 
@@ -64,7 +157,7 @@
         message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
       }
       $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
-      setProgressIndicator(false)
+      $indicatorProgress = false
       throw new Error(ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX)
     }
     const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
@@ -134,6 +227,7 @@
         expression: '',
         legendType: '',
         source: layerSource,
+        tree: tree,
       },
       ...$layerList,
     ]
@@ -147,7 +241,7 @@
     $map.addLayer(layerDefinition, firstSymbolId)
 
     setTimeout(function () {
-      setProgressIndicator(false)
+      $indicatorProgress = false
     }, 350)
   }
 
@@ -221,8 +315,10 @@
   }
 </script>
 
-<BucketTreeItemIcon bind:isLoading on:addLayer={loadLayer} />
+<BucketTreeItemIcon on:addLayer={loadLayer} />
 <BucketTreeLabel bind:tree />
 <BucketTreeItemCardButton bind:tree />
-<BucketTreeItemDownloadButton bind:tree />
+{#if !(tree.isStac && tree.isMosaicJSON)}
+  <BucketTreeItemDownloadButton bind:tree />
+{/if}
 <BucketTreeItemLegend bind:tree />

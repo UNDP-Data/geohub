@@ -3,7 +3,7 @@
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
   import { faChalkboardUser } from '@fortawesome/free-solid-svg-icons/faChalkboardUser'
   import Fa from 'svelte-fa'
-  import StyleShare from '../StyleShare.svelte'
+  import StyleShare from './StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
 
   export let drawerOpen = true
@@ -46,6 +46,25 @@
         </div>
       </div>
       <div style="margin-right: 5%; width: fit-content; display: flex!important;">
+        <div
+          style="margin-left: 5%; margin-right: 20px; cursor: pointer"
+          role="button"
+          aria-label="Click to see the documentation">
+          <div
+            role="button"
+            aria-label="Click to see the documentation"
+            style="cursor: pointer"
+            on:click={() => window.open('/docs/index.html', '_blank')}
+            on:keydown={onKeyPressed}
+            tabindex="1">
+            <Wrapper>
+              <div class="icon">
+                <i class="fa-regular fa-circle-question fa-xl" />
+              </div>
+              <Tooltip showDelay={500} hideDelay={500} yPos="below">Click to see the documentation</Tooltip>
+            </Wrapper>
+          </div>
+        </div>
         <div
           role="button"
           aria-label="Open GeoHub Dashboards"

@@ -2,8 +2,8 @@
   import { style } from 'svelte-body'
 
   // Fixme: Start of new redesign components
-  import Header_UNDP from '$components/UNDPComponents/Header_UNDP.svelte'
-  import Content_UNDP from '$components/UNDPComponents/Content_UNDP.svelte'
+  import Header from '$components/Header.svelte'
+  import Content from '$components/Content.svelte'
   //Fixme: End of new redesign components
 
   import Map from '$components/Map.svelte'
@@ -18,10 +18,10 @@
 
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Header_UNDP bind:drawerOpen />
-<Content_UNDP bind:drawerOpen>
+<Header bind:drawerOpen />
+<Content bind:drawerOpen>
   <Map />
-</Content_UNDP>
+</Content>
 
 <style global lang="scss">
   body,
