@@ -62,14 +62,19 @@
       `stac/mosaicjson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
     )
 
+    const tilejson = await fetchUrl(mosaicjsonRes.tilejson)
+
     const layerSource: RasterSourceSpecification = {
       type: LayerTypes.RASTER,
-      url: mosaicjsonRes.tilejson,
+      // convert http to https because titiler's /mosaicjson/tilejson.json does not return https protocol currently
+      tiles: tilejson.tiles.map((tile) => tile.replace('http://', 'https://')),
+      minzoom: tilejson.minzoom,
+      maxzoom: tilejson.maxzoom,
+      bounds: tilejson.bounds,
       attribution:
         'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
     }
-
     const tileSourceId = tree.id
     if (!(tileSourceId in $map.getStyle().sources)) {
       $map.addSource(tileSourceId, layerSource)
@@ -87,7 +92,7 @@
       },
     }
 
-    const layerInfo = await getMosaicJsonMetadata(mosaicjsonRes.tilejson)
+    const layerInfo = await getMosaicJsonMetadata(tilejson)
     const b64EncodedUrl: string = getBase64EncodedUrl(mosaicjsonRes.tilejson)
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
@@ -116,9 +121,7 @@
     $indicatorProgress = false
   }
 
-  const getMosaicJsonMetadata = async (tilejsonUrl: string) => {
-    const tilejson = await fetchUrl(tilejsonUrl)
-
+  const getMosaicJsonMetadata = async (tilejson: { bounds: any }) => {
     const data: RasterTileMetadata = {
       bounds: tilejson.bounds,
     }
