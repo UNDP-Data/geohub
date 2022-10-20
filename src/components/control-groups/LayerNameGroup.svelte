@@ -5,7 +5,7 @@
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, hash } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled, layerMetadata} from '$stores'
+  import { layerLabelled, layerMetadata } from '$stores'
   import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
 
   export let layer: Layer

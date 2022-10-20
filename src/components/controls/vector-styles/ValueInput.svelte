@@ -1,251 +1,219 @@
 <script lang="ts">
-	
-    import RangeSlider from 'svelte-range-slider-pips'
-    import Tags from '$components/Tags.svelte'
-    import { createEventDispatcher } from 'svelte'
-    import { map, filterInputTags } from '$stores'
-    import arraystat from 'arraystat'
-    
+  import RangeSlider from 'svelte-range-slider-pips'
+  import Tags from '$components/Tags.svelte'
+  import { createEventDispatcher } from 'svelte'
+  import { map, filterInputTags } from '$stores'
+  import arraystat from 'arraystat'
 
-    import type { Listener, MapMouseEvent } from 'maplibre-gl'
-    import type { VectorLayerTileStatAttribute} from '$lib/types'
-    import { abs } from 'mathjs'
-    import { includes } from 'lodash'
+  import type { Listener, MapMouseEvent } from 'maplibre-gl'
+  import type { VectorLayerTileStatAttribute } from '$lib/types'
+  import { abs } from 'mathjs'
+  import { includes } from 'lodash'
 
+  export let propertySelectedValue
+  export let expressionValue
+  export let acceptSingleTag = true
+  export let layer
+  export let operator
 
-    export let propertySelectedValue
-    export let expressionValue
-    export let acceptSingleTag = true
-    export let layer
-    export let operator
+  let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
+  //console.log(`handling prop ${propertySelectedValue} of type ${dataType}`)
 
-    let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
-    //console.log(`handling prop ${propertySelectedValue} of type ${dataType}`)
+  // const getPropSampleValue = () => {
+  //     for (const feature of $map.querySourceFeatures(layer.definition.source, {sourceLayer: layer.definition['source-layer']}) ) {
+  //         return feature.properties[propertySelectedValue]
+  //     }
+  // }
 
-    // const getPropSampleValue = () => {
-    //     for (const feature of $map.querySourceFeatures(layer.definition.source, {sourceLayer: layer.definition['source-layer']}) ) {
-    //         return feature.properties[propertySelectedValue]
-    //     }        
-    // }
+  // const propval = getPropSampleValue()
 
-    // const propval = getPropSampleValue()
+  const layerId = layer.definition.id
 
- 
-    const layerId = layer.definition.id
+  const attrstats = layer.info.stats.filter((el: VectorLayerTileStatAttribute) => {
+    return el.attribute == propertySelectedValue
+  })[0]
+  if (!attrstats) {
+    //this should not happen, however....it could so a recation must be set (error)
+    console.log('WTF')
+  }
 
-    const attrstats = layer.info.stats.filter((el:VectorLayerTileStatAttribute) => {return el.attribute == propertySelectedValue})[0]
-    if (!attrstats) {
-        //this should not happen, however....it could so a recation must be set (error)
-        console.log('WTF')
+  //console.log(JSON.stringify(attrstats))
+
+  const hasManyFeatures = attrstats.count > 250
+  //console.log(`has many features ${hasManyFeatures}`)
+
+  const dispatch = createEventDispatcher()
+
+  const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+  let hideOptions = true
+  let step
+  let uv: any = undefined
+  let clickFuncs: Listener[] = []
+  let sv: Array<number> = []
+  let calculatedStep
+  let min
+  let max
+  let vals: Array<number> = []
+  let svals: Array<number> = []
+
+  let sindex
+  let eindex
+  let closest: number
+  let index: number
+  let sol
+  const nn = 5
+  $: tagsList = $filterInputTags
+
+  const fclosest = (array, goal) =>
+    array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev))
+
+  if (hasManyFeatures) {
+    // console.log(`stats for ${propertySelectedValue} =>  ${JSON.stringify(attrstats, null, '\t')}`)
+    min = Number(attrstats.min)
+    max = Number(attrstats.max)
+    const range = max - min
+    calculatedStep = Number.isInteger(attrstats.median) ? ~~(range * 1e-4) || 1 : range * 1e-4
+    sv = [attrstats.median]
+    //console.log(`sv is ${sv} ${typeof sv}`)
+  } else {
+    const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
+
+    // get the values of the property for each feature
+    const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
+
+    let optionsList: number[] = [...new Set(values.flat())]
+    sol = Array.from(optionsList).sort((a, b) => a - b)
+    const astats = arraystat(sol)
+    //console.log(astats)
+
+    min = astats.min
+    max = astats.max
+    //                                        negative               0->1
+    calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2
+    let closest = fclosest(sol, astats.median)
+    sv = [closest]
+
+    index = sol.indexOf(closest)
+    //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
+    sindex = index - nn < 0 ? 0 : index - nn
+    eindex = index + nn > sol.length - 1 ? sol.length : index + nn
+    vals = sol.slice(sindex, eindex)
+    svals = vals.sort()
+  }
+
+  $: {
+    if (!hasManyFeatures) {
+      closest = fclosest(sol, sv[0])
+      index = sol.indexOf(closest)
+      //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
+      sindex = index - nn < 0 ? 0 : index - nn
+      eindex = index + nn > sol.length - 1 ? sol.length : index + nn
+      vals = sol.slice(sindex, eindex)
+      svals = vals.sort()
     }
+  }
 
-    //console.log(JSON.stringify(attrstats))
-    
-    const hasManyFeatures = attrstats.count > 250
-    //console.log(`has many features ${hasManyFeatures}`)
+  const onSliderStop = (event: CustomEvent) => {
+    expressionValue = event.detail.value
+    dispatch('sliderStop', event.detail)
+  }
 
-    const dispatch = createEventDispatcher()
+  const handleTags = (event: CustomEvent) => {
+    tagsList = event.detail.tags
+  }
 
-    const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
-    let hideOptions = true
-    let step
-    let uv: any = undefined
-    let clickFuncs: Listener[] = []
-    let sv: Array<number> = []
-    let calculatedStep
-    let min
-    let max
-    let vals: Array<number> = []
-    let svals: Array<number> = []
-
-    let sindex
-    let eindex
-    let closest: number
-    let index: number
-    let sol
-    const nn = 5
-    $: tagsList = $filterInputTags
-
-    const fclosest = (array, goal) => array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev))
-
-    
-
-    if (hasManyFeatures) {
-        // console.log(`stats for ${propertySelectedValue} =>  ${JSON.stringify(attrstats, null, '\t')}`)
-        min = Number(attrstats.min)
-        max = Number(attrstats.max)
-        const range = max-min
-        calculatedStep = Number.isInteger(attrstats.median) ? ~~(range * 1e-4) || 1 : range * 1e-4
-        sv = [attrstats.median]
-        //console.log(`sv is ${sv} ${typeof sv}`)
-
+  const applyTags = () => {
+    // dispatch('apply')
+    const filteredTags = tagsList.filter((tag) => !sol.includes(tag))
+    $filterInputTags = [...$filterInputTags, ...filteredTags]
+    if (filteredTags.length > 0) {
+      dispatch('customTags', tagsList)
     } else {
-        
-        const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
-
-        // get the values of the property for each feature
-        const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
-
-
-        let optionsList:number[] = [...new Set(values.flat())]
-        sol = Array.from(optionsList).sort((a, b) => a - b) 
-        const astats = arraystat(sol)
-        //console.log(astats)
-        
-        min = astats.min
-        max = astats.max
-        //                                        negative               0->1 
-        calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2
-        let closest = fclosest(sol, astats.median)
-        sv = [closest]
-        
-        index = sol.indexOf(closest)
-        //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
-        sindex = index - nn < 0 ? 0 : index - nn
-        eindex = index + nn > sol.length - 1 ? sol.length : index + nn
-        vals = sol.slice(sindex, eindex)
-        svals = vals.sort()
-
-        
+      expressionValue = tagsList
     }
+    apply()
+  }
 
-    
-    $: {
-            
-            if (!hasManyFeatures) {
+  const apply = (e) => {
+    if (!expressionValue) expressionValue = sv[0]
+    dispatch('apply')
+  }
 
-                closest = fclosest(sol, sv[0] )
-                index = sol.indexOf(closest)
-                //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
-                sindex = index - nn < 0 ? 0 : index - nn
-                eindex = index + nn > sol.length - 1 ? sol.length : index + nn
-                vals = sol.slice(sindex, eindex)
-                svals = vals.sort()
-            }
-            
-            
-            
-        }
-    
-
-    
-
-    const onSliderStop = (event: CustomEvent) => {
-        expressionValue = event.detail.value
-        dispatch('sliderStop', event.detail)
-    }
-
-    const handleTags = (event: CustomEvent) => {
-        tagsList = event.detail.tags
-    }
-
-    const applyTags = () => {
-        // dispatch('apply')
-        const filteredTags = tagsList.filter((tag) => !sol.includes(tag))
-        $filterInputTags = [...$filterInputTags, ...filteredTags]
-        if (filteredTags.length > 0) {
-        dispatch('customTags', tagsList)
+  const handleMapClick = async (e: MapMouseEvent) => {
+    try {
+      if (e.features) {
+        // console.log(`operator: ${operator} ${operator.includes('in')} ${uv}`)
+        if (operator.includes('in')) {
+          if (Array.isArray(uv)) {
+            uv = [...uv, e.features[0].properties[propertySelectedValue]]
+          } else {
+            uv = [e.features[0].properties[propertySelectedValue]]
+          }
         } else {
-        expressionValue = tagsList
+          uv = e.features[0].properties[propertySelectedValue]
         }
-        apply()
+      }
+    } catch (error) {
+      console.log(`gor err ${error}`)
+    }
+  }
+
+  const getFromMap = async (e: CustomEvent) => {
+    $map.getCanvas().style.cursor = 'cell'
+    if (clickFuncs.length == 0) {
+      clickFuncs = [...$map._listeners.click]
+    }
+    for (var func of clickFuncs) {
+      $map.off('click', func)
     }
 
-    const apply = (e) => {
-        if(!expressionValue) expressionValue = sv[0]
-        dispatch('apply')
+    $map.on('click', layerId, handleMapClick)
+  }
+
+  const restoreQ = () => {
+    $map.off('click', layerId, handleMapClick)
+    for (var func of clickFuncs) {
+      $map.on('click', func)
     }
+  }
 
-    const handleMapClick = async (e: MapMouseEvent) => {
-        try {
-            if (e.features) {
-                // console.log(`operator: ${operator} ${operator.includes('in')} ${uv}`)
-                if (operator.includes('in')) {
-                    if (Array.isArray(uv)) {
-                        uv = [...uv, e.features[0].properties[propertySelectedValue]]
-                    } else {
-                        uv = [e.features[0].properties[propertySelectedValue]]
-                    }
-                    
-                }
-                else {
-                    uv = e.features[0].properties[propertySelectedValue]
+  const formatter = (v: number) => {
+    //console.log('formatting')
+    
 
-                }
-                
-        }
-            
-        } catch (error) {
-            console.log(`gor err ${error}`)
-            
-        }
-        
-    }
-
-    const getFromMap = async (e: CustomEvent) => {
-        $map.getCanvas().style.cursor = 'cell'
-            if (clickFuncs.length == 0) {
-            clickFuncs = [...$map._listeners.click]
-            }
-            for (var func of clickFuncs) {
-            $map.off('click', func)
-            }
-
-            $map.on('click', layerId, handleMapClick)
-        
-        
-    }
-
-    const restoreQ = () => {
-        $map.off('click', layerId, handleMapClick)
-        for (var func of clickFuncs) {
-            $map.on('click', func)
-        }
-    }
-
-
-    const formatter = (v:number) => {
-        //console.log('formatting')
-        
-        return v
-
-    }
+    return v
+  }
 </script>
 
-
-  <div class="content" style="width:100%; height:100%">
-
-    {#if hasManyFeatures } 
-
-        {#if dataType === 'String'}
-            <div class="columns is-centered pb-2">
-                <button class="button is-small primary-button  " on:click={getFromMap}>
-                    <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
-                </button>
-            </div>
-            {#if uv}
-                <div class="is-flex is-flex-direction-column is-align-items-center is-justify-items-center">
-                    <div class="notification is-size-6 has-text-centered">
-                        
-                        Selected value: <span class="has-text-weight-bold"> {uv} </span>    
-                        
-                    </div>
-                    <div class=" ">
-                        <button
-                        class="button is-small primary-button"
-                        on:click={(e) => {
-                            expressionValue = Array.isArray(uv) ? uv : [uv]
-                            apply(e)
-                            restoreQ()
-                        }}>
-                        <i class="fa fa-hammer" />&nbsp; Apply
-                        </button>
-                    </div>
-                </div>
-            
-            {/if}
-        {:else} <!-- Numeric many values-->
-            <!-- {#if attrstats.values.length < 25 && !['<', '>'].includes(operator) }
+<div class="content" style="width:100%; height:100%">
+  {#if hasManyFeatures}
+    {#if dataType === 'String'}
+      <div class="columns is-centered pb-2">
+        <button class="button is-small primary-button  " on:click={getFromMap}>
+          <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
+        </button>
+      </div>
+      {#if uv}
+        <div class="is-flex is-flex-direction-column is-align-items-center is-justify-items-center">
+          <div class="notification is-size-6 has-text-centered">
+            Selected value: <span class="has-text-weight-bold"> {uv} </span>
+          </div>
+          <div class=" ">
+            <button
+              class="button is-small primary-button"
+              on:click={(e) => {
+                expressionValue = Array.isArray(uv) ? uv : [uv]
+                apply(e)
+                restoreQ()
+              }}>
+              <i class="fa fa-hammer" />&nbsp; Apply
+            </button>
+          </div>
+        </div>
+      {/if}
+    {:else}
+      <!-- Numeric many values-->
+      <!-- {#if attrstats.values.length < 25 && !['<', '>'].includes(operator) }
 
                     <div class="buttons">
                         {#each attrstats.values as v}
@@ -265,174 +233,155 @@
 
                 {/if} -->
 
-            {#if ['<', '>'].includes(operator)}
-                
-                <div class="range-slider">
-                    <RangeSlider
-                        bind:values={sv}
-                        float
-                        pips={calculatedStep}
-                        {min}
-                        {max}
-                        step={calculatedStep}
-                        range="min"
-                        first="label"
-                        last="label"
-                        rest={false}
-                        on:stop={onSliderStop}>
-                    </RangeSlider> 
-                </div>
-                <div class="columns is-centered pb-2">
-                    <button class="button is-small primary-button" on:click={apply}><i class="fa fa-hammer" />&nbsp; Apply</button>
-                </div>
-            {:else}
-                
-                <div class="columns is-centered pb-2">
-                    <button class="button is-small primary-button  " on:click={getFromMap}>
-                        <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
-                    </button>
-                </div>
-                {#if uv}
-                    <div class="is-flex is-flex-direction-column is-align-items-center is-justify-items-center">
-                        <div class="notification is-size-6 has-text-centered">
-                            {#if typeof uv === 'number'}
-                                Selected value: <span class="has-text-weight-bold"> {new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(uv)} </span>        
-                            
-                            {:else}
-                                Selected value: <span class="has-text-weight-bold"> {uv} </span>    
-                            {/if}
-                            
-                        </div>
-                        <div class=" ">
-                            <button
-                            class="button is-small primary-button"
-                            on:click={() => {
-                                expressionValue = uv
-                                apply()
-                                restoreQ()
-                            }}>
-                            <i class="fa fa-hammer" />&nbsp; Apply
-                            </button>
-                        </div>
-                    </div>
-                
-                {/if}
-            {/if}
-            
-
-        {/if}
-
-
-        
-
-
-    {:else} <!--FEW features-->
-        <!-- {min} {max} {calculatedStep} -->
-        {#if dataType === 'String'}
-            <div>
-                {#if acceptSingleTag}
-                    <div class="notification has-background-danger-light is-size-6 has-text-danger">
-                    <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ operators
-                    are used
-                    </div>
-                {/if}
-                <Tags
-                    on:tags={handleTags}
-                    maxTags={acceptSingleTag ? 1 : 100}
-                    addKeys={[9, 13]}
-                    splitWith={'/'}
-                    onlyUnique={true}
-                    removeKeys={[27]}
-                    placeholder={'Select a value...'}
-                    autoComplete={sol}
-                    tags={tagsList}
-                    allowBlur={true}
-                    disable={false}
-                    minChars={0}
-                    onlyAutocomplete={true}
-                    labelShow={false}
-                    class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
-                    {acceptSingleTag}
-                />
-                <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
-                    <div>
-                    <button class="button is-rounded is-small is-info">
-                        <i class="fa-solid fa-circle-info " />
-                    </button>
-                    </div>
-                    <div>
-                    <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
-                        ><i class="fa fa-hammer" />&nbsp; Apply
-                    </button>
-                    </div>
-                </div>
+      {#if ['<', '>'].includes(operator)}
+        <div class="range-slider">
+          <RangeSlider
+            bind:values={sv}
+            float
+            pips={calculatedStep}
+            {min}
+            {max}
+            step={calculatedStep}
+            range="min"
+            first="label"
+            last="label"
+            rest={false}
+            on:stop={onSliderStop} />
+        </div>
+        <div class="columns is-centered pb-2">
+          <button class="button is-small primary-button" on:click={apply}
+            ><i class="fa fa-hammer" />&nbsp; Apply</button>
+        </div>
+      {:else}
+        <div class="columns is-centered pb-2">
+          <button class="button is-small primary-button  " on:click={getFromMap}>
+            <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a
+            value
+          </button>
+        </div>
+        {#if uv}
+          <div class="is-flex is-flex-direction-column is-align-items-center is-justify-items-center">
+            <div class="notification is-size-6 has-text-centered">
+              {#if typeof uv === 'number'}
+                Selected value: <span class="has-text-weight-bold">
+                  {new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(uv)}
+                </span>
+              {:else}
+                Selected value: <span class="has-text-weight-bold"> {uv} </span>
+              {/if}
             </div>
-        {:else} <!--Numeric property-->
-            {#if !['<', '>'].includes(operator)} <!--<> operators use slider-->
-                
-                    <div class="range-slider">
-                        <RangeSlider
-                            bind:values={sv}
-                            float
-                            pips={calculatedStep}
-                            {min}
-                            {max}
-                            step={calculatedStep}
-                            range="min"
-                            first="label"
-                            last="label"
-                            rest={false}>
-                        </RangeSlider>
-                    </div>
-              
-                
-        
-                <div class="buttons">
-                    {#each svals as v}
-                        <button
-                            on:click={(e) => {
-                                expressionValue = v
-                                apply(e)
-                            }}
-                            class="button has-background-info-light">
-                            {v}
-                        </button>
-                    {/each}
-                </div>
-            {:else}
-                
-                <div class="range-slider">
-                    <RangeSlider
-                    bind:values={sv}
-                    float
-                    pips={calculatedStep}
-                    {min}
-                    {max}
-                    step={calculatedStep}
-                    range="min"
-                    first="label"
-                    last="label"
-                    springValues={{ stiffness: 0.15, damping: 0.4} }
-                    rest={false}
-                    formatter={formatter}
-                    on:stop={onSliderStop}>
-                    </RangeSlider> 
-                </div>
-                <div class="columns is-centered pb-2">
-                    <button class="button is-small primary-button" on:click={apply}><i class="fa fa-hammer" />&nbsp; Apply</button>
-                </div>
-            {/if}
-            
+            <div class=" ">
+              <button
+                class="button is-small primary-button"
+                on:click={() => {
+                  expressionValue = uv
+                  apply()
+                  restoreQ()
+                }}>
+                <i class="fa fa-hammer" />&nbsp; Apply
+              </button>
+            </div>
+          </div>
         {/if}
+      {/if}
     {/if}
+  {:else}
+    <!--FEW features-->
+    <!-- {min} {max} {calculatedStep} -->
+    {#if dataType === 'String'}
+      <div>
+        {#if acceptSingleTag}
+          <div class="notification has-background-danger-light is-size-6 has-text-danger">
+            <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ operators
+            are used
+          </div>
+        {/if}
+        <Tags
+          on:tags={handleTags}
+          maxTags={acceptSingleTag ? 1 : 100}
+          addKeys={[9, 13]}
+          splitWith={'/'}
+          onlyUnique={true}
+          removeKeys={[27]}
+          placeholder={'Select a value...'}
+          autoComplete={sol}
+          tags={tagsList}
+          allowBlur={true}
+          disable={false}
+          minChars={0}
+          onlyAutocomplete={true}
+          labelShow={false}
+          class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
+          {acceptSingleTag} />
+        <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
+          <div>
+            <button class="button is-rounded is-small is-info">
+              <i class="fa-solid fa-circle-info " />
+            </button>
+          </div>
+          <div>
+            <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
+              ><i class="fa fa-hammer" />&nbsp; Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    {:else}
+      <!--Numeric property-->
+      {#if !['<', '>'].includes(operator)}
+        <!--<> operators use slider-->
 
-    
-      
-    
-      
-    
-  </div>
+        <div class="range-slider">
+          <RangeSlider
+            bind:values={sv}
+            float
+            pips={calculatedStep}
+            {min}
+            {max}
+            step={calculatedStep}
+            range="min"
+            first="label"
+            last="label"
+            rest={false} />
+        </div>
 
+        <div class="buttons">
+          {#each svals as v}
+            <button
+              on:click={(e) => {
+                expressionValue = v
+                apply(e)
+              }}
+              class="button has-background-info-light">
+              {v}
+            </button>
+          {/each}
+        </div>
+      {:else}
+        <div class="range-slider">
+          <RangeSlider
+            bind:values={sv}
+            float
+            pips={calculatedStep}
+            {min}
+            {max}
+            step={calculatedStep}
+            range="min"
+            first="label"
+            last="label"
+            springValues={{ stiffness: 0.15, damping: 0.4 }}
+            rest={false}
+            {formatter}
+            on:stop={onSliderStop} />
+        </div>
+        <div class="columns is-centered pb-2">
+          <button class="button is-small primary-button" on:click={apply}
+            ><i class="fa fa-hammer" />&nbsp; Apply</button>
+        </div>
+      {/if}
+    {/if}
+  {/if}
+</div>
 
 <style lang="scss">
   .grid {

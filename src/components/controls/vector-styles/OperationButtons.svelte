@@ -1,18 +1,16 @@
 <script lang="ts">
   import { vectorFilterOperations } from '$lib/constants'
-  
+
   import { createEventDispatcher } from 'svelte'
-  
+
   export let currentSelectedOperation = ''
   export let stringProperty = false
   export let numberProperty = false
 
-
-  const operationOptions = vectorFilterOperations.filter((el)=> {
-    if(stringProperty && ['>', '<'].includes(el.value) ) return false 
-    if(numberProperty && ['in', '!in'].includes(el.value) ) return false 
+  const operationOptions = vectorFilterOperations.filter((el) => {
+    if (stringProperty && ['>', '<'].includes(el.value)) return false
+    if (numberProperty && ['in', '!in'].includes(el.value)) return false
     return true
-
   })
 
   const dispatch = createEventDispatcher()
@@ -46,7 +44,6 @@
           class="card-header-title is-centered is-v-centered {currentSelectedOperation === operation.value
             ? 'has-text-white-ter'
             : 'has-text-white-ter'}  ">
-         
           {#if currentSelectedOperation === operation.value}
             <span class="icon  ">
               <i class="fa-solid fa-check" />

@@ -62,16 +62,15 @@
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       {#if design1}
-        <div 
-            class="grid-item card  m-10 is-info is-clickable  has-text-centered "
-            on:click={() => {
-              propertySelectValue = propertySelectOption;
-              handleClick
-            }}
-            title={layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() === 'string'
+        <div
+          class="grid-item card  m-10 is-info is-clickable  has-text-centered "
+          on:click={() => {
+            propertySelectValue = propertySelectOption
+            handleClick
+          }}
+          title={layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() === 'string'
             ? `${clean(propertySelectOption)}, text property`
-            : ` ${clean(propertySelectOption)}, numeric property`}
-          >
+            : ` ${clean(propertySelectOption)}, numeric property`}>
           <div
             class="card-header is-size-6  pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
               ? 'has-background-success'
@@ -80,7 +79,6 @@
               class="card-header-title grid-item is-centered is-v-centered {propertySelectValue === propertySelectOption
                 ? 'has-text-white-ter'
                 : 'has-text-white-ter'}  ">
-              
               {#if propertySelectOption === propertySelectValue}
                 <span class="icon ">
                   <i class="fa-solid fa-check" />
@@ -91,17 +89,16 @@
           </div>
           <div class="content ">
             {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() == 'string'}
-                <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
-                  <i class="fa-solid fa-a" />...<i class="fa-solid fa-z" />
-                </span>
-      
-              {:else}
               <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
-                <i class="fa-solid fa-1" />...<i class="fa-solid fa-9" />               
+                <i class="fa-solid fa-a" />...<i class="fa-solid fa-z" />
+              </span>
+            {:else}
+              <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
+                <i class="fa-solid fa-1" />...<i class="fa-solid fa-9" />
               </span>
             {/if}
           </div>
-          
+
           <!-- <div class="card-content has-text-centered ">
             <div class="content has-text-weight-bold ">
               
@@ -114,8 +111,6 @@
               {/if}
             </div>
           </div> -->
-            
-          
         </div>
         <!-- <div
           class="card grid-item p-0 m-0 is-clickable  "
@@ -215,7 +210,6 @@
     // text-align: center;
   }
 
-  
   // .fa-spell-check {
   //   position: absolute;
   //   top: 0;

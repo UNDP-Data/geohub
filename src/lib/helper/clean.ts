@@ -9,5 +9,3 @@ export const clean = (val: string) => {
     .replace(/\.[^/.]+$/, '') // remove extension
     .replace(/\b\w/g, (str) => str.toUpperCase())
 }
-
-

@@ -25,13 +25,11 @@
     operator: '',
   }
   // eslint-disable-next-line @typescript-eslint/ban-types
-  let expressionsArray: ({ property: string; index: number; value: string; operator: string } )[] = [
-    singleExpression,
-  ]
+  let expressionsArray: { property: string; index: number; value: string; operator: string }[] = [singleExpression]
 
   let selectedCombiningOperator = 'all'
   //let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
-  let propertySelectValue 
+  let propertySelectValue
   let filteringError = false
   let propertyStats
   let initialStep = 1
@@ -65,7 +63,6 @@
       if (expression['value'] === undefined) return
       if (customTagsAvailable) {
         if (expression['value'].length > 1) {
-          
           if (expression['operator'] === 'in') {
             combineOperator = false
             expressions = expression['value'].map((val) => ['in', val, ['get', expression['property']]])
@@ -86,15 +83,12 @@
           }
         }
       } else {
-        
         if (expression['operator'] === 'in') {
           return [expression['operator'], ['get', expression['property']], ['literal', expression['value']]]
         } else if (expression['operator'] === '!in') {
           return ['!', ['in', ['get', expression['property']], ['literal', expression['value']]]]
         } else {
-          
           return [
-            
             expression['operator'],
             ['get', expression['property']],
             isNaN(Number(expression['value'])) ? expression['value'][0] : Number(expression['value']),
@@ -115,7 +109,7 @@
   // Apply expression to layer
   const handleApplyExpression = () => {
     //console.log(JSON.stringify(expressionsArray, null, '\t'))
-    
+
     const expression = generateFilterExpression(expressionsArray)
     // console.log(JSON.stringify(expression, null, '\t'))
     if (expression === undefined) {
@@ -217,9 +211,6 @@
     customTagsAvailable = true
     expressionsArray[currentExpressionIndex]['value'] = e.detail
   }
-
-
-    
 </script>
 
 <svelte:head>
@@ -231,14 +222,14 @@
     <input bind:checked={combineOperator} id="switchExample" type="checkbox" name="switchExample" class="switch" />
     <label class="condition-text" for="switchExample">All conditions must be true</label>
   </div>
-  
+
   <div style="margin:10px" class="is-divider" />
   <Wizard initialStep={1}>
     <Step num={1} let:nextStep>
       <div class="wizard-button-container">
         <button
           on:click={() => {
-            if(expressionsArray[0].value) {
+            if (expressionsArray[0].value) {
               handleAddExpression()
             }
             nextStep()
@@ -248,58 +239,44 @@
           &nbsp; {expressionsArray[0].value ? 'Add' : 'New rule'}
         </button>
         {#if expressionApplied || expressionsArray[0].value !== ''}
-        
-
           <div class="dropdown is-hoverable">
             <div class="dropdown-trigger">
-              <button class="button wizard-button is-small primary-button" aria-haspopup="true" aria-controls="dropdown-menu1">
+              <button
+                class="button wizard-button is-small primary-button"
+                aria-haspopup="true"
+                aria-controls="dropdown-menu1">
                 <span>View</span>
                 <span class="icon is-small">
-                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  <i class="fas fa-angle-down" aria-hidden="true" />
                 </span>
               </button>
             </div>
             <div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
               <div class="dropdown-content ">
                 <!-- <hr class="dropdown-divider"> -->
-                
-                {#each expressionsArray as expr, i }
-                        {@const op = vectorFilterOperations.filter(i => i.value == expr.operator)} 
-                        <div class="menu-item ">
-                          
-                            <div class="tags has-addons is-centered ">
-                              <div class="tag is-info is-light is-small">{clean(expr.property)}</div> 
-                              <div class="tag is-danger is-light is-small">{op[0].label.toLowerCase()}</div>
-                              <div class="tag is-success is-light is-small">{expr.value}</div>
-                            </div>
 
-                        
-                          
-                
-                        </div>
-                        {#if i < expressionsArray.length-1 }
-                          <div class="is-divider is-danger m-4 " data-content="{selectedCombiningOperator == 'all' ? 'AND' : 'OR'}" />
-                        {/if}
-                        
-                             
-                                          
-                        {/each}
-                
-               
-                
-               
-
-
+                {#each expressionsArray as expr, i}
+                  {@const op = vectorFilterOperations.filter((i) => i.value == expr.operator)}
+                  <div class="menu-item ">
+                    <div class="tags has-addons is-centered ">
+                      <div class="tag is-info is-light is-small">{clean(expr.property)}</div>
+                      <div class="tag is-danger is-light is-small">{op[0].label.toLowerCase()}</div>
+                      <div class="tag is-success is-light is-small">{expr.value}</div>
+                    </div>
+                  </div>
+                  {#if i < expressionsArray.length - 1}
+                    <div
+                      class="is-divider is-danger m-4 "
+                      data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'} />
+                  {/if}
+                {/each}
               </div>
             </div>
           </div>
 
-
-        
           <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
-            <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''} 
+            <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
           </button>
-         
         {/if}
       </div>
     </Step>
@@ -331,24 +308,24 @@
       <PropertySelectButtons
         {layer}
         bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-        on:select={handlePropertySelect} 
-        on:click={nextStep}/>
+        on:select={handlePropertySelect}
+        on:click={nextStep} />
     </Step>
     <Step num={3} let:prevStep let:nextStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button 
+        <button
           title="move back to properties"
-          on:click={prevStep} class="button wizard-button is-small secondary-button">
+          on:click={prevStep}
+          class="button wizard-button is-small secondary-button">
           <i class="fa fa-angles-left" />&nbsp;Properties
-          
         </button>
         <button
           on:click={() => {
             setInitialExpression()
             setStep(1)
           }}
-         class="button wizard-button is-small primary-button">
+          class="button wizard-button is-small primary-button">
           <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
         </button>
         <!-- <button
@@ -366,17 +343,17 @@
         bind:numberProperty
         bind:stringProperty
         bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
-        on:change={handleCurrentOperation} 
-        on:click={nextStep}/>
+        on:change={handleCurrentOperation}
+        on:click={nextStep} />
     </Step>
     <Step num={4} let:prevStep let:nextStep let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
-        <button on:click={prevStep} 
+        <button
+          on:click={prevStep}
           title="move back to operators"
           class="button wizard-button is-small secondary-button">
           <i class="fa fa-angles-left" /> &nbsp;Operators
-          
         </button>
         <button
           on:click={() => {
@@ -390,15 +367,16 @@
 
       <div class="is-divider separator is-danger" data-content="Select/input a value..." />
       <ValueInput
-        on:apply={()=> {handleApplyExpression()
-          setStep(1)}}
+        on:apply={() => {
+          handleApplyExpression()
+          setStep(1)
+        }}
         on:customTags={handleCustomTags}
         bind:layer
         bind:acceptSingleTag
         bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
         bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
-        bind:operator={expressionsArray[currentExpressionIndex]['operator']}
-         />
+        bind:operator={expressionsArray[currentExpressionIndex]['operator']} />
     </Step>
     <!-- this is commented because it is not used anymore
     <Step num={5} let:prevStep let:setStep>
@@ -435,10 +413,10 @@
 <style lang="scss">
   @import 'bulma-slider/dist/css/bulma-slider.min.css';
   #dropdown-menu-filter {
-  // position: fixed !important;
-  z-index: 20;
-  $dropdown-menu-min-width: 100px;
-}
+    // position: fixed !important;
+    z-index: 20;
+    $dropdown-menu-min-width: 100px;
+  }
   :global(.primary-button) {
     background: #d12800 !important;
     border-color: #d12800 !important;
