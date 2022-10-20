@@ -10,6 +10,7 @@
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import ContinuousLegend from '$components/ContinuousLegend.svelte'
   import { updateParamsInURL } from '$lib/helper'
+  import { layerList } from '$stores'
 
   export let layer: Layer
   let colorPickerVisibleIndex: number
@@ -48,6 +49,13 @@
       const rescale = [layer.continuous.minimum, layer.continuous.maximum]
       const updatedParams = Object.assign({ colormap_name: colorMapName, rescale: rescale.join(',') })
       updateParamsInURL(layer.definition, layerURL, updatedParams)
+
+      colorPickerVisibleIndex = -1
+      const nlayer = { ...layer, colorMapName: colorMapName }
+      const layers = $layerList.map((lyr) => {
+        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      })
+      layerList.set([...layers])
     }
   }
 </script>
