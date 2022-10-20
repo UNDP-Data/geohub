@@ -29,12 +29,24 @@
   }
 
   const loadLayer = async () => {
-    if (!tree.isRaster) throw new Error('This component can only be used for raster type')
+    try {
+      if (!tree.isRaster) throw new Error('This component can only be used for raster type')
+      $indicatorProgress = true
 
-    if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
-      await loadMosaicJsonLayer()
-    } else {
-      await loadRasterLayer()
+      if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
+        await loadMosaicJsonLayer()
+      } else {
+        await loadRasterLayer()
+      }
+    } catch (err) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: err.message,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+    } finally {
+      $indicatorProgress = false
     }
   }
 
@@ -49,7 +61,6 @@
       bannerMessages.update((data) => [...data, bannerErrorMessage])
       return
     }
-    $indicatorProgress = true
 
     const bounds = $map.getBounds()
     const bbox = [
@@ -117,8 +128,6 @@
       }
     }
     $map.addLayer(layerDefinition, firstSymbolId)
-
-    $indicatorProgress = false
   }
 
   const getMosaicJsonMetadata = async (tilejson: { bounds: any }) => {
@@ -146,8 +155,7 @@
         message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
       }
       bannerMessages.update((data) => [...data, bannerErrorMessage])
-      $indicatorProgress = false
-      throw new Error(JSON.stringify(layerInfo))
+      return
     }
 
     const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
@@ -160,8 +168,7 @@
         message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
       }
       $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
-      $indicatorProgress = false
-      throw new Error(ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX)
+      return
     }
     const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
     const titilerApiUrlParams = {
@@ -242,10 +249,6 @@
       }
     }
     $map.addLayer(layerDefinition, firstSymbolId)
-
-    setTimeout(function () {
-      $indicatorProgress = false
-    }, 350)
   }
 
   const getRasterMetadata = async (node: TreeNode) => {
