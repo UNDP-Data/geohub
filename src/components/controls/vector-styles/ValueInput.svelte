@@ -38,7 +38,7 @@
         console.log('WTF')
     }
 
-    console.log(JSON.stringify(attrstats))
+    //console.log(JSON.stringify(attrstats))
     
     const hasManyFeatures = attrstats.count > 250
     //console.log(`has many features ${hasManyFeatures}`)
@@ -89,7 +89,7 @@
         let optionsList:number[] = [...new Set(values.flat())]
         sol = Array.from(optionsList).sort((a, b) => a - b) 
         const astats = arraystat(sol)
-        console.log(astats)
+        //console.log(astats)
         
         min = astats.min
         max = astats.max
@@ -151,7 +151,6 @@
     }
 
     const apply = (e) => {
-        console.log(`happly ${expressionValue} ${sv}`)
         if(!expressionValue) expressionValue = sv[0]
         dispatch('apply')
     }
@@ -387,7 +386,7 @@
                     {/each}
                 </div>
             {:else}
-                JUSSU
+                
                 <div class="range-slider">
                     <RangeSlider
                     bind:values={sv}
