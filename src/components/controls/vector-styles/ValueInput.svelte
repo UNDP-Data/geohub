@@ -5,9 +5,11 @@
     import { createEventDispatcher } from 'svelte'
     import { map, filterInputTags } from '$stores'
     import arraystat from 'arraystat'
+    
 
     import type { Listener, MapMouseEvent } from 'maplibre-gl'
     import type { VectorLayerTileStatAttribute} from '$lib/types'
+    import { abs } from 'mathjs'
 
 
     export let propertySelectedValue
@@ -35,6 +37,8 @@
         //this should not happen, however....it could so a recation must be set (error)
         console.log('WTF')
     }
+
+    console.log(JSON.stringify(attrstats))
     
     const hasManyFeatures = attrstats.count > 250
     //console.log(`has many features ${hasManyFeatures}`)
@@ -66,7 +70,7 @@
     
 
     if (hasManyFeatures) {
-        //console.log(`stats for ${propertySelectedValue} =>  ${JSON.stringify(attrstats, null, '\t')}`)
+        // console.log(`stats for ${propertySelectedValue} =>  ${JSON.stringify(attrstats, null, '\t')}`)
         min = Number(attrstats.min)
         max = Number(attrstats.max)
         const range = max-min
@@ -85,15 +89,15 @@
         let optionsList:number[] = [...new Set(values.flat())]
         sol = Array.from(optionsList).sort((a, b) => a - b) 
         const astats = arraystat(sol)
-
+        console.log(astats)
         
         min = astats.min
         max = astats.max
         //                                        negative               0->1 
         calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2
-    
-        sv = [fclosest(sol, astats.median)]
-        let closest = fclosest(sol, sv[0])
+        let closest = fclosest(sol, astats.median)
+        sv = [closest]
+        
         index = sol.indexOf(closest)
         //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
         sindex = index - nn < 0 ? 0 : index - nn
@@ -147,6 +151,8 @@
     }
 
     const apply = (e) => {
+        console.log(`happly ${expressionValue} ${sv}`)
+        if(!expressionValue) expressionValue = sv[0]
         dispatch('apply')
     }
 
@@ -184,6 +190,13 @@
         }
     }
 
+
+    const formatter = (v:number) => {
+        //console.log('formatting')
+        
+        return v
+
+    }
 </script>
 
 
@@ -374,7 +387,7 @@
                     {/each}
                 </div>
             {:else}
-                
+                JUSSU
                 <div class="range-slider">
                     <RangeSlider
                     bind:values={sv}
@@ -386,7 +399,9 @@
                     range="min"
                     first="label"
                     last="label"
+                    springValues={{ stiffness: 0.15, damping: 0.4} }
                     rest={false}
+                    formatter={formatter}
                     on:stop={onSliderStop}>
                     </RangeSlider> 
                 </div>

@@ -7,6 +7,8 @@
   import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
+  import { vectorFilterOperations } from '$lib/constants'
+  import { clean } from '$lib/helper'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -15,7 +17,7 @@
 
   // vars
   let currentExpressionIndex = 0
-
+  // let exprText
   let singleExpression = {
     index: 0,
     property: '',
@@ -23,12 +25,13 @@
     operator: '',
   }
   // eslint-disable-next-line @typescript-eslint/ban-types
-  let expressionsArray: ({ property: string; index: number; filterValue: string; operator: string } | {})[] = [
+  let expressionsArray: ({ property: string; index: number; value: string; operator: string } )[] = [
     singleExpression,
   ]
 
   let selectedCombiningOperator = 'all'
-  let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
+  //let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
+  let propertySelectValue 
   let filteringError = false
   let propertyStats
   let initialStep = 1
@@ -111,8 +114,8 @@
 
   // Apply expression to layer
   const handleApplyExpression = () => {
-    // console.log(JSON.stringify(expressionsArray, null, '\t'))
-    expressionApplied = true
+    console.log(JSON.stringify(expressionsArray, null, '\t'))
+    
     const expression = generateFilterExpression(expressionsArray)
     // console.log(JSON.stringify(expression, null, '\t'))
     if (expression === undefined) {
@@ -127,7 +130,7 @@
     $map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
       ? $map.setFilter(`${layerId}-label`, expression)
       : null
-
+    expressionApplied = true
     $map.on('error', (err: ErrorEvent) => {
       showBannerMessage(err.error)
     })
@@ -214,6 +217,12 @@
     customTagsAvailable = true
     expressionsArray[currentExpressionIndex]['value'] = e.detail
   }
+
+  $: {
+    console.log(expressionsArray)
+  }
+
+    
 </script>
 
 <svelte:head>
@@ -225,12 +234,16 @@
     <input bind:checked={combineOperator} id="switchExample" type="checkbox" name="switchExample" class="switch" />
     <label class="condition-text" for="switchExample">All conditions must be true</label>
   </div>
+  
   <div style="margin:10px" class="is-divider" />
   <Wizard initialStep={1}>
     <Step num={1} let:nextStep>
       <div class="wizard-button-container">
         <button
           on:click={() => {
+            if(expressionsArray[0].value) {
+              handleAddExpression()
+            }
             nextStep()
           }}
           class="button wizard-button is-small primary-button">
@@ -238,9 +251,58 @@
           &nbsp; {expressionsArray[0].value ? 'Add' : 'New rule'}
         </button>
         {#if expressionApplied || expressionsArray[0].value !== ''}
+        
+
+          <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+              <button class="button wizard-button is-small primary-button" aria-haspopup="true" aria-controls="dropdown-menu1">
+                <span>View</span>
+                <span class="icon is-small">
+                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
+              <div class="dropdown-content ">
+                <!-- <hr class="dropdown-divider"> -->
+                
+                {#each expressionsArray as expr, i }
+                        {@const op = vectorFilterOperations.filter(i => i.value == expr.operator)} 
+                        <div class="menu-item ">
+                          
+                            <div class="tags has-addons is-centered ">
+                              <div class="tag is-info is-light is-small">{clean(expr.property)}</div> 
+                              <div class="tag is-danger is-light is-small">{op[0].label.toLowerCase()}</div>
+                              <div class="tag is-success is-light is-small">{expr.value}</div>
+                            </div>
+
+                        
+                          
+                
+                        </div>
+                        {#if i < expressionsArray.length-1 }
+                          <div class="is-divider is-danger m-4 " data-content="{selectedCombiningOperator == 'all' ? 'AND' : 'OR'}" />
+                        {/if}
+                        
+                             
+                                          
+                        {/each}
+                
+               
+                
+               
+
+
+              </div>
+            </div>
+          </div>
+
+
+        
           <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
             <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''} 
           </button>
+         
         {/if}
       </div>
     </Step>
@@ -375,7 +437,11 @@
 
 <style lang="scss">
   @import 'bulma-slider/dist/css/bulma-slider.min.css';
-
+  #dropdown-menu-filter {
+  // position: fixed !important;
+  z-index: 20;
+  $dropdown-menu-min-width: 100px;
+}
   :global(.primary-button) {
     background: #d12800 !important;
     border-color: #d12800 !important;

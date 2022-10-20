@@ -1,18 +1,19 @@
 <script lang="ts">
+  import { vectorFilterOperations } from '$lib/constants'
+  
   import { createEventDispatcher } from 'svelte'
-
+  
   export let currentSelectedOperation = ''
   export let stringProperty = false
   export let numberProperty = false
 
-  const operationOptions = [
-    { value: '==', label: 'Equals', disabled: false, symbol: '=' },
-    { value: '!=', label: 'Differs', disabled: false, symbol: '≠' },
-    { value: '>', label: 'Larger', disabled: stringProperty, symbol: '>' }, // < disabled when property is string
-    { value: '<', label: 'Smaller', disabled: stringProperty, symbol: '<' }, // < disabled when property is string
-    { value: 'in', label: 'Contains', disabled: numberProperty, symbol: '⊂' },
-    { value: '!in', label: 'Excludes', disabled: numberProperty, symbol: '⊄' },
-  ]
+
+  const operationOptions = vectorFilterOperations.filter((el)=> {
+    if(stringProperty && ['>', '<'].includes(el.value) ) return false 
+    if(numberProperty && ['in', '!in'].includes(el.value) ) return false 
+    return true
+
+  })
 
   const dispatch = createEventDispatcher()
 

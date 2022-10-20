@@ -223,3 +223,12 @@ export const TagKeys = [
   'name2',
   'name3',
 ]
+
+export const vectorFilterOperations = [
+  { value: '==', label: 'Equals', disabled: false, symbol: '=' },
+  { value: '!=', label: 'Differs', disabled: false, symbol: '≠' },
+  { value: '>', label: 'Larger', disabled: false, symbol: '>' }, // < disabled when property is string
+  { value: '<', label: 'Smaller', disabled: false, symbol: '<' }, // < disabled when property is string
+  { value: 'in', label: 'Contains', disabled: false, symbol: '⊂' },
+  { value: '!in', label: 'Excludes', disabled: false, symbol: '⊄' },
+]
