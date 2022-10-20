@@ -75,7 +75,6 @@
         'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
     }
-    console.log(layerSource)
     const tileSourceId = tree.id
     if (!(tileSourceId in $map.getStyle().sources)) {
       $map.addSource(tileSourceId, layerSource)
