@@ -179,7 +179,6 @@
 
   const formatter = (v: number) => {
     //console.log('formatting')
-    
 
     return v
   }
