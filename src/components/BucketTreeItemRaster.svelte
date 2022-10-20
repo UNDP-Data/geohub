@@ -59,7 +59,7 @@
       bounds.getNorthEast().lat,
     ]
     const mosaicjsonRes = await fetchUrl(
-      `stac/mosaicjson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
+      `stac/tilejson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
     )
 
     const layerSource: RasterSourceSpecification = {
