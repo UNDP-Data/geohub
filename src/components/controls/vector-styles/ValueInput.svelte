@@ -10,6 +10,7 @@
     import type { Listener, MapMouseEvent } from 'maplibre-gl'
     import type { VectorLayerTileStatAttribute} from '$lib/types'
     import { abs } from 'mathjs'
+    import { includes } from 'lodash'
 
 
     export let propertySelectedValue
@@ -158,7 +159,20 @@
     const handleMapClick = async (e: MapMouseEvent) => {
         try {
             if (e.features) {
-                uv = e.features[0].properties[propertySelectedValue]
+                // console.log(`operator: ${operator} ${operator.includes('in')} ${uv}`)
+                if (operator.includes('in')) {
+                    if (Array.isArray(uv)) {
+                        uv = [...uv, e.features[0].properties[propertySelectedValue]]
+                    } else {
+                        uv = [e.features[0].properties[propertySelectedValue]]
+                    }
+                    
+                }
+                else {
+                    uv = e.features[0].properties[propertySelectedValue]
+
+                }
+                
         }
             
         } catch (error) {
@@ -220,7 +234,7 @@
                         <button
                         class="button is-small primary-button"
                         on:click={(e) => {
-                            expressionValue = [uv]
+                            expressionValue = Array.isArray(uv) ? uv : [uv]
                             apply(e)
                             restoreQ()
                         }}>
