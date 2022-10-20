@@ -62,6 +62,7 @@
       if (expression['value'] === undefined) return
       if (customTagsAvailable) {
         if (expression['value'].length > 1) {
+          
           if (expression['operator'] === 'in') {
             combineOperator = false
             expressions = expression['value'].map((val) => ['in', val, ['get', expression['property']]])
@@ -82,12 +83,15 @@
           }
         }
       } else {
+        
         if (expression['operator'] === 'in') {
           return [expression['operator'], ['get', expression['property']], ['literal', expression['value']]]
         } else if (expression['operator'] === '!in') {
           return ['!', ['in', ['get', expression['property']], ['literal', expression['value']]]]
         } else {
+          
           return [
+            
             expression['operator'],
             ['get', expression['property']],
             isNaN(Number(expression['value'])) ? expression['value'][0] : Number(expression['value']),
@@ -107,9 +111,10 @@
 
   // Apply expression to layer
   const handleApplyExpression = () => {
-    console.log(JSON.stringify(expressionsArray, null, '\t'))
+    // console.log(JSON.stringify(expressionsArray, null, '\t'))
     expressionApplied = true
     const expression = generateFilterExpression(expressionsArray)
+    // console.log(JSON.stringify(expression, null, '\t'))
     if (expression === undefined) {
       filteringError = true
       return

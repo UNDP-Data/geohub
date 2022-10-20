@@ -89,25 +89,17 @@
               {clean(propertySelectOption)}
             </span>
           </div>
-          <div class="content is-small">
-            {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() !== 'string'}
-              
-                <span class="fa-stack fa-2x has-text-danger-dark">
-                  <i class="fa-solid fa-square fa-stack-2x"></i>
-                  <i class="fa-solid fa-list-ol fa-stack-1x fa-inverse" />
+          <div class="content ">
+            {#if layer.info.json.vector_layers[0].fields[propertySelectOption].toLowerCase() == 'string'}
+                <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
+                  <i class="fa-solid fa-a" />...<i class="fa-solid fa-z" />
                 </span>
-              
-              
+      
               {:else}
-                <span class="fa-stack fa-2x has-text-danger-dark">
-                  <i class="fa-solid fa-square fa-stack-2x"></i>
-                  <i class="fa-solid fa-t fa-stack-1x fa-inverse" />
-                  
-                </span>
-                
-                
-                
-          {/if}
+              <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
+                <i class="fa-solid fa-1" />...<i class="fa-solid fa-9" />               
+              </span>
+            {/if}
           </div>
           
           <!-- <div class="card-content has-text-centered ">
