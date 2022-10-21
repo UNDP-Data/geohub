@@ -166,6 +166,11 @@
       : null
   }
 
+  const handleCancelExpression = (e) => {
+    expressionsArray = expressionsArray.filter((e) => e.index < currentExpressionIndex)
+    currentExpressionIndex -= 1
+  }
+
   const handleCurrentOperation = (e) => {
     expressionsArray[currentExpressionIndex]['operator'] = e.detail.operation
   }
@@ -257,17 +262,20 @@
 
                 {#each expressionsArray as expr, i}
                   {@const op = vectorFilterOperations.filter((i) => i.value == expr.operator)}
-                  <div class="menu-item ">
-                    <div class="tags has-addons is-centered ">
-                      <div class="tag is-info is-light is-small">{clean(expr.property)}</div>
-                      <div class="tag is-danger is-light is-small">{op[0].label.toLowerCase()}</div>
-                      <div class="tag is-success is-light is-small">{expr.value}</div>
+
+                  {#if op.length > 0}
+                    <div class="menu-item ">
+                      <div class="tags has-addons is-centered ">
+                        <div class="tag is-info is-light is-small">{clean(expr.property)}</div>
+                        <div class="tag is-danger is-light is-small">{op[0].label.toLowerCase()}</div>
+                        <div class="tag is-success is-light is-small">{expr.value}</div>
+                      </div>
                     </div>
-                  </div>
-                  {#if i < expressionsArray.length - 1}
-                    <div
-                      class="is-divider is-danger m-4 "
-                      data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'} />
+                    {#if i < expressionsArray.length - 1}
+                      <div
+                        class="is-divider is-danger m-4 "
+                        data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'} />
+                    {/if}
                   {/if}
                 {/each}
               </div>
@@ -289,7 +297,8 @@
         {/if} -->
         <button
           on:click={() => {
-            setInitialExpression()
+            // setInitialExpression()
+            handleCancelExpression()
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
@@ -322,7 +331,8 @@
         </button>
         <button
           on:click={() => {
-            setInitialExpression()
+            //setInitialExpression()
+            handleCancelExpression()
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
@@ -357,7 +367,8 @@
         </button>
         <button
           on:click={() => {
-            setInitialExpression()
+            //setInitialExpression()
+            handleCancelExpression()
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
