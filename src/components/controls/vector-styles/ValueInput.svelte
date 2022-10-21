@@ -7,8 +7,7 @@
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
   import type { VectorLayerTileStatAttribute } from '$lib/types'
-  import { abs } from 'mathjs'
-  import { includes } from 'lodash'
+  import { boolean } from 'mathjs'
 
   export let propertySelectedValue
   export let expressionValue
@@ -123,7 +122,6 @@
   }
 
   const applyTags = () => {
-    // dispatch('apply')
     const filteredTags = tagsList.filter((tag) => !sol.includes(tag))
     $filterInputTags = [...$filterInputTags, ...filteredTags]
     if (filteredTags.length > 0) {
@@ -131,7 +129,8 @@
     } else {
       expressionValue = tagsList
     }
-    apply()
+
+    dispatch('apply')
   }
 
   const apply = (e) => {
@@ -142,15 +141,16 @@
   const handleMapClick = async (e: MapMouseEvent) => {
     try {
       if (e.features) {
+        const features = e.features
         // console.log(`operator: ${operator} ${operator.includes('in')} ${uv}`)
         if (operator.includes('in')) {
           if (Array.isArray(uv)) {
-            uv = [...uv, e.features[0].properties[propertySelectedValue]]
+            uv = [...uv, features[0].properties[propertySelectedValue]]
           } else {
-            uv = [e.features[0].properties[propertySelectedValue]]
+            uv = [features[0].properties[propertySelectedValue]]
           }
         } else {
-          uv = e.features[0].properties[propertySelectedValue]
+          uv = features[0].properties[propertySelectedValue]
         }
       }
     } catch (error) {
@@ -212,6 +212,7 @@
       {/if}
     {:else}
       <!-- Numeric many values-->
+      <!-- Numeric, many features few UV could be handled specially-->
       <!-- {#if attrstats.values.length < 25 && !['<', '>'].includes(operator) }
 
                     <div class="buttons">
@@ -286,7 +287,7 @@
     {/if}
   {:else}
     <!--FEW features-->
-    <!-- {min} {max} {calculatedStep} -->
+
     {#if dataType === 'String'}
       <div>
         {#if acceptSingleTag}
@@ -306,12 +307,10 @@
           autoComplete={sol}
           tags={tagsList}
           allowBlur={true}
-          disable={false}
+          disable={acceptSingleTag && tagsList.length > 0}
           minChars={0}
-          onlyAutocomplete={true}
-          labelShow={false}
-          class={acceptSingleTag && tagsList.length > 0 ? 'disable' : null}
-          {acceptSingleTag} />
+          onlyAutocomplete={false}
+          labelShow={false} />
         <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
           <div>
             <button class="button is-rounded is-small is-info">

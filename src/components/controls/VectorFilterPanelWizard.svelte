@@ -169,6 +169,17 @@
   const handleCancelExpression = (e) => {
     expressionsArray = expressionsArray.filter((e) => e.index < currentExpressionIndex)
     currentExpressionIndex -= 1
+    if (expressionsArray.length == 0) {
+      expressionsArray = [
+        {
+          index: 0,
+          property: '',
+          value: '',
+          operator: '',
+        },
+      ]
+      currentExpressionIndex = 0
+    }
   }
 
   const handleCurrentOperation = (e) => {
@@ -216,6 +227,11 @@
     customTagsAvailable = true
     expressionsArray[currentExpressionIndex]['value'] = e.detail
   }
+
+  // $: {
+  //   console.log(expressionsArray)
+  //   //console.log(currentExpressionIndex)
+  // }
 </script>
 
 <svelte:head>
@@ -263,7 +279,7 @@
                 {#each expressionsArray as expr, i}
                   {@const op = vectorFilterOperations.filter((i) => i.value == expr.operator)}
 
-                  {#if op.length > 0}
+                  {#if op && op.length > 0}
                     <div class="menu-item ">
                       <div class="tags has-addons is-centered ">
                         <div class="tag is-info is-light is-small">{clean(expr.property)}</div>

@@ -66,7 +66,7 @@
   function setTag(e) {
     const currentTag = e.target.value
     // if key is enter, add tag
-    if (e.key === 'Enter' && currentTag !== '') {
+    if (e.key === 'Enter' && currentTag !== '' && !onlyAutocomplete) {
       tags = [...tags, currentTag]
       dispatch('tags', {
         tags: tags,
