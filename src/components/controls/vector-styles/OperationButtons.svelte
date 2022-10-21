@@ -8,7 +8,7 @@
   export let numberProperty = false
 
   const operationOptions = vectorFilterOperations.filter((el) => {
-    if (stringProperty && ['>', '<'].includes(el.value))  return false
+    if (stringProperty && ['>', '<'].includes(el.value)) return false
     if (numberProperty && ['in', '!in'].includes(el.value)) return false
     return true
   })

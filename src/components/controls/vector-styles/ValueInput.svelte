@@ -7,8 +7,7 @@
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
   import type { VectorLayerTileStatAttribute } from '$lib/types'
-    import { boolean } from 'mathjs'
-
+  import { boolean } from 'mathjs'
 
   export let propertySelectedValue
   export let expressionValue
@@ -123,7 +122,6 @@
   }
 
   const applyTags = () => {
-    
     const filteredTags = tagsList.filter((tag) => !sol.includes(tag))
     $filterInputTags = [...$filterInputTags, ...filteredTags]
     if (filteredTags.length > 0) {
@@ -131,9 +129,8 @@
     } else {
       expressionValue = tagsList
     }
-    
+
     dispatch('apply')
-    
   }
 
   const apply = (e) => {
@@ -161,9 +158,6 @@
     }
   }
 
-
-  
-
   const getFromMap = async (e: CustomEvent) => {
     $map.getCanvas().style.cursor = 'cell'
     if (clickFuncs.length == 0) {
@@ -188,10 +182,6 @@
 
     return v
   }
-
-
-  
-
 </script>
 
 <div class="content" style="width:100%; height:100%">
@@ -297,9 +287,8 @@
     {/if}
   {:else}
     <!--FEW features-->
-   
+
     {#if dataType === 'String'}
-        
       <div>
         {#if acceptSingleTag}
           <div class="notification has-background-danger-light is-size-6 has-text-danger">
@@ -318,12 +307,10 @@
           autoComplete={sol}
           tags={tagsList}
           allowBlur={true}
-          disable={(acceptSingleTag && tagsList.length > 0) && oac }
+          disable={acceptSingleTag && tagsList.length > 0}
           minChars={0}
           onlyAutocomplete={false}
-          labelShow={false}
-          
-           />
+          labelShow={false} />
         <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
           <div>
             <button class="button is-rounded is-small is-info">

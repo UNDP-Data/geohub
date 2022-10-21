@@ -171,16 +171,15 @@
     currentExpressionIndex -= 1
     if (expressionsArray.length == 0) {
       expressionsArray = [
-      {
-        index: 0,
-        property: '',
-        value: '',
-        operator: '',
-      },
-    ]
-    currentExpressionIndex = 0
+        {
+          index: 0,
+          property: '',
+          value: '',
+          operator: '',
+        },
+      ]
+      currentExpressionIndex = 0
     }
-
   }
 
   const handleCurrentOperation = (e) => {
@@ -229,12 +228,10 @@
     expressionsArray[currentExpressionIndex]['value'] = e.detail
   }
 
-
   // $: {
   //   console.log(expressionsArray)
   //   //console.log(currentExpressionIndex)
   // }
-
 </script>
 
 <svelte:head>
