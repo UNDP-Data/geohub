@@ -6,18 +6,18 @@
 
   import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
-  import { ColorMapTypes } from '$lib/constants'
+  import { ColorMapTypes, COLOR_CLASS_COUNT } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layer: Layer
   export let layerMax: number
   export let layerMin: number
-  let numberOfClasses = layer.intervals.numberOfClasses
+  let numberOfClasses = layer.intervals?.numberOfClasses || COLOR_CLASS_COUNT
 
   $: {
     if (layer) {
-      numberOfClasses = layer.intervals.numberOfClasses
+      numberOfClasses = layer.intervals?.numberOfClasses || COLOR_CLASS_COUNT
     }
   }
 
@@ -153,7 +153,7 @@
   }
 
   .card-color {
-    max-height: 150px;
+    max-height: 200px;
     overflow-y: auto;
 
     ul {

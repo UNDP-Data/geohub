@@ -10,9 +10,9 @@ pre-push:
 
 pre-commit:
   commands:
-    lint:
+    1_lint:
       tags: lint
       run: pnpm lint
-    format:
+    2_format:
       tags: prettier
       run: pnpm format

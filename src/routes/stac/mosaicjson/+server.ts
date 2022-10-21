@@ -195,12 +195,12 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
 
   fs.unlinkSync(localFileWithPath)
 
-  const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
-    new Date(new Date().valueOf() + 86400000),
-    AccountSASPermissions.parse('r'),
-    'o',
-  )
-  const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
+  //   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
+  //     new Date(new Date().valueOf() + 86400000),
+  //     AccountSASPermissions.parse('r'),
+  //     'o',
+  //   )
+  //   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
 
-  return `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}${ACCOUNT_SAS_TOKEN_URL.search}`
+  return `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`
 }

@@ -29,12 +29,24 @@
   }
 
   const loadLayer = async () => {
-    if (!tree.isRaster) throw new Error('This component can only be used for raster type')
+    try {
+      if (!tree.isRaster) throw new Error('This component can only be used for raster type')
+      $indicatorProgress = true
 
-    if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
-      await loadMosaicJsonLayer()
-    } else {
-      await loadRasterLayer()
+      if (tree.isRaster && tree.isStac && tree.isMosaicJSON) {
+        await loadMosaicJsonLayer()
+      } else {
+        await loadRasterLayer()
+      }
+    } catch (err) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: err.message,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+    } finally {
+      $indicatorProgress = false
     }
   }
 
@@ -49,7 +61,6 @@
       bannerMessages.update((data) => [...data, bannerErrorMessage])
       return
     }
-    $indicatorProgress = true
 
     const bounds = $map.getBounds()
     const bbox = [
@@ -62,14 +73,41 @@
       `stac/mosaicjson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
     )
 
+    const tilejson = await fetchUrl(mosaicjsonRes.tilejson)
+    const layerInfo = await getMosaicJsonMetadata(tilejson)
+    const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
+    const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
+
+    let defaultColorMap = DEFAULT_COLORMAP
+    // console.log(layerInfo.band_metadata)
+    if (layerInfo.band_metadata.length > 1) {
+      defaultColorMap = ''
+    }
+    tilejson.tiles = tilejson.tiles.map((tile) => {
+      tile = tile.replace('http://', 'https://')
+      if (layerInfo.band_metadata.length > 1) {
+        return tile
+      } else {
+        const _url = new URL(tile)
+        _url.searchParams.delete('colormap_name')
+        _url.searchParams.delete('rescale')
+        _url.searchParams.set('colormap_name', DEFAULT_COLORMAP)
+        _url.searchParams.set('rescale', [layerBandMetadataMin, layerBandMetadataMax].join(','))
+        return decodeURI(_url.toString())
+      }
+    })
+
     const layerSource: RasterSourceSpecification = {
       type: LayerTypes.RASTER,
-      url: mosaicjsonRes.tilejson,
+      // convert http to https because titiler's /mosaicjson/tilejson.json does not return https protocol currently
+      tiles: tilejson.tiles,
+      minzoom: tilejson.minzoom,
+      maxzoom: tilejson.maxzoom,
+      bounds: tilejson.bounds,
       attribution:
         'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
     }
-
     const tileSourceId = tree.id
     if (!(tileSourceId in $map.getStyle().sources)) {
       $map.addSource(tileSourceId, layerSource)
@@ -87,7 +125,6 @@
       },
     }
 
-    const layerInfo = await getMosaicJsonMetadata(mosaicjsonRes.tilejson)
     const b64EncodedUrl: string = getBase64EncodedUrl(mosaicjsonRes.tilejson)
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
@@ -98,6 +135,19 @@
         info: layerInfo,
         visible: true,
         url: b64EncodedUrl,
+        colorMapName: defaultColorMap,
+        continuous: {
+          minimum: parseFloat(layerBandMetadataMin),
+          maximum: parseFloat(layerBandMetadataMax),
+        },
+        intervals: {
+          classification: ClassificationMethodTypes.EQUIDISTANT,
+          numberOfClasses: COLOR_CLASS_COUNT,
+          colorMapRows: [],
+        },
+        unique: {
+          colorMapRows: [],
+        },
         source: layerSource,
         tree: tree,
       },
@@ -112,23 +162,35 @@
       }
     }
     $map.addLayer(layerDefinition, firstSymbolId)
-
-    $indicatorProgress = false
   }
 
-  const getMosaicJsonMetadata = async (tilejsonUrl: string) => {
-    const tilejson = await fetchUrl(tilejsonUrl)
-
+  const getMosaicJsonMetadata = async (tilejson: { bounds: any; tiles: string[] }) => {
     const data: RasterTileMetadata = {
       bounds: tilejson.bounds,
     }
-    return data
+    const tileUrl = new URL(tilejson.tiles[0])
+    const mosaicUrl = tileUrl.searchParams.get('url')
+    const mosaicAssetUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/${tilejson.bounds.join(
+      ',',
+    )}/assets?url=${encodeURIComponent(mosaicUrl)}`
+    const assets: string[] = await fetchUrl(mosaicAssetUrl)
+    if (assets && assets.length > 0) {
+      const assetUrl = assets[0].replace('/vsicurl/', '')
+      const data: RasterTileMetadata = await getRasterMetadata(getBase64EncodedUrl(assetUrl))
+      return data
+    } else {
+      const data: RasterTileMetadata = {
+        bounds: tilejson.bounds,
+      }
+      return data
+    }
   }
 
   const loadRasterLayer = async () => {
     $indicatorProgress = true
 
-    const layerInfo: RasterTileMetadata = await getRasterMetadata(tree)
+    const b64EncodedUrl = getBase64EncodedUrl(tree.url)
+    const layerInfo: RasterTileMetadata = await getRasterMetadata(b64EncodedUrl)
     const bandIndex = getActiveBandIndex(layerInfo)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -143,8 +205,7 @@
         message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
       }
       bannerMessages.update((data) => [...data, bannerErrorMessage])
-      $indicatorProgress = false
-      throw new Error(JSON.stringify(layerInfo))
+      return
     }
 
     const layerBandMetadataMin = layerInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
@@ -157,10 +218,8 @@
         message: ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX,
       }
       $bannerMessages = [...$bannerMessages, ...[bannerErrorMessage]]
-      $indicatorProgress = false
-      throw new Error(ErrorMessages.UNDEFINED_BAND_METADATA_LAYER_MINMAX)
+      return
     }
-    const b64EncodedUrl: string = getBase64EncodedUrl(tree.url)
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -239,15 +298,10 @@
       }
     }
     $map.addLayer(layerDefinition, firstSymbolId)
-
-    setTimeout(function () {
-      $indicatorProgress = false
-    }, 350)
   }
 
-  const getRasterMetadata = async (node: TreeNode) => {
-    let b64EncodedUrl = getBase64EncodedUrl(node.url)
-    const data: RasterTileMetadata = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
+  const getRasterMetadata = async (url: string) => {
+    const data: RasterTileMetadata = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/info?url=${url}`)
 
     if (
       data &&
@@ -256,7 +310,7 @@
       //TODO needs fix: Ioan band
       Object.keys(data.band_metadata[0][1]).length === 0
     ) {
-      const statistics = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
+      const statistics = await fetchUrl(`${PUBLIC_TITILER_ENDPOINT}/statistics?url=${url}`)
       if (statistics) {
         for (let i = 0; i < data.band_metadata.length; i++) {
           const bandValue = data.band_metadata[i][0]

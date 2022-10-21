@@ -78,6 +78,7 @@ markdown_extensions:
 
 plugins:
   - search
+  - mkdocs-video
 
 nav:
   - "Get started": "index.md"
