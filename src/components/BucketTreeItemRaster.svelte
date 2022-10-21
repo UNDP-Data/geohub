@@ -125,7 +125,6 @@
       },
     }
 
-    const b64EncodedUrl: string = getBase64EncodedUrl(mosaicjsonRes.tilejson)
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
       {
@@ -134,7 +133,7 @@
         type: LayerTypes.RASTER,
         info: layerInfo,
         visible: true,
-        url: b64EncodedUrl,
+        url: mosaicjsonRes.mosaicjson,
         colorMapName: defaultColorMap,
         continuous: {
           minimum: parseFloat(layerBandMetadataMin),
@@ -175,7 +174,7 @@
       const assetUrl = assets[0].replace('/vsicurl/', '')
       const data: RasterTileMetadata = await getRasterMetadata(getBase64EncodedUrl(assetUrl))
       if (!(data.band_metadata.length > 1)) {
-        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${encodeURIComponent(assetUrl)}&categorical=true`
+        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${encodeURIComponent(assetUrl)}`
         const layerStats = await fetchUrl(statsURL)
         data.stats = layerStats
         data.active_band_no = Object.keys(layerStats)[0]

@@ -71,9 +71,14 @@
       let presentUniqueNames = {}
       let availableUnique = {}
       let bandIndex: number = null
+      let layerName = layer.name
       if (layer.type === LayerTypes.RASTER) {
         if (layer.tree && layer.tree.isMosaicJSON) {
-          throw new Error('TODO: Implement querying to mosaicjson')
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/point/${lng},${lat}?url=${layer.url}`
+          const layerData = await fetchUrl(baseUrl)
+          values = layerData.values[0][1]
+          presentUniqueNames = [undefined]
+          layerName = `${layer.tree.label} (${layer.name})`
         } else {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -109,7 +114,7 @@
         ...[
           {
             id: layer.definition.id,
-            name: layer.name,
+            name: layerName,
             lat,
             lng,
             type: layer.type,
@@ -451,7 +456,7 @@
         .name {
           overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;
+          // white-space: nowrap;
           width: 100px;
         }
       }
