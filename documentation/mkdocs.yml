@@ -78,13 +78,24 @@ markdown_extensions:
 
 plugins:
   - search
-  - mkdocs-video
+  - mkdocs-video:
+      css_style:
+        class: "center"
+        width: "760px"
+        height: "515px"
+        frameborder: "0"
+        
+        
+        
 
 nav:
   - "Get started": "index.md"
   - Data:
-    - Intro: "data/intro.md"
-    - Data_structure: "data/data structure.md"
-    - Special_buckets: "data/special_buckets.md"
+    - Introduction: "data/introduction.md"
+    - Data-structure: "data/data-structure.md"
+    - Special-buckets: "data/special-buckets.md"
   - Visualization:
-    - Map_view: "visualization/map_view.md"
+    - Map-view: "visualization/map-view.md"
+    - Search-data: "visualization/search-data.md"
+    - Add-remove-layers: "visualization/add-remove-layers.md"
+    - Zooming: "vizualization/zooming.md"
