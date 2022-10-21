@@ -75,13 +75,7 @@
       Crosshair: true,
       PrintableArea: true,
     })
-
-    newMap.addControl(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      exportControl,
-      'top-right',
-    )
+    newMap.addControl(exportControl, 'top-right')
 
     newMap.on('click', async function (e: MapMouseEvent) {
       // clear all previous vector feature properties

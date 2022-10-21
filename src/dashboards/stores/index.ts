@@ -8,6 +8,3 @@ export const admin = writable({})
 
 // map store for maplibre-gl object
 export const year = writable<number>(null)
-
-// store for circle feature created by editor
-export const circleFeatures = writable([])

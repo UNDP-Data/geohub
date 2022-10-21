@@ -3,17 +3,25 @@
 # https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md
 #
 pre-push:
+  parallel: true
   commands:
     build:
       tags: build
       run: pnpm build
+    build_packages:
+      tags: build
+      run: pnpm --filter="./packages/*" build
 
 pre-commit:
   parallel: true
   commands:
-    lint:
+    1_lint:
       tags: lint
       run: pnpm lint
-    format:
+    2_format:
       tags: prettier
       run: pnpm format
+    1_lint_packages:
+      run: pnpm --filter="./packages/*" lint
+    2_format_packages:
+      run: pnpm --filter="./packages/*" format

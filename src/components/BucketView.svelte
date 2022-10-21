@@ -1,12 +1,14 @@
 <script lang="ts">
   import { slide } from 'svelte/transition'
+  import LinearProgress from '@smui/linear-progress'
 
   import BucketCard from '$components/BucketCard.svelte'
   import BucketCardFilter from '$components/BucketCardFilter.svelte'
   import BucketFilter from '$components/BucketFilter.svelte'
-  import BucketTreeNode from '$components/BucketTreeNode.svelte'
+  import BucketTreeView from '$components/BucketTreeView.svelte'
   import { bucketList, indicatorProgress, modalVisible, treeBucket } from '$stores'
 
+  $: hideLinearProgress = !$indicatorProgress
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
 
@@ -22,9 +24,12 @@
     const isBucketInTree = $treeBucket.some((node) => node.path === bucket.path)
 
     if (isBucketInTree === false) {
-      const isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
+      let isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
       const isBucketMartin = bucket.tags.find((tag: string) => tag.toLowerCase() === 'martin') ? true : false
-
+      const isBucketMosaic = bucket.tags.find((tag: string) => tag.toLowerCase() === 'mosaicjson') ? true : false
+      if (isBucketMosaic === true) {
+        isBucketStac = true
+      }
       treeBucketUpdated = [
         ...$treeBucket,
         {
@@ -32,6 +37,7 @@
           isRaster: true,
           isStac: isBucketStac,
           isMartin: isBucketMartin,
+          isMosaicJSON: isBucketMosaic,
           label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
           children: [],
@@ -100,34 +106,33 @@
         <div class="column separator" />
       </div>
     </div>
-    <div
-      id="tree-container"
-      class="column is-three-quarters tree"
-      data-testid="tree-container"
-      style="overflow-y: auto">
-      {#if $treeBucket.length === 0}
-        <div class="title is-size-4">Welcome to GeoHub</div>
-        <div class="subtitle is-size-5">
-          This UNDP data repository features a range of innovative tools to visualise, analyse, and download data.
-        </div>
-        <div class="subtitle is-size-5">
-          Select an icon to the left, to explore the data. Click on each icon to see data available for visualisation
-          and download.
-        </div>
-      {:else}
-        <nav>
-          {#each $treeBucket as tree}
-            <ul
-              id={tree.label
-                .split(' ')
-                .map((el) => el.toLowerCase())
-                .join('-')}
-              label={tree.label}>
-              <BucketTreeNode bind:node={tree} on:remove={handleRemoveBucket} />
-            </ul>
-          {/each}
-        </nav>
-      {/if}
+    <div class="column is-three-quarters">
+      <LinearProgress indeterminate bind:closed={hideLinearProgress} />
+      <div id="tree-container" class="tree" data-testid="tree-container">
+        {#if $treeBucket.length === 0}
+          <div class="title is-size-4">Welcome to GeoHub</div>
+          <div class="subtitle is-size-5">
+            This UNDP data repository features a range of innovative tools to visualise, analyse, and download data.
+          </div>
+          <div class="subtitle is-size-5">
+            Select an icon to the left, to explore the data. Click on each icon to see data available for visualisation
+            and download.
+          </div>
+        {:else}
+          <nav>
+            {#each $treeBucket as tree}
+              <ul
+                id={tree.label
+                  .split(' ')
+                  .map((el) => el.toLowerCase())
+                  .join('-')}
+                label={tree.label}>
+                <BucketTreeView bind:node={tree} on:remove={handleRemoveBucket} />
+              </ul>
+            {/each}
+          </nav>
+        {/if}
+      </div>
     </div>
   </div>
 </div>
@@ -135,6 +140,8 @@
 <style lang="scss">
   $separator: 1px solid whitesmoke;
   $separator-dark: 1px solid #ccc;
+
+  $height: calc(100vh - 120px);
 
   .view-container {
     .filter-container {
@@ -158,10 +165,14 @@
         z-index: 10;
         max-width: fit-content;
         width: fit-content;
+        overflow-y: auto;
+        height: $height;
       }
 
       .tree {
         z-index: 1;
+        overflow-y: auto;
+        height: $height;
 
         .title {
           margin-bottom: 30px;

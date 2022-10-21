@@ -1,18 +1,17 @@
 <script lang="ts">
+  import { vectorFilterOperations } from '$lib/constants'
+
   import { createEventDispatcher } from 'svelte'
 
   export let currentSelectedOperation = ''
   export let stringProperty = false
   export let numberProperty = false
 
-  const operationOptions = [
-    { value: '==', label: 'Equals', disabled: false, symbol: '=' },
-    { value: '!=', label: 'Differs', disabled: false, symbol: '≠' },
-    { value: '<', label: 'Larger', disabled: stringProperty, symbol: '>' }, // < disabled when property is string
-    { value: '>', label: 'Smaller', disabled: stringProperty, symbol: '<' }, // < disabled when property is string
-    { value: 'in', label: 'Contains', disabled: numberProperty, symbol: '⊂' },
-    { value: '!in', label: 'Excludes', disabled: numberProperty, symbol: '⊄' },
-  ]
+  const operationOptions = vectorFilterOperations.filter((el) => {
+    if (stringProperty && ['>', '<'].includes(el.value)) return false
+    if (numberProperty && ['in', '!in'].includes(el.value)) return false
+    return true
+  })
 
   const dispatch = createEventDispatcher()
 
@@ -29,7 +28,7 @@
   }
 </script>
 
-<div class="grid" role="menu">
+<div class="grid p-0" role="menu">
   {#each operationOptions as operation}
     <div
       class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
@@ -43,14 +42,14 @@
           : 'has-background-info-dark'} ">
         <span
           class="card-header-title is-centered is-v-centered {currentSelectedOperation === operation.value
-            ? 'has-text-success-darker'
+            ? 'has-text-white-ter'
             : 'has-text-white-ter'}  ">
-          {operation.label}
           {#if currentSelectedOperation === operation.value}
             <span class="icon  ">
-              <i class="fa-solid fa-check has-text-black" />
+              <i class="fa-solid fa-check" />
             </span>
           {/if}
+          {operation.label}
         </span>
       </div>
       <div class="card-content  p-0 m-0 has-text-centered ">

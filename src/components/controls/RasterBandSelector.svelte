@@ -14,6 +14,7 @@
 
   $: selected, setActiveBand()
   const setActiveBand = () => {
+    if (layer.tree && layer.tree.isMosaicJSON) return
     if (!info) return
     if (info.active_band_no === selected) return
 
@@ -34,7 +35,7 @@
     deleteOldLayer(layer.definition.id)
   }
 
-  if (layer.definition.type === 'raster') {
+  if (layer.definition.type === 'raster' && !layer.tree && layer.tree.isMosaicJSON) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ;({ info } = layer)

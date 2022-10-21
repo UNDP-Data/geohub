@@ -3,7 +3,6 @@
   import * as EmailValidator from 'email-validator'
   import type { Metadata } from '../interfaces'
   import { continentals, countries, dataExtents, regions, resolutions, subnationals, units } from '../constants'
-  import ConditionTag from './ConditionTag.svelte'
   import MetadataField from './MetadataField.svelte'
 
   export let metadata: Metadata = {}

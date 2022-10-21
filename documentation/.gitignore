@@ -1,0 +1,5 @@
+site
+*.pyc
+*.DS_Store
+.idea
+.env

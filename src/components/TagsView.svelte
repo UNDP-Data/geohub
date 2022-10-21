@@ -6,7 +6,7 @@
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
   import Tags from '$components/Tags.svelte'
-  import BucketTreeNode from '$components/BucketTreeNode.svelte'
+  import BucketTreeView from '$components/BucketTreeView.svelte'
   import { fetchUrl } from '$lib/helper'
   import type { TagsSearchResults, TagLayer, TreeNode } from '$lib/types'
   import { tags } from '$stores'
@@ -153,10 +153,10 @@
       {/if}
 
       {#if showSpinner === false && groupedTagSearchResults.size > 0}
-        <div class="is-size-6">
+        <div class="is-size-6 tag-result">
           {#each treeBucket as tree}
             <ul class="mb-3">
-              <BucketTreeNode bind:node={tree} hideCloseButton={true} />
+              <BucketTreeView bind:node={tree} />
             </ul>
           {/each}
         </div>
@@ -168,5 +168,11 @@
 <style lang="scss">
   .tags-view-container .button {
     width: 75px;
+  }
+  $height: calc(100vh - 300px);
+
+  .tag-result {
+    overflow-y: auto;
+    height: $height;
   }
 </style>

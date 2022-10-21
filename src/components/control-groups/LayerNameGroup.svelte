@@ -5,7 +5,7 @@
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, hash } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled, layerMetadata, layerList } from '$stores'
+  import { layerLabelled, layerMetadata } from '$stores'
   import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
 
   export let layer: Layer
@@ -17,7 +17,11 @@
   ;({ info } = layer)
 
   if (layer.definition.type === 'raster') {
-    bandName = `B${info?.active_band_no}`
+    if (layer.tree?.isMosaicJSON) {
+      bandName = 'Mosaic'
+    } else {
+      bandName = `B${info?.active_band_no}`
+    }
   }
 
   let icon = LayerIconTypes.find((icon) => icon.id === layer.type)
@@ -62,7 +66,11 @@
         <Wrapper>
           <div>
             <span style="padding-left: 5px;">
-              {name}
+              {#if layer.tree?.isMosaicJSON}
+                {layer.tree.label}
+              {:else}
+                {name}
+              {/if}
             </span>
           </div>
           <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">

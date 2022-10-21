@@ -1,7 +1,4 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
-  import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
-
   import type { ColorMapTypes } from '$lib/constants'
   import { colorMapStyle } from '$lib/colormaps'
 
@@ -38,7 +35,7 @@
       </div>
       {#if isSelected}
         <div class="column is-size-8 selected" alt="Colormap Selected" title="Colormap Selected">
-          <Fa icon={faCheck} />
+          <i class="fas fa-check" />
         </div>
       {/if}
     </div>

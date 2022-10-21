@@ -8,8 +8,6 @@
   import { map } from '../stores'
   import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl'
   import RangeSlider from 'svelte-range-slider-pips'
-  import OverlayLegend1 from './OverlayLegend1.svelte'
-  import OverlayLegend2 from './OverlayLegend2.svelte'
   import { loadAdmin, setOpacity, getChoropleth } from '../utils/adminLayer'
 
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
@@ -115,8 +113,6 @@
     </div>
   </div>
 {/if}
-{#if overlaySelected.name === ADMIN_ID}<OverlayLegend1 />{/if}
-{#if overlaySelected.name === POVERTY_ID}<OverlayLegend2 />{/if}
 
 <br />
 
