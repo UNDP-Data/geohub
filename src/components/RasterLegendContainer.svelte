@@ -15,7 +15,7 @@
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { getActiveBandIndex, fetchUrl } from '$lib/helper'
+  import { getActiveBandIndex, fetchUrl, updateParamsInURL } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type {
     FillLayerSpecification,
@@ -58,27 +58,30 @@
   }
 
   onMount(async () => {
-    const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
-    // if(layer.isStac){
-    //   layerCatalogUrl = `https://planetarycomputer.microsoft.com/api/stac/v1/collections/${collectionId}`
-    // }
-    layerStats = await fetchUrl(statsURL)
-    const band = info.active_band_no
-
-    layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
-    if (layerHasUniqueValues) {
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
+    if (!layer.tree?.isMosaicJSON) {
+      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+      // if(layer.isStac){
+      //   layerCatalogUrl = `https://planetarycomputer.microsoft.com/api/stac/v1/collections/${collectionId}`
+      // }
       layerStats = await fetchUrl(statsURL)
-    }
-    if (!('stats' in info)) {
-      info = { ...info, stats: layerStats }
-      layer = { ...layer, info: info }
-      const layers = $layerList.map((lyr) => {
-        return layer.definition.id !== lyr.definition.id ? lyr : layer
-      })
-      layerList.set([...layers])
-    }
+      const band = info.active_band_no
 
+      layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
+      if (layerHasUniqueValues) {
+        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get(
+          'url',
+        )}&categorical=true`
+        layerStats = await fetchUrl(statsURL)
+      }
+      if (!('stats' in info)) {
+        info = { ...info, stats: layerStats }
+        layer = { ...layer, info: info }
+        const layers = $layerList.map((lyr) => {
+          return layer.definition.id !== lyr.definition.id ? lyr : layer
+        })
+        layerList.set([...layers])
+      }
+    }
     layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
   })
 
@@ -119,6 +122,17 @@
 
   const handleColorMapClick = (event: CustomEvent) => {
     if (event?.detail?.colorMapName) {
+      if (layer.tree?.isMosaicJSON) {
+        const colorMapName = event?.detail?.colorMapName
+        const tiles = layer.source.tiles
+        const layerURL = new URL(tiles[0])
+        layerURL.searchParams.delete('colormap_name')
+        layerURL.searchParams.delete('rescale')
+        const rescale = [layer.continuous.minimum, layer.continuous.maximum]
+        const updatedParams = Object.assign({ colormap_name: colorMapName, rescale: rescale.join(',') })
+        updateParamsInURL(layer.definition, layerURL, updatedParams)
+      }
+
       colorPickerVisibleIndex = -1
       const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
       const layers = $layerList.map((lyr) => {

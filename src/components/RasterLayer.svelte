@@ -13,7 +13,6 @@
   import type { Layer } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/RasterHistogram.svelte'
-  import RasterMosaicLegendContainer from './RasterMosaicLegendContainer.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -60,7 +59,11 @@
       // disable other menus since they are not working for mosaicjson layer currently
       tabs = [{ label: TabNames.OPACITY, icon: faDroplet, active: false }]
       if (layer.info.band_metadata.length < 2) {
-        tabs = [{ label: TabNames.LEGEND, icon: faList, active: false }, ...tabs]
+        tabs = [
+          { label: TabNames.LEGEND, icon: faList, active: false },
+          { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
+          ...tabs,
+        ]
       }
     }
   }
@@ -127,11 +130,7 @@
 
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
-        {#if tree && tree.isMosaicJSON}
-          <RasterMosaicLegendContainer bind:layer />
-        {:else}
-          <RasterLegendContainer bind:layer />
-        {/if}
+        <RasterLegendContainer bind:layer />
       {/if}
       {#if isHistogramPanelVisible}
         <RasterHistogram bind:layer />
