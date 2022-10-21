@@ -11,6 +11,7 @@ importers:
       '@fortawesome/free-regular-svg-icons': ^6.2.0
       '@fortawesome/free-solid-svg-icons': ^6.2.0
       '@mapbox/vector-tile': ^1.3.1
+      '@neodrag/svelte': ^1.2.4
       '@popperjs/core': ^2.11.6
       '@smui-extra/autocomplete': ^6.2.0
       '@smui-extra/badge': ^6.1.4
@@ -73,7 +74,6 @@ importers:
       maplibre-gl: ^2.4.0
       mathjs: ^11.2.1
       mime: ^3.0.0
-      moveable: ^0.36.3
       node-cache: ^5.1.2
       node-fetch: ^3.2.10
       papaparse: ^5.3.2
@@ -92,7 +92,6 @@ importers:
       svelte-fa: ^3.0.3
       svelte-file-dropzone: ^1.0.0
       svelte-keydown: ^0.5.0
-      svelte-moveable: ^0.28.3
       svelte-popperjs: ^1.3.2
       svelte-preprocess: ^4.10.7
       svelte-range-slider-pips: ^2.0.3
@@ -117,6 +116,7 @@ importers:
       '@fortawesome/free-regular-svg-icons': 6.2.0
       '@fortawesome/free-solid-svg-icons': 6.2.0
       '@mapbox/vector-tile': 1.3.1
+      '@neodrag/svelte': 1.2.4
       '@popperjs/core': 2.11.6
       '@smui-extra/autocomplete': 6.2.0_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui-extra/badge': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
@@ -158,7 +158,6 @@ importers:
       maplibre-gl: 2.4.0
       mathjs: 11.2.1
       mime: 3.0.0
-      moveable: 0.36.3
       node-cache: 5.1.2
       papaparse: 5.3.2
       pbf: 3.2.1
@@ -172,7 +171,6 @@ importers:
       svelte-fa: 3.0.3
       svelte-file-dropzone: 1.0.0
       svelte-keydown: 0.5.0
-      svelte-moveable: 0.28.3
       svelte-popperjs: 1.3.2_rurmo7pyahcial4fcgesrrbml4
       svelte-range-slider-pips: 2.0.3
       svelte-step-wizard: 0.0.2
@@ -343,28 +341,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.9
-
-  /@daybrush/utils/1.10.0:
-    resolution: {integrity: sha512-IDT0DWAGcjxb2+WMr8pHrVTkHVKdilBumX1SubXJUlowN4rMSLphwDxvMNfv+vQOrdCPXSoPVZ3mhfrHsQ9Xow==}
-    dev: false
-
-  /@daybrush/utils/1.6.0:
-    resolution: {integrity: sha512-9MjMoOLl1U+l8lXByN3BbLZXf+mktoLyeb6t78Jz2WZ7LRldK0FNg8oW//9giO2hHCUyxS7LX6jS1hToGIfRWA==}
-    dev: false
-
-  /@egjs/agent/2.4.2:
-    resolution: {integrity: sha512-UZQzdpPl0g0M1wDAiq4EY2vUzUI6P5SKGOAPkf0yxSnlcwrU8/zuoyUWbYj11ROFeHV8iW0IetGsmia83z1Hbw==}
-    dev: false
-
-  /@egjs/children-differ/1.0.1:
-    resolution: {integrity: sha512-DRvyqMf+CPCOzAopQKHtW+X8iN6Hy6SFol+/7zCUiE5y4P/OB8JP8FtU4NxtZwtafvSL4faD5KoQYPj3JHzPFQ==}
-    dependencies:
-      '@egjs/list-differ': 1.0.0
-    dev: false
-
-  /@egjs/list-differ/1.0.0:
-    resolution: {integrity: sha512-HsbMKc0ZAQH+EUeCmI/2PvTYSybmkaWwakU8QGDYYgMVIg9BQ5sM0A0Nnombjxo2+JzXHxmH+jw//yGX+y6GYw==}
-    dev: false
 
   /@esbuild/android-arm/0.15.9:
     resolution: {integrity: sha512-VZPy/ETF3fBG5PiinIkA0W/tlsvlEgJccyN2DzWZEl0DlVKRbu91PvY2D6Lxgluj4w9QtYHjOWjAT44C+oQ+EQ==}
@@ -982,6 +958,10 @@ packages:
       tslib: 2.4.0
     dev: false
 
+  /@neodrag/svelte/1.2.4:
+    resolution: {integrity: sha512-oGOxAgjtLbHyCJIWv35cvuHpgip9Kzn0ANrCidZb3rXV29w3AWhS7VtKAQfRinzFbmfK0Jeic7aSYdGmtKFKqw==}
+    dev: false
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1075,25 +1055,6 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.1
     dev: true
-
-  /@scena/dragscroll/1.2.1:
-    resolution: {integrity: sha512-bVJGC9ZpShoQB1yTRXYRhkAzC6KAlvlRPEiPb4tz15lda5F5va1wX1oeZpLTxmmHkf0x/AeVI1eolWihkILS4Q==}
-    dependencies:
-      '@daybrush/utils': 1.6.0
-      '@scena/event-emitter': 1.0.5
-    dev: false
-
-  /@scena/event-emitter/1.0.5:
-    resolution: {integrity: sha512-AzY4OTb0+7ynefmWFQ6hxDdk0CySAq/D4efljfhtRHCOP7MBF9zUfhKG3TJiroVjASqVgkRJFdenS8ArZo6Olg==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-    dev: false
-
-  /@scena/matrix/1.1.1:
-    resolution: {integrity: sha512-JVKBhN0tm2Srl+Yt+Ywqu0oLgLcdemDQlD1OxmN9jaCTwaFPZ7tY8n6dhVgMEaR9qcR7r+kAlMXnSfNyYdE+Vg==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-    dev: false
 
   /@smui-extra/autocomplete/6.2.0_qy6w2iv5hnh55blsjuu7uihyzm:
     resolution: {integrity: sha512-JCZOQO6rnDdCq8/q9gB4ElM04AIaQAcNLiNkPsgzUT6v8klYzerqPnfT3JBvm+p+ZUqocmRAIrdsF5QVvAgacg==}
@@ -2315,22 +2276,6 @@ packages:
     dev: false
     optional: true
 
-  /css-styled/1.0.1_@daybrush+utils@1.10.0:
-    resolution: {integrity: sha512-psJCbNDPPusDBWH/gszP6BetPh577QaqpvaysTNPitxX0nxdGiTgELiOCus0gZ0yXk3gvjShBrFP07nvn58/TQ==}
-    peerDependencies:
-      '@daybrush/utils': '>=1.0.0'
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      string-hash: 1.1.3
-    dev: false
-
-  /css-to-mat/1.0.3:
-    resolution: {integrity: sha512-HADRhVqPc8wFqEp6ClK+uuPYg+FMBinNo2ReLyI/KQCncmHPJ60o5zldyJG7NjsTqXWbdfGJO51jnoxfMvWJiA==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      '@scena/matrix': 1.1.1
-    dev: false
-
   /css.escape/1.5.1:
     resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
     dev: true
@@ -3176,10 +3121,6 @@ packages:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: false
 
-  /framework-utils/1.1.0:
-    resolution: {integrity: sha512-KAfqli5PwpFJ8o3psRNs8svpMGyCSAe8nmGcjQ0zZBWN2H6dZDnq+ABp3N3hdUmFeMrLtjOCTXD4yplUJIWceg==}
-    dev: false
-
   /fs-minipass/2.1.0:
     resolution: {integrity: sha512-V/JgOLFCS+R6Vcq0slCuaeWEdNC3ouDlJMNIsacH2VtALiu9mV4LPrHc5cDl8k5aw6J8jwgWWpiTo5RYhmIzvg==}
     engines: {node: '>= 8'}
@@ -3229,13 +3170,6 @@ packages:
   /geojson/0.5.0:
     resolution: {integrity: sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==}
     engines: {node: '>= 0.10'}
-    dev: false
-
-  /gesto/1.13.3:
-    resolution: {integrity: sha512-OIOS19KzUWAqYrdV/g/j0WRbuCDorA3/E8+kBUGSV+AW9sgzrKtB3HuGTK8mfZQRJw21QRxrM5awZiR6qTd49g==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      '@scena/event-emitter': 1.0.5
     dev: false
 
   /get-caller-file/2.0.5:
@@ -3889,15 +3823,6 @@ packages:
     dev: false
     optional: true
 
-  /moveable/0.36.3:
-    resolution: {integrity: sha512-tw5PuxRCnRQr6GUBu2bEzk5hLS/ZWbCu8WAMgzmags9ceSSyVvMnsf2+lZNNEPezd99OAr+4kLs9ZTHEYbNUIw==}
-    dependencies:
-      '@scena/event-emitter': 1.0.5
-      react-compat-moveable: 0.24.3
-      react-moveable: 0.39.3
-      react-simple-compat: 1.2.3
-    dev: false
-
   /mri/1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -4029,12 +3954,6 @@ packages:
       type-check: 0.4.0
       word-wrap: 1.2.3
     dev: true
-
-  /overlap-area/1.1.0:
-    resolution: {integrity: sha512-3dlJgJCaVeXH0/eZjYVJvQiLVVrPO4U1ZGqlATtx6QGO3b5eNM6+JgUKa7oStBTdYuGTk7gVoABCW6Tp+dhRdw==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-    dev: false
 
   /p-limit/3.1.0:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
@@ -4298,68 +4217,9 @@ packages:
     dev: false
     optional: true
 
-  /react-compat-css-styled/1.0.9:
-    resolution: {integrity: sha512-YpUgTpXU1wR58aPQJVGAWq6QeEFWkafV0qq4Y8KRUwpQJLbJF2GYu5ZQ/kafHGvN3dqQX2e340NlNZ+zbZZv2w==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      css-styled: 1.0.1_@daybrush+utils@1.10.0
-      framework-utils: 1.1.0
-      react-css-styled: 1.0.4_@daybrush+utils@1.10.0
-    dev: false
-
-  /react-compat-moveable/0.24.3:
-    resolution: {integrity: sha512-mkJm/v3pvx5PrZFrK7AYySE6WDb0dceuHI7UUE/2pkMalUzgRVcueEWRJjZZhMbZAQ3HsNdPTPJz/4vhx8ZC7w==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      '@egjs/agent': 2.4.2
-      '@egjs/children-differ': 1.0.1
-      '@scena/dragscroll': 1.2.1
-      '@scena/event-emitter': 1.0.5
-      '@scena/matrix': 1.1.1
-      css-to-mat: 1.0.3
-      framework-utils: 1.1.0
-      gesto: 1.13.3
-      overlap-area: 1.1.0
-      react-compat-css-styled: 1.0.9
-      react-css-styled: 1.0.4_@daybrush+utils@1.10.0
-      react-moveable: 0.39.3
-    dev: false
-
-  /react-css-styled/1.0.4_@daybrush+utils@1.10.0:
-    resolution: {integrity: sha512-nRske1bAKOCaf7Gf3o76tKQFIYggaW1qH4rutBlitH5lYnRPA7WoAYKrcxqdUPZd00oASg3SvFZSh3Mc1Wvj3w==}
-    dependencies:
-      css-styled: 1.0.1_@daybrush+utils@1.10.0
-      framework-utils: 1.1.0
-    transitivePeerDependencies:
-      - '@daybrush/utils'
-    dev: false
-
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
     dev: true
-
-  /react-moveable/0.39.3:
-    resolution: {integrity: sha512-peSQ3cphhiXah+OF0hVxFn1QPUjAcoPJ2kFdNI5gek55PVDTs2hvEyDQNZnOglPO104t32tYIbsnevO+bPq8/Q==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      '@egjs/agent': 2.4.2
-      '@egjs/children-differ': 1.0.1
-      '@scena/dragscroll': 1.2.1
-      '@scena/event-emitter': 1.0.5
-      '@scena/matrix': 1.1.1
-      css-to-mat: 1.0.3
-      framework-utils: 1.1.0
-      gesto: 1.13.3
-      overlap-area: 1.1.0
-      react-css-styled: 1.0.4_@daybrush+utils@1.10.0
-    dev: false
-
-  /react-simple-compat/1.2.3:
-    resolution: {integrity: sha512-vYepRjSriGRyEmFtSsTQoHWVQRbBMYR4ONATeZtuf8GDY8jWGkc6R4+lIb5rVhPBIkx3ru68bpl+9r8V4YA/nA==}
-    dependencies:
-      '@daybrush/utils': 1.10.0
-      '@egjs/list-differ': 1.0.0
-    dev: false
 
   /readable-stream/3.6.0:
     resolution: {integrity: sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==}
@@ -4678,10 +4538,6 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /string-hash/1.1.3:
-    resolution: {integrity: sha512-kJUvRUFK49aub+a7T1nNE66EJbZBMnBgoC1UbCZ5n6bsZKBRga4KgBRTMn/pFkeCZSYtNeSyMxPDM0AXWELk2A==}
-    dev: false
-
   /string-width/4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
@@ -4811,13 +4667,6 @@ packages:
 
   /svelte-keydown/0.5.0:
     resolution: {integrity: sha512-DgY6AYlKbBocSvjC3kUeNPcStJQOTOCxAGG9ymVHzJdsQ1hRJuB8pcnB4UFH8uH3bAPdYyXXa3LwenLDL41eqQ==}
-    dev: false
-
-  /svelte-moveable/0.28.3:
-    resolution: {integrity: sha512-f+bRF5tU44nSWVjqrJsSNdHdXIw8yIe7XZHQf2CsIEZe6QU4OjsNvEnHVRQUBBvQ27hM5fCVnu2arVHXPUcr5A==}
-    dependencies:
-      framework-utils: 1.1.0
-      moveable: 0.36.3
     dev: false
 
   /svelte-popperjs/1.3.2_rurmo7pyahcial4fcgesrrbml4:
