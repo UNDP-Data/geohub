@@ -1,4 +1,4 @@
-import type { StacItemFeatureCollection } from '$lib/types'
+import type { StacCollection, StacItemFeatureCollection } from '$lib/types'
 import type { RequestHandler } from './$types'
 import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
@@ -18,14 +18,20 @@ export const GET: RequestHandler = async ({ url }) => {
   const searchUrl = url.searchParams.get('url')
   const bbox: number[] = JSON.parse(url.searchParams.get('bbox'))
   const asset = url.searchParams.get('asset')
-
+  console.log(new URL(searchUrl), asset)
   const searchResult = await searchStacItemUrls(searchUrl, bbox, asset)
   const mosaicJsonUrl = await createTitilerMosaicJsonEndpoint(searchResult.urls, searchResult.filter)
   const tileJsonUrl = createMosaicTileJson(mosaicJsonUrl)
+
+  const searchUrlObj = new URL(searchUrl)
+  const collectionUrl = `${searchUrlObj.origin}${searchUrlObj.pathname.replace('search', 'collections')}`
+  const classmap = await getClassmap(collectionUrl, searchUrlObj.searchParams.get('collections'), asset)
+  console.log(classmap)
   return new Response(
     JSON.stringify({
       tilejson: tileJsonUrl,
       mosaicjson: mosaicJsonUrl,
+      classmap: classmap,
     }),
   )
 }
@@ -203,4 +209,36 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
   //   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
 
   return `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`
+}
+
+const getClassmap = async (baseUrl: string, collectionId: string, asset: string) => {
+  const classesMap = {}
+  const collectionUrl = `${baseUrl}/${collectionId}`
+  const res = await fetch(collectionUrl)
+  const collection: StacCollection = await res.json()
+  // FixME: There is no standard object for the classes labels.
+  if (collection.item_assets[asset]) {
+    let classesObj
+    if (collection.item_assets[asset]['classification:classes']) {
+      classesObj = collection.item_assets[asset]['classification:classes']
+    } else if (collection.item_assets[asset]['file:values']) {
+      classesObj = collection.item_assets[asset]['file:values']
+    } else {
+      return classesMap
+    }
+
+    if (!classesObj) {
+      return classesMap
+    }
+    classesObj.forEach((item) => {
+      if (item['description']) {
+        classesMap[item['value']] = item['description']
+      } else if (item['summary']) {
+        classesMap[item['values']] = item['summary']
+      } else {
+        return
+      }
+    })
+  }
+  return classesMap
 }
