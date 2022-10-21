@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import GeoJSON from 'geojson'
   import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
-  import Moveable from 'moveable'
+  import { draggable } from '@neodrag/svelte'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
@@ -28,7 +27,6 @@
 
   const iconSize = 'lg'
   const noDataLabel = 'N/A'
-  const frame = { translate: [0, 0] }
 
   // mouse click on map
   $: {
@@ -181,45 +179,14 @@
     downloadFile(filename, data)
   }
 
-  onMount(async () => {
-    new Moveable(document.body, {
-      className: 'moveable-control',
-      draggable: true,
-      dragTarget: document.querySelector('#header'),
-      edgeDraggable: false,
-      hideDefaultLines: true,
-      origin: false,
-      resizable: true,
-      target: document.getElementById('data-container'),
-      throttleDrag: 0,
-      throttleResize: 0,
-    })
-      .on('dragStart', (e) => {
-        e.set(frame.translate)
-      })
-      .on('drag', (e) => {
-        frame.translate = e.beforeTranslate
-        e.target.style.transform = `translate(${e.beforeTranslate[0]}px, ${e.beforeTranslate[1]}px)`
-      })
-      .on('resizeStart', (e) => {
-        e.setOrigin(['%', '%'])
-        const style = window.getComputedStyle(e.target)
-        const cssWidth = parseFloat(style.width)
-        const cssHeight = parseFloat(style.height)
-        e.set([cssWidth, cssHeight])
-      })
-      .on('resize', (e) => {
-        e.target.style.width = `${e.width}px`
-        e.target.style.height = `${e.height}px`
-        frame.translate = e.drag.beforeTranslate
-        e.target.style.transform = `translate(${e.drag.beforeTranslate[0]}px, ${e.drag.beforeTranslate[1]}px)`
-      })
-  })
-
   let layerValuesExpanded = []
 </script>
 
-<div id="data-container" class="data-container target" hidden={isDataContainerVisible === false}>
+<div
+  id="data-container"
+  class="data-container target"
+  use:draggable={{ bounds: 'parent' }}
+  hidden={isDataContainerVisible === false}>
   <div id="header" class="header">
     <div class="name">Query Information</div>
 
@@ -376,19 +343,6 @@
 </div>
 
 <style lang="scss">
-  :global(.moveable-control) {
-    background: none !important ;
-    border-radius: 50%;
-    border: 0 !important;
-    box-sizing: none !important;
-    height: 34px;
-    margin-left: -7px;
-    margin-top: -7px;
-    position: absolute;
-    width: 34px;
-    z-index: 10;
-  }
-
   .data-container {
     background-color: #fff;
     border-radius: 10px;
