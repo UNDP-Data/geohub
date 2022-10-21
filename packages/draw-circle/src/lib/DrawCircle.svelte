@@ -3,12 +3,14 @@
   import type { MenuComponentDev } from '@smui/menu'
   import Menu from '@smui/menu'
   import List, { Item, Text } from '@smui/list'
-  import type { MapMouseEvent } from 'maplibre-gl'
+  import type { Map, MapMouseEvent } from 'maplibre-gl'
   import distance from '@turf/distance'
   import bearing from '@turf/bearing'
   import area from '@turf/area'
   import { destinationPoint as geodesyDestinationPoint } from 'geodesy-fn/src/spherical.js'
-  import { map, circleFeatures } from '../stores'
+  import { circleFeatures } from './stores'
+
+  export let map: Map
 
   const SOURCE_LINE = 'draw-circle-controls-source-line'
   const LAYER_LINE = 'draw-circle-controls-layer-line'
@@ -28,46 +30,46 @@
   let menu: MenuComponentDev
 
   const drawStart = () => {
-    if ($map) {
-      $map.getCanvas().style.cursor = 'crosshair'
+    if (map) {
+      map.getCanvas().style.cursor = 'crosshair'
       clearFeatures()
       initFeatures()
-      $map.on('click', mapClickListener)
-      $map.on('mousemove', mapMoveListener)
-      $map.fire('drawcircle.on')
+      map.on('click', mapClickListener)
+      map.on('mousemove', mapMoveListener)
+      map.fire('drawcircle.on')
     }
   }
 
   const deleteFeatures = () => {
-    if (!$map) return
-    $map.getCanvas().style.cursor = ''
+    if (!map) return
+    map.getCanvas().style.cursor = ''
     clearFeatures()
     initFeatures()
-    $map.off('click', mapClickListener)
-    $map.off('mousemove', mapMoveListener)
+    map.off('click', mapClickListener)
+    map.off('mousemove', mapMoveListener)
   }
 
   const mapClickListener = (event: MapMouseEvent) => {
-    if (!$map?.getSource(SOURCE_LINE) || !$map?.getSource(SOURCE_SYMBOL)) {
+    if (!map?.getSource(SOURCE_LINE) || !map?.getSource(SOURCE_SYMBOL)) {
       initFeatures()
     }
     const lnglat: number[] = [event.lngLat.lng, event.lngLat.lat]
-    if ($map) {
+    if (map) {
       if (coordinatesCenter.length === 0) {
         coordinatesCenter.push(lnglat)
       } else if (coordinatesRadius.length === 0) {
         coordinatesRadius.push(lnglat)
       } else {
         coordinatesRadius[coordinatesRadius.length - 1] = lnglat
-        $map.off('click', mapClickListener)
-        $map.off('mousemove', mapMoveListener)
-        $map.getCanvas().style.cursor = ''
+        map.off('click', mapClickListener)
+        map.off('mousemove', mapMoveListener)
+        map.getCanvas().style.cursor = ''
       }
     }
   }
 
   const mapMoveListener = (event: MapMouseEvent) => {
-    if (!$map) return
+    if (!map) return
     if (coordinatesCenter.length === 0) return
     const lnglat: number[] = [event.lngLat.lng, event.lngLat.lat]
     if (coordinatesRadius.length === 0) {
@@ -77,29 +79,29 @@
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
+    map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
+    map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_SYMBOL_RADIUS).setData(geoPoint(coordinatesRadius))
+    map.getSource(SOURCE_SYMBOL_RADIUS).setData(geoPoint(coordinatesRadius))
 
     updateCircleFeature()
   }
 
   const clearFeatures = () => {
-    if ($map) {
-      if ($map.getLayer(LAYER_LINE)) $map.removeLayer(LAYER_LINE)
-      if ($map.getLayer(LAYER_LINE_SYMBOL)) $map.removeLayer(LAYER_LINE_SYMBOL)
-      if ($map.getLayer(LAYER_SYMBOL)) $map.removeLayer(LAYER_SYMBOL)
-      if ($map.getLayer(LAYER_SYMBOL_RADIUS)) $map.removeLayer(LAYER_SYMBOL_RADIUS)
-      if ($map.getLayer(LAYER_CIRCLE)) $map.removeLayer(LAYER_CIRCLE)
-      if ($map.getLayer(LAYER_CIRCLE_OUTLINE)) $map.removeLayer(LAYER_CIRCLE_OUTLINE)
-      if ($map.getSource(SOURCE_LINE)) $map.removeSource(SOURCE_LINE)
-      if ($map.getSource(SOURCE_SYMBOL)) $map.removeSource(SOURCE_SYMBOL)
-      if ($map.getSource(SOURCE_SYMBOL_RADIUS)) $map.removeSource(SOURCE_SYMBOL_RADIUS)
-      if ($map.getSource(SOURCE_CIRCLE)) $map.removeSource(SOURCE_CIRCLE)
+    if (map) {
+      if (map.getLayer(LAYER_LINE)) map.removeLayer(LAYER_LINE)
+      if (map.getLayer(LAYER_LINE_SYMBOL)) map.removeLayer(LAYER_LINE_SYMBOL)
+      if (map.getLayer(LAYER_SYMBOL)) map.removeLayer(LAYER_SYMBOL)
+      if (map.getLayer(LAYER_SYMBOL_RADIUS)) map.removeLayer(LAYER_SYMBOL_RADIUS)
+      if (map.getLayer(LAYER_CIRCLE)) map.removeLayer(LAYER_CIRCLE)
+      if (map.getLayer(LAYER_CIRCLE_OUTLINE)) map.removeLayer(LAYER_CIRCLE_OUTLINE)
+      if (map.getSource(SOURCE_LINE)) map.removeSource(SOURCE_LINE)
+      if (map.getSource(SOURCE_SYMBOL)) map.removeSource(SOURCE_SYMBOL)
+      if (map.getSource(SOURCE_SYMBOL_RADIUS)) map.removeSource(SOURCE_SYMBOL_RADIUS)
+      if (map.getSource(SOURCE_CIRCLE)) map.removeSource(SOURCE_CIRCLE)
       circleFeatures.update(() => [])
     }
   }
@@ -107,21 +109,21 @@
   const initFeatures = () => {
     coordinatesCenter = []
     coordinatesRadius = []
-    if ($map) {
-      $map.addSource(SOURCE_LINE, {
+    if (map) {
+      map.addSource(SOURCE_LINE, {
         type: 'geojson',
         data: geoLineString([]),
       })
-      $map.addSource(SOURCE_SYMBOL, {
+      map.addSource(SOURCE_SYMBOL, {
         type: 'geojson',
         data: geoPoint(coordinatesCenter),
       })
-      $map.addSource(SOURCE_SYMBOL_RADIUS, {
+      map.addSource(SOURCE_SYMBOL_RADIUS, {
         type: 'geojson',
         data: geoPoint(coordinatesRadius),
       })
 
-      $map.addLayer({
+      map.addLayer({
         id: LAYER_LINE,
         type: 'line',
         source: SOURCE_LINE,
@@ -131,7 +133,7 @@
         },
       })
 
-      $map.addLayer({
+      map.addLayer({
         id: LAYER_LINE_SYMBOL,
         type: 'symbol',
         source: SOURCE_LINE,
@@ -152,7 +154,7 @@
         },
       })
 
-      $map.addLayer({
+      map.addLayer({
         id: LAYER_SYMBOL,
         type: 'symbol',
         source: SOURCE_SYMBOL,
@@ -164,7 +166,7 @@
           'icon-color': 'rgb(245,169,71)',
         },
       })
-      $map.addLayer({
+      map.addLayer({
         id: LAYER_SYMBOL_RADIUS,
         type: 'symbol',
         source: SOURCE_SYMBOL_RADIUS,
@@ -176,30 +178,30 @@
           'icon-color': 'rgb(245,169,71)',
         },
       })
-      $map.on('mousedown', LAYER_SYMBOL_RADIUS, (e) => {
+      map.on('mousedown', LAYER_SYMBOL_RADIUS, (e) => {
         // Prevent the default map drag behavior.
         e.preventDefault()
         isDragging = true
 
         // Set a cursor indicator
-        $map.getCanvasContainer().style.cursor = 'grab'
+        map.getCanvasContainer().style.cursor = 'grab'
 
         // Mouse events
-        $map.on('mousemove', mouseMoveOnPoint)
-        $map.once('mouseup', mouseUpOnPoint)
+        map.on('mousemove', mouseMoveOnPoint)
+        map.once('mouseup', mouseUpOnPoint)
       })
 
-      $map.on('mousedown', LAYER_SYMBOL, (e) => {
+      map.on('mousedown', LAYER_SYMBOL, (e) => {
         // Prevent the default map drag behavior.
         e.preventDefault()
         isDragging = true
 
         // Set a cursor indicator
-        $map.getCanvasContainer().style.cursor = 'grab'
+        map.getCanvasContainer().style.cursor = 'grab'
 
         // Mouse events
-        $map.on('mousemove', mouseMoveOnCenter)
-        $map.once('mouseup', mouseUpOnCenter)
+        map.on('mousemove', mouseMoveOnCenter)
+        map.once('mouseup', mouseUpOnCenter)
       })
     }
   }
@@ -207,12 +209,12 @@
   const updateCircleFeature = () => {
     const feature = getGeoCircle([coordinatesCenter[0], coordinatesRadius[0]])
     if (feature) {
-      if (!$map?.getSource(SOURCE_CIRCLE)) {
-        $map.addSource(SOURCE_CIRCLE, {
+      if (!map?.getSource(SOURCE_CIRCLE)) {
+        map.addSource(SOURCE_CIRCLE, {
           type: 'geojson',
           data: feature,
         })
-        $map.addLayer({
+        map.addLayer({
           id: LAYER_CIRCLE,
           type: 'fill',
           source: SOURCE_CIRCLE,
@@ -222,7 +224,7 @@
             'fill-opacity': 0.3,
           },
         })
-        $map.addLayer({
+        map.addLayer({
           id: LAYER_CIRCLE_OUTLINE,
           type: 'line',
           source: SOURCE_CIRCLE,
@@ -235,7 +237,7 @@
       } else {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        $map.getSource(SOURCE_CIRCLE).setData(feature)
+        map.getSource(SOURCE_CIRCLE).setData(feature)
       }
       circleFeatures.update(() => [feature])
     } else {
@@ -342,44 +344,44 @@
     if (!isDragging) return
     const coords = e.lngLat
     isDragging = true
-    $map.getCanvasContainer().style.cursor = 'grabbing'
+    map.getCanvasContainer().style.cursor = 'grabbing'
     coordinatesRadius = [[coords.lng, coords.lat]]
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
+    map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_SYMBOL_RADIUS).setData(geoPoint(coordinatesRadius))
+    map.getSource(SOURCE_SYMBOL_RADIUS).setData(geoPoint(coordinatesRadius))
     updateCircleFeature()
   }
 
   const mouseUpOnPoint = () => {
     if (!isDragging) return
     isDragging = false
-    $map.getCanvasContainer().style.cursor = ''
-    $map.off('mousemove', mouseMoveOnPoint)
+    map.getCanvasContainer().style.cursor = ''
+    map.off('mousemove', mouseMoveOnPoint)
   }
 
   const mouseMoveOnCenter = (e: MapMouseEvent) => {
     if (!isDragging) return
     const coords = e.lngLat
     isDragging = true
-    $map.getCanvasContainer().style.cursor = 'grabbing'
+    map.getCanvasContainer().style.cursor = 'grabbing'
     coordinatesCenter = [[coords.lng, coords.lat]]
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
+    map.getSource(SOURCE_LINE).setData(geoLineString([coordinatesCenter[0], coordinatesRadius[0]]))
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    $map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
+    map.getSource(SOURCE_SYMBOL).setData(geoPoint(coordinatesCenter))
     updateCircleFeature()
   }
 
   const mouseUpOnCenter = () => {
     if (!isDragging) return
     isDragging = false
-    $map.getCanvasContainer().style.cursor = ''
-    $map.off('mousemove', mouseMoveOnCenter)
+    map.getCanvasContainer().style.cursor = ''
+    map.off('mousemove', mouseMoveOnCenter)
   }
 </script>
 
