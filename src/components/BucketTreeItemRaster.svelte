@@ -165,9 +165,6 @@
   }
 
   const getMosaicJsonMetadata = async (tilejson: { bounds: any; tiles: string[] }) => {
-    const data: RasterTileMetadata = {
-      bounds: tilejson.bounds,
-    }
     const tileUrl = new URL(tilejson.tiles[0])
     const mosaicUrl = tileUrl.searchParams.get('url')
     const mosaicAssetUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/${tilejson.bounds.join(
@@ -177,6 +174,12 @@
     if (assets && assets.length > 0) {
       const assetUrl = assets[0].replace('/vsicurl/', '')
       const data: RasterTileMetadata = await getRasterMetadata(getBase64EncodedUrl(assetUrl))
+      if (!(data.band_metadata.length > 1)) {
+        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${assetUrl}&categorical=true`
+        const layerStats = await fetchUrl(statsURL)
+        data.stats = layerStats
+        data.active_band_no = Object.keys(layerStats)[0]
+      }
       return data
     } else {
       const data: RasterTileMetadata = {

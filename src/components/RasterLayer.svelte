@@ -13,7 +13,6 @@
   import type { Layer } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/RasterHistogram.svelte'
-  import RasterMosaicLegendContainer from './RasterMosaicLegendContainer.svelte'
 
   export let layer: Layer = LayerInitialValues
 
@@ -127,11 +126,7 @@
 
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
-        {#if tree && tree.isMosaicJSON}
-          <RasterMosaicLegendContainer bind:layer />
-        {:else}
-          <RasterLegendContainer bind:layer />
-        {/if}
+        <RasterLegendContainer bind:layer />
       {/if}
       {#if isHistogramPanelVisible}
         <RasterHistogram bind:layer />

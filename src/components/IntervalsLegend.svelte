@@ -70,11 +70,13 @@
   }
 
   onMount(async () => {
-    const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
-    const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-    info = { ...info, stats: layerStats }
+    if (!layerConfig.tree?.isMosaicJSON) {
+      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
+      const layerStats: RasterLayerStats = await fetchUrl(statsURL)
+      info = { ...info, stats: layerStats }
+    }
     const band = info.active_band_no
-    percentile98 = layerStats[band]['percentile_98']
+    percentile98 = info.stats[band]['percentile_98']
     layerConfig.percentile98 = percentile98
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
     if (layerConfig.intervals.classification !== ClassificationMethodTypes.LOGARITHMIC) {
