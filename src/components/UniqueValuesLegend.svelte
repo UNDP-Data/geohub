@@ -134,20 +134,22 @@
   }
 </script>
 
-<div class="is-divider" data-content="Unique values" />
-<div
-  class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
-  data-testid="unique-view-container">
-  {#each layerConfig.unique.colorMapRows as colorMapRow}
-    <UniqueValuesLegendColorMapRow
-      bind:colorMapRow
-      layer={layerConfig}
-      {colorPickerVisibleIndex}
-      on:clickColorPicker={handleColorPickerClick}
-      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-      on:changeColorMap={handleChangeColorMap} />
-  {/each}
-</div>
+{#if legendLabels}
+  <div class="is-divider" data-content="Unique values" />
+  <div
+    class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
+    data-testid="unique-view-container">
+    {#each layerConfig.unique.colorMapRows as colorMapRow}
+      <UniqueValuesLegendColorMapRow
+        bind:colorMapRow
+        layer={layerConfig}
+        {colorPickerVisibleIndex}
+        on:clickColorPicker={handleColorPickerClick}
+        on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
+        on:changeColorMap={handleChangeColorMap} />
+    {/each}
+  </div>
+{/if}
 
 <style lang="scss">
   .unique-view-container {

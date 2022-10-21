@@ -41,8 +41,10 @@
     const probability = counts.map((item) => item / sum)
     const interval = info.stats[band]['histogram'][1]
 
-    for (let i = 0; i < interval.length - 1; i++) {
-      interval[i] = (interval[i] + interval[i + 1]) * 0.5
+    if (!layer.tree?.isMosaicJSON) {
+      for (let i = 0; i < interval.length - 1; i++) {
+        interval[i] = (interval[i] + interval[i + 1]) * 0.5
+      }
     }
 
     counts.unshift(0)
@@ -63,8 +65,6 @@
     })
 
     data = { table: table }
-
-    console.log(data)
   })
 
   let viewVL

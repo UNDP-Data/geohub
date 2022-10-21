@@ -14,6 +14,7 @@
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
+    COLOR_CLASS_COUNT_MAXIMUM,
     DEFAULT_COLORMAP,
     ErrorMessages,
     LayerTypes,
@@ -73,13 +74,17 @@
       `stac/mosaicjson?url=${encodeURIComponent(tree.url)}&bbox=${JSON.stringify(bbox)}&asset=${tree.path}`,
     )
 
+    const numberOfClasses = mosaicjsonRes.classmap ? Object.keys(mosaicjsonRes.classmap).length : 0
+    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= COLOR_CLASS_COUNT_MAXIMUM ? true : false
     const tilejson = await fetchUrl(mosaicjsonRes.tilejson)
-    const layerInfo = await getMosaicJsonMetadata(tilejson)
-    const layerBandMetadataMin = layerInfo.band_metadata[0][1]['STATISTICS_MINIMUM']
-    const layerBandMetadataMax = layerInfo.band_metadata[0][1]['STATISTICS_MAXIMUM']
+    const layerInfo = await getMosaicJsonMetadata(tilejson, isUniqueValueLayer)
+    const bandMetaStats = layerInfo.band_metadata[0][1]
+    const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
+    const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
+
+    bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjsonRes.classmap
 
     let defaultColorMap = DEFAULT_COLORMAP
-    // console.log(layerInfo.band_metadata)
     if (layerInfo.band_metadata.length > 1) {
       defaultColorMap = ''
     }
@@ -163,7 +168,7 @@
     $map.addLayer(layerDefinition, firstSymbolId)
   }
 
-  const getMosaicJsonMetadata = async (tilejson: { bounds: any; tiles: string[] }) => {
+  const getMosaicJsonMetadata = async (tilejson: { bounds: any; tiles: string[] }, isUniqueValue: boolean) => {
     const tileUrl = new URL(tilejson.tiles[0])
     const mosaicUrl = tileUrl.searchParams.get('url')
     const mosaicAssetUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/${tilejson.bounds.join(
@@ -174,7 +179,9 @@
       const assetUrl = assets[0].replace('/vsicurl/', '')
       const data: RasterTileMetadata = await getRasterMetadata(getBase64EncodedUrl(assetUrl))
       if (!(data.band_metadata.length > 1)) {
-        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${encodeURIComponent(assetUrl)}`
+        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${encodeURIComponent(assetUrl)}${
+          isUniqueValue ? '&categorical=true' : ''
+        }`
         const layerStats = await fetchUrl(statsURL)
         data.stats = layerStats
         data.active_band_no = Object.keys(layerStats)[0]

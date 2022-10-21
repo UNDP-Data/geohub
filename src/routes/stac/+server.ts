@@ -42,9 +42,9 @@ export const GET: RequestHandler = async ({ url }) => {
   } else if (containerPath.toLowerCase().indexOf('collection') > -1) {
     // /api/stac/v1/collections/{collection_id}/items?limit=1
     const apiUrl = `${baseUrl}/${collectionId}/items?limit=1`
-    const item = await getItem(apiUrl)
-    const collectionUrl = item.links.find((link) => link.rel === 'collection').href
-    const rootUrl = item.links.find((link) => link.rel === 'root').href
+    const fc = await getItem(apiUrl)
+    const collectionUrl = fc.links.find((link) => link.rel === 'self').href
+    const rootUrl = fc.links.find((link) => link.rel === 'root').href
     const collection = await getCollection(collectionUrl)
     catalog = {
       id: `${catalog.id}_${collectionId}`,
@@ -56,7 +56,10 @@ export const GET: RequestHandler = async ({ url }) => {
       isMosaicJSON: true,
       children: [],
     }
-
+    if (fc.features.length === 0) {
+      throw error(404, { message: `No data found in ${collectionId}: ${collection.title}` })
+    }
+    const item = fc.features[0]
     const itemProperties = item.properties
     Object.keys(item.assets).forEach((assetName) => {
       const asset = item.assets[assetName]
@@ -80,7 +83,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
       catalog.children.push({
         id: `${catalog.id}_${collectionId}_${assetName}`,
-        label: asset.title,
+        label: asset.title ? asset.title : asset.roles[0],
         description: description,
         path: `${assetName}`,
         url: searchUrl,
@@ -90,6 +93,9 @@ export const GET: RequestHandler = async ({ url }) => {
         // children: [],
       })
     })
+    if (catalog.children.length === 0) {
+      throw error(404, `No item found in ${collectionId}: ${collection.title}`)
+    }
   } else {
     // others
     throw error(400, { message: 'Bad request' })
@@ -127,5 +133,5 @@ const getItem = async (url: string) => {
     throw error(res.status, { message: res.statusText })
   }
   const fc: StacItemFeatureCollection = await res.json()
-  return fc.features[0]
+  return fc
 }

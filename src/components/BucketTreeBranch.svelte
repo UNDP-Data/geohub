@@ -2,10 +2,10 @@
   import { onMount } from 'svelte'
   import { slide } from 'svelte/transition'
 
-  import type { TreeNode } from '$lib/types'
+  import type { BannerMessage, TreeNode } from '$lib/types'
 
-  import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT } from '$lib/constants'
-  import { indicatorProgress } from '$stores'
+  import { STAC_PAGINATION_PREV, STAC_PAGINATION_NEXT, StatusTypes } from '$lib/constants'
+  import { bannerMessages, indicatorProgress } from '$stores'
 
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeBranchCloseButton from './BucketTreeBranchCloseButton.svelte'
@@ -51,37 +51,47 @@
   }
 
   const updateTreeStore = async () => {
-    $indicatorProgress = true
-    let treeData: { tree: TreeNode }
+    try {
+      $indicatorProgress = true
+      let treeData: { tree: TreeNode }
 
-    if (tree.isStac) {
-      if (tree.isMosaicJSON) {
-        treeData = await fetchUrl(`stac?id=${tree.id}&path=${tree.path}`)
-      } else {
-        const catalogId = tree.path.split('/')[0]
+      if (tree.isStac) {
+        if (tree.isMosaicJSON) {
+          const res = await fetch(`stac?id=${tree.id}&path=${tree.path}`)
+          treeData = await res.json()
+        } else {
+          const catalogId = tree.path.split('/')[0]
+          treeData = await fetchUrl(
+            `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
+              .split('/')
+              .pop()
+              .replace(/\.[^/.]+$/, '')}`,
+          )
+        }
+      } else if (tree.isMartin) {
         treeData = await fetchUrl(
-          `stac.json?id=${catalogId}&path=${tree.path}&token=${stacPaginationAction}&item=${stacPaginationLabel
-            .split('/')
-            .pop()
-            .replace(/\.[^/.]+$/, '')}`,
+          `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
         )
+      } else {
+        treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
       }
-    } else if (tree.isMartin) {
-      treeData = await fetchUrl(
-        `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
-      )
-    } else {
-      treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
-    }
 
-    if (treeData) {
-      //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
-      // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
-      // potentially invalid layers from the tree!!!!
-      tree = treeData.tree
+      if (treeData) {
+        //set  node value to the result of the fetch. This will actualy work becauase the tree is recursive
+        // TODO: evaluate if the  node should be assigned at ethe end of this function. This would allow to remove
+        // potentially invalid layers from the tree!!!!
+        tree = treeData.tree
+      }
+    } catch (err) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: err.message,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+    } finally {
+      $indicatorProgress = false
     }
-
-    $indicatorProgress = false
   }
 </script>
 
