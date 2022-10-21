@@ -11,8 +11,9 @@
     RasterLayerSpecification,
     SymbolLayerSpecification,
   } from 'maplibre-gl'
+  import type { Layer } from '$lib/types'
 
-  export let layer
+  export let layer: Layer
 
   let definition:
     | RasterLayerSpecification
@@ -28,14 +29,17 @@
   let data
 
   onMount(async () => {
-    const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
-    let layerStats
+    if (!layer.tree?.isMosaicJSON) {
+      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+      let layerStats
+      layerStats = await fetchUrl(statsURL)
+      info.stats = layerStats
+    }
     const band = info.active_band_no
-    layerStats = await fetchUrl(statsURL)
-    const counts = layerStats[band]['histogram'][0]
+    const counts = info.stats[band]['histogram'][0]
     const sum = counts.reduce((a, b) => a + b, 0)
     const probability = counts.map((item) => item / sum)
-    const interval = layerStats[band]['histogram'][1]
+    const interval = info.stats[band]['histogram'][1]
 
     for (let i = 0; i < interval.length - 1; i++) {
       interval[i] = (interval[i] + interval[i + 1]) * 0.5

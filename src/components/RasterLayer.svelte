@@ -59,7 +59,11 @@
       // disable other menus since they are not working for mosaicjson layer currently
       tabs = [{ label: TabNames.OPACITY, icon: faDroplet, active: false }]
       if (layer.info.band_metadata.length < 2) {
-        tabs = [{ label: TabNames.LEGEND, icon: faList, active: false }, ...tabs]
+        tabs = [
+          { label: TabNames.LEGEND, icon: faList, active: false },
+          { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
+          ...tabs,
+        ]
       }
     }
   }
