@@ -24,7 +24,6 @@ importers:
       '@smui/form-field': ^6.1.4
       '@smui/linear-progress': ^6.1.4
       '@smui/list': ^6.1.4
-      '@smui/menu': ^6.2.0
       '@smui/paper': ^6.1.4
       '@smui/segmented-button': ^6.1.4
       '@smui/select': ^6.2.0
@@ -36,9 +35,6 @@ importers:
       '@sveltejs/vite-plugin-svelte': ^1.0.8
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/svelte': ^3.2.1
-      '@turf/area': ^6.5.0
-      '@turf/bearing': ^6.5.0
-      '@turf/distance': ^6.5.0
       '@types/chroma-js': ^2.1.4
       '@types/colormap': ^2.3.1
       '@types/geojson': ^7946.0.10
@@ -65,7 +61,6 @@ importers:
       eslint: ^8.24.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
-      geodesy-fn: ^1.0.1
       geojson: ^0.5.0
       hex-to-css-filter: ^5.4.0
       image-clipper: ^0.4.4
@@ -129,16 +124,12 @@ importers:
       '@smui/form-field': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/linear-progress': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/list': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      '@smui/menu': 6.2.0_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/paper': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/segmented-button': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/select': 6.2.0_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/switch': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/textfield': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
       '@smui/tooltip': 6.1.4_qy6w2iv5hnh55blsjuu7uihyzm
-      '@turf/area': 6.5.0
-      '@turf/bearing': 6.5.0
-      '@turf/distance': 6.5.0
       '@watergis/legend-symbol': 0.2.2
       '@watergis/maplibre-gl-export': 1.3.7
       '@watergis/maplibre-gl-legend': 1.2.7
@@ -150,7 +141,6 @@ importers:
       colormap: 2.3.2
       d3-format: 3.1.0
       email-validator: 2.0.4
-      geodesy-fn: 1.0.1
       geojson: 0.5.0
       hex-to-css-filter: 5.4.0
       image-clipper: 0.4.4
