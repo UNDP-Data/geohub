@@ -23,7 +23,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right',
+      placement: 'right-start',
       strategy: 'fixed',
     },
     [0, 5],
