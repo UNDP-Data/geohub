@@ -14,7 +14,7 @@
   }
 </script>
 
-<a class="tree-icon" href="#" role="button" on:click={() => toggleExpansion()}>
+<div class="tree-icon" on:click={() => toggleExpansion()}>
   {#if level === 0}
     <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
   {:else if !IsExpanded}
@@ -22,7 +22,7 @@
   {:else}
     <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
   {/if}
-</a>
+</div>
 
 <style lang="scss">
   .tree-icon {
