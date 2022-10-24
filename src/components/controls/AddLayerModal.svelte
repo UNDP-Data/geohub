@@ -229,7 +229,7 @@
         visible: true,
         url: treeNode.url,
         source: layerSource,
-        tree: treeNode
+        tree: treeNode,
       },
       ...$layerList,
     ]
