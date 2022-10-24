@@ -18,7 +18,7 @@
 </script>
 
 <div>
-  <a class="icon-button" href="#" role="button" on:click={addLayer}>
+  <div class="icon-button" on:click={addLayer}>
     <Wrapper>
       <FaLayers size="sm" style="cursor: pointer;">
         <Fa icon={faLayerGroup} scale={1} />
@@ -28,7 +28,7 @@
       </FaLayers>
       <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
     </Wrapper>
-  </a>
+  </div>
   <slot />
 </div>
 
