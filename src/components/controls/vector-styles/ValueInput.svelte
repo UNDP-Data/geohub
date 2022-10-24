@@ -8,7 +8,6 @@
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
   import type { VectorLayerTileStatAttribute } from '$lib/types'
 
-
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
@@ -48,8 +47,8 @@
   let step
   let uv: any = undefined
   let clickFuncs: Listener[] = []
-  let cursor:string;
-  let mapClickButtonDisabled:boolean = false
+  let cursor: string
+  let mapClickButtonDisabled = false
   let sv: Array<number> = []
   let calculatedStep
   let min

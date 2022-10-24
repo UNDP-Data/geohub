@@ -9,7 +9,7 @@
   import Step from '$components/control-groups/Step.svelte'
   import { vectorFilterOperations } from '$lib/constants'
   import { clean } from '$lib/helper'
-    import { isInteger } from 'lodash'
+  import { isInteger } from 'lodash'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -51,13 +51,11 @@
     expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
     if (layer.children && layer.children.length > 0) {
       layer.children['0'].info.stats.forEach((stat) => {
-      if (stat.attribute === propertySelectValue) {
-        propertyStats = stat
-      }
-    })
-
+        if (stat.attribute === propertySelectValue) {
+          propertyStats = stat
+        }
+      })
     }
-    
   }
 
   const generateExpressionFromExpressionsArray = (expressionsArray) => {
