@@ -9,6 +9,7 @@
   import Step from '$components/control-groups/Step.svelte'
   import { vectorFilterOperations } from '$lib/constants'
   import { clean } from '$lib/helper'
+    import { isInteger } from 'lodash'
 
   export let isFilterPanelVisible = false
   export let layer
@@ -48,11 +49,15 @@
       numberProperty = dataType === 'Number' || dataType.includes('int') || dataType.includes('float')
     }
     expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
-    layer.children['0'].info.stats.forEach((stat) => {
+    if (layer.children && layer.children.length > 0) {
+      layer.children['0'].info.stats.forEach((stat) => {
       if (stat.attribute === propertySelectValue) {
         propertyStats = stat
       }
     })
+
+    }
+    
   }
 
   const generateExpressionFromExpressionsArray = (expressionsArray) => {
@@ -282,9 +287,9 @@
                   {#if op && op.length > 0}
                     <div class="menu-item ">
                       <div class="tags has-addons is-centered ">
-                        <div class="tag is-info is-light is-small">{clean(expr.property)}</div>
-                        <div class="tag is-danger is-light is-small">{op[0].label.toLowerCase()}</div>
-                        <div class="tag is-success is-light is-small">{expr.value}</div>
+                        <div class="tag is-info is-dark is-small">{clean(expr.property)}</div>
+                        <div class="tag is-danger is-dark is-small">{op[0].text}</div>
+                        <div class="tag is-success is-dark is-small">{expr.value}</div>
                       </div>
                     </div>
                     {#if i < expressionsArray.length - 1}

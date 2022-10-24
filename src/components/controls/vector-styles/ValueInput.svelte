@@ -7,7 +7,7 @@
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
   import type { VectorLayerTileStatAttribute } from '$lib/types'
-  import { boolean } from 'mathjs'
+
 
   export let propertySelectedValue
   export let expressionValue
@@ -48,6 +48,8 @@
   let step
   let uv: any = undefined
   let clickFuncs: Listener[] = []
+  let cursor:string;
+  let mapClickButtonDisabled:boolean = false
   let sv: Array<number> = []
   let calculatedStep
   let min
@@ -71,9 +73,10 @@
     min = Number(attrstats.min)
     max = Number(attrstats.max)
     const range = max - min
-    calculatedStep = Number.isInteger(attrstats.median) ? ~~(range * 1e-4) || 1 : range * 1e-4
+    calculatedStep = Number.isInteger(attrstats.median) && Number.isInteger(min) ? ~~(range * 1e-4) || 1 : range * 1e-4
+
     sv = [attrstats.median]
-    //console.log(`sv is ${sv} ${typeof sv}`)
+    //console.log(`calculatedStep is ${calculatedStep} ${min}-${max} ${attrstats.median}`)
   } else {
     const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
 
@@ -158,7 +161,9 @@
     }
   }
 
-  const getFromMap = async (e: CustomEvent) => {
+  const getFromMap = async (e: Event) => {
+    mapClickButtonDisabled = !mapClickButtonDisabled
+    cursor = $map.getCanvas().style.cursor
     $map.getCanvas().style.cursor = 'cell'
     if (clickFuncs.length == 0) {
       clickFuncs = [...$map._listeners.click]
@@ -171,10 +176,12 @@
   }
 
   const restoreQ = () => {
+    mapClickButtonDisabled = !mapClickButtonDisabled
     $map.off('click', layerId, handleMapClick)
     for (var func of clickFuncs) {
       $map.on('click', func)
     }
+    $map.getCanvas().style.cursor = cursor
   }
 
   const formatter = (v: number) => {
@@ -188,8 +195,8 @@
   {#if hasManyFeatures}
     {#if dataType === 'String'}
       <div class="columns is-centered pb-2">
-        <button class="button is-small primary-button  " on:click={getFromMap}>
-          <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a value
+        <button class="button is-small primary-button  " on:click={getFromMap} disabled={mapClickButtonDisabled}>
+          <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Select from map
         </button>
       </div>
       {#if uv}
@@ -254,9 +261,8 @@
         </div>
       {:else}
         <div class="columns is-centered pb-2">
-          <button class="button is-small primary-button  " on:click={getFromMap}>
-            <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Click on the map to select a
-            value
+          <button class="button is-small primary-button  " on:click={getFromMap} disabled={mapClickButtonDisabled}>
+            <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Select from map
           </button>
         </div>
         {#if uv}
