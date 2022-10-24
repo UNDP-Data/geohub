@@ -13,6 +13,7 @@
   import { onMount } from 'svelte'
 
   export let tree: TreeNode
+  export let isShownInTree = true
   let layerInfoMetadata: LayerInfoMetadata = undefined
   let showTooltip = false
 
@@ -131,7 +132,7 @@
 </script>
 
 <div
-  class="icon"
+  class="icon {`${!isShownInTree ? 'icon-selected' : ''}`}"
   alt="Show more detailed information"
   title="Show more detailed information"
   use:popperRef
@@ -188,6 +189,7 @@
 
 <style lang="scss">
   @import '../styles/popper.scss';
+  @import '../styles/button-icons-selected.scss';
 
   .icon {
     cursor: pointer;

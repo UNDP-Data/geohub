@@ -13,3 +13,4 @@ static/
 .vscode/
 .prettierrc
 src/index.html
+/packages

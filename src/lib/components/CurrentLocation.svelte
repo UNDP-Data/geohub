@@ -1,7 +1,12 @@
 <script lang="ts">
   import type { Map } from 'maplibre-gl'
+  import { onMount } from 'svelte'
 
   export let map: Map
+  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-left'
+
+  let currentLocationDiv: HTMLDivElement
+
   const ADM_ID = 'admin'
   let isContainerVisible = false
   let adm0Name = null
@@ -35,27 +40,68 @@
       }
     }
   }
+
+  // eslint-disable-next-line
+  function CurrentLocationControl() {}
+
+  CurrentLocationControl.prototype.onAdd = function (map: Map) {
+    this.map = map
+
+    this.controlContainer = document.createElement('div')
+    this.controlContainer.appendChild(currentLocationDiv)
+    return this.controlContainer
+  }
+
+  CurrentLocationControl.prototype.onRemove = function () {
+    if (!this.controlContainer || !this.controlContainer.parentNode || !this.map) {
+      return
+    }
+    this.controlContainer.parentNode.removeChild(this.controlContainer)
+    this.map = undefined
+  }
+
+  /*global CurrentLocationControl */
+  /*eslint no-undef: "error"*/
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  let currentLocationControl: CurrentLocationControl
+
+  $: {
+    if (map) {
+      if (currentLocationControl !== null && map.hasControl(currentLocationControl) === false) {
+        map.addControl(currentLocationControl, position)
+      }
+    }
+  }
+
+  onMount(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    currentLocationControl = new CurrentLocationControl()
+  })
 </script>
 
-{#if isContainerVisible}
-  <div id="data-container" class="data-container target">
-    {#if adm0Name}
-      {adm0Name}
-    {/if}
-    {#if adm1Name}
-      {'>'} {adm1Name}
-    {/if}
-    {#if adm2Name}
-      {'>'} {adm2Name}
-    {/if}
-    {#if adm3Name}
-      {'>'} {adm3Name}
-    {/if}
-    {#if adm4Name}
-      {'>'} {adm4Name}
-    {/if}
-  </div>
-{/if}
+<div bind:this={currentLocationDiv}>
+  {#if isContainerVisible}
+    <div id="data-container" class="data-container">
+      {#if adm0Name}
+        {adm0Name}
+      {/if}
+      {#if adm1Name}
+        {'>'} {adm1Name}
+      {/if}
+      {#if adm2Name}
+        {'>'} {adm2Name}
+      {/if}
+      {#if adm3Name}
+        {'>'} {adm3Name}
+      {/if}
+      {#if adm4Name}
+        {'>'} {adm4Name}
+      {/if}
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   .data-container {
@@ -66,10 +112,7 @@
     color: #4a4a4a;
     font-family: ProximaNova, sans-serif;
     font-size: 11px;
-    left: 10px;
-    padding: 10px;
-    position: absolute;
-    top: 10px;
-    z-index: 10;
+    padding: 5px;
+    margin: 10px;
   }
 </style>
