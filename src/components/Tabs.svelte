@@ -44,20 +44,12 @@
   <ul style="border-bottom: none; margin-left: auto" data-deep-link="true" data-tabs="true" id="tablist" role="tablist">
     {#each tabs as tab, i}
       <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
-        <a
-          on:keydown={handleKeyDown}
-          on:click={() => (activeTab = tab.label)}
-          href="#{tab.label}"
-          aria-selected="true"
-          role="tab"
-          aria-controls="tab{i}"
-          id="tab-{tab.label}"
-          tabindex={i + 2}
-          >{tab.label}
+        <div on:keydown={handleKeyDown} on:click={() => (activeTab = tab.label)} id="tab-{tab.label}">
+          {tab.label}
           {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
             ({$layerList.length})
           {/if}
-        </a>
+        </div>
       </li>
     {/each}
   </ul>
@@ -77,13 +69,18 @@
     height: 100%;
   }
   .tabs-title {
-    a {
+    div {
       border-bottom: none !important;
       font-weight: bold;
       text-transform: uppercase;
       color: $gray-700;
       font-size: 1rem;
       font-family: ProximaNova, sans-serif;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      cursor: pointer;
     }
   }
   .active-tab {
