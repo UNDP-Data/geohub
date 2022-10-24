@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Map, NavigationControl, AttributionControl } from 'maplibre-gl';
 	import { map } from '$example/stores';
-	import { DrawCircle} from '$lib'
+	import { DrawCircle } from '$lib';
 
 	let mapContainer: HTMLDivElement;
 
@@ -30,10 +30,10 @@
 </script>
 
 <div class="map-wrap">
-	<div class="map" id="map" bind:this={mapContainer}/>
+	<div class="map" id="map" bind:this={mapContainer} />
 
 	<div class="content">
-		<DrawCircle bind:map={$map}/>
+		<DrawCircle bind:map={$map} />
 	</div>
 </div>
 
@@ -46,13 +46,13 @@
 		height: calc(100vh);
 
 		.map {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 1;
-	}
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
 
 		.content {
 			position: absolute;
@@ -61,5 +61,4 @@
 			z-index: 10;
 		}
 	}
-	
 </style>

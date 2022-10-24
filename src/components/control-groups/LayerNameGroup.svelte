@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
@@ -43,7 +42,6 @@
   }
 
   const name = clean(layer.name)
-  const layerInfoMetadata = $layerMetadata.get(hash(layer.definition.source))
 </script>
 
 <div class="layer-header">
@@ -63,26 +61,15 @@
         </div>
       {/if}
       <div class="layer-name">
-        <Wrapper>
-          <div>
-            <span style="padding-left: 5px;">
-              {#if layer.tree?.isMosaicJSON}
-                {layer.tree.label}
-              {:else}
-                {name}
-              {/if}
-            </span>
-          </div>
-          <Tooltip showDelay={250} hideDelay={0} yPos="above" style="background-color: #ccc; border-radius: 7.5px;">
-            <div class="label has-text-left">{clean(name)}</div>
-            <div class="description has-text-left">
-              {layerInfoMetadata?.description ? layerInfoMetadata?.description : 'N/A'}
-            </div>
-            <div class="unit is-size-7 has-text-left">
-              <span class="has-text-weight-bold">Unit: </span>{layerInfoMetadata?.unit ? layerInfoMetadata.unit : 'N/A'}
-            </div>
-          </Tooltip>
-        </Wrapper>
+        <div>
+          <span style="padding-left: 5px;">
+            {#if layer.tree?.isMosaicJSON}
+              {layer.tree.label}
+            {:else}
+              {name}
+            {/if}
+          </span>
+        </div>
       </div>
       <div>
         <LayerControlGroup {layer} />
