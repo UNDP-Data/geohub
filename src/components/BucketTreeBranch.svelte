@@ -16,6 +16,7 @@
   export let tree: TreeNode
   export let IsExpanded = false
   export let level = 0
+  export let hideCloseButton = false
   export let handleRemoveBucket = (): void => {
     throw new Error('Please give the function from the parent component')
   }
@@ -104,7 +105,7 @@
       bind:IsExpanded
       on:toggleExpansion={toggleExpansion} />
     <BucketTreeLabel bind:tree />
-    {#if level === 0}
+    {#if level === 0 && hideCloseButton === false}
       <BucketTreeBranchCloseButton on:remove={handleRemoveBucket} />
     {/if}
   </div>

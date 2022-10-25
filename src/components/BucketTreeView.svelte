@@ -12,6 +12,8 @@
 
   export let level = 0
   export let node: TreeNode
+  export let hideCloseButton = false
+  export let IsExpanded = false
 
   const dispatch = createEventDispatcher()
 
@@ -42,6 +44,7 @@
       bind:tree={node}
       bind:level
       bind:IsExpanded
+      bind:hideCloseButton
       {handleRemoveBucket}
       {toggleExpansion} />
   {:else}
