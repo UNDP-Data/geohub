@@ -251,10 +251,9 @@
                   class="icon"
                   alt={layerIconTypeLabel}
                   title={layerIconTypeLabel}>
-                  <Fa
-                    icon={layerIconType.icon}
-                    size="sm"
-                    primaryColor={layerIconType.color} />&nbsp;
+                  <i
+                    class="{layerIconType.icon} sm"
+                    style="color: {layerIconType.color};" />&nbsp;
                 </div>
                 <div class="name">
                   {layerValue.name}

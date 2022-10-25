@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import Fa from 'svelte-fa'
-
   import type { TreeNode } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
 
@@ -29,11 +27,9 @@
     alt={iconRaster.label}
     title={iconRaster.label}>
     <Wrapper>
-      <Fa
-        rotate={140}
-        icon={iconRaster.icon}
-        size="sm"
-        primaryColor={iconRaster.color} />
+      <i
+        class="{iconRaster.icon} sm fa-rotate-by"
+        style="--fa-rotate-angle:140deg; color:{iconRaster.color};" />
       <Tooltip
         showDelay={0}
         hideDelay={100}
@@ -46,10 +42,9 @@
     alt={iconVector.label}
     title={iconVector.label}>
     <Wrapper>
-      <Fa
-        icon={iconVector.icon}
-        size="sm"
-        primaryColor={iconVector.color} />
+      <i
+        class="{iconVector.icon} sm"
+        style="color:{iconVector.color};" />
       <Tooltip
         showDelay={500}
         hideDelay={100}
