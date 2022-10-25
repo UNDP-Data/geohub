@@ -1,9 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import Fa from 'svelte-fa'
-  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { LayerInfoMetadata, TreeNode } from '$lib/types'
   import { clean, fetchUrl, getActiveBandIndex, getBase64EncodedUrl, hash } from '$lib/helper'
@@ -13,7 +10,6 @@
   import { onMount } from 'svelte'
 
   export let tree: TreeNode
-  export let isShownInTree = true
   let layerInfoMetadata: LayerInfoMetadata = undefined
   let showTooltip = false
 
@@ -132,16 +128,18 @@
 </script>
 
 <div
-  class="icon {`${!isShownInTree ? 'icon-selected' : ''}`}"
+  class="icon"
   alt="Show more detailed information"
   title="Show more detailed information"
   use:popperRef
   on:click={() => (showTooltip = !showTooltip)}
   on:keydown={handleEnterKeyForInfo}>
   <Wrapper>
-    <Fa
-      icon={showTooltip ? faXmark : faCircleInfo}
-      size="sm" />
+    {#if showTooltip}
+      <i class="fa-solid fa-xmark sm" />
+    {:else}
+      <i class="fa-solid fa-circle-info sm" />
+    {/if}
     <Tooltip
       showDelay={0}
       hideDelay={100}
@@ -157,13 +155,11 @@
     transition:fade
     use:clickOutside={handleClose}>
     <div
-      class="close is-clickable"
+      class="close"
       alt="Close"
       title="Close"
       on:click={handleClose}>
-      <Fa
-        icon={faXmark}
-        size="sm" />
+      <i class="fa-solid fa-xmark sm" />
     </div>
 
     <div class="bucket-card">
@@ -254,7 +250,8 @@
 
     .close {
       text-align: right;
-      z-index: 100;
+      z-index: 10;
+      cursor: pointer;
     }
   }
 </style>

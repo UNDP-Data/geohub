@@ -10,9 +10,7 @@
 </script>
 
 <div class="group">
-  <BucketTreeItemCardButton
-    bind:tree={layer.tree}
-    isShownInTree={false} />
+  <BucketTreeItemCardButton bind:tree={layer.tree} />
   <VisibilityButton {layer} />
   <DeleteButton {layer} />
   <ActionsDropdown {layer} />
