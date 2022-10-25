@@ -58,7 +58,11 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
-<div style="max-height: 200px; overflow-y: auto" class="grid-wrapper " role="menu" on:click={handleClick}>
+<div
+  style="max-height: 200px; overflow-y: auto"
+  class="grid-wrapper "
+  role="menu"
+  on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
       {#if design1}

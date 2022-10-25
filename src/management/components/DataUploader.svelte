@@ -127,9 +127,14 @@
       {:else if currentStep.id == 2}
         <SDGSelect bind:selectedSDG />
       {:else if currentStep.id == 3}
-        <MetadataInput bind:metadata bind:metadataFormCompleted />
+        <MetadataInput
+          bind:metadata
+          bind:metadataFormCompleted />
       {:else if currentStep.id == 4}
-        <DataUploadConfirm bind:selectedFiles bind:selectedSDG bind:metadata />
+        <DataUploadConfirm
+          bind:selectedFiles
+          bind:selectedSDG
+          bind:metadata />
       {:else if currentStep.id == 5}
         <SubmittedForm />
       {/if}
@@ -140,13 +145,16 @@
           <div class="level-left">
             {#if currentStep.id > steps[0].id}
               <div class="level-item">
-                <button class="button is-light" on:click={handleBack}>Back</button>
+                <button
+                  class="button is-light"
+                  on:click={handleBack}>Back</button>
               </div>
             {/if}
             {#if isNextButtonEnabled}
               <div class="level-item">
-                <button class="button is-primary" on:click={handleNext}
-                  >{currentStep.id < 4 ? 'Next' : 'Submit'}</button>
+                <button
+                  class="button is-primary"
+                  on:click={handleNext}>{currentStep.id < 4 ? 'Next' : 'Submit'}</button>
               </div>
             {/if}
           </div>

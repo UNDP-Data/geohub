@@ -22,5 +22,9 @@
 </script>
 
 {#if $step === num}
-  <slot {nextStep} {prevStep} {resetStep} {setStep} />
+  <slot
+    {nextStep}
+    {prevStep}
+    {resetStep}
+    {setStep} />
 {/if}

@@ -83,7 +83,9 @@
         on:keydown={handleArrowKey}
         class={activeTab === tab.label ? 'is-active' : ''}>
         <span>
-          <Fa icon={tab.icon} size="sm" />
+          <Fa
+            icon={tab.icon}
+            size="sm" />
         </span>
         {tab.label}
       </a>

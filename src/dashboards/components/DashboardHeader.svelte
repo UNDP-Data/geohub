@@ -12,7 +12,9 @@
             href="https://develop.design-system.pages.dev/iframe?id=components-navigation-components-main-navigation-global-header--global-header&amp;globals=locale:english&amp;args=&amp;viewMode=story"
             class="logo"
             tabindex="0">
-            <img src="undp-images/undp-logo-blue.svg" alt="UNDP Logo" />
+            <img
+              src="undp-images/undp-logo-blue.svg"
+              alt="UNDP Logo" />
           </a>
           <div class="site-title">
             <span>GeoHub</span>

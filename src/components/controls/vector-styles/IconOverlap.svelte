@@ -19,7 +19,9 @@
   }
 </script>
 
-<div class="range-slider" style="width: 150px;">
+<div
+  class="range-slider"
+  style="width: 150px;">
   <RangeSlider
     bind:values={selected}
     min={0}

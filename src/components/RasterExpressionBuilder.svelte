@@ -123,7 +123,9 @@
     {:else}
       <div style="display: block">
         <div style="font-weight: bolder;">STATISTICS</div>
-        <div style="margin: 10px" class="is-divider" />
+        <div
+          style="margin: 10px"
+          class="is-divider" />
         <div>
           <div>Min: {layerMin}</div>
           <div>Max: {layerMax}</div>
@@ -136,7 +138,11 @@
       <div class="columns is-centered is-mobile">
         <div class="column is-11 ">
           <div class="tabs is-centered">
-            <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
+            <ul
+              data-deep-link="true"
+              data-tabs="true"
+              id="tablist_1"
+              role="tablist">
               {#each Object.values(operatorCategories) as operatorCategory}
                 <li class={activeOperatorCategory === operatorCategory.name ? 'is-active tabs-title' : 'tabs-title'}>
                   <Wrapper>
@@ -147,9 +153,14 @@
                         activeOperatorCategory = operatorCategory.name
                         operatorCategory.isVisible = !operatorCategory.isVisible
                       }}>
-                      <Fa icon={operatorCategory.icon} style="font-size: 16px; color: #232E3D" />
+                      <Fa
+                        icon={operatorCategory.icon}
+                        style="font-size: 16px; color: #232E3D" />
                     </a>
-                    <Tooltip showDelay={100} hideDelay={0} yPos="above">{operatorCategory.title}</Tooltip>
+                    <Tooltip
+                      showDelay={100}
+                      hideDelay={0}
+                      yPos="above">{operatorCategory.title}</Tooltip>
                   </Wrapper>
                 </li>
               {/each}

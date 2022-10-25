@@ -135,7 +135,9 @@
 </script>
 
 {#if legendLabels}
-  <div class="is-divider" data-content="Unique values" />
+  <div
+    class="is-divider"
+    data-content="Unique values" />
   <div
     class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
     data-testid="unique-view-container">

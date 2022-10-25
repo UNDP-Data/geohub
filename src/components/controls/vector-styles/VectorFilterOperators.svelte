@@ -17,9 +17,15 @@
 
 <div class=" column">
   <div class="setmembership">
-    <div class="buttons" style="display: flex; ">
+    <div
+      class="buttons"
+      style="display: flex; ">
       {#each operators.operators as operator}
-        <button class="button is-small" on:click={() => handleOperatorClick(operator)} alt={operator} title={operator}>
+        <button
+          class="button is-small"
+          on:click={() => handleOperatorClick(operator)}
+          alt={operator}
+          title={operator}>
           <span>{operator}</span>
         </button>
       {/each}

@@ -139,9 +139,17 @@
       class="discrete"
       style="{colorPickerStyle}; width:20px; height:20px" />
     {#if showToolTip && color}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-        <div id="arrow" data-popper-arrow />
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
+        <DefaultColorPicker
+          bind:color
+          on:closeColorPicker={() => handleColorPickerClick()} />
+        <div
+          id="arrow"
+          data-popper-arrow />
       </div>
     {/if}
   </div>
@@ -155,7 +163,12 @@
   </div>
   <div class="cell small-2">—</div>
   <div class="cell small-4">
-    <input style="border: none" id="end" type="number" value={colorMapRow.end} on:input={handleInput} />
+    <input
+      style="border: none"
+      id="end"
+      type="number"
+      value={colorMapRow.end}
+      on:input={handleInput} />
   </div>
 </div>
 

@@ -123,7 +123,9 @@
   }
 </script>
 
-<div class="columns" data-testid="line-view-container">
+<div
+  class="columns"
+  data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>
@@ -131,11 +133,17 @@
       </div>
     {:else if layer.legendType === VectorLayerLineLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorLineAdvanced bind:layer bind:applyToOption bind:layerMin bind:layerMax />
+        <VectorLineAdvanced
+          bind:layer
+          bind:applyToOption
+          bind:layerMin
+          bind:layerMax />
       </div>
     {/if}
   </div>
-  <div class="columm legend-toggle" transition:slide>
+  <div
+    class="columm legend-toggle"
+    transition:slide>
     {#if layerNumberProperties > 0}
       <Wrapper>
         <div
@@ -147,11 +155,17 @@
           data-testid="legend-toggle-container">
           <Card style="background: #D12800;">
             <PrimaryAction style="padding: 10px;">
-              <Fa icon={faRetweet} style="font-size: 16px; color:white" spin={isLegendSwitchAnimate} />
+              <Fa
+                icon={faRetweet}
+                style="font-size: 16px; color:white"
+                spin={isLegendSwitchAnimate} />
             </PrimaryAction>
           </Card>
         </div>
-        <Tooltip showDelay={500} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
+        <Tooltip
+          showDelay={500}
+          hideDelay={0}
+          yPos="above">Toggle Legend Type</Tooltip>
       </Wrapper>
       <br />
     {/if}
@@ -168,21 +182,29 @@
         transition:fade>
         <Card style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faPalette} style="font-size: 16px; color:white" />
+            <Fa
+              icon={faPalette}
+              style="font-size: 16px; color:white" />
           </PrimaryAction>
         </Card>
       </div>
     {/if}
 
     {#if showTooltip && layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           {layerMin}
           {layerMax} />
-        <div id="arrow" data-popper-arrow />
+        <div
+          id="arrow"
+          data-popper-arrow />
       </div>
     {/if}
   </div>

@@ -32,4 +32,8 @@
   })
 </script>
 
-<slot {nextStep} {prevStep} {resetStep} {setStep} />
+<slot
+  {nextStep}
+  {prevStep}
+  {resetStep}
+  {setStep} />

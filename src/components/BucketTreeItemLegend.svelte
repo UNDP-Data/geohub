@@ -24,17 +24,36 @@
 </script>
 
 {#if tree.isRaster}
-  <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
+  <div
+    class="icon"
+    alt={iconRaster.label}
+    title={iconRaster.label}>
     <Wrapper>
-      <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
-      <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
+      <Fa
+        rotate={140}
+        icon={iconRaster.icon}
+        size="sm"
+        primaryColor={iconRaster.color} />
+      <Tooltip
+        showDelay={0}
+        hideDelay={100}
+        yPos="above">Raster</Tooltip>
     </Wrapper>
   </div>
 {:else}
-  <div class="icon" alt={iconVector.label} title={iconVector.label}>
+  <div
+    class="icon"
+    alt={iconVector.label}
+    title={iconVector.label}>
     <Wrapper>
-      <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
+      <Fa
+        icon={iconVector.icon}
+        size="sm"
+        primaryColor={iconVector.color} />
+      <Tooltip
+        showDelay={500}
+        hideDelay={100}
+        yPos="above">Vector</Tooltip>
     </Wrapper>
   </div>
 {/if}

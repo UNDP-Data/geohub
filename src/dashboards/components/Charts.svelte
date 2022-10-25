@@ -184,7 +184,11 @@
 </script>
 
 <div class="centered">
-  <SegmentedButton segments={interactChoices} let:segment singleSelect bind:selected={interactSelected}>
+  <SegmentedButton
+    segments={interactChoices}
+    let:segment
+    singleSelect
+    bind:selected={interactSelected}>
     <Segment {segment}>
       <Label>{segment}</Label>
     </Segment>
@@ -196,7 +200,10 @@
   <div class="title-text">Population fully electrified in</div>
   <div class="title-text stats-location">{adminLocation}</div>
   <br />
-  <VegaLite data={{ values: adminBarValues }} spec={getAdminSpec()} options={vegaOptions} />
+  <VegaLite
+    data={{ values: adminBarValues }}
+    spec={getAdminSpec()}
+    options={vegaOptions} />
   <div class="subtitle-text">
     Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
   </div>
@@ -206,7 +213,10 @@
   <div class="title-text">Likelihood of full electrification at</div>
   <div class="title-text stats-location">{pointLocation}</div>
   <br />
-  <VegaLite data={{ values: pointBarValues }} spec={getPointSpec()} options={vegaOptions} />
+  <VegaLite
+    data={{ values: pointBarValues }}
+    spec={getPointSpec()}
+    options={vegaOptions} />
 {/if}
 
 <style lang="scss">

@@ -9,7 +9,9 @@
         <div class="cell medium-5">
           <div class="footer-logo">
             <a href="https://www.undp.org">
-              <img src="undp-images/undp-logo-white.svg" alt="UNDP Logo" />
+              <img
+                src="undp-images/undp-logo-white.svg"
+                alt="UNDP Logo" />
             </a>
             <h5 tabindex="0">
               United Nations

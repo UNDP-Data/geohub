@@ -190,12 +190,19 @@
   }
 </script>
 
-<div class="content" style="width:100%; height:100%">
+<div
+  class="content"
+  style="width:100%; height:100%">
   {#if hasManyFeatures}
     {#if dataType === 'String'}
       <div class="columns is-centered pb-2">
-        <button class="button is-small primary-button  " on:click={getFromMap} disabled={mapClickButtonDisabled}>
-          <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Select from map
+        <button
+          class="button is-small primary-button  "
+          on:click={getFromMap}
+          disabled={mapClickButtonDisabled}>
+          <i
+            title="Select a value from the map"
+            class="fa fa-map-location-dot" /> &nbsp; Select from map
         </button>
       </div>
       {#if uv}
@@ -255,13 +262,19 @@
             on:stop={onSliderStop} />
         </div>
         <div class="columns is-centered pb-2">
-          <button class="button is-small primary-button" on:click={apply}
-            ><i class="fa fa-hammer" />&nbsp; Apply</button>
+          <button
+            class="button is-small primary-button"
+            on:click={apply}><i class="fa fa-hammer" />&nbsp; Apply</button>
         </div>
       {:else}
         <div class="columns is-centered pb-2">
-          <button class="button is-small primary-button  " on:click={getFromMap} disabled={mapClickButtonDisabled}>
-            <i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Select from map
+          <button
+            class="button is-small primary-button  "
+            on:click={getFromMap}
+            disabled={mapClickButtonDisabled}>
+            <i
+              title="Select a value from the map"
+              class="fa fa-map-location-dot" /> &nbsp; Select from map
           </button>
         </div>
         {#if uv}
@@ -323,7 +336,10 @@
             </button>
           </div>
           <div>
-            <button disabled={tagsList.length === 0} class="button is-small primary-button" on:click={applyTags}
+            <button
+              disabled={tagsList.length === 0}
+              class="button is-small primary-button"
+              on:click={applyTags}
               ><i class="fa fa-hammer" />&nbsp; Apply
             </button>
           </div>
@@ -378,8 +394,9 @@
             on:stop={onSliderStop} />
         </div>
         <div class="columns is-centered pb-2">
-          <button class="button is-small primary-button" on:click={apply}
-            ><i class="fa fa-hammer" />&nbsp; Apply</button>
+          <button
+            class="button is-small primary-button"
+            on:click={apply}><i class="fa fa-hammer" />&nbsp; Apply</button>
         </div>
       {/if}
     {/if}

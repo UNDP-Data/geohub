@@ -41,7 +41,9 @@
     <h3>Saved Map Styles</h3>
   </div>
 
-  <div class="content-card-container" style="margin-left: 10%; margin-right: 10%; margin-top: 5%; margin-bottom: 5%;">
+  <div
+    class="content-card-container"
+    style="margin-left: 10%; margin-right: 10%; margin-top: 5%; margin-bottom: 5%;">
     <div class="grid-x grid-margin-x small-up-1 medium-up-2 large-up-4 content-card-wrapper">
       {#each styleList as style}
         <DashboardMapStyleCard {style} />
@@ -51,25 +53,47 @@
   {#if totalItemsCount > 1}
     <hr />
     <div style="width:max-content; margin: 0 auto">
-      <nav style="margin-left:auto;" class="pagination" aria-label="Pagination" role="navigation">
+      <nav
+        style="margin-left:auto;"
+        class="pagination"
+        aria-label="Pagination"
+        role="navigation">
         <ul>
-          <li class={defaultPage === totalPagesCount ? '' : 'disabled'} aria-disabled={defaultPage === totalPagesCount}>
+          <li
+            class={defaultPage === totalPagesCount ? '' : 'disabled'}
+            aria-disabled={defaultPage === totalPagesCount}>
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <a href="#" on:click={handlePreviousClick} role="button" aria-current="true" aria-label="Previous">
+            <a
+              href="#"
+              on:click={handlePreviousClick}
+              role="button"
+              aria-current="true"
+              aria-label="Previous">
               Previous
             </a>
           </li>
           <li>
             Page
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <span><a href="#" aria-label={defaultPage}>{defaultPage}</a></span>
+            <span
+              ><a
+                href="#"
+                aria-label={defaultPage}>{defaultPage}</a
+              ></span>
             of
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <span><a href="#" aria-label={totalPagesCount}>{totalPagesCount}</a></span>
+            <span
+              ><a
+                href="#"
+                aria-label={totalPagesCount}>{totalPagesCount}</a
+              ></span>
           </li>
           <li class={defaultPage === totalPagesCount ? 'disabled' : ''}>
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <a href="#" on:click={handleNextClick} aria-label="Next">Next</a>
+            <a
+              href="#"
+              on:click={handleNextClick}
+              aria-label="Next">Next</a>
           </li>
         </ul>
       </nav>

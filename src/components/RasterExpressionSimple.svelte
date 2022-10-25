@@ -311,7 +311,9 @@
 
 <div class="container">
   <div class="columns">
-    <div class="column is-10" style="border: 1px dotted #e6e9f7">
+    <div
+      class="column is-10"
+      style="border: 1px dotted #e6e9f7">
       {#if simpleExpressionAvailable}
         {#each Object.keys(expressions[0]) as key}
           <span
@@ -326,9 +328,15 @@
           </span>
         {/each}
       {:else}
-        <div class="column" style="width: 90%; margin: auto">
+        <div
+          class="column"
+          style="width: 90%; margin: auto">
           <div style="width: 50%; margin: auto; display: flex; align-items: center; justify-content: space-evenly">
-            <span style="cursor: pointer; margin: .5%;" class="tag is-medium is-link">where </span>
+            <span
+              style="cursor: pointer; margin: .5%;"
+              class="tag is-medium is-link"
+              >where
+            </span>
             <button
               style="display: {expressions.length > 0 ? 'none' : ''}"
               on:click={addNewCondition}
@@ -338,12 +346,15 @@
             <div style="display: block; width: 100%">
               <div style="display: flex; align-items: center">
                 {#each Object.keys(expression) as oper}
-                  <span class="tag is-medium is-warning" style="margin: .5%;">
+                  <span
+                    class="tag is-medium is-warning"
+                    style="margin: .5%;">
                     {expression[`${oper}`]}
                   </span>
                 {/each}
-                <button on:click={() => removeConditionAtIndex(index)} class="button is-small is-light is-danger"
-                  ><i class="fa fa-x" /></button>
+                <button
+                  on:click={() => removeConditionAtIndex(index)}
+                  class="button is-small is-light is-danger"><i class="fa fa-x" /></button>
                 <button
                   on:click={() => changeEditingIndexTo(index)}
                   class="button is-small is-light {index === editingExpressionIndex ? 'is-info' : 'is-dark'}"
@@ -372,7 +383,9 @@
             tabindex="0"
             class="tag is-medium is-success">
             {trueStatement.statement.length > 0 ? trueStatement.statement : ''}
-            <button on:click={() => (trueStatement.statement = '')} class="delete is-small" />
+            <button
+              on:click={() => (trueStatement.statement = '')}
+              class="delete is-small" />
           </span>
           <span
             on:click={() => {
@@ -384,7 +397,9 @@
             class="tag is-medium is-danger"
             tabindex="0"
             >{falseStatement.statement.length > 0 ? falseStatement.statement : ''}
-            <button on:click={() => (falseStatement.statement = '')} class="delete is-small" />
+            <button
+              on:click={() => (falseStatement.statement = '')}
+              class="delete is-small" />
           </span>
         </div>
       {/if}
@@ -400,15 +415,24 @@
       <Wrapper>
         <Card style="background: #D12800">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faCalculator} style="font-size: 16px; color: white" />
+            <Fa
+              icon={faCalculator}
+              style="font-size: 16px; color: white" />
           </PrimaryAction>
         </Card>
-        <Tooltip showDelay={100} hideDelay={0} yPos="above">Expression builder</Tooltip>
+        <Tooltip
+          showDelay={100}
+          hideDelay={0}
+          yPos="above">Expression builder</Tooltip>
       </Wrapper>
     </div>
     <!--    </div>-->
     {#if showExpressionBuilder}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
         <RasterExpressionBuilder
           bind:simpleExpressionAvailable
           on:handleComparisonButtonClick={handleComparisonButtonClick}
@@ -423,8 +447,12 @@
       </div>
     {/if}
   </div>
-  <div class="columns" style="width: fit-content">
-    <div class="column" style="width: 100%; justify-content: space-between; margin-left: auto">
+  <div
+    class="columns"
+    style="width: fit-content">
+    <div
+      class="column"
+      style="width: 100%; justify-content: space-between; margin-left: auto">
       <button
         style="display: {simpleExpressionAvailable ? 'none' : ''}"
         class="button other-button is-small"

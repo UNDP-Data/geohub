@@ -87,15 +87,23 @@
     on:focusout={() => handleFocusOut()}
     on:keydown={handleKP}>
     {#if bucket.icon.startsWith('http')}
-      <img src={bucket.icon} alt={bucket.label} />
+      <img
+        src={bucket.icon}
+        alt={bucket.label} />
     {:else}
-      <i class={`fa-icon ${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`} aria-label={bucket.label} />
+      <i
+        class={`fa-icon ${bucket.icon.replace('fa-duotone', 'fa-solid')} fa-xl`}
+        aria-label={bucket.label} />
     {/if}
   </button>
 </div>
 
 {#if showTooltip}
-  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+  <div
+    id="tooltip"
+    data-testid="tooltip"
+    use:popperContent={popperOptions}
+    transition:fade>
     <div class="columns is-vcentered is-mobile">
       <div class="column is-full">
         <div class="title is-size-5">
@@ -108,12 +116,16 @@
     </div>
     <div class="content is-size-7 tags">
       {#each bucket.tags as tag}
-        <span title="tag" style="margin-right: 5px;">
+        <span
+          title="tag"
+          style="margin-right: 5px;">
           <span class="tag is-info is-small is-light">{tag}</span>
         </span>
       {/each}
     </div>
-    <div id="arrow" data-popper-arrow />
+    <div
+      id="arrow"
+      data-popper-arrow />
   </div>
 {/if}
 

@@ -14,13 +14,24 @@
   }
 </script>
 
-<div class="tree-icon" on:click={() => toggleExpansion()}>
+<div
+  class="tree-icon"
+  on:click={() => toggleExpansion()}>
   {#if level === 0}
-    <Fa icon={faDatabase} size="sm" style="cursor: pointer;" />
+    <Fa
+      icon={faDatabase}
+      size="sm"
+      style="cursor: pointer;" />
   {:else if !IsExpanded}
-    <Fa icon={faChevronRight} size="sm" style="cursor: pointer;" />
+    <Fa
+      icon={faChevronRight}
+      size="sm"
+      style="cursor: pointer;" />
   {:else}
-    <Fa icon={faChevronRight} size="sm" style="cursor: pointer; transform: rotate(90deg);" />
+    <Fa
+      icon={faChevronRight}
+      size="sm"
+      style="cursor: pointer; transform: rotate(90deg);" />
   {/if}
 </div>
 

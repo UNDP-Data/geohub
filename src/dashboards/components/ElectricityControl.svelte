@@ -25,10 +25,18 @@
 </script>
 
 <div class="centered">
-  <SegmentedButton segments={electricityChoices} let:segment singleSelect bind:selected={electricitySelected}>
-    <Segment {segment} title={segment.title}>
+  <SegmentedButton
+    segments={electricityChoices}
+    let:segment
+    singleSelect
+    bind:selected={electricitySelected}>
+    <Segment
+      {segment}
+      title={segment.title}>
       <div class="icon">
-        <Fa icon={segment.icon} size="lg" />
+        <Fa
+          icon={segment.icon}
+          size="lg" />
       </div>
       <Label>{segment.name}</Label>
     </Segment>
@@ -36,7 +44,10 @@
   <ElectricityLegend bind:electricitySelected />
 </div>
 <div class="raster-time-slider">
-  <TimeSlider bind:electricitySelected bind:loadLayer={loadRasterLayer} bind:BEFORE_LAYER_ID={POVERTY_ID} />
+  <TimeSlider
+    bind:electricitySelected
+    bind:loadLayer={loadRasterLayer}
+    bind:BEFORE_LAYER_ID={POVERTY_ID} />
 </div>
 
 <style lang="scss">

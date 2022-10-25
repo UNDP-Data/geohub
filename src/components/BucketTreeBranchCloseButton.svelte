@@ -15,8 +15,15 @@
   }
 </script>
 
-<a class="close-button" href="#" role="button" on:click={handleRemoveBucket} on:keydown={handleKD}>
-  <Fa icon={faWindowClose} size="sm" />
+<a
+  class="close-button"
+  href="#"
+  role="button"
+  on:click={handleRemoveBucket}
+  on:keydown={handleKD}>
+  <Fa
+    icon={faWindowClose}
+    size="sm" />
 </a>
 
 <style lang="scss">

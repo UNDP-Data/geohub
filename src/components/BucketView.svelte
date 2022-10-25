@@ -68,20 +68,34 @@
   }
 </script>
 
-<div class="view-container" data-testid="view-container">
+<div
+  class="view-container"
+  data-testid="view-container">
   {#if bucketCardFilterSelected}
-    <div class="columns filter-container" transition:slide data-testid="filter-container">
+    <div
+      class="columns filter-container"
+      transition:slide
+      data-testid="filter-container">
       <div class="column filter">
         <BucketFilter bind:bucketsMeetThereshold />
       </div>
     </div>
   {/if}
 
-  <div class="columns cards-tree-container is-gapless" style="display: flex!important;">
-    <div class="column" style="max-width: 112px;">
+  <div
+    class="columns cards-tree-container is-gapless"
+    style="display: flex!important;">
+    <div
+      class="column"
+      style="max-width: 112px;">
       <div class="columns">
-        <div class="column cards" data-testid="buckets-container" style={$modalVisible ? 'z-index: 1;' : ''}>
-          <div class="card-filter" data-testid="buckets-filter-container">
+        <div
+          class="column cards"
+          data-testid="buckets-container"
+          style={$modalVisible ? 'z-index: 1;' : ''}>
+          <div
+            class="card-filter"
+            data-testid="buckets-filter-container">
             <BucketCardFilter on:click={handleBucketCardFilterClick} />
           </div>
 
@@ -89,16 +103,24 @@
             {#if !bucketsMeetThereshold.includes('NO_RESULTS')}
               {#each $bucketList as bucket}
                 {#if bucketsMeetThereshold.includes(bucket.path)}
-                  <div data-testid={bucket.path} transition:slide>
-                    <BucketCard {bucket} on:click={handleBucketClick} />
+                  <div
+                    data-testid={bucket.path}
+                    transition:slide>
+                    <BucketCard
+                      {bucket}
+                      on:click={handleBucketClick} />
                   </div>
                 {/if}
               {/each}
             {/if}
           {:else}
             {#each $bucketList as bucket}
-              <div data-testid={bucket.path} transition:slide>
-                <BucketCard {bucket} on:click={handleBucketClick} />
+              <div
+                data-testid={bucket.path}
+                transition:slide>
+                <BucketCard
+                  {bucket}
+                  on:click={handleBucketClick} />
               </div>
             {/each}
           {/if}
@@ -107,8 +129,13 @@
       </div>
     </div>
     <div class="column is-three-quarters">
-      <LinearProgress indeterminate bind:closed={hideLinearProgress} />
-      <div id="tree-container" class="tree" data-testid="tree-container">
+      <LinearProgress
+        indeterminate
+        bind:closed={hideLinearProgress} />
+      <div
+        id="tree-container"
+        class="tree"
+        data-testid="tree-container">
         {#if $treeBucket.length === 0}
           <div class="title is-size-4">Welcome to GeoHub</div>
           <div class="subtitle is-size-5">
@@ -127,7 +154,9 @@
                   .map((el) => el.toLowerCase())
                   .join('-')}
                 label={tree.label}>
-                <BucketTreeView bind:node={tree} on:remove={handleRemoveBucket} />
+                <BucketTreeView
+                  bind:node={tree}
+                  on:remove={handleRemoveBucket} />
               </ul>
             {/each}
           </nav>

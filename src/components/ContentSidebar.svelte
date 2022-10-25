@@ -50,7 +50,9 @@
   }
 </script>
 
-<svelte:window bind:innerWidth bind:innerHeight />
+<svelte:window
+  bind:innerWidth
+  bind:innerHeight />
 
 <div class="split-container">
   <Split
@@ -60,11 +62,15 @@
     {splitterSize}
     on:changed={splitterChanged}
     bind:this={splitControl}>
-    <div slot="primary" class="primary-content">
+    <div
+      slot="primary"
+      class="primary-content">
       <slot name="primary" />
     </div>
 
-    <div slot="secondary" class="secondary-content">
+    <div
+      slot="secondary"
+      class="secondary-content">
       <slot name="secondary" />
     </div>
   </Split>

@@ -10,7 +10,9 @@
 </script>
 
 {#if electricitySelected.name == 'ML'}
-  <div class="legend" style="background: linear-gradient(to right, {[...mlScale]});" />
+  <div
+    class="legend"
+    style="background: linear-gradient(to right, {[...mlScale]});" />
   <div style="display: flex; align-items: center; justify-content: space-between"><span>0%</span><span>100%</span></div>
 {/if}
 
