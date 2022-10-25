@@ -23,12 +23,16 @@
       <div style="width: 120px; height: 5px; background: black; " />
     </div>
   </div>
-  <div class="main-section" style="height: max-content; min-height: 60vh">
+  <div
+    class="main-section"
+    style="height: max-content; min-height: 60vh">
     <div
       class="grid-x small-up-2 medium-up-4 large-up-6 content-card-wrapper"
       style="width: 100%; margin-left: 2%; margin-right: 2%">
       {#each pages as page}
-        <DashboardCard bind:title={page.title} bind:link={page.link} />
+        <DashboardCard
+          bind:title={page.title}
+          bind:link={page.link} />
       {/each}
     </div>
     {#if data}

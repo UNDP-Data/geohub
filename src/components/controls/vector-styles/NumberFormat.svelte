@@ -8,4 +8,8 @@
   let stepValue = 1
 </script>
 
-<NumberInput bind:value={decimalPosition} bind:minValue bind:maxValue bind:step={stepValue} />
+<NumberInput
+  bind:value={decimalPosition}
+  bind:minValue
+  bind:maxValue
+  bind:step={stepValue} />

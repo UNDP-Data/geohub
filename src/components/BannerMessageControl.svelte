@@ -53,15 +53,26 @@
     fixed
     mobileStacked
     content$style={`max-width: 100%; height:max-content; padding-right: 20px;`}>
-    <LabelBanner slot="label" style="font-family: ProximaNova, sans-serif; font-size: 13px;">
+    <LabelBanner
+      slot="label"
+      style="font-family: ProximaNova, sans-serif; font-size: 13px;">
       <div class="banner-container columns">
         <div class="icon column is-1">
           {#if currentBannerMessage.type === StatusTypes.INFO}
-            <Fa icon={faCircleInfo} size="2x" primaryColor="hsl(204, 86%, 53%)" />
+            <Fa
+              icon={faCircleInfo}
+              size="2x"
+              primaryColor="hsl(204, 86%, 53%)" />
           {:else if currentBannerMessage.type === StatusTypes.DANGER}
-            <Fa icon={faBan} size="2x" primaryColor="hsl(348, 100%, 61%)" />
+            <Fa
+              icon={faBan}
+              size="2x"
+              primaryColor="hsl(348, 100%, 61%)" />
           {:else if currentBannerMessage.type === StatusTypes.WARNING}
-            <Fa icon={faTriangleExclamation} size="2x" primaryColor="hsl(36, 100%, 50%)" />
+            <Fa
+              icon={faTriangleExclamation}
+              size="2x"
+              primaryColor="hsl(36, 100%, 50%)" />
           {/if}
         </div>
         <div class="content column is-half">
@@ -77,22 +88,31 @@
         </div>
         <div class="column is-1">
           {#if currentBannerMessage.error}
-            <Button slot="actions" on:click={() => (showDetailedError = !showDetailedError)}>
+            <Button
+              slot="actions"
+              on:click={() => (showDetailedError = !showDetailedError)}>
               <LabelButton>{showDetailedError ? 'Hide' : 'Details'}</LabelButton>
             </Button>
           {/if}
         </div>
         <div class="column is-1">
-          <Button slot="actions" on:click={() => showNextBanner()}>
+          <Button
+            slot="actions"
+            on:click={() => showNextBanner()}>
             <LabelButton>Dismiss</LabelButton>
             {#if $bannerMessages.length > 0}
-              <Badge {position} {align} aria-label="unread message count">{$bannerMessages.length}</Badge>
+              <Badge
+                {position}
+                {align}
+                aria-label="unread message count">{$bannerMessages.length}</Badge>
             {/if}
           </Button>
         </div>
         {#if $bannerMessages.length > 1}
           <div class="column is-2">
-            <Button slot="actions" on:click={() => hideBanner()}>
+            <Button
+              slot="actions"
+              on:click={() => hideBanner()}>
               <LabelButton>Dismiss all</LabelButton>
             </Button>
           </div>

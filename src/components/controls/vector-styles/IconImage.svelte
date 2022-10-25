@@ -135,8 +135,13 @@
   }
 </script>
 
-<div class="icon-button" use:popperRef on:click={handleClosePopup}>
-  <IconImagePickerCard bind:legendSymbolContainer iconImageAlt={iconImage} />
+<div
+  class="icon-button"
+  use:popperRef
+  on:click={handleClosePopup}>
+  <IconImagePickerCard
+    bind:legendSymbolContainer
+    iconImageAlt={iconImage} />
 </div>
 
 {#if isIconListPanelVisible}
@@ -151,7 +156,9 @@
       on:handleClosePopup={handleClosePopup}
       iconImageAlt={iconImage} />
 
-    <div id="arrow" data-popper-arrow />
+    <div
+      id="arrow"
+      data-popper-arrow />
   </div>
 {/if}
 

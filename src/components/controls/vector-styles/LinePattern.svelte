@@ -42,9 +42,13 @@
   }
 </script>
 
-<div class="line-pattern-view-container" data-testid="line-pattern-view-container">
+<div
+  class="line-pattern-view-container"
+  data-testid="line-pattern-view-container">
   {#each lineTypes as type}
-    <div class="columns is-gapless mb-1 line-pattern" on:click={() => handleLineTypeClick(type.title)}>
+    <div
+      class="columns is-gapless mb-1 line-pattern"
+      on:click={() => handleLineTypeClick(type.title)}>
       <div class="column is-1">
         <input
           type="radio"
@@ -54,7 +58,9 @@
           title="Line Option"
           value={type.title} />
       </div>
-      <div class="column" style="position: relative; top: -2px; left: 5px;">
+      <div
+        class="column"
+        style="position: relative; top: -2px; left: 5px;">
         {type.title}
       </div>
       <div

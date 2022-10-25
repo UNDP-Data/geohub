@@ -83,7 +83,9 @@
 
 <div bind:this={currentLocationDiv}>
   {#if isContainerVisible}
-    <div id="data-container" class="data-container">
+    <div
+      id="data-container"
+      class="data-container">
       {#if adm0Name}
         {adm0Name}
       {/if}

@@ -54,9 +54,14 @@
     role="button"
     on:click={() => toggleVisibility()}
     on:keydown={handleKeyDown}>
-    <Fa icon={visibility === 'none' ? faEye : faEyeSlash} size="sm" />
+    <Fa
+      icon={visibility === 'none' ? faEye : faEyeSlash}
+      size="sm" />
   </div>
-  <Tooltip showDelay={300} hideDelay={100} yPos="above">{isLayerVisible ? 'Show Layer' : 'Hide Layer'}</Tooltip>
+  <Tooltip
+    showDelay={300}
+    hideDelay={100}
+    yPos="above">{isLayerVisible ? 'Show Layer' : 'Hide Layer'}</Tooltip>
 </Wrapper>
 
 <style lang="scss">

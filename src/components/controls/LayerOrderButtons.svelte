@@ -60,9 +60,15 @@
       role="button"
       on:click={() => hierachyUp(layerId)}
       on:keydown={handleUpKeyEnter}>
-      <Fa class="arrow-icon" icon={faChevronUp} size="1x" />
+      <Fa
+        class="arrow-icon"
+        icon={faChevronUp}
+        size="1x" />
     </div>
-    <Tooltip showDelay={300} hideDelay={100} yPos="above">Bring Forward in Map</Tooltip>
+    <Tooltip
+      showDelay={300}
+      hideDelay={100}
+      yPos="above">Bring Forward in Map</Tooltip>
   </Wrapper>
   <div style="width: 10px" />
   <Wrapper>
@@ -73,9 +79,15 @@
       tabindex="0"
       on:click={() => hierachyDown(layerId)}
       on:keydown={handleDownKeyEnter}>
-      <Fa class="arrow-icon" icon={faChevronDown} size="1x" />
+      <Fa
+        class="arrow-icon"
+        icon={faChevronDown}
+        size="1x" />
     </div>
-    <Tooltip showDelay={300} hideDelay={100} yPos="above">Send Backward in Map</Tooltip>
+    <Tooltip
+      showDelay={300}
+      hideDelay={100}
+      yPos="above">Send Backward in Map</Tooltip>
   </Wrapper>
 </div>
 

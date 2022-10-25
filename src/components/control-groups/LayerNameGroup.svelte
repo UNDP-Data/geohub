@@ -48,7 +48,10 @@
   <div>
     <div class="layer-header-name">
       <div style="display: flex; align-items: center">
-        <Fa icon={icon.icon} size="sm" primaryColor={icon.color} />
+        <Fa
+          icon={icon.icon}
+          size="sm"
+          primaryColor={icon.color} />
         <span style="padding-left: 5px;">
           {#if $layerLabelled[layer.definition.id]}
             <span class="tag is-info"><Fa icon={faTextHeight} /></span>

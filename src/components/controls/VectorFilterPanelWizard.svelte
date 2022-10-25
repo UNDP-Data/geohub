@@ -238,18 +238,33 @@
 </script>
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css" />
 </svelte:head>
 {#if isFilterPanelVisible === true}
-  <div class="field" style="margin: auto; display: flex; justify-content: space-between">
+  <div
+    class="field"
+    style="margin: auto; display: flex; justify-content: space-between">
     <span class="condition-text">One condition must be true</span>
-    <input bind:checked={combineOperator} id="switchExample" type="checkbox" name="switchExample" class="switch" />
-    <label class="condition-text" for="switchExample">All conditions must be true</label>
+    <input
+      bind:checked={combineOperator}
+      id="switchExample"
+      type="checkbox"
+      name="switchExample"
+      class="switch" />
+    <label
+      class="condition-text"
+      for="switchExample">All conditions must be true</label>
   </div>
 
-  <div style="margin:10px" class="is-divider" />
+  <div
+    style="margin:10px"
+    class="is-divider" />
   <Wizard initialStep={1}>
-    <Step num={1} let:nextStep>
+    <Step
+      num={1}
+      let:nextStep>
       <div class="wizard-button-container">
         <button
           on:click={() => {
@@ -271,11 +286,16 @@
                 aria-controls="dropdown-menu1">
                 <span>View</span>
                 <span class="icon is-small">
-                  <i class="fas fa-angle-down" aria-hidden="true" />
+                  <i
+                    class="fas fa-angle-down"
+                    aria-hidden="true" />
                 </span>
               </button>
             </div>
-            <div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
+            <div
+              class="dropdown-menu"
+              id="dropdown-menu-filter"
+              role="menu">
               <div class="dropdown-content ">
                 <!-- <hr class="dropdown-divider"> -->
 
@@ -301,13 +321,19 @@
             </div>
           </div>
 
-          <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
+          <button
+            on:click={handleClearExpression}
+            class="button wizard-button is-small primary-button">
             <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
           </button>
         {/if}
       </div>
     </Step>
-    <Step num={2} let:prevStep let:nextStep let:setStep>
+    <Step
+      num={2}
+      let:prevStep
+      let:nextStep
+      let:setStep>
       <div class="wizard-button-container">
         <!-- {#if expressionApplied || expressionsArray[0].value !== ''}
           <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
@@ -332,14 +358,20 @@
           <i class="fa fa-chevron-right" />
         </button> -->
       </div>
-      <div class="is-divider separator is-danger" data-content="Select a property..." />
+      <div
+        class="is-divider separator is-danger"
+        data-content="Select a property..." />
       <PropertySelectButtons
         {layer}
         bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
         on:select={handlePropertySelect}
         on:click={nextStep} />
     </Step>
-    <Step num={3} let:prevStep let:nextStep let:setStep>
+    <Step
+      num={3}
+      let:prevStep
+      let:nextStep
+      let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
         <button
@@ -365,7 +397,9 @@
           <i class="fa fa-chevron-right" />
         </button> -->
       </div>
-      <div class="is-divider separator is-danger" data-content="Select an operator..." />
+      <div
+        class="is-divider separator is-danger"
+        data-content="Select an operator..." />
       <OperationButtons
         on:enableTags={handleEnableTags}
         on:disableTags={handleDisableTags}
@@ -375,7 +409,11 @@
         on:change={handleCurrentOperation}
         on:click={nextStep} />
     </Step>
-    <Step num={4} let:prevStep let:nextStep let:setStep>
+    <Step
+      num={4}
+      let:prevStep
+      let:nextStep
+      let:setStep>
       <!--      Pick one operation from the selected-->
       <div class="wizard-button-container">
         <button
@@ -395,7 +433,9 @@
         </button>
       </div>
 
-      <div class="is-divider separator is-danger" data-content="Select/input a value..." />
+      <div
+        class="is-divider separator is-danger"
+        data-content="Select/input a value..." />
       <ValueInput
         on:apply={() => {
           handleApplyExpression()

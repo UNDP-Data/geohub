@@ -27,12 +27,16 @@
   }
 </script>
 
-<ContentSidebar bind:map={$map} bind:isMenuShown={drawerOpen}>
+<ContentSidebar
+  bind:map={$map}
+  bind:isMenuShown={drawerOpen}>
   <div slot="primary">
     <div class="drawer-content">
       <nav class="panel">
         <div class="panel-block">
-          <Tabs bind:activeTab bind:tabs />
+          <Tabs
+            bind:activeTab
+            bind:tabs />
         </div>
         <div class="panel-block">
           <div hidden={activeTab !== TabNames.BUCKETS}>

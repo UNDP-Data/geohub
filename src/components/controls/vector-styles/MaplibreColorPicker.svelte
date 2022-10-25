@@ -60,9 +60,18 @@
   style="background: {rgba};"
   use:popperRef />
 {#if showToolTip}
-  <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-    <DefaultColorPicker bind:color on:closeColorPicker={handleCloseColorPicker} on:changeColor={setColor} />
-    <div id="arrow" data-popper-arrow />
+  <div
+    id="tooltip"
+    data-testid="tooltip"
+    use:popperContent={popperOptions}
+    transition:fade>
+    <DefaultColorPicker
+      bind:color
+      on:closeColorPicker={handleCloseColorPicker}
+      on:changeColor={setColor} />
+    <div
+      id="arrow"
+      data-popper-arrow />
   </div>
 {/if}
 

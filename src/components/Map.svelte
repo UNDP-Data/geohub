@@ -143,10 +143,15 @@
 </script>
 
 <svelte:head>
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
 </svelte:head>
 
-<div bind:this={container} class="map" id="map">
+<div
+  bind:this={container}
+  class="map"
+  id="map">
   {#if map}
     <slot />
   {/if}
@@ -157,7 +162,9 @@
   <StyleSwicher bind:map={$map} />
 {/if}
 
-<MapQueryInfoPanel bind:mapMouseEvent bind:isDataContainerVisible />
+<MapQueryInfoPanel
+  bind:mapMouseEvent
+  bind:isDataContainerVisible />
 
 <style lang="scss">
   .map {

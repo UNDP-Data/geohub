@@ -128,14 +128,20 @@
   }
 </script>
 
-<div class="refine-view-container" data-testid="refine-view-container">
+<div
+  class="refine-view-container"
+  data-testid="refine-view-container">
   <div class="columns">
     <div class="column">
       <div class="numbers">
         <div class="is-size-7 has-text-weight-semibold">{numbers.title}</div>
         <div class="buttons">
           {#each numbers.operators as operator}
-            <button class="button is-small " on:click={() => handleNumber(operator)} alt={operator} title={operator}>
+            <button
+              class="button is-small "
+              on:click={() => handleNumber(operator)}
+              alt={operator}
+              title={operator}>
               <span>{operator}</span>
             </button>
           {/each}
@@ -145,7 +151,11 @@
         <div class="is-size-7 has-text-weight-semibold">{functionsList.title}</div>
         <div class="buttons">
           {#each functionsList.operators as operator}
-            <button class="button is-small" on:click={() => handleFunctions(operator)} alt={operator} title={operator}>
+            <button
+              class="button is-small"
+              on:click={() => handleFunctions(operator)}
+              alt={operator}
+              title={operator}>
               <span>{operator}</span>
             </button>
           {/each}
@@ -227,7 +237,9 @@
       </div>
     </div>
     <div class="columns">
-      <div class="column" style="width: fit-content; margin-left: auto">
+      <div
+        class="column"
+        style="width: fit-content; margin-left: auto">
         <button
           class="button primary-button is-small"
           on:click={handleApplyExpression}

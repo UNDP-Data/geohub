@@ -167,15 +167,22 @@
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex />
+        <IntervalsLegend
+          bind:layerConfig={layer}
+          bind:colorPickerVisibleIndex />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend bind:layerConfig={layer} bind:colorPickerVisibleIndex bind:legendLabels />
+        <UniqueValuesLegend
+          bind:layerConfig={layer}
+          bind:colorPickerVisibleIndex
+          bind:legendLabels />
       </div>
     {/if}
   </div>
-  <div class="columm legend-toggle" transition:slide>
+  <div
+    class="columm legend-toggle"
+    transition:slide>
     <Wrapper>
       <div
         role="button"
@@ -183,13 +190,21 @@
         aria-label="Switch Legend Type"
         on:click={handleLegendToggleClick}
         data-testid="legend-toggle-container">
-        <Card on:keydown={handleEnterKeyForSwitch} style="background: #D12800;">
+        <Card
+          on:keydown={handleEnterKeyForSwitch}
+          style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faRetweet} style="font-size: 16px; color: white" spin={isLegendSwitchAnimate} />
+            <Fa
+              icon={faRetweet}
+              style="font-size: 16px; color: white"
+              spin={isLegendSwitchAnimate} />
           </PrimaryAction>
         </Card>
       </div>
-      <Tooltip showDelay={1000} hideDelay={0} yPos="above">Toggle Legend Type</Tooltip>
+      <Tooltip
+        showDelay={1000}
+        hideDelay={0}
+        yPos="above">Toggle Legend Type</Tooltip>
     </Wrapper>
     <br />
     <Wrapper>
@@ -200,24 +215,37 @@
         use:popperRef
         on:click={handleClosePopup}
         data-testid="colormap-toggle-container">
-        <Card on:keydown={handleEnterKeyForColor} style="background: #D12800;">
+        <Card
+          on:keydown={handleEnterKeyForColor}
+          style="background: #D12800;">
           <PrimaryAction style="padding: 10px;">
-            <Fa icon={faPalette} style="font-size: 16px; color: white" />
+            <Fa
+              icon={faPalette}
+              style="font-size: 16px; color: white" />
           </PrimaryAction>
         </Card>
       </div>
-      <Tooltip showDelay={1000} hideDelay={0} yPos="above">Change color map</Tooltip>
+      <Tooltip
+        showDelay={1000}
+        hideDelay={0}
+        yPos="above">Change color map</Tooltip>
     </Wrapper>
 
     {#if showTooltip}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
         <ColorMapPicker
           on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
           layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])} />
-        <div id="arrow" data-popper-arrow />
+        <div
+          id="arrow"
+          data-popper-arrow />
       </div>
     {/if}
   </div>

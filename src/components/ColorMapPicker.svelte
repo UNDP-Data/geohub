@@ -84,11 +84,17 @@
   }
 </script>
 
-<div data-testid="color-map-picker" use:clickOutside={handleClosePopup}>
+<div
+  data-testid="color-map-picker"
+  use:clickOutside={handleClosePopup}>
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
       <div class="tabs">
-        <ul data-deep-link="true" data-tabs="true" id="tablist_1" role="tablist">
+        <ul
+          data-deep-link="true"
+          data-tabs="true"
+          id="tablist_1"
+          role="tablist">
           {#each Object.values(ColorMapTypes) as colorMapType}
             <li class={activeColorMapType === colorMapType ? 'is-active tabs-title' : 'tabs-title'}>
               <a
@@ -121,7 +127,9 @@
         {#each colorMapTypes as colorMapType}
           {#if activeColorMapType === colorMapType.name}
             {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as colorMapName}
-              <li on:click={() => handleColorMapClick(colorMapName)} on:keydown={handleEnterKey}>
+              <li
+                on:click={() => handleColorMapClick(colorMapName)}
+                on:keydown={handleEnterKey}>
                 <ColorMapPickerCard
                   {colorMapName}
                   colorMapType={ColorMapTypes.SEQUENTIAL}

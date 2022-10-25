@@ -30,5 +30,7 @@
 </script>
 
 <div data-testid="bucket-card-filter-container">
-  <BucketCard bucket={filterBucket} on:click={handleFilterBucketClick} />
+  <BucketCard
+    bucket={filterBucket}
+    on:click={handleFilterBucketClick} />
 </div>

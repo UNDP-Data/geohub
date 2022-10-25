@@ -139,8 +139,13 @@
   on:click={() => (showTooltip = !showTooltip)}
   on:keydown={handleEnterKeyForInfo}>
   <Wrapper>
-    <Fa icon={showTooltip ? faXmark : faCircleInfo} size="sm" />
-    <Tooltip showDelay={0} hideDelay={100} yPos="above">{`${showTooltip ? 'Hide' : 'Show'} infomation`}</Tooltip>
+    <Fa
+      icon={showTooltip ? faXmark : faCircleInfo}
+      size="sm" />
+    <Tooltip
+      showDelay={0}
+      hideDelay={100}
+      yPos="above">{`${showTooltip ? 'Hide' : 'Show'} infomation`}</Tooltip>
   </Wrapper>
 </div>
 
@@ -151,8 +156,14 @@
     use:popperContent={popperOptions}
     transition:fade
     use:clickOutside={handleClose}>
-    <div class="close is-clickable" alt="Close" title="Close" on:click={handleClose}>
-      <Fa icon={faXmark} size="sm" />
+    <div
+      class="close is-clickable"
+      alt="Close"
+      title="Close"
+      on:click={handleClose}>
+      <Fa
+        icon={faXmark}
+        size="sm" />
     </div>
 
     <div class="bucket-card">
@@ -174,7 +185,9 @@
           <div class="content is-size-7 tags pt-3">
             {#if tree.tags}
               {#each Object.values(tree.tags) as tag}
-                <span title="tag" style="margin-right: 5px; font-weight: bold;">
+                <span
+                  title="tag"
+                  style="margin-right: 5px; font-weight: bold;">
                   <span class="tag is-info is-small is-light">{clean(tag)}</span>
                 </span>
               {/each}
@@ -183,7 +196,9 @@
         </div>
       </div>
     </div>
-    <div id="arrow" data-popper-arrow />
+    <div
+      id="arrow"
+      data-popper-arrow />
   </div>
 {/if}
 

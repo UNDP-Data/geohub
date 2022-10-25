@@ -1,4 +1,6 @@
-<script context="module" lang="ts">
+<script
+  context="module"
+  lang="ts">
   const expansionState = {}
 </script>
 
@@ -36,14 +38,23 @@
 
 <li style="padding-left:{level * 0.75}rem;">
   {#if children}
-    <BucketTreeBranch bind:tree={node} bind:level bind:IsExpanded {handleRemoveBucket} {toggleExpansion} />
+    <BucketTreeBranch
+      bind:tree={node}
+      bind:level
+      bind:IsExpanded
+      {handleRemoveBucket}
+      {toggleExpansion} />
   {:else}
-    <BucketTreeItem bind:tree={node} bind:IsExpanded />
+    <BucketTreeItem
+      bind:tree={node}
+      bind:IsExpanded />
   {/if}
 </li>
 
 {#if children && IsExpanded}
   {#each children as child}
-    <svelte:self node={child} level={level + 1} />
+    <svelte:self
+      node={child}
+      level={level + 1} />
   {/each}
 {/if}

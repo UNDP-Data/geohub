@@ -278,10 +278,16 @@
   }
 </script>
 
-<Keydown paused={!isModalVisible} on:Escape={() => (isModalVisible = false)} />
+<Keydown
+  paused={!isModalVisible}
+  on:Escape={() => (isModalVisible = false)} />
 
 {#if isModalVisible}
-  <div class="modal is-active" data-testid="add-layer-view-container" transition:fade use:clickOutside={handleCancel}>
+  <div
+    class="modal is-active"
+    data-testid="add-layer-view-container"
+    transition:fade
+    use:clickOutside={handleCancel}>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
@@ -295,8 +301,12 @@
       </header>
       <section class="modal-card-body">
         <div class="field">
-          <label for="layer-id" class="label">Layer ID</label>
-          <div class="control" data-testid="layer-id-input">
+          <label
+            for="layer-id"
+            class="label">Layer ID</label>
+          <div
+            class="control"
+            data-testid="layer-id-input">
             <Autocomplete
               id="Layer ID input"
               combobox
@@ -307,11 +317,17 @@
           </div>
         </div>
         <div class="field layer-type">
-          <label class="label" for="layer-types">Layer Types</label>
+          <label
+            class="label"
+            for="layer-types">Layer Types</label>
           {#each layerTypes as selectLayerType}
             {@const layerTypeLabel = getLayerTypeLabel(selectLayerType)}
-            <div class="control" style="margin-top: 5px;">
-              <label class="radio" for="layer-type">
+            <div
+              class="control"
+              style="margin-top: 5px;">
+              <label
+                class="radio"
+                for="layer-type">
                 <div class="columns is-gapless is-vcentered layer-type">
                   <div class="column">
                     <input
@@ -322,7 +338,9 @@
                       alt={`${layerTypeLabel} Option`}
                       title={`${layerTypeLabel} Option`} />
                   </div>
-                  <div class="column layer-type-label" on:click={() => handleLayerTypeClick(selectLayerType)}>
+                  <div
+                    class="column layer-type-label"
+                    on:click={() => handleLayerTypeClick(selectLayerType)}>
                     {layerTypeLabel}
                   </div>
                 </div>

@@ -1,4 +1,6 @@
-<script lang="ts" context="module">
+<script
+  lang="ts"
+  context="module">
   const dynamicLayerIds = {}
 </script>
 
@@ -162,16 +164,24 @@
           role="button"
           on:click={handleZoomToLayerClick}
           on:keydown={handleZoomKeyDown}>
-          <Fa icon={faMagnifyingGlass} size="sm" />
+          <Fa
+            icon={faMagnifyingGlass}
+            size="sm" />
         </div>
-        <Tooltip showDelay={500} hideDelay={500} yPos="above">Zoom to layer</Tooltip>
+        <Tooltip
+          showDelay={500}
+          hideDelay={500}
+          yPos="above">Zoom to layer</Tooltip>
       </Wrapper>
     </div>
 
     <div style="padding-left: 5px;">
       <Wrapper>
         <RasterBandSelector {layer} />
-        <Tooltip showDelay={500} hideDelay={500} yPos="above">Change raster band</Tooltip>
+        <Tooltip
+          showDelay={500}
+          hideDelay={500}
+          yPos="above">Change raster band</Tooltip>
       </Wrapper>
     </div>
 
@@ -179,15 +189,24 @@
       <span class="tag is-info is-small">{mapLayerIndex} / {mapLayerLength}</span>
     </div>
     <div style="padding-left: 5px;">
-      <LayerOrderButtons {layer} bind:mapLayerIndex />
+      <LayerOrderButtons
+        {layer}
+        bind:mapLayerIndex />
     </div>
 
     {#if layer.type === LayerTypes.RASTER && $layerList.length > 1}
       <Wrapper>
-        <div class="icon-selected" on:click={() => (isDynamicLayer = !isDynamicLayer)}>
-          <Fa icon={isDynamicLayer ? faSquareCheck : faSquare} size="sm" />
+        <div
+          class="icon-selected"
+          on:click={() => (isDynamicLayer = !isDynamicLayer)}>
+          <Fa
+            icon={isDynamicLayer ? faSquareCheck : faSquare}
+            size="sm" />
         </div>
-        <Tooltip showDelay={500} hideDelay={500} yPos="above">Merge Layers</Tooltip>
+        <Tooltip
+          showDelay={500}
+          hideDelay={500}
+          yPos="above">Merge Layers</Tooltip>
       </Wrapper>
     {/if}
   </div>

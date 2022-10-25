@@ -9,16 +9,26 @@
 </script>
 
 <svelte:head>
-  <link rel="stylesheet" href="../smui.css" media="(prefers-color-scheme: light)" />
-  <link rel="stylesheet" href="../smui-dark.css" media="screen and (prefers-color-scheme: dark)" />
+  <link
+    rel="stylesheet"
+    href="../smui.css"
+    media="(prefers-color-scheme: light)" />
+  <link
+    rel="stylesheet"
+    href="../smui-dark.css"
+    media="screen and (prefers-color-scheme: dark)" />
 </svelte:head>
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Content bind:drawerOpen bind:loadLayers>
+<Content
+  bind:drawerOpen
+  bind:loadLayers>
   <Map on:styleChanged={loadLayers} />
 </Content>
 
-<style global lang="scss">
+<style
+  global
+  lang="scss">
   body,
   html {
     font-family: ProximaNova, sans-serif;

@@ -28,7 +28,9 @@
   }
 </script>
 
-<div class="grid p-0" role="menu">
+<div
+  class="grid p-0"
+  role="menu">
   {#each operationOptions as operation}
     <div
       class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "

@@ -94,27 +94,46 @@
 </script>
 
 {#if $layerList.length > 0}
-  <div style="margin-left: 2%" class="icon" on:click={() => open()} on:keydown={onKeyPressed} tabindex="1">
-    <Fa icon={faShare} size="lg" />
+  <div
+    style="margin-left: 2%"
+    class="icon"
+    on:click={() => open()}
+    on:keydown={onKeyPressed}
+    tabindex="1">
+    <Fa
+      icon={faShare}
+      size="lg" />
   </div>
 {/if}
 
 {#if isModalVisible}
-  <div class="modal is-active" transition:fade use:clickOutside={handleClose}>
+  <div
+    class="modal is-active"
+    transition:fade
+    use:clickOutside={handleClose}>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title has-text-weight-bold">Share</p>
-        <button class="delete" aria-label="close" alt="Close" title="Close" on:click={handleClose} />
+        <button
+          class="delete"
+          aria-label="close"
+          alt="Close"
+          title="Close"
+          on:click={handleClose} />
       </header>
       <section class="modal-card-body">
         {#if !styleURL}
           <div class="textfield">
-            <Textfield bind:value={styleName} label="Style name" />
+            <Textfield
+              bind:value={styleName}
+              label="Style name" />
           </div>
           {#if radioDisabled === false}
             <div style="display: block">
-              <div class="radio-input" style="margin: 10%; align-items: center">
+              <div
+                class="radio-input"
+                style="margin: 10%; align-items: center">
                 <input
                   on:input={() => (selectedOption = 'all')}
                   checked={selectedOption === 'all'}
@@ -124,7 +143,9 @@
                   id="all" />
                 <label for="all"> All Layers </label>
               </div>
-              <div class="radio-input" style="margin: 10%">
+              <div
+                class="radio-input"
+                style="margin: 10%">
                 <input
                   on:input={() => (selectedOption = 'geohub')}
                   checked={selectedOption === 'geohub'}
@@ -138,17 +159,36 @@
           {/if}
         {:else}
           <div style="width: 100%;">
-            <input class="input text-style" type="text" placeholder="style.json" value={styleURL} readonly />
-            <button class="button is-info is-success style-copy" use:copy={styleURL} on:click={handleCopy}
-              >{textCopyButton}</button>
+            <input
+              class="input text-style"
+              type="text"
+              placeholder="style.json"
+              value={styleURL}
+              readonly />
+            <button
+              class="button is-info is-success style-copy"
+              use:copy={styleURL}
+              on:click={handleCopy}>{textCopyButton}</button>
           </div>
         {/if}
       </section>
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
         <div>
-          <button class="button secondary-button" alt="Close" title="Close" on:click={handleClose}> Cancel </button>
+          <button
+            class="button secondary-button"
+            alt="Close"
+            title="Close"
+            on:click={handleClose}>
+            Cancel
+          </button>
           {#if !styleURL}
-            <button class="button primary-button" alt="Share" title="Share" on:click={handleShare}> Share </button>
+            <button
+              class="button primary-button"
+              alt="Share"
+              title="Share"
+              on:click={handleShare}>
+              Share
+            </button>
           {/if}
         </div>
       </footer>

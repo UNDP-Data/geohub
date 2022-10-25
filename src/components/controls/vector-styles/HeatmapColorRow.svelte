@@ -92,7 +92,9 @@
   }
 </script>
 
-<div class="columns is-vcentered is-gapless color-editor" data-testid="heatmap-color-map-row-container">
+<div
+  class="columns is-vcentered is-gapless color-editor"
+  data-testid="heatmap-color-map-row-container">
   <div class="column is-1 color-picker">
     <div
       id={`heatmap-${colorRow?.index}`}
@@ -104,9 +106,17 @@
       style={colorPickerStyle} />
 
     {#if showToolTip && color}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-        <div id="arrow" data-popper-arrow />
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
+        <DefaultColorPicker
+          bind:color
+          on:closeColorPicker={() => handleColorPickerClick()} />
+        <div
+          id="arrow"
+          data-popper-arrow />
       </div>
     {/if}
   </div>

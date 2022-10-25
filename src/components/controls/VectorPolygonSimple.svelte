@@ -7,7 +7,9 @@
   export let layer: Layer = LayerInitialValues
 </script>
 
-<div class="line-simple-container" data-testid="polygon-simple-container">
+<div
+  class="line-simple-container"
+  data-testid="polygon-simple-container">
   <div class="columns">
     <div class="column is-5">
       <div class="has-text-centered pb-2">Fill Color</div>

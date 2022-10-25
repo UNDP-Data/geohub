@@ -21,11 +21,26 @@
   $: color, changeColor()
 </script>
 
-<div class="default-color-picker-container" data-testid="default-color-picker-container" use:clickOutside={handleClose}>
-  <div class="close is-clickable" alt="Close Color Picker" title="Close Color Picker" on:click={handleClose}>
-    <Fa icon={faXmark} size="sm" />
+<div
+  class="default-color-picker-container"
+  data-testid="default-color-picker-container"
+  use:clickOutside={handleClose}>
+  <div
+    class="close is-clickable"
+    alt="Close Color Picker"
+    title="Close Color Picker"
+    on:click={handleClose}>
+    <Fa
+      icon={faXmark}
+      size="sm" />
   </div>
-  <ColorPicker isPopup={true} isInput={false} isAlpha={true} toRight={true} isOpen={true} bind:color />
+  <ColorPicker
+    isPopup={true}
+    isInput={false}
+    isAlpha={true}
+    toRight={true}
+    isOpen={true}
+    bind:color />
 </div>
 
 <style lang="scss">

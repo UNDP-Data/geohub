@@ -99,7 +99,11 @@
 </script>
 
 <main>
-  <VegaLite bind:view={viewVL} spec={specVL} {data} options={vegaOptions} />
+  <VegaLite
+    bind:view={viewVL}
+    spec={specVL}
+    {data}
+    options={vegaOptions} />
 </main>
 
 <style>

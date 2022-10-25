@@ -31,7 +31,9 @@
 </script>
 
 <div class="onecol">
-  <textarea bind:value={expression} style="width:95%; min-height:45pt" />
+  <textarea
+    bind:value={expression}
+    style="width:95%; min-height:45pt" />
 </div>
 <div class="one">
   <Button
@@ -41,14 +43,22 @@
 </div>
 <div class="cwrapper">
   <div>
-    <SegmentedButton segments={operators} let:segment singleSelect bind:selected={operator}>
+    <SegmentedButton
+      segments={operators}
+      let:segment
+      singleSelect
+      bind:selected={operator}>
       <Segment {segment}>
         <Label style="width:20px">{segment}</Label>
       </Segment>
     </SegmentedButton>
   </div>
   <div>
-    <SegmentedButton segments={fuctions} let:segment singleSelect bind:selected={func}>
+    <SegmentedButton
+      segments={fuctions}
+      let:segment
+      singleSelect
+      bind:selected={func}>
       <Segment {segment}>
         <Label style="width:auto">{segment}</Label>
       </Segment>

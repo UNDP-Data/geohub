@@ -106,7 +106,9 @@
 
 <BucketTreeItemIcon on:addLayer={loadLayer}>
   <!-- The modal is located here so the focus is set to ne next element -->
-  <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+  <AddLayerModal
+    bind:isModalVisible={isAddLayerModalVisible}
+    treeNode={tree} />
 </BucketTreeItemIcon>
 <BucketTreeLabel bind:tree />
 <BucketTreeItemCardButton bind:tree />

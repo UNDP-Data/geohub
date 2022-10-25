@@ -103,12 +103,17 @@
   }
 </script>
 
-<div class="raster-layer-container" transition:fade>
+<div
+  class="raster-layer-container"
+  transition:fade>
   <nav class="panel">
     <p class="panel-heading">
       <LayerNameGroup {layer} />
     </p>
-    <ul class="panel-tabs" role="tablist" tabindex="0">
+    <ul
+      class="panel-tabs"
+      role="tablist"
+      tabindex="0">
       {#each tabs as tab, index}
         <li>
           <a
@@ -120,7 +125,9 @@
             on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
             class={activeTab === tab.label ? 'is-active' : ''}>
             <span>
-              <Fa icon={tab.icon} size="sm" />
+              <Fa
+                icon={tab.icon}
+                size="sm" />
             </span>
             {tab.label}
           </a>
@@ -139,7 +146,9 @@
         <!-- <RefineContainer bind:layer /> -->
         <RasterExpression bind:layer />
       {/if}
-      <OpacityPanel {layer} {isOpacityPanelVisible} />
+      <OpacityPanel
+        {layer}
+        {isOpacityPanelVisible} />
     </p>
   </nav>
 </div>

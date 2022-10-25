@@ -9,12 +9,18 @@
   export let isSelected = false
 </script>
 
-<div class="card" data-testid="icon-image-picker-card-container">
+<div
+  class="card"
+  data-testid="icon-image-picker-card-container">
   <div class="card-content">
     <div class="media is-flex is-justify-content-center">
-      <figure class={`image is-24x24 ${isSelected ? '' : 'is-clickable'}`} data-testid="icon-figure">
+      <figure
+        class={`image is-24x24 ${isSelected ? '' : 'is-clickable'}`}
+        data-testid="icon-figure">
         {#if legendSymbolContainer}
-          <div data-testid="legend-symbol-container" bind:this={legendSymbolContainer} />
+          <div
+            data-testid="legend-symbol-container"
+            bind:this={legendSymbolContainer} />
         {:else}
           <input
             data-testid="icon-image"
@@ -27,12 +33,20 @@
         {/if}
       </figure>
     </div>
-    <div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-      <div class="column is-flex is-justify-content-center sprite-image-title" alt={iconImageAlt} title={iconImageAlt}>
+    <div
+      class="content is-size-7 columns is-gapless"
+      style="padding-top: 5px;">
+      <div
+        class="column is-flex is-justify-content-center sprite-image-title"
+        alt={iconImageAlt}
+        title={iconImageAlt}>
         {clean(iconImageAlt)}
       </div>
       {#if isSelected}
-        <div class="selected" alt="Icon Selected" title="Icon Selected">
+        <div
+          class="selected"
+          alt="Icon Selected"
+          title="Icon Selected">
           <Fa icon={faCheck} />
         </div>
       {/if}

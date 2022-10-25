@@ -140,7 +140,11 @@
 </script>
 
 <main>
-  <VegaLite {data} spec={specVL} bind:view={viewVL} options={vegaOptions} />
+  <VegaLite
+    {data}
+    spec={specVL}
+    bind:view={viewVL}
+    options={vegaOptions} />
 </main>
 
 <style>

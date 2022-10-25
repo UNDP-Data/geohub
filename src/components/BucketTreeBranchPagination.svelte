@@ -25,7 +25,9 @@
       class={`pr-3 ${disabledPrev ? 'disabled' : 'is-clickable'}`}
       alt="Previous layers"
       title="Previous layers">
-      <Fa icon={faBackward} size="sm" />
+      <Fa
+        icon={faBackward}
+        size="sm" />
     </div>
     &nbsp;
     <div
@@ -33,7 +35,9 @@
       class={`${disabledNext ? 'disabled' : 'is-clickable'}`}
       alt="Next layers"
       title="Next layers">
-      <Fa icon={faForward} size="sm" />
+      <Fa
+        icon={faForward}
+        size="sm" />
     </div>
   </div>
 </div>

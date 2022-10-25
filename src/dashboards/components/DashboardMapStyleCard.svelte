@@ -116,10 +116,16 @@
   }
 </script>
 
-<div class="cell small-3" bind:this={nodeRef}>
-  <div class="content-card" style="border: none">
+<div
+  class="cell small-3"
+  bind:this={nodeRef}>
+  <div
+    class="content-card"
+    style="border: none">
     <!-- svelte-ignore a11y-invalid-attribute -->
-    <a href="#" aria-label={style.name}>
+    <a
+      href="#"
+      aria-label={style.name}>
       <div style="display: flex; align-items: center; justify-content: space-between">
         <h6>{style.name}</h6>
         <div
@@ -129,7 +135,9 @@
           use:popperRef
           on:click={() => (showContextMenu = !showContextMenu)}
           on:keydown={handleEnterKey}>
-          <Fa icon={faEllipsisVertical} size="sm" />
+          <Fa
+            icon={faEllipsisVertical}
+            size="sm" />
         </div>
         {#if showContextMenu}
           <div
@@ -139,7 +147,9 @@
             transition:fade
             use:clickOutside={handleClose}>
             <!-- svelte-ignore a11y-positive-tabindex -->
-            <aside class="menu" tabindex="1">
+            <aside
+              class="menu"
+              tabindex="1">
               <button
                 class="button is-small"
                 on:click={() => {
@@ -151,15 +161,24 @@
           </div>
         {/if}
       </div>
-      <div on:click={() => window.open(style.viewer)} class="image" id="map" bind:this={mapContainer} />
+      <div
+        on:click={() => window.open(style.viewer)}
+        class="image"
+        id="map"
+        bind:this={mapContainer} />
       <div class="content-caption">
-        <span tabindex="0" on:click={() => window.open(style.viewer)} class="cta__link cta--space">
+        <span
+          tabindex="0"
+          on:click={() => window.open(style.viewer)}
+          class="cta__link cta--space">
           View Style
           <i />
         </span>
         <div style="display: flex; align-items: center; justify-content: space-between">
           <div class="content">
-            <Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+            <Time
+              timestamp={style.createdat}
+              format="h:mm A · MMMM D, YYYY" />
           </div>
         </div>
       </div>
@@ -168,7 +187,10 @@
 </div>
 
 {#if confirmDeleteDialogVisible}
-  <div class="modal is-active" transition:fade use:clickOutside={() => (confirmDeleteDialogVisible = false)}>
+  <div
+    class="modal is-active"
+    transition:fade
+    use:clickOutside={() => (confirmDeleteDialogVisible = false)}>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
@@ -194,7 +216,11 @@
             on:click={() => (confirmDeleteDialogVisible = false)}>
             Cancel
           </button>
-          <button class="button primary-button" alt="Delete" title="Delete" on:click={handleDeleteStyle}>Delete</button>
+          <button
+            class="button primary-button"
+            alt="Delete"
+            title="Delete"
+            on:click={handleDeleteStyle}>Delete</button>
         </div>
       </footer>
     </div>

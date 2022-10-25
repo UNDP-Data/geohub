@@ -21,7 +21,10 @@
   }
 </script>
 
-<div class="card" data-testid="color-map-picker-card-container" tabindex="0">
+<div
+  class="card"
+  data-testid="color-map-picker-card-container"
+  tabindex="0">
   <div class="card-content">
     <div class="media">
       <figure
@@ -34,7 +37,10 @@
         {colorMapName}
       </div>
       {#if isSelected}
-        <div class="column is-size-8 selected" alt="Colormap Selected" title="Colormap Selected">
+        <div
+          class="column is-size-8 selected"
+          alt="Colormap Selected"
+          title="Colormap Selected">
           <i class="fas fa-check" />
         </div>
       {/if}

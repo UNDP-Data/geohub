@@ -47,7 +47,9 @@
 
 <div class="columns mx-5 is-multiline is-centered">
   <div class="column is-6">
-    <MetadataField name="sdgTarget" bind:value={metadata.sdgTarget}>
+    <MetadataField
+      name="sdgTarget"
+      bind:value={metadata.sdgTarget}>
       <input
         class="input"
         type="text"
@@ -56,7 +58,9 @@
     </MetadataField>
   </div>
   <div class="column is-6">
-    <MetadataField name="theme" bind:value={metadata.theme}>
+    <MetadataField
+      name="theme"
+      bind:value={metadata.theme}>
       <input
         class="input"
         type="text"
@@ -66,7 +70,9 @@
   </div>
 
   <div class="column is-6">
-    <MetadataField name="layerDescription" bind:value={metadata.layerDescription}>
+    <MetadataField
+      name="layerDescription"
+      bind:value={metadata.layerDescription}>
       <input
         class="input"
         type="text"
@@ -76,7 +82,9 @@
   </div>
 
   <div class="column is-6">
-    <MetadataField name="year" bind:value={metadata.year}>
+    <MetadataField
+      name="year"
+      bind:value={metadata.year}>
       <AutoComplete
         items={yearSelection}
         bind:selectedItem={metadata.year}
@@ -87,7 +95,9 @@
   </div>
 
   <div class="column is-6">
-    <MetadataField name="extent" bind:value={metadata.extent}>
+    <MetadataField
+      name="extent"
+      bind:value={metadata.extent}>
       <AutoComplete
         items={dataExtents}
         bind:selectedItem={metadata.extent}
@@ -97,7 +107,9 @@
   </div>
 
   <div class="column is-6">
-    <MetadataField name="resolution" bind:value={metadata.resolution}>
+    <MetadataField
+      name="resolution"
+      bind:value={metadata.resolution}>
       <AutoComplete
         items={resolutions}
         bind:selectedItem={metadata.resolution}
@@ -108,7 +120,9 @@
 
   {#if metadata.extent && !['', 'Global'].includes(metadata.extent)}
     <div class="column is-6">
-      <MetadataField name="granularity" bind:value={metadata.granularity}>
+      <MetadataField
+        name="granularity"
+        bind:value={metadata.granularity}>
         {#if metadata.extent === 'Continental'}
           <AutoComplete
             items={continentals}
@@ -139,7 +153,9 @@
   {/if}
 
   <div class="column is-6">
-    <MetadataField name="unit" bind:value={metadata.unit}>
+    <MetadataField
+      name="unit"
+      bind:value={metadata.unit}>
       <AutoComplete
         items={units}
         bind:selectedItem={metadata.unit}
@@ -149,14 +165,26 @@
   </div>
 
   <div class="column is-6">
-    <MetadataField name="source" bind:value={metadata.source}>
-      <input class="input" type="text" bind:value={metadata.source} placeholder="Source of the data" />
+    <MetadataField
+      name="source"
+      bind:value={metadata.source}>
+      <input
+        class="input"
+        type="text"
+        bind:value={metadata.source}
+        placeholder="Source of the data" />
     </MetadataField>
   </div>
 
   <div class="column is-6">
-    <MetadataField name="email" bind:value={metadata.email}>
-      <input class="input" type="text" bind:value={metadata.email} placeholder="Contact email" />
+    <MetadataField
+      name="email"
+      bind:value={metadata.email}>
+      <input
+        class="input"
+        type="text"
+        bind:value={metadata.email}
+        placeholder="Contact email" />
     </MetadataField>
   </div>
 </div>

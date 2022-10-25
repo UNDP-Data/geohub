@@ -32,7 +32,9 @@
 
 <br />
 <br />
-<Button style="background:#D12800; color:white; border-radius: 0" on:click={download}>Download</Button>
+<Button
+  style="background:#D12800; color:white; border-radius: 0"
+  on:click={download}>Download</Button>
 <!--<br />-->
 
 <!--<br />-->
