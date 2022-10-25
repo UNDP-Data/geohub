@@ -101,19 +101,13 @@
 
 <style lang="scss">
   @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
-  .content-container {
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 80px);
-    margin-top: 84px;
-    width: 100%;
-  }
+
+  $height: calc(100% - 93.44px);
+  $margin-top: 93.44px;
 
   @media (max-width: 90em) {
-    .content-container {
-      margin-top: 52px;
-      height: calc(100vh - 52px);
-    }
+    $margin-top: 60.94px;
+    $height: calc(100vh - 60.94px);
   }
 
   :global(.mdc-drawer__content) {
@@ -136,11 +130,11 @@
     }
   }
 
-  $height: calc(100vh);
+  // $height: calc(100vh);
 
-  @media (max-width: 768px) {
-    $height: calc(100vh - 184px);
-  }
+  // @media (max-width: 768px) {
+  //   $height: calc(100vh - 184px);
+  // }
 
   .content-container {
     position: absolute;
@@ -149,6 +143,8 @@
     overflow: hidden;
     z-index: 0;
     flex-grow: 1;
+    height: $height;
+    margin-top: $margin-top;
 
     .drawer-container {
       position: relative;
