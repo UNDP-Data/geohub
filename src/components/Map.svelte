@@ -161,12 +161,12 @@
 
 <style lang="scss">
   .map {
-    height: calc(100vh - 82px);
+    height: calc(100vh - 93.44px);
     width: 100%;
   }
   @media (max-width: 90em) {
     .map {
-      height: calc(100vh - 52px);
+      height: calc(100vh - 60.94px);
     }
   }
 </style>
