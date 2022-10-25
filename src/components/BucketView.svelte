@@ -141,8 +141,6 @@
   $separator: 1px solid whitesmoke;
   $separator-dark: 1px solid #ccc;
 
-  $height: calc(100vh - 120px);
-
   .view-container {
     .filter-container {
       border-bottom: $separator;
@@ -166,13 +164,21 @@
         max-width: fit-content;
         width: fit-content;
         overflow-y: auto;
-        height: $height;
+        height: calc(100vh - 150px);
+
+        @media (max-width: 90em) {
+          height: calc(100vh - 120px);
+        }
       }
 
       .tree {
         z-index: 1;
         overflow-y: auto;
-        height: $height;
+        height: calc(100vh - 150px);
+
+        @media (max-width: 90em) {
+          height: calc(100vh - 120px);
+        }
 
         .title {
           margin-bottom: 30px;
