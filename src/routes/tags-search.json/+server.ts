@@ -104,7 +104,6 @@ export const GET: RequestHandler = async ({ url }) => {
                 geomType,
                 container: blob.containerName,
                 tags: tags.tags,
-                children: [],
               }
 
               if (isRaster) {

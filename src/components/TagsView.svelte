@@ -63,8 +63,9 @@
         path: `${label}/`,
         url: null,
       }
-
-      treeBucketClone.push(node)
+      node.children.forEach((child) => {
+        treeBucketClone.push(child)
+      })
     }
 
     treeBucket = treeBucketClone
@@ -168,7 +169,9 @@
         <div class="is-size-6 tag-result">
           {#each treeBucket as tree}
             <ul class="mb-3">
-              <BucketTreeView bind:node={tree} />
+              <BucketTreeView
+                bind:node={tree}
+                hideCloseButton={true} />
             </ul>
           {/each}
         </div>
