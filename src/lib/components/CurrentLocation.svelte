@@ -68,7 +68,7 @@
 
   $: {
     if (map) {
-      if (currentLocationControl !== null && map.hasControl(currentLocationControl) === false) {
+      if (currentLocationControl && map.hasControl(currentLocationControl) === false) {
         map.addControl(currentLocationControl, position)
       }
     }

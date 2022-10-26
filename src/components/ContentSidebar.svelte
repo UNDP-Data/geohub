@@ -11,7 +11,7 @@
   let minPrimaryWidth = '355px'
   let minSecondaryWidth = '50%'
   let defaultsplitterSize = '10px'
-  let widthPecent: number = 0
+  let widthPecent = 0
 
   let splitControl: Split
   let splitterSize = defaultsplitterSize
