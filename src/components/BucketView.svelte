@@ -73,7 +73,7 @@
   data-testid="view-container">
   {#if bucketCardFilterSelected}
     <div
-      class="columns filter-container"
+      class="columns filter-container pt-3"
       transition:slide
       data-testid="filter-container">
       <div class="column filter">

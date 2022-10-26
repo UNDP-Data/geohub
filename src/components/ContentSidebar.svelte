@@ -8,7 +8,7 @@
   let innerWidth: number
   let innerHeight: number
   let initialPrimaryWidth = 355
-  let minPrimaryWidth = '300px'
+  let minPrimaryWidth = '355px'
   let minSecondaryWidth = '50%'
   let defaultsplitterSize = '10px'
   let widthPecent: number = 0
@@ -58,6 +58,10 @@
 
   const splitterChanged = () => {
     repaintMap()
+
+    if (isMenuShown !== true) {
+      resizeMap()
+    }
   }
 </script>
 
@@ -68,6 +72,7 @@
 <div class="split-container">
   <Split
     initialPrimarySize={`${widthPecent}%`}
+    minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
     minSecondarySize={minSecondaryWidth}
     {splitterSize}
     on:changed={splitterChanged}
