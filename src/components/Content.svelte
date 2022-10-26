@@ -38,7 +38,7 @@
             bind:activeTab
             bind:tabs />
         </div>
-        <div class="panel-block">
+        <div class="container p-0 m-0">
           <div hidden={activeTab !== TabNames.BUCKETS}>
             <BucketView />
           </div>

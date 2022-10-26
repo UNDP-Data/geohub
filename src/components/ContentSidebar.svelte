@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Map } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
+  import { onMount } from 'svelte'
 
   export let map: Map
   export let isMenuShown = false
@@ -9,13 +10,22 @@
   let initialPrimaryWidth = 355
   let minPrimaryWidth = '300px'
   let minSecondaryWidth = '50%'
-  $: widthPecent = (initialPrimaryWidth / innerWidth) * 100
+  let defaultsplitterSize = '10px'
+  let widthPecent: number = 0
 
   let splitControl: Split
-  let splitterSize = '10px'
+  let splitterSize = defaultsplitterSize
 
   $: innerWidth, resizeMap()
   $: innerHeight, resizeMap()
+
+  onMount(() => {
+    setSplitControl()
+  })
+
+  const setWidthPercent = () => {
+    widthPecent = (initialPrimaryWidth / innerWidth) * 100
+  }
 
   const resizeMap = () => {
     if (!map) return
@@ -31,8 +41,9 @@
   const setSplitControl = () => {
     if (!splitControl) return
     if (isMenuShown === true) {
+      setWidthPercent()
       splitControl.setPercent(widthPecent)
-      splitterSize = '10px'
+      splitterSize = defaultsplitterSize
     } else {
       splitControl.setPercent(0)
       splitterSize = '0px'
@@ -56,8 +67,7 @@
 
 <div class="split-container">
   <Split
-    initialPrimarySize="0%"
-    minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
+    initialPrimarySize={`${widthPecent}%`}
     minSecondarySize={minSecondaryWidth}
     {splitterSize}
     on:changed={splitterChanged}

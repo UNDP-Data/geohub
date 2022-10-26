@@ -88,7 +88,7 @@
     <div
       class="column"
       style="max-width: 112px;">
-      <div class="columns">
+      <div class="columns m-0 p-0">
         <div
           class="column cards"
           data-testid="buckets-container"
@@ -128,7 +128,7 @@
         <div class="column separator" />
       </div>
     </div>
-    <div class="column is-three-quarters">
+    <div class="column">
       <LinearProgress
         indeterminate
         bind:closed={hideLinearProgress} />
@@ -223,7 +223,11 @@
 
       .separator {
         border-left: $separator;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 150px);
+        @media (max-width: 90em) {
+          height: calc(100vh - 120px);
+        }
+
         max-width: 21px;
         width: 21px;
 
