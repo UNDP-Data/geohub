@@ -74,10 +74,11 @@
   $gray-700: #232e3d;
   .tabs {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     align-items: center;
     justify-content: space-between;
     margin-top: 0 !important;
+    margin-left: 70px;
     width: 100%;
     height: 100%;
   }
