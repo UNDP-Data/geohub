@@ -34,7 +34,7 @@ DECLARE _sql text := '
 	)
 	,data_number as (
 		SELECT
-			a.attname as attribute, 
+			b.column_name as attribute, 
 			''number'' as type,
 			c.count,
 			c.min,
@@ -43,14 +43,10 @@ DECLARE _sql text := '
 			c.median,
 			c.std,
 			c.histogram
-		FROM pg_stats a
-		INNER JOIN information_schema.columns b
-		ON a.schemaname = b.table_schema
-		AND a.tablename = b.table_name
+		FROM information_schema.columns b
 		INNER JOIN stats_number c
-		ON a.attname = c.attribute
-		AND b.column_name = c.attribute
-		WHERE a.schemaname=''' || schemaname ||''' and a.tablename = ''' || tablename ||'''
+		ON b.column_name = c.attribute
+		WHERE b.table_schema=''' || schemaname ||''' and b.table_name = ''' || tablename ||'''
 	)
 	,stats_string as (
 		select 
