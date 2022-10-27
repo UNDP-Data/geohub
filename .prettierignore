@@ -14,3 +14,4 @@ static/
 .prettierrc
 src/index.html
 /packages
+sql/

@@ -210,6 +210,7 @@
         ? `${treeNode.url.replace('.json', '/0/0/0.pbf')}`
         : `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`,
       treeNode.isMartin ? treeNode.path : layerName,
+      treeNode.isMartin,
     )
     if (stats) {
       treeNode.metadata.stats = stats
