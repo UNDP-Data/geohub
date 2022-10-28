@@ -86,7 +86,7 @@
     on:focusin={() => handleFocusIn()}
     on:focusout={() => handleFocusOut()}
     on:keydown={handleKP}>
-    {#if bucket.icon.startsWith('http')}
+    {#if bucket.icon.startsWith('http') || bucket.icon.startsWith('/')}
       <img
         src={bucket.icon}
         alt={bucket.label} />

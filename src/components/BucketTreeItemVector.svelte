@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TreeNode, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
+  import type { TreeNode, VectorLayerMetadata, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
   import BucketTreeItemCardButton from '$components/BucketTreeItemCardButton.svelte'
   import BucketTreeItemLegend from './BucketTreeItemLegend.svelte'
@@ -33,7 +33,7 @@
 
   const getVectorMetadata = async (node: TreeNode) => {
     let data: VectorTileMetadata
-    if (!node.isMartin) {
+    if (!node.dynamicSourceType) {
       const layerURL = new URL(node.url)
       const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
         '{z}/{x}/{y}.pbf',
@@ -58,25 +58,36 @@
         maxzoom: tilejson.maxzoom,
       }
 
-      const metadata = $martinIndex[node.path]
-      Object.keys(metadata.properties).forEach((key) => {
-        const dataType = metadata.properties[key]
-        switch (dataType) {
-          case 'varchar':
-          case 'text':
-          case 'char':
-          case 'name':
-            metadata.properties[key] = 'String'
-            break
-          case 'float4':
-          case 'float8':
-          case 'int2':
-          case 'int4':
-          case 'numeric':
-            metadata.properties[key] = 'Number'
-            break
-        }
-      })
+      let vector_layers: VectorLayerMetadata[]
+      if (node.dynamicSourceType === 'martin') {
+        const metadata = $martinIndex[node.path]
+        Object.keys(metadata.properties).forEach((key) => {
+          const dataType = metadata.properties[key]
+          switch (dataType) {
+            case 'varchar':
+            case 'text':
+            case 'char':
+            case 'name':
+              metadata.properties[key] = 'String'
+              break
+            case 'float4':
+            case 'float8':
+            case 'int2':
+            case 'int4':
+            case 'numeric':
+              metadata.properties[key] = 'Number'
+              break
+          }
+        })
+        vector_layers = [
+          {
+            id: metadata.id,
+            fields: metadata.properties,
+          },
+        ]
+      } else if (node.dynamicSourceType === 'pgtileserv') {
+        vector_layers = tilejson.vector_layers
+      }
 
       // const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
       const tilestatsLayer: VectorLayerTileStatLayer = {
@@ -88,12 +99,7 @@
       }
 
       data.json = {
-        vector_layers: [
-          {
-            id: metadata.id,
-            fields: metadata.properties,
-          },
-        ],
+        vector_layers: vector_layers,
         tilestats: {
           layerCount: 1,
           layers: [tilestatsLayer],

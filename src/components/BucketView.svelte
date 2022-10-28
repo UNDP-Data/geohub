@@ -26,19 +26,21 @@
     if (isBucketInTree === false) {
       let isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
       const isBucketMartin = bucket.tags.find((tag: string) => tag.toLowerCase() === 'martin') ? true : false
+      const isBucketPgtileserv = bucket.tags.find((tag: string) => tag.toLowerCase() === 'pgtileserv') ? true : false
       const isBucketMosaic = bucket.tags.find((tag: string) => tag.toLowerCase() === 'mosaicjson') ? true : false
       if (isBucketMosaic === true) {
         isBucketStac = true
       }
+      let dynamicSourceType = isBucketMartin ? 'martin' : isBucketPgtileserv ? 'pgtileserv' : undefined
       treeBucketUpdated = [
         ...$treeBucket,
         {
           id: bucket.id,
           isRaster: true,
           isStac: isBucketStac,
-          isMartin: isBucketMartin,
+          dynamicSourceType: dynamicSourceType,
           isMosaicJSON: isBucketMosaic,
-          label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
+          label: isBucketStac || dynamicSourceType ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
           children: [],
         },

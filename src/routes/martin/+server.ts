@@ -34,7 +34,7 @@ export const GET: RequestHandler = async ({ url }) => {
           url: containerPath.replace('index', table.id),
           isRaster: false,
           isStac: false,
-          isMartin: true,
+          dynamicSourceType: 'martin',
         }
         children.push(chjld)
       }
@@ -51,7 +51,7 @@ export const GET: RequestHandler = async ({ url }) => {
           children: [],
           isRaster: false,
           isStac: false,
-          isMartin: true,
+          dynamicSourceType: 'martin',
         }
         children.push(schema)
       }
@@ -65,7 +65,7 @@ export const GET: RequestHandler = async ({ url }) => {
     children: children,
     isRaster: false,
     isStac: false,
-    isMartin: true,
+    dynamicSourceType: 'martin',
   }
 
   const endTime = performance.now()

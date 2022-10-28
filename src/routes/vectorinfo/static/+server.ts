@@ -13,6 +13,7 @@ let tile: VectorTile
 
 // fetch vector tiles info from
 const fetchVectorTileInfo = async (path: string, layerName: string) => {
+  console.log(path, layerName)
   let attributesArray = []
 
   await fetch(`${path}`)
@@ -22,11 +23,20 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
     .then((arrayBuffer) => (pbf = new Pbf(arrayBuffer)))
     .catch((error) => (attributesArray = error))
 
-  try {
-    tile = new VectorTile(pbf)
-
+    try {
+      tile = new VectorTile(pbf)
+    } catch (err) {
+      throw error(500, { message: err})
+    }
+    
     // eslint-disable-next-line no-prototype-builtins
-    if (tile.layers.hasOwnProperty(layerName)) {
+    if (!tile.layers.hasOwnProperty(layerName)) {
+      // layerName doesn't exist in layers
+      throw error(400, { message: ErrorMessages.NO_LAYER_WITH_THAT_NAME})
+    }
+
+  try {
+    
       const layer = tile.layers[layerName]
 
       // since we are pushing values, we need to force the attributesArray to be empty at this point
@@ -92,20 +102,10 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
           attributesArray.push(attribute)
         }
       })
-    } else {
-      // layerName doesn't exist in layers
-      attributesArray.push({
-        code: 500,
-        message: ErrorMessages.NO_LAYER_WITH_THAT_NAME,
-      })
-    }
+    
   } catch (error) {
     // Fixme: If this catch is invoked. Need to return the actual error
-
-    attributesArray.push({
-      code: 500,
-      message: error,
-    })
+    throw error(400, { message: error})
   }
   return attributesArray
 }
@@ -122,14 +122,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
   const path = url.searchParams.get('path')
   const layer_name = url.searchParams.get('layer_name')
-  let response = []
 
   // fetch vector tiles values
-  await fetchVectorTileInfo(path, layer_name)
-    .then((res) => (response = res))
-    .catch((reason) => {
-      response = reason
-    })
+  const response = await fetchVectorTileInfo(path, layer_name)
 
   return new Response(JSON.stringify(response))
 }

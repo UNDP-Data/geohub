@@ -6,9 +6,13 @@ import { fetchUrl } from './fetchUrl'
  * @param layerName layer name on vector tile
  * @returns tilestats information
  */
-export const getVectorInfo = async (pbfPath: string, layerName: string, isDynamic: boolean) => {
+export const getVectorInfo = async (
+  pbfPath: string,
+  layerName: string,
+  dynamicSourceType?: 'martin' | 'pgtileserv',
+) => {
   // commented the following source code because the response of /vectorinfo/dynamic is slower than static vercion with varnish cache
-  // if (isDynamic) {
+  // if (dynamicSourceType === 'martin) {
   //   return await fetchUrl(`vectorinfo/dynamic?layer_name=${layerName}`)
   // } else {
   return await fetchUrl(`vectorinfo/static?path=${pbfPath}&layer_name=${layerName}`)

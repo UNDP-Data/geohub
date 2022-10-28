@@ -6,7 +6,7 @@
     "url": "https://planetarycomputer.microsoft.com/api",
     "label": "Microsoft Planetary Computer STAC API",
     "description": "Searchable spatiotemporal metadata describing Earth science datasets hosted by the Microsoft Planetary Computer",
-    "icon": "fa-regular fa-images",
+    "icon": "/stac.png",
     "type": "external",
     "tags": ["MosaicJSON", "API", "Microsoft"],
     "selected": false,

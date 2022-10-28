@@ -69,9 +69,13 @@
               .replace(/\.[^/.]+$/, '')}`,
           )
         }
-      } else if (tree.isMartin) {
+      } else if (tree.dynamicSourceType === 'martin') {
         treeData = await fetchUrl(
-          `martin.json?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
+          `martin?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
+        )
+      } else if (tree.dynamicSourceType === 'pgtileserv') {
+        treeData = await fetchUrl(
+          `pgtileserv?path=${tree.path}&label=${tree.label}${tree.url === null ? '&isschema=true' : ''}`,
         )
       } else {
         treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
