@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getLayerNumberProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
 
@@ -18,18 +19,7 @@
   })
 
   function setPropertyList() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const vectorLayerMeta = JSON.parse(
-      JSON.stringify(layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-    if (showOnlyNumberFields === true) {
-      Object.keys(vectorLayerMeta.fields).forEach((key) => {
-        if (vectorLayerMeta.fields[key] !== 'Number') {
-          delete vectorLayerMeta.fields[key]
-        }
-      })
-    }
+    const vectorLayerMeta = getLayerNumberProperties(layer)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]

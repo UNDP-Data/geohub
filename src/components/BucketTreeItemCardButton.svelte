@@ -2,12 +2,13 @@
   import { fade } from 'svelte/transition'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import { clickOutside } from 'svelte-use-click-outside'
-  import type { LayerInfoMetadata, TreeNode } from '$lib/types'
+  import type { LayerInfoMetadata, TileJson, TreeNode } from '$lib/types'
   import { clean, fetchUrl, getActiveBandIndex, getBase64EncodedUrl, hash } from '$lib/helper'
   import Popper from '$lib/popper'
   import { layerMetadata, bucketList } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount } from 'svelte'
+  import { layer } from '@fortawesome/fontawesome-svg-core'
 
   export let tree: TreeNode
   export let isShownInTree = true
@@ -65,15 +66,10 @@
         }
       } else {
         // get metadata from endpoint
-        const layerURL = new URL(tree.url)
-        const infoURI: string = tree.isRaster
-          ? `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(tree.url)}`
-          : `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace('{z}/{x}/{y}.pbf', 'metadata.json')}${
-              layerURL.search
-            }`
-        const layerInfo = await fetchUrl(infoURI)
 
         if (tree.isRaster) {
+          const infoURI = `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(tree.url)}`
+          const layerInfo = await fetchUrl(infoURI)
           if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
             const bandIndex = getActiveBandIndex(layerInfo)
             await setLayerMetaDataStore(
@@ -84,7 +80,25 @@
             )
           }
         } else {
-          await setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+          if (tree.dynamicSourceType) {
+            const layerInfo: TileJson = await fetchUrl(tree.url)
+            let source = 'Martin'
+            if (tree.dynamicSourceType === 'pgtileserv') {
+              source = 'pg_tileserv'
+            }
+            if (layerInfo.attribution) {
+              source = `${source}, ${layerInfo.attribution}`
+            }
+            await setLayerMetaDataStore(layerInfo.description, source, 'N/A', layerPathHash)
+          } else {
+            const layerURL = new URL(tree.url)
+            const infoURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
+              '{z}/{x}/{y}.pbf',
+              'metadata.json',
+            )}${layerURL.search}`
+            const layerInfo = await fetchUrl(infoURI)
+            await setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+          }
         }
       }
 
@@ -166,8 +180,14 @@
     <div class="bucket-card">
       <div class="columns is-vcentered is-mobile">
         <div class="column is-full">
-          <div class="label">{clean(tree.label)}</div>
-          <div class="description">{layerInfoMetadata?.description}</div>
+          <div class="label">
+            {#if tree.dynamicSourceType}
+              {clean(tree.path.split('.').join(' '))}
+            {:else}
+              {clean(tree.label)}
+            {/if}
+          </div>
+          <div class="description">{layerInfoMetadata?.description ? layerInfoMetadata?.description : 'N/A'}</div>
           <div class="source is-size-6">
             <span class="has-text-weight-bold">Source: </span>{layerInfoMetadata?.source
               ? layerInfoMetadata.source

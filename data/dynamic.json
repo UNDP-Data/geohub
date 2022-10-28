@@ -1,0 +1,26 @@
+[
+    {
+        "id": "martin",
+        "published": true,
+        "path": "https://martin.undpgeohub.org/index.json",
+        "url": "https://martin.undpgeohub.org",
+        "label": "Martin Vector Tiles API",
+        "description": "Dynamic vector tiles sources from PostGIS database",
+        "icon": "fa-solid fa-database",
+        "type": "external",
+        "tags": ["martin", "API", "UNDP"],
+        "selected": false
+    },
+    {
+        "id": "pgtileserv",
+        "published": true,
+        "path": "https://pgtileserv.undpgeohub.org/index.json",
+        "url": "https://pgtileserv.undpgeohub.org",
+        "label": "pgTileServ Vector Tiles API",
+        "description": "Dynamic vector tiles sources from PostGIS database",
+        "icon": "fa-solid fa-server",
+        "type": "external",
+        "tags": ["pgtileserv", "API", "UNDP"],
+        "selected": false
+    }
+]

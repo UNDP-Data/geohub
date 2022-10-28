@@ -3,7 +3,8 @@
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled } from '$stores'
+  import { layerLabelled, treeBucket } from '$stores'
+  import { join, split } from 'lodash'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -38,8 +39,6 @@
         break
     }
   }
-
-  const name = clean(layer.name)
 </script>
 
 <div class="layer-header">
@@ -65,8 +64,10 @@
           <span style="padding-left: 5px;">
             {#if layer.tree?.isMosaicJSON}
               {layer.tree.label}
+            {:else if layer.tree?.dynamicSourceType}
+              {clean(layer.tree.path.split('.').join(' '))}
             {:else}
-              {name}
+              {clean(layer.name)}
             {/if}
           </span>
         </div>

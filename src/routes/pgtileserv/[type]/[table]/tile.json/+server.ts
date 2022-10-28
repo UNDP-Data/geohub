@@ -58,7 +58,7 @@ const getTileJson = async (url: string) => {
   const tilejson: TileJson = {
     tilejson: '3.0.0',
     name: `${json.id}`,
-    description: `${json.description}`,
+    description: json.description,
     version: '1.0.0',
     attribution: 'United Nations Development Programme',
     scheme: 'xyz',

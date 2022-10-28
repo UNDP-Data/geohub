@@ -19,8 +19,9 @@
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer } from '$lib/types'
+  import type { Layer, VectorLayerTileStatLayer } from '$lib/types'
   import { layerList } from '$stores'
+  import { getLayerNumberProperties } from '$lib/helper'
 
   export let layer: Layer
 
@@ -70,7 +71,7 @@
       }
     }
 
-    layerNumberProperties = getLayerNumberProperties()
+    layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
   const handleLegendToggleClick = () => {
@@ -101,18 +102,8 @@
     colorPickerVisibleIndex = -1
   }
 
-  const getLayerNumberProperties = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const vectorLayerMeta = JSON.parse(
-      JSON.stringify(layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-    Object.keys(vectorLayerMeta.fields).forEach((key) => {
-      if (vectorLayerMeta.fields[key] !== 'Number') {
-        delete vectorLayerMeta.fields[key]
-      }
-    })
-
+  const getLayerNumberPropertiesCount = () => {
+    const vectorLayerMeta = getLayerNumberProperties(layer)
     return Object.keys(vectorLayerMeta.fields).length
   }
 

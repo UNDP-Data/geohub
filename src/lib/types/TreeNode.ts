@@ -12,7 +12,7 @@ export interface TreeNode {
   metadata?: VectorTileMetadata
   tags?: string[]
   isStac?: boolean
-  isMartin?: boolean
+  dynamicSourceType?: 'martin' | 'pgtileserv'
   paginationDirectionDisabled?: string
   collectionUrl?: string
   isMosaicJSON?: boolean
