@@ -79,15 +79,9 @@
     let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
       if (treeNode.dynamicSourceType) {
-        // const tilejson = await fetchUrl(treeNode.url)
-        // URL of tiles inside tileJSON from martin is http, hence we cannot use tileJSON directly because of CORS issue.
         layerSource = {
           type: LayerTypes.VECTOR,
           url: treeNode.url,
-          // scheme: tilejson.scheme,
-          // tiles: tilejson.tiles,
-          // minzoom: tilejson.minzoom,
-          // maxzoom: tilejson.maxzoom,
         }
       } else {
         layerSource = {
@@ -209,9 +203,7 @@
 
     // set vector info stats (number properties)
     let statsUrl = `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`
-    if (treeNode.dynamicSourceType === 'martin') {
-      statsUrl = `${treeNode.url.replace('.json', '/0/0/0.pbf')}`
-    } else if (treeNode.dynamicSourceType === 'pgtileserv') {
+    if (treeNode.dynamicSourceType) {
       const tilejson: TileJson = await fetchUrl(treeNode.url)
       statsUrl = tilejson.tiles[0].replace('/{z}/{x}/{y}.pbf', '/0/0/0.pbf')
     }

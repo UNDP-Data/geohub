@@ -8,7 +8,6 @@
   import { layerMetadata, bucketList } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount } from 'svelte'
-  import { layer } from '@fortawesome/fontawesome-svg-core'
 
   export let tree: TreeNode
   export let isShownInTree = true
@@ -33,7 +32,7 @@
   })
 
   export const generateTreeNodeMetadata = async () => {
-    const layerPathHash = hash(tree.path)
+    const layerPathHash = hash([tree.path, tree.url].join('-'))
     let metadata: LayerInfoMetadata
 
     // get existing metadata from store
@@ -66,7 +65,6 @@
         }
       } else {
         // get metadata from endpoint
-
         if (tree.isRaster) {
           const infoURI = `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(tree.url)}`
           const layerInfo = await fetchUrl(infoURI)
