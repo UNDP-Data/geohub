@@ -18,7 +18,7 @@
         "url": "https://pgtileserv.undpgeohub.org",
         "label": "pgTileServ Vector Tiles API",
         "description": "Dynamic vector tiles sources from PostGIS database",
-        "icon": "fa-solid fa-server",
+        "icon": "https://access.crunchydata.com/documentation/pg_tileserv/latest/crunchy-spatial-logo.png",
         "type": "external",
         "tags": ["pgtileserv", "API", "UNDP"],
         "selected": false
