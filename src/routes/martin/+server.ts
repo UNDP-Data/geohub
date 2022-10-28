@@ -31,7 +31,7 @@ export const GET: RequestHandler = async ({ url }) => {
           label: table.table,
           path: table.id,
           geomType: geomType,
-          url: containerPath.replace('index', table.id),
+          url: `${url.origin}/martin/${table.id}/tile.json`,
           isRaster: false,
           isStac: false,
           dynamicSourceType: 'martin',

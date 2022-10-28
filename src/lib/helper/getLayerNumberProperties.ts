@@ -22,12 +22,6 @@ export const getLayerNumberProperties = (layer: Layer) => {
         delete vectorLayerMeta.fields[attr.attribute]
       }
     })
-  } else {
-    Object.keys(vectorLayerMeta.fields).forEach((key) => {
-      if (vectorLayerMeta.fields[key] !== 'Number') {
-        delete vectorLayerMeta.fields[key]
-      }
-    })
   }
   return vectorLayerMeta
 }

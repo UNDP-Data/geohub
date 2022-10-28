@@ -58,38 +58,8 @@
         maxzoom: tilejson.maxzoom,
       }
 
-      let vector_layers: VectorLayerMetadata[]
-      if (node.dynamicSourceType === 'martin') {
-        const metadata = $martinIndex[node.path]
-        Object.keys(metadata.properties).forEach((key) => {
-          const dataType = metadata.properties[key]
-          switch (dataType) {
-            case 'varchar':
-            case 'text':
-            case 'char':
-            case 'name':
-              metadata.properties[key] = 'String'
-              break
-            case 'float4':
-            case 'float8':
-            case 'int2':
-            case 'int4':
-            case 'numeric':
-              metadata.properties[key] = 'Number'
-              break
-          }
-        })
-        vector_layers = [
-          {
-            id: metadata.id,
-            fields: metadata.properties,
-          },
-        ]
-      } else if (node.dynamicSourceType === 'pgtileserv') {
-        vector_layers = tilejson.vector_layers
-      }
+      let vector_layers: VectorLayerMetadata[] = tilejson.vector_layers
 
-      // const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
       const tilestatsLayer: VectorLayerTileStatLayer = {
         layer: node.path,
         geometry: node.geomType,
