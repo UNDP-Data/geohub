@@ -1,16 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import { Map } from 'maplibre-gl'
+  import { Map, type StyleSpecification } from 'maplibre-gl'
   import { styles } from '$lib/constants'
   import type { StyleDefinition } from '$lib/types'
-  import stylePrimaryData from '$lib/style.json'
-  import styleSecondaryData from '$lib/aerialstyle.json'
+  import { fetchUrl } from '$lib/helper'
 
   let stylePrimary: StyleDefinition = styles[0]
   let styleSecondary: StyleDefinition = styles[1]
   let activeStyle: StyleDefinition = styles[0]
   let buttonStyle: StyleDefinition = styles[1]
+
+  let stylePrimaryData: StyleSpecification
+  let styleSecondaryData: StyleSpecification
+
   const indexStyle = { id: 'index', type: 'background', layout: { visibility: 'none' } }
 
   export let map: Map
@@ -29,7 +32,9 @@
     })
   }
 
-  onMount(() => {
+  onMount(async () => {
+    stylePrimaryData = await fetchUrl(stylePrimary.uri)
+    styleSecondaryData = await fetchUrl(styleSecondary.uri)
     mapToggle = createMiniMap(mainContainerId, buttonStyle.uri)
   })
 
@@ -104,9 +109,20 @@
     width: 60px;
     height: 60px;
     border-radius: 30px;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
     margin: 0px;
     border-style: solid;
     border-color: #1c1c1c;
     border-width: 1px;
+    background: white;
+  }
+
+  :global(.maplibregl-canvas) {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
   }
 </style>
