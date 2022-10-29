@@ -136,19 +136,15 @@
     console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
 
     if (acceptSingleTag) {
-      if( sol.includes(event.detail.tags[0])) {
+      if (sol.includes(event.detail.tags[0])) {
         tagsList = event.detail.tags
-      }
-
-      else {
+      } else {
         tagsList = []
         badSingleTagValue = event.detail.tags[0]
         warningSingleTagEqual = !warningSingleTagEqual //set
-
       }
-      
     } else {
-        tagsList = event.detail.tags
+      tagsList = event.detail.tags
       // tagsList = []
       // badSingleTagValue = event.detail.tags[0]
       // warningSingleTagEqual = !warningSingleTagEqual //set
