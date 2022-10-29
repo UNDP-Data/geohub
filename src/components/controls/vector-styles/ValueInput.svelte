@@ -6,24 +6,21 @@
   import arraystat from 'arraystat'
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
-  import type { VectorLayerTileStatAttribute } from '$lib/types'
+  import type { Layer, VectorLayerTileStatAttribute } from '$lib/types'
 
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
-  export let layer
+  export let layer: Layer
   export let operator
 
-  let dataType = layer.info.json.vector_layers[0].fields[propertySelectedValue]
-  //console.log(`handling prop ${propertySelectedValue} of type ${dataType}`)
-
-  // const getPropSampleValue = () => {
-  //     for (const feature of $map.querySourceFeatures(layer.definition.source, {sourceLayer: layer.definition['source-layer']}) ) {
-  //         return feature.properties[propertySelectedValue]
-  //     }
-  // }
-
-  // const propval = getPropSampleValue()
+  const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(
+    (e) => e['attribute'] === propertySelectedValue,
+  )
+  const dataType = propertyProps['type']
+  let warningSingleTagEqual = false
+  let badSingleTagValue
+  //console.log(propertySelectedValue, dataType)
 
   const layerId = layer.definition.id
 
@@ -42,7 +39,7 @@
 
   const dispatch = createEventDispatcher()
 
-  const layers = $map.getStyle().layers.filter((layer) => layer.id === layerId)
+  //console.log(layer)
   let hideOptions = true
   let step
   let uv: any = undefined
@@ -77,33 +74,38 @@
     sv = [attrstats.median]
     //console.log(`calculatedStep is ${calculatedStep} ${min}-${max} ${attrstats.median}`)
   } else {
-    const features = layers.map((layer) => $map.queryRenderedFeatures({ layers: layers.map((layer) => layer.id) }))
+    let features = $map.querySourceFeatures({ layers: [layerId] })
+
+    if (features.length == 0) {
+      features = $map.querySourceFeatures(layer.definition.source, { sourceLayer: layer.definition['source-layer'] })
+    }
 
     // get the values of the property for each feature
-    const values = features.map((feature) => feature.map((feature) => feature.properties[propertySelectedValue]))
+    const values = features.map((feature) => feature.properties[propertySelectedValue])
 
     let optionsList: number[] = [...new Set(values.flat())]
     sol = Array.from(optionsList).sort((a, b) => a - b)
     const astats = arraystat(sol)
-    //console.log(astats)
+    //console.log(sol)
+    if (dataType != 'string') {
+      min = astats.min
+      max = astats.max
+      //                                        negative               0->1
+      calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2
+      let closest = fclosest(sol, astats.median)
+      sv = [closest]
 
-    min = astats.min
-    max = astats.max
-    //                                        negative               0->1
-    calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2
-    let closest = fclosest(sol, astats.median)
-    sv = [closest]
-
-    index = sol.indexOf(closest)
-    //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
-    sindex = index - nn < 0 ? 0 : index - nn
-    eindex = index + nn > sol.length - 1 ? sol.length : index + nn
-    vals = sol.slice(sindex, eindex)
-    svals = vals.sort()
+      index = sol.indexOf(closest)
+      //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
+      sindex = index - nn < 0 ? 0 : index - nn
+      eindex = index + nn > sol.length - 1 ? sol.length : index + nn
+      vals = sol.slice(sindex, eindex)
+      svals = vals.sort()
+    }
   }
 
   $: {
-    if (!hasManyFeatures) {
+    if (!hasManyFeatures && dataType != 'string') {
       closest = fclosest(sol, sv[0])
       index = sol.indexOf(closest)
       //console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
@@ -120,7 +122,19 @@
   }
 
   const handleTags = (event: CustomEvent) => {
-    tagsList = event.detail.tags
+    if (warningSingleTagEqual) {
+      warningSingleTagEqual = !warningSingleTagEqual //reset
+      //tagsList = []
+      badSingleTagValue = null
+    }
+    console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
+    if (acceptSingleTag && sol.includes(event.detail.tags[0])) {
+      tagsList = event.detail.tags
+    } else {
+      tagsList = []
+      badSingleTagValue = event.detail.tags[0]
+      warningSingleTagEqual = !warningSingleTagEqual //set
+    }
   }
 
   const applyTags = () => {
@@ -137,6 +151,7 @@
 
   const apply = (e) => {
     if (!expressionValue) expressionValue = sv[0]
+    tagsList = []
     dispatch('apply')
   }
 
@@ -194,7 +209,7 @@
   class="content"
   style="width:100%; height:100%">
   {#if hasManyFeatures}
-    {#if dataType === 'String'}
+    {#if dataType === 'string'}
       <div class="columns is-centered pb-2">
         <button
           class="button is-small primary-button  "
@@ -306,13 +321,22 @@
   {:else}
     <!--FEW features-->
 
-    {#if dataType === 'String'}
+    {#if dataType === 'string'}
       <div>
         {#if acceptSingleTag}
-          <div class="notification has-background-danger-light is-size-6 has-text-danger">
-            <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ operators
-            are used
-          </div>
+          {#if warningSingleTagEqual}
+            <div class="notification has-background-danger-light is-size-6 has-text-danger">
+              <i class="fa-solid fa-circle-info has-text-danger" />
+              <span class="subtitle has-text-weight-bold">{badSingleTagValue}</span>
+              does not exist in <span class="has-text-weight-bold message is-primary p-2">{propertySelectedValue}</span>
+              property
+            </div>
+          {:else}
+            <div class="notification has-background-danger-light is-size-6 has-text-danger">
+              <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ operators
+              are used
+            </div>
+          {/if}
         {/if}
         <Tags
           on:tags={handleTags}
@@ -404,44 +428,44 @@
 </div>
 
 <style lang="scss">
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 1px;
-  }
+  // .grid {
+  //   display: grid;
+  //   grid-template-columns: repeat(5, 1fr);
+  //   grid-gap: 1px;
+  // }
 
-  .grid-item {
-    width: 100% !important;
-    height: 100% !important;
-  }
+  // .grid-item {
+  //   width: 100% !important;
+  //   height: 100% !important;
+  // }
 
-  .input {
-    margin-top: 5%;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  // .input {
+  //   margin-top: 5%;
+  //   margin-left: auto;
+  //   margin-right: auto;
+  // }
 
-  .unique-values-card {
-    height: 50px;
-    width: 50px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-  }
+  // .unique-values-card {
+  //   height: 50px;
+  //   width: 50px;
+  //   background-color: #fff;
+  //   border: 1px solid #ccc;
+  //   border-radius: 5px;
+  //   margin: 5px;
+  //   display: flex;
+  //   justify-content: center;
+  //   align-items: center;
+  //   cursor: pointer;
+  // }
 
-  .unique-values-card:hover {
-    background-color: #f5f5f5;
-  }
+  // .unique-values-card:hover {
+  //   background-color: #f5f5f5;
+  // }
 
-  .disable {
-    pointer-events: none;
-    cursor: not-allowed;
-  }
+  // .disable {
+  //   pointer-events: none;
+  //   cursor: not-allowed;
+  // }
   .range-slider {
     --range-handle-focus: #2196f3;
     --range-handle-inactive: #2196f3;
