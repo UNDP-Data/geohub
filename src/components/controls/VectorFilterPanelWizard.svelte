@@ -9,7 +9,8 @@
   import Step from '$components/control-groups/Step.svelte'
   import { vectorFilterOperations } from '$lib/constants'
   import { clean } from '$lib/helper'
-  import { isInteger } from 'lodash'
+
+  
 
   export let isFilterPanelVisible = false
   export let layer
@@ -42,20 +43,24 @@
   let customTagsAvailable = false
 
   const handlePropertySelect = (e) => {
-    propertySelectValue = e.detail.prop
-    const dataType = layer.info.json.vector_layers[0].fields[propertySelectValue]
-    if (dataType) {
-      stringProperty = dataType === 'String'
-      numberProperty = dataType === 'Number' || dataType.includes('int') || dataType.includes('float')
+    if (e.detail.prop) {
+      propertySelectValue = e.detail.prop
+      const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(e => e['attribute'] === propertySelectValue)  
+      const dataType = propertyProps['type']
+      if (dataType) {
+        stringProperty = dataType === 'string'
+        numberProperty = dataType === 'number' || dataType.includes('int') || dataType.includes('float') // last two not really necessary (ioan)
+      }
+      expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
+      if (layer.children && layer.children.length > 0) {
+        layer.children['0'].info.stats.forEach((stat) => {
+          if (stat.attribute === propertySelectValue) {
+            propertyStats = stat
+          }
+        })
+      }
     }
-    expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
-    if (layer.children && layer.children.length > 0) {
-      layer.children['0'].info.stats.forEach((stat) => {
-        if (stat.attribute === propertySelectValue) {
-          propertyStats = stat
-        }
-      })
-    }
+   
   }
 
   const generateExpressionFromExpressionsArray = (expressionsArray) => {
@@ -182,6 +187,9 @@
         },
       ]
       currentExpressionIndex = 0
+    }
+    if ($filterInputTags.length > 0) {
+      $filterInputTags = []
     }
   }
 
@@ -364,7 +372,7 @@
       <PropertySelectButtons
         {layer}
         bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-        on:select={handlePropertySelect}
+        on:select={(e)=> {handlePropertySelect(e)}}
         on:click={nextStep} />
     </Step>
     <Step
