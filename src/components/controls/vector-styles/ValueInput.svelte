@@ -11,15 +11,16 @@
   export let propertySelectedValue
   export let expressionValue
   export let acceptSingleTag = true
-  export let layer:Layer
+  export let layer: Layer
   export let operator
 
-  const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(e => e['attribute'] === propertySelectedValue)  
+  const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(
+    (e) => e['attribute'] === propertySelectedValue,
+  )
   const dataType = propertyProps['type']
-  let warningSingleTagEqual:boolean = false;
-  let badSingleTagValue;
+  let warningSingleTagEqual = false
+  let badSingleTagValue
   //console.log(propertySelectedValue, dataType)
- 
 
   const layerId = layer.definition.id
 
@@ -38,7 +39,6 @@
 
   const dispatch = createEventDispatcher()
 
-  
   //console.log(layer)
   let hideOptions = true
   let step
@@ -77,18 +77,17 @@
     let features = $map.querySourceFeatures({ layers: [layerId] })
 
     if (features.length == 0) {
-      features = $map.querySourceFeatures(layer.definition.source, {sourceLayer: layer.definition['source-layer']} )
+      features = $map.querySourceFeatures(layer.definition.source, { sourceLayer: layer.definition['source-layer'] })
     }
 
-    
     // get the values of the property for each feature
     const values = features.map((feature) => feature.properties[propertySelectedValue])
-    
+
     let optionsList: number[] = [...new Set(values.flat())]
     sol = Array.from(optionsList).sort((a, b) => a - b)
     const astats = arraystat(sol)
     //console.log(sol)
-    if(dataType != 'string') {
+    if (dataType != 'string') {
       min = astats.min
       max = astats.max
       //                                        negative               0->1
@@ -103,7 +102,6 @@
       vals = sol.slice(sindex, eindex)
       svals = vals.sort()
     }
-    
   }
 
   $: {
@@ -124,23 +122,19 @@
   }
 
   const handleTags = (event: CustomEvent) => {
-    if(warningSingleTagEqual) {
-      warningSingleTagEqual = ! warningSingleTagEqual //reset
+    if (warningSingleTagEqual) {
+      warningSingleTagEqual = !warningSingleTagEqual //reset
       //tagsList = []
       badSingleTagValue = null
-    } 
+    }
     console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
     if (acceptSingleTag && sol.includes(event.detail.tags[0])) {
       tagsList = event.detail.tags
-      
     } else {
       tagsList = []
-      badSingleTagValue =  event.detail.tags[0]
-      warningSingleTagEqual = ! warningSingleTagEqual //set
-    } 
-
-    
-   
+      badSingleTagValue = event.detail.tags[0]
+      warningSingleTagEqual = !warningSingleTagEqual //set
+    }
   }
 
   const applyTags = () => {
@@ -332,16 +326,17 @@
         {#if acceptSingleTag}
           {#if warningSingleTagEqual}
             <div class="notification has-background-danger-light is-size-6 has-text-danger">
-              <i class="fa-solid fa-circle-info has-text-danger" /> <span class="subtitle has-text-weight-bold">{badSingleTagValue}</span> does not exist
-              in <span class="has-text-weight-bold message is-primary p-2">{propertySelectedValue}</span> property
+              <i class="fa-solid fa-circle-info has-text-danger" />
+              <span class="subtitle has-text-weight-bold">{badSingleTagValue}</span>
+              does not exist in <span class="has-text-weight-bold message is-primary p-2">{propertySelectedValue}</span>
+              property
             </div>
-          {:else}  
+          {:else}
             <div class="notification has-background-danger-light is-size-6 has-text-danger">
               <i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when equals = or ≠ operators
               are used
             </div>
           {/if}
-          
         {/if}
         <Tags
           on:tags={handleTags}

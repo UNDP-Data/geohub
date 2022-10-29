@@ -10,8 +10,6 @@
   import { vectorFilterOperations } from '$lib/constants'
   import { clean } from '$lib/helper'
 
-  
-
   export let isFilterPanelVisible = false
   export let layer
 
@@ -45,7 +43,9 @@
   const handlePropertySelect = (e) => {
     if (e.detail.prop) {
       propertySelectValue = e.detail.prop
-      const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(e => e['attribute'] === propertySelectValue)  
+      const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(
+        (e) => e['attribute'] === propertySelectValue,
+      )
       const dataType = propertyProps['type']
       if (dataType) {
         stringProperty = dataType === 'string'
@@ -60,7 +60,6 @@
         })
       }
     }
-   
   }
 
   const generateExpressionFromExpressionsArray = (expressionsArray) => {
@@ -372,7 +371,9 @@
       <PropertySelectButtons
         {layer}
         bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-        on:select={(e)=> {handlePropertySelect(e)}}
+        on:select={(e) => {
+          handlePropertySelect(e)
+        }}
         on:click={nextStep} />
     </Step>
     <Step
