@@ -115,7 +115,7 @@
 
   // Apply expression to layer
   const handleApplyExpression = () => {
-    //console.log(JSON.stringify(expressionsArray, null, '\t'))
+    console.log(JSON.stringify(expressionsArray, null, '\t'))
 
     const expression = generateFilterExpression(expressionsArray)
     // console.log(JSON.stringify(expression, null, '\t'))

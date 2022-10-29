@@ -127,18 +127,31 @@
   })
 
   const handleTags = (event: CustomEvent) => {
+    console.log('CE')
     if (warningSingleTagEqual) {
       warningSingleTagEqual = !warningSingleTagEqual //reset
       //tagsList = []
       badSingleTagValue = null
     }
     console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
-    if (acceptSingleTag && sol.includes(event.detail.tags[0])) {
-      tagsList = event.detail.tags
+
+    if (acceptSingleTag) {
+      if( sol.includes(event.detail.tags[0])) {
+        tagsList = event.detail.tags
+      }
+
+      else {
+        tagsList = []
+        badSingleTagValue = event.detail.tags[0]
+        warningSingleTagEqual = !warningSingleTagEqual //set
+
+      }
+      
     } else {
-      tagsList = []
-      badSingleTagValue = event.detail.tags[0]
-      warningSingleTagEqual = !warningSingleTagEqual //set
+        tagsList = event.detail.tags
+      // tagsList = []
+      // badSingleTagValue = event.detail.tags[0]
+      // warningSingleTagEqual = !warningSingleTagEqual //set
     }
   }
 
