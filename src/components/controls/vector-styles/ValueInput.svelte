@@ -4,6 +4,7 @@
   import { createEventDispatcher } from 'svelte'
   import { map, filterInputTags } from '$stores'
   import arraystat from 'arraystat'
+  import { onDestroy } from 'svelte'
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
   import type { Layer, VectorLayerTileStatAttribute } from '$lib/types'
@@ -120,6 +121,10 @@
     expressionValue = event.detail.value
     dispatch('sliderStop', event.detail)
   }
+
+  onDestroy(() => {
+    restoreQ()
+  })
 
   const handleTags = (event: CustomEvent) => {
     if (warningSingleTagEqual) {
