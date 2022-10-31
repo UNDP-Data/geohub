@@ -13,7 +13,6 @@ let tile: VectorTile
 
 // fetch vector tiles info from
 const fetchVectorTileInfo = async (path: string, layerName: string) => {
-  console.log(path, layerName)
   let attributesArray = []
 
   await fetch(`${path}`)
