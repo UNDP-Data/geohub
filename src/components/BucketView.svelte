@@ -191,7 +191,7 @@
       margin-bottom: 0;
 
       .cards {
-        z-index: 10;
+        z-index: 5;
         max-width: fit-content;
         width: fit-content;
         overflow-y: auto;
