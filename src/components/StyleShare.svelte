@@ -111,7 +111,9 @@
     class="modal is-active"
     transition:fade
     use:clickOutside={handleClose}>
-    <div class="modal-background" />
+    <div
+      class="modal-background"
+      on:click={handleClose} />
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title has-text-weight-bold">Share</p>
