@@ -2,16 +2,24 @@ import type { RequestHandler } from './$types'
 import { fetchUrl } from '$lib/helper'
 import type { TreeNode } from '$lib/types'
 
+import fs from 'fs'
+import path from 'path'
+const __dirname = path.resolve()
+
 export const GET: RequestHandler = async ({ url }) => {
+  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/dynamic.json`, 'utf8'))
   const startTime = performance.now()
 
   const containerLabel = url.searchParams.get('label')
   const containerPath = url.searchParams.get('path')
-  const isSchema = url.searchParams.get('isschema')
+
+  // check whether it is root level
+  const catalog: TreeNode = catalogues.find((catalog) => catalog.label === containerLabel)
 
   const indexData = await fetchUrl(`${containerPath}`)
   const children = []
-  if (isSchema === 'true') {
+  if (!catalog) {
+    // table
     Object.keys(indexData).forEach((id) => {
       const table = indexData[id]
       if (table.schema === containerLabel) {
@@ -31,15 +39,16 @@ export const GET: RequestHandler = async ({ url }) => {
           label: table.table,
           path: table.id,
           geomType: geomType,
-          url: containerPath.replace('index', table.id),
+          url: `${url.origin}/martin/${table.id}/tile.json`,
           isRaster: false,
           isStac: false,
-          isMartin: true,
+          dynamicSourceType: 'martin',
         }
         children.push(chjld)
       }
     })
   } else {
+    // schema
     Object.keys(indexData).forEach((id) => {
       const table = indexData[id]
       let schema: TreeNode = children.find((s) => s.label === table.schema)
@@ -51,7 +60,7 @@ export const GET: RequestHandler = async ({ url }) => {
           children: [],
           isRaster: false,
           isStac: false,
-          isMartin: true,
+          dynamicSourceType: 'martin',
         }
         children.push(schema)
       }
@@ -65,7 +74,7 @@ export const GET: RequestHandler = async ({ url }) => {
     children: children,
     isRaster: false,
     isStac: false,
-    isMartin: true,
+    dynamicSourceType: 'martin',
   }
 
   const endTime = performance.now()

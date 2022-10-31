@@ -136,7 +136,10 @@
   <Content>
     <div class="wrapper">
       <div>
-        <Textfield variant="filled" bind:value={newLayerName} label="Layer name">
+        <Textfield
+          variant="filled"
+          bind:value={newLayerName}
+          label="Layer name">
           <HelperText slot="helper">...set the name of the new layer ...</HelperText>
         </Textfield>
         {#if newLayerName}
@@ -182,7 +185,9 @@
       {/if}
 
       <div>
-        <Select bind:value={selectedLegendType} label="Select legend type">
+        <Select
+          bind:value={selectedLegendType}
+          label="Select legend type">
           {#each Object.values(DynamicLayerLegendTypes) as legendType}
             <Option value={legendType}>{legendType}</Option>
           {/each}
@@ -190,8 +195,14 @@
       </div>
 
       <div>
-        <Set chips={Object.values(DynamicLayerResolutionTypes)} let:chip choice bind:selected={selectedRes}>
-          <Chip {chip} touch>
+        <Set
+          chips={Object.values(DynamicLayerResolutionTypes)}
+          let:chip
+          choice
+          bind:selected={selectedRes}>
+          <Chip
+            {chip}
+            touch>
             <Text>{chip}</Text>
           </Chip>
         </Set>

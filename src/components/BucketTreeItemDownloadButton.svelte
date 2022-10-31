@@ -24,8 +24,13 @@
     on:click={() => downloadFile(tree.url)}
     on:keydown={handleEnterKeyForDownload}>
     <Wrapper>
-      <Fa icon={faDownload} size="sm" />
-      <Tooltip showDelay={0} hideDelay={100} yPos="above">Download Layer Data</Tooltip>
+      <Fa
+        icon={faDownload}
+        size="sm" />
+      <Tooltip
+        showDelay={0}
+        hideDelay={100}
+        yPos="above">Download Layer Data</Tooltip>
     </Wrapper>
   </div>
 {/if}

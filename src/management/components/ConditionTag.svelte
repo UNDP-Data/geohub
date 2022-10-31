@@ -7,7 +7,9 @@
 
 {#if isSuccess === true}
   <span class="tag is-success is-small">
-    <Fa icon={faCheck} size="sm" />
+    <Fa
+      icon={faCheck}
+      size="sm" />
   </span>
 {/if}
 

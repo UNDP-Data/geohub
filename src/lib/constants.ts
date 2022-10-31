@@ -1,9 +1,3 @@
-import { faBacon } from '@fortawesome/free-solid-svg-icons/faBacon'
-import { faBezierCurve } from '@fortawesome/free-solid-svg-icons/faBezierCurve'
-import { faWindows } from '@fortawesome/free-brands-svg-icons/faWindows'
-import { faCubesStacked } from '@fortawesome/free-solid-svg-icons/faCubesStacked'
-import { faVectorSquare } from '@fortawesome/free-solid-svg-icons/faVectorSquare'
-import { faBraille } from '@fortawesome/free-solid-svg-icons/faBraille'
 import type { StyleDefinition } from '$lib/types'
 
 export const COLOR_CLASS_COUNT = 5
@@ -18,6 +12,7 @@ export const STRING_COMPARE_THRESHOLD = 0.25
 export const STAC_PAGINATION_PREV = 'prev'
 export const STAC_PAGINATION_NEXT = 'next'
 export const STAC_PAGINATION_LIMIT = 5
+export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
 
 export enum TabNames {
   ANALYZE = 'Analyze',
@@ -98,37 +93,37 @@ export const LayerIconTypes = [
   {
     id: 'point',
     label: 'Point',
-    icon: faCubesStacked,
+    icon: 'fa-solid fa-cubes-stacked',
     color: 'lightseagreen',
   },
   {
     id: 'line',
     label: 'Line',
-    icon: faBacon,
+    icon: 'fa-solid fa-bacon',
     color: 'mediumpurple',
   },
   {
     id: 'polygon',
     label: 'Polygon',
-    icon: faVectorSquare,
+    icon: 'fa-solid fa-vector-square',
     color: 'crimson',
   },
   {
     id: 'vector',
     label: 'Vector',
-    icon: faBezierCurve,
+    icon: 'fa-solid fa-bezier-curve',
     color: 'peru',
   },
   {
     id: 'raster',
     label: 'Raster',
-    icon: faWindows,
+    icon: 'fa-brands fa-windows',
     color: '#0b0b45',
   },
   {
     id: 'heatmap',
     label: 'Heatmap',
-    icon: faBraille,
+    icon: 'fa-solid fa-braille',
     color: 'crimson',
   },
 ]

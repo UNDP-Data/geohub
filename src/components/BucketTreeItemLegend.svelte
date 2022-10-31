@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
-  import Fa from 'svelte-fa'
-
   import type { TreeNode } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
 
@@ -24,17 +22,33 @@
 </script>
 
 {#if tree.isRaster}
-  <div class="icon" alt={iconRaster.label} title={iconRaster.label}>
+  <div
+    class="icon"
+    alt={iconRaster.label}
+    title={iconRaster.label}>
     <Wrapper>
-      <Fa rotate={140} icon={iconRaster.icon} size="sm" primaryColor={iconRaster.color} />
-      <Tooltip showDelay={0} hideDelay={100} yPos="above">Raster</Tooltip>
+      <i
+        class="{iconRaster.icon} sm fa-rotate-by"
+        style="--fa-rotate-angle:140deg; color:{iconRaster.color};" />
+      <Tooltip
+        showDelay={0}
+        hideDelay={100}
+        yPos="above">Raster</Tooltip>
     </Wrapper>
   </div>
 {:else}
-  <div class="icon" alt={iconVector.label} title={iconVector.label}>
+  <div
+    class="icon"
+    alt={iconVector.label}
+    title={iconVector.label}>
     <Wrapper>
-      <Fa icon={iconVector.icon} size="sm" primaryColor={iconVector.color} />
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Vector</Tooltip>
+      <i
+        class="{iconVector.icon} sm"
+        style="color:{iconVector.color};" />
+      <Tooltip
+        showDelay={500}
+        hideDelay={100}
+        yPos="above">Vector</Tooltip>
     </Wrapper>
   </div>
 {/if}

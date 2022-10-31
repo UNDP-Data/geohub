@@ -83,10 +83,18 @@
 </script>
 
 <div class="centered">
-  <SegmentedButton segments={overlayChoices} let:segment singleSelect bind:selected={overlaySelected}>
-    <Segment {segment} title={segment.title}>
+  <SegmentedButton
+    segments={overlayChoices}
+    let:segment
+    singleSelect
+    bind:selected={overlaySelected}>
+    <Segment
+      {segment}
+      title={segment.title}>
       <div class="icon">
-        <Fa icon={segment.icon} size="lg" />
+        <Fa
+          icon={segment.icon}
+          size="lg" />
       </div>
       <Label>{segment.name}</Label>
     </Segment>

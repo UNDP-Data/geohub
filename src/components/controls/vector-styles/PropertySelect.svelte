@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getLayerNumberProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
 
@@ -18,18 +19,7 @@
   })
 
   function setPropertyList() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const vectorLayerMeta = JSON.parse(
-      JSON.stringify(layer.info.json.vector_layers.find((l) => l.id === layer.definition['source-layer'])),
-    )
-    if (showOnlyNumberFields === true) {
-      Object.keys(vectorLayerMeta.fields).forEach((key) => {
-        if (vectorLayerMeta.fields[key] !== 'Number') {
-          delete vectorLayerMeta.fields[key]
-        }
-      })
-    }
+    const vectorLayerMeta = getLayerNumberProperties(layer)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]
@@ -55,7 +45,9 @@
 
 <!--<div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">-->
 <div class="control has-icons-left">
-  <div style="margin-right: 2%" class="select is-flex is-justify-content-left select is-small">
+  <div
+    style="margin-right: 2%"
+    class="select is-flex is-justify-content-left select is-small">
     <select
       style="width: 100%"
       class="is-small"
@@ -64,14 +56,19 @@
       title="Property Options">
       {#if propertySelectOptions}
         {#each propertySelectOptions as propertySelectOption}
-          <option class="legend-text" alt="Property Option" title="Property Option" value={propertySelectOption}
-            >{propertySelectOption}</option>
+          <option
+            class="legend-text"
+            alt="Property Option"
+            title="Property Option"
+            value={propertySelectOption}>{propertySelectOption}</option>
         {/each}
       {/if}
     </select>
   </div>
   <span class="icon is-small is-left">
-    <i style="color:black" class="fas fa-table-list" />
+    <i
+      style="color:black"
+      class="fas fa-table-list" />
   </span>
 </div>
 

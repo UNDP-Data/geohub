@@ -108,7 +108,10 @@
   }
 </script>
 
-<div class="map" id="map" bind:this={mapContainer} />
+<div
+  class="map"
+  id="map"
+  bind:this={mapContainer} />
 <CurrentLocation bind:map={$map} />
 {#if isMapLoaded}
   <MapQueryInfoControl bind:map={$map} />

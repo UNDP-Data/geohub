@@ -118,13 +118,25 @@
       title="Color Picker"
       style={colorPickerStyle} />
     {#if showToolTip && color}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-        <div id="arrow" data-popper-arrow />
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
+        <DefaultColorPicker
+          bind:color
+          on:closeColorPicker={() => handleColorPickerClick()} />
+        <div
+          id="arrow"
+          data-popper-arrow />
       </div>
     {/if}
     <!--    <div class="cell" style="width:min-content">{colorMapRow.start}</div>-->
-    <div class="space-arrow" style="width:min-content">&nbsp;&#x21A6;</div>
+    <div
+      class="space-arrow"
+      style="width:min-content">
+      &nbsp;&#x21A6;
+    </div>
     <div class="label-text">
       {colorMapRow.end ? colorMapRow.end : colorMapRow.start}
     </div>
@@ -141,9 +153,17 @@
       title="Color Picker"
       style={colorPickerStyle} />
     {#if showToolTip && color}
-      <div id="tooltip" data-testid="tooltip" use:popperContent={popperOptions} transition:fade>
-        <DefaultColorPicker bind:color on:closeColorPicker={() => handleColorPickerClick()} />
-        <div id="arrow" data-popper-arrow />
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
+        <DefaultColorPicker
+          bind:color
+          on:closeColorPicker={() => handleColorPickerClick()} />
+        <div
+          id="arrow"
+          data-popper-arrow />
       </div>
     {/if}
     <div class="arrow">&nbsp; &#x21A6;</div>

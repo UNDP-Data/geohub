@@ -18,15 +18,29 @@
 </script>
 
 <div>
-  <div class="icon-button" on:click={addLayer}>
+  <div
+    class="icon-button"
+    on:click={addLayer}>
     <Wrapper>
-      <FaLayers size="sm" style="cursor: pointer;">
-        <Fa icon={faLayerGroup} scale={1} />
+      <FaLayers
+        size="sm"
+        style="cursor: pointer;">
+        <Fa
+          icon={faLayerGroup}
+          scale={1} />
         {#if showProgress !== true}
-          <Fa icon={faPlus} scale={0.8} translateY={0.4} translateX={0.5} style="color:black" />
+          <Fa
+            icon={faPlus}
+            scale={0.8}
+            translateY={0.4}
+            translateX={0.5}
+            style="color:black" />
         {/if}
       </FaLayers>
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Add Layer</Tooltip>
+      <Tooltip
+        showDelay={500}
+        hideDelay={100}
+        yPos="above">Add Layer</Tooltip>
     </Wrapper>
   </div>
   <slot />

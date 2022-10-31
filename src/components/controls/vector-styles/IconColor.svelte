@@ -26,4 +26,6 @@
   }
 </script>
 
-<MaplibreColorPicker {rgba} on:change={handleSetColor} />
+<MaplibreColorPicker
+  {rgba}
+  on:change={handleSetColor} />

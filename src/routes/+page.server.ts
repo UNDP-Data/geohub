@@ -13,12 +13,12 @@ const __dirname = path.resolve()
 
 export const load: PageServerLoad = async ({ url }) => {
   const stacContainers = getStacContainers()
-  const martinContainers = getMartinContainers()
+  const dynamicContainers = getDynamicContainers()
   const mosaicStacContainers = getMosaicStacContainers()
   const buckets = await listContainers(url.origin)
 
   return {
-    buckets: [...stacContainers, ...mosaicStacContainers, ...martinContainers, ...buckets],
+    buckets: [...stacContainers, ...mosaicStacContainers, ...dynamicContainers, ...buckets],
   }
 }
 
@@ -100,8 +100,8 @@ const getStacContainers = () => {
   return getExternalContainers(filePath)
 }
 
-const getMartinContainers = () => {
-  const filePath = `${__dirname}/data/martin.json`
+const getDynamicContainers = () => {
+  const filePath = `${__dirname}/data/dynamic.json`
   return getExternalContainers(filePath)
 }
 

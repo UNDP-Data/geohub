@@ -94,7 +94,9 @@
   }
 </script>
 
-<div class="columns is-vcentered" data-testid="filter-container">
+<div
+  class="columns is-vcentered"
+  data-testid="filter-container">
   <div class="column is-10">
     <div class="control has-icons-left has-icons-right">
       <input
@@ -111,12 +113,18 @@
   </div>
   <div class="column">
     <Wrapper>
-      <button class="button is-vcentered" on:click={clearInput} data-testid="filter-clear-button">
+      <button
+        class="button is-vcentered"
+        on:click={clearInput}
+        data-testid="filter-clear-button">
         <span class="icon is-small">
           <i class="fas fa-xmark" />
         </span>
       </button>
-      <Tooltip showDelay={500} hideDelay={100} yPos="above">Clear input</Tooltip>
+      <Tooltip
+        showDelay={500}
+        hideDelay={100}
+        yPos="above">Clear input</Tooltip>
     </Wrapper>
   </div>
 </div>

@@ -156,11 +156,17 @@
   }
 </script>
 
-<div class="intervals-view-container" data-testid="intervals-view-container">
-  <div class="columns is-gapless controls" on:click={() => (colorPickerVisibleIndex = -1)}>
+<div
+  class="intervals-view-container"
+  data-testid="intervals-view-container">
+  <div
+    class="columns is-gapless controls"
+    on:click={() => (colorPickerVisibleIndex = -1)}>
     <div class="column classification">
       <div class="has-text-centered pb-2">Classification</div>
-      <div class="select is-flex is-justify-content-center" style="height: 30px; width: fit-content">
+      <div
+        class="select is-flex is-justify-content-center"
+        style="height: 30px; width: fit-content">
         <select
           bind:value={classificationMethod}
           on:change={(e) => reclassifyImage(e)}
@@ -168,7 +174,9 @@
           alt="Classification Methods"
           title="Classification Methods">
           {#each classificationMethods as classificationMethod}
-            <option class="legend-text" value={classificationMethod.code}>{classificationMethod.name}</option>
+            <option
+              class="legend-text"
+              value={classificationMethod.code}>{classificationMethod.name}</option>
           {/each}
         </select>
       </div>

@@ -63,8 +63,9 @@
         path: `${label}/`,
         url: null,
       }
-
-      treeBucketClone.push(node)
+      node.children.forEach((child) => {
+        treeBucketClone.push(child)
+      })
     }
 
     treeBucket = treeBucketClone
@@ -77,7 +78,9 @@
   }
 </script>
 
-<div class="tags-view-container pl-5" data-testid="tags-view-container">
+<div
+  class="tags-view-container pl-5"
+  data-testid="tags-view-container">
   <div class="title is-size-4 mb-4">
     Keywords
     <div class="is-divider separator mt-1 mb-1" />
@@ -88,7 +91,10 @@
         style="background-color: whitesmoke; padding: 5px; padding-top: 10px;"
         transition:fade>
         <div class="column is-1 is-size-6 has-text-weight-normal">
-          <Fa icon={faCircleInfo} size="lg" primaryColor="dodgerblue" />
+          <Fa
+            icon={faCircleInfo}
+            size="lg"
+            primaryColor="dodgerblue" />
         </div>
         <div class="column is-size-6 has-text-weight-normal">
           A maximum of {MAX_TAGS} keywords can be selected.
@@ -97,7 +103,9 @@
     {/if}
   </div>
   <div class="columns search">
-    <div class="column is-9 tags-list" style="position: relative; z-index: 10;">
+    <div
+      class="column is-9 tags-list"
+      style="position: relative; z-index: 10;">
       <Tags
         on:tags={handleTags}
         addKeys={[9, 13]}
@@ -124,7 +132,9 @@
             disabled={showSpinner}
             on:focusin={() => (hideOptions = false)}
             on:click={handleSearchTags}>
-            <i class="fas fa-search" style="color: white;" />
+            <i
+              class="fas fa-search"
+              style="color: white;" />
           </button>
         </div>
       </div>
@@ -148,7 +158,10 @@
       </div>
       {#if showSpinner}
         <div class="has-text-centered">
-          <Fa icon={faSync} size="lg" spin />
+          <Fa
+            icon={faSync}
+            size="lg"
+            spin />
         </div>
       {/if}
 
@@ -156,7 +169,9 @@
         <div class="is-size-6 tag-result">
           {#each treeBucket as tree}
             <ul class="mb-3">
-              <BucketTreeView bind:node={tree} />
+              <BucketTreeView
+                bind:node={tree}
+                hideCloseButton={true} />
             </ul>
           {/each}
         </div>

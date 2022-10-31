@@ -14,7 +14,7 @@
 
   import { LayerTypes } from '$lib/constants'
   import { fetchUrl, getVectorInfo } from '$lib/helper'
-  import type { TreeNode } from '$lib/types'
+  import type { TileJson, TreeNode } from '$lib/types'
   import { map, layerList, modalVisible } from '$stores'
   import Keydown from 'svelte-keydown'
   export let isModalVisible = false
@@ -23,7 +23,7 @@
   let layerIdList: string[]
   let layerType = LayerTypes.LINE
   let layerTypes = [LayerTypes.LINE, LayerTypes.FILL, LayerTypes.SYMBOL, LayerTypes.HEATMAP]
-  let selectedLayerId: string | undefined = treeNode?.isMartin ? treeNode?.path : treeNode?.label
+  let selectedLayerId: string | undefined = treeNode?.dynamicSourceType ? treeNode?.path : treeNode?.label
   let tileSourceId = treeNode?.path
 
   $: {
@@ -78,15 +78,10 @@
 
     let layerSource: VectorSourceSpecification
     if (!$map.getSource(tileSourceId)) {
-      if (treeNode.isMartin) {
-        const tilejson = await fetchUrl(treeNode.url)
-        // URL of tiles inside tileJSON from martin is http, hence we cannot use tileJSON directly because of CORS issue.
+      if (treeNode.dynamicSourceType) {
         layerSource = {
           type: LayerTypes.VECTOR,
-          scheme: tilejson.scheme,
-          tiles: tilejson.tiles,
-          minzoom: tilejson.minzoom,
-          maxzoom: tilejson.maxzoom,
+          url: treeNode.url,
         }
       } else {
         layerSource = {
@@ -202,18 +197,25 @@
       treeNode.metadata.maxzoom && treeNode.metadata.maxzoom <= 24 ? treeNode.metadata.maxzoom : 24,
     )
 
-    const layerName = treeNode.isMartin ? treeNode.label : treeNode.path.split('/')[treeNode.path.split('/').length - 2]
+    const layerName = treeNode.dynamicSourceType
+      ? treeNode.label
+      : treeNode.path.split('/')[treeNode.path.split('/').length - 2]
 
     // set vector info stats (number properties)
+    let statsUrl = `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`
+    if (treeNode.dynamicSourceType) {
+      const tilejson: TileJson = await fetchUrl(treeNode.url)
+      statsUrl = tilejson.tiles[0].replace('/{z}/{x}/{y}.pbf', '/0/0/0.pbf')
+    }
+
     const stats = await getVectorInfo(
-      treeNode.isMartin
-        ? `${treeNode.url.replace('.json', '/0/0/0.pbf')}`
-        : `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`,
-      treeNode.isMartin ? treeNode.path : layerName,
+      statsUrl,
+      treeNode.dynamicSourceType ? treeNode.path : layerName,
+      treeNode.dynamicSourceType,
     )
     if (stats) {
       treeNode.metadata.stats = stats
-      if (treeNode.isMartin) {
+      if (treeNode.dynamicSourceType) {
         const layer = treeNode.metadata.json.tilestats.layers.find((l) => l.layer === treeNode.path)
         layer.attributeCount = stats.length
         layer.attributes = stats
@@ -278,10 +280,16 @@
   }
 </script>
 
-<Keydown paused={!isModalVisible} on:Escape={() => (isModalVisible = false)} />
+<Keydown
+  paused={!isModalVisible}
+  on:Escape={() => (isModalVisible = false)} />
 
 {#if isModalVisible}
-  <div class="modal is-active" data-testid="add-layer-view-container" transition:fade use:clickOutside={handleCancel}>
+  <div
+    class="modal is-active"
+    data-testid="add-layer-view-container"
+    transition:fade
+    use:clickOutside={handleCancel}>
     <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
@@ -295,8 +303,12 @@
       </header>
       <section class="modal-card-body">
         <div class="field">
-          <label for="layer-id" class="label">Layer ID</label>
-          <div class="control" data-testid="layer-id-input">
+          <label
+            for="layer-id"
+            class="label">Layer ID</label>
+          <div
+            class="control"
+            data-testid="layer-id-input">
             <Autocomplete
               id="Layer ID input"
               combobox
@@ -307,11 +319,17 @@
           </div>
         </div>
         <div class="field layer-type">
-          <label class="label" for="layer-types">Layer Types</label>
+          <label
+            class="label"
+            for="layer-types">Layer Types</label>
           {#each layerTypes as selectLayerType}
             {@const layerTypeLabel = getLayerTypeLabel(selectLayerType)}
-            <div class="control" style="margin-top: 5px;">
-              <label class="radio" for="layer-type">
+            <div
+              class="control"
+              style="margin-top: 5px;">
+              <label
+                class="radio"
+                for="layer-type">
                 <div class="columns is-gapless is-vcentered layer-type">
                   <div class="column">
                     <input
@@ -322,7 +340,9 @@
                       alt={`${layerTypeLabel} Option`}
                       title={`${layerTypeLabel} Option`} />
                   </div>
-                  <div class="column layer-type-label" on:click={() => handleLayerTypeClick(selectLayerType)}>
+                  <div
+                    class="column layer-type-label"
+                    on:click={() => handleLayerTypeClick(selectLayerType)}>
                     {layerTypeLabel}
                   </div>
                 </div>

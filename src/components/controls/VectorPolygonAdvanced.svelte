@@ -227,8 +227,12 @@
   }
 </script>
 
-<div class="polygon-advanced-container" data-testid="polygon-advanced-container">
-  <div class="columns" style="display:flex; align-items: center">
+<div
+  class="polygon-advanced-container"
+  data-testid="polygon-advanced-container">
+  <div
+    class="columns"
+    style="display:flex; align-items: center">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
@@ -240,7 +244,9 @@
         {setDefaultProperty} />
     </div>
     {#if hasUniqueValues === false}
-      <div class="column" transition:fade>
+      <div
+        class="column"
+        transition:fade>
         <div class="has-text-centered pb-2">Classification:</div>
         <div class="is-flex is-justify-content-center">
           <div class="select is-small is-justify-content-center">
@@ -266,10 +272,15 @@
     {/if}
   </div>
 
-  <div class="is-divider separator mb-3 mt-0" data-content={hasUniqueValues ? 'Unique Values' : ''} />
+  <div
+    class="is-divider separator mb-3 mt-0"
+    data-content={hasUniqueValues ? 'Unique Values' : ''} />
 
   {#if hasUniqueValues === false}
-    <div class="columns" style="margin-right: -56px;" transition:fade>
+    <div
+      class="columns"
+      style="margin-right: -56px;"
+      transition:fade>
       <div class="column pb-0">
         <div class="has-text-centered">Number of Classes</div>
         <div class="is-flex is-justify-content-center">
@@ -283,7 +294,9 @@
     </div>
   {/if}
 
-  <div class="columns" style="margin-right: -56px;">
+  <div
+    class="columns"
+    style="margin-right: -56px;">
     <div class="column size">
       <div>
         {#each layer.intervals.colorMapRows as colorMapRow}

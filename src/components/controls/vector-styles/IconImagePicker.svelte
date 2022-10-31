@@ -77,8 +77,12 @@
       <div class="tabs">
         <ul>
           {#each iconGroupsByLetter as iconGroup}
-            <li class={activeIconGroupId === iconGroup.id ? 'is-active' : ''} data-testid="group-letter-tab">
-              <a href={'#'} on:click={() => handleSetActiveIconGroup(iconGroup.id)}>
+            <li
+              class={activeIconGroupId === iconGroup.id ? 'is-active' : ''}
+              data-testid="group-letter-tab">
+              <a
+                href={'#'}
+                on:click={() => handleSetActiveIconGroup(iconGroup.id)}>
                 {iconGroup.id.toUpperCase()}
               </a>
             </li>
@@ -86,7 +90,11 @@
         </ul>
       </div>
     </div>
-    <div class="column is-1 close" alt="Close Icon Picker" title="Close Icon Picker" on:click={handleClosePopup}>
+    <div
+      class="column is-1 close"
+      alt="Close Icon Picker"
+      title="Close Icon Picker"
+      on:click={handleClosePopup}>
       <Fa icon={faXmark} />
     </div>
   </div>

@@ -252,7 +252,9 @@
   }
 </script>
 
-<div class="symbol-advanced-container" data-testid="symbol-advanced-container">
+<div
+  class="symbol-advanced-container"
+  data-testid="symbol-advanced-container">
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
@@ -291,7 +293,9 @@
     </div>
   </div>
 
-  <div class="columns" style="margin-right: -56px;">
+  <div
+    class="columns"
+    style="margin-right: -56px;">
     <div class="column">
       <div class="has-text-centered pb-2">Classification</div>
       <div class="is-flex is-justify-content-center">
@@ -325,7 +329,9 @@
     </div>
   </div>
 
-  <div class="columns" style="margin-right: -56px;">
+  <div
+    class="columns"
+    style="margin-right: -56px;">
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div class="column size">
         <div>

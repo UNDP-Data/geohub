@@ -24,23 +24,49 @@
 
 <svelte:head>
   {#if darkTheme === undefined}
-    <link rel="stylesheet" href="/smui.css" media="(prefers-color-scheme: light)" />
-    <link rel="stylesheet" href="/smui-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    <link
+      rel="stylesheet"
+      href="/smui.css"
+      media="(prefers-color-scheme: light)" />
+    <link
+      rel="stylesheet"
+      href="/smui-dark.css"
+      media="screen and (prefers-color-scheme: dark)" />
   {:else if darkTheme}
-    <link rel="stylesheet" href="/smui.css" />
-    <link rel="stylesheet" href="/smui-dark.css" media="screen" />
+    <link
+      rel="stylesheet"
+      href="/smui.css" />
+    <link
+      rel="stylesheet"
+      href="/smui-dark.css"
+      media="screen" />
   {:else}
-    <link rel="stylesheet" href="/smui.css" />
+    <link
+      rel="stylesheet"
+      href="/smui.css" />
   {/if}
 </svelte:head>
 <header class="country-header">
   <section class="header">
-    <div class="grid-container fluid" style="display: flex; justify-content: space-between; align-items: center">
-      <div class="cell large-9 small-9 align-self-middle top-left logo-div" aria-label="UNDP Logo">
-        <a style="background:none;" href="https://undpgeohub.org" class="logo" tabIndex="-1">
-          <img src="undp-images/undp-logo-blue.svg" alt="GeoHub | UNDP" loading="lazy" />
+    <div
+      class="grid-container fluid"
+      style="display: flex; justify-content: space-between; align-items: center">
+      <div
+        class="cell large-9 small-9 align-self-middle top-left logo-div"
+        aria-label="UNDP Logo">
+        <a
+          style="background:none;"
+          href="https://undpgeohub.org"
+          class="logo"
+          tabIndex="-1">
+          <img
+            src="undp-images/undp-logo-blue.svg"
+            alt="GeoHub | UNDP"
+            loading="lazy" />
         </a>
-        <div class="site-title" style="width: max-content">
+        <div
+          class="site-title"
+          style="width: max-content">
           <span>UNDP's one stop shop for spatial data and analytics</span>
           <span>GeoHub</span>
         </div>
@@ -61,7 +87,10 @@
               <div class="icon">
                 <i class="fa-regular fa-circle-question fa-xl" />
               </div>
-              <Tooltip showDelay={500} hideDelay={500} yPos="below">Click to see the documentation</Tooltip>
+              <Tooltip
+                showDelay={500}
+                hideDelay={500}
+                yPos="below">Click to see the documentation</Tooltip>
             </Wrapper>
           </div>
         </div>
@@ -73,17 +102,30 @@
           on:keydown={onKeyPressed}
           tabindex="1">
           <Wrapper>
-            <div style="margin-right: 20px!important;" class="icon">
-              <Fa icon={faChalkboardUser} size="lg" />
+            <div
+              style="margin-right: 20px!important;"
+              class="icon">
+              <Fa
+                icon={faChalkboardUser}
+                size="lg" />
             </div>
-            <Tooltip showDelay={500} hideDelay={500} yPos="below">UNDP Dashboards</Tooltip>
+            <Tooltip
+              showDelay={500}
+              hideDelay={500}
+              yPos="below">UNDP Dashboards</Tooltip>
           </Wrapper>
         </div>
 
-        <div style="margin-left: 5%; cursor: pointer" role="button" aria-label="Share the current style">
+        <div
+          style="margin-left: 5%; cursor: pointer"
+          role="button"
+          aria-label="Share the current style">
           <Wrapper>
             <StyleShare bind:share />
-            <Tooltip showDelay={500} hideDelay={500} yPos="below">Download Map Style Specification</Tooltip>
+            <Tooltip
+              showDelay={500}
+              hideDelay={500}
+              yPos="below">Download Map Style Specification</Tooltip>
           </Wrapper>
         </div>
         <div
@@ -95,9 +137,14 @@
           aria-label={drawerOpen ? 'Close side panel' : 'Open side panel'}>
           <Wrapper>
             <div class="icon">
-              <Fa icon={faBars} size="lg" />
+              <Fa
+                icon={faBars}
+                size="lg" />
             </div>
-            <Tooltip showDelay={500} hideDelay={500} yPos="below">
+            <Tooltip
+              showDelay={500}
+              hideDelay={500}
+              yPos="below">
               {drawerOpen ? 'Hide Drawer' : 'Show Drawer'}
             </Tooltip>
           </Wrapper>

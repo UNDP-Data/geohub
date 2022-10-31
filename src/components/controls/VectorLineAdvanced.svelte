@@ -275,7 +275,9 @@
   }
 </script>
 
-<div class="line-advanced-container" data-testid="line-advanced-container">
+<div
+  class="line-advanced-container"
+  data-testid="line-advanced-container">
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
@@ -287,7 +289,9 @@
         {setDefaultProperty} />
     </div>
     {#if hasUniqueValues === false}
-      <div class="column" transition:fade>
+      <div
+        class="column"
+        transition:fade>
         <div class="has-text-centered pb-2">Apply To</div>
         <div class="is-flex is-justify-content-center">
           <div class="mb-0">
@@ -318,9 +322,14 @@
     {/if}
   </div>
 
-  <div class="is-divider separator mb-3 mt-0" data-content={hasUniqueValues ? 'Unique Values' : ''} />
+  <div
+    class="is-divider separator mb-3 mt-0"
+    data-content={hasUniqueValues ? 'Unique Values' : ''} />
   {#if hasUniqueValues === false}
-    <div class="columns" style="margin-right: -56px;" transition:fade>
+    <div
+      class="columns"
+      style="margin-right: -56px;"
+      transition:fade>
       <div class="column">
         <div class="has-text-centered pb-2">Classification</div>
         <div class="is-flex is-justify-content-center">
@@ -355,7 +364,9 @@
     </div>
   {/if}
 
-  <div class="columns" style="margin-right: -56px;">
+  <div
+    class="columns"
+    style="margin-right: -56px;">
     <div class="column size">
       {#if hasUniqueValues}
         <div>

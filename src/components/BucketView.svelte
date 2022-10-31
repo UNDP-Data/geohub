@@ -26,19 +26,21 @@
     if (isBucketInTree === false) {
       let isBucketStac = bucket.tags.find((tag: string) => tag.toLowerCase() === 'stac') ? true : false
       const isBucketMartin = bucket.tags.find((tag: string) => tag.toLowerCase() === 'martin') ? true : false
+      const isBucketPgtileserv = bucket.tags.find((tag: string) => tag.toLowerCase() === 'pgtileserv') ? true : false
       const isBucketMosaic = bucket.tags.find((tag: string) => tag.toLowerCase() === 'mosaicjson') ? true : false
       if (isBucketMosaic === true) {
         isBucketStac = true
       }
+      let dynamicSourceType = isBucketMartin ? 'martin' : isBucketPgtileserv ? 'pgtileserv' : undefined
       treeBucketUpdated = [
         ...$treeBucket,
         {
           id: bucket.id,
           isRaster: true,
           isStac: isBucketStac,
-          isMartin: isBucketMartin,
+          dynamicSourceType: dynamicSourceType,
           isMosaicJSON: isBucketMosaic,
-          label: isBucketStac || isBucketMartin ? bucket.label : bucket.path.slice(0, -1),
+          label: isBucketStac || dynamicSourceType ? bucket.label : bucket.path.slice(0, -1),
           path: bucket.path,
           children: [],
         },
@@ -68,20 +70,34 @@
   }
 </script>
 
-<div class="view-container" data-testid="view-container">
+<div
+  class="view-container"
+  data-testid="view-container">
   {#if bucketCardFilterSelected}
-    <div class="columns filter-container" transition:slide data-testid="filter-container">
+    <div
+      class="columns filter-container pt-3"
+      transition:slide
+      data-testid="filter-container">
       <div class="column filter">
         <BucketFilter bind:bucketsMeetThereshold />
       </div>
     </div>
   {/if}
 
-  <div class="columns cards-tree-container is-gapless" style="display: flex!important;">
-    <div class="column" style="max-width: 112px;">
-      <div class="columns">
-        <div class="column cards" data-testid="buckets-container" style={$modalVisible ? 'z-index: 1;' : ''}>
-          <div class="card-filter" data-testid="buckets-filter-container">
+  <div
+    class="columns cards-tree-container is-gapless"
+    style="display: flex!important;">
+    <div
+      class="column"
+      style="max-width: 112px;">
+      <div class="columns m-0 p-0">
+        <div
+          class="column cards"
+          data-testid="buckets-container"
+          style={$modalVisible ? 'z-index: 1;' : ''}>
+          <div
+            class="card-filter"
+            data-testid="buckets-filter-container">
             <BucketCardFilter on:click={handleBucketCardFilterClick} />
           </div>
 
@@ -89,16 +105,24 @@
             {#if !bucketsMeetThereshold.includes('NO_RESULTS')}
               {#each $bucketList as bucket}
                 {#if bucketsMeetThereshold.includes(bucket.path)}
-                  <div data-testid={bucket.path} transition:slide>
-                    <BucketCard {bucket} on:click={handleBucketClick} />
+                  <div
+                    data-testid={bucket.path}
+                    transition:slide>
+                    <BucketCard
+                      {bucket}
+                      on:click={handleBucketClick} />
                   </div>
                 {/if}
               {/each}
             {/if}
           {:else}
             {#each $bucketList as bucket}
-              <div data-testid={bucket.path} transition:slide>
-                <BucketCard {bucket} on:click={handleBucketClick} />
+              <div
+                data-testid={bucket.path}
+                transition:slide>
+                <BucketCard
+                  {bucket}
+                  on:click={handleBucketClick} />
               </div>
             {/each}
           {/if}
@@ -106,9 +130,14 @@
         <div class="column separator" />
       </div>
     </div>
-    <div class="column is-three-quarters">
-      <LinearProgress indeterminate bind:closed={hideLinearProgress} />
-      <div id="tree-container" class="tree" data-testid="tree-container">
+    <div class="column">
+      <LinearProgress
+        indeterminate
+        bind:closed={hideLinearProgress} />
+      <div
+        id="tree-container"
+        class="tree"
+        data-testid="tree-container">
         {#if $treeBucket.length === 0}
           <div class="title is-size-4">Welcome to GeoHub</div>
           <div class="subtitle is-size-5">
@@ -127,7 +156,9 @@
                   .map((el) => el.toLowerCase())
                   .join('-')}
                 label={tree.label}>
-                <BucketTreeView bind:node={tree} on:remove={handleRemoveBucket} />
+                <BucketTreeView
+                  bind:node={tree}
+                  on:remove={handleRemoveBucket} />
               </ul>
             {/each}
           </nav>
@@ -140,8 +171,6 @@
 <style lang="scss">
   $separator: 1px solid whitesmoke;
   $separator-dark: 1px solid #ccc;
-
-  $height: calc(100vh - 120px);
 
   .view-container {
     .filter-container {
@@ -162,17 +191,25 @@
       margin-bottom: 0;
 
       .cards {
-        z-index: 10;
+        z-index: 5;
         max-width: fit-content;
         width: fit-content;
         overflow-y: auto;
-        height: $height;
+        height: calc(100vh - 150px);
+
+        @media (max-width: 90em) {
+          height: calc(100vh - 120px);
+        }
       }
 
       .tree {
         z-index: 1;
         overflow-y: auto;
-        height: $height;
+        height: calc(100vh - 150px);
+
+        @media (max-width: 90em) {
+          height: calc(100vh - 120px);
+        }
 
         .title {
           margin-bottom: 30px;
@@ -188,7 +225,11 @@
 
       .separator {
         border-left: $separator;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 150px);
+        @media (max-width: 90em) {
+          height: calc(100vh - 120px);
+        }
+
         max-width: 21px;
         width: 21px;
 

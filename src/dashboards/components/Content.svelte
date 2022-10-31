@@ -74,14 +74,18 @@
     bind:open={drawerOpen}
     style="width: {drawerWidth}px; max-width: {drawerWidth}px; overflow:visible;">
     <div class="drawer-container">
-      <div class="drawer-content" style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
+      <div
+        class="drawer-content"
+        style="width: {drawerWidth - 10}px; max-width: {drawerWidth - 10}px;">
         <Content style="padding: 15px; overflow: visible;">
           <p class="heading-text">UNDP Electricity Dashboard</p>
           <IntroductionPanel bind:showIntro />
 
           {#if !showIntro}
             <StyleControlGroup title="Raw Data - Electricity Access">
-              <ElectricityControl bind:electricitySelected bind:loadRasterLayer />
+              <ElectricityControl
+                bind:electricitySelected
+                bind:loadRasterLayer />
             </StyleControlGroup>
             <StyleControlGroup title="Overlays">
               <OverlayControl />

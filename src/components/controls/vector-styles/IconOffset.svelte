@@ -31,21 +31,39 @@
   }
 </script>
 
-<div class="columns is-gapless" style="margin-bottom: 0;">
-  <div class="column" alt="Horizontal Offset" title="Horizontal Offset">
+<div
+  class="columns is-gapless"
+  style="margin-bottom: 0;">
+  <div
+    class="column"
+    alt="Horizontal Offset"
+    title="Horizontal Offset">
     <div class="is-flex is-justify-content-center">Horizontal</div>
     <div class="is-flex is-justify-content-center">
-      <NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
+      <NumberInput
+        bind:value={xValue}
+        bind:minValue
+        bind:maxValue
+        bind:step />
     </div>
   </div>
-  <div class="column" alt="Vertical Offset" title="Vertical Offset">
+  <div
+    class="column"
+    alt="Vertical Offset"
+    title="Vertical Offset">
     <div class="is-flex is-justify-content-center">Vertical</div>
     <div class="is-flex is-justify-content-center">
-      <NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
+      <NumberInput
+        bind:value={yValue}
+        bind:minValue
+        bind:maxValue
+        bind:step />
     </div>
   </div>
 </div>
-<div class="columns is-gapless is-size-7" style="padding-left: 5px; padding-bottom: 5px; padding-top: 5px;">
+<div
+  class="columns is-gapless is-size-7"
+  style="padding-left: 5px; padding-bottom: 5px; padding-top: 5px;">
   <div class="column">Icon offset from center point</div>
 </div>
 

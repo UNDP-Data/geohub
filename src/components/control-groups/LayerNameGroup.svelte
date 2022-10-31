@@ -1,11 +1,10 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { clean, hash } from '$lib/helper'
+  import { clean } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled, layerMetadata } from '$stores'
-  import { faTextHeight } from '@fortawesome/free-solid-svg-icons/faTextHeight'
+  import { layerLabelled, treeBucket } from '$stores'
+  import { join, split } from 'lodash'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -40,18 +39,18 @@
         break
     }
   }
-
-  const name = clean(layer.name)
 </script>
 
 <div class="layer-header">
   <div>
     <div class="layer-header-name">
       <div style="display: flex; align-items: center">
-        <Fa icon={icon.icon} size="sm" primaryColor={icon.color} />
+        <i
+          class="{icon.icon} sm"
+          style="color: {icon.color};" />
         <span style="padding-left: 5px;">
           {#if $layerLabelled[layer.definition.id]}
-            <span class="tag is-info"><Fa icon={faTextHeight} /></span>
+            <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
           {/if}
         </span>
       </div>
@@ -65,8 +64,10 @@
           <span style="padding-left: 5px;">
             {#if layer.tree?.isMosaicJSON}
               {layer.tree.label}
+            {:else if layer.tree?.dynamicSourceType}
+              {clean(layer.tree.path.split('.').join(' '))}
             {:else}
-              {name}
+              {clean(layer.name)}
             {/if}
           </span>
         </div>

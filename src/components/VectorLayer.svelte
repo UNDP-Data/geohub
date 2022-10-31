@@ -86,12 +86,18 @@
   }
 </script>
 
-<div class="vector-layer-container" transition:fade data-testid="vector-layer-view-container">
+<div
+  class="vector-layer-container"
+  transition:fade
+  data-testid="vector-layer-view-container">
   <nav class="panel">
     <p class="panel-heading">
       <LayerNameGroup {layer} />
     </p>
-    <ul class="panel-tabs" role="tablist" tabindex="0">
+    <ul
+      class="panel-tabs"
+      role="tablist"
+      tabindex="0">
       {#each tabs as tab}
         <li>
           <a
@@ -105,7 +111,9 @@
             alt={`${tab.label} Tab Link`}
             title={`${tab.label} Tab Link`}>
             <span>
-              <Fa icon={tab.icon} size="sm" />
+              <Fa
+                icon={tab.icon}
+                size="sm" />
             </span>
             {tab.label}
           </a>
@@ -113,10 +121,18 @@
       {/each}
     </ul>
     <p class="panel-content">
-      <VectorLegendPanel {layer} {isLegendPanelVisible} />
-      <VectorFilterPanelWizard {layer} {isFilterPanelVisible} />
-      <VectorLabelPanel {layer} {isLabelPanelVisible} />
-      <OpacityPanel {layer} {isOpacityPanelVisible} />
+      <VectorLegendPanel
+        {layer}
+        {isLegendPanelVisible} />
+      <VectorFilterPanelWizard
+        {layer}
+        {isFilterPanelVisible} />
+      <VectorLabelPanel
+        {layer}
+        {isLabelPanelVisible} />
+      <OpacityPanel
+        {layer}
+        {isOpacityPanelVisible} />
     </p>
   </nav>
 </div>

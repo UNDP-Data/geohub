@@ -28,7 +28,9 @@
   }
 </script>
 
-<div class="symbol-simple-container" data-testid="symbol-simple-container">
+<div
+  class="symbol-simple-container"
+  data-testid="symbol-simple-container">
   <div class="columns icon-size">
     <div class="column is-4 icon-image">
       <div class="has-text-centered pb-2">Icon</div>
@@ -44,9 +46,13 @@
     </div>
   </div>
 
-  <div class="is-divider separator mt-3 mb-3" style="margin-right: -56px;" />
+  <div
+    class="is-divider separator mt-3 mb-3"
+    style="margin-right: -56px;" />
 
-  <div class="columns icon-color-overlap" style="margin-right: -56px;">
+  <div
+    class="columns icon-color-overlap"
+    style="margin-right: -56px;">
     <div class="column color">
       <div class="has-text-centered pb-2">Color</div>
       <div class="is-flex is-justify-content-center bring-to-front">
@@ -72,7 +78,9 @@
           name="switchSmall"
           class="switch is-small is-rounded is-info"
           bind:checked={isAdvancedSettings} />
-        <label for="switchAdvancedSettings" class="is-size-6">Advanced Settings</label>
+        <label
+          for="switchAdvancedSettings"
+          class="is-size-6">Advanced Settings</label>
       </div>
     </div>
   </div>
@@ -84,7 +92,9 @@
       alt="Advanced Settings Container"
       title="Advanced Settings Container">
       <div class="column">
-        <IconOffset {layer} on:change={handleIconOffset} />
+        <IconOffset
+          {layer}
+          on:change={handleIconOffset} />
       </div>
     </div>
   {/if}

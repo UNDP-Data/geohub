@@ -40,11 +40,24 @@
   }
 </script>
 
-<div class="tabs" style="margin-top: 20px;" role="navigation" title="navigation" aria-label="navigation">
-  <ul style="border-bottom: none; margin-left: auto" data-deep-link="true" data-tabs="true" id="tablist" role="tablist">
+<div
+  class="tabs"
+  style="margin-top: 20px;"
+  role="navigation"
+  title="navigation"
+  aria-label="navigation">
+  <ul
+    style="border-bottom: none; margin-left: auto"
+    data-deep-link="true"
+    data-tabs="true"
+    id="tablist"
+    role="tablist">
     {#each tabs as tab, i}
       <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
-        <div on:keydown={handleKeyDown} on:click={() => (activeTab = tab.label)} id="tab-{tab.label}">
+        <div
+          on:keydown={handleKeyDown}
+          on:click={() => (activeTab = tab.label)}
+          id="tab-{tab.label}">
           {tab.label}
           {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
             ({$layerList.length})
@@ -61,10 +74,11 @@
   $gray-700: #232e3d;
   .tabs {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     align-items: center;
     justify-content: space-between;
     margin-top: 0 !important;
+    margin-left: 70px;
     width: 100%;
     height: 100%;
   }

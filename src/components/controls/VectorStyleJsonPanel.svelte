@@ -50,7 +50,10 @@
       style="width: 100%; height: 200px;"
       helperLine$style="width: 100%;" />
     <div class="changeLegendButtonDiv">
-      <Button class="changelegendbtn" variant="raised" on:click={() => applyLayerStyle()}>
+      <Button
+        class="changelegendbtn"
+        variant="raised"
+        on:click={() => applyLayerStyle()}>
         <LabelButton>Apply</LabelButton>
       </Button>
     </div>

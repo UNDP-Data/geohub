@@ -23,18 +23,13 @@
   <Map />
 </Content>
 
-<style global lang="scss">
+<style
+  global
+  lang="scss">
+  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
   body,
   html {
     font-family: ProximaNova, sans-serif;
     font-size: 13px;
-  }
-  .mdc-drawer {
-    width: 355px;
-  }
-
-  .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
-    margin-left: 355px;
-    margin-right: 0;
   }
 </style>

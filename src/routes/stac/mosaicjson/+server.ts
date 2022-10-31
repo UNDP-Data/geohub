@@ -5,7 +5,7 @@ import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 const TITILER_MOSAIC_ENDPOINT = PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')
 
 import { v4 as uuidv4 } from 'uuid'
-import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
+import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
 const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
 
@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ url }) => {
   const searchUrl = url.searchParams.get('url')
   const bbox: number[] = JSON.parse(url.searchParams.get('bbox'))
   const asset = url.searchParams.get('asset')
-  console.log(new URL(searchUrl), asset)
+  // console.log(new URL(searchUrl), asset)
   const searchResult = await searchStacItemUrls(searchUrl, bbox, asset)
   const mosaicJsonUrl = await createTitilerMosaicJsonEndpoint(searchResult.urls, searchResult.filter)
   const tileJsonUrl = createMosaicTileJson(mosaicJsonUrl)
@@ -26,7 +26,7 @@ export const GET: RequestHandler = async ({ url }) => {
   const searchUrlObj = new URL(searchUrl)
   const collectionUrl = `${searchUrlObj.origin}${searchUrlObj.pathname.replace('search', 'collections')}`
   const classmap = await getClassmap(collectionUrl, searchUrlObj.searchParams.get('collections'), asset)
-  console.log(classmap)
+  // console.log(classmap)
   return new Response(
     JSON.stringify({
       tilejson: tileJsonUrl,
@@ -110,7 +110,6 @@ const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: stri
   const itemUrls: string[] = []
 
   const sasToken = await getMsStacToken(url)
-
   fc.features.forEach((f) => {
     itemUrls.push(`${f.assets[targetAsset].href}?${sasToken}`)
   })
@@ -175,7 +174,7 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
 
   const containerClient = blobServiceClient.getContainerClient(containerName)
 
-  const blobName = `${uuidv4()}.json`
+  const blobName = `mosaicjson_${uuidv4()}.json`
   const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
 
   const tmpDir = path.resolve(`${__dirname}/tmp/`)

@@ -47,7 +47,9 @@
   }
 </script>
 
-<Keydown paused={!confirmDeleteLayerDialogVisible} on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
+<Keydown
+  paused={!confirmDeleteLayerDialogVisible}
+  on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
 
 <Wrapper>
   <div
@@ -58,9 +60,14 @@
     aria-label="Delete layer"
     on:click={() => (confirmDeleteLayerDialogVisible = true)}
     on:keydown={handleKeyDown}>
-    <Fa icon={faTrash} size="sm" />
+    <Fa
+      icon={faTrash}
+      size="sm" />
   </div>
-  <Tooltip showDelay={300} hideDelay={100} yPos="above">Delete layer</Tooltip>
+  <Tooltip
+    showDelay={300}
+    hideDelay={100}
+    yPos="above">Delete layer</Tooltip>
 </Wrapper>
 
 {#if confirmDeleteLayerDialogVisible}

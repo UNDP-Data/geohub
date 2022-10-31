@@ -64,10 +64,18 @@
   }
 </script>
 
-<div class="select is-rounded" style="height: 30px;">
-  <select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
+<div
+  class="select is-rounded"
+  style="height: 30px;">
+  <select
+    bind:value={selected}
+    style="width: 100%;"
+    alt="text-field"
+    title="Icon overlap">
     {#each choices as choice}
-      <option class="legend-text" value={choice}>{choice}</option>
+      <option
+        class="legend-text"
+        value={choice}>{choice}</option>
     {/each}
   </select>
 </div>

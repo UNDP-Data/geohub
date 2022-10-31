@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { TreeNode, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
+  import type { TreeNode, VectorLayerMetadata, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
   import AddLayerModal from '$components/controls/AddLayerModal.svelte'
   import BucketTreeItemCardButton from '$components/BucketTreeItemCardButton.svelte'
   import BucketTreeItemLegend from './BucketTreeItemLegend.svelte'
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { modalVisible, martinIndex, indicatorProgress } from '$stores'
+  import { modalVisible, indicatorProgress } from '$stores'
   import { fetchUrl } from '$lib/helper'
 
   export let tree: TreeNode
@@ -33,7 +33,7 @@
 
   const getVectorMetadata = async (node: TreeNode) => {
     let data: VectorTileMetadata
-    if (!node.isMartin) {
+    if (!node.dynamicSourceType) {
       const layerURL = new URL(node.url)
       const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
         '{z}/{x}/{y}.pbf',
@@ -58,27 +58,8 @@
         maxzoom: tilejson.maxzoom,
       }
 
-      const metadata = $martinIndex[node.path]
-      Object.keys(metadata.properties).forEach((key) => {
-        const dataType = metadata.properties[key]
-        switch (dataType) {
-          case 'varchar':
-          case 'text':
-          case 'char':
-          case 'name':
-            metadata.properties[key] = 'String'
-            break
-          case 'float4':
-          case 'float8':
-          case 'int2':
-          case 'int4':
-          case 'numeric':
-            metadata.properties[key] = 'Number'
-            break
-        }
-      })
+      let vector_layers: VectorLayerMetadata[] = tilejson.vector_layers
 
-      // const stats = await getVectorInfo(node.url.replace('.json', '/0/0/0.pbf'), node.path)
       const tilestatsLayer: VectorLayerTileStatLayer = {
         layer: node.path,
         geometry: node.geomType,
@@ -88,12 +69,7 @@
       }
 
       data.json = {
-        vector_layers: [
-          {
-            id: metadata.id,
-            fields: metadata.properties,
-          },
-        ],
+        vector_layers: vector_layers,
         tilestats: {
           layerCount: 1,
           layers: [tilestatsLayer],
@@ -106,7 +82,9 @@
 
 <BucketTreeItemIcon on:addLayer={loadLayer}>
   <!-- The modal is located here so the focus is set to ne next element -->
-  <AddLayerModal bind:isModalVisible={isAddLayerModalVisible} treeNode={tree} />
+  <AddLayerModal
+    bind:isModalVisible={isAddLayerModalVisible}
+    treeNode={tree} />
 </BucketTreeItemIcon>
 <BucketTreeLabel bind:tree />
 <BucketTreeItemCardButton bind:tree />

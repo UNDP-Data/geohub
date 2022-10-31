@@ -187,12 +187,19 @@
   class="data-container target"
   use:draggable={{ bounds: 'parent' }}
   hidden={isDataContainerVisible === false}>
-  <div id="header" class="header">
+  <div
+    id="header"
+    class="header">
     <div class="name">Query Information</div>
 
-    <div class="handle" alt="Move Query Information" title="Move Query Information">
+    <div
+      class="handle"
+      alt="Move Query Information"
+      title="Move Query Information">
       <span class="icon is-small pointer">
-        <Fa icon={faUpDownLeftRight} size={iconSize} />
+        <Fa
+          icon={faUpDownLeftRight}
+          size={iconSize} />
       </span>
     </div>
 
@@ -202,7 +209,9 @@
       title="Close Query Information"
       on:click={() => resetMapQueryInfo()}>
       <span class="icon is-small pointer">
-        <Fa icon={faXmark} size={iconSize} />
+        <Fa
+          icon={faXmark}
+          size={iconSize} />
       </span>
     </div>
   </div>
@@ -238,8 +247,13 @@
             {@const layerIconTypeLabel = `${layerIconType.label} Layer`}
             <tr style={layerValuesExpanded[i] === true ? 'border-top: 0;' : ''}>
               <td class="first-column">
-                <div class="icon" alt={layerIconTypeLabel} title={layerIconTypeLabel}>
-                  <Fa icon={layerIconType.icon} size="sm" primaryColor={layerIconType.color} />&nbsp;
+                <div
+                  class="icon"
+                  alt={layerIconTypeLabel}
+                  title={layerIconTypeLabel}>
+                  <i
+                    class="{layerIconType.icon} sm"
+                    style="color: {layerIconType.color};" />&nbsp;
                 </div>
                 <div class="name">
                   {layerValue.name}
@@ -269,11 +283,17 @@
                 {/if}
               {:else if layerValue.type === LayerTypes.VECTOR}
                 <td class="second-column">
-                  <div class="expand-collapse" on:click={() => (layerValuesExpanded[i] = !layerValuesExpanded[i])}>
+                  <div
+                    class="expand-collapse"
+                    on:click={() => (layerValuesExpanded[i] = !layerValuesExpanded[i])}>
                     {#if layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === false}
-                      <Fa icon={faChevronDown} size="sm" />
+                      <Fa
+                        icon={faChevronDown}
+                        size="sm" />
                     {:else}
-                      <Fa icon={faChevronUp} size="sm" />
+                      <Fa
+                        icon={faChevronUp}
+                        size="sm" />
                     {/if}
                   </div>
                 </td>
@@ -305,9 +325,13 @@
 
     {#if layerValuesData.length > 0}
       <div class="actions">
-        <div class="rounded-values" on:click={() => (isValuesRounded = !isValuesRounded)}>
+        <div
+          class="rounded-values"
+          on:click={() => (isValuesRounded = !isValuesRounded)}>
           <div class="icon is-small">
-            <Fa icon={isValuesRounded ? faSquareCheck : faSquare} size="1x" />
+            <Fa
+              icon={isValuesRounded ? faSquareCheck : faSquare}
+              size="1x" />
           </div>
           <div>Round values</div>
         </div>
@@ -319,7 +343,9 @@
             alt="Download GeoJSON"
             title="Download GeoJSON">
             <span class="icon is-small pointer">
-              <Fa icon={faDownload} size={iconSize} />
+              <Fa
+                icon={faDownload}
+                size={iconSize} />
             </span>
             <span class="label">GeoJSON</span>
           </button>
@@ -332,7 +358,9 @@
             alt="Download CSV"
             title="Download CSV">
             <span class="icon is-small pointer">
-              <Fa icon={faDownload} size={iconSize} />
+              <Fa
+                icon={faDownload}
+                size={iconSize} />
             </span>
             <span class="label">CSV</span>
           </button>
