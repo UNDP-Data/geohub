@@ -7,7 +7,6 @@
   import Popper from '$lib/popper'
   import { layerMetadata, bucketList } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount } from 'svelte'
 
   export let tree: TreeNode
   export let isShownInTree = true
@@ -25,11 +24,6 @@
     },
     [0, 5],
   ).init()
-
-  onMount(() => {
-    // Generate the metadata and store it in the store
-    generateTreeNodeMetadata()
-  })
 
   export const generateTreeNodeMetadata = async () => {
     const layerPathHash = hash([tree.path, tree.url].join('-'))
