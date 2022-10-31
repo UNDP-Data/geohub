@@ -110,7 +110,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/develop'}}
         with:
           app-name: 'undpgeohub-dev'
-          slot-name: 'Development'
+          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
           package: build
 
