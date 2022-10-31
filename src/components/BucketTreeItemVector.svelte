@@ -46,35 +46,7 @@
       }
       data = layerMeta
     } else {
-      const tilejson = await fetchUrl(node.url)
-      data = {
-        name: tilejson.name,
-        format: 'pbf',
-        center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
-          tilejson.minzoom
-        }`,
-        bounds: `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`,
-        minzoom: tilejson.minzoom,
-        maxzoom: tilejson.maxzoom,
-      }
-
-      let vector_layers: VectorLayerMetadata[] = tilejson.vector_layers
-
-      const tilestatsLayer: VectorLayerTileStatLayer = {
-        layer: node.path,
-        geometry: node.geomType,
-        count: null,
-        attributeCount: null,
-        attributes: null,
-      }
-
-      data.json = {
-        vector_layers: vector_layers,
-        tilestats: {
-          layerCount: 1,
-          layers: [tilestatsLayer],
-        },
-      }
+      data = await fetchUrl(node.url.replace('tile.json', 'metadata.json'))
     }
     return data
   }
