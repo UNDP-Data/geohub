@@ -174,7 +174,7 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
 
   const containerClient = blobServiceClient.getContainerClient(containerName)
 
-  const blobName = `${uuidv4()}.json`
+  const blobName = `mosaicjson_${uuidv4()}.json`
   const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
 
   const tmpDir = path.resolve(`${__dirname}/tmp/`)
