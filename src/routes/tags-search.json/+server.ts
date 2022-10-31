@@ -10,7 +10,7 @@ import {
   StorageSharedKeyCredential,
 } from '@azure/storage-blob'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
-import { TagKeys } from '$lib/constants'
+import { TagKeys, TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 import { fetchUrl } from '$lib/helper'
 import type { TagLayer } from '$lib/types'
 
@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ url }) => {
   const blobs = []
   let tagsFilteredParam = []
   const accountSasTokenUri = blobServiceClient.generateAccountSasUrl(
-    new Date(new Date().valueOf() + 86400000),
+    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
     AccountSASPermissions.parse('r'),
     'o',
   )

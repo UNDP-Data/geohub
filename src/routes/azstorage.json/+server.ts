@@ -10,6 +10,7 @@ import {
 import type { Tree, TreeNode } from '$lib/types'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
 import { fetchUrl } from '$lib/helper'
+import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 
 const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
 
@@ -33,7 +34,7 @@ const listContainer = async (containerName: string, relPath: string) => {
   // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
 
   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
-    new Date(new Date().valueOf() + 86400000),
+    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
     AccountSASPermissions.parse('r'),
     'o',
   )
