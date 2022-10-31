@@ -6,7 +6,7 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { modalVisible, martinIndex, indicatorProgress } from '$stores'
+  import { modalVisible, indicatorProgress } from '$stores'
   import { fetchUrl } from '$lib/helper'
 
   export let tree: TreeNode

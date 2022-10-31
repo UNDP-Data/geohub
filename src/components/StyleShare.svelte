@@ -13,9 +13,11 @@
   let isModalVisible = false
   let styleURL
   let radioDisabled = false
-  let selectedOption = 'all'
+  let selectedOption: 'all' | 'geohub' = 'all'
   let styleName = 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
+  let untargetedLayers: Layer[] = []
+  let exportedStyleJSON: StyleSpecification
 
   const open = () => {
     selectedOption = 'all'
@@ -23,9 +25,38 @@
     radioDisabled = $layerList.length === 0
     isModalVisible = !isModalVisible
     styleURL = undefined
+
+    untargetedLayers = []
+    if ($layerList.length > 0) {
+      $layerList.forEach((layer) => {
+        if (layer.tree?.isStac || layer.tree?.isMosaicJSON) {
+          untargetedLayers.push(layer)
+        }
+      })
+    }
+    createStyleJSON2Generate()
   }
 
   export const share = async () => {
+    const data = {
+      name: exportedStyleJSON.name,
+      style: exportedStyleJSON,
+    }
+
+    const res = await fetch('/style', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+    console.log(res)
+    const resjson = await res.json()
+    styleURL = resjson.url
+  }
+
+  $: styleName, createStyleJSON2Generate()
+  $: selectedOption, createStyleJSON2Generate()
+
+  const createStyleJSON2Generate = () => {
+    if (!$map) return
     const style: StyleSpecification = $map.getStyle()
     if (selectedOption === 'geohub') {
       if ($layerList.length === 0) {
@@ -50,25 +81,26 @@
       })
       style.layers = newLayers
     }
+
+    untargetedLayers.forEach((layer) => {
+      const deletedLayer = style.layers.find((l) => l.id === layer.definition.id)
+      if (deletedLayer) {
+        const delIndex = style.layers.indexOf(deletedLayer)
+        if (delIndex === 0) {
+          style.layers.shift()
+        } else {
+          style.layers.splice(delIndex, 1)
+        }
+      }
+    })
+
     style.name = styleName
     const center = $map.getCenter()
     style.center = [center.lng, center.lat]
     style.bearing = $map.getBearing()
     style.pitch = $map.getPitch()
     style.zoom = $map.getZoom()
-
-    const data = {
-      name: style.name,
-      style,
-    }
-
-    const res = await fetch('/style', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-    console.log(res)
-    const resjson = await res.json()
-    styleURL = resjson.url
+    exportedStyleJSON = style
   }
 
   const handleClose = () => {
@@ -111,7 +143,9 @@
     class="modal is-active"
     transition:fade
     use:clickOutside={handleClose}>
-    <div class="modal-background" />
+    <div
+      class="modal-background"
+      on:click={handleClose} />
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title has-text-weight-bold">Share</p>
@@ -157,6 +191,26 @@
               </div>
             </div>
           {/if}
+          {#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
+            <article class="message is-warning">
+              <div class="message-header">
+                <p>Warning</p>
+              </div>
+              <div class="message-body">
+                <p>No layer to be saved</p>
+              </div>
+            </article>
+          {/if}
+          {#if untargetedLayers.length > 0}
+            <article class="message is-warning">
+              <div class="message-header">
+                <p>Warning</p>
+              </div>
+              <div class="message-body">
+                <p>The following layers from Microsoft Planet Computer API will be removed from saved style.</p>
+              </div>
+            </article>
+          {/if}
         {:else}
           <div style="width: 100%;">
             <input
@@ -181,7 +235,7 @@
             on:click={handleClose}>
             Cancel
           </button>
-          {#if !styleURL}
+          {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
             <button
               class="button primary-button"
               alt="Share"
