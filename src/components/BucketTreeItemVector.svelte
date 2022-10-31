@@ -20,11 +20,8 @@
     if (tree.isRaster) throw new Error('This component can only be used for vector type')
     $indicatorProgress = true
 
-    if (!tree.isRaster) {
-      tree.metadata = await getVectorMetadata(tree)
-
-      isAddLayerModalVisible = true
-    }
+    tree.metadata = await getVectorMetadata(tree)
+    isAddLayerModalVisible = true
 
     setTimeout(function () {
       $indicatorProgress = false

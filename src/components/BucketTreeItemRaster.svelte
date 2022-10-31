@@ -9,7 +9,7 @@
   import BucketTreeLabel from './BucketTreeLabel.svelte'
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
-  import { map, layerList, bannerMessages, modalVisible, indicatorProgress } from '$stores'
+  import { map, layerList, bannerMessages, indicatorProgress } from '$stores'
   import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
     ClassificationMethodTypes,
@@ -23,11 +23,6 @@
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let tree: TreeNode
-
-  let isAddLayerModalVisible = false
-  $: {
-    $modalVisible = isAddLayerModalVisible
-  }
 
   const loadLayer = async () => {
     try {
