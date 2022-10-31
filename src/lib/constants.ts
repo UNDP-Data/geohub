@@ -12,6 +12,7 @@ export const STRING_COMPARE_THRESHOLD = 0.25
 export const STAC_PAGINATION_PREV = 'prev'
 export const STAC_PAGINATION_NEXT = 'next'
 export const STAC_PAGINATION_LIMIT = 5
+export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
 
 export enum TabNames {
   ANALYZE = 'Analyze',
