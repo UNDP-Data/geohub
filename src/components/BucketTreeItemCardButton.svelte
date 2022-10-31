@@ -60,6 +60,7 @@
       } else {
         // get metadata from endpoint
         if (tree.isRaster) {
+          // raster data
           const infoURI = `${PUBLIC_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(tree.url)}`
           const layerInfo = await fetchUrl(infoURI)
           if (layerInfo?.band_metadata?.length > 0 && !$layerMetadata.has(layerPathHash)) {
@@ -72,24 +73,27 @@
             )
           }
         } else {
+          // vector data
+          if (!tree.metadata) {
+            let metadataUrl: string
+            if (!tree.dynamicSourceType) {
+              const layerURL = new URL(tree.url)
+              const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
+              metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
+            } else {
+              metadataUrl = tree.url.replace('tile.json', 'metadata.json')
+            }
+            tree.metadata = await fetchUrl(metadataUrl)
+          }
+
           if (tree.dynamicSourceType) {
-            const layerInfo: TileJson = await fetchUrl(tree.url)
-            let source = 'Martin'
-            if (tree.dynamicSourceType === 'pgtileserv') {
-              source = 'pg_tileserv'
+            let source = tree.dynamicSourceType === 'martin' ? 'Martin' : 'pg_tileserv'
+            if (tree.metadata.attribution) {
+              source = `${source}, ${tree.metadata.attribution}`
             }
-            if (layerInfo.attribution) {
-              source = `${source}, ${layerInfo.attribution}`
-            }
-            await setLayerMetaDataStore(layerInfo.description, source, 'N/A', layerPathHash)
+            await setLayerMetaDataStore(tree.metadata.description, source, 'N/A', layerPathHash)
           } else {
-            const layerURL = new URL(tree.url)
-            const infoURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
-              '{z}/{x}/{y}.pbf',
-              'metadata.json',
-            )}${layerURL.search}`
-            const layerInfo = await fetchUrl(infoURI)
-            await setLayerMetaDataStore(layerInfo.description, layerInfo.source, 'N/A', layerPathHash)
+            await setLayerMetaDataStore(tree.metadata.description, tree.metadata.attribution, 'N/A', layerPathHash)
           }
         }
       }

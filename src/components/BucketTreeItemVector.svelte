@@ -20,7 +20,9 @@
     if (tree.isRaster) throw new Error('This component can only be used for vector type')
     $indicatorProgress = true
 
-    tree.metadata = await getVectorMetadata(tree)
+    if (!tree.metadata) {
+      tree.metadata = await getVectorMetadata(tree)
+    }
     isAddLayerModalVisible = true
 
     setTimeout(function () {
@@ -29,22 +31,15 @@
   }
 
   const getVectorMetadata = async (node: TreeNode) => {
-    let data: VectorTileMetadata
+    let metadataUrl: string
     if (!node.dynamicSourceType) {
       const layerURL = new URL(node.url)
-      const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
-        '{z}/{x}/{y}.pbf',
-        'metadata.json',
-      )}${layerURL.search}`
-
-      const layerMeta = await fetchUrl(metaURI)
-      if (layerMeta.json) {
-        layerMeta.json = JSON.parse(layerMeta.json)
-      }
-      data = layerMeta
+      const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
+      metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
     } else {
-      data = await fetchUrl(node.url.replace('tile.json', 'metadata.json'))
+      metadataUrl = node.url.replace('tile.json', 'metadata.json')
     }
+    const data: VectorTileMetadata = await fetchUrl(metadataUrl)
     return data
   }
 </script>
