@@ -31,6 +31,10 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
 
   const data: VectorTileMetadata = {
     name: tilejson.name,
+    version: '1.3.0',
+    type: 'overlay',
+    description: tilejson.description,
+    attribution: tilejson.attribution,
     format: 'pbf',
     center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
       tilejson.minzoom
