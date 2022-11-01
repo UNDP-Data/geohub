@@ -131,45 +131,17 @@ const listContainer = async (containerName: string, relPath: string) => {
   }
 }
 
-const listContainers = async (prefix = '/') => {
-  const blobServiceClient = new BlobServiceClient(
-    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
-    sharedKeyCredential,
-  )
-  const tree: TreeNode = {
-    label: 'GeoHub Storage',
-    children: <TreeNode[]>[],
-    path: prefix,
-    url: null,
-    isRaster: false,
-  }
-
-  for await (const container of blobServiceClient.listContainers()) {
-    tree.children.push({ label: container.name, children: [], path: `${container.name}/`, url: null, isRaster: false })
-  }
-
-  return {
-    tree,
-  }
-}
-
 export const GET: RequestHandler = async ({ url }) => {
-  let path = '/'
-  if (url.searchParams.has('path')) {
-    path = !path.endsWith('/') ? `${path}/` : url.searchParams.get('path')
+  let path = url.searchParams.get('path')
+  if (!path.endsWith('/')) {
+    path = `${path}/`
   }
 
-  let tree: Tree
-
-  if (path === '/') {
-    tree = await listContainers()
-  } else {
-    const [containerName, ...containerPath] = path.split('/')
-    tree = await listContainer(
-      containerName,
-      Array.isArray(containerPath) && !!containerPath[0] ? containerPath.join('/') : '',
-    )
-  }
+  const [containerName, ...containerPath] = path.split('/')
+  const tree: Tree = await listContainer(
+    containerName,
+    Array.isArray(containerPath) && !!containerPath[0] ? containerPath.join('/') : '',
+  )
 
   return new Response(JSON.stringify(tree))
 }

@@ -10,7 +10,7 @@ const __dirname = path.resolve()
 export const GET: RequestHandler = async () => {
   const startTime = performance.now()
 
-  const filePath = `${__dirname}/data/stac.json`
+  const filePath = `${__dirname}/data/external-buckets.json`
   const stacBuckets = []
 
   const COG_MIME_TYPE = 'image/tiff; application=geotiff; profile=cloud-optimized'
@@ -29,8 +29,7 @@ export const GET: RequestHandler = async () => {
 
   if (fs.existsSync(filePath)) {
     const catalogues = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Bucket[]
-
-    for (const catalog of catalogues) {
+    const catalog = catalogues.find(catalog=>catalog.id === 'msft')
       // fetch catalog url
       const node: TreeNode = {
         label: catalog.label,
@@ -81,7 +80,6 @@ export const GET: RequestHandler = async () => {
 
       fs.writeFileSync(`${__dirname}/data/stac-${catalog.id}.json`, JSON.stringify(node, null, 2))
     }
-  }
 
   const endTime = performance.now()
 

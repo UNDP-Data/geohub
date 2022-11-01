@@ -13,12 +13,12 @@ export const GET: RequestHandler = async ({ url }) => {
   const startTime = performance.now()
   let tree: TreeNode = {}
 
-  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/stac.json`, 'utf8'))
-  const stacIds = catalogues.map((catalog) => catalog.id)
+  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/external-buckets.json`, 'utf8'))
+  const catalog = catalogues.find(catalog=>catalog.id === 'msft')
   const catalogId = url.searchParams.get('id')
   const containerPath = url.searchParams.get('path')
 
-  if (catalogId && stacIds.includes(catalogId) && containerPath.startsWith(catalogId)) {
+  if (catalogId && catalogId === catalog.id && containerPath.startsWith(catalogId)) {
     // get root
     tree = getStacFileData(`stac-${catalogId}.json`) as TreeNode
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

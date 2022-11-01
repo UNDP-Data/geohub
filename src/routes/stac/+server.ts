@@ -7,7 +7,7 @@ import path from 'path'
 const __dirname = path.resolve()
 
 export const GET: RequestHandler = async ({ url }) => {
-  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/mosaic-stac.json`, 'utf8'))
+  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/external-buckets.json`, 'utf8'))
   const catalogIds = url.searchParams.get('id')
   const containerPath = url.searchParams.get('path')
 
