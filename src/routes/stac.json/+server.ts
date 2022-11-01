@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ url }) => {
   let tree: TreeNode = {}
 
   const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/external-buckets.json`, 'utf8'))
-  const catalog = catalogues.find(catalog=>catalog.id === 'msft')
+  const catalog = catalogues.find((catalog) => catalog.id === 'msft')
   const catalogId = url.searchParams.get('id')
   const containerPath = url.searchParams.get('path')
 

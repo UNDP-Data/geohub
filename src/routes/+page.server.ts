@@ -5,10 +5,7 @@ import type { PageServerLoad } from './$types'
 const __dirname = path.resolve()
 
 export const load: PageServerLoad = async ({ url }) => {
-  const promises = [
-    getExternalContainers(`${__dirname}/data/external-buckets.json`),
-    getAzureBlobContainers(url)
-  ]
+  const promises = [getExternalContainers(`${__dirname}/data/external-buckets.json`), getAzureBlobContainers(url)]
 
   const data = await Promise.all(promises)
   let buckets: Bucket[] = []
