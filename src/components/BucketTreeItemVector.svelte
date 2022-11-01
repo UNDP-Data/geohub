@@ -20,11 +20,10 @@
     if (tree.isRaster) throw new Error('This component can only be used for vector type')
     $indicatorProgress = true
 
-    if (!tree.isRaster) {
+    if (!tree.metadata) {
       tree.metadata = await getVectorMetadata(tree)
-
-      isAddLayerModalVisible = true
     }
+    isAddLayerModalVisible = true
 
     setTimeout(function () {
       $indicatorProgress = false
@@ -32,50 +31,15 @@
   }
 
   const getVectorMetadata = async (node: TreeNode) => {
-    let data: VectorTileMetadata
+    let metadataUrl: string
     if (!node.dynamicSourceType) {
       const layerURL = new URL(node.url)
-      const metaURI = `${layerURL.origin}${decodeURIComponent(layerURL.pathname).replace(
-        '{z}/{x}/{y}.pbf',
-        'metadata.json',
-      )}${layerURL.search}`
-
-      const layerMeta = await fetchUrl(metaURI)
-      if (layerMeta.json) {
-        layerMeta.json = JSON.parse(layerMeta.json)
-      }
-      data = layerMeta
+      const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
+      metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
     } else {
-      const tilejson = await fetchUrl(node.url)
-      data = {
-        name: tilejson.name,
-        format: 'pbf',
-        center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
-          tilejson.minzoom
-        }`,
-        bounds: `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`,
-        minzoom: tilejson.minzoom,
-        maxzoom: tilejson.maxzoom,
-      }
-
-      let vector_layers: VectorLayerMetadata[] = tilejson.vector_layers
-
-      const tilestatsLayer: VectorLayerTileStatLayer = {
-        layer: node.path,
-        geometry: node.geomType,
-        count: null,
-        attributeCount: null,
-        attributes: null,
-      }
-
-      data.json = {
-        vector_layers: vector_layers,
-        tilestats: {
-          layerCount: 1,
-          layers: [tilestatsLayer],
-        },
-      }
+      metadataUrl = node.url.replace('tile.json', 'metadata.json')
     }
+    const data: VectorTileMetadata = await fetchUrl(metadataUrl)
     return data
   }
 </script>

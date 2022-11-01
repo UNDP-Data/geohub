@@ -201,24 +201,17 @@
       ? treeNode.label
       : treeNode.path.split('/')[treeNode.path.split('/').length - 2]
 
-    // set vector info stats (number properties)
-    let statsUrl = `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`
-    if (treeNode.dynamicSourceType) {
-      const tilejson: TileJson = await fetchUrl(treeNode.url)
-      statsUrl = tilejson.tiles[0].replace('/{z}/{x}/{y}.pbf', '/0/0/0.pbf')
-    }
-
-    const stats = await getVectorInfo(
-      statsUrl,
-      treeNode.dynamicSourceType ? treeNode.path : layerName,
-      treeNode.dynamicSourceType,
-    )
-    if (stats) {
-      treeNode.metadata.stats = stats
-      if (treeNode.dynamicSourceType) {
-        const layer = treeNode.metadata.json.tilestats.layers.find((l) => l.layer === treeNode.path)
-        layer.attributeCount = stats.length
-        layer.attributes = stats
+    if (!treeNode.dynamicSourceType) {
+      // set vector info stats (number properties)
+      let statsUrl = `${new URL(treeNode.url).origin}/${layerDefinition.source}0/0/0.pbf`
+      const stats = await getVectorInfo(statsUrl, layerName)
+      if (stats) {
+        treeNode.metadata.stats = stats
+        if (treeNode.dynamicSourceType) {
+          const layer = treeNode.metadata.json.tilestats.layers.find((l) => l.layer === treeNode.path)
+          layer.attributeCount = stats.length
+          layer.attributes = stats
+        }
       }
     }
 
