@@ -41,14 +41,35 @@ export const GET: RequestHandler = async ({ url }) => {
             geomType = 'polygon'
             break
         }
+
+        let grandchildren: TreeNode[] | undefined = []
+        if (geomType.toLowerCase() === 'point') {
+          ;['heatmap', 'point'].forEach((layerType) => {
+            grandchildren.push({
+              label: `${table}-${layerType}`,
+              path: tableSchemaName,
+              geomType: layerType,
+              url: `${url.origin}/pgtileserv/table/${tableSchemaName}/tile.json`,
+              isRaster: false,
+              isStac: false,
+              dynamicSourceType: 'pgtileserv',
+              children: undefined,
+            })
+          })
+        } else {
+          grandchildren = undefined
+        }
+
         const chjld: TreeNode = {
           label: table,
           path: tableSchemaName,
           geomType: geomType,
-          url: `${url.origin}/pgtileserv/table/${tableSchemaName}/tile.json`,
+          url:
+            grandchildren && grandchildren.length ? '' : `${url.origin}/pgtileserv/table/${tableSchemaName}/tile.json`,
           isRaster: false,
           isStac: false,
           dynamicSourceType: 'pgtileserv',
+          children: grandchildren,
         }
         children.push(chjld)
       }

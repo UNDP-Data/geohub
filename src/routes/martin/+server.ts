@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ url }) => {
   const catalog: TreeNode = catalogues.find((catalog) => catalog.label === containerLabel)
 
   const indexData = await fetchUrl(`${containerPath}`)
-  const children = []
+  let children: TreeNode[] | undefined = []
   if (!catalog) {
     // table
     Object.keys(indexData).forEach((id) => {
@@ -35,14 +35,32 @@ export const GET: RequestHandler = async ({ url }) => {
             geomType = 'polygon'
             break
         }
+        let grandchildren: TreeNode[] | undefined = []
+        if (geomType.toLowerCase() === 'point') {
+          ;['heatmap', 'point'].forEach((layerType) => {
+            grandchildren.push({
+              label: `${table.table}-${layerType}`,
+              path: table.id,
+              geomType: layerType,
+              url: `${url.origin}/martin/${table.id}/tile.json`,
+              isRaster: false,
+              isStac: false,
+              dynamicSourceType: 'martin',
+              children: undefined,
+            })
+          })
+        } else {
+          grandchildren = undefined
+        }
         const chjld: TreeNode = {
           label: table.table,
           path: table.id,
           geomType: geomType,
-          url: `${url.origin}/martin/${table.id}/tile.json`,
+          url: grandchildren && grandchildren.length > 0 ? '' : `${url.origin}/martin/${table.id}/tile.json`,
           isRaster: false,
           isStac: false,
           dynamicSourceType: 'martin',
+          children: grandchildren,
         }
         children.push(chjld)
       }
