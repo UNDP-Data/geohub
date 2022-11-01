@@ -6,7 +6,7 @@ import path from 'path'
 const __dirname = path.resolve()
 
 export const GET: RequestHandler = async ({ url }) => {
-  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/dynamic.json`, 'utf8'))
+  const catalogues = JSON.parse(fs.readFileSync(`${__dirname}/data/external-buckets.json`, 'utf8'))
   const startTime = performance.now()
 
   const containerLabel = url.searchParams.get('label')
