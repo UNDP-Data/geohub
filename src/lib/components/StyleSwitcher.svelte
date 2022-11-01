@@ -118,11 +118,13 @@
     background: white;
   }
 
-  :global(.maplibregl-canvas) {
-    width: 60px;
-    height: 60px;
-    border-radius: 30px;
-    -moz-border-radius: 30px;
-    -webkit-border-radius: 30px;
+  #main-switch-container {
+    :global(.maplibregl-canvas) {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      -moz-border-radius: 30px;
+      -webkit-border-radius: 30px;
+    }
   }
 </style>
