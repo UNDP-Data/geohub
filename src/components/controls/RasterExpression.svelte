@@ -3,7 +3,7 @@
 
   import type { Layer } from '$lib/types'
   import RasterRefineContainer from '$components/RasterRefineContainer.svelte'
-  import RasterExpressionSimple from './RasterExpressionSimple.svelte'
+  import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
   export let layer: Layer
