@@ -4,7 +4,7 @@
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
 
-  import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
+  import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, COLOR_CLASS_COUNT } from '$lib/constants'
   import type { Layer } from '$lib/types'
