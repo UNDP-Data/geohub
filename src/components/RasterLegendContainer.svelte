@@ -8,7 +8,7 @@
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
-  import ContinuousLegend from '$components/ContinuousLegend.svelte'
+  import RasterContinuousLegend from '$components/RasterContinuousLegend.svelte'
   import IntervalsLegend from '$components/IntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
@@ -163,7 +163,7 @@
   <div class="column is-10">
     {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <ContinuousLegend bind:layerConfig={layer} />
+        <RasterContinuousLegend bind:layerConfig={layer} />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>

@@ -28,7 +28,10 @@ export interface Layer {
   url?: string
   features?: []
   colorMapName?: string
-  continuous?: ContinuousLegend
+  continuous?: {
+    minimum: number
+    maximum: number
+  }
   intervals?: IntervalLegend
   unique?: UniqueLegend
   expression?: string
