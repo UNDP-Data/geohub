@@ -490,7 +490,7 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/popper.scss';
+  @import 'src/styles/popper.scss';
   #tooltip {
     max-height: 300px;
     max-width: 600px;

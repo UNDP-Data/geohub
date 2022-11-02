@@ -252,7 +252,7 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/popper.scss';
+  @import 'src/styles/popper.scss';
 
   .legend-toggle {
     padding-top: 15px;
