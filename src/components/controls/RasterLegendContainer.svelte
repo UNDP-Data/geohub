@@ -10,7 +10,7 @@
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
-  import RasterUniqueValuesLegend from '$components/RasterUniqueValuesLegend.svelte'
+  import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
