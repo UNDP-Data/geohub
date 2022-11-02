@@ -10,7 +10,7 @@
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/RasterIntervalsLegend.svelte'
-  import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
+  import RasterUniqueValuesLegend from '$components/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
@@ -173,7 +173,7 @@
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend
+        <RasterUniqueValuesLegend
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex
           bind:legendLabels />
