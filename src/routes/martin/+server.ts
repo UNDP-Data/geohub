@@ -17,26 +17,29 @@ export const GET: RequestHandler = async ({ url }) => {
   const catalog: TreeNode = catalogues.find((catalog) => catalog.label === containerLabel)
 
   const indexData = await fetchUrl(`${containerPath}`)
-  let children: TreeNode[] | undefined = []
+  const children: TreeNode[] | undefined = []
   if (!catalog) {
     // table
     Object.keys(indexData).forEach((id) => {
       const table = indexData[id]
       if (table.schema === containerLabel) {
-        let geomType: string
-        switch (table.geometry_type.toLowerCase()) {
+        let geomType: string = table.geometry_type.toLowerCase()
+        switch (geomType) {
+          case 'point':
           case 'multipoint':
             geomType = 'point'
             break
+          case 'linestring':
           case 'multilinestring':
             geomType = 'line'
             break
+          case 'polygon':
           case 'multipolygon':
             geomType = 'polygon'
             break
         }
         let grandchildren: TreeNode[] | undefined = []
-        if (geomType.toLowerCase() === 'point') {
+        if (geomType === 'point') {
           ;['heatmap', 'point'].forEach((layerType) => {
             grandchildren.push({
               label: `${table.table}-${layerType}`,

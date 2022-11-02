@@ -29,21 +29,24 @@ export const GET: RequestHandler = async ({ url }) => {
       const detailJson: PgtileservDetailJson = await fetchUrl(detailJsonUrl)
 
       if (schema === containerLabel) {
-        let geomType: string
-        switch (detailJson.geometrytype.toLocaleLowerCase()) {
+        let geomType: string = detailJson.geometrytype.toLocaleLowerCase()
+        switch (geomType) {
+          case 'point':
           case 'multipoint':
             geomType = 'point'
             break
+          case 'linestring':
           case 'multilinestring':
             geomType = 'line'
             break
+          case 'polygon':
           case 'multipolygon':
             geomType = 'polygon'
             break
         }
 
         let grandchildren: TreeNode[] | undefined = []
-        if (geomType.toLowerCase() === 'point') {
+        if (geomType === 'point') {
           ;['heatmap', 'point'].forEach((layerType) => {
             grandchildren.push({
               label: `${table}-${layerType}`,
