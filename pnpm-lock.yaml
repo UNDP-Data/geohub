@@ -105,7 +105,6 @@ importers:
       vite: ^3.1.8
       vitest: ^0.24.3
     dependencies:
-      '@arkweid/lefthook': 0.7.7
       '@azure/storage-blob': 12.12.0
       '@fortawesome/fontawesome-svg-core': 6.2.0
       '@fortawesome/free-brands-svg-icons': 6.2.0
@@ -174,6 +173,7 @@ importers:
       vega-embed: 6.21.0_36sthfwhgi34qytpvkzggbhnle
       vega-lite: 5.6.0_vega@5.22.1
     devDependencies:
+      '@arkweid/lefthook': 0.7.7
       '@sveltejs/adapter-node': 1.0.0-next.99
       '@sveltejs/kit': 1.0.0-next.525_svelte@3.50.1+vite@3.1.8
       '@sveltejs/vite-plugin-svelte': 1.1.0_svelte@3.50.1+vite@3.1.8
@@ -326,7 +326,7 @@ packages:
     deprecated: '@arkweid/lefthook has been renamed to @evilmartians/lefthook, please upgrade to it. You also can use @evilmartians/lefthook-installer'
     hasBin: true
     requiresBuild: true
-    dev: false
+    dev: true
 
   /@azure/abort-controller/1.1.0:
     resolution: {integrity: sha512-TrRLIoSQVzfAJX9H1JeFjzAoDGcoK1IYX1UImfceTZpsyYfWr09Ss1aHW1y5TrrR3iq6RZLBwJ3E24uwPhwahw==}
