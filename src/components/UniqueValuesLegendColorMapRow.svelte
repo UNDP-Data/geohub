@@ -5,7 +5,7 @@
 
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
-  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import DefaultColorPicker from '$components/controls/DefaultColorPicker.svelte'
   import { abs } from 'mathjs'
 
   export let colorMapRow: IntervalLegendColorMapRow

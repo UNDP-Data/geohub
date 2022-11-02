@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import DefaultColorPicker from '$components/controls/DefaultColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color, HeatmapColorRow } from '$lib/types'
 

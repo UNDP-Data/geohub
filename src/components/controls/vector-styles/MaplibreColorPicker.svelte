@@ -3,7 +3,7 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
 
-  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import DefaultColorPicker from '$components/controls/DefaultColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color } from '$lib/types'
 
