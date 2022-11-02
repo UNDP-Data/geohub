@@ -3,7 +3,7 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
 
-  import DefaultColorPicker from '$components/controls/DefaultColorPicker.svelte'
+  import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color } from '$lib/types'
 
@@ -65,7 +65,7 @@
     data-testid="tooltip"
     use:popperContent={popperOptions}
     transition:fade>
-    <DefaultColorPicker
+    <ColorPicker
       bind:color
       on:closeColorPicker={handleCloseColorPicker}
       on:changeColor={setColor} />

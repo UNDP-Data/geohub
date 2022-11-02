@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import DefaultColorPicker from '$components/controls/DefaultColorPicker.svelte'
+  import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color, HeatmapColorRow } from '$lib/types'
 
@@ -111,7 +111,7 @@
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
-        <DefaultColorPicker
+        <ColorPicker
           bind:color
           on:closeColorPicker={() => handleColorPickerClick()} />
         <div
