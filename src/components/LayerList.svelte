@@ -1,16 +1,11 @@
 <script lang="ts">
-  import Button, { Label } from '@smui/button'
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
 
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
-  import { layerList, dynamicLayers } from '$stores'
-  import DynamicLayer from '$components/DynamicLayer.svelte'
+  import { layerList } from '$stores'
   import { LayerTypes, TabNames } from '$lib/constants'
-
-  let disabled = true
-  let open = false
 </script>
 
 {#if $layerList?.length === 0}
@@ -27,16 +22,6 @@
       </div>
     </li>
   </ul>
-{/if}
-
-{#if !disabled && $layerList?.length > 0 && $dynamicLayers.length > 1}
-  <div style="display:flex; justify-content:center; flex-direction:row">
-    <Button on:click={() => (open = true)}>
-      <Label>Merge selected layers</Label>
-    </Button>
-  </div>
-
-  <DynamicLayer bind:open />
 {/if}
 
 <div class="layer-list">
