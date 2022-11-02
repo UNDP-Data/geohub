@@ -7,10 +7,10 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
 
-  import ColorMapPicker from '$components/ColorMapPicker.svelte'
-  import ContinuousLegend from '$components/ContinuousLegend.svelte'
-  import IntervalsLegend from '$components/IntervalsLegend.svelte'
-  import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
+  import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
+  import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
+  import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
+  import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
@@ -163,17 +163,17 @@
   <div class="column is-10">
     {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <ContinuousLegend bind:layerConfig={layer} />
+        <RasterContinuousLegend bind:layerConfig={layer} />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend
+        <RasterIntervalsLegend
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
-        <UniqueValuesLegend
+        <RasterUniqueValuesLegend
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex
           bind:legendLabels />
@@ -252,7 +252,7 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/popper.scss';
+  @import 'src/styles/popper.scss';
 
   .legend-toggle {
     padding-top: 15px;

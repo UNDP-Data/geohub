@@ -8,7 +8,7 @@
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { cloneDeep } from 'lodash-es'
 
-  import ColorMapPicker from '$components/ColorMapPicker.svelte'
+  import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorLineSimple from '$components/controls/VectorLineSimple.svelte'
   import VectorLineAdvanced from '$components/controls/VectorLineAdvanced.svelte'
   import {

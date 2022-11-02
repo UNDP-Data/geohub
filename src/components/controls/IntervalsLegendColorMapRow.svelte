@@ -3,7 +3,7 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { abs } from 'mathjs'
-  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
 
@@ -144,7 +144,7 @@
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
-        <DefaultColorPicker
+        <ColorPicker
           bind:color
           on:closeColorPicker={() => handleColorPickerClick()} />
         <div
@@ -173,8 +173,8 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/popper.scss';
-  @import '../styles/undp-design/base-minimal.min';
+  @import '../../styles/popper.scss';
+  @import '../../styles/undp-design/base-minimal.min';
 
   $input-margin: 5px !important;
 

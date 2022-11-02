@@ -10,7 +10,7 @@
   } from 'maplibre-gl'
   import { debounce } from 'lodash-es'
 
-  import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
+  import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'

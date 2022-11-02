@@ -7,7 +7,6 @@ import type {
   RasterSourceSpecification,
   VectorSourceSpecification,
 } from 'maplibre-gl'
-import type { ContinuousLegend } from './ContinuousLegend'
 import type { IntervalLegend } from './IntervalLegend'
 import type { RasterTileMetadata } from './RasterTileMetadata'
 import type { TreeNode } from './TreeNode'
@@ -28,7 +27,10 @@ export interface Layer {
   url?: string
   features?: []
   colorMapName?: string
-  continuous?: ContinuousLegend
+  continuous?: {
+    minimum: number
+    maximum: number
+  }
   intervals?: IntervalLegend
   unique?: UniqueLegend
   expression?: string

@@ -19,7 +19,7 @@
   import { cloneDeep, debounce } from 'lodash-es'
   import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
 

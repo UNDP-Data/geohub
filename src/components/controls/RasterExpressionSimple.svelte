@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RasterExpressionBuilder from '$components/RasterExpressionBuilder.svelte'
+  import RasterExpressionBuilder from '$components/controls/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
   import type { BannerMessage, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Card, { PrimaryAction } from '@smui/card'
@@ -7,7 +7,7 @@
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
   import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, layerList, map } from '$stores'
 
@@ -490,7 +490,7 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/popper.scss';
+  @import 'src/styles/popper.scss';
   #tooltip {
     max-height: 300px;
     max-width: 600px;

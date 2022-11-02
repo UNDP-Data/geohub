@@ -5,7 +5,7 @@
 
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
-  import DefaultColorPicker from '$components/DefaultColorPicker.svelte'
+  import ColorPicker from '$components/controls/ColorPicker.svelte'
   import { abs } from 'mathjs'
 
   export let colorMapRow: IntervalLegendColorMapRow
@@ -123,7 +123,7 @@
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
-        <DefaultColorPicker
+        <ColorPicker
           bind:color
           on:closeColorPicker={() => handleColorPickerClick()} />
         <div
