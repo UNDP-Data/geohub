@@ -1,7 +1,7 @@
 import { describe, beforeEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, type RenderResult } from '@testing-library/svelte'
 
-import RasterRefineContainer from '$components/RasterRefineContainer.svelte'
+import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
 import * as helper from '$lib/helper'
 
 import layer from './_layer.json'
