@@ -2,7 +2,7 @@
   import Fa from 'svelte-fa'
 
   import type { Layer } from '$lib/types'
-  import RefineContainer from '$components/RefineContainer.svelte'
+  import RasterRefineContainer from '$components/RasterRefineContainer.svelte'
   import RasterExpressionSimple from './RasterExpressionSimple.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
@@ -97,7 +97,7 @@
       <RasterExpressionSimple bind:layer />
     {/if}
     {#if isAdvancedPanelVisible}
-      <RefineContainer bind:layer />
+      <RasterRefineContainer bind:layer />
     {/if}
   </p>
 </nav>

@@ -1,7 +1,7 @@
 import { describe, beforeEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, type RenderResult } from '@testing-library/svelte'
 
-import RefineContainer from '$components/RefineContainer.svelte'
+import RasterRefineContainer from '$components/RasterRefineContainer.svelte'
 import * as helper from '$lib/helper'
 
 import layer from './_layer.json'
@@ -14,7 +14,7 @@ describe('Refine Container', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    sut = render(RefineContainer, {
+    sut = render(RasterRefineContainer, {
       layer: layer,
     })
     viewContainer = sut.getByTestId('refine-view-container')
@@ -87,7 +87,7 @@ describe('Refine Container : Expression Data in Layer ', () => {
     layer.expression = expression
 
     vi.resetAllMocks()
-    sut = render(RefineContainer, {
+    sut = render(RasterRefineContainer, {
       layer: layer,
     })
     viewContainer = sut.getByTestId('refine-view-container')

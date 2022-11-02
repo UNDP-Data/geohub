@@ -143,7 +143,6 @@
         <RasterHistogram bind:layer />
       {/if}
       {#if isRefinePanelVisible === true}
-        <!-- <RefineContainer bind:layer /> -->
         <RasterExpression bind:layer />
       {/if}
       <OpacityPanel
