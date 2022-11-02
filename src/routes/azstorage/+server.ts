@@ -82,18 +82,31 @@ const listContainer = async (containerName: string, relPath: string) => {
       let children: TreeNode[] | undefined = []
       if (isVectorTile) {
         const vectorLayerInfo = await fetchUrl(`${bclient.url}${ACCOUNT_SAS_TOKEN_URL.search}`)
-
+        children = undefined
         if (vectorLayerInfo?.json) {
           const vectorTileMeta = JSON.parse(vectorLayerInfo.json)
           geomType = vectorTileMeta.tilestats.layers[0].geometry
+
+          if (['point', 'multipoint'].includes(geomType.toLowerCase())) {
+            children = []
+            ;['heatmap', 'point'].forEach((layerType) => {
+              children.push({
+                label: `${childLabel}-${layerType}`,
+                children: undefined,
+                path: path,
+                url: url,
+                isRaster: false,
+                geomType: layerType,
+              })
+            })
+          }
         }
-        children = undefined
       }
       containerChildren.push({
         label: childLabel,
         children,
         path: path,
-        url: url,
+        url: children && children.length > 0 ? undefined : url,
         isRaster: false,
         geomType: geomType,
       })

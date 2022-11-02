@@ -6,7 +6,7 @@
   import BucketCardFilter from '$components/BucketCardFilter.svelte'
   import BucketFilter from '$components/BucketFilter.svelte'
   import BucketTreeView from '$components/BucketTreeView.svelte'
-  import { bucketList, indicatorProgress, modalVisible, treeBucket } from '$stores'
+  import { bucketList, indicatorProgress, treeBucket } from '$stores'
 
   $: hideLinearProgress = !$indicatorProgress
   let bucketsMeetThereshold = []
@@ -93,8 +93,7 @@
       <div class="columns m-0 p-0">
         <div
           class="column cards"
-          data-testid="buckets-container"
-          style={$modalVisible ? 'z-index: 1;' : ''}>
+          data-testid="buckets-container">
           <div
             class="card-filter"
             data-testid="buckets-filter-container">
