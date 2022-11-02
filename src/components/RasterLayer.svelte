@@ -12,7 +12,7 @@
   import { LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
-  import RasterHistogram from '$components/RasterHistogram.svelte'
+  import RasterHistogram from '$components/controls/RasterHistogram.svelte'
 
   export let layer: Layer = LayerInitialValues
 
