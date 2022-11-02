@@ -7,7 +7,7 @@
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
 
-  import ColorMapPicker from '$components/ColorMapPicker.svelte'
+  import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/RasterIntervalsLegend.svelte'
   import RasterUniqueValuesLegend from '$components/RasterUniqueValuesLegend.svelte'
