@@ -9,7 +9,7 @@
 
   import ColorMapPicker from '$components/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/RasterContinuousLegend.svelte'
-  import IntervalsLegend from '$components/IntervalsLegend.svelte'
+  import RasterIntervalsLegend from '$components/RasterIntervalsLegend.svelte'
   import UniqueValuesLegend from '$components/UniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
   import Popper from '$lib/popper'
@@ -167,7 +167,7 @@
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
-        <IntervalsLegend
+        <RasterIntervalsLegend
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex />
       </div>
