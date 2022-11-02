@@ -4,7 +4,7 @@
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
+  import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {

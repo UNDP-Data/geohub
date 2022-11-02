@@ -9,7 +9,7 @@
     HeatmapLayerSpecification,
   } from 'maplibre-gl'
 
-  import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
+  import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
   import { updateParamsInURL, remapInputValue, getActiveBandIndex } from '$lib/helper'
