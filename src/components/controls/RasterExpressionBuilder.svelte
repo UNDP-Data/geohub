@@ -7,7 +7,7 @@
   import { faPlusMinus } from '@fortawesome/free-solid-svg-icons/faPlusMinus'
   import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
   import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
-  import OpCat from '$components/raster/OpCat.svelte'
+  import RasterOpCat from '$components/controls/RasterOpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
   import { getActiveBandIndex } from '$lib/helper'
 
@@ -182,7 +182,7 @@
     </div>
     <div class="container">
       {#each operatorCategories as operCat}
-        <OpCat
+        <RasterOpCat
           bind:simpleExpressionAvailable
           on:NumbersButtonClick={handleNumberButtonClick}
           on:ArithmeticButtonClick={handleArithmeticButtonClick}
