@@ -5,7 +5,7 @@
   import type { LayerSpecification } from 'maplibre-gl'
   import { hexToCSSFilter } from 'hex-to-css-filter'
 
-  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
     ClassificationMethodNames,

@@ -5,7 +5,7 @@
   import { debounce } from 'lodash-es'
 
   import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
-  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
     ClassificationMethodNames,
