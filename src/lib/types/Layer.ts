@@ -4,8 +4,6 @@ import type {
   FillLayerSpecification,
   SymbolLayerSpecification,
   HeatmapLayerSpecification,
-  RasterSourceSpecification,
-  VectorSourceSpecification,
 } from 'maplibre-gl'
 import type { IntervalLegend } from './IntervalLegend'
 import type { RasterTileMetadata } from './RasterTileMetadata'
@@ -23,7 +21,6 @@ export interface Layer {
     | HeatmapLayerSpecification
   type?: string
   info?: RasterTileMetadata | VectorTileMetadata
-  visible?: boolean | true
   url?: string
   colorMapName?: string
   continuous?: {
@@ -38,7 +35,6 @@ export interface Layer {
   children?: Layer[]
   parent?: Layer
   legendType?: string
-  source?: VectorSourceSpecification | RasterSourceSpecification
   percentile98?: number
   tree?: TreeNode
 }
