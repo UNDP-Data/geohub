@@ -67,8 +67,6 @@
     zoomLevel = $map.getZoom()
     layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    // propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
-    // layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   })
 
@@ -197,7 +195,10 @@
     })
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
-      $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
+      const iconSize = $map.getLayoutProperty(layer.definition.id, 'icon-size')
+      if (!iconSize || (iconSize && iconSize.type === 'interval')) {
+        $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
+      }
       $map.setPaintProperty(layer.definition.id, 'icon-color', {
         property: layer.intervals.propertyName,
         type: 'interval',
