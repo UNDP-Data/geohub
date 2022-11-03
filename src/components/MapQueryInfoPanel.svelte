@@ -13,7 +13,6 @@
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
   import { layerList } from '$stores'
-  import type { Layer } from '$lib/types'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
