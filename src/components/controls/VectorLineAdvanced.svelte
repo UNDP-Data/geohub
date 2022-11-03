@@ -17,7 +17,7 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getLineColor, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getIntervalList, getLineColor, getLineWidth, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -236,7 +236,7 @@
 
     if (stops.length > 0) {
       if (hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
-        $map.setPaintProperty(layer.definition.id, 'line-width', 1)
+        $map.setPaintProperty(layer.definition.id, 'line-width', getLineWidth($map, layer.definition.id))
         $map.setPaintProperty(layer.definition.id, 'line-color', {
           property: layer.intervals.propertyName,
           type: 'interval',
