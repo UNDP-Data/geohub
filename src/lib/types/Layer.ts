@@ -39,7 +39,6 @@ export interface Layer {
   parent?: Layer
   legendType?: string
   source?: VectorSourceSpecification | RasterSourceSpecification
-  iconSize?: number
   iconColor?: string
   lineWidth?: number
   fillColor?: string

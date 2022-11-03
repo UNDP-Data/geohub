@@ -16,16 +16,23 @@
   let maxValue = 5
   let minValue = 0
   let stepValue = 0.25
-  let value = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
+
+  const getValue = () => {
+    let value = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
+    if (value && value.type === 'interval') {
+      value = 1
+    }
+    return value
+  }
+
+  let value = getValue()
 
   onMount(() => {
-    value = layer.iconSize ? layer.iconSize : 1
     setValue()
   })
 
   const setValue = () => {
     $map.setLayoutProperty(layer.definition.id, propertyName, value)
-    layer.iconSize = value
   }
 </script>
 
