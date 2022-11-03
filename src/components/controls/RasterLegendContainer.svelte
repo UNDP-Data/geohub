@@ -22,6 +22,7 @@
     HeatmapLayerSpecification,
     LineLayerSpecification,
     RasterLayerSpecification,
+    RasterTileSource,
     SymbolLayerSpecification,
   } from 'maplibre-gl'
 
@@ -124,7 +125,8 @@
     if (event?.detail?.colorMapName) {
       if (layer.tree?.isMosaicJSON) {
         const colorMapName = event?.detail?.colorMapName
-        const tiles = layer.source.tiles
+        const source: RasterTileSource = $map.getSource($map.getLayer(layer.definition.id).source) as RasterTileSource
+        const tiles = source.tiles
         const layerURL = new URL(tiles[0])
         layerURL.searchParams.delete('colormap_name')
         layerURL.searchParams.delete('rescale')
