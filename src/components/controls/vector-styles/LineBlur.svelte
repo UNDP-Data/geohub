@@ -10,7 +10,7 @@
   let maxValue = 10
   let minValue = 0
   let propertyName = 'line-blur'
-  let propertyType = 'paint'
+  let propertyType: 'paint' | 'layout' = 'paint'
   let stepValue = 0.1
   let titleName = 'Line Blur'
 </script>

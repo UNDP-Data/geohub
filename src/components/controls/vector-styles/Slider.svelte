@@ -14,7 +14,7 @@
   export let maxValue: number
   export let minValue: number
   export let propertyName: string
-  export let propertyType = 'paint'
+  export let propertyType: 'paint' | 'layout' = 'paint'
   export let stepValue: number
   export let titleName: string
   export let styleControlGroupDisabled = false
@@ -23,9 +23,20 @@
   const layerId = layer.definition.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let values = [
-    style?.[propertyType] && style[propertyType][propertyName] ? style[propertyType][propertyName] : defaultValue,
-  ]
+  const getValue = () => {
+    let value =
+      propertyType === 'paint'
+        ? $map.getPaintProperty(layerId, propertyName)
+        : $map.getLayoutProperty(layerId, propertyName)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!value || (value && value.type === 'interval')) {
+      value = defaultValue
+    }
+    return Number(value)
+  }
+
+  let values = [getValue()]
 
   $: values, setValue()
 

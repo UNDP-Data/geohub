@@ -15,7 +15,7 @@
   let maxValue = 10
   let minValue = 0
   let propertyName = 'line-width'
-  let propertyType = 'paint'
+  let propertyType: 'paint' | 'layout' = 'paint'
   let stepValue = 0.1
   let titleName = 'Line Width'
 

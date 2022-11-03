@@ -39,7 +39,6 @@ export interface Layer {
   parent?: Layer
   legendType?: string
   source?: VectorSourceSpecification | RasterSourceSpecification
-  zoomLevel?: number
   percentile98?: number
   tree?: TreeNode
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
@@ -44,7 +44,6 @@
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = layer.intervals.propertyName
-  let zoomLevel: number
   let inLegend = true
 
   // update color intervals upon change of color map name
@@ -55,14 +54,17 @@
     }
   }
 
-  // update map upon change of zoom level
-  $: if (zoomLevel !== layer.zoomLevel) updateMap()
-
   onMount(() => {
-    // set the zoom level to the initial value
-    zoomLevel = $map.getZoom()
-    layer.zoomLevel = zoomLevel
-    $map.on('zoom', () => (zoomLevel = $map.getZoom()))
+    if (layer && colorMapName !== layer.colorMapName) {
+      colorMapName = layer.colorMapName
+    }
+    setIntervalValues()
+    $map.on('zoom', updateMap)
+  })
+
+  onDestroy(() => {
+    if (!$map) return
+    $map.off('zoom', updateMap)
   })
 
   const setDefaultProperty = (selectOptions: string[]) => {
