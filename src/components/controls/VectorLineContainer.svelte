@@ -19,7 +19,7 @@
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer, VectorLayerTileStatLayer } from '$lib/types'
+  import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
 
