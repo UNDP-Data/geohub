@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
@@ -46,7 +46,6 @@
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = null
-  let zoomLevel: number
   let sizeArray: number[]
   let highlySkewed: boolean
   // update layer store upon change of apply to option
@@ -63,10 +62,7 @@
     }
   }
 
-  // Initially set the zoomLevel to the initial value
   onMount(() => {
-    zoomLevel = $map.getZoom()
-    layer.zoomLevel = zoomLevel
     setCssIconFilter()
     if (highlySkewed) {
       classificationMethods = [
@@ -77,6 +73,13 @@
     } else {
       classificationMethod = ClassificationMethodTypes.EQUIDISTANT
     }
+    if (!$map) return
+    $map.on('zoom', updateMap)
+  })
+
+  onDestroy(() => {
+    if (!$map) return
+    $map.off('zoom', updateMap)
   })
 
   const setCssIconFilter = () => {
@@ -244,11 +247,7 @@
         })
       } else if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
         // generate remapped stops based on the zoom level
-        if (zoomLevel === undefined) {
-          zoomLevel = $map.getZoom()
-        }
-
-        const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
+        const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
 
         sizeArray = newStops.map((item) => item[1])
         const lineColor = getLineColor($map, layer.definition.id)
@@ -261,16 +260,6 @@
       }
     }
   }
-
-  // If zoomLevel Changes, updateMap
-  $: {
-    if (zoomLevel !== layer.zoomLevel) {
-      updateMap()
-    }
-  }
-
-  // On Zoom change the zoomLevel variable
-  $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 
   const handleApplyToClick = (type: string) => {
     applyToOption = type
@@ -409,15 +398,17 @@
               </tr>
             </thead>
             <tbody>
-              {#each layer.intervals.colorMapRows as row, index}
-                <tr data-testid="line-width-row-container">
-                  <td class="has-text-centered">
-                    <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
-                  </td>
-                  <td>{row.start}</td>
-                  <td>{row.end}</td>
-                </tr>
-              {/each}
+              {#if sizeArray && sizeArray.length > 0}
+                {#each layer.intervals.colorMapRows as row, index}
+                  <tr data-testid="line-width-row-container">
+                    <td class="has-text-centered">
+                      <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
+                    </td>
+                    <td>{row.start}</td>
+                    <td>{row.end}</td>
+                  </tr>
+                {/each}
+              {/if}
             </tbody>
           </table>
         {/if}

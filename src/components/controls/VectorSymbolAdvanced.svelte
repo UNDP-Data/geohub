@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
@@ -46,7 +46,6 @@
   let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = null
-  let zoomLevel: number
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -61,13 +60,17 @@
     }
   }
 
-  // Initially set the zoomLevel to the initial value
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
-    zoomLevel = $map.getZoom()
-    layer.zoomLevel = zoomLevel
     setCssIconFilter()
     setIntervalValues()
+    if (!$map) return
+    $map.on('zoom', updateMap)
+  })
+
+  onDestroy(() => {
+    if (!$map) return
+    $map.off('zoom', updateMap)
   })
 
   const setCssIconFilter = () => {
@@ -208,9 +211,6 @@
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
-      if (zoomLevel === undefined) {
-        zoomLevel = $map.getZoom()
-      }
 
       // Ends are the
       const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
@@ -219,14 +219,10 @@
       // Add 1 to the ratio array
       ratioOfRadiustoTheFirstEnd.unshift(1)
 
-      if (zoomLevel === undefined) {
-        zoomLevel = $map.getZoom()
-      }
-
       // newStops array, that takes into considerarion the ratio and the zoomLevel
       const newStops = stops.map((item, index) => [
         item[0],
-        (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
+        (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10),
       ])
 
       $map.setPaintProperty(layer.definition.id, 'icon-color', getIconColor($map, layer.definition.id))
@@ -237,16 +233,6 @@
       })
     }
   }
-
-  // If zoomLevel Changes, updateMap
-  $: {
-    if (zoomLevel !== layer.zoomLevel) {
-      updateMap()
-    }
-  }
-
-  // On Zoom change the zoomLevel variable
-  $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 
   const handleApplyToClick = (type: string) => {
     applyToOption = type
