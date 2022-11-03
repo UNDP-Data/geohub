@@ -7,7 +7,6 @@
     HeatmapLayerSpecification,
     VectorSourceSpecification,
   } from 'maplibre-gl'
-  import { cloneDeep } from 'lodash-es'
   import type { TreeNode, VectorTileMetadata } from '$lib/types'
   import BucketTreeItemCardButton from '$components/BucketTreeItemCardButton.svelte'
   import BucketTreeItemLegend from './BucketTreeItemLegend.svelte'
@@ -188,19 +187,6 @@
     ]
 
     $map.addLayer(layerDefinition)
-
-    // set layer list features properties to diplay in query panel info
-    $map.on('click', layerDefinition.id, function (e) {
-      const layer = $layerList.find((layer) => layer.definition.id == layerDefinition.id)
-      if (layer) {
-        const layerClone = cloneDeep(layer)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        layerClone.features = e.features.length > 0 ? e.features[0].properties : []
-        const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerDefinition.id)
-        $layerList[layerIndex] = layerClone
-      }
-    })
   }
 </script>
 

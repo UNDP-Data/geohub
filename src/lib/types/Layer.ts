@@ -25,7 +25,6 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   visible?: boolean | true
   url?: string
-  features?: []
   colorMapName?: string
   continuous?: {
     minimum: number
