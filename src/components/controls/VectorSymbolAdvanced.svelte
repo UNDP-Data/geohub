@@ -16,7 +16,7 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getIconColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -71,7 +71,7 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : '#000000').rgba()
+    const rgba = chroma(getIconColor($map, layer.definition.id)).rgba()
     cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
@@ -229,7 +229,7 @@
         (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
       ])
 
-      $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
+      $map.setPaintProperty(layer.definition.id, 'icon-color', getIconColor($map, layer.definition.id))
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
         type: 'interval',
