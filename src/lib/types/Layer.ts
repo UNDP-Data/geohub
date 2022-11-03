@@ -4,8 +4,6 @@ import type {
   FillLayerSpecification,
   SymbolLayerSpecification,
   HeatmapLayerSpecification,
-  RasterSourceSpecification,
-  VectorSourceSpecification,
 } from 'maplibre-gl'
 import type { IntervalLegend } from './IntervalLegend'
 import type { RasterTileMetadata } from './RasterTileMetadata'
