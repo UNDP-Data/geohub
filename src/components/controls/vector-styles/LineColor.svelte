@@ -2,28 +2,20 @@
   import { onMount } from 'svelte'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { DEFAULT_LINE_COLOR, LayerInitialValues } from '$lib/constants'
+  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getLineColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.definition.id
   const propertyName = 'line-color'
 
-  const getLineColor = (): string => {
-    let lineColor = $map.getPaintProperty(layer.definition.id, propertyName)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
-      lineColor = DEFAULT_LINE_COLOR
-    }
-    return lineColor as string
-  }
-  let rgba = getLineColor()
+  let rgba = getLineColor($map, layerId)
 
   onMount(() => {
-    rgba = getLineColor()
+    rgba = getLineColor($map, layerId)
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 

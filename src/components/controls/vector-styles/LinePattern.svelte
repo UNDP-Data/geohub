@@ -4,9 +4,10 @@
   import { isEqual, sortBy } from 'lodash-es'
   import chroma from 'chroma-js'
 
-  import { DEFAULT_LINE_COLOR, LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getLineColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
@@ -20,17 +21,7 @@
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  const getLineColor = (): string => {
-    let lineColor = $map.getPaintProperty(layer.definition.id, 'line-color')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
-      lineColor = DEFAULT_LINE_COLOR
-    }
-    return lineColor as string
-  }
-
-  let linePatternColorRgba = getLineColor()
+  let linePatternColorRgba = getLineColor($map, layerId)
   let lineType = (
     style?.paint[propertyName]
       ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
@@ -42,7 +33,7 @@
   onMount(() => {
     if (!$map) return
     $map.on('line-color:changed', () => {
-      linePatternColorRgba = getLineColor()
+      linePatternColorRgba = getLineColor($map, layerId)
     })
   })
 
