@@ -132,7 +132,6 @@
         definition: layerDefinition,
         type: LayerTypes.RASTER,
         info: layerInfo,
-        visible: true,
         url: mosaicjsonRes.mosaicjson,
         colorMapName: defaultColorMap,
         continuous: {
@@ -147,7 +146,6 @@
         unique: {
           colorMapRows: [],
         },
-        source: layerSource,
         tree: tree,
       },
       ...$layerList,
@@ -272,7 +270,6 @@
         definition: layerDefinition,
         type: LayerTypes.RASTER,
         info: layerInfo,
-        visible: true,
         url: b64EncodedUrl,
         colorMapName: DEFAULT_COLORMAP,
         continuous: {
@@ -289,7 +286,6 @@
         },
         expression: '',
         legendType: '',
-        source: layerSource,
         tree: tree,
       },
       ...$layerList,
