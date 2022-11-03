@@ -17,7 +17,7 @@
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
 
   export let map: Map
   let isDataContainerVisible: boolean
@@ -25,18 +25,15 @@
   let layerValuesData = []
   let marker: Marker
   let clickedLocation: LngLat
-  let mapQueryInfoControl = null
 
   const iconSize = 'lg'
   const noDataLabel = 'N/A'
 
-  $: isDataContainerVisible, handleClick()
-
   // eslint-disable-next-line
   function MapQueryInfoControl() {}
 
-  MapQueryInfoControl.prototype.onAdd = function (map: Map) {
-    this.map = map
+  MapQueryInfoControl.prototype.onAdd = function () {
+    // this.map = map
     this.container = document.createElement('div')
     this.container.title = 'Query Layer Information'
     this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
@@ -49,61 +46,32 @@
     this.button.classList.add('mapboxgl-query-info-control')
     this.button.type = 'button'
     this.button.addEventListener('click', () => {
-      isDataContainerVisible = !isDataContainerVisible
+      this.changeButtonCondition()
     })
+    this.changeButtonCondition()
     this.container.appendChild(this.button)
     return this.container
   }
 
-  MapQueryInfoControl.prototype.onRemove = function () {
-    if (!this.container || !this.container.parentNode || !this.map || !this.button) {
+  MapQueryInfoControl.prototype.changeButtonCondition = function () {
+    if (isDataContainerVisible) {
+      map.off('click', this.onClick.bind(this))
+      map.getCanvas().style.cursor = ''
+    } else {
+      map.on('click', this.onClick.bind(this))
+      map.getCanvas().style.cursor = 'crosshair'
+    }
+    isDataContainerVisible = !isDataContainerVisible
+  }
+
+  MapQueryInfoControl.prototype.onClick = async (e: MapMouseEvent) => {
+    if (!isDataContainerVisible) {
       return
     }
-    this.container.parentNode.removeChild(this.container)
-    this.map = undefined
-  }
 
-  const handleClick = () => {
-    if (!map) return
-    if (isDataContainerVisible) {
-      map.on('click', mapClickListener)
-      map.getCanvas().style.cursor = 'crosshair'
-    } else {
-      map.off('click', mapClickListener)
-      map.getCanvas().style.cursor = ''
-    }
-  }
-
-  const mapClickListener = function (e: MapMouseEvent) {
     const layersVisible = $layerList.filter((layer) => layer.visible === true)
+    if (layersVisible.length === 0) return
 
-    if (layersVisible.length > 0) {
-      addMapLayerValues(e, layersVisible)
-    }
-  }
-
-  $: if (map && mapQueryInfoControl) {
-    if (map.hasControl(mapQueryInfoControl)) {
-      map.removeControl(mapQueryInfoControl)
-    }
-    map.addControl(mapQueryInfoControl, 'top-right')
-    isDataContainerVisible = true
-  }
-
-  onMount(async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    mapQueryInfoControl = new MapQueryInfoControl()
-  })
-
-  const resetMapQueryInfo = () => {
-    if (marker) marker.remove()
-    isDataContainerVisible = false
-    layerValuesData = []
-    if (map) map.getCanvas().style.cursor = 'grab'
-  }
-
-  const addMapLayerValues = async (e: MapMouseEvent, layersVisible: Layer[]) => {
     if (marker) marker.remove()
     marker = new maplibregl.Marker().setLngLat(e.lngLat).addTo(map)
     clickedLocation = e.lngLat
@@ -180,6 +148,48 @@
     }
 
     layerValuesData = layerValuesDataTmp
+  }
+
+  MapQueryInfoControl.prototype.onRemove = function () {
+    if (!this.container || !this.container.parentNode) {
+      return
+    }
+    this.container.parentNode.removeChild(this.container)
+  }
+
+  /*global MapQueryInfoControl */
+  /*eslint no-undef: "error"*/
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  let mapQueryInfoControl: MapQueryInfoControl = null
+
+  $: {
+    if (map) {
+      if (mapQueryInfoControl !== null && map.hasControl(mapQueryInfoControl) === false) {
+        map.addControl(mapQueryInfoControl, 'top-right')
+      }
+    }
+  }
+
+  onMount(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    mapQueryInfoControl = new MapQueryInfoControl()
+  })
+
+  onDestroy(() => {
+    if (map) {
+      if (mapQueryInfoControl && map.hasControl(mapQueryInfoControl)) {
+        map.removeControl(mapQueryInfoControl)
+      }
+    }
+  })
+
+  const resetMapQueryInfo = () => {
+    if (marker) marker.remove()
+    isDataContainerVisible = false
+    layerValuesData = []
+    if (map) map.getCanvas().style.cursor = 'grab'
   }
 
   const downloadCsv = () => {
