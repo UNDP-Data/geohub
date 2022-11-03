@@ -1,6 +1,6 @@
 <script lang="ts">
   import GeoJSON from 'geojson'
-  import maplibregl, { Map, MapMouseEvent, Marker } from 'maplibre-gl'
+  import maplibregl, { LngLat, Map, MapMouseEvent, Marker } from 'maplibre-gl'
   import { draggable } from '@neodrag/svelte'
   import PapaParse from 'papaparse'
   import Fa from 'svelte-fa'
@@ -12,68 +12,85 @@
   import { faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons/faUpDownLeftRight'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
 
-  import { layerList, map } from '$stores'
-  import type { Layer } from '$lib/types'
+  import { layerList } from '$stores'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { onMount, onDestroy } from 'svelte'
 
-  export let mapMouseEvent: MapMouseEvent
-  export let isDataContainerVisible: boolean
-  // let isDataContainerVisible = false
+  export let map: Map
+  let isDataContainerVisible: boolean
   let isValuesRounded = true
   let layerValuesData = []
   let marker: Marker
+  let clickedLocation: LngLat
 
   const iconSize = 'lg'
   const noDataLabel = 'N/A'
 
-  // mouse click on map
-  $: {
-    if (mapMouseEvent?.lngLat) {
-      const layersVisible = $layerList.filter((layer) => layer.visible === true)
+  // eslint-disable-next-line
+  function MapQueryInfoControl() {}
 
-      if (layersVisible.length > 0) {
-        removeMapLayerValues(false)
-        addMapLayerValues(layersVisible)
-      }
+  MapQueryInfoControl.prototype.onAdd = function () {
+    // this.map = map
+    this.container = document.createElement('div')
+    this.container.title = 'Query Layer Information'
+    this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
+
+    this.queryInfoContainer = document.createElement('div')
+    this.queryInfoContainer.classList.add('mapboxgl-query-info-list')
+    this.container.appendChild(this.queryInfoContainer)
+
+    this.button = document.createElement('button')
+    this.button.classList.add('mapboxgl-query-info-control')
+    this.button.type = 'button'
+    this.button.addEventListener('click', () => {
+      this.changeButtonCondition()
+    })
+    this.changeButtonCondition()
+    this.container.appendChild(this.button)
+    return this.container
+  }
+
+  MapQueryInfoControl.prototype.changeButtonCondition = function () {
+    if (isDataContainerVisible) {
+      map.off('click', this.onClick.bind(this))
+      map.getCanvas().style.cursor = ''
+    } else {
+      map.on('click', this.onClick.bind(this))
+      map.getCanvas().style.cursor = 'crosshair'
     }
+    isDataContainerVisible = !isDataContainerVisible
   }
 
-  const resetMapQueryInfo = () => {
+  MapQueryInfoControl.prototype.onClick = async (e: MapMouseEvent) => {
+    if (!isDataContainerVisible) {
+      return
+    }
+
+    const layersVisible = $layerList.filter((layer) => layer.visible === true)
+    if (layersVisible.length === 0) return
+
     if (marker) marker.remove()
-    mapMouseEvent = null
-    isDataContainerVisible = false
-    layerValuesData = []
-    if ($map) $map.getCanvas().style.cursor = 'grab'
-  }
-
-  const removeMapLayerValues = (hideCoordinates = true) => {
-    $map.getCanvas().style.cursor = ''
-
-    if (hideCoordinates) isDataContainerVisible = false
-    if (marker) marker.remove()
-  }
-
-  const addMapLayerValues = async (layersVisible: Layer[]) => {
-    $map.getCanvas().style.cursor = 'crosshair'
-    marker = new maplibregl.Marker().setLngLat(mapMouseEvent.lngLat).addTo($map)
-
+    marker = new maplibregl.Marker().setLngLat(e.lngLat).addTo(map)
+    clickedLocation = e.lngLat
     // get layer value(s) at lat/lng of mouse event
-    const lat = mapMouseEvent.lngLat?.lat
-    const lng = mapMouseEvent.lngLat?.lng
+    const lat = e.lngLat.lat
+    const lng = e.lngLat.lng
     let layerValuesDataTmp = []
 
     for (const layer of layersVisible) {
       let values = []
       let presentUniqueNames = {}
-      let availableUnique = {}
       let bandIndex: number = null
       let layerName = layer.name
       if (layer.type === LayerTypes.RASTER) {
         if (layer.tree && layer.tree.isMosaicJSON) {
           const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/point/${lng},${lat}?url=${layer.url}`
           const layerData = await fetchUrl(baseUrl)
+          if (!(layerData.values.length > 0 && layerData.values[0].length > 0 && layerData.values[0][1].length > 0)) {
+            continue
+          }
           values = layerData.values[0][1]
           presentUniqueNames = [undefined]
           layerName = `${layer.tree.label} (${layer.name})`
@@ -103,9 +120,13 @@
           })
         }
       } else if (layer.type === LayerTypes.VECTOR) {
-        const layerClicked = $layerList.find((layerList) => layerList.definition.id === layer.definition.id)
-        if (layerClicked.features) {
-          values = layer.features
+        const queriedFeatures = map.queryRenderedFeatures(e.point, {
+          layers: $layerList.map((l) => l.definition.id),
+        })
+        if (queriedFeatures && queriedFeatures.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          values = queriedFeatures[0].properties
         }
       }
       layerValuesDataTmp = [
@@ -126,7 +147,48 @@
     }
 
     layerValuesData = layerValuesDataTmp
-    isDataContainerVisible = true
+  }
+
+  MapQueryInfoControl.prototype.onRemove = function () {
+    if (!this.container || !this.container.parentNode) {
+      return
+    }
+    this.container.parentNode.removeChild(this.container)
+  }
+
+  /*global MapQueryInfoControl */
+  /*eslint no-undef: "error"*/
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  let mapQueryInfoControl: MapQueryInfoControl = null
+
+  $: {
+    if (map) {
+      if (mapQueryInfoControl !== null && map.hasControl(mapQueryInfoControl) === false) {
+        map.addControl(mapQueryInfoControl, 'top-right')
+      }
+    }
+  }
+
+  onMount(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    mapQueryInfoControl = new MapQueryInfoControl()
+  })
+
+  onDestroy(() => {
+    if (map) {
+      if (mapQueryInfoControl && map.hasControl(mapQueryInfoControl)) {
+        map.removeControl(mapQueryInfoControl)
+      }
+    }
+  })
+
+  const resetMapQueryInfo = () => {
+    if (marker) marker.remove()
+    isDataContainerVisible = false
+    layerValuesData = []
+    if (map) map.getCanvas().style.cursor = 'grab'
   }
 
   const downloadCsv = () => {
@@ -135,7 +197,7 @@
       [new Date().toISOString()],
       [],
       ['Latitude', 'Longitude'],
-      [mapMouseEvent.lngLat?.lat, mapMouseEvent.lngLat?.lng],
+      [clickedLocation.lat, clickedLocation.lng],
       [],
       ['Layer Name', 'Layer Type', 'Property', 'Value'],
     ]
@@ -182,193 +244,194 @@
   let layerValuesExpanded = []
 </script>
 
-<div
-  id="data-container"
-  class="data-container target"
-  use:draggable={{ bounds: 'parent' }}
-  hidden={isDataContainerVisible === false}>
+{#if isDataContainerVisible}
   <div
-    id="header"
-    class="header">
-    <div class="name">Query Information</div>
-
+    id="data-container"
+    class="data-container target"
+    use:draggable={{ bounds: 'parent' }}>
     <div
-      class="handle"
-      alt="Move Query Information"
-      title="Move Query Information">
-      <span class="icon is-small pointer">
-        <Fa
-          icon={faUpDownLeftRight}
-          size={iconSize} />
-      </span>
-    </div>
+      id="header"
+      class="header">
+      <div class="name">Query Information</div>
 
-    <div
-      class="close"
-      alt="Close Query Information"
-      title="Close Query Information"
-      on:click={() => resetMapQueryInfo()}>
-      <span class="icon is-small pointer">
-        <Fa
-          icon={faXmark}
-          size={iconSize} />
-      </span>
-    </div>
-  </div>
-
-  <div class="container-expand-collapse">
-    <div class="content">
-      <table class="table is-fullwidth coordinates">
-        <thead>
-          <tr>
-            <th>Latitude</th>
-            <th>Longitude</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="first-column">{mapMouseEvent?.lngLat?.lat ? mapMouseEvent?.lngLat?.lat : noDataLabel}</td>
-            <td class="second-column">{mapMouseEvent?.lngLat?.lng ? mapMouseEvent?.lngLat?.lng : noDataLabel}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <table class="table is-fullwidth is-striped">
-        <thead>
-          <tr>
-            <th>Layer Name</th>
-            <th>Pixel Values</th>
-            <th>Label</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each layerValuesData as layerValue, i (layerValue)}
-            {@const layerIconType = LayerIconTypes.find((iconType) => iconType.id === layerValue.type)}
-            {@const layerIconTypeLabel = `${layerIconType.label} Layer`}
-            <tr style={layerValuesExpanded[i] === true ? 'border-top: 0;' : ''}>
-              <td class="first-column">
-                <div
-                  class="icon"
-                  alt={layerIconTypeLabel}
-                  title={layerIconTypeLabel}>
-                  <i
-                    class="{layerIconType.icon} sm"
-                    style="color: {layerIconType.color};" />&nbsp;
-                </div>
-                <div class="name">
-                  {layerValue.name}
-                </div>
-              </td>
-              {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
-                <td class="second-column"> N/A </td>
-                <td class="third-column"> N/A </td>
-              {:else if layerValue.type === LayerTypes.RASTER}
-                {#if isValuesRounded === true}
-                  <td class="second-column">
-                    {layerValue.values
-                      .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
-                      .join(', ')}
-                  </td>
-                {:else}
-                  <td class="second-column">
-                    {layerValue.values.join(', ')}
-                  </td>
-                {/if}
-                {#if layerValue.legendLabels.length > 0}
-                  <td class="third-column">
-                    {layerValue.legendLabels}
-                  </td>
-                {:else}
-                  <td class="third-column"> N/A </td>
-                {/if}
-              {:else if layerValue.type === LayerTypes.VECTOR}
-                <td class="second-column">
-                  <div
-                    class="expand-collapse"
-                    on:click={() => (layerValuesExpanded[i] = !layerValuesExpanded[i])}>
-                    {#if layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === false}
-                      <Fa
-                        icon={faChevronDown}
-                        size="sm" />
-                    {:else}
-                      <Fa
-                        icon={faChevronUp}
-                        size="sm" />
-                    {/if}
-                  </div>
-                </td>
-              {/if}
-            </tr>
-
-            {#if (layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === true) && layerValue.type !== LayerTypes.RASTER}
-              <tr style={layerValuesExpanded[i] === true ? 'border-top: 0;' : ''}>
-                <td colspan="2">
-                  <div class="expanded-container">
-                    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                      <tbody>
-                        {#each Object.keys(layerValue.values) as layerValueRow}
-                          <tr>
-                            <td class="name">{layerValueRow}</td>
-                            <td class="value">{layerValue.values[layerValueRow]}</td>
-                          </tr>
-                        {/each}
-                      </tbody>
-                    </table>
-                  </div>
-                </td>
-              </tr>
-            {/if}
-          {/each}
-        </tbody>
-      </table>
-    </div>
-
-    {#if layerValuesData.length > 0}
-      <div class="actions">
-        <div
-          class="rounded-values"
-          on:click={() => (isValuesRounded = !isValuesRounded)}>
-          <div class="icon is-small">
-            <Fa
-              icon={isValuesRounded ? faSquareCheck : faSquare}
-              size="1x" />
-          </div>
-          <div>Round values</div>
-        </div>
-
-        <div class="download">
-          <button
-            class="button is-small download"
-            on:click={() => downloadGeoJson()}
-            alt="Download GeoJSON"
-            title="Download GeoJSON">
-            <span class="icon is-small pointer">
-              <Fa
-                icon={faDownload}
-                size={iconSize} />
-            </span>
-            <span class="label">GeoJSON</span>
-          </button>
-        </div>
-
-        <div class="download">
-          <button
-            class="button is-small download"
-            on:click={() => downloadCsv()}
-            alt="Download CSV"
-            title="Download CSV">
-            <span class="icon is-small pointer">
-              <Fa
-                icon={faDownload}
-                size={iconSize} />
-            </span>
-            <span class="label">CSV</span>
-          </button>
-        </div>
+      <div
+        class="handle"
+        alt="Move Query Information"
+        title="Move Query Information">
+        <span class="icon is-small pointer">
+          <Fa
+            icon={faUpDownLeftRight}
+            size={iconSize} />
+        </span>
       </div>
-    {/if}
+
+      <div
+        class="close"
+        alt="Close Query Information"
+        title="Close Query Information"
+        on:click={() => resetMapQueryInfo()}>
+        <span class="icon is-small pointer">
+          <Fa
+            icon={faXmark}
+            size={iconSize} />
+        </span>
+      </div>
+    </div>
+
+    <div class="container-expand-collapse">
+      <div class="content">
+        <table class="table is-fullwidth coordinates">
+          <thead>
+            <tr>
+              <th>Latitude</th>
+              <th>Longitude</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="first-column">{clickedLocation?.lat ? clickedLocation?.lat : noDataLabel}</td>
+              <td class="second-column">{clickedLocation?.lng ? clickedLocation?.lng : noDataLabel}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table is-fullwidth is-striped">
+          <thead>
+            <tr>
+              <th>Layer Name</th>
+              <th>Pixel Values</th>
+              <th>Label</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each layerValuesData as layerValue, i (layerValue)}
+              {@const layerIconType = LayerIconTypes.find((iconType) => iconType.id === layerValue.type)}
+              {@const layerIconTypeLabel = `${layerIconType.label} Layer`}
+              <tr style={layerValuesExpanded[i] === true ? 'border-top: 0;' : ''}>
+                <td class="first-column">
+                  <div
+                    class="icon"
+                    alt={layerIconTypeLabel}
+                    title={layerIconTypeLabel}>
+                    <i
+                      class="{layerIconType.icon} sm"
+                      style="color: {layerIconType.color};" />&nbsp;
+                  </div>
+                  <div class="name">
+                    {layerValue.name}
+                  </div>
+                </td>
+                {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
+                  <td class="second-column"> N/A </td>
+                  <td class="third-column"> N/A </td>
+                {:else if layerValue.type === LayerTypes.RASTER}
+                  {#if isValuesRounded === true}
+                    <td class="second-column">
+                      {layerValue.values
+                        .map((val) => (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2))
+                        .join(', ')}
+                    </td>
+                  {:else}
+                    <td class="second-column">
+                      {layerValue.values.join(', ')}
+                    </td>
+                  {/if}
+                  {#if layerValue.legendLabels.length > 0}
+                    <td class="third-column">
+                      {layerValue.legendLabels}
+                    </td>
+                  {:else}
+                    <td class="third-column"> N/A </td>
+                  {/if}
+                {:else if layerValue.type === LayerTypes.VECTOR}
+                  <td class="second-column">
+                    <div
+                      class="expand-collapse"
+                      on:click={() => (layerValuesExpanded[i] = !layerValuesExpanded[i])}>
+                      {#if layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === false}
+                        <Fa
+                          icon={faChevronDown}
+                          size="sm" />
+                      {:else}
+                        <Fa
+                          icon={faChevronUp}
+                          size="sm" />
+                      {/if}
+                    </div>
+                  </td>
+                {/if}
+              </tr>
+
+              {#if (layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === true) && layerValue.type !== LayerTypes.RASTER}
+                <tr style={layerValuesExpanded[i] === true ? 'border-top: 0;' : ''}>
+                  <td colspan="2">
+                    <div class="expanded-container">
+                      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <tbody>
+                          {#each Object.keys(layerValue.values) as layerValueRow}
+                            <tr>
+                              <td class="name">{layerValueRow}</td>
+                              <td class="value">{layerValue.values[layerValueRow]}</td>
+                            </tr>
+                          {/each}
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              {/if}
+            {/each}
+          </tbody>
+        </table>
+      </div>
+
+      {#if layerValuesData.length > 0}
+        <div class="actions">
+          <div
+            class="rounded-values"
+            on:click={() => (isValuesRounded = !isValuesRounded)}>
+            <div class="icon is-small">
+              <Fa
+                icon={isValuesRounded ? faSquareCheck : faSquare}
+                size="1x" />
+            </div>
+            <div>Round values</div>
+          </div>
+
+          <div class="download">
+            <button
+              class="button is-small download"
+              on:click={() => downloadGeoJson()}
+              alt="Download GeoJSON"
+              title="Download GeoJSON">
+              <span class="icon is-small pointer">
+                <Fa
+                  icon={faDownload}
+                  size={iconSize} />
+              </span>
+              <span class="label">GeoJSON</span>
+            </button>
+          </div>
+
+          <div class="download">
+            <button
+              class="button is-small download"
+              on:click={() => downloadCsv()}
+              alt="Download CSV"
+              title="Download CSV">
+              <span class="icon is-small pointer">
+                <Fa
+                  icon={faDownload}
+                  size={iconSize} />
+              </span>
+              <span class="label">CSV</span>
+            </button>
+          </div>
+        </div>
+      {/if}
+    </div>
   </div>
-</div>
+{/if}
 
 <style lang="scss">
   .data-container {
