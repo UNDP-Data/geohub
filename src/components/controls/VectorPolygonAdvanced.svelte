@@ -23,7 +23,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getFillOutlineColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -40,7 +40,7 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
-  let defaultLineColor = DEFAULT_LINE_COLOR
+  let defaultFillOutlineColor = getFillOutlineColor($map, layer.definition.id)
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = layer.intervals.propertyName
@@ -212,13 +212,13 @@
 
       // set default line color to be middle of colors
       if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
-        defaultLineColor = chroma(hex).darken(2.6).hex()
+        defaultFillOutlineColor = chroma(hex).darken(2.6).hex()
       }
 
       return [row.start, rgb]
     })
     // console.log(stops)
-    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultLineColor)
+    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultFillOutlineColor)
     $map.setPaintProperty(layer.definition.id, 'fill-color', {
       property: layer.intervals.propertyName,
       type: 'interval',

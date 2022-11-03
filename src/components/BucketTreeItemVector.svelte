@@ -15,7 +15,13 @@
 
   import { map, layerList, indicatorProgress } from '$stores'
   import { fetchUrl } from '$lib/helper'
-  import { LayerTypes } from '$lib/constants'
+  import {
+    DEFAULT_FILL_COLOR,
+    DEFAULT_FILL_OUTLINE_COLOR,
+    DEFAULT_LINE_COLOR,
+    DEFAULT_LINE_WIDTH,
+    LayerTypes,
+  } from '$lib/constants'
 
   export let tree: TreeNode
 
@@ -108,8 +114,8 @@
             'line-join': 'round',
           },
           paint: {
-            'line-color': 'rgb(53, 175, 109)',
-            'line-width': 0.5,
+            'line-color': DEFAULT_LINE_COLOR,
+            'line-width': DEFAULT_LINE_WIDTH,
           },
         }
         break
@@ -123,8 +129,8 @@
             visibility: 'visible',
           },
           paint: {
-            'fill-color': 'rgb(20, 180, 60)',
-            'fill-outline-color': 'rgb(110, 110, 110)',
+            'fill-color': DEFAULT_FILL_COLOR,
+            'fill-outline-color': DEFAULT_FILL_OUTLINE_COLOR,
             'fill-opacity': 0.6,
           },
         }

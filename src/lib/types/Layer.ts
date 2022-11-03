@@ -39,8 +39,6 @@ export interface Layer {
   parent?: Layer
   legendType?: string
   source?: VectorSourceSpecification | RasterSourceSpecification
-  fillColor?: string
-  fillOutlineColor?: string
   zoomLevel?: number
   percentile98?: number
   tree?: TreeNode

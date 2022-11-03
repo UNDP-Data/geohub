@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { DEFAULT_LINE_COLOR, LayerInitialValues } from '$lib/constants'
+  import { DEFAULT_FILL_COLOR, LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -11,12 +11,21 @@
   const layerId = layer.definition.id
   const propertyName = 'fill-color'
 
-  let rgba = DEFAULT_LINE_COLOR
+  const getFillColor = (): string => {
+    let fillColor = $map.getPaintProperty(layerId, propertyName)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!fillColor || (fillColor && fillColor.type === 'interval')) {
+      fillColor = DEFAULT_FILL_COLOR
+    }
+    return fillColor as string
+  }
+
+  let rgba = getFillColor()
 
   onMount(() => {
-    rgba = layer.fillColor ? layer.fillColor : DEFAULT_LINE_COLOR
+    rgba = getFillColor()
     $map.setPaintProperty(layerId, propertyName, rgba)
-    layer.fillColor = rgba
   })
 
   const handleSetColor = (e: CustomEvent) => {
