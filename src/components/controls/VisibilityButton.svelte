@@ -13,27 +13,32 @@
 
   const layerId = layer.definition.id
 
-  let isLayerVisible = false
+  $: visibility = getVisibility()
 
-  $: visibility = isLayerVisible ? 'visible' : 'none'
+  const getVisibility = (): 'visible' | 'none' => {
+    const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.definition.id)
+    let visibility: 'visible' | 'none' = 'visible'
+    if (layerStyle.layout && layerStyle.layout.visibility) {
+      visibility = layerStyle.layout.visibility
+    }
+    return visibility
+  }
 
   const toggleVisibility = () => {
     if (!$map.getLayer(layerId)) {
       $map.addLayer(layer.definition)
     }
+    visibility = visibility === 'visible' ? 'none' : 'visible'
     $map.setLayoutProperty(layerId, 'visibility', visibility)
 
     const layerClone = cloneDeep(layer)
-    layerClone.visible = isLayerVisible
     const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
     $layerList[layerIndex] = layerClone
-    isLayerVisible = !isLayerVisible
 
     if (layer.children && layer.children.length > 0) {
       layer.children.forEach((child) => {
         if (!$map.getLayer(child.definition.id)) return
         $map.setLayoutProperty(child.definition.id, 'visibility', visibility)
-        child.visible = isLayerVisible
       })
     }
   }
@@ -55,13 +60,13 @@
     on:click={() => toggleVisibility()}
     on:keydown={handleKeyDown}>
     <Fa
-      icon={visibility === 'none' ? faEye : faEyeSlash}
+      icon={visibility === 'visible' ? faEye : faEyeSlash}
       size="sm" />
   </div>
   <Tooltip
     showDelay={300}
     hideDelay={100}
-    yPos="above">{isLayerVisible ? 'Show Layer' : 'Hide Layer'}</Tooltip>
+    yPos="above">{visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}</Tooltip>
 </Wrapper>
 
 <style lang="scss">

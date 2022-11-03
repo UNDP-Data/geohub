@@ -67,9 +67,19 @@
     if (!isDataContainerVisible) {
       return
     }
-
-    const layersVisible = $layerList.filter((layer) => layer.visible === true)
-    if (layersVisible.length === 0) return
+    const visibleLayers = map.getStyle().layers.filter((l) => {
+      let visibility = 'visible'
+      if (l.layout && l.layout.visibility) {
+        visibility = l.layout.visibility
+      }
+      return visibility === 'visible'
+    })
+    const visibleLayerIds = visibleLayers.map((l) => l.id)
+    const layersVisible = $layerList.filter((layer) => visibleLayerIds.includes(layer.definition.id))
+    if (layersVisible.length === 0) {
+      layerValuesData = []
+      return
+    }
 
     if (marker) marker.remove()
     marker = new maplibregl.Marker().setLngLat(e.lngLat).addTo(map)
