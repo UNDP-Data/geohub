@@ -1,15 +1,16 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
   import { isEqual, sortBy } from 'lodash-es'
   import chroma from 'chroma-js'
 
-  import { DEFAULT_LINE_COLOR, LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getLineColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = DEFAULT_LINE_COLOR
   const propertyName = 'line-dasharray'
   const layerId = layer.definition.id
   const lineTypes = [
@@ -20,7 +21,7 @@
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let linePatternColorRgba = layer.iconColor ? layer.iconColor : defaultColor
+  let linePatternColorRgba = getLineColor($map, layerId)
   let lineType = (
     style?.paint[propertyName]
       ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
@@ -29,8 +30,12 @@
 
   $: lineType, setLineType()
 
-  // change line pattern color upon change of line color
-  $: if (layer.iconColor) linePatternColorRgba = layer.iconColor
+  onMount(() => {
+    if (!$map) return
+    $map.on('line-color:changed', () => {
+      linePatternColorRgba = getLineColor($map, layerId)
+    })
+  })
 
   const setLineType = () => {
     if (style?.type !== LayerTypes.LINE || lineType === undefined) return

@@ -17,7 +17,7 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getIntervalList, getLineColor, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -80,7 +80,8 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR).rgba()
+    const lineColor = getLineColor($map, layer.definition.id)
+    const rgba = chroma(lineColor).rgba()
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
@@ -250,7 +251,8 @@
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
 
         sizeArray = newStops.map((item) => item[1])
-        $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
+        const lineColor = getLineColor($map, layer.definition.id)
+        $map.setPaintProperty(layer.definition.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
         $map.setPaintProperty(layer.definition.id, 'line-width', {
           property: layer.intervals.propertyName,
           type: 'interval',

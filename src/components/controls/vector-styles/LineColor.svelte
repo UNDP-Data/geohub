@@ -2,27 +2,27 @@
   import { onMount } from 'svelte'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { DEFAULT_LINE_COLOR, LayerInitialValues } from '$lib/constants'
+  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getLineColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = DEFAULT_LINE_COLOR
   const layerId = layer.definition.id
   const propertyName = 'line-color'
 
-  let rgba = defaultColor
+  let rgba = getLineColor($map, layerId)
 
   onMount(() => {
-    rgba = layer.iconColor ? layer.iconColor : defaultColor
+    rgba = getLineColor($map, layerId)
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 
   const handleSetColor = (e: CustomEvent) => {
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
-      layer.iconColor = e.detail.color
+      $map.fire('line-color:changed', { value: e.detail.color })
     }
   }
 </script>
