@@ -8,21 +8,29 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = DEFAULT_LINE_COLOR
   const layerId = layer.definition.id
   const propertyName = 'line-color'
 
-  let rgba = defaultColor
+  const getLineColor = (): string => {
+    let lineColor = $map.getPaintProperty(layer.definition.id, propertyName)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
+      lineColor = DEFAULT_LINE_COLOR
+    }
+    return lineColor as string
+  }
+  let rgba = getLineColor()
 
   onMount(() => {
-    rgba = layer.iconColor ? layer.iconColor : defaultColor
+    rgba = getLineColor()
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 
   const handleSetColor = (e: CustomEvent) => {
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
-      layer.iconColor = e.detail.color
+      $map.fire('line-color:changed', { value: e.detail.color })
     }
   }
 </script>

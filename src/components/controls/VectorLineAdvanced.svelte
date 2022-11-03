@@ -79,8 +79,19 @@
     }
   })
 
+  const getLineColor = (): string => {
+    let lineColor = $map.getPaintProperty(layer.definition.id, 'line-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
+      lineColor = DEFAULT_LINE_COLOR
+    }
+    return lineColor as string
+  }
+
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR).rgba()
+    const lineColor = getLineColor()
+    const rgba = chroma(lineColor).rgba()
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
@@ -250,7 +261,8 @@
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / zoomLevel])
 
         sizeArray = newStops.map((item) => item[1])
-        $map.setPaintProperty(layer.definition.id, 'line-color', layer.iconColor ? layer.iconColor : DEFAULT_LINE_COLOR)
+        const lineColor = getLineColor()
+        $map.setPaintProperty(layer.definition.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
         $map.setPaintProperty(layer.definition.id, 'line-width', {
           property: layer.intervals.propertyName,
           type: 'interval',

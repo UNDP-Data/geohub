@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
   import { isEqual, sortBy } from 'lodash-es'
   import chroma from 'chroma-js'
@@ -9,7 +10,6 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = DEFAULT_LINE_COLOR
   const propertyName = 'line-dasharray'
   const layerId = layer.definition.id
   const lineTypes = [
@@ -20,7 +20,17 @@
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let linePatternColorRgba = layer.iconColor ? layer.iconColor : defaultColor
+  const getLineColor = (): string => {
+    let lineColor = $map.getPaintProperty(layer.definition.id, 'line-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
+      lineColor = DEFAULT_LINE_COLOR
+    }
+    return lineColor as string
+  }
+
+  let linePatternColorRgba = getLineColor()
   let lineType = (
     style?.paint[propertyName]
       ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
@@ -29,8 +39,12 @@
 
   $: lineType, setLineType()
 
-  // change line pattern color upon change of line color
-  $: if (layer.iconColor) linePatternColorRgba = layer.iconColor
+  onMount(() => {
+    if (!$map) return
+    $map.on('line-color:changed', () => {
+      linePatternColorRgba = getLineColor()
+    })
+  })
 
   const setLineType = () => {
     if (style?.type !== LayerTypes.LINE || lineType === undefined) return
