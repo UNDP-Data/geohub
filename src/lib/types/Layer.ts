@@ -22,10 +22,6 @@ export interface Layer {
   type?: string
   info?: RasterTileMetadata | VectorTileMetadata
   colorMapName?: string
-  continuous?: {
-    minimum: number
-    maximum: number
-  }
   intervals?: IntervalLegend
   unique?: UniqueLegend
   expression?: string

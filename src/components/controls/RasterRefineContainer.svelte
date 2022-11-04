@@ -61,8 +61,6 @@
 
       //overwrite CL logic
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
-      layer.continuous.minimum = Number(info.stats[band].min)
-      layer.continuous.maximum = Number(info.stats[band].max)
 
       layerURL.searchParams.delete('expression')
       if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
@@ -116,8 +114,6 @@
       updatedParams = { expression: layer.expression }
       //overwrite CL logic
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
-      layer.continuous.minimum = Number(info.stats[band].min)
-      layer.continuous.maximum = Number(info.stats[band].max)
 
       layerURL.searchParams.delete('expression')
       updateParamsInURL(layer.definition, layerURL, updatedParams)
