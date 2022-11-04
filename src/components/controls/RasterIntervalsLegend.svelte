@@ -14,6 +14,7 @@
     HeatmapLayerSpecification,
     LineLayerSpecification,
     RasterLayerSpecification,
+    RasterTileSource,
     SymbolLayerSpecification,
   } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
@@ -50,10 +51,10 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  const layerSrc = $map.getSource(definition.source)
+  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
-  let percentile98: number = layerConfig.percentile98
+  let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
@@ -77,7 +78,6 @@
     }
     const band = info.active_band_no
     percentile98 = info.stats[band]['percentile_98']
-    layerConfig.percentile98 = percentile98
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
     if (layerConfig.intervals.classification !== ClassificationMethodTypes.LOGARITHMIC) {
       //pass

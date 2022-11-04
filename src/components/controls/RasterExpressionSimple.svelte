@@ -10,6 +10,7 @@
   import { fetchUrl, getActiveBandIndex, getLayerUrl, updateParamsInURL } from '$lib/helper'
   import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, layerList, map } from '$stores'
+  import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
 
@@ -147,7 +148,7 @@
     try {
       if (simpleExpressionAvailable) {
         if (expressions[0].operator && expressions[0].value) {
-          const layerSrc = $map.getSource(layer.definition.source)
+          const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
           const layerURL = new URL(layerSrc.tiles[0])
           let updatedParams = {}
 
@@ -169,7 +170,6 @@
           updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
           layer.continuous.minimum = Number(info.stats[band].min)
           layer.continuous.maximum = Number(info.stats[band].max)
-          layer.percentile98 = info.stats[band].percentile_98
 
           // Delete the expression in the url if already exists and update the url
           layerURL.searchParams.delete('expression')
@@ -254,8 +254,6 @@
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
       layer.continuous.minimum = Number(info.stats[band].min)
       layer.continuous.maximum = Number(info.stats[band].max)
-      // resetting the percentile_98 parameter to the default value.
-      layer.percentile98 = layer.info.stats[band].percentile_98
 
       layerURL.searchParams.delete('expression')
       if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
