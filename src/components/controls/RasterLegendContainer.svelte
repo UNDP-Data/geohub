@@ -15,7 +15,7 @@
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { getActiveBandIndex, fetchUrl, updateParamsInURL } from '$lib/helper'
+  import { getActiveBandIndex, fetchUrl, updateParamsInURL, getValueFromRasterTileUrl } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type {
     FillLayerSpecification,
@@ -36,7 +36,7 @@
     | HeatmapLayerSpecification
   let info
   ;({ definition, info } = layer)
-  const layerSrc = $map.getSource(definition.source)
+  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   let layerStats
   let colorPickerVisibleIndex: number
@@ -61,9 +61,6 @@
   onMount(async () => {
     if (!layer.tree?.isMosaicJSON) {
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
-      // if(layer.isStac){
-      //   layerCatalogUrl = `https://planetarycomputer.microsoft.com/api/stac/v1/collections/${collectionId}`
-      // }
       layerStats = await fetchUrl(statsURL)
       const band = info.active_band_no
 
@@ -130,7 +127,7 @@
         const layerURL = new URL(tiles[0])
         layerURL.searchParams.delete('colormap_name')
         layerURL.searchParams.delete('rescale')
-        const rescale = [layer.continuous.minimum, layer.continuous.maximum]
+        const rescale = getValueFromRasterTileUrl($map, layer.definition.id, 'rescale') as number[]
         const updatedParams = Object.assign({ colormap_name: colorMapName, rescale: rescale.join(',') })
         updateParamsInURL(layer.definition, layerURL, updatedParams)
       }

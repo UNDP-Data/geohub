@@ -133,10 +133,6 @@
         type: LayerTypes.RASTER,
         info: layerInfo,
         colorMapName: defaultColorMap,
-        continuous: {
-          minimum: parseFloat(layerBandMetadataMin),
-          maximum: parseFloat(layerBandMetadataMax),
-        },
         intervals: {
           classification: ClassificationMethodTypes.EQUIDISTANT,
           numberOfClasses: COLOR_CLASS_COUNT,
@@ -270,10 +266,6 @@
         type: LayerTypes.RASTER,
         info: layerInfo,
         colorMapName: DEFAULT_COLORMAP,
-        continuous: {
-          minimum: parseFloat(layerBandMetadataMin),
-          maximum: parseFloat(layerBandMetadataMax),
-        },
         intervals: {
           classification: ClassificationMethodTypes.EQUIDISTANT,
           numberOfClasses: COLOR_CLASS_COUNT,

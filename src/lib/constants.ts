@@ -62,10 +62,6 @@ export const LayerInitialValues = {
   type: '',
   info: {},
   colorMapName: DEFAULT_COLORMAP,
-  continuous: {
-    minimum: undefined,
-    maximum: undefined,
-  },
   intervals: {
     classification: ClassificationMethodTypes.EQUIDISTANT,
     numberOfClasses: COLOR_CLASS_COUNT,

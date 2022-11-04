@@ -8,11 +8,10 @@
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
   } from 'maplibre-gl'
-  import { debounce } from 'lodash-es'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { getActiveBandIndex, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
 
@@ -46,8 +45,10 @@
 
   let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
+  const rescale = getValueFromRasterTileUrl($map, layerConfig.definition.id, 'rescale') as number[]
+
   // this ensures the slider state is set to layer min max
-  let rangeSliderValues = [layerConfig.continuous.minimum, layerConfig.continuous.maximum] || [layerMin, layerMax]
+  let rangeSliderValues = rescale ? rescale : [layerMin, layerMax]
 
   let step = (layerMax - layerMin) * 1e-2
 
@@ -62,7 +63,6 @@
       updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
       activeColorMapName = layerConfig.colorMapName // this re-renders the continuous legend
       layerConfig.intervals.colorMapRows = [] // this re-remders the intervals legend classes properly
-      // [layerConfig.continuous.minimum, layerConfig.continuous.maximum] = [layerMin, layerMax]
     }
   }
 
@@ -96,13 +96,7 @@
   }
   const onSliderStop = () => {
     updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })
-    setSliderState()
   }
-
-  const setSliderState = debounce(() => {
-    layerConfig.continuous.minimum = rangeSliderValues[0]
-    layerConfig.continuous.maximum = rangeSliderValues[1]
-  }, 500)
 </script>
 
 <div
