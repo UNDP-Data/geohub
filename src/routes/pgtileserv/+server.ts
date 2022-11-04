@@ -52,7 +52,7 @@ export const GET: RequestHandler = async ({ url }) => {
               label: `${table}-${layerType}`,
               path: tableSchemaName,
               geomType: layerType,
-              url: `${url.origin}/pgtileserv/table/${tableSchemaName}/tile.json`,
+              url: `/pgtileserv/table/${tableSchemaName}/tile.json`,
               isRaster: false,
               isStac: false,
               dynamicSourceType: 'pgtileserv',
