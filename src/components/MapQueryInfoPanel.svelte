@@ -14,7 +14,7 @@
 
   import { layerList } from '$stores'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { downloadFile, fetchUrl, getActiveBandIndex } from '$lib/helper'
+  import { downloadFile, fetchUrl, getActiveBandIndex, getLayerUrl } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount, onDestroy } from 'svelte'
 
@@ -96,7 +96,10 @@
       let layerName = layer.name
       if (layer.type === LayerTypes.RASTER) {
         if (layer.tree && layer.tree.isMosaicJSON) {
-          const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/point/${lng},${lat}?url=${layer.url}`
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
+            'cog',
+            'mosaicjson',
+          )}/point/${lng},${lat}?url=${getLayerUrl(map, layer.definition.id)}`
           const layerData = await fetchUrl(baseUrl)
           if (!(layerData.values.length > 0 && layerData.values[0].length > 0 && layerData.values[0][1].length > 0)) {
             continue
@@ -108,7 +111,10 @@
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           bandIndex = getActiveBandIndex(layer.info)
-          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${layer.url}&bidx=${bandIndex + 1}`
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getLayerUrl(
+            map,
+            layer.definition.id,
+          )}&bidx=${bandIndex + 1}`
           const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
 
           const layerData = await fetchUrl(queryURL)

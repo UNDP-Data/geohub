@@ -21,7 +21,6 @@ export interface Layer {
     | HeatmapLayerSpecification
   type?: string
   info?: RasterTileMetadata | VectorTileMetadata
-  url?: string
   colorMapName?: string
   continuous?: {
     minimum: number

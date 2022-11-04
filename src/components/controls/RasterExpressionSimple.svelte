@@ -7,7 +7,7 @@
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, getLayerUrl, updateParamsInURL } from '$lib/helper'
   import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, layerList, map } from '$stores'
 
@@ -152,7 +152,10 @@
           let updatedParams = {}
 
           const exprStatUrl = new URL(
-            `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
+            `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
+              $map,
+              layer.definition.id,
+            )}&expression=${encodeURIComponent(
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
             )};`,
           )
@@ -194,7 +197,10 @@
           .join('')
 
         const exprStatUrl = new URL(
-          `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
+          `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
+            $map,
+            layer.definition.id,
+          )}&expression=${encodeURIComponent(
             `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
           )}&categorical=true`,
         )
@@ -238,7 +244,9 @@
     layer.expression = expression
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
-      const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
+      const statsUrl = new URL(
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+      )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
       const bandName = Object.keys(layer.info.stats)

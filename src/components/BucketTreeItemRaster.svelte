@@ -132,7 +132,6 @@
         definition: layerDefinition,
         type: LayerTypes.RASTER,
         info: layerInfo,
-        url: mosaicjsonRes.mosaicjson,
         colorMapName: defaultColorMap,
         continuous: {
           minimum: parseFloat(layerBandMetadataMin),
@@ -270,7 +269,6 @@
         definition: layerDefinition,
         type: LayerTypes.RASTER,
         info: layerInfo,
-        url: b64EncodedUrl,
         colorMapName: DEFAULT_COLORMAP,
         continuous: {
           minimum: parseFloat(layerBandMetadataMin),
@@ -332,38 +330,36 @@
 
   const getClassesMap = async (bandIndex: number, layerInfo: RasterTileMetadata) => {
     let classesMap = {}
-    try {
-      if (tree.isStac) {
-        const collectionName = tree.path.split('/')[tree.path.split('/').length - 2]
-        const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
-        // FixME: There is no standard object for the classes labels.
+    if (tree.isStac) {
+      const collectionName = tree.path.split('/')[tree.path.split('/').length - 2]
+      const collectionInfo = await fetchUrl(`${tree.collectionUrl}/${collectionName}`)
+      // FixME: There is no standard object for the classes labels.
 
-        if (collectionInfo.item_assets.map) {
-          // Todo: Tested with ESA WorldCover 2020
-          const classesObj = collectionInfo.item_assets.map['classification:classes']
-          classesObj.forEach((item) => {
-            classesMap[item['value']] = item['description']
-          })
-        } else if (collectionInfo.item_assets.data) {
-          // Todo: Tested with Esri 10m Land Cover (10 Class)
-          const classesObj = collectionInfo.item_assets.data['file:values']
-          classesObj.forEach((item) => {
-            classesMap[item['values'][0]] = item['summary']
-          })
-        } else {
-          // Todo: Tested for LandCover of Canada
-          const classesObj = collectionInfo.item_assets.landcover['file:values']
-          classesObj.forEach((item) => {
-            classesMap[item['values'][0]] = item['summary']
-          })
-        }
+      if (collectionInfo.item_assets.map) {
+        // Todo: Tested with ESA WorldCover 2020
+        const classesObj = collectionInfo.item_assets.map['classification:classes']
+        classesObj.forEach((item) => {
+          classesMap[item['value']] = item['description']
+        })
+      } else if (collectionInfo.item_assets.data) {
+        // Todo: Tested with Esri 10m Land Cover (10 Class)
+        const classesObj = collectionInfo.item_assets.data['file:values']
+        classesObj.forEach((item) => {
+          classesMap[item['values'][0]] = item['summary']
+        })
       } else {
-        // local rasters
-        const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+        // Todo: Tested for LandCover of Canada
+        const classesObj = collectionInfo.item_assets.landcover['file:values']
+        classesObj.forEach((item) => {
+          classesMap[item['values'][0]] = item['summary']
+        })
+      }
+    } else {
+      // local rasters
+      const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+      if (uvString) {
         classesMap = JSON.parse(uvString)
       }
-    } catch (e) {
-      console.log(e)
     }
     return classesMap
   }
