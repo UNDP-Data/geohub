@@ -1,7 +1,7 @@
 import { describe, beforeEach, expect, it } from 'vitest'
 import { cleanup, render, within, type RenderResult } from '@testing-library/svelte'
 
-import ColorMapPickerCard from '$components/ColorMapPickerCard.svelte'
+import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
 import { DEFAULT_COLORMAP, ColorMapTypes } from '$lib/constants'
 
 beforeEach(cleanup)

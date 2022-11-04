@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
   import { hexToCSSFilter } from 'hex-to-css-filter'
 
-  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
     ClassificationMethodNames,
@@ -16,7 +16,7 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getIconColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -46,7 +46,6 @@
   let icon: SpriteImage
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = null
-  let zoomLevel: number
   // update layer store upon change of apply to option
   $: if (applyToOption !== layer.intervals.applyToOption) {
     layer.intervals.applyToOption = applyToOption
@@ -61,19 +60,21 @@
     }
   }
 
-  // Initially set the zoomLevel to the initial value
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
-    zoomLevel = $map.getZoom()
-    layer.zoomLevel = zoomLevel
     setCssIconFilter()
-    // propertySelectValue = layer.intervals.propertyName === '' ? '' : layer.intervals.propertyName
-    // layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
+    if (!$map) return
+    $map.on('zoom', updateMap)
+  })
+
+  onDestroy(() => {
+    if (!$map) return
+    $map.off('zoom', updateMap)
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(layer.iconColor ? layer.iconColor : '#000000').rgba()
+    const rgba = chroma(getIconColor($map, layer.definition.id)).rgba()
     cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
@@ -197,7 +198,10 @@
     })
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
-      $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
+      const iconSize = $map.getLayoutProperty(layer.definition.id, 'icon-size')
+      if (!iconSize || (iconSize && iconSize.type === 'interval')) {
+        $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
+      }
       $map.setPaintProperty(layer.definition.id, 'icon-color', {
         property: layer.intervals.propertyName,
         type: 'interval',
@@ -207,9 +211,6 @@
 
     if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
-      if (zoomLevel === undefined) {
-        zoomLevel = $map.getZoom()
-      }
 
       // Ends are the
       const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
@@ -218,17 +219,13 @@
       // Add 1 to the ratio array
       ratioOfRadiustoTheFirstEnd.unshift(1)
 
-      if (zoomLevel === undefined) {
-        zoomLevel = $map.getZoom()
-      }
-
       // newStops array, that takes into considerarion the ratio and the zoomLevel
       const newStops = stops.map((item, index) => [
         item[0],
-        (ratioOfRadiustoTheFirstEnd[index] as number) * (zoomLevel / 10),
+        (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10),
       ])
 
-      $map.setPaintProperty(layer.definition.id, 'icon-color', layer.iconColor)
+      $map.setPaintProperty(layer.definition.id, 'icon-color', getIconColor($map, layer.definition.id))
       $map.setLayoutProperty(layer.definition.id, 'icon-size', {
         property: layer.intervals.propertyName,
         type: 'interval',
@@ -236,16 +233,6 @@
       })
     }
   }
-
-  // If zoomLevel Changes, updateMap
-  $: {
-    if (zoomLevel !== layer.zoomLevel) {
-      updateMap()
-    }
-  }
-
-  // On Zoom change the zoomLevel variable
-  $map.on('zoom', () => (zoomLevel = $map.getZoom()))
 
   const handleApplyToClick = (type: string) => {
     applyToOption = type

@@ -13,15 +13,11 @@ pre-push:
       run: pnpm --filter="./packages/*" build
 
 pre-commit:
-  parallel: true
+  # parallel: true
   commands:
-    1_lint_packages:
-      run: pnpm --filter="./packages/*" lint
-    2_lint:
+    1_lint:
       tags: lint
       run: pnpm lint
-    4_format:
+    2_format:
       tags: prettier
       run: pnpm format
-    3_format_packages:
-      run: pnpm --filter="./packages/*" format

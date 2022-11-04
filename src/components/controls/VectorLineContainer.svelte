@@ -8,7 +8,7 @@
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { cloneDeep } from 'lodash-es'
 
-  import ColorMapPicker from '$components/ColorMapPicker.svelte'
+  import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorLineSimple from '$components/controls/VectorLineSimple.svelte'
   import VectorLineAdvanced from '$components/controls/VectorLineAdvanced.svelte'
   import {
@@ -19,7 +19,7 @@
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer, VectorLayerTileStatLayer } from '$lib/types'
+  import type { Layer } from '$lib/types'
   import { layerList } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
 

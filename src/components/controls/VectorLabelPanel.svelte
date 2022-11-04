@@ -67,8 +67,6 @@
         definition: childLayer,
         type: LayerTypes.VECTOR,
         info: layer.info,
-        visible: true,
-        url: layer.url,
         parent: layer,
       }
 

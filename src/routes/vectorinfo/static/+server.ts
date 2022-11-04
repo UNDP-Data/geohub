@@ -27,16 +27,12 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
     } catch (err) {
       throw error(500, { message: err})
     }
-    
-    // eslint-disable-next-line no-prototype-builtins
-    if (!tile.layers.hasOwnProperty(layerName)) {
+
+    const layer = tile.layers[layerName]
+    if (!layer) {
       // layerName doesn't exist in layers
       throw error(400, { message: ErrorMessages.NO_LAYER_WITH_THAT_NAME})
     }
-
-  try {
-    
-      const layer = tile.layers[layerName]
 
       // since we are pushing values, we need to force the attributesArray to be empty at this point
 
@@ -50,6 +46,7 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
 
         for (let featureIndex = 0; featureIndex < layer.length; featureIndex++) {
           const feature = layer.feature(featureIndex)
+          if (!feature.properties[property]) continue
           layer['_keys'][property] = propsObj[property].push(feature.properties[property])
         }
 
@@ -101,11 +98,7 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
           attributesArray.push(attribute)
         }
       })
-    
-  } catch (error) {
-    // Fixme: If this catch is invoked. Need to return the actual error
-    throw error(400, { message: error})
-  }
+
   return attributesArray
 }
 

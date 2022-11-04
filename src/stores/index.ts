@@ -1,15 +1,9 @@
 import { writable } from 'svelte/store'
 import type { Map as MaplibreMap } from 'maplibre-gl'
-import type { BannerMessage, Bucket, Layer, MartinLayerMetadata, SpriteImage, TreeNode } from '$lib/types'
-
-// dynamic layer list
-export const dynamicLayers = writable([])
+import type { BannerMessage, Bucket, Layer, SpriteImage, TreeNode } from '$lib/types'
 
 // progress / indicator bar displayed in the drawer for async fetch data
 export const indicatorProgress = writable(false)
-
-// modal is displayed
-export const modalVisible = writable(false)
 
 // layer map list
 export const layerList = writable(<Layer[]>[])

@@ -73,7 +73,7 @@
         // martin or pgtileserv
         treeData = await fetchUrl(`${tree.dynamicSourceType}?path=${tree.path}&label=${tree.label}`)
       } else {
-        treeData = await fetchUrl(`azstorage.json?path=${tree.path}`)
+        treeData = await fetchUrl(`azstorage?path=${tree.path}`)
       }
 
       if (treeData) {

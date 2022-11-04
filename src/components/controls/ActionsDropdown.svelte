@@ -11,15 +11,13 @@
   import { fade } from 'svelte/transition'
   import Fa from 'svelte-fa'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
-  import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-  import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
   import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
   import { createPopperActions } from 'svelte-popperjs'
 
   import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types'
-  import { dynamicLayers, layerList, map } from '$stores'
+  import { map } from '$stores'
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
   import { clickOutside } from 'svelte-use-click-outside'
   import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
@@ -31,39 +29,10 @@
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-  let isDynamicLayer: boolean = dynamicLayerIds[layerId] || false
   let mapLayerLength = mapLayers.length - 1
   let showTooltip = false
 
-  $: isDynamicLayer, setDynamicLayerState()
-
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
-
-  const setDynamicLayerState = () => {
-    dynamicLayerIds[layerId] = isDynamicLayer
-
-    if (isDynamicLayer === true) {
-      if (!$dynamicLayers.includes(layerId)) {
-        dynamicLayers.set([...$dynamicLayers, layerId])
-      }
-    } else {
-      $dynamicLayers = $dynamicLayers.filter((dynamicLayerId) => dynamicLayerId !== layerId)
-    }
-
-    let ntrue = 0
-
-    for (const [value] of Object.entries(dynamicLayerIds)) {
-      if (value) {
-        ++ntrue
-      }
-      if (ntrue >= 2) {
-        disabled = false
-        break
-      } else {
-        disabled = true
-      }
-    }
-  }
 
   const [popperRef, popperContent] = createPopperActions({
     placement: 'right-start',
@@ -193,22 +162,6 @@
         {layer}
         bind:mapLayerIndex />
     </div>
-
-    {#if layer.type === LayerTypes.RASTER && $layerList.length > 1}
-      <Wrapper>
-        <div
-          class="icon-selected"
-          on:click={() => (isDynamicLayer = !isDynamicLayer)}>
-          <Fa
-            icon={isDynamicLayer ? faSquareCheck : faSquare}
-            size="sm" />
-        </div>
-        <Tooltip
-          showDelay={500}
-          hideDelay={500}
-          yPos="above">Merge Layers</Tooltip>
-      </Wrapper>
-    {/if}
   </div>
 {/if}
 

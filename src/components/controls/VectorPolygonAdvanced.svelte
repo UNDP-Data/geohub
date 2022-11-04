@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
-  import UniqueValuesLegendColorMapRow from '$components/UniqueValuesLegendColorMapRow.svelte'
-  import IntervalsLegendColorMapRow from '$components/IntervalsLegendColorMapRow.svelte'
+  import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
     ClassificationMethodNames,
@@ -23,7 +23,7 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getFillOutlineColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -40,11 +40,10 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
-  let defaultLineColor = DEFAULT_LINE_COLOR
+  let defaultFillOutlineColor = getFillOutlineColor($map, layer.definition.id)
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = layer.intervals.propertyName
-  let zoomLevel: number
   let inLegend = true
 
   // update color intervals upon change of color map name
@@ -55,14 +54,17 @@
     }
   }
 
-  // update map upon change of zoom level
-  $: if (zoomLevel !== layer.zoomLevel) updateMap()
-
   onMount(() => {
-    // set the zoom level to the initial value
-    zoomLevel = $map.getZoom()
-    layer.zoomLevel = zoomLevel
-    $map.on('zoom', () => (zoomLevel = $map.getZoom()))
+    if (layer && colorMapName !== layer.colorMapName) {
+      colorMapName = layer.colorMapName
+    }
+    setIntervalValues()
+    $map.on('zoom', updateMap)
+  })
+
+  onDestroy(() => {
+    if (!$map) return
+    $map.off('zoom', updateMap)
   })
 
   const setDefaultProperty = (selectOptions: string[]) => {
@@ -212,13 +214,13 @@
 
       // set default line color to be middle of colors
       if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
-        defaultLineColor = chroma(hex).darken(2.6).hex()
+        defaultFillOutlineColor = chroma(hex).darken(2.6).hex()
       }
 
       return [row.start, rgb]
     })
     // console.log(stops)
-    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultLineColor)
+    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultFillOutlineColor)
     $map.setPaintProperty(layer.definition.id, 'fill-color', {
       property: layer.intervals.propertyName,
       type: 'interval',
