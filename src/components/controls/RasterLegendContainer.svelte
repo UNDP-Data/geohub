@@ -48,7 +48,6 @@
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
-  let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
   // hide colormap picker if change in layer list
   $: {
@@ -128,7 +127,10 @@
         layerURL.searchParams.delete('colormap_name')
         layerURL.searchParams.delete('rescale')
         const rescale = getValueFromRasterTileUrl($map, layer.definition.id, 'rescale') as number[]
-        const updatedParams = Object.assign({ colormap_name: colorMapName, rescale: rescale.join(',') })
+        let updatedParams = Object.assign({ colormap_name: colorMapName })
+        if (rescale) {
+          updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
+        }
         updateParamsInURL(layer.definition, layerURL, updatedParams)
       }
 
@@ -174,8 +176,7 @@
       <div transition:slide>
         <RasterUniqueValuesLegend
           bind:layerConfig={layer}
-          bind:colorPickerVisibleIndex
-          bind:legendLabels />
+          bind:colorPickerVisibleIndex />
       </div>
     {/if}
   </div>

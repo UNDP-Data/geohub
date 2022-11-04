@@ -7,18 +7,18 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
+    RasterTileSource,
   } from 'maplibre-gl'
 
   import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { updateParamsInURL, remapInputValue, getActiveBandIndex } from '$lib/helper'
-  import type { Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
+  import { updateParamsInURL, remapInputValue, getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
-  export let legendLabels
 
   let definition:
     | RasterLayerSpecification
@@ -33,23 +33,54 @@
   const bandIndex = getActiveBandIndex(info)
   let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
   let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
+  let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
-  const layerSrc = $map.getSource(definition.source)
+  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   let colorMap = {}
   let colorMapName = layerConfig.colorMapName
   let layerColorMap: chroma.Scale = undefined
+  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
-      colorMapName = layerConfig.colorMapName
-      reclassifyImage()
+      if ($map.isStyleLoaded()) {
+        getColorMapRows()
+        colorMapName = layerConfig.colorMapName
+        reclassifyImage()
+      } else {
+        // wait a bit if map style is not loaded after changing colormap_name
+        setTimeout(() => {
+          getColorMapRows()
+          colorMapName = layerConfig.colorMapName
+          reclassifyImage()
+        }, 300)
+      }
     }
   }
 
   onMount(() => {
-    layerConfig.unique.colorMapRows.length > 0 ? reclassifyImage(true) : reclassifyImage(false)
+    if (!$map.isStyleLoaded()) return
+    getColorMapRows()
+    colorMapRows.length > 0 ? reclassifyImage(true) : reclassifyImage(false)
   })
+
+  const getColorMapRows = () => {
+    const colormap = getValueFromRasterTileUrl($map, layerConfig.definition.id, 'colormap') as {
+      [key: string]: number[]
+    }
+    colorMapRows = []
+    if (!(colormap && Object.keys(colormap).length > 0)) return
+    Object.keys(colormap).forEach((key) => {
+      const color = colormap[key]
+      colorMapRows.push({
+        color: color,
+        index: colorMapRows.length === 0 ? 0 : colorMapRows.length - 1,
+        start: key,
+        end: Object.keys(legendLabels).length > 0 ? legendLabels[key] : key,
+      })
+    })
+  }
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
     setColorMap()
@@ -57,7 +88,6 @@
       layerURL.searchParams.delete('rescale')
     }
     if (useLayerColorMapRows === false) {
-      const colorMapRows = []
       const bandName = Object.keys(layerConfig.info.stats)
       layerMin = layerConfig.info.stats[bandName]['min']
       layerMax = layerConfig.info.stats[bandName]['max']
@@ -67,7 +97,7 @@
       const layerUniqueValues = uValues.map((v) => {
         return { name: v, value: v }
       })
-
+      const _colorMapRows = []
       let index = 0
       layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
         const key = row.value
@@ -77,7 +107,7 @@
 
         colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
         //colorMap[key] = color
-        colorMapRows.push({
+        _colorMapRows.push({
           index,
           color,
           start: key,
@@ -86,9 +116,9 @@
         index++
       })
 
-      layerConfig.unique.colorMapRows = colorMapRows
+      colorMapRows = _colorMapRows
     } else {
-      layerConfig.unique.colorMapRows.forEach((row) => {
+      colorMapRows.forEach((row) => {
         colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
     }
@@ -124,11 +154,11 @@
   const handleChangeColorMap = (e) => {
     const valuesList = Object.keys(colorMap)
     colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
-    layerConfig.unique.colorMapRows.splice(colorPickerVisibleIndex, 1, {
+    colorMapRows.splice(colorPickerVisibleIndex, 1, {
       index: colorPickerVisibleIndex,
       color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255 * e.detail.color.a],
-      start: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].start,
-      end: layerConfig.unique.colorMapRows[colorPickerVisibleIndex].end,
+      start: colorMapRows[colorPickerVisibleIndex].start,
+      end: colorMapRows[colorPickerVisibleIndex].end,
     })
     reclassifyImage(true)
   }
@@ -141,7 +171,7 @@
   <div
     class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
     data-testid="unique-view-container">
-    {#each layerConfig.unique.colorMapRows as colorMapRow}
+    {#each colorMapRows as colorMapRow}
       <UniqueValuesLegendColorMapRow
         bind:colorMapRow
         layer={layerConfig}
