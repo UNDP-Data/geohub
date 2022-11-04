@@ -184,7 +184,6 @@
         definition: layerDefinition,
         type: LayerTypes.VECTOR,
         info: tree.metadata,
-        url: tree.url,
         tree: tree,
       },
       ...$layerList,

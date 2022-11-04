@@ -1,7 +1,7 @@
 <script lang="ts">
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
-  import { fetchUrl, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, getLayerUrl, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { map, layerList } from '$stores'
 
@@ -52,7 +52,9 @@
     //handleApplyExpression()
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
-      const statsUrl = new URL(`${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}`)
+      const statsUrl = new URL(
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+      )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
       const bandName = Object.keys(layer.info.stats)
@@ -98,9 +100,10 @@
       const layerURL = new URL(layerSrc.tiles[0])
       let updatedParams = {}
       const exprStatUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${layer.url}&expression=${encodeURIComponent(
-          expression,
-        )}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
+          $map,
+          layer.definition.id,
+        )}&expression=${encodeURIComponent(expression)}`,
       )
       console.log(exprStatUrl.searchParams.get('expression').includes('where'))
       if (exprStatUrl.searchParams.get('expression').includes('where')) {
