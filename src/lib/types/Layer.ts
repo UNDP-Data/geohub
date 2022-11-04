@@ -34,6 +34,5 @@ export interface Layer {
   children?: Layer[]
   parent?: Layer
   legendType?: string
-  percentile98?: number
   tree?: TreeNode
 }

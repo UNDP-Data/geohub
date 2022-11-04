@@ -73,7 +73,6 @@ export const LayerInitialValues = {
   expression: '',
   legendType: '',
   simpleExpressionAvailable: true,
-  percentile98: undefined,
 }
 
 export enum ErrorMessages {
