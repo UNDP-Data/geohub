@@ -135,7 +135,6 @@
   }
 
   const setIntervalValues = () => {
-    
     // set to default values
     classificationMethods = classificationMethodsDefault
 
@@ -329,7 +328,8 @@
 
 <div
   class="symbol-advanced-container"
-  data-testid="symbol-advanced-container" style="">
+  data-testid="symbol-advanced-container"
+  style="">
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
