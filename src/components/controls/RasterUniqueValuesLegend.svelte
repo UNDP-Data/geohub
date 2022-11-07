@@ -1,41 +1,35 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
-  import type {
-    RasterLayerSpecification,
-    FillLayerSpecification,
-    LineLayerSpecification,
-    SymbolLayerSpecification,
-    HeatmapLayerSpecification,
-    RasterTileSource,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
 
   import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { updateParamsInURL, remapInputValue, getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper'
+  import {
+    updateParamsInURL,
+    remapInputValue,
+    getActiveBandIndex,
+    getValueFromRasterTileUrl,
+    getLayerStyle,
+  } from '$lib/helper'
   import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
 
-  let definition:
-    | RasterLayerSpecification
-    | FillLayerSpecification
-    | LineLayerSpecification
-    | SymbolLayerSpecification
-    | HeatmapLayerSpecification
   let info: RasterTileMetadata
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-  ;({ definition, info } = layerConfig)
+  ;({ info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
   let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
   let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
-  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
+  let layerStyle = getLayerStyle($map, layerConfig.id)
+  const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   let colorMap = {}
   let colorMapName = layerConfig.colorMapName
@@ -45,12 +39,14 @@
   $: {
     if (layerConfig && colorMapName !== layerConfig.colorMapName) {
       if ($map.isStyleLoaded()) {
+        layerStyle = getLayerStyle($map, layerConfig.id)
         getColorMapRows()
         colorMapName = layerConfig.colorMapName
         reclassifyImage()
       } else {
         // wait a bit if map style is not loaded after changing colormap_name
         setTimeout(() => {
+          layerStyle = getLayerStyle($map, layerConfig.id)
           getColorMapRows()
           colorMapName = layerConfig.colorMapName
           reclassifyImage()
@@ -66,7 +62,7 @@
   })
 
   const getColorMapRows = () => {
-    const colormap = getValueFromRasterTileUrl($map, layerConfig.definition.id, 'colormap') as {
+    const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as {
       [key: string]: number[]
     }
     colorMapRows = []
@@ -144,7 +140,7 @@
     const encodeColorMapRows = JSON.stringify(cmap)
     layerURL.searchParams.delete('colormap_name')
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
-    updateParamsInURL(definition, layerURL, updatedParams)
+    updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
 
   const handleColorPickerClick = (event: CustomEvent) => {

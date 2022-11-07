@@ -9,16 +9,9 @@
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
   } from '$lib/constants'
-  import type {
-    FillLayerSpecification,
-    HeatmapLayerSpecification,
-    LineLayerSpecification,
-    RasterLayerSpecification,
-    RasterTileSource,
-    SymbolLayerSpecification,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
-  import { fetchUrl, generateColorMap, getActiveBandIndex, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, generateColorMap, getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
@@ -29,14 +22,9 @@
   export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
-  let definition:
-    | RasterLayerSpecification
-    | FillLayerSpecification
-    | LineLayerSpecification
-    | SymbolLayerSpecification
-    | HeatmapLayerSpecification
+
   let info: RasterTileMetadata
-  ;({ definition, info } = layerConfig)
+  ;({ info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
 
   let layerMax
@@ -51,7 +39,7 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
+  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
@@ -93,7 +81,7 @@
     }
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
-      return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
+      return layerConfig.id !== layer.id ? layer : layerConfig
     })
     layerList.set([...layers])
     layerConfig.intervals.colorMapRows.length > 0 ? null : reclassifyImage()
@@ -127,7 +115,8 @@
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
-    updateParamsInURL(definition, layerURL, updatedParams)
+    const layerStyle = getLayerStyle($map, layerConfig.id)
+    updateParamsInURL(layerStyle, layerURL, updatedParams)
   }, 500)
 
   const handleIncrementDecrementClasses = (e: CustomEvent) => {

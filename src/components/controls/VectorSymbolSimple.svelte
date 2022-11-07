@@ -12,7 +12,7 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
 
   let iconOffSetValueEdited = false
   let isAdvancedSettings = false

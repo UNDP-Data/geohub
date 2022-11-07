@@ -1,30 +1,18 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
   import { onMount } from 'svelte'
-  import type {
-    RasterLayerSpecification,
-    FillLayerSpecification,
-    LineLayerSpecification,
-    SymbolLayerSpecification,
-    HeatmapLayerSpecification,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
-  import { getActiveBandIndex, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
+  import { getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
 
   export let layerConfig: Layer = LayerInitialValues
 
-  let definition:
-    | RasterLayerSpecification
-    | LineLayerSpecification
-    | FillLayerSpecification
-    | SymbolLayerSpecification
-    | HeatmapLayerSpecification
   let info: RasterTileMetadata
-  ;({ definition, info } = layerConfig)
+  ;({ info } = layerConfig)
   let activeColorMapName = layerConfig.colorMapName
   let layerMin = NaN
   let layerMax = NaN
@@ -40,12 +28,12 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  const layerSrc = $map.getSource(definition.source)
+  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
 
   let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
-  const rescale = getValueFromRasterTileUrl($map, layerConfig.definition.id, 'rescale') as number[]
+  const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
   // this ensures the slider state is set to layer min max
   let rangeSliderValues = rescale ? rescale : [layerMin, layerMax]
@@ -60,7 +48,8 @@
       //if (activeColorMapName !== layerConfig.colorMapName || layerConfig) {
       //console.log(`layerURL has changed ${layerURL.searchParams.get('rescale')} ${layerMin} - ${layerMax}` )
       rescaleColorMap()
-      updateParamsInURL(definition, layerURL, { colormap_name: layerConfig.colorMapName })
+      const layerStyle = getLayerStyle($map, layerConfig.id)
+      updateParamsInURL(layerStyle, layerURL, { colormap_name: layerConfig.colorMapName })
       activeColorMapName = layerConfig.colorMapName // this re-renders the continuous legend
       layerConfig.intervals.colorMapRows = [] // this re-remders the intervals legend classes properly
     }
@@ -91,11 +80,13 @@
       Object.keys(params).forEach((key) => {
         layerURL.searchParams.set(key, params[key])
       })
-      updateParamsInURL(definition, layerURL, params)
+      const layerStyle = getLayerStyle($map, layerConfig.id)
+      updateParamsInURL(layerStyle, layerURL, params)
     }
   }
   const onSliderStop = () => {
-    updateParamsInURL(definition, layerURL, { rescale: rangeSliderValues.join(',') })
+    const layerStyle = getLayerStyle($map, layerConfig.id)
+    updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') })
   }
 </script>
 

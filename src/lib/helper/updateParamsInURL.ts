@@ -10,7 +10,7 @@ import { get } from 'svelte/store'
 import { map } from '$stores'
 
 export const updateParamsInURL = (
-  definition:
+  layerStyle:
     | RasterLayerSpecification
     | LineLayerSpecification
     | FillLayerSpecification
@@ -29,7 +29,7 @@ export const updateParamsInURL = (
     if (style?.sources) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      style.sources[definition.source].tiles = [decodeURI(layerURL.toString())]
+      style.sources[layerStyle.source].tiles = [decodeURI(layerURL.toString())]
       mapStore.setStyle(style)
     }
   }

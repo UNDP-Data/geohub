@@ -7,7 +7,7 @@
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, getActiveBandIndex, getLayerUrl, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, getLayerStyle, getLayerUrl, updateParamsInURL } from '$lib/helper'
   import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, layerList, map } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -148,7 +148,8 @@
   // Apply the expression
   const applyExpression = async () => {
     try {
-      const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+      const layerStyle = getLayerStyle($map, layer.id)
+      const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       if (simpleExpressionAvailable) {
         if (expressions.length > 0 && expressions[0].operator && expressions[0].value) {
@@ -157,7 +158,7 @@
           const exprStatUrl = new URL(
             `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
               $map,
-              layer.definition.id,
+              layer.id,
             )}&expression=${encodeURIComponent(
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
             )};`,
@@ -173,10 +174,10 @@
 
           // Delete the expression in the url if already exists and update the url
           layerURL.searchParams.delete('expression')
-          updateParamsInURL(layer.definition, layerURL, updatedParams)
+          updateParamsInURL(layerStyle, layerURL, updatedParams)
           const nlayer = { ...layer, info: info }
           const layers = $layerList.map((lyr) => {
-            return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+            return layer.id !== lyr.id ? lyr : nlayer
           })
           layerList.set([...layers])
         }
@@ -199,7 +200,7 @@
         const exprStatUrl = new URL(
           `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
             $map,
-            layer.definition.id,
+            layer.id,
           )}&expression=${encodeURIComponent(
             `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
           )}&categorical=true`,
@@ -213,11 +214,11 @@
         updatedParams = { expression: expression }
         updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
         layerURL.searchParams.delete('expression')
-        updateParamsInURL(layer.definition, layerURL, updatedParams)
+        updateParamsInURL(layerStyle, layerURL, updatedParams)
 
         const nlayer = { ...layer, info: info }
         const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+          return layer.id !== lyr.id ? lyr : nlayer
         })
         layerList.set([...layers])
       }
@@ -239,12 +240,13 @@
     expressions = []
     expression = ''
 
-    const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+    const layerStyle = getLayerStyle($map, layer.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
     const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.id)}`,
       )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
@@ -260,7 +262,7 @@
       }
       layerURL.searchParams.delete('rescale')
       layerURL.searchParams.delete('expression')
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
     }
   }
 

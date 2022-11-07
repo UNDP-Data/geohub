@@ -50,10 +50,10 @@
     const nextTabIndex = currentTabIndex - 1
     if (nextTabIndex < 0) {
       activeTab = tabs[tabs.length - 1].label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[nextTabIndex].label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     }
   }
 
@@ -63,10 +63,10 @@
     const nextTab = tabs[nextTabIndex]
     if (nextTab) {
       activeTab = nextTab.label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[0].label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -78,7 +78,7 @@
         href={'#'}
         role="tab"
         aria-label={tab.label}
-        id={`expression-${tab.label}-${layer.definition.id}`}
+        id={`expression-${tab.label}-${layer.id}`}
         on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
         on:keydown={handleArrowKey}
         class={activeTab === tab.label ? 'is-active' : ''}>

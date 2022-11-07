@@ -180,8 +180,8 @@
 
     $layerList = [
       {
+        id: layerId,
         name: layerName,
-        definition: layerDefinition,
         info: tree.metadata,
         tree: tree,
       },

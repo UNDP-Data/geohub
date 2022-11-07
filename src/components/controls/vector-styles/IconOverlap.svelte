@@ -8,7 +8,7 @@
   export let layer: Layer = LayerInitialValues
 
   const choices = ['never', 'always', 'cooperative']
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'icon-overlap'
   let selected = [choices.findIndex((choice) => choice === $map.getLayoutProperty(layerId, propertyName))]
 

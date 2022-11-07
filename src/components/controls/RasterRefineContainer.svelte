@@ -1,7 +1,14 @@
 <script lang="ts">
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
-  import { fetchUrl, getActiveBandIndex, getLayerUrl, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
+  import {
+    fetchUrl,
+    getActiveBandIndex,
+    getLayerStyle,
+    getLayerUrl,
+    getValueFromRasterTileUrl,
+    updateParamsInURL,
+  } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { map, layerList } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -12,7 +19,7 @@
     // @ts-ignore
   ;({ info } = layer)
 
-  let expression = getValueFromRasterTileUrl($map, layer.definition.id, 'expression') as string
+  let expression = getValueFromRasterTileUrl($map, layer.id, 'expression') as string
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
 
@@ -46,14 +53,15 @@
   }
 
   const handleRemoveExpression = async () => {
-    const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+    const layerStyle = getLayerStyle($map, layer.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
     const layerURL = new URL(layerSrc.tiles[0])
     expression = ''
     //handleApplyExpression()
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.id)}`,
       )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
@@ -69,11 +77,11 @@
         layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
 
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
     }
     const nlayer = { ...layer, info: info }
     const layers = $layerList.map((lyr) => {
-      return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      return layer.id !== lyr.id ? lyr : nlayer
     })
     layerList.set([...layers])
   }
@@ -94,13 +102,14 @@
 
   const handleApplyExpression = async () => {
     if (expression && expression.length > 0) {
-      const layerSrc = $map.getSource(layer.definition.source)
+      const layerStyle = getLayerStyle($map, layer.id)
+      const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       let updatedParams = {}
       const exprStatUrl = new URL(
         `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
           $map,
-          layer.definition.id,
+          layer.id,
         )}&expression=${encodeURIComponent(expression)}`,
       )
       console.log(exprStatUrl.searchParams.get('expression').includes('where'))
@@ -115,11 +124,11 @@
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
 
       layerURL.searchParams.delete('expression')
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
 
       const nlayer = { ...layer, info: info }
       const layers = $layerList.map((lyr) => {
-        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+        return layer.id !== lyr.id ? lyr : nlayer
       })
       layerList.set([...layers])
     }

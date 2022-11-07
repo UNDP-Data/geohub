@@ -23,7 +23,13 @@
     VectorLayerTileStatLayer,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getFillOutlineColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getFillOutlineColor,
+    getIntervalList,
+    getLayerStyle,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
@@ -40,7 +46,7 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
-  let defaultFillOutlineColor = getFillOutlineColor($map, layer.definition.id)
+  let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = layer.intervals.propertyName
@@ -124,7 +130,7 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {
@@ -220,8 +226,8 @@
       return [row.start, rgb]
     })
     // console.log(stops)
-    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultFillOutlineColor)
-    $map.setPaintProperty(layer.definition.id, 'fill-color', {
+    $map.setPaintProperty(layer.id, 'fill-outline-color', defaultFillOutlineColor)
+    $map.setPaintProperty(layer.id, 'fill-color', {
       property: layer.intervals.propertyName,
       type: 'interval',
       stops: stops,

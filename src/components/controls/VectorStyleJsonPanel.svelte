@@ -11,7 +11,7 @@
   export let isStyleJsonPanelVisible = false
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   $: styleJSON = stringifyStyleJSON(style)

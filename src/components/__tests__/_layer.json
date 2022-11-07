@@ -1,16 +1,5 @@
 {
   "name":"Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif",
-  "definition":{
-     "id":"0ebfd361-8fd3-4d01-84f7-13b620b3e2ff",
-     "type":"raster",
-     "source":"climate-action/Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif",
-     "source-layer": "NGA_DepRationAdm2",
-     "minzoom":0,
-     "maxzoom":22,
-     "layout":{
-        "visibility":"visible"
-     }
-  },
   "type":"raster",
   "info":{
      "bounds":[

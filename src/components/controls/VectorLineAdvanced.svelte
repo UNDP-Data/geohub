@@ -17,7 +17,14 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getLineColor, getLineWidth, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getIntervalList,
+    getLayerStyle,
+    getLineColor,
+    getLineWidth,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -83,7 +90,7 @@
   })
 
   const setCssIconFilter = () => {
-    const lineColor = getLineColor($map, layer.definition.id)
+    const lineColor = getLineColor($map, layer.id)
     const rgba = chroma(lineColor).rgba()
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
@@ -145,7 +152,7 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {
@@ -239,8 +246,8 @@
 
     if (stops.length > 0) {
       if (hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
-        $map.setPaintProperty(layer.definition.id, 'line-width', getLineWidth($map, layer.definition.id))
-        $map.setPaintProperty(layer.definition.id, 'line-color', {
+        $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
+        $map.setPaintProperty(layer.id, 'line-color', {
           property: layer.intervals.propertyName,
           type: 'interval',
           stops,
@@ -250,9 +257,9 @@
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
 
         sizeArray = newStops.map((item) => item[1])
-        const lineColor = getLineColor($map, layer.definition.id)
-        $map.setPaintProperty(layer.definition.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
-        $map.setPaintProperty(layer.definition.id, 'line-width', {
+        const lineColor = getLineColor($map, layer.id)
+        $map.setPaintProperty(layer.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
+        $map.setPaintProperty(layer.id, 'line-width', {
           property: layer.intervals.propertyName,
           type: 'interval',
           stops: newStops,

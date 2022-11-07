@@ -10,13 +10,13 @@
   export let layer: Layer = LayerInitialValues
 
   const defaultColor = `rgba(0,0,0,1)`
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'icon-color'
 
-  let rgba = getIconColor($map, layer.definition.id)
+  let rgba = getIconColor($map, layer.id)
 
   onMount(() => {
-    rgba = getIconColor($map, layer.definition.id)
+    rgba = getIconColor($map, layer.id)
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 

@@ -65,10 +65,10 @@
     const nextTabIndex = currentTabIndex - 1
     if (nextTabIndex < 0) {
       activeTab = tabs[tabs.length - 1].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[nextTabIndex].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 
@@ -78,10 +78,10 @@
     const nextTab = tabs[nextTabIndex]
     if (nextTab) {
       activeTab = nextTab.label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[0].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -103,7 +103,7 @@
           <a
             role="tab"
             aria-label={tab.label}
-            id={`${tab.label}-${layer.definition.id}`}
+            id={`${tab.label}-${layer.id}`}
             on:keydown={handleKeyDown}
             href={'#'}
             on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}

@@ -63,10 +63,10 @@
     const nextTabIndex = currentTabIndex - 1
     if (nextTabIndex < 0) {
       activeColorMapType = colorMapTypes[colorMapTypes.length - 1].name
-      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
     } else {
       activeColorMapType = colorMapTypes[nextTabIndex].name
-      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
     }
   }
 
@@ -76,10 +76,10 @@
     const nextTab = colorMapTypes[nextTabIndex]
     if (nextTab) {
       activeColorMapType = nextTab.name
-      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
     } else {
       activeColorMapType = colorMapTypes[0].name
-      document.getElementById(`${activeColorMapType}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -100,7 +100,7 @@
               <a
                 style="border: none"
                 role="tab"
-                id={`${colorMapType}-${layer.definition.id}`}
+                id={`${colorMapType}-${layer.id}`}
                 href={'#'}
                 on:click={() => handleSetActiveColorMapType(colorMapType)}
                 on:keydown={handleArrowKey}>

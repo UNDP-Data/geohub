@@ -9,7 +9,7 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'icon-size'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
@@ -32,7 +32,7 @@
   })
 
   const setValue = () => {
-    $map.setLayoutProperty(layer.definition.id, propertyName, value)
+    $map.setLayoutProperty(layer.id, propertyName, value)
   }
 </script>
 

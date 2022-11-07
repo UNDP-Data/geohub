@@ -15,28 +15,21 @@
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { getActiveBandIndex, fetchUrl, updateParamsInURL, getValueFromRasterTileUrl } from '$lib/helper'
+  import {
+    getActiveBandIndex,
+    fetchUrl,
+    updateParamsInURL,
+    getValueFromRasterTileUrl,
+    getLayerStyle,
+  } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import type {
-    FillLayerSpecification,
-    HeatmapLayerSpecification,
-    LineLayerSpecification,
-    RasterLayerSpecification,
-    RasterTileSource,
-    SymbolLayerSpecification,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
 
-  let definition:
-    | RasterLayerSpecification
-    | FillLayerSpecification
-    | LineLayerSpecification
-    | SymbolLayerSpecification
-    | HeatmapLayerSpecification
   let info
-  ;({ definition, info } = layer)
-  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
+  ;({ info } = layer)
+  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   let layerStats
   let colorPickerVisibleIndex: number
@@ -74,7 +67,7 @@
         info = { ...info, stats: layerStats }
         layer = { ...layer, info: info }
         const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : layer
+          return layer.id !== lyr.id ? lyr : layer
         })
         layerList.set([...layers])
       }
@@ -121,23 +114,24 @@
     if (event?.detail?.colorMapName) {
       if (layer.tree?.isMosaicJSON) {
         const colorMapName = event?.detail?.colorMapName
-        const source: RasterTileSource = $map.getSource($map.getLayer(layer.definition.id).source) as RasterTileSource
+        const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
         const tiles = source.tiles
         const layerURL = new URL(tiles[0])
         layerURL.searchParams.delete('colormap_name')
         layerURL.searchParams.delete('rescale')
-        const rescale = getValueFromRasterTileUrl($map, layer.definition.id, 'rescale') as number[]
+        const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
         let updatedParams = Object.assign({ colormap_name: colorMapName })
         if (rescale) {
           updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
         }
-        updateParamsInURL(layer.definition, layerURL, updatedParams)
+        const layerStyle = getLayerStyle($map, layer.id)
+        updateParamsInURL(layerStyle, layerURL, updatedParams)
       }
 
       colorPickerVisibleIndex = -1
       const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
       const layers = $layerList.map((lyr) => {
-        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+        return layer.id !== lyr.id ? lyr : nlayer
       })
       layerList.set([...layers])
     }

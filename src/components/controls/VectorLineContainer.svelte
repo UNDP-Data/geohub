@@ -20,7 +20,7 @@
   } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
-  import { layerList } from '$stores'
+  import { layerList, map } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
 
   export let layer: Layer
@@ -103,7 +103,7 @@
   }
 
   const getLayerNumberPropertiesCount = () => {
-    const vectorLayerMeta = getLayerNumberProperties(layer)
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
     return Object.keys(vectorLayerMeta.fields).length
   }
 
