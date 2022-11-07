@@ -21,7 +21,6 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   colorMapName?: string
   intervals?: IntervalLegend
-  simpleExpressionAvailable?: boolean
   children?: Layer[]
   parent?: Layer
   legendType?: string

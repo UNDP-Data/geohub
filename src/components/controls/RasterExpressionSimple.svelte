@@ -27,8 +27,7 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable: boolean =
-    layer.simpleExpressionAvailable === undefined ? true : layer.simpleExpressionAvailable
+  let simpleExpressionAvailable = true
   let editingExpressionIndex = 0
   let combiningOperators = []
 
@@ -116,7 +115,6 @@
   // Whenever the where button is clicked, create a new complex expression
   const handleWhereButtonClick = () => {
     simpleExpressionAvailable = false
-    layer.simpleExpressionAvailable = simpleExpressionAvailable
     if (expressions.length === 1) {
       expressions[0] = {
         band: band,
@@ -164,7 +162,7 @@
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
             )};`,
           )
-          console.log(exprStatUrl)
+          // console.log(exprStatUrl)
           const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
           info.stats = exprStats
           const expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
@@ -237,7 +235,6 @@
   // Clear the expression, reset the map, legend and other relevant components to the initial state when without the expression
   const clearAppliedExpression = async () => {
     simpleExpressionAvailable = true
-    layer.simpleExpressionAvailable = simpleExpressionAvailable
     editingExpressionIndex = 0
     expressions = []
     expression = ''
