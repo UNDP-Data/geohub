@@ -91,6 +91,12 @@ export const LayerIconTypes = [
     color: 'lightseagreen',
   },
   {
+    id: 'symbol',
+    label: 'Symbol',
+    icon: 'fa-solid fa-cubes-stacked',
+    color: 'lightseagreen',
+  },
+  {
     id: 'line',
     label: 'Line',
     icon: 'fa-solid fa-bacon',
@@ -98,6 +104,12 @@ export const LayerIconTypes = [
   },
   {
     id: 'polygon',
+    label: 'Polygon',
+    icon: 'fa-solid fa-vector-square',
+    color: 'crimson',
+  },
+  {
+    id: 'fill',
     label: 'Polygon',
     icon: 'fa-solid fa-vector-square',
     color: 'crimson',

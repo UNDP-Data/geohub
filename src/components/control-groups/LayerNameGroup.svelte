@@ -22,8 +22,8 @@
     }
   }
 
-  let icon = LayerIconTypes.find((icon) => icon.id === layer.type)
-  if (layer.type === LayerTypes.VECTOR) {
+  let icon = LayerIconTypes.find((icon) => icon.id === layer.definition.type)
+  if (layer.definition.type !== LayerTypes.RASTER) {
     switch (layer.definition.type) {
       case 'fill':
         icon = LayerIconTypes.find((icon) => icon.id === 'polygon')

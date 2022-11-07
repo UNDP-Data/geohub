@@ -62,7 +62,7 @@
 
   const handleZoomToLayerClick = () => {
     let bounds: LngLatBoundsLike
-    if (layer.type === LayerTypes.RASTER) {
+    if (layer.definition.type === LayerTypes.RASTER) {
       const metadata: RasterTileMetadata = layer.info
       bounds = [
         [Number(metadata.bounds[0]), Number(metadata.bounds[1])],

@@ -18,7 +18,6 @@ export interface Layer {
     | FillLayerSpecification
     | SymbolLayerSpecification
     | HeatmapLayerSpecification
-  type?: string
   info?: RasterTileMetadata | VectorTileMetadata
   colorMapName?: string
   intervals?: IntervalLegend

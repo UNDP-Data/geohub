@@ -65,7 +65,6 @@
       targetLayer = {
         name: targetLayerId,
         definition: childLayer,
-        type: LayerTypes.VECTOR,
         info: layer.info,
         parent: layer,
       }

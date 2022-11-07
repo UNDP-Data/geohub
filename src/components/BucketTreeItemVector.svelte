@@ -182,7 +182,6 @@
       {
         name: layerName,
         definition: layerDefinition,
-        type: LayerTypes.VECTOR,
         info: tree.metadata,
         tree: tree,
       },
