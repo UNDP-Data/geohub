@@ -9,7 +9,7 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { LayerInitialValues, TabNames } from '$lib/constants'
+  import { DEFAULT_COLORMAP, LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer, RasterSimpleExpression } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
@@ -23,6 +23,7 @@
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
+  let colorMapName = DEFAULT_COLORMAP
 
   $: {
     isLegendPanelVisible = false
@@ -137,7 +138,9 @@
 
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
-        <RasterLegendContainer bind:layer />
+        <RasterLegendContainer
+          bind:layer
+          bind:colorMapName />
       {/if}
       {#if isHistogramPanelVisible}
         <RasterHistogram bind:layer />

@@ -131,7 +131,6 @@
         id: layerId,
         name: layerName,
         info: layerInfo,
-        colorMapName: defaultColorMap,
         intervals: {
           classification: ClassificationMethodTypes.EQUIDISTANT,
           numberOfClasses: COLOR_CLASS_COUNT,
@@ -260,7 +259,6 @@
         id: layerId,
         name: layerName,
         info: layerInfo,
-        colorMapName: DEFAULT_COLORMAP,
         intervals: {
           classification: ClassificationMethodTypes.EQUIDISTANT,
           numberOfClasses: COLOR_CLASS_COUNT,

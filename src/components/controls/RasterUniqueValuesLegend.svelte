@@ -18,6 +18,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
+  export let colorMapName: string
 
   let info: RasterTileMetadata
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,30 +29,22 @@
   let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
-  let layerStyle = getLayerStyle($map, layerConfig.id)
-  const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
-  const layerURL = new URL(layerSrc.tiles[0])
   let colorMap = {}
-  let colorMapName = layerConfig.colorMapName
   let layerColorMap: chroma.Scale = undefined
   let colorMapRows: IntervalLegendColorMapRow[] = []
 
-  $: {
-    if (layerConfig && colorMapName !== layerConfig.colorMapName) {
-      if ($map.isStyleLoaded()) {
-        layerStyle = getLayerStyle($map, layerConfig.id)
+  $: colorMapName, colorMapNameChanged()
+  const colorMapNameChanged = () => {
+    if (!colorMapName) return
+    if ($map.isStyleLoaded()) {
+      getColorMapRows()
+      reclassifyImage()
+    } else {
+      // wait a bit if map style is not loaded after changing colormap_name
+      setTimeout(() => {
         getColorMapRows()
-        colorMapName = layerConfig.colorMapName
         reclassifyImage()
-      } else {
-        // wait a bit if map style is not loaded after changing colormap_name
-        setTimeout(() => {
-          layerStyle = getLayerStyle($map, layerConfig.id)
-          getColorMapRows()
-          colorMapName = layerConfig.colorMapName
-          reclassifyImage()
-        }, 300)
-      }
+      }, 300)
     }
   }
 
@@ -80,6 +73,9 @@
 
   const reclassifyImage = (useLayerColorMapRows = false) => {
     setColorMap()
+    const layerStyle = getLayerStyle($map, layerConfig.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('rescale')) {
       layerURL.searchParams.delete('rescale')
     }
@@ -124,8 +120,8 @@
 
   const setColorMap = () => {
     for (let [colorMapType, colorMaps] of Object.entries(ColorMaps)) {
-      colorMaps.forEach((colorMapName: string) => {
-        if (layerConfig.colorMapName === colorMapName) {
+      colorMaps.forEach((cmName: string) => {
+        if (colorMapName === cmName) {
           if (colorMapType === ColorMapTypes.SEQUENTIAL) {
             layerColorMap = chroma.scale(colorMapName).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
           } else {
@@ -138,7 +134,13 @@
 
   const handleParamsUpdate = (cmap) => {
     const encodeColorMapRows = JSON.stringify(cmap)
+    const layerStyle = getLayerStyle($map, layerConfig.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     layerURL.searchParams.delete('colormap_name')
+    if (layerURL.searchParams.has('rescale')) {
+      layerURL.searchParams.delete('rescale')
+    }
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
@@ -170,6 +172,7 @@
     {#each colorMapRows as colorMapRow}
       <UniqueValuesLegendColorMapRow
         bind:colorMapRow
+        bind:colorMapName
         layer={layerConfig}
         {colorPickerVisibleIndex}
         on:clickColorPicker={handleColorPickerClick}

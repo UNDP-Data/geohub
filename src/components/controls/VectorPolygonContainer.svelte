@@ -11,18 +11,14 @@
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorPolygonSimple from '$components/controls/VectorPolygonSimple.svelte'
   import VectorPolygonAdvanced from '$components/controls/VectorPolygonAdvanced.svelte'
-  import {
-    ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
-    DEFAULT_COLORMAP,
-    VectorLayerPolygonLegendTypes,
-  } from '$lib/constants'
+  import { ClassificationMethodTypes, COLOR_CLASS_COUNT, VectorLayerPolygonLegendTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
 
   export let layer: Layer
+  export let colorMapName
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -55,7 +51,6 @@
   onMount(() => {
     // set default values
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerPolygonLegendTypes.SIMPLE
-    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
 
     if (layer?.intervals === undefined) {
       layer.intervals = {
@@ -84,13 +79,11 @@
     }
   }
 
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
-      colorPickerVisibleIndex = -1
-    }
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    const layerClone = cloneDeep(layer)
+    layer = layerClone
+    colorPickerVisibleIndex = -1
   }
 
   const handleClosePopup = () => {
@@ -123,7 +116,8 @@
         <VectorPolygonAdvanced
           bind:layer
           bind:layerMin
-          bind:layerMax />
+          bind:layerMax
+          bind:colorMapName />
       </div>
     {/if}
   </div>
@@ -183,11 +177,11 @@
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           {layerMin}
-          {layerMax} />
+          {layerMax}
+          bind:colorMapName />
         <div
           id="arrow"
           data-popper-arrow />

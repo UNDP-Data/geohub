@@ -7,7 +7,14 @@
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, getActiveBandIndex, getLayerStyle, getLayerUrl, updateParamsInURL } from '$lib/helper'
+  import {
+    fetchUrl,
+    getActiveBandIndex,
+    getLayerStyle,
+    getLayerUrl,
+    getValueFromRasterTileUrl,
+    updateParamsInURL,
+  } from '$lib/helper'
   import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, layerList, map } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -257,7 +264,8 @@
       layerURL.searchParams.delete('expression')
       if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
         layerURL.searchParams.delete('colormap')
-        layerURL.searchParams.set('colormap_name', layer.colorMapName)
+        const colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+        layerURL.searchParams.set('colormap_name', colorMapName)
         layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
       layerURL.searchParams.delete('rescale')

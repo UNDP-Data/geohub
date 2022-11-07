@@ -13,7 +13,7 @@
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
-  let activeColorMapName = layerConfig.colorMapName
+  export let colorMapName: string
   let layerMin = NaN
   let layerMax = NaN
 
@@ -28,9 +28,6 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-  const layerURL = new URL(layerSrc.tiles[0])
-
   let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
@@ -42,15 +39,14 @@
 
   // the reactive statement below will update map whenever the colormap changes or the legend was switched.
   // quite a tricky business
-
-  $: {
-    if (activeColorMapName !== layerConfig.colorMapName || (layerURL.searchParams.has('colormap') && layerConfig)) {
-      //if (activeColorMapName !== layerConfig.colorMapName || layerConfig) {
-      //console.log(`layerURL has changed ${layerURL.searchParams.get('rescale')} ${layerMin} - ${layerMax}` )
+  $: colorMapName, colorMapNameChanged()
+  const colorMapNameChanged = () => {
+    if (!colorMapName) return
+    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
+    if (!(layerSrc && layerSrc.tiles && layerSrc.tiles.length > 0)) return
+    const layerURL = new URL(layerSrc.tiles[0])
+    if (layerURL.searchParams.has('colormap') && layerConfig) {
       rescaleColorMap()
-      const layerStyle = getLayerStyle($map, layerConfig.id)
-      updateParamsInURL(layerStyle, layerURL, { colormap_name: layerConfig.colorMapName })
-      activeColorMapName = layerConfig.colorMapName // this re-renders the continuous legend
       layerConfig.intervals.colorMapRows = [] // this re-remders the intervals legend classes properly
     }
   }
@@ -60,6 +56,9 @@
   })
 
   const rescaleColorMap = () => {
+    if (!$map) return
+    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('colormap')) {
       //console.log('rescale color map')
       let params = {}
@@ -76,7 +75,7 @@
         }
       }
 
-      params = Object.assign(params, { colormap_name: activeColorMapName })
+      params = Object.assign(params, { colormap_name: colorMapName })
       Object.keys(params).forEach((key) => {
         layerURL.searchParams.set(key, params[key])
       })
@@ -86,6 +85,8 @@
   }
   const onSliderStop = () => {
     const layerStyle = getLayerStyle($map, layerConfig.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') })
   }
 </script>
@@ -95,7 +96,7 @@
   data-testid="continuous-view-container">
   <div class="active-color-map">
     <ColorMapPickerCard
-      colorMapName={activeColorMapName}
+      {colorMapName}
       colorMapType={ColorMapTypes.SEQUENTIAL}
       {layerMax}
       {layerMin}

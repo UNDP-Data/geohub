@@ -31,6 +31,7 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName
 
   const classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -40,7 +41,6 @@
   let hasUniqueValues = false
   let classificationMethod = layer.intervals.classification
   let classificationMethods = classificationMethodsDefault
-  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let icon: SpriteImage
@@ -53,12 +53,7 @@
   }
 
   // update color intervals upon change of color map name
-  $: {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-      setIntervalValues()
-    }
-  }
+  $: colorMapName, setIntervalValues()
 
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
@@ -192,7 +187,7 @@
                 randomSample,
                 numberOfClasses,
               )
-              const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+              const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
               for (let i = 0; i < intervalList.length - 1; i++) {
@@ -357,6 +352,7 @@
           {#each layer.intervals.colorMapRows as colorMapRow}
             <IntervalsLegendColorMapRow
               bind:colorMapRow
+              bind:colorMapName
               {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}

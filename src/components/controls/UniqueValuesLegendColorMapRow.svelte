@@ -15,7 +15,7 @@
   const dispatch = createEventDispatcher()
 
   let color: Color
-  let colorMapName: string
+  export let colorMapName: string
   let colorPickerStyle: string
   let showToolTip = false
 
@@ -31,12 +31,7 @@
   $: color, updateColorMap(color)
 
   // load color map upon change of layer color map name
-  $: {
-    if (layer.colorMapName !== colorMapName) {
-      colorMapName = layer.colorMapName
-      setColorFromProp()
-    }
-  }
+  $: colorMapName, setColorFromProp()
 
   const {
     ref: popperRef,

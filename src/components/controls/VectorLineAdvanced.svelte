@@ -38,6 +38,7 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName
 
   const classificationMethodsDefault = [
     // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -47,7 +48,6 @@
 
   let classificationMethod
   let classificationMethods = classificationMethodsDefault
-  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let hasUniqueValues = false
@@ -62,12 +62,7 @@
   }
 
   // update color intervals upon change of color map name
-  $: {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-      setIntervalValues()
-    }
-  }
+  $: colorMapName, setIntervalValues()
 
   onMount(() => {
     setCssIconFilter()
@@ -207,7 +202,7 @@
                 randomSample,
                 numberOfClasses,
               )
-              const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+              const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
               for (let i = 0; i < intervalList.length - 1; i++) {
@@ -372,6 +367,7 @@
             <div class="pl-6">
               <UniqueValuesLegendColorMapRow
                 bind:colorMapRow
+                bind:colorMapName
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}
@@ -386,6 +382,7 @@
             {#each layer.intervals.colorMapRows as colorMapRow}
               <IntervalsLegendColorMapRow
                 bind:colorMapRow
+                bind:colorMapName
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}

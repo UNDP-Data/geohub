@@ -73,7 +73,8 @@
       layerURL.searchParams.delete('expression')
       if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
         layerURL.searchParams.delete('colormap')
-        layerURL.searchParams.set('colormap_name', layer.colorMapName)
+        const colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+        layerURL.searchParams.set('colormap_name', colorMapName)
         layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
 

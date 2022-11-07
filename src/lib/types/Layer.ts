@@ -7,7 +7,6 @@ export interface Layer {
   id: string
   name: string
   info?: RasterTileMetadata | VectorTileMetadata
-  colorMapName?: string
   intervals?: IntervalLegend
   children?: Layer[]
   parent?: Layer

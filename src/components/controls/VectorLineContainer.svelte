@@ -14,7 +14,6 @@
   import {
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
-    DEFAULT_COLORMAP,
     VectorLayerLineLegendTypes,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
@@ -24,6 +23,7 @@
   import { getLayerNumberProperties } from '$lib/helper'
 
   export let layer: Layer
+  export let colorMapName
 
   let applyToOption = layer?.intervals?.applyToOption
     ? layer.intervals.applyToOption
@@ -59,7 +59,6 @@
   onMount(() => {
     // set default values
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerLineLegendTypes.SIMPLE
-    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
 
     if (layer?.intervals === undefined) {
       layer.intervals = {
@@ -88,13 +87,12 @@
       layer.legendType = VectorLayerLineLegendTypes.SIMPLE
     }
   }
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
-      colorPickerVisibleIndex = -1
-    }
+
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    const layerClone = cloneDeep(layer)
+    layer = layerClone
+    colorPickerVisibleIndex = -1
   }
 
   const handleClosePopup = () => {
@@ -128,7 +126,8 @@
           bind:layer
           bind:applyToOption
           bind:layerMin
-          bind:layerMax />
+          bind:layerMax
+          bind:colorMapName />
       </div>
     {/if}
   </div>
@@ -188,11 +187,11 @@
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           {layerMin}
-          {layerMax} />
+          {layerMax}
+          bind:colorMapName />
         <div
           id="arrow"
           data-popper-arrow />

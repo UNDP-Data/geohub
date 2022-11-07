@@ -9,7 +9,6 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const defaultColor = `rgba(0,0,0,1)`
   const layerId = layer.id
   const propertyName = 'icon-color'
 

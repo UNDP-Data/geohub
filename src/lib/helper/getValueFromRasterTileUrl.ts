@@ -19,6 +19,7 @@ export const getValueFromRasterTileUrl = (
   if (source.type !== 'raster') {
     throw new Error(`Invalid source type: ${source.type}`)
   }
+  if (!(source && source.tiles && source.tiles.length > 0)) return
   const tileUrl = new URL(source.tiles[0])
   let value: string | number[] | number[][][] | { [key: string]: number[] } = tileUrl.searchParams.get(paramName)
   if (value && paramName === 'rescale') {

@@ -12,7 +12,6 @@
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    DEFAULT_LINE_COLOR,
     LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
   } from '$lib/constants'
@@ -35,6 +34,7 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName
 
   const classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -44,7 +44,6 @@
 
   let classificationMethod = layer.intervals.classification
   let classificationMethods = classificationMethodsDefault
-  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
   let hasUniqueValues = false
@@ -53,17 +52,9 @@
   let inLegend = true
 
   // update color intervals upon change of color map name
-  $: {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-      setIntervalValues()
-    }
-  }
+  $: colorMapName, setIntervalValues()
 
   onMount(() => {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-    }
     setIntervalValues()
     $map.on('zoom', updateMap)
   })
@@ -181,7 +172,7 @@
                 randomSample,
                 numberOfClasses,
               )
-              const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+              const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
               for (let i = 0; i < intervalList.length - 1; i++) {
@@ -312,6 +303,7 @@
             <div class="pl-6">
               <UniqueValuesLegendColorMapRow
                 bind:colorMapRow
+                bind:colorMapName
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}
@@ -321,6 +313,7 @@
           {:else}
             <IntervalsLegendColorMapRow
               bind:colorMapRow
+              bind:colorMapName
               {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
