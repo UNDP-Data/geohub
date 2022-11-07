@@ -74,7 +74,7 @@
         info = { ...info, stats: layerStats }
         layer = { ...layer, info: info }
         const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : layer
+          return layer.id !== lyr.id ? lyr : layer
         })
         layerList.set([...layers])
       }
@@ -121,12 +121,12 @@
     if (event?.detail?.colorMapName) {
       if (layer.tree?.isMosaicJSON) {
         const colorMapName = event?.detail?.colorMapName
-        const source: RasterTileSource = $map.getSource($map.getLayer(layer.definition.id).source) as RasterTileSource
+        const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
         const tiles = source.tiles
         const layerURL = new URL(tiles[0])
         layerURL.searchParams.delete('colormap_name')
         layerURL.searchParams.delete('rescale')
-        const rescale = getValueFromRasterTileUrl($map, layer.definition.id, 'rescale') as number[]
+        const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
         let updatedParams = Object.assign({ colormap_name: colorMapName })
         if (rescale) {
           updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
@@ -137,7 +137,7 @@
       colorPickerVisibleIndex = -1
       const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
       const layers = $layerList.map((lyr) => {
-        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+        return layer.id !== lyr.id ? lyr : nlayer
       })
       layerList.set([...layers])
     }

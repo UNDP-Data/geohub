@@ -12,7 +12,7 @@
     // @ts-ignore
   ;({ info } = layer)
 
-  let expression = getValueFromRasterTileUrl($map, layer.definition.id, 'expression') as string
+  let expression = getValueFromRasterTileUrl($map, layer.id, 'expression') as string
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
 
@@ -53,7 +53,7 @@
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.id)}`,
       )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
@@ -73,7 +73,7 @@
     }
     const nlayer = { ...layer, info: info }
     const layers = $layerList.map((lyr) => {
-      return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+      return layer.id !== lyr.id ? lyr : nlayer
     })
     layerList.set([...layers])
   }
@@ -94,13 +94,13 @@
 
   const handleApplyExpression = async () => {
     if (expression && expression.length > 0) {
-      const layerSrc = $map.getSource(layer.definition.source)
+      const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       let updatedParams = {}
       const exprStatUrl = new URL(
         `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
           $map,
-          layer.definition.id,
+          layer.id,
         )}&expression=${encodeURIComponent(expression)}`,
       )
       console.log(exprStatUrl.searchParams.get('expression').includes('where'))
@@ -119,7 +119,7 @@
 
       const nlayer = { ...layer, info: info }
       const layers = $layerList.map((lyr) => {
-        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+        return layer.id !== lyr.id ? lyr : nlayer
       })
       layerList.set([...layers])
     }

@@ -13,7 +13,7 @@
   export let isFilterPanelVisible = false
   export let layer
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
 
   // vars
   let currentExpressionIndex = 0

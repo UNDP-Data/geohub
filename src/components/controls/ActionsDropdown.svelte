@@ -25,7 +25,7 @@
   export let layer: Layer = LayerInitialValues
   export let disabled = true
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 

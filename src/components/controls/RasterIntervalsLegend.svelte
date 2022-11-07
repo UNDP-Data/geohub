@@ -93,7 +93,7 @@
     }
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
-      return layerConfig.definition.id !== layer.definition.id ? layer : layerConfig
+      return layerConfig.id !== layer.id ? layer : layerConfig
     })
     layerList.set([...layers])
     layerConfig.intervals.colorMapRows.length > 0 ? null : reclassifyImage()

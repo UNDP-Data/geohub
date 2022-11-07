@@ -128,6 +128,7 @@
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
       {
+        id: layerId,
         name: layerName,
         definition: layerDefinition,
         info: layerInfo,
@@ -257,6 +258,7 @@
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
       {
+        id: layerId,
         name: layerName,
         definition: layerDefinition,
         info: layerInfo,

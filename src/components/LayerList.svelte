@@ -26,7 +26,7 @@
 {/if}
 
 <div class="layer-list">
-  {#each $layerList as layer (layer.definition.id)}
+  {#each $layerList as layer (layer.id)}
     {#if layer.definition.type === LayerTypes.RASTER}
       <RasterLayer {layer} />
       <!--     FixMe: Component commented out to make use of the RasterLayer component-->

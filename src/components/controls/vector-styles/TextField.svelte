@@ -12,7 +12,7 @@
   export let fieldType: string = undefined
 
   const dispatch = createEventDispatcher()
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'text-field'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 

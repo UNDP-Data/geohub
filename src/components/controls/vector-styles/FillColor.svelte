@@ -8,7 +8,7 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'fill-color'
 
   const getFillColor = (): string => {

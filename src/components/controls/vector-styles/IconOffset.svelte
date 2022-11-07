@@ -10,7 +10,7 @@
   export let layer: Layer = LayerInitialValues
 
   const dispatch = createEventDispatcher()
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'icon-offset'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 

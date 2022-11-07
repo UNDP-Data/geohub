@@ -66,7 +66,7 @@
   })
 
   const getColorMapRows = () => {
-    const colormap = getValueFromRasterTileUrl($map, layerConfig.definition.id, 'colormap') as {
+    const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as {
       [key: string]: number[]
     }
     colorMapRows = []

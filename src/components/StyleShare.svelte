@@ -74,7 +74,7 @@
       const newLayers = []
       style.layers.forEach((layer) => {
         $layerList.forEach((l: Layer) => {
-          if (l.definition.id === layer.id) {
+          if (l.id === layer.id) {
             newLayers.push(layer)
           }
         })
@@ -83,7 +83,7 @@
     }
 
     untargetedLayers.forEach((layer) => {
-      const deletedLayer = style.layers.find((l) => l.id === layer.definition.id)
+      const deletedLayer = style.layers.find((l) => l.id === layer.id)
       if (deletedLayer) {
         const delIndex = style.layers.indexOf(deletedLayer)
         if (delIndex === 0) {

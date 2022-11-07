@@ -11,6 +11,7 @@ import type { TreeNode } from './TreeNode'
 import type { VectorTileMetadata } from './VectorTileMetadata'
 
 export interface Layer {
+  id: string
   name: string
   definition:
     | RasterLayerSpecification

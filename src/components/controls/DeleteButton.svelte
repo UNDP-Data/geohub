@@ -15,19 +15,19 @@
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {
-    const layerId = layer.definition.id
+    const layerId = layer.id
     confirmDeleteLayerDialogVisible = false
 
     setTimeout(() => {
-      const layer = $layerList.filter((item) => item.definition.id === layerId)[0]
+      const layer = $layerList.filter((item) => item.id === layerId)[0]
       const delSourceId = layer.definition.source
       if (layer.children && layer.children.length > 0) {
         layer.children.forEach((child) => {
-          $map.removeLayer(child.definition.id)
+          $map.removeLayer(child.id)
         })
         layer.children = []
       }
-      $layerList = $layerList.filter((item) => item.definition.id !== layerId)
+      $layerList = $layerList.filter((item) => item.id !== layerId)
       $map.removeLayer(layerId)
       const layerListforDelSource = $layerList.filter((item) => item.definition.source === delSourceId)
       if (layerListforDelSource.length === 0) {

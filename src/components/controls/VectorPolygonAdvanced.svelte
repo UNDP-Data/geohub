@@ -40,7 +40,7 @@
   let classificationMethods = classificationMethodsDefault
   let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
-  let defaultFillOutlineColor = getFillOutlineColor($map, layer.definition.id)
+  let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = layer.intervals.propertyName
@@ -220,8 +220,8 @@
       return [row.start, rgb]
     })
     // console.log(stops)
-    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultFillOutlineColor)
-    $map.setPaintProperty(layer.definition.id, 'fill-color', {
+    $map.setPaintProperty(layer.id, 'fill-outline-color', defaultFillOutlineColor)
+    $map.setPaintProperty(layer.id, 'fill-color', {
       property: layer.intervals.propertyName,
       type: 'interval',
       stops: stops,

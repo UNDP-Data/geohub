@@ -23,7 +23,7 @@
   let badSingleTagValue
   //console.log(propertySelectedValue, dataType)
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
 
   const attrstats = layer.info.stats.filter((el: VectorLayerTileStatAttribute) => {
     return el.attribute == propertySelectedValue

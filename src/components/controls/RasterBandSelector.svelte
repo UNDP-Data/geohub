@@ -21,7 +21,7 @@
 
     const newLayer = cloneDeep(layer)
     const layerId = uuidv4()
-    newLayer.definition.id = layerId
+    newLayer.id = layerId
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -31,9 +31,9 @@
     $layerList.splice(currentLayerIndex, 0, newLayer)
 
     // layerList.set([newLayer, ...$layerList])
-    $map.addLayer(newLayer.definition, layer.definition.id)
+    $map.addLayer(newLayer.definition, layer.id)
 
-    deleteOldLayer(layer.definition.id)
+    deleteOldLayer(layer.id)
   }
 
   if (layer.definition.type === LayerTypes.RASTER && !layer.tree && layer.tree.isMosaicJSON) {
@@ -71,7 +71,7 @@
   }
 
   const deleteOldLayer = (oldLayerId) => {
-    $layerList = $layerList.filter((item) => item.definition.id !== oldLayerId)
+    $layerList = $layerList.filter((item) => item.id !== oldLayerId)
     $map.removeLayer(oldLayerId)
   }
 </script>

@@ -157,7 +157,7 @@
           const exprStatUrl = new URL(
             `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
               $map,
-              layer.definition.id,
+              layer.id,
             )}&expression=${encodeURIComponent(
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
             )};`,
@@ -176,7 +176,7 @@
           updateParamsInURL(layer.definition, layerURL, updatedParams)
           const nlayer = { ...layer, info: info }
           const layers = $layerList.map((lyr) => {
-            return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+            return layer.id !== lyr.id ? lyr : nlayer
           })
           layerList.set([...layers])
         }
@@ -199,7 +199,7 @@
         const exprStatUrl = new URL(
           `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
             $map,
-            layer.definition.id,
+            layer.id,
           )}&expression=${encodeURIComponent(
             `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
           )}&categorical=true`,
@@ -217,7 +217,7 @@
 
         const nlayer = { ...layer, info: info }
         const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+          return layer.id !== lyr.id ? lyr : nlayer
         })
         layerList.set([...layers])
       }
@@ -244,7 +244,7 @@
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.id)}`,
       )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no

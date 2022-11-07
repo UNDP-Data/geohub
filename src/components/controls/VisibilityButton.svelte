@@ -11,12 +11,12 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
 
   $: visibility = getVisibility()
 
   const getVisibility = (): 'visible' | 'none' => {
-    const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.definition.id)
+    const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.id)
     let visibility: 'visible' | 'none' = 'visible'
     if (layerStyle.layout && layerStyle.layout.visibility) {
       visibility = layerStyle.layout.visibility
@@ -32,13 +32,13 @@
     $map.setLayoutProperty(layerId, 'visibility', visibility)
 
     const layerClone = cloneDeep(layer)
-    const layerIndex = $layerList.findIndex((layer) => layer.definition.id === layerId)
+    const layerIndex = $layerList.findIndex((layer) => layer.id === layerId)
     $layerList[layerIndex] = layerClone
 
     if (layer.children && layer.children.length > 0) {
       layer.children.forEach((child) => {
-        if (!$map.getLayer(child.definition.id)) return
-        $map.setLayoutProperty(child.definition.id, 'visibility', visibility)
+        if (!$map.getLayer(child.id)) return
+        $map.setLayoutProperty(child.id, 'visibility', visibility)
       })
     }
   }

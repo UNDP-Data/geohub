@@ -11,7 +11,7 @@
   export let layer: Layer = LayerInitialValues
   let colorPickerVisibleIndex: number
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'heatmap-color'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
   const heatMapDataColorIndexStart = 3

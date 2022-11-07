@@ -7,6 +7,7 @@
     LineLayerSpecification,
     SymbolLayerSpecification,
     HeatmapLayerSpecification,
+    RasterTileSource,
   } from 'maplibre-gl'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
@@ -40,12 +41,12 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  const layerSrc = $map.getSource(definition.source)
+  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
 
   let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
 
-  const rescale = getValueFromRasterTileUrl($map, layerConfig.definition.id, 'rescale') as number[]
+  const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
   // this ensures the slider state is set to layer min max
   let rangeSliderValues = rescale ? rescale : [layerMin, layerMax]

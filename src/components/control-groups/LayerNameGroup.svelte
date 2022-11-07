@@ -49,7 +49,7 @@
           class="{icon.icon} sm"
           style="color: {icon.color};" />
         <span style="padding-left: 5px;">
-          {#if $layerLabelled[layer.definition.id]}
+          {#if $layerLabelled[layer.id]}
             <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
           {/if}
         </span>

@@ -75,7 +75,7 @@
       return visibility === 'visible'
     })
     const visibleLayerIds = visibleLayers.map((l) => l.id)
-    const layersVisible = $layerList.filter((layer) => visibleLayerIds.includes(layer.definition.id))
+    const layersVisible = $layerList.filter((layer) => visibleLayerIds.includes(layer.id))
     if (layersVisible.length === 0) {
       layerValuesData = []
       return
@@ -99,7 +99,7 @@
           const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
             'cog',
             'mosaicjson',
-          )}/point/${lng},${lat}?url=${getLayerUrl(map, layer.definition.id)}`
+          )}/point/${lng},${lat}?url=${getLayerUrl(map, layer.id)}`
           const layerData = await fetchUrl(baseUrl)
           if (!(layerData.values.length > 0 && layerData.values[0].length > 0 && layerData.values[0][1].length > 0)) {
             continue
@@ -111,11 +111,10 @@
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           bandIndex = getActiveBandIndex(layer.info)
-          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getLayerUrl(
-            map,
-            layer.definition.id,
-          )}&bidx=${bandIndex + 1}`
-          const expression = getValueFromRasterTileUrl(map, layer.definition.id, 'expression') as string
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getLayerUrl(map, layer.id)}&bidx=${
+            bandIndex + 1
+          }`
+          const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string
           const queryURL = !expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(expression)}`
 
           const layerData = await fetchUrl(queryURL)
@@ -138,7 +137,7 @@
         }
       } else {
         const queriedFeatures = map.queryRenderedFeatures(e.point, {
-          layers: $layerList.map((l) => l.definition.id),
+          layers: $layerList.map((l) => l.id),
         })
         if (queriedFeatures && queriedFeatures.length > 0) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -149,7 +148,7 @@
       layerValuesDataTmp = [
         ...[
           {
-            id: layer.definition.id,
+            id: layer.id,
             name: layerName,
             lat,
             lng,

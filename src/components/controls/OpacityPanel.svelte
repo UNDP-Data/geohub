@@ -22,7 +22,7 @@
   }
 
   const setLayerOpacity = (target: Layer) => {
-    const id = target.definition.id
+    const id = target.id
     if (target.definition.type === LayerTypes.RASTER) {
       $map.setPaintProperty(id, 'raster-opacity', layerOpacity)
     } else {

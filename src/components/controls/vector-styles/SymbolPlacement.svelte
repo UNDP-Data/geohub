@@ -8,7 +8,7 @@
   export let layer: Layer = LayerInitialValues
 
   const dispatch = createEventDispatcher()
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'icon-keep-upright'
   const propertyNameSymbolPlacement = 'symbol-placement'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
@@ -25,9 +25,7 @@
 
   const parentLayer = layer.parent
   if (parentLayer) {
-    const parentStyle = $map
-      .getStyle()
-      .layers.filter((layer: LayerSpecification) => layer.id === parentLayer.definition.id)[0]
+    const parentStyle = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === parentLayer.id)[0]
     parentType = parentStyle.type
   }
 
