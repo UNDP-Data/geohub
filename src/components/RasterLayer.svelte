@@ -10,12 +10,12 @@
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import { LayerInitialValues, TabNames } from '$lib/constants'
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterSimpleExpression } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
 
   export let layer: Layer = LayerInitialValues
-
+  let expressions: RasterSimpleExpression[]
   $: tree = layer.tree
 
   let activeTab = ''
@@ -143,7 +143,9 @@
         <RasterHistogram bind:layer />
       {/if}
       {#if isRefinePanelVisible === true}
-        <RasterExpression bind:layer />
+        <RasterExpression
+          bind:layer
+          bind:expressions />
       {/if}
       <OpacityPanel
         {layer}

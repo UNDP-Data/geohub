@@ -1,7 +1,7 @@
 <script lang="ts">
   import RasterExpressionBuilder from '$components/controls/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
-  import type { BannerMessage, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { BannerMessage, Layer, RasterLayerStats, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
@@ -13,6 +13,7 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
+  export let expressions: RasterSimpleExpression[] = []
 
   let info: RasterTileMetadata
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -29,7 +30,6 @@
   let simpleExpressionAvailable: boolean =
     layer.simpleExpressionAvailable === undefined ? true : layer.simpleExpressionAvailable
   let editingExpressionIndex = 0
-  let expressions = layer.expressions || [{}]
   let combiningOperators = []
 
   // For complex expressions, ie the complex `where` expression
@@ -64,7 +64,6 @@
   // to an empty string
   $: simpleExpressionAvailable, (numbers = '')
   $: editingExpressionIndex, (numbers = '')
-  $: expressions, (layer.expressions = expressions)
 
   // Whenever the arithmetic operator is clicked, add it to the operator
   // only when the simple expression is available. Complex expression will
@@ -72,8 +71,15 @@
   const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       if (event?.detail?.operator) {
-        expressions[0].band = band
-        expressions[0].operator = event.detail.operator
+        const expr = {
+          band,
+          operator: event.detail.operator,
+        }
+        if (expressions.length === 0) {
+          expressions.push(expr)
+        } else {
+          expressions[0] = expr
+        }
       }
     } else {
       // pass
@@ -147,7 +153,7 @@
       const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       if (simpleExpressionAvailable) {
-        if (expressions[0].operator && expressions[0].value) {
+        if (expressions.length > 0 && expressions[0].operator && expressions[0].value) {
           let updatedParams = {}
 
           const exprStatUrl = new URL(
@@ -233,7 +239,7 @@
     simpleExpressionAvailable = true
     layer.simpleExpressionAvailable = simpleExpressionAvailable
     editingExpressionIndex = 0
-    expressions = [{}]
+    expressions = []
     expression = ''
 
     const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
@@ -315,18 +321,20 @@
       class="column is-10"
       style="border: 1px dotted #e6e9f7">
       {#if simpleExpressionAvailable}
-        {#each Object.keys(expressions[0]) as key}
-          <span
-            style="cursor: pointer; margin: 1%;"
-            tabindex="0"
-            class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
-            {expressions[0][`${key}`]}
-            <button
-              style="display:{key === 'band' ? 'none' : null}"
-              on:click={() => handleRemoveItem(key)}
-              class="delete is-small" />
-          </span>
-        {/each}
+        {#if expressions && expressions.length > 0}
+          {#each Object.keys(expressions[0]) as key}
+            <span
+              style="cursor: pointer; margin: 1%;"
+              tabindex="0"
+              class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
+              {expressions[0][`${key}`]}
+              <button
+                style="display:{key === 'band' ? 'none' : null}"
+                on:click={() => handleRemoveItem(key)}
+                class="delete is-small" />
+            </span>
+          {/each}
+        {/if}
       {:else}
         <div
           class="column"

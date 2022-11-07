@@ -21,7 +21,6 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   colorMapName?: string
   intervals?: IntervalLegend
-  expressions?: [] // This is to maintain the state of the expression editor. Different from expression.
   simpleExpressionAvailable?: boolean
   children?: Layer[]
   parent?: Layer
