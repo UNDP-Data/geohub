@@ -46,7 +46,7 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
 
         for (let featureIndex = 0; featureIndex < layer.length; featureIndex++) {
           const feature = layer.feature(featureIndex)
-          if (!feature.properties[property]) continue
+          if (!feature.properties?.[property]) continue
           layer['_keys'][property] = propsObj[property].push(feature.properties[property])
         }
 
