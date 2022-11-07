@@ -9,14 +9,7 @@
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
   } from '$lib/constants'
-  import type {
-    FillLayerSpecification,
-    HeatmapLayerSpecification,
-    LineLayerSpecification,
-    RasterLayerSpecification,
-    RasterTileSource,
-    SymbolLayerSpecification,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
   import { fetchUrl, generateColorMap, getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
