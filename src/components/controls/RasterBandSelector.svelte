@@ -5,6 +5,7 @@
 
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { LayerTypes } from '$lib/constants'
 
   export let layer: Layer
 
@@ -35,7 +36,7 @@
     deleteOldLayer(layer.definition.id)
   }
 
-  if (layer.definition.type === 'raster' && !layer.tree && layer.tree.isMosaicJSON) {
+  if (layer.definition.type === LayerTypes.RASTER && !layer.tree && layer.tree.isMosaicJSON) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ;({ info } = layer)
@@ -75,7 +76,7 @@
   }
 </script>
 
-{#if layer.definition.type === 'raster' && bands && bands.length > 0}
+{#if layer.definition.type === LayerTypes.RASTER && bands && bands.length > 0}
   <div class="select is-success is-rounded is-small">
     <select bind:value={selected}>
       {#each bands as band}

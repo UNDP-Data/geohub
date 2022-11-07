@@ -6,6 +6,7 @@
   import VectorLayer from '$components/VectorLayer.svelte'
   import { layerList } from '$stores'
   import { LayerTypes, TabNames } from '$lib/constants'
+  import { definition } from '@fortawesome/free-solid-svg-icons/faWindowClose'
 </script>
 
 {#if $layerList?.length === 0}
@@ -26,11 +27,11 @@
 
 <div class="layer-list">
   {#each $layerList as layer (layer.definition.id)}
-    {#if layer.type === LayerTypes.RASTER}
+    {#if layer.definition.type === LayerTypes.RASTER}
       <RasterLayer {layer} />
       <!--     FixMe: Component commented out to make use of the RasterLayer component-->
       <!--    <RasterLayer {layer} />-->
-    {:else if layer.type === LayerTypes.VECTOR}
+    {:else}
       <VectorLayer {layer} />
     {/if}
   {/each}

@@ -130,7 +130,6 @@
       {
         name: layerName,
         definition: layerDefinition,
-        type: LayerTypes.RASTER,
         info: layerInfo,
         colorMapName: defaultColorMap,
         intervals: {
@@ -145,7 +144,7 @@
 
     let firstSymbolId = undefined
     for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol') {
+      if (layer.type === LayerTypes.SYMBOL) {
         firstSymbolId = layer.id
         break
       }
@@ -260,7 +259,6 @@
       {
         name: layerName,
         definition: layerDefinition,
-        type: LayerTypes.RASTER,
         info: layerInfo,
         colorMapName: DEFAULT_COLORMAP,
         intervals: {
@@ -276,7 +274,7 @@
     ]
     let firstSymbolId = undefined
     for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol') {
+      if (layer.type === LayerTypes.SYMBOL) {
         firstSymbolId = layer.id
         break
       }

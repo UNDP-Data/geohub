@@ -94,7 +94,7 @@
       let presentUniqueNames = {}
       let bandIndex: number = null
       let layerName = layer.name
-      if (layer.type === LayerTypes.RASTER) {
+      if (layer.definition.type === LayerTypes.RASTER) {
         if (layer.tree && layer.tree.isMosaicJSON) {
           const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
             'cog',
@@ -135,7 +135,7 @@
             return (presentUniqueNames[String(item)] = layerUniqueValues[item])
           })
         }
-      } else if (layer.type === LayerTypes.VECTOR) {
+      } else {
         const queriedFeatures = map.queryRenderedFeatures(e.point, {
           layers: $layerList.map((l) => l.definition.id),
         })
@@ -152,7 +152,7 @@
             name: layerName,
             lat,
             lng,
-            type: layer.type,
+            type: layer.definition.type,
             values,
             // legend labels should correspond to the actual values in the values array
             legendLabels: presentUniqueNames,
@@ -219,19 +219,19 @@
     ]
 
     layerValuesData.forEach((layerValue) => {
-      if (layerValue.type === LayerTypes.RASTER) {
+      if (layerValue.definition.type === LayerTypes.RASTER) {
         data.push([
           layerValue.name,
-          layerValue.type,
+          layerValue.definition.type,
           '',
           layerValue.values.length > 0 ? layerValue.values : noDataLabel,
         ])
-      } else if (layerValue.type === LayerTypes.VECTOR) {
+      } else {
         if (layerValue.values.length === 0) {
-          data.push([layerValue.name, layerValue.type, 'N/A', 'N/A'])
+          data.push([layerValue.name, layerValue.definition.type, 'N/A', 'N/A'])
         } else {
           Object.keys(layerValue.values).forEach((key) => {
-            data.push([layerValue.name, layerValue.type, key, layerValue.values[key]])
+            data.push([layerValue.name, layerValue.definition.type, key, layerValue.values[key]])
           })
         }
       }
@@ -337,7 +337,7 @@
                     {layerValue.name}
                   </div>
                 </td>
-                {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
+                {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0)}
                   <td class="second-column"> N/A </td>
                   <td class="third-column"> N/A </td>
                 {:else if layerValue.type === LayerTypes.RASTER}
@@ -359,7 +359,7 @@
                   {:else}
                     <td class="third-column"> N/A </td>
                   {/if}
-                {:else if layerValue.type === LayerTypes.VECTOR}
+                {:else}
                   <td class="second-column">
                     <div
                       class="expand-collapse"
