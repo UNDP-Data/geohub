@@ -1,13 +1,13 @@
 <script lang="ts">
   import Fa from 'svelte-fa'
 
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterSimpleExpression } from '$lib/types'
   import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
   import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
   export let layer: Layer
-
+  export let expressions: RasterSimpleExpression[]
   let activeTab = 'Simple'
   let isAdvancedPanelVisible = false
   let isSimplePanelVisible = false
@@ -94,7 +94,9 @@
   <div class="block" />
   <p>
     {#if isSimplePanelVisible === true}
-      <RasterExpressionSimple bind:layer />
+      <RasterExpressionSimple
+        bind:layer
+        bind:expressions />
     {/if}
     {#if isAdvancedPanelVisible}
       <RasterRefineContainer bind:layer />

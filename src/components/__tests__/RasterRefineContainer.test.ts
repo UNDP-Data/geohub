@@ -77,28 +77,3 @@ describe('Refine Container', () => {
     await expect(spy).resolves.toBeCalledTimes(0)
   })
 })
-
-describe('Refine Container : Expression Data in Layer ', () => {
-  let sut: RenderResult
-  let viewContainer: HTMLElement
-  const expression = 'where((b1==1)|(b1>0.9),1,0);'
-
-  beforeEach(() => {
-    layer.expression = expression
-
-    vi.resetAllMocks()
-    sut = render(RasterRefineContainer, {
-      layer: layer,
-    })
-    viewContainer = sut.getByTestId('refine-view-container')
-  })
-
-  it('should render the container', () => {
-    expect(viewContainer).toBeDefined()
-  })
-
-  it('should display the layer expression in the input field', () => {
-    const expressionInput = sut.getByTitle('Expression input')
-    expect(expressionInput).toHaveValue(expression)
-  })
-})

@@ -266,7 +266,6 @@
           numberOfClasses: COLOR_CLASS_COUNT,
           colorMapRows: [],
         },
-        expression: '',
         legendType: '',
         tree: tree,
       },

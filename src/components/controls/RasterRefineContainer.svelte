@@ -1,9 +1,10 @@
 <script lang="ts">
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
-  import { fetchUrl, getActiveBandIndex, getLayerUrl, updateParamsInURL } from '$lib/helper'
+  import { fetchUrl, getActiveBandIndex, getLayerUrl, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { map, layerList } from '$stores'
+  import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -11,7 +12,7 @@
     // @ts-ignore
   ;({ info } = layer)
 
-  let expression = layer.expression
+  let expression = getValueFromRasterTileUrl($map, layer.definition.id, 'expression') as string
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
 
@@ -45,10 +46,9 @@
   }
 
   const handleRemoveExpression = async () => {
-    const layerSrc = $map.getSource(layer.definition.source)
+    const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
     const layerURL = new URL(layerSrc.tiles[0])
     expression = ''
-    layer.expression = expression
     //handleApplyExpression()
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
@@ -109,9 +109,8 @@
       }
       const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
       info.stats = exprStats
-      layer.expression = expression
       const band = Object.keys(exprStats)[bandIndex]
-      updatedParams = { expression: layer.expression }
+      updatedParams = { expression: expression }
       //overwrite CL logic
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
 
