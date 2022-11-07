@@ -22,6 +22,8 @@
   export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
+  export let colorMapName: string
+  $: colorMapName, reclassifyImage()
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
@@ -39,8 +41,6 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-  const layerURL = new URL(layerSrc.tiles[0])
   let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
@@ -49,17 +49,11 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
-  let colorMapName = layerConfig.colorMapName
-
-  $: {
-    if (layerConfig && colorMapName !== layerConfig.colorMapName) {
-      colorMapName = layerConfig.colorMapName
-      reclassifyImage()
-    }
-  }
 
   onMount(async () => {
     if (!layerConfig.tree?.isMosaicJSON) {
+      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
+      const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
       info = { ...info, stats: layerStats }
@@ -88,6 +82,7 @@
   })
 
   const reclassifyImage = (e?: CustomEvent) => {
+    if (!colorMapName) return
     let isClassificationMethodEdited = false
     if (e) {
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
@@ -112,6 +107,8 @@
     const encodeColorMapRows = JSON.stringify(
       layerConfig.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
     )
+    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
@@ -183,6 +180,7 @@
   {#each layerConfig.intervals.colorMapRows as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
+      bind:colorMapName
       layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}

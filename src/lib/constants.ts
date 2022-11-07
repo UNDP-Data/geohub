@@ -1,4 +1,4 @@
-import type { StyleDefinition } from '$lib/types'
+import type { Layer, StyleDefinition } from '$lib/types'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -56,17 +56,14 @@ export enum ClassificationMethodNames {
   NATURAL_BREAK = 'Natural Breaks',
 }
 
-export const LayerInitialValues = {
+export const LayerInitialValues: Layer = {
   id: '',
   name: 'GeoHub',
-  type: '',
   info: {},
-  colorMapName: DEFAULT_COLORMAP,
   intervals: {
     classification: ClassificationMethodTypes.EQUIDISTANT,
     numberOfClasses: COLOR_CLASS_COUNT,
   },
-  expression: '',
   legendType: '',
 }
 

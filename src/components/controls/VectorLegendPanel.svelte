@@ -14,6 +14,7 @@
 
   export let isLegendPanelVisible = false
   export let layer: Layer = LayerInitialValues
+  export let colorMapName: string
 
   const layerId = layer.id
   const style: LayerSpecification = $map
@@ -26,11 +27,17 @@
     class="vector-legend-panel-container"
     data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
-      <VectorLineContainer bind:layer />
+      <VectorLineContainer
+        bind:layer
+        bind:colorMapName />
     {:else if style.type === LayerTypes.FILL}
-      <VectorPolygonContainer bind:layer />
+      <VectorPolygonContainer
+        bind:layer
+        bind:colorMapName />
     {:else if style.type === LayerTypes.SYMBOL}
-      <VectorSymbolContainer bind:layer />
+      <VectorSymbolContainer
+        bind:layer
+        bind:colorMapName />
     {:else if style.type === LayerTypes.HEATMAP}
       <div class="columns">
         <div class="column">

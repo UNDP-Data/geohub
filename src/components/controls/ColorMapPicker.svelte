@@ -13,6 +13,7 @@
   export let layer: Layer
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName: string
   let numberOfClasses = layer.intervals?.numberOfClasses || COLOR_CLASS_COUNT
 
   $: {
@@ -32,10 +33,9 @@
     activeColorMapType = colorMapType
   }
 
-  const handleColorMapClick = (colorMapName: string) => {
-    if (colorMapName !== layer.colorMapName) {
-      dispatch('handleColorMapClick', { colorMapName })
-      layer.colorMapName = colorMapName
+  const handleColorMapClick = (cmName: string) => {
+    if (cmName !== colorMapName) {
+      colorMapName = cmName
     }
   }
 
@@ -126,17 +126,17 @@
       <ul class="is-size-6">
         {#each colorMapTypes as colorMapType}
           {#if activeColorMapType === colorMapType.name}
-            {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as colorMapName}
+            {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
               <li
-                on:click={() => handleColorMapClick(colorMapName)}
+                on:click={() => handleColorMapClick(cmName)}
                 on:keydown={handleEnterKey}>
                 <ColorMapPickerCard
-                  {colorMapName}
+                  colorMapName={cmName}
                   colorMapType={ColorMapTypes.SEQUENTIAL}
                   {layerMax}
                   {layerMin}
                   {numberOfClasses}
-                  isSelected={layer.colorMapName === colorMapName} />
+                  isSelected={colorMapName === cmName} />
               </li>
             {/each}
           {/if}

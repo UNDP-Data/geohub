@@ -29,14 +29,14 @@
 
   let info
   ;({ info } = layer)
-  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-  const layerURL = new URL(layerSrc.tiles[0])
+
   let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
+  export let colorMapName: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -52,6 +52,8 @@
 
   onMount(async () => {
     if (!layer.tree?.isMosaicJSON) {
+      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+      const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
       const band = info.active_band_no
@@ -110,31 +112,31 @@
     }
   }
 
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      if (layer.tree?.isMosaicJSON) {
-        const colorMapName = event?.detail?.colorMapName
-        const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
-        const tiles = source.tiles
-        const layerURL = new URL(tiles[0])
-        layerURL.searchParams.delete('colormap_name')
-        layerURL.searchParams.delete('rescale')
-        const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-        let updatedParams = Object.assign({ colormap_name: colorMapName })
-        if (rescale) {
-          updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-        }
-        const layerStyle = getLayerStyle($map, layer.id)
-        updateParamsInURL(layerStyle, layerURL, updatedParams)
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    if (!colorMapName) return
+    if (layer.tree?.isMosaicJSON) {
+      const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
+      const tiles = source.tiles
+      if (!(tiles && tiles.length > 0)) return
+      const layerURL = new URL(tiles[0])
+      layerURL.searchParams.delete('colormap_name')
+      layerURL.searchParams.delete('rescale')
+      const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
+      let updatedParams = Object.assign({ colormap_name: colorMapName })
+      if (rescale) {
+        updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
       }
-
-      colorPickerVisibleIndex = -1
-      const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
-      const layers = $layerList.map((lyr) => {
-        return layer.id !== lyr.id ? lyr : nlayer
-      })
-      layerList.set([...layers])
+      const layerStyle = getLayerStyle($map, layer.id)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
     }
+
+    colorPickerVisibleIndex = -1
+    const nlayer = { ...layer, colorMapName: colorMapName }
+    const layers = $layerList.map((lyr) => {
+      return layer.id !== lyr.id ? lyr : nlayer
+    })
+    layerList.set([...layers])
   }
 
   const handleClosePopup = () => {
@@ -158,19 +160,23 @@
   <div class="column is-10">
     {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <RasterContinuousLegend bind:layerConfig={layer} />
+        <RasterContinuousLegend
+          bind:layerConfig={layer}
+          bind:colorMapName />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
         <RasterIntervalsLegend
           bind:layerConfig={layer}
-          bind:colorPickerVisibleIndex />
+          bind:colorPickerVisibleIndex
+          bind:colorMapName />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
         <RasterUniqueValuesLegend
           bind:layerConfig={layer}
-          bind:colorPickerVisibleIndex />
+          bind:colorPickerVisibleIndex
+          bind:colorMapName />
       </div>
     {/if}
   </div>
@@ -232,11 +238,11 @@
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])} />
+          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
+          bind:colorMapName />
         <div
           id="arrow"
           data-popper-arrow />
