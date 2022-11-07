@@ -50,7 +50,7 @@
     class="select is-flex is-justify-content-left select is-small">
     <select
       style="width: 100%"
-      class="is-small"
+      class="is-normal"
       bind:value={propertySelectValue}
       alt="Property Options"
       title="Property Options">
