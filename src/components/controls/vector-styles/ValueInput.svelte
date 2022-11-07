@@ -8,6 +8,7 @@
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
   import type { Layer, VectorLayerTileStatAttribute } from '$lib/types'
+  import { getLayerStyle } from '$lib/helper'
 
   export let propertySelectedValue
   export let expressionValue
@@ -78,7 +79,11 @@
     let features = $map.querySourceFeatures({ layers: [layerId] })
 
     if (features.length == 0) {
-      features = $map.querySourceFeatures(layer.definition.source, { sourceLayer: layer.definition['source-layer'] })
+      const layerStyle = getLayerStyle($map, layer.id)
+      features = $map.querySourceFeatures(layerStyle.source, {
+        sourceLayer: layerStyle['source-layer'],
+        filter: [],
+      })
     }
 
     // get the values of the property for each feature

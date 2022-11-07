@@ -4,9 +4,9 @@
 
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
-  import { layerList } from '$stores'
+  import { map, layerList } from '$stores'
   import { LayerTypes, TabNames } from '$lib/constants'
-  import { definition } from '@fortawesome/free-solid-svg-icons/faWindowClose'
+  import { getLayerStyle } from '$lib/helper'
 </script>
 
 {#if $layerList?.length === 0}
@@ -27,7 +27,7 @@
 
 <div class="layer-list">
   {#each $layerList as layer (layer.id)}
-    {#if layer.definition.type === LayerTypes.RASTER}
+    {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
       <RasterLayer {layer} />
       <!--     FixMe: Component commented out to make use of the RasterLayer component-->
       <!--    <RasterLayer {layer} />-->

@@ -2,6 +2,7 @@
   import { getLayerNumberProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
+  import { map } from '$stores'
 
   export let layer
   export let propertySelectValue
@@ -19,7 +20,7 @@
   })
 
   function setPropertyList() {
-    const vectorLayerMeta = getLayerNumberProperties(layer)
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]

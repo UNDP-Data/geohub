@@ -59,7 +59,6 @@ export enum ClassificationMethodNames {
 export const LayerInitialValues = {
   id: '',
   name: 'GeoHub',
-  definition: undefined,
   type: '',
   info: {},
   colorMapName: DEFAULT_COLORMAP,

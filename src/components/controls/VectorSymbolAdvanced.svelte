@@ -16,7 +16,7 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIconColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import { getIconColor, getIntervalList, getLayerStyle, getSampleFromInterval, remapInputValue } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -141,7 +141,7 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {
@@ -218,60 +218,6 @@
     }
   }
 
-  /*
-  const setIntervalValues = () => {
-    // set to default values
-    classificationMethods = classificationMethodsDefault
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const tilestats = layer?.info?.json?.tilestats
-    if (tilestats) {
-      const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
-      )
-
-      if (tileStatLayer) {
-        const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
-        )
-        const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-        const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
-
-        if (stat) {
-          if (stat.min > 0) {
-            classificationMethods = [
-              ...classificationMethods,
-              ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-            ]
-          }
-          const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-          const intervalList = getIntervalList(classificationMethod, stat.min, stat.max, randomSample, numberOfClasses)
-          const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
-          const propertySelectValues = []
-
-          // create interval list (start / end)
-          for (let i = 0; i < intervalList.length - 1; i++) {
-            const row: IntervalLegendColorMapRow = {
-              index: i,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore:next-line
-              color: [...scaleColorList(intervalList[i]).rgb(), 255],
-              start: intervalList[i],
-              end: intervalList[i + 1],
-            }
-            propertySelectValues.push(row)
-          }
-          layerMax = stat.max
-          layerMin = stat.min
-          layer.intervals.colorMapRows = propertySelectValues
-
-          updateMap()
-        }
-      }
-    }
-  }
-  */
   const updateMap = () => {
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [

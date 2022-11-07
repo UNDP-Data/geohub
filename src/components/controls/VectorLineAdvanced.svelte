@@ -17,7 +17,14 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getLineColor, getLineWidth, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getIntervalList,
+    getLayerStyle,
+    getLineColor,
+    getLineWidth,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -145,7 +152,7 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {

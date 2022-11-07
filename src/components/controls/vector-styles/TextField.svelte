@@ -6,6 +6,7 @@
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
+  import { getLayerStyle } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
   export let decimalPosition = undefined
@@ -85,7 +86,7 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(

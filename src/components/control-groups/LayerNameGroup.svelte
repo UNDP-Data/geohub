@@ -1,10 +1,9 @@
 <script lang="ts">
   import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { clean } from '$lib/helper'
+  import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled, treeBucket } from '$stores'
-  import { join, split } from 'lodash'
+  import { layerLabelled, map } from '$stores'
 
   export let layer: Layer
   let info: RasterTileMetadata
@@ -14,7 +13,8 @@
   // @ts-ignore
   ;({ info } = layer)
 
-  if (layer.definition.type === 'raster') {
+  const layerStyle = getLayerStyle($map, layer.id)
+  if (layerStyle.type === 'raster') {
     if (layer.tree?.isMosaicJSON) {
       bandName = 'Mosaic'
     } else {
@@ -22,9 +22,9 @@
     }
   }
 
-  let icon = LayerIconTypes.find((icon) => icon.id === layer.definition.type)
-  if (layer.definition.type !== LayerTypes.RASTER) {
-    switch (layer.definition.type) {
+  let icon = LayerIconTypes.find((icon) => icon.id === layerStyle.type)
+  if (layerStyle.type !== LayerTypes.RASTER) {
+    switch (layerStyle.type) {
       case 'fill':
         icon = LayerIconTypes.find((icon) => icon.id === 'polygon')
         break
@@ -54,7 +54,7 @@
           {/if}
         </span>
       </div>
-      {#if layer.definition.type === 'raster'}
+      {#if layerStyle.type === 'raster'}
         <div style="display: flex; align-items: center">
           <span class="tag is-success">{bandName}</span>
         </div>

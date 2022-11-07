@@ -25,9 +25,6 @@
   }
 
   const toggleVisibility = () => {
-    if (!$map.getLayer(layerId)) {
-      $map.addLayer(layer.definition)
-    }
     visibility = visibility === 'visible' ? 'none' : 'visible'
     $map.setLayoutProperty(layerId, 'visibility', visibility)
 

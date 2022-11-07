@@ -1,7 +1,14 @@
 <script lang="ts">
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
-  import { fetchUrl, getActiveBandIndex, getLayerUrl, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
+  import {
+    fetchUrl,
+    getActiveBandIndex,
+    getLayerStyle,
+    getLayerUrl,
+    getValueFromRasterTileUrl,
+    updateParamsInURL,
+  } from '$lib/helper'
   import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { map, layerList } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -46,7 +53,8 @@
   }
 
   const handleRemoveExpression = async () => {
-    const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+    const layerStyle = getLayerStyle($map, layer.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
     const layerURL = new URL(layerSrc.tiles[0])
     expression = ''
     //handleApplyExpression()
@@ -69,7 +77,7 @@
         layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
 
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
     }
     const nlayer = { ...layer, info: info }
     const layers = $layerList.map((lyr) => {
@@ -94,7 +102,8 @@
 
   const handleApplyExpression = async () => {
     if (expression && expression.length > 0) {
-      const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+      const layerStyle = getLayerStyle($map, layer.id)
+      const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       let updatedParams = {}
       const exprStatUrl = new URL(
@@ -115,7 +124,7 @@
       updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
 
       layerURL.searchParams.delete('expression')
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
 
       const nlayer = { ...layer, info: info }
       const layers = $layerList.map((lyr) => {

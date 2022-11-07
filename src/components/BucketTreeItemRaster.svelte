@@ -130,7 +130,6 @@
       {
         id: layerId,
         name: layerName,
-        definition: layerDefinition,
         info: layerInfo,
         colorMapName: defaultColorMap,
         intervals: {
@@ -260,7 +259,6 @@
       {
         id: layerId,
         name: layerName,
-        definition: layerDefinition,
         info: layerInfo,
         colorMapName: DEFAULT_COLORMAP,
         intervals: {

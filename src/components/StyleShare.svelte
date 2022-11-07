@@ -9,6 +9,7 @@
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
+  import { getLayerStyle } from '$lib/helper'
 
   let isModalVisible = false
   let styleURL
@@ -65,8 +66,9 @@
       const newSources = {}
       Object.keys(style.sources).forEach((key: string) => {
         $layerList.forEach((l: Layer) => {
-          if (l.definition && l.definition.source === key) {
-            newSources[key] = style.sources[key]
+          const style = getLayerStyle($map, l.id)
+          if (style && style.source === key) {
+            newSources[key] = $map.getStyle().sources[key]
           }
         })
       })

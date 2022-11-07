@@ -2,28 +2,16 @@
   import { VegaLite } from 'svelte-vega'
   import { onMount } from 'svelte'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { fetchUrl } from '$lib/helper'
+  import { fetchUrl, getLayerStyle } from '$lib/helper'
   import { map } from '$stores'
-  import type {
-    FillLayerSpecification,
-    HeatmapLayerSpecification,
-    LineLayerSpecification,
-    RasterLayerSpecification,
-    SymbolLayerSpecification,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
   import type { Layer } from '$lib/types'
 
   export let layer: Layer
 
-  let definition:
-    | RasterLayerSpecification
-    | FillLayerSpecification
-    | LineLayerSpecification
-    | SymbolLayerSpecification
-    | HeatmapLayerSpecification
   let info
-  ;({ definition, info } = layer)
-  const layerSrc = $map.getSource(definition.source)
+  ;({ info } = layer)
+  const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
   const layerURL = new URL(layerSrc.tiles[0])
   const table = []
   let data

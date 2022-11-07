@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cloneDeep } from 'lodash-es'
   import { v4 as uuidv4 } from 'uuid'
-  import { getActiveBandIndex } from '$lib/helper'
+  import { getActiveBandIndex, getLayerStyle } from '$lib/helper'
 
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -12,6 +12,8 @@
   let info: RasterTileMetadata
   let bands: string[] = undefined
   let selected: string = undefined
+
+  let layerStyle = getLayerStyle($map, layer.id)
 
   $: selected, setActiveBand()
   const setActiveBand = () => {
@@ -30,13 +32,15 @@
     const currentLayerIndex = $layerList.indexOf(layer)
     $layerList.splice(currentLayerIndex, 0, newLayer)
 
+    const style = getLayerStyle($map, layer.id)
+
     // layerList.set([newLayer, ...$layerList])
-    $map.addLayer(newLayer.definition, layer.id)
+    $map.addLayer(JSON.parse(JSON.stringify(style)), layer.id)
 
     deleteOldLayer(layer.id)
   }
 
-  if (layer.definition.type === LayerTypes.RASTER && !layer.tree && layer.tree.isMosaicJSON) {
+  if (layerStyle.type === LayerTypes.RASTER && !layer.tree && layer.tree.isMosaicJSON) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ;({ info } = layer)
@@ -47,7 +51,7 @@
   }
 
   const updateLayerInfo = (metadata: RasterTileMetadata, bandName: string) => {
-    const layerSrc = $map.getSource(layer.definition.source)
+    const layerSrc = $map.getSource(layerStyle.source)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const layerURL = new URL(layerSrc.tiles[0])
@@ -76,7 +80,7 @@
   }
 </script>
 
-{#if layer.definition.type === LayerTypes.RASTER && bands && bands.length > 0}
+{#if layerStyle && layerStyle.type === LayerTypes.RASTER && bands && bands.length > 0}
   <div class="select is-success is-rounded is-small">
     <select bind:value={selected}>
       {#each bands as band}

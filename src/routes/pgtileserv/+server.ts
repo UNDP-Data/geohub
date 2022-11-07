@@ -106,7 +106,7 @@ export const GET: RequestHandler = async ({ url }) => {
     isStac: false,
     dynamicSourceType: 'pgtileserv',
   }
-  console.log(tree)
+  // console.log(tree)
   const endTime = performance.now()
 
   return new Response(

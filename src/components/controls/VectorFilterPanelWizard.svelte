@@ -124,7 +124,7 @@
       return
     }
     filteringError = false
-    layer.definition.filter = expression
+
     $map.setFilter(layerId, expression)
 
     // if layer has labels, set filter on labels

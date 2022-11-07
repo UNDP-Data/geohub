@@ -21,6 +21,7 @@
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
   import { clickOutside } from 'svelte-use-click-outside'
   import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+  import { getLayerStyle } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
   export let disabled = true
@@ -62,8 +63,9 @@
 
   const handleZoomToLayerClick = () => {
     let bounds: LngLatBoundsLike
-    if (layer.definition.type === LayerTypes.RASTER) {
-      const metadata: RasterTileMetadata = layer.info
+    const layerStyle = getLayerStyle($map, layer.id)
+    if (layerStyle.type === LayerTypes.RASTER) {
+      const metadata: RasterTileMetadata = layer.info as RasterTileMetadata
       bounds = [
         [Number(metadata.bounds[0]), Number(metadata.bounds[1])],
         [Number(metadata.bounds[2]), Number(metadata.bounds[3])],

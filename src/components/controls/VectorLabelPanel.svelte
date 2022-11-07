@@ -65,7 +65,6 @@
       targetLayer = {
         id: targetLayerId,
         name: targetLayerId,
-        definition: childLayer,
         info: layer.info,
         parent: layer,
       }
