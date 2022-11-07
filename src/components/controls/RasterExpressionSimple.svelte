@@ -19,8 +19,6 @@
     // @ts-ignore
   ;({ info } = layer)
 
-  const layerSrc = $map.getSource(layer.definition.source)
-  const layerURL = new URL(layerSrc.tiles[0])
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
   let showExpressionBuilder = false
@@ -146,10 +144,10 @@
   // Apply the expression
   const applyExpression = async () => {
     try {
+      const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+      const layerURL = new URL(layerSrc.tiles[0])
       if (simpleExpressionAvailable) {
         if (expressions[0].operator && expressions[0].value) {
-          const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
-          const layerURL = new URL(layerSrc.tiles[0])
           let updatedParams = {}
 
           const exprStatUrl = new URL(
@@ -163,9 +161,9 @@
           console.log(exprStatUrl)
           const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
           info.stats = exprStats
-          layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
+          const expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
           const band = Object.keys(exprStats)[bandIndex]
-          updatedParams = { expression: layer.expression.replaceAll(',', '') }
+          updatedParams = { expression: expression.replaceAll(',', '') }
 
           updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
 
@@ -206,9 +204,9 @@
         const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
         console.log(exprStats)
         info.stats = exprStats
-        layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
+        const expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
         const band = Object.keys(exprStats)[bandIndex]
-        updatedParams = { expression: layer.expression }
+        updatedParams = { expression: expression }
         updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
         layerURL.searchParams.delete('expression')
         updateParamsInURL(layer.definition, layerURL, updatedParams)
@@ -237,7 +235,9 @@
     editingExpressionIndex = 0
     expressions = [{}]
     expression = ''
-    layer.expression = expression
+
+    const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(

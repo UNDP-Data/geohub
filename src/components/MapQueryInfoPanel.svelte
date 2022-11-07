@@ -14,7 +14,7 @@
 
   import { layerList } from '$stores'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { downloadFile, fetchUrl, getActiveBandIndex, getLayerUrl } from '$lib/helper'
+  import { downloadFile, fetchUrl, getActiveBandIndex, getLayerUrl, getValueFromRasterTileUrl } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount, onDestroy } from 'svelte'
 
@@ -115,7 +115,8 @@
             map,
             layer.definition.id,
           )}&bidx=${bandIndex + 1}`
-          const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
+          const expression = getValueFromRasterTileUrl(map, layer.definition.id, 'expression') as string
+          const queryURL = !expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(expression)}`
 
           const layerData = await fetchUrl(queryURL)
           const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
