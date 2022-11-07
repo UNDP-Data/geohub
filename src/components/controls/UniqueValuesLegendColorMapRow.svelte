@@ -158,7 +158,7 @@
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
-        <DefaultColorPicker
+        <ColorPicker
           bind:color
           on:closeColorPicker={() => handleColorPickerClick()} />
         <div
