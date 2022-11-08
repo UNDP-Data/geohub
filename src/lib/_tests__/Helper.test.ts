@@ -3,20 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as helper from '../helper'
 import { ClassificationMethodTypes } from '../constants'
 
-describe('stringifyStyleJSON', () => {
-  it('should return a string', () => {
-    const json = {
-      foo: 'bar',
-      test: 'me',
-    }
-
-    expect(helper.stringifyStyleJSON(JSON.parse(JSON.stringify(json)))).toEqual(`{
-    "foo": "bar",
-    "test": "me"
-}`)
-  })
-})
-
 describe('downloadFile', () => {
   let linkElement: HTMLAnchorElement
   const link = {
