@@ -42,7 +42,7 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let classificationMethod = layer.intervals.classification
+  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
   let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
@@ -79,7 +79,6 @@
   }
 
   const handleClassificationChange = () => {
-    layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 

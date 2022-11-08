@@ -115,7 +115,6 @@
   "url":"https://undpngddlsgeohubdev01.blob.core.windows.net/climate-action/Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTExVDAzJTNBMDElM0E1M1omc3I9YiZzcD1yJnNpZz1WTjRSYm5peUFxSU50SWMlMkY3cTRZWnNjYXBQSkN2VnNSZ0o0VzNLdFEzbnclM0Q=",
   "colorMapName":"viridis",
   "intervals":{
-     "classification":"e",
      "numberOfClasses":5,
      "colorMapRows":[
         {

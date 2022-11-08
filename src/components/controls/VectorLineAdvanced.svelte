@@ -46,7 +46,7 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let classificationMethod
+  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
@@ -105,7 +105,6 @@
   }
 
   const handleClassificationChange = () => {
-    layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 

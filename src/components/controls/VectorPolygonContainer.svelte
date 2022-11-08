@@ -19,6 +19,7 @@
 
   export let layer: Layer
   export let colorMapName
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -54,7 +55,6 @@
 
     if (layer?.intervals === undefined) {
       layer.intervals = {
-        classification: ClassificationMethodTypes.NATURAL_BREAK,
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
         propertyName: '',
@@ -117,7 +117,8 @@
           bind:layer
           bind:layerMin
           bind:layerMax
-          bind:colorMapName />
+          bind:colorMapName
+          bind:classificationMethod />
       </div>
     {/if}
   </div>

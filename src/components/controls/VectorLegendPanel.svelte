@@ -8,13 +8,14 @@
   import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte'
   import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte'
   import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let isLegendPanelVisible = false
   export let layer: Layer = LayerInitialValues
   export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes
 
   const layerId = layer.id
   const style: LayerSpecification = $map
@@ -29,15 +30,18 @@
     {#if style.type === LayerTypes.LINE}
       <VectorLineContainer
         bind:layer
-        bind:colorMapName />
+        bind:colorMapName
+        bind:classificationMethod />
     {:else if style.type === LayerTypes.FILL}
       <VectorPolygonContainer
         bind:layer
-        bind:colorMapName />
+        bind:colorMapName
+        bind:classificationMethod />
     {:else if style.type === LayerTypes.SYMBOL}
       <VectorSymbolContainer
         bind:layer
-        bind:colorMapName />
+        bind:colorMapName
+        bind:classificationMethod />
     {:else if style.type === LayerTypes.HEATMAP}
       <div class="columns">
         <div class="column">

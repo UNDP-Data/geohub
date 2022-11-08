@@ -12,7 +12,6 @@
   import { map, layerList, bannerMessages, indicatorProgress } from '$stores'
   import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
-    ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     DEFAULT_COLORMAP,
@@ -132,7 +131,6 @@
         name: layerName,
         info: layerInfo,
         intervals: {
-          classification: ClassificationMethodTypes.EQUIDISTANT,
           numberOfClasses: COLOR_CLASS_COUNT,
           colorMapRows: [],
         },
@@ -260,7 +258,6 @@
         name: layerName,
         info: layerInfo,
         intervals: {
-          classification: ClassificationMethodTypes.EQUIDISTANT,
           numberOfClasses: COLOR_CLASS_COUNT,
           colorMapRows: [],
         },

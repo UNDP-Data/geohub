@@ -61,7 +61,6 @@ export const LayerInitialValues: Layer = {
   name: 'GeoHub',
   info: {},
   intervals: {
-    classification: ClassificationMethodTypes.EQUIDISTANT,
     numberOfClasses: COLOR_CLASS_COUNT,
   },
   legendType: '',

@@ -23,6 +23,7 @@
 
   export let layer: Layer
   export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
 
   let applyToOption = layer?.intervals?.applyToOption
     ? layer.intervals.applyToOption
@@ -59,7 +60,6 @@
 
     if (layer?.intervals === undefined) {
       layer.intervals = {
-        classification: ClassificationMethodTypes.NATURAL_BREAK,
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
         propertyName: '',
@@ -117,7 +117,8 @@
           bind:applyToOption
           bind:layerMin
           bind:layerMax
-          bind:colorMapName />
+          bind:colorMapName
+          bind:classificationMethod />
       </div>
     {/if}
   </div>
