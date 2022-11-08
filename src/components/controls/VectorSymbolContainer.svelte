@@ -60,8 +60,6 @@
       layer.intervals = {
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
-        propertyName: '',
-        applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
       }
     }
   })

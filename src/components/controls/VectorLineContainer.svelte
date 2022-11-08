@@ -63,8 +63,6 @@
       layer.intervals = {
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
-        propertyName: '',
-        applyToOption: VectorLayerLineLegendApplyToTypes.LINE_COLOR,
       }
     }
 
