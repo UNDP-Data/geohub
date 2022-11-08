@@ -19,6 +19,7 @@
   } from '$lib/constants'
   import {
     getIntervalList,
+    getLayerNumberProperties,
     getLayerStyle,
     getLineColor,
     getLineWidth,
@@ -38,7 +39,7 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
-  export let colorMapName
+  export let colorMapName: string
 
   const classificationMethodsDefault = [
     // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -59,9 +60,14 @@
   $: applyToOption, updateMap()
 
   // update color intervals upon change of color map name
-  $: colorMapName, setIntervalValues()
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    getPropertySelectValue()
+    setIntervalValues()
+  }
 
   onMount(() => {
+    getPropertySelectValue()
     setCssIconFilter()
     if (highlySkewed) {
       classificationMethods = [
@@ -87,17 +93,33 @@
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
+  const getPropertySelectValue = () => {
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const selectOptions = Object.keys(vectorLayerMeta.fields)
+
+    propertySelectValue = selectOptions[0]
+
+    if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+      const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
+      if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'property')) {
+        propertySelectValue = lineColorValue['property']
+      }
+    } else {
+      const lineWidthValue = $map.getPaintProperty(layer.id, 'line-width')
+      if (lineWidthValue && Object.prototype.hasOwnProperty.call(lineWidthValue, 'property')) {
+        propertySelectValue = lineWidthValue['property']
+      }
+    }
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
-    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = defaultValue
     setIntervalValues()
-    return defaultValue
+    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
-    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
@@ -148,7 +170,7 @@
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
           const stats = layer.info.stats as VectorLayerTileStatAttribute[]
@@ -226,6 +248,7 @@
   }
 
   const updateMap = () => {
+    if (!propertySelectValue) return
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
@@ -239,7 +262,7 @@
       if (hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
         $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
         $map.setPaintProperty(layer.id, 'line-color', {
-          property: layer.intervals.propertyName,
+          property: propertySelectValue,
           type: 'interval',
           stops,
         })
@@ -251,7 +274,7 @@
         const lineColor = getLineColor($map, layer.id)
         $map.setPaintProperty(layer.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
         $map.setPaintProperty(layer.id, 'line-width', {
-          property: layer.intervals.propertyName,
+          property: propertySelectValue,
           type: 'interval',
           stops: newStops,
         })

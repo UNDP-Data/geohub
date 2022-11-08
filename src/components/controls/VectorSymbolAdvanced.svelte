@@ -16,7 +16,14 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIconColor, getIntervalList, getLayerStyle, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getIconColor,
+    getIntervalList,
+    getLayerNumberProperties,
+    getLayerStyle,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -50,11 +57,16 @@
   $: applyToOption, updateMap()
 
   // update color intervals upon change of color map name
-  $: colorMapName, setIntervalValues()
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    getPropertySelectValue()
+    setIntervalValues()
+  }
 
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     setCssIconFilter()
+    getPropertySelectValue()
     setIntervalValues()
     if (!$map) return
     $map.on('zoom', updateMap)
@@ -76,17 +88,35 @@
     return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   }
 
+  const getPropertySelectValue = () => {
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const selectOptions = Object.keys(vectorLayerMeta.fields)
+
+    propertySelectValue = selectOptions[0]
+
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+      const iconColorValue = $map.getPaintProperty(layer.id, 'icon-color')
+      if (iconColorValue && Object.prototype.hasOwnProperty.call(iconColorValue, 'property')) {
+        propertySelectValue = iconColorValue['property']
+      }
+    } else {
+      const iconSizeValue = $map.getLayoutProperty(layer.id, 'icon-size')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-igenore
+      if (iconSizeValue && Object.prototype.hasOwnProperty.call(iconSizeValue, 'property')) {
+        propertySelectValue = iconSizeValue['property']
+      }
+    }
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
-    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = defaultValue
     setIntervalValues()
-    return defaultValue
+    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
-    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
@@ -137,7 +167,7 @@
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
           const stats = layer.info.stats as VectorLayerTileStatAttribute[]
@@ -210,6 +240,7 @@
   }
 
   const updateMap = () => {
+    if (!propertySelectValue) return
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
@@ -225,7 +256,7 @@
         $map.setLayoutProperty(layer.id, 'icon-size', 1)
       }
       $map.setPaintProperty(layer.id, 'icon-color', {
-        property: layer.intervals.propertyName,
+        property: propertySelectValue,
         type: 'interval',
         stops: stops,
       })
@@ -249,7 +280,7 @@
 
       $map.setPaintProperty(layer.id, 'icon-color', getIconColor($map, layer.id))
       $map.setLayoutProperty(layer.id, 'icon-size', {
-        property: layer.intervals.propertyName,
+        property: propertySelectValue,
         type: 'interval',
         stops: newStops,
       })
