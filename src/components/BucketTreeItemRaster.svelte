@@ -130,10 +130,6 @@
         id: layerId,
         name: layerName,
         info: layerInfo,
-        intervals: {
-          numberOfClasses: COLOR_CLASS_COUNT,
-          colorMapRows: [],
-        },
         tree: tree,
       },
       ...$layerList,
@@ -257,11 +253,6 @@
         id: layerId,
         name: layerName,
         info: layerInfo,
-        intervals: {
-          numberOfClasses: COLOR_CLASS_COUNT,
-          colorMapRows: [],
-        },
-        legendType: '',
         tree: tree,
       },
       ...$layerList,

@@ -60,10 +60,6 @@ export const LayerInitialValues: Layer = {
   id: '',
   name: 'GeoHub',
   info: {},
-  intervals: {
-    numberOfClasses: COLOR_CLASS_COUNT,
-  },
-  legendType: '',
 }
 
 export enum ErrorMessages {
