@@ -23,10 +23,9 @@
 
   export let layer: Layer
   export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
 
-  let applyToOption = layer?.intervals?.applyToOption
-    ? layer.intervals.applyToOption
-    : VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
@@ -59,11 +58,8 @@
 
     if (layer?.intervals === undefined) {
       layer.intervals = {
-        classification: ClassificationMethodTypes.NATURAL_BREAK,
         numberOfClasses: COLOR_CLASS_COUNT,
         colorMapRows: [],
-        propertyName: '',
-        applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
       }
     }
   })
@@ -117,7 +113,8 @@
           bind:applyToOption
           bind:layerMin
           bind:layerMax
-          bind:colorMapName />
+          bind:colorMapName
+          bind:classificationMethod />
       </div>
     {/if}
   </div>

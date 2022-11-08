@@ -25,6 +25,7 @@
   import {
     getFillOutlineColor,
     getIntervalList,
+    getLayerNumberProperties,
     getLayerStyle,
     getSampleFromInterval,
     remapInputValue,
@@ -42,19 +43,20 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let classificationMethod = layer.intervals.classification
+  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
   let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
   let hasUniqueValues = false
   let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectValue: string = layer.intervals.propertyName
+  let propertySelectValue: string
   let inLegend = true
 
   // update color intervals upon change of color map name
   $: colorMapName, setIntervalValues()
 
   onMount(() => {
+    getPropertySelectValue()
     setIntervalValues()
     $map.on('zoom', updateMap)
   })
@@ -64,22 +66,30 @@
     $map.off('zoom', updateMap)
   })
 
+  const getPropertySelectValue = () => {
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const selectOptions = Object.keys(vectorLayerMeta.fields)
+
+    propertySelectValue = selectOptions[0]
+
+    const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color')
+    if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'property')) {
+      propertySelectValue = fillColorValue['property']
+    }
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
-    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = defaultValue
     setIntervalValues()
-    return defaultValue
+    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
-    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
   const handleClassificationChange = () => {
-    layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 
@@ -126,7 +136,7 @@
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
           const stats = layer.info.stats as VectorLayerTileStatAttribute[]
@@ -219,7 +229,7 @@
     // console.log(stops)
     $map.setPaintProperty(layer.id, 'fill-outline-color', defaultFillOutlineColor)
     $map.setPaintProperty(layer.id, 'fill-color', {
-      property: layer.intervals.propertyName,
+      property: propertySelectValue,
       type: 'interval',
       stops: stops,
     })

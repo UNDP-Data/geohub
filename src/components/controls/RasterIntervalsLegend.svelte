@@ -41,7 +41,7 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  let classificationMethod = layerConfig.intervals.classification || ClassificationMethodTypes.EQUIDISTANT
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -61,16 +61,12 @@
     const band = info.active_band_no
     percentile98 = info.stats[band]['percentile_98']
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
-    if (layerConfig.intervals.classification !== ClassificationMethodTypes.LOGARITHMIC) {
-      //pass
-    } else {
+    if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-        layerConfig.intervals.classification = classificationMethod
       } else {
         classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-        layerConfig.intervals.classification = classificationMethod
       }
     }
     layerConfig = { ...layerConfig, info: info }
@@ -99,7 +95,6 @@
       isClassificationMethodEdited,
       percentile98,
     )
-    layerConfig.intervals.classification = classificationMethod
     handleParamsUpdate()
   }
   // encode colormap and update url parameters

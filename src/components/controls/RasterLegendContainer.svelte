@@ -11,7 +11,7 @@
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
+  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -26,6 +26,8 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
+  export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes
 
   let info
   ;({ info } = layer)
@@ -36,7 +38,6 @@
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
-  export let colorMapName: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -169,7 +170,8 @@
         <RasterIntervalsLegend
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex
-          bind:colorMapName />
+          bind:colorMapName
+          bind:classificationMethod />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>

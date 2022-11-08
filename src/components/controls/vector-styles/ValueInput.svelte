@@ -82,7 +82,7 @@
       const layerStyle = getLayerStyle($map, layer.id)
       features = $map.querySourceFeatures(layerStyle.source, {
         sourceLayer: layerStyle['source-layer'],
-        filter: [],
+        filter: undefined,
       })
     }
 

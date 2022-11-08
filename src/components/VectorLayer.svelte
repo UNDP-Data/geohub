@@ -8,13 +8,15 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { DEFAULT_COLORMAP, LayerInitialValues, TabNames } from '$lib/constants'
+  import { ClassificationMethodTypes, DEFAULT_COLORMAP, LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
 
   export let layer: Layer = LayerInitialValues
   let colorMapName = DEFAULT_COLORMAP
+  let classificationMethod: ClassificationMethodTypes
+  let applyToOption: string
 
   let activeTab = ''
   let isLabelPanelVisible: boolean
@@ -125,7 +127,9 @@
       <VectorLegendPanel
         {layer}
         {isLegendPanelVisible}
-        bind:colorMapName />
+        bind:colorMapName
+        bind:classificationMethod
+        bind:applyToOption />
       <VectorFilterPanelWizard
         {layer}
         {isFilterPanelVisible} />
