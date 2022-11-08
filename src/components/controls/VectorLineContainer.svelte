@@ -26,9 +26,7 @@
   export let colorMapName
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
 
-  let applyToOption = layer?.intervals?.applyToOption
-    ? layer.intervals.applyToOption
-    : VectorLayerLineLegendApplyToTypes.LINE_COLOR
+  export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length

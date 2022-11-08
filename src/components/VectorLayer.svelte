@@ -16,6 +16,7 @@
   export let layer: Layer = LayerInitialValues
   let colorMapName = DEFAULT_COLORMAP
   let classificationMethod: ClassificationMethodTypes
+  let applyToOption: string
 
   let activeTab = ''
   let isLabelPanelVisible: boolean
@@ -127,7 +128,8 @@
         {layer}
         {isLegendPanelVisible}
         bind:colorMapName
-        bind:classificationMethod />
+        bind:classificationMethod
+        bind:applyToOption />
       <VectorFilterPanelWizard
         {layer}
         {isFilterPanelVisible} />

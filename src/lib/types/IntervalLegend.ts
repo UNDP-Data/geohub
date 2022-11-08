@@ -5,6 +5,5 @@ export interface IntervalLegend {
   numberOfClasses?: number
   colorMapRows?: IntervalLegendColorMapRow[]
   propertyName?: string
-  applyToOption?: string
   propertyOptions?: string[]
 }

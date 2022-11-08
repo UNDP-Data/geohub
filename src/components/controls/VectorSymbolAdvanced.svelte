@@ -47,10 +47,7 @@
   let numberOfClasses = layer.intervals.numberOfClasses
   let propertySelectValue: string = null
   // update layer store upon change of apply to option
-  $: if (applyToOption !== layer.intervals.applyToOption) {
-    layer.intervals.applyToOption = applyToOption
-    updateMap()
-  }
+  $: applyToOption, updateMap()
 
   // update color intervals upon change of color map name
   $: colorMapName, setIntervalValues()
@@ -216,13 +213,13 @@
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
-        layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+        applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
       const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
       if (!iconSize || (iconSize && iconSize.type === 'interval')) {
         $map.setLayoutProperty(layer.id, 'icon-size', 1)
@@ -234,7 +231,7 @@
       })
     }
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
 
       // Ends are the

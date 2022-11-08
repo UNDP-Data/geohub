@@ -56,10 +56,7 @@
   let sizeArray: number[]
   let highlySkewed: boolean
   // update layer store upon change of apply to option
-  $: if (applyToOption !== layer.intervals.applyToOption) {
-    layer.intervals.applyToOption = applyToOption
-    updateMap()
-  }
+  $: applyToOption, updateMap()
 
   // update color intervals upon change of color map name
   $: colorMapName, setIntervalValues()
@@ -232,21 +229,21 @@
     const stops = layer.intervals.colorMapRows.map((row) => {
       return [
         row.start,
-        hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
+        hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
     if (stops.length > 0) {
-      if (hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+      if (hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
         $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
         $map.setPaintProperty(layer.id, 'line-color', {
           property: layer.intervals.propertyName,
           type: 'interval',
           stops,
         })
-      } else if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
+      } else if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
         // generate remapped stops based on the zoom level
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
 
