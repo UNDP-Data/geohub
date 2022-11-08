@@ -12,12 +12,13 @@ export const generateColorMap = (
   classificationMethod: ClassificationMethodTypes,
   isClassificationMethodEdited: boolean,
   percentile98: number,
+  colorMapName: string,
 ) => {
   const colorMap = []
   if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
     const randomSample = getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
     const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
-    const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+    const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 2; i++) {
       const row: IntervalLegendColorMapRow = {
         index: i,
@@ -57,7 +58,7 @@ export const generateColorMap = (
   } else {
     const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
     const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
-    const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+    const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
       const row: IntervalLegendColorMapRow = {
         index: i,
