@@ -118,9 +118,9 @@
     // Fixme: Possible bug in titiler. The Max value is not the real max in some layers
     // 0.01 is added to the max value as in some layers, the max value is not the real max value.
     colorMapRows = generateColorMap(
-      layerConfig,
       layerMin,
       layerMax + 0.01,
+      colorMapRows,
       numberOfClasses,
       classificationMethod,
       isClassificationMethodEdited,
