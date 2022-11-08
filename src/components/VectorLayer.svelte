@@ -17,6 +17,7 @@
   let colorMapName = DEFAULT_COLORMAP
   let classificationMethod: ClassificationMethodTypes
   let applyToOption: string
+  let legendType: string
 
   let activeTab = ''
   let isLabelPanelVisible: boolean
@@ -129,7 +130,8 @@
         {isLegendPanelVisible}
         bind:colorMapName
         bind:classificationMethod
-        bind:applyToOption />
+        bind:applyToOption
+        bind:legendType />
       <VectorFilterPanelWizard
         {layer}
         {isFilterPanelVisible} />

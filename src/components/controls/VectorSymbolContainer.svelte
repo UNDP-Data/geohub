@@ -13,7 +13,6 @@
   import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
   import {
     ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
     VectorLayerSymbolLegendTypes,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
@@ -24,8 +23,9 @@
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-
   export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  export let legendType: string
+
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
@@ -55,7 +55,7 @@
   ).init()
 
   onMount(() => {
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
+    legendType = legendType ? legendType : VectorLayerSymbolLegendTypes.SIMPLE
   })
 
   const handleLegendToggleClick = () => {
@@ -66,10 +66,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerSymbolLegendTypes.ADVANCED
+    if (legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
+      legendType = VectorLayerSymbolLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerSymbolLegendTypes.SIMPLE
+      legendType = VectorLayerSymbolLegendTypes.SIMPLE
     }
   }
 
@@ -96,11 +96,11 @@
   class="columns"
   data-testid="symbol-view-container">
   <div class="column is-10">
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE}
+    {#if legendType === VectorLayerSymbolLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorSymbolSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
+    {:else if legendType === VectorLayerSymbolLegendTypes.ADVANCED}
       <div transition:slide>
         <VectorSymbolAdvanced
           bind:layer
@@ -141,7 +141,7 @@
     </Wrapper>
     <br />
 
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div
         role="button"
         class="toggle-container"
@@ -161,7 +161,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if showTooltip && legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"

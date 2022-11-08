@@ -24,8 +24,9 @@
   export let layer: Layer
   export let colorMapName
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-
   export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+  export let legendType: string
+
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
@@ -57,7 +58,7 @@
 
   onMount(() => {
     // set default values
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerLineLegendTypes.SIMPLE
+    legendType = legendType ? legendType : VectorLayerLineLegendTypes.SIMPLE
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
@@ -69,10 +70,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerLineLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerLineLegendTypes.ADVANCED
+    if (legendType === VectorLayerLineLegendTypes.SIMPLE) {
+      legendType = VectorLayerLineLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerLineLegendTypes.SIMPLE
+      legendType = VectorLayerLineLegendTypes.SIMPLE
     }
   }
 
@@ -104,11 +105,11 @@
   class="columns"
   data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
+    {#if legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorLineSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerLineLegendTypes.ADVANCED}
+    {:else if legendType === VectorLayerLineLegendTypes.ADVANCED}
       <div transition:slide>
         <VectorLineAdvanced
           bind:layer
@@ -150,7 +151,7 @@
       <br />
     {/if}
 
-    {#if layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div
         class="toggle-container"
         role="button"
@@ -170,7 +171,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if showTooltip && legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"

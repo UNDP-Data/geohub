@@ -11,7 +11,7 @@
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorPolygonSimple from '$components/controls/VectorPolygonSimple.svelte'
   import VectorPolygonAdvanced from '$components/controls/VectorPolygonAdvanced.svelte'
-  import { ClassificationMethodTypes, COLOR_CLASS_COUNT, VectorLayerPolygonLegendTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, VectorLayerPolygonLegendTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -20,6 +20,7 @@
   export let layer: Layer
   export let colorMapName
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
+  export let legendType: string
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -52,7 +53,7 @@
 
   onMount(() => {
     // set default values
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerPolygonLegendTypes.SIMPLE
+    legendType = legendType ? legendType : VectorLayerPolygonLegendTypes.SIMPLE
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
@@ -64,10 +65,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerPolygonLegendTypes.ADVANCED
+    if (legendType === VectorLayerPolygonLegendTypes.SIMPLE) {
+      legendType = VectorLayerPolygonLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerPolygonLegendTypes.SIMPLE
+      legendType = VectorLayerPolygonLegendTypes.SIMPLE
     }
   }
 
@@ -99,11 +100,11 @@
   class="columns"
   data-testid="polygon-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE}
+    {#if legendType === VectorLayerPolygonLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorPolygonSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
+    {:else if legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div transition:slide>
         <VectorPolygonAdvanced
           bind:layer
@@ -144,7 +145,7 @@
       <br />
     {/if}
 
-    {#if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
+    {#if legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         role="button"
         class="toggle-container"
@@ -164,7 +165,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
+    {#if showTooltip && legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         id="tooltip"
         data-testid="tooltip"
