@@ -14,13 +14,7 @@
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
-  let numberOfClasses = layer.intervals?.numberOfClasses || COLOR_CLASS_COUNT
-
-  $: {
-    if (layer) {
-      numberOfClasses = layer.intervals?.numberOfClasses || COLOR_CLASS_COUNT
-    }
-  }
+  export let numberOfClasses: number
 
   const dispatch = createEventDispatcher()
   const colorMapTypes = [

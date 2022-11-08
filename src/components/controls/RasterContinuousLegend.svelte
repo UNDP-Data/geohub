@@ -28,7 +28,7 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
+  export let numberOfClasses = COLOR_CLASS_COUNT
 
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
@@ -47,7 +47,6 @@
     const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('colormap') && layerConfig) {
       rescaleColorMap()
-      layerConfig.intervals.colorMapRows = [] // this re-remders the intervals legend classes properly
     }
   }
 

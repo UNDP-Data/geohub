@@ -11,19 +11,31 @@
   } from '$lib/constants'
   import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
-  import { fetchUrl, generateColorMap, getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper'
+  import {
+    fetchUrl,
+    generateColorMap,
+    getActiveBandIndex,
+    getLayerStyle,
+    getValueFromRasterTileUrl,
+    updateParamsInURL,
+  } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer = LayerInitialValues
-  export let numberOfClasses = layerConfig.intervals.numberOfClasses || COLOR_CLASS_COUNT
+  export let numberOfClasses = COLOR_CLASS_COUNT
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
-  $: colorMapName, reclassifyImage()
+  $: colorMapName, colorManNameChanged()
+
+  const colorManNameChanged = () => {
+    getColorMapRows()
+    reclassifyImage()
+  }
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
@@ -41,7 +53,7 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
+  export let classificationMethod: ClassificationMethodTypes
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -49,6 +61,7 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
+  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   onMount(async () => {
     if (!layerConfig.tree?.isMosaicJSON) {
@@ -74,11 +87,29 @@
       return layerConfig.id !== layer.id ? layer : layerConfig
     })
     layerList.set([...layers])
-    layerConfig.intervals.colorMapRows.length > 0 ? null : reclassifyImage()
+    getColorMapRows()
+    colorMapRows.length > 0 ? null : reclassifyImage()
   })
 
+  const getColorMapRows = () => {
+    const colormap: number[][][] = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as number[][][]
+    colorMapRows = []
+    if (colormap && colormap.length > 0) {
+      colormap.forEach((row: number[][], index: number) => {
+        const values = row[0]
+        const color = row[1]
+        colorMapRows.push({
+          color: color,
+          index: index,
+          start: values[0],
+          end: values[1],
+        })
+      })
+    }
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+  }
+
   const reclassifyImage = (e?: CustomEvent) => {
-    if (!colorMapName) return
     let isClassificationMethodEdited = false
     if (e) {
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
@@ -86,22 +117,21 @@
     }
     // Fixme: Possible bug in titiler. The Max value is not the real max in some layers
     // 0.01 is added to the max value as in some layers, the max value is not the real max value.
-    layerConfig.intervals.colorMapRows = generateColorMap(
-      layerConfig,
+    colorMapRows = generateColorMap(
       layerMin,
       layerMax + 0.01,
+      colorMapRows,
       numberOfClasses,
       classificationMethod,
       isClassificationMethodEdited,
       percentile98,
+      colorMapName,
     )
     handleParamsUpdate()
   }
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {
-    const encodeColorMapRows = JSON.stringify(
-      layerConfig.intervals.colorMapRows.map((row) => [[row.start, row.end], row.color]),
-    )
+    const encodeColorMapRows = JSON.stringify(colorMapRows.map((row) => [[row.start, row.end], row.color]))
     const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
     const layerURL = new URL(layerSrc.tiles[0])
     layerURL.searchParams.delete('colormap_name')
@@ -114,9 +144,8 @@
   const handleIncrementDecrementClasses = (e: CustomEvent) => {
     numberOfClasses = e.detail.value
     const layerConfigClone = cloneDeep(layerConfig)
-    layerConfigClone.intervals.numberOfClasses = numberOfClasses
     layerConfig = layerConfigClone
-    layerConfig.intervals.colorMapRows = []
+    colorMapRows = []
     reclassifyImage()
   }
 
@@ -128,10 +157,10 @@
     const inputType = event.detail.id
     const inputValue = event.detail.value
     if (inputType === 'start' && rowIndex !== 0) {
-      layerConfig.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
-    if (inputType === 'end' && rowIndex < layerConfig.intervals.colorMapRows.length - 1) {
-      layerConfig.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
     handleParamsUpdate()
   }
@@ -172,7 +201,7 @@
     </div>
   </div>
   <div class="is-divider separator mb-4" />
-  {#each layerConfig.intervals.colorMapRows as colorMapRow}
+  {#each colorMapRows as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
       bind:colorMapName

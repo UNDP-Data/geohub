@@ -10,6 +10,7 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
@@ -51,8 +52,9 @@
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let icon: SpriteImage
-  let numberOfClasses = layer.intervals.numberOfClasses
+  export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string = null
+  let colorMapRows: IntervalLegendColorMapRow[] = []
   // update layer store upon change of apply to option
   $: applyToOption, updateMap()
 
@@ -60,6 +62,7 @@
   $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
     getPropertySelectValue()
+    getColorMapRows()
     setIntervalValues()
   }
 
@@ -67,6 +70,7 @@
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     setCssIconFilter()
     getPropertySelectValue()
+    getColorMapRows()
     setIntervalValues()
     if (!$map) return
     $map.on('zoom', updateMap)
@@ -109,6 +113,38 @@
     }
   }
 
+  const getColorMapRows = () => {
+    let stops: [[number, string]]
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+      const iconColorValue = $map.getPaintProperty(layer.id, 'icon-color')
+      if (iconColorValue && Object.prototype.hasOwnProperty.call(iconColorValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = iconColorValue.stops
+      }
+    } else {
+      const iconSizeValue = $map.getLayoutProperty(layer.id, 'icon-size')
+      if (iconSizeValue && Object.prototype.hasOwnProperty.call(iconSizeValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = iconSizeValue.stops
+      }
+    }
+    colorMapRows = []
+
+    stops?.forEach((stop, index: number) => {
+      const value: number = stop[0]
+      const color: string = stop[1]
+      colorMapRows.push({
+        color: chroma(color).rgba(),
+        index: index,
+        start: value,
+        end: index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+      })
+    })
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
     setIntervalValues()
@@ -125,7 +161,6 @@
   }
 
   const handleIncrementDecrementClasses = () => {
-    layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
@@ -143,11 +178,11 @@
     const inputValue = event.detail.value
 
     if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
 
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
 
     updateMap()
@@ -231,7 +266,7 @@
               layerMin = stat.min
             }
 
-            layer.intervals.colorMapRows = propertySelectValues
+            colorMapRows = propertySelectValues
             updateMap()
           }
         }
@@ -241,7 +276,7 @@
 
   const updateMap = () => {
     if (!propertySelectValue) return
-    const stops = layer.intervals.colorMapRows.map((row) => {
+    const stops = colorMapRows.map((row) => {
       return [
         row.start,
         applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
@@ -266,7 +301,7 @@
       // Generate new stops based on the zoomLevel
 
       // Ends are the
-      const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
+      const intervalEnds = colorMapRows.map((item) => item.end)
       const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => (item as number) / Number(intervalEnds[0]))
 
       // Add 1 to the ratio array
@@ -376,7 +411,7 @@
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div class="column size">
         <div>
-          {#each layer.intervals.colorMapRows as colorMapRow}
+          {#each colorMapRows as colorMapRow}
             <IntervalsLegendColorMapRow
               bind:colorMapRow
               bind:colorMapName
@@ -401,7 +436,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each layer.intervals.colorMapRows as row, index}
+            {#each colorMapRows as row, index}
               {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
               <tr data-testid="icon-size-row-container">
                 <td class="has-text-centered">

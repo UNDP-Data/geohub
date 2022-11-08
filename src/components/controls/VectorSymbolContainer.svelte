@@ -32,6 +32,7 @@
   let layerMin: number
   let layerMax: number
   let showTooltip = false
+  let numberOfClasses: number
 
   // hide colormap picker if change in layer list
   $: {
@@ -55,13 +56,6 @@
 
   onMount(() => {
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
-
-    if (layer?.intervals === undefined) {
-      layer.intervals = {
-        numberOfClasses: COLOR_CLASS_COUNT,
-        colorMapRows: [],
-      }
-    }
   })
 
   const handleLegendToggleClick = () => {
@@ -114,7 +108,8 @@
           bind:layerMin
           bind:layerMax
           bind:colorMapName
-          bind:classificationMethod />
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
     {/if}
   </div>
@@ -177,7 +172,8 @@
           {layer}
           {layerMin}
           {layerMax}
-          bind:colorMapName />
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />
