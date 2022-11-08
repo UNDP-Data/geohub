@@ -28,6 +28,7 @@
   let layerMax: number
   let showTooltip = false
   let layerNumberProperties = 0
+  let numberOfClasses: number
 
   // hide colormap picker if change in layer list
   $: {
@@ -52,14 +53,6 @@
   onMount(() => {
     // set default values
     layer.legendType = layer.legendType ? layer.legendType : VectorLayerPolygonLegendTypes.SIMPLE
-
-    if (layer?.intervals === undefined) {
-      layer.intervals = {
-        numberOfClasses: COLOR_CLASS_COUNT,
-        colorMapRows: [],
-      }
-    }
-
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
@@ -117,7 +110,8 @@
           bind:layerMin
           bind:layerMax
           bind:colorMapName
-          bind:classificationMethod />
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
     {/if}
   </div>
@@ -181,7 +175,8 @@
           {layer}
           {layerMin}
           {layerMax}
-          bind:colorMapName />
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />

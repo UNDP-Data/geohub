@@ -38,6 +38,7 @@
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
+  let numberOfClasses: number
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -163,7 +164,8 @@
       <div transition:slide>
         <RasterContinuousLegend
           bind:layerConfig={layer}
-          bind:colorMapName />
+          bind:colorMapName
+          bind:numberOfClasses />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
@@ -171,7 +173,8 @@
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex
           bind:colorMapName
-          bind:classificationMethod />
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
     {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
@@ -244,7 +247,8 @@
           {layer}
           layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
           layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
-          bind:colorMapName />
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />

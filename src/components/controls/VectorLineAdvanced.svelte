@@ -10,6 +10,7 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     DEFAULT_LINE_COLOR,
@@ -52,10 +53,11 @@
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let hasUniqueValues = false
-  let numberOfClasses = layer.intervals.numberOfClasses
+  export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string = null
   let sizeArray: number[]
   let highlySkewed: boolean
+  let colorMapRows: IntervalLegendColorMapRow[] = []
   // update layer store upon change of apply to option
   $: applyToOption, updateMap()
 
@@ -63,11 +65,13 @@
   $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
     getPropertySelectValue()
+    getColorMapRows()
     setIntervalValues()
   }
 
   onMount(() => {
     getPropertySelectValue()
+    getColorMapRows()
     setCssIconFilter()
     if (highlySkewed) {
       classificationMethods = [
@@ -112,6 +116,38 @@
     }
   }
 
+  const getColorMapRows = () => {
+    let stops: [[number, string]]
+    if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+      const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
+      if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = lineColorValue.stops
+      }
+    } else {
+      const lineWidthValue = $map.getPaintProperty(layer.id, 'line-width')
+      if (lineWidthValue && Object.prototype.hasOwnProperty.call(lineWidthValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = lineWidthValue.stops
+      }
+    }
+    colorMapRows = []
+
+    stops?.forEach((stop, index: number) => {
+      const value: number = stop[0]
+      const color: string = stop[1]
+      colorMapRows.push({
+        color: chroma(color).rgba(),
+        index: index,
+        start: value,
+        end: index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+      })
+    })
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
     setIntervalValues()
@@ -128,7 +164,6 @@
   }
 
   const handleIncrementDecrementClasses = () => {
-    layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
@@ -146,11 +181,11 @@
     const inputValue = event.detail.value
 
     if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
 
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
 
     updateMap()
@@ -238,7 +273,7 @@
               layerMin = stat.min
             }
 
-            layer.intervals.colorMapRows = propertySelectValues
+            colorMapRows = propertySelectValues
 
             updateMap()
           }
@@ -249,7 +284,7 @@
 
   const updateMap = () => {
     if (!propertySelectValue) return
-    const stops = layer.intervals.colorMapRows.map((row) => {
+    const stops = colorMapRows.map((row) => {
       return [
         row.start,
         hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
@@ -382,7 +417,7 @@
     <div class="column size">
       {#if hasUniqueValues}
         <div>
-          {#each layer.intervals.colorMapRows as colorMapRow}
+          {#each colorMapRows as colorMapRow}
             <div class="pl-6">
               <UniqueValuesLegendColorMapRow
                 bind:colorMapRow
@@ -398,7 +433,7 @@
       {:else}
         {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
           <div>
-            {#each layer.intervals.colorMapRows as colorMapRow}
+            {#each colorMapRows as colorMapRow}
               <IntervalsLegendColorMapRow
                 bind:colorMapRow
                 bind:colorMapName
@@ -422,7 +457,7 @@
             </thead>
             <tbody>
               {#if sizeArray && sizeArray.length > 0}
-                {#each layer.intervals.colorMapRows as row, index}
+                {#each colorMapRows as row, index}
                   <tr data-testid="line-width-row-container">
                     <td class="has-text-centered">
                       <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />

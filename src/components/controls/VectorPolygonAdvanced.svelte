@@ -10,6 +10,7 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
@@ -48,15 +49,17 @@
   let colorPickerVisibleIndex: number
   let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
   let hasUniqueValues = false
-  let numberOfClasses = layer.intervals.numberOfClasses
+  export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string
   let inLegend = true
+  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   // update color intervals upon change of color map name
   $: colorMapName, setIntervalValues()
 
   onMount(() => {
     getPropertySelectValue()
+    getColorMapRows()
     setIntervalValues()
     $map.on('zoom', updateMap)
   })
@@ -78,6 +81,28 @@
     }
   }
 
+  const getColorMapRows = () => {
+    const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color')
+    colorMapRows = []
+    if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'stops')) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const stops: [[number, string]] = fillColorValue.stops
+      stops?.forEach((stop, index: number) => {
+        const value: number = stop[0]
+        const color: string = stop[1]
+
+        colorMapRows.push({
+          color: chroma(color).rgba(),
+          index: index,
+          start: value,
+          end: index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+        })
+      })
+    }
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
     setIntervalValues()
@@ -94,7 +119,6 @@
   }
 
   const handleIncrementDecrementClasses = () => {
-    layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
@@ -112,11 +136,11 @@
     const inputValue = event.detail.value
 
     if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
 
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
 
     updateMap()
@@ -200,7 +224,7 @@
               layerMin = stat.min
             }
 
-            layer.intervals.colorMapRows = propertySelectValues
+            colorMapRows = propertySelectValues
             updateMap()
           }
         }
@@ -209,7 +233,7 @@
   }
 
   const updateMap = () => {
-    const stops = layer.intervals.colorMapRows.map((row, index) => {
+    const stops = colorMapRows.map((row, index) => {
       const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
         row.color[3],
         0,
@@ -220,7 +244,7 @@
       const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
       // set default line color to be middle of colors
-      if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
+      if (index === Math.floor(colorMapRows.length / 2)) {
         defaultFillOutlineColor = chroma(hex).darken(2.6).hex()
       }
 
@@ -308,7 +332,7 @@
     style="margin-right: -56px;">
     <div class="column size">
       <div>
-        {#each layer.intervals.colorMapRows as colorMapRow}
+        {#each colorMapRows as colorMapRow}
           {#if hasUniqueValues}
             <div class="pl-6">
               <UniqueValuesLegendColorMapRow
