@@ -21,6 +21,7 @@
 
   export let layer: Layer
   export let expressions: RasterSimpleExpression[] = []
+  export let legendType: DynamicLayerLegendTypes
 
   let info: RasterTileMetadata
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -266,7 +267,7 @@
         layerURL.searchParams.delete('colormap')
         const colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
         layerURL.searchParams.set('colormap_name', colorMapName)
-        layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+        legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
       layerURL.searchParams.delete('rescale')
       layerURL.searchParams.delete('expression')

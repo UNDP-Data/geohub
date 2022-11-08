@@ -6,8 +6,10 @@
   import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
+  import type { DynamicLayerLegendTypes } from '$lib/constants'
   export let layer: Layer
   export let expressions: RasterSimpleExpression[]
+  export let legendType: DynamicLayerLegendTypes
   let activeTab = 'Simple'
   let isAdvancedPanelVisible = false
   let isSimplePanelVisible = false
@@ -96,10 +98,13 @@
     {#if isSimplePanelVisible === true}
       <RasterExpressionSimple
         bind:layer
-        bind:expressions />
+        bind:expressions
+        bind:legendType />
     {/if}
     {#if isAdvancedPanelVisible}
-      <RasterRefineContainer bind:layer />
+      <RasterRefineContainer
+        bind:layer
+        bind:legendType />
     {/if}
   </p>
 </nav>

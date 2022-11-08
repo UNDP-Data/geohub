@@ -39,6 +39,7 @@
   let layerListCount = $layerList.length
   let showTooltip = false
   let numberOfClasses: number
+  export let legendType: DynamicLayerLegendTypes
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -76,7 +77,7 @@
         layerList.set([...layers])
       }
     }
-    layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
+    legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
   })
 
   const {
@@ -107,10 +108,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === DynamicLayerLegendTypes.CONTINUOUS) {
-      layer.legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    if (legendType === DynamicLayerLegendTypes.CONTINUOUS) {
+      legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
     } else {
-      layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+      legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
   }
 
@@ -160,14 +161,14 @@
 
 <div class="columns">
   <div class="column is-10">
-    {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
+    {#if legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
         <RasterContinuousLegend
           bind:layerConfig={layer}
           bind:colorMapName
           bind:numberOfClasses />
       </div>
-    {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
+    {:else if legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
         <RasterIntervalsLegend
           bind:layerConfig={layer}
@@ -176,7 +177,7 @@
           bind:classificationMethod
           bind:numberOfClasses />
       </div>
-    {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
+    {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
         <RasterUniqueValuesLegend
           bind:layerConfig={layer}
