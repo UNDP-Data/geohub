@@ -193,7 +193,7 @@
                   // @ts-ignore:next-line
                   color: [...scaleColorList(i).rgb(), 255],
                   start: stat.values[i],
-                  end: '',
+                  end: stat.values[i],
                 }
                 propertySelectValues.push(row)
               }
