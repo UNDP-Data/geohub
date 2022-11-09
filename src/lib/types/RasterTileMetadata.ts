@@ -9,12 +9,8 @@ export interface RasterTileMetadata {
   count?: number
   driver?: string
   dtype?: string
-  height?: number
-  maxzoom?: number
-  minzoom?: number
   nodata_type?: string
   overviews?: []
-  width?: number
   stats?: RasterLayerStats
   active_band_no?: string
 }
