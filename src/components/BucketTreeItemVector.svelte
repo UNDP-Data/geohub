@@ -47,7 +47,8 @@
       const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
       metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
     } else {
-      metadataUrl = node.url.replace('tile.json', 'metadata.json')
+      const url = new URL(node.url)
+      metadataUrl = url.pathname.replace('tile.json', 'metadata.json')
     }
     const data: VectorTileMetadata = await fetchUrl(metadataUrl)
     return data
