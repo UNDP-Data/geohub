@@ -21,6 +21,7 @@
     Layer,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
+    VectorTileMetadata,
   } from '$lib/types'
   import { map } from '$stores'
   import {
@@ -85,6 +86,11 @@
     const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color')
     colorMapRows = []
     if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'stops')) {
+      const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+        (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+      )
+      const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const stops: [[number, string]] = fillColorValue.stops
@@ -96,7 +102,7 @@
           color: chroma(color).rgba(),
           index: index,
           start: value,
-          end: index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+          end: stat.values ? '' : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
         })
       })
     }
@@ -163,8 +169,10 @@
           (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
-          const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-          const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+          const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+          )
+          const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
           hasUniqueValues = false
 
           if (stat) {

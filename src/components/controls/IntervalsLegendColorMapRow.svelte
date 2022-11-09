@@ -156,15 +156,17 @@
       value={colorMapRow.start}
       on:input={handleInput} />
   </div>
-  <div class="cell small-2">—</div>
-  <div class="cell small-4">
-    <input
-      style="border: none"
-      id="end"
-      type="number"
-      value={colorMapRow.end}
-      on:input={handleInput} />
-  </div>
+  {#if colorMapRow.end}
+    <div class="cell small-2">—</div>
+    <div class="cell small-4">
+      <input
+        style="border: none"
+        id="end"
+        type="number"
+        value={colorMapRow.end}
+        on:input={handleInput} />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
