@@ -21,6 +21,5 @@ export interface VectorTileMetadata {
       layers: VectorLayerTileStatLayer[]
     }
   }
-  band_metadata?: string[]
   stats?: VectorLayerTileStatAttribute[]
 }
