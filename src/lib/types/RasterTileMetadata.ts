@@ -13,6 +13,7 @@ export interface RasterTileMetadata {
   maxzoom?: number
   minzoom?: number
   nodata_type?: string
+  nodata_value?: number
   overviews?: []
   width?: number
   stats?: RasterLayerStats
