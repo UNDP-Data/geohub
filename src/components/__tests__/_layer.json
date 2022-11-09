@@ -61,7 +61,6 @@
         8,
         16
      ],
-     "nodata_value":0,
      "driver":"GTiff",
      "stats": {
       "1": {

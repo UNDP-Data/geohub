@@ -132,12 +132,6 @@
 
           if (Object.prototype.hasOwnProperty.call(layerData, 'detail')) layerHasNoDataValue = true
 
-          if (layerHasNoDataValue === false) {
-            for (const value of layerData.values) {
-              if (value === layer.info.nodata_value) layerHasNoDataValue = true
-            }
-          }
-
           values = layerHasNoDataValue ? [] : layerData.values
           presentUniqueNames = values.map((item) => {
             return (presentUniqueNames[String(item)] = layerUniqueValues[item])
