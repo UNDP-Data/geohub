@@ -24,6 +24,7 @@
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount, onDestroy } from 'svelte'
+  import type { RasterTileMetadata } from '$lib/types'
 
   export let map: Map
   let isDataContainerVisible: boolean
@@ -126,7 +127,8 @@
           const queryURL = !expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(expression)}`
 
           const layerData = await fetchUrl(queryURL)
-          const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
+          const rasterInfo = layer.info as RasterTileMetadata
+          const layerUniqueValues = rasterInfo.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
           let layerHasNoDataValue = false
 
@@ -134,7 +136,7 @@
 
           if (layerHasNoDataValue === false) {
             for (const value of layerData.values) {
-              if (value === layer.info.nodata_value) layerHasNoDataValue = true
+              if (value === rasterInfo.nodata_value) layerHasNoDataValue = true
             }
           }
 

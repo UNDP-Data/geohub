@@ -21,7 +21,5 @@ export interface VectorTileMetadata {
       layers: VectorLayerTileStatLayer[]
     }
   }
-  band_metadata?: string[]
-  nodata_value?: number
   stats?: VectorLayerTileStatAttribute[]
 }
