@@ -1,11 +1,12 @@
 <script lang="ts">
   import { v4 as uuidv4 } from 'uuid'
-  import type {
-    LineLayerSpecification,
-    FillLayerSpecification,
-    SymbolLayerSpecification,
-    HeatmapLayerSpecification,
-    VectorSourceSpecification,
+  import {
+    type LineLayerSpecification,
+    type FillLayerSpecification,
+    type SymbolLayerSpecification,
+    type HeatmapLayerSpecification,
+    type VectorSourceSpecification,
+    LngLatBounds,
   } from 'maplibre-gl'
   import type { TreeNode, VectorTileMetadata } from '$lib/types'
   import BucketTreeItemCardButton from '$components/BucketTreeItemCardButton.svelte'
@@ -74,7 +75,9 @@
           maxzoom: tree.metadata.maxzoom | 24,
         }
       }
-
+      if (layerSource.maxzoom > 24) {
+        layerSource.maxzoom = 24
+      }
       if (!(tileSourceId in $map.getStyle().sources)) {
         $map.addSource(tileSourceId, layerSource)
       }
@@ -189,6 +192,8 @@
     ]
 
     $map.addLayer(layerDefinition)
+    const bounds = tree.metadata.bounds.split(',').map((val) => Number(val))
+    $map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))
   }
 </script>
 
