@@ -80,8 +80,6 @@
     "@neodrag/svelte": "^1.2.4",
     "@popperjs/core": "^2.11.6",
     "@smui-extra/autocomplete": "^6.2.0",
-    "@smui-extra/badge": "^6.1.4",
-    "@smui/banner": "^6.1.4",
     "@smui/button": "^6.1.4",
     "@smui/card": "^6.1.4",
     "@smui/chips": "^6.1.4",

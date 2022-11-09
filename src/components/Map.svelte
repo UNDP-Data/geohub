@@ -117,7 +117,7 @@
     height: calc(100vh - 93.44px);
     width: 100%;
   }
-  @media (max-width: 90em) {
+  @media (max-width: 89.9375em) {
     .map {
       height: calc(100vh - 60.94px);
     }
