@@ -1,17 +1,17 @@
 <script lang="ts">
   import { bannerMessages, map, filterInputTags } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
-  import type { BannerMessage } from '$lib/types'
+  import type { BannerMessage, Layer, VectorTileMetadata } from '$lib/types'
   import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte'
   import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte'
   import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
   import { vectorFilterOperations } from '$lib/constants'
-  import { clean } from '$lib/helper'
+  import { clean, getLayerStyle } from '$lib/helper'
 
   export let isFilterPanelVisible = false
-  export let layer
+  export let layer: Layer
 
   const layerId = layer.id
 
@@ -43,7 +43,7 @@
   const handlePropertySelect = (e) => {
     if (e.detail.prop) {
       propertySelectValue = e.detail.prop
-      const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(
+      const propertyProps = (layer.info as VectorTileMetadata).json.tilestats.layers[0].attributes.find(
         (e) => e['attribute'] === propertySelectValue,
       )
       const dataType = propertyProps['type']
@@ -53,7 +53,11 @@
       }
       expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
       if (layer.children && layer.children.length > 0) {
-        layer.children['0'].info.stats.forEach((stat) => {
+        const childInfo = layer.children['0'].info as VectorTileMetadata
+        const stats = childInfo.json.tilestats?.layers.find(
+          (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+        )
+        stats?.attributes.forEach((stat) => {
           if (stat.attribute === propertySelectValue) {
             propertyStats = stat
           }

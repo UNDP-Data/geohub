@@ -7,7 +7,7 @@
   import { onDestroy } from 'svelte'
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
-  import type { Layer, VectorLayerTileStatAttribute } from '$lib/types'
+  import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types'
   import { getLayerStyle } from '$lib/helper'
 
   export let propertySelectedValue
@@ -26,7 +26,10 @@
 
   const layerId = layer.id
 
-  const attrstats = layer.info.stats.filter((el: VectorLayerTileStatAttribute) => {
+  const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+    (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+  )
+  const attrstats = stats?.attributes.filter((el: VectorLayerTileStatAttribute) => {
     return el.attribute == propertySelectedValue
   })[0]
   if (!attrstats) {

@@ -31,6 +31,7 @@
     SpriteImage,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
+    VectorTileMetadata,
   } from '$lib/types'
   import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
@@ -132,6 +133,11 @@
     }
     colorMapRows = []
 
+    const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+      (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+    )
+    const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
+
     stops?.forEach((stop, index: number) => {
       const value: number = stop[0]
       const color: string = stop[1]
@@ -139,7 +145,7 @@
         color: chroma(color).rgba(),
         index: index,
         start: value,
-        end: index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+        end: stat.values ? '' : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
       })
     })
     numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
@@ -205,8 +211,10 @@
           (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
-          const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-          const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+          const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+          )
+          const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
           hasUniqueValues = false
 
           if (stat) {
@@ -228,7 +236,7 @@
                   // @ts-ignore:next-line
                   color: [...scaleColorList(i).rgb(), 255],
                   start: stat.values[i],
-                  end: stat.values[i],
+                  end: '',
                 }
                 propertySelectValues.push(row)
               }
