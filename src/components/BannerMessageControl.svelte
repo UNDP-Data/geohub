@@ -1,8 +1,4 @@
 <script lang="ts">
-  import Badge from '@smui-extra/badge'
-  import Banner, { Label as LabelBanner } from '@smui/banner'
-  import Button, { Label as LabelButton } from '@smui/button'
-  import Paper, { Title, Subtitle, Content } from '@smui/paper'
   import Fa from 'svelte-fa'
   import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
   import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
@@ -12,10 +8,11 @@
   import { bannerMessages } from '$stores'
   import type { BannerMessage } from '$lib/types'
 
+  import Split from '@geoffcox/svelte-splitter/src/Split.svelte'
+
+  let bannerHeight = 60
   $: showBanner = $bannerMessages.length > 0 ? true : false
   let currentBannerMessage: BannerMessage
-  let position: 'inset' | 'middle' | 'outset' = 'middle'
-  let align: 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' = 'top-end'
   let errorMessage: string
   let showDetailedError = false
 
@@ -47,17 +44,16 @@
   }
 </script>
 
-{#if currentBannerMessage}
-  <Banner
-    bind:open={showBanner}
-    fixed
-    mobileStacked
-    content$style={`max-width: 100%; height:max-content; padding-right: 20px;`}>
-    <LabelBanner
-      slot="label"
-      style="font-family: ProximaNova, sans-serif; font-size: 13px;">
-      <div class="banner-container columns">
-        <div class="icon column is-1">
+<Split
+  horizontal
+  initialPrimarySize={showBanner ? `${bannerHeight}px` : '0px'}
+  splitterSize="0px">
+  <div
+    slot="primary"
+    class="banner-container">
+    {#if currentBannerMessage}
+      <div class="tile p-0 m-0">
+        <div class="tile is-child is-1 pt-2 pl-4 m-0">
           {#if currentBannerMessage.type === StatusTypes.INFO}
             <Fa
               icon={faCircleInfo}
@@ -75,88 +71,59 @@
               primaryColor="hsl(36, 100%, 50%)" />
           {/if}
         </div>
-        <div class="content column is-half">
-          <Paper variant="unelevated">
-            <Title>{currentBannerMessage.title}</Title>
-            <Subtitle>{currentBannerMessage.message}</Subtitle>
-            <Content>
-              {#if showDetailedError}
-                {errorMessage}
-              {/if}
-            </Content>
-          </Paper>
+        <div class="tile py-0 m-0">
+          <div class="tile is-vertical message-container">
+            <div class="tile">
+              <p class="title is-5">{currentBannerMessage.title}</p>
+            </div>
+            <div class="tile">
+              <p class="subtitle is-6">{currentBannerMessage.message}</p>
+            </div>
+            {#if showDetailedError}
+              <div class="tile">
+                <p class="subtitle is-6">{errorMessage}</p>
+              </div>
+            {/if}
+          </div>
         </div>
-        <div class="column is-1">
+
+        <div class="tile py-0 pr-2 pt-3 m-0 is-3">
           {#if currentBannerMessage.error}
-            <Button
-              slot="actions"
+            <button
+              class="button is-warning is-small is-light mr-1"
               on:click={() => (showDetailedError = !showDetailedError)}>
-              <LabelButton>{showDetailedError ? 'Hide' : 'Details'}</LabelButton>
-            </Button>
+              {showDetailedError ? 'Hide' : 'Details'}
+            </button>
+          {/if}
+          <button
+            class="button is-link is-small is-light mr-1"
+            on:click={() => showNextBanner()}>
+            Dismiss
+          </button>
+          {#if $bannerMessages.length > 0}
+            <button
+              class="button is-link is-small is-light mr-1"
+              on:click={() => hideBanner()}>
+              Dismiss all
+            </button>
           {/if}
         </div>
-        <div class="column is-1">
-          <Button
-            slot="actions"
-            on:click={() => showNextBanner()}>
-            <LabelButton>Dismiss</LabelButton>
-            {#if $bannerMessages.length > 0}
-              <Badge
-                {position}
-                {align}
-                aria-label="unread message count">{$bannerMessages.length}</Badge>
-            {/if}
-          </Button>
-        </div>
-        {#if $bannerMessages.length > 1}
-          <div class="column is-2">
-            <Button
-              slot="actions"
-              on:click={() => hideBanner()}>
-              <LabelButton>Dismiss all</LabelButton>
-            </Button>
-          </div>
-        {/if}
       </div>
-    </LabelBanner>
-  </Banner>
-{/if}
+    {/if}
+  </div>
+  <div slot="secondary">
+    <slot />
+    <div />
+  </div></Split>
 
 <style lang="scss">
   .banner-container {
-    align-items: center;
-    display: flex;
-    gap: 20px;
     justify-content: left;
-    margin-bottom: 20px;
+    margin-top: 10px;
 
-    .content {
-      .subtitle {
-        margin: 0;
-        margin-bottom: 10px;
-
-        @media (prefers-color-scheme: dark) {
-          color: white;
-        }
-      }
-
-      .message {
-        background: #fff;
-
-        @media (prefers-color-scheme: dark) {
-          background: #212125;
-          color: white;
-        }
-      }
-
-      .error-message {
-        background: #fff;
-
-        @media (prefers-color-scheme: dark) {
-          background: #212125;
-          color: white;
-        }
-      }
+    .message-container {
+      height: 55px;
+      overflow-y: auto;
     }
   }
 </style>

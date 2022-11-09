@@ -40,7 +40,8 @@
     </div>
   </div>
   <div slot="secondary">
-    <BannerMessageControl />
-    <slot />
+    <BannerMessageControl>
+      <slot />
+    </BannerMessageControl>
   </div>
 </ContentSidebar>
