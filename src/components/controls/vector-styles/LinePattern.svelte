@@ -12,7 +12,7 @@
   export let layer: Layer = LayerInitialValues
 
   const propertyName = 'line-dasharray'
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const lineTypes = [
     { title: 'solid', value: [1], pattern: '______' },
     { title: 'dash', value: [10, 4], pattern: '_____&nbsp;&nbsp;' },

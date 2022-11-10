@@ -7,7 +7,7 @@
   export let showEmptyFields = false //this needs to be removed TODO
   export let showOnlyNumberFields = false
   export let inLegend = false
-  let propertySelectOptions = inLegend ? layer.intervals.propertyOptions : undefined
+  let propertySelectOptions: string[]
 
   const dispatch = createEventDispatcher()
 
@@ -27,8 +27,6 @@
         }
       })
     }
-
-    inLegend ? (layer.intervals.propertyOptions = propertySelectOptions) : null
 
     propertyChanged()
   }

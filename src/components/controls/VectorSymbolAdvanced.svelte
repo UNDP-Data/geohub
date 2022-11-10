@@ -10,19 +10,28 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIconColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getIconColor,
+    getIntervalList,
+    getLayerNumberProperties,
+    getLayerStyle,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
     SpriteImage,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
+    VectorTileMetadata,
   } from '$lib/types'
   import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
@@ -31,38 +40,38 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName
 
   const classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
-
-  let classificationMethod = layer.intervals.classification
+  let hasUniqueValues = false
+  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
-  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let icon: SpriteImage
-  let numberOfClasses = layer.intervals.numberOfClasses
+  export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string = null
+  let colorMapRows: IntervalLegendColorMapRow[] = []
   // update layer store upon change of apply to option
-  $: if (applyToOption !== layer.intervals.applyToOption) {
-    layer.intervals.applyToOption = applyToOption
-    updateMap()
-  }
+  $: applyToOption, updateMap()
 
   // update color intervals upon change of color map name
-  $: {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-      setIntervalValues()
-    }
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    getPropertySelectValue()
+    getColorMapRows()
+    setIntervalValues()
   }
 
   onMount(() => {
     icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     setCssIconFilter()
+    getPropertySelectValue()
+    getColorMapRows()
     setIntervalValues()
     if (!$map) return
     $map.on('zoom', updateMap)
@@ -74,39 +83,90 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(getIconColor($map, layer.definition.id)).rgba()
+    const rgba = chroma(getIconColor($map, layer.id)).rgba()
     cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
   const getIconImageName = () => {
     const propertyName = 'icon-image'
-    const style = $map
-      .getStyle()
-      .layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.definition.id)[0]
+    const style = $map.getStyle().layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.id)[0]
     return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+  }
+
+  const getPropertySelectValue = () => {
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const selectOptions = Object.keys(vectorLayerMeta.fields)
+
+    propertySelectValue = selectOptions[0]
+
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+      const iconColorValue = $map.getPaintProperty(layer.id, 'icon-color')
+      if (iconColorValue && Object.prototype.hasOwnProperty.call(iconColorValue, 'property')) {
+        propertySelectValue = iconColorValue['property']
+      }
+    } else {
+      const iconSizeValue = $map.getLayoutProperty(layer.id, 'icon-size')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-igenore
+      if (iconSizeValue && Object.prototype.hasOwnProperty.call(iconSizeValue, 'property')) {
+        propertySelectValue = iconSizeValue['property']
+      }
+    }
+  }
+
+  const getColorMapRows = () => {
+    let stops: [[number, string]]
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+      const iconColorValue = $map.getPaintProperty(layer.id, 'icon-color')
+      if (iconColorValue && Object.prototype.hasOwnProperty.call(iconColorValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = iconColorValue.stops
+      }
+    } else {
+      const iconSizeValue = $map.getLayoutProperty(layer.id, 'icon-size')
+      if (iconSizeValue && Object.prototype.hasOwnProperty.call(iconSizeValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = iconSizeValue.stops
+      }
+    }
+    colorMapRows = []
+
+    const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+      (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+    )
+    const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
+
+    stops?.forEach((stop, index: number) => {
+      const value: number = stop[0]
+      const color: string = stop[1]
+      colorMapRows.push({
+        color: chroma(color).rgba(),
+        index: index,
+        start: value,
+        end: stat.values ? '' : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+      })
+    })
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
   }
 
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
-    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = defaultValue
     setIntervalValues()
-    return defaultValue
+    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
-    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
   const handleClassificationChange = () => {
-    layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 
   const handleIncrementDecrementClasses = () => {
-    layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
@@ -124,11 +184,11 @@
     const inputValue = event.detail.value
 
     if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
 
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
 
     updateMap()
@@ -143,77 +203,113 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
-        const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-        const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+        if (tileStatLayerAttribute) {
+          const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+          )
+          const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+          hasUniqueValues = false
 
-        if (stat) {
-          if (stat.min > 0) {
-            classificationMethods = [
-              ...classificationMethods,
-              ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-            ]
-          }
-          const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-          const intervalList = getIntervalList(classificationMethod, stat.min, stat.max, randomSample, numberOfClasses)
-          const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
-          const propertySelectValues = []
+          if (stat) {
+            const propertySelectValues = []
 
-          // create interval list (start / end)
-          for (let i = 0; i < intervalList.length - 1; i++) {
-            const row: IntervalLegendColorMapRow = {
-              index: i,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore:next-line
-              color: [...scaleColorList(intervalList[i]).rgb(), 255],
-              start: intervalList[i],
-              end: intervalList[i + 1],
+            if (stat['values'] !== undefined) {
+              hasUniqueValues = true
+
+              const scaleColorList = chroma
+                .scale(colorMapName)
+                .mode('lrgb')
+                .padding([0.25, 0])
+                .domain([0, stat.values.length])
+
+              for (let i = 0; i < stat.values.length; i++) {
+                const row: IntervalLegendColorMapRow = {
+                  index: i,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore:next-line
+                  color: [...scaleColorList(i).rgb(), 255],
+                  start: stat.values[i],
+                  end: '',
+                }
+                propertySelectValues.push(row)
+              }
+            } else {
+              if (stat.min > 0) {
+                classificationMethods = [
+                  ...classificationMethods,
+                  ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+                ]
+              }
+
+              const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+              const intervalList = getIntervalList(
+                classificationMethod,
+                stat.min,
+                stat.max,
+                randomSample,
+                numberOfClasses,
+              )
+              const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
+
+              // create interval list (start / end)
+              for (let i = 0; i < intervalList.length - 1; i++) {
+                const row: IntervalLegendColorMapRow = {
+                  index: i,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore:next-line
+                  color: [...scaleColorList(intervalList[i]).rgb(), 255],
+                  start: intervalList[i],
+                  end: intervalList[i + 1],
+                }
+                propertySelectValues.push(row)
+              }
+              layerMax = stat.max
+              layerMin = stat.min
             }
-            propertySelectValues.push(row)
-          }
-          layerMax = stat.max
-          layerMin = stat.min
-          layer.intervals.colorMapRows = propertySelectValues
 
-          updateMap()
+            colorMapRows = propertySelectValues
+            updateMap()
+          }
         }
       }
     }
   }
 
   const updateMap = () => {
-    const stops = layer.intervals.colorMapRows.map((row) => {
+    if (!propertySelectValue) return
+    const stops = colorMapRows.map((row) => {
       return [
         row.start,
-        layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+        applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
-      const iconSize = $map.getLayoutProperty(layer.definition.id, 'icon-size')
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
+      const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
       if (!iconSize || (iconSize && iconSize.type === 'interval')) {
-        $map.setLayoutProperty(layer.definition.id, 'icon-size', 1)
+        $map.setLayoutProperty(layer.id, 'icon-size', 1)
       }
-      $map.setPaintProperty(layer.definition.id, 'icon-color', {
-        property: layer.intervals.propertyName,
+      $map.setPaintProperty(layer.id, 'icon-color', {
+        property: propertySelectValue,
         type: 'interval',
         stops: stops,
       })
     }
 
-    if (layer.intervals.applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
+    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
 
       // Ends are the
-      const intervalEnds = layer.intervals.colorMapRows.map((item) => item.end)
+      const intervalEnds = colorMapRows.map((item) => item.end)
       const ratioOfRadiustoTheFirstEnd = intervalEnds.slice(1).map((item) => (item as number) / Number(intervalEnds[0]))
 
       // Add 1 to the ratio array
@@ -225,9 +321,9 @@
         (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10),
       ])
 
-      $map.setPaintProperty(layer.definition.id, 'icon-color', getIconColor($map, layer.definition.id))
-      $map.setLayoutProperty(layer.definition.id, 'icon-size', {
-        property: layer.intervals.propertyName,
+      $map.setPaintProperty(layer.id, 'icon-color', getIconColor($map, layer.id))
+      $map.setLayoutProperty(layer.id, 'icon-size', {
+        property: propertySelectValue,
         type: 'interval',
         stops: newStops,
       })
@@ -241,7 +337,8 @@
 
 <div
   class="symbol-advanced-container"
-  data-testid="symbol-advanced-container">
+  data-testid="symbol-advanced-container"
+  style="">
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
@@ -322,9 +419,10 @@
     {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div class="column size">
         <div>
-          {#each layer.intervals.colorMapRows as colorMapRow}
+          {#each colorMapRows as colorMapRow}
             <IntervalsLegendColorMapRow
               bind:colorMapRow
+              bind:colorMapName
               {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
@@ -346,7 +444,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each layer.intervals.colorMapRows as row, index}
+            {#each colorMapRows as row, index}
               {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
               <tr data-testid="icon-size-row-container">
                 <td class="has-text-centered">

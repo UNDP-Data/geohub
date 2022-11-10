@@ -8,12 +8,16 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { LayerInitialValues, TabNames } from '$lib/constants'
+  import { ClassificationMethodTypes, DEFAULT_COLORMAP, LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
 
   export let layer: Layer = LayerInitialValues
+  let colorMapName = DEFAULT_COLORMAP
+  let classificationMethod: ClassificationMethodTypes
+  let applyToOption: string
+  let legendType: string
 
   let activeTab = ''
   let isLabelPanelVisible: boolean
@@ -65,10 +69,10 @@
     const nextTabIndex = currentTabIndex - 1
     if (nextTabIndex < 0) {
       activeTab = tabs[tabs.length - 1].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[nextTabIndex].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 
@@ -78,10 +82,10 @@
     const nextTab = tabs[nextTabIndex]
     if (nextTab) {
       activeTab = nextTab.label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[0].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -103,7 +107,7 @@
           <a
             role="tab"
             aria-label={tab.label}
-            id={`${tab.label}-${layer.definition.id}`}
+            id={`${tab.label}-${layer.id}`}
             on:keydown={handleKeyDown}
             href={'#'}
             on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
@@ -123,7 +127,11 @@
     <p class="panel-content">
       <VectorLegendPanel
         {layer}
-        {isLegendPanelVisible} />
+        {isLegendPanelVisible}
+        bind:colorMapName
+        bind:classificationMethod
+        bind:applyToOption
+        bind:legendType />
       <VectorFilterPanelWizard
         {layer}
         {isFilterPanelVisible} />

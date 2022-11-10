@@ -1,16 +1,19 @@
 <script lang="ts">
   import { cloneDeep } from 'lodash-es'
   import { v4 as uuidv4 } from 'uuid'
-  import { getActiveBandIndex } from '$lib/helper'
+  import { getActiveBandIndex, getLayerStyle } from '$lib/helper'
 
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { LayerTypes } from '$lib/constants'
 
   export let layer: Layer
 
   let info: RasterTileMetadata
   let bands: string[] = undefined
   let selected: string = undefined
+
+  let layerStyle = getLayerStyle($map, layer.id)
 
   $: selected, setActiveBand()
   const setActiveBand = () => {
@@ -20,7 +23,7 @@
 
     const newLayer = cloneDeep(layer)
     const layerId = uuidv4()
-    newLayer.definition.id = layerId
+    newLayer.id = layerId
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -29,13 +32,15 @@
     const currentLayerIndex = $layerList.indexOf(layer)
     $layerList.splice(currentLayerIndex, 0, newLayer)
 
-    // layerList.set([newLayer, ...$layerList])
-    $map.addLayer(newLayer.definition, layer.definition.id)
+    const style = getLayerStyle($map, layer.id)
 
-    deleteOldLayer(layer.definition.id)
+    // layerList.set([newLayer, ...$layerList])
+    $map.addLayer(JSON.parse(JSON.stringify(style)), layer.id)
+
+    deleteOldLayer(layer.id)
   }
 
-  if (layer.definition.type === 'raster' && !layer.tree && layer.tree.isMosaicJSON) {
+  if (layerStyle.type === LayerTypes.RASTER && !layer.tree && layer.tree.isMosaicJSON) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ;({ info } = layer)
@@ -46,7 +51,7 @@
   }
 
   const updateLayerInfo = (metadata: RasterTileMetadata, bandName: string) => {
-    const layerSrc = $map.getSource(layer.definition.source)
+    const layerSrc = $map.getSource(layerStyle.source)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const layerURL = new URL(layerSrc.tiles[0])
@@ -70,12 +75,12 @@
   }
 
   const deleteOldLayer = (oldLayerId) => {
-    $layerList = $layerList.filter((item) => item.definition.id !== oldLayerId)
+    $layerList = $layerList.filter((item) => item.id !== oldLayerId)
     $map.removeLayer(oldLayerId)
   }
 </script>
 
-{#if layer.definition.type === 'raster' && bands && bands.length > 0}
+{#if layerStyle && layerStyle.type === LayerTypes.RASTER && bands && bands.length > 0}
   <div class="select is-success is-rounded is-small">
     <select bind:value={selected}>
       {#each bands as band}

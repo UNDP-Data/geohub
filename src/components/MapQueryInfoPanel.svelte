@@ -14,9 +14,17 @@
 
   import { layerList } from '$stores'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import { downloadFile, fetchUrl, getActiveBandIndex, getLayerUrl } from '$lib/helper'
+  import {
+    downloadFile,
+    fetchUrl,
+    getActiveBandIndex,
+    getLayerStyle,
+    getLayerUrl,
+    getValueFromRasterTileUrl,
+  } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount, onDestroy } from 'svelte'
+  import type { RasterTileMetadata } from '$lib/types'
 
   export let map: Map
   let isDataContainerVisible: boolean
@@ -75,7 +83,7 @@
       return visibility === 'visible'
     })
     const visibleLayerIds = visibleLayers.map((l) => l.id)
-    const layersVisible = $layerList.filter((layer) => visibleLayerIds.includes(layer.definition.id))
+    const layersVisible = $layerList.filter((layer) => visibleLayerIds.includes(layer.id))
     if (layersVisible.length === 0) {
       layerValuesData = []
       return
@@ -94,12 +102,13 @@
       let presentUniqueNames = {}
       let bandIndex: number = null
       let layerName = layer.name
-      if (layer.type === LayerTypes.RASTER) {
+      const layerStyle = getLayerStyle(map, layer.id)
+      if (layerStyle.type === LayerTypes.RASTER) {
         if (layer.tree && layer.tree.isMosaicJSON) {
           const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
             'cog',
             'mosaicjson',
-          )}/point/${lng},${lat}?url=${getLayerUrl(map, layer.definition.id)}`
+          )}/point/${lng},${lat}?url=${getLayerUrl(map, layer.id)}`
           const layerData = await fetchUrl(baseUrl)
           if (!(layerData.values.length > 0 && layerData.values[0].length > 0 && layerData.values[0][1].length > 0)) {
             continue
@@ -111,14 +120,15 @@
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           bandIndex = getActiveBandIndex(layer.info)
-          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getLayerUrl(
-            map,
-            layer.definition.id,
-          )}&bidx=${bandIndex + 1}`
-          const queryURL = !layer.expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(layer.expression)}`
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getLayerUrl(map, layer.id)}&bidx=${
+            bandIndex + 1
+          }`
+          const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string
+          const queryURL = !expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(expression)}`
 
           const layerData = await fetchUrl(queryURL)
-          const layerUniqueValues = layer.info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
+          const rasterInfo = layer.info as RasterTileMetadata
+          const layerUniqueValues = rasterInfo.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
 
           let layerHasNoDataValue = false
 
@@ -126,7 +136,7 @@
 
           if (layerHasNoDataValue === false) {
             for (const value of layerData.values) {
-              if (value === layer.info.nodata_value) layerHasNoDataValue = true
+              if (value === rasterInfo.nodata_value) layerHasNoDataValue = true
             }
           }
 
@@ -135,9 +145,9 @@
             return (presentUniqueNames[String(item)] = layerUniqueValues[item])
           })
         }
-      } else if (layer.type === LayerTypes.VECTOR) {
+      } else {
         const queriedFeatures = map.queryRenderedFeatures(e.point, {
-          layers: $layerList.map((l) => l.definition.id),
+          layers: $layerList.map((l) => l.id),
         })
         if (queriedFeatures && queriedFeatures.length > 0) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -148,11 +158,11 @@
       layerValuesDataTmp = [
         ...[
           {
-            id: layer.definition.id,
+            id: layer.id,
             name: layerName,
             lat,
             lng,
-            type: layer.type,
+            type: layerStyle.type,
             values,
             // legend labels should correspond to the actual values in the values array
             legendLabels: presentUniqueNames,
@@ -219,19 +229,20 @@
     ]
 
     layerValuesData.forEach((layerValue) => {
-      if (layerValue.type === LayerTypes.RASTER) {
+      const layerStyle = getLayerStyle(map, layerValue.id)
+      if (layerStyle.type === LayerTypes.RASTER) {
         data.push([
           layerValue.name,
-          layerValue.type,
+          layerStyle.type,
           '',
           layerValue.values.length > 0 ? layerValue.values : noDataLabel,
         ])
-      } else if (layerValue.type === LayerTypes.VECTOR) {
+      } else {
         if (layerValue.values.length === 0) {
-          data.push([layerValue.name, layerValue.type, 'N/A', 'N/A'])
+          data.push([layerValue.name, layerStyle.type, 'N/A', 'N/A'])
         } else {
           Object.keys(layerValue.values).forEach((key) => {
-            data.push([layerValue.name, layerValue.type, key, layerValue.values[key]])
+            data.push([layerValue.name, layerStyle.type, key, layerValue.values[key]])
           })
         }
       }
@@ -337,7 +348,7 @@
                     {layerValue.name}
                   </div>
                 </td>
-                {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0 && (layerValue.type === LayerTypes.RASTER || layerValue.type === LayerTypes.VECTOR))}
+                {#if (layerValue.values && layerValue.values.length === 0) || (layerValue.legendLabels && layerValue.legendLabels.length === 0)}
                   <td class="second-column"> N/A </td>
                   <td class="third-column"> N/A </td>
                 {:else if layerValue.type === LayerTypes.RASTER}
@@ -359,7 +370,7 @@
                   {:else}
                     <td class="third-column"> N/A </td>
                   {/if}
-                {:else if layerValue.type === LayerTypes.VECTOR}
+                {:else}
                   <td class="second-column">
                     <div
                       class="expand-collapse"

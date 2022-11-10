@@ -1,4 +1,4 @@
-import type { StyleDefinition } from '$lib/types'
+import type { Layer, StyleDefinition } from '$lib/types'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -56,19 +56,10 @@ export enum ClassificationMethodNames {
   NATURAL_BREAK = 'Natural Breaks',
 }
 
-export const LayerInitialValues = {
+export const LayerInitialValues: Layer = {
+  id: '',
   name: 'GeoHub',
-  definition: undefined,
-  type: '',
   info: {},
-  colorMapName: DEFAULT_COLORMAP,
-  intervals: {
-    classification: ClassificationMethodTypes.EQUIDISTANT,
-    numberOfClasses: COLOR_CLASS_COUNT,
-  },
-  expression: '',
-  legendType: '',
-  simpleExpressionAvailable: true,
 }
 
 export enum ErrorMessages {
@@ -91,6 +82,12 @@ export const LayerIconTypes = [
     color: 'lightseagreen',
   },
   {
+    id: 'symbol',
+    label: 'Symbol',
+    icon: 'fa-solid fa-cubes-stacked',
+    color: 'lightseagreen',
+  },
+  {
     id: 'line',
     label: 'Line',
     icon: 'fa-solid fa-bacon',
@@ -98,6 +95,12 @@ export const LayerIconTypes = [
   },
   {
     id: 'polygon',
+    label: 'Polygon',
+    icon: 'fa-solid fa-vector-square',
+    color: 'crimson',
+  },
+  {
+    id: 'fill',
     label: 'Polygon',
     icon: 'fa-solid fa-vector-square',
     color: 'crimson',

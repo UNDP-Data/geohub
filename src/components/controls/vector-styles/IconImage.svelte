@@ -17,7 +17,7 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
@@ -86,7 +86,7 @@
           if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
             $spriteImageList.find((icon) => {
               if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
-                const rgba = chroma(getIconColor($map, layer.definition.id)).rgba()
+                const rgba = chroma(getIconColor($map, layer.id)).rgba()
                 const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
                 const img = document.createElement('img')
                 img.src = icon.src

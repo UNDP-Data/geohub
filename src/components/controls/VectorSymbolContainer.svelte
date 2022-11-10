@@ -13,8 +13,6 @@
   import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
   import {
     ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
-    DEFAULT_COLORMAP,
     VectorLayerSymbolLegendTypes,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
@@ -23,16 +21,18 @@
   import { layerList } from '$stores'
 
   export let layer: Layer
+  export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
+  export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  export let legendType: string
 
-  let applyToOption = layer?.intervals?.applyToOption
-    ? layer.intervals.applyToOption
-    : VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
   let layerMin: number
   let layerMax: number
   let showTooltip = false
+  let numberOfClasses: number
 
   // hide colormap picker if change in layer list
   $: {
@@ -55,18 +55,7 @@
   ).init()
 
   onMount(() => {
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerSymbolLegendTypes.SIMPLE
-    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
-
-    if (layer?.intervals === undefined) {
-      layer.intervals = {
-        classification: ClassificationMethodTypes.NATURAL_BREAK,
-        numberOfClasses: COLOR_CLASS_COUNT,
-        colorMapRows: [],
-        propertyName: '',
-        applyToOption: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
-      }
-    }
+    legendType = legendType ? legendType : VectorLayerSymbolLegendTypes.SIMPLE
   })
 
   const handleLegendToggleClick = () => {
@@ -77,20 +66,18 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerSymbolLegendTypes.ADVANCED
+    if (legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
+      legendType = VectorLayerSymbolLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerSymbolLegendTypes.SIMPLE
+      legendType = VectorLayerSymbolLegendTypes.SIMPLE
     }
   }
 
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
-      colorPickerVisibleIndex = -1
-    }
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    const layerClone = cloneDeep(layer)
+    layer = layerClone
+    colorPickerVisibleIndex = -1
   }
 
   const handleClosePopup = () => {
@@ -109,17 +96,20 @@
   class="columns"
   data-testid="symbol-view-container">
   <div class="column is-10">
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.SIMPLE}
+    {#if legendType === VectorLayerSymbolLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorSymbolSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED}
+    {:else if legendType === VectorLayerSymbolLegendTypes.ADVANCED}
       <div transition:slide>
         <VectorSymbolAdvanced
           bind:layer
           bind:applyToOption
           bind:layerMin
-          bind:layerMax />
+          bind:layerMax
+          bind:colorMapName
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
     {/if}
   </div>
@@ -151,7 +141,7 @@
     </Wrapper>
     <br />
 
-    {#if layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div
         role="button"
         class="toggle-container"
@@ -171,18 +161,19 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if showTooltip && legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           {layerMin}
-          {layerMax} />
+          {layerMax}
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />

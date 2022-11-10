@@ -37,13 +37,11 @@ export const GET: RequestHandler = async ({ url }) => {
   const layers = await getStats(url.origin, pbfpath, data.json.tilestats.layers)
   if (layers.length > 0) {
     data.json.tilestats.layerCount = layers.length
-    data.stats = layers[0].attributes // TODO: stats should be removed
   } else {
     data.json.tilestats = {
       layerCount: data.json.vector_layers.length,
       layers: data.json.tilestats.layers,
     }
-    data.stats = data.json.tilestats.layers[0].attributes
   }
 
   return new Response(JSON.stringify(data))

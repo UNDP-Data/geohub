@@ -11,18 +11,16 @@
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorPolygonSimple from '$components/controls/VectorPolygonSimple.svelte'
   import VectorPolygonAdvanced from '$components/controls/VectorPolygonAdvanced.svelte'
-  import {
-    ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
-    DEFAULT_COLORMAP,
-    VectorLayerPolygonLegendTypes,
-  } from '$lib/constants'
+  import { ClassificationMethodTypes, VectorLayerPolygonLegendTypes } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
-  import { layerList } from '$stores'
+  import type { Layer } from '$lib/types'
+  import { layerList, map } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
 
   export let layer: Layer
+  export let colorMapName
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
+  export let legendType: string
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -31,6 +29,7 @@
   let layerMax: number
   let showTooltip = false
   let layerNumberProperties = 0
+  let numberOfClasses: number
 
   // hide colormap picker if change in layer list
   $: {
@@ -54,18 +53,7 @@
 
   onMount(() => {
     // set default values
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerPolygonLegendTypes.SIMPLE
-    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
-
-    if (layer?.intervals === undefined) {
-      layer.intervals = {
-        classification: ClassificationMethodTypes.NATURAL_BREAK,
-        numberOfClasses: COLOR_CLASS_COUNT,
-        colorMapRows: [],
-        propertyName: '',
-      }
-    }
-
+    legendType = legendType ? legendType : VectorLayerPolygonLegendTypes.SIMPLE
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
@@ -77,20 +65,18 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerPolygonLegendTypes.ADVANCED
+    if (legendType === VectorLayerPolygonLegendTypes.SIMPLE) {
+      legendType = VectorLayerPolygonLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerPolygonLegendTypes.SIMPLE
+      legendType = VectorLayerPolygonLegendTypes.SIMPLE
     }
   }
 
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
-      colorPickerVisibleIndex = -1
-    }
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    const layerClone = cloneDeep(layer)
+    layer = layerClone
+    colorPickerVisibleIndex = -1
   }
 
   const handleClosePopup = () => {
@@ -99,7 +85,7 @@
   }
 
   const getLayerNumberPropertiesCount = () => {
-    const vectorLayerMeta = getLayerNumberProperties(layer)
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
     return Object.keys(vectorLayerMeta.fields).length
   }
 
@@ -114,16 +100,19 @@
   class="columns"
   data-testid="polygon-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if layer.legendType === VectorLayerPolygonLegendTypes.SIMPLE}
+    {#if legendType === VectorLayerPolygonLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorPolygonSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
+    {:else if legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div transition:slide>
         <VectorPolygonAdvanced
           bind:layer
           bind:layerMin
-          bind:layerMax />
+          bind:layerMax
+          bind:colorMapName
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
     {/if}
   </div>
@@ -156,7 +145,7 @@
       <br />
     {/if}
 
-    {#if layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
+    {#if legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         role="button"
         class="toggle-container"
@@ -176,18 +165,19 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerPolygonLegendTypes.ADVANCED}
+    {#if showTooltip && legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div
         id="tooltip"
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           {layerMin}
-          {layerMax} />
+          {layerMax}
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />

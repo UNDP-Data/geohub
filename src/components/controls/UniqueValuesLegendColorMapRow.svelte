@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
-  import chroma, { rgb } from 'chroma-js'
+  import chroma from 'chroma-js'
 
   import Popper from '$lib/popper'
   import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
@@ -15,7 +15,7 @@
   const dispatch = createEventDispatcher()
 
   let color: Color
-  let colorMapName: string
+  export let colorMapName: string
   let colorPickerStyle: string
   let showToolTip = false
 
@@ -31,12 +31,7 @@
   $: color, updateColorMap(color)
 
   // load color map upon change of layer color map name
-  $: {
-    if (layer.colorMapName !== colorMapName) {
-      colorMapName = layer.colorMapName
-      setColorFromProp()
-    }
-  }
+  $: colorMapName, setColorFromProp()
 
   const {
     ref: popperRef,
@@ -158,7 +153,7 @@
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
-        <DefaultColorPicker
+        <ColorPicker
           bind:color
           on:closeColorPicker={() => handleColorPickerClick()} />
         <div

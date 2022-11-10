@@ -1,13 +1,15 @@
 <script lang="ts">
   import Fa from 'svelte-fa'
 
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterSimpleExpression } from '$lib/types'
   import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
   import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
+  import type { DynamicLayerLegendTypes } from '$lib/constants'
   export let layer: Layer
-
+  export let expressions: RasterSimpleExpression[]
+  export let legendType: DynamicLayerLegendTypes
   let activeTab = 'Simple'
   let isAdvancedPanelVisible = false
   let isSimplePanelVisible = false
@@ -50,10 +52,10 @@
     const nextTabIndex = currentTabIndex - 1
     if (nextTabIndex < 0) {
       activeTab = tabs[tabs.length - 1].label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[nextTabIndex].label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     }
   }
 
@@ -63,10 +65,10 @@
     const nextTab = tabs[nextTabIndex]
     if (nextTab) {
       activeTab = nextTab.label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[0].label
-      document.getElementById(`expression-${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`expression-${activeTab}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -78,7 +80,7 @@
         href={'#'}
         role="tab"
         aria-label={tab.label}
-        id={`expression-${tab.label}-${layer.definition.id}`}
+        id={`expression-${tab.label}-${layer.id}`}
         on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
         on:keydown={handleArrowKey}
         class={activeTab === tab.label ? 'is-active' : ''}>
@@ -94,10 +96,15 @@
   <div class="block" />
   <p>
     {#if isSimplePanelVisible === true}
-      <RasterExpressionSimple bind:layer />
+      <RasterExpressionSimple
+        bind:layer
+        bind:expressions
+        bind:legendType />
     {/if}
     {#if isAdvancedPanelVisible}
-      <RasterRefineContainer bind:layer />
+      <RasterRefineContainer
+        bind:layer
+        bind:legendType />
     {/if}
   </p>
 </nav>

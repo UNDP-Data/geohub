@@ -10,6 +10,7 @@
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number
   export let layer: Layer
+  export let colorMapName: string
 
   const dispatch = createEventDispatcher()
   const {
@@ -25,7 +26,6 @@
   ).init()
 
   let color: Color
-  let colorMapName: string
   let colorPickerStyle: string
   let showToolTip = false
 
@@ -41,12 +41,7 @@
   $: color, updateColorMap(color)
 
   // load color map upon change of layer color map name
-  $: {
-    if (layer?.colorMapName !== colorMapName) {
-      colorMapName = layer.colorMapName
-      setColorFromProp()
-    }
-  }
+  $: colorMapName, setColorFromProp()
 
   // set color based on default value
   const setColorFromProp = () => {
@@ -161,15 +156,17 @@
       value={colorMapRow.start}
       on:input={handleInput} />
   </div>
-  <div class="cell small-2">—</div>
-  <div class="cell small-4">
-    <input
-      style="border: none"
-      id="end"
-      type="number"
-      value={colorMapRow.end}
-      on:input={handleInput} />
-  </div>
+  {#if colorMapRow.end}
+    <div class="cell small-2">—</div>
+    <div class="cell small-4">
+      <input
+        style="border: none"
+        id="end"
+        type="number"
+        value={colorMapRow.end}
+        on:input={handleInput} />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">

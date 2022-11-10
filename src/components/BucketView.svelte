@@ -196,7 +196,7 @@
         overflow-y: auto;
         height: calc(100vh - 150px);
 
-        @media (max-width: 90em) {
+        @media (max-width: 89.9375em) {
           height: calc(100vh - 120px);
         }
       }
@@ -206,7 +206,7 @@
         overflow-y: auto;
         height: calc(100vh - 150px);
 
-        @media (max-width: 90em) {
+        @media (max-width: 89.9375em) {
           height: calc(100vh - 120px);
         }
 
@@ -225,7 +225,7 @@
       .separator {
         border-left: $separator;
         height: calc(100vh - 150px);
-        @media (max-width: 90em) {
+        @media (max-width: 89.9375em) {
           height: calc(100vh - 120px);
         }
 

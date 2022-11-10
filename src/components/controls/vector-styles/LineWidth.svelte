@@ -8,9 +8,9 @@
 
   export let layer: Layer = LayerInitialValues
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
 
-  let defaultValue = getLineWidth($map, layer.definition.id, DEFAULT_LINE_WIDTH)
+  let defaultValue = getLineWidth($map, layer.id, DEFAULT_LINE_WIDTH)
   let layerType = LayerTypes.LINE
   let maxValue = 10
   let minValue = 0
@@ -20,7 +20,7 @@
   let titleName = 'Line Width'
 
   onMount(() => {
-    defaultValue = getLineWidth($map, layer.definition.id, DEFAULT_LINE_WIDTH)
+    defaultValue = getLineWidth($map, layer.id, DEFAULT_LINE_WIDTH)
     setValue(defaultValue)
   })
 

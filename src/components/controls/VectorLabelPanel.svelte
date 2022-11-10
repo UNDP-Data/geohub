@@ -18,7 +18,7 @@
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
 
-  const parentLayerId = layer.definition.id
+  const parentLayerId = layer.id
   const style: LayerSpecification = $map
     .getStyle()
     .layers.filter((layer: LayerSpecification) => layer.id === parentLayerId)[0]
@@ -27,7 +27,7 @@
   let fieldType: string
   let isAdvancedSettings = false
   let targetLayer = layer
-  let targetLayerId = layer.definition.id
+  let targetLayerId = layer.id
   let updateLegend = () => undefined
 
   onMount(() => {
@@ -63,9 +63,8 @@
       }
 
       targetLayer = {
+        id: targetLayerId,
         name: targetLayerId,
-        definition: childLayer,
-        type: LayerTypes.VECTOR,
         info: layer.info,
         parent: layer,
       }
@@ -103,8 +102,8 @@
   } else {
     if (layer.children && layer.children.length > 0) {
       layer.children.forEach((l) => {
-        if (!$map.getLayer(l.definition.id)) return
-        $map.removeLayer(l.definition.id)
+        if (!$map.getLayer(l.id)) return
+        $map.removeLayer(l.id)
       })
       layer.children = []
     }

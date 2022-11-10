@@ -1,26 +1,33 @@
 <script lang="ts">
   import RasterExpressionBuilder from '$components/controls/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
-  import type { BannerMessage, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { BannerMessage, Layer, RasterLayerStats, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import Card, { PrimaryAction } from '@smui/card'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
-  import { fetchUrl, getActiveBandIndex, getLayerUrl, updateParamsInURL } from '$lib/helper'
+  import {
+    fetchUrl,
+    getActiveBandIndex,
+    getLayerStyle,
+    getLayerUrl,
+    getValueFromRasterTileUrl,
+    updateParamsInURL,
+  } from '$lib/helper'
   import { COLOR_CLASS_COUNT_MAXIMUM, DynamicLayerLegendTypes, ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages, layerList, map } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
+  export let expressions: RasterSimpleExpression[] = []
+  export let legendType: DynamicLayerLegendTypes
 
   let info: RasterTileMetadata
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
   ;({ info } = layer)
 
-  const layerSrc = $map.getSource(layer.definition.source)
-  const layerURL = new URL(layerSrc.tiles[0])
   const bandIndex = getActiveBandIndex(info)
   const band = `b${bandIndex + 1}`
   let showExpressionBuilder = false
@@ -28,10 +35,8 @@
   // Vars for expression
   let numbers = ''
   let expression = ''
-  let simpleExpressionAvailable: boolean =
-    layer.simpleExpressionAvailable === undefined ? true : layer.simpleExpressionAvailable
+  let simpleExpressionAvailable = true
   let editingExpressionIndex = 0
-  let expressions = layer.expressions || [{}]
   let combiningOperators = []
 
   // For complex expressions, ie the complex `where` expression
@@ -66,7 +71,6 @@
   // to an empty string
   $: simpleExpressionAvailable, (numbers = '')
   $: editingExpressionIndex, (numbers = '')
-  $: expressions, (layer.expressions = expressions)
 
   // Whenever the arithmetic operator is clicked, add it to the operator
   // only when the simple expression is available. Complex expression will
@@ -74,8 +78,15 @@
   const handleArithmeticButtonClick = (event: CustomEvent) => {
     if (simpleExpressionAvailable) {
       if (event?.detail?.operator) {
-        expressions[0].band = band
-        expressions[0].operator = event.detail.operator
+        const expr = {
+          band,
+          operator: event.detail.operator,
+        }
+        if (expressions.length === 0) {
+          expressions.push(expr)
+        } else {
+          expressions[0] = expr
+        }
       }
     } else {
       // pass
@@ -112,7 +123,6 @@
   // Whenever the where button is clicked, create a new complex expression
   const handleWhereButtonClick = () => {
     simpleExpressionAvailable = false
-    layer.simpleExpressionAvailable = simpleExpressionAvailable
     if (expressions.length === 1) {
       expressions[0] = {
         band: band,
@@ -146,35 +156,36 @@
   // Apply the expression
   const applyExpression = async () => {
     try {
+      const layerStyle = getLayerStyle($map, layer.id)
+      const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
+      const layerURL = new URL(layerSrc.tiles[0])
       if (simpleExpressionAvailable) {
-        if (expressions[0].operator && expressions[0].value) {
-          const layerSrc: RasterTileSource = $map.getSource(layer.definition.source) as RasterTileSource
-          const layerURL = new URL(layerSrc.tiles[0])
+        if (expressions.length > 0 && expressions[0].operator && expressions[0].value) {
           let updatedParams = {}
 
           const exprStatUrl = new URL(
             `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
               $map,
-              layer.definition.id,
+              layer.id,
             )}&expression=${encodeURIComponent(
               `${expressions[0].band}${expressions[0].operator}${expressions[0].value}`,
             )};`,
           )
-          console.log(exprStatUrl)
+          // console.log(exprStatUrl)
           const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
           info.stats = exprStats
-          layer.expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
+          const expression = `${expressions[0].band},${expressions[0].operator},${expressions[0].value}`
           const band = Object.keys(exprStats)[bandIndex]
-          updatedParams = { expression: layer.expression.replaceAll(',', '') }
+          updatedParams = { expression: expression.replaceAll(',', '') }
 
           updatedParams['rescale'] = [layer.info.stats[band].min, layer.info.stats[band].max]
 
           // Delete the expression in the url if already exists and update the url
           layerURL.searchParams.delete('expression')
-          updateParamsInURL(layer.definition, layerURL, updatedParams)
+          updateParamsInURL(layerStyle, layerURL, updatedParams)
           const nlayer = { ...layer, info: info }
           const layers = $layerList.map((lyr) => {
-            return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+            return layer.id !== lyr.id ? lyr : nlayer
           })
           layerList.set([...layers])
         }
@@ -197,7 +208,7 @@
         const exprStatUrl = new URL(
           `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
             $map,
-            layer.definition.id,
+            layer.id,
           )}&expression=${encodeURIComponent(
             `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`,
           )}&categorical=true`,
@@ -206,16 +217,16 @@
         const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
         console.log(exprStats)
         info.stats = exprStats
-        layer.expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
+        const expression = `where(${complexExpression}, ${trueStatement.statement}, ${falseStatement.statement});`
         const band = Object.keys(exprStats)[bandIndex]
-        updatedParams = { expression: layer.expression }
+        updatedParams = { expression: expression }
         updatedParams['rescale'] = [info.stats[band].min, info.stats[band].max]
         layerURL.searchParams.delete('expression')
-        updateParamsInURL(layer.definition, layerURL, updatedParams)
+        updateParamsInURL(layerStyle, layerURL, updatedParams)
 
         const nlayer = { ...layer, info: info }
         const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : nlayer
+          return layer.id !== lyr.id ? lyr : nlayer
         })
         layerList.set([...layers])
       }
@@ -233,15 +244,17 @@
   // Clear the expression, reset the map, legend and other relevant components to the initial state when without the expression
   const clearAppliedExpression = async () => {
     simpleExpressionAvailable = true
-    layer.simpleExpressionAvailable = simpleExpressionAvailable
     editingExpressionIndex = 0
-    expressions = [{}]
+    expressions = []
     expression = ''
-    layer.expression = expression
+
+    const layerStyle = getLayerStyle($map, layer.id)
+    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
+    const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.definition.id)}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.id)}`,
       )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
@@ -252,12 +265,13 @@
       layerURL.searchParams.delete('expression')
       if (Number(info.stats[bandName].unique) > COLOR_CLASS_COUNT_MAXIMUM) {
         layerURL.searchParams.delete('colormap')
-        layerURL.searchParams.set('colormap_name', layer.colorMapName)
-        layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+        const colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+        layerURL.searchParams.set('colormap_name', colorMapName)
+        legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
       layerURL.searchParams.delete('rescale')
       layerURL.searchParams.delete('expression')
-      updateParamsInURL(layer.definition, layerURL, updatedParams)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
     }
   }
 
@@ -315,18 +329,20 @@
       class="column is-10"
       style="border: 1px dotted #e6e9f7">
       {#if simpleExpressionAvailable}
-        {#each Object.keys(expressions[0]) as key}
-          <span
-            style="cursor: pointer; margin: 1%;"
-            tabindex="0"
-            class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
-            {expressions[0][`${key}`]}
-            <button
-              style="display:{key === 'band' ? 'none' : null}"
-              on:click={() => handleRemoveItem(key)}
-              class="delete is-small" />
-          </span>
-        {/each}
+        {#if expressions && expressions.length > 0}
+          {#each Object.keys(expressions[0]) as key}
+            <span
+              style="cursor: pointer; margin: 1%;"
+              tabindex="0"
+              class="tag is-medium {key === 'band' ? 'is-primary' : key === 'operator' ? 'is-danger' : 'is-warning'}">
+              {expressions[0][`${key}`]}
+              <button
+                style="display:{key === 'band' ? 'none' : null}"
+                on:click={() => handleRemoveItem(key)}
+                class="delete is-small" />
+            </span>
+          {/each}
+        {/if}
       {:else}
         <div
           class="column"

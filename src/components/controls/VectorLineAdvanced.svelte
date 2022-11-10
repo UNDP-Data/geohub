@@ -10,6 +10,7 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     DEFAULT_LINE_COLOR,
@@ -17,12 +18,21 @@
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
-  import { getIntervalList, getLineColor, getLineWidth, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getIntervalList,
+    getLayerNumberProperties,
+    getLayerStyle,
+    getLineColor,
+    getLineWidth,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import type {
     IntervalLegendColorMapRow,
     Layer,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
+    VectorTileMetadata,
   } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
@@ -31,6 +41,7 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName: string
 
   const classificationMethodsDefault = [
     // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -38,31 +49,30 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let classificationMethod
+  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
-  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let hasUniqueValues = false
-  let numberOfClasses = layer.intervals.numberOfClasses
+  export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string = null
   let sizeArray: number[]
   let highlySkewed: boolean
+  let colorMapRows: IntervalLegendColorMapRow[] = []
   // update layer store upon change of apply to option
-  $: if (applyToOption !== layer.intervals.applyToOption) {
-    layer.intervals.applyToOption = applyToOption
-    updateMap()
-  }
+  $: applyToOption, updateMap()
 
   // update color intervals upon change of color map name
-  $: {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-      setIntervalValues()
-    }
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    getPropertySelectValue()
+    getColorMapRows()
+    setIntervalValues()
   }
 
   onMount(() => {
+    getPropertySelectValue()
+    getColorMapRows()
     setCssIconFilter()
     if (highlySkewed) {
       classificationMethods = [
@@ -83,32 +93,83 @@
   })
 
   const setCssIconFilter = () => {
-    const lineColor = getLineColor($map, layer.definition.id)
+    const lineColor = getLineColor($map, layer.id)
     const rgba = chroma(lineColor).rgba()
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
 
+  const getPropertySelectValue = () => {
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const selectOptions = Object.keys(vectorLayerMeta.fields)
+
+    propertySelectValue = selectOptions[0]
+
+    if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+      const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
+      if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'property')) {
+        propertySelectValue = lineColorValue['property']
+      }
+    } else {
+      const lineWidthValue = $map.getPaintProperty(layer.id, 'line-width')
+      if (lineWidthValue && Object.prototype.hasOwnProperty.call(lineWidthValue, 'property')) {
+        propertySelectValue = lineWidthValue['property']
+      }
+    }
+  }
+
+  const getColorMapRows = () => {
+    let stops: [[number, string]]
+    if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+      const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
+      if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = lineColorValue.stops
+      }
+    } else {
+      const lineWidthValue = $map.getPaintProperty(layer.id, 'line-width')
+      if (lineWidthValue && Object.prototype.hasOwnProperty.call(lineWidthValue, 'stops')) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        stops = lineWidthValue.stops
+      }
+    }
+    colorMapRows = []
+
+    const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+      (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+    )
+    const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
+
+    stops?.forEach((stop, index: number) => {
+      const value: number = stop[0]
+      const color: string = stop[1]
+      colorMapRows.push({
+        color: chroma(color).rgba(),
+        index: index,
+        start: value,
+        end: stat.values ? '' : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+      })
+    })
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
-    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = defaultValue
     setIntervalValues()
-    return defaultValue
+    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
-    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
   const handleClassificationChange = () => {
-    layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 
   const handleIncrementDecrementClasses = () => {
-    layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
@@ -126,11 +187,11 @@
     const inputValue = event.detail.value
 
     if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
 
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
 
     updateMap()
@@ -145,16 +206,18 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
-          const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-          const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+          const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+          )
+          const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
           const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std'])
 
           highlySkewed = !(skewness < 1 && skewness > -1)
@@ -200,7 +263,7 @@
                 randomSample,
                 numberOfClasses,
               )
-              const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+              const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
               for (let i = 0; i < intervalList.length - 1; i++) {
@@ -218,7 +281,7 @@
               layerMin = stat.min
             }
 
-            layer.intervals.colorMapRows = propertySelectValues
+            colorMapRows = propertySelectValues
 
             updateMap()
           }
@@ -228,32 +291,33 @@
   }
 
   const updateMap = () => {
-    const stops = layer.intervals.colorMapRows.map((row) => {
+    if (!propertySelectValue) return
+    const stops = colorMapRows.map((row) => {
       return [
         row.start,
-        hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
+        hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
     if (stops.length > 0) {
-      if (hasUniqueValues === true || layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
-        $map.setPaintProperty(layer.definition.id, 'line-width', getLineWidth($map, layer.definition.id))
-        $map.setPaintProperty(layer.definition.id, 'line-color', {
-          property: layer.intervals.propertyName,
+      if (hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+        $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
+        $map.setPaintProperty(layer.id, 'line-color', {
+          property: propertySelectValue,
           type: 'interval',
           stops,
         })
-      } else if (layer.intervals.applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
+      } else if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
         // generate remapped stops based on the zoom level
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
 
         sizeArray = newStops.map((item) => item[1])
-        const lineColor = getLineColor($map, layer.definition.id)
-        $map.setPaintProperty(layer.definition.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
-        $map.setPaintProperty(layer.definition.id, 'line-width', {
-          property: layer.intervals.propertyName,
+        const lineColor = getLineColor($map, layer.id)
+        $map.setPaintProperty(layer.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
+        $map.setPaintProperty(layer.id, 'line-width', {
+          property: propertySelectValue,
           type: 'interval',
           stops: newStops,
         })
@@ -361,10 +425,11 @@
     <div class="column size">
       {#if hasUniqueValues}
         <div>
-          {#each layer.intervals.colorMapRows as colorMapRow}
+          {#each colorMapRows as colorMapRow}
             <div class="pl-6">
               <UniqueValuesLegendColorMapRow
                 bind:colorMapRow
+                bind:colorMapName
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}
@@ -376,9 +441,10 @@
       {:else}
         {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
           <div>
-            {#each layer.intervals.colorMapRows as colorMapRow}
+            {#each colorMapRows as colorMapRow}
               <IntervalsLegendColorMapRow
                 bind:colorMapRow
+                bind:colorMapName
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}
@@ -399,7 +465,7 @@
             </thead>
             <tbody>
               {#if sizeArray && sizeArray.length > 0}
-                {#each layer.intervals.colorMapRows as row, index}
+                {#each colorMapRows as row, index}
                   <tr data-testid="line-width-row-container">
                     <td class="has-text-centered">
                       <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />

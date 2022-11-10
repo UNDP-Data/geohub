@@ -1,5 +1,4 @@
 import type { VectorLayerMetadata } from './VectorLayerMetadata'
-import type { VectorLayerTileStatAttribute } from './VectorLayerTileStatAttribute'
 import type { VectorLayerTileStatLayer } from './VectorLayerTileStatLayer'
 
 // https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
@@ -21,7 +20,4 @@ export interface VectorTileMetadata {
       layers: VectorLayerTileStatLayer[]
     }
   }
-  band_metadata?: string[]
-  nodata_value?: number
-  stats?: VectorLayerTileStatAttribute[]
 }

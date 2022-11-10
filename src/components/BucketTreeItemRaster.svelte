@@ -12,7 +12,6 @@
   import { map, layerList, bannerMessages, indicatorProgress } from '$stores'
   import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
-    ClassificationMethodTypes,
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     DEFAULT_COLORMAP,
@@ -101,12 +100,15 @@
       type: LayerTypes.RASTER,
       // convert http to https because titiler's /mosaicjson/tilejson.json does not return https protocol currently
       tiles: tilejson.tiles,
-      minzoom: tilejson.minzoom,
-      maxzoom: tilejson.maxzoom,
+      minzoom: tilejson.minzoom | 0,
+      maxzoom: tilejson.maxzoom | 22,
       bounds: tilejson.bounds,
       attribution:
         'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+    }
+    if (layerSource.maxzoom > 24) {
+      layerSource.maxzoom = 24
     }
     const tileSourceId = tree.id
     if (!(tileSourceId in $map.getStyle().sources)) {
@@ -118,8 +120,8 @@
       id: layerId,
       type: LayerTypes.RASTER,
       source: tileSourceId,
-      minzoom: 0,
-      maxzoom: 22,
+      minzoom: layerSource.minzoom,
+      maxzoom: layerSource.maxzoom,
       layout: {
         visibility: 'visible',
       },
@@ -128,16 +130,9 @@
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
       {
+        id: layerId,
         name: layerName,
-        definition: layerDefinition,
-        type: LayerTypes.RASTER,
         info: layerInfo,
-        colorMapName: defaultColorMap,
-        intervals: {
-          classification: ClassificationMethodTypes.EQUIDISTANT,
-          numberOfClasses: COLOR_CLASS_COUNT,
-          colorMapRows: [],
-        },
         tree: tree,
       },
       ...$layerList,
@@ -145,12 +140,13 @@
 
     let firstSymbolId = undefined
     for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol') {
+      if (layer.type === LayerTypes.SYMBOL) {
         firstSymbolId = layer.id
         break
       }
     }
     $map.addLayer(layerDefinition, firstSymbolId)
+    $map.fitBounds(layerSource.bounds)
   }
 
   const getMosaicJsonMetadata = async (tilejson: { bounds: any; tiles: string[] }, isUniqueValue: boolean) => {
@@ -230,6 +226,8 @@
       type: LayerTypes.RASTER,
       tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
       tileSize: 256,
+      minzoom: layerInfo.minzoom | 0,
+      maxzoom: layerInfo.maxzoom | 22,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       bounds: layerInfo['bounds'],
@@ -237,7 +235,9 @@
         'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
               Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
     }
-
+    if (layerSource.maxzoom > 24) {
+      layerSource.maxzoom = 24
+    }
     const tileSourceId = tree.path
     if (!(tileSourceId in $map.getStyle().sources)) {
       $map.addSource(tileSourceId, layerSource)
@@ -248,8 +248,8 @@
       id: layerId,
       type: LayerTypes.RASTER,
       source: tileSourceId,
-      minzoom: 0,
-      maxzoom: 22,
+      minzoom: layerSource.minzoom,
+      maxzoom: layerSource.maxzoom,
       layout: {
         visibility: 'visible',
       },
@@ -258,30 +258,22 @@
     const layerName = tree.path.split('/')[tree.path.split('/').length - 1]
     $layerList = [
       {
+        id: layerId,
         name: layerName,
-        definition: layerDefinition,
-        type: LayerTypes.RASTER,
         info: layerInfo,
-        colorMapName: DEFAULT_COLORMAP,
-        intervals: {
-          classification: ClassificationMethodTypes.EQUIDISTANT,
-          numberOfClasses: COLOR_CLASS_COUNT,
-          colorMapRows: [],
-        },
-        expression: '',
-        legendType: '',
         tree: tree,
       },
       ...$layerList,
     ]
     let firstSymbolId = undefined
     for (const layer of $map.getStyle().layers) {
-      if (layer.type === 'symbol') {
+      if (layer.type === LayerTypes.SYMBOL) {
         firstSymbolId = layer.id
         break
       }
     }
     $map.addLayer(layerDefinition, firstSymbolId)
+    $map.fitBounds(layerSource.bounds)
   }
 
   const getRasterMetadata = async (url: string) => {

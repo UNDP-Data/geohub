@@ -9,6 +9,7 @@
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
+  import { getLayerStyle } from '$lib/helper'
 
   let isModalVisible = false
   let styleURL
@@ -65,8 +66,9 @@
       const newSources = {}
       Object.keys(style.sources).forEach((key: string) => {
         $layerList.forEach((l: Layer) => {
-          if (l.definition && l.definition.source === key) {
-            newSources[key] = style.sources[key]
+          const style = getLayerStyle($map, l.id)
+          if (style && style.source === key) {
+            newSources[key] = $map.getStyle().sources[key]
           }
         })
       })
@@ -74,7 +76,7 @@
       const newLayers = []
       style.layers.forEach((layer) => {
         $layerList.forEach((l: Layer) => {
-          if (l.definition.id === layer.id) {
+          if (l.id === layer.id) {
             newLayers.push(layer)
           }
         })
@@ -83,7 +85,7 @@
     }
 
     untargetedLayers.forEach((layer) => {
-      const deletedLayer = style.layers.find((l) => l.id === layer.definition.id)
+      const deletedLayer = style.layers.find((l) => l.id === layer.id)
       if (deletedLayer) {
         const delIndex = style.layers.indexOf(deletedLayer)
         if (delIndex === 0) {

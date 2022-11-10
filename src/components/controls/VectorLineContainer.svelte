@@ -13,21 +13,20 @@
   import VectorLineAdvanced from '$components/controls/VectorLineAdvanced.svelte'
   import {
     ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
-    DEFAULT_COLORMAP,
     VectorLayerLineLegendTypes,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
-  import { layerList } from '$stores'
+  import { layerList, map } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
 
   export let layer: Layer
+  export let colorMapName
+  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
+  export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+  export let legendType: string
 
-  let applyToOption = layer?.intervals?.applyToOption
-    ? layer.intervals.applyToOption
-    : VectorLayerLineLegendApplyToTypes.LINE_COLOR
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerListCount = $layerList.length
@@ -35,6 +34,7 @@
   let layerMax: number
   let showTooltip = false
   let layerNumberProperties = 0
+  let numberOfClasses: number
 
   // hide colormap picker if change in layer list
   $: {
@@ -58,19 +58,7 @@
 
   onMount(() => {
     // set default values
-    layer.legendType = layer.legendType ? layer.legendType : VectorLayerLineLegendTypes.SIMPLE
-    layer.colorMapName = layer.colorMapName ? layer.colorMapName : DEFAULT_COLORMAP
-
-    if (layer?.intervals === undefined) {
-      layer.intervals = {
-        classification: ClassificationMethodTypes.NATURAL_BREAK,
-        numberOfClasses: COLOR_CLASS_COUNT,
-        colorMapRows: [],
-        propertyName: '',
-        applyToOption: VectorLayerLineLegendApplyToTypes.LINE_COLOR,
-      }
-    }
-
+    legendType = legendType ? legendType : VectorLayerLineLegendTypes.SIMPLE
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
@@ -82,19 +70,18 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === VectorLayerLineLegendTypes.SIMPLE) {
-      layer.legendType = VectorLayerLineLegendTypes.ADVANCED
+    if (legendType === VectorLayerLineLegendTypes.SIMPLE) {
+      legendType = VectorLayerLineLegendTypes.ADVANCED
     } else {
-      layer.legendType = VectorLayerLineLegendTypes.SIMPLE
+      legendType = VectorLayerLineLegendTypes.SIMPLE
     }
   }
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      const layerClone = cloneDeep(layer)
-      layerClone.colorMapName = event.detail.colorMapName
-      layer = layerClone
-      colorPickerVisibleIndex = -1
-    }
+
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    const layerClone = cloneDeep(layer)
+    layer = layerClone
+    colorPickerVisibleIndex = -1
   }
 
   const handleClosePopup = () => {
@@ -103,7 +90,7 @@
   }
 
   const getLayerNumberPropertiesCount = () => {
-    const vectorLayerMeta = getLayerNumberProperties(layer)
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
     return Object.keys(vectorLayerMeta.fields).length
   }
 
@@ -118,17 +105,20 @@
   class="columns"
   data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if layer.legendType === VectorLayerLineLegendTypes.SIMPLE}
+    {#if legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorLineSimple bind:layer />
       </div>
-    {:else if layer.legendType === VectorLayerLineLegendTypes.ADVANCED}
+    {:else if legendType === VectorLayerLineLegendTypes.ADVANCED}
       <div transition:slide>
         <VectorLineAdvanced
           bind:layer
           bind:applyToOption
           bind:layerMin
-          bind:layerMax />
+          bind:layerMax
+          bind:colorMapName
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
     {/if}
   </div>
@@ -161,7 +151,7 @@
       <br />
     {/if}
 
-    {#if layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div
         class="toggle-container"
         role="button"
@@ -181,18 +171,19 @@
       </div>
     {/if}
 
-    {#if showTooltip && layer.legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if showTooltip && legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           {layerMin}
-          {layerMax} />
+          {layerMax}
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />

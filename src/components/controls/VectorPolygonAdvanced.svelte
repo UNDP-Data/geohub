@@ -10,9 +10,9 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
+    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    DEFAULT_LINE_COLOR,
     LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
   } from '$lib/constants'
@@ -21,14 +21,23 @@
     Layer,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
+    VectorTileMetadata,
   } from '$lib/types'
   import { map } from '$stores'
-  import { getFillOutlineColor, getIntervalList, getSampleFromInterval, remapInputValue } from '$lib/helper'
+  import {
+    getFillOutlineColor,
+    getIntervalList,
+    getLayerNumberProperties,
+    getLayerStyle,
+    getSampleFromInterval,
+    remapInputValue,
+  } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
+  export let colorMapName
 
   const classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -36,28 +45,22 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
-  let classificationMethod = layer.intervals.classification
+  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
-  let colorMapName = layer.colorMapName
   let colorPickerVisibleIndex: number
-  let defaultFillOutlineColor = getFillOutlineColor($map, layer.definition.id)
+  let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
   let hasUniqueValues = false
-  let numberOfClasses = layer.intervals.numberOfClasses
-  let propertySelectValue: string = layer.intervals.propertyName
+  export let numberOfClasses = COLOR_CLASS_COUNT
+  let propertySelectValue: string
   let inLegend = true
+  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   // update color intervals upon change of color map name
-  $: {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-      setIntervalValues()
-    }
-  }
+  $: colorMapName, setIntervalValues()
 
   onMount(() => {
-    if (layer && colorMapName !== layer.colorMapName) {
-      colorMapName = layer.colorMapName
-    }
+    getPropertySelectValue()
+    getColorMapRows()
     setIntervalValues()
     $map.on('zoom', updateMap)
   })
@@ -67,27 +70,61 @@
     $map.off('zoom', updateMap)
   })
 
+  const getPropertySelectValue = () => {
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const selectOptions = Object.keys(vectorLayerMeta.fields)
+
+    propertySelectValue = selectOptions[0]
+
+    const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color')
+    if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'property')) {
+      propertySelectValue = fillColorValue['property']
+    }
+  }
+
+  const getColorMapRows = () => {
+    const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color')
+    colorMapRows = []
+    if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'stops')) {
+      const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+        (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+      )
+      const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const stops: [[number, string]] = fillColorValue.stops
+      stops?.forEach((stop, index: number) => {
+        const value: number = stop[0]
+        const color: string = stop[1]
+
+        colorMapRows.push({
+          color: chroma(color).rgba(),
+          index: index,
+          start: value,
+          end: stat.values ? '' : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+        })
+      })
+    }
+    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+  }
+
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return ''
-    const defaultValue = layer.intervals.propertyName === '' ? selectOptions[0] : layer.intervals.propertyName
-    layer.intervals.propertyName = defaultValue
     setIntervalValues()
-    return defaultValue
+    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
-    layer.intervals.propertyName = propertySelectValue
     setIntervalValues()
   }
 
   const handleClassificationChange = () => {
-    layer.intervals.classification = classificationMethod
     setIntervalValues()
   }
 
   const handleIncrementDecrementClasses = () => {
-    layer.intervals.numberOfClasses = numberOfClasses
     setIntervalValues()
   }
 
@@ -105,11 +142,11 @@
     const inputValue = event.detail.value
 
     if (inputType === 'start' && rowIndex !== 0) {
-      layer.intervals.colorMapRows[rowIndex - 1].end = inputValue
+      colorMapRows[rowIndex - 1].end = inputValue
     }
 
-    if (inputType === 'end' && rowIndex < layer.intervals.colorMapRows.length - 1) {
-      layer.intervals.colorMapRows[rowIndex + 1].start = inputValue
+    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
+      colorMapRows[rowIndex + 1].start = inputValue
     }
 
     updateMap()
@@ -124,16 +161,18 @@
     const tilestats = layer?.info?.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer.definition['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
       )
 
       if (tileStatLayer) {
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
-          (val: VectorLayerTileStatAttribute) => val.attribute === layer.intervals.propertyName,
+          (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
         if (tileStatLayerAttribute) {
-          const stats = layer.info.stats as VectorLayerTileStatAttribute[]
-          const stat = stats.find((val) => val.attribute === tileStatLayerAttribute.attribute)
+          const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+          )
+          const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
           hasUniqueValues = false
 
           if (stat) {
@@ -175,7 +214,7 @@
                 randomSample,
                 numberOfClasses,
               )
-              const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+              const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
               for (let i = 0; i < intervalList.length - 1; i++) {
@@ -193,7 +232,7 @@
               layerMin = stat.min
             }
 
-            layer.intervals.colorMapRows = propertySelectValues
+            colorMapRows = propertySelectValues
             updateMap()
           }
         }
@@ -202,7 +241,7 @@
   }
 
   const updateMap = () => {
-    const stops = layer.intervals.colorMapRows.map((row, index) => {
+    const stops = colorMapRows.map((row, index) => {
       const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
         row.color[3],
         0,
@@ -213,16 +252,16 @@
       const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
       // set default line color to be middle of colors
-      if (index === Math.floor(layer.intervals.colorMapRows.length / 2)) {
+      if (index === Math.floor(colorMapRows.length / 2)) {
         defaultFillOutlineColor = chroma(hex).darken(2.6).hex()
       }
 
       return [row.start, rgb]
     })
     // console.log(stops)
-    $map.setPaintProperty(layer.definition.id, 'fill-outline-color', defaultFillOutlineColor)
-    $map.setPaintProperty(layer.definition.id, 'fill-color', {
-      property: layer.intervals.propertyName,
+    $map.setPaintProperty(layer.id, 'fill-outline-color', defaultFillOutlineColor)
+    $map.setPaintProperty(layer.id, 'fill-color', {
+      property: propertySelectValue,
       type: 'interval',
       stops: stops,
     })
@@ -301,11 +340,12 @@
     style="margin-right: -56px;">
     <div class="column size">
       <div>
-        {#each layer.intervals.colorMapRows as colorMapRow}
+        {#each colorMapRows as colorMapRow}
           {#if hasUniqueValues}
             <div class="pl-6">
               <UniqueValuesLegendColorMapRow
                 bind:colorMapRow
+                bind:colorMapName
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}
@@ -315,6 +355,7 @@
           {:else}
             <IntervalsLegendColorMapRow
               bind:colorMapRow
+              bind:colorMapName
               {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}

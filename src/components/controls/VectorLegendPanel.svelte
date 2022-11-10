@@ -8,14 +8,18 @@
   import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte'
   import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte'
   import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let isLegendPanelVisible = false
   export let layer: Layer = LayerInitialValues
+  export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes
+  export let applyToOption: string
+  export let legendType: string
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
   const style: LayerSpecification = $map
     .getStyle()
     .layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
@@ -26,11 +30,25 @@
     class="vector-legend-panel-container"
     data-testid="vector-legend-panel-container">
     {#if style.type === LayerTypes.LINE}
-      <VectorLineContainer bind:layer />
+      <VectorLineContainer
+        bind:layer
+        bind:colorMapName
+        bind:classificationMethod
+        bind:applyToOption
+        bind:legendType />
     {:else if style.type === LayerTypes.FILL}
-      <VectorPolygonContainer bind:layer />
+      <VectorPolygonContainer
+        bind:layer
+        bind:colorMapName
+        bind:classificationMethod
+        bind:legendType />
     {:else if style.type === LayerTypes.SYMBOL}
-      <VectorSymbolContainer bind:layer />
+      <VectorSymbolContainer
+        bind:layer
+        bind:colorMapName
+        bind:classificationMethod
+        bind:applyToOption
+        bind:legendType />
     {:else if style.type === LayerTypes.HEATMAP}
       <div class="columns">
         <div class="column">

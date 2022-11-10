@@ -1,23 +1,24 @@
-import type { IntervalLegendColorMapRow, Layer } from '../types'
+import type { IntervalLegendColorMapRow } from '../types'
 import { ClassificationMethodTypes, NO_RANDOM_SAMPLING_POINTS } from '../constants'
 import chroma from 'chroma-js'
 import { getSampleFromInterval } from './getSampleFromInterval'
 import { getIntervalList } from './getIntervalList'
 
 export const generateColorMap = (
-  layer: Layer,
   layerMin: number,
   layerMax: number,
+  colorMapRows: IntervalLegendColorMapRow[],
   numberOfClasses: number,
   classificationMethod: ClassificationMethodTypes,
   isClassificationMethodEdited: boolean,
   percentile98: number,
+  colorMapName: string,
 ) => {
   const colorMap = []
   if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
     const randomSample = getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
     const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
-    const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+    const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 2; i++) {
       const row: IntervalLegendColorMapRow = {
         index: i,
@@ -25,18 +26,12 @@ export const generateColorMap = (
         // @ts-ignore:next-line
         color: [...scaleColorList(intervalList[i]).rgb(), 255],
         start:
-          isClassificationMethodEdited == false &&
-          layer.intervals.colorMapRows.length > 0 &&
-          layer.intervals.numberOfClasses === numberOfClasses &&
-          layer.intervals.colorMapRows[i]?.start
-            ? layer.intervals.colorMapRows[i].start
+          isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.start
+            ? colorMapRows[i].start
             : intervalList[i],
         end:
-          isClassificationMethodEdited == false &&
-          layer.intervals.colorMapRows.length > 0 &&
-          layer.intervals.numberOfClasses === numberOfClasses &&
-          layer.intervals.colorMapRows[i]?.end
-            ? layer.intervals.colorMapRows[i].end
+          isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.end
+            ? colorMapRows[i].end
             : intervalList[i + 1],
       }
       colorMap.push(row)
@@ -57,7 +52,7 @@ export const generateColorMap = (
   } else {
     const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
     const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
-    const scaleColorList = chroma.scale(layer.colorMapName).classes(intervalList)
+    const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
       const row: IntervalLegendColorMapRow = {
         index: i,
@@ -65,18 +60,12 @@ export const generateColorMap = (
         // @ts-ignore:next-line
         color: [...scaleColorList(intervalList[i]).rgb(), 255],
         start:
-          isClassificationMethodEdited == false &&
-          layer.intervals.colorMapRows.length > 0 &&
-          layer.intervals.numberOfClasses === numberOfClasses &&
-          layer.intervals.colorMapRows[i]?.start
-            ? layer.intervals.colorMapRows[i].start
+          isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.start
+            ? colorMapRows[i].start
             : intervalList[i],
         end:
-          isClassificationMethodEdited == false &&
-          layer.intervals.colorMapRows.length > 0 &&
-          layer.intervals.numberOfClasses === numberOfClasses &&
-          layer.intervals.colorMapRows[i]?.end
-            ? layer.intervals.colorMapRows[i].end
+          isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.end
+            ? colorMapRows[i].end
             : intervalList[i + 1],
       }
       colorMap.push(row)

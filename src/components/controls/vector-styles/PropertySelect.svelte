@@ -2,6 +2,7 @@
   import { getLayerNumberProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
+  import { map } from '$stores'
 
   export let layer
   export let propertySelectValue
@@ -9,7 +10,7 @@
   export let showOnlyNumberFields = false
   export let inLegend = false
 
-  let propertySelectOptions = inLegend ? layer.intervals.propertyOptions : undefined
+  let propertySelectOptions: string[]
 
   const dispatch = createEventDispatcher()
 
@@ -19,12 +20,11 @@
   })
 
   function setPropertyList() {
-    const vectorLayerMeta = getLayerNumberProperties(layer)
+    const vectorLayerMeta = getLayerNumberProperties($map, layer)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]
     }
-    inLegend ? (layer.intervals.propertyOptions = propertySelectOptions) : null
     propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()
   }
@@ -50,7 +50,7 @@
     class="select is-flex is-justify-content-left select is-small">
     <select
       style="width: 100%"
-      class="is-small"
+      class="is-normal"
       bind:value={propertySelectValue}
       alt="Property Options"
       title="Property Options">

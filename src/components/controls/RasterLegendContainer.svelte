@@ -11,39 +11,35 @@
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
+  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { getActiveBandIndex, fetchUrl, updateParamsInURL, getValueFromRasterTileUrl } from '$lib/helper'
+  import {
+    getActiveBandIndex,
+    fetchUrl,
+    updateParamsInURL,
+    getValueFromRasterTileUrl,
+    getLayerStyle,
+  } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import type {
-    FillLayerSpecification,
-    HeatmapLayerSpecification,
-    LineLayerSpecification,
-    RasterLayerSpecification,
-    RasterTileSource,
-    SymbolLayerSpecification,
-  } from 'maplibre-gl'
+  import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
+  export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes
 
-  let definition:
-    | RasterLayerSpecification
-    | FillLayerSpecification
-    | LineLayerSpecification
-    | SymbolLayerSpecification
-    | HeatmapLayerSpecification
   let info
-  ;({ definition, info } = layer)
-  const layerSrc: RasterTileSource = $map.getSource(definition.source) as RasterTileSource
-  const layerURL = new URL(layerSrc.tiles[0])
+  ;({ info } = layer)
+
   let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let layerListCount = $layerList.length
   let showTooltip = false
+  let numberOfClasses: number
+  export let legendType: DynamicLayerLegendTypes
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -59,6 +55,8 @@
 
   onMount(async () => {
     if (!layer.tree?.isMosaicJSON) {
+      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+      const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
       const band = info.active_band_no
@@ -74,12 +72,12 @@
         info = { ...info, stats: layerStats }
         layer = { ...layer, info: info }
         const layers = $layerList.map((lyr) => {
-          return layer.definition.id !== lyr.definition.id ? lyr : layer
+          return layer.id !== lyr.id ? lyr : layer
         })
         layerList.set([...layers])
       }
     }
-    layer.legendType = layer.legendType ? layer.legendType : DynamicLayerLegendTypes.CONTINUOUS
+    legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
   })
 
   const {
@@ -110,37 +108,38 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (layer.legendType === DynamicLayerLegendTypes.CONTINUOUS) {
-      layer.legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    if (legendType === DynamicLayerLegendTypes.CONTINUOUS) {
+      legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
     } else {
-      layer.legendType = DynamicLayerLegendTypes.CONTINUOUS
+      legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
   }
 
-  const handleColorMapClick = (event: CustomEvent) => {
-    if (event?.detail?.colorMapName) {
-      if (layer.tree?.isMosaicJSON) {
-        const colorMapName = event?.detail?.colorMapName
-        const source: RasterTileSource = $map.getSource($map.getLayer(layer.definition.id).source) as RasterTileSource
-        const tiles = source.tiles
-        const layerURL = new URL(tiles[0])
-        layerURL.searchParams.delete('colormap_name')
-        layerURL.searchParams.delete('rescale')
-        const rescale = getValueFromRasterTileUrl($map, layer.definition.id, 'rescale') as number[]
-        let updatedParams = Object.assign({ colormap_name: colorMapName })
-        if (rescale) {
-          updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-        }
-        updateParamsInURL(layer.definition, layerURL, updatedParams)
+  $: colorMapName, colorMapChanged()
+  const colorMapChanged = () => {
+    if (!colorMapName) return
+    if (layer.tree?.isMosaicJSON) {
+      const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
+      const tiles = source.tiles
+      if (!(tiles && tiles.length > 0)) return
+      const layerURL = new URL(tiles[0])
+      layerURL.searchParams.delete('colormap_name')
+      layerURL.searchParams.delete('rescale')
+      const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
+      let updatedParams = Object.assign({ colormap_name: colorMapName })
+      if (rescale) {
+        updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
       }
-
-      colorPickerVisibleIndex = -1
-      const nlayer = { ...layer, colorMapName: event.detail.colorMapName }
-      const layers = $layerList.map((lyr) => {
-        return layer.definition.id !== lyr.definition.id ? lyr : nlayer
-      })
-      layerList.set([...layers])
+      const layerStyle = getLayerStyle($map, layer.id)
+      updateParamsInURL(layerStyle, layerURL, updatedParams)
     }
+
+    colorPickerVisibleIndex = -1
+    const nlayer = { ...layer, colorMapName: colorMapName }
+    const layers = $layerList.map((lyr) => {
+      return layer.id !== lyr.id ? lyr : nlayer
+    })
+    layerList.set([...layers])
   }
 
   const handleClosePopup = () => {
@@ -162,21 +161,28 @@
 
 <div class="columns">
   <div class="column is-10">
-    {#if layer.legendType === DynamicLayerLegendTypes.CONTINUOUS}
+    {#if legendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
-        <RasterContinuousLegend bind:layerConfig={layer} />
+        <RasterContinuousLegend
+          bind:layerConfig={layer}
+          bind:colorMapName
+          bind:numberOfClasses />
       </div>
-    {:else if layer.legendType === DynamicLayerLegendTypes.INTERVALS}
+    {:else if legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
         <RasterIntervalsLegend
           bind:layerConfig={layer}
-          bind:colorPickerVisibleIndex />
+          bind:colorPickerVisibleIndex
+          bind:colorMapName
+          bind:classificationMethod
+          bind:numberOfClasses />
       </div>
-    {:else if layer.legendType === DynamicLayerLegendTypes.UNIQUE}
+    {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
         <RasterUniqueValuesLegend
           bind:layerConfig={layer}
-          bind:colorPickerVisibleIndex />
+          bind:colorPickerVisibleIndex
+          bind:colorMapName />
       </div>
     {/if}
   </div>
@@ -238,11 +244,12 @@
         use:popperContent={popperOptions}
         transition:fade>
         <ColorMapPicker
-          on:handleColorMapClick={handleColorMapClick}
           on:handleClosePopup={handleClosePopup}
           {layer}
           layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])} />
+          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
+          bind:colorMapName
+          bind:numberOfClasses />
         <div
           id="arrow"
           data-popper-arrow />

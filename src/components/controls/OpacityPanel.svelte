@@ -4,6 +4,7 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getLayerStyle } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
   export let isOpacityPanelVisible = false
@@ -22,27 +23,27 @@
   }
 
   const setLayerOpacity = (target: Layer) => {
-    const id = target.definition.id
-    if (target.definition.type === LayerTypes.RASTER) {
-      $map.setPaintProperty(id, 'raster-opacity', layerOpacity)
-    } else {
-      switch (target.definition.type) {
-        case LayerTypes.SYMBOL:
-          $map.setPaintProperty(id, 'icon-opacity', layerOpacity)
-          $map.setPaintProperty(id, 'text-opacity', layerOpacity)
-          break
-        case LayerTypes.LINE:
-          $map.setPaintProperty(id, 'line-opacity', layerOpacity)
-          break
-        case LayerTypes.FILL:
-          $map.setPaintProperty(id, 'fill-opacity', layerOpacity)
-          break
-        case LayerTypes.HEATMAP:
-          $map.setPaintProperty(id, 'heatmap-opacity', layerOpacity)
-          break
-        default:
-          break
-      }
+    const id = target.id
+    const style = getLayerStyle($map, target.id)
+    switch (style.type) {
+      case LayerTypes.RASTER:
+        $map.setPaintProperty(id, 'raster-opacity', layerOpacity)
+        break
+      case LayerTypes.SYMBOL:
+        $map.setPaintProperty(id, 'icon-opacity', layerOpacity)
+        $map.setPaintProperty(id, 'text-opacity', layerOpacity)
+        break
+      case LayerTypes.LINE:
+        $map.setPaintProperty(id, 'line-opacity', layerOpacity)
+        break
+      case LayerTypes.FILL:
+        $map.setPaintProperty(id, 'fill-opacity', layerOpacity)
+        break
+      case LayerTypes.HEATMAP:
+        $map.setPaintProperty(id, 'heatmap-opacity', layerOpacity)
+        break
+      default:
+        break
     }
   }
 </script>

@@ -7,7 +7,8 @@
   import { onDestroy } from 'svelte'
 
   import type { Listener, MapMouseEvent } from 'maplibre-gl'
-  import type { Layer, VectorLayerTileStatAttribute } from '$lib/types'
+  import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types'
+  import { getLayerStyle } from '$lib/helper'
 
   export let propertySelectedValue
   export let expressionValue
@@ -15,7 +16,7 @@
   export let layer: Layer
   export let operator
 
-  const propertyProps = layer.info.json.tilestats.layers[0].attributes.find(
+  const propertyProps = (layer.info as VectorTileMetadata).json.tilestats.layers[0].attributes.find(
     (e) => e['attribute'] === propertySelectedValue,
   )
   const dataType = propertyProps['type']
@@ -23,20 +24,24 @@
   let badSingleTagValue
   //console.log(propertySelectedValue, dataType)
 
-  const layerId = layer.definition.id
+  const layerId = layer.id
 
-  const attrstats = layer.info.stats.filter((el: VectorLayerTileStatAttribute) => {
+  const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+    (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+  )
+  const attrstats = stats?.attributes.filter((el: VectorLayerTileStatAttribute) => {
     return el.attribute == propertySelectedValue
   })[0]
+
   if (!attrstats) {
     //this should not happen, however....it could so a recation must be set (error)
-    console.log('WTF')
+    console.log('unexpected situation')
   }
 
   //console.log(JSON.stringify(attrstats))
 
   const hasManyFeatures = attrstats.count > 250
-  //console.log(`has many features ${hasManyFeatures}`)
+  //console.log(`${propertySelectedValue} has many features ${hasManyFeatures} ${attrstats.count}`)
 
   const dispatch = createEventDispatcher()
 
@@ -78,17 +83,23 @@
     let features = $map.querySourceFeatures({ layers: [layerId] })
 
     if (features.length == 0) {
-      features = $map.querySourceFeatures(layer.definition.source, { sourceLayer: layer.definition['source-layer'] })
+      const layerStyle = getLayerStyle($map, layer.id)
+      features = $map.querySourceFeatures(layerStyle.source, {
+        sourceLayer: layerStyle['source-layer'],
+        filter: undefined,
+      })
     }
 
     // get the values of the property for each feature
-    const values = features.map((feature) => feature.properties[propertySelectedValue])
+    const values = features
+      .filter((f) => f.properties[propertySelectedValue] != undefined)
+      .map((feature) => feature.properties[propertySelectedValue])
 
     let optionsList: number[] = [...new Set(values.flat())]
     sol = Array.from(optionsList).sort((a, b) => a - b)
-    const astats = arraystat(sol)
-    //console.log(sol)
+
     if (dataType != 'string') {
+      const astats = arraystat(sol)
       min = astats.min
       max = astats.max
       //                                        negative               0->1
@@ -127,13 +138,13 @@
   })
 
   const handleTags = (event: CustomEvent) => {
-    console.log('CE')
+    //console.log('CE')
     if (warningSingleTagEqual) {
       warningSingleTagEqual = !warningSingleTagEqual //reset
       //tagsList = []
       badSingleTagValue = null
     }
-    console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
+    //console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
 
     if (acceptSingleTag) {
       if (sol.includes(event.detail.tags[0])) {
@@ -185,7 +196,7 @@
         }
       }
     } catch (error) {
-      console.log(`gor err ${error}`)
+      console.log(`got err ${error}`)
     }
   }
 
@@ -352,6 +363,7 @@
             </div>
           {/if}
         {/if}
+
         <Tags
           on:tags={handleTags}
           maxTags={acceptSingleTag ? 1 : 100}
@@ -366,7 +378,8 @@
           disable={acceptSingleTag && tagsList.length > 0}
           minChars={0}
           onlyAutocomplete={false}
-          labelShow={false} />
+          labelShow={false}
+          {hideOptions} />
         <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
           <div>
             <button class="button is-rounded is-small is-info">

@@ -9,13 +9,19 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { LayerInitialValues, TabNames } from '$lib/constants'
-  import type { Layer } from '$lib/types'
+  import {
+    ClassificationMethodTypes,
+    DEFAULT_COLORMAP,
+    DynamicLayerLegendTypes,
+    LayerInitialValues,
+    TabNames,
+  } from '$lib/constants'
+  import type { Layer, RasterSimpleExpression } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
 
   export let layer: Layer = LayerInitialValues
-
+  let expressions: RasterSimpleExpression[]
   $: tree = layer.tree
 
   let activeTab = ''
@@ -23,6 +29,9 @@
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
+  let colorMapName = DEFAULT_COLORMAP
+  let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
+  let legendType: DynamicLayerLegendTypes
 
   $: {
     isLegendPanelVisible = false
@@ -82,10 +91,10 @@
     const nextTabIndex = currentTabIndex - 1
     if (nextTabIndex < 0) {
       activeTab = tabs[tabs.length - 1].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[nextTabIndex].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 
@@ -95,10 +104,10 @@
     const nextTab = tabs[nextTabIndex]
     if (nextTab) {
       activeTab = nextTab.label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     } else {
       activeTab = tabs[0].label
-      document.getElementById(`${activeTab}-${layer.definition.id}`)?.focus()
+      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -119,7 +128,7 @@
           <a
             role="tab"
             aria-label={tab.label}
-            id={`${tab.label}-${layer.definition.id}`}
+            id={`${tab.label}-${layer.id}`}
             on:keydown={handleKeyDown}
             href={'#'}
             on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
@@ -137,13 +146,20 @@
 
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
-        <RasterLegendContainer bind:layer />
+        <RasterLegendContainer
+          bind:layer
+          bind:colorMapName
+          bind:classificationMethod
+          bind:legendType />
       {/if}
       {#if isHistogramPanelVisible}
         <RasterHistogram bind:layer />
       {/if}
       {#if isRefinePanelVisible === true}
-        <RasterExpression bind:layer />
+        <RasterExpression
+          bind:layer
+          bind:expressions
+          bind:legendType />
       {/if}
       <OpacityPanel
         {layer}
