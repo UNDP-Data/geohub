@@ -9,7 +9,7 @@
     isVisible: false,
   }
   let selectedFilterOperator: string = undefined
-  let initialFilterStep: number = 1
+  let initialFilterStep = 1
 </script>
 
 <script lang="ts">
