@@ -4,6 +4,7 @@
   import type { Layer, RasterSimpleExpression } from '$lib/types'
   import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
   import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
+  import RasterFilter from '$components/controls/RasterFilter.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
   import type { DynamicLayerLegendTypes } from '$lib/constants'
@@ -96,10 +97,11 @@
   <div class="block" />
   <p>
     {#if isSimplePanelVisible === true}
-      <RasterExpressionSimple
+      <!-- <RasterExpressionSimple
         bind:layer
         bind:expressions
-        bind:legendType />
+        bind:legendType /> -->
+      <RasterFilter bind:layer />
     {/if}
     {#if isAdvancedPanelVisible}
       <RasterRefineContainer

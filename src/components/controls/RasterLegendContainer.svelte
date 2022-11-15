@@ -210,7 +210,7 @@
       <Tooltip
         showDelay={1000}
         hideDelay={0}
-        yPos="above">Toggle Legend Type</Tooltip>
+        yPos="above">Change layer appearence</Tooltip>
     </Wrapper>
     <br />
     <Wrapper>
