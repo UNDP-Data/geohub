@@ -1,3 +1,17 @@
+<script
+  context="module"
+  lang="ts">
+  const originalRasterFilterUrl = {}
+  let selectedFilterOperatorCategory: { name: string; title: string; operators: Array<string>; isVisible: boolean } = {
+    name: '',
+    title: '',
+    operators: [],
+    isVisible: false,
+  }
+  let selectedFilterOperator: string = undefined
+  let initialFilterStep: number = 1
+</script>
+
 <script lang="ts">
   /*
 A component designed to apply where expression to a raster layer through titiler
@@ -12,6 +26,7 @@ A component designed to apply where expression to a raster layer through titiler
     getLayerStyle,
     getValueFromRasterTileUrl,
     updateParamsInURL,
+    getLayerSourceUrl,
     fetchUrl,
   } from '$lib/helper'
   import { map } from '$stores'
@@ -22,9 +37,14 @@ A component designed to apply where expression to a raster layer through titiler
   //console.log(JSON.stringify(layer.info, null, '\t'))
   let combineOperator = true
   let expression: RasterExpression
-  let selectedOperatorCategory
-  let selectedOperator
-  let inputValue: Array<number> = []
+  let selectedOperatorCategory = selectedFilterOperatorCategory || {
+    name: '',
+    title: '',
+    operators: [],
+    isVisible: false,
+  }
+  let selectedOperator = selectedFilterOperator || undefined
+
   //const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
 
   let layerMin: number
@@ -36,18 +56,25 @@ A component designed to apply where expression to a raster layer through titiler
 
   let statistics: RasterLayerStats
   let step: number
+
+  $: {
+    console.log(`initial filter step ${initialFilterStep}`)
+  }
+
   const bandIndex = getActiveBandIndex(info) //normlly info should be called as well
 
   //necessary to create Slider
   const [band, bandMetaStats] = info['band_metadata'][bandIndex]
   layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
-
-  const url: string = getValueFromRasterTileUrl($map, layer.id, 'url') as string
+  let inputValue: Array<number> = [(layerMax - layerMin) * 0.5]
+  const url: string = getLayerSourceUrl($map, layer.id) as string
   const lURL = new URL(url)
-  console.log(JSON.stringify(lURL))
+
+  originalRasterFilterUrl[layer.id] = url
 
   onMount(async () => {
+    console.log(`mount ${initialFilterStep}`)
     if (!('stats' in info)) {
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${url}`
       statistics = await fetchUrl(statsURL)
@@ -105,6 +132,7 @@ A component designed to apply where expression to a raster layer through titiler
   ]
   const clearExpression = () => {
     console.log(`clearing expression`)
+    updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {})
   }
 
   const applyExpression = async (e: MouseEvent) => {
@@ -122,7 +150,12 @@ A component designed to apply where expression to a raster layer through titiler
     const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
     console.log(exprStats)
 
-    updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
+    //updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
+  }
+
+  const cancel = () => {
+    selectedOperatorCategory = { name: '', title: '', operators: [], isVisible: false }
+    selectedOperator = undefined
   }
 </script>
 
@@ -155,7 +188,7 @@ A component designed to apply where expression to a raster layer through titiler
 
 <div class="is-divider m-1 p-1" /> -->
 
-<Wizard initialStep={1}>
+<Wizard initialStep={initialFilterStep}>
   <Step
     num={1}
     let:nextStep>
@@ -163,6 +196,7 @@ A component designed to apply where expression to a raster layer through titiler
       <button
         on:click={() => {
           nextStep()
+          initialFilterStep = 2
         }}
         class="button wizard-button is-small primary-button has-text-weight-bold">
         <i class="fas fa-plus" />
@@ -196,6 +230,7 @@ A component designed to apply where expression to a raster layer through titiler
       <button
         on:click={() => {
           setStep(1)
+          cancel()
         }}
         class="button  is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
@@ -218,18 +253,21 @@ A component designed to apply where expression to a raster layer through titiler
           class="card is-info is-clickable  has-text-centered "
           on:click={() => {
             selectedOperatorCategory = operatorCategory
+            selectedFilterOperatorCategory = selectedOperatorCategory
+            initialFilterStep = 3
             nextStep()
           }}
           title={operatorCategory.title}>
           <div
-            class="card-header is-size-6 {operatorCategory === selectedOperatorCategory
+            class="card-header is-size-6 {operatorCategory.name === selectedOperatorCategory.name
               ? 'has-background-success'
               : 'has-background-info-dark'} ">
             <span
-              class="card-header-title is-centered is-v-centered {operatorCategory === selectedOperatorCategory
+              class="card-header-title is-centered is-v-centered {operatorCategory.name ===
+              selectedOperatorCategory.name
                 ? 'has-text-white-ter'
                 : 'has-text-white-ter'}  ">
-              {#if operatorCategory === selectedOperatorCategory}
+              {#if operatorCategory.name === selectedOperatorCategory.name}
                 <span class="icon ">
                   <i class="fa-solid fa-check" />
                 </span>
@@ -237,8 +275,8 @@ A component designed to apply where expression to a raster layer through titiler
               {operatorCategory.title}
             </span>
           </div>
-          <div class="content ">
-            <span class="box has-text-danger-dark is-size-3 has-text-weight-bold">
+          <div class="content">
+            <span class="box has-text-danger-dark is-size-5 has-text-weight-bold">
               <i class={operatorCategory.icon} />
             </span>
           </div>
@@ -262,6 +300,7 @@ A component designed to apply where expression to a raster layer through titiler
       <button
         on:click={() => {
           setStep(1)
+          cancel()
         }}
         class="button  is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
@@ -283,6 +322,8 @@ A component designed to apply where expression to a raster layer through titiler
         <button
           on:click={() => {
             selectedOperator = operator
+            selectedFilterOperator = selectedOperator
+            initialFilterStep = 4
             nextStep()
           }}
           class="button  {operator === selectedOperator
@@ -308,6 +349,7 @@ A component designed to apply where expression to a raster layer through titiler
       <button
         on:click={() => {
           setStep(1)
+          cancel()
         }}
         class="button  is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
@@ -349,9 +391,12 @@ A component designed to apply where expression to a raster layer through titiler
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
     grid-gap: 5px;
     padding: 0px;
+    grid-auto-flow: dense;
+    /* align-content: space-around; */
+    justify-content: space-around;
     /* grid-auto-columns: 1fr; */
   }
 

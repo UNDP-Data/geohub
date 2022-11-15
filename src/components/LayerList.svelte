@@ -25,7 +25,7 @@
   </ul>
 {/if}
 
-<div class="layer-list">
+<div class="layer-list pt-2 ">
   {#each $layerList as layer (layer.id)}
     {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
       <RasterLayer {layer} />
