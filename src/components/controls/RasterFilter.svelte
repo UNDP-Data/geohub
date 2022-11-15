@@ -13,7 +13,6 @@ A component designed to apply where expression to a raster layer through titiler
     getValueFromRasterTileUrl,
     updateParamsInURL,
     fetchUrl,
-    getLayerUrl,
   } from '$lib/helper'
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
@@ -44,7 +43,7 @@ A component designed to apply where expression to a raster layer through titiler
   layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
 
-  const url = getLayerUrl($map, layer.id)
+  const url: string = getValueFromRasterTileUrl($map, layer.id, 'url') as string
   const lURL = new URL(url)
   console.log(JSON.stringify(lURL))
 

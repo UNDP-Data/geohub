@@ -226,7 +226,7 @@
       type: LayerTypes.RASTER,
       tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`],
       tileSize: 256,
-      minzoom: layerInfo.minzoom | 0,
+      minzoom: 0,
       maxzoom: layerInfo.maxzoom | 22,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

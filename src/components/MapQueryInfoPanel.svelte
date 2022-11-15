@@ -14,14 +14,7 @@
 
   import { layerList } from '$stores'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
-  import {
-    downloadFile,
-    fetchUrl,
-    getActiveBandIndex,
-    getLayerStyle,
-    getLayerUrl,
-    getValueFromRasterTileUrl,
-  } from '$lib/helper'
+  import { downloadFile, fetchUrl, getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount, onDestroy } from 'svelte'
   import type { RasterTileMetadata } from '$lib/types'
@@ -108,7 +101,7 @@
           const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
             'cog',
             'mosaicjson',
-          )}/point/${lng},${lat}?url=${getLayerUrl(map, layer.id)}`
+          )}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(map, layer.id, 'url')}`
           const layerData = await fetchUrl(baseUrl)
           if (!(layerData.values.length > 0 && layerData.values[0].length > 0 && layerData.values[0][1].length > 0)) {
             continue
@@ -120,9 +113,11 @@
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           bandIndex = getActiveBandIndex(layer.info)
-          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getLayerUrl(map, layer.id)}&bidx=${
-            bandIndex + 1
-          }`
+          const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(
+            map,
+            layer.id,
+            'url',
+          )}&bidx=${bandIndex + 1}`
           const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string
           const queryURL = !expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(expression)}`
 
