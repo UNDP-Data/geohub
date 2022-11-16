@@ -12,7 +12,7 @@ const connectionString = DATABASE_CONNECTION
  * Example
  * http://localhost:5173/datasets?limit=10&offset=0&sdg_goal=1&query=kenya
  * Query Params
- * - query = free text to search in `name`, `description` and `tag value`
+ * - query = free text to search in `name`, `description` and `tag value`. AND search is `aaa & bbb`. OR search is `aaa | bbb`
  * - limit = default is 10
  * - offset = default is 0
  * - {key}={value} e.g., sdg_goal=1 to filter where tag key is `sdg_goal` and value is 1. If multiple key/value are set, it will filter by OR operator.
