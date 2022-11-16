@@ -12,30 +12,42 @@ const connectionString = DATABASE_CONNECTION
  * Example
  * http://localhost:5173/datasets?limit=10&offset=0&sdg_goal=1&query=kenya
  * Query Params
- * - query = free text to search in `name`, `description` and `tag value`. AND search is `aaa & bbb`. OR search is `aaa | bbb`
+ * - query = free text to search in `name`, `description` and `tag value`.
+ *     AND search is `aaa and bbb`
+ *     OR search is `aaa or bbb`
+ *     If queried text contains space like 'water quality', query='water quality' should be used with single quatation.
  * - limit = default is 10
  * - offset = default is 0
  * - {key}={value} e.g., sdg_goal=1 to filter where tag key is `sdg_goal` and value is 1. If multiple key/value are set, it will filter by OR operator.
+ *   if you want to filter by SDG1 and 2, you can query like '&sdg_goal=1&sdg_goal=2'
  * @returns GeojSON FeatureCollection
  */
 export const GET: RequestHandler = async ({ url }) => {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
-    const query = url.searchParams.get('query')
+    let query = url.searchParams.get('query')
     const _limit = url.searchParams.get('limit') || 10
     const limit = Number(_limit)
     const _offset = url.searchParams.get('offset') || 0
     const offset = Number(_offset)
 
-    const filters: { [key: string]: string } = {}
+    const filters: { key: string; value: string }[] = []
     url.searchParams.forEach((key, value) => {
       if (['query', 'offset', 'limit'].includes(value)) return
-      filters[value] = key.toLowerCase()
+      filters.push({
+        key: value,
+        value: key.toLowerCase(),
+      })
     })
 
     const values = []
     if (query) {
+      // normalise query text for to_tsquery function
+      query = query
+        .toLowerCase()
+        .replace(/\r?and/g, '&') // convert 'and' to '&'
+        .replace(/\r?or/g, '|') // convert 'or' to '|'
       values.push(query)
     }
 
@@ -103,15 +115,15 @@ export const GET: RequestHandler = async ({ url }) => {
            )`
           }
            ${
-             Object.keys(filters).length === 0
+             filters.length === 0
                ? ''
                : `AND EXISTS(
             SELECT a.id FROM geohub.tag as a WHERE a.id = y.tag_id AND (
-           ${Object.keys(filters)
-             .map((key) => {
-               values.push(key)
+           ${filters
+             .map((filter) => {
+               values.push(filter.key)
                const keyLength = values.length
-               values.push(filters[key])
+               values.push(filter.value)
                const valueLength = values.length
                return `
             (a.key = $${keyLength} and lower(a.value) = $${valueLength})
@@ -136,7 +148,7 @@ export const GET: RequestHandler = async ({ url }) => {
       `,
       values: values,
     }
-
+    // console.log(sql)
     const res = await client.query(sql)
     const geojson = res.rows[0].geojson
     if (!geojson.features) {
