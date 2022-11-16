@@ -72,16 +72,18 @@ export interface StacCollection {
   'msft:short_description'?: string
 }
 
+export interface StacLink {
+  rel: string
+  type: string
+  href: string
+  method?: string
+  body?: { [key: string]: string }
+}
+
 export interface StacItemFeatureCollection {
   type: 'FeatureCollection'
   features: StacItemFeature[]
-  links: {
-    rel: string
-    type: string
-    href: string
-    method?: string
-    body?: { [key: string]: string }
-  }[]
+  links: StacLink[]
 }
 
 export interface StacItemFeature {
