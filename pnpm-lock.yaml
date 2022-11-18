@@ -56,7 +56,6 @@ importers:
       chroma-js: ^2.4.2
       colormap: ^2.3.2
       d3-format: ^3.1.0
-      email-validator: ^2.0.4
       eslint: ^8.26.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
@@ -75,8 +74,6 @@ importers:
       pg: ^8.8.0
       prettier: ^2.7.1
       prettier-plugin-svelte: ^2.8.0
-      pretty-bytes: ^6.0.0
-      simple-svelte-autocomplete: ^2.5.0
       smui-theme: ^6.2.0
       svelte: ^3.50.01
       svelte-awesome-color-picker: ^0.0.10
@@ -84,7 +81,6 @@ importers:
       svelte-check: ^2.9.2
       svelte-copy: ^1.3.0
       svelte-fa: ^3.0.3
-      svelte-file-dropzone: ^1.0.0
       svelte-keydown: ^0.5.0
       svelte-popperjs: ^1.3.2
       svelte-preprocess: ^4.10.7
@@ -138,7 +134,6 @@ importers:
       chroma-js: 2.4.2
       colormap: 2.3.2
       d3-format: 3.1.0
-      email-validator: 2.0.4
       geojson: 0.5.0
       hex-to-css-filter: 5.4.0
       image-clipper: 0.4.4
@@ -150,14 +145,11 @@ importers:
       papaparse: 5.3.2
       pbf: 3.2.1
       pg: 8.8.0
-      pretty-bytes: 6.0.0
-      simple-svelte-autocomplete: 2.5.0
       smui-theme: 6.2.0
       svelte-awesome-color-picker: 0.0.10
       svelte-body: 1.3.6
       svelte-copy: 1.3.0
       svelte-fa: 3.0.3
-      svelte-file-dropzone: 1.0.0
       svelte-keydown: 0.5.0
       svelte-popperjs: 1.3.2_rurmo7pyahcial4fcgesrrbml4
       svelte-range-slider-pips: 2.1.0
@@ -2933,11 +2925,6 @@ packages:
     resolution: {integrity: sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==}
     dev: false
 
-  /email-validator/2.0.4:
-    resolution: {integrity: sha512-gYCwo7kh5S3IDyZPLZf6hSS0MnZT8QmJFqYvbqlDZSbwdZlY6QZWxJ4i/6UhITOJ4XzyI647Bm2MXKCLqnJ4nQ==}
-    engines: {node: '>4.0'}
-    dev: false
-
   /emoji-regex/8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
 
@@ -3489,13 +3476,6 @@ packages:
 
   /file-saver/2.0.5:
     resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
-    dev: false
-
-  /file-selector/0.2.4:
-    resolution: {integrity: sha512-ZDsQNbrv6qRi1YTDOEWzf5J2KjZ9KMI1Q2SGeTkCJmNNW25Jg4TW4UMcmoqcg4WrAyKRcpBXdbWRxkfrOzVRbA==}
-    engines: {node: '>= 10'}
-    dependencies:
-      tslib: 2.4.1
     dev: false
 
   /file-uri-to-path/1.0.0:
@@ -4642,11 +4622,6 @@ packages:
     hasBin: true
     dev: true
 
-  /pretty-bytes/6.0.0:
-    resolution: {integrity: sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==}
-    engines: {node: ^14.13.1 || >=16.0.0}
-    dev: false
-
   /pretty-format/27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -4934,10 +4909,6 @@ packages:
     dev: false
     optional: true
 
-  /simple-svelte-autocomplete/2.5.0:
-    resolution: {integrity: sha512-UIhzFl7eeqKvXLD6xevdH58lRCxp0yk611WSkfjX7k0UEGibHrY4Pm2MfdjwZZtcP9XO63cbcCxgbPcsjgk1Fg==}
-    dev: false
-
   /sirv/2.0.2:
     resolution: {integrity: sha512-4Qog6aE29nIjAOKe/wowFTxOdmbEZKb+3tsLljaBRzJwtqto0BChD2zzH0LhgCSXiI+V7X+Y45v14wBZQ1TK3w==}
     engines: {node: '>= 10'}
@@ -5167,12 +5138,6 @@ packages:
 
   /svelte-fa/3.0.3:
     resolution: {integrity: sha512-GIikJjcVCD+5Y/x9hZc2R4gvuA0gVftacuWu1a+zVQWSFjFYZ+hhU825x+QNs2slsppfrgmFiUyU9Sz9gj4Rdw==}
-    dev: false
-
-  /svelte-file-dropzone/1.0.0:
-    resolution: {integrity: sha512-F2DN+wN2w7bKuUJFYQOFsdtTgaohQ/rNKau5m5n2l3LHJRRIccYS4wpq8f6dz/h5aSxYse3oRclmYdW6FWAfjw==}
-    dependencies:
-      file-selector: 0.2.4
     dev: false
 
   /svelte-hmr/0.15.0_svelte@3.50.1:
