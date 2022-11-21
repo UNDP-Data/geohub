@@ -31,10 +31,11 @@ export const GET: RequestHandler = async ({ url }) => {
     const limit = Number(_limit)
     const _offset = url.searchParams.get('offset') || 0
     const offset = Number(_offset)
+    const storage_id = url.searchParams.get('storage_id')
 
     const filters: { key: string; value: string }[] = []
     url.searchParams.forEach((key, value) => {
-      if (['query', 'offset', 'limit'].includes(value)) return
+      if (['query', 'offset', 'limit', 'storage_id'].includes(value)) return
       filters.push({
         key: value,
         value: key.toLowerCase(),
@@ -114,24 +115,8 @@ export const GET: RequestHandler = async ({ url }) => {
            OR to_tsvector(z.value) @@ to_tsquery($1)
            )`
           }
-           ${
-             filters.length === 0
-               ? ''
-               : `AND EXISTS(
-            SELECT a.id FROM geohub.tag as a WHERE a.id = y.tag_id AND (
-           ${filters
-             .map((filter) => {
-               values.push(filter.key)
-               const keyLength = values.length
-               values.push(filter.value)
-               const valueLength = values.length
-               return `
-            (a.key = $${keyLength} and lower(a.value) = $${valueLength})
-            `
-             })
-             .join('OR')}
-           ))`
-           }
+          ${getStorageIdFilter(storage_id, values)}
+           ${getTagFilter(filters, values)}
         ORDER BY
           ${
             !query
@@ -196,4 +181,32 @@ export const GET: RequestHandler = async ({ url }) => {
     client.release()
     pool.end()
   }
+}
+
+const getStorageIdFilter = (storage_id: string, values: string[]) => {
+  if (storage_id) {
+    values.push(storage_id)
+  } else {
+    return ''
+  }
+  return `AND x.storage_id=$${values.length} `
+}
+
+const getTagFilter = (filters: { key: string; value: string }[], values: string[]) => {
+  if (filters.length === 0) return ''
+  return `
+    AND EXISTS(
+    SELECT a.id FROM geohub.tag as a WHERE a.id = y.tag_id AND (
+    ${filters
+      .map((filter) => {
+        values.push(filter.key)
+        const keyLength = values.length
+        values.push(filter.value)
+        const valueLength = values.length
+        return `
+    (a.key = $${keyLength} and lower(a.value) = $${valueLength})
+    `
+      })
+      .join('OR')}
+    ))`
 }
