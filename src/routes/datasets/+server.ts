@@ -10,12 +10,14 @@ const connectionString = DATABASE_CONNECTION
 /**
  * Search API
  * Example
- * http://localhost:5173/datasets?limit=10&offset=0&sdg_goal=1&query=kenya
+ * http://localhost:5173/datasets?limit=10&offset=0&sdg_goal=1&query=kenya&bbox=35.26,-1.058,40.473,1.968&storage_id=4019fd03c7cc612686a6db0fde231206
  * Query Params
  * - query = free text to search in `name`, `description` and `tag value`.
  *     AND search is `aaa and bbb`
  *     OR search is `aaa or bbb`
  *     If queried text contains space like 'water quality', query='water quality' should be used with single quatation.
+ * - storage_id = you can also filter by directly storage_id
+ * - bbox = you can filter the data by bounding box (minx, miny, maxx, maxy)
  * - limit = default is 10
  * - offset = default is 0
  * - {key}={value} e.g., sdg_goal=1 to filter where tag key is `sdg_goal` and value is 1. If multiple key/value are set, it will filter by OR operator.
@@ -32,10 +34,18 @@ export const GET: RequestHandler = async ({ url }) => {
     const _offset = url.searchParams.get('offset') || 0
     const offset = Number(_offset)
     const storage_id = url.searchParams.get('storage_id')
+    const bbox = url.searchParams.get('bbox')
+    let bboxCoordinates: number[]
+    if (bbox) {
+      bboxCoordinates = bbox.split(',').map((val) => Number(val))
+      if (bboxCoordinates.length !== 4) {
+        throw error(400, 'Invalid bbox')
+      }
+    }
 
     const filters: { key: string; value: string }[] = []
     url.searchParams.forEach((key, value) => {
-      if (['query', 'offset', 'limit', 'storage_id'].includes(value)) return
+      if (['query', 'offset', 'limit', 'storage_id', 'bbox'].includes(value)) return
       filters.push({
         key: value,
         value: key.toLowerCase(),
@@ -97,7 +107,7 @@ export const GET: RequestHandler = async ({ url }) => {
           FROM geohub.dataset x
           LEFT JOIN geohub.dataset_tag y
           ON x.id = y.dataset_id
-          LEFT JOIN geohub.tag z
+          INNER JOIN geohub.tag z
           ON y.tag_id = z.id
           GROUP BY
             x.id
@@ -116,7 +126,8 @@ export const GET: RequestHandler = async ({ url }) => {
            )`
           }
           ${getStorageIdFilter(storage_id, values)}
-           ${getTagFilter(filters, values)}
+          ${getTagFilter(filters, values)}
+          ${getBBoxFilter(bboxCoordinates, values)}
         ORDER BY
           ${
             !query
@@ -209,4 +220,23 @@ const getTagFilter = (filters: { key: string; value: string }[], values: string[
       })
       .join('OR')}
     ))`
+}
+
+const getBBoxFilter = (bbox: number[], values: string[]) => {
+  if (!(bbox && bbox.length === 4)) return ''
+  bbox.forEach((val) => {
+    values.push(val.toString())
+  })
+  return `
+  AND ST_INTERSECTS(
+    x.bounds, 
+    ST_MakeEnvelope(
+      $${values.length - 3}::double precision,
+      $${values.length - 2}::double precision,
+      $${values.length - 1}::double precision,
+      $${values.length}::double precision
+      , 4326
+    )
+  )
+  `
 }
