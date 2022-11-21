@@ -124,7 +124,7 @@
       <Tooltip
         showDelay={500}
         hideDelay={100}
-        yPos="above">Clear input</Tooltip>
+        xPos="start">Clear input</Tooltip>
     </Wrapper>
   </div>
 </div>
