@@ -8,7 +8,6 @@
   import BucketTreeView from '$components/BucketTreeView.svelte'
   import { bucketList, indicatorProgress, treeBucket } from '$stores'
 
-  $: hideLinearProgress = !$indicatorProgress
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
 
@@ -115,9 +114,6 @@
       </div>
     </div>
     <div class="column">
-      <LinearProgress
-        indeterminate
-        bind:closed={hideLinearProgress} />
       <div
         id="tree-container"
         class="tree"
