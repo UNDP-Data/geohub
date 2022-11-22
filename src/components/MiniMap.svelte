@@ -26,7 +26,7 @@
       interactive: false,
     })
 
-    console.log(feature)
+    // console.log(feature)
     map.on('load', async () => {
       const is_raster: boolean = feature.properties.is_raster
       const url: string = feature.properties.url
@@ -34,7 +34,7 @@
         // TODO: implement for STAC source
         const b64EncodedUrl = getBase64EncodedUrl(url)
         const rasterInfo = await getRasterInfo(b64EncodedUrl)
-        console.log(rasterInfo)
+        // console.log(rasterInfo)
         const bandIndex = getActiveBandIndex(rasterInfo)
         const layerBandMetadataMin = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
         const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']

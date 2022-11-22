@@ -1,6 +1,5 @@
 <script lang="ts">
   import { debounce } from 'lodash-es'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
 
   import { STRING_COMPARE_THRESHOLD } from '$lib/constants'
   import { bucketList } from '$stores'

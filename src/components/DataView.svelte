@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
   import { indicatorProgress } from '$stores'
+  import TextFilter from './controls/TextFilter.svelte'
 
   let selectedCategories: DataCategory[] = []
 
@@ -75,7 +77,43 @@
       $indicatorProgress = false
     }
   }
+
+  const handleFilterInput = async (e) => {
+    const query = e.detail.query
+
+    try {
+      $indicatorProgress = true
+
+      const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
+      let url = `${$page.url.origin}/datasets`
+      if (link) {
+        url = link.href
+      }
+      const apiUrl = new URL(url)
+      if (query.length === 0) {
+        apiUrl.searchParams.delete('query')
+      } else {
+        apiUrl.searchParams.set('query', query.trim())
+      }
+      const res = await fetch(apiUrl.toString())
+      if (!res.ok) return
+      const json: StacItemFeatureCollection = await res.json()
+      DataItemFeatureCollection = json
+    } finally {
+      $indicatorProgress = false
+    }
+  }
+
+  const clearFilter = () => {
+    DataItemFeatureCollection = undefined
+    selectedCategories = []
+  }
 </script>
+
+<TextFilter
+  placeholder="Filter data"
+  on:change={handleFilterInput}
+  on:clear={clearFilter} />
 
 <div class="container data-view-container p-1">
   {#if selectedCategories && selectedCategories.length > 0}
@@ -112,7 +150,7 @@
     <div
       class="container p-2"
       style="text-align:center">
-      {#if !$indicatorProgress}
+      {#if !$indicatorProgress && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
         <!-- svelte-ignore a11y-missing-attribute -->
         <a
           class="button button-primary button-without-arrow"
@@ -158,11 +196,11 @@
   @import '../styles/undp-design/buttons.min.css';
 
   .data-view-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 183px);
     overflow-y: auto;
 
     @media (max-width: 89.9375em) {
-      height: calc(100vh - 120px);
+      height: calc(100vh - 153px);
     }
 
     .button {

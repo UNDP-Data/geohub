@@ -169,12 +169,16 @@ export const GET: RequestHandler = async ({ url }) => {
         type: 'application/json',
         href: url.toString(),
       },
-      {
+    ]
+
+    if (geojson.features.length === limit) {
+      links.push({
         rel: 'next',
         type: 'application/json',
         href: nextUrl.toString(),
-      },
-    ]
+      })
+    }
+
     if (offset > 0) {
       const previoustUrl = new URL(url.toString())
       previoustUrl.searchParams.set('limit', limit.toString())
