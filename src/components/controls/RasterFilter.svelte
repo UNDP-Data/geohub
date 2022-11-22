@@ -179,16 +179,16 @@ A component designed to apply where expression to a raster layer through titiler
     property: string = 'band' || 'expressions',
     value: string | Record<string, unknown> = undefined,
   ) => {
-    console.clear()
-    console.log(
-      `new: ${JSON.stringify(value, uf, '')} old: ${JSON.stringify(
-        whereExpression[part][expressionIndex][property],
-        uf,
-        '',
-      )}`,
-    )
+    // console.clear()
+    // console.log(
+    //   `new: ${JSON.stringify(value, uf, '')} old: ${JSON.stringify(
+    //     whereExpression[part][expressionIndex][property],
+    //     uf,
+    //     '',
+    //   )}`,
+    // )
 
-    if (Object.keys(whereExpression[part][expressionIndex]).length >= 1 && typeof value !== 'string') {
+    if (value === Object(value)) {
       //console.log(`MERGE ${property} ${JSON.stringify(value)}`)
       whereExpression[part][expressionIndex][property] = {
         ...whereExpression[part][expressionIndex][property],
@@ -386,7 +386,7 @@ A component designed to apply where expression to a raster layer through titiler
               class="card is-info is-clickable  has-text-centered "
               on:click={() => {
                 selectedOperator = operator.value
-                // not reallu necessary
+                //  not necessary
                 // setWhereExpression(
                 //   currentExpressionPart,
                 //   'expressions',
