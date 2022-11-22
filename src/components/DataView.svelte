@@ -16,6 +16,7 @@
   let subCategories: DataCategory[] = []
 
   let DataItemFeatureCollection: StacItemFeatureCollection
+  let isLoading = false
 
   const handleSelectCategory = async (category: DataCategory) => {
     selectedCategories = [category]
@@ -46,6 +47,24 @@
     }
     return category
   }
+
+  const fetchNextDatasets = async () => {
+    if (DataItemFeatureCollection?.features.length === 0) return
+    const link = DataItemFeatureCollection.links.find((link) => link.rel === 'next')
+    if (!link) return
+
+    try {
+      isLoading = true
+      const res = await fetch(link.href)
+      const json: StacItemFeatureCollection = await res.json()
+      if (json.features.length > 0) {
+        json.features = [...DataItemFeatureCollection.features, ...json.features]
+      }
+      DataItemFeatureCollection = json
+    } finally {
+      isLoading = false
+    }
+  }
 </script>
 
 <div class="container data-view-container p-1">
@@ -57,6 +76,7 @@
         {#each selectedCategories as category, index}
           {#if index === 0}
             <li>
+              <!-- svelte-ignore a11y-missing-attribute -->
               <a
                 on:click={() => {
                   selectedCategories = []
@@ -64,8 +84,10 @@
                 }}>{category.name}</a>
             </li>
           {:else if index === selectedCategories.length - 1}
+            <!-- svelte-ignore a11y-missing-attribute -->
             <li class="is-active"><a>{category.name}</a></li>
           {:else}
+            <!-- svelte-ignore a11y-missing-attribute -->
             <li><a>{category.name}</a></li>
           {/if}
         {/each}
@@ -77,6 +99,24 @@
     {#each DataItemFeatureCollection.features as feature}
       <DataCard {feature} />
     {/each}
+    <div
+      class="container p-2"
+      style="text-align:center">
+      {#if !isLoading}
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          class="button button-primary button-without-arrow"
+          role="button"
+          on:click={fetchNextDatasets}>
+          Load more...
+        </a>
+      {:else}
+        <div
+          class="loader"
+          aria-busy="true"
+          aria-live="polite" />
+      {/if}
+    </div>
   {:else}
     <div class="columns m-1 is-multiline is-centered category-container">
       {#if selectedCategories && selectedCategories.length === 0}
@@ -109,12 +149,20 @@
 </div>
 
 <style lang="scss">
+  @import '../styles/undp-design/base-minimal.min.css';
+  @import '../styles/undp-design/buttons.min.css';
+  @import '../styles/undp-design/loader.min.css';
+
   .data-view-container {
     height: calc(100vh - 150px);
     overflow-y: auto;
 
     @media (max-width: 89.9375em) {
       height: calc(100vh - 120px);
+    }
+
+    .button {
+      color: white !important;
     }
   }
 </style>
