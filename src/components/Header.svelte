@@ -5,9 +5,11 @@
   import Fa from 'svelte-fa'
   import StyleShare from './StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
+  import LinearProgress from '@smui/linear-progress'
+  import { indicatorProgress } from '$stores'
 
   export let drawerOpen = true
-
+  $: hideLinearProgress = !$indicatorProgress
   let darkTheme: boolean
   let share: boolean
 
@@ -151,6 +153,9 @@
         </div>
       </div>
     </div>
+    <LinearProgress
+      indeterminate
+      bind:closed={hideLinearProgress} />
   </section>
 </header>
 
