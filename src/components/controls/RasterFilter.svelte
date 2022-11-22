@@ -1,15 +1,12 @@
 <script
   context="module"
   lang="ts">
+  /* state variables used to keep the state of the wizard*/
   const originalRasterFilterUrl = {}
-  let selectedFilterOperatorCategory: { name: string; title: string; operators: Array<string>; isVisible: boolean } = {
-    name: '',
-    title: '',
-    operators: [],
-    isVisible: false,
-  }
-  let selectedFilterOperator: string = undefined
-  let initialFilterStep = 1
+  let selectedRasterFilterOperatorCategory = 'comparison'
+  let selectedRasterFilterOperator: string = undefined
+  let selectedRasterFilterInputCategory = 'layer'
+  let initialRasterFilterStep = 1
 </script>
 
 <script lang="ts">
@@ -31,21 +28,58 @@ A component designed to apply where expression to a raster layer through titiler
   } from '$lib/helper'
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
+  import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
+  import RasterExpressionNumbersInput from '$components/controls/RasterExpressionNumbersInput.svelte'
 
   export let layer: Layer
-  //console.log(JSON.stringify(layer.info, null, '\t'))
-  let combineOperator = true
-  let expression: RasterExpression
-  let selectedOperatorCategory = selectedFilterOperatorCategory || {
-    name: '',
-    title: '',
-    operators: [],
-    isVisible: false,
-  }
-  let selectedOperator = selectedFilterOperator || undefined
 
-  //const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
+  //expression parts
+  const whereExpressionParts = [
+    { name: 'condition', label: 'condition', icon: 'fa-solid fa-question', color: 'has-text-info' },
+    { name: 'truthy', label: 'true value', icon: 'fa-solid fa-thumbs-up', color: 'has-text-success' },
+    { name: 'falsy', label: 'false value', icon: 'fa-solid fa-thumbs-down', color: 'has-text-danger-dark' },
+  ]
+
+  let currentExpressionPart = 'condition'
+  //operator categories
+  const operatorCategories = [
+    { name: 'comparison', op: rasterComparisonOperators },
+    { name: 'arithmetic', op: rasterArithmeticOperators },
+  ]
+  const rasterComparisonOperatorsValues = rasterComparisonOperators.map((e) => e.value)
+  let selectedOperatorCategory: string = selectedRasterFilterOperatorCategory || undefined
+
+  //operators
+  let selectedOperator: string = selectedRasterFilterOperator || undefined
+  let selectedOperatorObject = rasterComparisonOperators
+
+  //input categories (numbers and slider binded to the layer Min<=>Max)
+  const inputCategories = ['layer', 'numbers']
+  //const numberInput:Array<string> = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')']
+  let selectedInputCategory = selectedRasterFilterInputCategory || undefined
+
+  /*
+    Expression object consisting of a band property and expressions property. The expressions is an object where the key or property name
+    and the values is as number set by the user either using  the numbers interface or the range slider binded to the layer min max
+  */
+  const emptyExpression = { band: undefined, expressions: {} }
+  /**
+   where expression object, consisting of three properties as arrays or expression objects. The three properties
+   correspond to the three parts of a titiler where expression 
+  */
+  const emptyWhereExpression = {
+    condition: [{ ...emptyExpression }],
+    truthy: [{ ...emptyExpression }],
+    falsy: [{ ...emptyExpression }],
+  }
+  let whereExpression = { ...emptyWhereExpression }
+  //int index accessor or the exression objects in the expression part array
+  $: expressionIndex = whereExpression[currentExpressionPart].length - 1
+
+  let combineOperator = true
+
+  let expression: string
 
   let layerMin: number
   let layerMax: number
@@ -57,31 +91,26 @@ A component designed to apply where expression to a raster layer through titiler
   let statistics: RasterLayerStats
   let step: number
 
-  $: {
-    console.log(`initial filter step ${initialFilterStep}`)
-  }
-
-  const bandIndex = getActiveBandIndex(info) //normlly info should be called as well
+  const bandIndex = getActiveBandIndex(info) //normally info should be called as well
 
   //necessary to create Slider
   const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+
   layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
-  let inputValue: Array<number> = [(layerMax - layerMin) * 0.5]
+
   const url: string = getLayerSourceUrl($map, layer.id) as string
   const lURL = new URL(url)
 
   originalRasterFilterUrl[layer.id] = url
 
   onMount(async () => {
-    console.log(`mount ${initialFilterStep}`)
     if (!('stats' in info)) {
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${url}`
       statistics = await fetchUrl(statsURL)
       info = { ...info, stats: statistics }
     }
 
-    //console.log(info.stats)
     const band = Object.keys(info.stats)[bandIndex]
     layerMin = Number(info.stats[band].min)
     layerMax = Number(info.stats[band].max)
@@ -91,45 +120,10 @@ A component designed to apply where expression to a raster layer through titiler
 
     const range = layerMax - layerMin
     step = Number.isInteger(layerMedian) && Number.isInteger(layerMin) ? ~~(range * 1e-4) || 1 : range * 1e-4
-    inputValue = [range * 0.5]
   })
 
-  const operatorCategories: Array<{
-    name: string
-    title: string
-    icon: string
-    operators: Array<string>
-    isVisible: boolean
-  }> = [
-    {
-      name: 'arithmetic',
-      title: 'Arithmetic',
-      icon: 'fa-solid fa-plus-minus',
-      operators: ['*', '/', '+', '-', '%', '**'],
-      isVisible: true,
-    },
-    // {
-    //   name: 'numbers',
-    //   title: 'Numbers',
-    //   icon: 'fa-solid fa-arrow-down-1-9',
-    //   operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')'],
-    //   isVisible: true,
-    // },
-    {
-      name: 'comparison',
-      title: 'Comparison',
-      icon: 'fa-solid fa-equals',
-      operators: ['==', '!=', '>=', '<', '>', '<='],
-      isVisible: true,
-    },
-    // {
-    //   name: 'functions',
-    //   title: 'Functions',
-    //   icon: 'fa-solid fa-square-root-variable',
-    //   operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'where'],
-    //   isVisible: true,
-    // },
-  ]
+  let sliderBindValue: Array<number> = [(layerMax - layerMin) * 0.5]
+
   const clearExpression = () => {
     console.log(`clearing expression`)
     updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {})
@@ -137,10 +131,10 @@ A component designed to apply where expression to a raster layer through titiler
 
   const applyExpression = async (e: MouseEvent) => {
     let newParams = {}
-    console.log(`applying... ${e}`)
-    expression = { band: bandIndex + 1, operator: selectedOperator, pixelValue: inputValue?.[0] }
-    //  console.log(JSON.stringify(expression))
-    newParams['expression'] = `b${expression.band}${expression.operator}${expression.pixelValue}`
+    console.log(JSON.stringify(expression))
+
+    newParams['expression'] = ``
+
     const exprStatUrl = new URL(
       `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
         newParams['expression'],
@@ -148,14 +142,86 @@ A component designed to apply where expression to a raster layer through titiler
     )
 
     const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-    console.log(exprStats)
 
     //updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
   }
 
-  const cancel = () => {
-    selectedOperatorCategory = { name: '', title: '', operators: [], isVisible: false }
+  const clear = () => {
     selectedOperator = undefined
+    selectedOperatorObject = rasterComparisonOperators
+    selectedOperatorCategory = 'comparison'
+    selectedInputCategory = 'layer'
+  }
+
+  const cancel = () => {
+    clear()
+    expressionIndex = 0
+    //expressionIndex = 0
+    whereExpression = {
+      condition: [{ ...emptyExpression }],
+      truthy: [{ ...emptyExpression }],
+      falsy: [{ ...emptyExpression }],
+    }
+  }
+
+  const onSliderStop = (event: CustomEvent) => {
+    setWhereExpression(currentExpressionPart, 'expressions', { [selectedOperator]: event.detail.value })
+  }
+
+  const onNumbersClick = (event: CustomEvent) => {
+    setWhereExpression(currentExpressionPart, 'expressions', { [selectedOperator]: event.detail.value })
+  }
+
+  /*sets the where expression parts/properties/values in one shot*/
+
+  const setWhereExpression = (
+    part: string = 'condition' || 'truthy' || 'falsy',
+    property: string = 'band' || 'expressions',
+    value: string | Record<string, unknown> = undefined,
+  ) => {
+    console.clear()
+    console.log(
+      `new: ${JSON.stringify(value, uf, '')} old: ${JSON.stringify(
+        whereExpression[part][expressionIndex][property],
+        uf,
+        '',
+      )}`,
+    )
+
+    if (Object.keys(whereExpression[part][expressionIndex]).length >= 1 && typeof value !== 'string') {
+      //console.log(`MERGE ${property} ${JSON.stringify(value)}`)
+      whereExpression[part][expressionIndex][property] = {
+        ...whereExpression[part][expressionIndex][property],
+        ...(value as Record<string, unknown>),
+      }
+    } else {
+      //console.log(`ASSIGN ${property} ${JSON.stringify(value)}`)
+      whereExpression[part][expressionIndex][property] = value
+    }
+  }
+
+  let continueExpressionButtonDisabled = true
+  let conditionExpressionButtonDisabled = true
+  const uf = (k, v) => {
+    return v === undefined ? null : v
+  }
+  $: {
+    //console.clear()
+
+    //console.log(`${JSON.stringify(whereExpression[currentExpressionPart], uf, '\t')} expressionIndex: ${expressionIndex}`)
+    //console.log(`${JSON.stringify(whereExpression[currentExpressionPart], uf, '\t')} `)
+
+    if (Object.keys(whereExpression[currentExpressionPart][expressionIndex].expressions).length > 0) {
+      const [lastKey, lastValue] = Object.entries(
+        whereExpression[currentExpressionPart][expressionIndex].expressions,
+      ).at(-1)
+      continueExpressionButtonDisabled =
+        lastKey && lastValue !== undefined && !rasterComparisonOperatorsValues.includes(lastKey) ? false : true
+      conditionExpressionButtonDisabled =
+        lastKey && lastValue != undefined && rasterComparisonOperatorsValues.includes(lastKey) ? false : true
+
+      //console.log(`lastkey: ${lastKey} lastValue: ${lastValue} \n continueExpressionButtonDisabled : ${continueExpressionButtonDisabled} \n conditionExpressionButtonDisabled ${conditionExpressionButtonDisabled}`)
+    }
   }
 </script>
 
@@ -188,25 +254,68 @@ A component designed to apply where expression to a raster layer through titiler
 
 <div class="is-divider m-1 p-1" /> -->
 
-<Wizard initialStep={initialFilterStep}>
+<!-- {#if initialFilterStep>1}
+  <div class="notification is-danger is-light has-text-centered is-size-4 pt-3">
+    
+    {#if whereExpression.condition.length>0}
+      where pixels are
+      {#each whereExpression.condition as expr, i}
+
+        {#if expr?.operator}
+          
+          {@const op = rasterComparisonOperators.find(el=>el.value === expr.operator)}
+          {op.text}
+          {#if expr?.value}
+            {expr.value}
+          {/if}
+          {#if i < whereExpression.condition.length - 1}
+            <div
+              class="is-divider is-danger "
+              data-content={combineOperator == false ? 'AND' : 'OR'} />
+          {/if}
+        {/if}
+      {/each}
+    {/if}
+  </div>
+{/if} -->
+{[currentExpressionPart, expressionIndex]}
+{`${JSON.stringify(whereExpression[currentExpressionPart], null, '\t')} `}
+
+<Wizard initialStep={initialRasterFilterStep}>
   <Step
     num={1}
     let:nextStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pl-3 pb-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center  pb-3">
       <button
         on:click={() => {
           nextStep()
-          initialFilterStep = 2
+          initialRasterFilterStep = 2
+          setWhereExpression(currentExpressionPart, 'band', band)
+          //whereExpression.condition = [...whereExpression.condition, { band: `${band}` }] //direct set used with
         }}
         class="button wizard-button is-small primary-button has-text-weight-bold">
         <i class="fas fa-plus" />
-        &nbsp; {expression ? 'Add' : 'New rule'}
+        &nbsp; {whereExpression.condition.length > 0 ? 'Add' : 'New rule'}
       </button>
     </div>
     <div class="notification is-danger is-light has-text-centered p-1">
-      Conditions (rules) can be <span class="has-text-weight-bold">evaluated</span> against the pixels of the layer. By applying
-      a rule the layer is transformed and change appearance.
+      Create an <b>expression</b> and tranform the current layer's pixels values based on whether they <b>satisfy</b> or
+      <b>not</b>
+      a <b>condition</b>.
     </div>
+    <div
+      class="is-divider separator is-danger p-0 "
+      data-content="The general form is..." />
+
+    <figure class="image">
+      <img
+        alt=""
+        width="300"
+        src="/conditional-operator.jpg" />
+    </figure>
+    <div
+      class="is-divider separator is-danger p-0"
+      data-content="A concrete example ..." />
     <figure class="image p-2">
       <img
         alt=""
@@ -220,9 +329,12 @@ A component designed to apply where expression to a raster layer through titiler
     let:nextStep
     let:setStep
     let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pl-3 pr-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center  pb-3">
       <button
-        on:click={prevStep}
+        on:click={() => {
+          prevStep()
+          initialRasterFilterStep = 1
+        }}
         title="move back to start"
         class="button  is-small secondary-button has-text-weight-bold">
         <i class="fa fa-angles-left" /> &nbsp;Back
@@ -235,54 +347,84 @@ A component designed to apply where expression to a raster layer through titiler
         class="button  is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
-
-      <!-- <button
-          on:click={()=>{setStep(1);clearExpression()}}
-          class="button is-small primary-button">
-          <i class="fas fa-trash " />&nbsp;Clear filter{expression  ? '(s)' : ''}
-        </button> -->
     </div>
 
-    <div
-      class="is-divider separator is-danger"
-      data-content="Select an operator category..." />
+    <div class="card">
+      <div
+        class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase  has-background-white has-text-weight-semibold  has-text-centered ">
+        <!-- {currentExpressionPart} -->
+        {#each whereExpressionParts as { name, label, icon, color }, i}
+          <span class="tag p-1 is-size-6 {name === currentExpressionPart ? 'is-danger is-dark' : 'has-text-grey-light'}"
+            >{label}</span>
+          <span class="icon {color}"><i class={icon} /> </span>
+        {/each}
+      </div>
+      <footer class="card-footer">
+        {#each operatorCategories as { name, op }}
+          <span
+            role="navigation"
+            class="card-footer-item is-subtitle is-capitalized has-text-weight-bold is-clickable {name ==
+            selectedOperatorCategory
+              ? 'has-background-success has-text-white-bis'
+              : ''}"
+            on:click={() => {
+              selectedOperatorCategory = name
+              selectedRasterFilterOperatorCategory = selectedOperatorCategory
+              selectedOperatorObject = op
+            }}>
+            {name}
+          </span>
+        {/each}
+      </footer>
+    </div>
+    {#if selectedOperatorObject !== undefined}
+      <div class="grid pt-5">
+        {#each selectedOperatorObject as operator}
+          {@const isVisible = !operator.disabled}
+          {#if isVisible}
+            <div
+              class="card is-info is-clickable  has-text-centered "
+              on:click={() => {
+                selectedOperator = operator.value
+                // not reallu necessary
+                // setWhereExpression(
+                //   currentExpressionPart,
+                //   'expressions',
+                //   { [selectedOperator]: undefined },
+                //   mergeExpressions,
+                // )
+                selectedInputCategory = rasterComparisonOperatorsValues.includes(selectedOperator) ? 'layer' : 'numbers'
 
-    <div class="grid">
-      {#each Object.values(operatorCategories) as operatorCategory}
-        <div
-          class="card is-info is-clickable  has-text-centered "
-          on:click={() => {
-            selectedOperatorCategory = operatorCategory
-            selectedFilterOperatorCategory = selectedOperatorCategory
-            initialFilterStep = 3
-            nextStep()
-          }}
-          title={operatorCategory.title}>
-          <div
-            class="card-header is-size-6 {operatorCategory.name === selectedOperatorCategory.name
-              ? 'has-background-success'
-              : 'has-background-info-dark'} ">
-            <span
-              class="card-header-title is-centered is-v-centered {operatorCategory.name ===
-              selectedOperatorCategory.name
-                ? 'has-text-white-ter'
-                : 'has-text-white-ter'}  ">
-              {#if operatorCategory.name === selectedOperatorCategory.name}
-                <span class="icon ">
-                  <i class="fa-solid fa-check" />
+                initialRasterFilterStep = 3
+                nextStep()
+              }}
+              title={operator.text}>
+              <div
+                class="card-header is-size-6 {operator.value === selectedOperator
+                  ? 'has-background-success'
+                  : 'has-background-info-dark'} ">
+                <span
+                  class="card-header-title is-centered is-v-centered {operator.value === selectedOperator
+                    ? 'has-text-white-ter'
+                    : 'has-text-white-ter'}  ">
+                  {#if operator.value === selectedOperator}
+                    <span class="icon ">
+                      <i class="fa-solid fa-check" />
+                    </span>
+                  {/if}
+                  {operator.label}
                 </span>
-              {/if}
-              {operatorCategory.title}
-            </span>
-          </div>
-          <div class="content">
-            <span class="box has-text-danger-dark is-size-5 has-text-weight-bold">
-              <i class={operatorCategory.icon} />
-            </span>
-          </div>
-        </div>
-      {/each}
-    </div>
+              </div>
+              <div class="content">
+                <div class="content is-size-2  p-0 m-0 has-text-weight-bold has-text-danger">
+                  {operator.symbol}
+                </div>
+              </div>
+            </div>
+          {/if}
+        {/each}
+      </div>
+    {/if}
   </Step>
 
   <Step
@@ -290,99 +432,114 @@ A component designed to apply where expression to a raster layer through titiler
     let:nextStep
     let:setStep
     let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pl-3 pr-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3 ">
       <button
-        on:click={prevStep}
-        title="move back to start"
+        on:click={() => {
+          prevStep()
+          initialRasterFilterStep = 2
+        }}
+        title="Operator categories"
         class="button  is-small secondary-button has-text-weight-bold">
-        <i class="fa fa-angles-left" /> &nbsp;Operator categories
+        <i class="fa fa-angles-left" /> &nbsp;Change operator
       </button>
       <button
         on:click={() => {
-          setStep(1)
           cancel()
+          setStep(1)
         }}
         class="button  is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
-
-      <!-- <button
-          on:click={()=>{setStep(1);clearExpression()}}
-          class="button is-small primary-button">
-          <i class="fas fa-trash " />&nbsp;Clear filter{expression  ? '(s)' : ''}
-        </button> -->
     </div>
 
-    <div
-      class="is-divider separator is-danger"
-      data-content="Select an operator ..." />
+    <div class="card">
+      <!-- <div
+        class="card-content p-2 m-0 is-size-5 is-family-primary is-uppercase has-text-weight-semibold has-text-danger-dark has-background-white-bis has-text-centered ">
+        {currentExpressionPart}
+      </div> -->
+      <div
+        class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase  has-background-white has-text-weight-semibold  has-text-centered ">
+        <!-- {currentExpressionPart} -->
+        {#each whereExpressionParts as { name, label, icon, color }, i}
+          <span class="tag p-1 is-size-6 {name === currentExpressionPart ? 'is-danger is-dark' : 'has-text-grey-light'}"
+            >{label}</span>
+          <span class="icon {color}"><i class={icon} /> </span>
+        {/each}
+      </div>
+      <footer class="card-footer">
+        {#each inputCategories as inputCategory}
+          <span
+            role="navigation"
+            class="card-footer-item is-subtitle is-capitalized has-text-weight-bold is-clickable {inputCategory ==
+            selectedInputCategory
+              ? 'has-background-success has-text-white-bis'
+              : ''}"
+            on:click={() => {
+              selectedInputCategory = inputCategory
+              selectedRasterFilterInputCategory = selectedInputCategory
+            }}>
+            {inputCategory}
+          </span>
+        {/each}
+      </footer>
+    </div>
 
-    <div class="grid-container">
-      {#each selectedOperatorCategory.operators as operator}
+    <div class="container ">
+      {#if selectedInputCategory == 'layer'}
+        <div class="range-slider pt-5 pb-">
+          <RangeSlider
+            bind:values={sliderBindValue}
+            float
+            pips={step}
+            min={layerMin}
+            max={layerMax}
+            {step}
+            range="min"
+            first="label"
+            last="label"
+            rest={false}
+            on:stop={onSliderStop} />
+        </div>
+      {:else if selectedInputCategory === 'numbers'}
+        <RasterExpressionNumbersInput on:click={onNumbersClick} />
+      {/if}
+    </div>
+
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-5 pl-3 pr-3">
+      <button
+        on:click={() => {
+          initialRasterFilterStep = 2 //go back
+          clear()
+          whereExpression.condition = [...whereExpression.condition, { band: `${band}`, expressions: {} }]
+          setStep(2)
+        }}
+        disabled={conditionExpressionButtonDisabled}
+        class="button is-small primary-button has-text-weight-bold">
+        <i class="fas fa-plus " />&nbsp; Add
+      </button>
+
+      {#if !rasterComparisonOperatorsValues.includes(whereExpression[currentExpressionPart][expressionIndex]['expressions'])}
         <button
           on:click={() => {
-            selectedOperator = operator
-            selectedFilterOperator = selectedOperator
-            initialFilterStep = 4
-            nextStep()
+            initialRasterFilterStep = 2 //set state to step 2
+            clear()
+            setStep(2)
           }}
-          class="button  {operator === selectedOperator
-            ? 'is-success is-dark'
-            : 'is-outlined is-info'} has-text-weight-bold ">
-          {operator}
+          disabled={continueExpressionButtonDisabled}
+          class="button is-small primary-button has-text-weight-bold">
+          <i class="fas fa-rotate " />&nbsp;Continue with current
         </button>
-      {/each}
-    </div>
-  </Step>
-  <Step
-    num={4}
-    let:nextStep
-    let:setStep
-    let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pl-3 pr-3">
-      <button
-        on:click={prevStep}
-        title="move back to start"
-        class="button  is-small secondary-button">
-        <i class="fa fa-angles-left" /> &nbsp;Operators
-      </button>
+      {/if}
+
       <button
         on:click={() => {
-          setStep(1)
-          cancel()
+          initialRasterFilterStep = 4
+          clear()
+          nextStep()
         }}
-        class="button  is-small primary-button has-text-weight-bold">
-        <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
-      </button>
-
-      <!-- <button
-          on:click={()=>{setStep(1);clearExpression()}}
-          class="button is-small primary-button">
-          <i class="fas fa-trash " />&nbsp;Clear filter{expression  ? '(s)' : ''}
-        </button> -->
-    </div>
-
-    <div
-      class="is-divider separator is-danger"
-      data-content="Set pixel value ..." />
-    <div class="range-slider">
-      <RangeSlider
-        bind:values={inputValue}
-        float
-        pips={step}
-        min={layerMin}
-        max={layerMax}
-        {step}
-        range="min"
-        first="label"
-        last="label"
-        rest={false} />
-    </div>
-    <div>
-      <button
-        class="button is-small primary-button"
-        on:click={applyExpression}>
-        <i class="fa fa-hammer" />&nbsp; Apply
+        disabled={conditionExpressionButtonDisabled}
+        class="button is-small secondary-button has-text-weight-bold">
+        <i class="fas fa-angles-right " />&nbsp; True
       </button>
     </div>
   </Step>
@@ -391,20 +548,8 @@ A component designed to apply where expression to a raster layer through titiler
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 5px;
-    padding: 0px;
-    grid-auto-flow: dense;
-    /* align-content: space-around; */
-    justify-content: space-around;
-    /* grid-auto-columns: 1fr; */
-  }
-
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(5px, 1fr));
-    grid-gap: 5px;
-    grid-auto-flow: dense;
   }
 
   .range-slider {
