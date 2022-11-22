@@ -2,6 +2,7 @@
   import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
+  import { indicatorProgress } from '$stores'
 
   let selectedCategories: DataCategory[] = []
 
@@ -16,36 +17,45 @@
   let subCategories: DataCategory[] = []
 
   let DataItemFeatureCollection: StacItemFeatureCollection
-  let isLoading = false
 
   const handleSelectCategory = async (category: DataCategory) => {
-    selectedCategories = [category]
+    try {
+      $indicatorProgress = true
 
-    const res = await fetch(category.url)
-    const json = await res.json()
-    const values: string[] = json[Object.keys(json)[0]]
-    if (category.name === 'SDG') {
-      const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
-      subCategories = num_values.map((num) => {
-        return {
-          name: `SDG${num}`,
-          icon: `/sdgs/${num}.png`,
-          url: `/datasets?sdg_goal=${num}`,
-        }
-      })
+      selectedCategories = [category]
+
+      const res = await fetch(category.url)
+      const json = await res.json()
+      const values: string[] = json[Object.keys(json)[0]]
+      if (category.name === 'SDG') {
+        const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
+        subCategories = num_values.map((num) => {
+          return {
+            name: `SDG${num}`,
+            icon: `/sdgs/${num}.png`,
+            url: `/datasets?sdg_goal=${num}`,
+          }
+        })
+      }
+    } finally {
+      $indicatorProgress = false
     }
   }
 
   const handleSelectSubcategory = async (category: DataCategory) => {
-    console.log(category)
-    selectedCategories = [...selectedCategories, category]
+    try {
+      $indicatorProgress = true
+      selectedCategories = [...selectedCategories, category]
 
-    if (category.url.startsWith('/datasets')) {
-      const res = await fetch(category.url)
-      const json = await res.json()
-      DataItemFeatureCollection = json
+      if (category.url.startsWith('/datasets')) {
+        const res = await fetch(category.url)
+        const json = await res.json()
+        DataItemFeatureCollection = json
+      }
+      return category
+    } finally {
+      $indicatorProgress = false
     }
-    return category
   }
 
   const fetchNextDatasets = async () => {
@@ -54,7 +64,7 @@
     if (!link) return
 
     try {
-      isLoading = true
+      $indicatorProgress = true
       const res = await fetch(link.href)
       const json: StacItemFeatureCollection = await res.json()
       if (json.features.length > 0) {
@@ -62,7 +72,7 @@
       }
       DataItemFeatureCollection = json
     } finally {
-      isLoading = false
+      $indicatorProgress = false
     }
   }
 </script>
@@ -102,7 +112,7 @@
     <div
       class="container p-2"
       style="text-align:center">
-      {#if !isLoading}
+      {#if !$indicatorProgress}
         <!-- svelte-ignore a11y-missing-attribute -->
         <a
           class="button button-primary button-without-arrow"
@@ -110,11 +120,6 @@
           on:click={fetchNextDatasets}>
           Load more...
         </a>
-      {:else}
-        <div
-          class="loader"
-          aria-busy="true"
-          aria-live="polite" />
       {/if}
     </div>
   {:else}
@@ -151,7 +156,6 @@
 <style lang="scss">
   @import '../styles/undp-design/base-minimal.min.css';
   @import '../styles/undp-design/buttons.min.css';
-  @import '../styles/undp-design/loader.min.css';
 
   .data-view-container {
     height: calc(100vh - 150px);
