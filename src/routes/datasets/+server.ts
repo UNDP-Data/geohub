@@ -7,6 +7,10 @@ import { DATABASE_CONNECTION } from '$lib/variables/private'
 import type { StacLink } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
+import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
+import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
+
 /**
  * Datasets search API
  * Example
@@ -185,6 +189,15 @@ export const GET: RequestHandler = async ({ url }) => {
 
     geojson.links = links
 
+    // add SAS token if it is Azure Blob source
+    const sasToken = generateAzureBlobSasToken()
+    geojson.features.forEach((feature) => {
+      const tags: [{ key: string; value: string }] = feature.properties.tags
+      const type = tags.find((tag) => tag.key === 'type')
+      if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
+      feature.properties.url = `${feature.properties.url}${sasToken}`
+    })
+
     return new Response(JSON.stringify(geojson))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
@@ -239,4 +252,25 @@ const getBBoxFilter = (bbox: number[], values: string[]) => {
     )
   )
   `
+}
+
+const generateAzureBlobSasToken = () => {
+  const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
+  // create storage container
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
+
+  // generate account SAS token for vector tiles. This is needed because the
+  // blob level SAS tokens have the blob name encoded inside the SAS token and the
+  // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
+
+  const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
+    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
+    AccountSASPermissions.parse('r'),
+    'o',
+  )
+  const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
+  return ACCOUNT_SAS_TOKEN_URL.search
 }

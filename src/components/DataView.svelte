@@ -1,13 +1,11 @@
 <script lang="ts">
-  interface Category {
-    name: string
-    icon: string
-    url: string
-  }
+  import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
+  import DataCategoryCard from './DataCategoryCard.svelte'
+  import DataCard from './DataCard.svelte'
 
-  let selectedCategories: Category[] = []
+  let selectedCategories: DataCategory[] = []
 
-  let categories: Category[] = [
+  let categories: DataCategory[] = [
     {
       name: 'SDG',
       icon: '/sdgs/SDG Wheel_WEB.png',
@@ -15,18 +13,18 @@
     },
   ]
 
-  let subCategories: Category[] = []
+  let subCategories: DataCategory[] = []
 
-  const handleSelectCategory = async (category: Category) => {
+  let DataItemFeatureCollection: StacItemFeatureCollection
+
+  const handleSelectCategory = async (category: DataCategory) => {
     selectedCategories = [category]
 
     const res = await fetch(category.url)
     const json = await res.json()
     const values: string[] = json[Object.keys(json)[0]]
-    console.log(values)
     if (category.name === 'SDG') {
       const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
-      console.log(num_values)
       subCategories = num_values.map((num) => {
         return {
           name: `SDG${num}`,
@@ -34,90 +32,89 @@
           url: `/datasets?sdg_goal=${num}`,
         }
       })
-      console.log(subCategories)
     }
   }
 
-  const handleSelectSubcategory = async (category: Category) => {
+  const handleSelectSubcategory = async (category: DataCategory) => {
+    console.log(category)
+    selectedCategories = [...selectedCategories, category]
+
+    if (category.url.startsWith('/datasets')) {
+      const res = await fetch(category.url)
+      const json = await res.json()
+      DataItemFeatureCollection = json
+    }
     return category
   }
 </script>
 
-{#if selectedCategories && selectedCategories.length > 0}
-  <nav
-    class="breadcrumb has-arrow-separator m-2"
-    aria-label="breadcrumbs">
-    <ul>
-      {#each selectedCategories as category, index}
-        {#if index === 0}
-          <li>
-            <a
-              on:click={() => {
-                selectedCategories = []
-              }}>{category.name}</a>
-          </li>
-        {:else}
-          <li><a>{category.name}</a></li>
-        {/if}
-      {/each}
-    </ul>
-  </nav>
-{/if}
+<div class="container data-view-container p-1">
+  {#if selectedCategories && selectedCategories.length > 0}
+    <nav
+      class="breadcrumb has-succeeds-separator m-2"
+      aria-label="breadcrumbs">
+      <ul>
+        {#each selectedCategories as category, index}
+          {#if index === 0}
+            <li>
+              <a
+                on:click={() => {
+                  selectedCategories = []
+                  DataItemFeatureCollection = undefined
+                }}>{category.name}</a>
+            </li>
+          {:else if index === selectedCategories.length - 1}
+            <li class="is-active"><a>{category.name}</a></li>
+          {:else}
+            <li><a>{category.name}</a></li>
+          {/if}
+        {/each}
+      </ul>
+    </nav>
+  {/if}
 
-<div class="columns m-1 is-multiline is-centered category-container">
-  {#if selectedCategories && selectedCategories.length === 0}
-    {#each categories as category}
-      <div
-        class="column is-one-third m-0 p-1 category"
-        on:click={() => {
-          handleSelectCategory(category)
-        }}>
-        <div class="border p-2">
-          <figure class="image is-64x64 center">
-            <img
-              src={category.icon}
-              alt="{category.name}_image" />
-          </figure>
-          <p class="title is-4 center">{category.name}</p>
-        </div>
-      </div>
+  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
+    {#each DataItemFeatureCollection.features as feature}
+      <DataCard {feature} />
     {/each}
   {:else}
-    {#each subCategories as category}
-      <div
-        class="column is-one-third m-0 p-1 category"
-        on:click={() => {
-          handleSelectSubcategory(category)
-        }}>
-        <div class="border p-2">
-          <figure class="image is-64x64 center">
-            <img
-              src={category.icon}
-              alt="{category.name}_image" />
-          </figure>
-          <p class="title is-4 center">{category.name}</p>
-        </div>
-      </div>
-    {/each}
+    <div class="columns m-1 is-multiline is-centered category-container">
+      {#if selectedCategories && selectedCategories.length === 0}
+        {#each categories as category}
+          <div
+            class="column is-one-third m-0 p-1"
+            on:click={() => {
+              handleSelectCategory(category)
+            }}>
+            <DataCategoryCard
+              bind:category
+              size="medium" />
+          </div>
+        {/each}
+      {:else}
+        {#each subCategories as category}
+          <div
+            class="column is-3 -0 p-1"
+            on:click={() => {
+              handleSelectSubcategory(category)
+            }}>
+            <DataCategoryCard
+              bind:category
+              size="small" />
+          </div>
+        {/each}
+      {/if}
+    </div>
   {/if}
 </div>
 
 <style lang="scss">
-  .category-container {
-    height: 100%;
+  .data-view-container {
+    height: calc(100vh - 150px);
+    overflow-y: auto;
 
-    .category {
-      cursor: pointer;
-    }
-
-    .border {
-      border: 0.1em solid #000000;
-
-      .center {
-        text-align: center;
-        display: block;
-        margin: 0 auto;
-      }
+    @media (max-width: 89.9375em) {
+      height: calc(100vh - 120px);
     }
   }
 </style>
