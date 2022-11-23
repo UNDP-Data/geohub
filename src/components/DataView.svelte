@@ -7,6 +7,7 @@
   import TextFilter from './controls/TextFilter.svelte'
   import { indexOf } from 'lodash'
 
+  let containerDivElement: HTMLDivElement
   let selectedCategories: DataCategory[] = []
 
   let categories: DataCategory[] = [
@@ -139,6 +140,18 @@
     DataItemFeatureCollection = undefined
     selectedCategories = []
   }
+
+  const handleScroll = async () => {
+    const containerHeight = containerDivElement.scrollHeight
+    const scrollTop = containerDivElement.scrollTop
+    let currentScroll = scrollTop + containerDivElement.clientHeight
+    let modifier = 100
+    if (currentScroll + modifier > containerHeight) {
+      if (!$indicatorProgress && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
+        await fetchNextDatasets()
+      }
+    }
+  }
 </script>
 
 <TextFilter
@@ -146,7 +159,10 @@
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
-<div class="container data-view-container m-4">
+<div
+  class="container data-view-container m-4"
+  on:scroll={handleScroll}
+  bind:this={containerDivElement}>
   {#if selectedCategories && selectedCategories.length > 0}
     <nav
       class="breadcrumb has-succeeds-separator"
@@ -189,19 +205,6 @@
     {#each DataItemFeatureCollection.features as feature}
       <DataCard {feature} />
     {/each}
-    <div
-      class="container p-2"
-      style="text-align:center">
-      {#if !$indicatorProgress && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-          class="button button-primary button-without-arrow"
-          role="button"
-          on:click={fetchNextDatasets}>
-          Load more...
-        </a>
-      {/if}
-    </div>
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
     <div class="notification is-warning m-2">No data found</div>
   {:else}
@@ -255,7 +258,7 @@
     }
     .sub-category-container {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       grid-gap: 5px;
     }
   }

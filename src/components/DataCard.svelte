@@ -86,7 +86,6 @@
           <!-- svelte-ignore a11y-missing-attribute -->
           <a
             class="button button-primary button-without-arrow"
-            style="width: 49%"
             role="button"
             on:click={() => {
               isFullDescription = true
@@ -97,7 +96,6 @@
         <!-- svelte-ignore a11y-missing-attribute -->
         <a
           class="button button-primary button-without-arrow"
-          style="width: {`${isFullDescription ? '100%' : '49%'}`}"
           role="button"
           on:click={addLayer}>
           Add layer
@@ -117,6 +115,12 @@
 
     .description {
       padding-bottom: 0.5rem;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 0.1rem;
     }
 
     .button {

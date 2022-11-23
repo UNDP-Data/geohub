@@ -10,7 +10,7 @@
     <button
       tabindex="0"
       aria-expanded={isExpanded}
-      class={isExpanded ? 'accordion--active' : ''}
+      class={`accordion-button ${isExpanded ? 'accordion--active' : ''}`}
       on:click={() => {
         isExpanded = !isExpanded
       }}>
@@ -32,14 +32,19 @@
   .accordion {
     padding: 5px;
     padding-right: 10px;
-  }
 
-  .accordion-header {
-    padding-left: 0.5rem;
-    padding-right: 1.2rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-transform: capitalize;
+    .accordion-button {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .accordion-header {
+      padding-left: 0.5rem;
+      padding-right: 1.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: capitalize;
+    }
   }
 </style>
