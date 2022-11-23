@@ -2,7 +2,7 @@
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
-  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
+  import { faShuffle } from '@fortawesome/free-solid-svg-icons/faShuffle'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
@@ -42,7 +42,7 @@
       case TabNames.LEGEND:
         isLegendPanelVisible = true
         break
-      case TabNames.REFINE:
+      case TabNames.TRANSFORM:
         isRefinePanelVisible = true
         break
       case TabNames.OPACITY:
@@ -59,7 +59,7 @@
   let tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
     { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
-    { label: TabNames.REFINE, icon: faCalculator, active: false },
+    { label: TabNames.TRANSFORM, icon: faShuffle, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
 
