@@ -16,7 +16,12 @@
       url: '/tags?key=sdg_goal',
     },
     {
-      name: 'Microsoft Planetary Computer',
+      name: 'Climate change',
+      icon: '/sdgs/13.png',
+      url: '/datasets?sdg_goal=13',
+    },
+    {
+      name: 'Microsoft Planetary',
       icon: 'fa-brands fa-microsoft',
       url: '/datasets?stac=microsoft-pc',
     },
@@ -29,11 +34,6 @@
       name: 'martin',
       icon: '/maplibre.png',
       url: '/datasets?type=martin',
-    },
-    {
-      name: 'Climate change',
-      icon: '/sdgs/13.png',
-      url: '/datasets?sdg_goal=13',
     },
   ]
 
@@ -146,10 +146,10 @@
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
-<div class="container data-view-container p-1">
+<div class="container data-view-container m-4">
   {#if selectedCategories && selectedCategories.length > 0}
     <nav
-      class="breadcrumb has-succeeds-separator m-2"
+      class="breadcrumb has-succeeds-separator"
       aria-label="breadcrumbs">
       <ul>
         {#each selectedCategories as category, index}
@@ -205,30 +205,27 @@
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
     <div class="notification is-warning m-2">No data found</div>
   {:else}
-    <div class="columns m-1 is-multiline is-centered category-container">
+    <div
+      class={`${
+        selectedCategories && selectedCategories.length === 0 ? 'category-container' : 'sub-category-container'
+      }`}>
       {#if selectedCategories && selectedCategories.length === 0}
         {#each categories as category}
-          <div
-            class="column is-one-third m-0 p-1"
-            on:click={() => {
+          <DataCategoryCard
+            bind:category
+            size="medium"
+            on:clicked={() => {
               handleSelectCategory(category)
-            }}>
-            <DataCategoryCard
-              bind:category
-              size="medium" />
-          </div>
+            }} />
         {/each}
       {:else}
         {#each subCategories as category}
-          <div
-            class="column is-3 -0 p-1"
-            on:click={() => {
-              handleSelectSubcategory(category)
-            }}>
-            <DataCategoryCard
-              bind:category
-              size="small" />
-          </div>
+          <DataCategoryCard
+            bind:category
+            size="small"
+            on:clicked={() => {
+              handleSelectCategory(category)
+            }} />
         {/each}
       {/if}
     </div>
@@ -249,6 +246,17 @@
 
     .button {
       color: white !important;
+    }
+
+    .category-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 5px;
+    }
+    .sub-category-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 5px;
     }
   }
 </style>
