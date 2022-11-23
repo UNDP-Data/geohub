@@ -14,7 +14,7 @@
   <Accordion
     headerTitle={feature.properties.name}
     bind:isExpanded>
-    <div class="card-container p-1">
+    <div class="card-container px-1">
       <div class="description">
         {#if !isFullDescription}
           <p>
@@ -57,8 +57,8 @@
 {/if}
 
 <style lang="scss">
-  @import '../styles/undp-design/base-minimal.min.css';
-  @import '../styles/undp-design/buttons.min.css';
+  @use '../styles/undp-design/base-minimal.min.css';
+  @use '../styles/undp-design/buttons.min.css';
   .card-container {
     display: flex;
     flex-direction: row;

@@ -13,7 +13,9 @@
       class={isExpanded ? 'accordion--active' : ''}
       on:click={() => {
         isExpanded = !isExpanded
-      }}>{headerTitle}</button>
+      }}>
+      <p class="accordion-header">{headerTitle}</p>
+    </button>
     <div
       class={!isExpanded ? 'accordion__panel' : 'accordion--active'}
       aria-hidden={!isExpanded}
@@ -24,6 +26,15 @@
 </ul>
 
 <style lang="scss">
-  @import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/accordion.min.css';
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/accordion.min.css';
+
+  .accordion-header {
+    padding-left: 0.5rem;
+    padding-right: 1.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+  }
 </style>

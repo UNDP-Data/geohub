@@ -160,6 +160,8 @@
         </a>
       {/if}
     </div>
+  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
+    <div class="notification is-warning m-2">No data found</div>
   {:else}
     <div class="columns m-1 is-multiline is-centered category-container">
       {#if selectedCategories && selectedCategories.length === 0}
@@ -192,8 +194,8 @@
 </div>
 
 <style lang="scss">
-  @import '../styles/undp-design/base-minimal.min.css';
-  @import '../styles/undp-design/buttons.min.css';
+  @use '../styles/undp-design/base-minimal.min.css';
+  @use '../styles/undp-design/buttons.min.css';
 
   .data-view-container {
     height: calc(100vh - 183px);
