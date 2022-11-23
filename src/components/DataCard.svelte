@@ -8,6 +8,30 @@
   let isExpanded: boolean
   let descriptionLength = 100
   let isFullDescription = false
+
+  const addLayer = async () => {
+    const is_raster: boolean = feature.properties.is_raster as unknown as boolean
+    const url: string = feature.properties.url
+    const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+      { key: string; value: string },
+    ]
+    if (is_raster) {
+      const type = tags?.find((tag) => tag.key === 'stac')
+      if (type) {
+        // STAC
+      } else {
+        // COG
+      }
+    } else {
+      // vector tile
+      const type = tags?.find((tag) => ['martin', 'pgtileserv'].includes(tag.value))
+      if (type) {
+        // dynamic
+      } else {
+        // static
+      }
+    }
+  }
 </script>
 
 {#if feature}
@@ -55,7 +79,8 @@
         <a
           class="button button-primary button-without-arrow"
           style="width: {`${isFullDescription ? '100%' : '49%'}`}"
-          role="button">
+          role="button"
+          on:click={addLayer}>
           Add layer
         </a>
       </div>
