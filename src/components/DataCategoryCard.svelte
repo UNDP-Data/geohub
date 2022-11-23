@@ -8,9 +8,13 @@
 {#if category}
   <div class="category border p-2">
     <figure class="image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
-      <img
-        src={category.icon}
-        alt="{category.name}_image" />
+      {#if category.icon.startsWith('fa')}
+        <i class="{category.icon} fa-4x" />
+      {:else}
+        <img
+          src={category.icon}
+          alt="{category.name}_image" />
+      {/if}
     </figure>
     {#if category.name}
       <p class="title is-5 center">{category.name}</p>

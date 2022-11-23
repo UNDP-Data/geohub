@@ -17,7 +17,7 @@
     },
     {
       name: 'Microsoft Planetary Computer',
-      icon: '/stac.png',
+      icon: 'fa-brands fa-microsoft',
       url: '/datasets?stac=microsoft-pc',
     },
     {
