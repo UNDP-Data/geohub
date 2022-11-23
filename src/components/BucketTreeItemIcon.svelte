@@ -40,7 +40,7 @@
       <Tooltip
         showDelay={500}
         hideDelay={100}
-        yPos="above">Add Layer</Tooltip>
+        xPos="start">Add Layer</Tooltip>
     </Wrapper>
   </div>
   <slot />

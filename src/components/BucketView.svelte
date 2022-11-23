@@ -8,7 +8,6 @@
   import BucketTreeView from '$components/BucketTreeView.svelte'
   import { bucketList, indicatorProgress, treeBucket } from '$stores'
 
-  $: hideLinearProgress = !$indicatorProgress
   let bucketsMeetThereshold = []
   let bucketCardFilterSelected = false
 
@@ -65,7 +64,7 @@
     $indicatorProgress = false
   }
 
-  const handleBucketCardFilterClick = (event: CustomEvent) => {
+  const handleBucketCardFilterClick = (event?: CustomEvent) => {
     bucketCardFilterSelected = event.detail.bucketCardFilterSelected
   }
 </script>
@@ -73,17 +72,6 @@
 <div
   class="view-container"
   data-testid="view-container">
-  {#if bucketCardFilterSelected}
-    <div
-      class="columns filter-container pt-3"
-      transition:slide
-      data-testid="filter-container">
-      <div class="column filter">
-        <BucketFilter bind:bucketsMeetThereshold />
-      </div>
-    </div>
-  {/if}
-
   <div
     class="columns cards-tree-container is-gapless"
     style="display: flex!important;">
@@ -94,11 +82,7 @@
         <div
           class="column cards"
           data-testid="buckets-container">
-          <div
-            class="card-filter"
-            data-testid="buckets-filter-container">
-            <BucketCardFilter on:click={handleBucketCardFilterClick} />
-          </div>
+          <BucketCardFilter on:click={handleBucketCardFilterClick} />
 
           {#if bucketsMeetThereshold.length > 0}
             {#if !bucketsMeetThereshold.includes('NO_RESULTS')}
@@ -130,13 +114,18 @@
       </div>
     </div>
     <div class="column">
-      <LinearProgress
-        indeterminate
-        bind:closed={hideLinearProgress} />
       <div
         id="tree-container"
         class="tree"
         data-testid="tree-container">
+        {#if bucketCardFilterSelected}
+          <div
+            class="filter-container"
+            data-testid="filter-container">
+            <BucketFilter bind:bucketsMeetThereshold />
+          </div>
+        {/if}
+
         {#if $treeBucket.length === 0}
           <div class="title is-size-4">Welcome to GeoHub</div>
           <div class="subtitle is-size-5">
@@ -172,20 +161,6 @@
   $separator-dark: 1px solid #ccc;
 
   .view-container {
-    .filter-container {
-      border-bottom: $separator;
-      margin-bottom: 20px;
-      padding-left: 10px;
-
-      @media (prefers-color-scheme: dark) {
-        border-bottom: $separator-dark;
-      }
-
-      .filter {
-        padding-bottom: 15px;
-      }
-    }
-
     .cards-tree-container {
       margin-bottom: 0;
 
@@ -208,6 +183,17 @@
 
         @media (max-width: 89.9375em) {
           height: calc(100vh - 120px);
+        }
+
+        .filter-container {
+          position: absolute;
+
+          top: 25px;
+          left: 70px;
+
+          @media (prefers-color-scheme: dark) {
+            border-bottom: $separator-dark;
+          }
         }
 
         .title {

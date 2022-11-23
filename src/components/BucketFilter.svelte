@@ -94,37 +94,35 @@
   }
 </script>
 
-<div
-  class="columns is-vcentered"
-  data-testid="filter-container">
-  <div class="column is-10">
-    <div class="control has-icons-left has-icons-right">
-      <input
-        data-testid="filter-bucket-input"
-        class="input is-rounded"
-        type="text"
-        placeholder="Filter Buckets"
-        bind:value={inputValue}
-        on:input={handleFilterInput} />
-      <span class="icon is-small is-left">
-        <i class="fas fa-search" />
-      </span>
-    </div>
+<div class="filter-text">
+  <div class="control has-icons-left has-icons-right">
+    <input
+      data-testid="filter-bucket-input"
+      class="input is-rounded"
+      type="text"
+      placeholder="Filter Buckets"
+      bind:value={inputValue}
+      on:input={handleFilterInput} />
+    <span class="icon is-small is-left">
+      <i class="fas fa-search" />
+    </span>
   </div>
-  <div class="column">
-    <Wrapper>
-      <button
-        class="button is-vcentered"
-        on:click={clearInput}
-        data-testid="filter-clear-button">
-        <span class="icon is-small">
-          <i class="fas fa-xmark" />
-        </span>
-      </button>
-      <Tooltip
-        showDelay={500}
-        hideDelay={100}
-        yPos="above">Clear input</Tooltip>
-    </Wrapper>
-  </div>
+  <span
+    class="icon is-small clear-button"
+    on:click={clearInput}>
+    <i class="fas fa-xmark" />
+  </span>
 </div>
+
+<style lang="scss">
+  .filter-text {
+    position: relative;
+
+    .clear-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+  }
+</style>
