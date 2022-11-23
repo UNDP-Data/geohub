@@ -25,7 +25,7 @@
   <div class="control has-icons-left has-icons-right">
     <input
       data-testid="filter-bucket-input"
-      class="input"
+      class="input filter-text-box"
       type="text"
       {placeholder}
       on:input={handleFilterInput}
@@ -46,9 +46,13 @@
     padding-left: 1em;
     padding-right: 1em;
 
+    .filter-text-box {
+      height: 35px;
+    }
+
     .clear-button {
       position: absolute;
-      top: 10px;
+      top: 12px;
       right: 1.5em;
       cursor: pointer;
     }

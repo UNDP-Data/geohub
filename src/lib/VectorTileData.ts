@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid'
 import { DEFAULT_FILL_COLOR, DEFAULT_FILL_OUTLINE_COLOR, DEFAULT_LINE_COLOR, DEFAULT_LINE_WIDTH } from './constants'
 import type { StacItemFeature, VectorTileMetadata } from './types'
 import {
@@ -70,7 +71,7 @@ export class VectorTileData {
     }
     this.map.addSource(tileSourceId, source)
 
-    const layerId = `${selectedLayerId}`
+    const layerId = uuidv4()
     let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
 
     const geomType = vectorInfo.metadata.json.tilestats.layers[0].geometry
@@ -127,6 +128,13 @@ export class VectorTileData {
       default:
         return
     }
+    layer.minzoom = Number(
+      vectorInfo.metadata.minzoom && vectorInfo.metadata.minzoom >= 0 ? vectorInfo.metadata.minzoom : 0,
+    )
+    layer.maxzoom = Number(
+      vectorInfo.metadata.maxzoom && vectorInfo.metadata.maxzoom <= 24 ? vectorInfo.metadata.maxzoom : 24,
+    )
+
     this.map.addLayer(layer)
     const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))
     this.map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))
@@ -135,6 +143,7 @@ export class VectorTileData {
       layer,
       source,
       sourceId: tileSourceId,
+      metadata: vectorInfo.metadata,
     }
   }
 }

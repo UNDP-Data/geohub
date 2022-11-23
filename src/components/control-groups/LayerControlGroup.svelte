@@ -10,12 +10,16 @@
 </script>
 
 <div class="group">
-  <BucketTreeItemCardButton
-    bind:tree={layer.tree}
-    isShownInTree={false} />
+  {#if layer.tree}
+    <BucketTreeItemCardButton
+      bind:tree={layer.tree}
+      isShownInTree={false} />
+  {/if}
   <VisibilityButton {layer} />
   <DeleteButton {layer} />
-  <ActionsDropdown {layer} />
+  {#if layer.tree}
+    <ActionsDropdown {layer} />
+  {/if}
 </div>
 
 <style lang="scss">

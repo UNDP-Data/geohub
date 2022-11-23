@@ -16,9 +16,9 @@
       url: '/tags?key=sdg_goal',
     },
     {
-      name: 'STAC',
+      name: 'Microsoft Planetary Computer',
       icon: '/stac.png',
-      url: '/datasets?type=stac',
+      url: '/datasets?stac=microsoft-pc',
     },
     {
       name: 'pg_tileserv',
@@ -29,6 +29,11 @@
       name: 'martin',
       icon: '/maplibre.png',
       url: '/datasets?type=martin',
+    },
+    {
+      name: 'Climate change',
+      icon: '/sdgs/13.png',
+      url: '/datasets?sdg_goal=13',
     },
   ]
 
@@ -235,11 +240,11 @@
   @use '../styles/undp-design/buttons.min.css';
 
   .data-view-container {
-    height: calc(100vh - 183px);
+    height: calc(100vh - 188px);
     overflow-y: auto;
 
     @media (max-width: 89.9375em) {
-      height: calc(100vh - 153px);
+      height: calc(100vh - 158px);
     }
 
     .button {

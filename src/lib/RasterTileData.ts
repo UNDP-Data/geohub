@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid'
 import { DEFAULT_COLORMAP } from './constants'
 import { getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
@@ -17,14 +18,47 @@ export class RasterTileData {
   private getMetadata = async () => {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
-    const json: RasterTileMetadata = await res.json()
-    return json
+    const data: RasterTileMetadata = await res.json()
+
+    if (
+      data &&
+      data.band_metadata &&
+      data.band_metadata.length > 0 &&
+      //TODO needs fix: Ioan band
+      Object.keys(data.band_metadata[0][1]).length === 0
+    ) {
+      const resStatistics = await fetch(`${PUBLIC_TITILER_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
+      const statistics = await resStatistics.json()
+      if (statistics) {
+        for (let i = 0; i < data.band_metadata.length; i++) {
+          const bandValue = data.band_metadata[i][0]
+          const bandDetails = statistics[bandValue]
+          if (bandDetails) {
+            data.band_metadata[i][1] = {
+              STATISTICS_MAXIMUM: `${bandDetails.max}`,
+              STATISTICS_MEAN: `${bandDetails.mean}`,
+              STATISTICS_MINIMUM: `${bandDetails.min}`,
+              STATISTICS_STDDEV: `${bandDetails.std}`,
+              STATISTICS_VALID_PERCENT: `${bandDetails.valid_percent}`,
+            }
+          }
+        }
+      }
+    }
+
+    return data
   }
 
   public add = async () => {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const rasterInfo = await this.getMetadata()
     const bandIndex = getActiveBandIndex(rasterInfo)
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const [bandName, bandMetaStats] = rasterInfo.band_metadata[bandIndex]
+    bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
+
     const layerBandMetadataMin = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
@@ -62,15 +96,24 @@ export class RasterTileData {
       this.map.removeLayer(this.feature.properties.id)
     }
 
+    const layerId = uuidv4()
     const layer: RasterLayerSpecification = {
-      id: this.feature.properties.id,
+      id: layerId,
       type: 'raster',
       source: sourceId,
       layout: {
         visibility: 'visible',
       },
     }
-    this.map.addLayer(layer)
+
+    let firstSymbolId = undefined
+    for (const layer of this.map.getStyle().layers) {
+      if (layer.type === 'symbol') {
+        firstSymbolId = layer.id
+        break
+      }
+    }
+    this.map.addLayer(layer, firstSymbolId)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -80,6 +123,17 @@ export class RasterTileData {
       layer,
       source,
       sourceId,
+      metadata: rasterInfo,
     }
+  }
+
+  private getClassesMap = async (bandIndex: number, layerInfo: RasterTileMetadata) => {
+    let classesMap = {}
+    // local rasters
+    const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
+    if (uvString) {
+      classesMap = JSON.parse(uvString)
+    }
+    return classesMap
   }
 }

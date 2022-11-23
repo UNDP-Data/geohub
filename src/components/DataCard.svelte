@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { RasterTileData } from '$lib/RasterTileData'
   import type { StacItemFeature } from '$lib/types'
+  import { VectorTileData } from '$lib/VectorTileData'
   import type { GeoJSONFeature } from 'maplibre-gl'
   import Accordion from './controls/Accordion.svelte'
   import MiniMap from './MiniMap.svelte'
+  import { map, layerList } from '$stores'
 
   export let feature: StacItemFeature
   let isExpanded: boolean
@@ -21,15 +24,31 @@
         // STAC
       } else {
         // COG
+        const rasterTile = new RasterTileData($map, feature)
+        const data = await rasterTile.add()
+
+        $layerList = [
+          {
+            id: data.layer.id,
+            name: feature.properties.name,
+            info: data.metadata,
+          },
+          ...$layerList,
+        ]
       }
     } else {
       // vector tile
-      const type = tags?.find((tag) => ['martin', 'pgtileserv'].includes(tag.value))
-      if (type) {
-        // dynamic
-      } else {
-        // static
-      }
+      const vectorTile = new VectorTileData($map, feature)
+      const data = await vectorTile.add()
+
+      $layerList = [
+        {
+          id: data.layer.id,
+          name: feature.properties.name,
+          info: data.metadata,
+        },
+        ...$layerList,
+      ]
     }
   }
 </script>
@@ -56,9 +75,9 @@
             {/if}
           </p>
         {:else}
-          <p>{feature.properties.description}</p>
-          <p>Source: {feature.properties.source}</p>
-          <p>Updated at: {feature.properties.updatedat}</p>
+          <p><b>Description: </b>{feature.properties.description}</p>
+          <p><b>Source: </b> {feature.properties.source}</p>
+          <p><b>Updated at: </b> {feature.properties.updatedat}</p>
         {/if}
       </div>
 
@@ -94,6 +113,7 @@
   .card-container {
     display: flex;
     flex-direction: column;
+    margin-bottom: 0.5rem;
 
     .description {
       padding-bottom: 0.5rem;

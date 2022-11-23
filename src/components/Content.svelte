@@ -11,11 +11,11 @@
 
   export let drawerOpen = false
 
-  let activeTab = TabNames.BUCKETS
+  let activeTab = TabNames.DATA
   let tabs = [
-    { label: TabNames.BUCKETS },
+    // { label: TabNames.BUCKETS },
     { label: TabNames.DATA },
-    { label: TabNames.TAGS },
+    // { label: TabNames.TAGS },
     { label: TabNames.LAYERS },
   ]
 </script>
@@ -32,15 +32,15 @@
             bind:tabs />
         </div>
         <div class="container p-0 m-0">
-          <div hidden={activeTab !== TabNames.BUCKETS}>
+          <!-- <div hidden={activeTab !== TabNames.BUCKETS}>
             <BucketView />
-          </div>
+          </div> -->
           <div hidden={activeTab !== TabNames.DATA}>
             <DataView />
           </div>
-          <div hidden={activeTab !== TabNames.TAGS}>
+          <!-- <div hidden={activeTab !== TabNames.TAGS}>
             <TagsView />
-          </div>
+          </div> -->
           <div hidden={activeTab !== TabNames.LAYERS}>
             <LayerList />
           </div>
