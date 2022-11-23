@@ -31,15 +31,6 @@
               {feature.properties.description.substring(0, descriptionLength)}...
             {/if}
           </p>
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a
-            class="button button-primary button-without-arrow"
-            role="button"
-            on:click={() => {
-              isFullDescription = true
-            }}>
-            Read more...
-          </a>
         {:else}
           <p>{feature.properties.description}</p>
           <p>Source: {feature.properties.source}</p>
@@ -47,12 +38,27 @@
         {/if}
       </div>
 
-      <!-- svelte-ignore a11y-missing-attribute -->
-      <a
-        class="button button-primary button-without-arrow"
-        role="button">
-        Add layer
-      </a>
+      <div class="buttons">
+        {#if !isFullDescription}
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a
+            class="button button-primary button-without-arrow"
+            style="width: 49%"
+            role="button"
+            on:click={() => {
+              isFullDescription = true
+            }}>
+            Read more...
+          </a>
+        {/if}
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          class="button button-primary button-without-arrow"
+          style="width: {`${isFullDescription ? '100%' : '49%'}`}"
+          role="button">
+          Add layer
+        </a>
+      </div>
     </div>
   </Accordion>
 {/if}
