@@ -29,6 +29,11 @@
   @use '../../styles/undp-design/base-minimal.min.css';
   @use '../../styles/undp-design/accordion.min.css';
 
+  .accordion {
+    padding: 5px;
+    padding-right: 10px;
+  }
+
   .accordion-header {
     padding-left: 0.5rem;
     padding-right: 1.2rem;

@@ -5,6 +5,7 @@
   import DataCard from './DataCard.svelte'
   import { indicatorProgress } from '$stores'
   import TextFilter from './controls/TextFilter.svelte'
+  import { indexOf } from 'lodash'
 
   let selectedCategories: DataCategory[] = []
 
@@ -13,6 +14,16 @@
       name: 'SDG',
       icon: '/sdgs/SDG Wheel_WEB.png',
       url: '/tags?key=sdg_goal',
+    },
+    {
+      name: 'STAC',
+      icon: '/stac.png',
+      url: '/datasets?type=stac',
+    },
+    {
+      name: 'pg_tileserv',
+      icon: 'https://access.crunchydata.com/documentation/pg_tileserv/latest/crunchy-spatial-logo.png',
+      url: '/datasets?type=pgtileserv',
     },
   ]
 
@@ -24,12 +35,20 @@
     try {
       $indicatorProgress = true
 
-      selectedCategories = [category]
+      selectedCategories = [
+        {
+          name: 'Home',
+          icon: '',
+          url: '',
+        },
+      ]
 
       const res = await fetch(category.url)
       const json = await res.json()
       const values: string[] = json[Object.keys(json)[0]]
       if (category.name === 'SDG') {
+        selectedCategories = [...selectedCategories, category]
+
         const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
         subCategories = num_values.map((num) => {
           return {
@@ -38,6 +57,8 @@
             url: `/datasets?sdg_goal=${num}`,
           }
         })
+      } else {
+        await handleSelectSubcategory(category)
       }
     } finally {
       $indicatorProgress = false
@@ -128,6 +149,7 @@
               <a
                 on:click={() => {
                   selectedCategories = []
+                  subCategories = []
                   DataItemFeatureCollection = undefined
                 }}>{category.name}</a>
             </li>
@@ -136,7 +158,17 @@
             <li class="is-active"><a>{category.name}</a></li>
           {:else}
             <!-- svelte-ignore a11y-missing-attribute -->
-            <li><a>{category.name}</a></li>
+            <li>
+              <a
+                on:click={() => {
+                  let last = selectedCategories[selectedCategories.length - 1]
+                  while (last.name !== category.name) {
+                    selectedCategories.pop()
+                    last = selectedCategories[selectedCategories.length - 1]
+                  }
+                  DataItemFeatureCollection = undefined
+                }}>{category.name}</a>
+            </li>
           {/if}
         {/each}
       </ul>
