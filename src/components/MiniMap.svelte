@@ -20,6 +20,7 @@
     }
   }
   const loadMiniMap = async () => {
+    if (!mapContainer) return
     map = new Map({
       container: mapContainer,
       style: styles[0].uri,
