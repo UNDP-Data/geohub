@@ -1,8 +1,29 @@
 <script lang="ts">
-  import { Map, NavigationControl } from 'maplibre-gl'
-  import { DEFAULT_COLORMAP, styles } from '$lib/constants'
+  import {
+    LngLatBounds,
+    Map,
+    NavigationControl,
+    type FillLayerSpecification,
+    type LineLayerSpecification,
+    type SymbolLayerSpecification,
+    type VectorSourceSpecification,
+  } from 'maplibre-gl'
+  import {
+    DEFAULT_COLORMAP,
+    DEFAULT_FILL_COLOR,
+    DEFAULT_FILL_OUTLINE_COLOR,
+    DEFAULT_LINE_COLOR,
+    DEFAULT_LINE_WIDTH,
+    styles,
+  } from '$lib/constants'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import type { RasterTileMetadata, StacCollection, StacItemFeature, StacItemFeatureCollection } from '$lib/types'
+  import type {
+    RasterTileMetadata,
+    StacCollection,
+    StacItemFeature,
+    StacItemFeatureCollection,
+    VectorTileMetadata,
+  } from '$lib/types'
   import { getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
 
   export let feature: StacItemFeature
@@ -125,8 +146,116 @@
   }
 
   const addVectorLayer = async (url: string) => {
-    // TODO: implement for vector tile source
-    console.log(url)
+    const vectorInfo = await getVectorInfo(url)
+
+    const tileSourceId = feature.properties.id
+    const selectedLayerId = vectorInfo.metadata.json.vector_layers[0].id
+
+    let layerSource: VectorSourceSpecification
+    if (vectorInfo.type) {
+      layerSource = {
+        type: 'vector',
+        url: vectorInfo.url.replace('metadata.json', 'tile.json'),
+      }
+    } else {
+      layerSource = {
+        type: 'vector',
+        tiles: [url],
+        minzoom: vectorInfo.metadata.minzoom | 0,
+        maxzoom: vectorInfo.metadata.maxzoom | 24,
+      }
+    }
+    map.addSource(tileSourceId, layerSource)
+
+    const layerId = `${selectedLayerId}`
+    let layerDefinition: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
+
+    const geomType = vectorInfo.metadata.json.tilestats.layers[0].geometry
+    switch (geomType.toLocaleLowerCase()) {
+      case 'point':
+      case 'multipoint':
+        layerDefinition = {
+          id: layerId,
+          type: 'symbol',
+          source: tileSourceId,
+          'source-layer': selectedLayerId,
+          layout: {
+            visibility: 'visible',
+            'icon-image': 'circle',
+            'icon-size': 1,
+          },
+        }
+        break
+      case 'linestring':
+      case 'multilinestring':
+        layerDefinition = {
+          id: layerId,
+          type: 'line',
+          source: tileSourceId,
+          'source-layer': selectedLayerId,
+          layout: {
+            visibility: 'visible',
+            'line-cap': 'round',
+            'line-join': 'round',
+          },
+          paint: {
+            'line-color': DEFAULT_LINE_COLOR,
+            'line-width': DEFAULT_LINE_WIDTH,
+          },
+        }
+        break
+      case 'polygon':
+      case 'multipolygon':
+        layerDefinition = {
+          id: layerId,
+          type: 'fill',
+          source: tileSourceId,
+          'source-layer': selectedLayerId,
+          layout: {
+            visibility: 'visible',
+          },
+          paint: {
+            'fill-color': DEFAULT_FILL_COLOR,
+            'fill-outline-color': DEFAULT_FILL_OUTLINE_COLOR,
+            'fill-opacity': 0.6,
+          },
+        }
+        break
+      default:
+        return
+    }
+    map.addLayer(layerDefinition)
+    const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))
+    map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))
+  }
+
+  const getVectorInfo = async (url: string) => {
+    const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+      { key: string; value: string },
+    ]
+    const type = tags?.find((tag) => tag.key === 'type')
+    let metadataUrl: string
+    if (type && ['martin', 'pgtileserv'].includes(type.value)) {
+      // dynamic
+      if (type.value === 'pgtileserv') {
+        const layertype = tags?.find((tag) => tag.key === 'layertype')
+        metadataUrl = `/${type.value}/${layertype.value}/${feature.properties.name}/metadata.json`
+      } else {
+        metadataUrl = `/${type.value}/${feature.properties.name}/metadata.json`
+      }
+    } else {
+      // static
+      const layerURL = new URL(url.replace('/{z}/{x}/{y}', '/0/0/0'))
+      const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
+      metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
+    }
+    const res = await fetch(metadataUrl)
+    const data: VectorTileMetadata = await res.json()
+    return {
+      metadata: data,
+      type: type,
+      url: metadataUrl,
+    }
   }
 </script>
 

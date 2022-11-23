@@ -22,8 +22,13 @@
     },
     {
       name: 'pg_tileserv',
-      icon: 'https://access.crunchydata.com/documentation/pg_tileserv/latest/crunchy-spatial-logo.png',
+      icon: '/crunchy-spatial-logo.png',
       url: '/datasets?type=pgtileserv',
+    },
+    {
+      name: 'martin',
+      icon: '/maplibre.png',
+      url: '/datasets?type=martin',
     },
   ]
 
