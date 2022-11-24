@@ -1,5 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import Fa from 'svelte-fa'
+  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
+  import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation'
+
   import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
@@ -9,6 +13,7 @@
 
   let containerDivElement: HTMLDivElement
   let selectedCategories: DataCategory[] = []
+  const LIMIT = 25
 
   let categories: DataCategory[] = [
     {
@@ -89,7 +94,9 @@
       }
 
       if (category.url.startsWith('/datasets')) {
-        const res = await fetch(category.url)
+        const apiUrl = new URL(`${$page.url.origin}${category.url}`)
+        apiUrl.searchParams.set('limit', LIMIT.toString())
+        const res = await fetch(apiUrl.toString())
         const json = await res.json()
         DataItemFeatureCollection = json
       }
@@ -134,6 +141,7 @@
       } else {
         apiUrl.searchParams.set('query', query.trim())
       }
+      apiUrl.searchParams.set('limit', LIMIT.toString())
       const res = await fetch(apiUrl.toString())
       if (!res.ok) return
       const json: StacItemFeatureCollection = await res.json()
@@ -220,8 +228,27 @@
     {#each DataItemFeatureCollection.features as feature}
       <DataCard {feature} />
     {/each}
+    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+      <div class="notification is-info is-light message m-3">
+        <div class="icon">
+          <Fa
+            icon={faCircleInfo}
+            size="lg"
+            primaryColor="dodgerblue" />
+        </div>
+        <div class="text">All data loaded</div>
+      </div>
+    {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <div class="notification is-warning m-2">No data found</div>
+    <div class="notification is-warning is-light message m-3">
+      <div class="icon">
+        <Fa
+          icon={faTriangleExclamation}
+          size="lg"
+          primaryColor="#ffcc00" />
+      </div>
+      <div class="text">No data found</div>
+    </div>
   {:else}
     <div
       class={`${
@@ -256,7 +283,7 @@
 
   .data-view-container {
     height: calc(100vh - 188px);
-    overflow-y: auto;
+    overflow-y: scroll;
 
     @media (max-width: 89.9375em) {
       height: calc(100vh - 158px);
@@ -275,6 +302,23 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       grid-gap: 5px;
+    }
+
+    .message {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      padding: 10px;
+
+      @media (prefers-color-scheme: dark) {
+        background: #323234;
+        border-color: #30363d;
+        color: white;
+      }
+
+      .text {
+        padding-left: 15px;
+      }
     }
   }
 </style>
