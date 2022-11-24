@@ -9,6 +9,8 @@ export class RasterTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
+  public metadata: RasterTileMetadata
+
   constructor(map: Map, feature: StacItemFeature) {
     this.map = map
     this.feature = feature
@@ -19,7 +21,7 @@ export class RasterTileData {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
     const data: RasterTileMetadata = await res.json()
-
+    this.metadata = data
     if (
       data &&
       data.band_metadata &&
@@ -74,14 +76,14 @@ export class RasterTileData {
       colormap_name: DEFAULT_COLORMAP,
     }
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
-    // const tilejson = await getTileJson(tilejsonUrl)
+    const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 
     const source: RasterSourceSpecification = {
       type: 'raster',
       tiles: [tileUrl],
       tileSize: 256,
       minzoom: 0,
-      maxzoom: rasterInfo.maxzoom | 22,
+      maxzoom: maxzoom ?? 22,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       bounds: rasterInfo['bounds'],
@@ -101,8 +103,8 @@ export class RasterTileData {
       id: layerId,
       type: 'raster',
       source: sourceId,
-      minzoom: 0,
-      maxzoom: rasterInfo.maxzoom | 22,
+      minzoom: source.minzoom,
+      maxzoom: source.maxzoom,
       layout: {
         visibility: 'visible',
       },
