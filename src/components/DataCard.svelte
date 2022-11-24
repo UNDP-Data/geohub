@@ -206,16 +206,16 @@
               {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
                 <p><b>Maximum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MAXIMUM}</p>
               {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MEAN}
                 <p><b>Mean value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEAN}</p>
               {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MEDIAN}
                 <p><b>Median value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEDIAN}</p>
               {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_STDDEV}
                 <p><b>STDDev value: </b> {metadata['band_metadata'][0][1].STATISTICS_STDDEV}</p>
               {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_VALID_PERCENT}
                 <p><b>Valid percent: </b> {metadata['band_metadata'][0][1].STATISTICS_VALID_PERCENT}</p>
               {/if}
             {/if}
