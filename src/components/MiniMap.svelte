@@ -13,6 +13,7 @@
   let mapContainer: HTMLDivElement
   let map: Map
   let previewImageUrl: string
+  let isLoading = false
 
   $: if (isLoadMap === true) {
     if (!map) {
@@ -21,6 +22,7 @@
   }
   const loadMiniMap = async () => {
     if (!mapContainer) return
+    isLoading = true
     map = new Map({
       container: mapContainer,
       style: styles[0].uri,
@@ -38,26 +40,30 @@
 
     // console.log(feature)
     map.on('load', async () => {
-      const is_raster: boolean = feature.properties.is_raster as unknown as boolean
-      const url: string = feature.properties.url
+      try {
+        const is_raster: boolean = feature.properties.is_raster as unknown as boolean
+        const url: string = feature.properties.url
 
-      if (is_raster) {
-        const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
-          { key: string; value: string },
-        ]
-        const type = tags?.find((tag) => tag.key === 'stac')
-        if (type) {
-          previewImageUrl = await addStacPreview(url)
-          return
+        if (is_raster) {
+          const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+            { key: string; value: string },
+          ]
+          const type = tags?.find((tag) => tag.key === 'stac')
+          if (type) {
+            previewImageUrl = await addStacPreview(url)
+            return
+          }
         }
-      }
 
-      if (is_raster === true) {
-        const rasterTile = new RasterTileData(map, feature)
-        await rasterTile.add()
-      } else {
-        const vectorTile = new VectorTileData(map, feature)
-        await vectorTile.add()
+        if (is_raster === true) {
+          const rasterTile = new RasterTileData(map, feature)
+          await rasterTile.add()
+        } else {
+          const vectorTile = new VectorTileData(map, feature)
+          await vectorTile.add()
+        }
+      } finally {
+        isLoading = false
       }
     })
   }
@@ -76,22 +82,48 @@
   }
 </script>
 
-{#if !previewImageUrl}
-  <div
-    class="map"
-    style="width:{width}; height:{height}"
-    bind:this={mapContainer} />
-{:else}
-  <!-- svelte-ignore a11y-missing-attribute -->
-  <img
-    src={previewImageUrl}
-    style="width:{width}" />
-{/if}
+<div class="map-container">
+  {#if isLoading}
+    <div
+      class="loader"
+      aria-busy="true"
+      aria-live="polite" />
+  {/if}
+
+  {#if !previewImageUrl}
+    <div
+      class="map"
+      style="width:{width}; height:{height}"
+      bind:this={mapContainer} />
+  {:else}
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <img
+      src={previewImageUrl}
+      style="width:{width}" />
+  {/if}
+</div>
 
 <style lang="scss">
-  .map {
-    padding: 0;
-    margin: 0;
-    border: 1px solid gray;
+  @use '../styles/undp-design/base-minimal.min.css';
+  @use '../styles/undp-design/loader.min.css';
+
+  .map-container {
+    position: relative;
+
+    .loader {
+      position: absolute;
+      z-index: 10;
+      top: 25%;
+      left: 35%;
+      transform: translate(-25%, -35%);
+      -webkit-transform: translate(-25%, -35%);
+      -ms-transform: translate(-25%, -35%);
+    }
+
+    .map {
+      padding: 0;
+      margin: 0;
+      border: 1px solid gray;
+    }
   }
 </style>

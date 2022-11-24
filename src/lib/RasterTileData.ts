@@ -80,7 +80,7 @@ export class RasterTileData {
       type: 'raster',
       tiles: [tileUrl],
       tileSize: 256,
-      minzoom: rasterInfo.minzoom | 0,
+      minzoom: 0,
       maxzoom: rasterInfo.maxzoom | 22,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -101,6 +101,8 @@ export class RasterTileData {
       id: layerId,
       type: 'raster',
       source: sourceId,
+      minzoom: 0,
+      maxzoom: rasterInfo.maxzoom | 22,
       layout: {
         visibility: 'visible',
       },

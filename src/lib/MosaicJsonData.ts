@@ -137,7 +137,7 @@ export class MosaicJsonData {
       type: 'raster',
       // convert http to https because titiler's /mosaicjson/tilejson.json does not return https protocol currently
       tiles: tilejson.tiles,
-      minzoom: tilejson.minzoom | 0,
+      minzoom: 0,
       maxzoom: tilejson.maxzoom | 22,
       bounds: tilejson.bounds,
       attribution:
@@ -157,7 +157,7 @@ export class MosaicJsonData {
       id: layerId,
       type: 'raster',
       source: sourceId,
-      minzoom: source.minzoom,
+      minzoom: 0,
       maxzoom: source.maxzoom,
       layout: {
         visibility: 'visible',
