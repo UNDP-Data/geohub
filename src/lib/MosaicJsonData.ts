@@ -10,6 +10,8 @@ export class MosaicJsonData {
   private map: Map
   private url: string
   private assetName: string
+  public metadata: RasterTileMetadata
+
   constructor(map: Map, feature: StacItemFeature, assetUrl: string, assetName: string) {
     this.map = map
     this.feature = feature
@@ -40,12 +42,14 @@ export class MosaicJsonData {
         data.active_band_no = Object.keys(layerStats)[0]
       }
       data.isMosaicJson = true
+      this.metadata = data
       return data
     } else {
       const data: RasterTileMetadata = {
         bounds: tilejson.bounds,
       }
       data.isMosaicJson = true
+      this.metadata = data
       return data
     }
   }
@@ -133,12 +137,14 @@ export class MosaicJsonData {
       }
     })
 
+    const maxzoom = Number(tilejson.maxzoom && tilejson.maxzoom <= 24 ? tilejson.maxzoom : 24)
+
     const source: RasterSourceSpecification = {
       type: 'raster',
       // convert http to https because titiler's /mosaicjson/tilejson.json does not return https protocol currently
       tiles: tilejson.tiles,
       minzoom: 0,
-      maxzoom: tilejson.maxzoom | 22,
+      maxzoom: maxzoom ?? 22,
       bounds: tilejson.bounds,
       attribution:
         'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
@@ -157,7 +163,7 @@ export class MosaicJsonData {
       id: layerId,
       type: 'raster',
       source: sourceId,
-      minzoom: 0,
+      minzoom: source.minzoom,
       maxzoom: source.maxzoom,
       layout: {
         visibility: 'visible',

@@ -1,7 +1,13 @@
 <script lang="ts">
   import { Map, NavigationControl } from 'maplibre-gl'
   import { styles } from '$lib/constants'
-  import type { StacCollection, StacItemFeature, StacItemFeatureCollection } from '$lib/types'
+  import type {
+    RasterTileMetadata,
+    StacCollection,
+    StacItemFeature,
+    StacItemFeatureCollection,
+    VectorTileMetadata,
+  } from '$lib/types'
   import { RasterTileData } from '$lib/RasterTileData'
   import { VectorTileData } from '$lib/VectorTileData'
 
@@ -14,6 +20,8 @@
   let map: Map
   let previewImageUrl: string
   let isLoading = false
+
+  export let metadata: RasterTileMetadata | VectorTileMetadata
 
   $: if (isLoadMap === true) {
     if (!map) {
@@ -58,9 +66,11 @@
         if (is_raster === true) {
           const rasterTile = new RasterTileData(map, feature)
           await rasterTile.add()
+          metadata = rasterTile.metadata
         } else {
           const vectorTile = new VectorTileData(map, feature)
           await vectorTile.add()
+          metadata = vectorTile.metadata
         }
       } finally {
         isLoading = false

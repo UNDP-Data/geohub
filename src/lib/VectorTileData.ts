@@ -14,6 +14,8 @@ export class VectorTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
+  public metadata: VectorTileMetadata
+
   constructor(map: Map, feature: StacItemFeature) {
     this.map = map
     this.feature = feature
@@ -42,6 +44,7 @@ export class VectorTileData {
     }
     const res = await fetch(metadataUrl)
     const data: VectorTileMetadata = await res.json()
+    this.metadata = data
     return {
       metadata: data,
       type: type,
@@ -55,6 +58,10 @@ export class VectorTileData {
     const tileSourceId = this.feature.properties.id
     const selectedLayerId = vectorInfo.metadata.json.vector_layers[0].id
 
+    const maxzoom = Number(
+      vectorInfo.metadata.maxzoom && vectorInfo.metadata.maxzoom <= 24 ? vectorInfo.metadata.maxzoom : 24,
+    )
+
     let source: VectorSourceSpecification
     if (vectorInfo.type) {
       source = {
@@ -66,7 +73,7 @@ export class VectorTileData {
         type: 'vector',
         tiles: [this.url],
         minzoom: 0,
-        maxzoom: vectorInfo.metadata.maxzoom | 24,
+        maxzoom: maxzoom,
       }
     }
     this.map.addSource(tileSourceId, source)
@@ -129,9 +136,7 @@ export class VectorTileData {
         return
     }
     layer.minzoom = 0
-    layer.maxzoom = Number(
-      vectorInfo.metadata.maxzoom && vectorInfo.metadata.maxzoom <= 24 ? vectorInfo.metadata.maxzoom : 24,
-    )
+    layer.maxzoom = maxzoom
 
     this.map.addLayer(layer)
     const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))

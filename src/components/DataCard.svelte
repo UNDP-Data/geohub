@@ -1,6 +1,13 @@
 <script lang="ts">
   import { RasterTileData } from '$lib/RasterTileData'
-  import type { BannerMessage, StacAsset, StacItemFeature, StacItemFeatureCollection } from '$lib/types'
+  import type {
+    BannerMessage,
+    RasterTileMetadata,
+    StacAsset,
+    StacItemFeature,
+    StacItemFeatureCollection,
+    VectorTileMetadata,
+  } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
   import type { GeoJSONFeature } from 'maplibre-gl'
   import Accordion from './controls/Accordion.svelte'
@@ -10,6 +17,7 @@
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
   import { assets } from '$app/paths'
+  import { hasOwnProperty } from 'vega'
 
   interface AssetOptions {
     url: string
@@ -25,6 +33,8 @@
   let isFullDescription = false
 
   let assetList: AssetOptions[] = []
+
+  let metadata: RasterTileMetadata | VectorTileMetadata
 
   const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
   const stacType = tags?.find((tag) => tag.key === 'stac')
@@ -155,7 +165,8 @@
           bind:feature
           width={'100%'}
           height={'150px'}
-          bind:isLoadMap={isExpanded} />
+          bind:isLoadMap={isExpanded}
+          bind:metadata />
       </div>
       <div class="description">
         {#if !isFullDescription}
@@ -177,7 +188,37 @@
             <i />
           </a>
         {:else}
-          <p><b>Description: </b>{feature.properties.description}</p>
+          {#if feature.properties.description}
+            <p><b>Description: </b>{feature.properties.description}</p>
+          {/if}
+          {#if metadata}
+            {#if metadata['band_metadata']}
+              {#if metadata['band_metadata'][0][1]?.RepresentationType}
+                <p><b>Representation Type: </b> {metadata['band_metadata'][0][1].RepresentationType}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.Unit}
+                <p><b>unit: </b> {metadata['band_metadata'][0][1].Unit}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
+                <p><b>Minimum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MINIMUM}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+                <p><b>Maximum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MAXIMUM}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+                <p><b>Mean value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEAN}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+                <p><b>Median value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEDIAN}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+                <p><b>STDDev value: </b> {metadata['band_metadata'][0][1].STATISTICS_STDDEV}</p>
+              {/if}
+              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
+                <p><b>Valid percent: </b> {metadata['band_metadata'][0][1].STATISTICS_VALID_PERCENT}</p>
+              {/if}
+            {/if}
+          {/if}
           <p><b>Source: </b> {feature.properties.source}</p>
           <p><b>Updated at: </b> {feature.properties.updatedat}</p>
         {/if}
