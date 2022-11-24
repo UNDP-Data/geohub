@@ -23,7 +23,32 @@ export interface StacCollection {
       interval: [[string, string | null]]
     }
   }
-  summaries: { [key: string]: { minimum: string | number; maximum: string | number } | JSON }
+  summaries: {
+    [key: string]:
+      | { minimum: string | number; maximum: string | number }
+      | {
+          name: string
+          description: string
+          gsd?: number
+          common_name?: string
+          center_wavelength?: number
+          full_width_half_max?: number
+        }
+      | JSON
+  }
   links: StacLink[]
   assets?: { [key: string]: StacAsset }
+  item_assets?: {
+    [key: string]: {
+      title: string
+      type: string
+      roles: string[]
+      gsd: number
+    }
+  }
+  'sci:doi'?: string
+  stac_extensions?: string[]
+  'msft:container'?: string
+  'msft:storage_account'?: string
+  'msft:short_description'?: string
 }
