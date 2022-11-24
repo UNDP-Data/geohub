@@ -1,36 +1,22 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
-  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
   import { map, layerList } from '$stores'
   import { LayerTypes, TabNames } from '$lib/constants'
   import { getLayerStyle } from '$lib/helper'
+  import Notification from './controls/Notification.svelte'
 </script>
 
 {#if $layerList?.length === 0}
-  <ul class="no-data-layers">
-    <li class="message">
-      <div class="icon">
-        <Fa
-          icon={faCircleInfo}
-          size="lg"
-          primaryColor="dodgerblue" />
-      </div>
-      <div class="text">
-        No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.
-      </div>
-    </li>
-  </ul>
+  <Notification type="">
+    No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.
+  </Notification>
 {/if}
 
 <div class="layer-list">
   {#each $layerList as layer (layer.id)}
     {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
       <RasterLayer {layer} />
-      <!--     FixMe: Component commented out to make use of the RasterLayer component-->
-      <!--    <RasterLayer {layer} />-->
     {:else}
       <VectorLayer {layer} />
     {/if}
@@ -40,31 +26,6 @@
 <style lang="scss">
   :global(.smui-paper__content) {
     padding: 0px !important;
-  }
-
-  ul {
-    margin: 0;
-    list-style: none;
-    padding-left: 1.2rem;
-    user-select: none;
-    padding-top: 5px;
-
-    li {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      padding: 10px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #323234;
-        border-color: #30363d;
-        color: white;
-      }
-
-      .text {
-        padding-left: 15px;
-      }
-    }
   }
 
   $height: calc(100vh - 120px);

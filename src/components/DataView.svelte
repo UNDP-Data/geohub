@@ -1,15 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import Fa from 'svelte-fa'
-  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-  import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation'
-
   import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
   import { indicatorProgress } from '$stores'
   import TextFilter from './controls/TextFilter.svelte'
   import { indexOf } from 'lodash'
+  import Notification from './controls/Notification.svelte'
 
   let containerDivElement: HTMLDivElement
   let selectedCategories: DataCategory[] = []
@@ -229,26 +226,10 @@
       <DataCard {feature} />
     {/each}
     {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <div class="notification is-info is-light message m-3">
-        <div class="icon">
-          <Fa
-            icon={faCircleInfo}
-            size="lg"
-            primaryColor="dodgerblue" />
-        </div>
-        <div class="text">All data loaded</div>
-      </div>
+      <Notification type="info">All data loaded</Notification>
     {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <div class="notification is-warning is-light message m-3">
-      <div class="icon">
-        <Fa
-          icon={faTriangleExclamation}
-          size="lg"
-          primaryColor="#ffcc00" />
-      </div>
-      <div class="text">No data found</div>
-    </div>
+    <Notification type="warning">No data found</Notification>
   {:else}
     <div
       class={`${
@@ -302,23 +283,6 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       grid-gap: 5px;
-    }
-
-    .message {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      padding: 10px;
-
-      @media (prefers-color-scheme: dark) {
-        background: #323234;
-        border-color: #30363d;
-        color: white;
-      }
-
-      .text {
-        padding-left: 15px;
-      }
     }
   }
 </style>
