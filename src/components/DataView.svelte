@@ -46,13 +46,15 @@
     try {
       $indicatorProgress = true
 
-      selectedCategories = [
-        {
-          name: 'Home',
-          icon: '',
-          url: '',
-        },
-      ]
+      if (selectedCategories.length === 0) {
+        selectedCategories = [
+          {
+            name: 'Home',
+            icon: '',
+            url: '',
+          },
+        ]
+      }
 
       const res = await fetch(category.url)
       const json = await res.json()
@@ -79,7 +81,12 @@
   const handleSelectSubcategory = async (category: DataCategory) => {
     try {
       $indicatorProgress = true
-      selectedCategories = [...selectedCategories, category]
+      if (selectedCategories) {
+        const lastCategory = selectedCategories[selectedCategories.length - 1]
+        if (lastCategory?.name !== category.name) {
+          selectedCategories = [...selectedCategories, category]
+        }
+      }
 
       if (category.url.startsWith('/datasets')) {
         const res = await fetch(category.url)
@@ -136,7 +143,15 @@
     }
   }
 
-  const clearFilter = () => {
+  const clearFilter = async () => {
+    if (selectedCategories) {
+      const lastCategory = selectedCategories[selectedCategories.length - 1]
+      if (lastCategory?.url?.startsWith('/datasets')) {
+        await handleSelectSubcategory(lastCategory)
+        return
+      }
+    }
+
     DataItemFeatureCollection = undefined
     selectedCategories = []
   }

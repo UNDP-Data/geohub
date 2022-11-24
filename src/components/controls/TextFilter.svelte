@@ -6,6 +6,7 @@
 
   export let placeholder: string
   let queryText = ''
+  $: isQueryEmpty = !queryText || queryText?.length === 0
 
   const handleFilterInput = debounce((e) => {
     const inputString = (e.target as HTMLInputElement).value
@@ -16,6 +17,7 @@
   }, 500)
 
   const clearInput = () => {
+    if (isQueryEmpty === true) return
     queryText = ''
     dispatch('clear')
   }
@@ -34,11 +36,13 @@
       <i class="fas fa-search" />
     </span>
   </div>
-  <span
-    class="icon is-small clear-button"
-    on:click={clearInput}>
-    <i class="fas fa-xmark" />
-  </span>
+  {#if !isQueryEmpty}
+    <span
+      class="icon is-small clear-button"
+      on:click={clearInput}>
+      <i class="fas fa-xmark" />
+    </span>
+  {/if}
 </div>
 
 <style lang="scss">
