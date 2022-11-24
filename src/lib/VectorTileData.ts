@@ -65,7 +65,7 @@ export class VectorTileData {
       source = {
         type: 'vector',
         tiles: [this.url],
-        minzoom: vectorInfo.metadata.minzoom | 0,
+        minzoom: 0,
         maxzoom: vectorInfo.metadata.maxzoom | 24,
       }
     }
@@ -128,9 +128,7 @@ export class VectorTileData {
       default:
         return
     }
-    layer.minzoom = Number(
-      vectorInfo.metadata.minzoom && vectorInfo.metadata.minzoom >= 0 ? vectorInfo.metadata.minzoom : 0,
-    )
+    layer.minzoom = 0
     layer.maxzoom = Number(
       vectorInfo.metadata.maxzoom && vectorInfo.metadata.maxzoom <= 24 ? vectorInfo.metadata.maxzoom : 24,
     )
