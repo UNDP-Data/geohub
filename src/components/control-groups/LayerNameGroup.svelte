@@ -15,10 +15,11 @@
 
   const layerStyle = getLayerStyle($map, layer.id)
   if (layerStyle.type === 'raster') {
-    if (layer.tree?.isMosaicJSON) {
+    const rasterInfo = layer.info as RasterTileMetadata
+    if (rasterInfo?.isMosaicJson === true) {
       bandName = 'Mosaic'
     } else {
-      bandName = `B${info?.active_band_no}`
+      bandName = `B${rasterInfo?.active_band_no}`
     }
   }
 
@@ -62,13 +63,7 @@
       <div class="layer-name">
         <div>
           <span style="padding-left: 5px;">
-            {#if layer.tree?.isMosaicJSON}
-              {layer.tree.label}
-            {:else if layer.tree?.dynamicSourceType}
-              {clean(layer.tree.path.split('.').join(' '))}
-            {:else}
-              {clean(layer.name)}
-            {/if}
+            {clean(layer.name)}
           </span>
         </div>
       </div>

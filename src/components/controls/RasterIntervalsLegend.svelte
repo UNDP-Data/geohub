@@ -64,7 +64,8 @@
   let colorMapRows: IntervalLegendColorMapRow[] = []
 
   onMount(async () => {
-    if (!layerConfig.tree?.isMosaicJSON) {
+    const rasterInfo = info as RasterTileMetadata
+    if (!rasterInfo?.isMosaicJson) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`

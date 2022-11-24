@@ -7,7 +7,7 @@
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
 
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map, layerList } from '$stores'
   import { getLayerStyle } from '$lib/helper'
 
@@ -30,7 +30,8 @@
     untargetedLayers = []
     if ($layerList.length > 0) {
       $layerList.forEach((layer) => {
-        if (layer.tree?.isStac || layer.tree?.isMosaicJSON) {
+        const rasterInfo = layer.info as RasterTileMetadata
+        if (rasterInfo?.isMosaicJson) {
           untargetedLayers.push(layer)
         }
       })

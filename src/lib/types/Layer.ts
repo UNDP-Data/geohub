@@ -8,5 +8,4 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   children?: Layer[]
   parent?: Layer
-  tree?: TreeNode
 }

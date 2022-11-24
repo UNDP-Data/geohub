@@ -1,17 +1,22 @@
 <script lang="ts">
   import { RasterTileData } from '$lib/RasterTileData'
-  import type { StacAsset, StacItemFeature, StacItemFeatureCollection } from '$lib/types'
+  import type { BannerMessage, StacAsset, StacItemFeature, StacItemFeatureCollection } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
   import type { GeoJSONFeature } from 'maplibre-gl'
   import Accordion from './controls/Accordion.svelte'
   import MiniMap from './MiniMap.svelte'
-  import { map, layerList, indicatorProgress } from '$stores'
+  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { e } from 'mathjs'
+  import { MosaicJsonData } from '$lib/MosaicJsonData'
+  import { StatusTypes } from '$lib/constants'
+  import { assets } from '$app/paths'
 
-  interface AssetDefinition {
+  interface AssetOptions {
     url: string
     assetName: string
+    title: string
     asset: StacAsset
+    collectionId: string
   }
 
   export let feature: StacItemFeature
@@ -19,7 +24,7 @@
   let descriptionLength = 100
   let isFullDescription = false
 
-  let assetList: AssetDefinition[] = []
+  let assetList: AssetOptions[] = []
 
   const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
   const stacType = tags?.find((tag) => tag.key === 'stac')
@@ -72,10 +77,9 @@
 
   const getStacAssetList = async () => {
     if (!isExpanded) return
-
+    if (!stacType) return
     try {
       $indicatorProgress = true
-
       const LIMIT = 50
       const url: string = feature.properties.url
       const res = await fetch(`${url}?limit=1`)
@@ -84,13 +88,14 @@
       const rootUrl = fc.links.find((link) => link.rel === 'root').href
       const assets = f.assets
       const itemProperties = f.properties
+      const collectionId = f.collection
       Object.keys(assets).forEach((assetName) => {
         const asset = assets[assetName]
         if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
         // generate URL for search API except bbox parameter
         // bbox needs to be specified from frontend based on the current viewing.
         // this search URL does not work, it needs to be converted to POST version from query params specified by frontend.
-        let searchUrl = `${rootUrl}search?collections=${f.id}&sortby=${'datetime'}&limit=${LIMIT}`
+        let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${LIMIT}`
         if (itemProperties['eo:cloud_cover']) {
           searchUrl = `${searchUrl}&filter=${JSON.stringify({ op: '<=', args: [{ property: 'eo:cloud_cover' }, 5] })}`
         }
@@ -99,8 +104,10 @@
           ...assetList,
           {
             url: searchUrl,
-            assetName: asset.title ?? assetName,
+            assetName: assetName,
+            title: `${asset.title ?? assetName}`,
             asset: asset,
+            collectionId: collectionId,
           },
         ]
       })
@@ -109,8 +116,32 @@
     }
   }
 
-  const addStacMosaicLayer = async (url: string, asset: StacAsset) => {
-    console.log(url, asset)
+  const addStacMosaicLayer = async (asset: AssetOptions) => {
+    try {
+      $indicatorProgress = true
+      const mosaicjson = new MosaicJsonData($map, feature, asset.url, asset.assetName)
+      const data = await mosaicjson.add()
+
+      $layerList = [
+        {
+          id: data.layer.id,
+          name: `${asset.collectionId}-${asset.title}`,
+          info: data.metadata,
+        },
+        ...$layerList,
+      ]
+    } catch (err) {
+      const bannerErrorMessage: BannerMessage = {
+        type: StatusTypes.WARNING,
+        title: 'Whoops! Something went wrong.',
+        message: err.message,
+        error: err,
+      }
+      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      console.error(err)
+    } finally {
+      $indicatorProgress = false
+    }
   }
 </script>
 
@@ -165,18 +196,39 @@
         {/if}
       </div>
 
-      {#if stacType && assetList}
+      {#if stacType && stacType.key === 'stac' && assetList}
         <!--show asset list-->
         {#each assetList as asset}
-          <Accordion headerTitle={asset.assetName}>
+          <Accordion headerTitle={asset.title}>
             <div class="container pb-2">
+              <div class="description">
+                {#if asset.asset.description}
+                  <p><b>Description: </b>{asset.asset.description}</p>
+                {/if}
+                <p><b>Type: </b>{asset.asset.type}</p>
+                {#if asset.asset['raster:bands'] && asset.asset['raster:bands'].length > 0}
+                  {#if asset.asset['raster:bands'][0].name}
+                    <p><b>Band name: </b>{asset.asset['raster:bands'][0].name}</p>
+                  {/if}
+                  {#if asset.asset['raster:bands'][0].description}
+                    <p><b>Band description: </b>{asset.asset['raster:bands'][0].description}</p>
+                  {/if}
+                  {#if asset.asset['raster:bands'][0].sampling}
+                    <p><b>Sampling: </b>{asset.asset['raster:bands'][0].sampling}</p>
+                  {/if}
+                  {#if asset.asset['raster:bands'][0].spatial_resolution}
+                    <p><b>Spatial resolution: </b>{asset.asset['raster:bands'][0].spatial_resolution}</p>
+                  {/if}
+                {/if}
+              </div>
+
               <!-- svelte-ignore a11y-missing-attribute -->
               <a
                 class="button button-primary button-without-arrow"
                 role="button"
                 style="width:100%"
                 on:click={() => {
-                  addStacMosaicLayer(asset.url, asset.asset)
+                  addStacMosaicLayer(asset)
                 }}>
                 Add layer
               </a>

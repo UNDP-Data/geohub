@@ -133,7 +133,6 @@
         id: layerId,
         name: layerName,
         info: layerInfo,
-        tree: tree,
       },
       ...$layerList,
     ]
@@ -261,7 +260,6 @@
         id: layerId,
         name: layerName,
         info: layerInfo,
-        tree: tree,
       },
       ...$layerList,
     ]

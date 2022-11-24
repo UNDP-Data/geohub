@@ -67,7 +67,7 @@
   <Tooltip
     showDelay={300}
     hideDelay={100}
-    yPos="above">Delete layer</Tooltip>
+    xPos="start">Delete layer</Tooltip>
 </Wrapper>
 
 {#if confirmDeleteLayerDialogVisible}

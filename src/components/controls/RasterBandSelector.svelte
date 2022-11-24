@@ -17,8 +17,9 @@
 
   $: selected, setActiveBand()
   const setActiveBand = () => {
-    if (layer.tree && layer.tree.isMosaicJSON) return
+    info = layer.info as RasterTileMetadata
     if (!info) return
+    if (info?.isMosaicJson) return
     if (info.active_band_no === selected) return
 
     const newLayer = cloneDeep(layer)
@@ -40,7 +41,7 @@
     deleteOldLayer(layer.id)
   }
 
-  if (layerStyle.type === LayerTypes.RASTER && !layer.tree && layer.tree.isMosaicJSON) {
+  if (layerStyle.type === LayerTypes.RASTER && !info?.isMosaicJson) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ;({ info } = layer)
