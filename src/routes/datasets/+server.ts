@@ -193,7 +193,7 @@ export const GET: RequestHandler = async ({ url }) => {
     const sasToken = generateAzureBlobSasToken()
     geojson.features.forEach((feature) => {
       const tags: [{ key: string; value: string }] = feature.properties.tags
-      const type = tags.find((tag) => tag.key === 'type')
+      const type = tags?.find((tag) => tag.key === 'type')
       if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
       feature.properties.url = `${feature.properties.url}${sasToken}`
     })
