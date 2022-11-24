@@ -1,19 +1,10 @@
 <script lang="ts">
   import { style } from 'svelte-body'
-
-  // Fixme: Start of new redesign components
   import Header from '$components/Header.svelte'
   import Content from '$components/Content.svelte'
-  //Fixme: End of new redesign components
-
   import Map from '$components/Map.svelte'
-  import type { PageData } from './$types'
-  import { bucketList } from '$stores'
 
   let drawerOpen = true
-
-  export let data: PageData
-  $bucketList = data.buckets
 </script>
 
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />

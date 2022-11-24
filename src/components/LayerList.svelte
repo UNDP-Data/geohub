@@ -19,7 +19,7 @@
           primaryColor="dodgerblue" />
       </div>
       <div class="text">
-        No layers have been selected. Please select a layer from the <strong>{TabNames.BUCKETS}</strong> tab.
+        No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.
       </div>
     </li>
   </ul>

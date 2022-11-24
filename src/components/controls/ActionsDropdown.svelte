@@ -142,7 +142,7 @@
         <Tooltip
           showDelay={500}
           hideDelay={500}
-          yPos="above">Zoom to layer</Tooltip>
+          xPos="start">Zoom to layer</Tooltip>
       </Wrapper>
     </div>
 
@@ -152,7 +152,7 @@
         <Tooltip
           showDelay={500}
           hideDelay={500}
-          yPos="above">Change raster band</Tooltip>
+          xPos="start">Change raster band</Tooltip>
       </Wrapper>
     </div>
 

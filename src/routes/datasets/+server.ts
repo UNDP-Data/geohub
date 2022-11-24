@@ -7,6 +7,10 @@ import { DATABASE_CONNECTION } from '$lib/variables/private'
 import type { StacLink } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
+import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
+import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
+
 /**
  * Datasets search API
  * Example
@@ -57,13 +61,31 @@ export const GET: RequestHandler = async ({ url }) => {
       // normalise query text for to_tsquery function
       query = query
         .toLowerCase()
-        .replace(/\r?and/g, '&') // convert 'and' to '&'
-        .replace(/\r?or/g, '|') // convert 'or' to '|'
+        .replace(/\r?\s+and\s+/g, ' & ') // convert 'and' to '&'
+        .replace(/\r?\s+or\s+/g, ' | ') // convert 'or' to '|'
       values.push(query)
     }
 
     const sql = {
       text: `
+      WITH datasetTags as (
+        SELECT
+        x.id,
+        array_to_json(array_agg(row_to_json((
+          SELECT p FROM (
+          SELECT
+            z.key,
+            z.value
+          ) AS p
+          )))) AS tags
+        FROM geohub.dataset x
+        LEFT JOIN geohub.dataset_tag y
+        ON x.id = y.dataset_id
+        INNER JOIN geohub.tag z
+        ON y.tag_id = z.id
+        GROUP BY
+          x.id
+      )
       SELECT row_to_json(featurecollection) AS geojson 
       FROM (
         SELECT
@@ -86,33 +108,12 @@ export const GET: RequestHandler = async ({ url }) => {
             x.license, 
             x.createdat, 
             x.updatedat,
-            dt_tags.tags
+            y.tags
           ) AS p
           )) AS properties
           FROM geohub.dataset x
-          LEFT JOIN geohub.dataset_tag y
-          ON x.id = y.dataset_id
-          LEFT JOIN geohub.tag z
-          ON y.tag_id = z.id
-          LEFT JOIN (
-            SELECT
-            x.id,
-            array_to_json(array_agg(row_to_json((
-              SELECT p FROM (
-              SELECT
-                z.key,
-                z.value
-              ) AS p
-              )))) AS tags
-          FROM geohub.dataset x
-          LEFT JOIN geohub.dataset_tag y
-          ON x.id = y.dataset_id
-          INNER JOIN geohub.tag z
-          ON y.tag_id = z.id
-          GROUP BY
-            x.id
-          ) as dt_tags
-          ON x.id = dt_tags.id
+          LEFT JOIN datasetTags y
+          ON x.id = y.id
         WHERE 
           NOT ST_IsEmpty(x.bounds)
           ${
@@ -122,7 +123,6 @@ export const GET: RequestHandler = async ({ url }) => {
           AND (
             to_tsvector(x.name) @@ to_tsquery($1)
            OR to_tsvector(x.description) @@ to_tsquery($1)
-           OR to_tsvector(z.value) @@ to_tsquery($1)
            )`
           }
           ${getStorageIdFilter(storage_id, values)}
@@ -134,7 +134,7 @@ export const GET: RequestHandler = async ({ url }) => {
               ? ''
               : `
           ts_rank_cd(to_tsvector(x.name),to_tsquery($1)) desc,
-          ts_rank_cd(to_tsvector(z.value),to_tsquery($1)) desc,`
+          ts_rank_cd(to_tsvector(x.description),to_tsquery($1)) desc,`
           }
           x.updatedat desc
         LIMIT ${limit}
@@ -165,12 +165,16 @@ export const GET: RequestHandler = async ({ url }) => {
         type: 'application/json',
         href: url.toString(),
       },
-      {
+    ]
+
+    if (geojson.features.length === limit) {
+      links.push({
         rel: 'next',
         type: 'application/json',
         href: nextUrl.toString(),
-      },
-    ]
+      })
+    }
+
     if (offset > 0) {
       const previoustUrl = new URL(url.toString())
       previoustUrl.searchParams.set('limit', limit.toString())
@@ -184,6 +188,15 @@ export const GET: RequestHandler = async ({ url }) => {
     }
 
     geojson.links = links
+
+    // add SAS token if it is Azure Blob source
+    const sasToken = generateAzureBlobSasToken()
+    geojson.features.forEach((feature) => {
+      const tags: [{ key: string; value: string }] = feature.properties.tags
+      const type = tags.find((tag) => tag.key === 'type')
+      if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
+      feature.properties.url = `${feature.properties.url}${sasToken}`
+    })
 
     return new Response(JSON.stringify(geojson))
   } catch (err) {
@@ -203,20 +216,22 @@ const getStorageIdFilter = (storage_id: string, values: string[]) => {
   return `AND x.storage_id=$${values.length} `
 }
 
-const getTagFilter = (filters: { key: string; value: string }[], values: string[]) => {
+const getTagFilter = (filters: { key?: string; value: string }[], values: string[]) => {
   if (filters.length === 0) return ''
   return `
     AND EXISTS(
-    SELECT a.id FROM geohub.tag as a WHERE a.id = y.tag_id AND (
+      SELECT a.id 
+      FROM geohub.tag as a 
+      INNER JOIN geohub.dataset_tag as b
+      ON a.id = b.tag_id
+      WHERE b.dataset_id = x.id AND (
     ${filters
       .map((filter) => {
         values.push(filter.key)
         const keyLength = values.length
         values.push(filter.value)
         const valueLength = values.length
-        return `
-    (a.key = $${keyLength} and lower(a.value) = $${valueLength})
-    `
+        return `(a.key = $${keyLength} and lower(a.value) = $${valueLength})`
       })
       .join('OR')}
     ))`
@@ -239,4 +254,25 @@ const getBBoxFilter = (bbox: number[], values: string[]) => {
     )
   )
   `
+}
+
+const generateAzureBlobSasToken = () => {
+  const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
+  // create storage container
+  const blobServiceClient = new BlobServiceClient(
+    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    sharedKeyCredential,
+  )
+
+  // generate account SAS token for vector tiles. This is needed because the
+  // blob level SAS tokens have the blob name encoded inside the SAS token and the
+  // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
+
+  const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
+    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
+    AccountSASPermissions.parse('r'),
+    'o',
+  )
+  const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
+  return ACCOUNT_SAS_TOKEN_URL.search
 }

@@ -13,7 +13,7 @@
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
   import {
     getActiveBandIndex,
@@ -54,7 +54,8 @@
   }
 
   onMount(async () => {
-    if (!layer.tree?.isMosaicJSON) {
+    const rasterInfo = layer.info as RasterTileMetadata
+    if (!rasterInfo?.isMosaicJson) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
       const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
@@ -118,7 +119,8 @@
   $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
     if (!colorMapName) return
-    if (layer.tree?.isMosaicJSON) {
+    const rasterInfo = layer.info as RasterTileMetadata
+    if (rasterInfo?.isMosaicJson) {
       const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
       const tiles = source.tiles
       if (!(tiles && tiles.length > 0)) return

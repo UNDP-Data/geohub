@@ -186,7 +186,6 @@
         id: layerId,
         name: layerName,
         info: tree.metadata,
-        tree: tree,
       },
       ...$layerList,
     ]

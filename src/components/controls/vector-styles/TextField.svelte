@@ -112,6 +112,7 @@
   }
 
   const setTextField = () => {
+    if (!style) return
     if (style.type !== LayerTypes.SYMBOL) return
 
     if (textFieldValue) {

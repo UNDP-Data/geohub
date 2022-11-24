@@ -19,6 +19,7 @@ export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
 export enum TabNames {
   ANALYZE = 'Analyze',
   BUCKETS = 'Buckets',
+  DATA = 'Data',
   LABEL = 'Label',
   LAYERS = 'Layers',
   LEGEND = 'Legend',

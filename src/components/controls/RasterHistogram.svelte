@@ -5,7 +5,7 @@
   import { fetchUrl, getLayerStyle } from '$lib/helper'
   import { map } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
 
   export let layer: Layer
 
@@ -17,7 +17,8 @@
   let data
 
   onMount(async () => {
-    if (!layer.tree?.isMosaicJSON) {
+    const rasterInfo = layer.info as RasterTileMetadata
+    if (!rasterInfo?.isMosaicJson) {
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       let layerStats
       layerStats = await fetchUrl(statsURL)
@@ -29,7 +30,7 @@
     const probability = counts.map((item) => item / sum)
     const interval = info.stats[band]['histogram'][1]
 
-    if (!layer.tree?.isMosaicJSON) {
+    if (!rasterInfo?.isMosaicJson) {
       for (let i = 0; i < interval.length - 1; i++) {
         interval[i] = (interval[i] + interval[i + 1]) * 0.5
       }

@@ -63,7 +63,7 @@
   <Tooltip
     showDelay={300}
     hideDelay={100}
-    yPos="above">{visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}</Tooltip>
+    xPos="start">{visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}</Tooltip>
 </Wrapper>
 
 <style lang="scss">
