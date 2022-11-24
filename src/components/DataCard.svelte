@@ -160,6 +160,7 @@
     headerTitle={feature.properties.name}
     bind:isExpanded>
     <div class="card-container px-1">
+      <p class="title is-5">{feature.properties.name}</p>
       <div class="map">
         <MiniMap
           bind:feature
