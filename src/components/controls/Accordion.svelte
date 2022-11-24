@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   export let headerTitle: string
   export let isExpanded = false
 </script>
@@ -8,20 +7,15 @@
   class="accordion"
   aria-label="accordion">
   <li>
-    <Wrapper>
-      <button
-        tabindex="0"
-        aria-expanded={isExpanded}
-        class={`accordion-button ${isExpanded ? 'accordion--active' : ''}`}
-        on:click={() => {
-          isExpanded = !isExpanded
-        }}>
-        <p class="accordion-header">{headerTitle}</p>
-      </button>
-      <Tooltip
-        xPos="start"
-        yPos="above">{headerTitle}</Tooltip>
-    </Wrapper>
+    <button
+      tabindex="0"
+      aria-expanded={isExpanded}
+      class={`accordion-button ${isExpanded ? 'accordion--active' : ''}`}
+      on:click={() => {
+        isExpanded = !isExpanded
+      }}>
+      <p class="accordion-header">{headerTitle}</p>
+    </button>
     <div
       class={!isExpanded ? 'accordion__panel' : 'accordion--active'}
       aria-hidden={!isExpanded}
