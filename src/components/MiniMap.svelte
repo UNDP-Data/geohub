@@ -21,7 +21,7 @@
   let previewImageUrl: string
   let isLoading = false
 
-  export let metadata: RasterTileMetadata | VectorTileMetadata
+  export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
   $: if (isLoadMap === true) {
     if (!map) {
