@@ -166,6 +166,16 @@
               {feature.properties.description.substring(0, descriptionLength)}...
             {/if}
           </p>
+
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a
+            class="cta__link cta--arrow"
+            on:click={() => {
+              isFullDescription = true
+            }}>
+            READ MORE
+            <i />
+          </a>
         {:else}
           <p><b>Description: </b>{feature.properties.description}</p>
           <p><b>Source: </b> {feature.properties.source}</p>
@@ -174,17 +184,6 @@
       </div>
 
       <div class="buttons">
-        {#if !isFullDescription}
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a
-            class="button button-primary button-without-arrow"
-            role="button"
-            on:click={() => {
-              isFullDescription = true
-            }}>
-            Read more...
-          </a>
-        {/if}
         {#if !stacType}
           <!-- svelte-ignore a11y-missing-attribute -->
           <a
@@ -243,6 +242,7 @@
 <style lang="scss">
   @use '../styles/undp-design/base-minimal.min.css';
   @use '../styles/undp-design/buttons.min.css';
+  @use '../styles/undp-design/cta-link.min.css';
   .card-container {
     display: flex;
     flex-direction: column;
@@ -254,7 +254,7 @@
 
     .buttons {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(1, 1fr);
       grid-gap: 0.1rem;
     }
 
