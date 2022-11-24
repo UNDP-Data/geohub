@@ -6,9 +6,11 @@
   import { indicatorProgress } from '$stores'
   import TextFilter from './controls/TextFilter.svelte'
   import { indexOf } from 'lodash'
+  import Notification from './controls/Notification.svelte'
 
   let containerDivElement: HTMLDivElement
   let selectedCategories: DataCategory[] = []
+  const LIMIT = 25
 
   let categories: DataCategory[] = [
     {
@@ -89,7 +91,9 @@
       }
 
       if (category.url.startsWith('/datasets')) {
-        const res = await fetch(category.url)
+        const apiUrl = new URL(`${$page.url.origin}${category.url}`)
+        apiUrl.searchParams.set('limit', LIMIT.toString())
+        const res = await fetch(apiUrl.toString())
         const json = await res.json()
         DataItemFeatureCollection = json
       }
@@ -134,6 +138,7 @@
       } else {
         apiUrl.searchParams.set('query', query.trim())
       }
+      apiUrl.searchParams.set('limit', LIMIT.toString())
       const res = await fetch(apiUrl.toString())
       if (!res.ok) return
       const json: StacItemFeatureCollection = await res.json()
@@ -220,8 +225,11 @@
     {#each DataItemFeatureCollection.features as feature}
       <DataCard {feature} />
     {/each}
+    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+      <Notification type="info">All data loaded</Notification>
+    {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <div class="notification is-warning m-2">No data found</div>
+    <Notification type="warning">No data found</Notification>
   {:else}
     <div
       class={`${
@@ -256,7 +264,7 @@
 
   .data-view-container {
     height: calc(100vh - 188px);
-    overflow-y: auto;
+    overflow-y: scroll;
 
     @media (max-width: 89.9375em) {
       height: calc(100vh - 158px);
