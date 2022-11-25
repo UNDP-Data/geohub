@@ -103,13 +103,14 @@
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
     let bandName
+    const rasterInfo = layer.info as RasterTileMetadata
     try {
-      bandName = Object.keys(layer.info.stats)
+      bandName = Object.keys(rasterInfo.stats)
     } catch (e) {
       console.log(e)
     }
     layerHasUniqueValues =
-      Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !layer.info.dtype.startsWith('float')
+      Number(rasterInfo.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !rasterInfo.dtype.startsWith('float')
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
