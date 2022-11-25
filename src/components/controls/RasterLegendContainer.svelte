@@ -11,7 +11,12 @@
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
+  import {
+    DynamicLayerLegendTypes,
+    COLOR_CLASS_COUNT_MAXIMUM,
+    ClassificationMethodTypes,
+    DEFAULT_COLORMAP,
+  } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -26,7 +31,8 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let colorMapName: string
+  export let colorMapName: string =
+    (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) ?? DEFAULT_COLORMAP
   export let classificationMethod: ClassificationMethodTypes
 
   let info

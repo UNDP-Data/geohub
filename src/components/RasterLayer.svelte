@@ -19,6 +19,8 @@
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
+  import { getValueFromRasterTileUrl } from '$lib/helper'
+  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
   let expressions: RasterSimpleExpression[]
@@ -28,7 +30,7 @@
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
-  let colorMapName = DEFAULT_COLORMAP
+  let colorMapName: string
   let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
   let legendType: DynamicLayerLegendTypes
 
