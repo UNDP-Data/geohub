@@ -33,6 +33,7 @@
   let isFullDescription = false
   let symbolVectorType: 'point' | 'heatmap' = 'point'
   let defaultColor: string = undefined
+  let defaultColormap: string = undefined
 
   let assetList: AssetOptions[] = []
 
@@ -55,7 +56,7 @@
         } else {
           // COG
           const rasterTile = new RasterTileData($map, feature)
-          const data = await rasterTile.add()
+          const data = await rasterTile.add(defaultColormap)
 
           $layerList = [
             {
@@ -179,7 +180,8 @@
           height={'150px'}
           bind:isLoadMap={isExpanded}
           bind:metadata
-          bind:defaultColor />
+          bind:defaultColor
+          bind:defaultColormap />
       </div>
       <div class="description">
         {#if !isFullDescription}

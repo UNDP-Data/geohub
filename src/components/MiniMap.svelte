@@ -16,6 +16,7 @@
   export let height = '100%'
   export let isLoadMap = false
   export let defaultColor: string = undefined
+  export let defaultColormap: string = undefined
 
   let mapContainer: HTMLDivElement
   let map: Map
@@ -68,6 +69,7 @@
           const rasterTile = new RasterTileData(map, feature)
           const data = await rasterTile.add()
           metadata = data.metadata
+          defaultColormap = data.colormap
         } else {
           const vectorTile = new VectorTileData(map, feature)
           const data = await vectorTile.add()

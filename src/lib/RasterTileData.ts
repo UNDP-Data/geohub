@@ -48,7 +48,7 @@ export class RasterTileData {
     return data
   }
 
-  public add = async () => {
+  public add = async (defaultColormap?: string) => {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const rasterInfo = await this.getMetadata()
     const bandIndex = getActiveBandIndex(rasterInfo)
@@ -62,7 +62,7 @@ export class RasterTileData {
     const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
     // choose default colormap randomly
-    const colormap = getRandomColormap()
+    const colormap = defaultColormap ?? getRandomColormap()
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -126,6 +126,7 @@ export class RasterTileData {
       source,
       sourceId,
       metadata: rasterInfo,
+      colormap: colormap,
     }
   }
 
