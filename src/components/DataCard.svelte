@@ -31,11 +31,13 @@
   let isExpanded: boolean
   let descriptionLength = 100
   let isFullDescription = false
+  let symbolVectorType: 'point' | 'heatmap' = 'heatmap'
 
   let assetList: AssetOptions[] = []
 
   let metadata: RasterTileMetadata | VectorTileMetadata
 
+  const is_raster: boolean = feature.properties.is_raster as unknown as boolean
   const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
   const stacType = tags?.find((tag) => tag.key === 'stac')
 
@@ -43,7 +45,6 @@
     try {
       $indicatorProgress = true
 
-      const is_raster: boolean = feature.properties.is_raster as unknown as boolean
       const url: string = feature.properties.url
 
       if (is_raster) {
@@ -66,8 +67,17 @@
         }
       } else {
         // vector tile
+
+        let layerType: 'point' | 'heatmap'
+        if (
+          tags &&
+          (['point', 'multipoint'].includes(tags.find((t) => t.key === 'geometrytype')?.value.toLowerCase()) ||
+            ['point', 'multipoint'].includes(tags.find((t) => t.key === 'geometry_type')?.value.toLowerCase()))
+        ) {
+          layerType = symbolVectorType
+        }
         const vectorTile = new VectorTileData($map, feature)
-        const data = await vectorTile.add()
+        const data = await vectorTile.add(layerType)
 
         $layerList = [
           {
@@ -225,6 +235,42 @@
         {/if}
       </div>
 
+      {#if !is_raster}
+        {#if tags && (['point', 'multipoint'].includes(tags
+              .find((t) => t.key === 'geometrytype')
+              ?.value.toLowerCase()) || ['point', 'multipoint'].includes(tags
+                .find((t) => t.key === 'geometry_type')
+                ?.value.toLowerCase()))}
+          <p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
+          <div class="vector-symbol-radios">
+            <div class="radio-form">
+              <input
+                type="radio"
+                id="heatmap"
+                class="radio-button"
+                name="vector-type"
+                bind:group={symbolVectorType}
+                value="heatmap" />
+              <label
+                for="heatmap"
+                class="radio-form">Heatmap</label>
+            </div>
+            <div class="radio-form">
+              <input
+                type="radio"
+                id="point"
+                class="radio-button"
+                name="vector-type"
+                bind:group={symbolVectorType}
+                value="point" />
+              <label
+                for="point"
+                class="radio-form">Point</label>
+            </div>
+          </div>
+        {/if}
+      {/if}
+
       <div class="buttons">
         {#if !stacType}
           <!-- svelte-ignore a11y-missing-attribute -->
@@ -285,6 +331,7 @@
   @use '../styles/undp-design/base-minimal.min.css';
   @use '../styles/undp-design/buttons.min.css';
   @use '../styles/undp-design/cta-link.min.css';
+  @use '../styles/undp-design/radio.min.css';
   .card-container {
     display: flex;
     flex-direction: column;
@@ -308,6 +355,24 @@
       padding-bottom: 0.5rem;
       // display: flex;
       // flex-direction: column;
+    }
+
+    .vector-symbol-radios {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 0.1rem;
+      vertical-align: baseline;
+      padding-bottom: 0.5rem;
+
+      .radio-form {
+        cursor: pointer;
+
+        .radio-button {
+          position: relative;
+          top: 0.2rem;
+          margin-right: 0.5rem;
+        }
+      }
     }
   }
 </style>

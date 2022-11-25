@@ -154,7 +154,7 @@ export class MosaicJsonData {
       source.maxzoom = 24
     }
     const sourceId = this.feature.properties.id
-    if (!(sourceId in this.map.getStyle().sources)) {
+    if (!this.map.getSource(sourceId)) {
       this.map.addSource(sourceId, source)
     }
 
