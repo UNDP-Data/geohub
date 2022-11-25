@@ -4,6 +4,7 @@ import type { StacItemFeature, VectorTileMetadata } from './types'
 import {
   LngLatBounds,
   type FillLayerSpecification,
+  type HeatmapLayerSpecification,
   type LineLayerSpecification,
   type Map,
   type SymbolLayerSpecification,
@@ -52,7 +53,7 @@ export class VectorTileData {
     }
   }
 
-  public add = async () => {
+  public add = async (layerType?: 'point' | 'heatmap') => {
     const vectorInfo = await this.getMetadata()
 
     const tileSourceId = this.feature.properties.id
@@ -76,12 +77,14 @@ export class VectorTileData {
         maxzoom: maxzoom,
       }
     }
-    this.map.addSource(tileSourceId, source)
+    if (!this.map.getSource(tileSourceId)) {
+      this.map.addSource(tileSourceId, source)
+    }
 
     const layerId = uuidv4()
-    let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
+    let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification | HeatmapLayerSpecification
 
-    const geomType = vectorInfo.metadata.json.tilestats.layers[0].geometry
+    const geomType = layerType ?? vectorInfo.metadata.json.tilestats.layers[0].geometry
     switch (geomType.toLocaleLowerCase()) {
       case 'point':
       case 'multipoint':
@@ -129,6 +132,40 @@ export class VectorTileData {
             'fill-color': DEFAULT_FILL_COLOR,
             'fill-outline-color': DEFAULT_FILL_OUTLINE_COLOR,
             'fill-opacity': 0.6,
+          },
+        }
+        break
+      case 'heatmap':
+        layer = {
+          id: layerId,
+          type: 'heatmap',
+          source: tileSourceId,
+          'source-layer': selectedLayerId,
+          layout: {
+            visibility: 'visible',
+          },
+          paint: {
+            'heatmap-color': [
+              'interpolate',
+              ['linear'],
+              ['heatmap-density'],
+              0,
+              'rgba(0, 0, 255, 0)',
+              0.1,
+              'rgb(0,0,255)',
+              0.3,
+              'rgb(0,255,255)',
+              0.5,
+              'rgb(0,255,0)',
+              0.7,
+              'rgb(255,255,0)',
+              1,
+              'rgb(255,0,0)',
+            ],
+            'heatmap-intensity': 1,
+            'heatmap-opacity': 1,
+            'heatmap-radius': 30,
+            'heatmap-weight': 1,
           },
         }
         break
