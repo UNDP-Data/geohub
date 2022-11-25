@@ -21,12 +21,14 @@
     updateParamsInURL,
     getValueFromRasterTileUrl,
     getLayerStyle,
+    getRandomColormap,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let colorMapName: string
+  export let colorMapName: string =
+    (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) ?? getRandomColormap()
   export let classificationMethod: ClassificationMethodTypes
 
   let info
@@ -97,13 +99,14 @@
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
     let bandName
+    const rasterInfo = layer.info as RasterTileMetadata
     try {
-      bandName = Object.keys(layer.info.stats)
+      bandName = Object.keys(rasterInfo.stats)
     } catch (e) {
       console.log(e)
     }
     layerHasUniqueValues =
-      Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !layer.info.dtype.startsWith('float')
+      Number(rasterInfo.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !rasterInfo.dtype.startsWith('float')
 
     setTimeout(() => {
       isLegendSwitchAnimate = false

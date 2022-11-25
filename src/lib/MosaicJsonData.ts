@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
-import { COLOR_CLASS_COUNT_MAXIMUM, DEFAULT_COLORMAP, ErrorMessages } from './constants'
-import { getBase64EncodedUrl } from './helper'
+import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages } from './constants'
+import { getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
@@ -119,7 +119,7 @@ export class MosaicJsonData {
 
     bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjson.classmap
 
-    let defaultColorMap = DEFAULT_COLORMAP
+    let defaultColorMap = getRandomColormap()
     if (rasterInfo.band_metadata.length > 1) {
       defaultColorMap = ''
     }
@@ -164,7 +164,6 @@ export class MosaicJsonData {
       type: 'raster',
       source: sourceId,
       minzoom: source.minzoom,
-      maxzoom: source.maxzoom,
       layout: {
         visibility: 'visible',
       },

@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { DEFAULT_COLORMAP } from './constants'
-import { getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from './helper'
+import { getActiveBandIndex, getBase64EncodedUrl, getRandomColormap, paramsToQueryString } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
@@ -64,6 +63,8 @@ export class RasterTileData {
     const layerBandMetadataMin = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
     const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
+    // choose default colormap randomly
+    const colormap = getRandomColormap()
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -73,7 +74,7 @@ export class RasterTileData {
       resampling: 'nearest',
       rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
       return_mask: true,
-      colormap_name: DEFAULT_COLORMAP,
+      colormap_name: colormap,
     }
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
@@ -104,7 +105,6 @@ export class RasterTileData {
       type: 'raster',
       source: sourceId,
       minzoom: source.minzoom,
-      maxzoom: source.maxzoom,
       layout: {
         visibility: 'visible',
       },
