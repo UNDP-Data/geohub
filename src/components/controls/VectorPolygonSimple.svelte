@@ -5,6 +5,8 @@
   import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
+  export let defaultFillColor: string = undefined
+  export let defaultFillOutlineColor: string = undefined
 </script>
 
 <div
@@ -14,13 +16,17 @@
     <div class="column is-5">
       <div class="has-text-centered pb-2">Fill Color</div>
       <div class="is-flex is-justify-content-center bring-to-front">
-        <FillColor bind:layer />
+        <FillColor
+          bind:layer
+          bind:defaultColor={defaultFillColor} />
       </div>
     </div>
     <div class="column is-7">
       <div class="has-text-centered pb-2">Fill Outline Color</div>
       <div class="is-flex is-justify-content-center send-to-back">
-        <FillOutlineColor bind:layer />
+        <FillOutlineColor
+          bind:layer
+          bind:defaultColor={defaultFillOutlineColor} />
       </div>
     </div>
   </div>

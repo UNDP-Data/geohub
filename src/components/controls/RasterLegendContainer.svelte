@@ -22,6 +22,7 @@
     getValueFromRasterTileUrl,
     getLayerStyle,
     getRandomColormap,
+    getLayerUrl,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -41,7 +42,7 @@
   let layerListCount = $layerList.length
   let showTooltip = false
   let numberOfClasses: number
-  export let legendType: DynamicLayerLegendTypes
+  export let legendType: DynamicLayerLegendTypes = undefined
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -56,9 +57,19 @@
   }
 
   onMount(async () => {
+    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+    if (layerSrc?.tiles?.length > 0) {
+      await initialise()
+    } else {
+      setTimeout(initialise, 300)
+    }
+  })
+
+  const initialise = async () => {
     const rasterInfo = layer.info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+      if (!(layerSrc?.tiles?.length > 0)) return
       const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
@@ -81,7 +92,7 @@
       }
     }
     legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
-  })
+  }
 
   const {
     ref: popperRef,
@@ -123,21 +134,19 @@
   const colorMapChanged = () => {
     if (!colorMapName) return
     const rasterInfo = layer.info as RasterTileMetadata
-    if (rasterInfo?.isMosaicJson) {
-      const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
-      const tiles = source.tiles
-      if (!(tiles && tiles.length > 0)) return
-      const layerURL = new URL(tiles[0])
-      layerURL.searchParams.delete('colormap_name')
-      layerURL.searchParams.delete('rescale')
-      const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-      let updatedParams = Object.assign({ colormap_name: colorMapName })
-      if (rescale) {
-        updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-      }
-      const layerStyle = getLayerStyle($map, layer.id)
-      updateParamsInURL(layerStyle, layerURL, updatedParams)
+    const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
+    const tiles = source.tiles
+    if (!(tiles && tiles.length > 0)) return
+    const layerURL = new URL(tiles[0])
+    layerURL.searchParams.delete('colormap_name')
+    layerURL.searchParams.delete('rescale')
+    const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
+    let updatedParams = Object.assign({ colormap_name: colorMapName })
+    if (rescale) {
+      updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
     }
+    const layerStyle = getLayerStyle($map, layer.id)
+    updateParamsInURL(layerStyle, layerURL, updatedParams)
 
     colorPickerVisibleIndex = -1
     const nlayer = { ...layer, colorMapName: colorMapName }

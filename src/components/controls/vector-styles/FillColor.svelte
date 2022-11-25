@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { DEFAULT_FILL_COLOR, LayerInitialValues } from '$lib/constants'
+  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -10,13 +10,14 @@
 
   const layerId = layer.id
   const propertyName = 'fill-color'
+  export let defaultColor: string = undefined
 
   const getFillColor = (): string => {
     let fillColor = $map.getPaintProperty(layerId, propertyName)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (!fillColor || (fillColor && fillColor.type === 'interval')) {
-      fillColor = DEFAULT_FILL_COLOR
+      fillColor = defaultColor
     }
     return fillColor as string
   }

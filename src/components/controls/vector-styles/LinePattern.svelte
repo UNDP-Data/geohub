@@ -7,9 +7,9 @@
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { getLineColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
+  export let defaultColor: string = undefined
 
   const propertyName = 'line-dasharray'
   const layerId = layer.id
@@ -21,7 +21,7 @@
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let linePatternColorRgba = getLineColor($map, layerId)
+  let linePatternColorRgba = defaultColor
   let lineType = (
     style?.paint[propertyName]
       ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
@@ -33,7 +33,7 @@
   onMount(() => {
     if (!$map) return
     $map.on('line-color:changed', () => {
-      linePatternColorRgba = getLineColor($map, layerId)
+      linePatternColorRgba = defaultColor
     })
   })
 

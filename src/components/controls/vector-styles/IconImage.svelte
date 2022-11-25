@@ -13,9 +13,9 @@
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
-  import { getIconColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
+  export let defaultColor: string = undefined
 
   const layerId = layer.id
   const propertyName = 'icon-image'
@@ -86,7 +86,7 @@
           if (mapLayerByLayerId.layout && mapLayerByLayerId.layout['icon-image']) {
             $spriteImageList.find((icon) => {
               if (icon.alt === mapLayerByLayerId.layout['icon-image']) {
-                const rgba = chroma(getIconColor($map, layer.id)).rgba()
+                const rgba = chroma(defaultColor).rgba()
                 const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
                 const img = document.createElement('img')
                 img.src = icon.src

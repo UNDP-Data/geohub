@@ -25,7 +25,6 @@
   } from '$lib/types'
   import { map } from '$stores'
   import {
-    getFillOutlineColor,
     getIntervalList,
     getLayerNumberProperties,
     getLayerStyle,
@@ -48,7 +47,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
+  export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string

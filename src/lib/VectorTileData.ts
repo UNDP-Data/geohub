@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { DEFAULT_FILL_COLOR, DEFAULT_FILL_OUTLINE_COLOR, DEFAULT_LINE_COLOR, DEFAULT_LINE_WIDTH } from './constants'
+import { DEFAULT_LINE_WIDTH } from './constants'
 import type { StacItemFeature, VectorTileMetadata } from './types'
 import {
   LngLatBounds,
@@ -10,12 +10,12 @@ import {
   type SymbolLayerSpecification,
   type VectorSourceSpecification,
 } from 'maplibre-gl'
+import chroma from 'chroma-js'
 
 export class VectorTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
-  public metadata: VectorTileMetadata
 
   constructor(map: Map, feature: StacItemFeature) {
     this.map = map
@@ -45,7 +45,7 @@ export class VectorTileData {
     }
     const res = await fetch(metadataUrl)
     const data: VectorTileMetadata = await res.json()
-    this.metadata = data
+
     return {
       metadata: data,
       type: type,
@@ -53,7 +53,7 @@ export class VectorTileData {
     }
   }
 
-  public add = async (layerType?: 'point' | 'heatmap') => {
+  public add = async (layerType?: 'point' | 'heatmap', defaultColor?: string) => {
     const vectorInfo = await this.getMetadata()
 
     const tileSourceId = this.feature.properties.id
@@ -85,6 +85,7 @@ export class VectorTileData {
     let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification | HeatmapLayerSpecification
 
     const geomType = layerType ?? vectorInfo.metadata.json.tilestats.layers[0].geometry
+    const color = defaultColor ? chroma(defaultColor) : chroma.random()
     switch (geomType.toLocaleLowerCase()) {
       case 'point':
       case 'multipoint':
@@ -97,6 +98,9 @@ export class VectorTileData {
             visibility: 'visible',
             'icon-image': 'circle',
             'icon-size': 1,
+          },
+          paint: {
+            'icon-color': color.hex(),
           },
         }
         break
@@ -113,7 +117,7 @@ export class VectorTileData {
             'line-join': 'round',
           },
           paint: {
-            'line-color': DEFAULT_LINE_COLOR,
+            'line-color': color.hex(),
             'line-width': DEFAULT_LINE_WIDTH,
           },
         }
@@ -129,8 +133,8 @@ export class VectorTileData {
             visibility: 'visible',
           },
           paint: {
-            'fill-color': DEFAULT_FILL_COLOR,
-            'fill-outline-color': DEFAULT_FILL_OUTLINE_COLOR,
+            'fill-color': color.hex(),
+            'fill-outline-color': color.darken(2.6).hex(),
             'fill-opacity': 0.6,
           },
         }
@@ -184,6 +188,7 @@ export class VectorTileData {
       source,
       sourceId: tileSourceId,
       metadata: vectorInfo.metadata,
+      color: color.hex(),
     }
   }
 }

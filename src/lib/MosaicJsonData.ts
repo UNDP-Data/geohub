@@ -10,7 +10,6 @@ export class MosaicJsonData {
   private map: Map
   private url: string
   private assetName: string
-  public metadata: RasterTileMetadata
 
   constructor(map: Map, feature: StacItemFeature, assetUrl: string, assetName: string) {
     this.map = map
@@ -42,14 +41,12 @@ export class MosaicJsonData {
         data.active_band_no = Object.keys(layerStats)[0]
       }
       data.isMosaicJson = true
-      this.metadata = data
       return data
     } else {
       const data: RasterTileMetadata = {
         bounds: tilejson.bounds,
       }
       data.isMosaicJson = true
-      this.metadata = data
       return data
     }
   }
@@ -88,7 +85,7 @@ export class MosaicJsonData {
     return data
   }
 
-  public add = async () => {
+  public add = async (defaultColormap?: string) => {
     const zoom = this.map.getZoom()
     if (zoom < 5) {
       throw new Error(ErrorMessages.TOO_SMALL_ZOOM_LEVEL)
@@ -119,9 +116,9 @@ export class MosaicJsonData {
 
     bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjson.classmap
 
-    let defaultColorMap = getRandomColormap()
+    let colormap = defaultColormap ?? getRandomColormap()
     if (rasterInfo.band_metadata.length > 1) {
-      defaultColorMap = ''
+      colormap = ''
     }
     tilejson.tiles = tilejson.tiles.map((tile) => {
       tile = tile.replace('http://', 'https://')
@@ -131,7 +128,7 @@ export class MosaicJsonData {
         const _url = new URL(tile)
         _url.searchParams.delete('colormap_name')
         _url.searchParams.delete('rescale')
-        _url.searchParams.set('colormap_name', defaultColorMap)
+        _url.searchParams.set('colormap_name', colormap)
         _url.searchParams.set('rescale', [layerBandMetadataMin, layerBandMetadataMax].join(','))
         return decodeURI(_url.toString())
       }

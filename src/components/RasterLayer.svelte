@@ -22,7 +22,7 @@
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
-  let colorMapName: string
+  let colorMapName: string = undefined
   let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
   let legendType: DynamicLayerLegendTypes
 

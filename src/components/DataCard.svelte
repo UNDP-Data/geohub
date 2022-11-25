@@ -31,7 +31,9 @@
   let isExpanded: boolean
   let descriptionLength = 100
   let isFullDescription = false
-  let symbolVectorType: 'point' | 'heatmap' = 'heatmap'
+  let symbolVectorType: 'point' | 'heatmap' = 'point'
+  let defaultColor: string = undefined
+  let defaultColormap: string = undefined
 
   let assetList: AssetOptions[] = []
 
@@ -54,7 +56,7 @@
         } else {
           // COG
           const rasterTile = new RasterTileData($map, feature)
-          const data = await rasterTile.add()
+          const data = await rasterTile.add(defaultColormap)
 
           $layerList = [
             {
@@ -77,7 +79,7 @@
           layerType = symbolVectorType
         }
         const vectorTile = new VectorTileData($map, feature)
-        const data = await vectorTile.add(layerType)
+        const data = await vectorTile.add(layerType, defaultColor)
 
         $layerList = [
           {
@@ -177,7 +179,9 @@
           width={'100%'}
           height={'150px'}
           bind:isLoadMap={isExpanded}
-          bind:metadata />
+          bind:metadata
+          bind:defaultColor
+          bind:defaultColormap />
       </div>
       <div class="description">
         {#if !isFullDescription}
@@ -246,18 +250,6 @@
             <div class="radio-form">
               <input
                 type="radio"
-                id="heatmap"
-                class="radio-button"
-                name="vector-type"
-                bind:group={symbolVectorType}
-                value="heatmap" />
-              <label
-                for="heatmap"
-                class="radio-form">Heatmap</label>
-            </div>
-            <div class="radio-form">
-              <input
-                type="radio"
                 id="point"
                 class="radio-button"
                 name="vector-type"
@@ -266,6 +258,18 @@
               <label
                 for="point"
                 class="radio-form">Point</label>
+            </div>
+            <div class="radio-form">
+              <input
+                type="radio"
+                id="heatmap"
+                class="radio-button"
+                name="vector-type"
+                bind:group={symbolVectorType}
+                value="heatmap" />
+              <label
+                for="heatmap"
+                class="radio-form">Heatmap</label>
             </div>
           </div>
         {/if}

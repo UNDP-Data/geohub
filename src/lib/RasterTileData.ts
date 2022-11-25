@@ -8,7 +8,6 @@ export class RasterTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
-  public metadata: RasterTileMetadata
 
   constructor(map: Map, feature: StacItemFeature) {
     this.map = map
@@ -20,7 +19,6 @@ export class RasterTileData {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
     const data: RasterTileMetadata = await res.json()
-    this.metadata = data
     if (
       data &&
       data.band_metadata &&
@@ -50,7 +48,7 @@ export class RasterTileData {
     return data
   }
 
-  public add = async () => {
+  public add = async (defaultColormap?: string) => {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const rasterInfo = await this.getMetadata()
     const bandIndex = getActiveBandIndex(rasterInfo)
@@ -64,7 +62,7 @@ export class RasterTileData {
     const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
     // choose default colormap randomly
-    const colormap = getRandomColormap()
+    const colormap = defaultColormap ?? getRandomColormap()
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -128,6 +126,7 @@ export class RasterTileData {
       source,
       sourceId,
       metadata: rasterInfo,
+      colormap: colormap,
     }
   }
 

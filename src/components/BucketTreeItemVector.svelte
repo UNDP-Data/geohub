@@ -16,13 +16,8 @@
 
   import { map, layerList, indicatorProgress } from '$stores'
   import { fetchUrl } from '$lib/helper'
-  import {
-    DEFAULT_FILL_COLOR,
-    DEFAULT_FILL_OUTLINE_COLOR,
-    DEFAULT_LINE_COLOR,
-    DEFAULT_LINE_WIDTH,
-    LayerTypes,
-  } from '$lib/constants'
+  import { DEFAULT_LINE_WIDTH, LayerTypes } from '$lib/constants'
+  import chroma from 'chroma-js'
 
   export let tree: TreeNode
 
@@ -85,6 +80,7 @@
       layerSource = JSON.parse(JSON.stringify($map.getStyle().sources[tileSourceId]))
     }
 
+    const color = chroma.random()
     const layerId = `${selectedLayerId}-${uuidv4()}`
     let layerDefinition:
       | LineLayerSpecification
@@ -117,7 +113,7 @@
             'line-join': 'round',
           },
           paint: {
-            'line-color': DEFAULT_LINE_COLOR,
+            'line-color': color.hex(),
             'line-width': DEFAULT_LINE_WIDTH,
           },
         }
@@ -132,8 +128,8 @@
             visibility: 'visible',
           },
           paint: {
-            'fill-color': DEFAULT_FILL_COLOR,
-            'fill-outline-color': DEFAULT_FILL_OUTLINE_COLOR,
+            'fill-color': color.hex(),
+            'fill-outline-color': color.darken().hex(),
             'fill-opacity': 0.6,
           },
         }
