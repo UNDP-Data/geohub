@@ -136,7 +136,7 @@
       if (query.length === 0) {
         apiUrl.searchParams.delete('query')
       } else {
-        apiUrl.searchParams.set('query', query.trim())
+        apiUrl.searchParams.set('query', query)
       }
       apiUrl.searchParams.set('limit', LIMIT.toString())
       const res = await fetch(apiUrl.toString())
