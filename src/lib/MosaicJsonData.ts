@@ -10,7 +10,6 @@ export class MosaicJsonData {
   private map: Map
   private url: string
   private assetName: string
-  public metadata: RasterTileMetadata
 
   constructor(map: Map, feature: StacItemFeature, assetUrl: string, assetName: string) {
     this.map = map
@@ -42,14 +41,12 @@ export class MosaicJsonData {
         data.active_band_no = Object.keys(layerStats)[0]
       }
       data.isMosaicJson = true
-      this.metadata = data
       return data
     } else {
       const data: RasterTileMetadata = {
         bounds: tilejson.bounds,
       }
       data.isMosaicJson = true
-      this.metadata = data
       return data
     }
   }

@@ -21,7 +21,6 @@
     getIntervalList,
     getLayerNumberProperties,
     getLayerStyle,
-    getLineColor,
     getLineWidth,
     getSampleFromInterval,
     remapInputValue,
@@ -41,6 +40,7 @@
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
+  export let defaultColor: string = undefined
 
   const classificationMethodsDefault = [
     // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -92,7 +92,7 @@
   })
 
   const setCssIconFilter = () => {
-    const lineColor = getLineColor($map, layer.id)
+    const lineColor = defaultColor
     const rgba = chroma(lineColor).rgba()
     cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
   }
@@ -313,8 +313,7 @@
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
 
         sizeArray = newStops.map((item) => item[1])
-        const lineColor = getLineColor($map, layer.id)
-        $map.setPaintProperty(layer.id, 'line-color', lineColor ? lineColor : chroma.random().hex())
+        $map.setPaintProperty(layer.id, 'line-color', defaultColor)
         $map.setPaintProperty(layer.id, 'line-width', {
           property: propertySelectValue,
           type: 'interval',

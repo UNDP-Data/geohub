@@ -18,13 +18,26 @@
   } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
-  import { layerList } from '$stores'
+  import { layerList, map } from '$stores'
+  import chroma from 'chroma-js'
 
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   export let legendType: string
+
+  const getIconColor = (): string => {
+    let iconColor = $map.getPaintProperty(layer.id, 'icon-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!iconColor || (iconColor && iconColor.type === 'interval')) {
+      iconColor = chroma.random().hex()
+    }
+    return iconColor as string
+  }
+
+  export let defaultColor = getIconColor()
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -98,7 +111,9 @@
   <div class="column is-10">
     {#if legendType === VectorLayerSymbolLegendTypes.SIMPLE}
       <div transition:slide>
-        <VectorSymbolSimple bind:layer />
+        <VectorSymbolSimple
+          bind:layer
+          bind:defaultColor />
       </div>
     {:else if legendType === VectorLayerSymbolLegendTypes.ADVANCED}
       <div transition:slide>
@@ -109,7 +124,8 @@
           bind:layerMax
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses />
+          bind:numberOfClasses
+          bind:defaultColor />
       </div>
     {/if}
   </div>

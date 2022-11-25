@@ -11,7 +11,7 @@
 
   const layerId = layer.id
   const propertyName = 'fill-outline-color'
-  const defaultColor = chroma.random().hex()
+  export let defaultColor: string = undefined
 
   const getFillOutlineColor = (): string => {
     let fillOutlineColor = $map.getPaintProperty(layerId, 'fill-outline-color')

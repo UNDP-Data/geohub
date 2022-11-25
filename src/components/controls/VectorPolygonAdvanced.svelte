@@ -47,7 +47,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  let defaultFillOutlineColor: string
+  export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string

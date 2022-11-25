@@ -16,11 +16,36 @@
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
+  import chroma from 'chroma-js'
 
   export let layer: Layer
   export let colorMapName
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let legendType: string
+
+  const getFillColor = (): string => {
+    let fillColor = $map.getPaintProperty(layer.id, 'fill-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!fillColor || (fillColor && fillColor.type === 'interval')) {
+      fillColor = chroma.random().hex()
+    }
+    return fillColor as string
+  }
+
+  export let defaultFillColor = getFillColor()
+
+  const getFillOutlineColor = (): string => {
+    let fillOutlineColor = $map.getPaintProperty(layer.id, 'fill-outline-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!fillOutlineColor || (fillOutlineColor && fillOutlineColor.type === 'interval')) {
+      fillOutlineColor = chroma(defaultFillColor).darken(2.5).hex()
+    }
+    return fillOutlineColor as string
+  }
+
+  export let defaultFillOutlineColor = getFillOutlineColor()
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -102,7 +127,10 @@
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if legendType === VectorLayerPolygonLegendTypes.SIMPLE}
       <div transition:slide>
-        <VectorPolygonSimple bind:layer />
+        <VectorPolygonSimple
+          bind:layer
+          bind:defaultFillColor
+          bind:defaultFillOutlineColor />
       </div>
     {:else if legendType === VectorLayerPolygonLegendTypes.ADVANCED}
       <div transition:slide>
@@ -112,7 +140,8 @@
           bind:layerMax
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses />
+          bind:numberOfClasses
+          bind:defaultFillOutlineColor />
       </div>
     {/if}
   </div>

@@ -5,13 +5,12 @@
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.id
   const propertyName = 'fill-color'
-  const defaultColor = chroma.random().hex()
+  export let defaultColor: string = undefined
 
   const getFillColor = (): string => {
     let fillColor = $map.getPaintProperty(layerId, propertyName)

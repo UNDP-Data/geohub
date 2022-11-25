@@ -20,12 +20,25 @@
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
   import { getLayerNumberProperties } from '$lib/helper'
+  import chroma from 'chroma-js'
 
   export let layer: Layer
   export let colorMapName
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
   export let legendType: string
+
+  const getLineColor = (): string => {
+    let lineColor = $map.getPaintProperty(layer.id, 'line-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
+      lineColor = chroma.random().hex()
+    }
+    return lineColor as string
+  }
+
+  export let defaultColor = getLineColor()
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -107,7 +120,9 @@
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if legendType === VectorLayerLineLegendTypes.SIMPLE}
       <div transition:slide>
-        <VectorLineSimple bind:layer />
+        <VectorLineSimple
+          bind:layer
+          bind:defaultColor />
       </div>
     {:else if legendType === VectorLayerLineLegendTypes.ADVANCED}
       <div transition:slide>
@@ -118,7 +133,8 @@
           bind:layerMax
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses />
+          bind:numberOfClasses
+          bind:defaultColor />
       </div>
     {/if}
   </div>

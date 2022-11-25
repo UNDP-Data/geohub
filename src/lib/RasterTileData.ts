@@ -8,7 +8,6 @@ export class RasterTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
-  public metadata: RasterTileMetadata
 
   constructor(map: Map, feature: StacItemFeature) {
     this.map = map
@@ -20,7 +19,6 @@ export class RasterTileData {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
     const data: RasterTileMetadata = await res.json()
-    this.metadata = data
     if (
       data &&
       data.band_metadata &&

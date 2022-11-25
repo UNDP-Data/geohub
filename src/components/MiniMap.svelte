@@ -15,6 +15,7 @@
   export let width = '100%'
   export let height = '100%'
   export let isLoadMap = false
+  export let defaultColor: string = undefined
 
   let mapContainer: HTMLDivElement
   let map: Map
@@ -65,12 +66,13 @@
 
         if (is_raster === true) {
           const rasterTile = new RasterTileData(map, feature)
-          await rasterTile.add()
-          metadata = rasterTile.metadata
+          const data = await rasterTile.add()
+          metadata = data.metadata
         } else {
           const vectorTile = new VectorTileData(map, feature)
-          await vectorTile.add()
-          metadata = vectorTile.metadata
+          const data = await vectorTile.add()
+          metadata = data.metadata
+          defaultColor = data.color
         }
       } finally {
         isLoading = false

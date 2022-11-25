@@ -16,7 +16,6 @@ export class VectorTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
-  public metadata: VectorTileMetadata
 
   constructor(map: Map, feature: StacItemFeature) {
     this.map = map
@@ -46,7 +45,7 @@ export class VectorTileData {
     }
     const res = await fetch(metadataUrl)
     const data: VectorTileMetadata = await res.json()
-    this.metadata = data
+
     return {
       metadata: data,
       type: type,
@@ -54,7 +53,7 @@ export class VectorTileData {
     }
   }
 
-  public add = async (layerType?: 'point' | 'heatmap') => {
+  public add = async (layerType?: 'point' | 'heatmap', defaultColor?: string) => {
     const vectorInfo = await this.getMetadata()
 
     const tileSourceId = this.feature.properties.id
@@ -86,7 +85,7 @@ export class VectorTileData {
     let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification | HeatmapLayerSpecification
 
     const geomType = layerType ?? vectorInfo.metadata.json.tilestats.layers[0].geometry
-    const color = chroma.random()
+    const color = defaultColor ? chroma(defaultColor) : chroma.random()
     switch (geomType.toLocaleLowerCase()) {
       case 'point':
       case 'multipoint':
@@ -189,6 +188,7 @@ export class VectorTileData {
       source,
       sourceId: tileSourceId,
       metadata: vectorInfo.metadata,
+      color: color.hex(),
     }
   }
 }
