@@ -10,15 +10,14 @@
   import BucketTreeItemIcon from './BucketTreeItemIcon.svelte'
 
   import { map, layerList, bannerMessages, indicatorProgress } from '$stores'
-  import { fetchUrl, getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from '$lib/helper'
   import {
-    COLOR_CLASS_COUNT,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    DEFAULT_COLORMAP,
-    ErrorMessages,
-    LayerTypes,
-    StatusTypes,
-  } from '$lib/constants'
+    fetchUrl,
+    getActiveBandIndex,
+    getBase64EncodedUrl,
+    getRandomColormap,
+    paramsToQueryString,
+  } from '$lib/helper'
+  import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, LayerTypes, StatusTypes } from '$lib/constants'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   export let tree: TreeNode
@@ -78,7 +77,7 @@
 
     bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjsonRes.classmap
 
-    let defaultColorMap = DEFAULT_COLORMAP
+    let defaultColorMap = getRandomColormap()
     if (layerInfo.band_metadata.length > 1) {
       defaultColorMap = ''
     }
@@ -90,7 +89,7 @@
         const _url = new URL(tile)
         _url.searchParams.delete('colormap_name')
         _url.searchParams.delete('rescale')
-        _url.searchParams.set('colormap_name', DEFAULT_COLORMAP)
+        _url.searchParams.set('colormap_name', defaultColorMap)
         _url.searchParams.set('rescale', [layerBandMetadataMin, layerBandMetadataMax].join(','))
         return decodeURI(_url.toString())
       }
@@ -218,7 +217,7 @@
       resampling: 'nearest',
       rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
       return_mask: true,
-      colormap_name: DEFAULT_COLORMAP,
+      colormap_name: getRandomColormap(),
     }
 
     const layerSource: RasterSourceSpecification = {

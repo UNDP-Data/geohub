@@ -9,18 +9,10 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import {
-    ClassificationMethodTypes,
-    DEFAULT_COLORMAP,
-    DynamicLayerLegendTypes,
-    LayerInitialValues,
-    TabNames,
-  } from '$lib/constants'
+  import { ClassificationMethodTypes, DynamicLayerLegendTypes, LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
-  import { getValueFromRasterTileUrl } from '$lib/helper'
-  import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
   let expressions: RasterSimpleExpression[]

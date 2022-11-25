@@ -1,9 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
-import { getActiveBandIndex, getBase64EncodedUrl, paramsToQueryString } from './helper'
+import { getActiveBandIndex, getBase64EncodedUrl, getRandomColormap, paramsToQueryString } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
-import { SequentialColormaps } from './colormaps'
 
 export class RasterTileData {
   private feature: StacItemFeature
@@ -65,7 +64,7 @@ export class RasterTileData {
     const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
 
     // choose default colormap randomly
-    const colormap = SequentialColormaps[Math.floor(Math.random() * SequentialColormaps.length)]
+    const colormap = getRandomColormap()
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',

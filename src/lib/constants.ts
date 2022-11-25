@@ -3,7 +3,6 @@ import type { Layer, StyleDefinition } from '$lib/types'
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
 export const COLOR_CLASS_COUNT_MINIMUM = 2
-export const DEFAULT_COLORMAP = 'viridis'
 export const DEFAULT_FILL_COLOR = 'rgba(20, 180, 60, 1)'
 export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
 export const DEFAULT_LINE_WIDTH = 0.5

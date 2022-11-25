@@ -1,10 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
 import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages } from './constants'
-import { getBase64EncodedUrl } from './helper'
+import { getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
-import { SequentialColormaps } from './colormaps'
 
 export class MosaicJsonData {
   private feature: StacItemFeature
@@ -120,8 +119,7 @@ export class MosaicJsonData {
 
     bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjson.classmap
 
-    // choose default colormap randomly
-    let defaultColorMap = SequentialColormaps[Math.floor(Math.random() * SequentialColormaps.length)]
+    let defaultColorMap = getRandomColormap()
     if (rasterInfo.band_metadata.length > 1) {
       defaultColorMap = ''
     }
