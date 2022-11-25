@@ -5,17 +5,28 @@
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { getFillOutlineColor } from '$lib/helper'
+  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.id
   const propertyName = 'fill-outline-color'
+  const defaultColor = chroma.random().hex()
 
-  let rgba = getFillOutlineColor($map, layerId)
+  const getFillOutlineColor = (): string => {
+    let fillOutlineColor = $map.getPaintProperty(layerId, 'fill-outline-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!fillOutlineColor || (fillOutlineColor && fillOutlineColor.type === 'interval')) {
+      fillOutlineColor = defaultColor
+    }
+    return fillOutlineColor as string
+  }
+
+  let rgba = getFillOutlineColor()
 
   onMount(() => {
-    rgba = getFillOutlineColor($map, layerId)
+    rgba = getFillOutlineColor()
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 

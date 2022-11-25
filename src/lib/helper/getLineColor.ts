@@ -1,7 +1,7 @@
-import { DEFAULT_LINE_COLOR } from '$lib/constants'
+import chroma from 'chroma-js'
 import type { Map } from 'maplibre-gl'
 
-export const getLineColor = (map: Map, layerId: string, defaultColor = DEFAULT_LINE_COLOR): string => {
+export const getLineColor = (map: Map, layerId: string, defaultColor = chroma.random().hex()): string => {
   let lineColor = map.getPaintProperty(layerId, 'line-color')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

@@ -13,7 +13,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    DEFAULT_LINE_COLOR,
     LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
@@ -315,7 +314,7 @@
 
         sizeArray = newStops.map((item) => item[1])
         const lineColor = getLineColor($map, layer.id)
-        $map.setPaintProperty(layer.id, 'line-color', lineColor ? lineColor : DEFAULT_LINE_COLOR)
+        $map.setPaintProperty(layer.id, 'line-color', lineColor ? lineColor : chroma.random().hex())
         $map.setPaintProperty(layer.id, 'line-width', {
           property: propertySelectValue,
           type: 'interval',

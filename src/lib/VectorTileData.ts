@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { DEFAULT_FILL_COLOR, DEFAULT_FILL_OUTLINE_COLOR, DEFAULT_LINE_COLOR, DEFAULT_LINE_WIDTH } from './constants'
+import { DEFAULT_LINE_WIDTH } from './constants'
 import type { StacItemFeature, VectorTileMetadata } from './types'
 import {
   LngLatBounds,
@@ -9,6 +9,7 @@ import {
   type SymbolLayerSpecification,
   type VectorSourceSpecification,
 } from 'maplibre-gl'
+import chroma from 'chroma-js'
 
 export class VectorTileData {
   private feature: StacItemFeature
@@ -82,6 +83,7 @@ export class VectorTileData {
     let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification
 
     const geomType = vectorInfo.metadata.json.tilestats.layers[0].geometry
+    const color = chroma.random()
     switch (geomType.toLocaleLowerCase()) {
       case 'point':
       case 'multipoint':
@@ -94,6 +96,9 @@ export class VectorTileData {
             visibility: 'visible',
             'icon-image': 'circle',
             'icon-size': 1,
+          },
+          paint: {
+            'icon-color': color.hex(),
           },
         }
         break
@@ -110,7 +115,7 @@ export class VectorTileData {
             'line-join': 'round',
           },
           paint: {
-            'line-color': DEFAULT_LINE_COLOR,
+            'line-color': color.hex(),
             'line-width': DEFAULT_LINE_WIDTH,
           },
         }
@@ -126,8 +131,8 @@ export class VectorTileData {
             visibility: 'visible',
           },
           paint: {
-            'fill-color': DEFAULT_FILL_COLOR,
-            'fill-outline-color': DEFAULT_FILL_OUTLINE_COLOR,
+            'fill-color': color.hex(),
+            'fill-outline-color': color.darken(2.6).hex(),
             'fill-opacity': 0.6,
           },
         }
