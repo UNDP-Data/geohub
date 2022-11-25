@@ -8,11 +8,11 @@
   let queryText = ''
   let queryType: 'and' | 'or' = 'and'
   $: isQueryEmpty = !queryText || queryText?.length === 0
-  $: queryType,
-    () => {
-      if (queryText.length === 0) return
-      normaliseQuery(queryText)
-    }
+  $: queryType, handleQueryTypeChanged()
+  const handleQueryTypeChanged = () => {
+    if (queryText === '') return
+    normaliseQuery(queryText)
+  }
 
   const handleFilterInput = debounce((e) => {
     let query = (e.target as HTMLInputElement).value
@@ -93,7 +93,7 @@
     .filter-text-box {
       position: relative;
       height: 35px;
-      width: 70%;
+      width: 65%;
 
       .clear-button {
         position: absolute;
