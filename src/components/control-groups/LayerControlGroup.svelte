@@ -2,7 +2,6 @@
   import ActionsDropdown from '$components/controls/ActionsDropdown.svelte'
   import DeleteButton from '$components/controls/DeleteButton.svelte'
   import VisibilityButton from '$components/controls/VisibilityButton.svelte'
-  import BucketTreeItemCardButton from '$components/BucketTreeItemCardButton.svelte'
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
