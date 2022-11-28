@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
+  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { faChalkboardUser } from '@fortawesome/free-solid-svg-icons/faChalkboardUser'
   import Fa from 'svelte-fa'
   import StyleShare from './StyleShare.svelte'
@@ -13,8 +14,10 @@
   let darkTheme: boolean
   let share: boolean
 
-  const onKeyPressed = (e: any) => {
+  const onKeyPressed = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       e.target.click()
     }
   }
@@ -83,8 +86,7 @@
             aria-label="Click to see the documentation"
             style="cursor: pointer"
             on:click={() => window.open('/docs/index.html', '_blank')}
-            on:keydown={onKeyPressed}
-            tabindex="1">
+            on:keydown={onKeyPressed}>
             <Wrapper>
               <div class="icon">
                 <i class="fa-regular fa-circle-question fa-xl" />
@@ -101,8 +103,7 @@
           aria-label="Open GeoHub Dashboards"
           style="cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
-          on:keydown={onKeyPressed}
-          tabindex="1">
+          on:keydown={onKeyPressed}>
           <Wrapper>
             <div
               style="margin-right: 20px!important;"
@@ -134,13 +135,12 @@
           style="margin-left: 5%; cursor: pointer;"
           on:click={() => (drawerOpen = !drawerOpen)}
           on:keydown={onKeyPressed}
-          tabindex="1"
           role="button"
           aria-label={drawerOpen ? 'Close side panel' : 'Open side panel'}>
           <Wrapper>
             <div class="icon">
               <Fa
-                icon={faBars}
+                icon={drawerOpen ? faXmark : faBars}
                 size="lg" />
             </div>
             <Tooltip

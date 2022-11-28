@@ -9,15 +9,11 @@
     VectorTileMetadata,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
-  import type { GeoJSONFeature } from 'maplibre-gl'
   import Accordion from './controls/Accordion.svelte'
   import MiniMap from './MiniMap.svelte'
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
-  import { e } from 'mathjs'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
-  import { assets } from '$app/paths'
-  import { hasOwnProperty } from 'vega'
 
   interface AssetOptions {
     url: string
@@ -46,8 +42,6 @@
   const addLayer = async () => {
     try {
       $indicatorProgress = true
-
-      const url: string = feature.properties.url
 
       if (is_raster) {
         if (stacType) {
