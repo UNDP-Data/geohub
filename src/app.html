@@ -75,19 +75,14 @@
       margin: 0;
       font-family: ProximaNova, sans-serif;
       font-size: 13px;
+      min-height: 100vh;
+      /* mobile viewport bug fix */
+      min-height: -webkit-fill-available;
     }
 
     html {
       overflow-y: hidden !important;
-    }
-
-    .mdc-drawer {
-      width: 355px;
-    }
-
-    .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
-      margin-left: 355px;
-      margin-right: 0;
+      height: -webkit-fill-available;
     }
   </style>
   <body>

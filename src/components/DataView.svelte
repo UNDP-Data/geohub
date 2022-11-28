@@ -3,14 +3,15 @@
   import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
-  import { indicatorProgress } from '$stores'
+  import { map, indicatorProgress } from '$stores'
   import TextFilter from './controls/TextFilter.svelte'
   import { indexOf } from 'lodash'
   import Notification from './controls/Notification.svelte'
+  import { STAC_MINIMUM_ZOOM, SEARCH_PAGINATION_LIMIT } from '$lib/constants'
 
   let containerDivElement: HTMLDivElement
   let selectedCategories: DataCategory[] = []
-  const LIMIT = 25
+  const LIMIT = SEARCH_PAGINATION_LIMIT
 
   let categories: DataCategory[] = [
     {
@@ -83,6 +84,14 @@
   const handleSelectSubcategory = async (category: DataCategory) => {
     try {
       $indicatorProgress = true
+
+      if (['Microsoft Planetary'].includes(category.name)) {
+        const zoom = $map.getZoom()
+        if (zoom < STAC_MINIMUM_ZOOM) {
+          $map.zoomTo(STAC_MINIMUM_ZOOM)
+        }
+      }
+
       if (selectedCategories) {
         const lastCategory = selectedCategories[selectedCategories.length - 1]
         if (lastCategory?.name !== category.name) {
