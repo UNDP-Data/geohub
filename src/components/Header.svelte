@@ -76,20 +76,20 @@
           <span>GeoHub</span>
         </div>
       </div>
-      <div style="margin-right: 5%; width: fit-content; display: flex!important;">
+      <div style="margin-right: 2rem; width: fit-content; display: flex!important;">
         <div
-          style="margin-left: 5%; margin-right: 20px; cursor: pointer"
+          style="margin-right: 2rem; cursor: pointer"
           role="button"
-          aria-label="Click to see the documentation">
+          aria-label="Open documentation">
           <div
             role="button"
-            aria-label="Click to see the documentation"
+            aria-label="Open documentation"
             style="cursor: pointer"
             on:click={() => window.open('/docs/index.html', '_blank')}
             on:keydown={onKeyPressed}>
             <Wrapper>
               <div class="icon">
-                <i class="fa-regular fa-circle-question fa-xl" />
+                <i class="fa-regular fa-circle-question fa-2xl" />
               </div>
               <Tooltip
                 showDelay={500}
@@ -101,16 +101,14 @@
         <div
           role="button"
           aria-label="Open GeoHub Dashboards"
-          style="cursor: pointer"
+          style="margin-right: 1.5rem; cursor: pointer"
           on:click={() => window.open('/dashboards', '_blank')}
           on:keydown={onKeyPressed}>
           <Wrapper>
-            <div
-              style="margin-right: 20px!important;"
-              class="icon">
+            <div class="icon">
               <Fa
                 icon={faChalkboardUser}
-                size="lg" />
+                size="2x" />
             </div>
             <Tooltip
               showDelay={500}
@@ -120,7 +118,7 @@
         </div>
 
         <div
-          style="margin-left: 5%; cursor: pointer"
+          style="cursor: pointer"
           role="button"
           aria-label="Share the current style">
           <Wrapper>
@@ -141,7 +139,7 @@
             <div class="icon">
               <Fa
                 icon={drawerOpen ? faXmark : faBars}
-                size="lg" />
+                size="2x" />
             </div>
             <Tooltip
               showDelay={500}
