@@ -56,6 +56,7 @@ export const GET: RequestHandler = async ({ url }) => {
       const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat']
       const targetSortingOrder = ['asc', 'desc']
       if (!targetSortingColumns.includes(column)) {
+        console.log(targetSortingColumns, column)
         throw error(400, `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`)
       }
       sortByColumn = column
@@ -217,8 +218,6 @@ export const GET: RequestHandler = async ({ url }) => {
     })
 
     return new Response(JSON.stringify(geojson))
-  } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
   } finally {
     client.release()
     pool.end()

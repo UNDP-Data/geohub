@@ -96,8 +96,6 @@ export const GET: RequestHandler = async ({ url }) => {
     const res = await client.query(sql)
 
     return new Response(JSON.stringify(res.rows))
-  } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
   } finally {
     client.release()
     pool.end()
