@@ -12,6 +12,7 @@ const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT
 import fs from 'fs'
 import path from 'path'
 import { error } from '@sveltejs/kit'
+import { fetchWithTimeout } from '$lib/helper'
 const __dirname = path.resolve()
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -154,13 +155,18 @@ const getMsStacToken = async (originUrl: string) => {
   const _url = new URL(originUrl)
   const collectionId = _url.searchParams.get('collections')
   const url = `${_url.origin}/api/sas/v1/token/${collectionId}`
-  const res = await fetch(url)
-  if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
+  try {
+    // some collections are unable to request token and it will be timeout. Set 5 seconds to be timeouted.
+    const res = await fetchWithTimeout(url, { timeout: 5000 })
+
+    if (res.ok) {
+      const json = await res.json()
+      const token = json.token
+      return token
+    }
+  } catch (err) {
+    throw error(500, { message: `${err.message}. collection: ${collectionId} is not available.` })
   }
-  const json = await res.json()
-  const token = json.token
-  return token
 }
 
 const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
