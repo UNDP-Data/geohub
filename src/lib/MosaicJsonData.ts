@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages } from './constants'
+import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, STAC_MINIMUM_ZOOM } from './constants'
 import { getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
@@ -87,7 +87,7 @@ export class MosaicJsonData {
 
   public add = async (defaultColormap?: string) => {
     const zoom = this.map.getZoom()
-    if (zoom < 5) {
+    if (zoom < STAC_MINIMUM_ZOOM) {
       throw new Error(ErrorMessages.TOO_SMALL_ZOOM_LEVEL)
     }
 

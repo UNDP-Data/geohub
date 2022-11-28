@@ -6,11 +6,9 @@ export const COLOR_CLASS_COUNT_MINIMUM = 2
 export const DEFAULT_LINE_WIDTH = 0.5
 export const DEFAULT_TIMEOUT_MS = 60000
 export const NO_RANDOM_SAMPLING_POINTS = 1000
-export const STRING_COMPARE_THRESHOLD = 0.25
-export const STAC_PAGINATION_PREV = 'prev'
-export const STAC_PAGINATION_NEXT = 'next'
-export const STAC_PAGINATION_LIMIT = 5
+export const SEARCH_PAGINATION_LIMIT = 25
 export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
+export const STAC_MINIMUM_ZOOM = 5
 
 export enum TabNames {
   ANALYZE = 'Analyze',
@@ -24,17 +22,6 @@ export enum TabNames {
   ZOOM = 'Zoom',
   HISTOGRAM = 'Histogram',
   FILTER = 'Filter',
-}
-
-export const BucketIntialValues = {
-  id: '',
-  published: true,
-  path: '',
-  label: '',
-  description: '',
-  icon: '',
-  type: '',
-  tags: [],
 }
 
 export enum ClassificationMethodTypes {
@@ -182,11 +169,6 @@ export enum StatusTypes {
   DANGER = 'danger',
 }
 
-export enum BucketType {
-  INTERNAL = 'internal',
-  EXTERNAL = 'external',
-}
-
 export const styles: StyleDefinition[] = [
   {
     title: 'Carto',
@@ -196,19 +178,6 @@ export const styles: StyleDefinition[] = [
     title: 'Bing Aerial',
     uri: 'https://undp-data.github.io/style/aerialstyle.json',
   },
-]
-
-export const TagKeys = [
-  'sdg_goal',
-  'sdg_target',
-  'theme',
-  'extent',
-  'resolution',
-  'granularity',
-  'year_value',
-  'name1',
-  'name2',
-  'name3',
 ]
 
 export const vectorFilterOperations = [
