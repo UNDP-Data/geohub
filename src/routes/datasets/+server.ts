@@ -22,6 +22,7 @@ import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
  *     If queried text contains space like 'water quality', query='water quality' should be used with single quatation.
  * - storage_id = you can also filter by directly storage_id
  * - bbox = you can filter the data by bounding box (minx, miny, maxx, maxy)
+ * - sortby = set parameter like "sortby=name, desc". support sorting by 'name', 'source', 'license', 'createdat', 'updatedat'. Default order is ASC.
  * - limit = default is 10
  * - offset = default is 0
  * - {key}={value} e.g., sdg_goal=1 to filter where tag key is `sdg_goal` and value is 1. If multiple key/value are set, it will filter by OR operator.
@@ -46,10 +47,35 @@ export const GET: RequestHandler = async ({ url }) => {
         throw error(400, 'Invalid bbox')
       }
     }
+    const sortby = url.searchParams.get('sortby')
+    let sortByColumn = 'name'
+    let SortOrder: 'asc' | 'desc' = 'asc'
+    if (sortby) {
+      const values = sortby.split(',')
+      const column: string = values[0].trim().toLowerCase()
+      const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat']
+      const targetSortingOrder = ['asc', 'desc']
+      if (!targetSortingColumns.includes(column)) {
+        console.log(targetSortingColumns, column)
+        throw error(400, `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`)
+      }
+      sortByColumn = column
+
+      if (values.length > 1) {
+        const order: string = values[1].trim().toLowerCase()
+        if (!targetSortingOrder.includes(order)) {
+          throw error(
+            400,
+            `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(', ')}'`,
+          )
+        }
+        SortOrder = order as 'asc' | 'desc'
+      }
+    }
 
     const filters: { key: string; value: string }[] = []
     url.searchParams.forEach((key, value) => {
-      if (['query', 'offset', 'limit', 'storage_id', 'bbox'].includes(value)) return
+      if (['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby'].includes(value)) return
       filters.push({
         key: value,
         value: key.toLowerCase(),
@@ -129,14 +155,7 @@ export const GET: RequestHandler = async ({ url }) => {
           ${getTagFilter(filters, values)}
           ${getBBoxFilter(bboxCoordinates, values)}
         ORDER BY
-          ${
-            !query
-              ? ''
-              : `
-          ts_rank_cd(to_tsvector(x.name),to_tsquery($1)) desc,
-          ts_rank_cd(to_tsvector(x.description),to_tsquery($1)) desc,`
-          }
-          x.updatedat desc
+          x.${sortByColumn} ${SortOrder}
         LIMIT ${limit}
         OFFSET ${offset}
         ) AS feature
@@ -199,8 +218,6 @@ export const GET: RequestHandler = async ({ url }) => {
     })
 
     return new Response(JSON.stringify(geojson))
-  } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
   } finally {
     client.release()
     pool.end()
