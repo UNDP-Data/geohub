@@ -137,7 +137,7 @@
     tabindex="1">
     <Fa
       icon={faShare}
-      size="lg" />
+      size="2x" />
   </div>
 {/if}
 

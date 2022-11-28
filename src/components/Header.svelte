@@ -130,7 +130,7 @@
           </Wrapper>
         </div>
         <div
-          style="margin-left: 5%; cursor: pointer;"
+          style="cursor: pointer;"
           on:click={() => (drawerOpen = !drawerOpen)}
           on:keydown={onKeyPressed}
           role="button"
