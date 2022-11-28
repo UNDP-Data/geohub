@@ -9,7 +9,7 @@ import type { TileJson, VectorLayerTileStatLayer, VectorTileMetadata } from '$li
  */
 export const generateMetadataJson = async (tilejson: TileJson, origin: string) => {
   const pbfPath = tilejson.tiles[0].replace('{z}/{x}/{y}', '0/0/0')
-  const vectorinfoUrl = `${origin}/vectorinfo/static?path=${pbfPath}&layer_name=${tilejson.name}`
+  const vectorinfoUrl = `${origin}/vectorinfo?path=${pbfPath}&layer_name=${tilejson.name}`
   const res = await fetch(vectorinfoUrl)
   if (!res.ok) {
     throw error(res.status, { message: res.statusText })
@@ -49,7 +49,6 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
         layers: [tilestatsLayer],
       },
     },
-    stats: stats, // TODO: this stats property sould be deleted
   }
   return data
 }

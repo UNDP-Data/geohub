@@ -32,6 +32,7 @@
   const handleSetColor = (e: CustomEvent) => {
     rgba = e.detail.color
     $map.setPaintProperty(layerId, propertyName, rgba)
+    defaultColor = e.detail.color
   }
 </script>
 
