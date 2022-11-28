@@ -33,6 +33,7 @@
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
       $map.fire('line-color:changed', { value: e.detail.color })
+      defaultColor = e.detail.color
     }
   }
 </script>

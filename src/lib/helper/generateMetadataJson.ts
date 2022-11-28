@@ -49,7 +49,6 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
         layers: [tilestatsLayer],
       },
     },
-    stats: stats, // TODO: this stats property sould be deleted
   }
   return data
 }
