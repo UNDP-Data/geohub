@@ -87,6 +87,7 @@
 
   .filter-text {
     display: flex;
+    padding-top: 0.5rem;
     padding-left: 1em;
     padding-right: 1em;
 

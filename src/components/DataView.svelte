@@ -185,12 +185,12 @@
   bind:this={containerDivElement}>
   {#if selectedCategories && selectedCategories.length > 0}
     <nav
-      class="breadcrumb has-succeeds-separator"
+      class="breadcrumb has-succeeds-separator bread-crumb-margin"
       aria-label="breadcrumbs">
-      <ul>
+      <ul class="bread-crumb-margin">
         {#each selectedCategories as category, index}
           {#if index === 0}
-            <li>
+            <li class="bread-crumb-margin">
               <!-- svelte-ignore a11y-missing-attribute -->
               <a
                 on:click={() => {
@@ -201,10 +201,10 @@
             </li>
           {:else if index === selectedCategories.length - 1}
             <!-- svelte-ignore a11y-missing-attribute -->
-            <li class="is-active"><a>{category.name}</a></li>
+            <li class="bread-crumb-margin is-active"><a>{category.name}</a></li>
           {:else}
             <!-- svelte-ignore a11y-missing-attribute -->
-            <li>
+            <li class="bread-crumb-margin">
               <a
                 on:click={() => {
                   let last = selectedCategories[selectedCategories.length - 1]
@@ -263,15 +263,19 @@
   @use '../styles/undp-design/buttons.min.css';
 
   .data-view-container {
-    height: calc(100vh - 188px);
+    height: calc(100vh - 195px);
     overflow-y: scroll;
 
     @media (max-width: 89.9375em) {
-      height: calc(100vh - 158px);
+      height: calc(100vh - 166px);
     }
 
     .button {
       color: white !important;
+    }
+
+    .bread-crumb-margin {
+      margin-bottom: 0px;
     }
 
     .category-container {
