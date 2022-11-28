@@ -102,7 +102,6 @@ jobs:
           cp package.json build/.
           cp pnpm-lock.yaml build/.
           mv node_modules build/.
-          mv data build/.
 
       - name: 'Deploy to Azure Web App for undpgeohub-dev'
         id: deploy-to-webapp-dev
