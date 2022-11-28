@@ -28,8 +28,13 @@
   onMount(async () => {
     if (!$map) return
     updateLegend()
-    $map.on('icon-color:changed', updateLegend)
+    $map.on('icon-color:changed', (e) => {
+      if (!e.color) return
+      defaultColor = e.color
+    })
   })
+
+  $: defaultColor, updateLegend()
 
   const {
     ref: popperRef,

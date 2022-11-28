@@ -32,7 +32,7 @@
   const handleSetColor = (e: CustomEvent) => {
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
-      $map.fire('icon-color:changed', { value: e.detail.color })
+      $map.fire('icon-color:changed', { color: e.detail.color })
     }
   }
 </script>
