@@ -24,15 +24,16 @@
     <div class="drawer-content">
       <Tabs
         bind:tabs
-        bind:activeTab>
-        <div class="container p-0 m-0">
-          {#if activeTab === TabNames.DATA}
-            <DataView />
-          {:else if activeTab === TabNames.LAYERS}
-            <LayerList />
-          {/if}
+        bind:activeTab />
+
+      <div class="container p-0 m-0">
+        <div hidden={activeTab !== TabNames.DATA}>
+          <DataView />
         </div>
-      </Tabs>
+        <div hidden={activeTab !== TabNames.LAYERS}>
+          <LayerList />
+        </div>
+      </div>
     </div>
   </div>
   <div slot="secondary">

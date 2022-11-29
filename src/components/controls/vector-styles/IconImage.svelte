@@ -31,8 +31,6 @@
     $map.on('icon-color:changed', updateLegend)
   })
 
-  // $: defaultColor, updateLegend()
-
   const {
     ref: popperRef,
     options: popperOptions,
