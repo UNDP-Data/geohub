@@ -152,7 +152,7 @@
 </script>
 
 <TextFilter
-  placeholder="Filter data"
+  placeholder="Type keywords to search data"
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
@@ -196,11 +196,11 @@
   @use '../styles/undp-design/buttons.min.css';
 
   .data-view-container {
-    height: calc(100vh - 190px);
+    height: calc(100vh - 173.07px);
     overflow-y: scroll;
 
     @media (max-width: 89.9375em) {
-      height: calc(100vh - 160px);
+      height: calc(100vh - 140.57px);
     }
 
     .button {
