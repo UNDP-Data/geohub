@@ -82,7 +82,7 @@
 
           <div
             role="button"
-            aria-label="Open GeoHub Dashboards"
+            aria-label="UNDP Dashboards"
             class="menu-button"
             tabindex="0"
             on:click={() => window.open('/dashboards', '_blank')}
@@ -105,20 +105,20 @@
               class="menu-button"
               role="button"
               tabindex="0"
-              aria-label="Share the current style">
+              aria-label="Share map">
               <Wrapper>
                 <StyleShare />
                 <Tooltip
                   showDelay={500}
                   hideDelay={500}
-                  yPos="below">Download Map Style Specification</Tooltip>
+                  yPos="below">Share map</Tooltip>
               </Wrapper>
             </div>
           {/if}
 
           <div
             role="button"
-            aria-label="Open documentation"
+            aria-label="Documentation"
             class="menu-button"
             tabindex="0"
             on:click={() => window.open('/docs/index.html', '_blank')}
@@ -132,7 +132,7 @@
               <Tooltip
                 showDelay={500}
                 hideDelay={500}
-                yPos="below">Click to see the documentation</Tooltip>
+                yPos="below">Documentation</Tooltip>
             </Wrapper>
           </div>
         </div>
