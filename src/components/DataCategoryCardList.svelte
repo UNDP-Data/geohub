@@ -109,7 +109,7 @@
 {:else}
   <div
     class="container mt-2 category-container"
-    style="grid-template-columns: repeat(auto-fit, minmax({cardSize === 'medium' ? 100 : 80}px, 1fr))">
+    style="grid-template-columns: repeat(auto-fit, minmax({cardSize === 'medium' ? 80 : 70}px, 1fr))">
     {#each categories as category}
       <DataCategoryCard
         bind:category
