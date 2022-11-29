@@ -141,27 +141,27 @@
   <div class="data-list-header">
     {#if breadcrumbs && breadcrumbs.length > 0}
       <nav
-        class="breadcrumb has-succeeds-separator breadcrumb-margin"
-        aria-label="breadcrumbs">
-        <ul class="breadcrumb-margin">
+        aria-label="breadcrumb"
+        data-viewport="true"
+        class="breadcrumb-undp inviewport">
+        <ul>
           {#each breadcrumbs as category, index}
             {#if index === 0}
-              <li class="breadcrumb-margin">
+              <li>
                 <!-- svelte-ignore a11y-missing-attribute -->
                 <a
+                  aria-label={category.name}
                   on:click={() => {
                     breadcrumbs = []
                     DataItemFeatureCollection = undefined
                     isShownSortbyButton = false
                   }}>{category.name}</a>
               </li>
-            {:else if index === breadcrumbs.length - 1}
-              <!-- svelte-ignore a11y-missing-attribute -->
-              <li class="breadcrumb-margin is-active"><a>{category.name}</a></li>
-            {:else}
-              <!-- svelte-ignore a11y-missing-attribute -->
-              <li class="breadcrumb-margin">
+            {:else if index < breadcrumbs.length - 1}
+              <li>
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <a
+                  aria-label={category.name}
                   on:click={async () => {
                     let last = breadcrumbs[breadcrumbs.length - 1]
                     while (last.name !== category.name) {
@@ -172,12 +172,13 @@
                     isShownSortbyButton = last.url.startsWith('/datasets')
                   }}>{category.name}</a>
               </li>
+            {:else}
+              <li>{category.name}</li>
             {/if}
           {/each}
         </ul>
       </nav>
     {/if}
-
     {#if isShownSortbyButton}
       <span
         class="icon sortby-icon"
@@ -208,6 +209,7 @@
 <style lang="scss">
   @use '../styles/undp-design/base-minimal.min.css';
   @use '../styles/undp-design/buttons.min.css';
+  @use '../styles/undp-design/breadcrumbs.min.css';
 
   .data-view-container {
     height: calc(100vh - 195px);
