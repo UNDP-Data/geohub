@@ -7,7 +7,7 @@
   import TextFilter from './controls/TextFilter.svelte'
   import { indexOf, last, startsWith } from 'lodash'
   import Notification from './controls/Notification.svelte'
-  import { STAC_MINIMUM_ZOOM, SEARCH_PAGINATION_LIMIT } from '$lib/constants'
+  import { STAC_MINIMUM_ZOOM, SEARCH_PAGINATION_LIMIT, DataCategories } from '$lib/constants'
 
   let containerDivElement: HTMLDivElement
   let selectedCategories: DataCategory[] = []
@@ -20,34 +20,6 @@
       selectedCategories.length > 0 &&
       selectedCategories[selectedCategories.length - 1].url.startsWith('/datasets')) ||
     (DataItemFeatureCollection ? true : false)
-
-  let categories: DataCategory[] = [
-    {
-      name: 'SDG',
-      icon: '/sdgs/SDG Wheel_WEB.png',
-      url: '/tags?key=sdg_goal',
-    },
-    {
-      name: 'Climate change',
-      icon: '/sdgs/13.png',
-      url: '/datasets?sdg_goal=13',
-    },
-    {
-      name: 'Microsoft Planetary',
-      icon: 'fa-brands fa-microsoft',
-      url: '/datasets?stac=microsoft-pc',
-    },
-    {
-      name: 'pg_tileserv',
-      icon: '/crunchy-spatial-logo.png',
-      url: '/datasets?type=pgtileserv',
-    },
-    {
-      name: 'martin',
-      icon: '/maplibre.png',
-      url: '/datasets?type=martin',
-    },
-  ]
 
   let subCategories: DataCategory[] = []
 
@@ -301,7 +273,7 @@
         selectedCategories && selectedCategories.length === 0 ? 'category-container' : 'sub-category-container'
       }`}>
       {#if selectedCategories && selectedCategories.length === 0}
-        {#each categories as category}
+        {#each DataCategories as category}
           <DataCategoryCard
             bind:category
             size="medium"
