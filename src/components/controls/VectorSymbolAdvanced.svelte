@@ -19,7 +19,7 @@
   } from '$lib/constants'
   import {
     getIntervalList,
-    getLayerNumberProperties,
+    getLayerProperties,
     getLayerStyle,
     getSampleFromInterval,
     remapInputValue,
@@ -94,7 +94,7 @@
   }
 
   const getPropertySelectValue = () => {
-    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const vectorLayerMeta = getLayerProperties($map, layer)
     const selectOptions = Object.keys(vectorLayerMeta.fields)
 
     propertySelectValue = selectOptions[0]
