@@ -130,14 +130,15 @@
 
 {#if $layerList.length > 0}
   <div
-    style="margin-left: 2%"
     class="icon"
     on:click={() => open()}
     on:keydown={onKeyPressed}
     tabindex="1">
-    <Fa
-      icon={faShare}
-      size="2x" />
+    <span class="icon">
+      <i
+        class="fa-solid fa-share fa-xl"
+        style="color:#006eb5" />
+    </span>
   </div>
 {/if}
 
@@ -259,7 +260,6 @@
 
   .icon {
     cursor: pointer;
-    margin-right: 20px;
   }
   .textfield {
     padding-left: 30px;

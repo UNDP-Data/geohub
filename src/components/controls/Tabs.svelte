@@ -77,11 +77,6 @@
       </li>
     {/each}
   </ul>
-  <div
-    class="tabs-content"
-    data-tabs-content="tablist_1">
-    <slot />
-  </div>
 </div>
 
 <style lang="scss">
