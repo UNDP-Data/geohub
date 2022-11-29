@@ -3,15 +3,26 @@
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerLabelled, map } from '$stores'
+  import { map } from '$stores'
+  import { onDestroy, onMount } from 'svelte'
 
   export let layer: Layer
-  let info: RasterTileMetadata
   let bandName = ''
+  let hasLayerLabel = false
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  ;({ info } = layer)
+  onMount(() => {
+    if (!$map) return
+    $map.on('label:changed', handleLabelChanged)
+  })
+
+  onDestroy(() => {
+    $map.off('label:changed', handleLabelChanged)
+  })
+
+  const handleLabelChanged = (e: { parentId: string; layerId: string; isCreated: boolean }) => {
+    if (e.parentId !== layer.id) return
+    hasLayerLabel = e.isCreated ?? false
+  }
 
   const layerStyle = getLayerStyle($map, layer.id)
   if (layerStyle.type === 'raster') {
@@ -50,7 +61,7 @@
           class="{icon.icon} sm"
           style="color: {icon.color};" />
         <span style="padding-left: 5px;">
-          {#if $layerLabelled[layer.id]}
+          {#if hasLayerLabel}
             <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
           {/if}
         </span>

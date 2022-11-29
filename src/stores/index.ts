@@ -17,7 +17,4 @@ export const bannerMessages = writable(<BannerMessage[]>[])
 // vector : sprite list
 export const spriteImageList = writable(<SpriteImage[]>[])
 
-// layer labelled
-export const layerLabelled = writable(new Map())
-
 export const filterInputTags = writable([])
