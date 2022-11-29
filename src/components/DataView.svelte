@@ -9,6 +9,7 @@
   import Notification from './controls/Notification.svelte'
   import { STAC_MINIMUM_ZOOM, SEARCH_PAGINATION_LIMIT, DataCategories } from '$lib/constants'
   import DataCategoryCardList from './DataCategoryCardList.svelte'
+  import Breadcrumbs from './controls/Breadcrumbs.svelte'
 
   let containerDivElement: HTMLDivElement
   let breadcrumbs: DataCategory[] = []
@@ -127,6 +128,27 @@
       }
     }
   }
+
+  const handleBreadcrumpClicked = (e) => {
+    const index: number = e.detail.index
+    const breadcrump: DataCategory = e.detail.breadcrumb
+
+    if (index === 0) {
+      // home
+      breadcrumbs = []
+      DataItemFeatureCollection = undefined
+      isShownSortbyButton = false
+    } else if (index < breadcrumbs.length - 1) {
+      // middle ones
+      let last = breadcrumbs[breadcrumbs.length - 1]
+      while (last.name !== breadcrump.name) {
+        breadcrumbs.pop()
+        last = breadcrumbs[breadcrumbs.length - 1]
+      }
+      DataItemFeatureCollection = undefined
+      isShownSortbyButton = last.url.startsWith('/datasets')
+    }
+  }
 </script>
 
 <TextFilter
@@ -139,46 +161,9 @@
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   <div class="data-list-header">
-    {#if breadcrumbs && breadcrumbs.length > 0}
-      <nav
-        aria-label="breadcrumb"
-        data-viewport="true"
-        class="breadcrumb-undp inviewport">
-        <ul>
-          {#each breadcrumbs as category, index}
-            {#if index === 0}
-              <li>
-                <!-- svelte-ignore a11y-missing-attribute -->
-                <a
-                  aria-label={category.name}
-                  on:click={() => {
-                    breadcrumbs = []
-                    DataItemFeatureCollection = undefined
-                    isShownSortbyButton = false
-                  }}>{category.name}</a>
-              </li>
-            {:else if index < breadcrumbs.length - 1}
-              <li>
-                <!-- svelte-ignore a11y-missing-attribute -->
-                <a
-                  aria-label={category.name}
-                  on:click={async () => {
-                    let last = breadcrumbs[breadcrumbs.length - 1]
-                    while (last.name !== category.name) {
-                      breadcrumbs.pop()
-                      last = breadcrumbs[breadcrumbs.length - 1]
-                    }
-                    DataItemFeatureCollection = undefined
-                    isShownSortbyButton = last.url.startsWith('/datasets')
-                  }}>{category.name}</a>
-              </li>
-            {:else}
-              <li>{category.name}</li>
-            {/if}
-          {/each}
-        </ul>
-      </nav>
-    {/if}
+    <Breadcrumbs
+      bind:breadcrumbs
+      on:clicked={handleBreadcrumpClicked} />
     {#if isShownSortbyButton}
       <span
         class="icon sortby-icon"
@@ -209,7 +194,6 @@
 <style lang="scss">
   @use '../styles/undp-design/base-minimal.min.css';
   @use '../styles/undp-design/buttons.min.css';
-  @use '../styles/undp-design/breadcrumbs.min.css';
 
   .data-view-container {
     height: calc(100vh - 195px);
@@ -225,11 +209,6 @@
 
     .data-list-header {
       display: flex;
-
-      .breadcrumb-margin {
-        float: left;
-        margin-bottom: 0.2rem;
-      }
 
       .sortby-icon {
         cursor: pointer;
