@@ -196,11 +196,11 @@
   @use '../styles/undp-design/buttons.min.css';
 
   .data-view-container {
-    height: calc(100vh - 195px);
+    height: calc(100vh - 190px);
     overflow-y: scroll;
 
     @media (max-width: 89.9375em) {
-      height: calc(100vh - 166px);
+      height: calc(100vh - 160px);
     }
 
     .button {
