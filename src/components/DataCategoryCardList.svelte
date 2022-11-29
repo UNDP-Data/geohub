@@ -41,7 +41,7 @@
       breadcrumbs = [
         {
           name: 'Home',
-          icon: '',
+          icon: 'fas fa-house',
           url: '',
         },
       ]
@@ -66,7 +66,7 @@
 
       const last = breadcrumbs[breadcrumbs.length - 1]
       if (last.name !== category.name) {
-        breadcrumbs.push(category)
+        breadcrumbs = [...breadcrumbs, category]
       }
 
       const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
@@ -86,7 +86,7 @@
     if (breadcrumbs) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.name !== category.name) {
-        breadcrumbs.push(category)
+        breadcrumbs = [...breadcrumbs, category]
       }
     }
     if (category.url.startsWith('/datasets')) {

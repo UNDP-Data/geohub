@@ -212,7 +212,7 @@
 
       .sortby-icon {
         cursor: pointer;
-        margin-top: 0.4rem;
+        margin-top: 0.8rem;
         margin-left: auto;
       }
     }

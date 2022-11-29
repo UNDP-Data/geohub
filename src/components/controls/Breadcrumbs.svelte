@@ -22,15 +22,41 @@
     class="breadcrumb-undp inviewport">
     <ul>
       {#each breadcrumbs as breadcrumb, index}
-        {#if index < breadcrumbs.length - 1}
+        {#if index === breadcrumbs.length - 1}
+          <li>
+            <span class="icon-text">
+              <span class="icon">
+                {#if breadcrumb.icon.startsWith('fa')}
+                  <i class={breadcrumb.icon} />
+                {:else}
+                  <img
+                    src={breadcrumb.icon}
+                    alt="{breadcrumb.name}_image" />
+                {/if}
+              </span>
+              <span>{breadcrumb.name}</span>
+            </span>
+          </li>
+        {:else}
           <li>
             <!-- svelte-ignore a11y-missing-attribute -->
             <a
               aria-label={breadcrumb.name}
-              on:click={() => handleClicked(index)}>{breadcrumb.name}</a>
+              on:click={() => handleClicked(index)}>
+              <span class="icon-text">
+                <span class="icon">
+                  {#if breadcrumb.icon.startsWith('fa')}
+                    <i class={breadcrumb.icon} />
+                  {:else}
+                    <img
+                      src={breadcrumb.icon}
+                      alt="{breadcrumb.name}_image" />
+                  {/if}
+                </span>
+                <span>{breadcrumb.name}</span>
+              </span>
+            </a>
           </li>
-        {:else}
-          <li>{breadcrumb.name}</li>
         {/if}
       {/each}
     </ul>
