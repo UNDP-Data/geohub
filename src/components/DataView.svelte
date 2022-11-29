@@ -152,7 +152,7 @@
 </script>
 
 <TextFilter
-  placeholder="Filter data"
+  placeholder="Type keywords to search data"
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 

@@ -62,10 +62,17 @@
           on:click={() => {
             activeTab = tab.label
           }}>
-          {tab.label}
-          {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
-            ({$layerList.length})
-          {/if}
+          <span class="icon-text">
+            <span class="icon">
+              <i class={tab.icon} />
+            </span>
+            <span>
+              {tab.label}
+              {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
+                ({$layerList.length})
+              {/if}
+            </span>
+          </span>
         </a>
       </li>
     {/each}
@@ -81,7 +88,8 @@
   @use '../../styles/undp-design/base-minimal.min.css';
   @use '../../styles/undp-design/tab.min.css';
 
-  .tabs-undp ul {
+  .tabs-undp li {
     margin-left: 40px !important;
+    margin-right: auto !important;
   }
 </style>

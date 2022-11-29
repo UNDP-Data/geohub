@@ -6,10 +6,14 @@
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import Tabs from './controls/Tabs.svelte'
   import ContentSidebar from './ContentSidebar.svelte'
+  import type { Tab } from '$lib/types'
 
   export let drawerOpen = false
 
-  let tabs = [{ label: TabNames.DATA }, { label: TabNames.LAYERS }]
+  let tabs: Tab[] = [
+    { label: TabNames.DATA, icon: 'fas fa-database' },
+    { label: TabNames.LAYERS, icon: 'fas fa-layer-group' },
+  ]
   let activeTab: string = tabs[0].label
 </script>
 
