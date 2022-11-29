@@ -24,13 +24,13 @@
 </div>
 
 <style lang="scss">
-  :global(.smui-paper__content) {
-    padding: 0px !important;
-  }
-
-  $height: calc(100vh - 120px);
   .layer-list {
     overflow-y: auto;
-    height: $height;
+    height: calc(100vh - 131.57px);
+    margin-top: 5px;
+
+    @media (max-width: 89.9375em) {
+      height: calc(100vh - 99.07px);
+    }
   }
 </style>

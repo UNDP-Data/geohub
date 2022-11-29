@@ -1,8 +1,10 @@
 <script lang="ts">
   import { TabNames } from '$lib/constants'
+  import type { Tab } from '$lib/types'
   import { layerList } from '$stores'
 
-  export let tabs
+  export let tabs: Tab[]
+
   export let activeTab: string
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -13,7 +15,6 @@
       setRightActiveTab(activeTab)
     }
   }
-
   const setLeftActiveTab = (currentActiveTab: string) => {
     const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
     const nextTabIndex = currentTabIndex - 1
@@ -25,7 +26,6 @@
       document.getElementById(`tab-${activeTab}`)?.focus()
     }
   }
-
   const setRightActiveTab = (currentActiveTab: string) => {
     const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
     const nextTabIndex = currentTabIndex + 1
@@ -41,64 +41,47 @@
 </script>
 
 <div
-  class="tabs"
-  style="margin-top: 20px;"
-  role="navigation"
-  title="navigation"
-  aria-label="navigation">
+  class="tabs-undp inviewport"
+  data-viewport="true">
   <ul
-    style="border-bottom: none; margin-left: auto"
     data-deep-link="true"
     data-tabs="true"
-    id="tablist"
+    id="tablist_1"
     role="tablist">
-    {#each tabs as tab, i}
-      <li class="tabs-title {tab.label === activeTab ? 'active-tab' : null}">
-        <div
+    {#each tabs as tab}
+      <li
+        class="tabs-title {`${activeTab && activeTab === tab.label ? 'is-active' : ''}`}"
+        role="presentation">
+        <a
+          aria-selected="true"
+          role="tab"
+          aria-controls="tab-{tab.label}"
+          id="tab-{tab.label}"
+          tabindex={Number(`${activeTab && activeTab === tab.label ? '0' : '-1'}`)}
           on:keydown={handleKeyDown}
-          on:click={() => (activeTab = tab.label)}
-          id="tab-{tab.label}">
+          on:click={() => {
+            activeTab = tab.label
+          }}>
           {tab.label}
           {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
             ({$layerList.length})
           {/if}
-        </div>
+        </a>
       </li>
     {/each}
   </ul>
+  <div
+    class="tabs-content"
+    data-tabs-content="tablist_1">
+    <slot />
+  </div>
 </div>
 
 <style lang="scss">
-  $dark-red: #d12800;
-  $dark-azure: #00c1ff;
-  $gray-700: #232e3d;
-  .tabs {
-    display: flex;
-    // flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0 !important;
-    margin-left: 70px;
-    width: 100%;
-    height: 100%;
-  }
-  .tabs-title {
-    div {
-      border-bottom: none !important;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: $gray-700;
-      font-size: 1rem;
-      font-family: ProximaNova, sans-serif;
-      padding-left: 15px;
-      padding-right: 15px;
-      padding-top: 5px;
-      padding-bottom: 5px;
-      cursor: pointer;
-    }
-  }
-  .active-tab {
-    border-bottom: 2px solid $dark-red;
-    color: white;
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/tab.min.css';
+
+  .tabs-undp ul {
+    margin-left: 40px !important;
   }
 </style>
