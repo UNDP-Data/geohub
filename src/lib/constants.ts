@@ -1,4 +1,4 @@
-import type { Layer, StyleDefinition } from '$lib/types'
+import type { DataCategory, Layer, StyleDefinition } from '$lib/types'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -187,4 +187,32 @@ export const vectorFilterOperations = [
   { value: '<', label: 'Smaller', text: 'is smaller then', disabled: false, symbol: '<' }, // < disabled when property is string
   { value: 'in', label: 'Contains', text: 'contains', disabled: false, symbol: '⊂' },
   { value: '!in', label: 'Excludes', text: 'does not contain', disabled: false, symbol: '⊄' },
+]
+
+export const DataCategories: DataCategory[] = [
+  {
+    name: 'SDG',
+    icon: '/sdgs/SDG Wheel_WEB.png',
+    url: '/tags?key=sdg_goal',
+  },
+  {
+    name: 'Climate change',
+    icon: '/sdgs/13.png',
+    url: '/datasets?sdg_goal=13',
+  },
+  {
+    name: 'Microsoft Planetary',
+    icon: 'fa-brands fa-microsoft',
+    url: '/datasets?stac=microsoft-pc',
+  },
+  {
+    name: 'pg_tileserv',
+    icon: '/crunchy-spatial-logo.png',
+    url: '/datasets?type=pgtileserv',
+  },
+  {
+    name: 'martin',
+    icon: '/maplibre.png',
+    url: '/datasets?type=martin',
+  },
 ]

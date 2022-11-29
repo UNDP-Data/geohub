@@ -14,9 +14,9 @@
 
 {#if category}
   <div
-    class="category border p-2"
+    class="container p-2"
     on:click={handleClick}>
-    <figure class="image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
+    <figure class="category image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
       {#if category.icon.startsWith('fa')}
         <i class="{category.icon} fa-4x" />
       {:else}
@@ -26,18 +26,18 @@
       {/if}
     </figure>
     {#if category.name}
-      <p class="title is-5 center pt-2">{category.name}</p>
+      <p class="category {`${size === 'medium' ? 'title is-5' : 'subtitle is-6 '}`} center pt-2 has-text-weight-bold">
+        {category.name}
+      </p>
     {/if}
   </div>
 {/if}
 
 <style lang="scss">
-  .category {
-    cursor: pointer;
-  }
-
-  .border {
-    border: 0.1em solid gray;
+  .container {
+    .category {
+      cursor: pointer;
+    }
 
     .center {
       text-align: center;

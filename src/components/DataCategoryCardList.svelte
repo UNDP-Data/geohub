@@ -1,0 +1,129 @@
+<script lang="ts">
+  import { page } from '$app/stores'
+  import { createEventDispatcher } from 'svelte'
+  import type { DataCategory } from '$lib/types'
+  import DataCategoryCard from './DataCategoryCard.svelte'
+  import { indicatorProgress } from '$stores'
+  import { onMount } from 'svelte'
+
+  const dispatch = createEventDispatcher()
+
+  export let categories: DataCategory[]
+  export let cardSize: 'medium' | 'small' = 'medium'
+  export let breadcrumbs: DataCategory[]
+  let subCategories: DataCategory[] = []
+  $: isShowSubCategory = subCategories && subCategories.length > 0
+
+  $: breadcrumbs, breadcrumbChanged()
+
+  onMount(async () => {
+    const breadcrumbCount = breadcrumbs.length
+    if (breadcrumbCount > 1) {
+      const lastCategory = breadcrumbs[breadcrumbCount - 1]
+      if (!lastCategory.url.startsWith('/datasets') && categories.find((c) => c.name === lastCategory.name)) {
+        await getSelectedCategory(lastCategory)
+      }
+    }
+  })
+
+  const breadcrumbChanged = async () => {
+    if (breadcrumbs) {
+      const breadcrumbCount = breadcrumbs.length
+      if (breadcrumbCount === 0) {
+        subCategories = []
+        isShowSubCategory = false
+      }
+    }
+  }
+
+  const getSelectedCategory = async (category: DataCategory) => {
+    if (breadcrumbs.length === 0) {
+      breadcrumbs = [
+        {
+          name: 'Home',
+          icon: 'fas fa-house',
+          url: '',
+        },
+      ]
+    }
+
+    if (category.name === 'SDG') {
+      await searchCategory(category)
+    } else {
+      await handleSelectSubcategory(category)
+    }
+  }
+
+  const searchCategory = async (category: DataCategory) => {
+    try {
+      $indicatorProgress = true
+
+      const apiUrl = new URL(`${$page.url.origin}${category.url}`)
+
+      const res = await fetch(apiUrl.toString())
+      const json = await res.json()
+      const values: string[] = json[Object.keys(json)[0]]
+
+      const last = breadcrumbs[breadcrumbs.length - 1]
+      if (last.name !== category.name) {
+        breadcrumbs = [...breadcrumbs, category]
+      }
+
+      const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
+      subCategories = num_values.map((num) => {
+        return {
+          name: `SDG${num}`,
+          icon: `/sdgs/${num}.png`,
+          url: `/datasets?sdg_goal=${num}`,
+        }
+      })
+    } finally {
+      $indicatorProgress = false
+    }
+  }
+
+  const handleSelectSubcategory = async (category: DataCategory) => {
+    if (breadcrumbs) {
+      const lastCategory = breadcrumbs[breadcrumbs.length - 1]
+      if (lastCategory?.name !== category.name) {
+        breadcrumbs = [...breadcrumbs, category]
+      }
+    }
+    if (category.url.startsWith('/datasets')) {
+      dispatch('selected', { category })
+    }
+  }
+
+  const handleDatasetCategorySelected = (e) => {
+    const category = e.detail.category
+    dispatch('selected', { category })
+  }
+</script>
+
+{#if isShowSubCategory}
+  <svelte:self
+    categories={subCategories}
+    cardSize="small"
+    bind:breadcrumbs
+    on:selected={handleDatasetCategorySelected} />
+{:else}
+  <div
+    class="container mt-2 category-container"
+    style="grid-template-columns: repeat(auto-fit, minmax({cardSize === 'medium' ? 80 : 70}px, 1fr))">
+    {#each categories as category}
+      <DataCategoryCard
+        bind:category
+        size={cardSize}
+        on:clicked={() => {
+          getSelectedCategory(category)
+        }} />
+    {/each}
+  </div>
+{/if}
+
+<style lang="scss">
+  .category-container {
+    display: grid;
+    grid-gap: 5px;
+  }
+</style>
