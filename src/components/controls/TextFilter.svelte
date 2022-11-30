@@ -5,14 +5,19 @@
   import { SortingColumns } from '$lib/constants'
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
   import PanelButton from './PanelButton.svelte'
+  import type { Map } from 'maplibre-gl'
 
   const dispatch = createEventDispatcher()
 
+  export let map: Map
   export let placeholder: string
   let queryText = ''
   let queryType: 'and' | 'or' = 'and'
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
+  export let bbox: [number, number, number, number]
+
+  export let isFilterByBBox: boolean
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
 
@@ -47,7 +52,38 @@
       query: query,
       sortingColumn,
       orderType,
+      bbox,
     })
+  }
+
+  $: isFilterByBBox, registerMapMovedEvent()
+
+  const registerMapMovedEvent = () => {
+    if (!map) return
+    if (isFilterByBBox) {
+      map.off('moveend', handleMapMoved)
+      map.on('moveend', handleMapMoved)
+    } else {
+      map.off('moveend', handleMapMoved)
+    }
+    handleMapMoved()
+  }
+
+  const handleMapMoved = () => {
+    if (!map) return
+    if (isFilterByBBox) {
+      const bounds = map.getBounds()
+      bbox = [
+        bounds.getSouthWest().lng,
+        bounds.getSouthWest().lat,
+        bounds.getNorthEast().lng,
+        bounds.getNorthEast().lat,
+      ]
+    } else {
+      bbox = undefined
+      map.off('moveend', handleMapMoved)
+    }
+    fireChangeEvent('change', true)
   }
 </script>
 
@@ -74,8 +110,9 @@
 
   <PanelButton
     icon="fas fa-filter"
-    width="150px">
-    <p class="title is-5 is-12">Filter settings</p>
+    width="230px">
+    <p class="title is-5 m-0 p-0">Filter settings</p>
+    <p class="subtitle is-6 pb-0 my-1">Text search</p>
     <div class="control query-type-radios">
       <label class="radio">
         <input
@@ -95,15 +132,24 @@
           value="or" />
         OR
       </label>
+      <p class="subtitle is-6 pb-0 my-1">Geospatial filter</p>
+      <div class="form-check">
+        <input
+          type="checkbox"
+          id="bbox-filter-checkbox"
+          name="bbox-filter-checkbox"
+          bind:checked={isFilterByBBox} />
+        <label for="bbox-filter-checkbox">Filter by current map extent</label>
+      </div>
     </div>
   </PanelButton>
 
   <PanelButton
     bind:icon={sortIcon}
     width="200px">
-    <p class="title is-5 is-12">Sort settings</p>
+    <p class="title is-5 m-0 p-0">Sort settings</p>
 
-    <p class="subtitle is-6 pb-0 mb-1">Sort by:</p>
+    <p class="subtitle is-6 pb-0 my-1">Sort by</p>
 
     <div class="tile is-vertical">
       {#each SortingColumns as column}
@@ -121,7 +167,7 @@
       {/each}
     </div>
 
-    <p class="subtitle is-6 pb-0 mb-1">Ordering:</p>
+    <p class="subtitle is-6 pb-0 my-1">Ordering</p>
 
     <div class="tile is-vertical">
       <div class="tile">
@@ -153,6 +199,7 @@
 <style lang="scss">
   @use '../../styles/undp-design/base-minimal.min.css';
   @use '../../styles/undp-design/radio.min.css';
+  @use '../../styles/undp-design/checkbox.min.css';
 
   .filter-text {
     display: flex;
@@ -171,6 +218,11 @@
         right: 8px;
         cursor: pointer;
       }
+    }
+
+    .subtitle {
+      border-bottom: 1px solid gray;
+      font-weight: bold;
     }
 
     .radio-button {

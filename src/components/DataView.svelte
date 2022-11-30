@@ -17,6 +17,8 @@
   let query: string
   let sortingColumn: DataSortingColumn = 'name'
   let orderType: DataOrderType = 'asc'
+  let bbox: [number, number, number, number]
+  let isFilterByBBox = false
 
   let DataItemFeatureCollection: StacItemFeatureCollection
 
@@ -51,6 +53,13 @@
           apiUrl.searchParams.set('query', query)
         }
       }
+
+      if (bbox && bbox.length === 4) {
+        apiUrl.searchParams.set('bbox', bbox.join(','))
+      } else {
+        apiUrl.searchParams.delete('bbox')
+      }
+
       apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
       apiUrl.searchParams.delete('offset')
@@ -74,7 +83,11 @@
   const handleFilterInput = async (e) => {
     query = e.detail.query
 
-    if (!breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets') && query === '') return
+    if (
+      !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets')) &&
+      query === ''
+    )
+      return
 
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
     let url = `${$page.url.origin}/datasets`
@@ -132,8 +145,11 @@
 
 <TextFilter
   placeholder="Type keywords to search data"
+  bind:map={$map}
   bind:sortingColumn
   bind:orderType
+  bind:bbox
+  bind:isFilterByBBox
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
