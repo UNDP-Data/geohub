@@ -16,31 +16,9 @@
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
   let sortingColumn: 'name' | 'source' | 'license' | 'createdat' | 'updatedat' = 'name'
-  let isAsc = true
-  $: isShownSortbyButton =
-    (breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets')) ||
-    (DataItemFeatureCollection ? true : false)
+  let orderType: 'asc' | 'desc' = 'asc'
 
   let DataItemFeatureCollection: StacItemFeatureCollection
-
-  $: isAsc, handleSortbyChanged()
-
-  const handleSortbyChanged = async () => {
-    if ($indicatorProgress === true) return
-    if (!DataItemFeatureCollection) return
-
-    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
-    let url: string
-    if (link) {
-      url = link.href
-    } else {
-      const lastCategory = breadcrumbs[breadcrumbs.length - 1]
-      if (!lastCategory.url.startsWith('/datasets')) return
-      url = lastCategory.url
-    }
-
-    await searchDatasets(url)
-  }
 
   const fetchNextDatasets = async () => {
     if (DataItemFeatureCollection?.features.length === 0) return
@@ -72,7 +50,7 @@
           apiUrl.searchParams.set('query', query)
         }
       }
-      apiUrl.searchParams.set('sortby', [sortingColumn, `${isAsc ? 'asc' : 'desc'}`].join(','))
+      apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
       apiUrl.searchParams.delete('offset')
       const res = await fetch(apiUrl.toString())
@@ -94,6 +72,8 @@
 
   const handleFilterInput = async (e) => {
     query = e.detail.query
+
+    if (breadcrumbs.length === 0 && query === '') return
 
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
     let url = `${$page.url.origin}/datasets`
@@ -137,7 +117,6 @@
       // home
       breadcrumbs = []
       DataItemFeatureCollection = undefined
-      isShownSortbyButton = false
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -146,13 +125,14 @@
         last = breadcrumbs[breadcrumbs.length - 1]
       }
       DataItemFeatureCollection = undefined
-      isShownSortbyButton = last.url.startsWith('/datasets')
     }
   }
 </script>
 
 <TextFilter
   placeholder="Type keywords to search data"
+  bind:sortingColumn
+  bind:orderType
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
@@ -160,18 +140,9 @@
   class="container data-view-container mx-4"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  <div class="data-list-header">
-    <Breadcrumbs
-      bind:breadcrumbs
-      on:clicked={handleBreadcrumpClicked} />
-    {#if isShownSortbyButton}
-      <span
-        class="icon sortby-icon"
-        on:click={() => (isAsc = !isAsc)}>
-        <i class="fas {`${isAsc ? 'fa-arrow-down-a-z' : 'fa-arrow-up-a-z'}`} fa-lg" />
-      </span>
-    {/if}
-  </div>
+  <Breadcrumbs
+    bind:breadcrumbs
+    on:clicked={handleBreadcrumpClicked} />
 
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
     {#each DataItemFeatureCollection.features as feature}
@@ -205,16 +176,6 @@
 
     .button {
       color: white !important;
-    }
-
-    .data-list-header {
-      display: flex;
-
-      .sortby-icon {
-        cursor: pointer;
-        margin-top: 0.8rem;
-        margin-left: auto;
-      }
     }
   }
 </style>
