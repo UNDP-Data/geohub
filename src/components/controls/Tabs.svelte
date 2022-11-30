@@ -84,7 +84,7 @@
   @use '../../styles/undp-design/tab.min.css';
 
   .tabs-undp li {
-    margin-left: 40px !important;
+    margin-left: 50px !important;
     margin-right: auto !important;
   }
 </style>

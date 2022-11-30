@@ -1,9 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faChalkboardUser } from '@fortawesome/free-solid-svg-icons/faChalkboardUser'
-  import Fa from 'svelte-fa'
   import StyleShare from './StyleShare.svelte'
   import Tooltip, { Wrapper } from '@smui/tooltip'
   import LinearProgress from '@smui/linear-progress'
@@ -11,7 +7,7 @@
 
   export let drawerOpen = true
   $: hideLinearProgress = !$indicatorProgress
-  let darkTheme: boolean
+  // let darkTheme: boolean
 
   const onKeyPressed = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -27,12 +23,12 @@
 </script>
 
 <svelte:head>
-  <!-- {#if darkTheme === undefined}
-    <link
-      rel="stylesheet"
-      href="/smui.css"
-      media="(prefers-color-scheme: light)" />
-    <link
+  <!-- {#if darkTheme === undefined} -->
+  <link
+    rel="stylesheet"
+    href="/smui.css"
+    media="(prefers-color-scheme: light)" />
+  <!-- <link
       rel="stylesheet"
       href="/smui-dark.css"
       media="screen and (prefers-color-scheme: dark)" />
@@ -44,11 +40,11 @@
       rel="stylesheet"
       href="/smui-dark.css"
       media="screen" />
-  {:else} -->
+  {:else}
   <link
     rel="stylesheet"
     href="/smui.css" />
-  <!-- {/if} -->
+  {/if} -->
 </svelte:head>
 
 <header class="country-header">
@@ -70,15 +66,31 @@
           </div>
         </div>
         <div class="cell large-3 small-3 top-right menu-buttons">
-          <button
-            class="menu-hamburger {drawerOpen ? 'is-active' : ''}"
-            aria-label="menu-icon"
-            on:click={() => (drawerOpen = !drawerOpen)}>
-            <span class="hamburger-line line-top" />
-            <span class="hamburger-line line-middle" />
-            <span class="hamburger-line line-bottom" />
-            Nav toggle
-          </button>
+          <div
+            role="button"
+            aria-label="Layer panel"
+            class="menu-button"
+            tabindex="0"
+            on:click={() => (drawerOpen = !drawerOpen)}
+            on:keydown={onKeyPressed}>
+            <Wrapper>
+              <span class="icon">
+                <i
+                  class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
+                  style="color:#006eb5" />
+              </span>
+              <Tooltip
+                showDelay={500}
+                hideDelay={500}
+                yPos="below">
+                {#if drawerOpen}
+                  Hide layer panel
+                {:else}
+                  Open layer panel
+                {/if}
+              </Tooltip>
+            </Wrapper>
+          </div>
 
           <div
             role="button"
@@ -93,10 +105,6 @@
                   class="fa-solid fa-chalkboard-user fa-xl"
                   style="color:#006eb5" />
               </span>
-              <Tooltip
-                showDelay={500}
-                hideDelay={500}
-                yPos="below">UNDP Dashboards</Tooltip>
             </Wrapper>
           </div>
 
@@ -147,7 +155,6 @@
 <style lang="scss">
   @use 'src/styles/undp-design/base-minimal.min.css';
   @use 'src/styles/undp-design/country-site-header.min.css';
-  @use 'src/styles/undp-design/mobile-nav.min.css';
   @use 'src/styles/undp-design/variables.scss';
 
   .menu-buttons {
