@@ -41,6 +41,7 @@
   const searchDatasets = async (url: string) => {
     try {
       $indicatorProgress = true
+      DataItemFeatureCollection = undefined
 
       const apiUrl = new URL(url)
       if (query) {
@@ -140,31 +141,40 @@
   class="container data-view-container mx-4"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  <Breadcrumbs
-    bind:breadcrumbs
-    on:clicked={handleBreadcrumpClicked} />
+  <div hidden={$indicatorProgress}>
+    <Breadcrumbs
+      bind:breadcrumbs
+      on:clicked={handleBreadcrumpClicked} />
 
-  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {#each DataItemFeatureCollection.features as feature}
-      <DataCard {feature} />
-    {/each}
-    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <Notification type="info">All data loaded</Notification>
+    {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
+      {#each DataItemFeatureCollection.features as feature}
+        <DataCard {feature} />
+      {/each}
+      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+        <Notification type="info">All data loaded</Notification>
+      {/if}
+    {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
+      <Notification type="warning">No data found</Notification>
+    {:else}
+      <DataCategoryCardList
+        categories={DataCategories}
+        cardSize="medium"
+        on:selected={handleCategorySelected}
+        bind:breadcrumbs />
     {/if}
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <Notification type="warning">No data found</Notification>
-  {:else}
-    <DataCategoryCardList
-      categories={DataCategories}
-      cardSize="medium"
-      on:selected={handleCategorySelected}
-      bind:breadcrumbs />
-  {/if}
+  </div>
+
+  <div
+    hidden={!$indicatorProgress}
+    class="loader"
+    aria-busy="true"
+    aria-live="polite" />
 </div>
 
 <style lang="scss">
   @use '../styles/undp-design/base-minimal.min.css';
   @use '../styles/undp-design/buttons.min.css';
+  @use '../styles/undp-design/loader.min.css';
 
   .data-view-container {
     height: calc(100vh - 173.07px);
@@ -176,6 +186,16 @@
 
     .button {
       color: white !important;
+    }
+
+    .loader {
+      position: absolute;
+      z-index: 5;
+      top: 25%;
+      left: 35%;
+      transform: translate(-25%, -35%);
+      -webkit-transform: translate(-25%, -35%);
+      -ms-transform: translate(-25%, -35%);
     }
   }
 </style>
