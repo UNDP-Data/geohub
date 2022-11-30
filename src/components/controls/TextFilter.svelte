@@ -4,6 +4,7 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import { SortingColumns } from '$lib/constants'
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
+  import PanelButton from './PanelButton.svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -13,8 +14,7 @@
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
 
-  let isFilterPanelOpen = false
-  let isSortPanelOpen = false
+  $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
 
   $: isQueryEmpty = !queryText || queryText?.length === 0
   $: queryType, handleQueryTypeChanged()
@@ -72,105 +72,82 @@
     {/if}
   </div>
 
-  <div
-    class="filter-control"
-    use:clickOutside={() => (isFilterPanelOpen = false)}>
-    <button
-      class="button"
-      on:click={() => (isFilterPanelOpen = !isFilterPanelOpen)}>
-      <span class="icon is-small">
-        <i class="fas fa-filter" />
-      </span>
-    </button>
-    {#if isFilterPanelOpen}
-      <div class="filter-panel container p-4">
-        <p class="title is-5 is-12">Filter settings</p>
-        <div class="control query-type-radios">
+  <PanelButton
+    icon="fas fa-filter"
+    width="150px">
+    <p class="title is-5 is-12">Filter settings</p>
+    <div class="control query-type-radios">
+      <label class="radio">
+        <input
+          class="radio-button"
+          type="radio"
+          name="queryType"
+          bind:group={queryType}
+          value="and" />
+        AND
+      </label>
+      <label class="radio">
+        <input
+          class="radio-button"
+          type="radio"
+          name="queryType"
+          bind:group={queryType}
+          value="or" />
+        OR
+      </label>
+    </div>
+  </PanelButton>
+
+  <PanelButton
+    bind:icon={sortIcon}
+    width="200px">
+    <p class="title is-5 is-12">Sort settings</p>
+
+    <p class="subtitle is-6 pb-0 mb-1">Sort by:</p>
+
+    <div class="tile is-vertical">
+      {#each SortingColumns as column}
+        <div class="tile">
           <label class="radio">
             <input
               class="radio-button"
               type="radio"
-              name="queryType"
-              bind:group={queryType}
-              value="and" />
-            AND
-          </label>
-          <label class="radio">
-            <input
-              class="radio-button"
-              type="radio"
-              name="queryType"
-              bind:group={queryType}
-              value="or" />
-            OR
+              name="sortby"
+              bind:group={sortingColumn}
+              value={column.column} />
+            {column.label}
           </label>
         </div>
+      {/each}
+    </div>
+
+    <p class="subtitle is-6 pb-0 mb-1">Ordering:</p>
+
+    <div class="tile is-vertical">
+      <div class="tile">
+        <label class="radio">
+          <input
+            class="radio-button"
+            type="radio"
+            name="orderby"
+            bind:group={orderType}
+            value="asc" />
+          A to Z (small to large)
+        </label>
       </div>
-    {/if}
-  </div>
-
-  <div
-    class="sort-control"
-    use:clickOutside={() => (isSortPanelOpen = false)}>
-    <button
-      class="button"
-      on:click={() => (isSortPanelOpen = !isSortPanelOpen)}>
-      <span class="icon is-small">
-        <i class="fa-solid {orderType === 'asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-short-wide'}" />
-      </span>
-    </button>
-
-    {#if isSortPanelOpen}
-      <div class="sort-panel container p-4">
-        <p class="title is-5 is-12">Sort settings</p>
-
-        <p class="subtitle is-6 pb-0 mb-1">Sort by:</p>
-
-        <div class="tile is-vertical">
-          {#each SortingColumns as column}
-            <div class="tile">
-              <label class="radio">
-                <input
-                  class="radio-button"
-                  type="radio"
-                  name="sortby"
-                  bind:group={sortingColumn}
-                  value={column.column} />
-                {column.label}
-              </label>
-            </div>
-          {/each}
-        </div>
-
-        <p class="subtitle is-6 pb-0 mb-1">Ordering:</p>
-
-        <div class="tile is-vertical">
-          <div class="tile">
-            <label class="radio">
-              <input
-                class="radio-button"
-                type="radio"
-                name="orderby"
-                bind:group={orderType}
-                value="asc" />
-              A to Z (small to large)
-            </label>
-          </div>
-          <div class="tile">
-            <label class="radio">
-              <input
-                class="radio-button"
-                type="radio"
-                name="orderby"
-                bind:group={orderType}
-                value="desc" />
-              Z to A (large to small)
-            </label>
-          </div>
-        </div>
+      <div class="tile">
+        <label class="radio">
+          <input
+            class="radio-button"
+            type="radio"
+            name="orderby"
+            bind:group={orderType}
+            value="desc" />
+          Z to A (large to small)
+        </label>
       </div>
-    {/if}
-  </div>
+    </div>
+  </PanelButton>
 </div>
 
 <style lang="scss">
@@ -196,52 +173,9 @@
       }
     }
 
-    .filter-control {
+    .radio-button {
       position: relative;
-      margin-left: 0.2rem;
-
-      .filter-panel {
-        position: absolute;
-        background-color: white;
-        margin-top: 5px;
-        width: 200px;
-        top: 32.5px;
-        right: 0px;
-        border: 1px solid gray;
-        border-radius: 5px;
-        z-index: 10;
-
-        .query-type-radios {
-          display: flex;
-
-          .radio-button {
-            position: relative;
-            top: 0.2rem;
-          }
-        }
-      }
-    }
-
-    .sort-control {
-      position: relative;
-      margin-left: 0.2rem;
-
-      .sort-panel {
-        position: absolute;
-        background-color: white;
-        margin-top: 5px;
-        width: 200px;
-        top: 32.5px;
-        right: 0px;
-        border: 1px solid gray;
-        border-radius: 5px;
-        z-index: 10;
-
-        .radio-button {
-          position: relative;
-          top: 0.2rem;
-        }
-      }
+      top: 0.2rem;
     }
   }
 </style>

@@ -177,15 +177,13 @@
           bind:defaultColor
           bind:defaultColormap />
       </div>
-      <div class="description">
+      <div class="description has-text-justified">
         {#if !isFullDescription}
-          <p class="has-text-justified">
-            {#if feature.properties.description.length < 100}
-              {feature.properties.description}
-            {:else}
-              {feature.properties.description.substring(0, descriptionLength)}...
-            {/if}
-          </p>
+          {#if feature.properties.description.length < 100}
+            {feature.properties.description}
+          {:else}
+            {feature.properties.description.substring(0, descriptionLength)}...
+          {/if}
 
           <!-- svelte-ignore a11y-missing-attribute -->
           <a
