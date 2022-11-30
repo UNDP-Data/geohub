@@ -74,7 +74,7 @@
   const handleFilterInput = async (e) => {
     query = e.detail.query
 
-    if (breadcrumbs.length === 0 && query === '') return
+    if (!breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets') && query === '') return
 
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
     let url = `${$page.url.origin}/datasets`
@@ -141,28 +141,28 @@
   class="container data-view-container mx-4"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  <div hidden={$indicatorProgress}>
-    <Breadcrumbs
-      bind:breadcrumbs
-      on:clicked={handleBreadcrumpClicked} />
+  <Breadcrumbs
+    bind:breadcrumbs
+    on:clicked={handleBreadcrumpClicked} />
 
-    {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-      {#each DataItemFeatureCollection.features as feature}
-        <DataCard {feature} />
-      {/each}
-      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-        <Notification type="info">All data loaded</Notification>
-      {/if}
-    {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-      <Notification type="warning">No data found</Notification>
-    {:else}
-      <DataCategoryCardList
-        categories={DataCategories}
-        cardSize="medium"
-        on:selected={handleCategorySelected}
-        bind:breadcrumbs />
+  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
+    {#each DataItemFeatureCollection.features as feature}
+      <DataCard {feature} />
+    {/each}
+    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+      <Notification type="info">All data loaded</Notification>
     {/if}
-  </div>
+  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
+    <Notification type="warning">No data found</Notification>
+  {:else}
+    <DataCategoryCardList
+      categories={DataCategories}
+      cardSize="medium"
+      on:selected={handleCategorySelected}
+      bind:breadcrumbs />
+  {/if}
+
+  <div class={`${$indicatorProgress ? 'modal-background' : ''}`} />
 
   <div
     hidden={!$indicatorProgress}
@@ -179,6 +179,7 @@
   .data-view-container {
     height: calc(100vh - 173.07px);
     overflow-y: scroll;
+    position: relative;
 
     @media (max-width: 89.9375em) {
       height: calc(100vh - 140.57px);
@@ -188,9 +189,13 @@
       color: white !important;
     }
 
+    .modal-background {
+      z-index: 10;
+    }
+
     .loader {
       position: absolute;
-      z-index: 5;
+      z-index: 10;
       top: 25%;
       left: 35%;
       transform: translate(-25%, -35%);
