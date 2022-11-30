@@ -40,19 +40,6 @@
     })
     newMap.addControl(exportControl, 'top-right')
 
-    const indicatorProgressEvents = {
-      true: ['zoomstart', 'touchmove', 'mousedown'],
-      false: ['zoomend', 'touchend', 'mouseup'],
-    }
-
-    Object.keys(indicatorProgressEvents).forEach((state) => {
-      indicatorProgressEvents[state].forEach((event: string) => {
-        newMap.on(event, () => {
-          $indicatorProgress = state === 'true'
-        })
-      })
-    })
-
     newMap.on('load', () => {
       initAdminLayer()
       const styleUrl = newMap.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
