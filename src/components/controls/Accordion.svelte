@@ -20,7 +20,7 @@
       class={!isExpanded ? 'accordion__panel' : 'accordion--active'}
       aria-hidden={!isExpanded}
       role="region">
-      <slot />
+      <div class="accordion-content"><slot /></div>
     </div>
   </li>
 </ul>
@@ -45,6 +45,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
       text-transform: capitalize;
+    }
+
+    .accordion-content {
+      cursor: default;
     }
   }
 </style>

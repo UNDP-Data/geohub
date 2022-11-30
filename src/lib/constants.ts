@@ -216,3 +216,26 @@ export const DataCategories: DataCategory[] = [
     url: '/datasets?type=martin',
   },
 ]
+
+export const SortingColumns = [
+  {
+    column: 'name',
+    label: 'Name',
+  },
+  {
+    column: 'source',
+    label: 'Source',
+  },
+  // {
+  //   column: 'license',
+  //   label: 'Data license'
+  // },
+  {
+    column: 'updatedat',
+    label: 'Updated date',
+  },
+  {
+    column: 'createdat',
+    label: 'Created date',
+  },
+]

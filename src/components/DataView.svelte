@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
+  import type { DataCategory, DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
@@ -15,32 +15,10 @@
   let breadcrumbs: DataCategory[] = []
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
-  let sortingColumn: 'name' | 'source' | 'license' | 'createdat' | 'updatedat' = 'name'
-  let isAsc = true
-  $: isShownSortbyButton =
-    (breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets')) ||
-    (DataItemFeatureCollection ? true : false)
+  let sortingColumn: DataSortingColumn = 'name'
+  let orderType: DataOrderType = 'asc'
 
   let DataItemFeatureCollection: StacItemFeatureCollection
-
-  $: isAsc, handleSortbyChanged()
-
-  const handleSortbyChanged = async () => {
-    if ($indicatorProgress === true) return
-    if (!DataItemFeatureCollection) return
-
-    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
-    let url: string
-    if (link) {
-      url = link.href
-    } else {
-      const lastCategory = breadcrumbs[breadcrumbs.length - 1]
-      if (!lastCategory.url.startsWith('/datasets')) return
-      url = lastCategory.url
-    }
-
-    await searchDatasets(url)
-  }
 
   const fetchNextDatasets = async () => {
     if (DataItemFeatureCollection?.features.length === 0) return
@@ -63,6 +41,7 @@
   const searchDatasets = async (url: string) => {
     try {
       $indicatorProgress = true
+      DataItemFeatureCollection = undefined
 
       const apiUrl = new URL(url)
       if (query) {
@@ -72,7 +51,7 @@
           apiUrl.searchParams.set('query', query)
         }
       }
-      apiUrl.searchParams.set('sortby', [sortingColumn, `${isAsc ? 'asc' : 'desc'}`].join(','))
+      apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
       apiUrl.searchParams.delete('offset')
       const res = await fetch(apiUrl.toString())
@@ -94,6 +73,8 @@
 
   const handleFilterInput = async (e) => {
     query = e.detail.query
+
+    if (breadcrumbs.length === 0 && query === '') return
 
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
     let url = `${$page.url.origin}/datasets`
@@ -137,7 +118,6 @@
       // home
       breadcrumbs = []
       DataItemFeatureCollection = undefined
-      isShownSortbyButton = false
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -146,13 +126,14 @@
         last = breadcrumbs[breadcrumbs.length - 1]
       }
       DataItemFeatureCollection = undefined
-      isShownSortbyButton = last.url.startsWith('/datasets')
     }
   }
 </script>
 
 <TextFilter
   placeholder="Type keywords to search data"
+  bind:sortingColumn
+  bind:orderType
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
@@ -160,40 +141,40 @@
   class="container data-view-container mx-4"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  <div class="data-list-header">
+  <div hidden={$indicatorProgress}>
     <Breadcrumbs
       bind:breadcrumbs
       on:clicked={handleBreadcrumpClicked} />
-    {#if isShownSortbyButton}
-      <span
-        class="icon sortby-icon"
-        on:click={() => (isAsc = !isAsc)}>
-        <i class="fas {`${isAsc ? 'fa-arrow-down-a-z' : 'fa-arrow-up-a-z'}`} fa-lg" />
-      </span>
+
+    {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
+      {#each DataItemFeatureCollection.features as feature}
+        <DataCard {feature} />
+      {/each}
+      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+        <Notification type="info">All data loaded</Notification>
+      {/if}
+    {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
+      <Notification type="warning">No data found</Notification>
+    {:else}
+      <DataCategoryCardList
+        categories={DataCategories}
+        cardSize="medium"
+        on:selected={handleCategorySelected}
+        bind:breadcrumbs />
     {/if}
   </div>
 
-  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {#each DataItemFeatureCollection.features as feature}
-      <DataCard {feature} />
-    {/each}
-    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <Notification type="info">All data loaded</Notification>
-    {/if}
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <Notification type="warning">No data found</Notification>
-  {:else}
-    <DataCategoryCardList
-      categories={DataCategories}
-      cardSize="medium"
-      on:selected={handleCategorySelected}
-      bind:breadcrumbs />
-  {/if}
+  <div
+    hidden={!$indicatorProgress}
+    class="loader"
+    aria-busy="true"
+    aria-live="polite" />
 </div>
 
 <style lang="scss">
   @use '../styles/undp-design/base-minimal.min.css';
   @use '../styles/undp-design/buttons.min.css';
+  @use '../styles/undp-design/loader.min.css';
 
   .data-view-container {
     height: calc(100vh - 173.07px);
@@ -207,14 +188,14 @@
       color: white !important;
     }
 
-    .data-list-header {
-      display: flex;
-
-      .sortby-icon {
-        cursor: pointer;
-        margin-top: 0.8rem;
-        margin-left: auto;
-      }
+    .loader {
+      position: absolute;
+      z-index: 5;
+      top: 25%;
+      left: 35%;
+      transform: translate(-25%, -35%);
+      -webkit-transform: translate(-25%, -35%);
+      -ms-transform: translate(-25%, -35%);
     }
   }
 </style>
