@@ -35,6 +35,7 @@ importers:
       '@types/geojson': ^7946.0.10
       '@types/lodash': ^4.14.187
       '@types/lodash-es': ^4.17.6
+      '@types/marked': ^4.0.7
       '@types/mime': ^3.0.1
       '@types/papaparse': ^5.3.5
       '@types/pbf': ^3.0.2
@@ -61,6 +62,7 @@ importers:
       jsdom: ^20.0.2
       lodash-es: ^4.17.21
       maplibre-gl: ^2.4.0
+      marked: ^4.2.3
       mathjs: ^11.3.2
       mime: ^3.0.0
       node-cache: ^5.1.2
@@ -131,6 +133,7 @@ importers:
       image-clipper: 0.4.4
       lodash-es: 4.17.21
       maplibre-gl: 2.4.0
+      marked: 4.2.3
       mathjs: 11.3.2
       mime: 3.0.0
       node-cache: 5.1.2
@@ -164,6 +167,7 @@ importers:
       '@types/geojson': 7946.0.10
       '@types/lodash': 4.14.187
       '@types/lodash-es': 4.17.6
+      '@types/marked': 4.0.7
       '@types/mime': 3.0.1
       '@types/papaparse': 5.3.5
       '@types/pbf': 3.0.2
@@ -1756,6 +1760,10 @@ packages:
       '@types/mapbox__point-geometry': 0.1.2
       '@types/pbf': 3.0.2
     dev: false
+
+  /@types/marked/4.0.7:
+    resolution: {integrity: sha512-eEAhnz21CwvKVW+YvRvcTuFKNU9CV1qH+opcgVK3pIMI6YZzDm6gc8o2vHjldFk6MGKt5pueSB7IOpvpx5Qekw==}
+    dev: true
 
   /@types/mime/3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
@@ -4115,6 +4123,12 @@ packages:
       supercluster: 7.1.5
       tinyqueue: 2.0.3
       vt-pbf: 3.1.3
+    dev: false
+
+  /marked/4.2.3:
+    resolution: {integrity: sha512-slWRdJkbTZ+PjkyJnE30Uid64eHwbwa1Q25INCAYfZlK4o6ylagBy/Le9eWntqJFoFT93ikUKMv47GZ4gTwHkw==}
+    engines: {node: '>= 12'}
+    hasBin: true
     dev: false
 
   /mathjs/11.3.2:

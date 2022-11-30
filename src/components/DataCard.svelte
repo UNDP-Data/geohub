@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { marked } from 'marked'
   import { RasterTileData } from '$lib/RasterTileData'
   import type {
     BannerMessage,
@@ -180,7 +181,7 @@
       <div class="description has-text-justified">
         {#if !isFullDescription}
           {#if feature.properties.description.length < 100}
-            {feature.properties.description}
+            {@html marked(feature.properties.description)}
           {:else}
             {feature.properties.description.substring(0, descriptionLength)}...
           {/if}
@@ -196,7 +197,7 @@
           </a>
         {:else}
           {#if feature.properties.description}
-            <p><b>Description: </b>{feature.properties.description}</p>
+            <p><b>Description: </b>{@html marked(feature.properties.description)}</p>
           {/if}
           {#if metadata}
             {#if metadata['band_metadata']}
