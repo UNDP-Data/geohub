@@ -2,37 +2,16 @@
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
   import { clickOutside } from 'svelte-use-click-outside'
+  import { SortingColumns } from '$lib/constants'
+  import type { DataOrderType, DataSortingColumn } from '$lib/types'
 
   const dispatch = createEventDispatcher()
 
   export let placeholder: string
   let queryText = ''
   let queryType: 'and' | 'or' = 'and'
-  export let sortingColumn: 'name' | 'source' | 'license' | 'createdat' | 'updatedat' = 'name'
-  export let orderType: 'asc' | 'desc' = 'asc'
-
-  const sortingColumns = [
-    {
-      column: 'name',
-      label: 'Name',
-    },
-    {
-      column: 'source',
-      label: 'Source',
-    },
-    // {
-    //   column: 'license',
-    //   label: 'Data license'
-    // },
-    {
-      column: 'updatedat',
-      label: 'Updated date',
-    },
-    {
-      column: 'createdat',
-      label: 'Created date',
-    },
-  ]
+  export let sortingColumn: DataSortingColumn = 'name'
+  export let orderType: DataOrderType = 'asc'
 
   let isFilterPanelOpen = false
   let isSortPanelOpen = false
@@ -93,7 +72,9 @@
     {/if}
   </div>
 
-  <div class="filter-control">
+  <div
+    class="filter-control"
+    use:clickOutside={() => (isFilterPanelOpen = false)}>
     <button
       class="button"
       on:click={() => (isFilterPanelOpen = !isFilterPanelOpen)}>
@@ -102,9 +83,7 @@
       </span>
     </button>
     {#if isFilterPanelOpen}
-      <div
-        class="filter-panel container p-4"
-        use:clickOutside={() => (isFilterPanelOpen = false)}>
+      <div class="filter-panel container p-4">
         <p class="title is-5 is-12">Filter settings</p>
         <div class="control query-type-radios">
           <label class="radio">
@@ -130,7 +109,9 @@
     {/if}
   </div>
 
-  <div class="sort-control">
+  <div
+    class="sort-control"
+    use:clickOutside={() => (isSortPanelOpen = false)}>
     <button
       class="button"
       on:click={() => (isSortPanelOpen = !isSortPanelOpen)}>
@@ -140,15 +121,13 @@
     </button>
 
     {#if isSortPanelOpen}
-      <div
-        class="sort-panel container p-4"
-        use:clickOutside={() => (isSortPanelOpen = false)}>
+      <div class="sort-panel container p-4">
         <p class="title is-5 is-12">Sort settings</p>
 
         <p class="subtitle is-6 pb-0 mb-1">Sort by:</p>
 
         <div class="tile is-vertical">
-          {#each sortingColumns as column}
+          {#each SortingColumns as column}
             <div class="tile">
               <label class="radio">
                 <input

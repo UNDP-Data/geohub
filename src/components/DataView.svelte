@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataCategory, StacItemFeatureCollection } from '$lib/types'
+  import type { DataCategory, DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
   import DataCategoryCard from './DataCategoryCard.svelte'
   import DataCard from './DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
@@ -15,8 +15,8 @@
   let breadcrumbs: DataCategory[] = []
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
-  let sortingColumn: 'name' | 'source' | 'license' | 'createdat' | 'updatedat' = 'name'
-  let orderType: 'asc' | 'desc' = 'asc'
+  let sortingColumn: DataSortingColumn = 'name'
+  let orderType: DataOrderType = 'asc'
 
   let DataItemFeatureCollection: StacItemFeatureCollection
 
