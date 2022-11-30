@@ -27,6 +27,7 @@ import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
  * - offset = default is 0
  * - {key}={value} e.g., sdg_goal=1 to filter where tag key is `sdg_goal` and value is 1. If multiple key/value are set, it will filter by OR operator.
  *   if you want to filter by SDG1 and 2, you can query like '&sdg_goal=1&sdg_goal=2'
+ * - operator = 'and' or 'or'. This operator can be applied for tag search of {key}={value}
  * @returns GeojSON FeatureCollection
  */
 export const GET: RequestHandler = async ({ url }) => {
@@ -47,6 +48,13 @@ export const GET: RequestHandler = async ({ url }) => {
         throw error(400, 'Invalid bbox')
       }
     }
+
+    const operatorOptions = ['and', 'or']
+    const operator = url.searchParams.get('operator') ?? operatorOptions[0]
+    if (!(operator && operatorOptions.includes(operator.toLowerCase()))) {
+      throw error(400, `Bad parameter for 'operator'. It must be one of '${operatorOptions.join(', ')}'`)
+    }
+
     const sortby = url.searchParams.get('sortby')
     let sortByColumn = 'name'
     let SortOrder: 'asc' | 'desc' = 'asc'
@@ -75,7 +83,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const filters: { key: string; value: string }[] = []
     url.searchParams.forEach((key, value) => {
-      if (['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby'].includes(value)) return
+      if (['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby', 'operator'].includes(value)) return
       filters.push({
         key: value,
         value: key.toLowerCase(),
@@ -152,7 +160,7 @@ export const GET: RequestHandler = async ({ url }) => {
            )`
           }
           ${getStorageIdFilter(storage_id, values)}
-          ${getTagFilter(filters, values)}
+          ${operator === 'and' ? getTagFilterAND(filters, values) : getTagFilterOR(filters, values)}
           ${getBBoxFilter(bboxCoordinates, values)}
         ORDER BY
           x.${sortByColumn} ${SortOrder}
@@ -233,7 +241,7 @@ const getStorageIdFilter = (storage_id: string, values: string[]) => {
   return `AND x.storage_id=$${values.length} `
 }
 
-const getTagFilter = (filters: { key?: string; value: string }[], values: string[]) => {
+const getTagFilterOR = (filters: { key?: string; value: string }[], values: string[]) => {
   if (filters.length === 0) return ''
   return `
     AND EXISTS(
@@ -248,10 +256,35 @@ const getTagFilter = (filters: { key?: string; value: string }[], values: string
         const keyLength = values.length
         values.push(filter.value)
         const valueLength = values.length
-        return `(a.key = $${keyLength} and lower(a.value) = $${valueLength})`
+        return `(a.key = $${keyLength} and to_tsvector(a.value) @@ to_tsquery($${valueLength}) `
       })
       .join('OR')}
     ))`
+}
+
+const getTagFilterAND = (filters: { key?: string; value: string }[], values: string[]) => {
+  if (filters.length === 0) return ''
+  return `
+    AND EXISTS(
+      SELECT dataset_id FROM (
+    ${filters
+      .map((filter) => {
+        values.push(filter.key)
+        const keyLength = values.length
+        values.push(filter.value)
+        const valueLength = values.length
+        return `
+        SELECT b.dataset_id
+        FROM geohub.tag as a 
+        INNER JOIN geohub.dataset_tag as b
+        ON a.id = b.tag_id
+        WHERE a.key =$${keyLength} and to_tsvector(a.value) @@ to_tsquery($${valueLength}) 
+        `
+      })
+      .join('INTERSECT')}
+      ) y
+      WHERE dataset_id = x.id
+    )`
 }
 
 const getBBoxFilter = (bbox: number[], values: string[]) => {
