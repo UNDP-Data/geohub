@@ -7,6 +7,7 @@
   export let breadcrumbs: DataCategory[]
 
   const handleClicked = (index: number) => {
+    if (!(breadcrumbs && breadcrumbs.length > 0)) return
     const breadcrumb = breadcrumbs[index]
     dispatch('clicked', {
       index,

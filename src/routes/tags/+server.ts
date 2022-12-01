@@ -27,16 +27,28 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const sql = {
       text: `
-      SELECT distinct key, value FROM geohub.tag
-      WHERE EXISTS (SELECT * FROM geohub.dataset_tag WHERE tag_id = id)
+      WITH tag_count AS (
+      SELECT b.key, b.value,  COUNT(a.dataset_id) as count
+      FROM geohub.dataset_tag a
+      INNER JOIN geohub.tag b
+      ON a.tag_id = b.id
+      GROUP BY
+      b.key, b.value
+      )
+      SELECT distinct x.key, x.value, y.count
+      FROM geohub.tag x
+      INNER JOIN tag_count y
+      ON x.key = y.key
+      AND x.value = y.value
+      WHERE EXISTS (SELECT id FROM geohub.dataset_tag WHERE tag_id = x.id)
       ${
         !key
           ? ''
           : `
-      AND key = $1
+      AND x.key = $1
       `
       }
-      ORDER BY key, value
+      ORDER BY x.key, x.value
       `,
       values: values,
     }
@@ -46,15 +58,20 @@ export const GET: RequestHandler = async ({ url }) => {
       return error(404, `no tag found`)
     }
 
-    const result: { [key: string]: string[] } = {}
+    const result: { [key: string]: [{ value: string; count: number }] } = {}
     res.rows.forEach((row) => {
       if (!row.key) {
         return
       }
       if (!result[row.key]) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         result[row.key] = []
       }
-      result[row.key] = [...result[row.key], row.value]
+      result[row.key].push({
+        value: row.value,
+        count: Number(row.count),
+      })
     })
 
     return new Response(JSON.stringify(result))

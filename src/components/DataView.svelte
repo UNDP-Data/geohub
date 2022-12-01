@@ -12,7 +12,13 @@
   import Breadcrumbs from './controls/Breadcrumbs.svelte'
 
   let containerDivElement: HTMLDivElement
-  let breadcrumbs: DataCategory[] = []
+  let breadcrumbs: DataCategory[] = [
+    {
+      name: 'Home',
+      icon: 'fas fa-house',
+      url: '',
+    },
+  ]
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
   let sortingColumn: DataSortingColumn = 'name'
@@ -99,7 +105,7 @@
 
   const clearFilter = async () => {
     query = ''
-    if (breadcrumbs) {
+    if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.url?.startsWith('/datasets')) {
         const url = `${$page.url.origin}${lastCategory.url}`
@@ -129,7 +135,7 @@
 
     if (index === 0) {
       // home
-      breadcrumbs = []
+      breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
@@ -153,14 +159,15 @@
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
+<div class="container mx-4">
+  <Breadcrumbs
+    bind:breadcrumbs
+    on:clicked={handleBreadcrumpClicked} />
+</div>
 <div
   class="container data-view-container mx-4"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  <Breadcrumbs
-    bind:breadcrumbs
-    on:clicked={handleBreadcrumpClicked} />
-
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
     {#each DataItemFeatureCollection.features as feature}
       <DataCard {feature} />
@@ -193,12 +200,12 @@
   @use '../styles/undp-design/loader.min.css';
 
   .data-view-container {
-    height: calc(100vh - 173.07px);
+    height: calc(100vh - 212.07px);
     overflow-y: scroll;
     position: relative;
 
     @media (max-width: 89.9375em) {
-      height: calc(100vh - 140.57px);
+      height: calc(100vh - 179.57px);
     }
 
     .button {
