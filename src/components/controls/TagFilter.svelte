@@ -88,7 +88,7 @@
   @use '../../styles/undp-design/checkbox.min.css';
 
   .box {
-    height: 250px;
+    max-height: 250px;
     overflow-y: auto;
   }
 </style>
