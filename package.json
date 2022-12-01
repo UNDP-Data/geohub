@@ -123,6 +123,7 @@
     "svelte-range-slider-pips": "^2.1.0",
     "svelte-step-wizard": "^0.0.2",
     "svelte-time": "^0.7.1",
+    "svelte-tree-view-component": "^1.0.3",
     "svelte-use-click-outside": "^1.0.0",
     "svelte-vega": "^1.2.0",
     "uuid": "^9.0.0",

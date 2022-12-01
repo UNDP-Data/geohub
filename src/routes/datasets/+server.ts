@@ -9,7 +9,7 @@ const connectionString = DATABASE_CONNECTION
 
 import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
-import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
+import { TOKEN_EXPIRY_PERIOD_MSEC, DatasetSearchQueryParams } from '$lib/constants'
 
 /**
  * Datasets search API
@@ -83,7 +83,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const filters: { key: string; value: string }[] = []
     url.searchParams.forEach((key, value) => {
-      if (['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby', 'operator'].includes(value)) return
+      if (DatasetSearchQueryParams.includes(value)) return
       filters.push({
         key: value,
         value: key.toLowerCase(),
