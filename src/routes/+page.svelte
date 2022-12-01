@@ -4,10 +4,15 @@
   import Map from '$components/Map.svelte'
 
   let drawerOpen = true
+  let headerHeight: number
 </script>
 
-<Header bind:drawerOpen />
-<Content bind:drawerOpen>
+<Header
+  bind:drawerOpen
+  bind:height={headerHeight} />
+<Content
+  bind:drawerOpen
+  bind:headerHeight>
   <Map />
 </Content>
 

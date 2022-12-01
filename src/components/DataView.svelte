@@ -11,6 +11,11 @@
   import DataCategoryCardList from './DataCategoryCardList.svelte'
   import Breadcrumbs from './controls/Breadcrumbs.svelte'
 
+  export let headerHeight: number
+  export let tabsHeight: number
+  let textFilterHeight: number
+  let breadcrumbsHeight: number
+
   let containerDivElement: HTMLDivElement
   let breadcrumbs: DataCategory[] = [
     {
@@ -156,16 +161,19 @@
   bind:orderType
   bind:bbox
   bind:isFilterByBBox
+  bind:height={textFilterHeight}
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
 <div class="container mx-4">
   <Breadcrumbs
     bind:breadcrumbs
+    bind:height={breadcrumbsHeight}
     on:clicked={handleBreadcrumpClicked} />
 </div>
 <div
   class="container data-view-container mx-4"
+  style="height: calc(100vh - {headerHeight + tabsHeight + textFilterHeight + breadcrumbsHeight}px);overflow-y: scroll"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
@@ -200,14 +208,6 @@
   @use '../styles/undp-design/loader.min.css';
 
   .data-view-container {
-    height: calc(100vh - 212.07px);
-    overflow-y: scroll;
-    position: relative;
-
-    @media (max-width: 89.9375em) {
-      height: calc(100vh - 179.57px);
-    }
-
     .button {
       color: white !important;
     }

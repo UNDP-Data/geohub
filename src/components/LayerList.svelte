@@ -5,6 +5,10 @@
   import { LayerTypes, TabNames } from '$lib/constants'
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
+
+  export let headerHeight: number
+  export let tabsHeight: number
+  let marginTop = 5
 </script>
 
 {#if $layerList?.length === 0}
@@ -13,7 +17,9 @@
   </Notification>
 {/if}
 
-<div class="layer-list">
+<div
+  class="layer-list"
+  style="height: calc(100vh - {headerHeight + tabsHeight + marginTop}px); margin-top: {marginTop}px;">
   {#each $layerList as layer (layer.id)}
     {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
       <RasterLayer {layer} />
@@ -26,11 +32,5 @@
 <style lang="scss">
   .layer-list {
     overflow-y: auto;
-    height: calc(100vh - 131.57px);
-    margin-top: 5px;
-
-    @media (max-width: 89.9375em) {
-      height: calc(100vh - 99.07px);
-    }
   }
 </style>
