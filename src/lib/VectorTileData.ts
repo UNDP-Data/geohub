@@ -31,11 +31,12 @@ export class VectorTileData {
     let metadataUrl: string
     if (type && ['martin', 'pgtileserv'].includes(type.value)) {
       // dynamic
+      const id = tags.find((t) => t.key === 'id')
       if (type.value === 'pgtileserv') {
         const layertype = tags?.find((tag) => tag.key === 'layertype')
-        metadataUrl = `/${type.value}/${layertype.value}/${this.feature.properties.name}/metadata.json`
+        metadataUrl = `/${type.value}/${layertype.value}/${id.value}/metadata.json`
       } else {
-        metadataUrl = `/${type.value}/${this.feature.properties.name}/metadata.json`
+        metadataUrl = `/${type.value}/${id.value}/metadata.json`
       }
     } else {
       // static
