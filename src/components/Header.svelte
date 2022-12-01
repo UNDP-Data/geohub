@@ -6,6 +6,7 @@
   import { indicatorProgress, layerList } from '$stores'
 
   export let drawerOpen = true
+  export let height: number
   $: hideLinearProgress = !$indicatorProgress
   // let darkTheme: boolean
 
@@ -48,7 +49,9 @@
 </svelte:head>
 
 <header class="country-header">
-  <section class="header">
+  <section
+    class="header"
+    bind:clientHeight={height}>
     <div class="grid-container fluid">
       <div class="grid-x grid-margin-x align-content-middle">
         <div class="cell large-9 small-9 align-self-middle top-left">

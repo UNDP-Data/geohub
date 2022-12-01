@@ -2,8 +2,6 @@
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
   import Textfield from '@smui/textfield'
-  import Fa from 'svelte-fa'
-  import { faShare } from '@fortawesome/free-solid-svg-icons/faShare'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
 
@@ -114,8 +112,10 @@
     await share()
   }
 
-  const onKeyPressed = (e: any) => {
+  const onKeyPressed = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       e.target.click()
     }
   }
@@ -133,7 +133,7 @@
     class="icon"
     on:click={() => open()}
     on:keydown={onKeyPressed}
-    tabindex="1">
+    tabindex="0">
     <span class="icon">
       <i
         class="fa-solid fa-share fa-xl"

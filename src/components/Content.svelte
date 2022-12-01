@@ -9,6 +9,8 @@
   import type { Tab } from '$lib/types'
 
   export let drawerOpen = false
+  export let headerHeight: number
+  let tabsHeight: number
 
   let tabs: Tab[] = [
     { label: TabNames.DATA, icon: 'fas fa-database' },
@@ -19,19 +21,25 @@
 
 <ContentSidebar
   bind:map={$map}
-  bind:isMenuShown={drawerOpen}>
+  bind:isMenuShown={drawerOpen}
+  bind:headerHeight>
   <div slot="primary">
     <div class="drawer-content">
       <Tabs
         bind:tabs
-        bind:activeTab />
+        bind:activeTab
+        bind:height={tabsHeight} />
 
       <div class="container p-0 m-0">
         <div hidden={activeTab !== TabNames.DATA}>
-          <DataView />
+          <DataView
+            bind:headerHeight
+            bind:tabsHeight />
         </div>
         <div hidden={activeTab !== TabNames.LAYERS}>
-          <LayerList />
+          <LayerList
+            bind:headerHeight
+            bind:tabsHeight />
         </div>
       </div>
     </div>

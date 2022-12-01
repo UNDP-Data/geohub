@@ -7,6 +7,8 @@
 
   export let activeTab: string
 
+  export let height: number
+
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {
       setLeftActiveTab(activeTab)
@@ -42,7 +44,8 @@
 
 <div
   class="tabs-undp inviewport"
-  data-viewport="true">
+  data-viewport="true"
+  bind:clientHeight={height}>
   <ul
     data-deep-link="true"
     data-tabs="true"

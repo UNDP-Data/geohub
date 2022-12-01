@@ -18,6 +18,7 @@
   export let bbox: [number, number, number, number]
 
   export let isFilterByBBox: boolean
+  export let height: number
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
 
@@ -87,7 +88,9 @@
   }
 </script>
 
-<div class="filter-text">
+<div
+  class="filter-text"
+  bind:clientHeight={height}>
   <div class="control has-icons-left filter-text-box">
     <input
       data-testid="filter-bucket-input"
