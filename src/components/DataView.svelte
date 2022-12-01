@@ -32,6 +32,7 @@
   let bbox: [number, number, number, number]
   let isFilterByBBox = false
   let selectedTags: Tag[] = []
+  let tagFilterOperatorType: 'and' | 'or' = 'and'
 
   let DataItemFeatureCollection: StacItemFeatureCollection
 
@@ -95,9 +96,12 @@
         if (skipKeys.includes(key)) continue
         apiUrl.searchParams.delete(key)
       }
+      if (selectedTags?.length > 0) {
+        apiUrl.searchParams.set('operator', tagFilterOperatorType)
+      }
       const tagFilterString = selectedTags?.map((tag) => `${tag.key}=${tag.value}`).join('&')
 
-      const finalUrl = `${apiUrl.toString()}&${tagFilterString}`
+      const finalUrl = `${apiUrl.toString()}${tagFilterString ? `&${tagFilterString}` : ''}`
       const res = await fetch(finalUrl)
       if (!res.ok) return
       const json: StacItemFeatureCollection = await res.json()
@@ -116,6 +120,7 @@
   }
 
   $: selectedTags, handleTagChanged()
+  $: tagFilterOperatorType, handleTagChanged()
   const handleTagChanged = async () => {
     if (selectedTags.length === 0 && breadcrumbs.length <= 2) {
       DataItemFeatureCollection = undefined
@@ -206,6 +211,7 @@
   bind:bbox
   bind:isFilterByBBox
   bind:selectedTags
+  bind:tagFilterOperatorType
   bind:height={textFilterHeight}
   on:change={handleFilterInput}
   on:clear={clearFilter} />

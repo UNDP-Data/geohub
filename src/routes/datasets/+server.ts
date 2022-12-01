@@ -256,7 +256,7 @@ const getTagFilterOR = (filters: { key?: string; value: string }[], values: stri
         const keyLength = values.length
         values.push(filter.value)
         const valueLength = values.length
-        return `(a.key = $${keyLength} and to_tsvector(a.value) @@ to_tsquery($${valueLength}) `
+        return `(a.key = $${keyLength} and to_tsvector(a.value) @@ to_tsquery($${valueLength})) `
       })
       .join('OR')}
     ))`
