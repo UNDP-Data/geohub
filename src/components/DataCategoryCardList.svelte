@@ -30,23 +30,13 @@
   const breadcrumbChanged = async () => {
     if (!(breadcrumbs && breadcrumbs.length > 0)) return
     const breadcrumbCount = breadcrumbs.length
-    if (breadcrumbCount === 0) {
+    if (breadcrumbCount === 1) {
       subCategories = []
       isShowSubCategory = false
     }
   }
 
   const getSelectedCategory = async (category: DataCategory) => {
-    if (breadcrumbs.length === 0) {
-      breadcrumbs = [
-        {
-          name: 'Home',
-          icon: 'fas fa-house',
-          url: '',
-        },
-      ]
-    }
-
     if (category.name === 'SDG') {
       await searchCategory(category)
     } else {
