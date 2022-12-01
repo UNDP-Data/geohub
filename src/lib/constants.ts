@@ -239,3 +239,36 @@ export const SortingColumns = [
     label: 'Created date',
   },
 ]
+
+export const DatasetSearchQueryParams = ['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby', 'operator']
+
+export const tagSearchKeys = [
+  {
+    key: 'extent',
+    label: 'Region',
+  },
+  {
+    key: 'granularity',
+    label: 'Admin Level',
+  },
+  {
+    key: 'resolution',
+    label: 'Resolution',
+  },
+  {
+    key: 'year_value',
+    label: 'Year',
+  },
+  {
+    key: 'keyword',
+    label: 'Keyword',
+  },
+  {
+    key: 'sdg_target',
+    label: 'SDG Topic',
+  },
+  {
+    key: 'theme',
+    label: 'Theme',
+  },
+]

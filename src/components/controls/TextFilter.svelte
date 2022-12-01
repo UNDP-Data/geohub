@@ -6,12 +6,14 @@
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
   import PanelButton from './PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
+  import TagFilter from './TagFilter.svelte'
+  import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()
 
   export let map: Map
   export let placeholder: string
-  let queryText = ''
+  export let query = ''
   let queryType: 'and' | 'or' = 'and'
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
@@ -19,15 +21,17 @@
 
   export let isFilterByBBox: boolean
   export let height: number
+  export let selectedTags: Tag[]
+  let tags: { [key: string]: Tag[] }
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
 
-  $: isQueryEmpty = !queryText || queryText?.length === 0
+  $: isQueryEmpty = !query || query?.length === 0
   $: queryType, handleQueryTypeChanged()
   $: sortingColumn, fireChangeEvent('change', true)
   $: orderType, fireChangeEvent('change', true)
   const handleQueryTypeChanged = () => {
-    if (queryText === '') return
+    if (query === '') return
     fireChangeEvent('change', true)
   }
 
@@ -38,12 +42,11 @@
 
   const clearInput = () => {
     if (isQueryEmpty === true) return
-    queryText = ''
+    query = ''
     fireChangeEvent('clear')
   }
 
   const fireChangeEvent = (eventName: 'change' | 'clear', isNormalise = false) => {
-    let query = queryText
     if (isNormalise) {
       if (query.length > 0) {
         query = query.trim().replace(/\s/g, ` ${queryType} `)
@@ -98,7 +101,7 @@
       type="text"
       {placeholder}
       on:input={handleFilterInput}
-      bind:value={queryText} />
+      bind:value={query} />
     <span class="icon is-small is-left">
       <i class="fas fa-search" />
     </span>
@@ -115,7 +118,7 @@
     icon="fas fa-filter"
     width="230px">
     <p class="title is-5 m-0 p-0">Filter settings</p>
-    <p class="subtitle is-6 pb-0 my-1">Text search</p>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
     <div class="control query-type-radios">
       <label class="radio">
         <input
@@ -135,7 +138,7 @@
           value="or" />
         OR
       </label>
-      <p class="subtitle is-6 pb-0 my-1">Geospatial filter</p>
+      <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
       <div class="form-check">
         <input
           type="checkbox"
@@ -144,6 +147,10 @@
           bind:checked={isFilterByBBox} />
         <label for="bbox-filter-checkbox">Filter by current map extent</label>
       </div>
+      <p class="subtitle is-6 pb-0 pt-2 my-1">Tags</p>
+      <TagFilter
+        bind:selectedTags
+        bind:tags />
     </div>
   </PanelButton>
 
@@ -152,7 +159,7 @@
     width="200px">
     <p class="title is-5 m-0 p-0">Sort settings</p>
 
-    <p class="subtitle is-6 pb-0 my-1">Sort by</p>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Sort by</p>
 
     <div class="tile is-vertical">
       {#each SortingColumns as column}
@@ -170,7 +177,7 @@
       {/each}
     </div>
 
-    <p class="subtitle is-6 pb-0 my-1">Ordering</p>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Ordering</p>
 
     <div class="tile is-vertical">
       <div class="tile">

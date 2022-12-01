@@ -7,9 +7,10 @@
   import TextFilter from './controls/TextFilter.svelte'
   import { indexOf, last, startsWith } from 'lodash'
   import Notification from './controls/Notification.svelte'
-  import { STAC_MINIMUM_ZOOM, SEARCH_PAGINATION_LIMIT, DataCategories } from '$lib/constants'
+  import { STAC_MINIMUM_ZOOM, SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams } from '$lib/constants'
   import DataCategoryCardList from './DataCategoryCardList.svelte'
   import Breadcrumbs from './controls/Breadcrumbs.svelte'
+  import type { Tag } from '$lib/types/Tag'
 
   export let headerHeight: number
   export let tabsHeight: number
@@ -30,6 +31,7 @@
   let orderType: DataOrderType = 'asc'
   let bbox: [number, number, number, number]
   let isFilterByBBox = false
+  let selectedTags: Tag[] = []
 
   let DataItemFeatureCollection: StacItemFeatureCollection
 
@@ -57,6 +59,18 @@
       DataItemFeatureCollection = undefined
 
       const apiUrl = new URL(url)
+
+      if (breadcrumbs.length === 1) {
+        breadcrumbs = [
+          ...breadcrumbs,
+          {
+            name: 'Search result',
+            icon: 'fas fa-magnifying-glass',
+            url: url.replace(apiUrl.origin, ''),
+          },
+        ]
+      }
+
       if (query) {
         if (query.length === 0) {
           apiUrl.searchParams.delete('query')
@@ -74,7 +88,17 @@
       apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
       apiUrl.searchParams.delete('offset')
-      const res = await fetch(apiUrl.toString())
+
+      // clear existing tag parameters except some keys
+      const skipKeys = [...DatasetSearchQueryParams, 'type', 'stac', 'sdg_goal']
+      for (const key of apiUrl.searchParams.keys()) {
+        if (skipKeys.includes(key)) continue
+        apiUrl.searchParams.delete(key)
+      }
+      const tagFilterString = selectedTags?.map((tag) => `${tag.key}=${tag.value}`).join('&')
+
+      const finalUrl = `${apiUrl.toString()}&${tagFilterString}`
+      const res = await fetch(finalUrl)
       if (!res.ok) return
       const json: StacItemFeatureCollection = await res.json()
       DataItemFeatureCollection = json
@@ -89,6 +113,23 @@
       const url = `${$page.url.origin}${category.url}`
       await searchDatasets(url)
     }
+  }
+
+  $: selectedTags, handleTagChanged()
+  const handleTagChanged = async () => {
+    if (selectedTags.length === 0 && breadcrumbs.length <= 2) {
+      DataItemFeatureCollection = undefined
+      breadcrumbs = [breadcrumbs[0]]
+      return
+    } else if (selectedTags.length === 0) {
+      return
+    }
+    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
+    let url = `${$page.url.origin}/datasets`
+    if (link) {
+      url = link.href
+    }
+    await searchDatasets(url)
   }
 
   const handleFilterInput = async (e) => {
@@ -142,6 +183,8 @@
       // home
       breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
+      selectedTags = []
+      query = ''
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -157,10 +200,12 @@
 <TextFilter
   placeholder="Type keywords to search data"
   bind:map={$map}
+  bind:query
   bind:sortingColumn
   bind:orderType
   bind:bbox
   bind:isFilterByBBox
+  bind:selectedTags
   bind:height={textFilterHeight}
   on:change={handleFilterInput}
   on:clear={clearFilter} />

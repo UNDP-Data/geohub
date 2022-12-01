@@ -1,5 +1,6 @@
 <script lang="ts">
   import { marked } from 'marked'
+  import Time from 'svelte-time'
   import { RasterTileData } from '$lib/RasterTileData'
   import type {
     BannerMessage,
@@ -228,7 +229,12 @@
             {/if}
           {/if}
           <p><b>Source: </b> {feature.properties.source}</p>
-          <p><b>Updated at: </b> {feature.properties.updatedat}</p>
+          <p>
+            <b>Updated at: </b>
+            <Time
+              timestamp={feature.properties.updatedat}
+              format="h:mm A, MMMM D, YYYY" />
+          </p>
         {/if}
       </div>
 

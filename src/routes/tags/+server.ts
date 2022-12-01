@@ -4,6 +4,7 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/variables/private'
+import type { Tag } from '$lib/types/Tag'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -58,7 +59,7 @@ export const GET: RequestHandler = async ({ url }) => {
       return error(404, `no tag found`)
     }
 
-    const result: { [key: string]: [{ value: string; count: number }] } = {}
+    const result: { [key: string]: Tag[] } = {}
     res.rows.forEach((row) => {
       if (!row.key) {
         return
@@ -69,6 +70,7 @@ export const GET: RequestHandler = async ({ url }) => {
         result[row.key] = []
       }
       result[row.key].push({
+        key: row.key,
         value: row.value,
         count: Number(row.count),
       })
