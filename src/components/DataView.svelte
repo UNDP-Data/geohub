@@ -99,7 +99,7 @@
 
   const clearFilter = async () => {
     query = ''
-    if (breadcrumbs) {
+    if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.url?.startsWith('/datasets')) {
         const url = `${$page.url.origin}${lastCategory.url}`

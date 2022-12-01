@@ -17,6 +17,7 @@
   $: breadcrumbs, breadcrumbChanged()
 
   onMount(async () => {
+    if (!(breadcrumbs && breadcrumbs.length > 0)) return
     const breadcrumbCount = breadcrumbs.length
     if (breadcrumbCount > 1) {
       const lastCategory = breadcrumbs[breadcrumbCount - 1]
@@ -27,12 +28,11 @@
   })
 
   const breadcrumbChanged = async () => {
-    if (breadcrumbs) {
-      const breadcrumbCount = breadcrumbs.length
-      if (breadcrumbCount === 0) {
-        subCategories = []
-        isShowSubCategory = false
-      }
+    if (!(breadcrumbs && breadcrumbs.length > 0)) return
+    const breadcrumbCount = breadcrumbs.length
+    if (breadcrumbCount === 0) {
+      subCategories = []
+      isShowSubCategory = false
     }
   }
 
@@ -62,14 +62,15 @@
 
       const res = await fetch(apiUrl.toString())
       const json = await res.json()
-      const values: string[] = json[Object.keys(json)[0]]
+      const values: [{ value: string; count: number }] = json[Object.keys(json)[0]]
 
       const last = breadcrumbs[breadcrumbs.length - 1]
       if (last.name !== category.name) {
         breadcrumbs = [...breadcrumbs, category]
       }
 
-      const num_values: number[] = values.map((v) => Number(v)).sort((a, b) => a - b)
+      let num_values = values.map((v) => Number(v.value))
+      num_values = num_values.sort((a, b) => a - b)
       subCategories = num_values.map((num) => {
         return {
           name: `SDG${num}`,
@@ -83,7 +84,7 @@
   }
 
   const handleSelectSubcategory = async (category: DataCategory) => {
-    if (breadcrumbs) {
+    if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.name !== category.name) {
         breadcrumbs = [...breadcrumbs, category]
