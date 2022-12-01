@@ -193,13 +193,13 @@
       bind:breadcrumbs />
   {/if}
 
-  <div class={`${$indicatorProgress ? 'modal-background' : ''}`} />
-
-  <div
-    hidden={!$indicatorProgress}
-    class="loader"
-    aria-busy="true"
-    aria-live="polite" />
+  {#if !DataItemFeatureCollection}
+    <div
+      hidden={!$indicatorProgress}
+      class="loader"
+      aria-busy="true"
+      aria-live="polite" />
+  {/if}
 </div>
 
 <style lang="scss">
@@ -212,15 +212,12 @@
       color: white !important;
     }
 
-    .modal-background {
-      z-index: 10;
-    }
-
     .loader {
       position: absolute;
       z-index: 10;
       top: 25%;
       left: 35%;
+      background-color: white;
       transform: translate(-25%, -35%);
       -webkit-transform: translate(-25%, -35%);
       -ms-transform: translate(-25%, -35%);
