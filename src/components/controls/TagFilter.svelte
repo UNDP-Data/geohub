@@ -7,6 +7,7 @@
   export let tags: { [key: string]: Tag[] } = {}
 
   export let selectedTags: Tag[]
+  export let operatorType: 'and' | 'or'
 
   onMount(async () => {
     if (!(tags && Object.keys(tags).length > 0)) {
@@ -53,6 +54,31 @@
   }
 </script>
 
+<div class="tile is-vertical pt-2 pb-2">
+  <div class="tile">
+    <label class="radio">
+      <input
+        class="radio-button"
+        type="radio"
+        name="operator"
+        bind:group={operatorType}
+        value="and" />
+      Match all selected tags
+    </label>
+  </div>
+  <div class="tile">
+    <label class="radio">
+      <input
+        class="radio-button"
+        type="radio"
+        name="operator"
+        bind:group={operatorType}
+        value="or" />
+      Match at least a tag selected
+    </label>
+  </div>
+</div>
+
 <div class="box px-2 py-0 mb-2">
   <TreeView
     lineColor="#ff0000"
@@ -88,6 +114,7 @@
     {/key}
   </TreeView>
 </div>
+
 {#if selectedTags?.length > 0}
   <!-- svelte-ignore a11y-missing-attribute -->
   <a
@@ -102,10 +129,16 @@
   @use '../../styles/undp-design/base-minimal.min.css';
   @use '../../styles/undp-design/checkbox.min.css';
   @use '../../styles/undp-design/buttons.min.css';
+  @use '../../styles/undp-design/radio.min.css';
 
   .box {
-    max-height: 250px;
+    max-height: 200px;
     overflow-y: auto;
+  }
+
+  .radio-button {
+    position: relative;
+    top: 0.2rem;
   }
 
   .clear-tag-button {
