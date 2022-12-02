@@ -15,7 +15,6 @@ specifiers:
   '@smui/drawer': ^6.1.4
   '@smui/linear-progress': ^6.1.4
   '@smui/segmented-button': ^6.1.4
-  '@smui/switch': ^6.1.4
   '@sveltejs/adapter-node': ^1.0.0-next.101
   '@sveltejs/kit': ^1.0.0-next.564
   '@sveltejs/vite-plugin-svelte': ^1.3.1
@@ -104,7 +103,6 @@ dependencies:
   '@smui/drawer': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/linear-progress': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/segmented-button': 6.1.4_6pguu24pk3yjevilzyox2hewia
-  '@smui/switch': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@watergis/legend-symbol': 0.2.3
   '@watergis/maplibre-gl-export': 1.3.8
   '@watergis/maplibre-gl-legend': 1.2.8
@@ -630,34 +628,11 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/switch/13.0.0:
-    resolution: {integrity: sha512-zbdo6nKEOAx24ILCBobZlQqU2WZ+KuPgdAc1VTI1q1BCKN3rDIfm9RnsCuYiZa9iaq4UUgdYuhH8KVEYGP7Lrw==}
-    dependencies:
-      '@material/animation': 13.0.0
-      '@material/base': 13.0.0
-      '@material/density': 13.0.0
-      '@material/dom': 13.0.0
-      '@material/elevation': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/ripple': 13.0.0
-      '@material/rtl': 13.0.0
-      '@material/shape': 13.0.0
-      '@material/theme': 13.0.0
-      '@material/tokens': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
   /@material/theme/13.0.0:
     resolution: {integrity: sha512-KAe1s0MvvfCGAwJliDVTvgAKuD3ESwhl7F7br4Iam4IPdqME2rWl8NPhKHFfaWqTG7PyCgMMngYEYuA8cLNTsA==}
     dependencies:
       '@material/feature-targeting': 13.0.0
       tslib: 2.4.1
-    dev: false
-
-  /@material/tokens/13.0.0:
-    resolution: {integrity: sha512-t55CKVeAjABdSQCKjsvYvqrA6Z4f5varLpLloai8ZQU0giSl7qbUczV1i8y2pSOzpRTswD5JKM7a19qfsl/TCA==}
-    dependencies:
-      '@material/elevation': 13.0.0
     dev: false
 
   /@material/touch-target/13.0.0:
@@ -829,20 +804,6 @@ packages:
     resolution: {integrity: sha512-71k+vUfBYynvof1YNeElSoM2GFMZenU7yTKhL40yyACZJ33HAa/Xc+Tcy2uyrUyvCNd1dyrr49Cs4s/OX/nrdQ==}
     dependencies:
       '@material/segmented-button': 13.0.0
-      '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
-      '@smui/ripple': 6.1.4_6pguu24pk3yjevilzyox2hewia
-      svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/switch/6.1.4_6pguu24pk3yjevilzyox2hewia:
-    resolution: {integrity: sha512-UluXjA4RD9f/EjrpmQwdhZB5Zk6d9FhGdzMIEEc7JEIoYnQ0TmOCSUDoV+IJpwdFSxYIlKgX37PInqPB62Eg3Q==}
-    dependencies:
-      '@material/feature-targeting': 13.0.0
-      '@material/switch': 13.0.0
-      '@material/theme': 13.0.0
       '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
       '@smui/ripple': 6.1.4_6pguu24pk3yjevilzyox2hewia
       svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
