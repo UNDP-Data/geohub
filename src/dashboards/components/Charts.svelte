@@ -1,9 +1,7 @@
 <script lang="ts">
-  import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
   import { VegaLite } from 'svelte-vega'
   import type { VisualizationSpec } from 'svelte-vega'
   import { format } from 'd3-format'
-  // import type { VisualizationSpec } from 'svelte-vega'
   import { map, admin } from '../stores'
 
   import { PUBLIC_TITILER_ENDPOINT, PUBLIC_AZURE_BLOB_TOKEN, PUBLIC_AZURE_URL } from '$lib/variables/public'
@@ -184,15 +182,19 @@
 </script>
 
 <div class="centered">
-  <SegmentedButton
-    segments={interactChoices}
-    let:segment
-    singleSelect
-    bind:selected={interactSelected}>
-    <Segment {segment}>
-      <Label>{segment}</Label>
-    </Segment>
-  </SegmentedButton>
+  <div class="field has-addons">
+    {#each interactChoices as choice}
+      <p class="control pt-2">
+        <button
+          class="button {`${choice === interactSelected ? 'is-info is-light is-active' : ''}`}"
+          on:click={() => {
+            interactSelected = choice
+          }}>
+          <span>{choice}</span>
+        </button>
+      </p>
+    {/each}
+  </div>
 </div>
 
 {#if interactSelected === HOVER}

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Paper from '@smui/paper'
-
   export let showIntro: boolean
   const hideIntro = () => {
     showIntro = false
@@ -8,7 +6,7 @@
 </script>
 
 {#if showIntro}
-  <Paper>
+  <div class="box has-text-justified">
     <p
       tabindex="0"
       role="article">
@@ -37,23 +35,25 @@
       electrification for a single pixel only.
     </p>
     <br />
-    <!-- svelte-ignore a11y-invalid-attribute -->
+    <!-- svelte-ignore a11y-missing-attribute -->
     <a
-      style="border-radius: 0px"
       class="button button-primary"
       role="button"
-      href="#"
       on:click={hideIntro}>
       Explore Data
     </a>
-  </Paper>
+  </div>
 {/if}
 
 <style lang="scss">
-  @import '../src/styles/undp-design/buttons.min';
-  @import '../src/styles/undp-design/base-minimal.min';
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/buttons.min.css';
   p {
     padding: 10px;
     border-radius: 5px;
+  }
+
+  .button {
+    width: 100%;
   }
 </style>

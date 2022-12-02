@@ -1,9 +1,4 @@
 <script lang="ts">
-  import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
-  import Fa from 'svelte-fa'
-  import { faPlugCircleBolt } from '@fortawesome/free-solid-svg-icons/faPlugCircleBolt'
-  import { faLaptopCode } from '@fortawesome/free-solid-svg-icons/faLaptopCode'
-  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import TimeSlider from './TimeSlider.svelte'
   import ElectricityLegend from './ElectricityLegend.svelte'
 
@@ -13,9 +8,9 @@
   const NONE_ID = 'NONE'
 
   let electricityChoices = [
-    { name: HREA_ID, icon: faPlugCircleBolt, title: 'High Resolution Electricity Access' },
-    { name: ML_ID, icon: faLaptopCode, title: 'Machine Learning' },
-    { name: NONE_ID, icon: faBan, title: 'None' },
+    { name: HREA_ID, icon: 'fas fa-plug-circle-bolt', title: 'High Resolution Electricity Access' },
+    { name: ML_ID, icon: 'fas fa-laptop-code', title: 'Machine Learning' },
+    { name: NONE_ID, icon: 'fas fa-ban', title: 'None' },
   ]
   export let electricitySelected = electricityChoices[0]
 
@@ -25,22 +20,22 @@
 </script>
 
 <div class="centered">
-  <SegmentedButton
-    segments={electricityChoices}
-    let:segment
-    singleSelect
-    bind:selected={electricitySelected}>
-    <Segment
-      {segment}
-      title={segment.title}>
-      <div class="icon">
-        <Fa
-          icon={segment.icon}
-          size="lg" />
-      </div>
-      <Label>{segment.name}</Label>
-    </Segment>
-  </SegmentedButton>
+  <div class="field has-addons">
+    {#each electricityChoices as choice}
+      <p class="control pt-2">
+        <button
+          class="button {`${choice.name === electricitySelected.name ? 'is-info is-light is-active' : ''}`}"
+          on:click={() => {
+            electricitySelected = choice
+          }}>
+          <span class="icon is-small">
+            <i class={choice.icon} />
+          </span>
+          <span>{choice.name}</span>
+        </button>
+      </p>
+    {/each}
+  </div>
   <ElectricityLegend bind:electricitySelected />
 </div>
 <div class="raster-time-slider">

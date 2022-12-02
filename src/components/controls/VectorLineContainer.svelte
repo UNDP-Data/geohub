@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { fade, slide } from 'svelte/transition'
-  import Card, { PrimaryAction } from '@smui/card'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
@@ -142,48 +140,37 @@
     class="columm legend-toggle"
     transition:slide>
     {#if layerNumberProperties > 0}
-      <Wrapper>
-        <div
-          role="button"
-          aria-label="Switch legend type"
-          class="toggle-container"
-          on:click={handleLegendToggleClick}
-          on:keydown={handleEnterKey}
-          data-testid="legend-toggle-container">
-          <Card style="background: #D12800;">
-            <PrimaryAction style="padding: 10px;">
-              <Fa
-                icon={faRetweet}
-                style="font-size: 16px; color:white"
-                spin={isLegendSwitchAnimate} />
-            </PrimaryAction>
-          </Card>
-        </div>
-        <Tooltip
-          showDelay={500}
-          hideDelay={0}
-          yPos="above">Toggle Legend Type</Tooltip>
-      </Wrapper>
+      <div
+        role="button"
+        aria-label="Switch legend type"
+        class="toggle-container has-tooltip-left icon m-1"
+        data-tooltip="Toggle Legend Type"
+        tabindex="0"
+        on:click={handleLegendToggleClick}
+        on:keydown={handleEnterKey}
+        data-testid="legend-toggle-container">
+        <Fa
+          icon={faRetweet}
+          style="font-size: 16px; color:white"
+          spin={isLegendSwitchAnimate} />
+      </div>
       <br />
     {/if}
 
     {#if legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
       <div
-        class="toggle-container"
+        class="toggle-container icon m-1"
         role="button"
         aria-label="Open color scheme picker"
+        tabindex="0"
         use:popperRef
         on:click={handleClosePopup}
         on:keydown={handleEnterKey}
         data-testid="colormap-toggle-container"
         transition:fade>
-        <Card style="background: #D12800;">
-          <PrimaryAction style="padding: 10px;">
-            <Fa
-              icon={faPalette}
-              style="font-size: 16px; color:white" />
-          </PrimaryAction>
-        </Card>
+        <Fa
+          icon={faPalette}
+          style="font-size: 16px; color:white" />
       </div>
     {/if}
 
@@ -216,6 +203,12 @@
 
     .toggle-container {
       margin-left: 3.5px;
+      background: #d12800;
+      padding: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
+      cursor: pointer;
     }
   }
 

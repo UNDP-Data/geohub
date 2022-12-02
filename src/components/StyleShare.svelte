@@ -1,7 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
-  import Textfield from '@smui/textfield'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
 
@@ -130,7 +129,8 @@
 
 {#if $layerList.length > 0}
   <div
-    class="icon"
+    class="icon has-tooltip-bottom"
+    data-tooltip="Share map"
     on:click={() => open()}
     on:keydown={onKeyPressed}
     tabindex="0">
@@ -162,11 +162,18 @@
       </header>
       <section class="modal-card-body">
         {#if !styleURL}
-          <div class="textfield">
-            <Textfield
-              bind:value={styleName}
-              label="Style name" />
+          <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="label">Style name</label>
+            <div class="control">
+              <input
+                class="input text-stylename"
+                type="text"
+                placeholder="Style name"
+                bind:value={styleName} />
+            </div>
           </div>
+
           {#if radioDisabled === false}
             <div style="display: block">
               <div
@@ -260,9 +267,6 @@
 
   .icon {
     cursor: pointer;
-  }
-  .textfield {
-    padding-left: 30px;
   }
 
   .text-style {
