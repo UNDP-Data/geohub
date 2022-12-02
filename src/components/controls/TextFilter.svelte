@@ -13,7 +13,7 @@
 
   export let map: Map
   export let placeholder: string
-  export let query = ''
+  let query = ''
   let queryType: 'and' | 'or' = 'and'
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
@@ -43,18 +43,23 @@
 
   const clearInput = () => {
     if (isQueryEmpty === true) return
-    query = ''
+    clear()
     fireChangeEvent('clear')
   }
 
+  export const clear = () => {
+    query = ''
+  }
+
   const fireChangeEvent = (eventName: 'change' | 'clear', isNormalise = false) => {
+    let _query = query
     if (isNormalise) {
       if (query.length > 0) {
-        query = query.trim().replace(/\s/g, ` ${queryType} `)
+        _query = _query.trim().replace(/\s/g, ` ${queryType} `)
       }
     }
     dispatch(eventName, {
-      query: query,
+      query: _query,
       sortingColumn,
       orderType,
       bbox,
