@@ -6,10 +6,13 @@
   //fontawesome icon name e.g., https://fontawesome.com/search
   export let icon: string
   export let width: string
+  export let tooltip: string
+  export let position: 'top' | 'bottom' | 'right' | 'left' = 'top'
 </script>
 
 <div
-  class="panel-control"
+  class="panel-control {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
+  data-tooltip={tooltip}
   use:clickOutside={() => (isPanelOpen = false)}>
   <button
     class="button"

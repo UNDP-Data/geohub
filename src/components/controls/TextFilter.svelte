@@ -123,6 +123,7 @@
 
   <PanelButton
     icon="fas fa-sliders"
+    tooltip="Explore tags and filter data"
     width="230px">
     <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
     <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
@@ -134,6 +135,7 @@
 
   <PanelButton
     bind:icon={sortIcon}
+    tooltip="Sort"
     width="200px">
     <p class="title is-5 m-0 p-0">Sort settings</p>
 
@@ -185,6 +187,8 @@
 
   <PanelButton
     icon="fas fa-gear"
+    tooltip="Settings"
+    position="left"
     width="230px">
     <p class="title is-5 m-0 p-0">Search settings</p>
     <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
