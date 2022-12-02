@@ -122,44 +122,14 @@
   </div>
 
   <PanelButton
-    icon="fas fa-filter"
+    icon="fas fa-sliders"
     width="230px">
-    <p class="title is-5 m-0 p-0">Filter settings</p>
-    <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
-    <div class="control query-type-radios">
-      <label class="radio">
-        <input
-          class="radio-button"
-          type="radio"
-          name="queryType"
-          bind:group={queryType}
-          value="and" />
-        AND
-      </label>
-      <label class="radio">
-        <input
-          class="radio-button"
-          type="radio"
-          name="queryType"
-          bind:group={queryType}
-          value="or" />
-        OR
-      </label>
-      <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
-      <div class="form-check">
-        <input
-          type="checkbox"
-          id="bbox-filter-checkbox"
-          name="bbox-filter-checkbox"
-          bind:checked={isFilterByBBox} />
-        <label for="bbox-filter-checkbox">Filter by current map extent</label>
-      </div>
-      <p class="subtitle is-6 pb-0 pt-2 my-1">Tags</p>
-      <TagFilter
-        bind:selectedTags
-        bind:operatorType={tagFilterOperatorType}
-        bind:currentSearchUrl />
-    </div>
+    <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+    <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+    <TagFilter
+      bind:selectedTags
+      bind:operatorType={tagFilterOperatorType}
+      bind:currentSearchUrl />
   </PanelButton>
 
   <PanelButton
@@ -210,6 +180,47 @@
           Z to A (large to small)
         </label>
       </div>
+    </div>
+  </PanelButton>
+
+  <PanelButton
+    icon="fas fa-gear"
+    width="230px">
+    <p class="title is-5 m-0 p-0">Search settings</p>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
+
+    <div class="tile is-vertical">
+      <div class="tile">
+        <label class="radio">
+          <input
+            class="radio-button"
+            type="radio"
+            name="queryType"
+            bind:group={queryType}
+            value="and" />
+          Match all words typed
+        </label>
+      </div>
+      <div class="tile">
+        <label class="radio">
+          <input
+            class="radio-button"
+            type="radio"
+            name="queryType"
+            bind:group={queryType}
+            value="or" />
+          Match at least a word typed
+        </label>
+      </div>
+    </div>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        id="bbox-filter-checkbox"
+        name="bbox-filter-checkbox"
+        bind:checked={isFilterByBBox} />
+      <label for="bbox-filter-checkbox">Filter by current map extent</label>
     </div>
   </PanelButton>
 </div>
