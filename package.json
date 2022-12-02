@@ -83,7 +83,6 @@
     "@popperjs/core": "^2.11.6",
     "@smui/drawer": "^6.1.4",
     "@smui/linear-progress": "^6.1.4",
-    "@smui/paper": "7.0.0-beta.0",
     "@smui/segmented-button": "^6.1.4",
     "@smui/switch": "^6.1.4",
     "@smui/textfield": "^6.1.4",

@@ -14,7 +14,6 @@ specifiers:
   '@popperjs/core': ^2.11.6
   '@smui/drawer': ^6.1.4
   '@smui/linear-progress': ^6.1.4
-  '@smui/paper': 7.0.0-beta.0
   '@smui/segmented-button': ^6.1.4
   '@smui/switch': ^6.1.4
   '@smui/textfield': ^6.1.4
@@ -105,7 +104,6 @@ dependencies:
   '@popperjs/core': 2.11.6
   '@smui/drawer': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/linear-progress': 6.1.4_6pguu24pk3yjevilzyox2hewia
-  '@smui/paper': 7.0.0-beta.0_6pguu24pk3yjevilzyox2hewia
   '@smui/segmented-button': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/switch': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/textfield': 6.1.4_6pguu24pk3yjevilzyox2hewia
@@ -507,20 +505,8 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/animation/14.0.0:
-    resolution: {integrity: sha512-VlYSfUaIj/BBVtRZI8Gv0VvzikFf+XgK0Zdgsok5c1v5DDnNz5tpB8mnGrveWz0rHbp1X4+CWLKrTwNmjrw3Xw==}
-    dependencies:
-      tslib: 2.4.1
-    dev: false
-
   /@material/base/13.0.0:
     resolution: {integrity: sha512-vFx0JryRfcvUNX3cZ2u32wUMvxzd+c/YW0LFOXNgqCDWlubHcMm0Y6Wz371LhfQo80/NE69u+/4Joo99yKnVeg==}
-    dependencies:
-      tslib: 2.4.1
-    dev: false
-
-  /@material/base/14.0.0:
-    resolution: {integrity: sha512-Ou7vS7n1H4Y10MUZyYAbt6H0t67c6urxoCgeVT7M38aQlaNUwFMODp7KT/myjYz2YULfhu3PtfSV3Sltgac9mA==}
     dependencies:
       tslib: 2.4.1
     dev: false
@@ -535,13 +521,6 @@ packages:
     resolution: {integrity: sha512-M9HLAYBZtkTUvf66FL+jAEvUOdhji1HkGA1mV6oyE+HY9gkCkmso+mngvzlLd5+uaAVE9I3WQFhSb9gp0cpXnw==}
     dependencies:
       '@material/feature-targeting': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
-  /@material/dom/14.0.0:
-    resolution: {integrity: sha512-8t88XyacclTj8qsIw9q0vEj4PI2KVncLoIsIMzwuMx49P2FZg6TsLjor262MI3Qs00UWAifuLMrhnOnfyrbe7Q==}
-    dependencies:
-      '@material/feature-targeting': 14.0.0
       tslib: 2.4.1
     dev: false
 
@@ -573,25 +552,8 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/elevation/14.0.0:
-    resolution: {integrity: sha512-Di3tkxTpXwvf1GJUmaC8rd+zVh5dB2SWMBGagL4+kT8UmjSISif/OPRGuGnXs3QhF6nmEjkdC0ijdZLcYQkepw==}
-    dependencies:
-      '@material/animation': 14.0.0
-      '@material/base': 14.0.0
-      '@material/feature-targeting': 14.0.0
-      '@material/rtl': 14.0.0
-      '@material/theme': 14.0.0
-      tslib: 2.4.1
-    dev: false
-
   /@material/feature-targeting/13.0.0:
     resolution: {integrity: sha512-QJClfeaA4EMyAxKJy9WR0Nx+/VwSZCkhGLUVBG9NhxqYGfl/LtaeaidrNm32vYEoNZAofN92VD2RwQTRwp/dMQ==}
-    dependencies:
-      tslib: 2.4.1
-    dev: false
-
-  /@material/feature-targeting/14.0.0:
-    resolution: {integrity: sha512-a5WGgHEq5lJeeNL5yevtgoZjBjXWy6+klfVWQEh8oyix/rMJygGgO7gEc52uv8fB8uAIoYEB3iBMOv8jRq8FeA==}
     dependencies:
       tslib: 2.4.1
     dev: false
@@ -683,13 +645,6 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/rtl/14.0.0:
-    resolution: {integrity: sha512-xl6OZYyRjuiW2hmbjV2omMV8sQtfmKAjeWnD1RMiAPLCTyOW9Lh/PYYnXjxUrNa0cRwIIbOn5J7OYXokja8puA==}
-    dependencies:
-      '@material/theme': 14.0.0
-      tslib: 2.4.1
-    dev: false
-
   /@material/segmented-button/13.0.0:
     resolution: {integrity: sha512-cbjSzkGms+MB6e7ZF6Toc0kpIor4qFm3ueY8KGRIbpvPoJuHfDy6wqIUhwpfAibSpcaDSnCKg1m+hEtyplZPkQ==}
     dependencies:
@@ -709,15 +664,6 @@ packages:
       '@material/feature-targeting': 13.0.0
       '@material/rtl': 13.0.0
       '@material/theme': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
-  /@material/shape/14.0.0:
-    resolution: {integrity: sha512-o0mJB0+feOv473KckI8gFnUo8IQAaEA6ynXzw3VIYFjPi48pJwrxa0mZcJP/OoTXrCbDzDeFJfDPXEmRioBb9A==}
-    dependencies:
-      '@material/feature-targeting': 14.0.0
-      '@material/rtl': 14.0.0
-      '@material/theme': 14.0.0
       tslib: 2.4.1
     dev: false
 
@@ -764,13 +710,6 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/theme/14.0.0:
-    resolution: {integrity: sha512-6/SENWNIFuXzeHMPHrYwbsXKgkvCtWuzzQ3cUu4UEt3KcQ5YpViazIM6h8ByYKZP8A9d8QpkJ0WGX5btGDcVoA==}
-    dependencies:
-      '@material/feature-targeting': 14.0.0
-      tslib: 2.4.1
-    dev: false
-
   /@material/tokens/13.0.0:
     resolution: {integrity: sha512-t55CKVeAjABdSQCKjsvYvqrA6Z4f5varLpLloai8ZQU0giSl7qbUczV1i8y2pSOzpRTswD5JKM7a19qfsl/TCA==}
     dependencies:
@@ -791,14 +730,6 @@ packages:
     dependencies:
       '@material/feature-targeting': 13.0.0
       '@material/theme': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
-  /@material/typography/14.0.0:
-    resolution: {integrity: sha512-/QtHBYiTR+TPMryM/CT386B2WlAQf/Ae32V324Z7P40gHLKY/YBXx7FDutAWZFeOerq/two4Nd2aAHBcMM2wMw==}
-    dependencies:
-      '@material/feature-targeting': 14.0.0
-      '@material/theme': 14.0.0
       tslib: 2.4.1
     dev: false
 
@@ -915,17 +846,6 @@ packages:
       - typescript
     dev: false
 
-  /@smui/common/7.0.0-beta.0_6pguu24pk3yjevilzyox2hewia:
-    resolution: {integrity: sha512-JFbmbXR/j3NdUPC1Nn28LDH62WVv6AaKQVr4VVmutgBYAkMy+QIQhG/kvFBP4Shr2gG8DLQyXGSK0wHHgiONlw==}
-    dependencies:
-      '@material/dom': 14.0.0
-      '@tsconfig/svelte': 3.0.0
-      svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
   /@smui/drawer/6.1.4_6pguu24pk3yjevilzyox2hewia:
     resolution: {integrity: sha512-Y13Fvf9ue/yfeuV99I8doRYEN/viWMQpWPTmz3bvh+0ztyPvjK4kpP0AlCu1QxX7UCgb390DLmfT1lDrCl/QrA==}
     dependencies:
@@ -977,21 +897,6 @@ packages:
       '@material/notched-outline': 13.0.0
       '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
       '@smui/floating-label': 6.1.4_6pguu24pk3yjevilzyox2hewia
-      svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/paper/7.0.0-beta.0_6pguu24pk3yjevilzyox2hewia:
-    resolution: {integrity: sha512-0Zi2zyfCzxydnUHKKW7RDSjKfqkw6cekQ1mXzkm8AscUIeOCgysGuPvRjEmizBe9Uzc4radH8+gToPZejmbWVA==}
-    dependencies:
-      '@material/elevation': 14.0.0
-      '@material/feature-targeting': 14.0.0
-      '@material/shape': 14.0.0
-      '@material/theme': 14.0.0
-      '@material/typography': 14.0.0
-      '@smui/common': 7.0.0-beta.0_6pguu24pk3yjevilzyox2hewia
       svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
     transitivePeerDependencies:
       - svelte

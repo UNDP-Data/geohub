@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Paper from '@smui/paper'
-
   export let showIntro: boolean
   const hideIntro = () => {
     showIntro = false
@@ -8,7 +6,7 @@
 </script>
 
 {#if showIntro}
-  <Paper>
+  <div class="box has-text-justified">
     <p
       tabindex="0"
       role="article">
@@ -44,7 +42,7 @@
       on:click={hideIntro}>
       Explore Data
     </a>
-  </Paper>
+  </div>
 {/if}
 
 <style lang="scss">
