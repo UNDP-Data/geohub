@@ -44,6 +44,7 @@
       border: 1px solid gray;
       border-radius: 5px;
       z-index: 10;
+      cursor: default;
     }
   }
 </style>
