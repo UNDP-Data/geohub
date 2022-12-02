@@ -82,7 +82,6 @@
     "@neodrag/svelte": "^1.2.4",
     "@popperjs/core": "^2.11.6",
     "@smui/drawer": "^6.1.4",
-    "@smui/form-field": "^6.1.4",
     "@smui/linear-progress": "^6.1.4",
     "@smui/paper": "7.0.0-beta.0",
     "@smui/segmented-button": "^6.1.4",

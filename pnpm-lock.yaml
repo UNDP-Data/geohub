@@ -13,7 +13,6 @@ specifiers:
   '@neodrag/svelte': ^1.2.4
   '@popperjs/core': ^2.11.6
   '@smui/drawer': ^6.1.4
-  '@smui/form-field': ^6.1.4
   '@smui/linear-progress': ^6.1.4
   '@smui/paper': 7.0.0-beta.0
   '@smui/segmented-button': ^6.1.4
@@ -105,7 +104,6 @@ dependencies:
   '@neodrag/svelte': 1.2.4
   '@popperjs/core': 2.11.6
   '@smui/drawer': 6.1.4_6pguu24pk3yjevilzyox2hewia
-  '@smui/form-field': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/linear-progress': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/paper': 7.0.0-beta.0_6pguu24pk3yjevilzyox2hewia
   '@smui/segmented-button': 6.1.4_6pguu24pk3yjevilzyox2hewia
@@ -611,18 +609,6 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/form-field/13.0.0:
-    resolution: {integrity: sha512-cXs5uYA89KgrXrU1UYkl52JizeIK3Mx9LjBw4ZYiyQJzFaBTPYsYWGSJMad1HZhWlRiigGTyN1M9ePIxtBpi0Q==}
-    dependencies:
-      '@material/base': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/ripple': 13.0.0
-      '@material/rtl': 13.0.0
-      '@material/theme': 13.0.0
-      '@material/typography': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
   /@material/line-ripple/13.0.0:
     resolution: {integrity: sha512-5djBRXrd1+SiMVUTWr4rD6xv+/qTaGGmgUS5GytBE5mczvnEwcPmM4PzF+HNj2TS+wvNvIfRjRmUzWO2Z6w2lA==}
     dependencies:
@@ -956,19 +942,6 @@ packages:
     resolution: {integrity: sha512-7crwK7WsU7ELS+uJj5J8XnbCGoJrCDijs7DN57ok3LemWTsmn0vhhnsmDC3FYZARcAQ1KsX936+ahJGfiP/oAg==}
     dependencies:
       '@material/floating-label': 13.0.0
-      '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
-      svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/form-field/6.1.4_6pguu24pk3yjevilzyox2hewia:
-    resolution: {integrity: sha512-MytvYxHO/+zTzReWGNZ4UXZ2jeDShyopHFfQUCfwPszHX8ckiYTx/Ld+wFBs6GSq9bGJw49gHnYkkZUfVIbm3A==}
-    dependencies:
-      '@material/feature-targeting': 13.0.0
-      '@material/form-field': 13.0.0
-      '@material/rtl': 13.0.0
       '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
       svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
     transitivePeerDependencies:
