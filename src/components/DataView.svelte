@@ -63,7 +63,6 @@
   const searchDatasets = async (url: string) => {
     try {
       $indicatorProgress = true
-      // DataItemFeatureCollection = undefined
 
       const apiUrl = new URL(url)
 
