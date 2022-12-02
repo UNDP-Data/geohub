@@ -82,7 +82,6 @@
     "@neodrag/svelte": "^1.2.4",
     "@popperjs/core": "^2.11.6",
     "@smui/drawer": "^6.1.4",
-    "@smui/linear-progress": "^6.1.4",
     "@smui/segmented-button": "^6.1.4",
     "@watergis/legend-symbol": "^0.2.3",
     "@watergis/maplibre-gl-export": "^1.3.8",

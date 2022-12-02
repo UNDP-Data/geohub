@@ -13,7 +13,6 @@ specifiers:
   '@neodrag/svelte': ^1.2.4
   '@popperjs/core': ^2.11.6
   '@smui/drawer': ^6.1.4
-  '@smui/linear-progress': ^6.1.4
   '@smui/segmented-button': ^6.1.4
   '@sveltejs/adapter-node': ^1.0.0-next.101
   '@sveltejs/kit': ^1.0.0-next.564
@@ -101,7 +100,6 @@ dependencies:
   '@neodrag/svelte': 1.2.4
   '@popperjs/core': 2.11.6
   '@smui/drawer': 6.1.4_6pguu24pk3yjevilzyox2hewia
-  '@smui/linear-progress': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@smui/segmented-button': 6.1.4_6pguu24pk3yjevilzyox2hewia
   '@watergis/legend-symbol': 0.2.3
   '@watergis/maplibre-gl-export': 1.3.8
@@ -554,18 +552,6 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@material/linear-progress/13.0.0:
-    resolution: {integrity: sha512-FJpP6flSME5QRPfkB616uA5bk9aMKJBqkklrHk6dSMZaTKbiHRmc6faxMIZ4w9W49JFMXaSwzC39y96tQTiRQg==}
-    dependencies:
-      '@material/animation': 13.0.0
-      '@material/base': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/progress-indicator': 13.0.0
-      '@material/rtl': 13.0.0
-      '@material/theme': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
   /@material/list/13.0.0:
     resolution: {integrity: sha512-poq4WNDEfW6Z3YPAn3wdBX4RSkj3A83Pht6984MmG8YJZMlq34ftHECw37VcdmFJIyRPdpZqywJo/i7CxsSAgQ==}
     dependencies:
@@ -578,12 +564,6 @@ packages:
       '@material/shape': 13.0.0
       '@material/theme': 13.0.0
       '@material/typography': 13.0.0
-      tslib: 2.4.1
-    dev: false
-
-  /@material/progress-indicator/13.0.0:
-    resolution: {integrity: sha512-IfhAMn03gWg/Rl0Bg26Q1g+DrMnaULllz+ZJeIY7BXZC5qFYq1fLq4+RiQmfPGlJfURUjrWNLcI1VDVyXUHHzg==}
-    dependencies:
       tslib: 2.4.1
     dev: false
 
@@ -770,17 +750,6 @@ packages:
     dependencies:
       '@material/dom': 13.0.0
       '@material/drawer': 13.0.0
-      '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
-      svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/linear-progress/6.1.4_6pguu24pk3yjevilzyox2hewia:
-    resolution: {integrity: sha512-ta1syavpt9yIAmqV98DKzf0JEy32us4oIxThgj9Ze+4Xi6l4NnuUAx3L9XiW37qE7xrNJcoFMAlErht2yYDUIw==}
-    dependencies:
-      '@material/linear-progress': 13.0.0
       '@smui/common': 6.1.4_6pguu24pk3yjevilzyox2hewia
       svelte2tsx: 0.5.18_6pguu24pk3yjevilzyox2hewia
     transitivePeerDependencies:

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import StyleShare from './StyleShare.svelte'
-  import LinearProgress from '@smui/linear-progress'
   import { indicatorProgress, layerList } from '$stores'
 
   export let drawerOpen = true
@@ -128,9 +127,11 @@
         </div>
       </div>
     </div>
-    <LinearProgress
-      indeterminate
-      bind:closed={hideLinearProgress} />
+    {#if $indicatorProgress}
+      <progress
+        class="progress is-small is-info"
+        max="100" />
+    {/if}
   </section>
 </header>
 
