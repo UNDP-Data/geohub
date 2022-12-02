@@ -63,7 +63,7 @@
   const searchDatasets = async (url: string) => {
     try {
       $indicatorProgress = true
-      DataItemFeatureCollection = undefined
+      // DataItemFeatureCollection = undefined
 
       const apiUrl = new URL(url)
 
@@ -240,12 +240,14 @@
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {#each DataItemFeatureCollection.features as feature}
-      <DataCard {feature} />
-    {/each}
-    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <Notification type="info">All data loaded</Notification>
-    {/if}
+    {#key DataItemFeatureCollection}
+      {#each DataItemFeatureCollection.features as feature}
+        <DataCard {feature} />
+      {/each}
+      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+        <Notification type="info">All data loaded</Notification>
+      {/if}
+    {/key}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
     <Notification type="warning">No data found</Notification>
   {:else}
