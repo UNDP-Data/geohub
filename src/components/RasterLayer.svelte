@@ -9,27 +9,20 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import {
-    ClassificationMethodTypes,
-    DEFAULT_COLORMAP,
-    DynamicLayerLegendTypes,
-    LayerInitialValues,
-    TabNames,
-  } from '$lib/constants'
-  import type { Layer, RasterSimpleExpression } from '$lib/types'
+  import { ClassificationMethodTypes, DynamicLayerLegendTypes, LayerInitialValues, TabNames } from '$lib/constants'
+  import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
 
   export let layer: Layer = LayerInitialValues
   let expressions: RasterSimpleExpression[]
-  $: tree = layer.tree
 
   let activeTab = ''
   let isRefinePanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
-  let colorMapName = DEFAULT_COLORMAP
+  let colorMapName: string = undefined
   let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
   let legendType: DynamicLayerLegendTypes
 
@@ -64,10 +57,11 @@
   ]
 
   $: {
-    if (tree && tree.isMosaicJSON) {
+    const rasterInfo = layer.info as RasterTileMetadata
+    if (rasterInfo?.isMosaicJson === true) {
       // disable other menus since they are not working for mosaicjson layer currently
       tabs = [{ label: TabNames.OPACITY, icon: faDroplet, active: false }]
-      if (layer.info.band_metadata.length < 2) {
+      if (rasterInfo.band_metadata.length < 2) {
         tabs = [
           { label: TabNames.LEGEND, icon: faList, active: false },
           { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },

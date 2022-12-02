@@ -8,9 +8,6 @@ pre-push:
     build:
       tags: build
       run: pnpm build
-    build_packages:
-      tags: build
-      run: pnpm --filter="./packages/*" build
 
 pre-commit:
   # parallel: true

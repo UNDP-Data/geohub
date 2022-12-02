@@ -97,7 +97,8 @@
       let layerName = layer.name
       const layerStyle = getLayerStyle(map, layer.id)
       if (layerStyle.type === LayerTypes.RASTER) {
-        if (layer.tree && layer.tree.isMosaicJSON) {
+        const rasterInfo = layer.info as RasterTileMetadata
+        if (rasterInfo?.isMosaicJson) {
           const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
             'cog',
             'mosaicjson',
@@ -108,7 +109,7 @@
           }
           values = layerData.values[0][1]
           presentUniqueNames = [undefined]
-          layerName = `${layer.tree.label} (${layer.name})`
+          layerName = `${layer.name}`
         } else {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore

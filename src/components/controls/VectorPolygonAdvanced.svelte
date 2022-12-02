@@ -25,9 +25,8 @@
   } from '$lib/types'
   import { map } from '$stores'
   import {
-    getFillOutlineColor,
     getIntervalList,
-    getLayerNumberProperties,
+    getLayerProperties,
     getLayerStyle,
     getSampleFromInterval,
     remapInputValue,
@@ -48,7 +47,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  let defaultFillOutlineColor = getFillOutlineColor($map, layer.id)
+  export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string
@@ -71,7 +70,7 @@
   })
 
   const getPropertySelectValue = () => {
-    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const vectorLayerMeta = getLayerProperties($map, layer)
     const selectOptions = Object.keys(vectorLayerMeta.fields)
 
     propertySelectValue = selectOptions[0]

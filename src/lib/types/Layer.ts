@@ -1,5 +1,4 @@
 import type { RasterTileMetadata } from './RasterTileMetadata'
-import type { TreeNode } from './TreeNode'
 import type { VectorTileMetadata } from './VectorTileMetadata'
 
 export interface Layer {
@@ -8,5 +7,4 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   children?: Layer[]
   parent?: Layer
-  tree?: TreeNode
 }

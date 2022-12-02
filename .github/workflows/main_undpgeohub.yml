@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [18]
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -102,7 +102,6 @@ jobs:
           cp package.json build/.
           cp pnpm-lock.yaml build/.
           mv node_modules build/.
-          mv data build/.
 
       - name: 'Deploy to Azure Web App for undpgeohub-dev'
         id: deploy-to-webapp-dev

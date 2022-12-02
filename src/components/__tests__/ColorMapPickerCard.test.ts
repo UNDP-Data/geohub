@@ -2,9 +2,12 @@ import { describe, beforeEach, expect, it } from 'vitest'
 import { cleanup, render, within, type RenderResult } from '@testing-library/svelte'
 
 import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
-import { DEFAULT_COLORMAP, ColorMapTypes } from '$lib/constants'
+import { ColorMapTypes } from '$lib/constants'
+import { getRandomColormap } from '$lib/helper'
 
 beforeEach(cleanup)
+
+const colormap = getRandomColormap()
 
 describe('Color Map Picker Card : Card Style', () => {
   let sut: RenderResult
@@ -12,7 +15,7 @@ describe('Color Map Picker Card : Card Style', () => {
 
   beforeEach(() => {
     sut = render(ColorMapPickerCard, {
-      colorMapName: DEFAULT_COLORMAP,
+      colorMapName: colormap,
       colorMapType: ColorMapTypes.SEQUENTIAL,
       isSelected: false,
       layerMin: 100,
@@ -28,7 +31,7 @@ describe('Color Map Picker Card : Card Style', () => {
   })
 
   it('should render the default color type name', () => {
-    expect(within(cardContainer).getByText(DEFAULT_COLORMAP)).toBeDefined()
+    expect(within(cardContainer).getByText(colormap)).toBeDefined()
   })
 
   it('should render the color map style', () => {
@@ -51,7 +54,7 @@ describe('Color Map Picker Card : Card Style : Selected', () => {
 
   beforeEach(() => {
     sut = render(ColorMapPickerCard, {
-      colorMapName: DEFAULT_COLORMAP,
+      colorMapName: colormap,
       colorMapType: ColorMapTypes.SEQUENTIAL,
       isSelected: true,
       layerMin: 100,
@@ -74,7 +77,7 @@ describe('Color Map Picker Card : List Style', () => {
 
   beforeEach(() => {
     sut = render(ColorMapPickerCard, {
-      colorMapName: DEFAULT_COLORMAP,
+      colorMapName: colormap,
       colorMapType: ColorMapTypes.SEQUENTIAL,
       isSelected: false,
       layerMin: 100,

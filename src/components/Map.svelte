@@ -10,7 +10,7 @@
   import { styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
-  import { indicatorProgress, map, spriteImageList } from '$stores'
+  import { map, spriteImageList } from '$stores'
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   let adminLayer: AdminLayer = null
@@ -39,19 +39,6 @@
       PrintableArea: true,
     })
     newMap.addControl(exportControl, 'top-right')
-
-    const indicatorProgressEvents = {
-      true: ['zoomstart', 'touchmove', 'mousedown'],
-      false: ['zoomend', 'touchend', 'mouseup'],
-    }
-
-    Object.keys(indicatorProgressEvents).forEach((state) => {
-      indicatorProgressEvents[state].forEach((event: string) => {
-        newMap.on(event, () => {
-          $indicatorProgress = state === 'true'
-        })
-      })
-    })
 
     newMap.on('load', () => {
       initAdminLayer()

@@ -2,12 +2,10 @@
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
   import Textfield from '@smui/textfield'
-  import Fa from 'svelte-fa'
-  import { faShare } from '@fortawesome/free-solid-svg-icons/faShare'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
 
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map, layerList } from '$stores'
   import { getLayerStyle } from '$lib/helper'
 
@@ -30,7 +28,8 @@
     untargetedLayers = []
     if ($layerList.length > 0) {
       $layerList.forEach((layer) => {
-        if (layer.tree?.isStac || layer.tree?.isMosaicJSON) {
+        const rasterInfo = layer.info as RasterTileMetadata
+        if (rasterInfo?.isMosaicJson) {
           untargetedLayers.push(layer)
         }
       })
@@ -113,8 +112,10 @@
     await share()
   }
 
-  const onKeyPressed = (e: any) => {
+  const onKeyPressed = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       e.target.click()
     }
   }
@@ -129,14 +130,15 @@
 
 {#if $layerList.length > 0}
   <div
-    style="margin-left: 2%"
     class="icon"
     on:click={() => open()}
     on:keydown={onKeyPressed}
-    tabindex="1">
-    <Fa
-      icon={faShare}
-      size="lg" />
+    tabindex="0">
+    <span class="icon">
+      <i
+        class="fa-solid fa-share fa-xl"
+        style="color:#006eb5" />
+    </span>
   </div>
 {/if}
 
@@ -258,7 +260,6 @@
 
   .icon {
     cursor: pointer;
-    margin-right: 20px;
   }
   .textfield {
     padding-left: 30px;

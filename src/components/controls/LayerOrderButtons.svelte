@@ -68,7 +68,7 @@
     <Tooltip
       showDelay={300}
       hideDelay={100}
-      yPos="above">Bring Forward in Map</Tooltip>
+      xPos="start">Bring Forward in Map</Tooltip>
   </Wrapper>
   <div style="width: 10px" />
   <Wrapper>
@@ -87,7 +87,7 @@
     <Tooltip
       showDelay={300}
       hideDelay={100}
-      yPos="above">Send Backward in Map</Tooltip>
+      xPos="start">Send Backward in Map</Tooltip>
   </Wrapper>
 </div>
 

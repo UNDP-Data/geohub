@@ -13,7 +13,7 @@
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer } from '$lib/types'
+  import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
   import {
     getActiveBandIndex,
@@ -21,12 +21,14 @@
     updateParamsInURL,
     getValueFromRasterTileUrl,
     getLayerStyle,
+    getRandomColormap,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let colorMapName: string
+  export let colorMapName: string =
+    (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) ?? getRandomColormap()
   export let classificationMethod: ClassificationMethodTypes
 
   let info
@@ -39,7 +41,7 @@
   let layerListCount = $layerList.length
   let showTooltip = false
   let numberOfClasses: number
-  export let legendType: DynamicLayerLegendTypes
+  export let legendType: DynamicLayerLegendTypes = undefined
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -54,8 +56,19 @@
   }
 
   onMount(async () => {
-    if (!layer.tree?.isMosaicJSON) {
+    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+    if (layerSrc?.tiles?.length > 0) {
+      await initialise()
+    } else {
+      setTimeout(initialise, 300)
+    }
+  })
+
+  const initialise = async () => {
+    const rasterInfo = layer.info as RasterTileMetadata
+    if (!rasterInfo?.isMosaicJson) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+      if (!(layerSrc?.tiles?.length > 0)) return
       const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
@@ -78,7 +91,7 @@
       }
     }
     legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
-  })
+  }
 
   const {
     ref: popperRef,
@@ -96,13 +109,14 @@
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
     let bandName
+    const rasterInfo = layer.info as RasterTileMetadata
     try {
-      bandName = Object.keys(layer.info.stats)
+      bandName = Object.keys(rasterInfo.stats)
     } catch (e) {
       console.log(e)
     }
     layerHasUniqueValues =
-      Number(layer.info.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !layer.info.dtype.startsWith('float')
+      Number(rasterInfo.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !rasterInfo.dtype.startsWith('float')
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
@@ -118,21 +132,20 @@
   $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
     if (!colorMapName) return
-    if (layer.tree?.isMosaicJSON) {
-      const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
-      const tiles = source.tiles
-      if (!(tiles && tiles.length > 0)) return
-      const layerURL = new URL(tiles[0])
-      layerURL.searchParams.delete('colormap_name')
-      layerURL.searchParams.delete('rescale')
-      const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-      let updatedParams = Object.assign({ colormap_name: colorMapName })
-      if (rescale) {
-        updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-      }
-      const layerStyle = getLayerStyle($map, layer.id)
-      updateParamsInURL(layerStyle, layerURL, updatedParams)
+    const rasterInfo = layer.info as RasterTileMetadata
+    const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
+    const tiles = source.tiles
+    if (!(tiles && tiles.length > 0)) return
+    const layerURL = new URL(tiles[0])
+    layerURL.searchParams.delete('colormap_name')
+    layerURL.searchParams.delete('rescale')
+    const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
+    let updatedParams = Object.assign({ colormap_name: colorMapName })
+    if (rescale) {
+      updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
     }
+    const layerStyle = getLayerStyle($map, layer.id)
+    updateParamsInURL(layerStyle, layerURL, updatedParams)
 
     colorPickerVisibleIndex = -1
     const nlayer = { ...layer, colorMapName: colorMapName }

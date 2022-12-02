@@ -18,9 +18,8 @@
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
   import {
-    getIconColor,
     getIntervalList,
-    getLayerNumberProperties,
+    getLayerProperties,
     getLayerStyle,
     getSampleFromInterval,
     remapInputValue,
@@ -40,7 +39,8 @@
   export let layer: Layer = LayerInitialValues
   export let layerMax: number
   export let layerMin: number
-  export let colorMapName
+  export let colorMapName: string
+  export let defaultColor: string = undefined
 
   const classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -83,7 +83,7 @@
   })
 
   const setCssIconFilter = () => {
-    const rgba = chroma(getIconColor($map, layer.id)).rgba()
+    const rgba = chroma(defaultColor).rgba()
     cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
   }
 
@@ -94,7 +94,7 @@
   }
 
   const getPropertySelectValue = () => {
-    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const vectorLayerMeta = getLayerProperties($map, layer)
     const selectOptions = Object.keys(vectorLayerMeta.fields)
 
     propertySelectValue = selectOptions[0]
@@ -321,7 +321,7 @@
         (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10),
       ])
 
-      $map.setPaintProperty(layer.id, 'icon-color', getIconColor($map, layer.id))
+      $map.setPaintProperty(layer.id, 'icon-color', defaultColor)
       $map.setLayoutProperty(layer.id, 'icon-size', {
         property: propertySelectValue,
         type: 'interval',

@@ -5,24 +5,35 @@
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { getIconColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.id
   const propertyName = 'icon-color'
+  export let defaultColor: string
 
-  let rgba = getIconColor($map, layer.id)
+  const getIconColor = (): string => {
+    let iconColor = $map.getPaintProperty(layer.id, 'icon-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!iconColor || (iconColor && iconColor.type === 'interval')) {
+      iconColor = defaultColor
+    }
+    return iconColor as string
+  }
+
+  let rgba = getIconColor()
 
   onMount(() => {
-    rgba = getIconColor($map, layer.id)
+    rgba = getIconColor()
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 
   const handleSetColor = (e: CustomEvent) => {
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
-      $map.fire('icon-color:changed', { value: e.detail.color })
+      defaultColor = e.detail.color
+      $map.fire('icon-color:changed', { color: e.detail.color })
     }
   }
 </script>

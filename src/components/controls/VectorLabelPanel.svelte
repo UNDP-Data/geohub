@@ -13,7 +13,7 @@
   import TextSize from '$components/controls/vector-styles/TextSize.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import { layerLabelled, map } from '$stores'
+  import { map } from '$stores'
 
   export let isLabelPanelVisible = false
   export let layer: Layer = LayerInitialValues
@@ -114,7 +114,11 @@
   }
 
   const onTextChange = (e) => {
-    $layerLabelled[parentLayerId] = e.detail.textFieldValue !== ''
+    $map.fire('label:changed', {
+      parentId: parentLayerId,
+      layerId: targetLayer.id,
+      isCreated: e.detail.textFieldValue !== '',
+    })
   }
 </script>
 

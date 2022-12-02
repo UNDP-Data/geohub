@@ -6,6 +6,7 @@
   import type { Layer } from '$lib/types'
 
   export let layer: Layer = LayerInitialValues
+  export let defaultColor: string = undefined
 </script>
 
 <div
@@ -15,7 +16,9 @@
     <div class="column is-5">
       <div class="has-text-centered pb-2">Line Color</div>
       <div class="is-flex is-justify-content-center bring-to-front">
-        <LineColor bind:layer />
+        <LineColor
+          bind:layer
+          bind:defaultColor />
       </div>
     </div>
     <div class="column is-7">
@@ -34,7 +37,9 @@
     <div class="column">
       <div class="pb-2">Line Pattern</div>
       <div class="is-flex is-justify-content-center">
-        <LinePattern bind:layer />
+        <LinePattern
+          bind:layer
+          bind:defaultColor />
       </div>
     </div>
   </div>

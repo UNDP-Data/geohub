@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getLayerNumberProperties } from '$lib/helper'
+  import { getLayerProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
   import { map } from '$stores'
@@ -20,7 +20,7 @@
   })
 
   function setPropertyList() {
-    const vectorLayerMeta = getLayerNumberProperties($map, layer)
+    const vectorLayerMeta = getLayerProperties($map, layer, showOnlyNumberFields)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]

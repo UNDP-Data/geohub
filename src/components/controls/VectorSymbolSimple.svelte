@@ -11,6 +11,7 @@
   import { map } from '$stores'
 
   export let layer: Layer = LayerInitialValues
+  export let defaultColor: string = undefined
 
   const layerId = layer.id
 
@@ -35,7 +36,9 @@
     <div class="column is-4 icon-image">
       <div class="has-text-centered pb-2">Icon</div>
       <div class="is-flex is-justify-content-center bring-to-front">
-        <IconImage bind:layer />
+        <IconImage
+          bind:layer
+          bind:defaultColor />
       </div>
     </div>
     <div class="column is-8">
@@ -56,7 +59,9 @@
     <div class="column color">
       <div class="has-text-centered pb-2">Color</div>
       <div class="is-flex is-justify-content-center bring-to-front">
-        <IconColor bind:layer />
+        <IconColor
+          bind:layer
+          bind:defaultColor />
       </div>
     </div>
     <div class="column is-9 overlap-priority">

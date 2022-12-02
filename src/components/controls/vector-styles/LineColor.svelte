@@ -5,17 +5,27 @@
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { getLineColor } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
 
   const layerId = layer.id
   const propertyName = 'line-color'
+  export let defaultColor: string = undefined
 
-  let rgba = getLineColor($map, layerId)
+  const getLineColor = (): string => {
+    let lineColor = $map.getPaintProperty(layerId, 'line-color')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
+      lineColor = defaultColor
+    }
+    return lineColor as string
+  }
+
+  let rgba = getLineColor()
 
   onMount(() => {
-    rgba = getLineColor($map, layerId)
+    rgba = getLineColor()
     $map.setPaintProperty(layerId, propertyName, rgba)
   })
 
@@ -23,6 +33,7 @@
     if (e?.detail?.color) {
       $map.setPaintProperty(layerId, propertyName, e.detail.color)
       $map.fire('line-color:changed', { value: e.detail.color })
+      defaultColor = e.detail.color
     }
   }
 </script>

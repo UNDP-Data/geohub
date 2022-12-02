@@ -1,24 +1,18 @@
-import type { Layer, StyleDefinition } from '$lib/types'
+import type { DataCategory, Layer, StyleDefinition } from '$lib/types'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
 export const COLOR_CLASS_COUNT_MINIMUM = 2
-export const DEFAULT_COLORMAP = 'viridis'
-export const DEFAULT_FILL_COLOR = 'rgba(20, 180, 60, 1)'
-export const DEFAULT_LINE_COLOR = 'rgba(53, 175, 109, 1)'
 export const DEFAULT_LINE_WIDTH = 0.5
-export const DEFAULT_FILL_OUTLINE_COLOR = 'rgba(110, 110, 110, 1)'
 export const DEFAULT_TIMEOUT_MS = 60000
 export const NO_RANDOM_SAMPLING_POINTS = 1000
-export const STRING_COMPARE_THRESHOLD = 0.25
-export const STAC_PAGINATION_PREV = 'prev'
-export const STAC_PAGINATION_NEXT = 'next'
-export const STAC_PAGINATION_LIMIT = 5
+export const SEARCH_PAGINATION_LIMIT = 25
 export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
+export const STAC_MINIMUM_ZOOM = 5
 
 export enum TabNames {
   ANALYZE = 'Analyze',
-  BUCKETS = 'Buckets',
+  DATA = 'Data',
   LABEL = 'Label',
   LAYERS = 'Layers',
   LEGEND = 'Legend',
@@ -26,20 +20,8 @@ export enum TabNames {
   TRANSFORM = 'Transform',
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
-  TAGS = 'Search',
   HISTOGRAM = 'Histogram',
   FILTER = 'Filter',
-}
-
-export const BucketIntialValues = {
-  id: '',
-  published: true,
-  path: '',
-  label: '',
-  description: '',
-  icon: '',
-  type: '',
-  tags: [],
 }
 
 export enum ClassificationMethodTypes {
@@ -187,11 +169,6 @@ export enum StatusTypes {
   DANGER = 'danger',
 }
 
-export enum BucketType {
-  INTERNAL = 'internal',
-  EXTERNAL = 'external',
-}
-
 export const styles: StyleDefinition[] = [
   {
     title: 'Carto',
@@ -201,19 +178,6 @@ export const styles: StyleDefinition[] = [
     title: 'Bing Aerial',
     uri: 'https://undp-data.github.io/style/aerialstyle.json',
   },
-]
-
-export const TagKeys = [
-  'sdg_goal',
-  'sdg_target',
-  'theme',
-  'extent',
-  'resolution',
-  'granularity',
-  'year_value',
-  'name1',
-  'name2',
-  'name3',
 ]
 
 export const vectorFilterOperations = [
@@ -240,4 +204,88 @@ export const rasterArithmeticOperators = [
   { value: '/', label: 'Divide', text: 'division', disabled: false, symbol: '/' },
   { value: '%', label: 'Modulo', text: 'remainder of division', disabled: false, symbol: '%' },
   { value: '**', label: 'Power', text: 'raise to power', disabled: false, symbol: '^' },
+]
+
+export const DataCategories: DataCategory[] = [
+  {
+    name: 'SDG',
+    icon: '/sdgs/SDG Wheel_WEB.png',
+    url: '/tags?key=sdg_goal',
+  },
+  {
+    name: 'Climate change',
+    icon: '/sdgs/13.png',
+    url: '/datasets?sdg_goal=13',
+  },
+  {
+    name: 'Microsoft Planetary',
+    icon: 'fa-brands fa-microsoft',
+    url: '/datasets?stac=microsoft-pc',
+  },
+  {
+    name: 'pg_tileserv',
+    icon: '/crunchy-spatial-logo.png',
+    url: '/datasets?type=pgtileserv',
+  },
+  {
+    name: 'martin',
+    icon: '/maplibre.png',
+    url: '/datasets?type=martin',
+  },
+]
+
+export const SortingColumns = [
+  {
+    column: 'name',
+    label: 'Name',
+  },
+  {
+    column: 'source',
+    label: 'Source',
+  },
+  // {
+  //   column: 'license',
+  //   label: 'Data license'
+  // },
+  {
+    column: 'updatedat',
+    label: 'Updated date',
+  },
+  {
+    column: 'createdat',
+    label: 'Created date',
+  },
+]
+
+export const DatasetSearchQueryParams = ['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby', 'operator']
+
+export const tagSearchKeys = [
+  {
+    key: 'extent',
+    label: 'Region',
+  },
+  {
+    key: 'granularity',
+    label: 'Admin Level',
+  },
+  {
+    key: 'resolution',
+    label: 'Resolution',
+  },
+  {
+    key: 'year_value',
+    label: 'Year',
+  },
+  {
+    key: 'keyword',
+    label: 'Keyword',
+  },
+  {
+    key: 'sdg_target',
+    label: 'SDG Topic',
+  },
+  {
+    key: 'theme',
+    label: 'Theme',
+  },
 ]
