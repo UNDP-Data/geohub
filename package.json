@@ -33,9 +33,9 @@
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
   "devDependencies": {
-    "@sveltejs/adapter-node": "^1.0.0-next.101",
-    "@sveltejs/kit": "^1.0.0-next.564",
-    "@sveltejs/vite-plugin-svelte": "^1.3.1",
+    "@sveltejs/adapter-node": "^1.0.0-next.102",
+    "@sveltejs/kit": "^1.0.0-next.571",
+    "@sveltejs/vite-plugin-svelte": "^1.4.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/svelte": "^3.2.2",
     "@types/chroma-js": "^2.1.4",

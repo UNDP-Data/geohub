@@ -12,9 +12,9 @@ specifiers:
   '@mapbox/vector-tile': ^1.3.1
   '@neodrag/svelte': ^1.2.4
   '@popperjs/core': ^2.11.6
-  '@sveltejs/adapter-node': ^1.0.0-next.101
-  '@sveltejs/kit': ^1.0.0-next.564
-  '@sveltejs/vite-plugin-svelte': ^1.3.1
+  '@sveltejs/adapter-node': ^1.0.0-next.102
+  '@sveltejs/kit': ^1.0.0-next.571
+  '@sveltejs/vite-plugin-svelte': ^1.4.0
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/svelte': ^3.2.2
   '@types/chroma-js': ^2.1.4
@@ -139,9 +139,9 @@ dependencies:
   vega-lite: 5.6.0_vega@5.22.1
 
 devDependencies:
-  '@sveltejs/adapter-node': 1.0.0-next.101
-  '@sveltejs/kit': 1.0.0-next.570_svelte@3.50.1+vite@3.2.4
-  '@sveltejs/vite-plugin-svelte': 1.3.1_svelte@3.50.1+vite@3.2.4
+  '@sveltejs/adapter-node': 1.0.0-next.102
+  '@sveltejs/kit': 1.0.0-next.571_svelte@3.50.1+vite@3.2.4
+  '@sveltejs/vite-plugin-svelte': 1.4.0_svelte@3.50.1+vite@3.2.4
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/svelte': 3.2.2_svelte@3.50.1
   '@types/chroma-js': 2.1.4
@@ -593,8 +593,8 @@ packages:
       rollup: 2.79.1
     dev: true
 
-  /@sveltejs/adapter-node/1.0.0-next.101:
-    resolution: {integrity: sha512-gtg/b0dbDvd5TvTRsmthFSd/q9Gd+hVuq6uP0XqYgRKKXJw0tr9kNlnDNJ8HQMueo5ccHHUmOQYGV1vGR2zG0A==}
+  /@sveltejs/adapter-node/1.0.0-next.102:
+    resolution: {integrity: sha512-8HKFGXXxYQx4diAJ4eSceuQXoqOpSZCPQp9JkATKLK2ItEqjXk0FqiktGdoMNp2Xlgd1n4jF2sF3NECz8dblzg==}
     dependencies:
       '@rollup/plugin-commonjs': 23.0.2_rollup@2.79.1
       '@rollup/plugin-json': 5.0.1_rollup@2.79.1
@@ -602,8 +602,8 @@ packages:
       rollup: 2.79.1
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.570_svelte@3.50.1+vite@3.2.4:
-    resolution: {integrity: sha512-7CUoYidoWlKdTGxL/5RsPPkgGTb36TwFBnhSZmspHFeiIST5qQEXyzqicFk8+4M5qQhxvOZ0NuP8uy7Pc+xf/Q==}
+  /@sveltejs/kit/1.0.0-next.571_svelte@3.50.1+vite@3.2.4:
+    resolution: {integrity: sha512-J+J0UXBiAh569l4ZxKm6eIZJS4lbcP8MgF9fU+DbVplCJ8nqo9wUmirUHZkJoBoB0FUlZSgA0R7N471MnUNNBw==}
     engines: {node: '>=16.14'}
     hasBin: true
     requiresBuild: true
@@ -611,7 +611,7 @@ packages:
       svelte: ^3.44.0
       vite: ^3.2.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 1.3.1_svelte@3.50.1+vite@3.2.4
+      '@sveltejs/vite-plugin-svelte': 1.4.0_svelte@3.50.1+vite@3.2.4
       '@types/cookie': 0.5.1
       cookie: 0.5.0
       devalue: 4.2.0
@@ -626,20 +626,15 @@ packages:
       undici: 5.13.0
       vite: 3.2.4_sass@1.56.1
     transitivePeerDependencies:
-      - diff-match-patch
       - supports-color
     dev: true
 
-  /@sveltejs/vite-plugin-svelte/1.3.1_svelte@3.50.1+vite@3.2.4:
-    resolution: {integrity: sha512-2Uu2sDdIR+XQWF7QWOVSF2jR9EU6Ciw1yWfYnfLYj8HIgnNxkh/8g22Fw2pBUI8QNyW/KxtqJUWBI+8ypamSrQ==}
+  /@sveltejs/vite-plugin-svelte/1.4.0_svelte@3.50.1+vite@3.2.4:
+    resolution: {integrity: sha512-6QupI/jemMfK+yI2pMtJcu5iO2gtgTfcBdGwMZZt+lgbFELhszbDl6Qjh000HgAV8+XUA+8EY8DusOFk8WhOIg==}
     engines: {node: ^14.18.0 || >= 16}
     peerDependencies:
-      diff-match-patch: ^1.0.5
       svelte: ^3.44.0
       vite: ^3.0.0
-    peerDependenciesMeta:
-      diff-match-patch:
-        optional: true
     dependencies:
       debug: 4.3.4
       deepmerge: 4.2.2
