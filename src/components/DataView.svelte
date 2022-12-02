@@ -33,8 +33,14 @@
   let isFilterByBBox = false
   let selectedTags: Tag[] = []
   let tagFilterOperatorType: 'and' | 'or' = 'and'
+  let currentSearchUrl = ''
 
   let DataItemFeatureCollection: StacItemFeatureCollection
+  $: DataItemFeatureCollection, setCurrentSearchUrl()
+
+  const setCurrentSearchUrl = () => {
+    currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
+  }
 
   const fetchNextDatasets = async () => {
     if (DataItemFeatureCollection?.features.length === 0) return
@@ -122,11 +128,12 @@
   $: selectedTags, handleTagChanged()
   $: tagFilterOperatorType, handleTagChanged()
   const handleTagChanged = async () => {
-    if (selectedTags.length === 0 && breadcrumbs.length <= 2) {
+    if (
+      selectedTags.length === 0 &&
+      !(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets'))
+    ) {
       DataItemFeatureCollection = undefined
       breadcrumbs = [breadcrumbs[0]]
-      return
-    } else if (selectedTags.length === 0) {
       return
     }
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
@@ -215,6 +222,7 @@
   bind:isFilterByBBox
   bind:selectedTags
   bind:tagFilterOperatorType
+  bind:currentSearchUrl
   bind:height={textFilterHeight}
   bind:clear={clearFiltertext}
   on:change={handleFilterInput}

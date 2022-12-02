@@ -5,14 +5,16 @@ const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/variables/private'
 import type { Tag } from '$lib/types/Tag'
+import { createDatasetSearchWhereExpression } from '$lib/helper'
 const connectionString = DATABASE_CONNECTION
 
 /**
  * Tags API - return available keys and values in tag table
  * Example
- * http://localhost:5173/tags?key=sdg_goal
+ * http://localhost:5173/tags?url=http://localhost:5173/datasets?stac=microsoft-pc&sortby=name%2Casc&limit=25
  * Query Params
  * - key = only filter by key name. if it is not specified, all values will be returned
+ * - url = URL used for dataset search to filter available tags
  * @returns the list of key and value in tag table
  */
 export const GET: RequestHandler = async ({ url }) => {
@@ -20,21 +22,32 @@ export const GET: RequestHandler = async ({ url }) => {
   const client = await pool.connect()
   try {
     const key = url.searchParams.get('key')
+    const currentQueryUrl = url.searchParams.get('url')
 
-    const values = []
+    let values = []
     if (key) {
       values.push(key)
+    }
+
+    let whereSql = ''
+    if (currentQueryUrl) {
+      const whereExpressesion = await createDatasetSearchWhereExpression(new URL(currentQueryUrl), 'a')
+      whereSql = whereExpressesion.sql
+      values = [...values, ...whereExpressesion.values]
     }
 
     const sql = {
       text: `
       WITH tag_count AS (
-      SELECT b.key, b.value,  COUNT(a.dataset_id) as count
-      FROM geohub.dataset_tag a
-      INNER JOIN geohub.tag b
-      ON a.tag_id = b.id
+      SELECT c.key, c.value,  COUNT(a.id) as count
+      FROM geohub.dataset a
+      INNER JOIN geohub.dataset_tag b
+      ON a.id = b.dataset_id
+      INNER JOIN geohub.tag c
+      ON b.tag_id = c.id
+      ${whereSql}
       GROUP BY
-      b.key, b.value
+      c.key, c.value
       )
       SELECT distinct x.key, x.value, y.count
       FROM geohub.tag x
@@ -56,7 +69,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const res = await client.query(sql)
     if (res.rowCount === 0) {
-      return error(404, `no tag found`)
+      throw error(404, `no tag found`)
     }
 
     const result: { [key: string]: Tag[] } = {}

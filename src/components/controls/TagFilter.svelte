@@ -4,10 +4,11 @@
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
 
-  export let tags: { [key: string]: Tag[] } = {}
+  let tags: { [key: string]: Tag[] } = {}
 
   export let selectedTags: Tag[]
   export let operatorType: 'and' | 'or'
+  export let currentSearchUrl = ''
 
   onMount(async () => {
     if (!(tags && Object.keys(tags).length > 0)) {
@@ -15,8 +16,10 @@
     }
   })
 
+  $: currentSearchUrl, getTags()
+
   const getTags = async () => {
-    const res = await fetch('/tags')
+    const res = await fetch(`/tags${currentSearchUrl ? `?url=${encodeURIComponent(currentSearchUrl)}` : ''}`)
     const json: { [key: string]: Tag[] } = await res.json()
 
     tagSearchKeys.forEach((t) => {
@@ -51,6 +54,10 @@
 
   const clearAllTags = () => {
     selectedTags = []
+  }
+
+  const getTagSearchKey = (key: string) => {
+    return tagSearchKeys?.find((t) => t.key === key)
   }
 </script>
 
@@ -87,12 +94,12 @@
     branchHoverColor="#ff0000">
     {#key selectedTags}
       {#if tagSearchKeys}
-        {#each tagSearchKeys as key}
+        {#each Object.keys(tags) as key}
           <TreeBranch
-            rootContent={key.label}
-            defaultClosed={checkChildrenTicked(key.key)}>
-            {#if tags[key.key]}
-              {#each tags[key.key] as tag}
+            rootContent={getTagSearchKey(key).label}
+            defaultClosed={checkChildrenTicked(key)}>
+            {#if tags[key]}
+              {#each tags[key] as tag}
                 <TreeLeaf>
                   <div class="form-check">
                     <input

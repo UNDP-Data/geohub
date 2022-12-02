@@ -1,5 +1,6 @@
 export * from './clean'
 export * from './clipSprite'
+export * from './createDatasetSearchWhereExpression'
 export * from './downloadFile'
 export * from './fetchUrl'
 export * from './fetchWithTimeout'

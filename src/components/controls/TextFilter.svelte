@@ -23,6 +23,7 @@
   export let height: number
   export let selectedTags: Tag[]
   export let tagFilterOperatorType: 'and' | 'or'
+  export let currentSearchUrl: string
   let tags: { [key: string]: Tag[] }
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
@@ -156,8 +157,8 @@
       <p class="subtitle is-6 pb-0 pt-2 my-1">Tags</p>
       <TagFilter
         bind:selectedTags
-        bind:tags
-        bind:operatorType={tagFilterOperatorType} />
+        bind:operatorType={tagFilterOperatorType}
+        bind:currentSearchUrl />
     </div>
   </PanelButton>
 

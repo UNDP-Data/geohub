@@ -9,7 +9,8 @@ const connectionString = DATABASE_CONNECTION
 
 import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
-import { TOKEN_EXPIRY_PERIOD_MSEC, DatasetSearchQueryParams } from '$lib/constants'
+import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
+import { createDatasetSearchWhereExpression } from '$lib/helper'
 
 /**
  * Datasets search API
@@ -34,26 +35,10 @@ export const GET: RequestHandler = async ({ url }) => {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
-    let query = url.searchParams.get('query')
     const _limit = url.searchParams.get('limit') || 10
     const limit = Number(_limit)
     const _offset = url.searchParams.get('offset') || 0
     const offset = Number(_offset)
-    const storage_id = url.searchParams.get('storage_id')
-    const bbox = url.searchParams.get('bbox')
-    let bboxCoordinates: number[]
-    if (bbox) {
-      bboxCoordinates = bbox.split(',').map((val) => Number(val))
-      if (bboxCoordinates.length !== 4) {
-        throw error(400, 'Invalid bbox')
-      }
-    }
-
-    const operatorOptions = ['and', 'or']
-    const operator = url.searchParams.get('operator') ?? operatorOptions[0]
-    if (!(operator && operatorOptions.includes(operator.toLowerCase()))) {
-      throw error(400, `Bad parameter for 'operator'. It must be one of '${operatorOptions.join(', ')}'`)
-    }
 
     const sortby = url.searchParams.get('sortby')
     let sortByColumn = 'name'
@@ -81,24 +66,8 @@ export const GET: RequestHandler = async ({ url }) => {
       }
     }
 
-    const filters: { key: string; value: string }[] = []
-    url.searchParams.forEach((key, value) => {
-      if (DatasetSearchQueryParams.includes(value)) return
-      filters.push({
-        key: value,
-        value: key.toLowerCase(),
-      })
-    })
-
-    const values = []
-    if (query) {
-      // normalise query text for to_tsquery function
-      query = query
-        .toLowerCase()
-        .replace(/\r?\s+and\s+/g, ' & ') // convert 'and' to '&'
-        .replace(/\r?\s+or\s+/g, ' | ') // convert 'or' to '|'
-      values.push(query)
-    }
+    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x')
+    const values = whereExpressesion.values
 
     const sql = {
       text: `
@@ -148,20 +117,7 @@ export const GET: RequestHandler = async ({ url }) => {
           FROM geohub.dataset x
           LEFT JOIN datasetTags y
           ON x.id = y.id
-        WHERE 
-          NOT ST_IsEmpty(x.bounds)
-          ${
-            !query
-              ? ''
-              : `
-          AND (
-            to_tsvector(x.name) @@ to_tsquery($1)
-           OR to_tsvector(x.description) @@ to_tsquery($1)
-           )`
-          }
-          ${getStorageIdFilter(storage_id, values)}
-          ${operator === 'and' ? getTagFilterAND(filters, values) : getTagFilterOR(filters, values)}
-          ${getBBoxFilter(bboxCoordinates, values)}
+        ${whereExpressesion.sql}
         ORDER BY
           x.${sortByColumn} ${SortOrder}
         LIMIT ${limit}
@@ -230,80 +186,6 @@ export const GET: RequestHandler = async ({ url }) => {
     client.release()
     pool.end()
   }
-}
-
-const getStorageIdFilter = (storage_id: string, values: string[]) => {
-  if (storage_id) {
-    values.push(storage_id)
-  } else {
-    return ''
-  }
-  return `AND x.storage_id=$${values.length} `
-}
-
-const getTagFilterOR = (filters: { key?: string; value: string }[], values: string[]) => {
-  if (filters.length === 0) return ''
-  return `
-    AND EXISTS(
-      SELECT a.id 
-      FROM geohub.tag as a 
-      INNER JOIN geohub.dataset_tag as b
-      ON a.id = b.tag_id
-      WHERE b.dataset_id = x.id AND (
-    ${filters
-      .map((filter) => {
-        values.push(filter.key)
-        const keyLength = values.length
-        values.push(filter.value)
-        const valueLength = values.length
-        return `(a.key = $${keyLength} and to_tsvector(a.value) @@ to_tsquery($${valueLength})) `
-      })
-      .join('OR')}
-    ))`
-}
-
-const getTagFilterAND = (filters: { key?: string; value: string }[], values: string[]) => {
-  if (filters.length === 0) return ''
-  return `
-    AND EXISTS(
-      SELECT dataset_id FROM (
-    ${filters
-      .map((filter) => {
-        values.push(filter.key)
-        const keyLength = values.length
-        values.push(filter.value)
-        const valueLength = values.length
-        return `
-        SELECT b.dataset_id
-        FROM geohub.tag as a 
-        INNER JOIN geohub.dataset_tag as b
-        ON a.id = b.tag_id
-        WHERE a.key =$${keyLength} and to_tsvector(a.value) @@ to_tsquery($${valueLength}) 
-        `
-      })
-      .join('INTERSECT')}
-      ) y
-      WHERE dataset_id = x.id
-    )`
-}
-
-const getBBoxFilter = (bbox: number[], values: string[]) => {
-  if (!(bbox && bbox.length === 4)) return ''
-  bbox.forEach((val) => {
-    values.push(val.toString())
-  })
-  return `
-  AND ST_INTERSECTS(
-    x.bounds, 
-    ST_MakeEnvelope(
-      $${values.length - 3}::double precision,
-      $${values.length - 2}::double precision,
-      $${values.length - 1}::double precision,
-      $${values.length}::double precision
-      , 4326
-    )
-  )
-  `
 }
 
 const generateAzureBlobSasToken = () => {
