@@ -189,7 +189,7 @@
       breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
       selectedTags = []
-      query = ''
+      clearFiltertext()
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -200,12 +200,15 @@
       DataItemFeatureCollection = undefined
     }
   }
+
+  let clearFiltertext = () => {
+    return
+  }
 </script>
 
 <TextFilter
   placeholder="Type keywords to search data"
   bind:map={$map}
-  bind:query
   bind:sortingColumn
   bind:orderType
   bind:bbox
@@ -213,6 +216,7 @@
   bind:selectedTags
   bind:tagFilterOperatorType
   bind:height={textFilterHeight}
+  bind:clear={clearFiltertext}
   on:change={handleFilterInput}
   on:clear={clearFilter} />
 
