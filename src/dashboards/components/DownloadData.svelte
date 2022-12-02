@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Button from '@smui/button'
   import { downloadFile } from '$lib/helper'
 
   let layers = ['ADM0', 'ADM1', 'ADM2', 'ADM3', 'ADM4']
@@ -30,13 +29,21 @@
   </div>
 </div>
 
-<br />
-<br />
-<Button
-  style="background:#D12800; color:white; border-radius: 0"
-  on:click={download}>Download</Button>
-<!--<br />-->
+<!-- svelte-ignore a11y-missing-attribute -->
+<a
+  class="button button-primary button-without-arrow"
+  role="button"
+  on:click={download}>
+  Download
+</a>
 
-<!--<br />-->
 <style lang="scss">
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/buttons.min.css';
+
+  .button {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
 </style>
