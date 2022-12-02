@@ -81,7 +81,6 @@
     "@mapbox/vector-tile": "^1.3.1",
     "@neodrag/svelte": "^1.2.4",
     "@popperjs/core": "^2.11.6",
-    "@smui/card": "^6.1.4",
     "@smui/drawer": "^6.1.4",
     "@smui/form-field": "^6.1.4",
     "@smui/linear-progress": "^6.1.4",

@@ -2,7 +2,6 @@
   import RasterExpressionBuilder from '$components/controls/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
   import type { BannerMessage, Layer, RasterLayerStats, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
-  import Card, { PrimaryAction } from '@smui/card'
   import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
   import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
@@ -421,24 +420,18 @@
     </div>
     <!--    <div class="column">-->
     <div
+      class="expression-builder-button icon"
       on:click={() => {
         showExpressionBuilder = !showExpressionBuilder
       }}
       on:keydown={handleEnterKey}
       data-testid="expression-builder-button"
       use:popperRef>
-      <Card
-        style="background: #D12800"
-        class="has-tooltip-bottom"
-        data-tooltip="Expression builder">
-        <PrimaryAction style="padding: 10px;">
-          <Fa
-            icon={faCalculator}
-            style="font-size: 16px; color: white" />
-        </PrimaryAction>
-      </Card>
+      <Fa
+        icon={faCalculator}
+        style="font-size: 16px; color: white" />
     </div>
-    <!--    </div>-->
+
     {#if showExpressionBuilder}
       <div
         id="tooltip"
@@ -506,5 +499,14 @@
   #tooltip {
     max-height: 300px;
     max-width: 600px;
+  }
+
+  .expression-builder-button {
+    background: #d12800;
+    padding: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    cursor: pointer;
   }
 </style>
