@@ -6,7 +6,6 @@
   export let drawerOpen = true
   export let height: number
   $: hideLinearProgress = !$indicatorProgress
-  // let darkTheme: boolean
 
   const onKeyPressed = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -20,31 +19,6 @@
     window.matchMedia('(prefers-color-scheme: light)')
   })
 </script>
-
-<svelte:head>
-  <!-- {#if darkTheme === undefined} -->
-  <link
-    rel="stylesheet"
-    href="/smui.css"
-    media="(prefers-color-scheme: light)" />
-  <!-- <link
-      rel="stylesheet"
-      href="/smui-dark.css"
-      media="screen and (prefers-color-scheme: dark)" />
-  {:else if darkTheme}
-    <link
-      rel="stylesheet"
-      href="/smui.css" />
-    <link
-      rel="stylesheet"
-      href="/smui-dark.css"
-      media="screen" />
-  {:else}
-  <link
-    rel="stylesheet"
-    href="/smui.css" />
-  {/if} -->
-</svelte:head>
 
 <header class="country-header">
   <section

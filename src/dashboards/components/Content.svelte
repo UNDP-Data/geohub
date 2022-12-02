@@ -51,26 +51,26 @@
   <div
     slot="primary"
     class="drawer-content container m-0 p-4">
-    <p class="title is-4 m-0 p-0 pb-2">UNDP Electricity Dashboard</p>
+    <p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
     <IntroductionPanel bind:showIntro />
 
     {#if !showIntro}
       <div class="box mx-0 my-1">
-        <p class="title is-5 p-0 m-0">Raw Data - Electricity Access</p>
+        <p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
         <ElectricityControl
           bind:electricitySelected
           bind:loadRasterLayer />
       </div>
       <div class="box mx-0 my-1">
-        <p class="title is-5 p-0 m-0">Overlays</p>
+        <p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>
         <OverlayControl />
       </div>
       <div class="box mx-0 my-1">
-        <p class="title is-5 p-0 m-0">Statistics - Electricity Access</p>
+        <p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Electricity Access</p>
         <Charts />
       </div>
       <div class="box mx-0 my-1">
-        <p class="title is-5 p-0 m-0">Statistics - Download</p>
+        <p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
         <DownloadData />
       </div>
     {/if}
