@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import { Map, type StyleSpecification } from 'maplibre-gl'
   import { styles } from '$lib/constants'
   import type { StyleDefinition } from '$lib/types'
@@ -82,19 +81,14 @@
 </script>
 
 <div class="main-switch-container">
-  <Wrapper>
-    <div
-      class="map-button"
-      id={mainContainerId}
-      on:click={() => {
-        changeStyle()
-      }}
-      on:keydown={handleEnterKey} />
-
-    {#if buttonStyle}
-      <Tooltip yPos="above">{buttonStyle.title}</Tooltip>
-    {/if}
-  </Wrapper>
+  <div
+    class="map-button"
+    data-tooltip={buttonStyle.title}
+    id={mainContainerId}
+    on:click={() => {
+      changeStyle()
+    }}
+    on:keydown={handleEnterKey} />
 </div>
 
 <style lang="scss">

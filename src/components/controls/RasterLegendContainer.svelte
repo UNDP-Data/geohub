@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import Card, { PrimaryAction } from '@smui/card'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
@@ -203,53 +202,43 @@
   <div
     class="columm legend-toggle"
     transition:slide>
-    <Wrapper>
-      <div
-        role="button"
-        class="toggle-container"
-        aria-label="Switch Legend Type"
-        on:click={handleLegendToggleClick}
-        data-testid="legend-toggle-container">
-        <Card
-          on:keydown={handleEnterKeyForSwitch}
-          style="background: #D12800;">
-          <PrimaryAction style="padding: 10px;">
-            <Fa
-              icon={faRetweet}
-              style="font-size: 16px; color: white"
-              spin={isLegendSwitchAnimate} />
-          </PrimaryAction>
-        </Card>
-      </div>
-      <Tooltip
-        showDelay={1000}
-        hideDelay={0}
-        yPos="above">Toggle Legend Type</Tooltip>
-    </Wrapper>
+    <div
+      role="button"
+      class="toggle-container has-tooltip-left"
+      aria-label="Switch Legend Type"
+      data-tooltip="Toggle Legend Type"
+      on:click={handleLegendToggleClick}
+      data-testid="legend-toggle-container">
+      <Card
+        on:keydown={handleEnterKeyForSwitch}
+        style="background: #D12800;">
+        <PrimaryAction style="padding: 10px;">
+          <Fa
+            icon={faRetweet}
+            style="font-size: 16px; color: white"
+            spin={isLegendSwitchAnimate} />
+        </PrimaryAction>
+      </Card>
+    </div>
     <br />
-    <Wrapper>
-      <div
-        role="button"
-        class="toggle-container"
-        aria-label="Open Color Scheme Picker"
-        use:popperRef
-        on:click={handleClosePopup}
-        data-testid="colormap-toggle-container">
-        <Card
-          on:keydown={handleEnterKeyForColor}
-          style="background: #D12800;">
-          <PrimaryAction style="padding: 10px;">
-            <Fa
-              icon={faPalette}
-              style="font-size: 16px; color: white" />
-          </PrimaryAction>
-        </Card>
-      </div>
-      <Tooltip
-        showDelay={1000}
-        hideDelay={0}
-        yPos="above">Change color map</Tooltip>
-    </Wrapper>
+    <div
+      role="button"
+      class="toggle-container has-tooltip-left"
+      aria-label="Open Color Scheme Picker"
+      data-tooltip="Change color map"
+      use:popperRef
+      on:click={handleClosePopup}
+      data-testid="colormap-toggle-container">
+      <Card
+        on:keydown={handleEnterKeyForColor}
+        style="background: #D12800;">
+        <PrimaryAction style="padding: 10px;">
+          <Fa
+            icon={faPalette}
+            style="font-size: 16px; color: white" />
+        </PrimaryAction>
+      </Card>
+    </div>
 
     {#if showTooltip}
       <div

@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import Card, { PrimaryAction } from '@smui/card'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
   import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
@@ -142,28 +141,23 @@
     class="columm legend-toggle"
     transition:slide>
     {#if layerNumberProperties > 0}
-      <Wrapper>
-        <div
-          role="button"
-          aria-label="Switch legend type"
-          class="toggle-container"
-          on:click={handleLegendToggleClick}
-          on:keydown={handleEnterKey}
-          data-testid="legend-toggle-container">
-          <Card style="background: #D12800;">
-            <PrimaryAction style="padding: 10px;">
-              <Fa
-                icon={faRetweet}
-                style="font-size: 16px; color:white"
-                spin={isLegendSwitchAnimate} />
-            </PrimaryAction>
-          </Card>
-        </div>
-        <Tooltip
-          showDelay={500}
-          hideDelay={0}
-          yPos="above">Toggle Legend Type</Tooltip>
-      </Wrapper>
+      <div
+        role="button"
+        aria-label="Switch legend type"
+        class="toggle-container has-tooltip-left"
+        data-tooltip="Toggle Legend Type"
+        on:click={handleLegendToggleClick}
+        on:keydown={handleEnterKey}
+        data-testid="legend-toggle-container">
+        <Card style="background: #D12800;">
+          <PrimaryAction style="padding: 10px;">
+            <Fa
+              icon={faRetweet}
+              style="font-size: 16px; color:white"
+              spin={isLegendSwitchAnimate} />
+          </PrimaryAction>
+        </Card>
+      </div>
       <br />
     {/if}
 

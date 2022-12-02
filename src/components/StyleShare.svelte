@@ -130,7 +130,8 @@
 
 {#if $layerList.length > 0}
   <div
-    class="icon"
+    class="icon has-tooltip-bottom"
+    data-tooltip="Share map"
     on:click={() => open()}
     on:keydown={onKeyPressed}
     tabindex="0">

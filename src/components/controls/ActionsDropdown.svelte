@@ -5,7 +5,6 @@
 </script>
 
 <script lang="ts">
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import type { LayerSpecification } from 'maplibre-gl'
   import type { LngLatBoundsLike } from 'maplibre-gl'
   import { fade } from 'svelte/transition'
@@ -126,34 +125,23 @@
     data-testid="tooltip"
     use:clickOutside={handleClose}>
     <div style="padding-left: 5px;">
-      <Wrapper>
-        <div
-          class="icon-selected"
-          title="Zoom To Layer"
-          aria-label="Zoom To Layer"
-          tabindex="0"
-          role="button"
-          on:click={handleZoomToLayerClick}
-          on:keydown={handleZoomKeyDown}>
-          <Fa
-            icon={faMagnifyingGlass}
-            size="sm" />
-        </div>
-        <Tooltip
-          showDelay={500}
-          hideDelay={500}
-          xPos="start">Zoom to layer</Tooltip>
-      </Wrapper>
+      <div
+        class="icon-selected has-tooltip-bottom"
+        title="Zoom To Layer"
+        aria-label="Zoom To Layer"
+        tabindex="0"
+        role="button"
+        data-tooltip="Zoom to layer"
+        on:click={handleZoomToLayerClick}
+        on:keydown={handleZoomKeyDown}>
+        <Fa
+          icon={faMagnifyingGlass}
+          size="sm" />
+      </div>
     </div>
 
     <div style="padding-left: 5px;">
-      <Wrapper>
-        <RasterBandSelector {layer} />
-        <Tooltip
-          showDelay={500}
-          hideDelay={500}
-          xPos="start">Change raster band</Tooltip>
-      </Wrapper>
+      <RasterBandSelector {layer} />
     </div>
 
     <div>

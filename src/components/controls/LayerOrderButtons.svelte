@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import type { LayerSpecification } from 'maplibre-gl'
   import Fa from 'svelte-fa'
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
@@ -51,44 +50,34 @@
 </script>
 
 <div class="grouped">
-  <Wrapper>
-    <div
-      class="icon-selected"
-      title="Bring Layer Up"
-      aria-label="Bring Layer Up"
-      tabindex="0"
-      role="button"
-      on:click={() => hierachyUp(layerId)}
-      on:keydown={handleUpKeyEnter}>
-      <Fa
-        class="arrow-icon"
-        icon={faChevronUp}
-        size="1x" />
-    </div>
-    <Tooltip
-      showDelay={300}
-      hideDelay={100}
-      xPos="start">Bring Forward in Map</Tooltip>
-  </Wrapper>
+  <div
+    class="icon-selected has-tooltip-bottom"
+    title="Bring Layer Up"
+    aria-label="Bring Layer Up"
+    tabindex="0"
+    role="button"
+    data-tooltip="Bring Forward in Map"
+    on:click={() => hierachyUp(layerId)}
+    on:keydown={handleUpKeyEnter}>
+    <Fa
+      class="arrow-icon"
+      icon={faChevronUp}
+      size="1x" />
+  </div>
   <div style="width: 10px" />
-  <Wrapper>
-    <div
-      class="icon-selected"
-      title="Bring Layer Down"
-      aria-label="Bring Layer Down"
-      tabindex="0"
-      on:click={() => hierachyDown(layerId)}
-      on:keydown={handleDownKeyEnter}>
-      <Fa
-        class="arrow-icon"
-        icon={faChevronDown}
-        size="1x" />
-    </div>
-    <Tooltip
-      showDelay={300}
-      hideDelay={100}
-      xPos="start">Send Backward in Map</Tooltip>
-  </Wrapper>
+  <div
+    class="icon-selected has-tooltip-bottom"
+    title="Bring Layer Down"
+    aria-label="Bring Layer Down"
+    tabindex="0"
+    data-tooltip="Bring Backward in Map"
+    on:click={() => hierachyDown(layerId)}
+    on:keydown={handleDownKeyEnter}>
+    <Fa
+      class="arrow-icon"
+      icon={faChevronDown}
+      size="1x" />
+  </div>
 </div>
 
 <style lang="scss">
