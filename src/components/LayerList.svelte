@@ -6,8 +6,8 @@
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
 
-  export let headerHeight: number
-  export let tabsHeight: number
+  export let headerHeight: number = undefined
+  export let tabsHeight: number = undefined
   let marginTop = 5
 </script>
 
