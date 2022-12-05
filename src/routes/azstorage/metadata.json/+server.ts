@@ -54,7 +54,7 @@ const getStats = async (origin: string, url: string, tileStatsLayers: VectorLaye
 
   for (let i = 0; i < tileStatsLayers.length; i++) {
     const tilestatsLayer = tileStatsLayers[i]
-    const vectorinfoUrl = `${origin}/vectorinfo?path=${pbfPath}&layer_name=${tilestatsLayer.layer}`
+    const vectorinfoUrl = `${origin}/api/vector/statistics?path=${pbfPath}&layer_name=${tilestatsLayer.layer}`
     const res = await fetch(vectorinfoUrl)
     if (!res.ok) {
       console.error(res.status, res.statusText)
