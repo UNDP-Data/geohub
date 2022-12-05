@@ -20,7 +20,6 @@
     getValueFromRasterTileUrl,
     getLayerStyle,
     getRandomColormap,
-    getLayerUrl,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -239,7 +238,6 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          {layer}
           layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
           layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
           bind:colorMapName
