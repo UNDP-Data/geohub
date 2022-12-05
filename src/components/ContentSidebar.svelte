@@ -5,7 +5,7 @@
 
   export let map: Map
   export let isMenuShown = false
-  export let headerHeight: number
+  export let headerHeight: number = undefined
   let innerWidth: number
   let innerHeight: number
   let initialPrimaryWidth = 355

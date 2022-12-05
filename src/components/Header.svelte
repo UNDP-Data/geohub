@@ -4,7 +4,7 @@
   import { indicatorProgress, layerList } from '$stores'
 
   export let drawerOpen = true
-  export let height: number
+  export let height: number = undefined
   $: hideLinearProgress = !$indicatorProgress
 
   const onKeyPressed = (e: KeyboardEvent) => {

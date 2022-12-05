@@ -5,7 +5,7 @@
   const dispatch = createEventDispatcher()
 
   export let breadcrumbs: DataCategory[]
-  export let height: number
+  export let height: number = undefined
 
   const handleClicked = (index: number) => {
     if (!(breadcrumbs && breadcrumbs.length > 0)) return

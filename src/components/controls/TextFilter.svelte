@@ -17,13 +17,13 @@
   let queryType: 'and' | 'or' = 'and'
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
-  export let bbox: [number, number, number, number]
+  export let bbox: [number, number, number, number] = undefined
 
-  export let isFilterByBBox: boolean
-  export let height: number
-  export let selectedTags: Tag[]
-  export let tagFilterOperatorType: 'and' | 'or'
-  export let currentSearchUrl: string
+  export let isFilterByBBox: boolean = undefined
+  export let height: number = undefined
+  export let selectedTags: Tag[] = undefined
+  export let tagFilterOperatorType: 'and' | 'or' = undefined
+  export let currentSearchUrl: string = undefined
   let tags: { [key: string]: Tag[] }
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'

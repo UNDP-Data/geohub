@@ -12,8 +12,8 @@
   import Breadcrumbs from './controls/Breadcrumbs.svelte'
   import type { Tag } from '$lib/types/Tag'
 
-  export let headerHeight: number
-  export let tabsHeight: number
+  export let headerHeight: number = undefined
+  export let tabsHeight: number = undefined
   let textFilterHeight: number
   let breadcrumbsHeight: number
 

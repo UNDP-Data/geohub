@@ -9,7 +9,7 @@
   import type { Tab } from '$lib/types'
 
   export let drawerOpen = false
-  export let headerHeight: number
+  export let headerHeight: number = undefined
   let tabsHeight: number
 
   let tabs: Tab[] = [
