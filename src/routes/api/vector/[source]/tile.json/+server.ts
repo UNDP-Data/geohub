@@ -2,6 +2,7 @@ import type { RequestHandler } from './$types'
 import { getMartinTileJson, getPgtileservTileJson } from '$lib/helper'
 import { error } from '@sveltejs/kit'
 import type { TileJson } from '$lib/types'
+import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
 /**
  * /[source]/tile.json?table={tablename}
@@ -21,10 +22,10 @@ export const GET: RequestHandler = async ({ params, url }) => {
   let tilejson: TileJson
   switch (source) {
     case 'martin':
-      tilejson = await getMartinTileJson(table)
+      tilejson = await getMartinTileJson(table, PUBLIC_MARTIN_API_ENDPOINT)
       break
     case 'pgtileserv':
-      tilejson = await getPgtileservTileJson(table, type)
+      tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
       break
     default:
       throw error(400, { message: `Invalid source parameter.` })
