@@ -1,18 +1,8 @@
-import type { RequestHandler } from './$types'
 import { error } from '@sveltejs/kit'
 import type { PgtileservDetailJson, PgtileservIndexJson, TileJson } from '$lib/types'
 import { PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
-/**
- * /pgtileserv/[type]/[table]/tile.json
- * @param params.type either 'table' or 'function
- * @param params.table schemaname and table name (e.g., zambia.poverty)
- * @returns return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
- */
-export const GET: RequestHandler = async ({ params }) => {
-  const type = params.type
-  const table = params.table
-
+export const getPgtileservTileJson = async (table: string, type: string) => {
   if (!['table', 'function'].includes(type)) {
     throw error(400, { message: `type should be either table or function` })
   }
@@ -24,8 +14,7 @@ export const GET: RequestHandler = async ({ params }) => {
   const indexJson = await getIndexJson(table)
   const detailUrl: string = indexJson.detailurl
   const tilejson = await getTileJson(detailUrl)
-
-  return new Response(JSON.stringify(tilejson))
+  return tilejson
 }
 
 const getIndexJson = async (table: string) => {

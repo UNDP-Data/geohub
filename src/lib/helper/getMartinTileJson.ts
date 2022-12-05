@@ -1,21 +1,12 @@
-import type { RequestHandler } from './$types'
 import { error } from '@sveltejs/kit'
 import type { MartinLayerMetadata, TileJson } from '$lib/types'
 import { PUBLIC_MARTIN_API_ENDPOINT } from '$lib/variables/public'
 
-/**
- * /martin/[table]/tile.json
- * @param params.table schemaname and table name (e.g., zambia.poverty)
- * @returns return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
- */
-export const GET: RequestHandler = async ({ params }) => {
-  const table = params.table
-
+export const getMartinTileJson = async (table: string) => {
   const indexJson = await getIndexJson(table)
   // convert tilejson v2.2.0 to v3.0.0
   const tilejson = await getTileJson(table, indexJson)
-
-  return new Response(JSON.stringify(tilejson))
+  return tilejson
 }
 
 const getIndexJson = async (table: string) => {

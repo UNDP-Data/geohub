@@ -34,9 +34,9 @@ export class VectorTileData {
       const id = tags.find((t) => t.key === 'id')
       if (type.value === 'pgtileserv') {
         const layertype = tags?.find((tag) => tag.key === 'layertype')
-        metadataUrl = `/${type.value}/${layertype.value}/${id.value}/metadata.json`
+        metadataUrl = `/api/vector/${type.value}/metadata.json?table=${id.value}&type=${layertype.value}`
       } else {
-        metadataUrl = `/${type.value}/${id.value}/metadata.json`
+        metadataUrl = `/api/vector/${type.value}/metadata.json?table=${id.value}`
       }
     } else {
       // static
