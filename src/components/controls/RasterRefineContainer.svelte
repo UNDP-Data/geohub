@@ -5,7 +5,6 @@
     fetchUrl,
     getActiveBandIndex,
     getLayerStyle,
-    getLayerUrl,
     getValueFromRasterTileUrl,
     updateParamsInURL,
   } from '$lib/helper'
@@ -62,7 +61,7 @@
     if (layerURL.searchParams.has('expression')) {
       let updatedParams = {}
       const statsUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl($map, layer.id)}`,
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getValueFromRasterTileUrl($map, layer.id, 'url')}`,
       )
       info.stats = await fetchUrl(statsUrl.toString())
       const band = info.active_band_no
@@ -109,9 +108,10 @@
       const layerURL = new URL(layerSrc.tiles[0])
       let updatedParams = {}
       const exprStatUrl = new URL(
-        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getLayerUrl(
+        `${layerURL.protocol}//${layerURL.host}/cog/statistics?url=${getValueFromRasterTileUrl(
           $map,
           layer.id,
+          'url',
         )}&expression=${encodeURIComponent(expression)}`,
       )
       console.log(exprStatUrl.searchParams.get('expression').includes('where'))

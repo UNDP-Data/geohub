@@ -4,12 +4,14 @@
   import type { Layer, RasterSimpleExpression } from '$lib/types'
   import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
   import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
+  import RasterFilter from '$components/controls/RasterFilter.svelte'
+  import RasterFilterSimple from '$components/controls/RasterFilterSimple.svelte'
   import { faThumbsUp } from '@fortawesome/free-solid-svg-icons/faThumbsUp'
   import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlassPlus'
-  import type { DynamicLayerLegendTypes } from '$lib/constants'
+  //import type { DynamicLayerLegendTypes } from '$lib/constants'
   export let layer: Layer
-  export let expressions: RasterSimpleExpression[]
-  export let legendType: DynamicLayerLegendTypes
+  // export let expressions: RasterSimpleExpression[]
+  // export let legendType: DynamicLayerLegendTypes
   let activeTab = 'Simple'
   let isAdvancedPanelVisible = false
   let isSimplePanelVisible = false
@@ -96,15 +98,17 @@
   <div class="block" />
   <p>
     {#if isSimplePanelVisible === true}
-      <RasterExpressionSimple
+      <!-- <RasterExpressionSimple
         bind:layer
         bind:expressions
-        bind:legendType />
+        bind:legendType /> -->
+      <RasterFilterSimple bind:layer />
     {/if}
     {#if isAdvancedPanelVisible}
-      <RasterRefineContainer
+      <!-- <RasterRefineContainer
         bind:layer
-        bind:legendType />
+        bind:legendType /> -->
+      <RasterFilter bind:layer />
     {/if}
   </p>
 </nav>

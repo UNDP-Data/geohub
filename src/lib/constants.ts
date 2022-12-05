@@ -17,7 +17,7 @@ export enum TabNames {
   LAYERS = 'Layers',
   LEGEND = 'Legend',
   OPACITY = 'Opacity',
-  REFINE = 'Refine',
+  TRANSFORM = 'Transform',
   STYLEJSON = 'Specification',
   ZOOM = 'Zoom',
   HISTOGRAM = 'Histogram',
@@ -187,6 +187,23 @@ export const vectorFilterOperations = [
   { value: '<', label: 'Smaller', text: 'is smaller then', disabled: false, symbol: '<' }, // < disabled when property is string
   { value: 'in', label: 'Contains', text: 'contains', disabled: false, symbol: '⊂' },
   { value: '!in', label: 'Excludes', text: 'does not contain', disabled: false, symbol: '⊄' },
+]
+export const rasterComparisonOperators = [
+  { value: '==', label: 'Equals', text: 'equal to', disabled: false, symbol: '=' },
+  { value: '!=', label: 'Differs', text: 'different then', disabled: false, symbol: '≠' },
+  { value: '>', label: 'Larger', text: 'larger than', disabled: false, symbol: '>' },
+  { value: '<', label: 'Smaller', text: 'smaller than', disabled: false, symbol: '<' },
+  { value: '>=', label: 'Larger or equal', text: 'larger than or equal to', disabled: false, symbol: '>=' },
+  { value: '<=', label: 'Smaller or equal', text: 'smaller than or equal to', disabled: false, symbol: '<=' },
+]
+
+export const rasterArithmeticOperators = [
+  { value: '+', label: 'Plus', text: 'addition', disabled: false, symbol: '+' },
+  { value: '-', label: 'Minus', text: 'subtraction', disabled: false, symbol: '-' },
+  { value: '*', label: 'Multiply', text: 'multiplication', disabled: false, symbol: '*' },
+  { value: '/', label: 'Divide', text: 'division', disabled: false, symbol: '/' },
+  { value: '%', label: 'Modulo', text: 'remainder of division', disabled: false, symbol: '%' },
+  { value: '**', label: 'Power', text: 'raise to power', disabled: false, symbol: '^' },
 ]
 
 export const DataCategories: DataCategory[] = [

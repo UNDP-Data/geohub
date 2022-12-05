@@ -2,7 +2,7 @@
   import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
   import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
-  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
+  import { faShuffle } from '@fortawesome/free-solid-svg-icons/faShuffle'
   import { faList } from '@fortawesome/free-solid-svg-icons/faList'
 
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
@@ -35,7 +35,7 @@
       case TabNames.LEGEND:
         isLegendPanelVisible = true
         break
-      case TabNames.REFINE:
+      case TabNames.TRANSFORM:
         isRefinePanelVisible = true
         break
       case TabNames.OPACITY:
@@ -52,7 +52,7 @@
   let tabs = [
     { label: TabNames.LEGEND, icon: faList, active: false },
     { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
-    { label: TabNames.REFINE, icon: faCalculator, active: false },
+    { label: TabNames.TRANSFORM, icon: faShuffle, active: false },
     { label: TabNames.OPACITY, icon: faDroplet, active: false },
   ]
 
@@ -107,10 +107,10 @@
 </script>
 
 <div
-  class="raster-layer-container"
+  class="raster-layer-container pl-1 has-background-white-bis"
   transition:fade>
   <nav class="panel">
-    <p class="panel-heading">
+    <p class="panel-heading has-background-grey-lighter">
       <LayerNameGroup {layer} />
     </p>
     <ul
@@ -170,8 +170,8 @@
     border-bottom: 2px solid $dark-red !important;
   }
   .raster-layer-container {
-    margin-left: 15px;
-    margin-bottom: 20px;
+    // margin-left: 15px;
+    // margin-bottom: 20px;
 
     .panel-tabs {
       padding-top: 10px;
