@@ -1,18 +1,13 @@
-import type { RequestHandler } from './$types'
 import { error } from '@sveltejs/kit'
 import type { VectorLayerTileStatAttribute, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
 
 /**
- * /azstorage/metadata.json
- * @param pbfpath pbf path
+ * get metadata json of static pbf
+ * @param url pbf path
  * @returns return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
  */
-export const GET: RequestHandler = async ({ url }) => {
-  let pbfpath = url.searchParams.get('pbfpath')
-  if (!pbfpath) {
-    throw error(400, { message: `'pbfpath' is required.` })
-  }
-  pbfpath = decodeURI(pbfpath)
+export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
+  const pbfpath = decodeURI(url)
   const metaURI = pbfpath.replace('{z}/{x}/{y}.pbf', 'metadata.json')
 
   const res = await fetch(metaURI)
@@ -34,7 +29,7 @@ export const GET: RequestHandler = async ({ url }) => {
     data.attribution = 'United Nations Development Programme'
   }
 
-  const layers = await getStats(url.origin, pbfpath, data.json.tilestats.layers)
+  const layers = await getStats(origin, pbfpath, data.json.tilestats.layers)
   if (layers.length > 0) {
     data.json.tilestats.layerCount = layers.length
   } else {
@@ -44,7 +39,7 @@ export const GET: RequestHandler = async ({ url }) => {
     }
   }
 
-  return new Response(JSON.stringify(data))
+  return data
 }
 
 const getStats = async (origin: string, url: string, tileStatsLayers: VectorLayerTileStatLayer[]) => {

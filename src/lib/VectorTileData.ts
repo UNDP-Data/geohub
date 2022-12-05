@@ -42,7 +42,7 @@ export class VectorTileData {
       // static
       const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'))
       const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
-      metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
+      metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
     }
     const res = await fetch(metadataUrl)
     const data: VectorTileMetadata = await res.json()
