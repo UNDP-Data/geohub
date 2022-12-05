@@ -42,7 +42,7 @@
       style: exportedStyleJSON,
     }
 
-    const res = await fetch('/style', {
+    const res = await fetch('/api/style', {
       method: 'POST',
       body: JSON.stringify(data),
     })

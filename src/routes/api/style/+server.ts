@@ -8,14 +8,14 @@ const connectionString = DATABASE_CONNECTION
 
 /**
  * Get the list of saved style from PostGIS database
- * GET: ./style?limit=5&offset=10
+ * GET: ./api/style?limit=5&offset=10
  * [
  *   {
  *     "id": 1,
  *     "name": "UNDP GeoHub style",
  *     "createdat": "2022-07-29T15:59:23.781Z",
- *     "style": "http://localhost:3000/style/1.json",
- *     "viewer": "http://localhost:3000/viewer?style=http://localhost:3000/style/1.json"
+ *     "style": "http://localhost:3000/api/style/1.json",
+ *     "viewer": "http://localhost:3000/viewer?style=http://localhost:3000/api/style/1.json"
  *   }
  * ]
  */
@@ -83,7 +83,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
     const id = res.rows[0].id
     return new Response(
       JSON.stringify({
-        url: `${url.origin}/viewer?style=${url.origin}/style/${id}.json`,
+        url: `${url.origin}/viewer?style=${url.origin}/api/style/${id}.json`,
       }),
     )
   } catch (err) {

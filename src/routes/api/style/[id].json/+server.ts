@@ -7,10 +7,10 @@ import { DATABASE_CONNECTION } from '$lib/variables/private'
 const connectionString = DATABASE_CONNECTION
 
 /**
- * Delete style.json which is stored in PostgreSQL database
- * DELETE: ./style/{id}
+ * Get style.json which is stored in PostgreSQL database
+ * GET: ./api/style/{id}.json
  */
-export const DELETE: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params }) => {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -19,7 +19,7 @@ export const DELETE: RequestHandler = async ({ params }) => {
       throw new Error(`id parameter is required.`)
     }
     const query = {
-      text: `DELETE FROM geohub.style WHERE id = $1`,
+      text: `SELECT style FROM geohub.style WHERE id = $1`,
       values: [styleId],
     }
 
@@ -27,9 +27,8 @@ export const DELETE: RequestHandler = async ({ params }) => {
     if (res.rowCount === 0) {
       throw new Error(`${styleId} does not exist in the database`)
     }
-    return new Response(undefined, {
-      status: 204,
-    })
+    const style = res.rows[0].style
+    return new Response(JSON.stringify(style))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
   } finally {

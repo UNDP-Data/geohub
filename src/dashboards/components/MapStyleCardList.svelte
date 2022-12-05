@@ -17,7 +17,7 @@
 
   const updateStylePage = async (page: number, pageSize: number) => {
     const offset = page * pageSize - pageSize
-    const res = await fetch(`${url.origin}/style?limit=${pageSize}&offset=${offset}`)
+    const res = await fetch(`${url.origin}/api/style?limit=${pageSize}&offset=${offset}`)
     styleList = await res.json()
   }
 
