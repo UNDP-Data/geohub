@@ -210,27 +210,27 @@ export const DataCategories: DataCategory[] = [
   {
     name: 'SDG',
     icon: '/sdgs/SDG Wheel_WEB.png',
-    url: '/tags?key=sdg_goal',
+    url: '/api/tags?key=sdg_goal',
   },
   {
     name: 'Climate change',
     icon: '/sdgs/13.png',
-    url: '/datasets?sdg_goal=13',
+    url: '/api/datasets?sdg_goal=13',
   },
   {
     name: 'Microsoft Planetary',
     icon: 'fa-brands fa-microsoft',
-    url: '/datasets?stac=microsoft-pc',
+    url: '/api/datasets?stac=microsoft-pc',
   },
   {
     name: 'pg_tileserv',
     icon: '/crunchy-spatial-logo.png',
-    url: '/datasets?type=pgtileserv',
+    url: '/api/datasets?type=pgtileserv',
   },
   {
     name: 'martin',
     icon: '/maplibre.png',
-    url: '/datasets?type=martin',
+    url: '/api/datasets?type=martin',
   },
 ]
 

@@ -1,0 +1,802 @@
+openapi: 3.0.0
+info:
+  title: GeoHub API specification
+  version: '1.0'
+  description: This documentation is for GeoHub's endpoints specification
+  contact:
+    email: jin.igarashi@undp.org
+    url: 'https://geohub.data.undp.org'
+servers:
+  - url: 'http://localhost:5173/api'
+    description: localhost
+  - url: 'https://dev.undpgeohub.org/api'
+    description: development
+  - url: 'https://geohub.data.undp.org/api'
+    description: production
+paths:
+  /datasets:
+    get:
+      summary: Datasets search API
+      tags:
+        - search
+      responses:
+        '200':
+          description: GeoJSON feature collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  features:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      geometry:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          coordinates:
+                            type: array
+                            items:
+                              type: array
+                              items:
+                                type: array
+                                items:
+                                  type: number
+                      properties:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          storage_id:
+                            type: string
+                          url:
+                            type: string
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          is_raster:
+                            type: boolean
+                          source:
+                            type: string
+                          license:
+                            type: string
+                          createdat:
+                            type: string
+                          updatedat:
+                            type: string
+                          tags:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Tag'
+                        required:
+                          - id
+                          - storage_id
+                          - url
+                          - name
+                          - description
+                          - is_raster
+                          - createdat
+                          - updatedat
+              examples:
+                Example for /datasets?limit=1&sdg_goal=1:
+                  value:
+                    type: FeatureCollection
+                    features:
+                      - type: Feature
+                        geometry:
+                          type: Polygon
+                          coordinates:
+                            - - - -179.999985902
+                                - -59.492685518
+                              - - 179.995392624
+                                - -59.492685518
+                              - - 179.995392624
+                                - 83.632916502
+                              - - -179.999985902
+                                - 83.632916502
+                              - - -179.999985902
+                                - -59.492685518
+                        properties:
+                          id: 87538d7d497cfcc67e12505e8a29f893
+                          storage_id: da3cd4ffd3ac844db37bf1f87e2fc200
+                          url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/end-poverty/Population_Density/2000_Population_density_per_squareKm.tif?sv=2021-10-04&ss=b&srt=o&se=2023-12-05T15%3A25%3A26Z&sp=r&sig=t30dcAo8pKix1mAcnCAOq0k3vssfaLlSwrjaXxr9PGE%3D'
+                          name: 2000 Population density per squareKm
+                          description: Estimated population density per grid-cell.
+                          is_raster: true
+                          source: WorldPop
+                          license: ''
+                          createdat: '2022-04-29T16:51:38+00:00'
+                          updatedat: '2022-10-08T17:33:46+00:00'
+                          tags:
+                            - key: granularity
+                              value: Subnational
+                            - key: resolution
+                              value: 1km
+                            - key: extent
+                              value: Global
+                            - key: year_value
+                              value: '2000'
+                            - key: sdg_target
+                              value: population
+                            - key: theme
+                              value: Population density
+                            - key: sdg_goal
+                              value: '1'
+                    links:
+                      - rel: root
+                        type: application/json
+                        href: 'http://localhost:5173/api/datasets'
+                      - rel: self
+                        type: application/json
+                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1'
+                      - rel: next
+                        type: application/json
+                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1&offset=1'
+      operationId: get-datasets
+      description: |-
+        This API returns the result as GeoJSON feature collection format and it contains links property at the bottom.
+
+        The links will have the following patterns.
+
+        - self = URL for the query itself
+        - root = URL origin for this API
+        - next = URL for next page
+        - previous = URL for previous page
+
+        You can use next or previous links to implement paging feature.
+
+        Flexiblely to search by key/value of tags.
+
+        {key}={value} e.g., sdg_goal=1 to filter where tag key is sdg_goal and value is 1. If multiple key/value are set, it will filter by OR operator. if you want to filter by SDG1 and 2, you can query like '&sdg_goal=1&sdg_goal=2'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: 'free text to search in name, description'
+        - schema:
+            type: string
+          in: query
+          name: storage_id
+          description: you can also filter by directly storage_id
+        - schema:
+            type: string
+          in: query
+          name: bbox
+          description: 'you can filter the data by bounding box (minx, miny, maxx, maxy)'
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: The number of datasets retrieved. default is 10
+        - schema:
+            type: string
+          in: query
+          name: offset
+          description: Offset value for paging. default is 0
+        - schema:
+            type: string
+          in: query
+          name: extent
+          description: Search by extent value
+        - schema:
+            type: string
+          in: query
+          name: granularity
+          description: Search by granularity value
+        - schema:
+            type: string
+          in: query
+          name: keyword
+          description: Search by keyword value
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: layertype
+          description: Search by layertype of pg_tileserv
+        - schema:
+            type: string
+          in: query
+          name: resolution
+          description: Search by resolution value
+        - schema:
+            type: string
+            enum:
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              - '7'
+              - '8'
+              - '9'
+              - '10'
+              - '11'
+              - '12'
+              - '13'
+              - '14'
+              - '15'
+              - '16'
+              - '17'
+          in: query
+          name: sdg_goal
+          description: search by sdg_goal value
+        - schema:
+            type: string
+          in: query
+          name: sdg_target
+          description: search by sdg_target value
+        - schema:
+            type: string
+            enum:
+              - earth-search
+              - microsoft-pc
+          in: query
+          name: stac
+          description: search by stac value
+        - schema:
+            type: string
+          in: query
+          name: theme
+          description: search by theme value
+        - schema:
+            type: string
+            enum:
+              - martin
+              - pgtileserv
+              - stac
+          in: query
+          name: type
+          description: search by type value
+        - schema:
+            type: string
+          in: query
+          name: year_value
+          description: search by year value
+  /stac/mosaicjson:
+    get:
+      summary: STAC mosaicjson processing API
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tilejson:
+                    type: string
+                  mosaicjson:
+                    type: string
+                  classmap:
+                    type: string
+                required:
+                  - tilejson
+                  - mosaicjson
+              examples:
+                Example for ESA world cover:
+                  value:
+                    tilejson: 'https://titiler.undpgeohub.org/mosaicjson/tilejson.json?url=https%3A%2F%2Fundpngddlsgeohubdev01.blob.core.windows.net%2Fmosaicjson%2Fmosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
+                    mosaicjson: 'https://undpngddlsgeohubdev01.blob.core.windows.net/mosaicjson/mosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
+                    classmap:
+                      '10': Tree cover
+                      '20': Shrubland
+                      '30': Grassland
+                      '40': Cropland
+                      '50': Built-up
+                      '60': Bare / sparse vegetation
+                      '70': Snow and ice
+                      '80': Permanent water bodies
+                      '90': Herbaceous wetland
+                      '95': Mangroves
+                      '100': Moss and lichen
+      operationId: get-stac-mosaicjson
+      description: This api is to search items in STAC collection to make mosaicjson URL.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: url
+          description: URL for searching STAC items
+          required: true
+  /storages:
+    get:
+      summary: Storage search API
+      tags:
+        - search
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  url:
+                    type: string
+                  label:
+                    type: string
+                  description:
+                    type: string
+                  icon:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+      operationId: get-storages
+      description: |-
+        This api can return the list of storages which contain datasets.
+
+        It can search any key/value of tags stored in storage table as the following specification.
+
+        {key}={value} e.g., type=stac to filter where tag key is 'type' and value is 'stac'. If multiple key/value are set, it will filter by OR operator. if you want to filter by SDG1 and 2, you can query like '&sdg=1&sdg=2'. 'keyword', 'type' and 'sdg' are available for key value.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: 'ree text to search in label and description. AND search is aaa and bbb OR search is aaa or bbb If queried text contains space like ''water quality'', query=''water quality'' should be used with single quatation.'
+        - schema:
+            type: string
+          in: query
+          name: keyword
+        - schema:
+            type: string
+            enum:
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              - '7'
+              - '8'
+              - '9'
+              - '10'
+              - '11'
+              - '12'
+              - '13'
+              - '14'
+              - '15'
+              - '16'
+              - '17'
+          in: query
+          name: sdg
+  /tags:
+    get:
+      summary: Tag search API
+      tags:
+        - search
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Example for tags?key=extent:
+                  value:
+                    extent:
+                      - key: extent
+                        value: Afghanistan
+                        count: 2
+                      - key: extent
+                        value: Africa
+                        count: 5
+                      - key: extent
+                        value: America
+                        count: 1
+                      - key: extent
+                        value: Asia
+                        count: 5
+                      - key: extent
+                        value: Burundi
+                        count: 3
+                      - key: extent
+                        value: Cambodia
+                        count: 2
+                      - key: extent
+                        value: Conflict areas
+                        count: 1
+                      - key: extent
+                        value: Ethiopia
+                        count: 3
+                      - key: extent
+                        value: EU
+                        count: 3
+                      - key: extent
+                        value: Europe
+                        count: 9
+                      - key: extent
+                        value: Ghana
+                        count: 2
+                      - key: extent
+                        value: Global
+                        count: 3845
+                      - key: extent
+                        value: Greenland and Antarctica
+                        count: 1
+                      - key: extent
+                        value: India
+                        count: 2
+                      - key: extent
+                        value: Kenya
+                        count: 10
+                      - key: extent
+                        value: Madagascar
+                        count: 2
+                      - key: extent
+                        value: Malawi
+                        count: 4
+                      - key: extent
+                        value: Mali
+                        count: 2
+                      - key: extent
+                        value: Mozambique
+                        count: 2
+                      - key: extent
+                        value: Nepal
+                        count: 2
+                      - key: extent
+                        value: Nigeria
+                        count: 12
+                      - key: extent
+                        value: North America
+                        count: 1
+                      - key: extent
+                        value: Oceania
+                        count: 1
+                      - key: extent
+                        value: OECD
+                        count: 7
+                      - key: extent
+                        value: Pakistan
+                        count: 6
+                      - key: extent
+                        value: Rwanda
+                        count: 6
+                      - key: extent
+                        value: South America
+                        count: 1
+                      - key: extent
+                        value: SouthEast Asia
+                        count: 2
+                      - key: extent
+                        value: Tanzania
+                        count: 8
+                      - key: extent
+                        value: Uganda
+                        count: 10
+                      - key: extent
+                        value: West Africa
+                        count: 1
+                      - key: extent
+                        value: Zambia
+                        count: 2
+      operationId: get-tags
+      description: 'This API can return the list of available tags. If you simply query by /tags, it returns all tags. You can also filter a key value to list available tags.'
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - extent
+              - granularity
+              - keyword
+              - layertype
+              - resolution
+              - schema
+              - sdg_goal
+              - sdg_target
+              - stac
+              - theme
+              - type
+              - year_value
+          in: query
+          name: key
+          description: Optional parameter to filter by key
+  /vector/statistics:
+    get:
+      summary: Vector tile statistics API
+      tags:
+        - vectortile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attribute:
+                    type: string
+                  type:
+                    type: string
+                  count:
+                    type: number
+                  min:
+                    type: number
+                  max:
+                    type: number
+                  mean:
+                    type: number
+                  median:
+                    type: number
+                  std:
+                    type: number
+                  histogram:
+                    type: object
+                    properties:
+                      count:
+                        type: array
+                        items:
+                          type: number
+                      bins:
+                        type: array
+                        items:
+                          type: number
+              examples:
+                Example for zambia.poverty:
+                  value:
+                    - attribute: poverty
+                      type: number
+                      count: 145
+                      min: 0.1
+                      max: 0.96
+                      mean: 0.6919310344827585
+                      median: 0.78
+                      std: 0.21315518783181625
+                      histogram:
+                        count:
+                          - 9
+                          - 19
+                          - 10
+                          - 36
+                          - 71
+                        bins:
+                          - 0.1
+                          - 0.272
+                          - 0.444
+                          - 0.616
+                          - 0.788
+                          - 0.96
+      operationId: get-vector-statistics
+      description: This api it to calculate statistics for vector tiles from /0/0/0.pbf
+      parameters:
+        - schema:
+            type: string
+            example: 'https://martin.undpgeohub.org/zambia.poverty/0/0/0.pbf'
+          in: query
+          name: path
+          description: URL for vector tile. must be /0/0/0.pbf path
+          required: true
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: layer_name
+          description: layer name for vector tile
+          required: true
+  '/vector/{source}/metadata.json':
+    get:
+      summary: Vector tile metadata.json API
+      tags:
+        - vectortile
+      responses: {}
+      operationId: 'get-vector-[source]-metadata.json'
+      description: |-
+        This api is to generate metadata.json for vector tiles.
+
+        return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
+      parameters:
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: table
+          description: table name. only available for source = martin or pgtileserv
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: type
+          description: type name. only available for source = pgtileserv
+        - schema:
+            type: string
+          in: query
+          name: pbfpath
+          description: pbf path. only available for soruce = azstorage
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - azstorage
+            - pgtileserv
+            - martin
+        name: source
+        in: path
+        required: true
+        description: source type
+  '/vector/{source}/tile.json':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - pgtileserv
+            - martin
+        name: source
+        in: path
+        required: true
+        description: source type
+    get:
+      summary: Vector tile tile.json API
+      tags:
+        - vectortile
+      responses: {}
+      operationId: get-vector-source-tile.json
+      description: |-
+        This api is to generate tile.json for vector tiles.
+
+        return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
+      parameters:
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: table
+          description: table name. only available for source = martin or pgtileserv
+          required: true
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: type
+          description: type name. only available for source = pgtileserv
+  /style:
+    get:
+      summary: Style list API
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    createdat:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - createdat
+              examples:
+                Example 1:
+                  value:
+                    - id: 25
+                      name: Global South LOCE
+                      createdat: '2022-09-08T17:13:26.890Z'
+      operationId: get-style
+      description: Get the list of saved style from PostGIS database
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: offset
+    post:
+      summary: Style register API
+      operationId: post-style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: URL for style sharing viewer
+                required:
+                  - url
+      description: Save style.json to PostgreSQL database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name for style
+                style:
+                  type: object
+                  description: style.json object
+              required:
+                - name
+                - style
+      tags:
+        - style
+  '/style/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style ID
+    delete:
+      summary: Style delete API
+      operationId: delete-style-id
+      responses:
+        '204':
+          description: No Content
+      description: Delete style by ID
+      tags:
+        - style
+  '/style/{id}.json':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style ID
+    get:
+      summary: Style JSON api
+      tags:
+        - style
+      responses:
+        '200':
+          description: style.json object
+      operationId: get-style-id-.json
+      description: get style.json by ID
+components:
+  schemas:
+    Tag:
+      title: Tag
+      x-stoplight:
+        id: um38sy7bphx89
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        count:
+          type: number
+      required:
+        - key
+        - value

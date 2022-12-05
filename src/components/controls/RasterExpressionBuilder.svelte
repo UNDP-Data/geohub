@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
@@ -145,23 +144,19 @@
               role="tablist">
               {#each Object.values(operatorCategories) as operatorCategory}
                 <li class={activeOperatorCategory === operatorCategory.name ? 'is-active tabs-title' : 'tabs-title'}>
-                  <Wrapper>
-                    <a
-                      style="border: none;"
-                      href={'#'}
-                      on:click={() => {
-                        activeOperatorCategory = operatorCategory.name
-                        operatorCategory.isVisible = !operatorCategory.isVisible
-                      }}>
-                      <Fa
-                        icon={operatorCategory.icon}
-                        style="font-size: 16px; color: #232E3D" />
-                    </a>
-                    <Tooltip
-                      showDelay={100}
-                      hideDelay={0}
-                      yPos="above">{operatorCategory.title}</Tooltip>
-                  </Wrapper>
+                  <a
+                    style="border: none;"
+                    class="has-tooltip-bottom"
+                    data-tooltip={operatorCategory.title}
+                    href={'#'}
+                    on:click={() => {
+                      activeOperatorCategory = operatorCategory.name
+                      operatorCategory.isVisible = !operatorCategory.isVisible
+                    }}>
+                    <Fa
+                      icon={operatorCategory.icon}
+                      style="font-size: 16px; color: #232E3D" />
+                  </a>
                 </li>
               {/each}
             </ul>

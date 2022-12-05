@@ -19,7 +19,7 @@
   $: currentSearchUrl, getTags()
 
   const getTags = async () => {
-    const res = await fetch(`/tags${currentSearchUrl ? `?url=${encodeURIComponent(currentSearchUrl)}` : ''}`)
+    const res = await fetch(`/api/tags${currentSearchUrl ? `?url=${encodeURIComponent(currentSearchUrl)}` : ''}`)
     const json: { [key: string]: Tag[] } = await res.json()
 
     tagSearchKeys.forEach((t) => {
@@ -61,32 +61,8 @@
   }
 </script>
 
-<div class="tile is-vertical pt-2 pb-2">
-  <div class="tile">
-    <label class="radio">
-      <input
-        class="radio-button"
-        type="radio"
-        name="operator"
-        bind:group={operatorType}
-        value="and" />
-      Match all selected tags
-    </label>
-  </div>
-  <div class="tile">
-    <label class="radio">
-      <input
-        class="radio-button"
-        type="radio"
-        name="operator"
-        bind:group={operatorType}
-        value="or" />
-      Match at least a tag selected
-    </label>
-  </div>
-</div>
-
-<div class="box px-2 py-0 mb-2">
+<div class="box p-0 m-0 px-4 my-2">
+  <!-- {#if tags && Object.keys(tags).length > 0} -->
   <TreeView
     lineColor="#ff0000"
     iconBackgroundColor="#ff0000"
@@ -120,6 +96,38 @@
       {/if}
     {/key}
   </TreeView>
+  <!-- {:else} -->
+  <div
+    hidden={tags && Object.keys(tags).length > 0}
+    class="loader"
+    aria-busy="true"
+    aria-live="polite" />
+  <!-- {/if} -->
+</div>
+
+<div class="tile is-vertical pb-2">
+  <div class="tile">
+    <label class="radio">
+      <input
+        class="radio-button"
+        type="radio"
+        name="operator"
+        bind:group={operatorType}
+        value="and" />
+      Match all selected tags
+    </label>
+  </div>
+  <div class="tile">
+    <label class="radio">
+      <input
+        class="radio-button"
+        type="radio"
+        name="operator"
+        bind:group={operatorType}
+        value="or" />
+      Match at least a tag selected
+    </label>
+  </div>
 </div>
 
 {#if selectedTags?.length > 0}
@@ -137,10 +145,25 @@
   @use '../../styles/undp-design/checkbox.min.css';
   @use '../../styles/undp-design/buttons.min.css';
   @use '../../styles/undp-design/radio.min.css';
+  @use '../../styles/undp-design/loader.min.css';
 
   .box {
-    max-height: 200px;
+    position: relative;
+    min-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
+    border: 1px solid gray;
+
+    .loader {
+      position: absolute;
+      z-index: 10;
+      top: 40px;
+      left: 50px;
+      background-color: white;
+      transform: translate(-25%, -35%);
+      -webkit-transform: translate(-25%, -35%);
+      -ms-transform: translate(-25%, -35%);
+    }
   }
 
   .radio-button {

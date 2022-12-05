@@ -6,11 +6,11 @@
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
-  import { ColorMapTypes, COLOR_CLASS_COUNT } from '$lib/constants'
-  import type { Layer } from '$lib/types'
+  import { ColorMapTypes } from '$lib/constants'
+  import type { Tab } from '$lib/types'
+  import Tabs from '$components/controls/Tabs.svelte'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
-  export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
@@ -23,9 +23,9 @@
     { name: ColorMapTypes.QUALITATIVE, codes: QualitativeColorMaps },
   ]
 
-  const handleSetActiveColorMapType = (colorMapType: ColorMapTypes) => {
-    activeColorMapType = colorMapType
-  }
+  let tabs: Tab[] = colorMapTypes.map((type) => {
+    return { label: type.name }
+  })
 
   const handleColorMapClick = (cmName: string) => {
     if (cmName !== colorMapName) {
@@ -42,40 +42,6 @@
       event.target.click()
     }
   }
-
-  const handleArrowKey = (event: any) => {
-    if (event.key === 'ArrowLeft') {
-      setLeftActiveTab(activeColorMapType)
-    }
-    if (event.key === 'ArrowRight') {
-      setRightActiveTab(activeColorMapType)
-    }
-  }
-
-  const setLeftActiveTab = (currentActiveTab: string) => {
-    const currentTabIndex = colorMapTypes.findIndex((tab) => tab.name === currentActiveTab)
-    const nextTabIndex = currentTabIndex - 1
-    if (nextTabIndex < 0) {
-      activeColorMapType = colorMapTypes[colorMapTypes.length - 1].name
-      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
-    } else {
-      activeColorMapType = colorMapTypes[nextTabIndex].name
-      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
-    }
-  }
-
-  const setRightActiveTab = (currentActiveTab: string) => {
-    const currentTabIndex = colorMapTypes.findIndex((tab) => tab.name === currentActiveTab)
-    const nextTabIndex = currentTabIndex + 1
-    const nextTab = colorMapTypes[nextTabIndex]
-    if (nextTab) {
-      activeColorMapType = nextTab.name
-      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
-    } else {
-      activeColorMapType = colorMapTypes[0].name
-      document.getElementById(`${activeColorMapType}-${layer.id}`)?.focus()
-    }
-  }
 </script>
 
 <div
@@ -83,27 +49,10 @@
   use:clickOutside={handleClosePopup}>
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
-      <div class="tabs">
-        <ul
-          data-deep-link="true"
-          data-tabs="true"
-          id="tablist_1"
-          role="tablist">
-          {#each Object.values(ColorMapTypes) as colorMapType}
-            <li class={activeColorMapType === colorMapType ? 'is-active tabs-title' : 'tabs-title'}>
-              <a
-                style="border: none"
-                role="tab"
-                id={`${colorMapType}-${layer.id}`}
-                href={'#'}
-                on:click={() => handleSetActiveColorMapType(colorMapType)}
-                on:keydown={handleArrowKey}>
-                {colorMapType}
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </div>
+      <Tabs
+        bind:tabs
+        bind:activeTab={activeColorMapType}
+        tabMargin={10} />
     </div>
     <div
       tabindex="0"
@@ -141,15 +90,6 @@
 </div>
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
-  @import 'src/styles/undp-design/tab.min';
-  .tabs {
-    li {
-      a {
-        text-transform: capitalize;
-      }
-    }
-  }
   .close {
     cursor: pointer;
   }

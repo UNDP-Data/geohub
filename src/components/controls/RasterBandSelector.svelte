@@ -82,7 +82,9 @@
 </script>
 
 {#if layerStyle && layerStyle.type === LayerTypes.RASTER && bands && bands.length > 0}
-  <div class="select is-success is-rounded is-small">
+  <div
+    class="select is-success is-rounded is-small has-tooltip-bottom"
+    data-tooltip="Change raster band">
     <select bind:value={selected}>
       {#each bands as band}
         <option value={band}>B{band}</option>

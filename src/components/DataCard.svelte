@@ -16,6 +16,7 @@
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
+  import DataCardInfo from './DataCardInfo.svelte'
 
   interface AssetOptions {
     url: string
@@ -27,11 +28,11 @@
 
   export let feature: StacItemFeature
   let isExpanded: boolean
-  let descriptionLength = 100
-  let isFullDescription = false
   let symbolVectorType: 'point' | 'heatmap' = 'point'
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
+  let clientWidth: number
+  $: width = `${clientWidth * 0.95}px`
 
   let assetList: AssetOptions[] = []
 
@@ -59,6 +60,7 @@
               id: data.layer.id,
               name: feature.properties.name,
               info: data.metadata,
+              dataset: feature,
             },
             ...$layerList,
           ]
@@ -82,6 +84,7 @@
             id: data.layer.id,
             name: feature.properties.name,
             info: data.metadata,
+            dataset: feature,
           },
           ...$layerList,
         ]
@@ -145,6 +148,7 @@
           id: data.layer.id,
           name: `${asset.collectionId}-${asset.title}`,
           info: data.metadata,
+          dataset: feature,
         },
         ...$layerList,
       ]
@@ -167,76 +171,24 @@
   <Accordion
     headerTitle={feature.properties.name}
     bind:isExpanded>
-    <div class="card-container px-1">
-      <p class="title is-5">{feature.properties.name}</p>
-      <div class="map">
-        <MiniMap
-          bind:feature
-          width={'100%'}
-          height={'150px'}
-          bind:isLoadMap={isExpanded}
-          bind:metadata
-          bind:defaultColor
-          bind:defaultColormap />
-      </div>
-      <div class="description has-text-justified">
-        {#if !isFullDescription}
-          {#if feature.properties.description.length < 100}
-            {@html marked(feature.properties.description)}
-          {:else}
-            {feature.properties.description.substring(0, descriptionLength)}...
-          {/if}
-
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a
-            class="cta__link cta--arrow"
-            on:click={() => {
-              isFullDescription = true
-            }}>
-            READ MORE
-            <i />
-          </a>
-        {:else}
-          {#if feature.properties.description}
-            <p><b>Description: </b>{@html marked(feature.properties.description)}</p>
-          {/if}
-          {#if metadata}
-            {#if metadata['band_metadata']}
-              {#if metadata['band_metadata'][0][1]?.RepresentationType}
-                <p><b>Representation Type: </b> {metadata['band_metadata'][0][1].RepresentationType}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.Unit}
-                <p><b>unit: </b> {metadata['band_metadata'][0][1].Unit}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
-                <p><b>Minimum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MINIMUM}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
-                <p><b>Maximum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MAXIMUM}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MEAN}
-                <p><b>Mean value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEAN}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_MEDIAN}
-                <p><b>Median value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEDIAN}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_STDDEV}
-                <p><b>STDDev value: </b> {metadata['band_metadata'][0][1].STATISTICS_STDDEV}</p>
-              {/if}
-              {#if metadata['band_metadata'][0][1]?.STATISTICS_VALID_PERCENT}
-                <p><b>Valid percent: </b> {metadata['band_metadata'][0][1].STATISTICS_VALID_PERCENT}</p>
-              {/if}
-            {/if}
-          {/if}
-          <p><b>Source: </b> {feature.properties.source}</p>
-          <p>
-            <b>Updated at: </b>
-            <Time
-              timestamp={feature.properties.updatedat}
-              format="h:mm A, MMMM D, YYYY" />
-          </p>
-        {/if}
-      </div>
+    <div
+      class="card-container px-1"
+      bind:clientWidth>
+      <!-- <p class="title is-5">{feature.properties.name}</p> -->
+      <DataCardInfo
+        bind:feature
+        bind:metadata>
+        <div class="map">
+          <MiniMap
+            bind:feature
+            bind:width
+            height={'150px'}
+            bind:isLoadMap={isExpanded}
+            bind:metadata
+            bind:defaultColor
+            bind:defaultColormap />
+        </div>
+      </DataCardInfo>
 
       {#if !is_raster}
         {#if tags && (['point', 'multipoint'].includes(tags
@@ -340,10 +292,6 @@
     flex-direction: column;
     margin-bottom: 0.5rem;
 
-    .description {
-      padding-bottom: 0.5rem;
-    }
-
     .buttons {
       display: grid;
       grid-template-columns: repeat(1, 1fr);
@@ -356,8 +304,6 @@
 
     .map {
       padding-bottom: 0.5rem;
-      // display: flex;
-      // flex-direction: column;
     }
 
     .vector-symbol-radios {

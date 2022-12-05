@@ -1,14 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import StyleShare from './StyleShare.svelte'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
-  import LinearProgress from '@smui/linear-progress'
   import { indicatorProgress, layerList } from '$stores'
 
   export let drawerOpen = true
-  export let height: number
+  export let height: number = undefined
   $: hideLinearProgress = !$indicatorProgress
-  // let darkTheme: boolean
 
   const onKeyPressed = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -22,31 +19,6 @@
     window.matchMedia('(prefers-color-scheme: light)')
   })
 </script>
-
-<svelte:head>
-  <!-- {#if darkTheme === undefined} -->
-  <link
-    rel="stylesheet"
-    href="/smui.css"
-    media="(prefers-color-scheme: light)" />
-  <!-- <link
-      rel="stylesheet"
-      href="/smui-dark.css"
-      media="screen and (prefers-color-scheme: dark)" />
-  {:else if darkTheme}
-    <link
-      rel="stylesheet"
-      href="/smui.css" />
-    <link
-      rel="stylesheet"
-      href="/smui-dark.css"
-      media="screen" />
-  {:else}
-  <link
-    rel="stylesheet"
-    href="/smui.css" />
-  {/if} -->
-</svelte:head>
 
 <header class="country-header">
   <section
@@ -76,23 +48,13 @@
             tabindex="0"
             on:click={() => (drawerOpen = !drawerOpen)}
             on:keydown={onKeyPressed}>
-            <Wrapper>
-              <span class="icon">
-                <i
-                  class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
-                  style="color:#006eb5" />
-              </span>
-              <Tooltip
-                showDelay={500}
-                hideDelay={500}
-                yPos="below">
-                {#if drawerOpen}
-                  Hide layer panel
-                {:else}
-                  Open layer panel
-                {/if}
-              </Tooltip>
-            </Wrapper>
+            <span
+              class="icon has-tooltip-bottom"
+              data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
+              <i
+                class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
+                style="color:#006eb5" />
+            </span>
           </div>
 
           <div
@@ -102,13 +64,13 @@
             tabindex="0"
             on:click={() => window.open('/dashboards', '_blank')}
             on:keydown={onKeyPressed}>
-            <Wrapper>
-              <span class="icon">
-                <i
-                  class="fa-solid fa-chalkboard-user fa-xl"
-                  style="color:#006eb5" />
-              </span>
-            </Wrapper>
+            <span
+              class="icon has-tooltip-bottom"
+              data-tooltip="UNDP Dashboards">
+              <i
+                class="fa-solid fa-chalkboard-user fa-xl"
+                style="color:#006eb5" />
+            </span>
           </div>
 
           {#if $layerList.length > 0}
@@ -117,13 +79,7 @@
               role="button"
               tabindex="0"
               aria-label="Share map">
-              <Wrapper>
-                <StyleShare />
-                <Tooltip
-                  showDelay={500}
-                  hideDelay={500}
-                  yPos="below">Share map</Tooltip>
-              </Wrapper>
+              <StyleShare />
             </div>
           {/if}
 
@@ -134,24 +90,22 @@
             tabindex="0"
             on:click={() => window.open('/docs/index.html', '_blank')}
             on:keydown={onKeyPressed}>
-            <Wrapper>
-              <span class="icon">
-                <i
-                  class="fa-regular fa-circle-question fa-xl"
-                  style="color:#006eb5" />
-              </span>
-              <Tooltip
-                showDelay={500}
-                hideDelay={500}
-                yPos="below">Documentation</Tooltip>
-            </Wrapper>
+            <span
+              class="icon has-tooltip-bottom"
+              data-tooltip="Documentation">
+              <i
+                class="fa-regular fa-circle-question fa-xl"
+                style="color:#006eb5" />
+            </span>
           </div>
         </div>
       </div>
     </div>
-    <LinearProgress
-      indeterminate
-      bind:closed={hideLinearProgress} />
+    {#if $indicatorProgress}
+      <progress
+        class="progress is-small is-info"
+        max="100" />
+    {/if}
   </section>
 </header>
 

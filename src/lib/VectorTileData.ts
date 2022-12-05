@@ -34,15 +34,15 @@ export class VectorTileData {
       const id = tags.find((t) => t.key === 'id')
       if (type.value === 'pgtileserv') {
         const layertype = tags?.find((tag) => tag.key === 'layertype')
-        metadataUrl = `/${type.value}/${layertype.value}/${id.value}/metadata.json`
+        metadataUrl = `/api/vector/${type.value}/metadata.json?table=${id.value}&type=${layertype.value}`
       } else {
-        metadataUrl = `/${type.value}/${id.value}/metadata.json`
+        metadataUrl = `/api/vector/${type.value}/metadata.json?table=${id.value}`
       }
     } else {
       // static
       const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'))
       const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
-      metadataUrl = `/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
+      metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
     }
     const res = await fetch(metadataUrl)
     const data: VectorTileMetadata = await res.json()

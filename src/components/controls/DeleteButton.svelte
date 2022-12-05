@@ -1,7 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import Fa from 'svelte-fa'
   import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
@@ -51,24 +50,19 @@
   paused={!confirmDeleteLayerDialogVisible}
   on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
 
-<Wrapper>
-  <div
-    class="container icon-selected"
-    tabindex="0"
-    role="button"
-    title="Delete layer"
-    aria-label="Delete layer"
-    on:click={() => (confirmDeleteLayerDialogVisible = true)}
-    on:keydown={handleKeyDown}>
-    <Fa
-      icon={faTrash}
-      size="sm" />
-  </div>
-  <Tooltip
-    showDelay={300}
-    hideDelay={100}
-    xPos="start">Delete layer</Tooltip>
-</Wrapper>
+<div
+  class="container icon-selected has-tooltip-bottom"
+  tabindex="0"
+  role="button"
+  title="Delete layer"
+  aria-label="Delete layer"
+  data-tooltip="Delete layer"
+  on:click={() => (confirmDeleteLayerDialogVisible = true)}
+  on:keydown={handleKeyDown}>
+  <Fa
+    icon={faTrash}
+    size="sm" />
+</div>
 
 {#if confirmDeleteLayerDialogVisible}
   <div

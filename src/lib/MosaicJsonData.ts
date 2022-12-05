@@ -100,7 +100,7 @@ export class MosaicJsonData {
     ]
 
     let res = await fetch(
-      `stac/mosaicjson?url=${encodeURIComponent(this.url)}&bbox=${JSON.stringify(bbox)}&asset=${this.assetName}`,
+      `api/stac/mosaicjson?url=${encodeURIComponent(this.url)}&bbox=${JSON.stringify(bbox)}&asset=${this.assetName}`,
     )
     if (!res.ok) throw new Error(res.statusText)
     const mosaicjson = await res.json()

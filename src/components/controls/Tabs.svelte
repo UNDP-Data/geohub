@@ -7,7 +7,8 @@
 
   export let activeTab: string
 
-  export let height: number
+  export let height: number = undefined
+  export let tabMargin = 50
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {
@@ -54,6 +55,7 @@
     {#each tabs as tab}
       <li
         class="tabs-title {`${activeTab && activeTab === tab.label ? 'is-active' : ''}`}"
+        style="margin-left: {tabMargin}px!important;"
         role="presentation">
         <a
           aria-selected="true"
@@ -66,9 +68,11 @@
             activeTab = tab.label
           }}>
           <span class="icon-text">
-            <span class="icon">
-              <i class={tab.icon} />
-            </span>
+            {#if tab.icon}
+              <span class="icon">
+                <i class={tab.icon} />
+              </span>
+            {/if}
             <span>
               {tab.label}
               {#if tab.label === TabNames.LAYERS && $layerList.length > 0}
@@ -87,7 +91,9 @@
   @use '../../styles/undp-design/tab.min.css';
 
   .tabs-undp li {
-    margin-left: 50px !important;
     margin-right: auto !important;
+    a {
+      text-transform: capitalize;
+    }
   }
 </style>

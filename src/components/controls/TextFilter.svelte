@@ -17,13 +17,13 @@
   let queryType: 'and' | 'or' = 'and'
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
-  export let bbox: [number, number, number, number]
+  export let bbox: [number, number, number, number] = undefined
 
-  export let isFilterByBBox: boolean
-  export let height: number
-  export let selectedTags: Tag[]
-  export let tagFilterOperatorType: 'and' | 'or'
-  export let currentSearchUrl: string
+  export let isFilterByBBox: boolean = undefined
+  export let height: number = undefined
+  export let selectedTags: Tag[] = undefined
+  export let tagFilterOperatorType: 'and' | 'or' = undefined
+  export let currentSearchUrl: string = undefined
   let tags: { [key: string]: Tag[] }
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
@@ -122,48 +122,20 @@
   </div>
 
   <PanelButton
-    icon="fas fa-filter"
+    icon="fas fa-sliders"
+    tooltip="Explore tags and filter data"
     width="230px">
-    <p class="title is-5 m-0 p-0">Filter settings</p>
-    <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
-    <div class="control query-type-radios">
-      <label class="radio">
-        <input
-          class="radio-button"
-          type="radio"
-          name="queryType"
-          bind:group={queryType}
-          value="and" />
-        AND
-      </label>
-      <label class="radio">
-        <input
-          class="radio-button"
-          type="radio"
-          name="queryType"
-          bind:group={queryType}
-          value="or" />
-        OR
-      </label>
-      <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
-      <div class="form-check">
-        <input
-          type="checkbox"
-          id="bbox-filter-checkbox"
-          name="bbox-filter-checkbox"
-          bind:checked={isFilterByBBox} />
-        <label for="bbox-filter-checkbox">Filter by current map extent</label>
-      </div>
-      <p class="subtitle is-6 pb-0 pt-2 my-1">Tags</p>
-      <TagFilter
-        bind:selectedTags
-        bind:operatorType={tagFilterOperatorType}
-        bind:currentSearchUrl />
-    </div>
+    <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+    <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+    <TagFilter
+      bind:selectedTags
+      bind:operatorType={tagFilterOperatorType}
+      bind:currentSearchUrl />
   </PanelButton>
 
   <PanelButton
     bind:icon={sortIcon}
+    tooltip="Sort"
     width="200px">
     <p class="title is-5 m-0 p-0">Sort settings</p>
 
@@ -210,6 +182,49 @@
           Z to A (large to small)
         </label>
       </div>
+    </div>
+  </PanelButton>
+
+  <PanelButton
+    icon="fas fa-gear"
+    tooltip="Settings"
+    position="left"
+    width="230px">
+    <p class="title is-5 m-0 p-0">Search settings</p>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
+
+    <div class="tile is-vertical">
+      <div class="tile">
+        <label class="radio">
+          <input
+            class="radio-button"
+            type="radio"
+            name="queryType"
+            bind:group={queryType}
+            value="and" />
+          Match all words typed
+        </label>
+      </div>
+      <div class="tile">
+        <label class="radio">
+          <input
+            class="radio-button"
+            type="radio"
+            name="queryType"
+            bind:group={queryType}
+            value="or" />
+          Match at least a word typed
+        </label>
+      </div>
+    </div>
+    <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        id="bbox-filter-checkbox"
+        name="bbox-filter-checkbox"
+        bind:checked={isFilterByBBox} />
+      <label for="bbox-filter-checkbox">Filter by current map extent</label>
     </div>
   </PanelButton>
 </div>

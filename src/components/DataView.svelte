@@ -12,8 +12,8 @@
   import Breadcrumbs from './controls/Breadcrumbs.svelte'
   import type { Tag } from '$lib/types/Tag'
 
-  export let headerHeight: number
-  export let tabsHeight: number
+  export let headerHeight: number = undefined
+  export let tabsHeight: number = undefined
   let textFilterHeight: number
   let breadcrumbsHeight: number
 
@@ -118,7 +118,7 @@
 
   const handleCategorySelected = async (e) => {
     const category = e.detail.category
-    if (category.url.startsWith('/datasets')) {
+    if (category.url.startsWith('/api/datasets')) {
       const url = `${$page.url.origin}${category.url}`
       await searchDatasets(url)
     }
@@ -129,14 +129,14 @@
   const handleTagChanged = async () => {
     if (
       selectedTags.length === 0 &&
-      !(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets'))
+      !(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets'))
     ) {
       DataItemFeatureCollection = undefined
       breadcrumbs = [breadcrumbs[0]]
       return
     }
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
-    let url = `${$page.url.origin}/datasets`
+    let url = `${$page.url.origin}/api/datasets`
     if (link) {
       url = link.href
     }
@@ -147,13 +147,13 @@
     query = e.detail.query
 
     if (
-      !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/datasets')) &&
+      !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
       query === ''
     )
       return
 
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
-    let url = `${$page.url.origin}/datasets`
+    let url = `${$page.url.origin}/api/datasets`
     if (link) {
       url = link.href
     }
@@ -164,7 +164,7 @@
     query = ''
     if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
-      if (lastCategory?.url?.startsWith('/datasets')) {
+      if (lastCategory?.url?.startsWith('/api/datasets')) {
         const url = `${$page.url.origin}${lastCategory.url}`
         await searchDatasets(url)
         return

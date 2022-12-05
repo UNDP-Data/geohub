@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Tooltip, { Wrapper } from '@smui/tooltip'
   import { cloneDeep } from 'lodash-es'
   import Fa from 'svelte-fa'
   import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
@@ -47,24 +46,19 @@
   }
 </script>
 
-<Wrapper>
-  <div
-    class="icon-selected"
-    title="Toggle Visibility"
-    aria-label="Toggle Visibility"
-    tabindex="0"
-    role="button"
-    on:click={() => toggleVisibility()}
-    on:keydown={handleKeyDown}>
-    <Fa
-      icon={visibility === 'visible' ? faEye : faEyeSlash}
-      size="sm" />
-  </div>
-  <Tooltip
-    showDelay={300}
-    hideDelay={100}
-    xPos="start">{visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}</Tooltip>
-</Wrapper>
+<div
+  class="icon-selected has-tooltip-bottom"
+  title="Toggle Visibility"
+  aria-label="Toggle Visibility"
+  tabindex="0"
+  role="button"
+  data-tooltip={`${visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}`}
+  on:click={() => toggleVisibility()}
+  on:keydown={handleKeyDown}>
+  <Fa
+    icon={visibility === 'visible' ? faEye : faEyeSlash}
+    size="sm" />
+</div>
 
 <style lang="scss">
   @import '../../styles/button-icons-selected.scss';

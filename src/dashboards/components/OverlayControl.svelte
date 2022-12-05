@@ -1,9 +1,4 @@
 <script lang="ts">
-  import SegmentedButton, { Segment, Label } from '@smui/segmented-button'
-  import Fa from 'svelte-fa'
-  import { faDiceD6 } from '@fortawesome/free-solid-svg-icons/faDiceD6'
-  import { faHandHoldingUsd } from '@fortawesome/free-solid-svg-icons/faHandHoldingUsd'
-  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
   import { LayerTypes } from '$lib/constants'
   import { map } from '../stores'
   import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl'
@@ -18,9 +13,9 @@
   const NONE_ID = 'none'
 
   let overlayChoices = [
-    { name: ADMIN_ID, icon: faDiceD6, title: 'Administrative Boundaries' },
-    { name: POVERTY_ID, icon: faHandHoldingUsd, title: 'Poverty Heatmap' },
-    { name: NONE_ID, icon: faBan, title: 'None' },
+    { name: ADMIN_ID, icon: 'fas fa-dice-d6', title: 'Administrative Boundaries' },
+    { name: POVERTY_ID, icon: 'fas fa-hand-holding-dollar', title: 'Poverty Heatmap' },
+    { name: NONE_ID, icon: 'fas fa-ban', title: 'None' },
   ]
   export let overlaySelected = overlayChoices[0]
 
@@ -83,22 +78,22 @@
 </script>
 
 <div class="centered">
-  <SegmentedButton
-    segments={overlayChoices}
-    let:segment
-    singleSelect
-    bind:selected={overlaySelected}>
-    <Segment
-      {segment}
-      title={segment.title}>
-      <div class="icon">
-        <Fa
-          icon={segment.icon}
-          size="lg" />
-      </div>
-      <Label>{segment.name}</Label>
-    </Segment>
-  </SegmentedButton>
+  <div class="field has-addons">
+    {#each overlayChoices as choice}
+      <p class="control pt-2">
+        <button
+          class="button {`${choice.name === overlaySelected.name ? 'is-info is-light is-active' : ''}`}"
+          on:click={() => {
+            overlaySelected = choice
+          }}>
+          <span class="icon is-small">
+            <i class={choice.icon} />
+          </span>
+          <span>{choice.name}</span>
+        </button>
+      </p>
+    {/each}
+  </div>
 </div>
 
 {#if overlayChoices

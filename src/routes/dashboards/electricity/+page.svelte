@@ -2,33 +2,24 @@
   import { style } from 'svelte-body'
   import Content from '../../../dashboards/components/Content.svelte'
   import Map from '../../../dashboards/components/Map.svelte'
-  let drawerOpen = true
   let loadLayers = () => {
     return
   }
 </script>
 
-<svelte:head>
-  <link
-    rel="stylesheet"
-    href="../smui.css"
-    media="(prefers-color-scheme: light)" />
-  <link
-    rel="stylesheet"
-    href="../smui-dark.css"
-    media="screen and (prefers-color-scheme: dark)" />
-</svelte:head>
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
-<Content
-  bind:drawerOpen
-  bind:loadLayers>
+<Content bind:loadLayers>
   <Map on:styleChanged={loadLayers} />
 </Content>
 
 <style
   global
   lang="scss">
+  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
+
   body,
   html {
     font-family: ProximaNova, sans-serif;
