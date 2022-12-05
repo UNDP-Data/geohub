@@ -11,7 +11,7 @@ const connectionString = DATABASE_CONNECTION
 /**
  * Tags API - return available keys and values in tag table
  * Example
- * http://localhost:5173/tags?url=http://localhost:5173/datasets?stac=microsoft-pc&sortby=name%2Casc&limit=25
+ * http://localhost:5173/api/tags?url=http://localhost:5173/api/datasets?stac=microsoft-pc&sortby=name%2Casc&limit=25
  * Query Params
  * - key = only filter by key name. if it is not specified, all values will be returned
  * - url = URL used for dataset search to filter available tags

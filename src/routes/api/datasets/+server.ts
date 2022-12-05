@@ -15,7 +15,7 @@ import { createDatasetSearchWhereExpression } from '$lib/helper'
 /**
  * Datasets search API
  * Example
- * http://localhost:5173/datasets?limit=10&offset=0&sdg_goal=1&query=kenya&bbox=35.26,-1.058,40.473,1.968&storage_id=4019fd03c7cc612686a6db0fde231206
+ * http://localhost:5173/api/datasets?limit=10&offset=0&sdg_goal=1&query=kenya&bbox=35.26,-1.058,40.473,1.968&storage_id=4019fd03c7cc612686a6db0fde231206
  * Query Params
  * - query = free text to search in `name`, `description` and `tag value`.
  *     AND search is `aaa and bbb`

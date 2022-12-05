@@ -9,8 +9,8 @@ const connectionString = DATABASE_CONNECTION
 /**
  * Storage search API
  * Example
- * http://localhost:5173/storages?query=microsoft&type=stac
- * http://localhost:5173/storages?sdg=1&keyword=poverty
+ * http://localhost:5173/api/storages?query=microsoft&type=stac
+ * http://localhost:5173/api/storages?sdg=1&keyword=poverty
  * Query Params
  * - query = free text to search in `label` and `description`.
  *     AND search is `aaa and bbb`
