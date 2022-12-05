@@ -28,11 +28,11 @@
 
   export let feature: StacItemFeature
   let isExpanded: boolean
-  let descriptionLength = 100
-  let isFullDescription = false
   let symbolVectorType: 'point' | 'heatmap' = 'point'
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
+  let clientWidth: number
+  $: width = `${clientWidth * 0.95}px`
 
   let assetList: AssetOptions[] = []
 
@@ -171,7 +171,9 @@
   <Accordion
     headerTitle={feature.properties.name}
     bind:isExpanded>
-    <div class="card-container px-1">
+    <div
+      class="card-container px-1"
+      bind:clientWidth>
       <!-- <p class="title is-5">{feature.properties.name}</p> -->
       <DataCardInfo
         bind:feature
@@ -179,7 +181,7 @@
         <div class="map">
           <MiniMap
             bind:feature
-            width={'100%'}
+            bind:width
             height={'150px'}
             bind:isLoadMap={isExpanded}
             bind:metadata
