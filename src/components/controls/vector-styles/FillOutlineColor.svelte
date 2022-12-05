@@ -5,7 +5,6 @@
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import chroma from 'chroma-js'
 
   export let layer: Layer = LayerInitialValues
 

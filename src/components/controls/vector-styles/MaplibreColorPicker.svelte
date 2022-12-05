@@ -37,7 +37,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right-start',
       strategy: 'fixed',
     },
     [10, 15],
@@ -98,8 +98,9 @@
   $tooltip-background: #fff;
 
   #tooltip {
-    height: 230px;
+    height: 280px;
     padding: 0;
-    width: 170px;
+    width: 290px;
+    max-width: 290px;
   }
 </style>

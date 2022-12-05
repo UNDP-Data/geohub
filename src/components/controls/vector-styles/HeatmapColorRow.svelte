@@ -33,7 +33,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right-start',
       strategy: 'fixed',
     },
     [10, 15],
@@ -63,9 +63,10 @@
 
   // set color of display and dispatch to update map
   const updateColorMap = debounce((colorSelected: Color) => {
+    console.log(colorSelected)
     if (colorSelected) {
       try {
-        const rgba: number[] = chroma(colorSelected['hex']).rgba()
+        const rgba: number[] = chroma([colorSelected.r, colorSelected.g, colorSelected.b]).rgba()
         colorRow.color.r = rgba[0]
         colorRow.color.g = rgba[1]
         colorRow.color.b = rgba[2]
@@ -164,8 +165,9 @@
   }
 
   #tooltip {
-    height: 230px;
+    height: 280px;
     padding: 0;
-    width: 170px;
+    width: 290px;
+    max-width: 290px;
   }
 </style>

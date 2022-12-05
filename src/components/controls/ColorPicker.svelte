@@ -1,12 +1,13 @@
 <script lang="ts">
-  import ColorPicker from 'svelte-awesome-color-picker/ColorPicker.svelte'
-  import type { Color } from 'svelte-awesome-color-picker/type/types'
+  import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker'
+  // import type { Rgb } from 'svelte-awesome-color-picker/type/types'
+  // import type { colord } from 'colord';
   import { createEventDispatcher } from 'svelte'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
 
-  export let color: Color
+  export let color: { r: 255; g: 0; b: 0; a: 1 }
 
   const dispatch = createEventDispatcher()
 
@@ -35,24 +36,23 @@
       size="sm" />
   </div>
   <ColorPicker
+    components={ChromeVariant}
     isPopup={true}
     isInput={false}
+    isTextInput={false}
     isAlpha={true}
     toRight={true}
     isOpen={true}
-    bind:color />
+    bind:rgb={color} />
 </div>
 
 <style lang="scss">
   .default-color-picker-container {
-    --picker-height: 150px;
-    --picker-width: 150px;
     position: relative;
-    top: 8.5px;
 
     .close {
       position: absolute;
-      left: 150px;
+      right: 10px;
       z-index: 100;
     }
   }
@@ -61,27 +61,6 @@
   :global(.isPopup, .picker) {
     border: 0;
     cursor: pointer;
-    margin-top: 10px;
-    width: 120px;
-  }
-
-  // handles
-  :global(.picker > div, .slider > div.to-right, .alpha > div.to-right) {
-    background: #000 !important;
-    border-color: #fff;
-    border-width: 2px;
-    cursor: pointer;
-    height: 10px;
-    margin-left: -4px;
-    top: 5px;
-    width: 10px;
-  }
-
-  :global(.slider, .alpha) {
-    cursor: pointer;
-    height: 10px !important;
-    top: 5px;
-    width: 150px !important;
   }
 
   :global(div.isOpen.isPopup) {
