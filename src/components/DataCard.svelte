@@ -59,6 +59,7 @@
               id: data.layer.id,
               name: feature.properties.name,
               info: data.metadata,
+              dataset: feature,
             },
             ...$layerList,
           ]
@@ -82,6 +83,7 @@
             id: data.layer.id,
             name: feature.properties.name,
             info: data.metadata,
+            dataset: feature,
           },
           ...$layerList,
         ]
@@ -145,6 +147,7 @@
           id: data.layer.id,
           name: `${asset.collectionId}-${asset.title}`,
           info: data.metadata,
+          dataset: feature,
         },
         ...$layerList,
       ]
