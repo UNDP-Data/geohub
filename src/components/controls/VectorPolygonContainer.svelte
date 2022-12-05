@@ -189,7 +189,6 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          {layer}
           {layerMin}
           {layerMax}
           bind:colorMapName
