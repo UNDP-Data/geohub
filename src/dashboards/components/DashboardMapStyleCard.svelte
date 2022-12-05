@@ -43,7 +43,7 @@
   let confirmDeleteDialogVisible = false
 
   onMount(async () => {
-    style.style = `${url.origin}/style/${style.id}.json`
+    style.style = `${url.origin}/api/style/${style.id}.json`
     style.viewer = `${url.origin}/viewer?style=${style.style}`
 
     const res = await fetch(style.style)
@@ -61,7 +61,7 @@
 
   $: style, updateStyle()
   const updateStyle = async () => {
-    if (!style) return
+    if (!style.style) return
     if (!map) return
     const res = await fetch(style.style)
     const styleJSON = await res.json()
@@ -72,7 +72,7 @@
   }
 
   const handleDeleteStyle = () => {
-    fetch(`../style/${style.id}`, {
+    fetch(`../api/style/${style.id}`, {
       method: 'DELETE',
     })
       .then((res) => {

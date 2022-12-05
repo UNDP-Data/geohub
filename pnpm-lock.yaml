@@ -1649,9 +1649,8 @@ packages:
       webidl-conversions: 7.0.0
     dev: true
 
-  /dompurify/2.3.8:
-    resolution: {integrity: sha512-eVhaWoVibIzqdGYjwsBWodIQIaXFSB+cKDf4cfxLMsK0xiud6SE+/WCVx/Xw/UwQsa4cS3T2eITcdtmTg2UKcw==}
-    requiresBuild: true
+  /dompurify/2.3.10:
+    resolution: {integrity: sha512-o7Fg/AgC7p/XpKjf/+RC3Ok6k4St5F7Q6q6+Nnm3p2zGWioAY6dh0CbbuwOhH2UcSzKsdniE/YnE2/92JcsA+g==}
     dev: false
     optional: true
 
@@ -2615,7 +2614,7 @@ packages:
     optionalDependencies:
       canvg: 3.0.10
       core-js: 3.22.8
-      dompurify: 2.3.8
+      dompurify: 2.3.10
       html2canvas: 1.4.1
     dev: false
 

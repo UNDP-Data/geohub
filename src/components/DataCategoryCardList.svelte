@@ -21,7 +21,7 @@
     const breadcrumbCount = breadcrumbs.length
     if (breadcrumbCount > 1) {
       const lastCategory = breadcrumbs[breadcrumbCount - 1]
-      if (!lastCategory.url.startsWith('/datasets') && categories.find((c) => c.name === lastCategory.name)) {
+      if (!lastCategory.url.startsWith('/api/datasets') && categories.find((c) => c.name === lastCategory.name)) {
         await getSelectedCategory(lastCategory)
       }
     }
@@ -65,7 +65,7 @@
         return {
           name: `SDG${num}`,
           icon: `/sdgs/${num}.png`,
-          url: `/datasets?sdg_goal=${num}`,
+          url: `/api/datasets?sdg_goal=${num}`,
         }
       })
     } finally {
@@ -80,7 +80,7 @@
         breadcrumbs = [...breadcrumbs, category]
       }
     }
-    if (category.url.startsWith('/datasets')) {
+    if (category.url.startsWith('/api/datasets')) {
       dispatch('selected', { category })
     }
   }

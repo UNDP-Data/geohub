@@ -19,7 +19,7 @@
   $: currentSearchUrl, getTags()
 
   const getTags = async () => {
-    const res = await fetch(`/tags${currentSearchUrl ? `?url=${encodeURIComponent(currentSearchUrl)}` : ''}`)
+    const res = await fetch(`/api/tags${currentSearchUrl ? `?url=${encodeURIComponent(currentSearchUrl)}` : ''}`)
     const json: { [key: string]: Tag[] } = await res.json()
 
     tagSearchKeys.forEach((t) => {
