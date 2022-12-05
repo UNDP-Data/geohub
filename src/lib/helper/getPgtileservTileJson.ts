@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit'
 import type { PgtileservDetailJson, PgtileservIndexJson, TileJson } from '$lib/types'
-import { PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
-export const getPgtileservTileJson = async (table: string, type: string) => {
+export const getPgtileservTileJson = async (table: string, type: string, pgtileservUrl: string) => {
   if (!['table', 'function'].includes(type)) {
     throw error(400, { message: `type should be either table or function` })
   }
@@ -11,14 +10,14 @@ export const getPgtileservTileJson = async (table: string, type: string) => {
     throw error(400, { message: `function type is currently not available` })
   }
 
-  const indexJson = await getIndexJson(table)
+  const indexJson = await getIndexJson(table, pgtileservUrl)
   const detailUrl: string = indexJson.detailurl
   const tilejson = await getTileJson(detailUrl)
   return tilejson
 }
 
-const getIndexJson = async (table: string) => {
-  const url = `${PUBLIC_PGTILESERV_API_ENDPOINT}/index.json`
+const getIndexJson = async (table: string, pgtileservUrl: string) => {
+  const url = `${pgtileservUrl}/index.json`
   const res = await fetch(url)
   const json: PgtileservIndexJson = await res.json()
   if (!res.ok) {

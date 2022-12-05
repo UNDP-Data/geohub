@@ -2,6 +2,7 @@ import type { RequestHandler } from './$types'
 import { generateMetadataJson, getMartinTileJson, getPgtileservTileJson, getStaticPbfMetadataJson } from '$lib/helper'
 import type { TileJson, VectorTileMetadata } from '$lib/types'
 import { error } from '@sveltejs/kit'
+import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
 /**
  * /api/vector/[source]/metadata.json?table={table}&type={type}&pbfpath={pbfpath}
@@ -25,11 +26,11 @@ export const GET: RequestHandler = async ({ url, params }) => {
       metadatajson = await getStaticPbfMetadataJson(url.origin, pbfpath)
       break
     case 'martin':
-      tilejson = await getMartinTileJson(table)
+      tilejson = await getMartinTileJson(table, PUBLIC_MARTIN_API_ENDPOINT)
       metadatajson = await generateMetadataJson(tilejson, url.origin)
       break
     case 'pgtileserv':
-      tilejson = await getPgtileservTileJson(table, type)
+      tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
       metadatajson = await generateMetadataJson(tilejson, url.origin)
       break
     default:

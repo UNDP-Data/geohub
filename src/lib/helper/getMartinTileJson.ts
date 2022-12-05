@@ -1,16 +1,15 @@
 import { error } from '@sveltejs/kit'
 import type { MartinLayerMetadata, TileJson } from '$lib/types'
-import { PUBLIC_MARTIN_API_ENDPOINT } from '$lib/variables/public'
 
-export const getMartinTileJson = async (table: string) => {
-  const indexJson = await getIndexJson(table)
+export const getMartinTileJson = async (table: string, martinUrl: string) => {
+  const indexJson = await getIndexJson(table, martinUrl)
   // convert tilejson v2.2.0 to v3.0.0
-  const tilejson = await getTileJson(table, indexJson)
+  const tilejson = await getTileJson(table, indexJson, martinUrl)
   return tilejson
 }
 
-const getIndexJson = async (table: string) => {
-  const url = `${PUBLIC_MARTIN_API_ENDPOINT}/index.json`
+const getIndexJson = async (table: string, martinUrl: string) => {
+  const url = `${martinUrl}/index.json`
   const res = await fetch(url)
   const json: { [key: string]: MartinLayerMetadata } = await res.json()
   if (!res.ok) {
@@ -24,8 +23,8 @@ const getIndexJson = async (table: string) => {
   return json[table]
 }
 
-const getTileJson = async (table: string, indexJson: MartinLayerMetadata) => {
-  const url = `${PUBLIC_MARTIN_API_ENDPOINT}/${table}.json`
+const getTileJson = async (table: string, indexJson: MartinLayerMetadata, martinUrl: string) => {
+  const url = `${martinUrl}/${table}.json`
   const res = await fetch(url)
   const tilejson: TileJson = await res.json()
   if (!res.ok) {
