@@ -27,8 +27,12 @@
     untargetedLayers = []
     if ($layerList.length > 0) {
       $layerList.forEach((layer) => {
-        const rasterInfo = layer.info as RasterTileMetadata
-        if (rasterInfo?.isMosaicJson) {
+        const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
+          { key: string; value: string },
+        ]
+        const stacType = tags?.find((tag) => tag.key === 'stac')
+
+        if (stacType?.value === 'microsoft-pc') {
           untargetedLayers.push(layer)
         }
       })
@@ -219,6 +223,15 @@
               </div>
               <div class="message-body">
                 <p>The following layers from Microsoft Planet Computer API will be removed from saved style.</p>
+                <div class="level">
+                  {#each untargetedLayers as layer, index}
+                    <div class="level-left">
+                      <div class="level-item">
+                        <p>{index + 1}: {layer.name}</p>
+                      </div>
+                    </div>
+                  {/each}
+                </div>
               </div>
             </article>
           {/if}
