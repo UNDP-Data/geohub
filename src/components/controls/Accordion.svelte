@@ -7,20 +7,25 @@
   class="accordion"
   aria-label="accordion">
   <li>
-    <button
-      tabindex="0"
-      aria-expanded={isExpanded}
-      class={`accordion-button ${isExpanded ? 'accordion--active' : ''}`}
-      on:click={() => {
-        isExpanded = !isExpanded
-      }}>
-      <p class="accordion-header">{headerTitle}</p>
-    </button>
+    <div class="accordion-title">
+      <slot name="button" />
+      <button
+        tabindex="0"
+        aria-expanded={isExpanded}
+        class={`accordion-button ${isExpanded ? 'accordion--active' : ''}`}
+        on:click={() => {
+          isExpanded = !isExpanded
+        }}>
+        <p class="accordion-header">
+          {headerTitle}
+        </p>
+      </button>
+    </div>
     <div
       class={!isExpanded ? 'accordion__panel' : 'accordion--active'}
       aria-hidden={!isExpanded}
       role="region">
-      <div class="accordion-content"><slot /></div>
+      <div class="accordion-content"><slot name="content" /></div>
     </div>
   </li>
 </ul>
@@ -32,6 +37,12 @@
   .accordion {
     padding: 5px;
     padding-right: 10px;
+
+    .accordion-title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
 
     .accordion-button {
       padding-top: 1rem;
