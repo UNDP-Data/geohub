@@ -6,10 +6,6 @@ export const getPgtileservTileJson = async (table: string, type: string, pgtiles
     throw error(400, { message: `type should be either table or function` })
   }
 
-  if (type === 'function') {
-    throw error(400, { message: `function type is currently not available` })
-  }
-
   const indexJson = await getIndexJson(table, pgtileservUrl)
   const detailUrl: string = indexJson.detailurl
   const tilejson = await getTileJson(detailUrl)
@@ -24,10 +20,6 @@ const getIndexJson = async (table: string, pgtileservUrl: string) => {
     throw error(res.status, { message: res.statusText })
   }
 
-  if (!(json[table] && json[table].type === 'table')) {
-    throw error(404, { message: `${table} does not exist.` })
-  }
-
   return json[table]
 }
 
@@ -39,7 +31,7 @@ const getTileJson = async (url: string) => {
   }
 
   const fields: { [key: string]: string } = {}
-  json.properties.forEach((prop) => {
+  json.properties?.forEach((prop) => {
     fields[prop.name] = `${prop.type}. ${prop.description}`
   })
 
@@ -51,12 +43,23 @@ const getTileJson = async (url: string) => {
     attribution: 'United Nations Development Programme',
     scheme: 'xyz',
     tiles: [json.tileurl],
+    center: [0, 0, 0],
+    bounds: [-180, -90, 180, 90],
     minzoom: json.minzoom,
     maxzoom: json.maxzoom,
-    bounds: json.bounds,
-    center: [...json.center, (json.center[0] + json.center[1]) / 2],
-    geometrytype: json.geometrytype,
-    vector_layers: [
+    vector_layers: [],
+  }
+  if (json.bounds) {
+    tilejson.bounds = json.bounds
+  }
+  if (json.center) {
+    tilejson.center = [...json.center, (json.center[0] + json.center[1]) / 2]
+  }
+  if (json.geometrytype) {
+    tilejson.geometrytype = json.geometrytype
+  }
+  if (Object.keys(fields).length > 0) {
+    tilejson.vector_layers = [
       {
         id: json.id,
         fields: fields,
@@ -64,7 +67,7 @@ const getTileJson = async (url: string) => {
         minzoom: json.minzoom,
         maxzoom: json.maxzoom,
       },
-    ],
+    ]
   }
 
   return tilejson

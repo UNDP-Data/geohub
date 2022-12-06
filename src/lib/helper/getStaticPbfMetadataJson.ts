@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import type { VectorLayerTileStatAttribute, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
+import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
 
 /**
  * get metadata json of static pbf
@@ -48,18 +48,11 @@ const getStats = async (origin: string, url: string, tileStatsLayers: VectorLaye
   const layers: VectorLayerTileStatLayer[] = []
 
   for (let i = 0; i < tileStatsLayers.length; i++) {
-    const tilestatsLayer = tileStatsLayers[i]
+    let tilestatsLayer = tileStatsLayers[i]
     const vectorinfoUrl = `${origin}/api/vector/statistics?path=${pbfPath}&layer_name=${tilestatsLayer.layer}`
     const res = await fetch(vectorinfoUrl)
-    if (!res.ok) {
-      console.error(res.status, res.statusText)
-      break
-    }
-    const stats: VectorLayerTileStatAttribute[] = await res.json()
-
-    if (stats) {
-      tilestatsLayer.attributeCount = stats.length
-      tilestatsLayer.attributes = stats
+    if (res.ok) {
+      tilestatsLayer = await res.json()
     }
     layers.push(tilestatsLayer)
   }

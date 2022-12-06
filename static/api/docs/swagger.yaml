@@ -543,58 +543,92 @@ paths:
               schema:
                 type: object
                 properties:
-                  attribute:
+                  layer:
                     type: string
-                  type:
+                  geometry:
                     type: string
                   count:
                     type: number
-                  min:
+                  attributeCount:
                     type: number
-                  max:
-                    type: number
-                  mean:
-                    type: number
-                  median:
-                    type: number
-                  std:
-                    type: number
-                  histogram:
-                    type: object
-                    properties:
-                      count:
-                        type: array
-                        items:
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        attribute:
+                          type: string
+                        type:
+                          type: string
+                        count:
                           type: number
-                      bins:
-                        type: array
-                        items:
+                        min:
                           type: number
+                        max:
+                          type: number
+                        mean:
+                          type: number
+                        median:
+                          type: number
+                        std:
+                          type: number
+                        histogram:
+                          type: object
+                          properties:
+                            count:
+                              type: array
+                              items:
+                                type: number
+                            bins:
+                              type: array
+                              items:
+                                type: number
               examples:
                 Example for zambia.poverty:
                   value:
-                    - attribute: poverty
-                      type: number
-                      count: 145
-                      min: 0.1
-                      max: 0.96
-                      mean: 0.6919310344827585
-                      median: 0.78
-                      std: 0.21315518783181625
-                      histogram:
-                        count:
-                          - 9
-                          - 19
-                          - 10
-                          - 36
-                          - 71
-                        bins:
-                          - 0.1
-                          - 0.272
-                          - 0.444
-                          - 0.616
-                          - 0.788
-                          - 0.96
+                    layer: zambia.poverty
+                    geometry: Polygon
+                    count: 145
+                    attributeCount: 7
+                    attributes:
+                      - attribute: poverty
+                        type: number
+                        count: 145
+                        min: 0.1
+                        max: 0.96
+                        mean: 0.6919310344827585
+                        median: 0.78
+                        std: 0.21315518783181625
+                        histogram:
+                          count:
+                            - 9
+                            - 19
+                            - 10
+                            - 36
+                            - 71
+                          bins:
+                            - 0.1
+                            - 0.272
+                            - 0.444
+                            - 0.616
+                            - 0.788
+                            - 0.96
+                Example for zambia.poverty_selector:
+                  value:
+                    layer: zambia.poverty_selector
+                    geometry: Polygon
+                    count: 5
+                    attributeCount: 1
+                    attributes:
+                      - attribute: district
+                        type: string
+                        count: 5
+                        values:
+                          - Chilubi
+                          - Kasama
+                          - Luwingu
+                          - Chinsali
+                          - Mpika
       operationId: get-vector-statistics
       description: This api it to calculate statistics for vector tiles from /0/0/0.pbf
       parameters:

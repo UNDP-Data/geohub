@@ -39,6 +39,9 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
   if (attributesArray.length > 0) {
     attributesArray = []
   }
+
+  let geometryType: number
+
   // The layer._keys is a list with all the available attributes in the layer.
   // Mapping through the attributes to get the attributeArray object
   layer['_keys'].map((property) => {
@@ -46,6 +49,7 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
 
     for (let featureIndex = 0; featureIndex < layer.length; featureIndex++) {
       const feature = layer.feature(featureIndex)
+      geometryType = feature.type
       if (!feature.properties?.[property]) continue
       layer['_keys'][property] = propsObj[property].push(feature.properties[property])
     }
@@ -99,7 +103,13 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
     }
   })
 
-  return attributesArray
+  return {
+    layer: layer.name,
+    geometry: geometryType === 1 ? 'Point' : geometryType === 2 ? 'LineString' : 'Polygon',
+    count: layer.length,
+    attributeCount: attributesArray.length,
+    attributes: attributesArray,
+  }
 }
 
 export const GET: RequestHandler = async ({ url }) => {
