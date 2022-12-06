@@ -63,7 +63,6 @@
 
   // set color of display and dispatch to update map
   const updateColorMap = debounce((colorSelected: Color) => {
-    console.log(colorSelected)
     if (colorSelected) {
       try {
         const rgba: number[] = chroma([colorSelected.r, colorSelected.g, colorSelected.b]).rgba()

@@ -75,6 +75,7 @@
     setColorMap()
     const layerStyle = getLayerStyle($map, layerConfig.id)
     const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
+    if (!(layerSrc.tiles?.length > 0)) return
     const layerURL = new URL(layerSrc.tiles[0])
     if (layerURL.searchParams.has('rescale')) {
       layerURL.searchParams.delete('rescale')

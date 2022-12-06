@@ -51,11 +51,12 @@
     const r = rowColor[0]
     const g = rowColor[1]
     const b = rowColor[2]
-
+    const a = rowColor[3]
     color = {
       r,
       g,
       b,
+      a,
       hex: chroma([r, g, b]).hex('rgba'),
       h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],

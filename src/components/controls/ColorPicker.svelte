@@ -1,17 +1,35 @@
 <script lang="ts">
   import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker'
-  // import type { Rgb } from 'svelte-awesome-color-picker/type/types'
-  // import type { colord } from 'colord';
   import { createEventDispatcher } from 'svelte'
   import Fa from 'svelte-fa'
   import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
-
-  export let color: { r: 255; g: 0; b: 0; a: 1 }
+  import type { Color } from '$lib/types'
+  import chroma from 'chroma-js'
 
   const dispatch = createEventDispatcher()
 
+  export let color: Color
+  let rgb: { r: number; g: number; b: number; a: number } = { r: color.r, g: color.g, b: color.b, a: color.a }
+
+  const setColor = () => {
+    if (!rgb) return
+    const { r, g, b, a } = rgb
+    color = {
+      r,
+      g,
+      b,
+      a,
+      hex: chroma([r, g, b]).hex('rgba'),
+      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
+      s: chroma([r, g, b]).hsv()[1],
+      v: chroma([r, g, b]).hsv()[2],
+    }
+    return color
+  }
+
   const changeColor = () => {
+    setColor()
     dispatch('changeColor')
   }
 
@@ -19,7 +37,7 @@
     dispatch('closeColorPicker', { index: -1 })
   }
 
-  $: color, changeColor()
+  $: rgb, changeColor()
 </script>
 
 <div
@@ -43,7 +61,7 @@
     isAlpha={true}
     toRight={true}
     isOpen={true}
-    bind:rgb={color} />
+    bind:rgb />
 </div>
 
 <style lang="scss">
