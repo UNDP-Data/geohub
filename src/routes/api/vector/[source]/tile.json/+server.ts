@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types'
-import { getMartinTileJson, getPgtileservTileJson } from '$lib/helper'
+import { generateMetadataJson, getMartinTileJson, getPgtileservTileJson } from '$lib/helper'
 import { error } from '@sveltejs/kit'
-import type { TileJson } from '$lib/types'
+import type { TileJson, VectorTileMetadata } from '$lib/types'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
 /**
@@ -20,12 +20,18 @@ export const GET: RequestHandler = async ({ params, url }) => {
   }
 
   let tilejson: TileJson
+  let metadatajson: VectorTileMetadata
   switch (source) {
     case 'martin':
       tilejson = await getMartinTileJson(table, PUBLIC_MARTIN_API_ENDPOINT)
       break
     case 'pgtileserv':
       tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
+      if (tilejson.vector_layers.length === 0) {
+        metadatajson = await generateMetadataJson(tilejson, url.origin)
+        tilejson.vector_layers = metadatajson.json.vector_layers
+        tilejson.geometrytype = metadatajson.json.tilestats.layers[0].geometry
+      }
       break
     default:
       throw error(400, { message: `Invalid source parameter.` })

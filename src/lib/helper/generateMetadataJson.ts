@@ -14,20 +14,7 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
   if (!res.ok) {
     throw error(res.status, { message: res.statusText })
   }
-  const stats = await res.json()
-
-  const tilestatsLayer: VectorLayerTileStatLayer = {
-    layer: tilejson.name,
-    geometry: tilejson.geometrytype,
-    count: null,
-    attributeCount: null,
-    attributes: null,
-  }
-
-  if (stats) {
-    tilestatsLayer.attributeCount = stats.length
-    tilestatsLayer.attributes = stats
-  }
+  const tilestatsLayer: VectorLayerTileStatLayer = await res.json()
 
   const data: VectorTileMetadata = {
     name: tilejson.name,
@@ -36,10 +23,8 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
     description: tilejson.description,
     attribution: tilejson.attribution,
     format: 'pbf',
-    center: `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
-      tilejson.minzoom
-    }`,
-    bounds: `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`,
+    center: '0,0,0',
+    bounds: '-180,-90,180,90',
     minzoom: tilejson.minzoom,
     maxzoom: tilejson.maxzoom,
     json: {
@@ -49,6 +34,24 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
         layers: [tilestatsLayer],
       },
     },
+  }
+
+  if (data.json.vector_layers.length === 0) {
+    data.json.tilestats?.layers.forEach((layer) => {
+      const id = layer.layer
+      const fields: { [key: string]: string } = {}
+      layer.attributes.forEach((attr) => {
+        fields[attr.attribute] = attr.attribute
+      })
+      data.json.vector_layers.push({ id: id, fields: fields })
+    })
+  }
+
+  if (tilejson.bounds) {
+    data.center = `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
+      tilejson.minzoom
+    }`
+    data.bounds = `${tilejson.bounds[0]},${tilejson.bounds[1]},${tilejson.bounds[2]},${tilejson.bounds[3]}`
   }
   return data
 }
