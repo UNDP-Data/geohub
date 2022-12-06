@@ -106,7 +106,7 @@
       const res = await fetch(`${url}?limit=1`)
       const fc: StacItemFeatureCollection = await res.json()
       const f = fc.features[0]
-      const rootUrl = fc.links.find((link) => link.rel === 'root').href
+      const rootUrl = f.links.find((link) => link.rel === 'root').href
       const assets = f.assets
       const itemProperties = f.properties
       const collectionId = f.collection
