@@ -39,7 +39,7 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'right-start',
       strategy: 'fixed',
     },
     [10, 15],
@@ -51,11 +51,12 @@
     const r = rowColor[0]
     const g = rowColor[1]
     const b = rowColor[2]
-
+    const a = rowColor[3]
     color = {
       r,
       g,
       b,
+      a,
       hex: chroma([r, g, b]).hex('rgba'),
       h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
@@ -223,8 +224,9 @@
   }
 
   #tooltip {
-    height: 230px;
+    height: 280px;
     padding: 0;
-    width: 170px;
+    width: 290px;
+    max-width: 290px;
   }
 </style>
