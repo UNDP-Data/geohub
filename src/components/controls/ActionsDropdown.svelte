@@ -1,9 +1,3 @@
-<script
-  lang="ts"
-  context="module">
-  const dynamicLayerIds = {}
-</script>
-
 <script lang="ts">
   import type { LayerSpecification } from 'maplibre-gl'
   import type { LngLatBoundsLike } from 'maplibre-gl'
@@ -23,7 +17,6 @@
   import { getLayerStyle } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
-  export let disabled = true
 
   const layerId = layer.id
   const mapLayers = $map.getStyle().layers

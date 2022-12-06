@@ -37,8 +37,10 @@
     dispatch('handleClosePopup')
   }
 
-  const handleEnterKey = (event: any) => {
+  const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       event.target.click()
     }
   }

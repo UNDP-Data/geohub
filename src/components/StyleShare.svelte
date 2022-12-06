@@ -4,12 +4,12 @@
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
 
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
   import { getLayerStyle } from '$lib/helper'
 
   let isModalVisible = false
-  let styleURL
+  let styleURL: string
   let radioDisabled = false
   let selectedOption: 'all' | 'geohub' = 'all'
   let styleName = 'UNDP GeoHub style'
