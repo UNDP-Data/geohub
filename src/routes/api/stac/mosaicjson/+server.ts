@@ -19,8 +19,9 @@ export const GET: RequestHandler = async ({ url }) => {
   const searchUrl = url.searchParams.get('url')
   const bbox: number[] = JSON.parse(url.searchParams.get('bbox'))
   const asset = url.searchParams.get('asset')
+  const stacType = url.searchParams.get('type')
   // console.log(new URL(searchUrl), asset)
-  const searchResult = await searchStacItemUrls(searchUrl, bbox, asset)
+  const searchResult = await searchStacItemUrls(searchUrl, bbox, asset, stacType)
   const mosaicJsonUrl = await createTitilerMosaicJsonEndpoint(searchResult.urls, searchResult.filter)
   const tileJsonUrl = createMosaicTileJson(mosaicJsonUrl)
 
@@ -37,7 +38,7 @@ export const GET: RequestHandler = async ({ url }) => {
   )
 }
 
-const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: string) => {
+const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: string, stacType: string) => {
   // convert GET url to Post url for /search api
   const _url = new URL(url)
   const collections = _url.searchParams.get('collections')
@@ -108,12 +109,12 @@ const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: stri
   }
 
   const fc: StacItemFeatureCollection = await res.json()
-  const itemUrls: string[] = []
+  let itemUrls: string[] = fc.features.map((f) => f.assets[targetAsset].href)
+  if (stacType === 'microsoft-pc') {
+    const sasToken = await getMsStacToken(url)
+    itemUrls = fc.features.map((f) => `${f.assets[targetAsset].href}?${sasToken}`)
+  }
 
-  const sasToken = await getMsStacToken(url)
-  fc.features.forEach((f) => {
-    itemUrls.push(`${f.assets[targetAsset].href}?${sasToken}`)
-  })
   return {
     urls: itemUrls,
     filter: JSON.stringify(payload),

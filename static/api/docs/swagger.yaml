@@ -311,6 +311,24 @@ paths:
           name: url
           description: URL for searching STAC items
           required: true
+        - schema:
+            type: string
+          in: query
+          name: bbox
+          description: 'minx,miny,maxx,maxy'
+        - schema:
+            type: string
+          in: query
+          name: asset
+          description: Asset name of item
+        - schema:
+            type: string
+            enum:
+              - microsoft-pc
+            default: microsoft-pc
+          in: query
+          name: type
+          description: 'type of STAC. e.g., microsoft-pc'
   /storages:
     get:
       summary: Storage search API
