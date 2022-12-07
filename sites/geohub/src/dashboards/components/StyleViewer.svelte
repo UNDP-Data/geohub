@@ -4,13 +4,11 @@
   import { page } from '$app/stores'
   import { map } from '../stores'
   import { MaplibreLegendControl } from '@watergis/maplibre-gl-legend'
-  import AdminLayer from '$lib/adminLayer'
-  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
+  import CurrentLocation from '@undp-data/current-location'
   import MapQueryInfoControl from './MapQueryInfoControl.svelte'
 
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
   let mapContainer: HTMLDivElement
-  let adminLayer: AdminLayer = null
   let isMapLoaded = false
 
   onMount(async () => {
@@ -92,19 +90,9 @@
       map.update(() => tmpMap)
       tmpMap.on('load', async () => {
         await addControls()
-        initAdminLayer()
         isMapLoaded = true
       })
     }
-  }
-
-  const initAdminLayer = () => {
-    if (!$map) return
-    if (!adminLayer) {
-      adminLayer = new AdminLayer($map, PUBLIC_AZURE_URL, false)
-    }
-    adminLayer.load()
-    adminLayer.setInteraction()
   }
 </script>
 
@@ -112,8 +100,13 @@
   class="map"
   id="map"
   bind:this={mapContainer} />
-<CurrentLocation bind:map={$map} />
+
 {#if isMapLoaded}
+  <CurrentLocation
+    bind:map={$map}
+    azureBaseUrl={PUBLIC_AZURE_URL}
+    isHover={false}
+    position="top-left" />
   <MapQueryInfoControl bind:map={$map} />
 {/if}
 

@@ -4,16 +4,14 @@
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
-  import AdminLayer from '$lib/adminLayer'
   import StyleSwicher from '@undp-data/style-switcher'
-  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
+  import CurrentLocation from '@undp-data/current-location'
   import { styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
   import { map, spriteImageList } from '$stores'
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
-  let adminLayer: AdminLayer = null
   let container: HTMLDivElement
 
   onMount(async () => {
@@ -40,7 +38,7 @@
     newMap.addControl(exportControl, 'top-right')
 
     newMap.on('load', () => {
-      initAdminLayer()
+      // initAdminLayer()
       const styleUrl = newMap.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
       const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
       promise
@@ -64,15 +62,6 @@
     })
     map.update(() => newMap)
   })
-
-  const initAdminLayer = () => {
-    if (!$map) return
-    if (!adminLayer) {
-      adminLayer = new AdminLayer($map, PUBLIC_AZURE_URL, false)
-    }
-    adminLayer.load()
-    adminLayer.setInteraction()
-  }
 </script>
 
 <svelte:head>
@@ -90,7 +79,11 @@
   {/if}
 </div>
 
-<CurrentLocation bind:map={$map} />
+<CurrentLocation
+  bind:map={$map}
+  azureBaseUrl={PUBLIC_AZURE_URL}
+  isHover={false}
+  position="top-left" />
 <MapQueryInfoPanel bind:map={$map} />
 <StyleSwicher
   bind:map={$map}

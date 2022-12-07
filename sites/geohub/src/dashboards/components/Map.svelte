@@ -2,10 +2,11 @@
   import { onMount } from 'svelte'
   import { Map, NavigationControl, GeolocateControl, ScaleControl, AttributionControl } from 'maplibre-gl'
 
-  import CurrentLocation from '$lib/components/CurrentLocation.svelte'
+  import CurrentLocation from '@undp-data/current-location'
   import StyleSwicher from '@undp-data/style-switcher'
   import { styles } from '$lib/constants'
   import { map } from '../stores'
+  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   let mapContainer: HTMLDivElement
   let newMap: Map
@@ -40,7 +41,11 @@
   class="map"
   id="map"
   bind:this={mapContainer} />
-<CurrentLocation bind:map={$map} />
+<CurrentLocation
+  bind:map={$map}
+  azureBaseUrl={PUBLIC_AZURE_URL}
+  isHover={true}
+  position="top-left" />
 <StyleSwicher
   bind:map={$map}
   {styles}
