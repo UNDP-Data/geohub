@@ -21,7 +21,7 @@ export class AdminLayer {
 	}
 
 	public load() {
-		if (!this.map) return
+		if (!this.map) return;
 		const lvl = this.getAdminLevel();
 		const layerSource: SourceSpecification = {
 			type: 'vector',
@@ -69,7 +69,7 @@ export class AdminLayer {
 	}
 
 	public setInteraction() {
-		if (!this.map) return
+		if (!this.map) return;
 		this.adminLevel = this.getAdminLevel();
 		this.map?.on('mousemove', this.ADM_ID, this.onAdminMouseMove.bind(this));
 		this.map?.on('mouseleave', this.ADM_ID, this.onAdminMouseLeave.bind(this));
