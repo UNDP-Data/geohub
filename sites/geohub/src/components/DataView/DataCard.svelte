@@ -8,12 +8,12 @@
     VectorTileMetadata,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
-  import Accordion from './controls/Accordion.svelte'
-  import MiniMap from './MiniMap.svelte'
+  import Accordion from '$components/controls/Accordion.svelte'
+  import MiniMap from '$components/DataView/MiniMap.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
-  import DataCardInfo from './DataCardInfo.svelte'
-  import AddLayerButton from './controls/AddLayerButton.svelte'
-  import DataStacAssetCard from './DataStacAssetCard.svelte'
+  import DataCardInfo from '$components/DataView/DataCardInfo.svelte'
+  import AddLayerButton from '$components/DataView/AddLayerButton.svelte'
+  import DataStacAssetCard from '$components/DataView/DataStacAssetCard.svelte'
 
   export let feature: StacItemFeature
   let isExpanded: boolean
@@ -214,9 +214,9 @@
 {/if}
 
 <style lang="scss">
-  @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/cta-link.min.css';
-  @use '../styles/undp-design/radio.min.css';
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/cta-link.min.css';
+  @use '../../styles/undp-design/radio.min.css';
   .card-container {
     display: flex;
     flex-direction: column;

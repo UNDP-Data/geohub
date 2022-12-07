@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
   import type { DataCategory } from '$lib/types'
-  import DataCategoryCard from './DataCategoryCard.svelte'
+  import DataCategoryCard from '$components/DataView/DataCategoryCard.svelte'
   import { indicatorProgress } from '$stores'
   import { onMount } from 'svelte'
 

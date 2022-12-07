@@ -4,9 +4,9 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import { SortingColumns } from '$lib/constants'
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
-  import PanelButton from './PanelButton.svelte'
+  import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
-  import TagFilter from './TagFilter.svelte'
+  import TagFilter from '$components/DataView/TagFilter.svelte'
   import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()
