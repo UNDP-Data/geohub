@@ -6,7 +6,7 @@
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
-  import TagFilter from '$components/DataView/TagFilter.svelte'
+  import TagFilter from '$components/data-view/TagFilter.svelte'
   import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()

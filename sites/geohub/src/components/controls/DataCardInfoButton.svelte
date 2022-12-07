@@ -3,7 +3,7 @@
   import Popper from '$lib/popper'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
-  import DataCardInfo from '$components/DataView/DataCardInfo.svelte'
+  import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
 
   export let layer: Layer = undefined
 

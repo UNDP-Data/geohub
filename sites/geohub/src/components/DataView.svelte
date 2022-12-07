@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import type { DataCategory, DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
-  import DataCard from '$components/DataView/DataCard.svelte'
+  import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
-  import TextFilter from '$components/DataView/TextFilter.svelte'
+  import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
   import { SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams } from '$lib/constants'
-  import DataCategoryCardList from '$components/DataView/DataCategoryCardList.svelte'
+  import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import Breadcrumbs from '$components/controls/Breadcrumbs.svelte'
   import type { Tag } from '$lib/types/Tag'
 

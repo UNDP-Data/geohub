@@ -9,11 +9,11 @@
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
   import Accordion from '$components/controls/Accordion.svelte'
-  import MiniMap from '$components/DataView/MiniMap.svelte'
+  import MiniMap from '$components/data-view/MiniMap.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
-  import DataCardInfo from '$components/DataView/DataCardInfo.svelte'
-  import AddLayerButton from '$components/DataView/AddLayerButton.svelte'
-  import DataStacAssetCard from '$components/DataView/DataStacAssetCard.svelte'
+  import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
+  import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
+  import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
 
   export let feature: StacItemFeature
   let isExpanded: boolean
