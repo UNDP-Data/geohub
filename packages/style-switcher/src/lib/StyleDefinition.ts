@@ -1,4 +1,4 @@
 export interface StyleDefinition {
-  title: string
-  uri: string
+	title: string;
+	uri: string;
 }
