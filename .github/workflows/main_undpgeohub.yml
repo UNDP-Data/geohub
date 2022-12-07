@@ -67,12 +67,13 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm --filter="./sites/geohub" install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
         uses: SpicyPizza/create-envfile@v1.3
         with:
+          directory: ./sites/geohub
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
           envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
@@ -83,24 +84,24 @@ jobs:
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}   
 
       - name: Run lint
-        run: pnpm lint
+        run: pnpm --filter="./sites/geohub" lint
 
       - name: Run Prettier
-        run: pnpm format
+        run: pnpm --filter="./sites/geohub" format
 
       - name: Run build
-        run: pnpm build:ci
+        run: pnpm --filter="./sites/geohub" build:ci
 
       - name: Run unit tests
-        run: pnpm test
+        run: pnpm --filter="./sites/geohub" test
 
       - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
           pnpm install --prod
           cp package.json build/.
-          cp pnpm-lock.yaml build/.
           mv node_modules build/.
 
       - name: 'Deploy to Azure Web App for undpgeohub-dev'
@@ -111,7 +112,7 @@ jobs:
           app-name: 'undpgeohub-dev'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
-          package: build
+          package: sites/geohub/build
 
       - name: 'Deploy to Azure for undpgeohub'
         id: deploy-to-webapp
@@ -121,4 +122,4 @@ jobs:
           app-name: 'undpgeohub'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
-          package: build
+          package: sites/geohub/build
