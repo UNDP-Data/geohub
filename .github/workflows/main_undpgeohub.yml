@@ -108,7 +108,7 @@ jobs:
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
-          pnpm install --prod
+          pnpm --filter="." install --prod
           cp package.json build/.
           cp pnpm-lock.yaml build/.
           mv node_modules build/.
