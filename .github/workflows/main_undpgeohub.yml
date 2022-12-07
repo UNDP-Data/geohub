@@ -67,7 +67,7 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm --filter="./sites/geohub" install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
@@ -83,27 +83,28 @@ jobs:
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}   
 
       - name: Run lint
-        run: pnpm lint
+        run: pnpm --filter="./sites/geohub" lint
 
       - name: Run Prettier
-        run: pnpm format
+        run: pnpm --filter="./sites/geohub" format
 
       - name: Run build
-        run: pnpm build:ci
+        run: pnpm --filter="./sites/geohub" build:ci
 
       - name: Run unit tests
-        run: pnpm test
+        run: pnpm --filter="./sites/geohub" test
 
       - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
           pnpm install --prod
           cp package.json build/.
-          cp pnpm-lock.yaml build/.
           mv node_modules build/.
 
       - name: 'Deploy to Azure Web App for undpgeohub-dev'
+        working-directory: ./sites/geohub
         id: deploy-to-webapp-dev
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/develop'}}
@@ -114,6 +115,7 @@ jobs:
           package: build
 
       - name: 'Deploy to Azure for undpgeohub'
+        working-directory: ./sites/geohub
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/main'}}

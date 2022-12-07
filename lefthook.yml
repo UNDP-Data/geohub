@@ -7,14 +7,14 @@ pre-push:
   commands:
     build:
       tags: build
-      run: pnpm build
+      run: pnpm --filter="./sites/*" build
 
 pre-commit:
   # parallel: true
   commands:
     1_lint:
       tags: lint
-      run: pnpm lint
+      run: pnpm --filter="./sites/*" lint
     2_format:
-      tags: prettier
-      run: pnpm format
+      tags: format
+      run: pnpm --filter="./sites/*" format
