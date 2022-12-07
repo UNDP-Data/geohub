@@ -104,7 +104,6 @@ jobs:
           mv node_modules build/.
 
       - name: 'Deploy to Azure Web App for undpgeohub-dev'
-        working-directory: ./sites/geohub
         id: deploy-to-webapp-dev
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/develop'}}
@@ -112,10 +111,9 @@ jobs:
           app-name: 'undpgeohub-dev'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
-          package: build
+          package: sites/geohub/build
 
       - name: 'Deploy to Azure for undpgeohub'
-        working-directory: ./sites/geohub
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/main'}}
@@ -123,4 +121,4 @@ jobs:
           app-name: 'undpgeohub'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
-          package: build
+          package: sites/geohub/build
