@@ -1,3 +1,4 @@
 packages:
   - 'sites/geohub'
+  - 'packages/geohub-cli'
   
