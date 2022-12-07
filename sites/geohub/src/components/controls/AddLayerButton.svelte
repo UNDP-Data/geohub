@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { e } from 'mathjs'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
@@ -12,6 +11,7 @@
 </script>
 
 {#if isIconButton}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span
     class="button-icon fa-stack fa-xl"
     role="button"
@@ -22,6 +22,7 @@
   </span>
 {:else}
   <!-- svelte-ignore a11y-missing-attribute -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <a
     class="button button-primary button-without-arrow"
     role="button"
@@ -40,11 +41,14 @@
   }
 
   .button-icon {
+    width: 30px;
+    height: 30px;
+
     .fa-stack-1x {
       width: auto;
       height: auto;
-      top: -7px;
-      right: 3px;
+      top: -13px;
+      right: -10px;
       color: d12800;
     }
     color: #d12800;
