@@ -76,9 +76,9 @@
 </div>
 
 <style lang="scss">
-  @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/buttons.min.css';
-  @use '../styles/undp-design/cta-link.min.css';
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/buttons.min.css';
+  @use '../../styles/undp-design/cta-link.min.css';
 
   .container {
     display: flex;

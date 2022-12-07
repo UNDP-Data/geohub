@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { AssetOptions, BannerMessage, StacItemFeature } from '$lib/types'
-  import Accordion from './controls/Accordion.svelte'
-  import AddLayerButton from './controls/AddLayerButton.svelte'
+  import Accordion from '$components/controls/Accordion.svelte'
+  import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
@@ -79,6 +79,3 @@
       on:clicked={() => addStacMosaicLayer(asset)} />
   </div>
 </Accordion>
-
-<style lang="scss">
-</style>
