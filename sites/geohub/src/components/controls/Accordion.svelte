@@ -42,20 +42,21 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-    }
 
-    .accordion-button {
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
+      .accordion-button {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
 
-    .accordion-header {
-      padding-left: 0.5rem;
-      padding-right: 1.2rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-transform: capitalize;
+      .accordion-header {
+        padding-left: 0.5rem;
+        padding-right: 1.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: capitalize;
+        width: 90%;
+      }
     }
 
     .accordion-content {
