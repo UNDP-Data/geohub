@@ -4,8 +4,8 @@ importers:
 
   .:
     specifiers:
-      lefthook: ^1.2.0
-    devDependencies:
+      lefthook: ^1.2.4
+    dependencies:
       lefthook: 1.2.4
 
   sites/geohub:
@@ -2929,7 +2929,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-darwin-x64/1.2.4:
@@ -2937,7 +2937,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-freebsd-arm64/1.2.4:
@@ -2945,7 +2945,7 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-freebsd-x64/1.2.4:
@@ -2953,7 +2953,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-linux-arm64/1.2.4:
@@ -2961,7 +2961,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-linux-x64/1.2.4:
@@ -2969,7 +2969,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-windows-arm64/1.2.4:
@@ -2977,7 +2977,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook-windows-x64/1.2.4:
@@ -2985,7 +2985,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
+    dev: false
     optional: true
 
   /lefthook/1.2.4:
@@ -3001,7 +3001,7 @@ packages:
       lefthook-linux-x64: 1.2.4
       lefthook-windows-arm64: 1.2.4
       lefthook-windows-x64: 1.2.4
-    dev: true
+    dev: false
 
   /lerp/1.0.3:
     resolution: {integrity: sha512-70Rh4rCkJDvwWiTsyZ1HmJGvnyfFah4m6iTux29XmasRiZPDBpT9Cfa4ai73+uLZxnlKruUS62jj2lb11wURiA==}
