@@ -2,6 +2,12 @@ lockfileVersion: 5.4
 
 importers:
 
+  .:
+    specifiers:
+      lefthook: ^1.2.0
+    devDependencies:
+      lefthook: 1.2.4
+
   sites/geohub:
     specifiers:
       '@arkweid/lefthook': ^0.7.7
@@ -2927,6 +2933,85 @@ packages:
   /kleur/4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
+    dev: true
+
+  /lefthook-darwin-arm64/1.2.4:
+    resolution: {integrity: sha512-c3pzGWT6YuStgH0BWzlOpghJSiQTDvoXbjOmlolBKbN46KSLwclbVbeSpp2vfAtuQvGP1RIo02aMYngsVjX5DA==}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-darwin-x64/1.2.4:
+    resolution: {integrity: sha512-7HrmSd9GR3pe2bKq0She2pvdGLjaB2KKlREDqbREfe+vWrC+WqzeV/xUncKk+8mz6BCHyPq0XfuZqsztluXN5w==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-freebsd-arm64/1.2.4:
+    resolution: {integrity: sha512-VkUoz3xrW70XJ82y3vAz1vfZOdUCe/8z4W2h3YMIBaR/Ovrt9PwtWHtSWEM5LrTBkgi1BbIP7hZtu7HbMw/siQ==}
+    cpu: [arm64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-freebsd-x64/1.2.4:
+    resolution: {integrity: sha512-e/ycIWt9WB3T/8KGy1aXY16AbVRGYXI4kw7jDp+GT5Lqile609mA9HCPubm4uPQK5PEtvYTB8R3c19LCDGqyeQ==}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-linux-arm64/1.2.4:
+    resolution: {integrity: sha512-GDpfnt71Tx3+H14RcZr294of+ZTSANZ8v7dp86fATc2odZnvRCi31mGb2b0SjWGTvnsD9fnXcdvhOPsG2/+qIA==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-linux-x64/1.2.4:
+    resolution: {integrity: sha512-wNVsG0oOZVYqK5RIYZgY7aYPCoVaWkx4SGpTQiPrgiVeXRm2AgY/+U7Pv6Nim9KZppQXemNjaA83dA0DvOOufg==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-windows-arm64/1.2.4:
+    resolution: {integrity: sha512-t2xdxZQdbEYSlAaCwxJVphwmz1XQI9guGVkTfZEEbBswzNvDAUBr+w2l/ySDvA8fLrIyQI3D2czMQSslhAXqAQ==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook-windows-x64/1.2.4:
+    resolution: {integrity: sha512-0K2UeSEAdMXDNHF8FSjGS/ZlAhfMDQ8lHSkBnGXF+68W7Uo62X27yDAJHKAMDjmQKh45V7NuDaVj8dq+m0mnwQ==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /lefthook/1.2.4:
+    resolution: {integrity: sha512-DQOqqub4WmRFDsiTBye5GWy2TIsGdtJmkOrkK3zYBmUWoD7nuHodtMI4+JgrDgHCC1crB8LV/pMSaQOo2dsOHA==}
+    hasBin: true
+    requiresBuild: true
+    optionalDependencies:
+      lefthook-darwin-arm64: 1.2.4
+      lefthook-darwin-x64: 1.2.4
+      lefthook-freebsd-arm64: 1.2.4
+      lefthook-freebsd-x64: 1.2.4
+      lefthook-linux-arm64: 1.2.4
+      lefthook-linux-x64: 1.2.4
+      lefthook-windows-arm64: 1.2.4
+      lefthook-windows-x64: 1.2.4
     dev: true
 
   /lerp/1.0.3:
