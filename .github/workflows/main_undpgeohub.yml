@@ -72,6 +72,7 @@ jobs:
       # setup environmental variables
       - name: Create environment file
         uses: SpicyPizza/create-envfile@v1.3
+        working-directory: ./sites/geohub
         with:
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
