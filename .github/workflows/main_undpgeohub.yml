@@ -102,6 +102,7 @@ jobs:
           rm -rf node_modules
           pnpm install --prod
           cp package.json build/.
+          cp pnpm-lock.yaml build/.
           mv node_modules build/.
 
       - name: 'Deploy to Azure Web App for undpgeohub-dev'
