@@ -5,7 +5,7 @@
 
   import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
   import AdminLayer from '$lib/adminLayer'
-  import StyleSwicher from '$lib/components/StyleSwitcher.svelte'
+  import StyleSwicher from '@undp-data/style-switcher'
   import CurrentLocation from '$lib/components/CurrentLocation.svelte'
   import { styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
@@ -15,7 +15,6 @@
 
   let adminLayer: AdminLayer = null
   let container: HTMLDivElement
-  let isStyleSwitcherVisible = false
 
   onMount(async () => {
     const newMap = new Map({
@@ -67,8 +66,6 @@
   })
 
   const initAdminLayer = () => {
-    isStyleSwitcherVisible = true
-
     if (!$map) return
     if (!adminLayer) {
       adminLayer = new AdminLayer($map, PUBLIC_AZURE_URL, false)
@@ -95,9 +92,10 @@
 
 <CurrentLocation bind:map={$map} />
 <MapQueryInfoPanel bind:map={$map} />
-{#if isStyleSwitcherVisible}
-  <StyleSwicher bind:map={$map} />
-{/if}
+<StyleSwicher
+  bind:map={$map}
+  {styles}
+  position="bottom-left" />
 
 <style lang="scss">
   .map {

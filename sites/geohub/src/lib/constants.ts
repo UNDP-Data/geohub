@@ -1,4 +1,5 @@
-import type { DataCategory, Layer, StyleDefinition } from '$lib/types'
+import type { DataCategory, Layer } from '$lib/types'
+import type { StyleDefinition } from '@undp-data/style-switcher'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -42,6 +43,7 @@ export const LayerInitialValues: Layer = {
   id: '',
   name: 'GeoHub',
   info: {},
+  dataset: undefined,
 }
 
 export enum ErrorMessages {
