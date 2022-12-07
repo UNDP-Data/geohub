@@ -67,7 +67,9 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: pnpm --filter="./sites/geohub" install --frozen-lockfile
+        run: |
+          pnpm --filter="./packages/*" install --frozen-lockfile
+          pnpm --filter="./sites/geohub" install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
@@ -84,13 +86,19 @@ jobs:
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}   
 
       - name: Run lint
-        run: pnpm --filter="./sites/geohub" lint
+        run: |
+          pnpm --filter="./packages/*" lint
+          pnpm --filter="./sites/geohub" lint
 
       - name: Run Prettier
-        run: pnpm --filter="./sites/geohub" format
+        run: |
+          pnpm --filter="./packages/*" format
+          pnpm --filter="./sites/geohub" format
 
       - name: Run build
-        run: pnpm --filter="./sites/geohub" build:ci
+        run: |
+          pnpm --filter="./packages/*" build
+          pnpm --filter="./sites/geohub" build:ci
 
       - name: Run unit tests
         run: pnpm --filter="./sites/geohub" test
