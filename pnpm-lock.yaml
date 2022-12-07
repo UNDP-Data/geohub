@@ -10,7 +10,6 @@ importers:
 
   sites/geohub:
     specifiers:
-      '@arkweid/lefthook': ^0.7.7
       '@azure/storage-blob': ^12.12.0
       '@creativebulma/bulma-tooltip': ^1.2.0
       '@fortawesome/fontawesome-svg-core': ^6.2.1
@@ -95,7 +94,6 @@ importers:
       vite: ^3.2.5
       vitest: ^0.25.4
     dependencies:
-      '@arkweid/lefthook': 0.7.7
       '@azure/storage-blob': 12.12.0
       '@creativebulma/bulma-tooltip': 1.2.0
       '@fortawesome/fontawesome-svg-core': 6.2.1
@@ -186,15 +184,6 @@ packages:
   /@adobe/css-tools/4.0.1:
     resolution: {integrity: sha512-+u76oB43nOHrF4DDWRLWDCtci7f3QJoEBigemIdIeTi1ODqjx6Tad9NCVnPRwewWlKkVab5PlK8DCtPTyX7S8g==}
     dev: true
-
-  /@arkweid/lefthook/0.7.7:
-    resolution: {integrity: sha512-Eq30OXKmjxIAIsTtbX2fcF3SNZIXS8yry1u8yty7PQFYRctx04rVlhOJCEB2UmfTh8T2vrOMC9IHHUvvo5zbaQ==}
-    cpu: [x64, arm64, ia32]
-    os: [darwin, linux, win32]
-    deprecated: '@arkweid/lefthook has been renamed to @evilmartians/lefthook, please upgrade to it. You also can use @evilmartians/lefthook-installer'
-    hasBin: true
-    requiresBuild: true
-    dev: false
 
   /@azure/abort-controller/1.1.0:
     resolution: {integrity: sha512-TrRLIoSQVzfAJX9H1JeFjzAoDGcoK1IYX1UImfceTZpsyYfWr09Ss1aHW1y5TrrR3iq6RZLBwJ3E24uwPhwahw==}
