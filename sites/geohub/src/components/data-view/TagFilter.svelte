@@ -10,6 +10,22 @@
   export let operatorType: 'and' | 'or'
   export let currentSearchUrl = ''
 
+  const colorOptions = [
+    'is-black',
+    'is-primary',
+    'is-link',
+    'is-info',
+    'is-success',
+    'is-warning',
+    'is-danger',
+    'is-primary is-light',
+    'is-link is-light',
+    'is-info is-light',
+    'is-success is-light',
+    'is-warning is-light',
+    'is-danger is-light',
+  ]
+
   onMount(async () => {
     if (!(tags && Object.keys(tags).length > 0)) {
       await getTags()
@@ -34,6 +50,9 @@
       selectedTags.splice(selectedTags.indexOf(tag), 1)
       selectedTags = [...selectedTags]
     } else {
+      if (!value.color) {
+        value.color = getTagColor()
+      }
       selectedTags = [...selectedTags, value]
     }
   }
@@ -59,10 +78,28 @@
   const getTagSearchKey = (key: string) => {
     return tagSearchKeys?.find((t) => t.key === key)
   }
+
+  const getTagColor = () => {
+    const index = Math.floor(Math.random() * colorOptions.length)
+    return colorOptions[index]
+  }
 </script>
 
+{#if selectedTags.length > 0}
+  <p class="subtitle is-6 my-0">Selected tags:</p>
+  <div class="container p-0 m-0">
+    {#each selectedTags as tag}
+      <span class="tag is-small m-1 {tag.color}">
+        {tag.value}
+        <button
+          class="delete is-small"
+          on:click={() => handleTagChecked(tag)} />
+      </span>
+    {/each}
+  </div>
+{/if}
+
 <div class="box p-0 m-0 px-4 my-2">
-  <!-- {#if tags && Object.keys(tags).length > 0} -->
   <TreeView
     lineColor="#ff0000"
     iconBackgroundColor="#ff0000"
@@ -96,13 +133,11 @@
       {/if}
     {/key}
   </TreeView>
-  <!-- {:else} -->
   <div
     hidden={tags && Object.keys(tags).length > 0}
     class="loader"
     aria-busy="true"
     aria-live="polite" />
-  <!-- {/if} -->
 </div>
 
 <div class="tile is-vertical pb-2">
@@ -146,6 +181,11 @@
   @use '../../styles/undp-design/buttons.min.css';
   @use '../../styles/undp-design/radio.min.css';
   @use '../../styles/undp-design/loader.min.css';
+
+  .subtitle {
+    border-bottom: 1px solid gray;
+    font-weight: bold;
+  }
 
   .box {
     position: relative;
