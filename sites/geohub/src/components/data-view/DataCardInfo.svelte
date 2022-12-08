@@ -12,7 +12,7 @@
 
 <div class="container">
   {#if feature}
-    <p class="title is-5">{feature.properties.name}</p>
+    <p class="title is-5 has-text-left">{feature.properties.name}</p>
     <slot />
     <div class="description has-text-justified">
       {#if !isFullDescription}

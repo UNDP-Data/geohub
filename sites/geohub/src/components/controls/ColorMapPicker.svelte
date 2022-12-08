@@ -54,7 +54,7 @@
       <Tabs
         bind:tabs
         bind:activeTab={activeColorMapType}
-        tabMargin={10} />
+        tabPaddingLeft={10} />
     </div>
     <div
       tabindex="0"
