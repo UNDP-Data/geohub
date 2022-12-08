@@ -20,7 +20,6 @@
   export let bbox: [number, number, number, number] = undefined
 
   export let isFilterByBBox: boolean = undefined
-  export let height: number = undefined
   export let selectedTags: Tag[] = undefined
   export let tagFilterOperatorType: 'and' | 'or' = undefined
   export let currentSearchUrl: string = undefined
@@ -98,9 +97,7 @@
   }
 </script>
 
-<div
-  class="filter-text"
-  bind:clientHeight={height}>
+<div class="filter-text pt-1">
   <div class="control has-icons-left filter-text-box">
     <input
       data-testid="filter-bucket-input"
@@ -236,9 +233,6 @@
 
   .filter-text {
     display: flex;
-    padding-top: 0.5rem;
-    padding-left: 1em;
-    padding-right: 0.5em;
 
     .filter-text-box {
       position: relative;

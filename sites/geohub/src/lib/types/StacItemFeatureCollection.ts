@@ -5,4 +5,5 @@ export interface StacItemFeatureCollection {
   type: 'FeatureCollection'
   features: StacItemFeature[]
   links: StacLink[]
+  totalCount: number
 }
