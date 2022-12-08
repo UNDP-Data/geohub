@@ -3,7 +3,6 @@ import { error } from '@sveltejs/kit'
 import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
-import { ErrorMessages } from '$lib/constants'
 import { mean, std, median } from 'mathjs'
 
 const propsObj = {}
@@ -31,7 +30,7 @@ const fetchVectorTileInfo = async (path: string, layerName: string) => {
   const layer = tile.layers[layerName]
   if (!layer) {
     // layerName doesn't exist in layers
-    throw error(400, { message: ErrorMessages.NO_LAYER_WITH_THAT_NAME })
+    throw error(400, { message: `We couldn't find a layer with that name.` })
   }
 
   // since we are pushing values, we need to force the attributesArray to be empty at this point
@@ -119,7 +118,7 @@ export const GET: RequestHandler = async ({ url }) => {
     !url.searchParams.has('path') ||
     !url.searchParams.has('layer_name')
   ) {
-    throw error(400, JSON.stringify({ message: ErrorMessages.VECTOR_INFO_BAD_REQUEST }))
+    throw error(400, JSON.stringify({ message: 'Bad request. Please verify the URL and/or parameters.' }))
   }
 
   const path = url.searchParams.get('path')

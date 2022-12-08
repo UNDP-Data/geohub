@@ -1,8 +1,11 @@
 import type { RequestHandler } from './$types'
-import { generateMetadataJson, getMartinTileJson, getPgtileservTileJson } from '$lib/helper'
 import { error } from '@sveltejs/kit'
-import type { TileJson, VectorTileMetadata } from '$lib/types'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
+import type { TileJson } from '$lib/types/TileJson'
+import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
+import { getMartinTileJson } from '$lib/helper/getMartinTileJson'
+import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
+import { generateMetadataJson } from '$lib/helper/generateMetadataJson'
 
 /**
  * /[source]/tile.json?table={tablename}
@@ -17,6 +20,10 @@ export const GET: RequestHandler = async ({ params, url }) => {
 
   if (!table) {
     throw error(400, { message: `Missing table parameter` })
+  }
+
+  if (source === 'pgtileserv' && !['table', 'function'].includes(type)) {
+    throw error(400, { message: `type should be either table or function` })
   }
 
   let tilejson: TileJson

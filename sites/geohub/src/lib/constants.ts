@@ -49,8 +49,6 @@ export const LayerInitialValues: Layer = {
 export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
   FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
-  NO_LAYER_WITH_THAT_NAME = "We couldn't find a layer with that name.",
-  VECTOR_INFO_BAD_REQUEST = 'Bad request. Please verify the URL and/or parameters.',
   MAP_FILTER_NOT_APPLIED = 'The map filter was not applied. Please check the that all filters are valid.',
   EXPRESSION_INVALID = 'The Raster Expression appears to be Invalid. Please check it and try again.',
   NO_STYLE_EXISTS = 'No style id exists in the database',

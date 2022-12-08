@@ -12,7 +12,7 @@ const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT
 import fs from 'fs'
 import path from 'path'
 import { error } from '@sveltejs/kit'
-import { fetchWithTimeout } from '$lib/helper'
+import { fetchWithTimeout } from '$lib/helper/fetchWithTimeout'
 const __dirname = path.resolve()
 
 export const GET: RequestHandler = async ({ url }) => {

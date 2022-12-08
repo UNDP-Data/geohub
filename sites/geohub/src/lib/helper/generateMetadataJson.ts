@@ -1,5 +1,6 @@
-import { error } from '@sveltejs/kit'
-import type { TileJson, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
+import type { TileJson } from '$lib/types/TileJson'
+import type { VectorLayerTileStatLayer } from '$lib/types/VectorLayerTileStatLayer'
+import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
 
 /**
  * generate metadata.json from tilejson
@@ -12,7 +13,7 @@ export const generateMetadataJson = async (tilejson: TileJson, origin: string) =
   const vectorinfoUrl = `${origin}/api/vector/statistics?path=${pbfPath}&layer_name=${tilejson.name}`
   const res = await fetch(vectorinfoUrl)
   if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
+    throw new Error(res.statusText)
   }
   const tilestatsLayer: VectorLayerTileStatLayer = await res.json()
 
