@@ -8,7 +8,6 @@
   export let activeTab: string
 
   export let height: number = undefined
-  export let tabPaddingLeft = 50
   export let fontSize: 'medium' | 'small' = 'medium'
   export let isToggleTab = false
 
@@ -50,7 +49,7 @@
   data-viewport="true"
   bind:clientHeight={height}>
   <ul
-    style="padding-left: {tabPaddingLeft}px"
+    style="padding-left: 0px;  text-align: center;"
     data-deep-link="true"
     data-tabs="true"
     id="tablist_1"

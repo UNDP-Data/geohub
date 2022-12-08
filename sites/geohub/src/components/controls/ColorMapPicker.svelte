@@ -53,8 +53,7 @@
     <div class="column is-11">
       <Tabs
         bind:tabs
-        bind:activeTab={activeColorMapType}
-        tabPaddingLeft={10} />
+        bind:activeTab={activeColorMapType} />
     </div>
     <div
       tabindex="0"

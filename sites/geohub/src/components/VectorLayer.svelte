@@ -67,7 +67,6 @@
     <Tabs
       bind:tabs
       bind:activeTab
-      tabPaddingLeft={20}
       fontSize="small"
       isToggleTab={true} />
 
