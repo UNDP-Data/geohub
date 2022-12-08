@@ -134,9 +134,5 @@
     font-size: large;
     font-weight: bold;
     color: rgb(1, 1, 1, 0.6);
-
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
   }
 </style>

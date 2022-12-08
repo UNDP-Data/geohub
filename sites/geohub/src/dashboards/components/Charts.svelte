@@ -230,10 +230,6 @@
     font-size: 14px;
     color: rgb(1, 1, 1, 0.6);
     font-weight: normal;
-
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
   }
 
   .subtitle-text {

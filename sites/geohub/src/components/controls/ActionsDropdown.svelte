@@ -164,11 +164,5 @@
     position: absolute;
     right: 40px;
     z-index: 1;
-
-    @media (prefers-color-scheme: dark) {
-      background: #323234;
-      border-color: #30363d;
-      color: white;
-    }
   }
 </style>

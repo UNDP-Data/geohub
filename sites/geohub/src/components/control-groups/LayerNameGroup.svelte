@@ -112,10 +112,6 @@
     padding-bottom: 5px;
     margin-bottom: 10px;
     color: #fff;
-
-    @media (prefers-color-scheme: dark) {
-      color: #fff;
-    }
   }
 
   .description,
@@ -123,10 +119,6 @@
     font-weight: normal;
     color: #fff;
     margin-bottom: 10px;
-
-    @media (prefers-color-scheme: dark) {
-      color: #fff;
-    }
   }
 
   .description {

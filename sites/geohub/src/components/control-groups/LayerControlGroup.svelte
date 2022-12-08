@@ -23,10 +23,5 @@
     display: flex;
     justify-content: left;
     padding: 5px;
-
-    @media (prefers-color-scheme: dark) {
-      border-color: #30363d;
-      color: white;
-    }
   }
 </style>
