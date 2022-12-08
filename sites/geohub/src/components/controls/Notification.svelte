@@ -17,7 +17,7 @@
   }
 </script>
 
-<div class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message m-3">
+<div class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message">
   <div class="icon">
     <Fa
       {icon}

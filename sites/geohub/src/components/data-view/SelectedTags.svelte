@@ -3,7 +3,6 @@
 
   export let selectedTags: Tag[] = []
   export let isClearButtonShown = false
-  export let height = 0
 
   const handleTagDeleted = (value: Tag) => {
     const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value)
@@ -15,9 +14,7 @@
 </script>
 
 {#if selectedTags.length > 0}
-  <div
-    class="container tag-container p-1 m-0"
-    bind:clientHeight={height}>
+  <div class="container tag-container p-1 m-0">
     {#each selectedTags as tag}
       <span class="tag is-small m-1 {tag.color}">
         {tag.value}

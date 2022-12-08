@@ -5,7 +5,6 @@
   const dispatch = createEventDispatcher()
 
   export let breadcrumbs: DataCategory[]
-  export let height: number = undefined
 
   const handleClicked = (index: number) => {
     if (!(breadcrumbs && breadcrumbs.length > 0)) return
@@ -21,8 +20,7 @@
   <nav
     aria-label="breadcrumb"
     data-viewport="true"
-    class="breadcrumb-undp inviewport"
-    bind:clientHeight={height}>
+    class="breadcrumb-undp inviewport">
     <ul>
       {#each breadcrumbs as breadcrumb, index}
         {#if index === breadcrumbs.length - 1}

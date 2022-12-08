@@ -12,10 +12,10 @@
   import SelectedTags from './data-view/SelectedTags.svelte'
 
   export let headerHeight: number = undefined
-  export let tabsHeight: number = undefined
-  let textFilterHeight: number
-  let breadcrumbsHeight: number
-  let selectedTagHeight: number
+  export let tabsHeight = 38
+  let optionsHeight = 41.5
+
+  $: totalHeight = headerHeight + tabsHeight + optionsHeight
 
   let containerDivElement: HTMLDivElement
   let breadcrumbs: DataCategory[] = [
@@ -216,38 +216,36 @@
   }
 </script>
 
-<TextFilter
-  placeholder="Type keywords to search data"
-  bind:map={$map}
-  bind:sortingColumn
-  bind:orderType
-  bind:bbox
-  bind:isFilterByBBox
-  bind:selectedTags
-  bind:tagFilterOperatorType
-  bind:currentSearchUrl
-  bind:height={textFilterHeight}
-  bind:clear={clearFiltertext}
-  on:change={handleFilterInput}
-  on:clear={clearFilter} />
+<div
+  class="container mx-4"
+  bind:clientHeight={optionsHeight}>
+  <TextFilter
+    placeholder="Type keywords to search data"
+    bind:map={$map}
+    bind:sortingColumn
+    bind:orderType
+    bind:bbox
+    bind:isFilterByBBox
+    bind:selectedTags
+    bind:tagFilterOperatorType
+    bind:currentSearchUrl
+    bind:clear={clearFiltertext}
+    on:change={handleFilterInput}
+    on:clear={clearFilter} />
 
-<div class="container mx-4">
   <Breadcrumbs
     bind:breadcrumbs
-    bind:height={breadcrumbsHeight}
     on:clicked={handleBreadcrumpClicked} />
+  <SelectedTags
+    bind:selectedTags
+    isClearButtonShown={true} />
+  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
+    <Notification type="info">{DataItemFeatureCollection.totalCount} datasets found.</Notification>
+  {/if}
 </div>
-<SelectedTags
-  bind:selectedTags
-  bind:height={selectedTagHeight}
-  isClearButtonShown={true} />
 <div
   class="container data-view-container mx-4"
-  style="height: calc(100vh - {headerHeight +
-    tabsHeight +
-    textFilterHeight +
-    breadcrumbsHeight +
-    selectedTagHeight}px);overflow-y: scroll"
+  style="height: calc(100vh - {totalHeight}px);overflow-y: scroll"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
@@ -256,11 +254,11 @@
         <DataCard {feature} />
       {/each}
       {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-        <Notification type="info">All data loaded</Notification>
+        <Notification type="info">All data loaded.</Notification>
       {/if}
     {/key}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <Notification type="warning">No data found</Notification>
+    <Notification type="warning">No data found. Try another keyword.</Notification>
   {:else}
     <DataCategoryCardList
       categories={DataCategories}

@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types'
 import { error } from '@sveltejs/kit'
-import pkg from 'pg'
+import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/variables/private'
@@ -172,6 +172,8 @@ export const GET: RequestHandler = async ({ url }) => {
 
     geojson.links = links
 
+    geojson.totalCount = await getTotalCount(client, whereExpressesion.sql, values)
+
     // add SAS token if it is Azure Blob source
     const sasToken = generateAzureBlobSasToken()
     geojson.features.forEach((feature) => {
@@ -186,6 +188,21 @@ export const GET: RequestHandler = async ({ url }) => {
     client.release()
     pool.end()
   }
+}
+
+const getTotalCount = async (client: PoolClient, whereSql: string, values: string[]) => {
+  const sql = {
+    text: `
+        SELECT
+          COUNT(x.id) as count
+        FROM geohub.dataset x
+      ${whereSql}
+    `,
+    values: values,
+  }
+  const res = await client.query(sql)
+  const count = Number(res.rows[0]['count'])
+  return count
 }
 
 const generateAzureBlobSasToken = () => {
