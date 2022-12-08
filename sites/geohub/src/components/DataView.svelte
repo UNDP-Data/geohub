@@ -33,14 +33,8 @@
   let isFilterByBBox = false
   let selectedTags: Tag[] = []
   let tagFilterOperatorType: 'and' | 'or' = 'and'
-  let currentSearchUrl = ''
-
   let DataItemFeatureCollection: StacItemFeatureCollection
-  $: DataItemFeatureCollection, setCurrentSearchUrl()
-
-  const setCurrentSearchUrl = () => {
-    currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
-  }
+  $: currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
 
   const fetchNextDatasets = async () => {
     if (DataItemFeatureCollection?.features.length === 0) return
@@ -137,6 +131,7 @@
     ) {
       DataItemFeatureCollection = undefined
       breadcrumbs = [breadcrumbs[0]]
+      currentSearchUrl = ''
       return
     }
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
