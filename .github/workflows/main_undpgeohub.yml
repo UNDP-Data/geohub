@@ -68,8 +68,8 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          pnpm --filter="./packages/*" install --frozen-lockfile
-          pnpm --filter="./sites/geohub" install --frozen-lockfile
+          echo "shared-workspace-lockfile = false" >> .npmrc
+          pnpm install
 
       # setup environmental variables
       - name: Create environment file
