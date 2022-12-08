@@ -18,14 +18,16 @@
 {/if}
 
 <div
-  class="layer-list"
+  class="layer-list mx-2"
   style="height: calc(100vh - {headerHeight + tabsHeight + marginTop}px); margin-top: {marginTop}px;">
   {#each $layerList as layer (layer.id)}
-    {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
-      <RasterLayer {layer} />
-    {:else}
-      <VectorLayer {layer} />
-    {/if}
+    <div class="box p-0 mx-1 my-3">
+      {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
+        <RasterLayer {layer} />
+      {:else}
+        <VectorLayer {layer} />
+      {/if}
+    </div>
   {/each}
 </div>
 
