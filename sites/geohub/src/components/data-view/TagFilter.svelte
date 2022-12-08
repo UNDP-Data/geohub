@@ -3,12 +3,29 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
+  import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}
 
   export let selectedTags: Tag[]
   export let operatorType: 'and' | 'or'
   export let currentSearchUrl = ''
+
+  const colorOptions = [
+    'is-black',
+    'is-primary',
+    'is-link',
+    'is-info',
+    'is-success',
+    'is-warning',
+    'is-danger',
+    'is-primary is-light',
+    'is-link is-light',
+    'is-info is-light',
+    'is-success is-light',
+    'is-warning is-light',
+    'is-danger is-light',
+  ]
 
   onMount(async () => {
     if (!(tags && Object.keys(tags).length > 0)) {
@@ -34,6 +51,9 @@
       selectedTags.splice(selectedTags.indexOf(tag), 1)
       selectedTags = [...selectedTags]
     } else {
+      if (!value.color) {
+        value.color = getTagColor()
+      }
       selectedTags = [...selectedTags, value]
     }
   }
@@ -59,10 +79,18 @@
   const getTagSearchKey = (key: string) => {
     return tagSearchKeys?.find((t) => t.key === key)
   }
+
+  const getTagColor = () => {
+    const index = Math.floor(Math.random() * colorOptions.length)
+    return colorOptions[index]
+  }
 </script>
 
+<SelectedTags
+  bind:selectedTags
+  isClearButtonShown={true} />
+
 <div class="box p-0 m-0 px-4 my-2">
-  <!-- {#if tags && Object.keys(tags).length > 0} -->
   <TreeView
     lineColor="#ff0000"
     iconBackgroundColor="#ff0000"
@@ -96,13 +124,11 @@
       {/if}
     {/key}
   </TreeView>
-  <!-- {:else} -->
   <div
     hidden={tags && Object.keys(tags).length > 0}
     class="loader"
     aria-busy="true"
     aria-live="polite" />
-  <!-- {/if} -->
 </div>
 
 <div class="tile is-vertical pb-2">
@@ -147,17 +173,21 @@
   @use '../../styles/undp-design/radio.min.css';
   @use '../../styles/undp-design/loader.min.css';
 
+  .subtitle {
+    border-bottom: 1px solid gray;
+    font-weight: bold;
+  }
+
   .box {
     position: relative;
-    min-height: 200px;
-    max-height: 250px;
+    height: 150px;
     overflow-y: auto;
     border: 1px solid gray;
 
     .loader {
       position: absolute;
       z-index: 10;
-      top: 40px;
+      top: 25px;
       left: 50px;
       background-color: white;
       transform: translate(-25%, -35%);
