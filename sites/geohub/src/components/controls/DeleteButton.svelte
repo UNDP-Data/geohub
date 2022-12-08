@@ -115,10 +115,4 @@
       width: 450px;
     }
   }
-
-  :global(.mdc-button__label) {
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
-  }
 </style>

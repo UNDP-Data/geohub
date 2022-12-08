@@ -85,10 +85,6 @@
     padding: 1px;
     width: 20px;
 
-    @media (prefers-color-scheme: dark) {
-      border: 1px solid hsl(0, 0%, 100%);
-    }
-
     &:hover {
       border: 1px solid hsl(204, 86%, 53%);
       padding: 0;

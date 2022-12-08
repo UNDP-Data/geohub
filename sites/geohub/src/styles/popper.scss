@@ -9,10 +9,6 @@
   position: relative;
   z-index: 10;
 
-  @media (prefers-color-scheme: dark) {
-    background: #212125;
-  }
-
   #arrow,
   #arrow::before {
     background: #fff;
@@ -21,10 +17,6 @@
     position: absolute;
     width: 18px;
     z-index: 1;
-
-    @media (prefers-color-scheme: dark) {
-      background: #212125;
-    }
   }
 
   #arrow {

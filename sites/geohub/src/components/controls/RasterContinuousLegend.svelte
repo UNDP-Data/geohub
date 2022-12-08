@@ -129,11 +129,6 @@
   .group {
     padding: 2px;
 
-    @media (prefers-color-scheme: dark) {
-      background: #323234;
-      color: white;
-    }
-
     .range-slider {
       --range-handle-focus: #2196f3;
       --range-handle-inactive: #2196f3;

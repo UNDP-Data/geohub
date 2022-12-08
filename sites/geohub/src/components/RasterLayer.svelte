@@ -107,7 +107,7 @@
 </script>
 
 <div
-  class="raster-layer-container pl-1 has-background-white-bis"
+  class="raster-layer-container has-background-white-bis"
   transition:fade>
   <nav class="panel">
     <p class="panel-heading has-background-grey-lighter">
@@ -170,9 +170,6 @@
     border-bottom: 2px solid $dark-red !important;
   }
   .raster-layer-container {
-    // margin-left: 15px;
-    // margin-bottom: 20px;
-
     .panel-tabs {
       padding-top: 10px;
       border: none;
