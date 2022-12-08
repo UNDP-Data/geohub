@@ -1,5 +1,4 @@
 import { DatasetSearchQueryParams } from '$lib/constants'
-import { error } from '@sveltejs/kit'
 
 export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: string) => {
   let query = url.searchParams.get('query')
@@ -9,14 +8,14 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
   if (bbox) {
     bboxCoordinates = bbox.split(',').map((val) => Number(val))
     if (bboxCoordinates.length !== 4) {
-      throw error(400, 'Invalid bbox')
+      throw new Error('Invalid bbox')
     }
   }
 
   const operatorOptions = ['and', 'or']
   const operator = url.searchParams.get('operator') ?? operatorOptions[0]
   if (!(operator && operatorOptions.includes(operator.toLowerCase()))) {
-    throw error(400, `Bad parameter for 'operator'. It must be one of '${operatorOptions.join(', ')}'`)
+    throw new Error(`Bad parameter for 'operator'. It must be one of '${operatorOptions.join(', ')}'`)
   }
 
   const filters: { key: string; value: string }[] = []

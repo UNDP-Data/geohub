@@ -1,6 +1,10 @@
 import type { RequestHandler } from './$types'
-import { generateMetadataJson, getMartinTileJson, getPgtileservTileJson, getStaticPbfMetadataJson } from '$lib/helper'
-import type { TileJson, VectorTileMetadata } from '$lib/types'
+import type { TileJson } from '$lib/types/TileJson'
+import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
+import { getStaticPbfMetadataJson } from '$lib/helper/getStaticPbfMetadataJson'
+import { getMartinTileJson } from '$lib/helper/getMartinTileJson'
+import { generateMetadataJson } from '$lib/helper/generateMetadataJson'
+import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
@@ -27,11 +31,14 @@ export const GET: RequestHandler = async ({ url, params }) => {
       break
     case 'martin':
       tilejson = await getMartinTileJson(table, PUBLIC_MARTIN_API_ENDPOINT)
-      metadatajson = await generateMetadataJson(tilejson, url.origin)
+      if (!tilejson) {
+        throw error(404, { message: `table: ${table} not found.` })
+      }
+      metadatajson = await generateMetadataJson(tilejson)
       break
     case 'pgtileserv':
       tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
-      metadatajson = await generateMetadataJson(tilejson, url.origin)
+      metadatajson = await generateMetadataJson(tilejson)
       break
     default:
       throw error(400, { message: `Invalid source parameter.` })

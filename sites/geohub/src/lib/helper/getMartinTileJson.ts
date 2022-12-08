@@ -1,8 +1,11 @@
-import { error } from '@sveltejs/kit'
-import type { MartinLayerMetadata, TileJson } from '$lib/types'
+import type { MartinLayerMetadata } from '$lib/types/MartinLayerMetadata'
+import type { TileJson } from '$lib/types/TileJson'
 
 export const getMartinTileJson = async (table: string, martinUrl: string) => {
   const indexJson = await getIndexJson(table, martinUrl)
+  if (!indexJson) {
+    return
+  }
   // convert tilejson v2.2.0 to v3.0.0
   const tilejson = await getTileJson(table, indexJson, martinUrl)
   return tilejson
@@ -12,14 +15,6 @@ const getIndexJson = async (table: string, martinUrl: string) => {
   const url = `${martinUrl}/index.json`
   const res = await fetch(url)
   const json: { [key: string]: MartinLayerMetadata } = await res.json()
-  if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
-  }
-
-  if (!json[table]) {
-    throw error(404, { message: `${table} does not exist.` })
-  }
-
   return json[table]
 }
 
@@ -28,7 +23,7 @@ const getTileJson = async (table: string, indexJson: MartinLayerMetadata, martin
   const res = await fetch(url)
   const tilejson: TileJson = await res.json()
   if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
+    throw new Error(res.statusText)
   }
 
   const fields: { [key: string]: string } = {}

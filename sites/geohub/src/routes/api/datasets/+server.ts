@@ -10,7 +10,7 @@ const connectionString = DATABASE_CONNECTION
 import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
 import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
-import { createDatasetSearchWhereExpression } from '$lib/helper'
+import { createDatasetSearchWhereExpression } from '$lib/helper/createDatasetSearchWhereExpression'
 
 /**
  * Datasets search API
@@ -184,6 +184,8 @@ export const GET: RequestHandler = async ({ url }) => {
     })
 
     return new Response(JSON.stringify(geojson))
+  } catch (err) {
+    throw error(400, JSON.stringify({ message: err.message }))
   } finally {
     client.release()
     pool.end()

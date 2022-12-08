@@ -5,7 +5,7 @@ const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/variables/private'
 import type { Tag } from '$lib/types/Tag'
-import { createDatasetSearchWhereExpression } from '$lib/helper'
+import { createDatasetSearchWhereExpression } from '$lib/helper/createDatasetSearchWhereExpression'
 const connectionString = DATABASE_CONNECTION
 
 /**

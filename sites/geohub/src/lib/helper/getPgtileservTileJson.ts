@@ -1,11 +1,8 @@
-import { error } from '@sveltejs/kit'
-import type { PgtileservDetailJson, PgtileservIndexJson, TileJson } from '$lib/types'
+import type { PgtileservDetailJson } from '$lib/types/PgtileservDetailJson'
+import type { PgtileservIndexJson } from '$lib/types/PgtileservIndexJson'
+import type { TileJson } from '$lib/types/TileJson'
 
 export const getPgtileservTileJson = async (table: string, type: string, pgtileservUrl: string) => {
-  if (!['table', 'function'].includes(type)) {
-    throw error(400, { message: `type should be either table or function` })
-  }
-
   const indexJson = await getIndexJson(table, pgtileservUrl)
   const detailUrl: string = indexJson.detailurl
   const tilejson = await getTileJson(detailUrl)
@@ -16,20 +13,12 @@ const getIndexJson = async (table: string, pgtileservUrl: string) => {
   const url = `${pgtileservUrl}/index.json`
   const res = await fetch(url)
   const json: PgtileservIndexJson = await res.json()
-  if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
-  }
-
   return json[table]
 }
 
 const getTileJson = async (url: string) => {
   const res = await fetch(url)
   const json: PgtileservDetailJson = await res.json()
-  if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
-  }
-
   const fields: { [key: string]: string } = {}
   json.properties?.forEach((prop) => {
     fields[prop.name] = `${prop.type}. ${prop.description}`
