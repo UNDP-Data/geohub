@@ -3,6 +3,7 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
+  import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}
 
@@ -85,19 +86,9 @@
   }
 </script>
 
-{#if selectedTags.length > 0}
-  <p class="subtitle is-6 my-0">Selected tags:</p>
-  <div class="container p-0 m-0">
-    {#each selectedTags as tag}
-      <span class="tag is-small m-1 {tag.color}">
-        {tag.value}
-        <button
-          class="delete is-small"
-          on:click={() => handleTagChecked(tag)} />
-      </span>
-    {/each}
-  </div>
-{/if}
+<SelectedTags
+  bind:selectedTags
+  isClearButtonShown={true} />
 
 <div class="box p-0 m-0 px-4 my-2">
   <TreeView
@@ -189,15 +180,14 @@
 
   .box {
     position: relative;
-    min-height: 200px;
-    max-height: 250px;
+    height: 150px;
     overflow-y: auto;
     border: 1px solid gray;
 
     .loader {
       position: absolute;
       z-index: 10;
-      top: 40px;
+      top: 25px;
       left: 50px;
       background-color: white;
       transform: translate(-25%, -35%);

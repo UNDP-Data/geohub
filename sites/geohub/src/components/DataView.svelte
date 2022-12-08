@@ -9,11 +9,13 @@
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import Breadcrumbs from '$components/controls/Breadcrumbs.svelte'
   import type { Tag } from '$lib/types/Tag'
+  import SelectedTags from './data-view/SelectedTags.svelte'
 
   export let headerHeight: number = undefined
   export let tabsHeight: number = undefined
   let textFilterHeight: number
   let breadcrumbsHeight: number
+  let selectedTagHeight: number
 
   let containerDivElement: HTMLDivElement
   let breadcrumbs: DataCategory[] = [
@@ -127,7 +129,11 @@
   const handleTagChanged = async () => {
     if (
       selectedTags.length === 0 &&
-      !(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets'))
+      !(
+        breadcrumbs.length > 0 &&
+        breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets') &&
+        breadcrumbs[breadcrumbs.length - 1].name !== 'Search result'
+      )
     ) {
       DataItemFeatureCollection = undefined
       breadcrumbs = [breadcrumbs[0]]
@@ -231,9 +237,17 @@
     bind:height={breadcrumbsHeight}
     on:clicked={handleBreadcrumpClicked} />
 </div>
+<SelectedTags
+  bind:selectedTags
+  bind:height={selectedTagHeight}
+  isClearButtonShown={true} />
 <div
   class="container data-view-container mx-4"
-  style="height: calc(100vh - {headerHeight + tabsHeight + textFilterHeight + breadcrumbsHeight}px);overflow-y: scroll"
+  style="height: calc(100vh - {headerHeight +
+    tabsHeight +
+    textFilterHeight +
+    breadcrumbsHeight +
+    selectedTagHeight}px);overflow-y: scroll"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}

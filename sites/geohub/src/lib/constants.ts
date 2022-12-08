@@ -290,4 +290,8 @@ export const tagSearchKeys = [
     key: 'theme',
     label: 'Theme',
   },
+  {
+    key: 'schema',
+    label: 'Schema',
+  },
 ]
