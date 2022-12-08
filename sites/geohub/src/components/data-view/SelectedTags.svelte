@@ -14,7 +14,7 @@
 </script>
 
 {#if selectedTags.length > 0}
-  <div class="container tag-container p-1 m-0">
+  <div class="container tag-container p-1 m-0 mb-2">
     {#each selectedTags as tag}
       <span class="tag is-small m-1 {tag.color}">
         {tag.value}
