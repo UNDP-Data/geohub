@@ -1,18 +1,13 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
   import { fade } from 'svelte/transition'
-  import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet'
-  import { faShuffle } from '@fortawesome/free-solid-svg-icons/faShuffle'
-  import { faList } from '@fortawesome/free-solid-svg-icons/faList'
-
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import { ClassificationMethodTypes, DynamicLayerLegendTypes, LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
-  import { faChartColumn } from '@fortawesome/free-solid-svg-icons/faChartColumn'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
+  import Tabs from '$components//controls/Tabs.svelte'
 
   export let layer: Layer = LayerInitialValues
   let expressions: RasterSimpleExpression[]
@@ -50,58 +45,24 @@
   }
 
   let tabs = [
-    { label: TabNames.LEGEND, icon: faList, active: false },
-    { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
-    { label: TabNames.TRANSFORM, icon: faShuffle, active: false },
-    { label: TabNames.OPACITY, icon: faDroplet, active: false },
+    { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+    { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
+    { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
+    { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
 
   $: {
     const rasterInfo = layer.info as RasterTileMetadata
     if (rasterInfo?.isMosaicJson === true) {
       // disable other menus since they are not working for mosaicjson layer currently
-      tabs = [{ label: TabNames.OPACITY, icon: faDroplet, active: false }]
+      tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
       if (rasterInfo.band_metadata.length < 2) {
         tabs = [
-          { label: TabNames.LEGEND, icon: faList, active: false },
-          { label: TabNames.HISTOGRAM, icon: faChartColumn, active: false },
+          { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+          { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
           ...tabs,
         ]
       }
-    }
-  }
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowLeft') {
-      setLeftActiveTab(activeTab)
-    }
-    if (event.key === 'ArrowRight') {
-      setRightActiveTab(activeTab)
-    }
-  }
-
-  const setLeftActiveTab = (currentActiveTab: string) => {
-    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
-    const nextTabIndex = currentTabIndex - 1
-    if (nextTabIndex < 0) {
-      activeTab = tabs[tabs.length - 1].label
-      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
-    } else {
-      activeTab = tabs[nextTabIndex].label
-      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
-    }
-  }
-
-  const setRightActiveTab = (currentActiveTab: string) => {
-    const currentTabIndex = tabs.findIndex((tab) => tab.label === currentActiveTab)
-    const nextTabIndex = currentTabIndex + 1
-    const nextTab = tabs[nextTabIndex]
-    if (nextTab) {
-      activeTab = nextTab.label
-      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
-    } else {
-      activeTab = tabs[0].label
-      document.getElementById(`${activeTab}-${layer.id}`)?.focus()
     }
   }
 </script>
@@ -113,30 +74,11 @@
     <p class="panel-heading has-background-grey-lighter">
       <LayerNameGroup {layer} />
     </p>
-    <ul
-      class="panel-tabs"
-      role="tablist"
-      tabindex="0">
-      {#each tabs as tab, index}
-        <li>
-          <a
-            role="tab"
-            aria-label={tab.label}
-            id={`${tab.label}-${layer.id}`}
-            on:keydown={handleKeyDown}
-            href={'#'}
-            on:click={() => (activeTab === tab.label ? (activeTab = '') : (activeTab = tab.label))}
-            class={activeTab === tab.label ? 'is-active' : ''}>
-            <span>
-              <Fa
-                icon={tab.icon}
-                size="sm" />
-            </span>
-            {tab.label}
-          </a>
-        </li>
-      {/each}
-    </ul>
+    <Tabs
+      bind:tabs
+      bind:activeTab
+      fontSize="small"
+      isToggleTab={true} />
 
     <p class="panel-content">
       {#if isLegendPanelVisible === true}
@@ -163,29 +105,7 @@
 </div>
 
 <style lang="scss">
-  $gray-700: #232e3d;
-  $dark-red: #d12800;
-
-  .is-active {
-    border-bottom: 2px solid $dark-red !important;
-  }
   .raster-layer-container {
-    .panel-tabs {
-      padding-top: 10px;
-      border: none;
-
-      a {
-        margin-right: 5px;
-        font-weight: bold;
-        text-transform: capitalize;
-        color: $gray-700;
-        font-family: ProximaNova, sans-serif;
-
-        span {
-          margin-right: 3px;
-        }
-      }
-    }
     .panel-content {
       padding: 10px;
       padding-top: 15px;

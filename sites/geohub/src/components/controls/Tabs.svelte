@@ -8,7 +8,8 @@
   export let activeTab: string
 
   export let height: number = undefined
-  export let tabMargin = 50
+  export let fontSize: 'medium' | 'small' = 'medium'
+  export let isToggleTab = false
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft') {
@@ -48,14 +49,14 @@
   data-viewport="true"
   bind:clientHeight={height}>
   <ul
+    style="padding-left: 0px;  text-align: center;"
     data-deep-link="true"
     data-tabs="true"
     id="tablist_1"
     role="tablist">
     {#each tabs as tab}
       <li
-        class="tabs-title {`${activeTab && activeTab === tab.label ? 'is-active' : ''}`}"
-        style="margin-left: {tabMargin}px!important;"
+        class="tabs-title {`${activeTab && activeTab === tab.label ? 'is-active' : ''}`} px-1"
         role="presentation">
         <a
           aria-selected="true"
@@ -65,9 +66,13 @@
           tabindex={Number(`${activeTab && activeTab === tab.label ? '0' : '-1'}`)}
           on:keydown={handleKeyDown}
           on:click={() => {
-            activeTab = tab.label
+            if (isToggleTab && activeTab === tab.label) {
+              activeTab = undefined
+            } else {
+              activeTab = tab.label
+            }
           }}>
-          <span class="icon-text">
+          <span class="icon-text {fontSize === 'small' ? 'is-size-7' : 'is-size-6'}">
             {#if tab.icon}
               <span class="icon">
                 <i class={tab.icon} />
