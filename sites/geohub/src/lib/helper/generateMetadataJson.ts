@@ -1,6 +1,7 @@
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorLayerTileStatLayer } from '$lib/types/VectorLayerTileStatLayer'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
+import { fetchVectorTileInfo } from './fetchVectorInfo'
 
 /**
  * generate metadata.json from tilejson
@@ -8,14 +9,9 @@ import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
  * @param origin URL origin
  * @returns return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
  */
-export const generateMetadataJson = async (tilejson: TileJson, origin: string) => {
+export const generateMetadataJson = async (tilejson: TileJson) => {
   const pbfPath = tilejson.tiles[0].replace('{z}/{x}/{y}', '0/0/0')
-  const vectorinfoUrl = `${origin}/api/vector/statistics?path=${pbfPath}&layer_name=${tilejson.name}`
-  const res = await fetch(vectorinfoUrl)
-  if (!res.ok) {
-    throw new Error(res.statusText)
-  }
-  const tilestatsLayer: VectorLayerTileStatLayer = await res.json()
+  const tilestatsLayer: VectorLayerTileStatLayer = await fetchVectorTileInfo(pbfPath, tilejson.name)
 
   const data: VectorTileMetadata = {
     name: tilejson.name,

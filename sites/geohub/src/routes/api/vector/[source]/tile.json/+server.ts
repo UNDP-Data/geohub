@@ -35,7 +35,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
     case 'pgtileserv':
       tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
       if (tilejson.vector_layers.length === 0) {
-        metadatajson = await generateMetadataJson(tilejson, url.origin)
+        metadatajson = await generateMetadataJson(tilejson)
         tilejson.vector_layers = metadatajson.json.vector_layers
         tilejson.geometrytype = metadatajson.json.tilestats.layers[0].geometry
       }

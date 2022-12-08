@@ -34,11 +34,11 @@ export const GET: RequestHandler = async ({ url, params }) => {
       if (!tilejson) {
         throw error(404, { message: `table: ${table} not found.` })
       }
-      metadatajson = await generateMetadataJson(tilejson, url.origin)
+      metadatajson = await generateMetadataJson(tilejson)
       break
     case 'pgtileserv':
       tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
-      metadatajson = await generateMetadataJson(tilejson, url.origin)
+      metadatajson = await generateMetadataJson(tilejson)
       break
     default:
       throw error(400, { message: `Invalid source parameter.` })
