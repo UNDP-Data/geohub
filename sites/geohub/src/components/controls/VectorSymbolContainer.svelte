@@ -1,9 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { fade, slide } from 'svelte/transition'
-  import Fa from 'svelte-fa'
-  import { faRetweet } from '@fortawesome/free-solid-svg-icons/faRetweet'
-  import { faPalette } from '@fortawesome/free-solid-svg-icons/faPalette'
   import { cloneDeep } from 'lodash-es'
 
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
@@ -140,10 +137,9 @@
       on:keydown={handleEnterKey}
       data-testid="legend-toggle-container"
       on:keydown={handleEnterKey}>
-      <Fa
-        icon={faRetweet}
-        style="font-size: 16px; color:white"
-        spin={isLegendSwitchAnimate} />
+      <i
+        class="fa-solid fa-retweet {isLegendSwitchAnimate ? 'fa-spin' : ''}"
+        style="font-size: 16px; color: white" />
     </div>
     <br />
 
@@ -158,9 +154,9 @@
         on:keydown={handleEnterKey}
         data-testid="colormap-toggle-container"
         transition:fade>
-        <Fa
-          icon={faPalette}
-          style="font-size: 16px; color:white" />
+        <i
+          class="fa-solid fa-palette"
+          style="font-size: 16px; color: white" />
       </div>
     {/if}
 

@@ -4,8 +4,6 @@
   import { page } from '$app/stores'
   import { Map } from 'maplibre-gl'
   import Time from 'svelte-time'
-  import Fa from 'svelte-fa'
-  import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons/faEllipsisVertical'
   import { clickOutside } from 'svelte-use-click-outside'
   import Popper from '$lib/popper'
   import type { BannerMessage } from '$lib/types'
@@ -135,9 +133,7 @@
           use:popperRef
           on:click={() => (showContextMenu = !showContextMenu)}
           on:keydown={handleEnterKey}>
-          <Fa
-            icon={faEllipsisVertical}
-            size="sm" />
+          <i class="fa-solid fa-ellipsis-vertical fa-sm" />
         </div>
         {#if showContextMenu}
           <div

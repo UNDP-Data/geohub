@@ -1,11 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Fa from 'svelte-fa'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-  import { faEquals } from '@fortawesome/free-solid-svg-icons/faEquals'
-  import { faPlusMinus } from '@fortawesome/free-solid-svg-icons/faPlusMinus'
-  import { faArrowDown19 } from '@fortawesome/free-solid-svg-icons/faArrowDown19'
-  import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons/faSquareRootVariable'
   import RasterOpCat from '$components/controls/RasterOpCat.svelte'
   import type { Layer, OperatorCategory } from '$lib/types'
   import { getActiveBandIndex } from '$lib/helper'
@@ -25,28 +19,28 @@
     {
       name: 'arithmetic',
       title: 'Arithmetic',
-      icon: faPlusMinus,
+      icon: 'fa-solid fa-plus-minus',
       operators: ['*', '/', '+', '-', '%', '**'],
       isVisible: true,
     },
     {
       name: 'numbers',
       title: 'Numbers',
-      icon: faArrowDown19,
+      icon: 'fa-solid fa-arrow-down-1-9',
       operators: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '(', ')'],
       isVisible: true,
     },
     {
       name: 'comparison',
       title: 'Comparison',
-      icon: faEquals,
+      icon: 'fa-solid fa-equals',
       operators: ['==', '!=', '>=', '<', '>', '<='],
       isVisible: true,
     },
     {
       name: 'functions',
       title: 'Functions',
-      icon: faSquareRootVariable,
+      icon: 'fa-solid fa-square-root-variable',
       operators: ['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'where'],
       isVisible: true,
     },
@@ -153,8 +147,8 @@
                       activeOperatorCategory = operatorCategory.name
                       operatorCategory.isVisible = !operatorCategory.isVisible
                     }}>
-                    <Fa
-                      icon={operatorCategory.icon}
+                    <i
+                      class="fa-solid {operatorCategory.icon}"
                       style="font-size: 16px; color: #232E3D" />
                   </a>
                 </li>
@@ -171,7 +165,7 @@
           aria-label="Close Expression Builder"
           on:click={handleClosePopup}
           on:keydown={handleEnterKey}>
-          <Fa icon={faXmark} />
+          <i class="fa-solid fa-xmark" />
         </div>
       </div>
     </div>

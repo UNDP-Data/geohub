@@ -2,9 +2,7 @@
   import RasterExpressionBuilder from '$components/controls/RasterExpressionBuilder.svelte'
   import { fade } from 'svelte/transition'
   import type { BannerMessage, Layer, RasterLayerStats, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
-  import Fa from 'svelte-fa'
   import Popper from '$lib/popper'
-  import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator'
   import {
     fetchUrl,
     getActiveBandIndex,
@@ -428,8 +426,8 @@
       on:keydown={handleEnterKey}
       data-testid="expression-builder-button"
       use:popperRef>
-      <Fa
-        icon={faCalculator}
+      <i
+        class="fa-solid fa-calculator"
         style="font-size: 16px; color: white" />
     </div>
 

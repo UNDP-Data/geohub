@@ -1,8 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
-  import Fa from 'svelte-fa'
-  import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
 
   import { LayerInitialValues } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
@@ -59,9 +57,7 @@
   data-tooltip="Delete layer"
   on:click={() => (confirmDeleteLayerDialogVisible = true)}
   on:keydown={handleKeyDown}>
-  <Fa
-    icon={faTrash}
-    size="sm" />
+  <i class="fa-solid fa-trash fa-sm" />
 </div>
 
 {#if confirmDeleteLayerDialogVisible}

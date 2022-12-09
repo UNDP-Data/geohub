@@ -1,9 +1,5 @@
 <script lang="ts">
   import type { LayerSpecification } from 'maplibre-gl'
-  import Fa from 'svelte-fa'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
-  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
-
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -59,12 +55,10 @@
     data-tooltip="Bring Forward in Map"
     on:click={() => hierachyUp(layerId)}
     on:keydown={handleUpKeyEnter}>
-    <Fa
-      class="arrow-icon"
-      icon={faChevronUp}
-      size="1x" />
+    <i class="arrow-icon fa-solid fa-chevron-up" />
   </div>
   <div style="width: 10px" />
+  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <div
     class="icon-selected has-tooltip-bottom"
     title="Bring Layer Down"
@@ -73,10 +67,7 @@
     data-tooltip="Bring Backward in Map"
     on:click={() => hierachyDown(layerId)}
     on:keydown={handleDownKeyEnter}>
-    <Fa
-      class="arrow-icon"
-      icon={faChevronDown}
-      size="1x" />
+    <i class="arrow-icon fa-solid fa-chevron-down" />
   </div>
 </div>
 

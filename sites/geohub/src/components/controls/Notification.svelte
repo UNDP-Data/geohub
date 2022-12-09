@@ -1,28 +1,22 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
-  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-  import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation'
-  import { faSkullCrossbones } from '@fortawesome/free-solid-svg-icons/faSkullCrossbones'
-
   export let type: 'info' | 'warning' | 'danger' | '' = 'info'
 
   let color = 'dodgerblue'
-  let icon = faCircleInfo
+  let icon = 'fa-solid fa-circle-info'
   if (type === 'warning') {
-    icon = faTriangleExclamation
+    icon = 'fa-solid fa-triangle-exclamation'
     color = '#ffcc00'
   } else if (type === 'danger') {
-    icon = faSkullCrossbones
+    icon = 'fa-solid fa-skull-crossbones'
     color = '#cc3300'
   }
 </script>
 
 <div class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message">
   <div class="icon">
-    <Fa
-      {icon}
-      size="lg"
-      primaryColor={color} />
+    <i
+      class="fa-solid {icon} fa-lg"
+      style="color:{color}" />
   </div>
   <div class="text"><slot /></div>
 </div>

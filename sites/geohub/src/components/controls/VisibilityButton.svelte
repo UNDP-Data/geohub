@@ -1,9 +1,5 @@
 <script lang="ts">
   import { cloneDeep } from 'lodash-es'
-  import Fa from 'svelte-fa'
-  import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash'
-  import { faEye } from '@fortawesome/free-solid-svg-icons/faEye'
-
   import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -55,9 +51,7 @@
   data-tooltip={`${visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}`}
   on:click={() => toggleVisibility()}
   on:keydown={handleKeyDown}>
-  <Fa
-    icon={visibility === 'visible' ? faEye : faEyeSlash}
-    size="sm" />
+  <i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-sm" />
 </div>
 
 <style lang="scss">

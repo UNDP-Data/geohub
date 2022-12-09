@@ -3,15 +3,6 @@
   import maplibregl, { LngLat, Map, MapMouseEvent, Marker } from 'maplibre-gl'
   import { draggable } from '@neodrag/svelte'
   import PapaParse from 'papaparse'
-  import Fa from 'svelte-fa'
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
-  import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
-  import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload'
-  import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-  import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare'
-  import { faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons/faUpDownLeftRight'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-
   import { layerList } from '$stores'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { downloadFile, fetchUrl, getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper'
@@ -26,7 +17,6 @@
   let marker: Marker
   let clickedLocation: LngLat
 
-  const iconSize = 'lg'
   const noDataLabel = 'N/A'
 
   // eslint-disable-next-line
@@ -282,21 +272,18 @@
         alt="Move Query Information"
         title="Move Query Information">
         <span class="icon is-small pointer">
-          <Fa
-            icon={faUpDownLeftRight}
-            size={iconSize} />
+          <i class="fa-solid fa-up-down-left-right fa-lg" />
         </span>
       </div>
 
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         class="close"
         alt="Close Query Information"
         title="Close Query Information"
         on:click={() => resetMapQueryInfo()}>
         <span class="icon is-small pointer">
-          <Fa
-            icon={faXmark}
-            size={iconSize} />
+          <i class="fa-solid fa-xmark fa-lg" />
         </span>
       </div>
     </div>
@@ -368,17 +355,14 @@
                   {/if}
                 {:else}
                   <td class="second-column">
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <div
                       class="expand-collapse"
                       on:click={() => (layerValuesExpanded[i] = !layerValuesExpanded[i])}>
                       {#if layerValuesExpanded[i] === undefined || layerValuesExpanded[i] === false}
-                        <Fa
-                          icon={faChevronDown}
-                          size="sm" />
+                        <i class="fa-solid fa-chevron-down fa-sm" />
                       {:else}
-                        <Fa
-                          icon={faChevronUp}
-                          size="sm" />
+                        <i class="fa-solid fa-chevron-up fa-sm" />
                       {/if}
                     </div>
                   </td>
@@ -410,13 +394,12 @@
 
       {#if layerValuesData.length > 0}
         <div class="actions">
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
             class="rounded-values"
             on:click={() => (isValuesRounded = !isValuesRounded)}>
             <div class="icon is-small">
-              <Fa
-                icon={isValuesRounded ? faSquareCheck : faSquare}
-                size="1x" />
+              <i class="fa-solid {isValuesRounded ? 'fa-square-check' : 'fa-square'}" />
             </div>
             <div>Round values</div>
           </div>
@@ -428,9 +411,7 @@
               alt="Download GeoJSON"
               title="Download GeoJSON">
               <span class="icon is-small pointer">
-                <Fa
-                  icon={faDownload}
-                  size={iconSize} />
+                <i class="fa-solid fa-download fa-lg" />
               </span>
               <span class="label">GeoJSON</span>
             </button>
@@ -443,9 +424,7 @@
               alt="Download CSV"
               title="Download CSV">
               <span class="icon is-small pointer">
-                <Fa
-                  icon={faDownload}
-                  size={iconSize} />
+                <i class="fa-solid fa-download fa-lg" />
               </span>
               <span class="label">CSV</span>
             </button>

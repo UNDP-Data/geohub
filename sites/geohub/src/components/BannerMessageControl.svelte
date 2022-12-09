@@ -1,9 +1,4 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
-  import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-  import { faBan } from '@fortawesome/free-solid-svg-icons/faBan'
-  import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation'
-
   import { StatusTypes } from '$lib/constants'
   import { bannerMessages } from '$stores'
   import type { BannerMessage } from '$lib/types'
@@ -55,20 +50,17 @@
       <div class="tile p-0 m-0">
         <div class="tile is-child is-1 pt-2 pl-4 m-0">
           {#if currentBannerMessage.type === StatusTypes.INFO}
-            <Fa
-              icon={faCircleInfo}
-              size="2x"
-              primaryColor="hsl(204, 86%, 53%)" />
+            <i
+              class="fa-solid fa-circle-info fa-2xl"
+              style="color:hsl(204, 86%, 53%);" />
           {:else if currentBannerMessage.type === StatusTypes.DANGER}
-            <Fa
-              icon={faBan}
-              size="2x"
-              primaryColor="hsl(348, 100%, 61%)" />
+            <i
+              class="fa-solid fa-ban fa-2xl"
+              style="color:hsl(348, 100%, 61%);" />
           {:else if currentBannerMessage.type === StatusTypes.WARNING}
-            <Fa
-              icon={faTriangleExclamation}
-              size="2x"
-              primaryColor="hsl(36, 100%, 50%)" />
+            <i
+              class="fa-solid fa-triangle-exclamation fa-2xl"
+              style="color:hsl(36, 100%, 50%);" />
           {/if}
         </div>
         <div class="tile py-0 m-0">

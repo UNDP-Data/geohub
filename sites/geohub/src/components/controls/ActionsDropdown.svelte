@@ -2,9 +2,6 @@
   import type { LayerSpecification } from 'maplibre-gl'
   import type { LngLatBoundsLike } from 'maplibre-gl'
   import { fade } from 'svelte/transition'
-  import Fa from 'svelte-fa'
-  import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight'
-  import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass'
   import { createPopperActions } from 'svelte-popperjs'
 
   import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
@@ -13,7 +10,6 @@
   import { map } from '$stores'
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
   import { clickOutside } from 'svelte-use-click-outside'
-  import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft'
   import { getLayerStyle } from '$lib/helper'
 
   export let layer: Layer = LayerInitialValues
@@ -103,10 +99,10 @@
   on:keydown={handleKeyDown}
   style="margin-right: 0; cursor: pointer;">
   {#if showTooltip}
-    <Fa icon={faChevronLeft} />
+    <i class="fa-solid fa-chevron-left" />
   {/if}
   {#if !showTooltip}
-    <Fa icon={faChevronRight} />
+    <i class="fa-solid fa-chevron-right" />
   {/if}
 </div>
 
@@ -127,9 +123,7 @@
         data-tooltip="Zoom to layer"
         on:click={handleZoomToLayerClick}
         on:keydown={handleZoomKeyDown}>
-        <Fa
-          icon={faMagnifyingGlass}
-          size="sm" />
+        <i class="fa-solid fa-magnifying-glass fa-sm" />
       </div>
     </div>
 
