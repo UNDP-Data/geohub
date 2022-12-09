@@ -203,6 +203,12 @@
         last = breadcrumbs[breadcrumbs.length - 1]
       }
       DataItemFeatureCollection = undefined
+
+      breadcrumbs = [...breadcrumbs]
+
+      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
+        selectedTags = []
+      }
     }
   }
 
