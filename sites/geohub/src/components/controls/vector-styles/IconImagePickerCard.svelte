@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Fa from 'svelte-fa'
-  import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
   import { clean } from '$lib/helper'
 
   export let iconImageAlt: string
@@ -47,7 +45,7 @@
           class="selected"
           alt="Icon Selected"
           title="Icon Selected">
-          <Fa icon={faCheck} />
+          <i class="fa-solid fa-check" />
         </div>
       {/if}
     </div>

@@ -1,8 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
-  import Fa from 'svelte-fa'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
-
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
   import { spriteImageList } from '$stores'
 
@@ -95,7 +92,7 @@
       alt="Close Icon Picker"
       title="Close Icon Picker"
       on:click={handleClosePopup}>
-      <Fa icon={faXmark} />
+      <i class="fa-solid fa-xmark" />
     </div>
   </div>
   <div class="columns">

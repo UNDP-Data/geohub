@@ -1,7 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Fa from 'svelte-fa'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
@@ -55,6 +53,7 @@
         bind:tabs
         bind:activeTab={activeColorMapType} />
     </div>
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
       tabindex="0"
       class="column is-1 close"
@@ -62,7 +61,7 @@
       title="Close Colormap Picker"
       on:click={handleClosePopup}
       on:keydown={handleEnterKey}>
-      <Fa icon={faXmark} />
+      <i class="fa-solid fa-xmark" />
     </div>
   </div>
   <div class="columns">

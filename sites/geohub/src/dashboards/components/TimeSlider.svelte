@@ -6,12 +6,12 @@
   import { fetchUrl } from '$lib/helper'
   import { map, year } from '../stores'
   import { reloadAdmin } from '../utils/adminLayer'
-  import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
   export let BEFORE_LAYER_ID = undefined
   export let electricitySelected: {
     name: string
-    icon: IconDefinition
+    icon: string
+    title: string
   }
 
   import { PUBLIC_TITILER_ENDPOINT, PUBLIC_AZURE_BLOB_TOKEN, PUBLIC_AZURE_URL } from '$lib/variables/public'

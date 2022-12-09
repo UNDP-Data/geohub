@@ -48,6 +48,7 @@
 </div>
 
 <style lang="scss">
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
   @import '../../styles/undp-design/base-minimal.min.css';
   @import '../../styles/undp-design/fonts.css';
   @import '../../styles/undp-design/footer.min.css';

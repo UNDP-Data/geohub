@@ -1,8 +1,3 @@
-<script lang="ts">
-  import Fa from 'svelte-fa'
-  import { faHome } from '@fortawesome/free-solid-svg-icons/faHome'
-</script>
-
 <header class="country-header">
   <section class="header">
     <div class="grid-container fluid">
@@ -28,7 +23,7 @@
           class="cell large-3 small-3 top-right"
           style="cursor: pointer;"
           on:click={() => window.open('/')}>
-          <Fa icon={faHome} />
+          <i class="fa-solid fa-home" />
         </div>
       </div>
     </div>

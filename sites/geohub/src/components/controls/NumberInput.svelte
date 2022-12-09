@@ -1,8 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import Fa from 'svelte-fa'
-  import { faCircleMinus } from '@fortawesome/free-solid-svg-icons/faCircleMinus'
-  import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
   import BigNumber from 'bignumber.js'
 
   const dispatch = createEventDispatcher()
@@ -57,6 +54,7 @@
   class="container is-flex is-justify-content-center"
   data-testid="number-input-view-container">
   <div class="row">
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
       class={`minus ${value === minValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('-')}
@@ -64,7 +62,7 @@
       tabindex="0"
       alt="Decrease number"
       title="Decrease number">
-      <Fa icon={faCircleMinus} />
+      <i class="fa-solid fa-circle-minus" />
     </div>
     <div
       class="tag is-info is-light is-medium"
@@ -72,6 +70,7 @@
       title="Number Label">
       {round(value, countDecimals(step)).toFixed(countDecimals(step))}
     </div>
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
       class={`plus ${value === maxValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('+')}
@@ -79,7 +78,7 @@
       tabindex="0"
       alt="Increase number"
       title="Increase number">
-      <Fa icon={faCirclePlus} />
+      <i class="fa-solid fa-circle-plus" />
     </div>
   </div>
 </div>

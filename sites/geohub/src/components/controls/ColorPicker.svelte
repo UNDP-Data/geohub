@@ -1,8 +1,6 @@
 <script lang="ts">
   import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker'
   import { createEventDispatcher } from 'svelte'
-  import Fa from 'svelte-fa'
-  import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { Color } from '$lib/types'
   import chroma from 'chroma-js'
@@ -44,14 +42,13 @@
   class="default-color-picker-container"
   data-testid="default-color-picker-container"
   use:clickOutside={handleClose}>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="close is-clickable"
     alt="Close Color Picker"
     title="Close Color Picker"
     on:click={handleClose}>
-    <Fa
-      icon={faXmark}
-      size="sm" />
+    <i class="fa-solid fa-xmark fa-sm" />
   </div>
   <ColorPicker
     components={ChromeVariant}
