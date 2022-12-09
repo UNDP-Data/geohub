@@ -27,6 +27,7 @@
   ]
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
+  let queryForSearch: string
   let sortingColumn: DataSortingColumn = 'name'
   let orderType: DataOrderType = 'asc'
   let bbox: [number, number, number, number]
@@ -61,6 +62,8 @@
       const apiUrl = new URL(url)
 
       if (breadcrumbs.length === 1) {
+        if (!query && selectedTags.length === 0) return
+
         breadcrumbs = [
           ...breadcrumbs,
           {
@@ -69,13 +72,27 @@
             url: url.replace(apiUrl.origin, ''),
           },
         ]
+      } else if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
+        if (breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/tags')) {
+          breadcrumbs.pop()
+          breadcrumbs = [
+            ...breadcrumbs,
+            {
+              name: 'Search result',
+              icon: 'fas fa-magnifying-glass',
+              url: url.replace(apiUrl.origin, ''),
+            },
+          ]
+        } else {
+          return
+        }
       }
 
-      if (query) {
-        if (query.length === 0) {
+      if (queryForSearch) {
+        if (queryForSearch.length === 0) {
           apiUrl.searchParams.delete('query')
         } else {
-          apiUrl.searchParams.set('query', query)
+          apiUrl.searchParams.set('query', queryForSearch)
         }
       }
 
@@ -121,19 +138,27 @@
   $: selectedTags, handleTagChanged()
   $: tagFilterOperatorType, handleTagChanged()
   const handleTagChanged = async () => {
-    if (
-      selectedTags.length === 0 &&
-      !(
-        breadcrumbs.length > 0 &&
-        breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets') &&
-        breadcrumbs[breadcrumbs.length - 1].name !== 'Search result'
-      )
-    ) {
+    if (breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].name !== 'Search result') {
+      if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
+        if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
+          DataItemFeatureCollection = undefined
+          breadcrumbs.pop()
+          breadcrumbs = [...breadcrumbs]
+          currentSearchUrl = ''
+          return
+        }
+      }
+    }
+
+    if (breadcrumbs.length <= 2 && selectedTags.length === 0 && !query) {
       DataItemFeatureCollection = undefined
-      breadcrumbs = [breadcrumbs[0]]
-      currentSearchUrl = ''
+      if (breadcrumbs.length > 1) {
+        breadcrumbs.pop()
+        breadcrumbs = [...breadcrumbs]
+      }
       return
     }
+
     const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
     let url = `${$page.url.origin}/api/datasets`
     if (link) {
@@ -143,8 +168,6 @@
   }
 
   const handleFilterInput = async (e) => {
-    query = e.detail.query
-
     if (
       !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
       query === ''
@@ -160,12 +183,18 @@
   }
 
   const clearFilter = async () => {
-    query = ''
+    clearFiltertext()
     if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.url?.startsWith('/api/datasets')) {
-        const url = `${$page.url.origin}${lastCategory.url}`
-        await searchDatasets(url)
+        if (lastCategory.name === 'Search result' && selectedTags.length === 0) {
+          breadcrumbs.pop()
+          breadcrumbs = [...breadcrumbs]
+          DataItemFeatureCollection = undefined
+        } else {
+          const url = `${$page.url.origin}${lastCategory.url}`
+          await searchDatasets(url)
+        }
         return
       }
     }
@@ -191,10 +220,10 @@
 
     if (index === 0) {
       // home
+      clearFiltertext()
       breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
       selectedTags = []
-      clearFiltertext()
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -203,11 +232,18 @@
         last = breadcrumbs[breadcrumbs.length - 1]
       }
       DataItemFeatureCollection = undefined
+
+      breadcrumbs = [...breadcrumbs]
+
+      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
+        selectedTags = []
+      }
     }
   }
 
   let clearFiltertext = () => {
-    return
+    query = ''
+    queryForSearch = ''
   }
 </script>
 
@@ -217,6 +253,8 @@
   <TextFilter
     placeholder="Type keywords to search data"
     bind:map={$map}
+    bind:query
+    bind:queryForSearch
     bind:sortingColumn
     bind:orderType
     bind:bbox
@@ -224,7 +262,6 @@
     bind:selectedTags
     bind:tagFilterOperatorType
     bind:currentSearchUrl
-    bind:clear={clearFiltertext}
     on:change={handleFilterInput}
     on:clear={clearFilter} />
 
