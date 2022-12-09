@@ -49,15 +49,18 @@
   on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
 
 <div
-  class="container icon-selected has-tooltip-bottom"
-  tabindex="0"
-  role="button"
-  title="Delete layer"
-  aria-label="Delete layer"
-  data-tooltip="Delete layer"
-  on:click={() => (confirmDeleteLayerDialogVisible = true)}
-  on:keydown={handleKeyDown}>
-  <i class="fa-solid fa-trash fa-sm" />
+  class="has-tooltip-bottom"
+  data-tooltip="Delete layer">
+  <div
+    class="container icon-selected"
+    tabindex="0"
+    role="button"
+    title="Delete layer"
+    aria-label="Delete layer"
+    on:click={() => (confirmDeleteLayerDialogVisible = true)}
+    on:keydown={handleKeyDown}>
+    <i class="fa-solid fa-trash fa-sm" />
+  </div>
 </div>
 
 {#if confirmDeleteLayerDialogVisible}

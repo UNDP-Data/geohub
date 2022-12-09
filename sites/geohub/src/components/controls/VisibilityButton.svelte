@@ -43,15 +43,18 @@
 </script>
 
 <div
-  class="icon-selected has-tooltip-bottom"
-  title="Toggle Visibility"
-  aria-label="Toggle Visibility"
-  tabindex="0"
-  role="button"
-  data-tooltip={`${visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}`}
-  on:click={() => toggleVisibility()}
-  on:keydown={handleKeyDown}>
-  <i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-sm" />
+  class="has-tooltip-bottom"
+  data-tooltip={`${visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}`}>
+  <div
+    class="icon-selected"
+    title="Toggle Visibility"
+    aria-label="Toggle Visibility"
+    tabindex="0"
+    role="button"
+    on:click={() => toggleVisibility()}
+    on:keydown={handleKeyDown}>
+    <i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-sm" />
+  </div>
 </div>
 
 <style lang="scss">

@@ -42,61 +42,71 @@
         </div>
         <div class="cell large-3 small-3 top-right menu-buttons">
           <div
-            role="button"
-            aria-label="Layer panel"
-            class="menu-button"
-            tabindex="0"
-            on:click={() => (drawerOpen = !drawerOpen)}
-            on:keydown={onKeyPressed}>
-            <span
-              class="icon has-tooltip-bottom"
-              data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
-              <i
-                class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
-                style="color:#006eb5" />
-            </span>
+            class="has-tooltip-bottom"
+            data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
+            <div
+              role="button"
+              aria-label="Layer panel"
+              class="menu-button"
+              tabindex="0"
+              on:click={() => (drawerOpen = !drawerOpen)}
+              on:keydown={onKeyPressed}>
+              <span class="icon">
+                <i
+                  class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
+                  style="color:#006eb5" />
+              </span>
+            </div>
           </div>
 
           <div
-            role="button"
-            aria-label="UNDP Dashboards"
-            class="menu-button"
-            tabindex="0"
-            on:click={() => window.open('/dashboards', '_blank')}
-            on:keydown={onKeyPressed}>
-            <span
-              class="icon has-tooltip-bottom"
-              data-tooltip="UNDP Dashboards">
-              <i
-                class="fa-solid fa-chalkboard-user fa-xl"
-                style="color:#006eb5" />
-            </span>
+            class="has-tooltip-bottom"
+            data-tooltip="UNDP Dashboards">
+            <div
+              role="button"
+              aria-label="UNDP Dashboards"
+              class="menu-button has-tooltip-bottom"
+              tabindex="0"
+              on:click={() => window.open('/dashboards', '_blank')}
+              on:keydown={onKeyPressed}>
+              <span class="icon">
+                <i
+                  class="fa-solid fa-chalkboard-user fa-xl"
+                  style="color:#006eb5" />
+              </span>
+            </div>
           </div>
 
           {#if $layerList.length > 0}
             <div
-              class="menu-button"
-              role="button"
-              tabindex="0"
-              aria-label="Share map">
-              <StyleShare />
+              class="has-tooltip-bottom"
+              data-tooltip="Share map">
+              <div
+                class="menu-button"
+                role="button"
+                tabindex="0"
+                aria-label="Share map">
+                <StyleShare />
+              </div>
             </div>
           {/if}
 
           <div
-            role="button"
-            aria-label="Documentation"
-            class="menu-button"
-            tabindex="0"
-            on:click={() => window.open('/docs/index.html', '_blank')}
-            on:keydown={onKeyPressed}>
-            <span
-              class="icon has-tooltip-bottom"
-              data-tooltip="Documentation">
-              <i
-                class="fa-regular fa-circle-question fa-xl"
-                style="color:#006eb5" />
-            </span>
+            class="has-tooltip-bottom"
+            data-tooltip="Documentation">
+            <div
+              role="button"
+              aria-label="Documentation"
+              class="menu-button"
+              tabindex="0"
+              on:click={() => window.open('/docs/index.html', '_blank')}
+              on:keydown={onKeyPressed}>
+              <span class="icon has-tooltip-bottom">
+                <i
+                  class="fa-regular fa-circle-question fa-xl"
+                  style="color:#006eb5" />
+              </span>
+            </div>
           </div>
         </div>
       </div>
