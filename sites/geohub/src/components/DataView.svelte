@@ -5,7 +5,7 @@
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams } from '$lib/constants'
+  import { SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams, STAC_MINIMUM_ZOOM } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import Breadcrumbs from '$components/controls/Breadcrumbs.svelte'
   import type { Tag } from '$lib/types/Tag'
@@ -129,6 +129,9 @@
 
   const handleCategorySelected = async (e) => {
     const category = e.detail.category
+    if (category.name === 'Microsoft Planetary' && $map?.getZoom() < STAC_MINIMUM_ZOOM) {
+      $map.zoomTo(STAC_MINIMUM_ZOOM)
+    }
     if (category.url.startsWith('/api/datasets')) {
       const url = `${$page.url.origin}${category.url}`
       await searchDatasets(url)
