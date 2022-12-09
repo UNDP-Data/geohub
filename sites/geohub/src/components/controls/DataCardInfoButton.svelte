@@ -29,16 +29,19 @@
 </script>
 
 <div
-  class="icon-selected has-tooltip-bottom"
-  title="Toggle Infomation"
-  aria-label="Toggle Infomation"
-  tabindex="0"
-  role="button"
-  data-tooltip={`${isPopupShown ? 'Hide infomation' : 'Show infomation'}`}
-  use:popperRef
-  on:click={() => (isPopupShown = !isPopupShown)}
-  on:keydown={handleKeyDown}>
-  <i class="fa-solid fa-info-circle sm" />
+  class="has-tooltip-bottom"
+  data-tooltip={`${isPopupShown ? 'Hide infomation' : 'Show infomation'}`}>
+  <div
+    class="icon-selected"
+    title="Toggle Infomation"
+    aria-label="Toggle Infomation"
+    tabindex="0"
+    role="button"
+    use:popperRef
+    on:click={() => (isPopupShown = !isPopupShown)}
+    on:keydown={handleKeyDown}>
+    <i class="fa-solid fa-info-circle sm" />
+  </div>
 </div>
 
 {#if isPopupShown}

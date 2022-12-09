@@ -115,15 +115,18 @@
     use:clickOutside={handleClose}>
     <div style="padding-left: 5px;">
       <div
-        class="icon-selected has-tooltip-bottom"
-        title="Zoom To Layer"
-        aria-label="Zoom To Layer"
-        tabindex="0"
-        role="button"
-        data-tooltip="Zoom to layer"
-        on:click={handleZoomToLayerClick}
-        on:keydown={handleZoomKeyDown}>
-        <i class="fa-solid fa-magnifying-glass fa-sm" />
+        class="has-tooltip-bottom"
+        data-tooltip="Zoom to layer">
+        <div
+          class="icon-selected"
+          title="Zoom To Layer"
+          aria-label="Zoom To Layer"
+          tabindex="0"
+          role="button"
+          on:click={handleZoomToLayerClick}
+          on:keydown={handleZoomKeyDown}>
+          <i class="fa-solid fa-magnifying-glass fa-sm" />
+        </div>
       </div>
     </div>
 

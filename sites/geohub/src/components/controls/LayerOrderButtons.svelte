@@ -47,27 +47,32 @@
 
 <div class="grouped">
   <div
-    class="icon-selected has-tooltip-bottom"
-    title="Bring Layer Up"
-    aria-label="Bring Layer Up"
-    tabindex="0"
-    role="button"
-    data-tooltip="Bring Forward in Map"
-    on:click={() => hierachyUp(layerId)}
-    on:keydown={handleUpKeyEnter}>
-    <i class="arrow-icon fa-solid fa-chevron-up" />
+    class="has-tooltip-bottom"
+    data-tooltip="Bring Forward in Map">
+    <div
+      class="icon-selected"
+      title="Bring Layer Up"
+      aria-label="Bring Layer Up"
+      tabindex="0"
+      role="button"
+      on:click={() => hierachyUp(layerId)}
+      on:keydown={handleUpKeyEnter}>
+      <i class="arrow-icon fa-solid fa-chevron-up" />
+    </div>
   </div>
-  <div style="width: 10px" />
-  <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <div
-    class="icon-selected has-tooltip-bottom"
-    title="Bring Layer Down"
-    aria-label="Bring Layer Down"
-    tabindex="0"
-    data-tooltip="Bring Backward in Map"
-    on:click={() => hierachyDown(layerId)}
-    on:keydown={handleDownKeyEnter}>
-    <i class="arrow-icon fa-solid fa-chevron-down" />
+    class="pl-2 has-tooltip-bottom"
+    data-tooltip="Bring Backward in Map">
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+    <div
+      class="icon-selected"
+      title="Bring Layer Down"
+      aria-label="Bring Layer Down"
+      tabindex="0"
+      on:click={() => hierachyDown(layerId)}
+      on:keydown={handleDownKeyEnter}>
+      <i class="arrow-icon fa-solid fa-chevron-down" />
+    </div>
   </div>
 </div>
 
