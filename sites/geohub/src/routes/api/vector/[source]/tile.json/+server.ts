@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
-import { getMartinTileJson } from '$lib/helper/getMartinTileJson'
+import { getMartinTileJson } from '$lib/server/helpers/getMartinTileJson'
 import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
 import { generateMetadataJson } from '$lib/server/helpers/generateMetadataJson'
 
