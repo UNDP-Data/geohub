@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
   "scripts": {
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "preinstall": "npx only-allow pnpm"
   },
   "repository": {
     "type": "git",
