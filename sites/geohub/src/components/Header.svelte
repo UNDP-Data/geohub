@@ -1,0 +1,136 @@
+<script lang="ts">
+  import { onMount } from 'svelte'
+  import StyleShare from './StyleShare.svelte'
+  import { indicatorProgress, layerList } from '$stores'
+
+  export let drawerOpen = true
+  export let height: number = undefined
+  $: hideLinearProgress = !$indicatorProgress
+
+  const onKeyPressed = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
+
+  onMount(() => {
+    window.matchMedia('(prefers-color-scheme: light)')
+  })
+</script>
+
+<header class="country-header">
+  <section
+    class="header"
+    bind:clientHeight={height}>
+    <div class="grid-container fluid">
+      <div class="grid-x grid-margin-x align-content-middle">
+        <div class="cell large-9 small-9 align-self-middle top-left">
+          <a
+            href="https://undpgeohub.org"
+            class="logo"
+            tabindex="0">
+            <img
+              src="undp-images/undp-logo-blue.svg"
+              alt="GeoHub | UNDP" />
+          </a>
+          <div class="site-title">
+            <span>UNDP's one stop shop for spatial data and analytics</span>
+            <span>GeoHub</span>
+          </div>
+        </div>
+        <div class="cell large-3 small-3 top-right menu-buttons">
+          <div
+            class="has-tooltip-bottom"
+            data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
+            <div
+              role="button"
+              aria-label="Layer panel"
+              class="menu-button"
+              tabindex="0"
+              on:click={() => (drawerOpen = !drawerOpen)}
+              on:keydown={onKeyPressed}>
+              <span class="icon">
+                <i
+                  class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
+                  style="color:#006eb5" />
+              </span>
+            </div>
+          </div>
+
+          <div
+            class="has-tooltip-bottom"
+            data-tooltip="UNDP Dashboards">
+            <div
+              role="button"
+              aria-label="UNDP Dashboards"
+              class="menu-button has-tooltip-bottom"
+              tabindex="0"
+              on:click={() => window.open('/dashboards', '_blank')}
+              on:keydown={onKeyPressed}>
+              <span class="icon">
+                <i
+                  class="fa-solid fa-chalkboard-user fa-xl"
+                  style="color:#006eb5" />
+              </span>
+            </div>
+          </div>
+
+          {#if $layerList.length > 0}
+            <div
+              class="has-tooltip-bottom"
+              data-tooltip="Share map">
+              <div
+                class="menu-button"
+                role="button"
+                tabindex="0"
+                aria-label="Share map">
+                <StyleShare />
+              </div>
+            </div>
+          {/if}
+
+          <div
+            class="has-tooltip-bottom"
+            data-tooltip="Documentation">
+            <div
+              role="button"
+              aria-label="Documentation"
+              class="menu-button"
+              tabindex="0"
+              on:click={() => window.open('/docs/index.html', '_blank')}
+              on:keydown={onKeyPressed}>
+              <span class="icon has-tooltip-bottom">
+                <i
+                  class="fa-regular fa-circle-question fa-xl"
+                  style="color:#006eb5" />
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {#if $indicatorProgress}
+      <progress
+        class="progress is-small is-info"
+        max="100" />
+    {/if}
+  </section>
+</header>
+
+<style lang="scss">
+  @use 'src/styles/undp-design/base-minimal.min.css';
+  @use 'src/styles/undp-design/country-site-header.min.css';
+  @use 'src/styles/undp-design/variables.scss';
+
+  .menu-buttons {
+    display: flex;
+
+    .menu-button {
+      cursor: pointer;
+      margin-left: 20px;
+      margin-right: 5px;
+    }
+  }
+</style>

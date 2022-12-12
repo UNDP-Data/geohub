@@ -1,19 +1,10 @@
-!.env.example
 .DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
 .env
 .env.*
-.idea
-.vscode/
-/.svelte-kit
-/build
-/data/tags.json
-/data/stac-*
-/package
-coverage
-data/tags.json
-env.ts
-node_modules
-yarn-error.log
-static/docs
-static/smui*.css
-tmp/
+!.env.example
+# Local Netlify folder
+.netlify

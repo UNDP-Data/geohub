@@ -16,9 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [18]
     environment:
-      name: 'Production'
+      name: "Production"
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -50,13 +50,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Get pnpm store directory
         id: pnpm-cache
         run: |
           echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
-      
+
       - uses: actions/cache@v3
         name: Setup pnpm cache
         with:
@@ -67,12 +67,15 @@ jobs:
 
       # install dependencies
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          echo "shared-workspace-lockfile = false" >> .npmrc
+          pnpm install
 
       # setup environmental variables
       - name: Create environment file
         uses: SpicyPizza/create-envfile@v1.3
         with:
+          directory: ./sites/geohub
           envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
           envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
@@ -80,46 +83,52 @@ jobs:
           envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
           envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
-          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}   
+          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
 
       - name: Run lint
-        run: pnpm lint
+        run: |
+          pnpm --filter="./packages/*" lint
+          pnpm --filter="./sites/geohub" lint
 
       - name: Run Prettier
-        run: pnpm format
+        run: |
+          pnpm --filter="./packages/*" format
+          pnpm --filter="./sites/geohub" format
 
       - name: Run build
-        run: pnpm build:ci
+        run: |
+          pnpm --filter="./packages/*" build
+          pnpm --filter="./sites/geohub" build
 
       - name: Run unit tests
-        run: pnpm test
+        run: pnpm --filter="./sites/geohub" test
 
       - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
-          pnpm install --prod
+          pnpm --filter="." install --prod
           cp package.json build/.
           cp pnpm-lock.yaml build/.
           mv node_modules build/.
-          mv data build/.
 
-      - name: 'Deploy to Azure Web App for undpgeohub-dev'
+      - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/develop'}}
         with:
-          app-name: 'undpgeohub-dev'
-          slot-name: 'Production'
+          app-name: "undpgeohub-dev"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
-          package: build
+          package: sites/geohub/build
 
-      - name: 'Deploy to Azure for undpgeohub'
+      - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         if: ${{ github.ref == 'refs/heads/main'}}
         with:
-          app-name: 'undpgeohub'
-          slot-name: 'Production'
+          app-name: "undpgeohub"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
-          package: build
+          package: sites/geohub/build

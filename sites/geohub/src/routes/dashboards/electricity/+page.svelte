@@ -1,0 +1,36 @@
+<script lang="ts">
+  import { style } from 'svelte-body'
+  import Content from '../../../dashboards/components/Content.svelte'
+  import Map from '../../../dashboards/components/Map.svelte'
+  let loadLayers = () => {
+    return
+  }
+</script>
+
+<svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
+
+<Content bind:loadLayers>
+  <Map on:styleChanged={loadLayers} />
+</Content>
+
+<style
+  global
+  lang="scss">
+  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
+
+  body,
+  html {
+    font-family: ProximaNova, sans-serif;
+    font-size: 13px;
+  }
+  .mdc-drawer {
+    width: 355px;
+  }
+
+  .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
+    margin-left: 355px;
+    margin-right: 0;
+  }
+</style>
