@@ -41,9 +41,9 @@
               <p><b>Representation Type: </b> {metadata['band_metadata'][0][1].RepresentationType}</p>
             {/if}
             {#if metadata['band_metadata'][0][1]?.Unit}
-              <p><b>unit: </b> {metadata['band_metadata'][0][1].Unit}</p>
+              <p><b>Units: </b> {metadata['band_metadata'][0][1].Unit}</p>
             {/if}
-            {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
+            <!-- {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
               <p><b>Minimum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MINIMUM}</p>
             {/if}
             {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
@@ -60,7 +60,7 @@
             {/if}
             {#if metadata['band_metadata'][0][1]?.STATISTICS_VALID_PERCENT}
               <p><b>Valid percent: </b> {metadata['band_metadata'][0][1].STATISTICS_VALID_PERCENT}</p>
-            {/if}
+            {/if} -->
           {/if}
         {/if}
         <p><b>Source: </b> {feature.properties.source}</p>

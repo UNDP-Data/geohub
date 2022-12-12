@@ -352,9 +352,9 @@
           </button>
         {/if} -->
         <button
-          on:click={() => {
+          on:click={(e) => {
             // setInitialExpression()
-            handleCancelExpression()
+            handleCancelExpression(e)
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
@@ -394,9 +394,9 @@
           <i class="fa fa-angles-left" />&nbsp;Properties
         </button>
         <button
-          on:click={() => {
+          on:click={(e) => {
             //setInitialExpression()
-            handleCancelExpression()
+            handleCancelExpression(e)
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">
@@ -436,9 +436,9 @@
           <i class="fa fa-angles-left" /> &nbsp;Operators
         </button>
         <button
-          on:click={() => {
+          on:click={(e) => {
             //setInitialExpression()
-            handleCancelExpression()
+            handleCancelExpression(e)
             setStep(1)
           }}
           class="button wizard-button is-small primary-button">

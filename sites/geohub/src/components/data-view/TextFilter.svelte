@@ -89,7 +89,7 @@
   }
 </script>
 
-<div class="filter-text pt-1">
+<div class="filter-text pt-3">
   <div class="control has-icons-left filter-text-box">
     <input
       data-testid="filter-bucket-input"

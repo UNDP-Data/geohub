@@ -272,7 +272,8 @@
     bind:selectedTags
     isClearButtonShown={true} />
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    <Notification type="info">{DataItemFeatureCollection.totalCount} datasets found.</Notification>
+    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
+    <Notification type="info">{DataItemFeatureCollection.totalCount} {dsText} found.</Notification>
   {/if}
 </div>
 <div
