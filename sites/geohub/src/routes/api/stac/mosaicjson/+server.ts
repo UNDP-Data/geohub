@@ -4,7 +4,6 @@ import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
 const TITILER_MOSAIC_ENDPOINT = PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')
 
-import { v4 as uuidv4 } from 'uuid'
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
 const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
@@ -181,7 +180,7 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
 
   const containerClient = blobServiceClient.getContainerClient(containerName)
 
-  const blobName = `mosaicjson_${uuidv4()}.json`
+  const blobName = `mosaicjson_${new Date().getTime()}.json`
   const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
 
   const tmpDir = path.resolve(`${__dirname}/tmp/`)
