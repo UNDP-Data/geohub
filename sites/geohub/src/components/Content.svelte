@@ -26,8 +26,7 @@
         label: TabNames.LAYERORDER,
         icon: 'fa-solid fa-arrow-down-up-across-line',
       })
-    } else if (index > -1 && $layerList.length === 0) {
-      const index = tabs?.findIndex((t) => t.label === TabNames.LAYERORDER)
+    } else if (index > -1 && $layerList.length < 2) {
       if (index > -1) {
         tabs.splice(index, 1)
       }
