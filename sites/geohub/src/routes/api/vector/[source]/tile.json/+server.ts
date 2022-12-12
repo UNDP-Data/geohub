@@ -5,7 +5,7 @@ import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
 import { getMartinTileJson } from '$lib/helper/getMartinTileJson'
 import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
-import { generateMetadataJson } from '$lib/helper/generateMetadataJson'
+import { generateMetadataJson } from '$lib/server/helpers/generateMetadataJson'
 
 /**
  * /[source]/tile.json?table={tablename}
