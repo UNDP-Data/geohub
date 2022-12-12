@@ -281,7 +281,7 @@
 </div>
 <div
   class="container data-view-container mx-4"
-  style="height: calc(100vh - {totalHeight}px);overflow-y: scroll"
+  style="height: calc(100vh - {totalHeight}px);overflow-y: auto"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
