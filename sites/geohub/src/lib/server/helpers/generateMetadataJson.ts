@@ -1,7 +1,7 @@
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorLayerTileStatLayer } from '$lib/types/VectorLayerTileStatLayer'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
-import { fetchVectorTileInfo } from './fetchVectorInfo'
+import { fetchVectorTileInfo } from '$lib/server/helpers/fetchVectorInfo'
 
 /**
  * generate metadata.json from tilejson
