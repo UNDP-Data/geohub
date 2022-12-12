@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/variables/private'
+import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { Tag } from '$lib/types/Tag'
 import { createDatasetSearchWhereExpression } from '$lib/helper/createDatasetSearchWhereExpression'
 const connectionString = DATABASE_CONNECTION

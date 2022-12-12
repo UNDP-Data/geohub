@@ -3,12 +3,12 @@ import { error } from '@sveltejs/kit'
 import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/variables/private'
+import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { StacLink } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
 import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/variables/private'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
 import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 import { createDatasetSearchWhereExpression } from '$lib/helper/createDatasetSearchWhereExpression'
 
