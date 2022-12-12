@@ -8,7 +8,6 @@
   aria-label="accordion">
   <li>
     <div class="accordion-title">
-      <slot name="button" />
       <button
         tabindex="0"
         aria-expanded={isExpanded}
@@ -20,6 +19,8 @@
           {headerTitle}
         </p>
       </button>
+
+      <slot name="button" />
     </div>
     <div
       class={!isExpanded ? 'accordion__panel' : 'accordion--active'}
@@ -42,21 +43,30 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-content: center;
 
       .accordion-button {
         padding-top: 1rem;
         padding-bottom: 1rem;
+        width: 90%;
       }
 
       .accordion-header {
-        padding-left: 0.5rem;
-        padding-right: 1.2rem;
+        padding-left: 2rem;
+        padding-right: 0rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         text-transform: capitalize;
         width: 90%;
       }
+    }
+
+    li button:before {
+      content: '';
+      margin-left: 0rem;
+      position: absolute;
+      left: 0px;
     }
 
     .accordion-content {
