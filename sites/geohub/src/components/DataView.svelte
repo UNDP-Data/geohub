@@ -59,7 +59,16 @@
     try {
       $indicatorProgress = true
 
-      const apiUrl = new URL(url)
+      // clear existing tag parameters except some keys
+      const originUrl = new URL(url)
+      const sdg_goal = originUrl.searchParams.get('sdg_goal')
+      const type = originUrl.searchParams.get('type')
+      const stac = originUrl.searchParams.get('stac')
+
+      const apiUrl = new URL(`${originUrl.origin}${originUrl.pathname}`)
+      if (sdg_goal) apiUrl.searchParams.set('sdg_goal', sdg_goal)
+      if (type) apiUrl.searchParams.set('type', type)
+      if (stac) apiUrl.searchParams.set('stac', stac)
 
       if (breadcrumbs.length === 1) {
         if (!query && selectedTags.length === 0) return
@@ -89,34 +98,22 @@
       }
 
       if (queryForSearch) {
-        if (queryForSearch.length === 0) {
-          apiUrl.searchParams.delete('query')
-        } else {
+        if (queryForSearch.length > 0) {
           apiUrl.searchParams.set('query', queryForSearch)
         }
       }
 
       if (bbox && bbox.length === 4) {
         apiUrl.searchParams.set('bbox', bbox.join(','))
-      } else {
-        apiUrl.searchParams.delete('bbox')
       }
 
       apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
-      apiUrl.searchParams.delete('offset')
 
-      // clear existing tag parameters except some keys
-      const skipKeys = [...DatasetSearchQueryParams, 'type', 'stac', 'sdg_goal']
-      for (const key of apiUrl.searchParams.keys()) {
-        if (skipKeys.includes(key)) continue
-        apiUrl.searchParams.delete(key)
-      }
       if (selectedTags?.length > 0) {
         apiUrl.searchParams.set('operator', tagFilterOperatorType)
       }
       const tagFilterString = selectedTags?.map((tag) => `${tag.key}=${tag.value}`).join('&')
-
       const finalUrl = `${apiUrl.toString()}${tagFilterString ? `&${tagFilterString}` : ''}`
       const res = await fetch(finalUrl)
       if (!res.ok) return
@@ -284,7 +281,7 @@
 </div>
 <div
   class="container data-view-container mx-4"
-  style="height: calc(100vh - {totalHeight}px);overflow-y: scroll"
+  style="height: calc(100vh - {totalHeight}px);overflow-y: auto"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
