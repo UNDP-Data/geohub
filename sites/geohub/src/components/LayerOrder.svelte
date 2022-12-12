@@ -93,5 +93,9 @@
     :global(.legend) {
       display: none;
     }
+
+    :global(.layer-position) {
+      margin-right: 1rem;
+    }
   }
 </style>
