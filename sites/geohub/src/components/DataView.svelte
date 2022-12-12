@@ -120,6 +120,9 @@
       const finalUrl = `${apiUrl.toString()}${tagFilterString ? `&${tagFilterString}` : ''}`
       const res = await fetch(finalUrl)
       if (!res.ok) return
+      if (DataItemFeatureCollection) {
+        DataItemFeatureCollection.features = []
+      }
       const json: StacItemFeatureCollection = await res.json()
       DataItemFeatureCollection = json
     } finally {
@@ -284,14 +287,12 @@
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {#key DataItemFeatureCollection}
-      {#each DataItemFeatureCollection.features as feature}
-        <DataCard {feature} />
-      {/each}
-      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-        <Notification type="info">All data loaded.</Notification>
-      {/if}
-    {/key}
+    {#each DataItemFeatureCollection.features as feature}
+      <DataCard {feature} />
+    {/each}
+    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+      <Notification type="info">All data loaded.</Notification>
+    {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
     <Notification type="warning">No data found. Try another keyword.</Notification>
   {:else}
