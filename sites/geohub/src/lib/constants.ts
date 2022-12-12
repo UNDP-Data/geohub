@@ -16,6 +16,7 @@ export enum TabNames {
   DATA = 'Data',
   LABEL = 'Label',
   LAYERS = 'Layers',
+  LAYERORDER = 'Layer order',
   LEGEND = 'Legend',
   OPACITY = 'Opacity',
   TRANSFORM = 'Transform',
