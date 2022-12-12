@@ -4,7 +4,7 @@ import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
 import { getMartinTileJson } from '$lib/server/helpers/getMartinTileJson'
-import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
+import { getPgtileservTileJson } from '$lib/server/helpers/getPgtileservTileJson'
 import { generateMetadataJson } from '$lib/server/helpers/generateMetadataJson'
 
 /**

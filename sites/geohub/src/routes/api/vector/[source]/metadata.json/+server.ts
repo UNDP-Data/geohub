@@ -4,7 +4,7 @@ import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
 import { getStaticPbfMetadataJson } from '$lib/server/helpers/getStaticPbfMetadataJson'
 import { getMartinTileJson } from '$lib/server/helpers/getMartinTileJson'
 import { generateMetadataJson } from '$lib/server/helpers/generateMetadataJson'
-import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
+import { getPgtileservTileJson } from '$lib/server/helpers/getPgtileservTileJson'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
