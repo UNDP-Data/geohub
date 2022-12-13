@@ -10,17 +10,23 @@
   export let headerHeight: number = undefined
   export let tabsHeight: number = undefined
   let marginTop = 5
+  let layerHeaderHeight = 39
 </script>
 
-<div class="layer-header px-2 pt-2">
+<div
+  class="layer-header px-2 pt-2"
+  bind:clientHeight={layerHeaderHeight}>
   <div class="layer-order">
     <LayerOrder />
   </div>
 </div>
 
 <div
-  class="layer-list mx-2 my-0"
-  style="height: calc(100vh - {headerHeight + tabsHeight + marginTop}px); margin-top: {marginTop}px;">
+  class="layer-list mx-2 mt-1"
+  style="height: calc(100vh - {headerHeight +
+    tabsHeight +
+    layerHeaderHeight +
+    marginTop}px); margin-top: {marginTop}px;">
   {#if $layerList?.length === 0}
     <Notification type="">
       No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.
