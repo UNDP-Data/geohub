@@ -23,6 +23,6 @@
   },
   "type": "module",
   "dependencies": {
-    "lefthook": "^1.2.4"
+    "lefthook": "^1.2.5"
   }
 }
