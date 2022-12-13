@@ -13,13 +13,15 @@
   let layerHeaderHeight = 39
 </script>
 
-<div
-  class="layer-header px-2 pt-2"
-  bind:clientHeight={layerHeaderHeight}>
-  <div class="layer-order">
-    <LayerOrder />
+{#if $layerList?.length > 0}
+  <div
+    class="layer-header px-2 pt-2"
+    bind:clientHeight={layerHeaderHeight}>
+    <div class="layer-order">
+      <LayerOrder />
+    </div>
   </div>
-</div>
+{/if}
 
 <div
   class="layer-list mx-2 mt-1"
