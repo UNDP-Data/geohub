@@ -37,10 +37,10 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-end',
+      placement: 'auto',
       strategy: 'fixed',
     },
-    [-25, -5],
+    [0, 0],
   ).init()
 
   const updateLegend = () => {
@@ -171,6 +171,5 @@
 
   #tooltip {
     max-width: 440px;
-    inset: -10px auto auto 0px !important;
   }
 </style>
