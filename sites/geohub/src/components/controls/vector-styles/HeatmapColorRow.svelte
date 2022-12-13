@@ -33,10 +33,10 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'right-start',
+      placement: 'auto',
       strategy: 'fixed',
     },
-    [10, 15],
+    [0, 15],
   ).init()
 
   onMount(() => {
