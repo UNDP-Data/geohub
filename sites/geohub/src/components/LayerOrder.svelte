@@ -88,13 +88,13 @@
   .layer-order {
     overflow-y: auto;
     max-height: 300px;
+  }
 
-    :global(.legend) {
-      display: none;
-    }
+  :global(.legend) {
+    display: none;
+  }
 
-    :global(.layer-position) {
-      margin-right: 1rem;
-    }
+  :global(.layer-position) {
+    margin-right: 1rem;
   }
 </style>
