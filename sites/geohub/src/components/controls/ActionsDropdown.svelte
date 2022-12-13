@@ -4,7 +4,6 @@
   import { fade } from 'svelte/transition'
   import { createPopperActions } from 'svelte-popperjs'
 
-  import LayerOrderButtons from '$components/controls/LayerOrderButtons.svelte'
   import { LayerInitialValues, LayerTypes } from '$lib/constants'
   import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types'
   import { map } from '$stores'
@@ -18,7 +17,6 @@
   const mapLayers = $map.getStyle().layers
   const mapLayerByLayerId = mapLayers.find((item: LayerSpecification) => item.id === layerId)
 
-  let mapLayerLength = mapLayers.length - 1
   let showTooltip = false
 
   export let mapLayerIndex = mapLayers.indexOf(mapLayerByLayerId)
@@ -132,15 +130,6 @@
 
     <div style="padding-left: 5px;">
       <RasterBandSelector {layer} />
-    </div>
-
-    <div>
-      <span class="tag is-info is-small">{mapLayerIndex} / {mapLayerLength}</span>
-    </div>
-    <div style="padding-left: 5px;">
-      <LayerOrderButtons
-        {layer}
-        bind:mapLayerIndex />
     </div>
   </div>
 {/if}
