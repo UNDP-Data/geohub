@@ -7,6 +7,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>GeoHub | Electricity Dashboard</title>
+</svelte:head>
+
 <svelte:body use:style={{ height: '100vh', margin: '0px', padding: '0px', border: '0px solid red' }} />
 
 <Content bind:loadLayers>
