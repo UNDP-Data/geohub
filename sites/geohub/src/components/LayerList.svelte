@@ -5,14 +5,21 @@
   import { LayerTypes, TabNames } from '$lib/constants'
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
+  import LayerOrder from './LayerOrder.svelte'
 
   export let headerHeight: number = undefined
   export let tabsHeight: number = undefined
   let marginTop = 5
 </script>
 
+<div class="layer-header px-2 pt-2">
+  <div class="layer-order">
+    <LayerOrder />
+  </div>
+</div>
+
 <div
-  class="layer-list mx-2"
+  class="layer-list mx-2 my-0"
   style="height: calc(100vh - {headerHeight + tabsHeight + marginTop}px); margin-top: {marginTop}px;">
   {#if $layerList?.length === 0}
     <Notification type="">
@@ -32,6 +39,15 @@
 </div>
 
 <style lang="scss">
+  .layer-header {
+    display: flex;
+    width: 100%;
+
+    .layer-order {
+      margin-left: auto;
+    }
+  }
+
   .layer-list {
     overflow-y: auto;
   }

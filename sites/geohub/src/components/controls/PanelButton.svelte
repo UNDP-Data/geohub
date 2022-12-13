@@ -5,9 +5,11 @@
 
   //fontawesome icon name e.g., https://fontawesome.com/search
   export let icon: string
+  export let iconDisabled = ''
   export let width: string
   export let tooltip: string
   export let position: 'top' | 'bottom' | 'right' | 'left' = 'top'
+  export let disabled = false
 </script>
 
 <div
@@ -16,9 +18,10 @@
   use:clickOutside={() => (isPanelOpen = false)}>
   <button
     class="button"
+    {disabled}
     on:click={() => (isPanelOpen = !isPanelOpen)}>
     <span class="icon is-small">
-      <i class={icon} />
+      <i class={disabled && iconDisabled ? iconDisabled : icon} />
     </span>
   </button>
 
@@ -43,7 +46,7 @@
       right: 0px;
       border: 1px solid gray;
       border-radius: 5px;
-      z-index: 10;
+      z-index: 20;
       cursor: default;
     }
   }
