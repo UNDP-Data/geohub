@@ -15,6 +15,10 @@
   export let data: PageData
 </script>
 
+<svelte:head>
+  <title>GeoHub | Dashboards</title>
+</svelte:head>
+
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
   <DashboardHeader />
   <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: 8vh; height: 22vh">

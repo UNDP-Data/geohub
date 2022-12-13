@@ -7,6 +7,10 @@
   let headerHeight: number
 </script>
 
+<svelte:head>
+  <title>GeoHub | United Nations Development Programme</title>
+</svelte:head>
+
 <Header
   bind:drawerOpen
   bind:height={headerHeight} />
