@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Accordion, CardWithImage, Header, Footer } from '$lib';
+	import { Accordion, Breadcrumbs, CardWithImage, Header, Footer } from '$lib';
+	import type { Breadcrumb } from '$lib/interfaces';
 
 	let headerHeight: number;
 
@@ -21,6 +22,19 @@
 			}
 		]
 	};
+
+	let breadcrumbs: Breadcrumb[] = [
+		{
+			name: 'Home',
+			icon: 'fas fa-house',
+			url: ''
+		},
+		{
+			name: 'Search result',
+			icon: 'fas fa-magnifying-glass',
+			url: ''
+		}
+	];
 </script>
 
 <Header
@@ -85,6 +99,12 @@
 			eget, facilisis sodales sem.
 		</div>
 	</Accordion>
+
+	<br />
+
+	<h3>Breadcrumbs</h3>
+
+	<Breadcrumbs bind:breadcrumbs />
 
 	<br />
 </div>
