@@ -31,7 +31,7 @@
 </header>
 
 <style lang="scss">
-  @import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/country-site-header.min.css';
-  @import '../../styles/undp-design/mobile-nav.min.css';
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/country-site-header.min.css';
+  @use '../../styles/undp-design/mobile-nav.min.css';
 </style>

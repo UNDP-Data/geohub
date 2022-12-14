@@ -103,6 +103,6 @@
 {/if}
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
-  @import 'src/styles/undp-design/pagination.min';
+  @use 'src/styles/undp-design/base-minimal.min';
+  @use 'src/styles/undp-design/pagination.min';
 </style>

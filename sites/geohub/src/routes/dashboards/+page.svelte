@@ -1,14 +1,17 @@
 <script lang="ts">
-  import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
   import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
   import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
   import type { PageData } from './$types'
+  import { CardWithImage } from '@undp-data/svelte-undp-design'
 
   let pages = [
     {
       title: 'Electricity',
       link: 'dashboards/electricity',
+      image: 'electricity-snapshot.jpg',
+      imageSize: [350, 200],
+      description: 'GeoHub electricity dashboard',
     },
   ]
 
@@ -27,16 +30,23 @@
       <div style="width: 120px; height: 5px; background: black; " />
     </div>
   </div>
-  <div
-    class="main-section"
-    style="height: max-content; min-height: 60vh">
-    <div
-      class="grid-x small-up-2 medium-up-4 large-up-6 content-card-wrapper"
-      style="width: 100%; margin-left: 2%; margin-right: 2%">
+  <div class="main-section">
+    <div class="dashboard-list">
       {#each pages as page}
-        <DashboardCard
-          bind:title={page.title}
-          bind:link={page.link} />
+        <CardWithImage url={page.link}>
+          <div slot="title">
+            <h6>{page.title}</h6>
+          </div>
+          <div slot="image">
+            <img
+              style="width: {page.imageSize[0]}px; height: {page.imageSize[1]}px;"
+              src={page.image}
+              alt={page.image} />
+          </div>
+          <div slot="description">
+            <h5>{page.description}</h5>
+          </div>
+        </CardWithImage>
       {/each}
     </div>
     {#if data}
@@ -57,16 +67,9 @@
   @import '../../styles/undp-design/fonts.css';
   @import '../../styles/undp-design/footer.min.css';
 
-  :global(.primary-button) {
-    background: #d12800 !important;
-    border-color: #d12800 !important;
-    border-radius: 0px !important;
-    color: white !important;
-  }
-  :global(.secondary-button) {
-    background: #3288ce !important;
-    border-color: #3288ce !important;
-    border-radius: 0px !important;
-    color: white !important;
+  .main-section {
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 </style>

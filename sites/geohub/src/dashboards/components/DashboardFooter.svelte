@@ -30,6 +30,6 @@
 </footer>
 
 <style lang="scss">
-  @import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/footer.min.css';
+  @use '../../styles/undp-design/base-minimal.min.css';
+  @use '../../styles/undp-design/footer.min.css';
 </style>
