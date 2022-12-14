@@ -13,14 +13,14 @@
 	<div slot="menu-buttons">
 		<div role="button" aria-label="Layer panel" class="menu-button" tabindex="0">
 			<span class="icon">
-				<i class="fa-solid fa-bars fa-xl" style="color:#006eb5" />
+				<i class="fa-solid fa-bars fa-xl" />
 			</span>
 		</div>
 	</div>
 </Header>
 
 <div class="contents" style="margin-top: {headerHeight}px;">
-	<h1>Welcome to svelte UNDP design project project</h1>
+	<h1>Welcome to svelte UNDP design project</h1>
 
 	<h2>Card with image</h2>
 
@@ -39,4 +39,10 @@
 
 <style lang="scss">
 	@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
+
+	.menu-button {
+		cursor: pointer;
+		margin-left: 20px;
+		margin-right: 5px;
+	}
 </style>

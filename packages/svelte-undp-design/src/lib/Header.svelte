@@ -46,11 +46,6 @@
 
 	.menu-buttons {
 		display: flex;
-
-		.menu-button {
-			cursor: pointer;
-			margin-left: 20px;
-			margin-right: 5px;
-		}
+		color: #006eb5;
 	}
 </style>
