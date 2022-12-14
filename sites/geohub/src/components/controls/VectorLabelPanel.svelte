@@ -127,7 +127,7 @@
     class="action"
     data-testid="vector-label-panel-container">
     <div class="columns">
-      <div class="column is-6">
+      <div class="column m-auto is-10 is-flex is-align-content-center">
         <span>Property:&nbsp;</span>
         <TextField
           on:change={onTextChange}
@@ -187,7 +187,7 @@
     </div>
 
     <div class="columns advanced-settings">
-      <div class="column">
+      <div class="column is-6 m-auto">
         <div class="field">
           <input
             id="switchAdvancedSettings"

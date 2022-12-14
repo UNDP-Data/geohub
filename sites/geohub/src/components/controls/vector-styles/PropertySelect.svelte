@@ -47,7 +47,7 @@
 <div class="control has-icons-left">
   <div
     style="margin-right: 2%"
-    class="select is-flex is-justify-content-left select is-small">
+    class="select is-flex is-justify-content-left select is-normal">
     <select
       style="width: 100%"
       class="is-normal"
