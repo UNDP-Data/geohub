@@ -3,6 +3,8 @@
 	export let logoUrl: string;
 
 	export let footerItems: { [key: string]: { title: string; url: string }[] } = {};
+
+	const currentYear = new Date().getFullYear();
 </script>
 
 <footer class="footer">
@@ -95,7 +97,8 @@
 				</div>
 			</div>
 			<div class="footer-copyright">
-				<p tabindex="0">© 2022 United Nations Development Programme</p>
+				<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+				<p tabindex="0">© {currentYear} United Nations Development Programme</p>
 			</div>
 		</div>
 	</div>
