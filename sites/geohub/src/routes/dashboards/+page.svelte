@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { Header } from '@undp-data/svelte-undp-design'
-  import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
   import type { PageData } from './$types'
-  import { CardWithImage } from '@undp-data/svelte-undp-design'
+  import { CardWithImage, Header, Footer } from '@undp-data/svelte-undp-design'
 
   let pages = [
     {
@@ -61,7 +59,9 @@
   <div class="main-section">
     <div class="dashboard-list">
       {#each pages as page}
-        <CardWithImage url={page.link}>
+        <CardWithImage
+          url={page.link}
+          linkName="Open dashboard">
           <div slot="title">
             <h6>{page.title}</h6>
           </div>
@@ -86,15 +86,14 @@
         bind:totalPagesCount={data.totalPagesCount} />
     {/if}
   </div>
-  <DashboardFooter />
+
+  <Footer logoUrl="undp-images/undp-logo-white.svg" />
 </div>
 
 <style lang="scss">
   @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
   @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/fonts.css';
-  @import '../../styles/undp-design/footer.min.css';
 
   .menu-buttons {
     display: flex;
