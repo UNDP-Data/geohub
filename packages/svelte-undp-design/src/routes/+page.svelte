@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CardWithImage, Header, Footer } from '$lib';
+	import { Accordion, CardWithImage, Header, Footer } from '$lib';
 
 	let headerHeight: number;
 
@@ -72,6 +72,21 @@
 			<h5>Title of the post goes here and it’s two lines</h5>
 		</div>
 	</CardWithImage>
+
+	<h2>Accordion</h2>
+
+	<Accordion headerTitle="title">
+		<div slot="content">
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong
+			>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla.
+			Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac
+			<em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor,
+			tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem
+			eget, facilisis sodales sem.
+		</div>
+	</Accordion>
+
+	<br />
 </div>
 
 <Footer logoUrl="assets/undp-logo-white.svg" bind:footerItems />
