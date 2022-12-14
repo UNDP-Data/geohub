@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Accordion, Breadcrumbs, CardWithImage, Header, Footer } from '$lib';
-	import type { Breadcrumb } from '$lib/interfaces';
+	import { Accordion, Breadcrumbs, CardWithImage, Header, Footer, Tabs } from '$lib';
+	import type { Breadcrumb, Tab } from '$lib/interfaces';
 
 	let headerHeight: number;
 
@@ -35,6 +35,13 @@
 			url: ''
 		}
 	];
+
+	let tabs: Tab[] = [
+		{ label: 'Data', icon: 'fas fa-database' },
+		{ label: 'Layer', icon: 'fas fa-layer-group' }
+	];
+	let activeTab: string = tabs[0].label;
+	let tabHeight: number;
 </script>
 
 <Header
@@ -106,6 +113,12 @@
 	<h3>Breadcrumbs</h3>
 
 	<Breadcrumbs bind:breadcrumbs />
+
+	<br />
+
+	<h3>Tab</h3>
+
+	<Tabs bind:tabs fontSize="medium" bind:height={tabHeight} bind:activeTab />
 
 	<br />
 </div>
