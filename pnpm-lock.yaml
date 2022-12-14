@@ -477,8 +477,8 @@ importers:
       '@geoffcox/svelte-splitter': 1.0.1
       '@neodrag/svelte': 1.2.4
       '@popperjs/core': 2.11.6
-      '@sveltejs/adapter-node': 1.0.0-next.105_erfcpd5wjw6nq2fayxkx23hrei
-      '@sveltejs/kit': 1.0.0-next.588_svelte@3.55.0+vite@4.0.1
+      '@sveltejs/adapter-node': 1.0.0-next.106_l5ueyfihz3gpzzvvyo2ean5u3e
+      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.1
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.1
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
@@ -1152,15 +1152,15 @@ packages:
       import-meta-resolve: 2.2.0
     dev: true
 
-  /@sveltejs/adapter-node/1.0.0-next.105_erfcpd5wjw6nq2fayxkx23hrei:
-    resolution: {integrity: sha512-MoTHu7/d+UjmHdhPMqOLopvk468OijePkRVs8VBmCdU54YAwSbAg5fLHS4X5XHOfBv6CBScN7zPoT7Tae6Y4Rw==}
+  /@sveltejs/adapter-node/1.0.0-next.106_l5ueyfihz3gpzzvvyo2ean5u3e:
+    resolution: {integrity: sha512-HByOyp9Y9PUWpdk9Yj5OtUGASFiDT5Fly+YrEtFOsm/TQBbcHKS/L0oNPRB6H1Qw9il2QMfbLs7iuaOjTsxg1A==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0-next.587
     dependencies:
       '@rollup/plugin-commonjs': 23.0.4_rollup@3.7.4
       '@rollup/plugin-json': 5.0.2_rollup@3.7.4
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.7.4
-      '@sveltejs/kit': 1.0.0-next.588_svelte@3.55.0+vite@4.0.1
+      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.1
       rollup: 3.7.4
     dev: true
 
@@ -1194,6 +1194,34 @@ packages:
 
   /@sveltejs/kit/1.0.0-next.588_svelte@3.55.0+vite@4.0.1:
     resolution: {integrity: sha512-AHGlPbz/KdH+IsPt3TAteL6N9vbIxt18D9M18cbO7zlqrcWvnPmPL8xZseIxyVSLB7jSmxoV8So6Zo8WFB+uag==}
+    engines: {node: '>=16.14'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      svelte: ^3.54.0
+      vite: ^4.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.1
+      '@types/cookie': 0.5.1
+      cookie: 0.5.0
+      devalue: 4.2.0
+      esm-env: 1.0.0
+      kleur: 4.1.5
+      magic-string: 0.27.0
+      mime: 3.0.0
+      sade: 1.8.1
+      set-cookie-parser: 2.5.1
+      sirv: 2.0.2
+      svelte: 3.55.0
+      tiny-glob: 0.2.9
+      undici: 5.14.0
+      vite: 4.0.1_sass@1.56.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/kit/1.0.0-next.589_svelte@3.55.0+vite@4.0.1:
+    resolution: {integrity: sha512-5ABRw46z9B+cCe/YWhcx+I/azNZg1NCDEkVJifZn8ToFoJ3a1eP0OexNIrvMEWpllMbNMPcJm2TC9tnz9oPfWQ==}
     engines: {node: '>=16.14'}
     hasBin: true
     requiresBuild: true
