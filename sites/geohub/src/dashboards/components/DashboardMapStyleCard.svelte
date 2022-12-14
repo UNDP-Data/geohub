@@ -5,7 +5,6 @@
   import { Map } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
-  import Popper from '$lib/popper'
   import type { BannerMessage } from '$lib/types'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages } from '$stores'
@@ -24,18 +23,6 @@
   let mapContainer: HTMLDivElement
   let nodeRef
   let map: Map
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'bottom-end',
-      strategy: 'absolute',
-    },
-    [-30, 0],
-  ).init()
 
   let showContextMenu = false
   let confirmDeleteDialogVisible = false
@@ -101,12 +88,6 @@
     showContextMenu = false
   }
 
-  const handleEnterKey = (e) => {
-    if (e.key === 'Enter') {
-      e.target.click()
-    }
-  }
-
   $: {
     if (showContextMenu !== true) {
       setTimeout(handleClose, 100)
@@ -121,63 +102,40 @@
     class="content-card"
     style="border: none">
     <!-- svelte-ignore a11y-invalid-attribute -->
-    <a
-      href="#"
-      aria-label={style.name}>
-      <div style="display: flex; align-items: center; justify-content: space-between">
+    <a aria-label={style.name}>
+      <div style="display: flex;">
         <h6>{style.name}</h6>
+        <button
+          class="button is-small delete-button"
+          on:click={() => {
+            confirmDeleteDialogVisible = true
+          }}>
+          <i
+            class="fa-solid fa-trash"
+            style="color: black;" />
+        </button>
+      </div>
+      <a
+        href={style.viewer}
+        target="_blank"
+        rel="noreferrer">
         <div
-          aria-label="Open Delete Context Menu"
-          tabindex="0"
-          class="container icon"
-          use:popperRef
-          on:click={() => (showContextMenu = !showContextMenu)}
-          on:keydown={handleEnterKey}>
-          <i class="fa-solid fa-ellipsis-vertical fa-sm" />
-        </div>
-        {#if showContextMenu}
-          <div
-            id="tooltip"
-            data-testid="tooltip"
-            use:popperContent={popperOptions}
-            transition:fade
-            use:clickOutside={handleClose}>
-            <!-- svelte-ignore a11y-positive-tabindex -->
-            <aside
-              class="menu"
-              tabindex="1">
-              <button
-                class="button is-small"
-                on:click={() => {
-                  confirmDeleteDialogVisible = true
-                }}>
-                DELETE
-              </button>
-            </aside>
-          </div>
-        {/if}
-      </div>
-      <div
-        on:click={() => window.open(style.viewer)}
-        class="image"
-        id="map"
-        bind:this={mapContainer} />
-      <div class="content-caption">
-        <span
-          tabindex="0"
-          on:click={() => window.open(style.viewer)}
-          class="cta__link cta--space">
-          View Style
-          <i />
-        </span>
-        <div style="display: flex; align-items: center; justify-content: space-between">
-          <div class="content">
-            <Time
-              timestamp={style.createdat}
-              format="h:mm A · MMMM D, YYYY" />
+          class="image"
+          bind:this={mapContainer} />
+        <div class="content-caption">
+          <span class="cta__link cta--space">
+            View Style
+            <i />
+          </span>
+          <div style="display: flex; align-items: center; justify-content: space-between">
+            <div class="content">
+              <Time
+                timestamp={style.createdat}
+                format="h:mm A · MMMM D, YYYY" />
+            </div>
           </div>
         </div>
-      </div>
+      </a>
     </a>
   </div>
 </div>
@@ -225,8 +183,14 @@
 
 <!--</div>-->
 <style lang="scss">
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
-  @import '../../styles/popper.scss';
+  @use 'src/styles/undp-design/base-minimal.min.css';
+  @use 'src/styles/undp-design/cta-link.min.css';
+  @use 'src/styles/undp-design/content-card.min.css';
+  @use 'src/styles/undp-design/buttons.min.css';
+
+  .delete-button {
+    margin-left: auto;
+  }
 
   #delete-style:hover {
     cursor: pointer;
@@ -238,11 +202,6 @@
     width: 300px;
     min-height: 330px;
     cursor: pointer;
-  }
-
-  .map {
-    width: 100%;
-    height: 100%;
   }
 
   .icon {

@@ -1,18 +1,20 @@
 <script lang="ts">
-  import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
-  import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
-  import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
   import type { PageData } from './$types'
+  import { CardWithImage, Header, Footer } from '@undp-data/svelte-undp-design'
 
   let pages = [
     {
       title: 'Electricity',
       link: 'dashboards/electricity',
+      image: 'electricity-snapshot.jpg',
+      imageSize: [350, 200],
+      description: 'GeoHub electricity dashboard',
     },
   ]
 
   export let data: PageData
+  let headerHeight: number
 </script>
 
 <svelte:head>
@@ -20,23 +22,59 @@
 </svelte:head>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
-  <DashboardHeader />
-  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: 8vh; height: 22vh">
+  <Header
+    region="UNDP's one stop shop for spatial data and analytics"
+    siteTitle="GeoHub dashboards"
+    url="https://geohub.data.undp.org"
+    logoUrl="undp-images/undp-logo-blue.svg"
+    bind:height={headerHeight}>
+    <div
+      slot="menu-buttons"
+      class="menu-buttons">
+      <div
+        class="has-tooltip-bottom"
+        data-tooltip="Home">
+        <div
+          role="button"
+          aria-label="Home"
+          class="menu-button has-tooltip-bottom"
+          tabindex="0"
+          on:click={() => window.open('/', '_blank')}>
+          <span class="icon">
+            <i
+              class="fa-solid fa-home"
+              style="color:#006eb5" />
+          </span>
+        </div>
+      </div>
+    </div>
+  </Header>
+
+  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: {headerHeight}px; height: 22vh">
     <div style="margin-left:5%; padding-top:2%">
       <p class="title">Dashboards Gallery</p>
       <div style="width: 120px; height: 5px; background: black; " />
     </div>
   </div>
-  <div
-    class="main-section"
-    style="height: max-content; min-height: 60vh">
-    <div
-      class="grid-x small-up-2 medium-up-4 large-up-6 content-card-wrapper"
-      style="width: 100%; margin-left: 2%; margin-right: 2%">
+  <div class="main-section">
+    <div class="dashboard-list">
       {#each pages as page}
-        <DashboardCard
-          bind:title={page.title}
-          bind:link={page.link} />
+        <CardWithImage
+          url={page.link}
+          linkName="Open dashboard">
+          <div slot="title">
+            <h6>{page.title}</h6>
+          </div>
+          <div slot="image">
+            <img
+              style="width: {page.imageSize[0]}px; height: {page.imageSize[1]}px;"
+              src={page.image}
+              alt={page.image} />
+          </div>
+          <div slot="description">
+            <h5>{page.description}</h5>
+          </div>
+        </CardWithImage>
       {/each}
     </div>
     {#if data}
@@ -48,25 +86,28 @@
         bind:totalPagesCount={data.totalPagesCount} />
     {/if}
   </div>
-  <DashboardFooter />
+
+  <Footer logoUrl="undp-images/undp-logo-white.svg" />
 </div>
 
 <style lang="scss">
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+  @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/fonts.css';
-  @import '../../styles/undp-design/footer.min.css';
 
-  :global(.primary-button) {
-    background: #d12800 !important;
-    border-color: #d12800 !important;
-    border-radius: 0px !important;
-    color: white !important;
+  .menu-buttons {
+    display: flex;
+
+    .menu-button {
+      cursor: pointer;
+      margin-left: 20px;
+      margin-right: 5px;
+    }
   }
-  :global(.secondary-button) {
-    background: #3288ce !important;
-    border-color: #3288ce !important;
-    border-radius: 0px !important;
-    color: white !important;
+
+  .main-section {
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 </style>

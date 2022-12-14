@@ -64,7 +64,6 @@
             aria-disabled={defaultPage === totalPagesCount}>
             <!-- svelte-ignore a11y-invalid-attribute -->
             <a
-              href="#"
               on:click={handlePreviousClick}
               role="button"
               aria-current="true"
@@ -75,23 +74,14 @@
           <li>
             Page
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <span
-              ><a
-                href="#"
-                aria-label={defaultPage}>{defaultPage}</a
-              ></span>
+            <span><a aria-label={`${defaultPage}`}>{defaultPage}</a></span>
             of
             <!-- svelte-ignore a11y-invalid-attribute -->
-            <span
-              ><a
-                href="#"
-                aria-label={totalPagesCount}>{totalPagesCount}</a
-              ></span>
+            <span><a aria-label={`${totalPagesCount}`}>{totalPagesCount}</a></span>
           </li>
           <li class={defaultPage === totalPagesCount ? 'disabled' : ''}>
             <!-- svelte-ignore a11y-invalid-attribute -->
             <a
-              href="#"
               on:click={handleNextClick}
               aria-label="Next">Next</a>
           </li>
@@ -103,6 +93,6 @@
 {/if}
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
-  @import 'src/styles/undp-design/pagination.min';
+  @use 'src/styles/undp-design/base-minimal.min';
+  @use 'src/styles/undp-design/pagination.min';
 </style>
