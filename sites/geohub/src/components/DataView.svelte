@@ -313,7 +313,6 @@
 
 <style lang="scss">
   @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/buttons.min.css';
   @use '../styles/undp-design/loader.min.css';
 
   .data-view-container {

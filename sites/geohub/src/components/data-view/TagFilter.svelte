@@ -3,6 +3,7 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
+  import { Button } from '@undp-data/svelte-undp-design'
   import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}
@@ -157,19 +158,14 @@
 </div>
 
 {#if selectedTags?.length > 0}
-  <!-- svelte-ignore a11y-missing-attribute -->
-  <a
-    class="button button-primary button-without-arrow clear-tag-button"
-    role="button"
-    on:click={clearAllTags}>
-    Clear all tags
-  </a>
+  <Button
+    title="Clear all tags"
+    on:clicked={clearAllTags} />
 {/if}
 
 <style lang="scss">
   @use '../../styles/undp-design/base-minimal.min.css';
   @use '../../styles/undp-design/checkbox.min.css';
-  @use '../../styles/undp-design/buttons.min.css';
   @use '../../styles/undp-design/radio.min.css';
   @use '../../styles/undp-design/loader.min.css';
 

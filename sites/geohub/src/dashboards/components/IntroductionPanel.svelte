@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Button } from '@undp-data/svelte-undp-design'
+
   export let showIntro: boolean
   const hideIntro = () => {
     showIntro = false
@@ -35,25 +37,16 @@
       electrification for a single pixel only.
     </p>
     <br />
-    <!-- svelte-ignore a11y-missing-attribute -->
-    <a
-      class="button button-primary"
-      role="button"
-      on:click={hideIntro}>
-      Explore Data
-    </a>
+
+    <Button
+      title="Explore Data"
+      on:clicked={hideIntro} />
   </div>
 {/if}
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/buttons.min.css';
   p {
     padding: 10px;
     border-radius: 5px;
-  }
-
-  .button {
-    width: 100%;
   }
 </style>
