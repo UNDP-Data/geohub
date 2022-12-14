@@ -1,9 +1,26 @@
 <script lang="ts">
-	import { CardWithImage, Header } from '$lib';
+	import { CardWithImage, Header, Footer } from '$lib';
 
 	let headerHeight: number;
 
 	let showProgressBar = false;
+
+	let footerItems: { [key: string]: { title: string; url: string }[] } = {
+		GeoHub: [
+			{
+				title: 'GeoHub',
+				url: 'https://geohub.data.undp.org'
+			},
+			{
+				title: 'GeoHub dashboard',
+				url: 'https://geohub.data.undp.org/dashboards'
+			},
+			{
+				title: 'GeoHub electricity dashboard',
+				url: 'https://geohub.data.undp.org/dashboards/electricity'
+			}
+		]
+	};
 </script>
 
 <Header
@@ -56,6 +73,8 @@
 		</div>
 	</CardWithImage>
 </div>
+
+<Footer logoUrl="assets/undp-logo-white.svg" bind:footerItems />
 
 <style lang="scss">
 	@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
