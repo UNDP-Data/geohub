@@ -2,12 +2,15 @@
 	import { CardWithImage, Header } from '$lib';
 
 	let headerHeight: number;
+
+	let showProgressBar = false;
 </script>
 
 <Header
 	region="REGION"
 	siteTitle="Site Title"
 	logoUrl="assets/undp-logo-blue.svg"
+	bind:showProgressBar
 	bind:height={headerHeight}
 >
 	<div slot="menu-buttons">
@@ -21,6 +24,16 @@
 
 <div class="contents" style="margin-top: {headerHeight}px;">
 	<h1>Welcome to svelte UNDP design project</h1>
+
+	<h2>Header</h2>
+
+	<input
+		type="checkbox"
+		id="showProgressBar"
+		name="showProgressBar"
+		bind:checked={showProgressBar}
+	/>
+	<label for="showProgressBar">Show progress bar in header</label>
 
 	<h2>Card with image</h2>
 

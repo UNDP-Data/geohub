@@ -39,6 +39,7 @@
 <style lang="scss">
 	@use './css/base-minimal.min.css';
 	@use './css/country-site-header.min.css';
+	@use 'bulma/css/bulma.css';
 
 	.logo-image {
 		background-image: url('./assets/undp-logo-blue.svg');
