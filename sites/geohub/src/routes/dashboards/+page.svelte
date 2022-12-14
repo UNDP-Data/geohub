@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
+  import { Header } from '@undp-data/svelte-undp-design'
   import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
   import type { PageData } from './$types'
@@ -16,6 +16,7 @@
   ]
 
   export let data: PageData
+  let headerHeight: number
 </script>
 
 <svelte:head>
@@ -23,8 +24,35 @@
 </svelte:head>
 
 <div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
-  <DashboardHeader />
-  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: 8vh; height: 22vh">
+  <Header
+    region="UNDP's one stop shop for spatial data and analytics"
+    siteTitle="GeoHub dashboards"
+    url="https://geohub.data.undp.org"
+    logoUrl="undp-images/undp-logo-blue.svg"
+    bind:height={headerHeight}>
+    <div
+      slot="menu-buttons"
+      class="menu-buttons">
+      <div
+        class="has-tooltip-bottom"
+        data-tooltip="Home">
+        <div
+          role="button"
+          aria-label="Home"
+          class="menu-button has-tooltip-bottom"
+          tabindex="0"
+          on:click={() => window.open('/', '_blank')}>
+          <span class="icon">
+            <i
+              class="fa-solid fa-home"
+              style="color:#006eb5" />
+          </span>
+        </div>
+      </div>
+    </div>
+  </Header>
+
+  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: {headerHeight}px; height: 22vh">
     <div style="margin-left:5%; padding-top:2%">
       <p class="title">Dashboards Gallery</p>
       <div style="width: 120px; height: 5px; background: black; " />
@@ -62,10 +90,21 @@
 </div>
 
 <style lang="scss">
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+  @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import '../../styles/undp-design/base-minimal.min.css';
   @import '../../styles/undp-design/fonts.css';
   @import '../../styles/undp-design/footer.min.css';
+
+  .menu-buttons {
+    display: flex;
+
+    .menu-button {
+      cursor: pointer;
+      margin-left: 20px;
+      margin-right: 5px;
+    }
+  }
 
   .main-section {
     padding-top: 1rem;
