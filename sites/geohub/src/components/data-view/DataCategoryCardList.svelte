@@ -1,17 +1,17 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
-  import type { DataCategory } from '$lib/types'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
   import DataCategoryCard from '$components/data-view/DataCategoryCard.svelte'
   import { indicatorProgress } from '$stores'
   import { onMount } from 'svelte'
 
   const dispatch = createEventDispatcher()
 
-  export let categories: DataCategory[]
+  export let categories: Breadcrumb[]
   export let cardSize: 'medium' | 'small' = 'medium'
-  export let breadcrumbs: DataCategory[]
-  let subCategories: DataCategory[] = []
+  export let breadcrumbs: Breadcrumb[]
+  let subCategories: Breadcrumb[] = []
   $: isShowSubCategory = subCategories && subCategories.length > 0
 
   $: breadcrumbs, breadcrumbChanged()
@@ -36,7 +36,7 @@
     }
   }
 
-  const getSelectedCategory = async (category: DataCategory) => {
+  const getSelectedCategory = async (category: Breadcrumb) => {
     if (category.name === 'SDG') {
       await searchCategory(category)
     } else {
@@ -44,7 +44,7 @@
     }
   }
 
-  const searchCategory = async (category: DataCategory) => {
+  const searchCategory = async (category: Breadcrumb) => {
     try {
       $indicatorProgress = true
 
@@ -73,7 +73,7 @@
     }
   }
 
-  const handleSelectSubcategory = async (category: DataCategory) => {
+  const handleSelectSubcategory = async (category: Breadcrumb) => {
     if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.name !== category.name) {

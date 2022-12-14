@@ -1,5 +1,6 @@
-import type { DataCategory, Layer } from '$lib/types'
+import type { Layer } from '$lib/types'
 import type { StyleDefinition } from '@undp-data/style-switcher'
+import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -206,7 +207,7 @@ export const rasterArithmeticOperators = [
   { value: '**', label: 'Power', text: 'raise to power', disabled: false, symbol: '^' },
 ]
 
-export const DataCategories: DataCategory[] = [
+export const DataCategories: Breadcrumb[] = [
   {
     name: 'SDG',
     icon: '/sdgs/SDG Wheel_WEB.png',

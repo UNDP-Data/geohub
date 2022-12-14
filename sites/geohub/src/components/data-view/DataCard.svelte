@@ -8,7 +8,7 @@
     VectorTileMetadata,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
-  import Accordion from '$components/controls/Accordion.svelte'
+  import { Accordion } from '@undp-data/svelte-undp-design'
   import MiniMap from '$components/data-view/MiniMap.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'

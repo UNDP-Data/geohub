@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { CardWithImage, Header, Footer } from '$lib';
+	import { Accordion, Breadcrumbs, CardWithImage, Header, Footer, Tabs } from '$lib';
+	import type { Breadcrumb, Tab } from '$lib/interfaces';
 
 	let headerHeight: number;
 
@@ -21,6 +22,26 @@
 			}
 		]
 	};
+
+	let breadcrumbs: Breadcrumb[] = [
+		{
+			name: 'Home',
+			icon: 'fas fa-house',
+			url: ''
+		},
+		{
+			name: 'Search result',
+			icon: 'fas fa-magnifying-glass',
+			url: ''
+		}
+	];
+
+	let tabs: Tab[] = [
+		{ label: 'Data', icon: 'fas fa-database' },
+		{ label: 'Layer', icon: 'fas fa-layer-group' }
+	];
+	let activeTab: string = tabs[0].label;
+	let tabHeight: number;
 </script>
 
 <Header
@@ -72,6 +93,34 @@
 			<h5>Title of the post goes here and it’s two lines</h5>
 		</div>
 	</CardWithImage>
+
+	<h2>Accordion</h2>
+
+	<Accordion headerTitle="title">
+		<div slot="content">
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong
+			>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla.
+			<!-- svelte-ignore a11y-missing-attribute -->
+			Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac
+			<em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor,
+			tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem
+			eget, facilisis sodales sem.
+		</div>
+	</Accordion>
+
+	<br />
+
+	<h3>Breadcrumbs</h3>
+
+	<Breadcrumbs bind:breadcrumbs />
+
+	<br />
+
+	<h3>Tab</h3>
+
+	<Tabs bind:tabs fontSize="medium" bind:height={tabHeight} bind:activeTab />
+
+	<br />
 </div>
 
 <Footer logoUrl="assets/undp-logo-white.svg" bind:footerItems />

@@ -1,13 +1,14 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataCategory, DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
+  import type { DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams, STAC_MINIMUM_ZOOM } from '$lib/constants'
+  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
-  import Breadcrumbs from '$components/controls/Breadcrumbs.svelte'
+  import { Breadcrumbs } from '@undp-data/svelte-undp-design'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
@@ -18,7 +19,7 @@
   $: totalHeight = headerHeight + tabsHeight + optionsHeight
 
   let containerDivElement: HTMLDivElement
-  let breadcrumbs: DataCategory[] = [
+  let breadcrumbs: Breadcrumb[] = [
     {
       name: 'Home',
       icon: 'fas fa-house',
@@ -219,7 +220,7 @@
 
   const handleBreadcrumpClicked = (e) => {
     const index: number = e.detail.index
-    const breadcrump: DataCategory = e.detail.breadcrumb
+    const breadcrump: Breadcrumb = e.detail.breadcrumb
 
     if (index === 0) {
       // home

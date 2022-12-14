@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { SortingColumns } from '$lib/constants'
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
   import PanelButton from '$components/controls/PanelButton.svelte'

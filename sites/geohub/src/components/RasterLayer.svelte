@@ -7,7 +7,7 @@
   import { ClassificationMethodTypes, DynamicLayerLegendTypes, LayerInitialValues, TabNames } from '$lib/constants'
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
-  import Tabs from '$components//controls/Tabs.svelte'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer = LayerInitialValues
   let expressions: RasterSimpleExpression[]

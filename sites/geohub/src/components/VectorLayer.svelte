@@ -8,7 +8,7 @@
   import type { Layer } from '$lib/types'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
   import { getRandomColormap } from '$lib/helper'
-  import Tabs from '$components//controls/Tabs.svelte'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer = LayerInitialValues
   let colorMapName = getRandomColormap()
