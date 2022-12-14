@@ -8,6 +8,7 @@
   import type { BannerMessage } from '$lib/types'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages } from '$stores'
+  import { Button } from '@undp-data/svelte-undp-design'
 
   interface MapStyle {
     id: string
@@ -105,15 +106,16 @@
     <a aria-label={style.name}>
       <div style="display: flex;">
         <h6>{style.name}</h6>
-        <button
-          class="button is-small delete-button"
+        <span
+          class="delete-button p-2 pr-4"
+          role="button"
           on:click={() => {
             confirmDeleteDialogVisible = true
           }}>
           <i
             class="fa-solid fa-trash"
             style="color: black;" />
-        </button>
+        </span>
       </div>
       <a
         href={style.viewer}
@@ -161,20 +163,22 @@
         <br />
         {style.name}
       </section>
-      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-        <div>
-          <button
-            class="button secondary-button"
-            alt="Cancel Delete Layer Button"
-            title="Cancel Delete Layer Button"
-            on:click={() => (confirmDeleteDialogVisible = false)}>
-            Cancel
-          </button>
-          <button
-            class="button primary-button"
-            alt="Delete"
+      <footer class="modal-card-foot">
+        <div
+          class="px-1"
+          style="width: 50%">
+          <Button
+            title="Cancel"
+            isPrimary={false}
+            on:clicked={() => (confirmDeleteDialogVisible = false)} />
+        </div>
+        <div
+          class="px-1"
+          style="width: 50%">
+          <Button
             title="Delete"
-            on:click={handleDeleteStyle}>Delete</button>
+            isPrimary={true}
+            on:clicked={handleDeleteStyle} />
         </div>
       </footer>
     </div>
@@ -186,7 +190,6 @@
   @use 'src/styles/undp-design/base-minimal.min.css';
   @use 'src/styles/undp-design/cta-link.min.css';
   @use 'src/styles/undp-design/content-card.min.css';
-  @use 'src/styles/undp-design/buttons.min.css';
 
   .delete-button {
     margin-left: auto;

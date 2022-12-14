@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion, Breadcrumbs, CardWithImage, Header, Footer, Tabs } from '$lib';
+	import { Accordion, Button, Breadcrumbs, CardWithImage, Header, Footer, Tabs } from '$lib';
 	import type { Breadcrumb, Tab } from '$lib/interfaces';
 
 	let headerHeight: number;
@@ -119,6 +119,18 @@
 	<h3>Tab</h3>
 
 	<Tabs bind:tabs fontSize="medium" bind:height={tabHeight} bind:activeTab />
+
+	<br />
+
+	<h3>Button</h3>
+
+	<div style="width: 200px;">
+		<Button title="Read more" on:clicked={() => console.log('clicked')} />
+		<hr />
+		<Button title="Read more" isArrow={true} on:clicked={() => console.log('clicked')} />
+		<hr />
+		<Button title="Read more" on:clicked={() => console.log('clicked')} isPrimary={false} />
+	</div>
 
 	<br />
 </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { downloadFile } from '$lib/helper'
+  import { Button } from '@undp-data/svelte-undp-design'
 
   let layers = ['ADM0', 'ADM1', 'ADM2', 'ADM3', 'ADM4']
   let layer = 'ADM0'
@@ -29,19 +30,14 @@
   </div>
 </div>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<a
-  class="button button-primary button-without-arrow"
-  role="button"
-  on:click={download}>
-  Download
-</a>
+<div class="download-button">
+  <Button
+    title="Download"
+    on:clicked={download} />
+</div>
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/buttons.min.css';
-
-  .button {
+  .download-button {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     width: 100%;
