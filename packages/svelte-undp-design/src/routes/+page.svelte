@@ -9,11 +9,18 @@
 <Header
 	region="REGION"
 	siteTitle="Site Title"
+	url="https://undpgeohub.org"
 	logoUrl="assets/undp-logo-blue.svg"
 	bind:showProgressBar
 	bind:height={headerHeight}
 >
-	<div slot="menu-buttons">
+	<div slot="menu-buttons" class="menu-buttons">
+		<div role="button" aria-label="Layer panel" class="menu-button" tabindex="0">
+			<span class="icon">
+				<i class="fa-solid fa-bars fa-xl" />
+			</span>
+		</div>
+
 		<div role="button" aria-label="Layer panel" class="menu-button" tabindex="0">
 			<span class="icon">
 				<i class="fa-solid fa-bars fa-xl" />
@@ -53,9 +60,14 @@
 <style lang="scss">
 	@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
 
-	.menu-button {
-		cursor: pointer;
-		margin-left: 20px;
-		margin-right: 5px;
+	.menu-buttons {
+		display: flex;
+		color: #006eb5;
+
+		.menu-button {
+			cursor: pointer;
+			margin-left: 20px;
+			margin-right: 5px;
+		}
 	}
 </style>
