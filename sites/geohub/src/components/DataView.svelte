@@ -154,12 +154,15 @@
       }
     }
 
-    if (breadcrumbs.length <= 2 && selectedTags.length === 0 && !query) {
+    if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
       DataItemFeatureCollection = undefined
-      if (breadcrumbs.length > 1) {
-        breadcrumbs.pop()
-        breadcrumbs = [...breadcrumbs]
-      }
+      currentSearchUrl = ''
+      return
+    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
+      DataItemFeatureCollection = undefined
+      breadcrumbs.pop()
+      breadcrumbs = [...breadcrumbs]
+      currentSearchUrl = ''
       return
     }
 
