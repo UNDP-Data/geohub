@@ -8,6 +8,7 @@ import Header from './Header.svelte';
 import Footer from './Footer.svelte';
 import Tabs from './Tabs.svelte';
 import Radios from './Radios.svelte';
+import Loader from './Loader.svelte';
 
 export {
 	Accordion,
@@ -19,5 +20,6 @@ export {
 	Footer,
 	Tabs,
 	Radios,
-	CtaLink
+	CtaLink,
+	Loader
 };

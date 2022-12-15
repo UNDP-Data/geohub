@@ -7,7 +7,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
-  import { Breadcrumbs } from '@undp-data/svelte-undp-design'
+  import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
   import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
@@ -309,30 +309,20 @@
   {#if !DataItemFeatureCollection}
     <div
       hidden={!$indicatorProgress}
-      class="loader"
-      aria-busy="true"
-      aria-live="polite" />
+      class="loader-container">
+      <Loader />
+    </div>
   {/if}
 </div>
 
 <style lang="scss">
-  @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/loader.min.css';
-
   .data-view-container {
-    .button {
-      color: white !important;
-    }
-
-    .loader {
+    .loader-container {
       position: absolute;
       z-index: 10;
       top: 25%;
       left: 35%;
       background-color: white;
-      transform: translate(-25%, -35%);
-      -webkit-transform: translate(-25%, -35%);
-      -ms-transform: translate(-25%, -35%);
     }
   }
 </style>
