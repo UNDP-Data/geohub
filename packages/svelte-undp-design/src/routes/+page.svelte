@@ -8,7 +8,8 @@
 		Footer,
 		Tabs,
 		Radios,
-		CtaLink
+		CtaLink,
+		Loader
 	} from '$lib';
 	import Checkbox from '$lib/Checkbox.svelte';
 	import type { Breadcrumb, Tab, Radio } from '$lib/interfaces';
@@ -215,6 +216,11 @@
 
 	Selected: {radioValue3}
 
+	<br />
+
+	<h3>Loader</h3>
+
+	<Loader />
 	<br />
 </div>
 

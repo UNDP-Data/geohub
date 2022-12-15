@@ -3,7 +3,7 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
-  import { Button, Checkbox, Radios } from '@undp-data/svelte-undp-design'
+  import { Button, Checkbox, Radios, Loader } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import SelectedTags from './SelectedTags.svelte'
 
@@ -134,9 +134,9 @@
   </TreeView>
   <div
     hidden={tags && Object.keys(tags).length > 0}
-    class="loader"
-    aria-busy="true"
-    aria-live="polite" />
+    class="loader-container">
+    <Loader />
+  </div>
 </div>
 
 <div class="container pb-2">
@@ -154,9 +154,6 @@
 {/if}
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/loader.min.css';
-
   .subtitle {
     border-bottom: 1px solid gray;
     font-weight: bold;
@@ -168,22 +165,14 @@
     overflow-y: auto;
     border: 1px solid gray;
 
-    .loader {
+    .loader-container {
       position: absolute;
       z-index: 10;
-      top: 25px;
-      left: 50px;
+      top: 20px;
+      left: 40px;
       background-color: white;
-      transform: translate(-25%, -35%);
-      -webkit-transform: translate(-25%, -35%);
-      -ms-transform: translate(-25%, -35%);
     }
   }
-
-  // .radio-button {
-  //   position: relative;
-  //   top: 0.2rem;
-  // }
 
   .clear-tag-button {
     width: 100%;
