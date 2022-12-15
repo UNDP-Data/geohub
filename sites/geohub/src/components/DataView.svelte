@@ -171,6 +171,7 @@
     if (link) {
       url = link.href
     }
+
     await searchDatasets(url)
   }
 
@@ -242,7 +243,7 @@
 
       breadcrumbs = [...breadcrumbs]
 
-      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
+      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets') && selectedTags.length > 0) {
         selectedTags = []
       }
     }
