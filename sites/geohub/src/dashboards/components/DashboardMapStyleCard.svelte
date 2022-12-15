@@ -5,10 +5,7 @@
   import { Map } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
-  import type { BannerMessage } from '$lib/types'
-  import { ErrorMessages, StatusTypes } from '$lib/constants'
-  import { bannerMessages } from '$stores'
-  import { Button } from '@undp-data/svelte-undp-design'
+  import { Button, CtaLink } from '@undp-data/svelte-undp-design'
 
   interface MapStyle {
     id: string
@@ -57,31 +54,13 @@
     map.setZoom(styleJSON.zoom ? styleJSON.zoom : 4)
   }
 
-  const handleDeleteStyle = () => {
-    fetch(`../api/style/${style.id}`, {
+  const handleDeleteStyle = async () => {
+    const res = await fetch(`../api/style/${style.id}`, {
       method: 'DELETE',
     })
-      .then((res) => {
-        if (res.status === 204) {
-          nodeRef.parentNode.removeChild(nodeRef)
-        } else {
-          const bannerErrorMessage: BannerMessage = {
-            type: StatusTypes.DANGER,
-            title: 'Whoops! Something went wrong.',
-            message: ErrorMessages.NO_STYLE_EXISTS,
-          }
-          bannerMessages.update((data) => [...data, bannerErrorMessage])
-        }
-      })
-      .catch((err) => {
-        const bannerErrorMessage: BannerMessage = {
-          type: StatusTypes.DANGER,
-          title: 'Whoops! Something went wrong.',
-          message: ErrorMessages.FETCH_TIMEOUT,
-          error: err,
-        }
-        bannerMessages.update((data) => [...data, bannerErrorMessage])
-      })
+    if (res.status === 204) {
+      nodeRef.parentNode.removeChild(nodeRef)
+    }
     confirmDeleteDialogVisible = false
   }
 
@@ -125,10 +104,10 @@
           class="image"
           bind:this={mapContainer} />
         <div class="content-caption">
-          <span class="cta__link cta--space">
-            View Style
-            <i />
-          </span>
+          <CtaLink
+            label="View Style"
+            on:clicked={() => window.open(style.viewer, '_blank')}
+            isArrow={false} />
           <div style="display: flex; align-items: center; justify-content: space-between">
             <div class="content">
               <Time
@@ -188,7 +167,6 @@
 <!--</div>-->
 <style lang="scss">
   @use 'src/styles/undp-design/base-minimal.min.css';
-  @use 'src/styles/undp-design/cta-link.min.css';
   @use 'src/styles/undp-design/content-card.min.css';
 
   .delete-button {
