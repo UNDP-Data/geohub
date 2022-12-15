@@ -3,7 +3,7 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
-  import { Button } from '@undp-data/svelte-undp-design'
+  import { Button, Checkbox } from '@undp-data/svelte-undp-design'
   import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}
@@ -106,17 +106,12 @@
             {#if tags[key]}
               {#each tags[key] as tag}
                 <TreeLeaf>
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      id="{tag.key}-{tag.value}"
-                      name="{tag.key}-{tag.value}"
-                      on:click={() => {
-                        handleTagChecked(tag)
-                      }}
-                      checked={existTag(tag)} />
-                    <label for="{tag.key}-{tag.value}">{tag.value} ({tag.count})</label>
-                  </div>
+                  <Checkbox
+                    label="{tag.value} ({tag.count})"
+                    checked={existTag(tag)}
+                    on:clicked={() => {
+                      handleTagChecked(tag)
+                    }} />
                 </TreeLeaf>
               {/each}
             {/if}
@@ -165,7 +160,6 @@
 
 <style lang="scss">
   @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/checkbox.min.css';
   @use '../../styles/undp-design/radio.min.css';
   @use '../../styles/undp-design/loader.min.css';
 
