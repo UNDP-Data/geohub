@@ -1,6 +1,6 @@
 import type { Layer } from '$lib/types'
 import type { StyleDefinition } from '@undp-data/style-switcher'
-import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
+import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -235,25 +235,25 @@ export const DataCategories: Breadcrumb[] = [
   },
 ]
 
-export const SortingColumns = [
+export const SortingColumns: Radio[] = [
   {
-    column: 'name',
+    value: 'name',
     label: 'Name',
   },
   {
-    column: 'source',
+    value: 'source',
     label: 'Source',
   },
   // {
-  //   column: 'license',
+  //   value: 'license',
   //   label: 'Data license'
   // },
   {
-    column: 'updatedat',
+    value: 'updatedat',
     label: 'Updated date',
   },
   {
-    column: 'createdat',
+    value: 'createdat',
     label: 'Created date',
   },
 ]

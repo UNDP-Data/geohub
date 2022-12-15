@@ -6,5 +6,6 @@ import CardWithImage from './CardWithImage.svelte';
 import Header from './Header.svelte';
 import Footer from './Footer.svelte';
 import Tabs from './Tabs.svelte';
+import Radios from './Radios.svelte';
 
-export { Accordion, Button, Breadcrumbs, Checkbox, CardWithImage, Header, Footer, Tabs };
+export { Accordion, Button, Breadcrumbs, Checkbox, CardWithImage, Header, Footer, Tabs, Radios };
