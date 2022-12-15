@@ -7,7 +7,8 @@
 		Header,
 		Footer,
 		Tabs,
-		Radios
+		Radios,
+		CtaLink
 	} from '$lib';
 	import Checkbox from '$lib/Checkbox.svelte';
 	import type { Breadcrumb, Tab, Radio } from '$lib/interfaces';
@@ -165,6 +166,25 @@
 		<hr />
 		<Button title="Read more" on:clicked={() => console.log('clicked')} isPrimary={false} />
 	</div>
+
+	<br />
+
+	<h3>CTA Link</h3>
+
+	<CtaLink
+		label="Read more"
+		on:clicked={() => {
+			console.log('clicked cta link');
+		}}
+	/>
+	<br />
+	<CtaLink
+		label="Read more"
+		isArrow={false}
+		on:clicked={() => {
+			console.log('clicked cta link');
+		}}
+	/>
 
 	<br />
 

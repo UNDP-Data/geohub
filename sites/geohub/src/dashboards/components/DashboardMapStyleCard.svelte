@@ -8,7 +8,7 @@
   import type { BannerMessage } from '$lib/types'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import { bannerMessages } from '$stores'
-  import { Button } from '@undp-data/svelte-undp-design'
+  import { Button, CtaLink } from '@undp-data/svelte-undp-design'
 
   interface MapStyle {
     id: string
@@ -125,10 +125,9 @@
           class="image"
           bind:this={mapContainer} />
         <div class="content-caption">
-          <span class="cta__link cta--space">
-            View Style
-            <i />
-          </span>
+          <CtaLink
+            label="View Style"
+            isArrow={false} />
           <div style="display: flex; align-items: center; justify-content: space-between">
             <div class="content">
               <Time
@@ -188,7 +187,6 @@
 <!--</div>-->
 <style lang="scss">
   @use 'src/styles/undp-design/base-minimal.min.css';
-  @use 'src/styles/undp-design/cta-link.min.css';
   @use 'src/styles/undp-design/content-card.min.css';
 
   .delete-button {

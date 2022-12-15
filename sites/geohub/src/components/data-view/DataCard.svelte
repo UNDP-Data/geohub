@@ -207,8 +207,6 @@
 {/if}
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/cta-link.min.css';
   .card-container {
     display: flex;
     flex-direction: column;
