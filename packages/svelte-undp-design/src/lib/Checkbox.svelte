@@ -21,8 +21,7 @@
 	@use './css/base-minimal.min.css';
 	@use './css/checkbox.min.css';
 
-	.vertical-align input,
-	.vertical-align select {
+	.vertical-align input {
 		vertical-align: middle;
 	}
 </style>

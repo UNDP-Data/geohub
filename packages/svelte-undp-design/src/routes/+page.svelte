@@ -1,7 +1,16 @@
 <script lang="ts">
-	import { Accordion, Button, Breadcrumbs, CardWithImage, Header, Footer, Tabs } from '$lib';
+	import {
+		Accordion,
+		Button,
+		Breadcrumbs,
+		CardWithImage,
+		Header,
+		Footer,
+		Tabs,
+		Radios
+	} from '$lib';
 	import Checkbox from '$lib/Checkbox.svelte';
-	import type { Breadcrumb, Tab } from '$lib/interfaces';
+	import type { Breadcrumb, Tab, Radio } from '$lib/interfaces';
 
 	let headerHeight: number;
 
@@ -45,6 +54,26 @@
 	let tabHeight: number;
 
 	let checked = false;
+
+	let radios: Radio[] = [
+		{
+			label: 'radio A',
+			value: 'a'
+		},
+		{ label: 'radio B', value: 'b' }
+	];
+	let radioValue1 = radios[0].value;
+	let radioValue2 = radios[1].value;
+
+	let radiosHtml: Radio[] = [
+		{
+			label: '<b>radio A</b>',
+			value: 'a',
+			isLabelHTML: true
+		},
+		{ label: '<b>radio B</b>', value: 'b', isLabelHTML: true }
+	];
+	let radioValue3 = radiosHtml[0].value;
 </script>
 
 <Header
@@ -144,6 +173,27 @@
 	<Checkbox label="Category" bind:checked />
 
 	Checked: {checked}
+
+	<br />
+
+	<h3>Radio buttons</h3>
+
+	<Radios bind:radios bind:value={radioValue1} groupName="radio-buttons-1" isVertical={false} />
+
+	Selected: {radioValue1}
+
+	<Radios bind:radios bind:value={radioValue2} groupName="radio-buttons-2" isVertical={true} />
+
+	Selected: {radioValue2}
+
+	<Radios
+		bind:radios={radiosHtml}
+		bind:value={radioValue3}
+		groupName="radio-buttons-3"
+		isVertical={true}
+	/>
+
+	Selected: {radioValue3}
 
 	<br />
 </div>

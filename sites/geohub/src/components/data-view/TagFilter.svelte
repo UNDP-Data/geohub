@@ -3,7 +3,8 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
-  import { Button, Checkbox } from '@undp-data/svelte-undp-design'
+  import { Button, Checkbox, Radios } from '@undp-data/svelte-undp-design'
+  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}
@@ -11,6 +12,17 @@
   export let selectedTags: Tag[]
   export let operatorType: 'and' | 'or'
   export let currentSearchUrl = ''
+
+  let operatorTypes: Radio[] = [
+    {
+      label: 'Match all selected tags',
+      value: 'and',
+    },
+    {
+      label: 'Match at least a tag selected',
+      value: 'or',
+    },
+  ]
 
   const colorOptions = [
     'is-black',
@@ -127,29 +139,12 @@
     aria-live="polite" />
 </div>
 
-<div class="tile is-vertical pb-2">
-  <div class="tile">
-    <label class="radio">
-      <input
-        class="radio-button"
-        type="radio"
-        name="operator"
-        bind:group={operatorType}
-        value="and" />
-      Match all selected tags
-    </label>
-  </div>
-  <div class="tile">
-    <label class="radio">
-      <input
-        class="radio-button"
-        type="radio"
-        name="operator"
-        bind:group={operatorType}
-        value="or" />
-      Match at least a tag selected
-    </label>
-  </div>
+<div class="container pb-2">
+  <Radios
+    bind:radios={operatorTypes}
+    bind:value={operatorType}
+    groupName="operator"
+    isVertical={true} />
 </div>
 
 {#if selectedTags?.length > 0}
@@ -160,7 +155,6 @@
 
 <style lang="scss">
   @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/radio.min.css';
   @use '../../styles/undp-design/loader.min.css';
 
   .subtitle {
@@ -186,10 +180,10 @@
     }
   }
 
-  .radio-button {
-    position: relative;
-    top: 0.2rem;
-  }
+  // .radio-button {
+  //   position: relative;
+  //   top: 0.2rem;
+  // }
 
   .clear-tag-button {
     width: 100%;

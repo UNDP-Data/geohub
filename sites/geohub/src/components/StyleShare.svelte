@@ -3,6 +3,8 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
+  import { Radios, Button } from '@undp-data/svelte-undp-design'
+  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
@@ -12,6 +14,17 @@
   let styleURL: string
   let radioDisabled = false
   let selectedOption: 'all' | 'geohub' = 'all'
+  let selectedOptions: Radio[] = [
+    {
+      label: 'All layers',
+      value: 'all',
+    },
+    {
+      label: 'GeoHub',
+      value: 'geohub',
+    },
+  ]
+
   let styleName = 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
@@ -178,31 +191,12 @@
           </div>
 
           {#if radioDisabled === false}
-            <div style="display: block">
-              <div
-                class="radio-input"
-                style="margin: 10%; align-items: center">
-                <input
-                  on:input={() => (selectedOption = 'all')}
-                  checked={selectedOption === 'all'}
-                  type="radio"
-                  name="amount"
-                  value="all"
-                  id="all" />
-                <label for="all"> All Layers </label>
-              </div>
-              <div
-                class="radio-input"
-                style="margin: 10%">
-                <input
-                  on:input={() => (selectedOption = 'geohub')}
-                  checked={selectedOption === 'geohub'}
-                  type="radio"
-                  name="amount"
-                  value="geohub"
-                  id="geohub" />
-                <label for="geohub"> GeoHub </label>
-              </div>
+            <div class="container my-2">
+              <Radios
+                bind:radios={selectedOptions}
+                bind:value={selectedOption}
+                groupName="share-layer-type"
+                isVertical={true} />
             </div>
           {/if}
           {#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
@@ -250,33 +244,27 @@
         {/if}
       </section>
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-        <div>
-          <button
-            class="button secondary-button"
-            alt="Close"
-            title="Close"
-            on:click={handleClose}>
-            Cancel
-          </button>
-          {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
-            <button
-              class="button primary-button"
-              alt="Share"
-              title="Share"
-              on:click={handleShare}>
-              Share
-            </button>
-          {/if}
+        <div class="is-6 px-1">
+          <Button
+            title="Cancel"
+            on:clicked={handleClose}
+            isPrimary={false} />
         </div>
+
+        {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
+          <div class="is-6 px-1">
+            <Button
+              title="Share"
+              on:clicked={handleShare}
+              isPrimary={true} />
+          </div>
+        {/if}
       </footer>
     </div>
   </div>
 {/if}
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
-  @import 'src/styles/undp-design/radio.min';
-
   .icon {
     cursor: pointer;
   }
