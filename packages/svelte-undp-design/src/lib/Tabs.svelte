@@ -70,7 +70,7 @@
 						}
 					}}
 				>
-					<span class="icon-text {fontSize === 'small' ? 'is-size-7' : 'is-size-6'}">
+					<span class="icon-text" style="font-size: {fontSize === 'small' ? '0.75' : '1'}rem;">
 						{#if tab.icon}
 							<span class="icon">
 								<i class={tab.icon} />

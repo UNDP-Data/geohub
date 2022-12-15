@@ -6,6 +6,7 @@
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
+  import { Checkbox } from '@undp-data/svelte-undp-design'
   import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()
@@ -206,21 +207,15 @@
       </div>
     </div>
     <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
-    <div class="form-check">
-      <input
-        type="checkbox"
-        id="bbox-filter-checkbox"
-        name="bbox-filter-checkbox"
-        bind:checked={isFilterByBBox} />
-      <label for="bbox-filter-checkbox">Filter by current map extent</label>
-    </div>
+    <Checkbox
+      label="Filter by current map extent"
+      bind:checked={isFilterByBBox} />
   </PanelButton>
 </div>
 
 <style lang="scss">
   @use '../../styles/undp-design/base-minimal.min.css';
   @use '../../styles/undp-design/radio.min.css';
-  @use '../../styles/undp-design/checkbox.min.css';
 
   .filter-text {
     display: flex;

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Accordion, Button, Breadcrumbs, CardWithImage, Header, Footer, Tabs } from '$lib';
+	import Checkbox from '$lib/Checkbox.svelte';
 	import type { Breadcrumb, Tab } from '$lib/interfaces';
 
 	let headerHeight: number;
@@ -42,6 +43,8 @@
 	];
 	let activeTab: string = tabs[0].label;
 	let tabHeight: number;
+
+	let checked = false;
 </script>
 
 <Header
@@ -118,6 +121,8 @@
 
 	<h3>Tab</h3>
 
+	<Tabs bind:tabs fontSize="small" bind:height={tabHeight} bind:activeTab />
+
 	<Tabs bind:tabs fontSize="medium" bind:height={tabHeight} bind:activeTab />
 
 	<br />
@@ -131,6 +136,14 @@
 		<hr />
 		<Button title="Read more" on:clicked={() => console.log('clicked')} isPrimary={false} />
 	</div>
+
+	<br />
+
+	<h3>Checkbox</h3>
+
+	<Checkbox label="Category" bind:checked />
+
+	Checked: {checked}
 
 	<br />
 </div>

@@ -3,11 +3,12 @@
   import { map, layerList } from '$stores'
   import type { StyleSpecification } from 'maplibre-gl'
   import PanelButton from '$components/controls/PanelButton.svelte'
+  import { Checkbox } from '@undp-data/svelte-undp-design'
   import { clean } from '$lib/helper'
 
   let style: StyleSpecification
   let onlyRendered = false
-  let onlyRelative = false
+  let onlyRelative = true
   let enableLayerOrder = true
   let relativeLayers: { [key: string]: string } = {}
 
@@ -35,10 +36,6 @@
           relativeLayers[child.id] = `${clean(layer.name)} label`
         })
       })
-
-      if (Object.keys(relativeLayers).length > 0) {
-        onlyRelative = true
-      }
     }
   }
 </script>
@@ -54,16 +51,9 @@
   <p class="mx-2 mb-1">Drag and drop to change layer order for rendering in the map.</p>
 
   <div class="header mx-2 mt-1 mb-2 pb-2">
-    <div class="form-check">
-      <input
-        type="checkbox"
-        id="bbox-filter-checkbox"
-        name="bbox-filter-checkbox"
-        bind:checked={onlyRelative} />
-      <label for="bbox-filter-checkbox">
-        <b>Show only GeoHub layers</b>
-      </label>
-    </div>
+    <Checkbox
+      label="Show only GeoHub layers"
+      bind:checked={onlyRelative} />
   </div>
 
   <div class="layer-order">
@@ -78,9 +68,6 @@
 </PanelButton>
 
 <style lang="scss">
-  @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/checkbox.min.css';
-
   .header {
     border-bottom: 1px solid gray;
   }
