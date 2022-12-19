@@ -4,6 +4,7 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import type { StacLink } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -23,8 +24,8 @@ export const GET: RequestHandler = async ({ url }) => {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
-    const limit = url.searchParams.get('limit')
-    const offset = url.searchParams.get('offset')
+    const limit = url.searchParams.get('limit') ?? '10'
+    const offset = url.searchParams.get('offset') ?? '0'
 
     const options = {}
     if (limit) options['limit'] = limit
@@ -42,7 +43,49 @@ export const GET: RequestHandler = async ({ url }) => {
       throw error(404)
     }
 
-    return new Response(JSON.stringify(res.rows))
+    const nextUrl = new URL(url.toString())
+    nextUrl.searchParams.set('limit', limit)
+    nextUrl.searchParams.set('offset', (Number(offset) + Number(limit)).toString())
+
+    const links: StacLink[] = [
+      {
+        rel: 'root',
+        type: 'application/json',
+        href: `${url.origin}${url.pathname}`,
+      },
+      {
+        rel: 'self',
+        type: 'application/json',
+        href: url.toString(),
+      },
+    ]
+
+    if (res.rowCount === Number(limit)) {
+      links.push({
+        rel: 'next',
+        type: 'application/json',
+        href: nextUrl.toString(),
+      })
+    }
+
+    if (Number(offset) > 0) {
+      const previoustUrl = new URL(url.toString())
+      previoustUrl.searchParams.set('limit', limit.toString())
+      previoustUrl.searchParams.set('offset', (Number(offset) - Number(limit)).toString())
+
+      links.push({
+        rel: 'previous',
+        type: 'application/json',
+        href: previoustUrl.toString(),
+      })
+    }
+
+    const result = {
+      styles: res.rows,
+      links: links,
+    }
+
+    return new Response(JSON.stringify(result))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
   } finally {
