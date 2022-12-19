@@ -27,6 +27,6 @@
 </a>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/cta-link.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/cta-link.min.css';
 </style>

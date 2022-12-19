@@ -2,6 +2,22 @@
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
+## Usage
+
+- build package
+
+```shell
+pnpm build
+```
+
+- development
+
+Run the below command to launch storybook for developing UNDP design components
+
+```shell
+pnpm storybook
+```
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!

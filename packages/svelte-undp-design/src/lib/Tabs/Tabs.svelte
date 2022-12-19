@@ -91,8 +91,8 @@
 </div>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/tab.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/tab.min.css';
 
 	.tabs-undp li {
 		margin-right: auto !important;

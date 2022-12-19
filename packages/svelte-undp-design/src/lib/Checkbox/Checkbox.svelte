@@ -3,7 +3,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let label: string;
-	export let checked: boolean;
+	export let checked = false;
 
 	const handleChecked = () => {
 		dispatch('clicked');
@@ -18,8 +18,8 @@
 </div>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/checkbox.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/checkbox.min.css';
 
 	.vertical-align input {
 		vertical-align: middle;

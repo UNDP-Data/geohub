@@ -105,9 +105,9 @@
 </footer>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/footer.min.css';
-	@use './css/buttons.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/footer.min.css';
+	@use '../css/buttons.min.css';
 
 	.social-links {
 		margin-left: auto !important;
