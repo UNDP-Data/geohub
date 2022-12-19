@@ -67,7 +67,7 @@
     <Tabs
       bind:tabs
       bind:activeTab
-      fontSize="normal"
+      fontSize="medium"
       isToggleTab={true} />
 
     <p class="panel-content">
