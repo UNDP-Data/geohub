@@ -69,7 +69,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm install
+          pnpm install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
