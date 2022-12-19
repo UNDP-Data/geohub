@@ -23,7 +23,7 @@
     const vectorLayerMeta = getLayerProperties($map, layer, showOnlyNumberFields)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
-      propertySelectOptions = ['', ...propertySelectOptions]
+      propertySelectOptions = ['No Label', ...propertySelectOptions]
     }
     propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()

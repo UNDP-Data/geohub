@@ -117,7 +117,7 @@
     $map.fire('label:changed', {
       parentId: parentLayerId,
       layerId: targetLayer.id,
-      isCreated: e.detail.textFieldValue !== '',
+      isCreated: e.detail.textFieldValue !== 'No Label',
     })
   }
 </script>
@@ -127,7 +127,7 @@
     class="action"
     data-testid="vector-label-panel-container">
     <div class="columns">
-      <div class="column m-auto is-10 is-flex is-align-content-center">
+      <div class="column is-10 m-auto">
         <span>Property:&nbsp;</span>
         <TextField
           on:change={onTextChange}
@@ -138,7 +138,7 @@
     </div>
     {#if fieldType && ['number', 'float'].includes(fieldType)}
       <div
-        class="column is-7"
+        class="column is-7 m-auto"
         transition:fade>
         <div class="has-text-centered">Number of Decimal Places</div>
         <div class="is-flex is-justify-content-center">
