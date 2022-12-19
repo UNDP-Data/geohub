@@ -68,6 +68,7 @@
     "chroma-js": "^2.4.2",
     "colormap": "^2.3.2",
     "d3-format": "^3.1.0",
+    "esbuild": "0.16.8",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
