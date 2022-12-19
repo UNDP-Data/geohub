@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Radio } from './interfaces';
+	import type { Radio } from '../interfaces';
 
 	export let radios: Radio[];
 	export let groupName: string;
@@ -24,8 +24,8 @@
 </div>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/radio.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/radio.min.css';
 
 	.radio-buttons {
 		display: flex;

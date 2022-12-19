@@ -32,8 +32,8 @@
 </ul>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/accordion.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/accordion.min.css';
 
 	.accordion {
 		padding: 5px;
