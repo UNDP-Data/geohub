@@ -2,6 +2,7 @@
   import { marked } from 'marked'
   import Time from 'svelte-time'
   import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
+  import { CtaLink } from '@undp-data/svelte-undp-design'
 
   export let feature: StacItemFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
@@ -22,15 +23,11 @@
           {feature.properties.description.substring(0, descriptionLength)}...
         {/if}
         <br />
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-          class="cta__link cta--arrow"
-          on:click={() => {
+        <CtaLink
+          label="READ MORE"
+          on:clicked={() => {
             isFullDescription = true
-          }}>
-          READ MORE
-          <i />
-        </a>
+          }} />
       {:else}
         {#if feature.properties.description}
           <p><b>Description: </b>{@html marked(feature.properties.description)}</p>
@@ -76,10 +73,6 @@
 </div>
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/buttons.min.css';
-  @use '../../styles/undp-design/cta-link.min.css';
-
   .container {
     display: flex;
     flex-direction: column;

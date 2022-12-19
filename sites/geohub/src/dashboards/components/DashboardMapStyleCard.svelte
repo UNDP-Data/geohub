@@ -5,10 +5,7 @@
   import { Map } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
-  import Popper from '$lib/popper'
-  import type { BannerMessage } from '$lib/types'
-  import { ErrorMessages, StatusTypes } from '$lib/constants'
-  import { bannerMessages } from '$stores'
+  import { Button, CtaLink } from '@undp-data/svelte-undp-design'
 
   interface MapStyle {
     id: string
@@ -24,18 +21,6 @@
   let mapContainer: HTMLDivElement
   let nodeRef
   let map: Map
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'bottom-end',
-      strategy: 'absolute',
-    },
-    [-30, 0],
-  ).init()
 
   let showContextMenu = false
   let confirmDeleteDialogVisible = false
@@ -69,42 +54,18 @@
     map.setZoom(styleJSON.zoom ? styleJSON.zoom : 4)
   }
 
-  const handleDeleteStyle = () => {
-    fetch(`../api/style/${style.id}`, {
+  const handleDeleteStyle = async () => {
+    const res = await fetch(`../api/style/${style.id}`, {
       method: 'DELETE',
     })
-      .then((res) => {
-        if (res.status === 204) {
-          nodeRef.parentNode.removeChild(nodeRef)
-        } else {
-          const bannerErrorMessage: BannerMessage = {
-            type: StatusTypes.DANGER,
-            title: 'Whoops! Something went wrong.',
-            message: ErrorMessages.NO_STYLE_EXISTS,
-          }
-          bannerMessages.update((data) => [...data, bannerErrorMessage])
-        }
-      })
-      .catch((err) => {
-        const bannerErrorMessage: BannerMessage = {
-          type: StatusTypes.DANGER,
-          title: 'Whoops! Something went wrong.',
-          message: ErrorMessages.FETCH_TIMEOUT,
-          error: err,
-        }
-        bannerMessages.update((data) => [...data, bannerErrorMessage])
-      })
+    if (res.status === 204) {
+      nodeRef.parentNode.removeChild(nodeRef)
+    }
     confirmDeleteDialogVisible = false
   }
 
   const handleClose = () => {
     showContextMenu = false
-  }
-
-  const handleEnterKey = (e) => {
-    if (e.key === 'Enter') {
-      e.target.click()
-    }
   }
 
   $: {
@@ -121,63 +82,41 @@
     class="content-card"
     style="border: none">
     <!-- svelte-ignore a11y-invalid-attribute -->
-    <a
-      href="#"
-      aria-label={style.name}>
-      <div style="display: flex; align-items: center; justify-content: space-between">
+    <a aria-label={style.name}>
+      <div style="display: flex;">
         <h6>{style.name}</h6>
-        <div
-          aria-label="Open Delete Context Menu"
-          tabindex="0"
-          class="container icon"
-          use:popperRef
-          on:click={() => (showContextMenu = !showContextMenu)}
-          on:keydown={handleEnterKey}>
-          <i class="fa-solid fa-ellipsis-vertical fa-sm" />
-        </div>
-        {#if showContextMenu}
-          <div
-            id="tooltip"
-            data-testid="tooltip"
-            use:popperContent={popperOptions}
-            transition:fade
-            use:clickOutside={handleClose}>
-            <!-- svelte-ignore a11y-positive-tabindex -->
-            <aside
-              class="menu"
-              tabindex="1">
-              <button
-                class="button is-small"
-                on:click={() => {
-                  confirmDeleteDialogVisible = true
-                }}>
-                DELETE
-              </button>
-            </aside>
-          </div>
-        {/if}
-      </div>
-      <div
-        on:click={() => window.open(style.viewer)}
-        class="image"
-        id="map"
-        bind:this={mapContainer} />
-      <div class="content-caption">
         <span
-          tabindex="0"
-          on:click={() => window.open(style.viewer)}
-          class="cta__link cta--space">
-          View Style
-          <i />
+          class="delete-button p-2 pr-4"
+          role="button"
+          on:click={() => {
+            confirmDeleteDialogVisible = true
+          }}>
+          <i
+            class="fa-solid fa-trash"
+            style="color: black;" />
         </span>
-        <div style="display: flex; align-items: center; justify-content: space-between">
-          <div class="content">
-            <Time
-              timestamp={style.createdat}
-              format="h:mm A · MMMM D, YYYY" />
+      </div>
+      <a
+        href={style.viewer}
+        target="_blank"
+        rel="noreferrer">
+        <div
+          class="image"
+          bind:this={mapContainer} />
+        <div class="content-caption">
+          <CtaLink
+            label="View Style"
+            on:clicked={() => window.open(style.viewer, '_blank')}
+            isArrow={false} />
+          <div style="display: flex; align-items: center; justify-content: space-between">
+            <div class="content">
+              <Time
+                timestamp={style.createdat}
+                format="h:mm A · MMMM D, YYYY" />
+            </div>
           </div>
         </div>
-      </div>
+      </a>
     </a>
   </div>
 </div>
@@ -203,20 +142,22 @@
         <br />
         {style.name}
       </section>
-      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-        <div>
-          <button
-            class="button secondary-button"
-            alt="Cancel Delete Layer Button"
-            title="Cancel Delete Layer Button"
-            on:click={() => (confirmDeleteDialogVisible = false)}>
-            Cancel
-          </button>
-          <button
-            class="button primary-button"
-            alt="Delete"
+      <footer class="modal-card-foot">
+        <div
+          class="px-1"
+          style="width: 50%">
+          <Button
+            title="Cancel"
+            isPrimary={false}
+            on:clicked={() => (confirmDeleteDialogVisible = false)} />
+        </div>
+        <div
+          class="px-1"
+          style="width: 50%">
+          <Button
             title="Delete"
-            on:click={handleDeleteStyle}>Delete</button>
+            isPrimary={true}
+            on:clicked={handleDeleteStyle} />
         </div>
       </footer>
     </div>
@@ -225,8 +166,12 @@
 
 <!--</div>-->
 <style lang="scss">
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
-  @import '../../styles/popper.scss';
+  @use 'src/styles/undp-design/base-minimal.min.css';
+  @use 'src/styles/undp-design/content-card.min.css';
+
+  .delete-button {
+    margin-left: auto;
+  }
 
   #delete-style:hover {
     cursor: pointer;
@@ -238,11 +183,6 @@
     width: 300px;
     min-height: 330px;
     cursor: pointer;
-  }
-
-  .map {
-    width: 100%;
-    height: 100%;
   }
 
   .icon {

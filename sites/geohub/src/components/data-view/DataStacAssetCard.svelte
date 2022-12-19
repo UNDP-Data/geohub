@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { AssetOptions, BannerMessage, StacItemFeature } from '$lib/types'
-  import Accordion from '$components/controls/Accordion.svelte'
+  import { Accordion } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'

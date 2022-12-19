@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
+  import { Button } from '@undp-data/svelte-undp-design'
   const dispatch = createEventDispatcher()
 
   export let isIconButton = false
@@ -8,38 +9,31 @@
   const handleClicked = () => {
     dispatch('clicked')
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      dispatch('clicked')
+    }
+  }
 </script>
 
 {#if isIconButton}
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span
     class="button-icon fa-stack fa-xl"
     role="button"
     tabindex="0"
+    on:keydown={handleKeyDown}
     on:click={handleClicked}>
     <i class="fa-solid fa-layer-group fa-stack-xl" />
     <i class="fab fa-plus fa-sm fa-stack-1x" />
   </span>
 {:else}
-  <!-- svelte-ignore a11y-missing-attribute -->
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <a
-    class="button button-primary button-without-arrow"
-    role="button"
-    on:click={handleClicked}>
+  <Button
     {title}
-  </a>
+    on:clicked={handleClicked} />
 {/if}
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/buttons.min.css';
-
-  .button {
-    color: white !important;
-    width: 100%;
-  }
-
   .button-icon {
     width: 30px;
     height: 30px;

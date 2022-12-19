@@ -1,13 +1,14 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataCategory, DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
+  import type { DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams, STAC_MINIMUM_ZOOM } from '$lib/constants'
+  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
-  import Breadcrumbs from '$components/controls/Breadcrumbs.svelte'
+  import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
@@ -18,7 +19,7 @@
   $: totalHeight = headerHeight + tabsHeight + optionsHeight
 
   let containerDivElement: HTMLDivElement
-  let breadcrumbs: DataCategory[] = [
+  let breadcrumbs: Breadcrumb[] = [
     {
       name: 'Home',
       icon: 'fas fa-house',
@@ -141,7 +142,7 @@
   $: selectedTags, handleTagChanged()
   $: tagFilterOperatorType, handleTagChanged()
   const handleTagChanged = async () => {
-    if (breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].name !== 'Search result') {
+    if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
       if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
         if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
           DataItemFeatureCollection = undefined
@@ -153,12 +154,15 @@
       }
     }
 
-    if (breadcrumbs.length <= 2 && selectedTags.length === 0 && !query) {
+    if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
       DataItemFeatureCollection = undefined
-      if (breadcrumbs.length > 1) {
-        breadcrumbs.pop()
-        breadcrumbs = [...breadcrumbs]
-      }
+      currentSearchUrl = ''
+      return
+    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
+      DataItemFeatureCollection = undefined
+      breadcrumbs.pop()
+      breadcrumbs = [...breadcrumbs]
+      currentSearchUrl = ''
       return
     }
 
@@ -167,6 +171,7 @@
     if (link) {
       url = link.href
     }
+
     await searchDatasets(url)
   }
 
@@ -219,7 +224,7 @@
 
   const handleBreadcrumpClicked = (e) => {
     const index: number = e.detail.index
-    const breadcrump: DataCategory = e.detail.breadcrumb
+    const breadcrump: Breadcrumb = e.detail.breadcrumb
 
     if (index === 0) {
       // home
@@ -238,7 +243,7 @@
 
       breadcrumbs = [...breadcrumbs]
 
-      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
+      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets') && selectedTags.length > 0) {
         selectedTags = []
       }
     }
@@ -304,31 +309,20 @@
   {#if !DataItemFeatureCollection}
     <div
       hidden={!$indicatorProgress}
-      class="loader"
-      aria-busy="true"
-      aria-live="polite" />
+      class="loader-container">
+      <Loader />
+    </div>
   {/if}
 </div>
 
 <style lang="scss">
-  @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/buttons.min.css';
-  @use '../styles/undp-design/loader.min.css';
-
   .data-view-container {
-    .button {
-      color: white !important;
-    }
-
-    .loader {
+    .loader-container {
       position: absolute;
       z-index: 10;
       top: 25%;
       left: 35%;
       background-color: white;
-      transform: translate(-25%, -35%);
-      -webkit-transform: translate(-25%, -35%);
-      -ms-transform: translate(-25%, -35%);
     }
   }
 </style>

@@ -5,8 +5,8 @@
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
-  import type { Tab } from '$lib/types'
-  import Tabs from '$components/controls/Tabs.svelte'
+  import type { Tab } from '@undp-data/svelte-undp-design/interfaces'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let layerMax: number
