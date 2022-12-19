@@ -23,7 +23,7 @@
     const vectorLayerMeta = getLayerProperties($map, layer, showOnlyNumberFields)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
-      propertySelectOptions = ['', ...propertySelectOptions]
+      propertySelectOptions = ['No Label', ...propertySelectOptions]
     }
     propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()
@@ -47,7 +47,7 @@
 <div class="control has-icons-left">
   <div
     style="margin-right: 2%"
-    class="select is-flex is-justify-content-left select is-small">
+    class="select is-flex is-justify-content-left select is-normal">
     <select
       style="width: 100%"
       class="is-normal"
