@@ -5,6 +5,7 @@
 	export let groupName: string;
 	export let value: string;
 	export let isVertical = false;
+	export let allowHtml = false;
 </script>
 
 <div class="radio-buttons" style="flex-direction: {isVertical ? 'column' : 'row'};">
@@ -12,7 +13,7 @@
 		<label class="radio">
 			<div class="vertical-align is-flex-row">
 				<input type="radio" name={groupName} bind:group={value} value={radio.value} />
-				{#if radio.isLabelHTML === true}
+				{#if allowHtml === true}
 					{@html radio.label}
 				{:else}
 					{radio.label}
