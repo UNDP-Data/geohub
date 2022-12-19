@@ -46,7 +46,6 @@
       return {
         label: label,
         value: type.title,
-        isLabelHTML: true,
       }
     })
     return pattern
@@ -76,6 +75,7 @@
     <Radios
       bind:radios={linePatterns}
       bind:value={lineType}
+      allowHtml={true}
       groupName="line-pattern-{layer.id}"
       isVertical={true} />
   {/key}
