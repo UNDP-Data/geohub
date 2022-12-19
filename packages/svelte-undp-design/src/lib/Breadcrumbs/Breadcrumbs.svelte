@@ -57,6 +57,6 @@
 {/if}
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/breadcrumbs.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/breadcrumbs.min.css';
 </style>

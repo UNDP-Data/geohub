@@ -38,7 +38,7 @@
 </header>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/country-site-header.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/country-site-header.min.css';
 	@use 'bulma/css/bulma.css';
 </style>

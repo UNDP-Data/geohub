@@ -26,10 +26,10 @@
 </div>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/cta-link.min.css';
-	@use './css/content-card.min.css';
-	@use './css/buttons.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/cta-link.min.css';
+	@use '../css/content-card.min.css';
+	@use '../css/buttons.min.css';
 
 	.content-caption {
 		padding-left: 0.5rem;

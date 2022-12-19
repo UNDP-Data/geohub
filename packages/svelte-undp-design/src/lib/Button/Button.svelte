@@ -33,8 +33,8 @@
 </a>
 
 <style lang="scss">
-	@use './css/base-minimal.min.css';
-	@use './css/buttons.min.css';
+	@use '../css/base-minimal.min.css';
+	@use '../css/buttons.min.css';
 
 	.button {
 		color: white !important;
