@@ -83,6 +83,19 @@ paths:
                           - is_raster
                           - createdat
                           - updatedat
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                        type:
+                          type: string
+                        href:
+                          type: string
+                  totalCount:
+                    type: string
               examples:
                 Example for /datasets?limit=1&sdg_goal=1:
                   value:
@@ -138,6 +151,7 @@ paths:
                       - rel: next
                         type: application/json
                         href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1&offset=1'
+                    totalCount: 100
       operationId: get-datasets
       description: |-
         This API returns the result as GeoJSON feature collection format and it contains links property at the bottom.
@@ -736,26 +750,70 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    name:
-                      type: string
-                    createdat:
-                      type: string
-                  required:
-                    - id
-                    - name
-                    - createdat
+                type: object
+                properties:
+                  styles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        createdat:
+                          type: string
+                      required:
+                        - id
+                        - name
+                        - createdat
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                        type:
+                          type: string
+                        href:
+                          type: string
+                      required:
+                        - rel
+                        - type
+                        - href
+                required:
+                  - styles
+                  - links
               examples:
                 Example 1:
                   value:
-                    - id: 25
-                      name: Global South LOCE
-                      createdat: '2022-09-08T17:13:26.890Z'
+                    styles:
+                      - id: 25
+                        name: Global South LOCE
+                        createdat: '2022-09-08T17:13:26.890Z'
+                      - id: 48
+                        name: test123
+                        createdat: '2022-10-03T11:20:05.494Z'
+                      - id: 49
+                        name: nigeria airports
+                        createdat: '2022-10-03T16:38:43.895Z'
+                      - id: 50
+                        name: TEST Share
+                        createdat: '2022-10-06T15:06:50.716Z'
+                      - id: 56
+                        name: UNDP GeoHub style
+                        createdat: '2022-12-05T16:55:50.195Z'
+                    links:
+                      - rel: root
+                        type: application/json
+                        href: 'http://localhost:5173/api/style'
+                      - rel: self
+                        type: application/json
+                        href: 'http://localhost:5173/api/style'
+                      - rel: next
+                        type: application/json
+                        href: 'http://localhost:5173/api/style?limit=5&offset=5'
       operationId: get-style
       description: Get the list of saved style from PostGIS database
       parameters:
@@ -835,6 +893,25 @@ paths:
           description: style.json object
       operationId: get-style-id-.json
       description: get style.json by ID
+  /style/count:
+    get:
+      summary: Get total count of styles
+      tags:
+        - style
+      responses: {}
+      operationId: get-style-count
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+            examples:
+              Example 1:
+                value:
+                  count: 6
 components:
   schemas:
     Tag:

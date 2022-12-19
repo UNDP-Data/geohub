@@ -1,6 +1,5 @@
 <script lang="ts">
   import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
-  import type { PageData } from './$types'
   import { CardWithImage, Header, Footer } from '@undp-data/svelte-undp-design'
 
   let pages = [
@@ -13,7 +12,6 @@
     },
   ]
 
-  export let data: PageData
   let headerHeight: number
 </script>
 
@@ -34,6 +32,7 @@
       <div
         class="has-tooltip-bottom"
         data-tooltip="Home">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           role="button"
           aria-label="Home"
@@ -56,7 +55,7 @@
       <div style="width: 120px; height: 5px; background: black; " />
     </div>
   </div>
-  <div class="main-section">
+  <div class="main-section mb-4">
     <div class="dashboard-list">
       {#each pages as page}
         <CardWithImage
@@ -77,14 +76,8 @@
         </CardWithImage>
       {/each}
     </div>
-    {#if data}
-      <hr />
-      <MapStyleCardList
-        bind:defaultPage={data.defaultPage}
-        bind:defaultPageSize={data.defaultPageSize}
-        bind:totalItemsCount={data.totalItemsCount}
-        bind:totalPagesCount={data.totalPagesCount} />
-    {/if}
+    <hr />
+    <MapStyleCardList />
   </div>
 
   <Footer logoUrl="undp-images/undp-logo-white.svg" />

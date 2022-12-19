@@ -2,55 +2,62 @@
   import { onMount } from 'svelte'
   import { page } from '$app/stores'
   import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
+  import type { StacLink } from '$lib/types'
+  import Notification from '$components/controls/Notification.svelte'
 
   const url: URL = $page.url
 
   let styleList
-  export let totalItemsCount: number
-  export let defaultPage: number
-  export let defaultPageSize: number
-  export let totalPagesCount: number
+  let links: StacLink[]
+
+  let previoustLink: StacLink
+  let nextLink: StacLink
 
   onMount(async () => {
-    await updateStylePage(defaultPage, defaultPageSize)
+    await updateStylePage('next')
   })
 
-  const updateStylePage = async (page: number, pageSize: number) => {
-    const offset = page * pageSize - pageSize
-    const res = await fetch(`${url.origin}/api/style?limit=${pageSize}&offset=${offset}`)
-    styleList = await res.json()
+  const updateStylePage = async (type: 'next' | 'previous') => {
+    // const offset = page * pageSize - pageSize
+    let apiUrl = `${url.origin}/api/style`
+    const link = links?.find((l) => l.rel === type)
+    if (link) {
+      apiUrl = link.href
+    }
+    const res = await fetch(apiUrl)
+    const json = await res.json()
+    styleList = json.styles
+    links = json.links
+    previoustLink = links?.find((l) => l.rel === 'previous')
+    nextLink = links?.find((l) => l.rel === 'next')
+    console.log(previoustLink, nextLink)
   }
 
-  const handlePreviousClick = () => {
-    if (defaultPage > 1) {
-      defaultPage--
-      updateStylePage(defaultPage, defaultPageSize)
-    }
+  const handlePreviousClick = async () => {
+    await updateStylePage('previous')
   }
 
-  const handleNextClick = () => {
-    if (defaultPage < totalPagesCount) {
-      defaultPage++
-      updateStylePage(defaultPage, defaultPageSize)
-    }
+  const handleNextClick = async () => {
+    await updateStylePage('next')
   }
 </script>
 
+<div style="width: fit-content; margin:auto;">
+  <h3>Saved Map Styles</h3>
+</div>
 {#if styleList && styleList.length > 0}
-  <div style="width: fit-content; margin:auto;">
-    <h3>Saved Map Styles</h3>
-  </div>
-
   <div
     class="content-card-container"
     style="margin-left: 10%; margin-right: 10%; margin-top: 5%; margin-bottom: 5%;">
     <div class="grid-x grid-margin-x small-up-1 medium-up-2 large-up-4 content-card-wrapper">
-      {#each styleList as style}
-        <DashboardMapStyleCard {style} />
-      {/each}
+      {#key styleList}
+        {#each styleList as style}
+          <DashboardMapStyleCard {style} />
+        {/each}
+      {/key}
     </div>
   </div>
-  {#if totalItemsCount > 1}
+  {#if previoustLink || nextLink}
     <hr />
     <div style="width:max-content; margin: 0 auto">
       <nav
@@ -60,8 +67,8 @@
         role="navigation">
         <ul>
           <li
-            class={defaultPage === totalPagesCount ? '' : 'disabled'}
-            aria-disabled={defaultPage === totalPagesCount}>
+            class={!previoustLink ? 'disabled' : ''}
+            aria-disabled={!previoustLink}>
             <!-- svelte-ignore a11y-invalid-attribute -->
             <a
               on:click={handlePreviousClick}
@@ -71,15 +78,7 @@
               Previous
             </a>
           </li>
-          <li>
-            Page
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <span><a aria-label={`${defaultPage}`}>{defaultPage}</a></span>
-            of
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <span><a aria-label={`${totalPagesCount}`}>{totalPagesCount}</a></span>
-          </li>
-          <li class={defaultPage === totalPagesCount ? 'disabled' : ''}>
+          <li class={!nextLink ? 'disabled' : ''}>
             <!-- svelte-ignore a11y-invalid-attribute -->
             <a
               on:click={handleNextClick}
@@ -88,8 +87,9 @@
         </ul>
       </nav>
     </div>
-    <br />
   {/if}
+{:else}
+  <Notification type="info">No style saved</Notification>
 {/if}
 
 <style lang="scss">
