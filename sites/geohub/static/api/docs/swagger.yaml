@@ -759,14 +759,14 @@ paths:
                       properties:
                         id:
                           type: string
-                        name:
-                          type: string
                         createdat:
+                          type: string
+                        name:
                           type: string
                       required:
                         - id
-                        - name
                         - createdat
+                        - name
                   links:
                     type: array
                     items:
@@ -782,6 +782,15 @@ paths:
                         - rel
                         - type
                         - href
+                  pages:
+                    type: object
+                    properties:
+                      totalCount:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      currentPage:
+                        type: integer
                 required:
                   - styles
                   - links
@@ -814,6 +823,10 @@ paths:
                       - rel: next
                         type: application/json
                         href: 'http://localhost:5173/api/style?limit=5&offset=5'
+                    pages:
+                      totalCount: 2
+                      totalPages: 1
+                      currentPage: 1
       operationId: get-style
       description: Get the list of saved style from PostGIS database
       parameters:

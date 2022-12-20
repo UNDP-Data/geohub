@@ -2,97 +2,87 @@
   import { onMount } from 'svelte'
   import { page } from '$app/stores'
   import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
-  import type { StacLink } from '$lib/types'
+  import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
+  import { Pagination, Loader } from '@undp-data/svelte-undp-design'
 
   const url: URL = $page.url
 
-  let styleList
+  let styleList: DashboardMapStyle[]
   let links: StacLink[]
-
-  let previoustLink: StacLink
-  let nextLink: StacLink
+  let pages: Pages
+  let isLoading = false
 
   onMount(async () => {
     await updateStylePage('next')
   })
 
   const updateStylePage = async (type: 'next' | 'previous') => {
-    // const offset = page * pageSize - pageSize
-    let apiUrl = `${url.origin}/api/style`
-    const link = links?.find((l) => l.rel === type)
-    if (link) {
-      apiUrl = link.href
+    try {
+      isLoading = true
+      let apiUrl = `${url.origin}/api/style`
+      const link = links?.find((l) => l.rel === type)
+      if (link) {
+        apiUrl = link.href
+      }
+      const res = await fetch(apiUrl)
+      const json = await res.json()
+      styleList = json.styles
+      links = json.links
+      pages = json.pages
+    } finally {
+      isLoading = false
     }
-    const res = await fetch(apiUrl)
-    const json = await res.json()
-    styleList = json.styles
-    links = json.links
-    previoustLink = links?.find((l) => l.rel === 'previous')
-    nextLink = links?.find((l) => l.rel === 'next')
-    console.log(previoustLink, nextLink)
   }
 
-  const handlePreviousClick = async () => {
-    await updateStylePage('previous')
-  }
-
-  const handleNextClick = async () => {
-    await updateStylePage('next')
+  const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
+    const type = e.detail.type
+    await updateStylePage(type)
   }
 </script>
 
-<div style="width: fit-content; margin:auto;">
-  <h3>Saved Map Styles</h3>
+<div class="align-center">
+  <p class="title is-3">Saved maps</p>
 </div>
-{#if styleList && styleList.length > 0}
-  <div
-    class="content-card-container"
-    style="margin-left: 10%; margin-right: 10%; margin-top: 5%; margin-bottom: 5%;">
-    <div class="grid-x grid-margin-x small-up-1 medium-up-2 large-up-4 content-card-wrapper">
-      {#key styleList}
-        {#each styleList as style}
-          <DashboardMapStyleCard {style} />
-        {/each}
-      {/key}
-    </div>
+{#if isLoading}
+  <div class="align-center">
+    <Loader />
   </div>
-  {#if previoustLink || nextLink}
-    <hr />
-    <div style="width:max-content; margin: 0 auto">
-      <nav
-        style="margin-left:auto;"
-        class="pagination"
-        aria-label="Pagination"
-        role="navigation">
-        <ul>
-          <li
-            class={!previoustLink ? 'disabled' : ''}
-            aria-disabled={!previoustLink}>
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a
-              on:click={handlePreviousClick}
-              role="button"
-              aria-current="true"
-              aria-label="Previous">
-              Previous
-            </a>
-          </li>
-          <li class={!nextLink ? 'disabled' : ''}>
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a
-              on:click={handleNextClick}
-              aria-label="Next">Next</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  {/if}
+{:else if styleList && styleList.length > 0}
+  <div class="grid">
+    {#key styleList}
+      {#each styleList as style}
+        <DashboardMapStyleCard {style} />
+      {/each}
+    {/key}
+  </div>
+  <div class="align-center">
+    <Pagination
+      bind:totalPages={pages.totalPages}
+      bind:currentPage={pages.currentPage}
+      on:clicked={handlePaginationClicked} />
+  </div>
 {:else}
-  <Notification type="info">No style saved</Notification>
+  <Notification type="info">No map found</Notification>
 {/if}
 
 <style lang="scss">
-  @use 'src/styles/undp-design/base-minimal.min';
-  @use 'src/styles/undp-design/pagination.min';
+  .align-center {
+    width: max-content;
+    margin: auto;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+
+    @media (max-width: 300px) {
+      grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 1000px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
 </style>

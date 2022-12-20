@@ -184,7 +184,7 @@
 </div>
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
+  // @import 'src/styles/undp-design/base-minimal.min';
   // @import 'src/styles/undp-design/tab.min';
 
   #operator-categories {
