@@ -69,48 +69,41 @@
 </script>
 
 <div
-  class="cell small-3"
+  class="tile is-ancestor m-4"
   bind:this={nodeRef}>
-  <div
-    class="content-card"
-    style="border: none">
-    <!-- svelte-ignore a11y-invalid-attribute -->
-    <a aria-label={style.name}>
-      <div style="display: flex;">
-        <h6>{style.name}</h6>
-        <span
-          class="delete-button p-2 pr-4"
-          role="button"
-          on:click={() => {
-            confirmDeleteDialogVisible = true
-          }}>
-          <i
-            class="fa-solid fa-trash"
-            style="color: black;" />
-        </span>
+  <div class="tile is-vertical">
+    <div class="tile border-bottom mb-2">
+      <p class="title is-4 ml-1">{style.name}</p>
+    </div>
+    <div class="tile">
+      <div
+        class="image pointor"
+        on:click={() => window.open(style.viewer, '_blank')}
+        bind:this={mapContainer} />
+    </div>
+    <div class="tile">
+      <div class="content">
+        <Time
+          timestamp={style.createdat}
+          format="h:mm A · MMMM D, YYYY" />
       </div>
-      <a
-        href={style.viewer}
-        target="_blank"
-        rel="noreferrer">
-        <div
-          class="image"
-          bind:this={mapContainer} />
-        <div class="content-caption">
-          <CtaLink
-            label="View Style"
-            on:clicked={() => window.open(style.viewer, '_blank')}
-            isArrow={false} />
-          <div style="display: flex; align-items: center; justify-content: space-between">
-            <div class="content">
-              <Time
-                timestamp={style.createdat}
-                format="h:mm A · MMMM D, YYYY" />
-            </div>
-          </div>
+    </div>
+    <div class="tile">
+      <div class="tile is-8">
+        <CtaLink
+          label="View Style"
+          on:clicked={() => window.open(style.viewer, '_blank')}
+          isArrow={false} />
+      </div>
+      <div class="tile">
+        <div class="pt-2 is-2">
+          <Button
+            title="Delete"
+            isPrimary={false}
+            on:clicked={() => (confirmDeleteDialogVisible = true)} />
         </div>
-      </a>
-    </a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -157,34 +150,17 @@
   </div>
 {/if}
 
-<!--</div>-->
 <style lang="scss">
-  @use 'src/styles/undp-design/base-minimal.min.css';
-  @use 'src/styles/undp-design/content-card.min.css';
-
-  .delete-button {
-    margin-left: auto;
+  .border-bottom {
+    border-bottom: 3px solid gray;
   }
 
-  #delete-style:hover {
+  .image {
+    max-width: 500px;
+    height: 250px;
+  }
+
+  .pointor {
     cursor: pointer;
-    background: rgba(255, 0, 0, 0.1);
-  }
-  .card {
-    margin: 5px;
-    padding: 5px;
-    width: 300px;
-    min-height: 330px;
-    cursor: pointer;
-  }
-
-  .icon {
-    cursor: pointer;
-  }
-
-  #tooltip {
-    position: relative;
-    padding: 0px;
-    border-radius: 0px;
   }
 </style>

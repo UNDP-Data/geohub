@@ -42,21 +42,19 @@
 </script>
 
 <div class="align-center">
-  <h3>Saved Map Styles</h3>
+  <p class="title is-3">Saved maps</p>
 </div>
 {#if isLoading}
   <div class="align-center">
     <Loader />
   </div>
 {:else if styleList && styleList.length > 0}
-  <div class="content-card-container">
-    <div class="grid-x grid-margin-x small-up-1 medium-up-3 large-up-5 content-card-wrapper">
-      {#key styleList}
-        {#each styleList as style}
-          <DashboardMapStyleCard {style} />
-        {/each}
-      {/key}
-    </div>
+  <div class="grid">
+    {#key styleList}
+      {#each styleList as style}
+        <DashboardMapStyleCard {style} />
+      {/each}
+    {/key}
   </div>
   <div class="align-center">
     <Pagination
@@ -65,12 +63,26 @@
       on:clicked={handlePaginationClicked} />
   </div>
 {:else}
-  <Notification type="info">No style saved</Notification>
+  <Notification type="info">No map found</Notification>
 {/if}
 
 <style lang="scss">
   .align-center {
     width: max-content;
     margin: auto;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+
+    @media (max-width: 300px) {
+      grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 1000px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 </style>
