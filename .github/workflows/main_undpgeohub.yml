@@ -98,6 +98,7 @@ jobs:
       - name: Run build
         run: |
           pnpm --filter="./packages/*" build
+          pnpm --filter="./packages/svelte-undp-design" build-storybook
           pnpm --filter="./sites/geohub" build
 
       - name: Run unit tests
