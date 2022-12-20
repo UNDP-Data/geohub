@@ -19,37 +19,38 @@
   <title>GeoHub | Dashboards</title>
 </svelte:head>
 
-<div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
-  <Header
-    region="UNDP's one stop shop for spatial data and analytics"
-    siteTitle="GeoHub dashboards"
-    url="https://geohub.data.undp.org"
-    logoUrl="undp-images/undp-logo-blue.svg"
-    bind:height={headerHeight}>
+<Header
+  region="UNDP's one stop shop for spatial data and analytics"
+  siteTitle="GeoHub dashboards"
+  url="https://geohub.data.undp.org"
+  logoUrl="undp-images/undp-logo-blue.svg"
+  bind:height={headerHeight}>
+  <div
+    slot="menu-buttons"
+    class="menu-buttons">
     <div
-      slot="menu-buttons"
-      class="menu-buttons">
+      class="has-tooltip-bottom"
+      data-tooltip="Home">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
-        class="has-tooltip-bottom"
-        data-tooltip="Home">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div
-          role="button"
-          aria-label="Home"
-          class="menu-button has-tooltip-bottom"
-          tabindex="0"
-          on:click={() => window.open('/', '_blank')}>
-          <span class="icon">
-            <i
-              class="fa-solid fa-home"
-              style="color:#006eb5" />
-          </span>
-        </div>
+        role="button"
+        aria-label="Home"
+        class="menu-button has-tooltip-bottom"
+        tabindex="0"
+        on:click={() => window.open('/', '_blank')}>
+        <span class="icon">
+          <i
+            class="fa-solid fa-home"
+            style="color:#006eb5" />
+        </span>
       </div>
     </div>
-  </Header>
+  </div>
+</Header>
 
-  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: {headerHeight}px; height: 22vh">
+<div
+  style="height: calc(100vh - {headerHeight}px)!important; width: 100%; overflow-y: auto;overflow-x: hidden;margin-top: {headerHeight}px; ">
+  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); height: 22vh">
     <div style="margin-left:5%; padding-top:2%">
       <p class="title">Dashboards Gallery</p>
       <div style="width: 120px; height: 5px; background: black; " />
