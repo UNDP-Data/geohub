@@ -99,7 +99,10 @@ jobs:
         run: pnpm --filter="./packages/*" build
 
       - name: Run build storybook
-        run: pnpm --filter="./packages/svelte-undp-design" build-storybook
+        working-directory: ./packages/svelte-undp-design
+        run: |
+          pnpm --filter="." install
+          pnpm build-storybook
 
       - name: Run build GeoHub
         run: pnpm --filter="./sites/geohub" build
