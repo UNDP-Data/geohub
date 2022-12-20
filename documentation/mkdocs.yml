@@ -89,13 +89,13 @@ plugins:
         
 
 nav:
-  - "Get started": "index.md"
+  - "Get Started": "Index.md"
   - Data:
-    - Introduction: "data/introduction.md"
-    - Data-structure: "data/data-structure.md"
-    - Special-buckets: "data/special-buckets.md"
+    - Introduction: "data/Introduction.md"
+    - Data Structure: "data/Data Structure.md"
+    - Special Buckets: "data/Special Buckets.md"
   - Visualization:
-    - Map-view: "visualization/map-view.md"
-    - Search-data: "visualization/search-data.md"
-    - Add-remove-layers: "visualization/add-remove-layers.md"
-    - Zooming: "vizualization/zooming.md"
+    - Map View: "visualization/Map View.md"
+    - Search Data: "visualization/Search Data.md"
+    - Add Remove Layers: "visualization/Add Remove Layers.md"
+    - Zooming: "vizualization/Zooming.md"

@@ -17,4 +17,4 @@ GeoHub is designed to allow for a user-friendly experience with increased access
 Geo Hub has also allowed for improved information efficiency by displaying the scale of the map to the preferred zoom level as displayed on the bottom left corner of the map. With increased spatial information, you can also identify the name of the place of interest to the lowest subnational level as displayed on the upper left corner of the map.
 
 
-<center> ![type:video](https://undpngddlsgeohubdev01.blob.core.windows.net/docs-assets/Map_view.webm)</center>
+<center> ![type:video](https://undpngddlsgeohubdev01.blob.core.windows.net/docs-assets/Videos/How_do_I_adjust_the_map_view_.webm)</center>
