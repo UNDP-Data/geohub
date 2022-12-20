@@ -72,12 +72,7 @@
 
 <div
   bind:this={container}
-  class="map"
-  id="map">
-  {#if map}
-    <slot />
-  {/if}
-</div>
+  class="map" />
 
 <CurrentLocation
   bind:map={$map}

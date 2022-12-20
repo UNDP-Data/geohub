@@ -22,7 +22,8 @@
   region="UNDP's one stop shop for spatial data and analytics"
   siteTitle="GeoHub"
   url="https://geohub.data.undp.org"
-  logoUrl="undp-images/undp-logo-blue.svg">
+  logoUrl="undp-images/undp-logo-blue.svg"
+  isPositionFixed={false}>
   <div
     slot="menu-buttons"
     class="menu-buttons">

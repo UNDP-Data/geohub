@@ -34,8 +34,7 @@
 
 <ContentSidebar
   bind:map={$map}
-  bind:isMenuShown={drawerOpen}
-  bind:headerHeight>
+  bind:isMenuShown={drawerOpen}>
   <div slot="primary">
     <div class="drawer-content">
       {#key $layerList}
