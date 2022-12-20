@@ -4,7 +4,7 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
-import type { Pages, StacLink } from '$lib/types'
+import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { getStyleCount, pageNumber } from '$lib/server/helpers'
 const connectionString = DATABASE_CONNECTION
 
@@ -86,19 +86,15 @@ export const GET: RequestHandler = async ({ url }) => {
     if (totalPages === 0) {
       totalPages = 1
     }
+    const styles: DashboardMapStyle[] = res.rows
     const currentPage = pageNumber(totalCount, Number(limit), Number(offset))
     const pages: Pages = {
       totalCount,
       totalPages,
       currentPage,
     }
-    const result = {
-      styles: res.rows,
-      links: links,
-      pages: pages,
-    }
 
-    return new Response(JSON.stringify(result))
+    return new Response(JSON.stringify({ styles, links, pages }))
   } catch (err) {
     throw error(400, JSON.stringify({ message: err.message }))
   } finally {

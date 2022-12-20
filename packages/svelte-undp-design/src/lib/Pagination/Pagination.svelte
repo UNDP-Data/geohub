@@ -2,8 +2,8 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	export let totalPages: number = 1;
-	export let currentPage: number = 1;
+	export let totalPages = 1;
+	export let currentPage = 1;
 
 	const handleClicked = (type: 'previous' | 'next') => {
 		if (type === 'previous') {

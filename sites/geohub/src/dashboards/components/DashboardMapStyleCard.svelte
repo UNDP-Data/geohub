@@ -6,18 +6,11 @@
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
   import { Button, CtaLink } from '@undp-data/svelte-undp-design'
-
-  interface MapStyle {
-    id: string
-    name: string
-    createdat: string
-    style?: string
-    viewer?: string
-  }
+  import type { DashboardMapStyle } from '$lib/types'
 
   const url: URL = $page.url
 
-  export let style: MapStyle
+  export let style: DashboardMapStyle
   let mapContainer: HTMLDivElement
   let nodeRef
   let map: Map
