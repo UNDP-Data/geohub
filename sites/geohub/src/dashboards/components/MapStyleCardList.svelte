@@ -2,13 +2,15 @@
   import { onMount } from 'svelte'
   import { page } from '$app/stores'
   import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
-  import type { StacLink } from '$lib/types'
+  import type { Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
+  import { Pagination } from '@undp-data/svelte-undp-design'
 
   const url: URL = $page.url
 
   let styleList
   let links: StacLink[]
+  let pages: Pages
 
   let previoustLink: StacLink
   let nextLink: StacLink
@@ -28,17 +30,14 @@
     const json = await res.json()
     styleList = json.styles
     links = json.links
+    pages = json.pages
     previoustLink = links?.find((l) => l.rel === 'previous')
     nextLink = links?.find((l) => l.rel === 'next')
-    console.log(previoustLink, nextLink)
   }
 
-  const handlePreviousClick = async () => {
-    await updateStylePage('previous')
-  }
-
-  const handleNextClick = async () => {
-    await updateStylePage('next')
+  const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
+    const type = e.detail.type
+    await updateStylePage(type)
   }
 </script>
 
@@ -57,42 +56,19 @@
       {/key}
     </div>
   </div>
-  {#if previoustLink || nextLink}
-    <hr />
-    <div style="width:max-content; margin: 0 auto">
-      <nav
-        style="margin-left:auto;"
-        class="pagination"
-        aria-label="Pagination"
-        role="navigation">
-        <ul>
-          <li
-            class={!previoustLink ? 'disabled' : ''}
-            aria-disabled={!previoustLink}>
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a
-              on:click={handlePreviousClick}
-              role="button"
-              aria-current="true"
-              aria-label="Previous">
-              Previous
-            </a>
-          </li>
-          <li class={!nextLink ? 'disabled' : ''}>
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a
-              on:click={handleNextClick}
-              aria-label="Next">Next</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  {/if}
+  <div class="pagination-container">
+    <Pagination
+      bind:totalPages={pages.totalPages}
+      bind:currentPage={pages.currentPage}
+      on:clicked={handlePaginationClicked} />
+  </div>
 {:else}
   <Notification type="info">No style saved</Notification>
 {/if}
 
 <style lang="scss">
-  @use 'src/styles/undp-design/base-minimal.min';
-  @use 'src/styles/undp-design/pagination.min';
+  .pagination-container {
+    width: max-content;
+    margin: 0 auto;
+  }
 </style>
