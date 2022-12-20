@@ -74,15 +74,15 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 
-    @media (max-width: 300px) {
+    @media (max-width: 400px) {
       grid-template-columns: 1fr;
     }
 
-    @media (max-width: 1000px) {
-      grid-template-columns: repeat(3, 1fr);
+    @media (max-width: 820px) {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>

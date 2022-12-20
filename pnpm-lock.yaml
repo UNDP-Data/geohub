@@ -466,8 +466,10 @@ importers:
       '@watergis/svelte-maplibre-menu': ^0.1.16
       arraystat: ^1.1.6
       bignumber.js: ^9.1.1
+      bulma-divider: ^0.2.0
       bulma-o-steps: ^1.1.0
       bulma-slider: ^2.0.5
+      bulma-switch: ^2.0.4
       chroma-js: ^2.4.2
       colormap: ^2.3.2
       d3-format: ^3.1.0
@@ -553,8 +555,10 @@ importers:
       '@watergis/svelte-maplibre-legend': 0.1.15
       '@watergis/svelte-maplibre-menu': 0.1.16
       bignumber.js: 9.1.1
+      bulma-divider: 0.2.0
       bulma-o-steps: 1.1.0
       bulma-slider: 2.0.5
+      bulma-switch: 2.0.4
       chroma-js: 2.4.2
       colormap: 2.3.2
       d3-format: 3.1.0
@@ -4770,6 +4774,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /bulma-divider/0.2.0:
+    resolution: {integrity: sha512-REe3k56GECRfDaqFjC8cwLhV4RxXmV0RubuzDJqwior9wlJcdHlN0qfW0tvUX+qphikaTQegIeRuhjRIAqkjkw==}
+    dev: true
+
   /bulma-o-steps/1.1.0:
     resolution: {integrity: sha512-RelajORQ+tIY+CruowsEUzE6T5W5cbPp8Vskvu6Vgx5W45PcYhoP066Ls7kwMZl8M8djkxg+BcUswkX1a20hzg==}
     dependencies:
@@ -4778,6 +4786,10 @@ packages:
 
   /bulma-slider/2.0.5:
     resolution: {integrity: sha512-6woD/1E7q1o5bfEaQjNqpWZaCItC1oHe9bN15WYB2ELqz2gDaJYZkf+rlozGpAYOXQGDQGCCv3y+QuKjx6sQuw==}
+    dev: true
+
+  /bulma-switch/2.0.4:
+    resolution: {integrity: sha512-kMu4H0Pr0VjvfsnT6viRDCgptUq0Rvy7y7PX6q+IHg1xUynsjszPjhAdal5ysAlCG5HNO+5YXxeiu92qYGQolw==}
     dev: true
 
   /bulma/0.8.2:
