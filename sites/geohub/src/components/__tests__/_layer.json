@@ -1,0 +1,183 @@
+{
+  "name":"Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif",
+  "type":"raster",
+  "info":{
+     "bounds":[
+        -180,
+        -79.39558796108537,
+        180.00000000000512,
+        86.504412038917
+     ],
+     "json" : {
+       "vector_layers" : [
+         {
+          "description": "",
+          "fields": {
+            "COUNT": "Number",
+            "MEAN": "Number",
+            "ORIG_FID": "Number"},
+          "id": "NGA_DepRationAdm2",
+          "maxzoom": 12,
+          "minzoom": 0
+         }
+       ]
+     },
+     "minzoom":0,
+     "maxzoom":4,
+     "band_metadata":[
+        [
+           "1",
+           {
+              "Description":"This dataset contains Volcanic Hazard Level for proximal volcanic hazards (e.g., pyroclastic flows, lahars, lava). Volcanic Hazard Level is derived from the Smithsonian Institution Global Volcanism Program (GVP) volcano dataset, GVP eruption dataset, and the British Geological Survey LaMEVE (Large Magnitude Explosive Volcanic Eruptions) database.",
+              "Source":"www.geonode-gfdrrlab.org",
+              "STATISTICS_MAXIMUM":"103",
+              "STATISTICS_MEAN":"101.47994061076",
+              "STATISTICS_MINIMUM":"100",
+              "STATISTICS_STDDEV":"1.1215340629323",
+              "STATISTICS_UNIQUE_VALUES_COUNT":"4",
+              "STATISTICS_VALID_PERCENT":"3.237",
+              "STATISTICS_UNIQUE_VALUES": "[{\"name\":\"Rice Village\", \"value\":\"11\"}, {\"name\":\"Sparse trees\", \"value\":\"23\"}, {\"name\":\"Remote croplands\", \"value\":\"63\"}]",
+              "Unit":"sqkm"
+           }
+        ]
+     ],
+     "band_descriptions":[
+        [
+           "1",
+           ""
+        ]
+     ],
+     "dtype":"uint8",
+     "nodata_type":"Nodata",
+     "colorinterp":[
+        "gray"
+     ],
+     "width":3600,
+     "height":1659,
+     "count":1,
+     "overviews":[
+        2,
+        4,
+        8,
+        16
+     ],
+     "nodata_value":0,
+     "driver":"GTiff",
+     "stats": {
+      "1": {
+         "min": 100,
+         "max": 103,
+         "mean": 101.48582891160865,
+         "count": 15454,
+         "sum": 1568362,
+         "std": 1.1227380530818927,
+         "median": 101,
+         "majority": 100,
+         "minority": 101,
+         "unique": 4,
+         "histogram": [
+            [
+               4000,
+               0,
+               0,
+               3756,
+               0,
+               0,
+               3888,
+               0,
+               0,
+               3810
+            ],
+            [
+               100,
+               100.3,
+               100.6,
+               100.9,
+               101.2,
+               101.5,
+               101.8,
+               102.1,
+               102.4,
+               102.7,
+               103
+            ]
+         ],
+         "valid_percent": 3.2,
+         "masked_pixels": 467874,
+         "valid_pixels": 15454,
+         "percentile_98": 103,
+         "percentile_2": 100
+      }
+   }
+
+  },
+  "visible":true,
+  "url":"https://undpngddlsgeohubdev01.blob.core.windows.net/climate-action/Volcanic_Hazard_Level_for_Proximal_Volcanic_Hazards.tif?c3Y9MjAyMS0wNC0xMCZzZT0yMDIyLTA1LTExVDAzJTNBMDElM0E1M1omc3I9YiZzcD1yJnNpZz1WTjRSYm5peUFxSU50SWMlMkY3cTRZWnNjYXBQSkN2VnNSZ0o0VzNLdFEzbnclM0Q=",
+  "colorMapName":"viridis",
+  "intervals":{
+     "numberOfClasses":5,
+     "colorMapRows":[
+        {
+           "index":0,
+           "color":[
+              68,
+              1,
+              84,
+              255
+           ],
+           "start":100,
+           "end":100.6
+        },
+        {
+           "index":1,
+           "color":[
+              63,
+              74,
+              138,
+              255
+           ],
+           "start":100.6,
+           "end":101.2
+        },
+        {
+           "index":2,
+           "color":[
+              38,
+              131,
+              143,
+              255
+           ],
+           "start":101.2,
+           "end":101.8
+        },
+        {
+           "index":3,
+           "color":[
+              108,
+              206,
+              90,
+              255
+           ],
+           "start":101.8,
+           "end":102.4
+        },
+        {
+           "index":4,
+           "color":[
+              254,
+              232,
+              37,
+              255
+           ],
+           "start":102.4,
+           "end":103
+        }
+     ]
+  },
+  "unique":{
+     "colorMapRows":[
+
+     ]
+  },
+  "expression" : ""
+}
