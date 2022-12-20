@@ -93,8 +93,3 @@
     {/if}
   </div>
 {/if}
-
-<style lang="scss">
-  @import '../../styles/bulma-switch.min.css';
-  @import '../../styles/bulma-divider.min.css';
-</style>
