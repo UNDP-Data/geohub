@@ -64,20 +64,9 @@
   })
 </script>
 
-<svelte:head>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
-</svelte:head>
-
 <div
   bind:this={container}
-  class="map"
-  id="map">
-  {#if map}
-    <slot />
-  {/if}
-</div>
+  class="map" />
 
 <CurrentLocation
   bind:map={$map}
@@ -91,6 +80,8 @@
   position="bottom-left" />
 
 <style lang="scss">
+  @import 'maplibre-gl/dist/maplibre-gl.css';
+
   .map {
     height: calc(100vh - 93.44px);
     width: 100%;

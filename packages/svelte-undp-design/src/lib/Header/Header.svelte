@@ -7,14 +7,22 @@
 	export let logoUrl: string;
 	export let height = 75;
 	export let showProgressBar = false;
+	export let isPositionFixed = true;
 
 	onMount(() => {
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
 </script>
 
-<header class="country-header">
-	<section class="header" bind:clientHeight={height}>
+<header
+	class="country-header"
+	style="position: {isPositionFixed ? 'fixed' : 'relative'}!important;"
+>
+	<section
+		class="header"
+		style="position: {isPositionFixed ? 'fixed' : 'relative'}!important;"
+		bind:clientHeight={height}
+	>
 		<div class="grid-container fluid">
 			<div class="grid-x grid-margin-x align-content-middle">
 				<div class="cell large-9 small-9 align-self-middle top-left">

@@ -38,6 +38,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If enabled, progress bar will be shown in the bottom of header',
 			defaultValue: false
+		},
+		isPositionFixed: {
+			type: 'boolean',
+			description: 'If enabled, header will be shown at the top of window',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<Header>;
