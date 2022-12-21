@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
+  import {onDestroy, onMount} from 'svelte'
+  import {fade} from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { debounce } from 'lodash-es'
+  import {debounce} from 'lodash-es'
 
   import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
@@ -23,7 +23,7 @@
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import { map } from '$stores'
+  import {map} from '$stores'
   import {
     getIntervalList,
     getLayerProperties,
@@ -57,7 +57,14 @@
 
   // update color intervals upon change of color map name\
 
-  $: colorMapName, setIntervalValues()
+  // $:colorMapName, updateMapWithNewColor()
+  $:{
+    if(isFirstMount()){
+      // pass
+    }else{
+      colorMapName, updateMapWithNewColor()
+    }
+  }
 
   onMount(() => {
     getPropertySelectValue()
@@ -71,24 +78,27 @@
     $map.off('zoom', updateMap)
   })
 
-  const updateStopsWithColorMap = () => {
-    if (!$map) return
-    if (colorMapName) {
-      console.log('updateStopsWithColorMap', colorMapName)
-      const colorMap = chroma.scale(colorMapName).classes(intervalList)
-      console.log('colorMap', colorMap.colors(), intervalList)
-      colorMapRows = []
-      for (let i = 0; i < intervalList.length - 1; i++) {
-        const row = {
-          index: i,
-          color: [...colorMap(intervalList[i]).rgb(), 255],
-          start: intervalList[i],
-          end: intervalList[i + 1],
-        }
-        colorMapRows = [...colorMapRows, row]
-      }
-      updateMap()
+  const isFirstMount = () => {
+    const stops = getLayerStyle($map, layer.id).paint['fill-color'].stops
+    return !stops
+  }
+
+
+  const updateMapWithNewColor = () => {
+    const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
+    const stops = getLayerStyle($map, layer.id).paint['fill-color'].stops
+    if (!stops) {
+      return
     }
+    colorMapRows = stops.map((stop, index) => {
+      return {
+        index,
+        color: [...scaleColorList(intervalList[index]).rgb(), 255],
+        start: intervalList[index],
+        end: intervalList[index + 1],
+      }
+    })
+    updateMap()
   }
 
   const getPropertySelectValue = () => {
@@ -228,7 +238,7 @@
               }
 
               const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-              const intervalList = getIntervalList(
+              intervalList = getIntervalList(
                 classificationMethod,
                 stat.min,
                 stat.max,
