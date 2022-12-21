@@ -5,7 +5,7 @@ import { UserConfig } from 'vite'
 const config: UserConfig = {
   plugins: [sveltekit()],
   ssr: {
-    noExternal: [/^@material(?:-extra)?\//, 'vega-embed'],
+    noExternal: [/^@material(?:-extra)?\//, 'vega-embed', 'svelte-carousel', 'simply-reactive'],
   },
   resolve: {
     alias: {

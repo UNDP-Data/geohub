@@ -6,7 +6,7 @@
 
   let contents: CarouselContent[] = [
     {
-      tag: 'Case study',
+      tag: 'Dashboard',
       imageUrl: 'assets/electricity-snapshot.png',
       title: 'GeoHub Electricity Dashboard',
       description:
@@ -62,7 +62,7 @@
     <MapStyleCardList />
   </div>
 
-  <Footer logoUrl="undp-images/undp-logo-white.svg" />
+  <Footer logoUrl="assets/undp-images/undp-logo-white.svg" />
 </div>
 
 <style lang="scss">
