@@ -10,6 +10,7 @@ import Tabs from './Tabs/Tabs.svelte';
 import Radios from './Radios/Radios.svelte';
 import Loader from './Loader/Loader.svelte';
 import Pagination from './Pagination/Pagination.svelte';
+import FluidCarousel from './FluidCarousel/FluidCarousel.svelte';
 
 export {
 	Accordion,
@@ -23,5 +24,6 @@ export {
 	Radios,
 	CtaLink,
 	Loader,
-	Pagination
+	Pagination,
+	FluidCarousel
 };

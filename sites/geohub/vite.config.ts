@@ -13,6 +13,9 @@ const config: UserConfig = {
       $stores: resolve('./src/stores/index.ts'),
     },
   },
+  optimizeDeps: {
+    include: ['lodash.get', 'lodash.isequal', 'lodash.clonedeep'],
+  },
 }
 
 export default config

@@ -47,5 +47,8 @@
 		"typescript": "^4.9.4",
 		"vite": "^4.0.2"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"svelte-carousel": "^1.0.20"
+	}
 }

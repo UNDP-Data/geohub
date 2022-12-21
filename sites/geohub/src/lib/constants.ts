@@ -210,12 +210,12 @@ export const rasterArithmeticOperators = [
 export const DataCategories: Breadcrumb[] = [
   {
     name: 'SDG',
-    icon: '/sdgs/SDG Wheel_WEB.png',
+    icon: 'assets/sdgs/SDG Wheel_WEB.png',
     url: '/api/tags?key=sdg_goal',
   },
   {
     name: 'Climate change',
-    icon: '/sdgs/13.png',
+    icon: 'assets/sdgs/13.png',
     url: '/api/datasets?sdg_goal=13',
   },
   {
@@ -225,12 +225,12 @@ export const DataCategories: Breadcrumb[] = [
   },
   {
     name: 'pg_tileserv',
-    icon: '/crunchy-spatial-logo.png',
+    icon: 'assets/crunchy-spatial-logo.png',
     url: '/api/datasets?type=pgtileserv',
   },
   {
     name: 'martin',
-    icon: '/maplibre.png',
+    icon: 'assets/maplibre.png',
     url: '/api/datasets?type=martin',
   },
 ]
