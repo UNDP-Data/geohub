@@ -105,8 +105,8 @@
   </div>
   <div slot="secondary">
     <slot />
-    <div />
-  </div></Split>
+  </div>
+</Split>
 
 <style lang="scss">
   .banner-container {

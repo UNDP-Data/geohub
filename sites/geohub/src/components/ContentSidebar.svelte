@@ -5,7 +5,6 @@
 
   export let map: Map
   export let isMenuShown = false
-  export let headerHeight: number = undefined
   let innerWidth: number
   let innerHeight: number
   let initialPrimaryWidth = 355
@@ -70,9 +69,7 @@
   bind:innerWidth
   bind:innerHeight />
 
-<div
-  class="split-container"
-  style="margin-top: {headerHeight}px; height: calc(100vh - {headerHeight}px)">
+<div class="split-container">
   <Split
     initialPrimarySize={`${widthPecent}%`}
     minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}

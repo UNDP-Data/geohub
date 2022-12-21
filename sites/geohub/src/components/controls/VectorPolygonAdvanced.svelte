@@ -1,11 +1,14 @@
-<script context="module" lang="ts">
+<script
+  context="module"
+  lang="ts">
   const intervalListStore = {}
 </script>
+
 <script lang="ts">
-  import {onDestroy, onMount} from 'svelte'
-  import {fade} from 'svelte/transition'
+  import { onDestroy, onMount } from 'svelte'
+  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import {debounce} from 'lodash-es'
+  import { debounce } from 'lodash-es'
 
   import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
@@ -26,7 +29,7 @@
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import {map} from '$stores'
+  import { map } from '$stores'
   import {
     getIntervalList,
     getLayerProperties,
@@ -58,10 +61,8 @@
   let inLegend = true
   let colorMapRows: IntervalLegendColorMapRow[] = []
 
-
-
   onMount(() => {
-    if(propertySelectValue === undefined){
+    if (propertySelectValue === undefined) {
       getPropertySelectValue()
       getColorMapRows()
       setIntervalValues()
@@ -70,11 +71,11 @@
     $map.on('zoom', updateMap)
   })
 
-  $:{
+  $: {
     // This stub will run everytime the component is mounted or everytime the colorMapName
     // changes
     // The isFirstMount() condition prevents the function from running everytime the component is mounted
-    if(!isFirstMount()){
+    if (!isFirstMount()) {
       colorMapName, updateMapWithNewColor()
     }
   }
@@ -89,9 +90,8 @@
     return !stops
   }
 
-
   const updateMapWithNewColor = () => {
-    if(intervalList.length < 1) return
+    if (intervalList.length < 1) return
     getPropertySelectValue()
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     const stops = getLayerStyle($map, layer.id).paint['fill-color'].stops
@@ -244,13 +244,7 @@
               }
 
               const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-              intervalList = getIntervalList(
-                classificationMethod,
-                stat.min,
-                stat.max,
-                randomSample,
-                numberOfClasses,
-              )
+              intervalList = getIntervalList(classificationMethod, stat.min, stat.max, randomSample, numberOfClasses)
 
               intervalListStore[layer.id] = intervalList
               const scaleColorList = chroma.scale(colorMapName).classes(intervalList)

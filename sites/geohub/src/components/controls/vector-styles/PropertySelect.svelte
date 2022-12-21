@@ -45,8 +45,7 @@
 
 <!--<div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">-->
 <div class="control has-icons-left">
-  <div
-    class="select is-flex is-justify-content-left select is-normal">
+  <div class="select is-flex is-justify-content-left select is-normal">
     <select
       style="width: 100%"
       class="is-normal"
