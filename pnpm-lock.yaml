@@ -338,10 +338,13 @@ importers:
       sass: ^1.57.1
       storybook: 7.0.0-beta.12
       svelte: ^3.55.0
+      svelte-carousel: ^1.0.20
       svelte-check: ^2.10.3
       tslib: ^2.4.1
       typescript: ^4.9.4
       vite: ^4.0.2
+    dependencies:
+      svelte-carousel: 1.0.20
     devDependencies:
       '@storybook/addon-essentials': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-interactions': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
@@ -398,10 +401,13 @@ importers:
       sass: ^1.57.1
       storybook: 7.0.0-beta.12
       svelte: ^3.55.0
+      svelte-carousel: ^1.0.20
       svelte-check: ^2.10.3
       tslib: ^2.4.1
       typescript: ^4.9.4
       vite: ^4.0.2
+    dependencies:
+      svelte-carousel: 1.0.20
     devDependencies:
       '@storybook/addon-essentials': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-interactions': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
@@ -7895,9 +7901,21 @@ packages:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
     dev: true
 
+  /lodash.clonedeep/4.5.0:
+    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
+    dev: false
+
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
     dev: true
+
+  /lodash.get/4.4.2:
+    resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
+    dev: false
+
+  /lodash.isequal/4.5.0:
+    resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    dev: false
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -9925,6 +9943,12 @@ packages:
       csstype: 3.1.1
     dev: true
 
+  /svelte-carousel/1.0.20:
+    resolution: {integrity: sha512-BP6LosKg1I8D741WmzS2/Q9bwu1DdMslGXUe8//kWeumXB87XSQChw62Vyo8yFtgKP287riYI3w3fSI+aU+gbA==}
+    dependencies:
+      simply-reactive: github.com/vadimkorr/simply-reactive/8d1ae831b2fbba1cf4446543f954b4efe28013e0
+    dev: false
+
   /svelte-check/2.10.3_fbd3bsthkolgcfdtnjcrdnjhju:
     resolution: {integrity: sha512-Nt1aWHTOKFReBpmJ1vPug0aGysqPwJh2seM1OvICfM2oeyaA62mOiy5EvkXhltGfhCcIQcq2LoE0l1CwcWPjlw==}
     hasBin: true
@@ -11776,3 +11800,13 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  github.com/vadimkorr/simply-reactive/8d1ae831b2fbba1cf4446543f954b4efe28013e0:
+    resolution: {tarball: https://codeload.github.com/vadimkorr/simply-reactive/tar.gz/8d1ae831b2fbba1cf4446543f954b4efe28013e0}
+    name: simply-reactive
+    version: 1.0.0
+    dependencies:
+      lodash.clonedeep: 4.5.0
+      lodash.get: 4.4.2
+      lodash.isequal: 4.5.0
+    dev: false

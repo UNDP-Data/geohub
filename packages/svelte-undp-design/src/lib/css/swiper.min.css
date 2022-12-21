@@ -1,0 +1,117 @@
+.swiper {
+	box-sizing: border-box;
+	max-width: 100%;
+	position: relative;
+}
+.swiper * {
+	box-sizing: inherit;
+}
+[class*='swiper-slider-'] {
+	box-sizing: border-box;
+	max-width: 100%;
+	overflow: hidden;
+	position: relative;
+}
+.swiper-wrapper {
+	backface-visibility: hidden;
+	display: flex;
+	flex-wrap: nowrap;
+	list-style: none;
+	padding: 0;
+	position: relative;
+	touch-action: pan-y;
+	transform-style: preserve-3d;
+	transition-property: transform;
+	white-space: nowrap;
+	width: 100%;
+	will-change: transform;
+}
+.swiper-slide {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	-webkit-touch-callout: none;
+	box-sizing: border-box;
+	flex-shrink: 0;
+	height: 100%;
+	user-select: none;
+	white-space: normal;
+	width: 100%;
+}
+.swiper-slide a {
+	-webkit-user-drag: none;
+	user-select: none;
+}
+.swiper [class*='swiper-button-'] {
+	-webkit-touch-callout: none;
+	cursor: pointer;
+	display: none;
+	user-select: none;
+}
+.swiper [class*='swiper-button-'] img,
+.swiper-arrows [class*='swiper-button-'] {
+	cursor: pointer;
+}
+.swiper-button-disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+.swiper-button-disabled img {
+	cursor: default;
+}
+[dir='rtl'] .swiper {
+	direction: rtl;
+}
+.swiper-scrollbar {
+	background: transparent;
+	cursor: pointer;
+	display: block;
+	height: 4px;
+	margin-bottom: 2rem;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+.swiper-scrollbar:after {
+	border-bottom: 1px solid #000;
+	content: '';
+	height: 1px;
+	left: 0;
+	position: absolute;
+	top: 1px;
+	width: 100%;
+	z-index: 1;
+}
+.swiper-scrollbar-drag {
+	background: #000;
+	height: 100%;
+}
+.swiper-notification {
+	display: none;
+}
+.swiper-initialized {
+	padding-right: 2.75rem;
+}
+@media (max-width: 47.9375em) {
+	.swiper-initialized,
+	.swiper-initialized .swiper-scrollbar {
+		padding-right: 2.5rem;
+	}
+}
+[dir='rtl'] .swiper-initialized {
+	padding-left: 2.75rem;
+	padding-right: 0;
+}
+@media (max-width: 47.9375em) {
+	[dir='rtl'] .swiper-initialized {
+		padding-left: 2.5rem;
+		padding-right: 0;
+	}
+}
+[dir='rtl'] .swiper-initialized .swiper-scrollbar {
+	padding-right: 0;
+}
+@media (max-width: 47.9375em) {
+	[dir='rtl'] .swiper-initialized .swiper-scrollbar {
+		padding-left: 2.5rem;
+		padding-right: 0;
+	}
+}
