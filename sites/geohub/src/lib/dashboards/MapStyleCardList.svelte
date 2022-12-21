@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { page } from '$app/stores'
-  import DashboardMapStyleCard from '../../dashboards/components/DashboardMapStyleCard.svelte'
+  import DashboardMapStyleCard from './DashboardMapStyleCard.svelte'
   import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'

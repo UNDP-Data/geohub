@@ -1,0 +1,17 @@
+
+> @undp-data/electricity-dashboard@0.0.1 lint /Users/j_igarashi/Documents/git/UNDP-Data/geohub/apps/electricity-dashboard
+> prettier --plugin-search-dir . --check . && eslint .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+/Users/j_igarashi/Documents/git/UNDP-Data/geohub/apps/electricity-dashboard/src/lib/components/Content.svelte
+  13:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/j_igarashi/Documents/git/UNDP-Data/geohub/apps/electricity-dashboard/src/lib/components/IntroductionPanel.svelte
+  12:3  warning  A11y: noninteractive element cannot have positive tabIndex value  a11y-no-noninteractive-tabindex
+  21:3  warning  A11y: noninteractive element cannot have positive tabIndex value  a11y-no-noninteractive-tabindex
+  31:3  warning  A11y: noninteractive element cannot have positive tabIndex value  a11y-no-noninteractive-tabindex
+
+✖ 4 problems (0 errors, 4 warnings)
+

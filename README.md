@@ -7,6 +7,7 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 | App                           | Language   | Library   | Source code                                                   |
 | ----------------------------- | ---------- | --------- | ------------------------------------------------------------- |
 | GeoHub                        | TypeScript | sveltekit | [sites/geohub](./sites/geohub/)                               |
+| Electricity dashboard         | TypeScript | sveltekit | [apps/electricity-dashboard](./apps/electricity-dashboard/)   |
 | @undp-data/current-location   | TypeScript | sveltekit | [packages/current-location](./packages/current-location/)     |
 | @undp-data/style-switcher     | TypeScript | sveltekit | [packages/style-switcher](./packages/style-switcher/)         |
 | @undp-data/style-viewer       | TypeScript | sveltekit | [packages/style-viewer](./packages/style-viewer/)             |

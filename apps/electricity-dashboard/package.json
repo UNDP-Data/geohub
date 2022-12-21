@@ -1,0 +1,48 @@
+{
+	"name": "@undp-data/electricity-dashboard",
+	"version": "0.0.1",
+	"main": "package/index.js",
+	"files": [
+		"package"
+	],
+	"scripts": {
+		"dev": "vite dev",
+		"build": "svelte-kit sync && svelte-package",
+		"prepublishOnly": "echo 'Did you mean to publish `./package/`, instead of `./`?' && exit 1",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write .",
+		"prepare": "pnpm build"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^1.0.0",
+		"@sveltejs/kit": "^1.0.0",
+		"@sveltejs/package": "^1.0.0",
+		"@typescript-eslint/eslint-plugin": "^5.45.0",
+		"@typescript-eslint/parser": "^5.45.0",
+		"eslint": "^8.28.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"prettier": "^2.8.0",
+		"prettier-plugin-svelte": "^2.8.1",
+		"svelte": "^3.54.0",
+		"svelte-check": "^2.9.2",
+		"tslib": "^2.4.1",
+		"typescript": "^4.9.3",
+		"vite": "^4.0.0"
+	},
+	"type": "module",
+	"dependencies": {
+		"@creativebulma/bulma-tooltip": "^1.2.0",
+		"@undp-data/current-location": "workspace:^0.0.1",
+		"@undp-data/style-switcher": "workspace:^0.0.1",
+		"@undp-data/svelte-undp-design": "workspace:^0.0.1",
+		"@watergis/svelte-maplibre-menu": "^0.1.16",
+		"chroma-js": "^2.4.2",
+		"d3-format": "^3.1.0",
+		"maplibre-gl": "^2.4.0",
+		"svelte-range-slider-pips": "^2.1.1",
+		"svelte-vega": "^1.2.0"
+	}
+}
