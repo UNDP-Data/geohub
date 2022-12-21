@@ -7,7 +7,6 @@
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
-  import { getLayerStyle } from '$lib/helper'
 
   let isModalVisible = false
   let styleURL: string
@@ -24,6 +23,7 @@
     styleURL = undefined
 
     untargetedLayers = []
+    const names: string[] = []
     if ($layerList.length > 0) {
       $layerList.forEach((layer) => {
         const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
@@ -33,8 +33,15 @@
 
         if (stacType?.value === 'microsoft-pc') {
           untargetedLayers.push(layer)
+        } else {
+          names.push(layer.name)
         }
       })
+      if (names.length > 0) {
+        styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+      } else {
+        styleName = 'UNDP GeoHub style'
+      }
     }
     createStyleJSON2Generate()
   }
@@ -49,7 +56,6 @@
       method: 'POST',
       body: JSON.stringify(data),
     })
-    console.log(res)
     const resjson = await res.json()
     styleURL = resjson.url
   }
@@ -62,25 +68,6 @@
     if ($layerList.length === 0) {
       return
     }
-    const newSources = {}
-    Object.keys(style.sources).forEach((key: string) => {
-      $layerList.forEach((l: Layer) => {
-        const style = getLayerStyle($map, l.id)
-        if (style && style.source === key) {
-          newSources[key] = $map.getStyle().sources[key]
-        }
-      })
-    })
-    style.sources = newSources
-    const newLayers = []
-    style.layers.forEach((layer) => {
-      $layerList.forEach((l: Layer) => {
-        if (l.id === layer.id) {
-          newLayers.push(layer)
-        }
-      })
-    })
-    style.layers = newLayers
 
     untargetedLayers.forEach((layer) => {
       const deletedLayer = style.layers.find((l) => l.id === layer.id)
