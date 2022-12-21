@@ -55,9 +55,21 @@
   let inLegend = true
   let colorMapRows: IntervalLegendColorMapRow[] = []
 
-  // update color intervals upon change of color map name\
 
-  // $:colorMapName, updateMapWithNewColor()
+
+  onMount(() => {
+    if(isFirstMount()){
+      getPropertySelectValue()
+      getColorMapRows()
+      setIntervalValues()
+    }else{
+      getPropertySelectValue()
+      updateMapWithNewColor()
+    }
+
+    $map.on('zoom', updateMap)
+  })
+
   $:{
     if(isFirstMount()){
       // pass
@@ -65,13 +77,6 @@
       colorMapName, updateMapWithNewColor()
     }
   }
-
-  onMount(() => {
-    getPropertySelectValue()
-    getColorMapRows()
-    setIntervalValues()
-    $map.on('zoom', updateMap)
-  })
 
   onDestroy(() => {
     if (!$map) return
@@ -85,11 +90,9 @@
 
 
   const updateMapWithNewColor = () => {
+    if(intervalList.length < 1) return
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     const stops = getLayerStyle($map, layer.id).paint['fill-color'].stops
-    if (!stops) {
-      return
-    }
     colorMapRows = stops.map((stop, index) => {
       return {
         index,
