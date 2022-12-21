@@ -3,27 +3,14 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
-  import { Radios, Button } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import { Button } from '@undp-data/svelte-undp-design'
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
-  import { getLayerStyle } from '$lib/helper'
 
   let isModalVisible = false
   let styleURL: string
   let radioDisabled = false
-  let selectedOption: 'all' | 'geohub' = 'all'
-  let selectedOptions: Radio[] = [
-    {
-      label: 'All layers',
-      value: 'all',
-    },
-    {
-      label: 'GeoHub',
-      value: 'geohub',
-    },
-  ]
 
   let styleName = 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
@@ -31,13 +18,12 @@
   let exportedStyleJSON: StyleSpecification
 
   const open = () => {
-    selectedOption = 'all'
-
     radioDisabled = $layerList.length === 0
     isModalVisible = !isModalVisible
     styleURL = undefined
 
     untargetedLayers = []
+    const names: string[] = []
     if ($layerList.length > 0) {
       $layerList.forEach((layer) => {
         const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
@@ -47,8 +33,15 @@
 
         if (stacType?.value === 'microsoft-pc') {
           untargetedLayers.push(layer)
+        } else {
+          names.push(layer.name)
         }
       })
+      if (names.length > 0) {
+        styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+      } else {
+        styleName = 'UNDP GeoHub style'
+      }
     }
     createStyleJSON2Generate()
   }
@@ -63,40 +56,17 @@
       method: 'POST',
       body: JSON.stringify(data),
     })
-    console.log(res)
     const resjson = await res.json()
     styleURL = resjson.url
   }
 
   $: styleName, createStyleJSON2Generate()
-  $: selectedOption, createStyleJSON2Generate()
 
   const createStyleJSON2Generate = () => {
     if (!$map) return
     const style: StyleSpecification = $map.getStyle()
-    if (selectedOption === 'geohub') {
-      if ($layerList.length === 0) {
-        return
-      }
-      const newSources = {}
-      Object.keys(style.sources).forEach((key: string) => {
-        $layerList.forEach((l: Layer) => {
-          const style = getLayerStyle($map, l.id)
-          if (style && style.source === key) {
-            newSources[key] = $map.getStyle().sources[key]
-          }
-        })
-      })
-      style.sources = newSources
-      const newLayers = []
-      style.layers.forEach((layer) => {
-        $layerList.forEach((l: Layer) => {
-          if (l.id === layer.id) {
-            newLayers.push(layer)
-          }
-        })
-      })
-      style.layers = newLayers
+    if ($layerList.length === 0) {
+      return
     }
 
     untargetedLayers.forEach((layer) => {
@@ -190,15 +160,6 @@
             </div>
           </div>
 
-          {#if radioDisabled === false}
-            <div class="container my-2">
-              <Radios
-                bind:radios={selectedOptions}
-                bind:value={selectedOption}
-                groupName="share-layer-type"
-                isVertical={true} />
-            </div>
-          {/if}
           {#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
             <article class="message is-warning">
               <div class="message-header">
