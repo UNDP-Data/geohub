@@ -26,7 +26,7 @@
       propertySelectOptions = ['No Label', ...propertySelectOptions]
     }
     propertySelectValue = setDefaultProperty(propertySelectOptions)
-    propertyChanged()
+    // propertyChanged()
   }
 
   export let setDefaultProperty = (selectOptions: string[]) => {
@@ -40,18 +40,18 @@
     })
   }
 
-  $: propertySelectValue, propertyChanged()
+  // $: propertySelectValue, propertyChanged()
 </script>
 
 <!--<div style="width: 100%; display: flex; align-items: center; justify-content: left; margin: auto">-->
 <div class="control has-icons-left">
   <div
-    style="margin-right: 2%"
     class="select is-flex is-justify-content-left select is-normal">
     <select
       style="width: 100%"
       class="is-normal"
       bind:value={propertySelectValue}
+      on:change={propertyChanged}
       alt="Property Options"
       title="Property Options">
       {#if propertySelectOptions}

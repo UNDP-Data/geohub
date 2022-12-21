@@ -1,3 +1,6 @@
+<script context="module" lang="ts">
+  const intervalListStore = {}
+</script>
 <script lang="ts">
   import {onDestroy, onMount} from 'svelte'
   import {fade} from 'svelte/transition'
@@ -47,7 +50,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  let intervalList = []
+  let intervalList = intervalListStore[layer.id] || []
   export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
@@ -58,22 +61,20 @@
 
 
   onMount(() => {
-    if(isFirstMount()){
+    if(propertySelectValue === undefined){
       getPropertySelectValue()
       getColorMapRows()
       setIntervalValues()
-    }else{
-      getPropertySelectValue()
-      updateMapWithNewColor()
     }
 
     $map.on('zoom', updateMap)
   })
 
   $:{
-    if(isFirstMount()){
-      // pass
-    }else{
+    // This stub will run everytime the component is mounted or everytime the colorMapName
+    // changes
+    // The isFirstMount() condition prevents the function from running everytime the component is mounted
+    if(!isFirstMount()){
       colorMapName, updateMapWithNewColor()
     }
   }
@@ -91,6 +92,7 @@
 
   const updateMapWithNewColor = () => {
     if(intervalList.length < 1) return
+    getPropertySelectValue()
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     const stops = getLayerStyle($map, layer.id).paint['fill-color'].stops
     colorMapRows = stops.map((stop, index) => {
@@ -150,6 +152,7 @@
   }
 
   const handlePropertyChange = (e) => {
+    console.log('handlePropertyChange', e.detail)
     propertySelectValue = e.detail.prop
     setIntervalValues()
   }
@@ -248,6 +251,8 @@
                 randomSample,
                 numberOfClasses,
               )
+
+              intervalListStore[layer.id] = intervalList
               const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
@@ -292,7 +297,6 @@
 
       return [row.start, rgb]
     })
-    // console.log(stops)
     $map.setPaintProperty(layer.id, 'fill-outline-color', defaultFillOutlineColor)
     $map.setPaintProperty(layer.id, 'fill-color', {
       property: propertySelectValue,
