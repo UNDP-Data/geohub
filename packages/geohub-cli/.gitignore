@@ -2,6 +2,7 @@
 *.tsv
 tmp/
 .DS_Store
+.turbo
 
 # Logs
 logs

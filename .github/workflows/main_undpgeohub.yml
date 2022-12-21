@@ -68,8 +68,7 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm install
+          pnpm install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
@@ -87,29 +86,30 @@ jobs:
 
       - name: Run lint
         run: |
-          pnpm --filter="./packages/*" lint
-          pnpm --filter="./sites/geohub" lint
+          pnpm lint
 
       - name: Run Prettier
         run: |
-          pnpm --filter="./packages/*" format
-          pnpm --filter="./sites/geohub" format
+          pnpm format
 
       - name: Run build storybook
         working-directory: ./packages/svelte-undp-design
         run: pnpm build-storybook
 
       - name: Run build GeoHub
-        run: pnpm --filter="./sites/geohub" build
+        run: pnpm build
 
       - name: Run unit tests
-        run: pnpm --filter="./sites/geohub" test
+        run: pnpm test
 
+      # The following code is important to create node_modules in geohub folder for deploying to production
+      # echo "shared-workspace-lockfile = false" >> .npmrc
       - name: Copy package.json / lock files to build folder
         working-directory: ./sites/geohub
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
+          echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
           cp package.json build/.
           cp pnpm-lock.yaml build/.
