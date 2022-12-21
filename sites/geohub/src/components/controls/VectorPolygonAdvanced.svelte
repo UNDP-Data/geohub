@@ -1,9 +1,3 @@
-<script
-  context="module"
-  lang="ts">
-  const intervalListStore = {}
-</script>
-
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
   import { fade } from 'svelte/transition'
@@ -53,7 +47,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  let intervalList = intervalListStore[layer.id] || []
+  let intervalList = []
   export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
@@ -246,7 +240,6 @@
               const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
               intervalList = getIntervalList(classificationMethod, stat.min, stat.max, randomSample, numberOfClasses)
 
-              intervalListStore[layer.id] = intervalList
               const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
