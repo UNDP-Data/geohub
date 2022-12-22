@@ -13,7 +13,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerLineLegendApplyToTypes,
   } from '$lib/constants'
@@ -38,7 +37,7 @@
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
 
   export let applyToOption: string
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string

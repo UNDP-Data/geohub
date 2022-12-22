@@ -6,11 +6,11 @@
   import { Radios } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let defaultColor: string = undefined
 
   const propertyName = 'line-dasharray'

@@ -1,10 +1,9 @@
 <script lang="ts">
   import FillColor from '$components/controls/vector-styles/FillColor.svelte'
   import FillOutlineColor from '$components/controls/vector-styles/FillOutlineColor.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let defaultFillColor: string = undefined
   export let defaultFillOutlineColor: string = undefined
 </script>

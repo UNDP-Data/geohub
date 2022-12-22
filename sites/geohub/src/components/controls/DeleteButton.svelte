@@ -2,12 +2,11 @@
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
 
-  import { LayerInitialValues } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   import Keydown from 'svelte-keydown'
   let confirmDeleteLayerDialogVisible = false
 

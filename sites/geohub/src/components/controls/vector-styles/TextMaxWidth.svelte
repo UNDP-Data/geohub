@@ -3,11 +3,11 @@
   import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   const layerId = layer.id
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 

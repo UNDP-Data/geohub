@@ -4,11 +4,11 @@
   import chroma from 'chroma-js'
 
   import HeatmapColorRow from '$components/controls/vector-styles/HeatmapColorRow.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Color, Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   let colorPickerVisibleIndex: number
 
   const layerId = layer.id

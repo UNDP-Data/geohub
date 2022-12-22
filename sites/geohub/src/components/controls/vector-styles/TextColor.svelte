@@ -2,12 +2,12 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import MaplibreColorPicker from './MaplibreColorPicker.svelte'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
