@@ -42,6 +42,7 @@
 		"chroma-js": "^2.4.2",
 		"d3-format": "^3.1.0",
 		"maplibre-gl": "^2.4.0",
+		"mime": "^3.0.0",
 		"svelte-range-slider-pips": "^2.1.1",
 		"svelte-vega": "^1.2.0"
 	}

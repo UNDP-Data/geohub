@@ -29,6 +29,7 @@ importers:
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
       maplibre-gl: ^2.4.0
+      mime: ^3.0.0
       prettier: ^2.8.0
       prettier-plugin-svelte: ^2.8.1
       svelte: ^3.54.0
@@ -47,6 +48,7 @@ importers:
       chroma-js: 2.4.2
       d3-format: 3.1.0
       maplibre-gl: 2.4.0
+      mime: 3.0.0
       svelte-range-slider-pips: 2.1.1
       svelte-vega: 1.2.0_36sthfwhgi34qytpvkzggbhnle
     devDependencies:
