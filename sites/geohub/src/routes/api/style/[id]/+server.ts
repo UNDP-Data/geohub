@@ -14,7 +14,6 @@ export const GET: RequestHandler = async ({ params }) => {
     if (!styleId) {
       throw error(400, { message: `id parameter is required.` })
     }
-    console.log(styleId)
 
     const query = {
       text: `SELECT id, name, style, layers, createdat, updatedat FROM geohub.style where id = $1`,
