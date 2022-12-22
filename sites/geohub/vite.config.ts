@@ -16,6 +16,12 @@ const config: UserConfig = {
   optimizeDeps: {
     include: ['lodash.get', 'lodash.isequal', 'lodash.clonedeep'],
   },
+  server: {
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: ['../..'],
+    },
+  },
 }
 
 export default config
