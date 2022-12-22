@@ -82,7 +82,7 @@ export const GET: RequestHandler = async ({ url }) => {
     }
 
     const totalCount = await getStyleCount()
-    let totalPages = Math.round(totalCount / Number(limit))
+    let totalPages = Math.ceil(totalCount / Number(limit))
     if (totalPages === 0) {
       totalPages = 1
     }
@@ -137,9 +137,12 @@ export const POST: RequestHandler = async ({ request, url }) => {
       throw new Error('failed to insert to the database.')
     }
     const id = res.rows[0].id
+    const styleJsonUrl = `${url.origin}/api/style/${id}.json`
     return new Response(
       JSON.stringify({
-        url: `${url.origin}/viewer?style=${url.origin}/api/style/${id}.json`,
+        id: id,
+        style: styleJsonUrl,
+        viewer: `${url.origin}/viewer?style=${styleJsonUrl}`,
       }),
     )
   } catch (err) {
@@ -185,11 +188,14 @@ export const PUT: RequestHandler = async ({ request, url }) => {
       values: [body.name, JSON.stringify(body.style), JSON.stringify(body.layers), now, id],
     }
 
-    client.query(query)
+    await client.query(query)
 
+    const styleJsonUrl = `${url.origin}/api/style/${id}.json`
     return new Response(
       JSON.stringify({
-        url: `${url.origin}/viewer?style=${url.origin}/api/style/${id}.json`,
+        id: id,
+        style: styleJsonUrl,
+        viewer: `${url.origin}/viewer?style=${styleJsonUrl}`,
       }),
     )
   } catch (err) {

@@ -857,11 +857,17 @@ paths:
               schema:
                 type: object
                 properties:
-                  url:
+                  id:
+                    type: integer
+                  viewer:
                     type: string
                     description: URL for style sharing viewer
+                  style:
+                    type: string
+                    description: style.json URL
                 required:
-                  - url
+                  - viewer
+                  - style
       description: Save style.json to PostgreSQL database
       requestBody:
         content:
@@ -897,11 +903,18 @@ paths:
               schema:
                 type: object
                 properties:
-                  url:
+                  id:
+                    type: integer
+                  viewer:
                     type: string
                     description: URL for viewer
+                  style:
+                    type: string
+                    description: style.json URL
                 required:
-                  - url
+                  - id
+                  - viewer
+                  - style
       description: Update style.json to PostgreSQL database
       requestBody:
         content:

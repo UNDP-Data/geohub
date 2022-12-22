@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
+  import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
@@ -80,12 +82,29 @@
       layers: $layerList,
     }
 
-    const res = await fetch('/api/style', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-    const resjson = await res.json()
-    styleURL = resjson.url
+    const styleId = $page.url.searchParams.get('style')
+    let resjson
+    if (styleId) {
+      data['id'] = styleId
+
+      const res = await fetch('/api/style', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      })
+      resjson = await res.json()
+    } else {
+      const res = await fetch('/api/style', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+      resjson = await res.json()
+    }
+
+    styleURL = resjson.viewer
+    if (!styleId) {
+      $page.url.searchParams.set('style', resjson.id)
+      goto(`?${$page.url.searchParams.toString()}`)
+    }
   }
 
   $: styleName, createStyleJSON2Generate()
