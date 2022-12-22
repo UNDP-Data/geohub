@@ -129,6 +129,12 @@
       colorMapName,
     )
     handleParamsUpdate()
+
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layerConfig.id,
+      classification: classificationMethod,
+    })
   }
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {

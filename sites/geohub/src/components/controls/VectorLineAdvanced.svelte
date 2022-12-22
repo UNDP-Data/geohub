@@ -178,6 +178,11 @@
   }
 
   const handleClassificationChange = () => {
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layer.id,
+      classification: classificationMethod,
+    })
     setIntervalValues()
   }
 

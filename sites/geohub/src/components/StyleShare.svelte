@@ -17,6 +17,16 @@
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
 
+  let layerClassification: { [key: string]: string } = {}
+
+  $: {
+    if ($map) {
+      $map.on('classification:changed', (e: { layerId: string; classification: string }) => {
+        layerClassification[e.layerId] = e.classification
+      })
+    }
+  }
+
   const open = () => {
     radioDisabled = $layerList.length === 0
     isModalVisible = !isModalVisible
@@ -47,6 +57,23 @@
   }
 
   export const share = async () => {
+    // add classification in the top level of layer object in style.json
+    // in order to keep state of selection of classifying
+    exportedStyleJSON.layers.forEach((l) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (l.classification) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete l.classification
+      }
+      if (layerClassification[l.id]) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        l.classification = layerClassification[l.id]
+      }
+    })
+
     const data = {
       name: exportedStyleJSON.name,
       style: exportedStyleJSON,
