@@ -86,6 +86,7 @@ importers:
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
       maplibre-gl: ^2.4.0
+      mime: ^3.0.0
       prettier: ^2.8.0
       prettier-plugin-svelte: ^2.8.1
       svelte: ^3.54.0
@@ -104,6 +105,7 @@ importers:
       chroma-js: 2.4.2
       d3-format: 3.1.0
       maplibre-gl: 2.4.0
+      mime: 3.0.0
       svelte-range-slider-pips: 2.1.1
       svelte-vega: 1.2.0_36sthfwhgi34qytpvkzggbhnle
     devDependencies:
@@ -666,7 +668,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
       '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
       '@undp-data/current-location': link:../../packages/current-location/package
-      '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard
+      '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard/package
       '@undp-data/style-switcher': link:../../packages/style-switcher/package
       '@undp-data/style-viewer': link:../../packages/style-viewer/package
       '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design/package
