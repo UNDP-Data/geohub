@@ -87,7 +87,9 @@ CREATE TABLE geohub.style
   id        serial                   NOT NULL,
   name      character varying(100)   NOT NULL,
   style     json                     NOT NULL,
-  createdat timestamp with time zone NOT NULL,
+  createdat timestamp with time zone NOT NULL DEFAULT now(),
+  updatedat timestamp with time zone NOT NULL DEFAULT now(),
+  layers json,
   PRIMARY KEY (id)
 );
 

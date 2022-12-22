@@ -13,6 +13,8 @@
   let pages: Pages
   let isLoading = false
 
+  const LIMIT = 6
+
   onMount(async () => {
     await updateStylePage('next')
   })
@@ -20,7 +22,7 @@
   const updateStylePage = async (type: 'next' | 'previous') => {
     try {
       isLoading = true
-      let apiUrl = `${url.origin}/api/style`
+      let apiUrl = `${url.origin}/api/style?limit=${LIMIT}`
       const link = links?.find((l) => l.rel === type)
       if (link) {
         apiUrl = link.href

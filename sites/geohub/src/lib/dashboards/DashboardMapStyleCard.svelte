@@ -2,7 +2,7 @@
   import { fade } from 'svelte/transition'
   import { onMount } from 'svelte'
   import { page } from '$app/stores'
-  import { Map } from 'maplibre-gl'
+  import { Map, type StyleSpecification } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
   import { Button, CtaLink } from '@undp-data/svelte-undp-design'
@@ -21,6 +21,7 @@
   onMount(async () => {
     style.style = `${url.origin}/api/style/${style.id}.json`
     style.viewer = `${url.origin}/viewer?style=${style.style}`
+    style.editor = `${url.origin}?style=${style.id}`
 
     const res = await fetch(style.style)
     const styleJSON = await res.json()
@@ -40,11 +41,15 @@
     if (!style.style) return
     if (!map) return
     const res = await fetch(style.style)
-    const styleJSON = await res.json()
+    const styleJSON: StyleSpecification = await res.json()
 
-    map.setStyle(style.style)
-    map.setCenter(styleJSON.center ? styleJSON.center : [0, 0])
-    map.setZoom(styleJSON.zoom ? styleJSON.zoom : 4)
+    map.setStyle(styleJSON)
+    map.jumpTo({
+      center: [styleJSON.center[0], styleJSON.center[1]],
+      zoom: styleJSON.zoom,
+      bearing: styleJSON.bearing,
+      pitch: styleJSON.pitch,
+    })
   }
 
   const handleDeleteStyle = async () => {
@@ -81,27 +86,38 @@
         on:click={() => window.open(style.viewer, '_blank')}
         bind:this={mapContainer} />
     </div>
-    <div class="tile">
+    <div class="tile pt-2">
       <div class="content">
-        <Time
-          timestamp={style.createdat}
-          format="h:mm A · MMMM D, YYYY" />
+        <p class="p-0 m-0">
+          <b>Created at: </b><Time
+            timestamp={style.createdat}
+            format="h:mm A · MMMM D, YYYY" />
+        </p>
+        <p class="p-0 m-0">
+          <b>Updated at: </b><Time
+            timestamp={style.updatedat}
+            format="h:mm A · MMMM D, YYYY" />
+        </p>
       </div>
     </div>
-    <div class="tile">
-      <div class="tile is-8">
-        <CtaLink
-          label="View Style"
-          on:clicked={() => window.open(style.viewer, '_blank')}
-          isArrow={false} />
+    <div class="tile py-4">
+      <CtaLink
+        label="View Style"
+        on:clicked={() => window.open(style.viewer, '_blank')}
+        isArrow={false} />
+    </div>
+    <div class="tile pt-2">
+      <div class="tile is-half pr-1">
+        <Button
+          title="Edit"
+          isPrimary={true}
+          on:clicked={() => window.open(style.editor, '_blank')} />
       </div>
-      <div class="tile">
-        <div class="pt-2 is-2">
-          <Button
-            title="Delete"
-            isPrimary={false}
-            on:clicked={() => (confirmDeleteDialogVisible = true)} />
-        </div>
+      <div class="tile is-half pl-1">
+        <Button
+          title="Delete"
+          isPrimary={false}
+          on:clicked={() => (confirmDeleteDialogVisible = true)} />
       </div>
     </div>
   </div>

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
+  import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
@@ -16,6 +18,16 @@
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
+
+  let layerClassification: { [key: string]: string } = {}
+
+  $: {
+    if ($map) {
+      $map.on('classification:changed', (e: { layerId: string; classification: string }) => {
+        layerClassification[e.layerId] = e.classification
+      })
+    }
+  }
 
   const open = () => {
     radioDisabled = $layerList.length === 0
@@ -47,17 +59,52 @@
   }
 
   export const share = async () => {
+    // add classification in the top level of layer object in style.json
+    // in order to keep state of selection of classifying
+    exportedStyleJSON.layers.forEach((l) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (l.classification) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete l.classification
+      }
+      if (layerClassification[l.id]) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        l.classification = layerClassification[l.id]
+      }
+    })
+
     const data = {
       name: exportedStyleJSON.name,
       style: exportedStyleJSON,
+      layers: $layerList,
     }
 
-    const res = await fetch('/api/style', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-    const resjson = await res.json()
-    styleURL = resjson.url
+    const styleId = $page.url.searchParams.get('style')
+    let resjson
+    if (styleId) {
+      data['id'] = styleId
+
+      const res = await fetch('/api/style', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      })
+      resjson = await res.json()
+    } else {
+      const res = await fetch('/api/style', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+      resjson = await res.json()
+    }
+
+    styleURL = resjson.viewer
+    if (!styleId) {
+      $page.url.searchParams.set('style', resjson.id)
+      goto(`?${$page.url.searchParams.toString()}`)
+    }
   }
 
   $: styleName, createStyleJSON2Generate()

@@ -3,6 +3,7 @@
 tmp/
 .DS_Store
 .turbo
+!database.vuerd.json
 
 # Logs
 logs
