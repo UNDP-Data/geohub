@@ -8,6 +8,7 @@
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
+  import { map } from '$stores'
 
   export let layer: Layer
   let expressions: RasterSimpleExpression[]
@@ -80,27 +81,26 @@
       fontSize="small"
       isToggleTab={true} />
 
-    <p class="panel-content">
-      {#if isLegendPanelVisible === true}
-        <RasterLegendContainer
-          bind:layer
-          bind:colorMapName
-          bind:classificationMethod
-          bind:legendType />
-      {/if}
-      {#if isHistogramPanelVisible}
-        <RasterHistogram bind:layer />
-      {/if}
-      {#if isRefinePanelVisible === true}
-        <RasterExpression
-          bind:layer
-          bind:expressions
-          bind:legendType />
-      {/if}
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
-    </p>
+    <p class="panel-content" />
+    <div hidden={!isLegendPanelVisible}>
+      <RasterLegendContainer
+        bind:layer
+        bind:colorMapName
+        bind:classificationMethod
+        bind:legendType />
+    </div>
+    <div hidden={!isHistogramPanelVisible}>
+      <RasterHistogram bind:layer />
+    </div>
+    <div hidden={!isRefinePanelVisible}>
+      <RasterExpression
+        bind:layer
+        bind:expressions
+        bind:legendType />
+    </div>
+    <div hidden={!isOpacityPanelVisible}>
+      <OpacityPanel {layer} />
+    </div>
   </nav>
 </div>
 

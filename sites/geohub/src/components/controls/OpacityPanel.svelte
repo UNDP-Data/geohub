@@ -7,7 +7,6 @@
   import { getLayerStyle } from '$lib/helper'
 
   export let layer: Layer
-  export let isOpacityPanelVisible = false
 
   let layerOpacity = 1
   let rangeSliderValues = [layerOpacity * 100]
@@ -48,25 +47,23 @@
   }
 </script>
 
-{#if isOpacityPanelVisible === true}
-  <div
-    class="action"
-    data-testid="opacity-panel-container">
-    <div class="range-slider">
-      <RangeSlider
-        bind:values={rangeSliderValues}
-        float
-        min={0}
-        max={100}
-        step={1}
-        pips
-        first="label"
-        last="label"
-        rest={false}
-        suffix="%" />
-    </div>
+<div
+  class="action"
+  data-testid="opacity-panel-container">
+  <div class="range-slider">
+    <RangeSlider
+      bind:values={rangeSliderValues}
+      float
+      min={0}
+      max={100}
+      step={1}
+      pips
+      first="label"
+      last="label"
+      rest={false}
+      suffix="%" />
   </div>
-{/if}
+</div>
 
 <style lang="scss">
   .action {

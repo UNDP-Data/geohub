@@ -70,26 +70,26 @@
       fontSize="medium"
       isToggleTab={true} />
 
-    <p class="panel-content">
+    <p class="panel-content" />
+    <div hidden={!isLegendPanelVisible}>
       <VectorLegendPanel
         {layer}
-        {isLegendPanelVisible}
         bind:colorMapName
         bind:classificationMethod
         bind:applyToOption
         bind:legendType
         bind:defaultColor
         bind:defaultLineColor />
-      <VectorFilterPanelWizard
-        {layer}
-        {isFilterPanelVisible} />
-      <VectorLabelPanel
-        {layer}
-        {isLabelPanelVisible} />
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
-    </p>
+    </div>
+    <div hidden={!isFilterPanelVisible}>
+      <VectorFilterPanelWizard {layer} />
+    </div>
+    <div hidden={!isLabelPanelVisible}>
+      <VectorLabelPanel {layer} />
+    </div>
+    <div hidden={!isOpacityPanelVisible}>
+      <OpacityPanel {layer} />
+    </div>
   </nav>
 </div>
 

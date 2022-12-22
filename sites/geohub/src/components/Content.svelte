@@ -36,30 +36,28 @@
   let activeTab: string = tabs[0].label
 
   onMount(async () => {
-    try {
-      $indicatorProgress = true
-      const styleId = $page.url.searchParams.get('style')
-      if (!(styleId && $layerList.length === 0)) return
-      const res = await fetch(`/api/style/${styleId}`)
-      if (!res.ok) {
-        $page.url.searchParams.delete('style')
-        goto(`?${$page.url.searchParams.toString()}`)
-        return
-      }
-      const styleInfo = await res.json()
-      if (styleInfo.layers) {
-        $layerList = styleInfo.layers
-        const style: StyleSpecification = styleInfo.style
-        $map.setStyle(style)
-        $map.flyTo({
-          center: [style.center[0], style.center[1]],
-          zoom: style.zoom,
-          bearing: style.bearing,
-          pitch: style.pitch,
-        })
-        activeTab = TabNames.LAYERS
-      }
-    } finally {
+    $indicatorProgress = true
+    const styleId = $page.url.searchParams.get('style')
+    if (!(styleId && $layerList.length === 0)) return
+    const res = await fetch(`/api/style/${styleId}`)
+    if (!res.ok) {
+      $page.url.searchParams.delete('style')
+      goto(`?${$page.url.searchParams.toString()}`)
+      return
+    }
+    const styleInfo = await res.json()
+    if (styleInfo.layers) {
+      $layerList = styleInfo.layers
+      const style: StyleSpecification = styleInfo.style
+      $map.setStyle(style)
+      $map.flyTo({
+        center: [style.center[0], style.center[1]],
+        zoom: style.zoom,
+        bearing: style.bearing,
+        pitch: style.pitch,
+      })
+      activeTab = TabNames.LAYERS
+
       $indicatorProgress = false
     }
   })

@@ -24,6 +24,7 @@
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
+    if (!$map.isStyleLoaded()) return
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
       let propertyValue: any = ['get', textFieldValue]
