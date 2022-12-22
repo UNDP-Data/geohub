@@ -941,10 +941,12 @@ paths:
                 - name
                 - styles
                 - layers
+      tags:
+        - style
   '/style/{id}':
     parameters:
       - schema:
-          type: string
+          type: integer
         name: id
         in: path
         required: true
@@ -956,6 +958,41 @@ paths:
         '204':
           description: No Content
       description: Delete style by ID
+      tags:
+        - style
+    get:
+      summary: Style info API
+      operationId: get-style-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  style:
+                    type: object
+                  layers:
+                    type: array
+                    items:
+                      type: object
+                  createdat:
+                    type: string
+                  updatedat:
+                    type: string
+                required:
+                  - id
+                  - name
+                  - style
+                  - layers
+                  - createdat
+                  - updatedat
+      description: get style information by style id
       tags:
         - style
   '/style/{id}.json':
