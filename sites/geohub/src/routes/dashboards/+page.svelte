@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
+  import MapStyleCardList from '$lib/dashboards/MapStyleCardList.svelte'
   import { Header, Footer, FluidCarousel } from '@undp-data/svelte-undp-design'
   import type { CarouselContent } from '@undp-data/svelte-undp-design/interfaces'
   import { browser } from '$app/environment'
