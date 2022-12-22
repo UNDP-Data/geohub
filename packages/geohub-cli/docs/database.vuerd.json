@@ -1,0 +1,1000 @@
+{
+  "canvas": {
+    "version": "2.2.11",
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "zoomLevel": 1,
+    "show": {
+      "tableComment": true,
+      "columnComment": true,
+      "columnDataType": true,
+      "columnDefault": true,
+      "columnAutoIncrement": false,
+      "columnPrimaryKey": true,
+      "columnUnique": false,
+      "columnNotNull": true,
+      "relationship": true
+    },
+    "database": "PostgreSQL",
+    "databaseName": "geohub",
+    "canvasType": "ERD",
+    "language": "GraphQL",
+    "tableCase": "pascalCase",
+    "columnCase": "camelCase",
+    "highlightTheme": "VS2015",
+    "bracketType": "none",
+    "setting": {
+      "relationshipDataTypeSync": true,
+      "relationshipOptimization": false,
+      "columnOrder": [
+        "columnName",
+        "columnDataType",
+        "columnNotNull",
+        "columnUnique",
+        "columnAutoIncrement",
+        "columnDefault",
+        "columnComment"
+      ]
+    },
+    "pluginSerializationMap": {}
+  },
+  "table": {
+    "tables": [
+      {
+        "name": "geohub.dataset",
+        "comment": "this table manages metadata of files",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "md5 hash generated from URL",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "6739c38f-4385-4b45-8c01-0f3948df0b7e"
+          },
+          {
+            "name": "storage_id",
+            "comment": "storage ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 69.24893188476562,
+              "widthComment": 68.6639404296875,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "bfc6201d-27b2-4347-98ee-fc0d2a615b99"
+          },
+          {
+            "name": "url",
+            "comment": "stores URL for dataset. e.g., URL for azure blob, URL for mosaicjson",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "edfa196e-0a33-4009-9461-d7305497e9d1"
+          },
+          {
+            "name": "name",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "7ec00216-6335-448a-9dbe-704ae4cf0287"
+          },
+          {
+            "name": "description",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 73.98094177246094,
+              "widthComment": 60,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "76959741-7542-41ee-8b80-e5957a034f0f"
+          },
+          {
+            "name": "is_raster",
+            "comment": "raster or vector",
+            "dataType": "boolean",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 103.7899169921875,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "61a6d1f7-9638-4f3b-9b7b-c4ae9f6b1813"
+          },
+          {
+            "name": "source",
+            "comment": "data source",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 78.66093444824219,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "d07a01f2-a9f7-413f-b660-5e464b63efb4"
+          },
+          {
+            "name": "license",
+            "comment": "data license",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 78.69992065429688,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "2423d162-dd64-4d7c-bb6f-1f42f1d631fb"
+          },
+          {
+            "name": "bounds",
+            "comment": "bounds of data",
+            "dataType": "geometry (Polygon, 4326)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 100.617919921875,
+              "widthDataType": 170.42788696289062,
+              "widthDefault": 60
+            },
+            "id": "57a879fb-3fee-4799-8f0f-f2789e733040"
+          },
+          {
+            "name": "createdat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 63.93194580078125,
+              "widthComment": 60,
+              "widthDataType": 167.4248809814453,
+              "widthDefault": 60
+            },
+            "id": "52a21b85-ac16-4d99-aa00-e4a0875fcc55"
+          },
+          {
+            "name": "updatedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 68.02694702148438,
+              "widthComment": 60,
+              "widthDataType": 167.4248809814453,
+              "widthDefault": 60
+            },
+            "id": "cb6088fb-5f5a-4b5d-a9f9-2489c05d27c1"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 125.1019,
+          "top": 218.2722,
+          "zIndex": 6,
+          "widthName": 101.83992004394531,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "6d8bc276-7cd1-43ce-95a2-df870a3f108c"
+      },
+      {
+        "name": "geohub.tag",
+        "comment": "this table manages tags",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "unique ID for tag name",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "2d3425f3-e191-43ee-9a75-8ca1b50f49af"
+          },
+          {
+            "name": "value",
+            "comment": "tag value",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60.47393798828125,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "2f0869c6-8f5c-4119-b9b9-7f6babd98420"
+          },
+          {
+            "name": "key",
+            "comment": "tag key",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "f7d9b4f9-5573-4fdf-96cf-efbcee4a0c95"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 815.4385,
+          "top": 482.7973,
+          "zIndex": 4,
+          "widthName": 74.57894897460938,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "d20659b4-0aef-4283-8fad-8b0e1f97d480"
+      },
+      {
+        "name": "geohub.dataset_tag",
+        "comment": "this table connects file_metadata and tag tables",
+        "columns": [
+          {
+            "name": "dataset_id",
+            "comment": "unique ID for dataset",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 68.169921875,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "9fb397ae-ab61-468b-ac2a-a1a0d0345c86"
+          },
+          {
+            "name": "tag_id",
+            "comment": "unique ID for tag name",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "6ecc298b-9b0c-4a45-b3df-24aae5ecf389"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 850.8389,
+          "top": 231.9326,
+          "zIndex": 3,
+          "widthName": 129.2568817138672,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "8951ee6c-ebd2-4424-a816-edf4018ee186"
+      },
+      {
+        "name": "geohub.storage",
+        "comment": "manges storage",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "md5 hash generated from URL",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "e4675c3f-96af-4dd2-86aa-a799a65bc090"
+          },
+          {
+            "name": "name",
+            "comment": "name",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "92d455d7-1fe8-40f7-bfb1-0661338b8cde"
+          },
+          {
+            "name": "url",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "6b6a0dee-334c-4364-8259-e6785d41d19d"
+          },
+          {
+            "name": "label",
+            "comment": "label for visualising",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "caf8fd65-c9ee-4c6f-8531-30765c8b7fa6"
+          },
+          {
+            "name": "description",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 73.98094177246094,
+              "widthComment": 60,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "72e5ff40-0bec-47ea-b377-ed7ae34bddd7"
+          },
+          {
+            "name": "icon",
+            "comment": "fontawesome icon name or icon URL",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "9fc9bffa-d5b5-4c4c-ad56-87e9c816dd5b"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 127.839,
+          "top": 708.9414,
+          "zIndex": 1,
+          "widthName": 102.91893005371094,
+          "widthComment": 106.14291381835938
+        },
+        "visible": true,
+        "id": "886c1f9a-04fb-4ce3-acf0-5bda75d74117"
+      },
+      {
+        "name": "geohub.style",
+        "comment": "this table manages style.json created at geohub",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "f3408ec7-7173-4956-8a91-b34d843c2aab"
+          },
+          {
+            "name": "name",
+            "comment": "",
+            "dataType": "character varying(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 149.9268798828125,
+              "widthDefault": 60
+            },
+            "id": "66080b89-b576-422c-a407-086bf8fd2984"
+          },
+          {
+            "name": "style",
+            "comment": "",
+            "dataType": "json",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "a529a000-8f9a-4773-8b6f-2b9885edeb27"
+          },
+          {
+            "name": "createdat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "now()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 63.93194580078125,
+              "widthComment": 60,
+              "widthDataType": 167.4248809814453,
+              "widthDefault": 60
+            },
+            "id": "c0ce939c-1788-4751-944a-d247a7137963"
+          },
+          {
+            "name": "updatedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "now()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 68.02694702148438,
+              "widthComment": 60,
+              "widthDataType": 167.4248809814453,
+              "widthDefault": 60
+            },
+            "id": "3a4b399a-b44d-40f5-bd87-c218142ae9ed"
+          },
+          {
+            "name": "layers",
+            "comment": "",
+            "dataType": "json",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "1688b3e2-2e6b-40e4-b63a-1d583ef36b1b"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 150.885,
+          "top": 948.2498,
+          "zIndex": 5,
+          "widthName": 83.61393737792969,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "bf286693-2b56-4931-88c3-7797f15d82d2"
+      },
+      {
+        "name": "geohub.storage_tag",
+        "comment": "this table connects between storage and tag",
+        "columns": [
+          {
+            "name": "storage_id",
+            "comment": "storage type ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 69.24893188476562,
+              "widthComment": 101.34591674804688,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "b511b468-3eb0-4fcd-900d-a2b5f219b7d2"
+          },
+          {
+            "name": "tag_id",
+            "comment": "unique ID for tag name",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "30b8e885-5bb3-4892-a927-77174b9d302a"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 829.8891,
+          "top": 738.0004,
+          "zIndex": 2,
+          "widthName": 130.3358917236328,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "39dfaf50-3665-4bdd-b2cd-942cb0d31c33"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "tag_idx_key_value",
+        "columns": [
+          {
+            "id": "f7d9b4f9-5573-4fdf-96cf-efbcee4a0c95",
+            "orderType": "ASC"
+          },
+          {
+            "id": "2f0869c6-8f5c-4119-b9b9-7f6babd98420",
+            "orderType": "ASC"
+          }
+        ],
+        "unique": false,
+        "id": "b3d2895f-a816-4929-8067-df878b5cee65",
+        "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480"
+      },
+      {
+        "name": "tag_idx_value",
+        "columns": [
+          {
+            "id": "2f0869c6-8f5c-4119-b9b9-7f6babd98420",
+            "orderType": "ASC"
+          }
+        ],
+        "unique": false,
+        "id": "421e84e4-16d3-4a18-bc2d-0a55a66652bd",
+        "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480"
+      }
+    ]
+  },
+  "memo": {
+    "memos": []
+  },
+  "relationship": {
+    "relationships": [
+      {
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480",
+          "columnIds": [
+            "2d3425f3-e191-43ee-9a75-8ca1b50f49af"
+          ],
+          "x": 1046.4624486694336,
+          "y": 482.7973,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "8951ee6c-ebd2-4424-a816-edf4018ee186",
+          "columnIds": [
+            "6ecc298b-9b0c-4a45-b3df-24aae5ecf389"
+          ],
+          "x": 1085.9478096069336,
+          "y": 341.9326,
+          "direction": "bottom"
+        },
+        "constraintName": "fk_tag_to_tags",
+        "visible": true,
+        "id": "643c4841-8761-47ad-bef7-076490608ef9"
+      },
+      {
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "6d8bc276-7cd1-43ce-95a2-df870a3f108c",
+          "columnIds": [
+            "6739c38f-4385-4b45-8c01-0f3948df0b7e"
+          ],
+          "x": 656.5107287353516,
+          "y": 365.5222,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "8951ee6c-ebd2-4424-a816-edf4018ee186",
+          "columnIds": [
+            "9fb397ae-ab61-468b-ac2a-a1a0d0345c86"
+          ],
+          "x": 850.8389,
+          "y": 286.9326,
+          "direction": "left"
+        },
+        "constraintName": "fk_file_metadata_to_tags",
+        "visible": true,
+        "id": "25be799c-d5b2-4b01-be0a-4cc8d06c0e61"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "886c1f9a-04fb-4ce3-acf0-5bda75d74117",
+          "columnIds": [
+            "e4675c3f-96af-4dd2-86aa-a799a65bc090"
+          ],
+          "x": 365.85341955566406,
+          "y": 708.9414,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "6d8bc276-7cd1-43ce-95a2-df870a3f108c",
+          "columnIds": [
+            "bfc6201d-27b2-4347-98ee-fc0d2a615b99"
+          ],
+          "x": 390.8063143676758,
+          "y": 512.7722,
+          "direction": "bottom"
+        },
+        "constraintName": "fk_data_type_to_metadata",
+        "visible": true,
+        "id": "1645f819-90fb-4747-ba24-7e998950592d"
+      },
+      {
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480",
+          "columnIds": [
+            "2d3425f3-e191-43ee-9a75-8ca1b50f49af"
+          ],
+          "x": 1046.4624486694336,
+          "y": 613.2973,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "39dfaf50-3665-4bdd-b2cd-942cb0d31c33",
+          "columnIds": [
+            "30b8e885-5bb3-4892-a927-77174b9d302a"
+          ],
+          "x": 1065.5375146118163,
+          "y": 738.0004,
+          "direction": "top"
+        },
+        "constraintName": "fk_geohub.tag_to_geohub.storage_tag",
+        "visible": true,
+        "id": "3b7c0b0f-d545-40b5-9c9b-1f6f0ceaa798"
+      },
+      {
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "886c1f9a-04fb-4ce3-acf0-5bda75d74117",
+          "columnIds": [
+            "e4675c3f-96af-4dd2-86aa-a799a65bc090"
+          ],
+          "x": 603.8678391113281,
+          "y": 804.9414,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "39dfaf50-3665-4bdd-b2cd-942cb0d31c33",
+          "columnIds": [
+            "b511b468-3eb0-4fcd-900d-a2b5f219b7d2"
+          ],
+          "x": 829.8891,
+          "y": 793.0004,
+          "direction": "left"
+        },
+        "constraintName": "fk_geohub.storage_to_geohub.storage_tag",
+        "visible": true,
+        "id": "41e34c2f-139c-4952-bf33-a813180f6645"
+      }
+    ]
+  }
+}
