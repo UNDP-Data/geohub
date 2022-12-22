@@ -763,10 +763,18 @@ paths:
                           type: string
                         name:
                           type: string
+                        updatedat:
+                          type: string
+                        layers:
+                          type: array
+                          description: $layerList object
+                          items:
+                            type: object
                       required:
                         - id
                         - createdat
                         - name
+                        - updatedat
                   links:
                     type: array
                     items:
@@ -867,11 +875,59 @@ paths:
                 style:
                   type: object
                   description: style.json object
+                layers:
+                  type: array
+                  description: $layerList object
+                  items:
+                    type: object
               required:
                 - name
                 - style
+                - layers
       tags:
         - style
+    put:
+      summary: Style update API
+      operationId: put-style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: URL for viewer
+                required:
+                  - url
+      description: Update style.json to PostgreSQL database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: style id to update
+                name:
+                  type: string
+                  description: name for saved style
+                styles:
+                  type: object
+                  description: style.json object
+                layers:
+                  type: array
+                  description: $layerList object
+                  items:
+                    type: object
+              required:
+                - id
+                - name
+                - styles
+                - layers
   '/style/{id}':
     parameters:
       - schema:

@@ -50,6 +50,7 @@
     const data = {
       name: exportedStyleJSON.name,
       style: exportedStyleJSON,
+      layers: $layerList,
     }
 
     const res = await fetch('/api/style', {

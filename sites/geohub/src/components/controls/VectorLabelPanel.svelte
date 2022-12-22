@@ -66,7 +66,8 @@
         id: targetLayerId,
         name: targetLayerId,
         info: layer.info,
-        parent: layer,
+        parentId: layer.id,
+        dataset: undefined,
       }
 
       layer.children = [targetLayer, ...layer.children]

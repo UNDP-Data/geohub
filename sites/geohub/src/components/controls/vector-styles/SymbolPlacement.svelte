@@ -23,9 +23,9 @@
     | 'hillshade'
     | 'background' = LayerTypes.SYMBOL
 
-  const parentLayer = layer.parent
-  if (parentLayer) {
-    const parentStyle = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === parentLayer.id)[0]
+  const parentId = layer.parentId
+  if (parentId) {
+    const parentStyle = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === parentId)[0]
     parentType = parentStyle.type
   }
 
