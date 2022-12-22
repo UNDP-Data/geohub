@@ -9,12 +9,11 @@
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let defaultColor: string = undefined
 
   const layerId = layer.id

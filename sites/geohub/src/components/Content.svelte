@@ -3,15 +3,14 @@
   import { page } from '$app/stores'
   import DataView from '$components/DataView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import { StatusTypes, TabNames } from '$lib/constants'
-  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
+  import { TabNames } from '$lib/constants'
+  import { map, layerList, indicatorProgress } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
   import type { Tab } from '@undp-data/svelte-undp-design/interfaces'
   import ContentSidebar from './ContentSidebar.svelte'
   import { onMount } from 'svelte'
   import type { StyleSpecification } from 'maplibre-gl'
-  import type { BannerMessage } from '$lib/types'
 
   export let drawerOpen = false
   export let headerHeight: number = undefined

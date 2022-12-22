@@ -2,11 +2,10 @@
   import ActionsDropdown from '$components/controls/ActionsDropdown.svelte'
   import DeleteButton from '$components/controls/DeleteButton.svelte'
   import VisibilityButton from '$components/controls/VisibilityButton.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 </script>
 
 <div class="group">

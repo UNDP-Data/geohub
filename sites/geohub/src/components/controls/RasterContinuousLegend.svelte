@@ -4,12 +4,12 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
-  import { COLOR_CLASS_COUNT, ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import { COLOR_CLASS_COUNT, ColorMapTypes } from '$lib/constants'
   import { getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
 
-  export let layerConfig: Layer = LayerInitialValues
+  export let layerConfig: Layer
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)

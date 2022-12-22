@@ -40,13 +40,6 @@ export enum ClassificationMethodNames {
   NATURAL_BREAK = 'Natural Breaks',
 }
 
-export const LayerInitialValues: Layer = {
-  id: '',
-  name: 'GeoHub',
-  info: {},
-  dataset: undefined,
-}
-
 export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
   FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',

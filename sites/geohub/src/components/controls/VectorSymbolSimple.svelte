@@ -6,11 +6,10 @@
   import IconOverlap from '$components/controls/vector-styles/IconOverlap.svelte'
   import IconSize from '$components/controls/vector-styles/IconSize.svelte'
   import IconOffset from '$components/controls/vector-styles/IconOffset.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let defaultColor: string = undefined
 
   const layerId = layer.id

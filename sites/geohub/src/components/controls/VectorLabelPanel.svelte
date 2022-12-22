@@ -11,12 +11,12 @@
   import TextHaloWidth from '$components/controls/vector-styles/TextHaloWidth.svelte'
   import TextMaxWidth from '$components/controls/vector-styles/TextMaxWidth.svelte'
   import TextSize from '$components/controls/vector-styles/TextSize.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let isLabelPanelVisible = false
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const parentLayerId = layer.id
   const style: LayerSpecification = $map
