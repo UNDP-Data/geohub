@@ -9,6 +9,7 @@
   export let showEmptyFields = false
   export let showOnlyNumberFields = false
   export let inLegend = false
+  export let emptyFieldLabel = 'No Label'
 
   let propertySelectOptions: string[]
 
@@ -23,7 +24,7 @@
     const vectorLayerMeta = getLayerProperties($map, layer, showOnlyNumberFields)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
-      propertySelectOptions = ['No Label', ...propertySelectOptions]
+      propertySelectOptions = ['', ...propertySelectOptions]
     }
     propertySelectValue = setDefaultProperty(propertySelectOptions)
     propertyChanged()
@@ -60,7 +61,7 @@
             class="legend-text"
             alt="Property Option"
             title="Property Option"
-            value={propertySelectOption}>{propertySelectOption}</option>
+            value={propertySelectOption}>{!propertySelectOption ? emptyFieldLabel : propertySelectOption}</option>
         {/each}
       {/if}
     </select>

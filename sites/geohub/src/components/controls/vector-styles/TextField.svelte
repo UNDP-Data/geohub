@@ -6,18 +6,18 @@
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
-  import { getLayerStyle } from '$lib/helper'
+  import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper'
 
   export let layer: Layer
   export let decimalPosition = undefined
   export let fieldType: string = undefined
+  export let textFieldValue = ''
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
   const propertyName = 'text-field'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let textFieldValue = ''
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
@@ -51,29 +51,9 @@
 
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return
-    textFieldValue = getCurrentValue()
+    textFieldValue = getPropertyValueFromExpression(style, propertyName, 'layout')
     setTextField()
     return textFieldValue
-  }
-
-  const getCurrentValue = () => {
-    let value = ''
-    if (style.layout && style.layout[propertyName]) {
-      const values: any = style.layout[propertyName]
-      for (let i = 0; i < values.length; i++) {
-        const expression = values[i]
-        if (Array.isArray(expression)) {
-          if (expression[0] === 'get') {
-            value = expression[1]
-            break
-          }
-        } else if (expression === 'get') {
-          value = values[i + 1]
-          break
-        }
-      }
-    }
-    return value
   }
 
   const isInt = (n: number) => {
