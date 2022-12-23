@@ -13,7 +13,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
   } from '$lib/constants'
   import type {
@@ -33,7 +32,7 @@
   } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName
@@ -142,6 +141,11 @@
   }
 
   const handleClassificationChange = () => {
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layer.id,
+      classification: classificationMethod,
+    })
     setIntervalValues()
   }
 

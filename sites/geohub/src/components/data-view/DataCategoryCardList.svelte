@@ -64,7 +64,7 @@
       subCategories = num_values.map((num) => {
         return {
           name: `SDG${num}`,
-          icon: `/sdgs/${num}.png`,
+          icon: `assets/sdgs/${num}.png`,
           url: `/api/datasets?sdg_goal=${num}`,
         }
       })

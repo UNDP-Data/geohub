@@ -7,7 +7,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    LayerInitialValues,
   } from '$lib/constants'
   import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
@@ -25,7 +24,7 @@
   import { layerList, map } from '$stores'
 
   export let colorPickerVisibleIndex: number
-  export let layerConfig: Layer = LayerInitialValues
+  export let layerConfig: Layer
   export let numberOfClasses = COLOR_CLASS_COUNT
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
@@ -129,6 +128,12 @@
       colorMapName,
     )
     handleParamsUpdate()
+
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layerConfig.id,
+      classification: classificationMethod,
+    })
   }
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {

@@ -2,11 +2,10 @@
   import { onMount } from 'svelte'
 
   import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const layerId = layer.id
   const propertyName = 'icon-color'
