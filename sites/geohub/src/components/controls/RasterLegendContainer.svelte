@@ -142,7 +142,7 @@
     updateParamsInURL(layerStyle, layerURL, updatedParams)
 
     colorPickerVisibleIndex = -1
-    const nlayer = { ...layer, colorMapName: colorMapName }
+    const nlayer = { ...layer }
     const layers = $layerList.map((lyr) => {
       return layer.id !== lyr.id ? lyr : nlayer
     })

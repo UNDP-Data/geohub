@@ -765,11 +765,6 @@ paths:
                           type: string
                         updatedat:
                           type: string
-                        layers:
-                          type: array
-                          description: $layerList object
-                          items:
-                            type: object
                       required:
                         - id
                         - createdat

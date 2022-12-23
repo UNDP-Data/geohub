@@ -20,11 +20,15 @@
   let exportedStyleJSON: StyleSpecification
 
   let layerClassification: { [key: string]: string } = {}
-
+  let layerColormap: { [key: string]: string } = {}
   $: {
     if ($map) {
       $map.on('classification:changed', (e: { layerId: string; classification: string }) => {
         layerClassification[e.layerId] = e.classification
+      })
+
+      $map.on('colormap:changed', (e: { layerId: string; colorMapName: string }) => {
+        layerColormap[e.layerId] = e.colorMapName
       })
     }
   }
@@ -73,6 +77,19 @@
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         l.classification = layerClassification[l.id]
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (l.colormap) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete l.colormap
+      }
+      if (layerColormap[l.id]) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        l.colormap = layerColormap[l.id]
       }
     })
 

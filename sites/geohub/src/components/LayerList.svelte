@@ -7,7 +7,7 @@
   import VectorLayer from '$components/VectorLayer.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
   import { ClassificationMethodTypes, LayerTypes, TabNames } from '$lib/constants'
-  import { getLayerStyle } from '$lib/helper'
+  import { getLayerStyle, getRandomColormap } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'
 
@@ -55,13 +55,25 @@
   const getClassificationMethod = (layerId: string) => {
     const layerStyle = restoredStyle?.layers.find((l) => l.id === layerId)
     let classificationMethod = ClassificationMethodTypes.EQUIDISTANT
-    if (['fill', 'symbol'].includes(layerStyle.type)) {
+    if (['fill', 'symbol'].includes(layerStyle?.type)) {
       classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
     }
     if (layerStyle && layerStyle['classification']) {
       classificationMethod = layerStyle['classification']
     }
     return classificationMethod
+  }
+
+  const getColormapName = (layerId: string) => {
+    const layerStyle = restoredStyle?.layers.find((l) => l.id === layerId)
+    let colorMapName: string
+    if (layerStyle && layerStyle['colormap']) {
+      colorMapName = layerStyle['colormap']
+    }
+    if (!colorMapName) {
+      colorMapName = getRandomColormap()
+    }
+    return colorMapName
   }
 </script>
 
@@ -96,7 +108,8 @@
       {:else}
         <VectorLayer
           {layer}
-          classificationMethod={getClassificationMethod(layer.id)} />
+          classificationMethod={getClassificationMethod(layer.id)}
+          colorMapName={getColormapName(layer.id)} />
       {/if}
     </div>
   {/each}

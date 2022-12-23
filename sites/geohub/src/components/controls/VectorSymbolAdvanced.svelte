@@ -235,6 +235,9 @@
           hasUniqueValues = false
 
           if (stat) {
+            layerMax = stat.max
+            layerMin = stat.min
+
             const propertySelectValues = []
 
             if (stat['values'] !== undefined) {
@@ -287,8 +290,6 @@
                 }
                 propertySelectValues.push(row)
               }
-              layerMax = stat.max
-              layerMin = stat.min
             }
 
             colorMapRows = propertySelectValues

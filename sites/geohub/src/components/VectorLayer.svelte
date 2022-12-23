@@ -11,8 +11,8 @@
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer
-  let colorMapName = getRandomColormap()
   export let classificationMethod: ClassificationMethodTypes
+  export let colorMapName: string = getRandomColormap()
   let applyToOption: string
   let legendType: string
   let defaultColor: string = undefined
