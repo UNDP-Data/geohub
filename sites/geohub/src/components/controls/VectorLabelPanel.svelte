@@ -14,6 +14,7 @@
   import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getPropertyValueFromExpression } from '$lib/helper'
 
   export let isLabelPanelVisible = false
   export let layer: Layer
@@ -25,6 +26,7 @@
 
   let decimalPosition: number
   let fieldType: string
+  let textFieldValue: string
   let isAdvancedSettings = false
   let targetLayer = layer
   let targetLayerId = layer.id
@@ -36,89 +38,77 @@
 
   const initialiseTextLabel = () => {
     if (style.type !== LayerTypes.SYMBOL) {
-      targetLayerId = `${parentLayerId}-label`
-      const childLayer: SymbolLayerSpecification = {
-        id: targetLayerId,
-        type: LayerTypes.SYMBOL,
-        source: style['source'],
-        'source-layer': style['source-layer'],
-        minzoom: style.minzoom,
-        maxzoom: style.maxzoom,
-        layout: {
-          visibility: 'visible',
-          'text-size': 16,
-          'text-max-width': 10,
-        },
-        paint: {
-          'text-color': 'rgba(0,0,0,1)',
-          'text-halo-color': 'rgba(255,255,255,1)',
-          'text-halo-width': 1,
-        },
+      if (targetLayer.children?.length > 0) {
+        targetLayer = targetLayer.children[0]
+        targetLayerId = targetLayer.id
+      } else {
+        targetLayerId = `${parentLayerId}-label`
+        const childLayer: SymbolLayerSpecification = {
+          id: targetLayerId,
+          type: LayerTypes.SYMBOL,
+          source: style['source'],
+          'source-layer': style['source-layer'],
+          minzoom: style.minzoom,
+          maxzoom: style.maxzoom,
+          layout: {
+            visibility: 'visible',
+            'text-size': 16,
+            'text-max-width': 10,
+          },
+          paint: {
+            'text-color': 'rgba(0,0,0,1)',
+            'text-halo-color': 'rgba(255,255,255,1)',
+            'text-halo-width': 1,
+          },
+        }
+
+        $map.addLayer(childLayer)
+
+        if (!layer.children) {
+          layer.children = []
+        }
+
+        targetLayer = {
+          id: targetLayerId,
+          name: targetLayerId,
+          info: layer.info,
+          parentId: layer.id,
+          dataset: undefined,
+        }
+
+        layer.children = [targetLayer, ...layer.children]
       }
-
-      $map.addLayer(childLayer)
-
-      if (!layer.children) {
-        layer.children = []
-      }
-
-      targetLayer = {
-        id: targetLayerId,
-        name: targetLayerId,
-        info: layer.info,
-        parentId: layer.id,
-        dataset: undefined,
-      }
-
-      layer.children = [targetLayer, ...layer.children]
     } else {
-      $map.setLayoutProperty(targetLayerId, 'text-size', 16)
-      $map.setLayoutProperty(targetLayerId, 'text-max-width', 10)
-      $map.setPaintProperty(targetLayerId, 'text-color', 'rgba(0,0,0,1)')
-      $map.setPaintProperty(targetLayerId, 'text-halo-color', 'rgba(255,255,255,1)')
-      $map.setPaintProperty(targetLayerId, 'text-halo-width', 1)
-    }
-    return
-  }
+      const textSize = $map.getLayoutProperty(targetLayerId, 'text-size')
+      const textMaxWidth = $map.getLayoutProperty(targetLayerId, 'text-max-width')
+      const textColor: string = $map.getPaintProperty(targetLayerId, 'text-color') as string
+      const textHaloColor: string = $map.getPaintProperty(targetLayerId, 'text-halo-color') as string
+      const textHaloWidth: number = $map.getPaintProperty(targetLayerId, 'text-halo-width') as number
 
-  if (style.type === LayerTypes.SYMBOL) {
-    const layoutFields = [
-      'text-field',
-      'text-variable-anchor',
-      'text-radial-offset',
-      'text-justify',
-      'text-size',
-      'text-max-width',
-    ]
-    layoutFields.forEach((prop) => {
-      if (!$map.getLayoutProperty(targetLayerId, prop)) return
-      $map.setLayoutProperty(targetLayerId, prop, undefined)
-    })
-
-    const paintFields = ['text-color', 'text-halo-color', 'text-halo-width']
-    paintFields.forEach((prop) => {
-      if (!$map.getPaintProperty(targetLayerId, prop)) return
-      $map.setPaintProperty(targetLayerId, prop, undefined)
-    })
-  } else {
-    if (layer.children && layer.children.length > 0) {
-      layer.children.forEach((l) => {
-        if (!$map.getLayer(l.id)) return
-        $map.removeLayer(l.id)
-      })
-      layer.children = []
+      $map.setLayoutProperty(targetLayerId, 'text-size', textSize ?? 16)
+      $map.setLayoutProperty(targetLayerId, 'text-max-width', textMaxWidth ?? 10)
+      $map.setPaintProperty(targetLayerId, 'text-color', textColor ?? 'rgba(0,0,0,1)')
+      $map.setPaintProperty(targetLayerId, 'text-halo-color', textHaloColor ?? 'rgba(255,255,255,1)')
+      $map.setPaintProperty(targetLayerId, 'text-halo-width', textHaloWidth ?? 1)
     }
+    const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
+    textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
+    fireLabelChanged()
   }
 
   const onStyleChange = () => {
     updateLegend()
   }
 
-  const onTextChange = (e) => {
+  const fireLabelChanged = () => {
+    let isCreated = false
+    if (textFieldValue) {
+      isCreated = true
+    }
     $map.fire('label:changed', {
       parentId: parentLayerId,
       layerId: targetLayer.id,
-      isCreated: e.detail.textFieldValue !== 'No Label',
+      isCreated: isCreated,
     })
   }
 </script>
@@ -131,9 +121,10 @@
       <div class="column is-10 m-auto">
         <span>Property:&nbsp;</span>
         <TextField
-          on:change={onTextChange}
+          on:change={fireLabelChanged}
           bind:layer={targetLayer}
           bind:fieldType
+          bind:textFieldValue
           bind:decimalPosition />
       </div>
     </div>

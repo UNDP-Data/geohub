@@ -18,6 +18,12 @@
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let legendType: string
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if ($map.getPaintProperty(layer.id, 'fill-color')?.type === 'interval') {
+    legendType = VectorLayerPolygonLegendTypes.ADVANCED
+  }
+
   const getFillColor = (): string => {
     let fillColor = $map.getPaintProperty(layer.id, 'fill-color')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
