@@ -10,6 +10,8 @@
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer
+  export let classificationMethod: ClassificationMethodTypes
+
   let expressions: RasterSimpleExpression[]
 
   let activeTab = ''
@@ -18,7 +20,6 @@
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
   let colorMapName: string = undefined
-  let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
   let legendType: DynamicLayerLegendTypes
 
   $: {

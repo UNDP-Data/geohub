@@ -12,7 +12,7 @@
 
   export let layer: Layer
   let colorMapName = getRandomColormap()
-  let classificationMethod: ClassificationMethodTypes
+  export let classificationMethod: ClassificationMethodTypes
   let applyToOption: string
   let legendType: string
   let defaultColor: string = undefined
