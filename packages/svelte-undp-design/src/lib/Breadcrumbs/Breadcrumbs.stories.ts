@@ -27,6 +27,7 @@ const meta = {
 			defaultValue: []
 		},
 		fontSize: {
+			type: 'string',
 			description: 'Font size either large, medium or small',
 			defaultValue: 'medium'
 		}
