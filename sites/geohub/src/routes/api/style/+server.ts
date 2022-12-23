@@ -33,7 +33,7 @@ export const GET: RequestHandler = async ({ url }) => {
     if (offset) options['offset'] = offset
 
     const query = {
-      text: `SELECT id, name, createdat, updatedat, layers FROM geohub.style ORDER BY id ${Object.keys(options)
+      text: `SELECT id, name, createdat, updatedat FROM geohub.style ORDER BY id ${Object.keys(options)
         .map((key, index) => `${key} $${index + 1}`)
         .join(' ')}`,
       values: [...Object.keys(options).map((key) => options[key])],
