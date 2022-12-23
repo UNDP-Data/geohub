@@ -130,7 +130,7 @@
     <div
       role="button"
       aria-label="Switch legend type button"
-      class="toggle-container has-tooltip-left icon m-1"
+      class="toggle-container has-tooltip-left has-tooltip-arrow icon m-1"
       data-tooltip="Toggle Legend Type"
       tabindex="0"
       on:click={handleLegendToggleClick}

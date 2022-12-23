@@ -30,7 +30,7 @@
 									<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 								{/if}
 							</span>
-							<span>{breadcrumb.name}</span>
+							<span style="font-size:1rem">{breadcrumb.name}</span>
 						</span>
 					</li>
 				{:else}
@@ -46,7 +46,7 @@
 										<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 									{/if}
 								</span>
-								<span>{breadcrumb.name}</span>
+								<span style="font-size:1rem">{breadcrumb.name}</span>
 							</span>
 						</a>
 					</li>
@@ -59,4 +59,7 @@
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
 	@use '../css/breadcrumbs.min.css';
+	li:after{
+		font-size: 1.1rem!important;
+	}
 </style>

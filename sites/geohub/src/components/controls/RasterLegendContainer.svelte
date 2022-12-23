@@ -198,7 +198,7 @@
     transition:slide>
     <div
       role="button"
-      class="toggle-container has-tooltip-left icon m-1"
+      class="toggle-container has-tooltip-left has-tooltip-arrow icon m-1"
       aria-label="Switch Legend Type"
       data-tooltip="Toggle Legend Type"
       tabindex="0"
@@ -212,7 +212,7 @@
     <br />
     <div
       role="button"
-      class="toggle-container has-tooltip-left icon m-1"
+      class="toggle-container has-tooltip-left has-tooltip-arrow m-1"
       aria-label="Open Color Scheme Picker"
       data-tooltip="Change color map"
       tabindex="0"

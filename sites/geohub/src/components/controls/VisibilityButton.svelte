@@ -43,7 +43,7 @@
 </script>
 
 <div
-  class="has-tooltip-bottom"
+  class="has-tooltip-bottom has-tooltip-arrow"
   data-tooltip={`${visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}`}>
   <div
     class="icon-selected"

@@ -146,7 +146,7 @@
     {#if layerNumberProperties > 0}
       <div
         role="button"
-        class="toggle-container has-tooltip-left icon m-1"
+        class="toggle-container has-tooltip-left icon m-1 has-tooltip-arrow"
         aria-label="Switch legend type button"
         data-tooltip="Toggle Legend Type"
         tabindex="0"
