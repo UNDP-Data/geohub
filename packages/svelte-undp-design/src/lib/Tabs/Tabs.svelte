@@ -44,7 +44,7 @@
 
 <div class="tabs-undp inviewport" data-viewport="true" bind:clientHeight={height}>
 	<ul
-		style="padding-left: 0;  text-align: center; gap:10px"
+		style="padding-left: 0;  text-align: center;"
 		data-deep-link="true"
 		data-tabs="true"
 		id="tablist_1"
