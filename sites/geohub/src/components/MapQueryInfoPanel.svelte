@@ -135,9 +135,6 @@
         const queriedFeatures = map.queryRenderedFeatures(e.point, {
           layers: [layer.id],
         })
-        // const queriedFeatures = map.queryRenderedFeatures(e.point, {
-        //   layers: $layerList.map((l) => l.id),
-        // })
         if (queriedFeatures && queriedFeatures.length > 0) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
