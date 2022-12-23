@@ -2,10 +2,9 @@
   import LineColor from '$components/controls/vector-styles/LineColor.svelte'
   import LinePattern from '$components/controls/vector-styles/LinePattern.svelte'
   import LineWidth from '$components/controls/vector-styles/LineWidth.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let defaultColor: string = undefined
 </script>
 

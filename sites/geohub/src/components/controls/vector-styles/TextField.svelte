@@ -2,13 +2,13 @@
   import type { LayerSpecification } from 'maplibre-gl'
   import { createEventDispatcher } from 'svelte'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
   import { getLayerStyle } from '$lib/helper'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let decimalPosition = undefined
   export let fieldType: string = undefined
 

@@ -121,12 +121,9 @@
   }
 </script>
 
-<!--<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">-->
-
-<div class="grid-x">
-  <div class="cell small-2">
+<div class="tile is-ancestor p-2">
+  <div class="tile is-2 pl-4">
     <div
-      id={`interval-${colorMapRow?.index}`}
       alt="Color Map Control"
       title="Color Map Control"
       use:popperRef
@@ -148,20 +145,19 @@
       </div>
     {/if}
   </div>
-  <div class="cell small-4">
+  <div class="tile is-5 px-2">
     <input
-      style="border: none; width: fit-content"
+      class="number-input"
       id="start"
       type="number"
       value={colorMapRow.start}
       on:input={handleInput} />
   </div>
   {#if colorMapRow.end}
-    <div class="cell small-2">—</div>
-    <div class="cell small-4">
+    <div class="tile is-1"><p>—</p></div>
+    <div class="tile is-5 px-2">
       <input
-        style="border: none"
-        id="end"
+        class="number-input"
         type="number"
         value={colorMapRow.end}
         on:input={handleInput} />
@@ -171,19 +167,20 @@
 
 <style lang="scss">
   @import '../../styles/popper.scss';
-  @import '../../styles/undp-design/base-minimal.min';
 
   $input-margin: 5px !important;
 
-  .cell {
-    padding: 0 !important;
-    margin-top: 2%;
+  .number-input {
+    border: none;
+    width: 100%;
+    background-color: transparent;
   }
 
   .discrete {
     cursor: pointer !important;
     height: 20px;
     width: 20px;
+    border: 1px solid gray;
   }
 
   :global(.discrete):hover {
@@ -194,28 +191,6 @@
   input:focus {
     outline: none;
     background: rgb(220, 220, 220, 0.3);
-  }
-  .colormap-editor {
-    margin-bottom: $input-margin;
-
-    .column.end {
-      margin-left: 5px;
-    }
-
-    .color-picker {
-      margin-right: $input-margin;
-    }
-
-    .discrete {
-      cursor: pointer !important;
-      height: 20px;
-      width: 20px;
-
-      &:hover {
-        padding: 0;
-        border: 1px solid hsl(204, 86%, 53%);
-      }
-    }
   }
 
   input::-webkit-outer-spin-button,

@@ -7,6 +7,6 @@ export interface Layer {
   name: string
   info?: RasterTileMetadata | VectorTileMetadata
   children?: Layer[]
-  parent?: Layer
+  parentId?: string
   dataset: StacItemFeature
 }

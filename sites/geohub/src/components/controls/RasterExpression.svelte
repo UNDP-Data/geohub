@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Layer, RasterSimpleExpression } from '$lib/types'
-  import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
-  import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
+  // import RasterRefineContainer from '$components/controls/RasterRefineContainer.svelte'
+  // import RasterExpressionSimple from '$components/controls/RasterExpressionSimple.svelte'
   import RasterFilter from '$components/controls/RasterFilter.svelte'
   import RasterFilterSimple from '$components/controls/RasterFilterSimple.svelte'
-  import Tabs from '$components//controls/Tabs.svelte'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
   //import type { DynamicLayerLegendTypes } from '$lib/constants'
   export let layer: Layer

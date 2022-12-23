@@ -1,0 +1,68 @@
+.tabs-undp ul li a {
+	background-image: none;
+}
+.tabs-undp ul {
+	background-color: #fff;
+	border-bottom: 2px solid #edeff0;
+	list-style: none;
+	padding-left: 0;
+}
+@media (min-width: 48em) {
+	.tabs-undp ul {
+		padding-left: 3rem;
+	}
+}
+.tabs-undp ul li {
+	border-bottom: 2px solid transparent;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	margin-bottom: -0.125rem;
+	margin-right: 1.5rem;
+	margin-top: 0.75rem;
+	padding-bottom: 0.5rem;
+	padding-left: 0;
+	text-transform: uppercase;
+}
+.tabs-undp ul li.is-active {
+	border-bottom: 2px solid #d12800;
+}
+@media (min-width: 64em) {
+	.tabs-undp ul li:hover {
+		border-bottom: 2px solid #a9b1b7;
+	}
+}
+.tabs-undp ul li a {
+	font-size: 1rem;
+}
+.tabs-undp .tabs-undp-content {
+	background-color: #fff;
+}
+.tabs-undp .tabs-undp-content .tabs-undp-panel {
+	display: none;
+}
+.tabs-undp .tabs-undp-content .tabs-undp-panel.is-active {
+	display: inherit;
+}
+.tabs-undp .tabs-undp-content .tabs-undp-panel p {
+	margin-top: 1rem;
+}
+@media (min-width: 48em) {
+	.tabs-undp .tabs-undp-content .tabs-undp-panel p {
+		margin-top: 2.5rem;
+	}
+}
+[dir='rtl'] .tabs-undp ul {
+	padding-right: 0;
+}
+@media (min-width: 48em) {
+	[dir='rtl'] .tabs-undp ul {
+		padding-right: 3rem;
+	}
+}
+[dir='rtl'] .tabs-undp ul li {
+	margin-left: 1.5rem;
+	margin-right: 0;
+	padding-right: 0;
+}

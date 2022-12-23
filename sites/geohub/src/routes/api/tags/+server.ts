@@ -3,9 +3,9 @@ import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/variables/private'
+import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { Tag } from '$lib/types/Tag'
-import { createDatasetSearchWhereExpression } from '$lib/helper/createDatasetSearchWhereExpression'
+import { createDatasetSearchWhereExpression } from '$lib/server/helpers'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -31,7 +31,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
     let whereSql = ''
     if (currentQueryUrl) {
-      const whereExpressesion = await createDatasetSearchWhereExpression(new URL(currentQueryUrl), 'a')
+      const whereExpressesion = await createDatasetSearchWhereExpression(new URL(currentQueryUrl), 'x')
       whereSql = whereExpressesion.sql
       values = [...values, ...whereExpressesion.values]
     }
@@ -39,15 +39,15 @@ export const GET: RequestHandler = async ({ url }) => {
     const sql = {
       text: `
       WITH tag_count AS (
-      SELECT c.key, c.value,  COUNT(a.id) as count
-      FROM geohub.dataset a
-      INNER JOIN geohub.dataset_tag b
-      ON a.id = b.dataset_id
-      INNER JOIN geohub.tag c
-      ON b.tag_id = c.id
+      SELECT z.key, z.value,  COUNT(x.id) as count
+      FROM geohub.dataset x
+      INNER JOIN geohub.dataset_tag y
+      ON x.id = y.dataset_id
+      INNER JOIN geohub.tag z
+      ON y.tag_id = z.id
       ${whereSql}
       GROUP BY
-      c.key, c.value
+      z.key, z.value
       )
       SELECT distinct x.key, x.value, y.count
       FROM geohub.tag x

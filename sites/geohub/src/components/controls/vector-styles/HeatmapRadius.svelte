@@ -1,9 +1,9 @@
 <script lang="ts">
   import Slider from '$components/controls/vector-styles/Slider.svelte'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   let defaultValue = 30
   let layerType = LayerTypes.HEATMAP

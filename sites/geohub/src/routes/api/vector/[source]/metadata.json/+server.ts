@@ -1,11 +1,13 @@
 import type { RequestHandler } from './$types'
+import { error } from '@sveltejs/kit'
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
-import { getStaticPbfMetadataJson } from '$lib/helper/getStaticPbfMetadataJson'
-import { getMartinTileJson } from '$lib/helper/getMartinTileJson'
-import { generateMetadataJson } from '$lib/helper/generateMetadataJson'
-import { getPgtileservTileJson } from '$lib/helper/getPgtileservTileJson'
-import { error } from '@sveltejs/kit'
+import {
+  getStaticPbfMetadataJson,
+  getMartinTileJson,
+  generateMetadataJson,
+  getPgtileservTileJson,
+} from '$lib/server/helpers'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 
 /**

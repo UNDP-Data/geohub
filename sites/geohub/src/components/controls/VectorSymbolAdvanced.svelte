@@ -13,7 +13,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
     VectorLayerSymbolLegendApplyToTypes,
   } from '$lib/constants'
@@ -34,9 +33,11 @@
   } from '$lib/types'
   import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
+  import { Radios } from '@undp-data/svelte-undp-design'
+  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
 
   export let applyToOption: string
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
@@ -58,6 +59,17 @@
   let colorMapRows: IntervalLegendColorMapRow[] = []
   // update layer store upon change of apply to option
   $: applyToOption, updateMap()
+
+  let applyToOptions: Radio[] = [
+    {
+      label: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+      value: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+    },
+    {
+      label: VectorLayerSymbolLegendApplyToTypes.ICON_SIZE,
+      value: VectorLayerSymbolLegendApplyToTypes.ICON_SIZE,
+    },
+  ]
 
   // update color intervals upon change of color map name
   $: colorMapName, colorMapChanged()
@@ -163,6 +175,11 @@
   }
 
   const handleClassificationChange = () => {
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layer.id,
+      classification: classificationMethod,
+    })
     setIntervalValues()
   }
 
@@ -329,10 +346,6 @@
       })
     }
   }
-
-  const handleApplyToClick = (type: string) => {
-    applyToOption = type
-  }
 </script>
 
 <div
@@ -353,25 +366,11 @@
       <div class="has-text-centered pb-2">Apply To</div>
       <div class="is-flex is-justify-content-center">
         <div class="mb-0">
-          {#each Object.values(VectorLayerSymbolLegendApplyToTypes) as optionApplyTo}
-            <div class="columns is-gapless mb-1">
-              <div class="column is-2">
-                <input
-                  type="radio"
-                  name="layer-type"
-                  bind:group={applyToOption}
-                  value={optionApplyTo}
-                  alt="Apply To Option"
-                  title="Apply To Option" />
-              </div>
-              <div
-                class="column ml-2 applyto-title"
-                style="position: relative; top: -2px;"
-                on:click={() => handleApplyToClick(optionApplyTo)}>
-                {optionApplyTo}
-              </div>
-            </div>
-          {/each}
+          <Radios
+            bind:radios={applyToOptions}
+            bind:value={applyToOption}
+            groupName="layer-type-{layer.id}}"
+            isVertical={true} />
         </div>
       </div>
     </div>
@@ -467,7 +466,6 @@
 </div>
 
 <style lang="scss">
-  @import '../../styles/undp-design/radio.min';
   div {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

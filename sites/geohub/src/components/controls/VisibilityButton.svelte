@@ -1,10 +1,9 @@
 <script lang="ts">
   import { cloneDeep } from 'lodash-es'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const layerId = layer.id
 

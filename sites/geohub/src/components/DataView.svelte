@@ -1,13 +1,14 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataCategory, DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
+  import type { DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, DatasetSearchQueryParams, STAC_MINIMUM_ZOOM } from '$lib/constants'
+  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
-  import Breadcrumbs from '$components/controls/Breadcrumbs.svelte'
+  import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
@@ -18,7 +19,7 @@
   $: totalHeight = headerHeight + tabsHeight + optionsHeight
 
   let containerDivElement: HTMLDivElement
-  let breadcrumbs: DataCategory[] = [
+  let breadcrumbs: Breadcrumb[] = [
     {
       name: 'Home',
       icon: 'fas fa-house',
@@ -59,7 +60,16 @@
     try {
       $indicatorProgress = true
 
-      const apiUrl = new URL(url)
+      // clear existing tag parameters except some keys
+      const originUrl = new URL(url)
+      const sdg_goal = originUrl.searchParams.get('sdg_goal')
+      const type = originUrl.searchParams.get('type')
+      const stac = originUrl.searchParams.get('stac')
+
+      const apiUrl = new URL(`${originUrl.origin}${originUrl.pathname}`)
+      if (sdg_goal) apiUrl.searchParams.set('sdg_goal', sdg_goal)
+      if (type) apiUrl.searchParams.set('type', type)
+      if (stac) apiUrl.searchParams.set('stac', stac)
 
       if (breadcrumbs.length === 1) {
         if (!query && selectedTags.length === 0) return
@@ -89,37 +99,28 @@
       }
 
       if (queryForSearch) {
-        if (queryForSearch.length === 0) {
-          apiUrl.searchParams.delete('query')
-        } else {
+        if (queryForSearch.length > 0) {
           apiUrl.searchParams.set('query', queryForSearch)
         }
       }
 
       if (bbox && bbox.length === 4) {
         apiUrl.searchParams.set('bbox', bbox.join(','))
-      } else {
-        apiUrl.searchParams.delete('bbox')
       }
 
       apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
-      apiUrl.searchParams.delete('offset')
 
-      // clear existing tag parameters except some keys
-      const skipKeys = [...DatasetSearchQueryParams, 'type', 'stac', 'sdg_goal']
-      for (const key of apiUrl.searchParams.keys()) {
-        if (skipKeys.includes(key)) continue
-        apiUrl.searchParams.delete(key)
-      }
       if (selectedTags?.length > 0) {
         apiUrl.searchParams.set('operator', tagFilterOperatorType)
       }
       const tagFilterString = selectedTags?.map((tag) => `${tag.key}=${tag.value}`).join('&')
-
       const finalUrl = `${apiUrl.toString()}${tagFilterString ? `&${tagFilterString}` : ''}`
       const res = await fetch(finalUrl)
       if (!res.ok) return
+      if (DataItemFeatureCollection) {
+        DataItemFeatureCollection.features = []
+      }
       const json: StacItemFeatureCollection = await res.json()
       DataItemFeatureCollection = json
     } finally {
@@ -141,7 +142,7 @@
   $: selectedTags, handleTagChanged()
   $: tagFilterOperatorType, handleTagChanged()
   const handleTagChanged = async () => {
-    if (breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].name !== 'Search result') {
+    if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
       if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
         if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
           DataItemFeatureCollection = undefined
@@ -153,12 +154,15 @@
       }
     }
 
-    if (breadcrumbs.length <= 2 && selectedTags.length === 0 && !query) {
+    if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
       DataItemFeatureCollection = undefined
-      if (breadcrumbs.length > 1) {
-        breadcrumbs.pop()
-        breadcrumbs = [...breadcrumbs]
-      }
+      currentSearchUrl = ''
+      return
+    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
+      DataItemFeatureCollection = undefined
+      breadcrumbs.pop()
+      breadcrumbs = [...breadcrumbs]
+      currentSearchUrl = ''
       return
     }
 
@@ -167,6 +171,7 @@
     if (link) {
       url = link.href
     }
+
     await searchDatasets(url)
   }
 
@@ -219,7 +224,7 @@
 
   const handleBreadcrumpClicked = (e) => {
     const index: number = e.detail.index
-    const breadcrump: DataCategory = e.detail.breadcrumb
+    const breadcrump: Breadcrumb = e.detail.breadcrumb
 
     if (index === 0) {
       // home
@@ -238,7 +243,7 @@
 
       breadcrumbs = [...breadcrumbs]
 
-      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
+      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets') && selectedTags.length > 0) {
         selectedTags = []
       }
     }
@@ -281,18 +286,16 @@
 </div>
 <div
   class="container data-view-container mx-4"
-  style="height: calc(100vh - {totalHeight}px);overflow-y: scroll"
+  style="height: calc(100vh - {totalHeight}px);overflow-y: auto"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {#key DataItemFeatureCollection}
-      {#each DataItemFeatureCollection.features as feature}
-        <DataCard {feature} />
-      {/each}
-      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-        <Notification type="info">All data loaded.</Notification>
-      {/if}
-    {/key}
+    {#each DataItemFeatureCollection.features as feature}
+      <DataCard {feature} />
+    {/each}
+    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+      <Notification type="info">All data loaded.</Notification>
+    {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
     <Notification type="warning">No data found. Try another keyword.</Notification>
   {:else}
@@ -306,31 +309,20 @@
   {#if !DataItemFeatureCollection}
     <div
       hidden={!$indicatorProgress}
-      class="loader"
-      aria-busy="true"
-      aria-live="polite" />
+      class="loader-container">
+      <Loader />
+    </div>
   {/if}
 </div>
 
 <style lang="scss">
-  @use '../styles/undp-design/base-minimal.min.css';
-  @use '../styles/undp-design/buttons.min.css';
-  @use '../styles/undp-design/loader.min.css';
-
   .data-view-container {
-    .button {
-      color: white !important;
-    }
-
-    .loader {
+    .loader-container {
       position: absolute;
       z-index: 10;
       top: 25%;
       left: 35%;
       background-color: white;
-      transform: translate(-25%, -35%);
-      -webkit-transform: translate(-25%, -35%);
-      -ms-transform: translate(-25%, -35%);
     }
   }
 </style>

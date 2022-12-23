@@ -8,12 +8,12 @@
   import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte'
   import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte'
   import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte'
-  import { ClassificationMethodTypes, LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let isLegendPanelVisible = false
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes
   export let applyToOption: string
@@ -93,8 +93,3 @@
     {/if}
   </div>
 {/if}
-
-<style lang="scss">
-  @import '../../styles/bulma-switch.min.css';
-  @import '../../styles/bulma-divider.min.css';
-</style>

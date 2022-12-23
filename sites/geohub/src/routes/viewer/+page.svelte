@@ -1,13 +1,10 @@
 <script lang="ts">
-  import StyleViewer from '../../dashboards/components/StyleViewer.svelte'
-
-  const title = 'Geohub Simple Map Viewer'
+  import StyleViewer from '@undp-data/style-viewer'
+  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 </script>
 
-<sveltekit:head>
-  <title>{title}</title>
-</sveltekit:head>
+<svelte:head>
+  <title>Geohub | Simple Map Viewer</title>
+</svelte:head>
 
-<div>
-  <StyleViewer />
-</div>
+<StyleViewer azureBaseUrl={PUBLIC_AZURE_URL} />

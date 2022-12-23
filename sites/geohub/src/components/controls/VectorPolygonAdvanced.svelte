@@ -13,7 +13,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    LayerInitialValues,
     NO_RANDOM_SAMPLING_POINTS,
   } from '$lib/constants'
   import type {
@@ -33,7 +32,7 @@
   } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName
@@ -47,6 +46,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
+  let intervalList = []
   export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
@@ -54,7 +54,8 @@
   let inLegend = true
   let colorMapRows: IntervalLegendColorMapRow[] = []
 
-  // update color intervals upon change of color map name
+  // update color intervals upon change of color map name\
+
   $: colorMapName, setIntervalValues()
 
   onMount(() => {
@@ -68,6 +69,26 @@
     if (!$map) return
     $map.off('zoom', updateMap)
   })
+
+  const updateStopsWithColorMap = () => {
+    if (!$map) return
+    if (colorMapName) {
+      console.log('updateStopsWithColorMap', colorMapName)
+      const colorMap = chroma.scale(colorMapName).classes(intervalList)
+      console.log('colorMap', colorMap.colors(), intervalList)
+      colorMapRows = []
+      for (let i = 0; i < intervalList.length - 1; i++) {
+        const row = {
+          index: i,
+          color: [...colorMap(intervalList[i]).rgb(), 255],
+          start: intervalList[i],
+          end: intervalList[i + 1],
+        }
+        colorMapRows = [...colorMapRows, row]
+      }
+      updateMap()
+    }
+  }
 
   const getPropertySelectValue = () => {
     const vectorLayerMeta = getLayerProperties($map, layer)
@@ -120,6 +141,11 @@
   }
 
   const handleClassificationChange = () => {
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layer.id,
+      classification: classificationMethod,
+    })
     setIntervalValues()
   }
 
@@ -289,7 +315,7 @@
         transition:fade>
         <div class="has-text-centered pb-2">Classification:</div>
         <div class="is-flex is-justify-content-center">
-          <div class="select is-small is-justify-content-center">
+          <div class="select is-normal is-justify-content-center">
             <select
               bind:value={classificationMethod}
               on:change={handleClassificationChange}
