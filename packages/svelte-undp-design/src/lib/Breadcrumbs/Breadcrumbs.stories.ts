@@ -25,6 +25,10 @@ const meta = {
 		breadcrumbs: {
 			description: `Breadcrumbs data to be shown. Each object should contain 'name', 'icon' and 'url'. URL is optional. Icon can use either fontawesome of any icon image's URL.`,
 			defaultValue: []
+		},
+		fontSize: {
+			description: 'Font size either large, medium or small',
+			defaultValue: 'medium'
 		}
 	}
 } satisfies Meta<Breadcrumbs>;
