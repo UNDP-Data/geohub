@@ -70,26 +70,6 @@
     $map.off('zoom', updateMap)
   })
 
-  const updateStopsWithColorMap = () => {
-    if (!$map) return
-    if (colorMapName) {
-      console.log('updateStopsWithColorMap', colorMapName)
-      const colorMap = chroma.scale(colorMapName).classes(intervalList)
-      console.log('colorMap', colorMap.colors(), intervalList)
-      colorMapRows = []
-      for (let i = 0; i < intervalList.length - 1; i++) {
-        const row = {
-          index: i,
-          color: [...colorMap(intervalList[i]).rgb(), 255],
-          start: intervalList[i],
-          end: intervalList[i + 1],
-        }
-        colorMapRows = [...colorMapRows, row]
-      }
-      updateMap()
-    }
-  }
-
   const getPropertySelectValue = () => {
     const vectorLayerMeta = getLayerProperties($map, layer)
     const selectOptions = Object.keys(vectorLayerMeta.fields)
