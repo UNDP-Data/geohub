@@ -28,7 +28,7 @@
     slot="menu-buttons"
     class="menu-buttons">
     <div
-      class="has-tooltip-bottom"
+      class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
       <div
         role="button"
@@ -46,12 +46,12 @@
     </div>
 
     <div
-      class="has-tooltip-bottom"
+      class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip="UNDP Dashboards">
       <div
         role="button"
         aria-label="UNDP Dashboards"
-        class="menu-button has-tooltip-bottom"
+        class="menu-button has-tooltip-bottom has-tooltip-arrow"
         tabindex="0"
         on:click={() => window.open('/dashboards', '_blank')}
         on:keydown={onKeyPressed}>
@@ -65,7 +65,7 @@
 
     {#if $layerList.length > 0}
       <div
-        class="has-tooltip-bottom"
+        class="has-tooltip-bottom has-tooltip-arrow"
         data-tooltip="Share map">
         <div
           class="menu-button"
@@ -78,7 +78,7 @@
     {/if}
 
     <div
-      class="has-tooltip-bottom"
+      class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip="Documentation">
       <div
         role="button"
@@ -87,7 +87,7 @@
         tabindex="0"
         on:click={() => window.open('/docs/index.html', '_blank')}
         on:keydown={onKeyPressed}>
-        <span class="icon has-tooltip-bottom">
+        <span class="icon has-tooltip-bottom has-tooltip-arrow">
           <i
             class="fa-regular fa-circle-question fa-xl"
             style="color:#006eb5" />

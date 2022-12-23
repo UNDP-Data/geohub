@@ -41,6 +41,7 @@
         <Tabs
           bind:tabs
           bind:activeTab
+          fontSize="large"
           bind:height={tabsHeight} />
       {/key}
 

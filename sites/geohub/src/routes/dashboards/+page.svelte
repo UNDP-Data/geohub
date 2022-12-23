@@ -33,13 +33,13 @@
     slot="menu-buttons"
     class="menu-buttons">
     <div
-      class="has-tooltip-bottom"
+      class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip="Home">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <a
         role="button"
         aria-label="Home"
-        class="menu-button has-tooltip-bottom"
+        class="menu-button has-tooltip-bottom has-tooltip-arrow"
         tabindex="0"
         href="/">
         <span class="icon">

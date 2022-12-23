@@ -28,7 +28,7 @@
 </script>
 
 <div
-  class="panel-control {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
+  class="panel-control has-tooltip-arrow {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
   data-tooltip={tooltip}
   use:popperRef
   use:clickOutside={() => (isPanelOpen = false)}>
