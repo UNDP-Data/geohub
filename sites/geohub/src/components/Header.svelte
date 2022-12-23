@@ -47,10 +47,10 @@
 
     <div
       class="has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip="UNDP Dashboards">
+      data-tooltip="GeoHub Dashboards">
       <div
         role="button"
-        aria-label="UNDP Dashboards"
+        aria-label="GeoHub Dashboards"
         class="menu-button has-tooltip-bottom has-tooltip-arrow"
         tabindex="0"
         on:click={() => window.open('/dashboards', '_blank')}
