@@ -102,6 +102,12 @@
     const layerClone = cloneDeep(layer)
     layer = layerClone
     colorPickerVisibleIndex = -1
+
+    // fire event for style sharing
+    $map?.fire('colormap:changed', {
+      layerId: layer.id,
+      colorMapName: colorMapName,
+    })
   }
 
   const handleClosePopup = () => {
