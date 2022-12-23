@@ -5,7 +5,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let breadcrumbs: Breadcrumb[];
-
+	export let fontSize:  'small' | 'medium' | 'large' = 'medium';
 	const handleClicked = (index: number) => {
 		if (!(breadcrumbs && breadcrumbs.length > 0)) return;
 		const breadcrumb = breadcrumbs[index];
@@ -30,7 +30,7 @@
 									<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 								{/if}
 							</span>
-							<span style="font-size:1rem">{breadcrumb.name}</span>
+							<span style="font-size: {fontSize === 'small' ? '0.75' : fontSize === 'medium' ? '1' : '1.5' }rem">{breadcrumb.name}</span>
 						</span>
 					</li>
 				{:else}
@@ -46,7 +46,7 @@
 										<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 									{/if}
 								</span>
-								<span style="font-size:1rem">{breadcrumb.name}</span>
+								<span style="font-size: {fontSize === 'small' ? '0.75' : fontSize === 'medium' ? '1' : '1.5' }rem">{breadcrumb.name}</span>
 							</span>
 						</a>
 					</li>

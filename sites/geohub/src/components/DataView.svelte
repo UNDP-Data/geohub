@@ -275,7 +275,8 @@
 
   <Breadcrumbs
     bind:breadcrumbs
-    on:clicked={handleBreadcrumpClicked} />
+    on:clicked={handleBreadcrumpClicked}
+    fontSize="medium" />
   <SelectedTags
     bind:selectedTags
     isClearButtonShown={true} />
