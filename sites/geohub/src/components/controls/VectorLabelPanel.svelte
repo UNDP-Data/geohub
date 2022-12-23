@@ -14,6 +14,7 @@
   import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { getPropertyValueFromExpression } from '$lib/helper'
 
   export let isLabelPanelVisible = false
   export let layer: Layer
@@ -25,6 +26,7 @@
 
   let decimalPosition: number
   let fieldType: string
+  let textFieldValue: string
   let isAdvancedSettings = false
   let targetLayer = layer
   let targetLayerId = layer.id
@@ -89,18 +91,24 @@
       $map.setPaintProperty(targetLayerId, 'text-halo-color', textHaloColor ?? 'rgba(255,255,255,1)')
       $map.setPaintProperty(targetLayerId, 'text-halo-width', textHaloWidth ?? 1)
     }
-    return
+    const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
+    textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
+    fireLabelChanged()
   }
 
   const onStyleChange = () => {
     updateLegend()
   }
 
-  const onTextChange = (e) => {
+  const fireLabelChanged = () => {
+    let isCreated = false
+    if (textFieldValue) {
+      isCreated = true
+    }
     $map.fire('label:changed', {
       parentId: parentLayerId,
       layerId: targetLayer.id,
-      isCreated: e.detail.textFieldValue !== 'No Label',
+      isCreated: isCreated,
     })
   }
 </script>
@@ -113,9 +121,10 @@
       <div class="column is-10 m-auto">
         <span>Property:&nbsp;</span>
         <TextField
-          on:change={onTextChange}
+          on:change={fireLabelChanged}
           bind:layer={targetLayer}
           bind:fieldType
+          bind:textFieldValue
           bind:decimalPosition />
       </div>
     </div>

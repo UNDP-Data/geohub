@@ -22,6 +22,16 @@
   export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
   export let legendType: string
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if ($map.getPaintProperty(layer.id, 'icon-color')?.type === 'interval') {
+    legendType = VectorLayerSymbolLegendTypes.ADVANCED
+    applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  } else if ($map.getLayoutProperty(layer.id, 'icon-size')?.type === 'interval') {
+    legendType = VectorLayerSymbolLegendTypes.ADVANCED
+    applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_SIZE
+  }
+
   const getIconColor = (): string => {
     let iconColor = $map.getPaintProperty(layer.id, 'icon-color')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

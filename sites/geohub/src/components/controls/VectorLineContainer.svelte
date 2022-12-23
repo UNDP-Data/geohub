@@ -23,6 +23,18 @@
   export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
   export let legendType: string
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if ($map.getPaintProperty(layer.id, 'line-color')?.type === 'interval') {
+    legendType = VectorLayerLineLegendTypes.ADVANCED
+    applyToOption = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+  } else if ($map.getPaintProperty(layer.id, 'line-width')?.type === 'interval') {
+    legendType = VectorLayerLineLegendTypes.ADVANCED
+    applyToOption = VectorLayerLineLegendApplyToTypes.LINE_WIDTH
+  }
+
   const getLineColor = (): string => {
     let lineColor = $map.getPaintProperty(layer.id, 'line-color')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
