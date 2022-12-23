@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { bannerMessages, map, filterInputTags } from '$stores'
   import { ErrorMessages, StatusTypes } from '$lib/constants'
   import type { BannerMessage, Layer, VectorTileMetadata } from '$lib/types'
@@ -39,6 +40,40 @@
   let acceptSingleTag = true
   let expressionApplied = false
   let customTagsAvailable = false
+
+  onMount(() => {
+    // restore filter expression from layer style
+    const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.id)
+    const filter = layerStyle.filter
+    if (filter) {
+      expressionsArray = []
+      if (filter[0] === 'all') {
+        for (let i = 1; i < filter.length; i++) {
+          const expr = filter[i]
+          expressionsArray = [
+            ...expressionsArray,
+            {
+              index: expressionsArray.length - 1,
+              operator: expr[0],
+              property: expr[1][1],
+              value: expr[2],
+            },
+          ]
+        }
+      } else {
+        expressionsArray = [
+          {
+            index: 0,
+            operator: filter[0],
+            property: filter[1][1],
+            value: filter[2],
+          },
+        ]
+      }
+
+      currentExpressionIndex = expressionsArray.length - 1
+    }
+  })
 
   const handlePropertySelect = (e) => {
     if (e.detail.prop) {
