@@ -140,7 +140,7 @@
                 <li class={activeOperatorCategory === operatorCategory.name ? 'is-active tabs-title' : 'tabs-title'}>
                   <a
                     style="border: none;"
-                    class="has-tooltip-bottom"
+                    class="has-tooltip-bottom has-tooltip-arrow"
                     data-tooltip={operatorCategory.title}
                     href={'#'}
                     on:click={() => {

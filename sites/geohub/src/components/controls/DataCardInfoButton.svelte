@@ -29,7 +29,7 @@
 </script>
 
 <div
-  class="has-tooltip-bottom"
+  class="has-tooltip-bottom has-tooltip-arrow"
   data-tooltip={`${isPopupShown ? 'Hide infomation' : 'Show infomation'}`}>
   <div
     class="icon-selected"

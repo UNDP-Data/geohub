@@ -6,7 +6,7 @@
 	export let activeTab: string | undefined;
 
 	export let height: number;
-	export let fontSize: 'medium' | 'small' = 'medium';
+	export let fontSize: 'medium' |'large' | 'small' = 'medium';
 	export let isToggleTab = false;
 
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -44,7 +44,7 @@
 
 <div class="tabs-undp inviewport" data-viewport="true" bind:clientHeight={height}>
 	<ul
-		style="padding-left: 0px;  text-align: center;"
+		style="padding-left: 0;  text-align: center;"
 		data-deep-link="true"
 		data-tabs="true"
 		id="tablist_1"
@@ -70,7 +70,7 @@
 						}
 					}}
 				>
-					<span class="icon-text" style="font-size: {fontSize === 'small' ? '0.75' : '1'}rem;">
+					<span class="icon-text" style="font-size: {fontSize === 'small' ? '0.75': fontSize === 'large' ? '1.2' : '1'}rem;">
 						{#if tab.icon}
 							<span class="icon">
 								<i class={tab.icon} />

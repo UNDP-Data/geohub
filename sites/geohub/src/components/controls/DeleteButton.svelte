@@ -48,7 +48,7 @@
   on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
 
 <div
-  class="has-tooltip-bottom"
+  class="has-tooltip-bottom has-tooltip-arrow"
   data-tooltip="Delete layer">
   <div
     class="container icon-selected"

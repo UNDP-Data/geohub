@@ -83,7 +83,7 @@
 
 {#if layerStyle && layerStyle.type === LayerTypes.RASTER && bands && bands.length > 0}
   <div
-    class="select is-success is-rounded is-small has-tooltip-bottom"
+    class="select is-success is-rounded is-small has-tooltip-bottom has-tooltip-arrow"
     data-tooltip="Change raster band">
     <select bind:value={selected}>
       {#each bands as band}

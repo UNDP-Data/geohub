@@ -113,7 +113,7 @@
     use:clickOutside={handleClose}>
     <div style="padding-left: 5px;">
       <div
-        class="has-tooltip-bottom"
+        class="has-tooltip-bottom has-tooltip-arrow"
         data-tooltip="Zoom to layer">
         <div
           class="icon-selected"
