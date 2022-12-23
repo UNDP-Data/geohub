@@ -8,7 +8,7 @@
   let innerWidth: number
   let innerHeight: number
   let initialPrimaryWidth = 355
-  let minPrimaryWidth = '355px'
+  let minPrimaryWidth = '360px'
   let minSecondaryWidth = '50%'
   let defaultsplitterSize = '10px'
   let widthPecent = 0
