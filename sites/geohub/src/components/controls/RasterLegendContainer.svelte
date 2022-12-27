@@ -51,11 +51,12 @@
   onMount(async () => {
     const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
     if (colormap) {
+      // either unique or interval
       const rasterInfo = layer.info as RasterTileMetadata
       const band = info.active_band_no
       layerHasUniqueValues = false
-      if (rasterInfo[band] && rasterInfo[band]['unique']) {
-        layerHasUniqueValues = Number(rasterInfo[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
+      if (rasterInfo.stats[band] && rasterInfo.stats[band]['unique']) {
+        layerHasUniqueValues = Number(rasterInfo.stats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
       }
       if (layerHasUniqueValues) {
         legendType = DynamicLayerLegendTypes.UNIQUE
@@ -63,6 +64,7 @@
         legendType = DynamicLayerLegendTypes.INTERVALS
       }
     } else {
+      // continuous
       const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
       if (colormap_name) {
         colorMapName = colormap_name
