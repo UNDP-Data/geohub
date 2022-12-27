@@ -72,6 +72,15 @@
     const type = e.detail.type
     await updateStylePage(type)
   }
+
+  const handleStyleDeleted = (e) => {
+    const deletedStyle: DashboardMapStyle = e.detail.style
+    const index = styleList.map((s) => s.id).indexOf(deletedStyle.id)
+    if (index !== -1) {
+      styleList.splice(index, 1)
+      styleList = [...styleList]
+    }
+  }
 </script>
 
 <div class="styles-header">
@@ -79,12 +88,15 @@
     <p class="title is-3">Saved maps</p>
   </div>
   <div class="align-right">
-    <div class="select">
-      <select bind:value={limit}>
-        {#each limits as limit}
-          <option value={limit}>{limit}</option>
-        {/each}
-      </select>
+    <div class="right-items">
+      <p class="subtitle is-6 p-0 m-0 pr-2">Shown in:</p>
+      <div class="select">
+        <select bind:value={limit}>
+          {#each limits as limit}
+            <option value={limit}>{limit}</option>
+          {/each}
+        </select>
+      </div>
     </div>
   </div>
 </div>
@@ -97,7 +109,9 @@
   <div class="grid">
     {#key styleList}
       {#each styleList as style}
-        <DashboardMapStyleCard {style} />
+        <DashboardMapStyleCard
+          {style}
+          on:deleted={handleStyleDeleted} />
       {/each}
     {/key}
   </div>
@@ -125,6 +139,12 @@
     width: max-content;
     margin-left: auto;
     display: flex;
+  }
+
+  .right-items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
   }
 
   .grid {
