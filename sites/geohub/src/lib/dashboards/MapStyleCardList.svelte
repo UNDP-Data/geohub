@@ -19,13 +19,45 @@
   let limit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : 10
   let offset = $page.url.searchParams.get('offset') ? Number($page.url.searchParams.get('offset')) : 0
 
+  let orderbyOptions = [
+    {
+      value: 'updatedat,desc',
+      label: 'Most recent',
+    },
+    {
+      value: 'updatedat,asc',
+      label: 'less recent',
+    },
+    {
+      value: 'name,asc',
+      label: 'A to Z',
+    },
+    {
+      value: 'name,desc',
+      label: 'Z to A',
+    },
+  ]
+
+  const getSortByFromUrl = (url: URL) => {
+    const sortByValue = url.searchParams.get('sortby')
+    if (sortByValue) {
+      const option = orderbyOptions.find((opt) => opt.value === sortByValue)
+      if (option) {
+        return option.value
+      }
+    }
+  }
+
+  let sortby = getSortByFromUrl($page.url) ?? orderbyOptions[0].value
+
   onMount(async () => {
     setPageUrl()
   })
 
-  $: limit, reloadStyles()
+  $: limit, handleLimitChanged()
+  $: sortby, handleSortbyChanged()
 
-  const reloadStyles = async () => {
+  const handleLimitChanged = async () => {
     if (!browser) return
     const currentLimit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : undefined
     if (currentLimit && currentLimit !== limit) {
@@ -35,9 +67,17 @@
     await updateStylePage('next')
   }
 
+  const handleSortbyChanged = async () => {
+    if (!browser) return
+    offset = 0
+    links = []
+    await updateStylePage('next')
+  }
+
   const setPageUrl = () => {
     $page.url.searchParams.set('limit', `${limit}`)
     $page.url.searchParams.set('offset', `${offset}`)
+    $page.url.searchParams.set('sortby', `${sortby}`)
     if (browser) {
       goto(`?${$page.url.searchParams.toString()}`)
     }
@@ -47,12 +87,13 @@
     try {
       isLoading = true
 
-      let apiUrl = `${url.origin}/api/style?limit=${limit}&offset=${offset}`
+      let apiUrl = `${url.origin}/api/style?limit=${limit}&offset=${offset}&sortby=${sortby}`
       const link = links?.find((l) => l.rel === type)
       if (link) {
         const newURL = new URL(link.href)
         limit = Number(newURL.searchParams.get('limit'))
         offset = Number(newURL.searchParams.get('offset'))
+        sortby = getSortByFromUrl(newURL)
         apiUrl = link.href
         setPageUrl()
       } else {
@@ -89,13 +130,26 @@
   </div>
   <div class="align-right">
     <div class="right-items">
-      <p class="subtitle is-6 p-0 m-0 pr-2">Shown in:</p>
-      <div class="select">
-        <select bind:value={limit}>
-          {#each limits as limit}
-            <option value={limit}>{limit}</option>
-          {/each}
-        </select>
+      <div class="field pr-2">
+        <label class="label">Order by:</label>
+        <div class="select">
+          <select bind:value={sortby}>
+            {#each orderbyOptions as option}
+              <option value={option.value}>{option.label}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Shown in:</label>
+        <div class="select">
+          <select bind:value={limit}>
+            {#each limits as limit}
+              <option value={limit}>{limit}</option>
+            {/each}
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -144,7 +198,6 @@
   .right-items {
     display: flex;
     flex-direction: row;
-    align-items: center;
   }
 
   .grid {
