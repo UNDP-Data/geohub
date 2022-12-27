@@ -32,8 +32,42 @@ export const GET: RequestHandler = async ({ url }) => {
     if (limit) options['limit'] = limit
     if (offset) options['offset'] = offset
 
+    const sortby = url.searchParams.get('sortby')
+    let sortByColumn = 'name'
+    let sortOrder: 'asc' | 'desc' = 'asc'
+    if (sortby) {
+      const values = sortby.split(',')
+      const column: string = values[0].trim().toLowerCase()
+      const targetSortingColumns = ['id', 'name', 'createdat', 'updatedat']
+      const targetSortingOrder = ['asc', 'desc']
+      if (!targetSortingColumns.includes(column)) {
+        throw error(400, `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`)
+      }
+      sortByColumn = column
+
+      if (values.length > 1) {
+        const order: string = values[1].trim().toLowerCase()
+        if (!targetSortingOrder.includes(order)) {
+          throw error(
+            400,
+            `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(', ')}'`,
+          )
+        }
+        sortOrder = order as 'asc' | 'desc'
+      }
+    }
+
     const query = {
-      text: `SELECT id, name, createdat, updatedat FROM geohub.style ORDER BY id ${Object.keys(options)
+      text: `
+      SELECT
+        x.id, 
+        x.name, 
+        x.createdat, 
+        x.updatedat 
+      FROM geohub.style x
+      ORDER BY
+          x.${sortByColumn} ${sortOrder} 
+      ${Object.keys(options)
         .map((key, index) => `${key} $${index + 1}`)
         .join(' ')}`,
       values: [...Object.keys(options).map((key) => options[key])],
@@ -95,8 +129,6 @@ export const GET: RequestHandler = async ({ url }) => {
     }
 
     return new Response(JSON.stringify({ styles, links, pages }))
-  } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
   } finally {
     client.release()
     pool.end()

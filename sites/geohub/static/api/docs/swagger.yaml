@@ -841,6 +841,11 @@ paths:
             type: integer
           in: query
           name: offset
+        - schema:
+            type: string
+          in: query
+          name: sortby
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
     post:
       summary: Style register API
       operationId: post-style
