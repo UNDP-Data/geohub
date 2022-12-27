@@ -41,11 +41,10 @@
   let bandIndex = getActiveBandIndex(layer.info)
 
   onMount(async () => {
-    const rasterLayerSrcUrl = getLayerSourceUrl($map,layer.id)
+    const rasterLayerSrcUrl = getLayerSourceUrl($map, layer.id)
 
     const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
-    
-    
+
     if (colormap) {
       // either unique or interval
       const rasterInfo = layer.info as RasterTileMetadata
@@ -59,12 +58,9 @@
       } else {
         legendType = DynamicLayerLegendTypes.INTERVALS
       }
-
-
     } else {
       // continuous
-      colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string 
-      
+      colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
     }
     if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
