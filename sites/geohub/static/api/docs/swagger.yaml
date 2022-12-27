@@ -846,6 +846,11 @@ paths:
           in: query
           name: sortby
           description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: text to search styles by name
     post:
       summary: Style register API
       operationId: post-style
