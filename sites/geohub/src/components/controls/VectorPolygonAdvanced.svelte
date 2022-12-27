@@ -31,6 +31,7 @@
     remapInputValue,
   } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
+  import ActionsDropdown from './ActionsDropdown.svelte'
 
   export let layer: Layer
   export let layerMax: number
@@ -142,16 +143,61 @@
   }
 
   const handleChangeIntervalValues = (event: CustomEvent) => {
+    // get all values
+
     const rowIndex = event.detail.index
     const inputType = event.detail.id
-    const inputValue = event.detail.value
+    let inputValue = event.detail.value as number
+    let currentRow = colorMapRows.at(rowIndex)
 
-    if (inputType === 'start' && rowIndex !== 0) {
-      colorMapRows[rowIndex - 1].end = inputValue
-    }
+    if (rowIndex == 0) {
+      const nextRow = colorMapRows.at(rowIndex + 1)
+      if (inputType == 'start') {
+        inputValue = !isNaN(inputValue) && inputValue < currentRow.end ? inputValue : (currentRow.start as number)
+        colorMapRows[rowIndex].start = inputValue
+      } else {
+        inputValue =
+          !isNaN(inputValue) && inputValue > currentRow.start && inputValue < nextRow.end
+            ? inputValue
+            : (currentRow.end as number)
+        colorMapRows[rowIndex].end = inputValue
+        colorMapRows[rowIndex + 1].start = inputValue
+      }
+    } else if (rowIndex == colorMapRows.length - 1) {
+      const prevRow = colorMapRows.at(rowIndex - 1)
+      if (inputType == 'start') {
+        inputValue =
+          !isNaN(inputValue) && inputValue < currentRow.end && inputValue > prevRow.start
+            ? inputValue
+            : (currentRow.start as number)
+        colorMapRows[rowIndex].start = inputValue
+        colorMapRows[rowIndex - 1].end = inputValue
+      } else {
+        inputValue =
+          !isNaN(inputValue) && inputValue <= currentRow.end && inputValue > prevRow.start
+            ? inputValue
+            : (currentRow.end as number)
+        colorMapRows[rowIndex].end = inputValue
+      }
+    } else {
+      const nextRow = colorMapRows.at(rowIndex + 1)
+      const prevRow = colorMapRows.at(rowIndex - 1)
 
-    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
-      colorMapRows[rowIndex + 1].start = inputValue
+      if (inputType == 'start') {
+        inputValue =
+          !isNaN(inputValue) && inputValue > prevRow.start && inputValue < currentRow.end
+            ? inputValue
+            : (currentRow.start as number)
+        colorMapRows[rowIndex].start = inputValue
+        colorMapRows[rowIndex - 1].end = inputValue
+      } else {
+        inputValue =
+          !isNaN(inputValue) && inputValue > currentRow.start && inputValue < nextRow.end
+            ? inputValue
+            : (currentRow.end as number)
+        colorMapRows[rowIndex].end = inputValue
+        colorMapRows[rowIndex + 1].start = inputValue
+      }
     }
 
     updateMap()
@@ -339,7 +385,6 @@
       </div>
     </div>
   {/if}
-
   <div
     class="columns"
     style="margin-right: -56px;">
@@ -358,15 +403,17 @@
                 on:changeIntervalValues={handleChangeIntervalValues} />
             </div>
           {:else}
-            <IntervalsLegendColorMapRow
-              bind:colorMapRow
-              bind:colorMapName
-              {layer}
-              {colorPickerVisibleIndex}
-              on:clickColorPicker={handleColorPickerClick}
-              on:changeColorMap={handleParamsUpdate}
-              on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-              on:changeIntervalValues={handleChangeIntervalValues} />
+            {#key colorMapRows}
+              <IntervalsLegendColorMapRow
+                bind:colorMapRow
+                bind:colorMapName
+                {layer}
+                {colorPickerVisibleIndex}
+                on:clickColorPicker={handleColorPickerClick}
+                on:changeColorMap={handleParamsUpdate}
+                on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
+                on:changeIntervalValues={handleChangeIntervalValues} />
+            {/key}
           {/if}
         {/each}
       </div>

@@ -104,14 +104,6 @@
   const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
-    // const value = e.target.textContent
-
-    if (id === 'start') {
-      colorMapRow.start = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
-    }
-    if (id === 'end') {
-      colorMapRow.end = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
-    }
 
     dispatch('changeIntervalValues', {
       index: colorMapRow.index,
@@ -151,7 +143,8 @@
       id="start"
       type="number"
       value={colorMapRow.start}
-      on:input={handleInput} />
+      on:change={handleInput}
+      required />
   </div>
   {#if colorMapRow.end}
     <div class="tile is-1"><p>—</p></div>
@@ -159,8 +152,10 @@
       <input
         class="number-input"
         type="number"
+        id="end"
         value={colorMapRow.end}
-        on:input={handleInput} />
+        on:change={handleInput}
+        required />
     </div>
   {/if}
 </div>
