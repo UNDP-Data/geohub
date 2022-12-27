@@ -88,12 +88,15 @@
     <p class="title is-3">Saved maps</p>
   </div>
   <div class="align-right">
-    <div class="select">
-      <select bind:value={limit}>
-        {#each limits as limit}
-          <option value={limit}>{limit}</option>
-        {/each}
-      </select>
+    <div class="right-items">
+      <p class="subtitle is-6 p-0 m-0 pr-2">Shown in:</p>
+      <div class="select">
+        <select bind:value={limit}>
+          {#each limits as limit}
+            <option value={limit}>{limit}</option>
+          {/each}
+        </select>
+      </div>
     </div>
   </div>
 </div>
@@ -136,6 +139,12 @@
     width: max-content;
     margin-left: auto;
     display: flex;
+  }
+
+  .right-items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
   }
 
   .grid {

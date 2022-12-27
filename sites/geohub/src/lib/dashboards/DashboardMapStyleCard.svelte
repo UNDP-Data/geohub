@@ -94,38 +94,38 @@
           bind:this={mapContainer} />
       </div>
 
-      <div class="tile is-half is-vertical">
+      <div class="tile is-half is-vertical pl-4">
         <div class="tile">
-          <p class="title is-5 style-name">{style.name}</p>
+          <p class="title is-5 style-name align-center">{style.name}</p>
         </div>
-        <div class="tile pt-2">
-          <div class="content">
-            <p class="p-0 m-0">
-              <b>Created at: </b><Time
-                timestamp={style.createdat}
-                format="h:mm A · MMMM D, YYYY" />
-            </p>
-            <p class="p-0 m-0">
-              <b>Updated at: </b><Time
-                timestamp={style.updatedat}
-                format="h:mm A · MMMM D, YYYY" />
-            </p>
-          </div>
+        <div class="tile">
+          <p class="p-0 m-0">
+            <b>Created at: </b><Time
+              timestamp={style.createdat}
+              format="h:mm A · MMMM D, YYYY" />
+          </p>
         </div>
-        <div class="tile py-4">
+        <div class="tile">
+          <p class="p-0 m-0">
+            <b>Updated at: </b><Time
+              timestamp={style.updatedat}
+              format="h:mm A · MMMM D, YYYY" />
+          </p>
+        </div>
+        <div class="tile is-12 py-4">
           <CtaLink
             label="Open map"
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
-        <div class="tile pt-2 is-mobile">
-          <div class="tile is-2 p-1">
+        <div class="tile">
+          <div class="tile is-half p-1">
             <Button
               title="Edit"
               isPrimary={true}
               on:clicked={() => window.open(style.editor, '_blank')} />
           </div>
-          <div class="tile is-2 p-1">
+          <div class="tile is-half p-1">
             <Button
               title="Delete"
               isPrimary={false}
@@ -190,11 +190,25 @@
     padding-left: 0.2rem !important;
   }
 
-  .style-name {
+  p {
+    text-transform: lowercase;
+  }
+
+  p::first-letter {
     text-transform: capitalize;
   }
 
   .pointor {
     cursor: pointer;
+  }
+
+  .align-center {
+    width: max-content;
+    margin: auto;
+  }
+
+  :global(.cta__link) {
+    width: max-content;
+    margin: auto;
   }
 </style>
