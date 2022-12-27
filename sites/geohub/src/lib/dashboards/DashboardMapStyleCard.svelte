@@ -10,7 +10,7 @@
   const url: URL = $page.url
 
   export let style: DashboardMapStyle
-  let isExpanded: boolean = false
+  let isExpanded = false
   let mapContainer: HTMLDivElement
   let nodeRef
   let map: Map
