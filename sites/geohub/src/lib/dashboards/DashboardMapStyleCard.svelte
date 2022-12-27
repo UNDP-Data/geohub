@@ -1,16 +1,16 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import { onMount } from 'svelte'
   import { page } from '$app/stores'
   import { Map, type StyleSpecification } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
-  import { Button, CtaLink } from '@undp-data/svelte-undp-design'
+  import { Accordion, Button, CtaLink } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
 
   const url: URL = $page.url
 
   export let style: DashboardMapStyle
+  let isExpanded: boolean = false
   let mapContainer: HTMLDivElement
   let nodeRef
   let map: Map
@@ -18,7 +18,11 @@
   let showContextMenu = false
   let confirmDeleteDialogVisible = false
 
-  onMount(async () => {
+  $: if (mapContainer && isExpanded) {
+    inistialise()
+  }
+
+  const inistialise = async () => {
     style.style = `${url.origin}/api/style/${style.id}.json`
     style.viewer = `${url.origin}/viewer?style=${style.style}`
     style.editor = `${url.origin}?style=${style.id}`
@@ -34,7 +38,7 @@
       attributionControl: false,
       interactive: false,
     })
-  })
+  }
 
   $: style, updateStyle()
   const updateStyle = async () => {
@@ -73,55 +77,63 @@
   }
 </script>
 
-<div
-  class="tile is-ancestor m-4"
-  bind:this={nodeRef}>
-  <div class="tile is-vertical">
-    <div class="tile border-bottom mb-2">
-      <p class="title is-4 ml-1">{style.name}</p>
-    </div>
-    <div class="tile">
-      <div
-        class="image pointor"
-        on:click={() => window.open(style.viewer, '_blank')}
-        bind:this={mapContainer} />
-    </div>
-    <div class="tile pt-2">
-      <div class="content">
-        <p class="p-0 m-0">
-          <b>Created at: </b><Time
-            timestamp={style.createdat}
-            format="h:mm A · MMMM D, YYYY" />
-        </p>
-        <p class="p-0 m-0">
-          <b>Updated at: </b><Time
-            timestamp={style.updatedat}
-            format="h:mm A · MMMM D, YYYY" />
-        </p>
+<Accordion
+  headerTitle={style.name}
+  bind:isExpanded>
+  <div
+    slot="content"
+    class="card-container px-1">
+    <div class="tile p-2">
+      <div class="tile is-half px-2">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div
+          class="image pointor"
+          on:click={() => window.open(style.viewer, '_blank')}
+          bind:this={mapContainer} />
       </div>
-    </div>
-    <div class="tile py-4">
-      <CtaLink
-        label="View Style"
-        on:clicked={() => window.open(style.viewer, '_blank')}
-        isArrow={false} />
-    </div>
-    <div class="tile pt-2">
-      <div class="tile is-half pr-1">
-        <Button
-          title="Edit"
-          isPrimary={true}
-          on:clicked={() => window.open(style.editor, '_blank')} />
-      </div>
-      <div class="tile is-half pl-1">
-        <Button
-          title="Delete"
-          isPrimary={false}
-          on:clicked={() => (confirmDeleteDialogVisible = true)} />
+
+      <div class="tile is-half is-vertical">
+        <div class="tile">
+          <p class="title is-5 style-name">{style.name}</p>
+        </div>
+        <div class="tile pt-2">
+          <div class="content">
+            <p class="p-0 m-0">
+              <b>Created at: </b><Time
+                timestamp={style.createdat}
+                format="h:mm A · MMMM D, YYYY" />
+            </p>
+            <p class="p-0 m-0">
+              <b>Updated at: </b><Time
+                timestamp={style.updatedat}
+                format="h:mm A · MMMM D, YYYY" />
+            </p>
+          </div>
+        </div>
+        <div class="tile py-4">
+          <CtaLink
+            label="Open map"
+            on:clicked={() => window.open(style.viewer, '_blank')}
+            isArrow={false} />
+        </div>
+        <div class="tile pt-2 is-mobile">
+          <div class="tile is-2 p-1">
+            <Button
+              title="Edit"
+              isPrimary={true}
+              on:clicked={() => window.open(style.editor, '_blank')} />
+          </div>
+          <div class="tile is-2 p-1">
+            <Button
+              title="Delete"
+              isPrimary={false}
+              on:clicked={() => (confirmDeleteDialogVisible = true)} />
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</Accordion>
 
 {#if confirmDeleteDialogVisible}
   <div
@@ -167,13 +179,17 @@
 {/if}
 
 <style lang="scss">
-  .border-bottom {
-    border-bottom: 3px solid gray;
-  }
-
   .image {
     width: 100%;
-    height: 250px;
+    height: 200px;
+  }
+
+  :global(.accordion-header) {
+    padding-left: 0.2rem !important;
+  }
+
+  .style-name {
+    text-transform: capitalize;
   }
 
   .pointor {

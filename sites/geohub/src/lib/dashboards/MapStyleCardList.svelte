@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { browser } from '$app/environment'
   import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import DashboardMapStyleCard from './DashboardMapStyleCard.svelte'
   import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
@@ -13,19 +15,48 @@
   let pages: Pages
   let isLoading = false
 
-  const LIMIT = 6
+  let limits = [5, 10, 25, 50, 100]
+  let limit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : 10
+  let offset = $page.url.searchParams.get('offset') ? Number($page.url.searchParams.get('offset')) : 0
 
   onMount(async () => {
-    await updateStylePage('next')
+    setPageUrl()
   })
+
+  $: limit, reloadStyles()
+
+  const reloadStyles = async () => {
+    if (!browser) return
+    const currentLimit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : undefined
+    if (currentLimit && currentLimit !== limit) {
+      offset = 0
+      links = []
+    }
+    await updateStylePage('next')
+  }
+
+  const setPageUrl = () => {
+    $page.url.searchParams.set('limit', `${limit}`)
+    $page.url.searchParams.set('offset', `${offset}`)
+    if (browser) {
+      goto(`?${$page.url.searchParams.toString()}`)
+    }
+  }
 
   const updateStylePage = async (type: 'next' | 'previous') => {
     try {
       isLoading = true
-      let apiUrl = `${url.origin}/api/style?limit=${LIMIT}`
+
+      let apiUrl = `${url.origin}/api/style?limit=${limit}&offset=${offset}`
       const link = links?.find((l) => l.rel === type)
       if (link) {
+        const newURL = new URL(link.href)
+        limit = Number(newURL.searchParams.get('limit'))
+        offset = Number(newURL.searchParams.get('offset'))
         apiUrl = link.href
+        setPageUrl()
+      } else {
+        setPageUrl()
       }
       const res = await fetch(apiUrl)
       const json = await res.json()
@@ -43,9 +74,21 @@
   }
 </script>
 
-<div class="align-center">
-  <p class="title is-3">Saved maps</p>
+<div class="styles-header">
+  <div class="align-center">
+    <p class="title is-3">Saved maps</p>
+  </div>
+  <div class="align-right">
+    <div class="select">
+      <select bind:value={limit}>
+        {#each limits as limit}
+          <option value={limit}>{limit}</option>
+        {/each}
+      </select>
+    </div>
+  </div>
 </div>
+
 {#if isLoading}
   <div class="align-center">
     <Loader />
@@ -69,22 +112,24 @@
 {/if}
 
 <style lang="scss">
+  .styles-header {
+    display: flex;
+  }
+
   .align-center {
     width: max-content;
     margin: auto;
   }
 
+  .aligh-right {
+    width: max-content;
+    margin-left: auto;
+    display: flex;
+  }
+
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-
-    @media (max-width: 400px) {
-      grid-template-columns: 1fr;
-    }
-
-    @media (max-width: 820px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    grid-template-columns: 1fr;
   }
 </style>
