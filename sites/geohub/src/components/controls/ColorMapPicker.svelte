@@ -9,8 +9,6 @@
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
-  export let layerMax: number
-  export let layerMin: number
   export let colorMapName: string
   export let numberOfClasses: number
 
@@ -76,8 +74,6 @@
                 <ColorMapPickerCard
                   colorMapName={cmName}
                   colorMapType={ColorMapTypes.SEQUENTIAL}
-                  {layerMax}
-                  {layerMin}
                   {numberOfClasses}
                   isSelected={colorMapName === cmName} />
               </li>

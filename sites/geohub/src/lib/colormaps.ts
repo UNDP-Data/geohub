@@ -35,8 +35,6 @@ export const ColorMaps = {
  * Returns an style based on a color map name
  * @param colorMapType Color map type (e.x.:  sequential, diverging, qualitative)
  * @param colorMapName Color map name (e.x.: viridis)
- * @param layerMin Layer minimum metadata
- * @param layerMax Layer maximum metadata
  * @param numberOfClasses Number of color classes
  * @param isCardStyle Card style (card or list)
  * @returns string
@@ -44,8 +42,8 @@ export const ColorMaps = {
 export const colorMapStyle = (
   colorMapType: ColorMapTypes,
   colorMapName: string,
-  layerMin: number,
-  layerMax: number,
+  // layerMin: number,
+  // layerMax: number,
   numberOfClasses: number,
   isCardStyle: boolean,
 ) => {
@@ -56,11 +54,10 @@ export const colorMapStyle = (
     colorMap = chroma
       .scale(colorMapName)
       .mode('lrgb')
-      .padding([0.25, 0])
-      .domain([layerMin, layerMax])
+      .padding([0.25, 0]) // this is necessary to create better looking color ramps graphics
       .colors(numberOfClasses, 'rgba')
   } else {
-    colorMap = chroma.scale(colorMapName).mode('lrgb').domain([layerMin, layerMax]).colors(numberOfClasses, 'rgba')
+    colorMap = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses, 'rgba')
   }
 
   if (isCardStyle) {

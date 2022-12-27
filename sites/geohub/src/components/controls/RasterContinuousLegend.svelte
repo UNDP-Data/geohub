@@ -97,8 +97,6 @@
     <ColorMapPickerCard
       {colorMapName}
       colorMapType={ColorMapTypes.SEQUENTIAL}
-      {layerMax}
-      {layerMin}
       {numberOfClasses}
       isSelected={false}
       isCardStyle={false} />

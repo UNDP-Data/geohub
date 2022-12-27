@@ -17,6 +17,7 @@
     getLayerStyle,
     getValueFromRasterTileUrl,
     updateParamsInURL,
+    getLayerSourceUrl
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'

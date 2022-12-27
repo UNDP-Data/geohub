@@ -16,6 +16,7 @@
     getValueFromRasterTileUrl,
     getLayerStyle,
     getRandomColormap,
+    getLayerSourceUrl,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import type { RasterTileSource } from 'maplibre-gl'
@@ -31,7 +32,6 @@
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
-  let layerListCount = $layerList.length
   let showTooltip = false
   let numberOfClasses: number
   export let legendType: DynamicLayerLegendTypes = undefined
@@ -40,16 +40,12 @@
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
 
-  // hide colormap picker if change in layer list
-  $: {
-    if (layerListCount !== $layerList.length) {
-      showTooltip = false
-      layerListCount = $layerList.length
-    }
-  }
-
   onMount(async () => {
+    const rasterLayerSrcUrl = getLayerSourceUrl($map,layer.id)
+
     const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    
+    
     if (colormap) {
       // either unique or interval
       const rasterInfo = layer.info as RasterTileMetadata
@@ -63,14 +59,12 @@
       } else {
         legendType = DynamicLayerLegendTypes.INTERVALS
       }
+
+
     } else {
       // continuous
-      const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      if (colormap_name) {
-        colorMapName = colormap_name
-      } else {
-        colorMapName = getRandomColormap()
-      }
+      colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string 
+      
     }
     if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
@@ -257,8 +251,6 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
           bind:colorMapName
           bind:numberOfClasses />
         <div
