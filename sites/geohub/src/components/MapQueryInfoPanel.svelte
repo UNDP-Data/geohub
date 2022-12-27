@@ -133,7 +133,7 @@
         }
       } else {
         const queriedFeatures = map.queryRenderedFeatures(e.point, {
-          layers: $layerList.map((l) => l.id),
+          layers: [layer.id],
         })
         if (queriedFeatures && queriedFeatures.length > 0) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
