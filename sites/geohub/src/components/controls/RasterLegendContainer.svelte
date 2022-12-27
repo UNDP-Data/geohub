@@ -21,8 +21,7 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let colorMapName: string =
-    (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) ?? getRandomColormap()
+  export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes
 
   let info
@@ -50,11 +49,34 @@
   }
 
   onMount(async () => {
-    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-    if (layerSrc?.tiles?.length > 0) {
-      await initialise()
+    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    if (colormap) {
+      const rasterInfo = layer.info as RasterTileMetadata
+      const band = info.active_band_no
+      layerHasUniqueValues = false
+      if (rasterInfo[band] && rasterInfo[band]['unique']) {
+        layerHasUniqueValues = Number(rasterInfo[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
+      }
+      if (layerHasUniqueValues) {
+        legendType = DynamicLayerLegendTypes.UNIQUE
+      } else {
+        legendType = DynamicLayerLegendTypes.INTERVALS
+      }
     } else {
-      setTimeout(initialise, 300)
+      const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+      if (colormap_name) {
+        colorMapName = colormap_name
+      } else {
+        colorMapName = getRandomColormap()
+      }
+    }
+    if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
+      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+      if (layerSrc?.tiles?.length > 0) {
+        await initialise()
+      } else {
+        setTimeout(initialise, 300)
+      }
     }
   })
 
