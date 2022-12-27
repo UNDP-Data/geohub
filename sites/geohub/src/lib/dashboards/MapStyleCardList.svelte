@@ -7,7 +7,6 @@
   import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
-  import { re } from 'mathjs'
 
   const url: URL = $page.url
 
