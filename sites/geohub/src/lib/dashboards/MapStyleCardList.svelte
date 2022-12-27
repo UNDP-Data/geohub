@@ -72,6 +72,15 @@
     const type = e.detail.type
     await updateStylePage(type)
   }
+
+  const handleStyleDeleted = (e) => {
+    const deletedStyle: DashboardMapStyle = e.detail.style
+    const index = styleList.map((s) => s.id).indexOf(deletedStyle.id)
+    if (index !== -1) {
+      styleList.splice(index, 1)
+      styleList = [...styleList]
+    }
+  }
 </script>
 
 <div class="styles-header">
@@ -97,7 +106,9 @@
   <div class="grid">
     {#key styleList}
       {#each styleList as style}
-        <DashboardMapStyleCard {style} />
+        <DashboardMapStyleCard
+          {style}
+          on:deleted={handleStyleDeleted} />
       {/each}
     {/key}
   </div>
