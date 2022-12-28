@@ -597,7 +597,6 @@ importers:
       eslint: ^8.30.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
-      geojson: ^0.5.0
       hex-to-css-filter: ^5.4.0
       image-clipper: ^0.4.4
       jsdom: ^20.0.3
@@ -683,7 +682,6 @@ importers:
       eslint: 8.30.0
       eslint-config-prettier: 8.5.0_eslint@8.30.0
       eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
-      geojson: 0.5.0
       hex-to-css-filter: 5.4.0
       image-clipper: 0.4.4
       jsdom: 20.0.3
@@ -6741,11 +6739,6 @@ packages:
 
   /geojson-vt/3.2.1:
     resolution: {integrity: sha512-EvGQQi/zPrDA6zr6BnJD/YhwAkBP8nnJ9emh3EnHQKVMfg/MRVtPbMYdgVy/IaEmn4UfagD2a6fafPDL5hbtwg==}
-
-  /geojson/0.5.0:
-    resolution: {integrity: sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==}
-    engines: {node: '>= 0.10'}
-    dev: true
 
   /get-caller-file/2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
