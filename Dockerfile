@@ -25,9 +25,7 @@ RUN mkdocs build
 
 WORKDIR /app
 
-# disable shared lockfile
-RUN echo "shared-workspace-lockfile = false" >> .npmrc
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/sites/geohub
 
@@ -35,10 +33,11 @@ WORKDIR /app/sites/geohub
 RUN pnpm build
 # delete node_modules with devDependencies and install only dependencies packages
 RUN rm -rf node_modules
+RUN echo "shared-workspace-lockfile = false" >> .npmrc
 RUN pnpm --filter="." install --prod
 # copy necessary files to build folder
 RUN cp package.json build/.
-RUN cp pm2.json build/.
+RUN  cp pnpm-lock.yaml build/.
 RUN mv node_modules build/.
 
 # production image
