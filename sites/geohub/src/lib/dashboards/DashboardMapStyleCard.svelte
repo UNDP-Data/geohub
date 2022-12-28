@@ -91,9 +91,10 @@
     hidden={isExpanded}>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <span
-      class="icon open-button"
+      class="icon open-button has-tooltip-left has-tooltip-arrow"
       role="button"
       tabindex="0"
+      data-tooltip="Open map"
       on:click={() => window.open(style.viewer, '_blank')}>
       <i class="fa-solid fa-arrow-up-right-from-square fa-xl" />
     </span>
@@ -105,7 +106,8 @@
       <div class="tile is-half p-2">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
-          class="image pointor"
+          class="image pointor has-tooltip-right has-tooltip-arrow"
+          data-tooltip="Open map"
           on:click={() => window.open(style.viewer, '_blank')}
           bind:this={mapContainer} />
       </div>
@@ -131,13 +133,17 @@
             isArrow={false} />
         </div>
         <div class="tile">
-          <div class="tile is-half p-1 m-0">
+          <div
+            class="tile is-half p-1 m-0 has-tooltip-top has-tooltip-arrow"
+            data-tooltip="Edit map">
             <Button
               title="Edit"
               isPrimary={true}
               on:clicked={() => window.open(style.editor, '_blank')} />
           </div>
-          <div class="tile is-half p-1 m-0">
+          <div
+            class="tile is-half p-1 m-0 has-tooltip-top has-tooltip-arrow"
+            data-tooltip="Delete map">
             <Button
               title="Delete"
               isPrimary={false}

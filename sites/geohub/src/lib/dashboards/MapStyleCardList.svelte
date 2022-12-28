@@ -186,11 +186,11 @@
   }
 </script>
 
-<div class="styles-header">
-  <div class="align-center">
-    <p class="title is-3">Saved maps</p>
-  </div>
-  <div class="right-items">
+<div class="align-center">
+  <p class="title is-3">Saved maps</p>
+</div>
+<div class="styles-header tile">
+  <div class="tile">
     <div class="control has-icons-left filter-text-box pr-2">
       <input
         data-testid="filter-bucket-input"
@@ -211,32 +211,31 @@
         </span>
       {/if}
     </div>
-
-    <div class="container pr-2">
-      <div class="field">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-        <label class="label">Order by:</label>
-        <div class="select">
-          <select bind:value={sortby}>
-            {#each orderbyOptions as option}
-              <option value={option.value}>{option.label}</option>
-            {/each}
-          </select>
-        </div>
+  </div>
+  <div class="tile pr-2">
+    <div class="field pt-2">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label">Order by:</label>
+      <div class="select">
+        <select bind:value={sortby}>
+          {#each orderbyOptions as option}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
       </div>
     </div>
+  </div>
 
-    <div class="container">
-      <div class="field">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-        <label class="label">Shown in:</label>
-        <div class="select">
-          <select bind:value={limit}>
-            {#each limits as limit}
-              <option value={limit}>{limit}</option>
-            {/each}
-          </select>
-        </div>
+  <div class="tile">
+    <div class="field pt-2">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label">Shown in:</label>
+      <div class="select">
+        <select bind:value={limit}>
+          {#each limits as limit}
+            <option value={limit}>{limit}</option>
+          {/each}
+        </select>
       </div>
     </div>
   </div>
@@ -247,17 +246,16 @@
     <Loader />
   </div>
 {:else if styleList && styleList.length > 0}
-  <div class="grid">
-    {#key styleList}
-      {#each styleList as style}
-        <DashboardMapStyleCard
-          {style}
-          bind:isExpanded={expanded[style.id]}
-          on:deleted={handleStyleDeleted} />
-      {/each}
-    {/key}
-  </div>
-  <div class="align-center">
+  {#key styleList}
+    {#each styleList as style}
+      <DashboardMapStyleCard
+        {style}
+        bind:isExpanded={expanded[style.id]}
+        on:deleted={handleStyleDeleted} />
+    {/each}
+  {/key}
+
+  <div class="align-center pt-2">
     <Pagination
       bind:totalPages={pages.totalPages}
       bind:currentPage={pages.currentPage}
@@ -270,25 +268,20 @@
 {/if}
 
 <style lang="scss">
-  .styles-header {
-    display: flex;
-  }
-
   .align-center {
     width: max-content;
     margin: auto;
   }
 
-  .right-items {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
+  .styles-header {
+    width: fit-content;
+    margin-left: auto;
 
     .filter-text-box {
       position: relative;
       height: 35px;
       width: 200px;
-      margin-bottom: 5px;
+      margin-top: 40px;
 
       .clear-button {
         position: absolute;
@@ -299,9 +292,7 @@
     }
   }
 
-  .grid {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: 1fr;
+  :global(.accordion-header) {
+    padding-left: 1.5rem !important;
   }
 </style>
