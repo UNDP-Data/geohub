@@ -22,6 +22,21 @@
 
   let query = $page.url.searchParams.get('query') ?? ''
 
+  let expanded: { [key: string]: boolean } = {}
+  let expandedStyleId: string
+  $: {
+    let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedStyleId)
+    if (expandedDatasets.length > 0) {
+      expandedStyleId = expandedDatasets[0]
+      Object.keys(expanded)
+        .filter((key) => key !== expandedStyleId)
+        .forEach((key) => {
+          expanded[key] = false
+        })
+      expanded[expandedDatasets[0]] = true
+    }
+  }
+
   const normaliseQuery = () => {
     if (query.length > 0) {
       return query.trim().replace(/\s/g, ` and `)
@@ -237,6 +252,7 @@
       {#each styleList as style}
         <DashboardMapStyleCard
           {style}
+          bind:isExpanded={expanded[style.id]}
           on:deleted={handleStyleDeleted} />
       {/each}
     {/key}
