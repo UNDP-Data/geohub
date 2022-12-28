@@ -93,10 +93,14 @@
       }
     })
 
+    let savedLayerList = JSON.parse(JSON.stringify($layerList))
+    const untargetdIds = untargetedLayers.map((l) => l.id)
+    savedLayerList = savedLayerList.filter((l) => !untargetdIds.includes(l.id))
+
     const data = {
       name: exportedStyleJSON.name,
       style: exportedStyleJSON,
-      layers: $layerList,
+      layers: savedLayerList,
     }
 
     const styleId = $page.url.searchParams.get('style')
