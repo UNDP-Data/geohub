@@ -167,7 +167,6 @@
         <button
           class="delete"
           aria-label="close"
-          alt="Close"
           title="Close"
           on:click={() => (confirmDeleteDialogVisible = false)} />
       </header>
