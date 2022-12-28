@@ -356,62 +356,63 @@
       <b>Query information</b>
     </div>
   </div>
-
-  {#if $indicatorProgress}
-    <div class="loader-container">
-      <Loader />
-    </div>
-  {:else}
-    <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>
-    {#if coordinates && coordinates.length === 2}
-      <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-        <thead>
-          <tr>
-            <th>Longitude</th>
-            <th>Latitude</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#key coordinates}
+  <div class="contents">
+    {#if $indicatorProgress}
+      <div class="loader-container">
+        <Loader />
+      </div>
+    {:else}
+      <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>
+      {#if coordinates && coordinates.length === 2}
+        <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+          <thead>
             <tr>
-              <td>{coordinates[0]}</td>
-              <td>{coordinates[1]}</td>
+              <th>Longitude</th>
+              <th>Latitude</th>
             </tr>
-          {/key}
-        </tbody>
-      </table>
-    {/if}
-    {#each features as feature}
-      <Accordion
-        headerTitle={`${feature.properties.name}`}
-        bind:isExpanded={expanded[feature.id]}>
-        <div
-          slot="content"
-          class="accordion-content px-1">
-          <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-            <thead>
+          </thead>
+          <tbody>
+            {#key coordinates}
               <tr>
-                <th>Property</th>
-                <th>Value</th>
+                <td>{coordinates[0]}</td>
+                <td>{coordinates[1]}</td>
               </tr>
-            </thead>
-            <tbody>
-              {#key isValuesRounded}
-                {#each Object.keys(feature.properties) as property}
-                  {#if property !== 'name'}
-                    <tr>
-                      <td>{clean(property)}</td>
-                      <td>{formatValue(feature.properties[property])}</td>
-                    </tr>
-                  {/if}
-                {/each}
-              {/key}
-            </tbody>
-          </table>
-        </div>
-      </Accordion>
-    {/each}
-  {/if}
+            {/key}
+          </tbody>
+        </table>
+      {/if}
+      {#each features as feature}
+        <Accordion
+          headerTitle={`${feature.properties.name}`}
+          bind:isExpanded={expanded[feature.id]}>
+          <div
+            slot="content"
+            class="accordion-content px-1">
+            <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+              <thead>
+                <tr>
+                  <th>Property</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#key isValuesRounded}
+                  {#each Object.keys(feature.properties) as property}
+                    {#if property !== 'name'}
+                      <tr>
+                        <td>{clean(property)}</td>
+                        <td>{formatValue(feature.properties[property])}</td>
+                      </tr>
+                    {/if}
+                  {/each}
+                {/key}
+              </tbody>
+            </table>
+          </div>
+        </Accordion>
+      {/each}
+    {/if}
+  </div>
 
   <div class="is-divider p-0 m-0 py-2" />
   <div class="container actions">
@@ -456,9 +457,9 @@
       margin: 0;
     }
 
-    .accordion-content {
-      max-height: 200px;
-      overflow: auto;
+    .contents {
+      max-height: 400px;
+      overflow-y: auto;
     }
 
     .attr-table {
