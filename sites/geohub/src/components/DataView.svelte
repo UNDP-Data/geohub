@@ -36,7 +36,24 @@
   let selectedTags: Tag[] = []
   let tagFilterOperatorType: 'and' | 'or' = 'and'
   let DataItemFeatureCollection: StacItemFeatureCollection
+
   $: currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
+
+  let expanded: { [key: string]: boolean } = {}
+  // uncomment this if only an accordion is expanded
+  // let expandedDatasetId: string
+  // $: {
+  //   let expandedDatasets = Object.keys(expanded).filter((key) =>  expanded[key] === true && key !== expandedDatasetId)
+  //   if (expandedDatasets.length > 0) {
+  //     expandedDatasetId = expandedDatasets[0]
+  //     Object.keys(expanded)
+  //       .filter((key) => key !== expandedDatasetId)
+  //       .forEach((key) => {
+  //         expanded[key] = false
+  //       })
+  //     expanded[expandedDatasets[0]] = true
+  //   }
+  // }
 
   const fetchNextDatasets = async () => {
     if (DataItemFeatureCollection?.features.length === 0) return
@@ -292,7 +309,9 @@
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
     {#each DataItemFeatureCollection.features as feature}
-      <DataCard {feature} />
+      <DataCard
+        {feature}
+        bind:isExpanded={expanded[feature.properties.id]} />
     {/each}
     {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
       <Notification type="info">All data loaded.</Notification>

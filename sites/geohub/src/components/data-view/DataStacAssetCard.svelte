@@ -8,7 +8,7 @@
 
   export let asset: AssetOptions
   export let feature: StacItemFeature
-  let isExpanded = false
+  export let isExpanded = false
 
   const addStacMosaicLayer = async (asset: AssetOptions) => {
     try {
