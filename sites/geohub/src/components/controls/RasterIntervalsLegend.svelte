@@ -22,6 +22,7 @@
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -128,7 +129,7 @@
       percentile98,
       colorMapName,
     )
-    generateRowWidth(colorMapRows)
+    rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     handleParamsUpdate()
 
     // fire event for style sharing

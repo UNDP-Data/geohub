@@ -35,6 +35,7 @@
   import PropertySelect from './vector-styles/PropertySelect.svelte'
   import { Radios } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let applyToOption: string
   export let layer: Layer
@@ -299,22 +300,12 @@
             }
 
             colorMapRows = propertySelectValues
-            generateRowWidth(colorMapRows)
+            rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
             updateMap()
           }
         }
       }
     }
-  }
-
-  const generateRowWidth = (colorMapRows) => {
-    // for each of the start and end of the colormap rows get the maximum
-    // generate rowWidth based on the maximum
-    rowWidth = Math.max(
-      ...colorMapRows.map((row) => {
-        return Math.max(row.start.toString().length, row.end.toString().length)
-      }),
-    )
   }
 
   const updateMap = () => {

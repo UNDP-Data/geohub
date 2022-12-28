@@ -31,6 +31,7 @@
     remapInputValue,
   } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let layer: Layer
   export let layerMax: number
@@ -282,22 +283,12 @@
             }
 
             colorMapRows = propertySelectValues
-            generateRowWidth(colorMapRows)
+            rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
             updateMap()
           }
         }
       }
     }
-  }
-
-  const generateRowWidth = (colorMapRows) => {
-    // for each of the start and end of the colormap rows get the maximum
-    // generate rowWidth based on the maximum
-    rowWidth = Math.max(
-      ...colorMapRows.map((row) => {
-        return Math.max(row.start.toString().length, row.end.toString().length)
-      }),
-    )
   }
 
   const updateMap = () => {
