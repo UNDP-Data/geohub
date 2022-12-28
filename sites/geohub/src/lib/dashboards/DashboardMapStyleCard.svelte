@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { page } from '$app/stores'
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { Map, type StyleSpecification } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
@@ -20,43 +20,46 @@
   let showContextMenu = false
   let confirmDeleteDialogVisible = false
 
+  let styleJSON: StyleSpecification
+
+  onMount(async () => {
+    await inistialise()
+  })
+
   $: if (mapContainer && isExpanded) {
-    inistialise()
+    inistialiseMap()
   }
 
   const inistialise = async () => {
-    if (!mapContainer) return
     style.style = `${url.origin}/api/style/${style.id}.json`
     style.viewer = `${url.origin}/viewer?style=${style.style}`
     style.editor = `${url.origin}?style=${style.id}`
-
-    const res = await fetch(style.style)
-    const styleJSON = await res.json()
-
-    map = new Map({
-      container: mapContainer,
-      style: style.style,
-      center: styleJSON.center ? styleJSON.center : [0, 0],
-      zoom: styleJSON.zoom ? styleJSON.zoom : 4,
-      attributionControl: false,
-      interactive: false,
-    })
   }
 
-  $: style, updateStyle()
-  const updateStyle = async () => {
-    if (!style.style) return
-    if (!map) return
-    const res = await fetch(style.style)
-    const styleJSON: StyleSpecification = await res.json()
+  const inistialiseMap = async () => {
+    if (!mapContainer) return
 
-    map.setStyle(styleJSON)
-    map.jumpTo({
-      center: [styleJSON.center[0], styleJSON.center[1]],
-      zoom: styleJSON.zoom,
-      bearing: styleJSON.bearing,
-      pitch: styleJSON.pitch,
-    })
+    const res = await fetch(style.style)
+    styleJSON = await res.json()
+
+    if (!map) {
+      map = new Map({
+        container: mapContainer,
+        style: styleJSON,
+        center: styleJSON.center ? [styleJSON.center[0], styleJSON.center[1]] : [0, 0],
+        zoom: styleJSON.zoom ? styleJSON.zoom : 4,
+        attributionControl: false,
+        interactive: false,
+      })
+    } else {
+      map.setStyle(styleJSON)
+      map.jumpTo({
+        center: [styleJSON.center[0], styleJSON.center[1]],
+        zoom: styleJSON.zoom,
+        bearing: styleJSON.bearing,
+        pitch: styleJSON.pitch,
+      })
+    }
   }
 
   const handleDeleteStyle = async () => {
@@ -84,10 +87,22 @@
   headerTitle={style.name}
   bind:isExpanded>
   <div
+    slot="button"
+    hidden={isExpanded}>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <span
+      class="icon open-button"
+      role="button"
+      tabindex="0"
+      on:click={() => window.open(style.viewer, '_blank')}>
+      <i class="fa-solid fa-arrow-up-right-from-square fa-xl" />
+    </span>
+  </div>
+  <div
     slot="content"
     class="card-container px-1">
     <div class="tile p-2">
-      <div class="tile is-half px-2">
+      <div class="tile is-half p-2">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="image pointor"
@@ -95,38 +110,34 @@
           bind:this={mapContainer} />
       </div>
 
-      <div class="tile is-half is-vertical pl-4">
-        <div class="tile">
+      <div class="tile is-half is-vertical p-0 m-0 pl-4">
+        <div class="tile is-vertical align-center">
           <p class="title is-5 style-name align-center">{style.name}</p>
-        </div>
-        <div class="tile">
           <p class="p-0 m-0">
             <b>Created at: </b><Time
               timestamp={style.createdat}
               format="h:mm A · MMMM D, YYYY" />
           </p>
-        </div>
-        <div class="tile">
           <p class="p-0 m-0">
             <b>Updated at: </b><Time
               timestamp={style.updatedat}
               format="h:mm A · MMMM D, YYYY" />
           </p>
         </div>
-        <div class="tile is-12 py-4">
+        <div class="tile is-12 py-4 p-0 m-0">
           <CtaLink
             label="Open map"
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
         <div class="tile">
-          <div class="tile is-half p-1">
+          <div class="tile is-half p-1 m-0">
             <Button
               title="Edit"
               isPrimary={true}
               on:clicked={() => window.open(style.editor, '_blank')} />
           </div>
-          <div class="tile is-half p-1">
+          <div class="tile is-half p-1 m-0">
             <Button
               title="Delete"
               isPrimary={false}
@@ -184,7 +195,7 @@
 <style lang="scss">
   .image {
     width: 100%;
-    height: 200px;
+    height: 100%;
   }
 
   :global(.accordion-header) {
@@ -211,5 +222,11 @@
   :global(.cta__link) {
     width: max-content;
     margin: auto;
+  }
+
+  .open-button {
+    width: 30px;
+    height: 30px;
+    color: #d12800;
   }
 </style>
