@@ -13,7 +13,7 @@
   const url: URL = $page.url
 
   export let style: DashboardMapStyle
-  let isExpanded = false
+  export let isExpanded = false
   let mapContainer: HTMLDivElement
   let map: Map
 
@@ -25,6 +25,7 @@
   }
 
   const inistialise = async () => {
+    if (!mapContainer) return
     style.style = `${url.origin}/api/style/${style.id}.json`
     style.viewer = `${url.origin}/viewer?style=${style.style}`
     style.editor = `${url.origin}?style=${style.id}`
