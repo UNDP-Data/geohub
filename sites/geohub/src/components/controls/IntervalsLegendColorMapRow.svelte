@@ -11,7 +11,7 @@
   export let colorPickerVisibleIndex: number
   export let layer: Layer
   export let colorMapName: string
-
+  export let rowWidth
   const dispatch = createEventDispatcher()
   const {
     ref: popperRef,
@@ -28,7 +28,7 @@
   let color: Color
   let colorPickerStyle: string
   let showToolTip = false
-
+  let fullWidth = '100%'
   $: colorPickerStyle = getColorPickerStyle(colorMapRow?.color.join())
   $: {
     if (colorPickerVisibleIndex === colorMapRow?.index) {
@@ -137,8 +137,9 @@
       </div>
     {/if}
   </div>
-  <div class="tile is-5 px-2">
+  <div class="tile px-2">
     <input
+      width="{rowWidth + 20}px"
       class="number-input"
       id="start"
       type="number"
@@ -147,9 +148,10 @@
       required />
   </div>
   {#if colorMapRow.end}
-    <div class="tile is-1"><p>—</p></div>
-    <div class="tile is-5 px-2">
+    <div class="is-3 tile"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+    <div class="tile px-2">
       <input
+        width="{rowWidth + 20}px"
         class="number-input"
         type="number"
         id="end"
@@ -166,8 +168,9 @@
   $input-margin: 5px !important;
 
   .number-input {
-    border: none;
     width: 100%;
+    text-align: left;
+    border: none;
     background-color: transparent;
   }
 
