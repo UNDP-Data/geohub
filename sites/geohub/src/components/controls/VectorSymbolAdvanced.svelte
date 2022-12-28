@@ -54,6 +54,7 @@
   let colorPickerVisibleIndex: number
   let cssIconFilter: string
   let icon: SpriteImage
+  let rowWidth: number
   export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string = null
   let colorMapRows: IntervalLegendColorMapRow[] = []
@@ -293,11 +294,22 @@
             }
 
             colorMapRows = propertySelectValues
+            generateRowWidth(colorMapRows)
             updateMap()
           }
         }
       }
     }
+  }
+
+  const generateRowWidth = (colorMapRows) => {
+    // for each of the start and end of the colormap rows get the maximum
+    // generate rowWidth based on the maximum
+    rowWidth = Math.max(
+            ...colorMapRows.map((row) => {
+              return Math.max(row.start.toString().length, row.end.toString().length)
+            }),
+    )
   }
 
   const updateMap = () => {
@@ -423,6 +435,7 @@
             <IntervalsLegendColorMapRow
               bind:colorMapRow
               bind:colorMapName
+              bind:rowWidth
               {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
