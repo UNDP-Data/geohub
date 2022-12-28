@@ -15,7 +15,7 @@ Make sure you have `node`, `nvm`, `pnpm` installed before you get to these comma
 Copy and update the environment variables file by running this command and contacting the project manager to obtain the values:
 
 ```bash
-cp ..env.example ..env
+cp .env.example .env
 ```
 
 ## Developer Experience

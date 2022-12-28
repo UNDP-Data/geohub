@@ -28,7 +28,6 @@
   let color: Color
   let colorPickerStyle: string
   let showToolTip = false
-  let fullWidth = '100%'
   $: colorPickerStyle = getColorPickerStyle(colorMapRow?.color.join())
   $: {
     if (colorPickerVisibleIndex === colorMapRow?.index) {
