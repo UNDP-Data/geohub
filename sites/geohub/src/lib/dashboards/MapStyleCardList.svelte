@@ -189,9 +189,9 @@
 <div class="align-center">
   <p class="title is-3">Saved maps</p>
 </div>
-<div class="styles-header tile">
-  <div class="tile">
-    <div class="control has-icons-left filter-text-box pr-2">
+<div class="styles-header tile is-ancestor">
+  <div class="tile is-parent">
+    <div class="control has-icons-left filter-text-box">
       <input
         data-testid="filter-bucket-input"
         class="input"
@@ -212,8 +212,8 @@
       {/if}
     </div>
   </div>
-  <div class="tile pr-2">
-    <div class="field pt-2">
+  <div class="tile is-parent">
+    <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Order by:</label>
       <div class="select">
@@ -226,8 +226,8 @@
     </div>
   </div>
 
-  <div class="tile">
-    <div class="field pt-2">
+  <div class="tile is-parent">
+    <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Shown in:</label>
       <div class="select">
@@ -281,7 +281,7 @@
       position: relative;
       height: 35px;
       width: 200px;
-      margin-top: 40px;
+      margin-top: 33px;
 
       .clear-button {
         position: absolute;

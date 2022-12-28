@@ -101,9 +101,9 @@
   </div>
   <div
     slot="content"
-    class="card-container px-1">
-    <div class="tile p-2">
-      <div class="tile is-half p-2">
+    class="card-container px-4">
+    <div class="tile is-ancestor">
+      <div class="tile is-parent is-half">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="image pointor has-tooltip-right has-tooltip-arrow"
@@ -112,7 +112,7 @@
           bind:this={mapContainer} />
       </div>
 
-      <div class="tile is-half is-vertical p-0 m-0 pl-4">
+      <div class="tile is-parent is-half is-vertical">
         <div class="tile is-vertical align-center">
           <p class="title is-5 style-name align-center">{style.name}</p>
           <p class="p-0 m-0">
@@ -126,15 +126,15 @@
               format="h:mm A · MMMM D, YYYY" />
           </p>
         </div>
-        <div class="tile is-12 py-4 p-0 m-0">
+        <div class="tile is-parent">
           <CtaLink
             label="Open map"
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
-        <div class="tile">
+        <div class="tile is-parent">
           <div
-            class="tile is-half p-1 m-0 has-tooltip-top has-tooltip-arrow"
+            class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
             data-tooltip="Edit map">
             <Button
               title="Edit"
@@ -142,7 +142,7 @@
               on:clicked={() => window.open(style.editor, '_blank')} />
           </div>
           <div
-            class="tile is-half p-1 m-0 has-tooltip-top has-tooltip-arrow"
+            class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
             data-tooltip="Delete map">
             <Button
               title="Delete"
