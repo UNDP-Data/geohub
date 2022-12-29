@@ -117,9 +117,9 @@
   <div
     class="action"
     data-testid="vector-label-panel-container">
-    <div class="columns">
-      <div class="column is-10 m-auto">
-        <span>Property:&nbsp;</span>
+    <div class="columns is-vcentered">
+      <div class="column is-2">Property:&nbsp;</div>
+      <div class="column">
         <TextField
           on:change={fireLabelChanged}
           bind:layer={targetLayer}
@@ -127,59 +127,7 @@
           bind:textFieldValue
           bind:decimalPosition />
       </div>
-    </div>
-    {#if fieldType && ['number', 'float'].includes(fieldType)}
-      <div
-        class="column is-7 m-auto"
-        transition:fade>
-        <div class="has-text-centered">Number of Decimal Places</div>
-        <div class="is-flex is-justify-content-center">
-          <NumberFormat
-            on:change={onStyleChange}
-            bind:decimalPosition />
-        </div>
-      </div>
-    {/if}
-    <div class="columns mb-0 pb-0">
-      <div class="column is-6">
-        <div class="has-text-centered pb-2">Font Color</div>
-        <div class="is-flex is-justify-content-center">
-          <TextColor
-            on:change={onStyleChange}
-            bind:layer={targetLayer} />
-        </div>
-      </div>
-      <div class="column is-6">
-        <div class="has-text-centered">Font Size</div>
-        <div class="is-flex is-justify-content-center">
-          <TextSize
-            on:change={onStyleChange}
-            bind:layer={targetLayer} />
-        </div>
-      </div>
-    </div>
-
-    <div class="columns mb-0 pb-0">
-      <div class="column is-6">
-        <div class="has-text-centered pb-2">Halo Color</div>
-        <div class="is-flex is-justify-content-center">
-          <TextHaloCalor
-            on:change={onStyleChange}
-            bind:layer={targetLayer} />
-        </div>
-      </div>
-      <div class="column is-6">
-        <div class="has-text-centered">Halo Size</div>
-        <div class="is-flex is-justify-content-center">
-          <TextHaloWidth
-            on:change={onStyleChange}
-            bind:layer={targetLayer} />
-        </div>
-      </div>
-    </div>
-
-    <div class="columns advanced-settings">
-      <div class="column is-6 m-auto">
+      <div class="column pl-0 pr-0">
         <div class="field">
           <input
             id="switchAdvancedSettings"
@@ -191,6 +139,47 @@
             for="switchAdvancedSettings"
             class="is-size-6">Advanced Settings</label>
         </div>
+      </div>
+    </div>
+
+    {#if fieldType && ['number', 'float'].includes(fieldType)}
+      <div
+        class="columns is-vcentered is-flex is-justify-content-center"
+        transition:fade>
+        <div class="column">Number of Decimal Places</div>
+        <div class="column ">
+          <NumberFormat
+            on:change={onStyleChange}
+            bind:decimalPosition />
+        </div>
+      </div>
+    {/if}
+    <div class="columns is-vcentered is-flex is-justify-content-center mb-0 pb-0">
+      <div class="column pr-0">Font Color</div>
+      <div class="column is-flex is-justify-content-center">
+        <TextColor
+          on:change={onStyleChange}
+          bind:layer={targetLayer} />
+      </div>
+      <div class="column">Font Size</div>
+      <div class="column is-flex is-justify-content-center">
+        <TextSize
+          on:change={onStyleChange}
+          bind:layer={targetLayer} />
+      </div>
+    </div>
+    <div class="columns is-vcentered is-flex is-justify-content-center mb-0 pb-0">
+      <div class="column pr-0">Halo Color</div>
+      <div class="column is-flex is-justify-content-center">
+        <TextHaloCalor
+          on:change={onStyleChange}
+          bind:layer={targetLayer} />
+      </div>
+      <div class="column">Halo Size</div>
+      <div class="column is-flex is-justify-content-center">
+        <TextHaloWidth
+          on:change={onStyleChange}
+          bind:layer={targetLayer} />
       </div>
     </div>
 
