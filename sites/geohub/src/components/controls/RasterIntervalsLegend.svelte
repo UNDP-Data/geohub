@@ -22,6 +22,7 @@
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -42,6 +43,7 @@
 
   let layerMax
   let layerMin
+  let rowWidth: number
   if ('stats' in info) {
     const band = Object.keys(info.stats)[bandIndex]
     layerMin = Number(info.stats[band].min)
@@ -127,6 +129,7 @@
       percentile98,
       colorMapName,
     )
+    rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     handleParamsUpdate()
 
     // fire event for style sharing
@@ -153,6 +156,16 @@
     layerConfig = layerConfigClone
     colorMapRows = []
     reclassifyImage()
+  }
+
+  const generateRowWidth = (colorMapRows) => {
+    // for each of the start and end of the colormap rows get the maximum
+    // generate rowWidth based on the maximum
+    rowWidth = Math.max(
+      ...colorMapRows.map((row) => {
+        return Math.max(row.start.toString().length, row.end.toString().length)
+      }),
+    )
   }
 
   const handleColorPickerClick = (event: CustomEvent) => {
@@ -257,6 +270,7 @@
       <IntervalsLegendColorMapRow
         bind:colorMapRow
         bind:colorMapName
+        bind:rowWidth
         layer={layerConfig}
         {colorPickerVisibleIndex}
         on:clickColorPicker={handleColorPickerClick}
