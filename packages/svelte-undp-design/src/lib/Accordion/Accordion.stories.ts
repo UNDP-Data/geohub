@@ -17,7 +17,13 @@ const meta = {
 			type: 'boolean',
 			description: 'State of whether accordion is opened or closed.',
 			defaultValue: false
+		},
+		fontSize: {
+			type: 'string',
+			description: 'Font size of the accordion header title.',
+			defaultValue: 'medium'
 		}
+
 	},
 	parameters: {
 		isExpanded: {
