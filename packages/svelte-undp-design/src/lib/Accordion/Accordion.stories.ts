@@ -28,6 +28,9 @@ const meta = {
 	parameters: {
 		isExpanded: {
 			values: [true, false]
+		},
+		fontSize: {
+			values: ['small', 'medium']
 		}
 	}
 } satisfies Meta<Accordion>;
