@@ -63,7 +63,7 @@
 </script>
 
 <div
-  class="select is-rounded"
+  class="select"
   style="height: 30px;">
   <select
     bind:value={selected}

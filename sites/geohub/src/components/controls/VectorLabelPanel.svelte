@@ -15,6 +15,7 @@
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { getPropertyValueFromExpression } from '$lib/helper'
+  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
 
   export let isLabelPanelVisible = false
   export let layer: Layer
@@ -104,9 +105,9 @@
   <div
     class="action"
     data-testid="vector-label-panel-container">
-    <div class="columns">
-      <div class="column is-10 m-auto">
-        <span>Property:&nbsp;</span>
+    <div class="columns is-10 is-vcentered is-justify-content-space-around">
+      <div class="column is-2">Property:&nbsp;</div>
+      <div class="column is-8">
         <TextField
           on:change={fireLabelChanged}
           bind:layer={targetLayer}
@@ -120,7 +121,7 @@
         <div
           class="column is-7 m-auto"
           transition:fade>
-          <div class="has-text-centered">Number of Decimal Places</div>
+          <div class="has-text-centered">Number of decimal places</div>
           <div class="is-flex is-justify-content-center">
             <NumberFormat
               on:change={onStyleChange}
@@ -128,43 +129,43 @@
           </div>
         </div>
       {/if}
-      <div class="columns mb-0 pb-0">
-        <div class="column is-6">
-          <div class="has-text-centered pb-2">Font Color</div>
-          <div class="is-flex is-justify-content-center">
+      <StyleControlGroup
+        title="Font"
+        class="mb-1">
+        <div class="columns is-12 mb-0 pb-0 is-vcentered">
+          <div class="column is-3 pr-0">Color:</div>
+          <div class="column pl-0 is-1">
             <TextColor
               on:change={onStyleChange}
               bind:layer={targetLayer} />
           </div>
-        </div>
-        <div class="column is-6">
-          <div class="has-text-centered">Font Size</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="column has-text-centered is-4 pl-4 pr-0">Size:</div>
+          <div class="column pl-0 is-4">
             <TextSize
               on:change={onStyleChange}
               bind:layer={targetLayer} />
           </div>
         </div>
-      </div>
-
-      <div class="columns mb-0 pb-0">
-        <div class="column is-6">
-          <div class="has-text-centered pb-2">Halo Color</div>
-          <div class="is-flex is-justify-content-center">
+      </StyleControlGroup>
+      <br />
+      <StyleControlGroup
+        title="Halo"
+        class="mb-1">
+        <div class="columns is-vcentered">
+          <div class="column">Color:</div>
+          <div class="column">
             <TextHaloCalor
               on:change={onStyleChange}
               bind:layer={targetLayer} />
           </div>
-        </div>
-        <div class="column is-6">
-          <div class="has-text-centered">Halo Size</div>
-          <div class="is-flex is-justify-content-center">
+          <div class="column has-text-centered">Width:</div>
+          <div class="column">
             <TextHaloWidth
               on:change={onStyleChange}
               bind:layer={targetLayer} />
           </div>
         </div>
-      </div>
+      </StyleControlGroup>
 
       <div class="columns advanced-settings">
         <div class="column is-6 m-auto">
