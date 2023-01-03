@@ -403,18 +403,16 @@
                 on:changeIntervalValues={handleChangeIntervalValues} />
             </div>
           {:else}
-            {#key colorMapRows}
-              <IntervalsLegendColorMapRow
-                bind:colorMapRow
-                bind:colorMapName
-                bind:rowWidth
-                {layer}
-                {colorPickerVisibleIndex}
-                on:clickColorPicker={handleColorPickerClick}
-                on:changeColorMap={handleParamsUpdate}
-                on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-                on:changeIntervalValues={handleChangeIntervalValues} />
-            {/key}
+            <IntervalsLegendColorMapRow
+              bind:colorMapRow
+              bind:colorMapName
+              bind:rowWidth
+              {layer}
+              {colorPickerVisibleIndex}
+              on:clickColorPicker={handleColorPickerClick}
+              on:changeColorMap={handleParamsUpdate}
+              on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
+              on:changeIntervalValues={handleChangeIntervalValues} />
           {/if}
         {/each}
       </div>
