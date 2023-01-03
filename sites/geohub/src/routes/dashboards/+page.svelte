@@ -39,12 +39,12 @@
       <a
         role="button"
         aria-label="Home"
-        class="menu-button has-tooltip-bottom has-tooltip-arrow"
+        class="menu-button"
         tabindex="0"
         href="/">
         <span class="icon">
           <i
-            class="fa-solid fa-home"
+            class="fa-solid fa-home fa-xl"
             style="color:#006eb5" />
         </span>
       </a>

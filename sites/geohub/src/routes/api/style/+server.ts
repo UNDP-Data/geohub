@@ -28,10 +28,6 @@ export const GET: RequestHandler = async ({ url }) => {
     const limit = url.searchParams.get('limit') ?? '10'
     const offset = url.searchParams.get('offset') ?? '0'
 
-    const options = {}
-    if (limit) options['limit'] = limit
-    if (offset) options['offset'] = offset
-
     const sortby = url.searchParams.get('sortby')
     let sortByColumn = 'name'
     let sortOrder: 'asc' | 'desc' = 'asc'
@@ -57,7 +53,19 @@ export const GET: RequestHandler = async ({ url }) => {
       }
     }
 
-    const query = {
+    let query = url.searchParams.get('query')
+
+    const values = []
+    if (query) {
+      // normalise query text for to_tsquery function
+      query = query
+        .toLowerCase()
+        .replace(/\r?\s+and\s+/g, ' & ') // convert 'and' to '&'
+        .replace(/\r?\s+or\s+/g, ' | ') // convert 'or' to '|'
+      values.push(query)
+    }
+
+    const sql = {
       text: `
       SELECT
         x.id, 
@@ -65,15 +73,15 @@ export const GET: RequestHandler = async ({ url }) => {
         x.createdat, 
         x.updatedat 
       FROM geohub.style x
+      ${query ? 'WHERE to_tsvector(x.name) @@ to_tsquery($1)' : ''}
       ORDER BY
           x.${sortByColumn} ${sortOrder} 
-      ${Object.keys(options)
-        .map((key, index) => `${key} $${index + 1}`)
-        .join(' ')}`,
-      values: [...Object.keys(options).map((key) => options[key])],
+      LIMIT ${limit}
+      OFFSET ${offset}`,
+      values: values,
     }
 
-    const res = await client.query(query)
+    const res = await client.query(sql)
     if (res.rowCount === 0) {
       throw error(404)
     }

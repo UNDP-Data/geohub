@@ -13,8 +13,13 @@
   let relativeLayers: { [key: string]: string } = {}
 
   $: if ($map) {
+    $map.on('styledata', function (e) {
+      style = $map.getStyle()
+      updateLayerOrderList()
+    })
     $map.on('sourcedata', function (e) {
       if (e.isSourceLoaded) {
+        style = $map.getStyle()
         updateLayerOrderList()
       }
     })

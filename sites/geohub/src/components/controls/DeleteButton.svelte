@@ -19,12 +19,16 @@
       const delSourceId = getLayerStyle($map, layer.id).source
       if (layer.children && layer.children.length > 0) {
         layer.children.forEach((child) => {
-          $map.removeLayer(child.id)
+          if ($map.getLayer(child.id)) {
+            $map.removeLayer(child.id)
+          }
         })
         layer.children = []
       }
       $layerList = $layerList.filter((item) => item.id !== layerId)
-      $map.removeLayer(layerId)
+      if ($map.getLayer(layerId)) {
+        $map.removeLayer(layerId)
+      }
       const layerListforDelSource = $layerList.filter((item) => getLayerStyle($map, item.id).source === delSourceId)
       if (layerListforDelSource.length === 0) {
         $map.removeSource(delSourceId)

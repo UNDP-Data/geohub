@@ -31,7 +31,7 @@
     remapInputValue,
   } from '$lib/helper'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
-  import ActionsDropdown from './ActionsDropdown.svelte'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let layer: Layer
   export let layerMax: number
@@ -47,14 +47,13 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  let intervalList = []
   export let defaultFillOutlineColor: string = undefined
   let hasUniqueValues = false
   export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string
   let inLegend = true
   let colorMapRows: IntervalLegendColorMapRow[] = []
-
+  let rowWidth: number
   // update color intervals upon change of color map name\
 
   $: colorMapName, setIntervalValues()
@@ -284,6 +283,7 @@
             }
 
             colorMapRows = propertySelectValues
+            rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
             updateMap()
           }
         }
@@ -407,6 +407,7 @@
               <IntervalsLegendColorMapRow
                 bind:colorMapRow
                 bind:colorMapName
+                bind:rowWidth
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}

@@ -71,7 +71,6 @@
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
-    "geojson": "^0.5.0",
     "hex-to-css-filter": "^5.4.0",
     "image-clipper": "^0.4.4",
     "jsdom": "^20.0.3",

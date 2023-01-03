@@ -35,6 +35,7 @@
   import PropertySelect from './vector-styles/PropertySelect.svelte'
   import { Radios } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let applyToOption: string
   export let layer: Layer
@@ -43,6 +44,7 @@
   export let colorMapName: string
   export let defaultColor: string = undefined
 
+  let rowWidth: number
   const classificationMethodsDefault = [
     // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
@@ -298,7 +300,7 @@
             }
 
             colorMapRows = propertySelectValues
-
+            rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
             updateMap()
           }
         }
@@ -442,6 +444,7 @@
               <IntervalsLegendColorMapRow
                 bind:colorMapRow
                 bind:colorMapName
+                bind:rowWidth
                 {layer}
                 {colorPickerVisibleIndex}
                 on:clickColorPicker={handleColorPickerClick}

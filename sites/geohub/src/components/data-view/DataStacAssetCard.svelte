@@ -8,7 +8,7 @@
 
   export let asset: AssetOptions
   export let feature: StacItemFeature
-  let isExpanded = false
+  export let isExpanded = false
 
   const addStacMosaicLayer = async (asset: AssetOptions) => {
     try {
@@ -42,7 +42,8 @@
 
 <Accordion
   headerTitle={asset.title}
-  bind:isExpanded>
+  bind:isExpanded
+  fontSize="small">
   <div slot="button">
     {#if !isExpanded}
       <AddLayerButton

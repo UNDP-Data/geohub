@@ -17,7 +17,7 @@
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
 
   export let feature: StacItemFeature
-  let isExpanded: boolean
+  export let isExpanded: boolean
   let symbolVectorType: 'point' | 'heatmap' = 'point'
   let symbolVectorTypes: Radio[] = [
     {
@@ -41,6 +41,23 @@
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
   const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
   const stacType = tags?.find((tag) => tag.key === 'stac')
+
+  let expanded: { [key: string]: boolean } = {}
+  let expandedDatasetAssetId: string
+  $: {
+    let expandedDatasets = Object.keys(expanded).filter(
+      (key) => expanded[key] === true && key !== expandedDatasetAssetId,
+    )
+    if (expandedDatasets.length > 0) {
+      expandedDatasetAssetId = expandedDatasets[0]
+      Object.keys(expanded)
+        .filter((key) => key !== expandedDatasetAssetId)
+        .forEach((key) => {
+          expanded[key] = false
+        })
+      expanded[expandedDatasets[0]] = true
+    }
+  }
 
   const addLayer = async () => {
     try {
@@ -110,6 +127,7 @@
       const assets = f.assets
       const itemProperties = f.properties
       const collectionId = f.collection
+      assetList = []
       Object.keys(assets).forEach((assetName) => {
         const asset = assets[assetName]
         if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
@@ -199,7 +217,8 @@
         {#each assetList as asset}
           <DataStacAssetCard
             bind:asset
-            bind:feature />
+            bind:feature
+            bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]} />
         {/each}
       {/if}
     </div>
