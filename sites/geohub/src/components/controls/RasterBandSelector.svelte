@@ -41,18 +41,21 @@
     deleteOldLayer(layer.id)
   }
 
-  if (layerStyle.type === LayerTypes.RASTER && !info?.isMosaicJson) {
+  if (layerStyle.type === LayerTypes.RASTER) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ;({ info } = layer)
     selected = info.active_band_no
-    if (info.band_metadata.length > 1) {
+    if (info.band_metadata.length > 0) {
       bands = info.band_metadata.map((meta) => meta[0])
     }
   }
 
   const updateLayerInfo = (metadata: RasterTileMetadata, bandName: string) => {
     const layerSrc = $map.getSource(layerStyle.source)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (!(layerSrc.tiles && layerSrc.tiles.length > 0)) return
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const layerURL = new URL(layerSrc.tiles[0])
@@ -81,17 +84,24 @@
   }
 </script>
 
-{#if layerStyle && layerStyle.type === LayerTypes.RASTER && bands && bands.length > 0}
-  <div
-    class="select is-success is-rounded is-small has-tooltip-bottom has-tooltip-arrow"
-    data-tooltip="Change raster band">
-    <select bind:value={selected}>
-      {#each bands as band}
-        <option value={band}>B{band}</option>
-      {/each}
-    </select>
-  </div>
+{#if layerStyle && layerStyle.type === LayerTypes.RASTER && !info.isMosaicJson}
+  {#if bands.length === 1}
+    <span class="tag is-success">B{selected}</span>
+  {:else if bands.length > 1}
+    <div
+      class="select is-success is-small has-tooltip-bottom has-tooltip-arrow"
+      data-tooltip="Change raster band">
+      <select bind:value={selected}>
+        {#each bands as band}
+          <option value={band}>B{band}</option>
+        {/each}
+      </select>
+    </div>
+  {/if}
 {/if}
 
 <style lang="scss">
+  .select {
+    padding-right: 0.5rem !important;
+  }
 </style>

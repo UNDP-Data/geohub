@@ -1,13 +1,16 @@
 <script lang="ts">
-  import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
+  import DeleteButton from '$components/controls/DeleteButton.svelte'
+  import VisibilityButton from '$components/controls/VisibilityButton.svelte'
+  import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte'
+  import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { onDestroy, onMount } from 'svelte'
+  import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
 
   export let layer: Layer
-  let bandName = ''
   let hasLayerLabel = false
 
   onMount(() => {
@@ -25,14 +28,6 @@
   }
 
   const layerStyle = getLayerStyle($map, layer.id)
-  if (layerStyle.type === 'raster') {
-    const rasterInfo = layer.info as RasterTileMetadata
-    if (rasterInfo?.isMosaicJson === true) {
-      bandName = 'Mosaic'
-    } else {
-      bandName = `B${rasterInfo?.active_band_no}`
-    }
-  }
 
   let icon = LayerIconTypes.find((icon) => icon.id === layerStyle.type)
   if (layerStyle.type !== LayerTypes.RASTER) {
@@ -56,30 +51,27 @@
 <div class="layer-header">
   <div>
     <div class="layer-header-name">
-      <div style="display: flex; align-items: center">
-        <i
-          class="{icon.icon} sm"
-          style="color: {icon.color};" />
-        <span style="padding-left: 5px;">
-          {#if hasLayerLabel}
-            <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
-          {/if}
-        </span>
-      </div>
+      <i
+        class="{icon.icon} sm"
+        style="color: {icon.color};" />
+      <span style="padding-left: 5px;">
+        {#if hasLayerLabel}
+          <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
+        {/if}
+      </span>
       {#if layerStyle.type === 'raster'}
-        <div style="display: flex; align-items: center">
-          <span class="tag is-success">{bandName}</span>
-        </div>
+        <RasterBandSelector {layer} />
       {/if}
-      <div class="layer-name">
+      <div class="layer-name pl-1">
         <div>
-          <span style="padding-left: 5px;">
-            {clean(layer.name)}
-          </span>
+          {clean(layer.name)}
         </div>
       </div>
-      <div>
-        <LayerControlGroup {layer} />
+      <div class="group">
+        <DataCardInfoButton {layer} />
+        <VisibilityButton {layer} />
+        <DeleteButton {layer} />
+        <ZoomToLayerButton {layer} />
       </div>
     </div>
   </div>
@@ -105,23 +97,9 @@
         width: 100%;
       }
     }
-  }
 
-  .label {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    color: #fff;
-  }
-
-  .description,
-  .unit {
-    font-weight: normal;
-    color: #fff;
-    margin-bottom: 10px;
-  }
-
-  .description {
-    margin-bottom: 15px;
+    .group {
+      display: flex;
+    }
   }
 </style>
