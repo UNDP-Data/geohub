@@ -6,7 +6,7 @@
 	export let activeTab: string | undefined;
 
 	export let height: number;
-	export let fontSize: 'medium' |'large' | 'small' = 'medium';
+	export let fontSize: 'medium' | 'large' | 'small' = 'medium';
 	export let isToggleTab = false;
 
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -70,7 +70,14 @@
 						}
 					}}
 				>
-					<span class="icon-text" style="font-size: {fontSize === 'small' ? '0.75': fontSize === 'large' ? '1.2' : '1'}rem;">
+					<span
+						class="icon-text"
+						style="font-size: {fontSize === 'small'
+							? '0.75'
+							: fontSize === 'large'
+							? '1.2'
+							: '1'}rem;"
+					>
 						{#if tab.icon}
 							<span class="icon">
 								<i class={tab.icon} />
