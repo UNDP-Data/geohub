@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl'
-  import { indicatorProgress, layerList } from '$stores'
+  import { layerList } from '$stores'
   import { onMount, onDestroy } from 'svelte'
   import PapaParse from 'papaparse'
   import { Accordion, Loader, Checkbox } from '@undp-data/svelte-undp-design'
@@ -27,6 +27,7 @@
 
   let features: PointFeature[] = []
   let coordinates: number[]
+  let showProgress = false
 
   // eslint-disable-next-line
   function MapQueryInfoControl() {}
@@ -110,7 +111,7 @@
 
     coordinates = [e.lngLat.lng, e.lngLat.lat]
 
-    $indicatorProgress = true
+    showProgress = true
     map.getCanvas().style.cursor = 'wait'
     Promise.all(promises)
       .then((queriedFeautres: PointFeature[]) => {
@@ -133,7 +134,7 @@
         }
       })
       .finally(() => {
-        $indicatorProgress = false
+        showProgress = false
         map.getCanvas().style.cursor = 'crosshair'
       })
   }
@@ -357,7 +358,7 @@
     </div>
   </div>
   <div class="contents">
-    {#if $indicatorProgress}
+    {#if showProgress}
       <div class="loader-container">
         <Loader />
       </div>
