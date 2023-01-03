@@ -26,8 +26,6 @@
   import { onMount, onDestroy } from 'svelte'
   import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
 
-  //import RasterExpressionNumbersInput from '$components/controls/RasterExpressionNumbersInput.svelte'
-
   export let layer: Layer
 
   const layerId = layer.id
@@ -302,8 +300,6 @@
           rest={false}
           on:stop={onSliderStop} />
       </div>
-
-      <!-- <RasterExpressionNumbersInput on:click={onNumbersClick} /> -->
     </div>
 
     <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-5 pl-3 pr-3">
