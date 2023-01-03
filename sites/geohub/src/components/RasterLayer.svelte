@@ -1,6 +1,5 @@
 <script lang="ts">
-	
-	import { getValueFromRasterTileUrl } from '$lib/helper';
+  import { getValueFromRasterTileUrl } from '$lib/helper'
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
@@ -10,7 +9,7 @@
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import { map} from '$stores'
+  import { map } from '$stores'
   import { onMount } from 'svelte'
   import type { MapDataEvent } from 'maplibre-gl'
 
@@ -18,9 +17,9 @@
   export let classificationMethod: ClassificationMethodTypes
 
   let expressions: RasterSimpleExpression[]
-  
-  let colorMapName:string
-  
+
+  let colorMapName: string
+
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
     { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
@@ -34,27 +33,20 @@
     while ($map.loaded() == false) {
       await sleep(100)
     }
-    colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string 
-    
-    
+    colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
   })
-  
-  //let activeTab = TabNames.LEGEND 
+
+  //let activeTab = TabNames.LEGEND
   let activeTab = ''
 
-  
   let isRefinePanelVisible = false
   let isLegendPanelVisible = false
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
-  
- 
+
   let legendType: DynamicLayerLegendTypes
-  
-  
 
   $: {
-    
     isLegendPanelVisible = false
     isRefinePanelVisible = false
     isOpacityPanelVisible = false
@@ -75,11 +67,7 @@
       default:
         break
     }
-
-    
   }
-
-  
 
   $: {
     const rasterInfo = layer.info as RasterTileMetadata
@@ -96,6 +84,7 @@
     }
   }
 </script>
+
 <!-- {#await colorMapName}
   loading....
 {:then colorMapNameValue} 
@@ -139,6 +128,7 @@
     </p>
   </nav>
 </div>
+
 <style lang="scss">
   .raster-layer-container {
     .panel-content {
