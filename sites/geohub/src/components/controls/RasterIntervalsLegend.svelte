@@ -266,18 +266,16 @@
   <div class="is-divider separator mb-4" />
 
   {#each colorMapRows as colorMapRow}
-    {#key colorMapRows}
-      <IntervalsLegendColorMapRow
-        bind:colorMapRow
-        bind:colorMapName
-        bind:rowWidth
-        layer={layerConfig}
-        {colorPickerVisibleIndex}
-        on:clickColorPicker={handleColorPickerClick}
-        on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-        on:changeColorMap={handleParamsUpdate}
-        on:changeIntervalValues={handleChangeIntervalValues} />
-    {/key}
+    <IntervalsLegendColorMapRow
+      bind:colorMapRow
+      bind:colorMapName
+      bind:rowWidth
+      layer={layerConfig}
+      {colorPickerVisibleIndex}
+      on:clickColorPicker={handleColorPickerClick}
+      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
+      on:changeColorMap={handleParamsUpdate}
+      on:changeIntervalValues={handleChangeIntervalValues} />
   {/each}
 </div>
 
