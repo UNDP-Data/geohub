@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let headerTitle: string;
 	export let isExpanded = false;
+	export let fontSize : "small" | "medium" = "medium";
 </script>
 
 <ul class="accordion" aria-label="accordion">
@@ -14,9 +15,9 @@
 					isExpanded = !isExpanded;
 				}}
 			>
-				<p class="accordion-header">
-					{headerTitle}
-				</p>
+			<p class="accordion-header" style="font-size:{fontSize === 'small' ? 1 : 1.5 }rem">
+				{headerTitle}
+			</p>
 			</button>
 
 			<slot name="button" />
@@ -36,9 +37,7 @@
 	@use '../css/accordion.min.css';
 
 	.accordion {
-		padding: 5px;
-		padding-right: 10px;
-
+		padding: 5px 10px 5px 5px;
 		.accordion-title {
 			display: flex;
 			flex-direction: row;
@@ -53,7 +52,7 @@
 
 			.accordion-header {
 				padding-left: 2rem;
-				padding-right: 0rem;
+				padding-right: 0;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;

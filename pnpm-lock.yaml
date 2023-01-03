@@ -68,6 +68,63 @@ importers:
       typescript: 4.9.4
       vite: 4.0.2
 
+  apps/electricity-dashboard/package:
+    specifiers:
+      '@creativebulma/bulma-tooltip': ^1.2.0
+      '@sveltejs/adapter-auto': ^1.0.0
+      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/package': ^1.0.0
+      '@typescript-eslint/eslint-plugin': ^5.45.0
+      '@typescript-eslint/parser': ^5.45.0
+      '@undp-data/current-location': workspace:^0.0.1
+      '@undp-data/style-switcher': workspace:^0.0.1
+      '@undp-data/svelte-undp-design': workspace:^0.0.1
+      '@watergis/svelte-maplibre-menu': ^0.1.16
+      chroma-js: ^2.4.2
+      d3-format: ^3.1.0
+      eslint: ^8.28.0
+      eslint-config-prettier: ^8.5.0
+      eslint-plugin-svelte3: ^4.0.0
+      maplibre-gl: ^2.4.0
+      mime: ^3.0.0
+      prettier: ^2.8.0
+      prettier-plugin-svelte: ^2.8.1
+      svelte: ^3.54.0
+      svelte-check: ^2.9.2
+      svelte-range-slider-pips: ^2.1.1
+      svelte-vega: ^1.2.0
+      tslib: ^2.4.1
+      typescript: ^4.9.3
+      vite: ^4.0.0
+    dependencies:
+      '@creativebulma/bulma-tooltip': 1.2.0
+      '@undp-data/current-location': link:../../../packages/current-location/package
+      '@undp-data/style-switcher': link:../../../packages/style-switcher/package
+      '@undp-data/svelte-undp-design': link:../../../packages/svelte-undp-design/package
+      '@watergis/svelte-maplibre-menu': 0.1.16
+      chroma-js: 2.4.2
+      d3-format: 3.1.0
+      maplibre-gl: 2.4.0
+      mime: 3.0.0
+      svelte-range-slider-pips: 2.1.1
+      svelte-vega: 1.2.0
+    devDependencies:
+      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.1
+      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
+      '@sveltejs/package': 1.0.1_niwyv7xychq2ag6arq5eqxbomm
+      '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
+      '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
+      eslint: 8.30.0
+      eslint-config-prettier: 8.5.0_eslint@8.30.0
+      eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
+      prettier: 2.8.1
+      prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
+      svelte: 3.55.0
+      svelte-check: 2.10.3_svelte@3.55.0
+      tslib: 2.4.1
+      typescript: 4.9.4
+      vite: 4.0.3
+
   packages/current-location:
     specifiers:
       '@sveltejs/adapter-auto': ^1.0.0
@@ -608,7 +665,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
       '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
       '@undp-data/current-location': link:../../packages/current-location/package
-      '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard
+      '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard/package
       '@undp-data/style-switcher': link:../../packages/style-switcher/package
       '@undp-data/style-viewer': link:../../packages/style-viewer/package
       '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design/package
@@ -1975,6 +2032,13 @@ packages:
       source-map-support: 0.5.21
     dev: true
 
+  /@babel/runtime/7.20.6:
+    resolution: {integrity: sha512-Q+8MqP7TiHMWzSfwiJwXCjyf4GYA4Dgw3emg/7xmwsdLJOZUp+nMqcOwOzzYheuM1rhDu8FSj2l0aoMygEuXuA==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.13.11
+    dev: true
+
   /@babel/runtime/7.20.7:
     resolution: {integrity: sha512-UF0tvkUtxwAgZ5W/KrkHf0Rn0fdnLDU9ScxBrEVNUprE/MzirjK4MJUX1/BVDv00Sv8cljtukVK1aky++X1SjQ==}
     engines: {node: '>=6.9.0'}
@@ -2630,6 +2694,21 @@ packages:
       picomatch: 2.3.1
     dev: true
 
+  /@rollup/pluginutils/5.0.2_rollup@3.7.5:
+    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.0
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+      rollup: 3.7.5
+    dev: true
+
   /@rollup/pluginutils/5.0.2_rollup@3.8.1:
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
@@ -3097,8 +3176,8 @@ packages:
       glob: 7.2.3
       glob-promise: 4.2.2_glob@7.2.3
       magic-string: 0.26.7
-      rollup: 3.8.1
-      rollup-plugin-external-globals: 0.7.1_rollup@3.8.1
+      rollup: 3.7.5
+      rollup-plugin-external-globals: 0.7.1_rollup@3.7.5
       slash: 3.0.0
       typescript: 4.9.4
       vite: 4.0.2_sass@1.57.1
@@ -3137,8 +3216,8 @@ packages:
       glob: 7.2.3
       glob-promise: 4.2.2_glob@7.2.3
       magic-string: 0.26.7
-      rollup: 3.8.1
-      rollup-plugin-external-globals: 0.7.1_rollup@3.8.1
+      rollup: 3.7.5
+      rollup-plugin-external-globals: 0.7.1_rollup@3.7.5
       slash: 3.0.0
       typescript: 4.9.4
       vite: 4.0.3_sass@1.57.1
@@ -3700,8 +3779,8 @@ packages:
     dependencies:
       '@storybook/client-logger': 6.5.15
       '@storybook/instrumenter': 6.5.15_biqbaboplfbrettd7655fr4n2y
-      '@testing-library/dom': 8.19.1
-      '@testing-library/user-event': 13.5.0_ua4wuun3fnehcjqtqj2e2ldgpe
+      '@testing-library/dom': 8.19.0
+      '@testing-library/user-event': 13.5.0_aaq3sbffpfe3jnxzm2zngsddei
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - react
@@ -3820,7 +3899,7 @@ packages:
       svelte: 3.55.0
       tiny-glob: 0.2.9
       undici: 5.14.0
-      vite: 4.0.3_sass@1.57.1
+      vite: 4.0.3
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3873,7 +3952,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.0
       svelte-hmr: 0.15.1_svelte@3.55.0
-      vite: 4.0.3_sass@1.57.1
+      vite: 4.0.3
       vitefu: 0.2.4_vite@4.0.3
     transitivePeerDependencies:
       - supports-color
@@ -3884,6 +3963,20 @@ packages:
     engines: {node: '>=14.16'}
     dependencies:
       defer-to-connect: 2.0.1
+    dev: true
+
+  /@testing-library/dom/8.19.0:
+    resolution: {integrity: sha512-6YWYPPpxG3e/xOo6HIWwB/58HukkwIVTOaZ0VwdMVjhRUX/01E4FtQbck9GazOOj7MXHc5RBzMrU86iBJHbI+A==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@babel/code-frame': 7.18.6
+      '@babel/runtime': 7.20.6
+      '@types/aria-query': 4.2.2
+      aria-query: 5.1.3
+      chalk: 4.1.2
+      dom-accessibility-api: 0.5.14
+      lz-string: 1.4.4
+      pretty-format: 27.5.1
     dev: true
 
   /@testing-library/dom/8.19.1:
@@ -3925,14 +4018,14 @@ packages:
       svelte: 3.55.0
     dev: true
 
-  /@testing-library/user-event/13.5.0_ua4wuun3fnehcjqtqj2e2ldgpe:
+  /@testing-library/user-event/13.5.0_aaq3sbffpfe3jnxzm2zngsddei:
     resolution: {integrity: sha512-5Kwtbo3Y/NowpkbRuSepbyMFkZmHgD+vPzYB/RJ4oxt5Gj/avFFBYjhw27cqSVPVw/3a67NK1PbiIr9k4Gwmdg==}
     engines: {node: '>=10', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@babel/runtime': 7.20.7
-      '@testing-library/dom': 8.19.1
+      '@babel/runtime': 7.20.6
+      '@testing-library/dom': 8.19.0
     dev: true
 
   /@tootallnate/once/2.0.0:
@@ -3954,6 +4047,10 @@ packages:
 
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
+    dev: true
+
+  /@types/aria-query/4.2.2:
+    resolution: {integrity: sha512-HnYpAE1Y6kRyKM/XkEuiRQhTHvkzMBurTHnpFLYLBGPIylZNPs9jJcuOOYWxPLJCSEtmZT0Y8rHDokKN7rRTig==}
     dev: true
 
   /@types/aria-query/5.0.1:
@@ -7949,7 +8046,7 @@ packages:
     resolution: {integrity: sha512-prXSYk799h3GY3iOWnC6ZigYzMPjxN2svgjJ9shk7oMadSNX3wXy0B6F32PMJv7qtMnrIbUxoEHzbutvxR2LBQ==}
     engines: {node: '>=6.0.0', npm: '>=6.0.0', yarn: '>=1.0.0'}
     dependencies:
-      '@babel/runtime': 7.20.7
+      '@babel/runtime': 7.20.6
       app-root-dir: 1.0.2
       core-js: 3.26.1
       dotenv: 8.6.0
@@ -8996,7 +9093,7 @@ packages:
     resolution: {integrity: sha512-Sz2Lkdxz6F2Pgnpi9U5Ng/WdWAUZxmHrNPoVlm3aAemxoy2Qy7LGjQg4uf8qKelDAUW94F4np3iH2YPf2qefcQ==}
     engines: {node: '>=10'}
     dependencies:
-      '@babel/runtime': 7.20.7
+      '@babel/runtime': 7.20.6
     dev: true
 
   /posix-character-classes/0.1.1:
@@ -9381,7 +9478,7 @@ packages:
   /regenerator-transform/0.15.1:
     resolution: {integrity: sha512-knzmNAcuyxV+gQCufkYcvOqX/qIIfHLv0u5x79kRxuGojfYVky1f15TzZEu2Avte8QGepvUNTnLskf8E6X6Vyg==}
     dependencies:
-      '@babel/runtime': 7.20.7
+      '@babel/runtime': 7.20.6
     dev: true
 
   /regex-not/1.0.2:
@@ -9564,16 +9661,16 @@ packages:
     resolution: {integrity: sha512-ndEIpszUHiG4HtDsQLeIuMvRsDnn8c8rYStabochtUeCvfuvNptb5TUbVD68LRAILPX7p9nqQGh4xJgn3EHS/g==}
     dev: true
 
-  /rollup-plugin-external-globals/0.7.1_rollup@3.8.1:
+  /rollup-plugin-external-globals/0.7.1_rollup@3.7.5:
     resolution: {integrity: sha512-3U2OBhCa/D57P2SA9fx1CGS1xi9h7x7L3+nnAJ0563nIucQysHQdebfKYoI+2WZVkRdVuZKh4M+rgoF0B5W9Ag==}
     peerDependencies:
       rollup: ^2.25.0 || ^3.3.0
     dependencies:
-      '@rollup/pluginutils': 5.0.2_rollup@3.8.1
+      '@rollup/pluginutils': 5.0.2_rollup@3.7.5
       estree-walker: 3.0.1
       is-reference: 3.0.0
       magic-string: 0.26.7
-      rollup: 3.8.1
+      rollup: 3.7.5
     dev: true
 
   /rollup/3.7.5:
@@ -11678,7 +11775,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.3_sass@1.57.1
+      vite: 4.0.3
     dev: true
 
   /vitest/0.26.2_jsdom@20.0.3+sass@1.57.1:

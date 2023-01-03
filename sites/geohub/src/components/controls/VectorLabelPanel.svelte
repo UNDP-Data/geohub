@@ -31,6 +31,7 @@
   let targetLayer = layer
   let targetLayerId = layer.id
   let updateLegend = () => undefined
+  let isLabelCreated = false
 
   onMount(() => {
     initialiseTextLabel()
@@ -41,28 +42,12 @@
       if (targetLayer.children?.length > 0) {
         targetLayer = targetLayer.children[0]
         targetLayerId = targetLayer.id
+
+        const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
+        textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
+        fireLabelChanged()
       } else {
         targetLayerId = `${parentLayerId}-label`
-        const childLayer: SymbolLayerSpecification = {
-          id: targetLayerId,
-          type: LayerTypes.SYMBOL,
-          source: style['source'],
-          'source-layer': style['source-layer'],
-          minzoom: style.minzoom,
-          maxzoom: style.maxzoom,
-          layout: {
-            visibility: 'visible',
-            'text-size': 16,
-            'text-max-width': 10,
-          },
-          paint: {
-            'text-color': 'rgba(0,0,0,1)',
-            'text-halo-color': 'rgba(255,255,255,1)',
-            'text-halo-width': 1,
-          },
-        }
-
-        $map.addLayer(childLayer)
 
         if (!layer.children) {
           layer.children = []
@@ -90,10 +75,11 @@
       $map.setPaintProperty(targetLayerId, 'text-color', textColor ?? 'rgba(0,0,0,1)')
       $map.setPaintProperty(targetLayerId, 'text-halo-color', textHaloColor ?? 'rgba(255,255,255,1)')
       $map.setPaintProperty(targetLayerId, 'text-halo-width', textHaloWidth ?? 1)
+
+      const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
+      textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
+      fireLabelChanged()
     }
-    const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
-    textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
-    fireLabelChanged()
   }
 
   const onStyleChange = () => {
@@ -101,14 +87,15 @@
   }
 
   const fireLabelChanged = () => {
-    let isCreated = false
     if (textFieldValue) {
-      isCreated = true
+      isLabelCreated = true
+    } else {
+      isLabelCreated = false
     }
     $map.fire('label:changed', {
       parentId: parentLayerId,
       layerId: targetLayer.id,
-      isCreated: isCreated,
+      isCreated: isLabelCreated,
     })
   }
 </script>
@@ -117,9 +104,9 @@
   <div
     class="action"
     data-testid="vector-label-panel-container">
-    <div class="columns is-vcentered">
-      <div class="column is-2">Property:&nbsp;</div>
-      <div class="column">
+    <div class="columns">
+      <div class="column is-10 m-auto">
+        <span>Property:&nbsp;</span>
         <TextField
           on:change={fireLabelChanged}
           bind:layer={targetLayer}
@@ -127,90 +114,103 @@
           bind:textFieldValue
           bind:decimalPosition />
       </div>
-      <div class="column pl-0 pr-0">
-        <div class="field">
-          <input
-            id="switchAdvancedSettings"
-            type="checkbox"
-            name="switchSmall"
-            class="switch is-small is-rounded is-info"
-            bind:checked={isAdvancedSettings} />
-          <label
-            for="switchAdvancedSettings"
-            class="is-size-6">Advanced Settings</label>
+    </div>
+    {#if isLabelCreated}
+      {#if fieldType && ['number', 'float'].includes(fieldType)}
+        <div
+          class="column is-7 m-auto"
+          transition:fade>
+          <div class="has-text-centered">Number of Decimal Places</div>
+          <div class="is-flex is-justify-content-center">
+            <NumberFormat
+              on:change={onStyleChange}
+              bind:decimalPosition />
+          </div>
+        </div>
+      {/if}
+      <div class="columns mb-0 pb-0">
+        <div class="column is-6">
+          <div class="has-text-centered pb-2">Font Color</div>
+          <div class="is-flex is-justify-content-center">
+            <TextColor
+              on:change={onStyleChange}
+              bind:layer={targetLayer} />
+          </div>
+        </div>
+        <div class="column is-6">
+          <div class="has-text-centered">Font Size</div>
+          <div class="is-flex is-justify-content-center">
+            <TextSize
+              on:change={onStyleChange}
+              bind:layer={targetLayer} />
+          </div>
         </div>
       </div>
-    </div>
 
-    {#if fieldType && ['number', 'float'].includes(fieldType)}
-      <div
-        class="columns is-vcentered is-flex is-justify-content-center"
-        transition:fade>
-        <div class="column">Number of Decimal Places</div>
-        <div class="column ">
-          <NumberFormat
-            on:change={onStyleChange}
-            bind:decimalPosition />
+      <div class="columns mb-0 pb-0">
+        <div class="column is-6">
+          <div class="has-text-centered pb-2">Halo Color</div>
+          <div class="is-flex is-justify-content-center">
+            <TextHaloCalor
+              on:change={onStyleChange}
+              bind:layer={targetLayer} />
+          </div>
+        </div>
+        <div class="column is-6">
+          <div class="has-text-centered">Halo Size</div>
+          <div class="is-flex is-justify-content-center">
+            <TextHaloWidth
+              on:change={onStyleChange}
+              bind:layer={targetLayer} />
+          </div>
         </div>
       </div>
-    {/if}
-    <div class="columns is-vcentered is-flex is-justify-content-center mb-0 pb-0">
-      <div class="column pr-0">Font Color</div>
-      <div class="column is-flex is-justify-content-center">
-        <TextColor
-          on:change={onStyleChange}
-          bind:layer={targetLayer} />
-      </div>
-      <div class="column">Font Size</div>
-      <div class="column is-flex is-justify-content-center">
-        <TextSize
-          on:change={onStyleChange}
-          bind:layer={targetLayer} />
-      </div>
-    </div>
-    <div class="columns is-vcentered is-flex is-justify-content-center mb-0 pb-0">
-      <div class="column pr-0">Halo Color</div>
-      <div class="column is-flex is-justify-content-center">
-        <TextHaloCalor
-          on:change={onStyleChange}
-          bind:layer={targetLayer} />
-      </div>
-      <div class="column">Halo Size</div>
-      <div class="column is-flex is-justify-content-center">
-        <TextHaloWidth
-          on:change={onStyleChange}
-          bind:layer={targetLayer} />
-      </div>
-    </div>
 
-    {#if isAdvancedSettings}
-      <div
-        class="advanced-settings-container pb-4"
-        transition:slide={{ duration: 750 }}>
-        <div class="columns">
-          {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
+      <div class="columns advanced-settings">
+        <div class="column is-6 m-auto">
+          <div class="field">
+            <input
+              id="switchAdvancedSettings"
+              type="checkbox"
+              name="switchSmall"
+              class="switch is-small is-rounded is-info"
+              bind:checked={isAdvancedSettings} />
+            <label
+              for="switchAdvancedSettings"
+              class="is-size-6">Advanced Settings</label>
+          </div>
+        </div>
+      </div>
+
+      {#if isAdvancedSettings}
+        <div
+          class="advanced-settings-container pb-4"
+          transition:slide={{ duration: 750 }}>
+          <div class="columns">
+            {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
+              <div class="column">
+                <div class="has-text-centered pb-2">Label Position Relative to Geometry</div>
+                <div class="is-flex is-justify-content-center">
+                  <SymbolPlacement
+                    on:change={onStyleChange}
+                    bind:layer={targetLayer} />
+                </div>
+              </div>
+            {/if}
+
             <div class="column">
-              <div class="has-text-centered pb-2">Label Position Relative to Geometry</div>
-              <div class="is-flex is-justify-content-center">
-                <SymbolPlacement
+              <div class="has-text-centered">Maximum Width Text Wrap</div>
+              <div
+                class="is-flex is-justify-content-center"
+                style="position: relative;">
+                <TextMaxWidth
                   on:change={onStyleChange}
                   bind:layer={targetLayer} />
               </div>
             </div>
-          {/if}
-
-          <div class="column">
-            <div class="has-text-centered">Maximum Width Text Wrap</div>
-            <div
-              class="is-flex is-justify-content-center"
-              style="position: relative;">
-              <TextMaxWidth
-                on:change={onStyleChange}
-                bind:layer={targetLayer} />
-            </div>
           </div>
         </div>
-      </div>
+      {/if}
     {/if}
   </div>
 {/if}

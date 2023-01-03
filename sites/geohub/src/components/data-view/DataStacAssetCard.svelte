@@ -42,7 +42,8 @@
 
 <Accordion
   headerTitle={asset.title}
-  bind:isExpanded>
+  bind:isExpanded
+  fontSize="small">
   <div slot="button">
     {#if !isExpanded}
       <AddLayerButton
