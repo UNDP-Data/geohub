@@ -5,12 +5,12 @@
   import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { onDestroy, onMount } from 'svelte'
+  import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
 
   export let layer: Layer
-  let bandName = ''
   let hasLayerLabel = false
 
   onMount(() => {
@@ -28,14 +28,6 @@
   }
 
   const layerStyle = getLayerStyle($map, layer.id)
-  if (layerStyle.type === 'raster') {
-    const rasterInfo = layer.info as RasterTileMetadata
-    if (rasterInfo?.isMosaicJson === true) {
-      bandName = 'Mosaic'
-    } else {
-      bandName = `B${rasterInfo?.active_band_no}`
-    }
-  }
 
   let icon = LayerIconTypes.find((icon) => icon.id === layerStyle.type)
   if (layerStyle.type !== LayerTypes.RASTER) {
@@ -68,7 +60,7 @@
         {/if}
       </span>
       {#if layerStyle.type === 'raster'}
-        <span class="tag is-success">{bandName}</span>
+        <RasterBandSelector {layer} />
       {/if}
       <div class="layer-name pl-1">
         <div>
