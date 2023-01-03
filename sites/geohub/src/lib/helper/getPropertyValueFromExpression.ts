@@ -6,7 +6,7 @@ export const getPropertyValueFromExpression = (
   type: 'layout' | 'paint' = 'layout',
 ) => {
   let value = ''
-  if (style[type] && style[type][propertyName]) {
+  if (style && style[type] && style[type][propertyName]) {
     const values: any = style[type][propertyName]
     for (let i = 0; i < values.length; i++) {
       const expression = values[i]

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LayerSpecification } from 'maplibre-gl'
+  import type { LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl'
   import { createEventDispatcher } from 'svelte'
 
   import { LayerTypes } from '$lib/constants'
@@ -16,7 +16,7 @@
   const dispatch = createEventDispatcher()
   const layerId = layer.id
   const propertyName = 'text-field'
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+  let style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let showEmptyFields = true
 
@@ -24,6 +24,7 @@
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
+    if (!$map.getLayer(layerId)) return
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
       let propertyValue: any = ['get', textFieldValue]
@@ -92,10 +93,37 @@
   }
 
   const setTextField = () => {
-    if (!style) return
+    if (!style && !textFieldValue) return
+    if (!style && layer.parentId) {
+      const parentStyle = getLayerStyle($map, layer.parentId)
+      const childLayer: SymbolLayerSpecification = {
+        id: layerId,
+        type: LayerTypes.SYMBOL,
+        source: parentStyle['source'],
+        'source-layer': parentStyle['source-layer'],
+        minzoom: parentStyle.minzoom,
+        maxzoom: parentStyle.maxzoom,
+        layout: {
+          visibility: 'visible',
+          'text-size': 16,
+          'text-max-width': 10,
+        },
+        paint: {
+          'text-color': 'rgba(0,0,0,1)',
+          'text-halo-color': 'rgba(255,255,255,1)',
+          'text-halo-width': 1,
+        },
+      }
+      style = childLayer
+    }
+
     if (style.type !== LayerTypes.SYMBOL) return
 
     if (textFieldValue) {
+      if (!$map.getLayer(layerId)) {
+        $map.addLayer(style)
+      }
+
       setDesimalPosition()
 
       // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
@@ -103,10 +131,16 @@
       $map.setLayoutProperty(layerId, 'text-radial-offset', 0.5)
       $map.setLayoutProperty(layerId, 'text-justify', 'auto')
     } else {
-      $map.setLayoutProperty(layerId, propertyName, undefined)
-      $map.setLayoutProperty(layerId, 'text-variable-anchor', undefined)
-      $map.setLayoutProperty(layerId, 'text-radial-offset', undefined)
-      $map.setLayoutProperty(layerId, 'text-justify', undefined)
+      if (layer.parentId) {
+        if ($map.getLayer(layerId)) {
+          $map.removeLayer(layerId)
+        }
+      } else {
+        $map.setLayoutProperty(layerId, propertyName, undefined)
+        $map.setLayoutProperty(layerId, 'text-variable-anchor', undefined)
+        $map.setLayoutProperty(layerId, 'text-radial-offset', undefined)
+        $map.setLayoutProperty(layerId, 'text-justify', undefined)
+      }
     }
 
     dispatch('change', {
