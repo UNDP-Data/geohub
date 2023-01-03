@@ -59,8 +59,10 @@
         legendType = DynamicLayerLegendTypes.INTERVALS
       }
     } else {
+      console.log('first', colorMapName)
       // continuous
-      colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+      //colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+      console.log('second', colorMapName)
     }
     if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
