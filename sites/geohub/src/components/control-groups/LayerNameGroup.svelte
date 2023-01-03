@@ -1,5 +1,8 @@
 <script lang="ts">
-  import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
+  import DeleteButton from '$components/controls/DeleteButton.svelte'
+  import VisibilityButton from '$components/controls/VisibilityButton.svelte'
+  import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte'
+  import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte'
   import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
@@ -56,30 +59,27 @@
 <div class="layer-header">
   <div>
     <div class="layer-header-name">
-      <div style="display: flex; align-items: center">
-        <i
-          class="{icon.icon} sm"
-          style="color: {icon.color};" />
-        <span style="padding-left: 5px;">
-          {#if hasLayerLabel}
-            <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
-          {/if}
-        </span>
-      </div>
+      <i
+        class="{icon.icon} sm"
+        style="color: {icon.color};" />
+      <span style="padding-left: 5px;">
+        {#if hasLayerLabel}
+          <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
+        {/if}
+      </span>
       {#if layerStyle.type === 'raster'}
-        <div style="display: flex; align-items: center">
-          <span class="tag is-success">{bandName}</span>
-        </div>
+        <span class="tag is-success">{bandName}</span>
       {/if}
-      <div class="layer-name">
+      <div class="layer-name pl-1">
         <div>
-          <span style="padding-left: 5px;">
-            {clean(layer.name)}
-          </span>
+          {clean(layer.name)}
         </div>
       </div>
-      <div>
-        <LayerControlGroup {layer} />
+      <div class="group">
+        <DataCardInfoButton {layer} />
+        <VisibilityButton {layer} />
+        <DeleteButton {layer} />
+        <ZoomToLayerButton {layer} />
       </div>
     </div>
   </div>
@@ -105,23 +105,9 @@
         width: 100%;
       }
     }
-  }
 
-  .label {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    color: #fff;
-  }
-
-  .description,
-  .unit {
-    font-weight: normal;
-    color: #fff;
-    margin-bottom: 10px;
-  }
-
-  .description {
-    margin-bottom: 15px;
+    .group {
+      display: flex;
+    }
   }
 </style>
