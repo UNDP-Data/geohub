@@ -1,13 +1,9 @@
 <script lang="ts">
   import type { LayerSpecification } from 'maplibre-gl'
-
   import VectorSymbolContainer from '$components/controls/VectorSymbolContainer.svelte'
   import VectorLineContainer from '$components/controls/VectorLineContainer.svelte'
   import VectorPolygonContainer from '$components/controls/VectorPolygonContainer.svelte'
-  import HeatmapColor from '$components/controls/vector-styles/HeatmapColor.svelte'
-  import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte'
-  import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte'
-  import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte'
+  import VectorHeatmapContainer from './VectorHeatmapContainer.svelte'
   import { ClassificationMethodTypes, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -56,40 +52,7 @@
         bind:legendType
         bind:defaultColor />
     {:else if style.type === LayerTypes.HEATMAP}
-      <div class="columns">
-        <div class="column">
-          <div class="has-text-centered pb-2">Heatmap Color</div>
-          <div>
-            <HeatmapColor {layer} />
-          </div>
-        </div>
-        <div class="column">
-          <div class="columns">
-            <div class="column pb-0">
-              <div class="has-text-centered pb-2">Heatmap Intensity</div>
-              <div class="is-flex is-justify-content-center">
-                <HeatmapIntensity {layer} />
-              </div>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column pb-0">
-              <div class="has-text-centered pb-2">Heatmap Radius</div>
-              <div class="is-flex is-justify-content-center">
-                <HeatmapRadius {layer} />
-              </div>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column pb-0">
-              <div class="has-text-centered pb-2">Heatmap Weight</div>
-              <div class="is-flex is-justify-content-center">
-                <HeatmapWeight {layer} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <VectorHeatmapContainer bind:layer />
     {/if}
   </div>
 {/if}
