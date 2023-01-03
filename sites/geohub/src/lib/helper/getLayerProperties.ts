@@ -7,8 +7,13 @@ export const getLayerProperties = (map: Map, layer: Layer, onlyNumber = true) =>
   // @ts-ignore
   const vectorInfo: VectorLayerMetadata[] = layer.info.json.vector_layers
 
+  let layerId = layer.id
+  if (layer.parentId) {
+    layerId = layer.parentId
+  }
+
   const vectorLayerMeta: VectorLayerMetadata = JSON.parse(
-    JSON.stringify(vectorInfo.find((l) => l.id === getLayerStyle(map, layer.id)['source-layer'])),
+    JSON.stringify(vectorInfo.find((l) => l.id === getLayerStyle(map, layerId)['source-layer'])),
   )
 
   if (onlyNumber === true) {
@@ -19,7 +24,7 @@ export const getLayerProperties = (map: Map, layer: Layer, onlyNumber = true) =>
       // @ts-ignore
     } = layer.info.json.tilestats
     if (tilestats) {
-      const vectorLayerStats = tilestats.layers.find((l) => l.layer === getLayerStyle(map, layer.id)['source-layer'])
+      const vectorLayerStats = tilestats.layers.find((l) => l.layer === getLayerStyle(map, layerId)['source-layer'])
       vectorLayerStats.attributes.forEach((attr) => {
         if (attr.type.toLowerCase() !== 'number') {
           delete vectorLayerMeta.fields[attr.attribute]
