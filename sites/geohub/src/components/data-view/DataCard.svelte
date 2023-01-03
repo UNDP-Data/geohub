@@ -127,6 +127,7 @@
       const assets = f.assets
       const itemProperties = f.properties
       const collectionId = f.collection
+      assetList = []
       Object.keys(assets).forEach((assetName) => {
         const asset = assets[assetName]
         if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
