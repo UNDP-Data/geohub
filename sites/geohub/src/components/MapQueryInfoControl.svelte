@@ -503,7 +503,7 @@
   }
   :global(.maplibregl-popup-close-button) {
     top: 15px !important;
-    right: 15px !important;
+    right: 10px !important;
     height: 30px;
     width: 30px;
   }
