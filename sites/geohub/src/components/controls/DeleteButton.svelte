@@ -58,8 +58,6 @@
     class="container icon-selected"
     tabindex="0"
     role="button"
-    title="Delete layer"
-    aria-label="Delete layer"
     on:click={() => (confirmDeleteLayerDialogVisible = true)}
     on:keydown={handleKeyDown}>
     <i class="fa-solid fa-trash fa-sm" />
