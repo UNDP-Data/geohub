@@ -5,12 +5,8 @@
 
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorLineSimple from '$components/controls/VectorLineSimple.svelte'
-  import VectorLineAdvanced from '$components/controls/VectorLineAdvanced.svelte'
-  import {
-    ClassificationMethodTypes,
-    VectorLayerLineLegendTypes,
-    VectorLayerLineLegendApplyToTypes,
-  } from '$lib/constants'
+  import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
+  import { ClassificationMethodTypes, VectorLegendTypes, VectorApplyToTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -18,21 +14,21 @@
   import chroma from 'chroma-js'
 
   export let layer: Layer
-  export let colorMapName
+  export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   export let legendType: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if ($map.getPaintProperty(layer.id, 'line-color')?.type === 'interval') {
-    legendType = VectorLayerLineLegendTypes.ADVANCED
-    applyToOption = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+    legendType = VectorLegendTypes.ADVANCED
+    applyToOption = VectorApplyToTypes.COLOR
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
   } else if ($map.getPaintProperty(layer.id, 'line-width')?.type === 'interval') {
-    legendType = VectorLayerLineLegendTypes.ADVANCED
-    applyToOption = VectorLayerLineLegendApplyToTypes.LINE_WIDTH
+    legendType = VectorLegendTypes.ADVANCED
+    applyToOption = VectorApplyToTypes.SIZE
   }
 
   const getLineColor = (): string => {
@@ -78,7 +74,7 @@
 
   onMount(() => {
     // set default values
-    legendType = legendType ? legendType : VectorLayerLineLegendTypes.SIMPLE
+    legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
 
@@ -90,10 +86,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (legendType === VectorLayerLineLegendTypes.SIMPLE) {
-      legendType = VectorLayerLineLegendTypes.ADVANCED
+    if (legendType === VectorLegendTypes.SIMPLE) {
+      legendType = VectorLegendTypes.ADVANCED
     } else {
-      legendType = VectorLayerLineLegendTypes.SIMPLE
+      legendType = VectorLegendTypes.SIMPLE
     }
   }
 
@@ -131,15 +127,15 @@
   class="columns"
   data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if legendType === VectorLayerLineLegendTypes.SIMPLE}
+    {#if legendType === VectorLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorLineSimple
           bind:layer
           bind:defaultColor />
       </div>
-    {:else if legendType === VectorLayerLineLegendTypes.ADVANCED}
+    {:else if legendType === VectorLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorLineAdvanced
+        <VectorLegendAdvanced
           bind:layer
           bind:applyToOption
           bind:layerMin
@@ -171,7 +167,7 @@
       <br />
     {/if}
 
-    {#if legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         class="toggle-container icon m-1"
         role="button"
@@ -188,7 +184,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && legendType === VectorLayerLineLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if showTooltip && legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"

@@ -5,12 +5,8 @@
 
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
-  import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
-  import {
-    ClassificationMethodTypes,
-    VectorLayerSymbolLegendTypes,
-    VectorLayerSymbolLegendApplyToTypes,
-  } from '$lib/constants'
+  import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
+  import { ClassificationMethodTypes, VectorLegendTypes, VectorApplyToTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -19,17 +15,17 @@
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   export let legendType: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if ($map.getPaintProperty(layer.id, 'icon-color')?.type === 'interval') {
-    legendType = VectorLayerSymbolLegendTypes.ADVANCED
-    applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+    legendType = VectorLegendTypes.ADVANCED
+    applyToOption = VectorApplyToTypes.COLOR
   } else if ($map.getLayoutProperty(layer.id, 'icon-size')?.type === 'interval') {
-    legendType = VectorLayerSymbolLegendTypes.ADVANCED
-    applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_SIZE
+    legendType = VectorLegendTypes.ADVANCED
+    applyToOption = VectorApplyToTypes.SIZE
   }
 
   const getIconColor = (): string => {
@@ -73,7 +69,7 @@
   ).init()
 
   onMount(() => {
-    legendType = legendType ? legendType : VectorLayerSymbolLegendTypes.SIMPLE
+    legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
   })
 
   const handleLegendToggleClick = () => {
@@ -84,10 +80,10 @@
       isLegendSwitchAnimate = false
     }, 400)
 
-    if (legendType === VectorLayerSymbolLegendTypes.SIMPLE) {
-      legendType = VectorLayerSymbolLegendTypes.ADVANCED
+    if (legendType === VectorLegendTypes.SIMPLE) {
+      legendType = VectorLegendTypes.ADVANCED
     } else {
-      legendType = VectorLayerSymbolLegendTypes.SIMPLE
+      legendType = VectorLegendTypes.SIMPLE
     }
   }
 
@@ -120,15 +116,15 @@
   class="columns"
   data-testid="symbol-view-container">
   <div class="column is-10">
-    {#if legendType === VectorLayerSymbolLegendTypes.SIMPLE}
+    {#if legendType === VectorLegendTypes.SIMPLE}
       <div transition:slide>
         <VectorSymbolSimple
           bind:layer
           bind:defaultColor />
       </div>
-    {:else if legendType === VectorLayerSymbolLegendTypes.ADVANCED}
+    {:else if legendType === VectorLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorSymbolAdvanced
+        <VectorLegendAdvanced
           bind:layer
           bind:applyToOption
           bind:layerMin
@@ -159,7 +155,7 @@
     </div>
     <br />
 
-    {#if legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         role="button"
         class="toggle-container icon m-1"
@@ -176,7 +172,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && legendType === VectorLayerSymbolLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if showTooltip && legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"
