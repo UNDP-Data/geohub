@@ -506,5 +506,6 @@
     right: 10px !important;
     height: 30px;
     width: 30px;
+    font-size: 25px;
   }
 </style>
