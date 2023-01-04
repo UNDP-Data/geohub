@@ -105,9 +105,9 @@
   <div
     class="action"
     data-testid="vector-label-panel-container">
-    <div class="columns is-10 mb-0 is-vcentered is-justify-content-space-around">
-      <div class="column is-2 pl-0">Property:&nbsp;</div>
-      <div class="column is-8">
+    <div class="columns is-10 mb-0 is-vcentered is-justify-content-space-between">
+      <div class="column is-3">Property:&nbsp;</div>
+      <div class="column pl-0 pr-5 is-7">
         <TextField
           on:change={fireLabelChanged}
           bind:layer={targetLayer}
