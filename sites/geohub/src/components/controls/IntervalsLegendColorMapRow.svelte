@@ -112,8 +112,8 @@
   }
 </script>
 
-<div class="tile is-ancestor p-2">
-  <div class="tile is-2 pl-4">
+<div class="columns is-mobile p-0 m-0 py-1">
+  <div class="column is-2 p-0 m-0">
     <div
       alt="Color Map Control"
       title="Color Map Control"
@@ -136,7 +136,7 @@
       </div>
     {/if}
   </div>
-  <div class="tile px-2">
+  <div class="column p-0 m-0">
     <input
       width="{rowWidth + 20}px"
       class="number-input"
@@ -147,8 +147,8 @@
       required />
   </div>
   {#if colorMapRow.end}
-    <div class="is-3 tile"><p style="margin-left: {rowWidth + 5}px">—</p></div>
-    <div class="tile px-2">
+    <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+    <div class="column p-0 m-0">
       <input
         width="{rowWidth + 20}px"
         class="number-input"

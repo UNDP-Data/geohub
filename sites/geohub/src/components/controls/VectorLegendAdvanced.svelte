@@ -459,7 +459,7 @@
 <div
   class="advanced-container"
   data-testid="advanced-container">
-  <div class="columns">
+  <div class="columns is-mobile">
     <div class="column">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
@@ -484,7 +484,7 @@
   </div>
 
   {#if hasUniqueValues === false}
-    <div class="columns">
+    <div class="columns is-mobile">
       <div class="column">
         <div class="has-text-centered pb-2">Classification</div>
         <div class="select is-normal">

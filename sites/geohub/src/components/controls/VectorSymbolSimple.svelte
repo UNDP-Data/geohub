@@ -31,7 +31,7 @@
 <div
   class="symbol-simple-container"
   data-testid="symbol-simple-container">
-  <div class="columns icon-size">
+  <div class="columns icon-size is-mobile">
     <div class="column is-4 icon-image">
       <div class="has-text-centered pb-2">Icon</div>
       <div class="is-flex is-justify-content-center bring-to-front">
@@ -53,7 +53,7 @@
     style="margin-right: -56px;" />
 
   <div
-    class="columns icon-color-overlap"
+    class="columns icon-color-overlap is-mobile"
     style="margin-right: -56px;">
     <div class="column color">
       <div class="has-text-centered pb-2">Color</div>
@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <div class="columns advanced-settings">
+  <div class="columns advanced-settings is-mobile">
     <div class="column">
       <div class="field">
         <input

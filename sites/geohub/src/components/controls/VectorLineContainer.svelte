@@ -124,7 +124,7 @@
 </script>
 
 <div
-  class="columns"
+  class="columns is-mobile"
   data-testid="line-view-container">
   <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
     {#if legendType === VectorLegendTypes.SIMPLE}

@@ -11,7 +11,7 @@
 <div
   class="line-simple-container"
   data-testid="polygon-simple-container">
-  <div class="columns">
+  <div class="columns is-mobile">
     <div class="column is-5">
       <div class="has-text-centered pb-2">Fill Color</div>
       <div class="is-flex is-justify-content-center bring-to-front">

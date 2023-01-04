@@ -113,7 +113,7 @@
 </script>
 
 <div
-  class="columns"
+  class="columns is-mobile"
   data-testid="symbol-view-container">
   <div class="column is-10">
     {#if legendType === VectorLegendTypes.SIMPLE}
