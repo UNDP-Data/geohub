@@ -330,7 +330,9 @@
     <div
       hidden={!$indicatorProgress}
       class="loader-container">
-      <Loader />
+      <Loader
+        class="m-auto"
+        size="small" />
     </div>
   {/if}
 </div>
@@ -338,11 +340,8 @@
 <style lang="scss">
   .data-view-container {
     .loader-container {
-      position: absolute;
-      z-index: 10;
-      top: 25%;
-      left: 35%;
-      background-color: white;
+      width: fit-content;
+      margin: 0 auto;
     }
   }
 </style>

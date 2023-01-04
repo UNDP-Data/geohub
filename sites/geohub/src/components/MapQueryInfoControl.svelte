@@ -362,7 +362,7 @@
   <div class="contents">
     {#if showProgress}
       <div class="loader-container">
-        <Loader />
+        <Loader size="small" />
       </div>
     {:else}
       <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>

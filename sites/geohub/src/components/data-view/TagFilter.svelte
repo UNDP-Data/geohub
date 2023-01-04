@@ -135,7 +135,7 @@
   <div
     hidden={tags && Object.keys(tags).length > 0}
     class="loader-container">
-    <Loader />
+    <Loader size="small" />
   </div>
 </div>
 

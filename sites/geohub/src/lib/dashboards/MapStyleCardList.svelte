@@ -243,7 +243,7 @@
 
 {#if isLoading}
   <div class="align-center">
-    <Loader />
+    <Loader size="small" />
   </div>
 {:else if styleList && styleList.length > 0}
   {#key styleList}

@@ -99,7 +99,7 @@
 
 <div class="map-container">
   {#if isLoading}
-    <div class="loader-container"><Loader /></div>
+    <div class="loader-container"><Loader size="small" /></div>
   {/if}
 
   {#if !previewImageUrl}
