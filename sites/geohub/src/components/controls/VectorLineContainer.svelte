@@ -14,9 +14,9 @@
   import chroma from 'chroma-js'
 
   export let layer: Layer
-  export let colorMapName
+  export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: string = VectorApplyToTypes.COLOR
+  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   export let legendType: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

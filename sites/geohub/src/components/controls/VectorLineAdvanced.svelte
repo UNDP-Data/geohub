@@ -37,7 +37,7 @@
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
-  export let applyToOption: string
+  export let applyToOption: VectorApplyToTypes
   export let layer: Layer
   export let layerMax: number
   export let layerMin: number

@@ -4,16 +4,15 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { ClassificationMethodTypes, TabNames } from '$lib/constants'
+  import { ClassificationMethodTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
-  import { getRandomColormap } from '$lib/helper'
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
-  let applyToOption: string
+  let applyToOption: VectorApplyToTypes
   let legendType: string
   let defaultColor: string = undefined
   let defaultLineColor: string = undefined
