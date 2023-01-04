@@ -247,6 +247,8 @@
 
             if (stat.values !== undefined) {
               hasUniqueValues = true
+              applyToOption = VectorApplyToTypes.COLOR
+
               const scaleColorList = chroma
                 .scale(colorMapName)
                 .mode('lrgb')
