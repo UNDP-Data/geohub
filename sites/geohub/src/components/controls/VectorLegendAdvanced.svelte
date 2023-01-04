@@ -458,10 +458,9 @@
 
 <div
   class="advanced-container"
-  data-testid="advanced-container"
-  style="">
+  data-testid="advanced-container">
   <div class="columns">
-    <div style="width: 50%; padding: 5%">
+    <div class="column is-6">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
         bind:propertySelectValue
@@ -471,7 +470,7 @@
         {setDefaultProperty} />
     </div>
     {#if layerType !== 'fill' && hasUniqueValues === false}
-      <div class="column">
+      <div class="column is-6">
         <div class="has-text-centered pb-2">Apply To</div>
         <div class="is-flex is-justify-content-center">
           <div class="mb-0">
@@ -487,13 +486,11 @@
   </div>
 
   {#if hasUniqueValues === false}
-    <div
-      class="columns"
-      style="margin-right: -56px;">
+    <div class="columns">
       <div class="column">
         <div class="has-text-centered pb-2">Classification</div>
         <div class="is-flex is-justify-content-center">
-          <div class="select is-small is-justify-content-center">
+          <div class="select is-normal is-justify-content-center">
             <select
               bind:value={classificationMethod}
               on:change={handleClassificationChange}
