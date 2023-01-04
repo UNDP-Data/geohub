@@ -5,7 +5,7 @@
 
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorPolygonSimple from '$components/controls/VectorPolygonSimple.svelte'
-  import VectorPolygonAdvanced from '$components/controls/VectorPolygonAdvanced.svelte'
+  import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
   import { ClassificationMethodTypes, VectorLegendTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
@@ -141,14 +141,14 @@
       </div>
     {:else if legendType === VectorLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorPolygonAdvanced
+        <VectorLegendAdvanced
           bind:layer
           bind:layerMin
           bind:layerMax
           bind:colorMapName
           bind:classificationMethod
           bind:numberOfClasses
-          bind:defaultFillOutlineColor />
+          bind:defaultOutlineColor={defaultFillOutlineColor} />
       </div>
     {/if}
   </div>

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
+  import type { LayerSpecification } from 'maplibre-gl'
+  import { hexToCSSFilter } from 'hex-to-css-filter'
 
-  import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
@@ -27,35 +27,41 @@
   import type {
     IntervalLegendColorMapRow,
     Layer,
+    SpriteImage,
     VectorLayerTileStatAttribute,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import { map } from '$stores'
+  import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
   import { Radios } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
-  export let applyToOption: VectorApplyToTypes
+  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
   export let defaultColor: string = undefined
 
-  let rowWidth: number
-  const classificationMethodsDefault = [
-    // { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
+  let layerStyle = getLayerStyle($map, layer.id)
+  let layerType = layerStyle.type
+
+  let classificationMethodsDefault = [
+    { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
 
+  let hasUniqueValues = false
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
+  export let defaultOutlineColor: string = undefined
   let cssIconFilter: string
-  let hasUniqueValues = false
+  let icon: SpriteImage
+  let rowWidth: number
   export let numberOfClasses = COLOR_CLASS_COUNT
   let propertySelectValue: string = null
   let sizeArray: number[]
@@ -66,11 +72,11 @@
 
   let applyToOptions: Radio[] = [
     {
-      label: 'Line color',
+      label: layerType === 'symbol' ? 'Icon color' : 'Line color',
       value: VectorApplyToTypes.COLOR,
     },
     {
-      label: 'Line width',
+      label: layerType === 'symbol' ? 'Icon size' : 'Line width',
       value: VectorApplyToTypes.SIZE,
     },
   ]
@@ -84,17 +90,24 @@
   }
 
   onMount(() => {
+    if (layerType === 'symbol') {
+      icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
+    }
+    setCssIconFilter()
     getPropertySelectValue()
     getColorMapRows()
-    setCssIconFilter()
-    if (highlySkewed) {
-      classificationMethods = [
-        ...classificationMethods,
-        ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-      ]
-      classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-    } else {
-      classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+    setIntervalValues()
+
+    if (layerType === 'line') {
+      if (highlySkewed) {
+        classificationMethods = [
+          ...classificationMethods,
+          ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+        ]
+        classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+      } else {
+        classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+      }
     }
     if (!$map) return
     $map.on('zoom', updateMap)
@@ -106,9 +119,15 @@
   })
 
   const setCssIconFilter = () => {
-    const lineColor = defaultColor
-    const rgba = chroma(lineColor).rgba()
-    cssIconFilter = chroma([rgba[0], rgba[1], rgba[2]]).hex()
+    if (layerType === 'fill') return
+    const rgba = chroma(defaultColor).rgba()
+    cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter
+  }
+
+  const getIconImageName = () => {
+    const propertyName = 'icon-image'
+    const style = $map.getStyle().layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.id)[0]
+    return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   }
 
   const getPropertySelectValue = () => {
@@ -117,36 +136,63 @@
 
     propertySelectValue = selectOptions[0]
 
-    if (applyToOption === VectorApplyToTypes.COLOR) {
-      const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
-      if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'property')) {
-        propertySelectValue = lineColorValue['property']
+    if (layerType === 'fill') {
+      const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color')
+      if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'property')) {
+        propertySelectValue = fillColorValue['property']
       }
     } else {
-      const lineWidthValue = $map.getPaintProperty(layer.id, 'line-width')
-      if (lineWidthValue && Object.prototype.hasOwnProperty.call(lineWidthValue, 'property')) {
-        propertySelectValue = lineWidthValue['property']
+      if (applyToOption === VectorApplyToTypes.COLOR) {
+        const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color'
+        const colorValue = $map.getPaintProperty(layer.id, propertyName)
+        if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'property')) {
+          propertySelectValue = colorValue['property']
+        }
+      } else {
+        const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width'
+        const sizeValue =
+          layerType === 'symbol'
+            ? $map.getLayoutProperty(layer.id, propertyName)
+            : $map.getPaintProperty(layer.id, propertyName)
+        if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'property')) {
+          propertySelectValue = sizeValue['property']
+        }
       }
     }
   }
 
   const getColorMapRows = () => {
     let stops: [[number, string]]
-    if (applyToOption === VectorApplyToTypes.COLOR) {
-      const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
-      if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'stops')) {
+    if (layerType === 'fill') {
+      const colorValue = $map.getPaintProperty(layer.id, 'fill-color')
+      if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        stops = lineColorValue.stops
+        stops = colorValue.stops
       }
     } else {
-      const lineWidthValue = $map.getPaintProperty(layer.id, 'line-width')
-      if (lineWidthValue && Object.prototype.hasOwnProperty.call(lineWidthValue, 'stops')) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        stops = lineWidthValue.stops
+      if (applyToOption === VectorApplyToTypes.COLOR) {
+        const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color'
+        const colorValue = $map.getPaintProperty(layer.id, propertyName)
+        if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          stops = colorValue.stops
+        }
+      } else {
+        const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width'
+        const sizeValue =
+          layerType === 'symbol'
+            ? $map.getLayoutProperty(layer.id, propertyName)
+            : $map.getPaintProperty(layer.id, propertyName)
+        if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'stops')) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          stops = sizeValue.stops
+        }
       }
     }
+
     colorMapRows = []
 
     const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
@@ -243,9 +289,12 @@
           hasUniqueValues = false
 
           if (stat) {
+            layerMax = stat.max
+            layerMin = stat.min
+
             const propertySelectValues = []
 
-            if (stat.values !== undefined) {
+            if (stat['values'] !== undefined) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
@@ -267,13 +316,12 @@
                 propertySelectValues.push(row)
               }
             } else {
-              // No unique values
-              // if (stat.min > 0) {
-              //   classificationMethods = [
-              //     ...classificationMethods,
-              //     ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-              //   ]
-              // }
+              if (layerType === 'symbol' && stat.min > 0) {
+                classificationMethods = [
+                  ...classificationMethods,
+                  ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+                ]
+              }
 
               const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
               const intervalList = getIntervalList(
@@ -297,8 +345,6 @@
                 }
                 propertySelectValues.push(row)
               }
-              layerMax = stat.max
-              layerMin = stat.min
             }
 
             colorMapRows = propertySelectValues
@@ -312,42 +358,108 @@
 
   const updateMap = () => {
     if (!propertySelectValue) return
-    const stops = colorMapRows.map((row) => {
-      return [
-        row.start,
-        hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
-          ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
-          : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
-      ]
-    })
+    if (layerType === 'fill') {
+      const stops = colorMapRows.map((row, index) => {
+        const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
+          row.color[3],
+          0,
+          255,
+          0,
+          1,
+        )})`
+        const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
-    if (stops.length > 0) {
-      if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
-        $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
-        $map.setPaintProperty(layer.id, 'line-color', {
-          property: propertySelectValue,
-          type: 'interval',
-          stops,
-        })
-      } else if (applyToOption === VectorApplyToTypes.SIZE) {
-        // generate remapped stops based on the zoom level
-        const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
+        // set default line color to be middle of colors
+        if (index === Math.floor(colorMapRows.length / 2)) {
+          defaultOutlineColor = chroma(hex).darken(2.6).hex()
+        }
 
-        sizeArray = newStops.map((item) => item[1])
-        $map.setPaintProperty(layer.id, 'line-color', defaultColor)
-        $map.setPaintProperty(layer.id, 'line-width', {
-          property: propertySelectValue,
-          type: 'interval',
-          stops: newStops,
-        })
+        return [row.start, rgb]
+      })
+      // console.log(stops)
+      $map.setPaintProperty(layer.id, 'fill-outline-color', defaultOutlineColor)
+      $map.setPaintProperty(layer.id, 'fill-color', {
+        property: propertySelectValue,
+        type: 'interval',
+        stops: stops,
+      })
+    } else {
+      const stops = colorMapRows.map((row) => {
+        return [
+          row.start,
+          hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
+            ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+            : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
+        ]
+      })
+
+      if (stops.length > 0) {
+        if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
+          if (layerType === 'symbol') {
+            const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
+            if (!iconSize || (iconSize && iconSize.type === 'interval')) {
+              $map.setLayoutProperty(layer.id, 'icon-size', 1)
+            }
+            $map.setPaintProperty(layer.id, 'icon-color', {
+              property: propertySelectValue,
+              type: 'interval',
+              stops: stops,
+            })
+          } else if (layerType === 'line') {
+            $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
+            $map.setPaintProperty(layer.id, 'line-color', {
+              property: propertySelectValue,
+              type: 'interval',
+              stops,
+            })
+          }
+        } else if (applyToOption === VectorApplyToTypes.SIZE) {
+          // Generate new stops based on the zoomLevel
+          if (layerType === 'symbol') {
+            // Ends are the
+            const intervalEnds = colorMapRows.map((item) => item.end)
+            const ratioOfRadiustoTheFirstEnd = intervalEnds
+              .slice(1)
+              .map((item) => (item as number) / Number(intervalEnds[0]))
+
+            // Add 1 to the ratio array
+            ratioOfRadiustoTheFirstEnd.unshift(1)
+
+            // newStops array, that takes into considerarion the ratio and the zoomLevel
+            const newStops = stops.map((item, index) => {
+              let ratio = 1
+              if (ratioOfRadiustoTheFirstEnd[index]) {
+                ratio = (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10)
+              }
+              return [item[0], ratio]
+            })
+            $map.setPaintProperty(layer.id, 'icon-color', defaultColor)
+            $map.setLayoutProperty(layer.id, 'icon-size', {
+              property: propertySelectValue,
+              type: 'interval',
+              stops: newStops,
+            })
+          } else if (layerType === 'line') {
+            const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
+
+            sizeArray = newStops.map((item) => item[1])
+            $map.setPaintProperty(layer.id, 'line-color', defaultColor)
+            $map.setPaintProperty(layer.id, 'line-width', {
+              property: propertySelectValue,
+              type: 'interval',
+              stops: newStops,
+            })
+          }
+        }
       }
     }
   }
 </script>
 
 <div
-  class="line-advanced-container"
-  data-testid="line-advanced-container">
+  class="advanced-container"
+  data-testid="advanced-container"
+  style="">
   <div class="columns">
     <div style="width: 50%; padding: 5%">
       <div class="has-text-centered pb-2">Property:</div>
@@ -358,10 +470,8 @@
         showOnlyNumberFields={true}
         {setDefaultProperty} />
     </div>
-    {#if hasUniqueValues === false}
-      <div
-        class="column"
-        transition:fade>
+    {#if layerType !== 'fill' && hasUniqueValues === false}
+      <div class="column">
         <div class="has-text-centered pb-2">Apply To</div>
         <div class="is-flex is-justify-content-center">
           <div class="mb-0">
@@ -373,33 +483,25 @@
           </div>
         </div>
       </div>
-    {:else}
-      <div class="column" />
     {/if}
   </div>
 
-  <div
-    class="is-divider separator mb-3 mt-0"
-    data-content={hasUniqueValues ? 'Unique Values' : ''} />
   {#if hasUniqueValues === false}
     <div
       class="columns"
-      style="margin-right: -56px;"
-      transition:fade>
+      style="margin-right: -56px;">
       <div class="column">
         <div class="has-text-centered pb-2">Classification</div>
         <div class="is-flex is-justify-content-center">
-          <div class="select is-justify-content-center is-small">
+          <div class="select is-small is-justify-content-center">
             <select
               bind:value={classificationMethod}
               on:change={handleClassificationChange}
               style="width: 110px;"
-              alt="Classification Methods"
               title="Classification Methods">
               {#each classificationMethods as classificationMethod}
                 <option
                   class="legend-text"
-                  alt="Classification Method"
                   title="Classification Method"
                   value={classificationMethod.code}>{classificationMethod.name}</option>
               {/each}
@@ -419,68 +521,68 @@
       </div>
     </div>
   {/if}
-
   <div
     class="columns"
     style="margin-right: -56px;">
     <div class="column size">
-      {#if hasUniqueValues}
-        <div>
+      <div>
+        {#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
           {#each colorMapRows as colorMapRow}
-            <div class="pl-6">
-              <UniqueValuesLegendColorMapRow
-                bind:colorMapRow
-                bind:colorMapName
-                {layer}
-                {colorPickerVisibleIndex}
-                on:clickColorPicker={handleColorPickerClick}
-                on:changeColorMap={handleParamsUpdate}
-                on:changeIntervalValues={handleChangeIntervalValues} />
-            </div>
+            <IntervalsLegendColorMapRow
+              bind:colorMapRow
+              bind:colorMapName
+              bind:rowWidth
+              {layer}
+              {colorPickerVisibleIndex}
+              on:clickColorPicker={handleColorPickerClick}
+              on:changeColorMap={handleParamsUpdate}
+              on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
+              on:changeIntervalValues={handleChangeIntervalValues} />
           {/each}
-        </div>
-      {:else}
-        {#if applyToOption === VectorApplyToTypes.COLOR}
-          <div>
-            {#each colorMapRows as colorMapRow}
-              <IntervalsLegendColorMapRow
-                bind:colorMapRow
-                bind:colorMapName
-                bind:rowWidth
-                {layer}
-                {colorPickerVisibleIndex}
-                on:clickColorPicker={handleColorPickerClick}
-                on:changeColorMap={handleParamsUpdate}
-                on:changeIntervalValues={handleChangeIntervalValues} />
-            {/each}
-          </div>
-        {/if}
-
-        {#if applyToOption === VectorApplyToTypes.SIZE}
+        {:else if applyToOption === VectorApplyToTypes.SIZE}
           <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
             <thead>
               <tr>
-                <th>Line</th>
+                <th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
                 <th>Start</th>
                 <th>End</th>
               </tr>
             </thead>
             <tbody>
-              {#if sizeArray && sizeArray.length > 0}
+              {#if layerType === 'symbol'}
                 {#each colorMapRows as row, index}
-                  <tr data-testid="line-width-row-container">
+                  {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
+                  <tr data-testid="icon-size-row-container">
                     <td class="has-text-centered">
-                      <div style={`width: 100px; height: ${sizeArray[index]}px; background-color: ${cssIconFilter};`} />
+                      {#if icon}
+                        <img
+                          src={icon.src}
+                          alt={icon.alt}
+                          style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
+                      {/if}
                     </td>
                     <td>{row.start}</td>
                     <td>{row.end}</td>
                   </tr>
                 {/each}
+              {:else if layerType === 'line'}
+                {#if sizeArray && sizeArray.length > 0}
+                  {#each colorMapRows as row, index}
+                    <tr data-testid="line-width-row-container">
+                      <td class="has-text-centered">
+                        <div
+                          style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`} />
+                      </td>
+                      <td>{row.start}</td>
+                      <td>{row.end}</td>
+                    </tr>
+                  {/each}
+                {/if}
               {/if}
             </tbody>
           </table>
         {/if}
-      {/if}
+      </div>
     </div>
   </div>
 </div>
@@ -495,7 +597,7 @@
     user-select: none;
   }
 
-  .line-advanced-container {
+  .advanced-container {
     input[type='radio'] {
       cursor: pointer;
     }

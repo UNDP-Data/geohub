@@ -5,7 +5,7 @@
 
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
-  import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
+  import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
   import { ClassificationMethodTypes, VectorLegendTypes, VectorApplyToTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
@@ -124,7 +124,7 @@
       </div>
     {:else if legendType === VectorLegendTypes.ADVANCED}
       <div transition:slide>
-        <VectorSymbolAdvanced
+        <VectorLegendAdvanced
           bind:layer
           bind:applyToOption
           bind:layerMin
