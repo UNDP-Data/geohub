@@ -460,7 +460,7 @@
   class="advanced-container"
   data-testid="advanced-container">
   <div class="columns">
-    <div class="column is-6">
+    <div class="column">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
         bind:propertySelectValue
@@ -470,16 +470,14 @@
         {setDefaultProperty} />
     </div>
     {#if layerType !== 'fill' && hasUniqueValues === false}
-      <div class="column is-6">
+      <div class="column">
         <div class="has-text-centered pb-2">Apply To</div>
         <div class="is-flex is-justify-content-center">
-          <div class="mb-0">
-            <Radios
-              bind:radios={applyToOptions}
-              bind:value={applyToOption}
-              groupName="layer-type-{layer.id}}"
-              isVertical={true} />
-          </div>
+          <Radios
+            bind:radios={applyToOptions}
+            bind:value={applyToOption}
+            groupName="layer-type-{layer.id}}"
+            isVertical={true} />
         </div>
       </div>
     {/if}
@@ -489,38 +487,32 @@
     <div class="columns">
       <div class="column">
         <div class="has-text-centered pb-2">Classification</div>
-        <div class="is-flex is-justify-content-center">
-          <div class="select is-normal is-justify-content-center">
-            <select
-              bind:value={classificationMethod}
-              on:change={handleClassificationChange}
-              style="width: 110px;"
-              title="Classification Methods">
-              {#each classificationMethods as classificationMethod}
-                <option
-                  class="legend-text"
-                  title="Classification Method"
-                  value={classificationMethod.code}>{classificationMethod.name}</option>
-              {/each}
-            </select>
-          </div>
+        <div class="select is-normal">
+          <select
+            bind:value={classificationMethod}
+            on:change={handleClassificationChange}
+            style="width: 110px;"
+            title="Classification Methods">
+            {#each classificationMethods as classificationMethod}
+              <option
+                class="legend-text"
+                title="Classification Method"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
+            {/each}
+          </select>
         </div>
       </div>
       <div class="column">
         <div class="has-text-centered">Number of Classes</div>
-        <div class="is-flex is-justify-content-center">
-          <NumberInput
-            bind:value={numberOfClasses}
-            minValue={COLOR_CLASS_COUNT_MINIMUM}
-            maxValue={COLOR_CLASS_COUNT_MAXIMUM}
-            on:change={handleIncrementDecrementClasses} />
-        </div>
+        <NumberInput
+          bind:value={numberOfClasses}
+          minValue={COLOR_CLASS_COUNT_MINIMUM}
+          maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+          on:change={handleIncrementDecrementClasses} />
       </div>
     </div>
   {/if}
-  <div
-    class="columns"
-    style="margin-right: -56px;">
+  <div class="columns">
     <div class="column size">
       <div>
         {#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
