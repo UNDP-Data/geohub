@@ -91,6 +91,8 @@
 
     for (const layer of $layerList) {
       const layerStyle = getLayerStyle(map, layer.id)
+      const visibility = layerStyle.layout?.visibility ?? 'visible'
+      if (visibility === 'none') continue
       if (layerStyle.type === 'raster') {
         const rasterInfo = layer.info as RasterTileMetadata
         if (rasterInfo?.isMosaicJson) {
