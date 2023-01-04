@@ -11,7 +11,7 @@
   import { Tabs } from '@undp-data/svelte-undp-design'
   import { map } from '$stores'
   import { onMount } from 'svelte'
-  import type { MapDataEvent } from 'maplibre-gl'
+  import type { MapDataEvent } from 'maplibre-gl' // eventually should be removed
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
@@ -36,38 +36,8 @@
     colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
   })
 
-  //let activeTab = TabNames.LEGEND
-  let activeTab = ''
-
-  let isRefinePanelVisible = false
-  let isLegendPanelVisible = false
-  let isOpacityPanelVisible = false
-  let isHistogramPanelVisible = false
-
+  let activeTab = TabNames.LEGEND
   let legendType: DynamicLayerLegendTypes
-
-  $: {
-    isLegendPanelVisible = false
-    isRefinePanelVisible = false
-    isOpacityPanelVisible = false
-    isHistogramPanelVisible = false
-    switch (activeTab) {
-      case TabNames.LEGEND:
-        isLegendPanelVisible = true
-        break
-      case TabNames.TRANSFORM:
-        isRefinePanelVisible = true
-        break
-      case TabNames.OPACITY:
-        isOpacityPanelVisible = true
-        break
-      case TabNames.HISTOGRAM:
-        isHistogramPanelVisible = true
-        break
-      default:
-        break
-    }
-  }
 
   $: {
     const rasterInfo = layer.info as RasterTileMetadata
@@ -85,13 +55,6 @@
   }
 </script>
 
-<!-- {#await colorMapName}
-  loading....
-{:then colorMapNameValue} 
-  
-  
-{/await} -->
-
 <div
   class="raster-layer-container has-background-white-bis"
   transition:fade>
@@ -106,25 +69,27 @@
       isToggleTab={true} />
 
     <p class="panel-content">
-      {#if isLegendPanelVisible === true}
+      {#if activeTab == TabNames.LEGEND}
         <RasterLegendContainer
           bind:layer
           bind:colorMapName
           bind:classificationMethod
           bind:legendType />
       {/if}
-      {#if isHistogramPanelVisible}
+      {#if activeTab == TabNames.HISTOGRAM}
         <RasterHistogram bind:layer />
       {/if}
-      {#if isRefinePanelVisible === true}
+      {#if activeTab == TabNames.TRANSFORM}
         <RasterExpression
           bind:layer
           bind:expressions
           bind:legendType />
       {/if}
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
+      {#if activeTab == TabNames.OPACITY}
+        <OpacityPanel
+          {layer}
+          isOpacityPanelVisible={true} />
+      {/if}
     </p>
   </nav>
 </div>
