@@ -118,14 +118,9 @@ export enum VectorLegendTypes {
   ADVANCED = 'advanced',
 }
 
-export enum VectorLayerSymbolLegendApplyToTypes {
-  ICON_COLOR = 'Icon color',
-  ICON_SIZE = 'Icon size',
-}
-
-export enum VectorLayerLineLegendApplyToTypes {
-  LINE_COLOR = 'Line color',
-  LINE_WIDTH = 'Line width',
+export enum VectorApplyToTypes {
+  COLOR = 'color',
+  SIZE = 'size',
 }
 
 export enum DynamicLayerResolutionTypes {

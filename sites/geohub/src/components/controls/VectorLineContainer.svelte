@@ -6,7 +6,7 @@
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorLineSimple from '$components/controls/VectorLineSimple.svelte'
   import VectorLineAdvanced from '$components/controls/VectorLineAdvanced.svelte'
-  import { ClassificationMethodTypes, VectorLegendTypes, VectorLayerLineLegendApplyToTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, VectorLegendTypes, VectorApplyToTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -16,19 +16,19 @@
   export let layer: Layer
   export let colorMapName
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: string = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+  export let applyToOption: string = VectorApplyToTypes.COLOR
   export let legendType: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if ($map.getPaintProperty(layer.id, 'line-color')?.type === 'interval') {
     legendType = VectorLegendTypes.ADVANCED
-    applyToOption = VectorLayerLineLegendApplyToTypes.LINE_COLOR
+    applyToOption = VectorApplyToTypes.COLOR
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
   } else if ($map.getPaintProperty(layer.id, 'line-width')?.type === 'interval') {
     legendType = VectorLegendTypes.ADVANCED
-    applyToOption = VectorLayerLineLegendApplyToTypes.LINE_WIDTH
+    applyToOption = VectorApplyToTypes.SIZE
   }
 
   const getLineColor = (): string => {
@@ -167,7 +167,7 @@
       <br />
     {/if}
 
-    {#if legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         class="toggle-container icon m-1"
         role="button"
@@ -184,7 +184,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+    {#if showTooltip && legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"

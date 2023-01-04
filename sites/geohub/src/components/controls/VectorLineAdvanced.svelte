@@ -14,7 +14,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     NO_RANDOM_SAMPLING_POINTS,
-    VectorLayerLineLegendApplyToTypes,
+    VectorApplyToTypes,
   } from '$lib/constants'
   import {
     getIntervalList,
@@ -66,12 +66,12 @@
 
   let applyToOptions: Radio[] = [
     {
-      label: VectorLayerLineLegendApplyToTypes.LINE_COLOR,
-      value: VectorLayerLineLegendApplyToTypes.LINE_COLOR,
+      label: 'Line color',
+      value: VectorApplyToTypes.COLOR,
     },
     {
-      label: VectorLayerLineLegendApplyToTypes.LINE_WIDTH,
-      value: VectorLayerLineLegendApplyToTypes.LINE_WIDTH,
+      label: 'Line width',
+      value: VectorApplyToTypes.SIZE,
     },
   ]
 
@@ -117,7 +117,7 @@
 
     propertySelectValue = selectOptions[0]
 
-    if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+    if (applyToOption === VectorApplyToTypes.COLOR) {
       const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
       if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'property')) {
         propertySelectValue = lineColorValue['property']
@@ -132,7 +132,7 @@
 
   const getColorMapRows = () => {
     let stops: [[number, string]]
-    if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+    if (applyToOption === VectorApplyToTypes.COLOR) {
       const lineColorValue = $map.getPaintProperty(layer.id, 'line-color')
       if (lineColorValue && Object.prototype.hasOwnProperty.call(lineColorValue, 'stops')) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -313,21 +313,21 @@
     const stops = colorMapRows.map((row) => {
       return [
         row.start,
-        hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR
+        hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
     if (stops.length > 0) {
-      if (hasUniqueValues === true || applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR) {
+      if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
         $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
         $map.setPaintProperty(layer.id, 'line-color', {
           property: propertySelectValue,
           type: 'interval',
           stops,
         })
-      } else if (applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH) {
+      } else if (applyToOption === VectorApplyToTypes.SIZE) {
         // generate remapped stops based on the zoom level
         const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
 
@@ -438,7 +438,7 @@
           {/each}
         </div>
       {:else}
-        {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_COLOR}
+        {#if applyToOption === VectorApplyToTypes.COLOR}
           <div>
             {#each colorMapRows as colorMapRow}
               <IntervalsLegendColorMapRow
@@ -454,7 +454,7 @@
           </div>
         {/if}
 
-        {#if applyToOption === VectorLayerLineLegendApplyToTypes.LINE_WIDTH}
+        {#if applyToOption === VectorApplyToTypes.SIZE}
           <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
             <thead>
               <tr>

@@ -14,7 +14,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     NO_RANDOM_SAMPLING_POINTS,
-    VectorLayerSymbolLegendApplyToTypes,
+    VectorApplyToTypes,
   } from '$lib/constants'
   import {
     getIntervalList,
@@ -64,12 +64,12 @@
 
   let applyToOptions: Radio[] = [
     {
-      label: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
-      value: VectorLayerSymbolLegendApplyToTypes.ICON_COLOR,
+      label: 'Icon color',
+      value: VectorApplyToTypes.COLOR,
     },
     {
-      label: VectorLayerSymbolLegendApplyToTypes.ICON_SIZE,
-      value: VectorLayerSymbolLegendApplyToTypes.ICON_SIZE,
+      label: 'Icon size',
+      value: VectorApplyToTypes.SIZE,
     },
   ]
 
@@ -113,7 +113,7 @@
 
     propertySelectValue = selectOptions[0]
 
-    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+    if (applyToOption === VectorApplyToTypes.COLOR) {
       const iconColorValue = $map.getPaintProperty(layer.id, 'icon-color')
       if (iconColorValue && Object.prototype.hasOwnProperty.call(iconColorValue, 'property')) {
         propertySelectValue = iconColorValue['property']
@@ -130,7 +130,7 @@
 
   const getColorMapRows = () => {
     let stops: [[number, string]]
-    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR) {
+    if (applyToOption === VectorApplyToTypes.COLOR) {
       const iconColorValue = $map.getPaintProperty(layer.id, 'icon-color')
       if (iconColorValue && Object.prototype.hasOwnProperty.call(iconColorValue, 'stops')) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -308,13 +308,13 @@
     const stops = colorMapRows.map((row) => {
       return [
         row.start,
-        applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+        applyToOption === VectorApplyToTypes.COLOR
           ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
           : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
       ]
     })
 
-    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR && stops.length > 0) {
+    if (applyToOption === VectorApplyToTypes.COLOR && stops.length > 0) {
       const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
       if (!iconSize || (iconSize && iconSize.type === 'interval')) {
         $map.setLayoutProperty(layer.id, 'icon-size', 1)
@@ -326,7 +326,7 @@
       })
     }
 
-    if (applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE && stops.length > 0) {
+    if (applyToOption === VectorApplyToTypes.SIZE && stops.length > 0) {
       // Generate new stops based on the zoomLevel
 
       // Ends are the
@@ -337,11 +337,13 @@
       ratioOfRadiustoTheFirstEnd.unshift(1)
 
       // newStops array, that takes into considerarion the ratio and the zoomLevel
-      const newStops = stops.map((item, index) => [
-        item[0],
-        (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10),
-      ])
-
+      const newStops = stops.map((item, index) => {
+        let ratio = 1
+        if (ratioOfRadiustoTheFirstEnd[index]) {
+          ratio = (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10)
+        }
+        return [item[0], ratio]
+      })
       $map.setPaintProperty(layer.id, 'icon-color', defaultColor)
       $map.setLayoutProperty(layer.id, 'icon-size', {
         property: propertySelectValue,
@@ -419,7 +421,7 @@
   <div
     class="columns"
     style="margin-right: -56px;">
-    {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if applyToOption === VectorApplyToTypes.COLOR}
       <div class="column size">
         <div>
           {#each colorMapRows as colorMapRow}
@@ -437,7 +439,7 @@
       </div>
     {/if}
 
-    {#if applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_SIZE}
+    {#if applyToOption === VectorApplyToTypes.SIZE}
       <div class="column size">
         <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
           <thead>

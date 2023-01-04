@@ -6,7 +6,7 @@
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import VectorSymbolSimple from '$components/controls/VectorSymbolSimple.svelte'
   import VectorSymbolAdvanced from '$components/controls/VectorSymbolAdvanced.svelte'
-  import { ClassificationMethodTypes, VectorLegendTypes, VectorLayerSymbolLegendApplyToTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, VectorLegendTypes, VectorApplyToTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -15,17 +15,17 @@
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: string = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+  export let applyToOption: string = VectorApplyToTypes.COLOR
   export let legendType: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if ($map.getPaintProperty(layer.id, 'icon-color')?.type === 'interval') {
     legendType = VectorLegendTypes.ADVANCED
-    applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_COLOR
+    applyToOption = VectorApplyToTypes.COLOR
   } else if ($map.getLayoutProperty(layer.id, 'icon-size')?.type === 'interval') {
     legendType = VectorLegendTypes.ADVANCED
-    applyToOption = VectorLayerSymbolLegendApplyToTypes.ICON_SIZE
+    applyToOption = VectorApplyToTypes.SIZE
   }
 
   const getIconColor = (): string => {
@@ -155,7 +155,7 @@
     </div>
     <br />
 
-    {#if legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         role="button"
         class="toggle-container icon m-1"
@@ -172,7 +172,7 @@
       </div>
     {/if}
 
-    {#if showTooltip && legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorLayerSymbolLegendApplyToTypes.ICON_COLOR}
+    {#if showTooltip && legendType === VectorLegendTypes.ADVANCED && applyToOption === VectorApplyToTypes.COLOR}
       <div
         id="tooltip"
         data-testid="tooltip"
