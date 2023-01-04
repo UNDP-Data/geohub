@@ -33,7 +33,6 @@
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
-    getColorMapRows()
     reclassifyImage()
   }
 
@@ -68,6 +67,7 @@
     const rasterInfo = info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
+      if (!(layerSrc.tiles && layerSrc.tiles.length > 0)) return
       const layerURL = new URL(layerSrc.tiles[0])
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)

@@ -196,8 +196,7 @@
       <div transition:slide>
         <RasterContinuousLegend
           bind:layerConfig={layer}
-          bind:colorMapName
-          bind:numberOfClasses />
+          bind:colorMapName />
       </div>
     {:else if legendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>

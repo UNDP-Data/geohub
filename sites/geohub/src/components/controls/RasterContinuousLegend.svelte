@@ -28,8 +28,6 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  export let numberOfClasses = COLOR_CLASS_COUNT
-
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
   // this ensures the slider state is set to layer min max
@@ -99,7 +97,7 @@
       colorMapType={ColorMapTypes.SEQUENTIAL}
       {layerMax}
       {layerMin}
-      {numberOfClasses}
+      numberOfClasses={COLOR_CLASS_COUNT}
       isSelected={false}
       isCardStyle={false} />
   </div>
