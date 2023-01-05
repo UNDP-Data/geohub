@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getValueFromRasterTileUrl } from '$lib/helper'
+
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
@@ -9,16 +9,11 @@
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import { map } from '$stores'
-  import { onMount } from 'svelte'
-  import type { MapDataEvent } from 'maplibre-gl' // eventually should be removed
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
 
   let expressions: RasterSimpleExpression[]
-
-  let colorMapName: string
 
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -26,15 +21,6 @@
     { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
-
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-  onMount(async () => {
-    while ($map.loaded() === false) {
-      await sleep(100)
-    }
-    colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-  })
 
   let activeTab = TabNames.LEGEND
   let legendType: DynamicLayerLegendTypes
@@ -72,7 +58,6 @@
       {#if activeTab == TabNames.LEGEND}
         <RasterLegendContainer
           bind:layer
-          bind:colorMapName
           bind:classificationMethod
           bind:legendType />
       {/if}
