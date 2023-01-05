@@ -61,7 +61,7 @@
     } else {
       console.log('first', colorMapName)
       // continuous
-      //colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+      colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
       console.log('second', colorMapName)
     }
     if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
@@ -141,7 +141,12 @@
 
   $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
-    if (!colorMapName) return
+    console.log(getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string, colorMapName)
+    if (
+      colorMapName === undefined ||
+      (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == colorMapName
+    )
+      return
     const rasterInfo = layer.info as RasterTileMetadata
     const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
     const tiles = source.tiles

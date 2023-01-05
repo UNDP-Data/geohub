@@ -30,7 +30,7 @@
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
   onMount(async () => {
-    while ($map.loaded() == false) {
+    while ($map.loaded() === false) {
       await sleep(100)
     }
     colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
