@@ -23,7 +23,6 @@ const meta = {
 			description: 'Font size of the accordion header title.',
 			defaultValue: 'medium'
 		}
-
 	},
 	parameters: {
 		isExpanded: {

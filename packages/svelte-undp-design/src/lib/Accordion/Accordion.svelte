@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let headerTitle: string;
 	export let isExpanded = false;
-	export let fontSize : "small" | "medium" = "medium";
+	export let fontSize: 'small' | 'medium' = 'medium';
 </script>
 
 <ul class="accordion" aria-label="accordion">
@@ -15,9 +15,9 @@
 					isExpanded = !isExpanded;
 				}}
 			>
-			<p class="accordion-header" style="font-size:{fontSize === 'small' ? 1 : 1.5 }rem">
-				{headerTitle}
-			</p>
+				<p class="accordion-header" style="font-size:{fontSize === 'small' ? 1 : 1.5}rem">
+					{headerTitle}
+				</p>
 			</button>
 
 			<slot name="button" />

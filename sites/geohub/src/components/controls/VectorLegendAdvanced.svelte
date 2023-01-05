@@ -43,7 +43,7 @@
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
-  export let defaultColor: string = undefined
+  export let defaultColor: string
 
   let layerStyle = getLayerStyle($map, layer.id)
   let layerType = layerStyle.type
@@ -58,7 +58,7 @@
   export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  export let defaultOutlineColor: string = undefined
+  export let defaultOutlineColor: string
   let cssIconFilter: string
   let icon: SpriteImage
   let rowWidth: number
@@ -459,7 +459,7 @@
 <div
   class="advanced-container"
   data-testid="advanced-container">
-  <div class="columns">
+  <div class="columns is-mobile">
     <div class="column">
       <div class="has-text-centered pb-2">Property:</div>
       <PropertySelect
@@ -484,7 +484,7 @@
   </div>
 
   {#if hasUniqueValues === false}
-    <div class="columns">
+    <div class="columns is-mobile">
       <div class="column">
         <div class="has-text-centered pb-2">Classification</div>
         <div class="select is-normal">
