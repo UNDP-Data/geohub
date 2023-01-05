@@ -6,7 +6,7 @@
   import VectorPolygon from './VectorPolygon.svelte'
   import VectorSymbol from './VectorSymbol.svelte'
   import VectorHeatmap from './VectorHeatmap.svelte'
-  import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
+  import VectorLegendAdvanced from './VectorLegendAdvanced.svelte'
   import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -28,32 +28,32 @@
     .getStyle()
     .layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
+  const isIntervalExpression = (property: 'line-color' | 'line-width' | 'icon-color' | 'icon-size' | 'fill-color') => {
+    const layoutProperties = ['icon-size']
+    const expr = layoutProperties.includes(property)
+      ? $map.getLayoutProperty(layer.id, property)
+      : $map.getPaintProperty(layer.id, property)
+    return expr?.type === 'interval'
+  }
+
   if (style.type === 'line') {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if ($map.getPaintProperty(layer.id, 'line-color')?.type === 'interval') {
+    if (isIntervalExpression('line-color')) {
       legendType = VectorLegendTypes.ADVANCED
       applyToOption = VectorApplyToTypes.COLOR
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-    } else if ($map.getPaintProperty(layer.id, 'line-width')?.type === 'interval') {
+    } else if (isIntervalExpression('line-width')) {
       legendType = VectorLegendTypes.ADVANCED
       applyToOption = VectorApplyToTypes.SIZE
     }
   } else if (style.type === 'symbol') {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if ($map.getPaintProperty(layer.id, 'icon-color')?.type === 'interval') {
+    if (isIntervalExpression('icon-color')) {
       legendType = VectorLegendTypes.ADVANCED
       applyToOption = VectorApplyToTypes.COLOR
-    } else if ($map.getLayoutProperty(layer.id, 'icon-size')?.type === 'interval') {
+    } else if (isIntervalExpression('icon-size')) {
       legendType = VectorLegendTypes.ADVANCED
       applyToOption = VectorApplyToTypes.SIZE
     }
   } else if (style.type === 'fill') {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if ($map.getPaintProperty(layer.id, 'fill-color')?.type === 'interval') {
+    if (isIntervalExpression('fill-color')) {
       legendType = VectorLegendTypes.ADVANCED
     }
   }
