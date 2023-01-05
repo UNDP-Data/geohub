@@ -6,7 +6,19 @@ import Loader from './Loader.svelte';
 const meta = {
 	title: 'Example/Loader',
 	component: Loader,
-	tags: ['docsPage']
+	tags: ['docsPage'],
+	argTypes: {
+		size: {
+			type: 'string',
+			description: 'Size of the loader',
+			defaultValue: 'medium'
+		},
+		parameters: {
+			size: {
+				values: ['small','medium','large']
+			}
+		}
+	}
 } satisfies Meta<Loader>;
 
 export default meta;

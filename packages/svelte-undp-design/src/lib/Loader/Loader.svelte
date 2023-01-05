@@ -1,6 +1,22 @@
-<div class="loader" aria-busy="true" aria-live="polite" />
+<script lang="ts">
+    export let size : "small" | "medium" | "large" = "medium";
+</script>
+<div class="loader {size==='small' ? 'small-loader' : size==='medium' ? 'medium-loader': null}" aria-busy="true" aria-live="polite" />
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
 	@use '../css/loader.min.css';
+
+    .small-loader{
+      width: 30px;
+      height: 30px;
+      border: 4px solid #006eb5;
+      border-top-color: #edeff0;
+    }
+    .medium-loader{
+        width: 50px;
+        height: 50px;
+        border: 4px solid #006eb5;
+        border-top-color: #edeff0;
+    }
 </style>

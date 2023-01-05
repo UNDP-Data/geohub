@@ -54,6 +54,7 @@
   const setLayerOpacity = (target: Layer) => {
     const id = target.id
     const style = getLayerStyle($map, target.id)
+    if (!style) return
     switch (style.type) {
       case LayerTypes.RASTER:
         $map.setPaintProperty(id, 'raster-opacity', layerOpacity)
