@@ -6,7 +6,7 @@
   import arraystat from 'arraystat'
   import { onDestroy } from 'svelte'
 
-  import type { Listener, MapMouseEvent } from 'maplibre-gl'
+  import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl'
   import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types'
   import { getLayerStyle } from '$lib/helper'
 
@@ -177,7 +177,20 @@
   const apply = (e) => {
     if (!expressionValue) expressionValue = sv[0]
     tagsList = []
+    clearClickLayer()
     dispatch('apply')
+  }
+
+  const clearClickLayer = () => {
+    if (layer.children?.length > 0) {
+      const child = layer.children.find((l) => l.id === `${layerId}-select`)
+      if (child) {
+        if ($map.getLayer(child.id)) {
+          $map.removeLayer(child.id)
+        }
+        layer.children.splice(layer.children.indexOf(child), 1)
+      }
+    }
   }
 
   const handleMapClick = async (e: MapMouseEvent) => {
@@ -211,7 +224,43 @@
       $map.off('click', func)
     }
 
-    $map.on('click', layerId, handleMapClick)
+    const layerStyle = getLayerStyle($map, layerId)
+    if (layerStyle.type === 'heatmap') {
+      const clickLayerId = `${layerId}-select`
+      const clickLayer: SymbolLayerSpecification = {
+        id: clickLayerId,
+        type: 'symbol',
+        source: layerStyle.source,
+        'source-layer': layerStyle['source-layer'],
+        layout: {
+          visibility: 'visible',
+          'icon-image': 'circle',
+          'icon-size': 1,
+        },
+        paint: {
+          'icon-color': '#000000',
+        },
+      }
+      if (!$map.getLayer(clickLayerId)) {
+        $map.addLayer(clickLayer)
+        if (!layer.children) {
+          layer.children = []
+        }
+        layer.children = [
+          ...layer.children,
+          {
+            id: clickLayerId,
+            name: 'select-feature',
+            info: layer.info,
+            parentId: layerId,
+            dataset: undefined,
+          },
+        ]
+      }
+      $map.on('click', clickLayerId, handleMapClick)
+    } else {
+      $map.on('click', layerId, handleMapClick)
+    }
   }
 
   const restoreQ = () => {
