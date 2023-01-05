@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl'
+  import type { SymbolLayerSpecification } from 'maplibre-gl'
   import { createEventDispatcher } from 'svelte'
 
   import { LayerTypes } from '$lib/constants'
@@ -16,15 +16,16 @@
   const dispatch = createEventDispatcher()
   const layerId = layer.id
   const propertyName = 'text-field'
-  let style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-
+  let style = getLayerStyle($map, layer.id)
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
+    if (!$map) return
     if (!$map.getLayer(layerId)) return
+    if (['line', 'fill'].includes($map.getLayer(layerId).type)) return
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
       let propertyValue: any = ['get', textFieldValue]

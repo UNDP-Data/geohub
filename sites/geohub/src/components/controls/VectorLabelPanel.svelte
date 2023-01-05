@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { slide, fade } from 'svelte/transition'
-  import type { LayerSpecification, SymbolLayerSpecification } from 'maplibre-gl'
+  import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
   import SymbolPlacement from '$components/controls/vector-styles/SymbolPlacement.svelte'
@@ -14,23 +14,19 @@
   import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { getPropertyValueFromExpression } from '$lib/helper'
-  import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
+  import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper'
 
-  export let isLabelPanelVisible = false
   export let layer: Layer
 
   const parentLayerId = layer.id
-  const style: LayerSpecification = $map
-    .getStyle()
-    .layers.filter((layer: LayerSpecification) => layer.id === parentLayerId)[0]
+  let style: LayerSpecification = getLayerStyle($map, layer.id)
 
   let decimalPosition: number
   let fieldType: string
   let textFieldValue: string
   let isAdvancedSettings = false
-  let targetLayer = layer
-  let targetLayerId = layer.id
+  let targetLayer = style.type === 'symbol' ? layer : undefined
+  let targetLayerId = targetLayer ? layer.id : undefined
   let updateLegend = () => undefined
   let isLabelCreated = false
 
@@ -40,7 +36,7 @@
 
   const initialiseTextLabel = () => {
     if (style.type !== LayerTypes.SYMBOL) {
-      if (targetLayer.children?.length > 0) {
+      if (targetLayer?.children?.length > 0) {
         targetLayer = targetLayer.children[0]
         targetLayerId = targetLayer.id
 
@@ -61,7 +57,6 @@
           parentId: layer.id,
           dataset: undefined,
         }
-
         layer.children = [targetLayer, ...layer.children]
       }
     } else {
@@ -101,7 +96,7 @@
   }
 </script>
 
-{#if isLabelPanelVisible === true}
+{#if targetLayer}
   <div
     class="action"
     data-testid="vector-label-panel-container">
