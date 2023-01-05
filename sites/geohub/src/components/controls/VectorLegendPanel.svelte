@@ -9,7 +9,7 @@
   import VectorLegendAdvanced from './VectorLegendAdvanced.svelte'
   import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import { layerList, map } from '$stores'
+  import { map } from '$stores'
   import ColorMapPicker from './ColorMapPicker.svelte'
   import Popper from '$lib/popper'
   import { getLayerProperties } from '$lib/helper'
@@ -90,20 +90,11 @@
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
-  let layerListCount = $layerList.length
   let layerMin: number
   let layerMax: number
   let showTooltip = false
   let layerNumberProperties = 0
   let numberOfClasses: number
-
-  // hide colormap picker if change in layer list
-  $: {
-    if (layerListCount !== $layerList.length) {
-      showTooltip = false
-      layerListCount = $layerList.length
-    }
-  }
 
   onMount(() => {
     // set default values
