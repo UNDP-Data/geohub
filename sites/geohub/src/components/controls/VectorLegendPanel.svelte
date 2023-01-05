@@ -2,10 +2,10 @@
   import { fade, slide } from 'svelte/transition'
   import { cloneDeep } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
-  import VectorLineSimple from './VectorLineSimple.svelte'
-  import VectorPolygonSimple from './VectorPolygonSimple.svelte'
-  import VectorSymbolSimple from './VectorSymbolSimple.svelte'
-  import VectorHeatmapContainer from './VectorHeatmapContainer.svelte'
+  import VectorLine from './VectorLine.svelte'
+  import VectorPolygon from './VectorPolygon.svelte'
+  import VectorSymbol from './VectorSymbol.svelte'
+  import VectorHeatmap from './VectorHeatmap.svelte'
   import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
   import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
@@ -174,20 +174,20 @@
     data-testid="line-view-container">
     <div class={`column ${style.type !== LayerTypes.HEATMAP && layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
       {#if style.type === LayerTypes.HEATMAP}
-        <VectorHeatmapContainer bind:layer />
+        <VectorHeatmap bind:layer />
       {:else if legendType === VectorLegendTypes.SIMPLE}
         <div transition:slide>
           {#if style.type === LayerTypes.LINE}
-            <VectorLineSimple
+            <VectorLine
               bind:layer
               bind:defaultColor={defaultLineColor} />
           {:else if style.type === LayerTypes.FILL}
-            <VectorPolygonSimple
+            <VectorPolygon
               bind:layer
               bind:defaultFillColor={defaultColor}
               bind:defaultFillOutlineColor={defaultLineColor} />
           {:else if style.type === LayerTypes.SYMBOL}
-            <VectorSymbolSimple
+            <VectorSymbol
               bind:layer
               bind:defaultColor />
           {/if}

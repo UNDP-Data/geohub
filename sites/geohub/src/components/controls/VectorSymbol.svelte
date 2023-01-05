@@ -93,7 +93,6 @@
     <div
       class="columns icon-offset pb-4"
       transition:slide={{ duration: 750 }}
-      alt="Advanced Settings Container"
       title="Advanced Settings Container">
       <div class="column">
         <IconOffset
