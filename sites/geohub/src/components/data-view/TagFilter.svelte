@@ -135,7 +135,7 @@
   <div
     hidden={tags && Object.keys(tags).length > 0}
     class="loader-container">
-    <Loader />
+    <Loader size="small" />
   </div>
 </div>
 
@@ -168,8 +168,8 @@
     .loader-container {
       position: absolute;
       z-index: 10;
-      top: 20px;
-      left: 40px;
+      top: 40%;
+      left: 45%;
       background-color: white;
     }
   }

@@ -99,7 +99,7 @@
 
 <div class="map-container">
   {#if isLoading}
-    <div class="loader-container"><Loader /></div>
+    <div class="loader-container"><Loader size="small" /></div>
   {/if}
 
   {#if !previewImageUrl}
@@ -124,8 +124,8 @@
     .loader-container {
       position: absolute;
       z-index: 10;
-      top: 20px;
-      left: 30%;
+      top: 45%;
+      left: 45%;
     }
 
     .map {
