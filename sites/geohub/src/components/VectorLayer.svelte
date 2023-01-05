@@ -14,14 +14,10 @@
   export let colorMapName: string
   let applyToOption: VectorApplyToTypes
   let legendType: string
-  let defaultColor: string = undefined
-  let defaultLineColor: string = undefined
+  let defaultColor: string
+  let defaultLineColor: string
 
   let activeTab = ''
-  let isLabelPanelVisible: boolean
-  let isLegendPanelVisible: boolean
-  let isOpacityPanelVisible: boolean
-  let isFilterPanelVisible: boolean
 
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -29,29 +25,6 @@
     { label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
-
-  $: {
-    isLabelPanelVisible = false
-    isLegendPanelVisible = false
-    isOpacityPanelVisible = false
-    isFilterPanelVisible = false
-    switch (activeTab) {
-      case TabNames.LEGEND:
-        isLegendPanelVisible = true
-        break
-      case TabNames.FILTER:
-        isFilterPanelVisible = true
-        break
-      case TabNames.LABEL:
-        isLabelPanelVisible = true
-        break
-      case TabNames.OPACITY:
-        isOpacityPanelVisible = true
-        break
-      default:
-        break
-    }
-  }
 </script>
 
 <div
@@ -70,24 +43,22 @@
       isToggleTab={true} />
 
     <p class="panel-content">
-      <VectorLegendPanel
-        {layer}
-        {isLegendPanelVisible}
-        bind:colorMapName
-        bind:classificationMethod
-        bind:applyToOption
-        bind:legendType
-        bind:defaultColor
-        bind:defaultLineColor />
-      <VectorFilterPanelWizard
-        {layer}
-        {isFilterPanelVisible} />
-      <VectorLabelPanel
-        {layer}
-        {isLabelPanelVisible} />
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
+      {#if activeTab === TabNames.LEGEND}
+        <VectorLegendPanel
+          {layer}
+          bind:colorMapName
+          bind:classificationMethod
+          bind:applyToOption
+          bind:legendType
+          bind:defaultColor
+          bind:defaultLineColor />
+      {:else if activeTab === TabNames.FILTER}
+        <VectorFilterPanelWizard {layer} />
+      {:else if activeTab === TabNames.LABEL}
+        <VectorLabelPanel {layer} />
+      {:else if activeTab === TabNames.OPACITY}
+        <OpacityPanel {layer} />
+      {/if}
     </p>
   </nav>
 </div>

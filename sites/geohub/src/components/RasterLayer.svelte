@@ -98,9 +98,9 @@
           bind:expressions
           bind:legendType />
       {/if}
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
+      {#if isOpacityPanelVisible === true}
+        <OpacityPanel {layer} />
+      {/if}
     </p>
   </nav>
 </div>
