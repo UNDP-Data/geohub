@@ -168,8 +168,8 @@
     .loader-container {
       position: absolute;
       z-index: 10;
-      top: 20px;
-      left: 40px;
+      top: 40%;
+      left: 45%;
       background-color: white;
     }
   }

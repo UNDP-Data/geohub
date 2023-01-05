@@ -1,7 +1,7 @@
 <script lang="ts">
-    export let size : "small" | "large" = "large";
+    export let size : "small" | "medium" | "large" = "medium";
 </script>
-<div class="loader {size==='small' ? 'small-loader' : null}" aria-busy="true" aria-live="polite" />
+<div class="loader {size==='small' ? 'small-loader' : size==='medium' ? 'medium-loader': null}" aria-busy="true" aria-live="polite" />
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
@@ -12,5 +12,11 @@
       height: 30px;
       border: 4px solid #006eb5;
       border-top-color: #edeff0;
+    }
+    .medium-loader{
+        width: 50px;
+        height: 50px;
+        border: 4px solid #006eb5;
+        border-top-color: #edeff0;
     }
 </style>

@@ -332,7 +332,7 @@
       class="loader-container">
       <Loader
         class="m-auto"
-        size="small" />
+        size="medium" />
     </div>
   {/if}
 </div>

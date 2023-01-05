@@ -15,7 +15,7 @@ const meta = {
 		},
 		parameters: {
 			size: {
-				values: ['small', 'large']
+				values: ['small','medium','large']
 			}
 		}
 	}

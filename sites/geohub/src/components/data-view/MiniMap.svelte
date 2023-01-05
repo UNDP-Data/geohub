@@ -124,8 +124,8 @@
     .loader-container {
       position: absolute;
       z-index: 10;
-      top: 20px;
-      left: 30%;
+      top: 45%;
+      left: 45%;
     }
 
     .map {
