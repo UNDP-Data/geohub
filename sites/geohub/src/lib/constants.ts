@@ -1,4 +1,3 @@
-import type { Layer } from '$lib/types'
 import type { StyleDefinition } from '@undp-data/style-switcher'
 import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/interfaces'
 
@@ -114,29 +113,14 @@ export enum DynamicLayerLegendTypes {
   INTERVALS = 'intervals',
 }
 
-export enum VectorLayerSymbolLegendTypes {
+export enum VectorLegendTypes {
   SIMPLE = 'simple',
   ADVANCED = 'advanced',
 }
 
-export enum VectorLayerSymbolLegendApplyToTypes {
-  ICON_COLOR = 'Icon color',
-  ICON_SIZE = 'Icon size',
-}
-
-export enum VectorLayerLineLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
-}
-
-export enum VectorLayerPolygonLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
-}
-
-export enum VectorLayerLineLegendApplyToTypes {
-  LINE_COLOR = 'Line color',
-  LINE_WIDTH = 'Line width',
+export enum VectorApplyToTypes {
+  COLOR = 'color',
+  SIZE = 'size',
 }
 
 export enum DynamicLayerResolutionTypes {

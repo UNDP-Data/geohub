@@ -132,7 +132,7 @@
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
-        <div class="tile is-parent">
+        <div class="tile is-4 m-auto is-parent">
           <div
             class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
             data-tooltip="Edit map">
