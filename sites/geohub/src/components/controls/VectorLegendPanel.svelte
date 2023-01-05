@@ -16,7 +16,6 @@
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
 
-  export let isLegendPanelVisible = false
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
@@ -159,103 +158,101 @@
   }
 </script>
 
-{#if isLegendPanelVisible === true}
-  <div
-    class="columns is-mobile"
-    data-testid="line-view-container">
-    <div class={`column ${style.type !== LayerTypes.HEATMAP && layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-      {#if style.type === LayerTypes.HEATMAP}
-        <VectorHeatmap bind:layer />
-      {:else if legendType === VectorLegendTypes.SIMPLE}
-        <div transition:slide>
-          {#if style.type === LayerTypes.LINE}
-            <VectorLine
-              bind:layer
-              bind:defaultColor={defaultLineColor} />
-          {:else if style.type === LayerTypes.FILL}
-            <VectorPolygon
-              bind:layer
-              bind:defaultFillColor={defaultColor}
-              bind:defaultFillOutlineColor={defaultLineColor} />
-          {:else if style.type === LayerTypes.SYMBOL}
-            <VectorSymbol
-              bind:layer
-              bind:defaultColor />
-          {/if}
-        </div>
-      {:else if legendType === VectorLegendTypes.ADVANCED}
-        <div transition:slide>
-          <VectorLegendAdvanced
+<div
+  class="columns is-mobile"
+  data-testid="line-view-container">
+  <div class={`column ${style.type !== LayerTypes.HEATMAP && layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
+    {#if style.type === LayerTypes.HEATMAP}
+      <VectorHeatmap bind:layer />
+    {:else if legendType === VectorLegendTypes.SIMPLE}
+      <div transition:slide>
+        {#if style.type === LayerTypes.LINE}
+          <VectorLine
             bind:layer
-            bind:layerMin
-            bind:layerMax
-            bind:colorMapName
-            bind:classificationMethod
-            bind:numberOfClasses
-            bind:defaultColor
-            bind:defaultOutlineColor={defaultLineColor} />
-        </div>
-      {/if}
-    </div>
-    {#if style.type !== LayerTypes.HEATMAP}
-      <div
-        class="columm legend-toggle"
-        transition:slide>
-        {#if layerNumberProperties > 0}
-          <div
-            role="button"
-            aria-label="Switch legend type"
-            class="toggle-container has-tooltip-left has-tooltip-arrow icon m-1"
-            data-tooltip="Toggle Legend Type"
-            tabindex="0"
-            on:click={handleLegendToggleClick}
-            on:keydown={handleEnterKey}
-            data-testid="legend-toggle-container">
-            <i
-              class="fa-solid fa-retweet {isLegendSwitchAnimate ? 'fa-spin' : ''}"
-              style="font-size: 16px; color: white" />
-          </div>
-          <br />
+            bind:defaultColor={defaultLineColor} />
+        {:else if style.type === LayerTypes.FILL}
+          <VectorPolygon
+            bind:layer
+            bind:defaultFillColor={defaultColor}
+            bind:defaultFillOutlineColor={defaultLineColor} />
+        {:else if style.type === LayerTypes.SYMBOL}
+          <VectorSymbol
+            bind:layer
+            bind:defaultColor />
         {/if}
-
-        {#if legendType === VectorLegendTypes.ADVANCED && (applyToOption === VectorApplyToTypes.COLOR || style.type === LayerTypes.FILL)}
-          <div
-            class="toggle-container icon m-1"
-            role="button"
-            aria-label="Open color scheme picker"
-            tabindex="0"
-            use:popperRef
-            on:click={handleClosePopup}
-            on:keydown={handleEnterKey}
-            data-testid="colormap-toggle-container"
-            transition:fade>
-            <i
-              class="fa-solid fa-palette"
-              style="font-size: 16px; color: white" />
-          </div>
-        {/if}
-
-        {#if showTooltip}
-          <div
-            id="tooltip"
-            data-testid="tooltip"
-            use:popperContent={popperOptions}
-            transition:fade>
-            <ColorMapPicker
-              on:handleClosePopup={handleClosePopup}
-              {layerMin}
-              {layerMax}
-              bind:colorMapName
-              bind:numberOfClasses />
-            <div
-              id="arrow"
-              data-popper-arrow />
-          </div>
-        {/if}
+      </div>
+    {:else if legendType === VectorLegendTypes.ADVANCED}
+      <div transition:slide>
+        <VectorLegendAdvanced
+          bind:layer
+          bind:layerMin
+          bind:layerMax
+          bind:colorMapName
+          bind:classificationMethod
+          bind:numberOfClasses
+          bind:defaultColor
+          bind:defaultOutlineColor={defaultLineColor} />
       </div>
     {/if}
   </div>
-{/if}
+  {#if style.type !== LayerTypes.HEATMAP}
+    <div
+      class="columm legend-toggle"
+      transition:slide>
+      {#if layerNumberProperties > 0}
+        <div
+          role="button"
+          aria-label="Switch legend type"
+          class="toggle-container has-tooltip-left has-tooltip-arrow icon m-1"
+          data-tooltip="Toggle Legend Type"
+          tabindex="0"
+          on:click={handleLegendToggleClick}
+          on:keydown={handleEnterKey}
+          data-testid="legend-toggle-container">
+          <i
+            class="fa-solid fa-retweet {isLegendSwitchAnimate ? 'fa-spin' : ''}"
+            style="font-size: 16px; color: white" />
+        </div>
+        <br />
+      {/if}
+
+      {#if legendType === VectorLegendTypes.ADVANCED && (applyToOption === VectorApplyToTypes.COLOR || style.type === LayerTypes.FILL)}
+        <div
+          class="toggle-container icon m-1"
+          role="button"
+          aria-label="Open color scheme picker"
+          tabindex="0"
+          use:popperRef
+          on:click={handleClosePopup}
+          on:keydown={handleEnterKey}
+          data-testid="colormap-toggle-container"
+          transition:fade>
+          <i
+            class="fa-solid fa-palette"
+            style="font-size: 16px; color: white" />
+        </div>
+      {/if}
+
+      {#if showTooltip}
+        <div
+          id="tooltip"
+          data-testid="tooltip"
+          use:popperContent={popperOptions}
+          transition:fade>
+          <ColorMapPicker
+            on:handleClosePopup={handleClosePopup}
+            {layerMin}
+            {layerMax}
+            bind:colorMapName
+            bind:numberOfClasses />
+          <div
+            id="arrow"
+            data-popper-arrow />
+        </div>
+      {/if}
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   @import '../../styles/popper.scss';
