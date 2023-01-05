@@ -228,6 +228,20 @@
     if ($filterInputTags.length > 0) {
       $filterInputTags = []
     }
+
+    clearClickLayer()
+  }
+
+  const clearClickLayer = () => {
+    if (layer.children?.length > 0) {
+      const child = layer.children.find((l) => l.id === `${layerId}-select`)
+      if (child) {
+        if ($map.getLayer(child.id)) {
+          $map.removeLayer(child.id)
+        }
+        layer.children.splice(layer.children.indexOf(child), 1)
+      }
+    }
   }
 
   const handleCurrentOperation = (e) => {
