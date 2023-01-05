@@ -1,5 +1,4 @@
 <script lang="ts">
-
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
