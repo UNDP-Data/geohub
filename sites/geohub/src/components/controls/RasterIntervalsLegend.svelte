@@ -180,7 +180,10 @@
     if (rowIndex == 0) {
       const nextRow = colorMapRows.at(rowIndex + 1)
       if (inputType == 'start') {
-        inputValue = !isNaN(inputValue) && inputValue < currentRow.end ? inputValue : (currentRow.start as number)
+        inputValue =
+          !isNaN(inputValue) && inputValue < currentRow.end && inputValue >= currentRow.start
+            ? inputValue
+            : (currentRow.start as number)
         colorMapRows[rowIndex].start = inputValue
       } else {
         inputValue =
@@ -226,6 +229,9 @@
         colorMapRows[rowIndex + 1].start = inputValue
       }
     }
+
+    //console.log(`${JSON.stringify(currentRow)} ${JSON.stringify(colorMapRows[rowIndex])}`)
+
     handleParamsUpdate()
   }
 </script>
