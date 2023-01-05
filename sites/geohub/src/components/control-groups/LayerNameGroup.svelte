@@ -9,6 +9,7 @@
   import { map } from '$stores'
   import { onDestroy, onMount } from 'svelte'
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
+  import Legend from '$components/controls/vector-styles/Legend.svelte'
 
   export let layer: Layer
   let hasLayerLabel = false
@@ -27,7 +28,7 @@
     hasLayerLabel = e.isCreated ?? false
   }
 
-  const layerStyle = getLayerStyle($map, layer.id)
+  let layerStyle = getLayerStyle($map, layer.id)
 
   let icon = LayerIconTypes.find((icon) => icon.id === layerStyle.type)
   if (layerStyle.type !== LayerTypes.RASTER) {
@@ -49,57 +50,50 @@
 </script>
 
 <div class="layer-header">
-  <div>
-    <div class="layer-header-name">
-      <i
-        class="{icon.icon} sm"
-        style="color: {icon.color};" />
-      <span style="padding-left: 5px;">
-        {#if hasLayerLabel}
-          <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
-        {/if}
-      </span>
-      {#if layerStyle.type === 'raster'}
-        <RasterBandSelector {layer} />
-      {/if}
-      <div class="layer-name pl-1">
-        <div>
-          {clean(layer.name)}
-        </div>
-      </div>
-      <div class="group">
-        <DataCardInfoButton {layer} />
-        <VisibilityButton {layer} />
-        <DeleteButton {layer} />
-        <ZoomToLayerButton {layer} />
-      </div>
+  <Legend
+    bind:map={$map}
+    bind:layer={layerStyle} />
+  {#if hasLayerLabel}
+    <span class="tag is-info pl-1"><i class="fa-solid fa-text-height" /></span>
+  {/if}
+
+  {#if layerStyle.type === 'raster'}
+    <span class="pl-1"><RasterBandSelector {layer} /></span>
+  {/if}
+  <div class="layer-name pl-1">
+    <div>
+      {clean(layer.name)}
     </div>
+  </div>
+  <div class="group">
+    <DataCardInfoButton {layer} />
+    <VisibilityButton {layer} />
+    <DeleteButton {layer} />
+    <ZoomToLayerButton {layer} />
   </div>
 </div>
 <slot />
 
 <style lang="scss">
   .layer-header {
-    .layer-header-name {
-      align-items: center;
-      display: flex;
+    display: flex;
+    align-items: center;
+
+    .layer-name {
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      display: -webkit-box;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       font-family: ProximaNova, sans-serif;
       height: 20px;
       justify-content: left;
-
-      .layer-name {
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        display: -webkit-box;
-        font-size: 14px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-      }
     }
 
     .group {
       display: flex;
+      margin-left: auto;
     }
   }
 </style>
