@@ -2,9 +2,9 @@
   import { fade, slide } from 'svelte/transition'
   import { cloneDeep } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
-  import VectorSymbolContainer from '$components/controls/VectorSymbolContainer.svelte'
-  import VectorLineContainer from '$components/controls/VectorLineContainer.svelte'
-  import VectorPolygonContainer from '$components/controls/VectorPolygonContainer.svelte'
+  import VectorLineSimple from './VectorLineSimple.svelte'
+  import VectorPolygonSimple from './VectorPolygonSimple.svelte'
+  import VectorSymbolSimple from './VectorSymbolSimple.svelte'
   import VectorHeatmapContainer from './VectorHeatmapContainer.svelte'
   import VectorLegendAdvanced from '$components/controls/VectorLegendAdvanced.svelte'
   import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
@@ -58,57 +58,35 @@
     }
   }
 
-  const getIconColor = (): string => {
-    let iconColor = $map.getPaintProperty(layer.id, 'icon-color')
+  const getDefaultColor = (property: 'icon-color' | 'fill-color' | 'fill-outline-color' | 'line-color'): string => {
+    let color = $map.getPaintProperty(layer.id, property)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (!iconColor || (iconColor && iconColor.type === 'interval')) {
-      iconColor = chroma.random().hex()
+    if (!color || (color && color.type === 'interval')) {
+      if (property === 'fill-outline-color') {
+        color = chroma(defaultColor).darken(2.5).hex()
+      } else {
+        color = chroma.random().hex()
+      }
     }
-    return iconColor as string
-  }
-
-  const getFillColor = (): string => {
-    let fillColor = $map.getPaintProperty(layer.id, 'fill-color')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (!fillColor || (fillColor && fillColor.type === 'interval')) {
-      fillColor = chroma.random().hex()
-    }
-    return fillColor as string
-  }
-
-  const getLineColor = (): string => {
-    let lineColor = $map.getPaintProperty(layer.id, 'line-color')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
-      lineColor = chroma.random().hex()
-    }
-    return lineColor as string
+    return color as string
   }
 
   export let defaultColor: string =
     style.type === 'symbol'
-      ? getIconColor()
+      ? getDefaultColor('icon-color')
       : style.type === 'fill'
-      ? getFillColor()
+      ? getDefaultColor('fill-color')
       : style.type === 'line'
-      ? getLineColor()
+      ? getDefaultColor('line-color')
       : undefined
 
-  const getFillOutlineColor = (): string => {
-    let fillOutlineColor = $map.getPaintProperty(layer.id, 'fill-outline-color')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (!fillOutlineColor || (fillOutlineColor && fillOutlineColor.type === 'interval')) {
-      fillOutlineColor = chroma(defaultColor).darken(2.5).hex()
-    }
-    return fillOutlineColor as string
-  }
-
   export let defaultLineColor: string =
-    style.type === 'line' ? getLineColor() : style.type === 'fill' ? getFillOutlineColor() : undefined
+    style.type === 'line'
+      ? getDefaultColor('line-color')
+      : style.type === 'fill'
+      ? getDefaultColor('fill-outline-color')
+      : undefined
 
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
@@ -194,22 +172,22 @@
   <div
     class="columns is-mobile"
     data-testid="line-view-container">
-    <div class={`column ${layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
+    <div class={`column ${style.type !== LayerTypes.HEATMAP && layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
       {#if style.type === LayerTypes.HEATMAP}
         <VectorHeatmapContainer bind:layer />
       {:else if legendType === VectorLegendTypes.SIMPLE}
         <div transition:slide>
           {#if style.type === LayerTypes.LINE}
-            <VectorLineContainer
+            <VectorLineSimple
               bind:layer
               bind:defaultColor={defaultLineColor} />
           {:else if style.type === LayerTypes.FILL}
-            <VectorPolygonContainer
+            <VectorPolygonSimple
               bind:layer
               bind:defaultFillColor={defaultColor}
               bind:defaultFillOutlineColor={defaultLineColor} />
           {:else if style.type === LayerTypes.SYMBOL}
-            <VectorSymbolContainer
+            <VectorSymbolSimple
               bind:layer
               bind:defaultColor />
           {/if}
