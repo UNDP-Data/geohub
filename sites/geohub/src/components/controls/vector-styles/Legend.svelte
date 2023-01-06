@@ -63,7 +63,12 @@
           divColor.style.cssText = cssStyle
           container.appendChild(divColor)
         } else if (colormap) {
-          const colors = colormap.map((c) => chroma.rgb(c[1][0], c[1][1], c[1][2]).css())
+          let colors: string[]
+          if (Array.isArray(colormap)) {
+            colors = colormap.map((c) => chroma.rgb(c[1][0], c[1][1], c[1][2]).css())
+          } else {
+            colors = Object.values(colormap).map((c) => chroma.rgb(c[0], c[1], c[2]).css())
+          }
           const color = chroma
             .scale(colors)
             .mode('lrgb')
