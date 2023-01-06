@@ -330,8 +330,7 @@
     <div
       hidden={!$indicatorProgress}
       class="loader-container">
-      <Loader
-        size="medium" />
+      <Loader size="medium" />
     </div>
   {/if}
 </div>
