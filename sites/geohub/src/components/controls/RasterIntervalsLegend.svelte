@@ -230,8 +230,6 @@
       }
     }
 
-    //console.log(`${JSON.stringify(currentRow)} ${JSON.stringify(colorMapRows[rowIndex])}`)
-
     handleParamsUpdate()
   }
 </script>

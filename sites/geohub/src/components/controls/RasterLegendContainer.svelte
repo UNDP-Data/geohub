@@ -22,7 +22,7 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let colorMapName: string
+  export let legendType: DynamicLayerLegendTypes = undefined
   export let classificationMethod: ClassificationMethodTypes
 
   let info
@@ -34,14 +34,31 @@
   let layerHasUniqueValues = false
   let showTooltip = false
   let numberOfClasses: number
-  export let legendType: DynamicLayerLegendTypes = undefined
+  let vizMode: 'continuous' | 'discrete' | undefined = undefined
+  let colorMapName: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
-
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
   onMount(async () => {
-    const rasterLayerSrcUrl = getLayerSourceUrl($map, layer.id)
+    //first wait for the map to be load/be ready
+    while ($map.loaded() === false) {
+      await sleep(100)
+    }
+
+    /**
+     * a raster layer can at any goven time be in two visualization contexts:
+     *  1. continuous colormap_name param in url
+     *  2. discrete (classes) colormap parameter
+     *
+     * These two mode are MUTUALLY exlcusive, that is only ONE can be active at any given time instance
+     * That means whenever the mode is changed this is done by removing the other mode from the url
+     */
+
+    colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+
+    const rasterLayerURI = getLayerSourceUrl($map, layer.id)
 
     const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
 
@@ -59,10 +76,8 @@
         legendType = DynamicLayerLegendTypes.INTERVALS
       }
     } else {
-      console.log('first', colorMapName)
       // continuous
       colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      console.log('second', colorMapName)
     }
     if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
       const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
@@ -139,14 +154,11 @@
     }
   }
 
-  $: colorMapName, colorMapChanged()
-  const colorMapChanged = () => {
-    console.log(getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string, colorMapName)
-    if (
-      colorMapName === undefined ||
-      (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == colorMapName
-    )
-      return
+  //$: colorMapName, colorMapChanged()
+  const colorMapChanged = (e: CustomEvent) => {
+    const newCM = e.detail.colorMapName as string
+    if (newCM === undefined || (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == newCM) return
+    colorMapName = newCM
     const rasterInfo = layer.info as RasterTileMetadata
     const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
     const tiles = source.tiles
@@ -155,7 +167,7 @@
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-    let updatedParams = Object.assign({ colormap_name: colorMapName })
+    let updatedParams = Object.assign({ colormap_name: newCM })
     if (rescale) {
       updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
     }
@@ -254,7 +266,8 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          bind:colorMapName
+          on:colorMapChanged={colorMapChanged}
+          {colorMapName}
           bind:numberOfClasses />
         <div
           id="arrow"

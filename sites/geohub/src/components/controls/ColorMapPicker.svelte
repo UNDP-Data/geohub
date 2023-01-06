@@ -24,9 +24,14 @@
   })
 
   const handleColorMapClick = (cmName: string) => {
+    //the lines below if removed will break  all the components that use this component and bind
+    // two ways the colormap
+    // i recommend using the evend instead and bind the colormap one way only
     if (cmName !== colorMapName) {
       colorMapName = cmName
     }
+
+    dispatch('colorMapChanged', { colorMapName: cmName })
   }
 
   const handleClosePopup = () => {
