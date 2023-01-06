@@ -46,7 +46,7 @@ const blobRegister: AzureFunction = async function (
 
 			context.res = {
 				// status: 200, /* Defaults to 200 */
-				body: 'Hello ' + url
+				body: `${url} was registered to GeoHub`
 			};
 		}
 	}
