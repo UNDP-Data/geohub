@@ -72,7 +72,7 @@
   class="raster-layer-container has-background-white-bis"
   transition:fade>
   <nav class="panel">
-    <p class="panel-heading has-background-grey-lighter">
+    <p class="panel-heading has-background-grey-lighter p-2">
       <LayerNameGroup {layer} />
     </p>
     <Tabs
