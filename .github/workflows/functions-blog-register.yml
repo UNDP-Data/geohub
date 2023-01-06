@@ -33,13 +33,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: "Resolve Project Dependencies Using Npm"
-        shell: pwsh
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           pnpm --filter="./packages/geohub-cli" install
           pnpm --filter="./functions/geohub-blob-register" install
           pnpm --filter="./functions/geohub-blob-register" build
-          popd
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
