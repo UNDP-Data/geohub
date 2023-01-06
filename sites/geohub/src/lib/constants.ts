@@ -49,56 +49,6 @@ export enum ErrorMessages {
   COMPONENT_NOT_RENDERED = 'Step Component cannot be rendered outside the Wizard component',
   TOO_SMALL_ZOOM_LEVEL = 'Please zoom in more than zoom level: 5 in order to load the layer',
 }
-export const LayerIconTypes = [
-  {
-    id: 'point',
-    label: 'Point',
-    icon: 'fa-solid fa-cubes-stacked',
-    color: 'lightseagreen',
-  },
-  {
-    id: 'symbol',
-    label: 'Symbol',
-    icon: 'fa-solid fa-cubes-stacked',
-    color: 'lightseagreen',
-  },
-  {
-    id: 'line',
-    label: 'Line',
-    icon: 'fa-solid fa-bacon',
-    color: 'mediumpurple',
-  },
-  {
-    id: 'polygon',
-    label: 'Polygon',
-    icon: 'fa-solid fa-vector-square',
-    color: 'crimson',
-  },
-  {
-    id: 'fill',
-    label: 'Polygon',
-    icon: 'fa-solid fa-vector-square',
-    color: 'crimson',
-  },
-  {
-    id: 'vector',
-    label: 'Vector',
-    icon: 'fa-solid fa-bezier-curve',
-    color: 'peru',
-  },
-  {
-    id: 'raster',
-    label: 'Raster',
-    icon: 'fa-brands fa-windows',
-    color: '#0b0b45',
-  },
-  {
-    id: 'heatmap',
-    label: 'Heatmap',
-    icon: 'fa-solid fa-braille',
-    color: 'crimson',
-  },
-]
 
 export enum ColorMapTypes {
   SEQUENTIAL = 'sequential',

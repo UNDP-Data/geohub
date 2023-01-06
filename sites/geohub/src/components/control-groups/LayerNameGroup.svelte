@@ -3,7 +3,6 @@
   import VisibilityButton from '$components/controls/VisibilityButton.svelte'
   import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte'
   import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte'
-  import { LayerIconTypes, LayerTypes } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
@@ -29,24 +28,6 @@
   }
 
   let layerStyle = getLayerStyle($map, layer.id)
-
-  let icon = LayerIconTypes.find((icon) => icon.id === layerStyle.type)
-  if (layerStyle.type !== LayerTypes.RASTER) {
-    switch (layerStyle.type) {
-      case 'fill':
-        icon = LayerIconTypes.find((icon) => icon.id === 'polygon')
-        break
-      case 'line':
-        icon = LayerIconTypes.find((icon) => icon.id === 'line')
-        break
-      case 'symbol':
-        icon = LayerIconTypes.find((icon) => icon.id === 'point')
-        break
-      case 'heatmap':
-        icon = LayerIconTypes.find((icon) => icon.id === 'heatmap')
-        break
-    }
-  }
 </script>
 
 <div class="layer-header">
