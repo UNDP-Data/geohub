@@ -78,7 +78,10 @@
   const handleChangeColorMap = () => {
     if (style.type !== LayerTypes.HEATMAP) return
     colorValues.forEach((row) => {
-      const colorValue = `rgba(${row.color.r},${row.color.g},${row.color.b},${row.index === 0 ? 0 : row.color.a})`
+      let colorValue = `rgb(${row.color.r},${row.color.g},${row.color.b})`
+      if (row.index === 0 || row.color.a < 255) {
+        colorValue = `rgba(${row.color.r}, ${row.color.g}, ${row.color.b}, ${row.index === 0 ? 0 : row.color.a})`
+      }
       heatMapValues[row.index * 2 + heatMapDataColorIndexStart + 1] = colorValue
     })
 

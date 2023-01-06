@@ -57,7 +57,7 @@
     <span class="tag is-info pl-1"><i class="fa-solid fa-text-height" /></span>
   {/if}
 
-  {#if layerStyle.type === 'raster'}
+  {#if layerStyle?.type === 'raster'}
     <span class="pl-1"><RasterBandSelector {layer} /></span>
   {/if}
   <div class="layer-name pl-1">
