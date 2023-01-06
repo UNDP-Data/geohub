@@ -32,7 +32,7 @@
   transition:fade
   data-testid="vector-layer-view-container">
   <nav class="panel">
-    <p class="panel-heading">
+    <p class="panel-heading has-background-grey-lighter p-2">
       <LayerNameGroup {layer} />
     </p>
 
