@@ -15,9 +15,9 @@ class Datasets {
 
 	private tmpDir: string;
 
-	constructor(datasets: Dataset[], tmpDir: string) {
+	constructor(datasets: Dataset[], tmpDir?: string) {
 		this.datasets = datasets;
-		this.tmpDir = tmpDir;
+		this.tmpDir = tmpDir ?? '';
 	}
 
 	public addTags(tags: Tags) {

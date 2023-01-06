@@ -15,5 +15,5 @@
 		"module": "commonjs",
 		"outDir": "./dist"
 	},
-	"include": ["src/index.ts", "src/cli/index.ts"]
+	"include": ["src/index.ts", "src/cli/index.ts", "src/functions/geohub-blob-register"]
 }

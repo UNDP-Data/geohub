@@ -4,6 +4,7 @@ tmp/
 .DS_Store
 .turbo
 !database.vuerd.json
+!function.json
 
 # Logs
 logs

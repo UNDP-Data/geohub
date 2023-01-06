@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"dev": "./node_modules/.bin/ts-node ./src/cli/index.ts",
-		"build": "rimraf build && tsc -p .",
+		"build": "rimraf dist && tsc -p .",
 		"watch": "tsc -w",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
@@ -24,6 +24,7 @@
 	"author": "United Nations Development Programme",
 	"license": "ISC",
 	"devDependencies": {
+		"@azure/functions": "^3.5.0",
 		"@types/cli-progress": "^3.11.0",
 		"@types/node": "^18.11.17",
 		"@types/pg": "^8.6.5",

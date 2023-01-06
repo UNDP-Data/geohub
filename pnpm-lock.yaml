@@ -209,6 +209,7 @@ importers:
 
   packages/geohub-cli:
     specifiers:
+      '@azure/functions': ^3.5.0
       '@azure/storage-blob': ^12.12.0
       '@types/cli-progress': ^3.11.0
       '@types/node': ^18.11.17
@@ -236,6 +237,7 @@ importers:
       pg-copy-streams: 6.0.4
       wkx: 0.5.0
     devDependencies:
+      '@azure/functions': 3.5.0
       '@types/cli-progress': 3.11.0
       '@types/node': 18.11.17
       '@types/pg': 8.6.5
@@ -805,6 +807,14 @@ packages:
       '@azure/abort-controller': 1.1.0
       tslib: 2.4.1
     dev: false
+
+  /@azure/functions/3.5.0:
+    resolution: {integrity: sha512-RBYGdZIPYT17UPGBcXI9DPlpaEOO5D8r7pDpJsm/2N5eVrpqIRO8VZuoIiZiEQWV0LO3BZNzlvdS87pzBUBJzQ==}
+    dependencies:
+      iconv-lite: 0.6.3
+      long: 4.0.0
+      uuid: 8.3.2
+    dev: true
 
   /@azure/logger/1.0.3:
     resolution: {integrity: sha512-aK4s3Xxjrx3daZr3VylxejK3vG5ExXck5WOHDJ8in/k9AqlfIyFMMT1uG7u8mNjX+QRILTIn0/Xgschfh/dQ9g==}
@@ -8216,6 +8226,10 @@ packages:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
     dev: true
 
+  /long/4.0.0:
+    resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
+    dev: true
+
   /loose-envify/1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
@@ -11132,7 +11146,6 @@ packages:
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
-    dev: false
 
   /uuid/9.0.0:
     resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
