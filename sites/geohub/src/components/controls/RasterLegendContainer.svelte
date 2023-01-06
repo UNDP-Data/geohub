@@ -40,13 +40,8 @@
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-  onMount(async () => {
-    //first wait for the map to be load/be ready
-    while ($map.loaded() === false) {
-      await sleep(100)
-    }
 
+  onMount(async () => {
     /**
      * a raster layer can at any goven time be in two visualization contexts:
      *  1. continuous colormap_name param in url
@@ -55,10 +50,6 @@
      * These two mode are MUTUALLY exlcusive, that is only ONE can be active at any given time instance
      * That means whenever the mode is changed this is done by removing the other mode from the url
      */
-
-    colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-
-    const rasterLayerURI = getLayerSourceUrl($map, layer.id)
 
     const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
 
@@ -78,23 +69,23 @@
     } else {
       // continuous
       colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+      legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
-    if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      if (layerSrc?.tiles?.length > 0) {
-        await initialise()
-      } else {
-        setTimeout(initialise, 300)
-      }
-    }
+
+    // initialisation is not necessary when restoring or whitching from other tabs
+    if (!('stats' in Object.keys(layer.info))) await initialise()
   })
 
   const initialise = async () => {
     const rasterInfo = layer.info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      if (!(layerSrc?.tiles?.length > 0)) return
-      const layerURL = new URL(layerSrc.tiles[0])
+      // const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
+      // if (!(layerSrc?.tiles?.length > 0)) return
+
+      const layerURI = getLayerSourceUrl($map, layer.id) as string
+
+      const layerURL = new URL(layerURI)
+
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
       const band = info.active_band_no
@@ -115,7 +106,7 @@
         layerList.set([...layers])
       }
     }
-    legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
+    //legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
   }
 
   const {
@@ -149,21 +140,18 @@
 
     if (legendType === DynamicLayerLegendTypes.CONTINUOUS) {
       legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
-    } else {
-      legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
   }
 
-  //$: colorMapName, colorMapChanged()
   const colorMapChanged = (e: CustomEvent) => {
     const newCM = e.detail.colorMapName as string
+
     if (newCM === undefined || (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == newCM) return
     colorMapName = newCM
-    const rasterInfo = layer.info as RasterTileMetadata
-    const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
-    const tiles = source.tiles
-    if (!(tiles && tiles.length > 0)) return
-    const layerURL = new URL(tiles[0])
+
+    const layerURI = getLayerSourceUrl($map, layer.id) as string
+    const layerURL = new URL(layerURI)
+
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
