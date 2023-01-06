@@ -228,6 +228,7 @@
   map.on(
     'styledata',
     debounce(() => {
+      if (!layer) return
       layer = getLayerStyle(map, layer.id)
       update()
     }, 300),
