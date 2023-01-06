@@ -32,6 +32,16 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # setup environmental variables
+      - name: Create environment file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          directory: ./functions/geohub-blob-register
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+
       - name: "Resolve Project Dependencies Using Npm"
         run: |
           pnpm --filter="./packages/geohub-cli" install
