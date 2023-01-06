@@ -11,7 +11,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: "geohub-blob-register" # set this to your function app name on Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "packages/geohub-cli" # set this to the path to your web app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "packages/geohub-cli/dist" # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: "16.x" # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
