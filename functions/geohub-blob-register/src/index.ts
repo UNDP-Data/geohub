@@ -1,5 +1,10 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { BlobServiceAccountManager, DatabaseManager, Datasets, Storages } from '../../util';
+import {
+	BlobServiceAccountManager,
+	DatabaseManager,
+	Datasets,
+	Storages
+} from '@undp-data/geohub-cli';
 
 const { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY, DATABASE_CONNECTION, TITILER_ENDPOINT } =
 	process.env;
