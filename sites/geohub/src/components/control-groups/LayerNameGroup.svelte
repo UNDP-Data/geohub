@@ -35,13 +35,13 @@
     bind:map={$map}
     bind:layer={layerStyle} />
   {#if hasLayerLabel}
-    <span class="tag is-info pl-1"><i class="fa-solid fa-text-height" /></span>
+    <span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
   {/if}
 
   {#if layerStyle?.type === 'raster'}
     <span class="pl-1"><RasterBandSelector {layer} /></span>
   {/if}
-  <div class="layer-name pl-1">
+  <div class="layer-name ml-1">
     <div>
       {clean(layer.name)}
     </div>
