@@ -1,11 +1,22 @@
+<script
+  lang="ts"
+  context="module">
+  let rlcState = {}
+</script>
+
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
+  import {
+    DynamicLayerLegendTypes,
+    COLOR_CLASS_COUNT_MAXIMUM,
+    COLOR_CLASS_COUNT,
+    ClassificationMethodTypes,
+  } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -15,11 +26,10 @@
     updateParamsInURL,
     getValueFromRasterTileUrl,
     getLayerStyle,
-    getRandomColormap,
     getLayerSourceUrl,
+    sleep,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
   export let legendType: DynamicLayerLegendTypes = undefined
@@ -33,15 +43,21 @@
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let showTooltip = false
-  let numberOfClasses: number
-  let vizMode: 'continuous' | 'discrete' | undefined = undefined
-  let colorMapName: string
+  let numberOfClasses: number = rlcState?.[layer.id]?.['numberOfClasses'] || COLOR_CLASS_COUNT
+  // let vizMode: 'continuous' | 'discrete' | undefined = undefined
+  let colorMapName: string = rlcState?.[layer.id]?.['colorMapName']
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
 
   onMount(async () => {
+    rlcState[layer.id] = {}
+    console.log('RLCMOUNT', classificationMethod)
+    while ($map.loaded() === false) {
+      await sleep(100)
+    }
+
     /**
      * a raster layer can at any goven time be in two visualization contexts:
      *  1. continuous colormap_name param in url
@@ -68,23 +84,21 @@
       }
     } else {
       // continuous
-      colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
+      colorMapName = (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) || colorMapName
+
       legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
 
-    // initialisation is not necessary when restoring or whitching from other tabs
+    // initialisation is not necessary when restoring or swhitching from other tabs
     if (!('stats' in Object.keys(layer.info))) await initialise()
   })
 
   const initialise = async () => {
     const rasterInfo = layer.info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
-      // const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      // if (!(layerSrc?.tiles?.length > 0)) return
+      const layerUrl = getLayerSourceUrl($map, layer.id) as string
 
-      const layerURI = getLayerSourceUrl($map, layer.id) as string
-
-      const layerURL = new URL(layerURI)
+      const layerURL = new URL(layerUrl)
 
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
@@ -140,35 +154,52 @@
 
     if (legendType === DynamicLayerLegendTypes.CONTINUOUS) {
       legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    } else {
+      legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
   }
 
-  const colorMapChanged = (e: CustomEvent) => {
-    const newCM = e.detail.colorMapName as string
-
-    if (newCM === undefined || (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == newCM) return
-    colorMapName = newCM
-
-    const layerURI = getLayerSourceUrl($map, layer.id) as string
-    const layerURL = new URL(layerURI)
-
-    layerURL.searchParams.delete('colormap_name')
-    layerURL.searchParams.delete('rescale')
-    const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-    let updatedParams = Object.assign({ colormap_name: newCM })
-    if (rescale) {
-      updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-    }
-    const layerStyle = getLayerStyle($map, layer.id)
-    updateParamsInURL(layerStyle, layerURL, updatedParams)
-
-    colorPickerVisibleIndex = -1
-    const nlayer = { ...layer }
-    const layers = $layerList.map((lyr) => {
-      return layer.id !== lyr.id ? lyr : nlayer
-    })
-    layerList.set([...layers])
+  $: {
+    rlcState[layer.id] = { ...rlcState[layer.id], colorMapName: colorMapName }
   }
+
+  $: {
+    rlcState[layer.id] = { ...rlcState, numberOfClasses: numberOfClasses }
+  }
+
+  $: {
+    console.log('CMet', classificationMethod)
+  }
+
+  // const colorMapChanged = (e: CustomEvent) => {
+  //   console.log('CLMPC in container')
+  //   const newCM = e.detail.colorMapName as string
+
+  //   if (newCM === undefined || (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == newCM) return
+
+  //   const layerURI = getLayerSourceUrl($map, layer.id) as string
+  //   const layerURL = new URL(layerURI)
+
+  //   layerURL.searchParams.delete('colormap_name')
+  //   layerURL.searchParams.delete('rescale')
+  //   const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
+  //   let updatedParams = Object.assign({ colormap_name: newCM })
+  //   if (rescale) {
+  //     updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
+  //   }
+  //   const layerStyle = getLayerStyle($map, layer.id)
+  //   updateParamsInURL(layerStyle, layerURL, updatedParams)
+
+  //   colorPickerVisibleIndex = -1
+  //   const nlayer = { ...layer }
+  //   const layers = $layerList.map((lyr) => {
+  //     return layer.id !== lyr.id ? lyr : nlayer
+  //   })
+  //   layerList.set([...layers])
+
+  //   colorMapName= newCM
+
+  // }
 
   const handleClosePopup = () => {
     showTooltip = !showTooltip
@@ -254,8 +285,7 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          on:colorMapChanged={colorMapChanged}
-          {colorMapName}
+          bind:colorMapName
           bind:numberOfClasses />
         <div
           id="arrow"

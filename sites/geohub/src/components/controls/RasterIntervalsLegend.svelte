@@ -4,11 +4,9 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
   } from '$lib/constants'
-  import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
   import {
     fetchUrl,
@@ -27,13 +25,16 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
-  export let numberOfClasses = COLOR_CLASS_COUNT
+  export let numberOfClasses
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes
+
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
+    console.log('IL CMAPNAME', colorMapName, numberOfClasses, classificationMethod)
     getColorMapRows()
     reclassifyImage()
   }
@@ -55,7 +56,6 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  export let classificationMethod: ClassificationMethodTypes
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -68,8 +68,10 @@
   onMount(async () => {
     const rasterInfo = info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-      const layerURL = new URL(layerSrc.tiles[0])
+      const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+
+      const layerURL = new URL(layerUrl)
+
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
       const layerStats: RasterLayerStats = await fetchUrl(statsURL)
       info = { ...info, stats: layerStats }
@@ -80,11 +82,13 @@
     if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
+        console.log('HERE')
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
       } else {
         classificationMethod = ClassificationMethodTypes.LOGARITHMIC
       }
     }
+
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
       return layerConfig.id !== layer.id ? layer : layerConfig
@@ -109,13 +113,14 @@
         })
       })
     }
-    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+    numberOfClasses = colorMapRows.length === 0 ? numberOfClasses : colorMapRows.length
   }
 
   const reclassifyImage = (e?: CustomEvent) => {
     let isClassificationMethodEdited = false
     if (e) {
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
+      console.log('passed m', classificationMethod)
       isClassificationMethodEdited = true
     }
     // Fixme: Possible bug in titiler. The Max value is not the real max in some layers
@@ -139,11 +144,13 @@
       classification: classificationMethod,
     })
   }
+
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {
     const encodeColorMapRows = JSON.stringify(colorMapRows.map((row) => [[row.start, row.end], row.color]))
-    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-    const layerURL = new URL(layerSrc.tiles[0])
+    const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    if (!(layerUrl && layerUrl.length > 0)) return
+    const layerURL = new URL(layerUrl)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
@@ -157,16 +164,6 @@
     layerConfig = layerConfigClone
     colorMapRows = []
     reclassifyImage()
-  }
-
-  const generateRowWidth = (colorMapRows) => {
-    // for each of the start and end of the colormap rows get the maximum
-    // generate rowWidth based on the maximum
-    rowWidth = Math.max(
-      ...colorMapRows.map((row) => {
-        return Math.max(row.start.toString().length, row.end.toString().length)
-      }),
-    )
   }
 
   const handleColorPickerClick = (event: CustomEvent) => {
@@ -237,6 +234,7 @@
 <div
   class="intervals-view-container"
   data-testid="intervals-view-container">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="columns is-gapless controls"
     on:click={() => (colorPickerVisibleIndex = -1)}>

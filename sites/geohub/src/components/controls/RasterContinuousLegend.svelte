@@ -1,19 +1,36 @@
+<script
+  lang="ts"
+  context="module">
+  let rclState = {}
+</script>
+
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-  import { onMount } from 'svelte'
-  import type { RasterTileSource } from 'maplibre-gl'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { COLOR_CLASS_COUNT, ColorMapTypes } from '$lib/constants'
-  import { getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper'
+  import {
+    getActiveBandIndex,
+    getLayerStyle,
+    getValueFromRasterTileUrl,
+    updateParamsInURL,
+    getLayerSourceUrl,
+    sleep,
+  } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
 
   export let layerConfig: Layer
+  export let colorMapName: string
+  export let numberOfClasses
+
+  const lUrl = getLayerSourceUrl($map, layerConfig.id) as string
+
+  console.log('CONTINUOUS LEGEND', colorMapName)
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
-  export let colorMapName: string
+
   let layerMin = NaN
   let layerMax = NaN
 
@@ -28,65 +45,95 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  export let numberOfClasses = COLOR_CLASS_COUNT
-
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
-  // this ensures the slider state is set to layer min max
-  let rangeSliderValues = rescale ? rescale : [layerMin, layerMax]
+  // this ensures the slider state is set to 1) rescale from url, 2 rescale state, 3 layermin/max
+  let rangeSliderValues = rescale
+    ? rescale
+    : rclState['rescale']
+    ? rclState['rescale']
+    : ([layerMin, layerMax] as number[])
 
   let step = (layerMax - layerMin) * 1e-2
 
   // the reactive statement below will update map whenever the colormap changes or the legend was switched.
   // quite a tricky business
+  // as the colorMapName is two way binded, this means next fucntion is loaded all the time
+  // for this reason it makes a lot of sense to consider it a workhorse and do a lot of sanitation ans well
+
   $: colorMapName, colorMapNameChanged()
   const colorMapNameChanged = () => {
-    if (!colorMapName) return
-    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-    if (!(layerSrc && layerSrc.tiles && layerSrc.tiles.length > 0)) return
-    const layerURL = new URL(layerSrc.tiles[0])
-    if (layerURL.searchParams.has('colormap') && layerConfig) {
-      rescaleColorMap()
+    const currCMAP = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap_name') as string
+
+    // invalid cases
+    if (!colorMapName || currCMAP == colorMapName) {
+      return
     }
+
+    const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    if (!(layerUrl && layerUrl.length > 0)) {
+      return
+    }
+
+    const layerURL = new URL(layerUrl)
+    // remove colormap in case the layer was previously in
+    if (layerURL.searchParams.has('colormap')) layerURL.searchParams.delete('colormap')
+
+    // set color map and force map rerender
+    layerURL.searchParams.delete('colormap_name')
+    let updatedParams = Object.assign({ colormap_name: colorMapName })
+
+    //for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
+    // the rescale at all times
+    layerURL.searchParams.delete('rescale')
+    updatedParams = Object.assign(updatedParams, { rescale: rangeSliderValues.join(',') })
+
+    const layerStyle = getLayerStyle($map, layerConfig.id)
+    updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
 
-  onMount(() => {
-    // pass
-  })
+  /**
+   * please keep the next  fucntion here as It is not lcear whay it has been designed as such
+   */
 
-  const rescaleColorMap = () => {
-    if (!$map) return
-    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-    const layerURL = new URL(layerSrc.tiles[0])
-    if (layerURL.searchParams.has('colormap')) {
-      //console.log('rescale color map')
-      let params = {}
-      layerURL.searchParams.delete('colormap')
-      if (!layerURL.searchParams.has('rescale')) {
-        params = { rescale: rangeSliderValues.join(',') }
-      } else {
-        let rescaleParam = layerURL.searchParams.get('rescale')
-        let rescaleMin = '',
-          rescaleMax = ''
-        ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
-        if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
-          params = { rescale: rangeSliderValues.join(',') }
-        }
-      }
+  // const rescaleColorMap = () => {
+  //   if (!$map) return
+  //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+  //   const layerURL = new URL(layerUrl)
+  //   if (!(layerUrl && layerUrl.length > 0)) return
+  //   if (layerURL.searchParams.has('colormap')) {
+  //     //console.log('rescale color map')
+  //     let params = {}
+  //     layerURL.searchParams.delete('colormap')
+  //     if (!layerURL.searchParams.has('rescale')) {
+  //       params = { rescale: rangeSliderValues.join(',') }
+  //     } else {
+  //       let rescaleParam = layerURL.searchParams.get('rescale')
+  //       let rescaleMin = '',
+  //         rescaleMax = ''
+  //       ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
+  //       if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
+  //         params = { rescale: rangeSliderValues.join(',') }
+  //       }
+  //     }
 
-      params = Object.assign(params, { colormap_name: colorMapName })
-      Object.keys(params).forEach((key) => {
-        layerURL.searchParams.set(key, params[key])
-      })
-      const layerStyle = getLayerStyle($map, layerConfig.id)
-      updateParamsInURL(layerStyle, layerURL, params)
-    }
-  }
+  //     params = Object.assign(params, { colormap_name: colorMapName })
+  //     Object.keys(params).forEach((key) => {
+  //       layerURL.searchParams.set(key, params[key])
+  //     })
+  //     const layerStyle = getLayerStyle($map, layerConfig.id)
+  //     updateParamsInURL(layerStyle, layerURL, params)
+  //   }
+  // }
+
   const onSliderStop = () => {
     const layerStyle = getLayerStyle($map, layerConfig.id)
-    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
-    const layerURL = new URL(layerSrc.tiles[0])
+    const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    if (!(layerUrl && layerUrl.length > 0)) return
+    const layerURL = new URL(layerUrl)
     updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') })
+    rclState['rescale'] = rangeSliderValues
+    console.log(rangeSliderValues.join('::'))
   }
 </script>
 

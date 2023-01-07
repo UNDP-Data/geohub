@@ -85,9 +85,7 @@
             bind:legendType />
         {/if}
         {#if activeTab == TabNames.OPACITY}
-          <OpacityPanel
-            {layer}
-            isOpacityPanelVisible={true} />
+          <OpacityPanel {layer} />
         {/if}
       </p>
     </nav>
