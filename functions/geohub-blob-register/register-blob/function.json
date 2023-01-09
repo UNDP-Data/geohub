@@ -13,5 +13,5 @@
 			"name": "res"
 		}
 	],
-	"scriptFile": "../../dist/register/test/index.js"
+	"scriptFile": "../../dist/register-blob/index.js"
 }
