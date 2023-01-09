@@ -42,14 +42,15 @@ jobs:
           envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
           envkey_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
 
-      - name: "Resolve Project Dependencies Using Npm"
+      # install dependencies
+      - name: Install dependencies
         run: |
-          pnpm --filter="./packages/geohub-cli" install
+          pnpm install --frozen-lockfile
 
       - name: "Insatall and build Funciton app"
         working-directory: ./functions/geohub-blob-register
         run: |
-          pnpm --filter="." build
+          pnpm build
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
