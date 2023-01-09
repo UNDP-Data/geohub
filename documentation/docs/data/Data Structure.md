@@ -1,6 +1,6 @@
 # How is the data arranged in the GeoHub?
 
-## Data structure
+## Data Structure
 
 Data is found as Raster and Vector files
 
