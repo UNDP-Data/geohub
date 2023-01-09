@@ -8,7 +8,6 @@
     "prestart": "npm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\"",
-    "prepare": "pnpm build",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
