@@ -4,13 +4,13 @@
 			"authLevel": "anonymous",
 			"type": "httpTrigger",
 			"direction": "in",
-			"name": "req",
+			"url": "req",
 			"methods": ["get", "post"]
 		},
 		{
 			"type": "http",
 			"direction": "out",
-			"name": "res"
+			"url": "res"
 		}
 	],
 	"scriptFile": "../../dist/register-blob/index.js"

@@ -53,7 +53,7 @@ jobs:
           pnpm build
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm --filter="." install --prod
+          pnpm --filter="." install
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
@@ -62,4 +62,4 @@ jobs:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           slot-name: "Production"
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6C50935E3B7144199E54983603EF332D }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
