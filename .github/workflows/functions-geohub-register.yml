@@ -35,7 +35,7 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
 
       - name: "Insatall and build Funciton app"
         working-directory: ./functions/geohub-register
