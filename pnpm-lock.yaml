@@ -139,7 +139,6 @@ importers:
       eslint: ^8.30.0
       eslint-config-prettier: ^8.5.0
       prettier: ^2.8.1
-      rimraf: ^3.0.2
       ts-node: ^10.9.1
       typescript: ^4.9.4
     dependencies:
@@ -156,7 +155,6 @@ importers:
       eslint: 8.30.0
       eslint-config-prettier: 8.5.0_eslint@8.30.0
       prettier: 2.8.1
-      rimraf: 3.0.2
       ts-node: 10.9.1_moeqx3xmzxqxagf2sz6mqkbb7m
       typescript: 4.9.4
 
@@ -3915,7 +3913,7 @@ packages:
       svelte: 3.55.0
       tiny-glob: 0.2.9
       undici: 5.14.0
-      vite: 4.0.2
+      vite: 4.0.2_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3977,7 +3975,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.0
       svelte-hmr: 0.15.1_svelte@3.55.0
-      vite: 4.0.2
+      vite: 4.0.2_sass@1.57.1
       vitefu: 0.2.4_vite@4.0.2
     transitivePeerDependencies:
       - supports-color
@@ -11782,7 +11780,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.2
+      vite: 4.0.2_sass@1.57.1
     dev: true
 
   /vitefu/0.2.4_vite@4.0.3:
