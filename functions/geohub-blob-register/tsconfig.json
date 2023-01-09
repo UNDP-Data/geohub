@@ -13,7 +13,7 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"module": "commonjs",
-		"outDir": "./dist"
-	},
-	"include": ["src/register-blob/index.ts", "src/test/index.ts"]
+		"outDir": "./dist",
+		"rootDir": "."
+	}
 }
