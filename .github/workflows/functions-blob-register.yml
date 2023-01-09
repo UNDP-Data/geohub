@@ -47,7 +47,7 @@ jobs:
           pnpm --filter="./packages/geohub-cli" install
 
       - name: "Insatall and build Funciton app"
-        working-directory: ./sites/geohub
+        working-directory: ./functions/geohub-blob-register
         run: |
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
