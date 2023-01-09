@@ -17,12 +17,12 @@
     getLayerStyle,
     getValueFromRasterTileUrl,
     updateParamsInURL,
+    getMaxValueOfCharsInIntervals,
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -158,16 +158,6 @@
     reclassifyImage()
   }
 
-  const generateRowWidth = (colorMapRows) => {
-    // for each of the start and end of the colormap rows get the maximum
-    // generate rowWidth based on the maximum
-    rowWidth = Math.max(
-      ...colorMapRows.map((row) => {
-        return Math.max(row.start.toString().length, row.end.toString().length)
-      }),
-    )
-  }
-
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index
   }
@@ -225,6 +215,7 @@
         colorMapRows[rowIndex + 1].start = inputValue
       }
     }
+    rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     handleParamsUpdate()
   }
 </script>
