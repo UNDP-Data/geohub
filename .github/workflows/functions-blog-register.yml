@@ -45,8 +45,14 @@ jobs:
       - name: "Resolve Project Dependencies Using Npm"
         run: |
           pnpm --filter="./packages/geohub-cli" install
-          pnpm --filter="./functions/geohub-blob-register" install
-          pnpm --filter="./functions/geohub-blob-register" build
+
+      - name: "Resolve Project Dependencies Using Npm"
+        working-directory: ./sites/geohub
+        run: |
+          rm -rf node_modules
+          echo "shared-workspace-lockfile = false" >> .npmrc
+          pnpm --filter="." install --prod
+          pnpm --filter="." build
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
