@@ -42,7 +42,7 @@ jobs:
         run: |
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm --filter="." install
+          pnpm --filter="." install --prod
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
