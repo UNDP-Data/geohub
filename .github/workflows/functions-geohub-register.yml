@@ -35,14 +35,15 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          pnpm install --frozen-lockfile
+          echo "node-linker=hoisted" >> .npmrc
+          echo "shared-workspace-lockfile = false" >> .npmrc
+          pnpm install
 
       - name: "Insatall node_modules for production"
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           pnpm build
           rm -rf node_modules
-          echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
           popd
 
