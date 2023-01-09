@@ -37,17 +37,14 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
-       - name: "Build Funciton app"
-        working-directory: ./functions/geohub-register
-        run: |
-          pnpm --filter="./functions/geohub-register" build
-
       - name: "Insatall node_modules for production"
-        working-directory: ./functions/geohub-register
         run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pnpm build
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
+          popd
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
