@@ -46,7 +46,7 @@ jobs:
         run: |
           pnpm --filter="./packages/geohub-cli" install
 
-      - name: "Resolve Project Dependencies Using Npm"
+      - name: "Insatall and build Funciton app"
         working-directory: ./sites/geohub
         run: |
           rm -rf node_modules
