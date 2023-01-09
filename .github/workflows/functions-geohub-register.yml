@@ -35,14 +35,14 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm install
+          pnpm install --frozen-lockfile
 
       - name: "Insatall and build Funciton app"
         working-directory: ./functions/geohub-register
         run: |
           pnpm build
           rm -rf node_modules
+          echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
 
       - name: "Run Azure Functions Action"
