@@ -11,7 +11,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: "geohub-blob-register" # set this to your function app name on Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "functions/geohub-blob-register" # set this to the path to your web app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "functions/geohub-register" # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: "18.x" # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
@@ -32,27 +32,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      # setup environmental variables
-      - name: Create environment file
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./functions/geohub-blob-register
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
-          envkey_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-
       # install dependencies
       - name: Install dependencies
         run: |
-          echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm install
 
       - name: "Insatall and build Funciton app"
-        working-directory: ./functions/geohub-blob-register
+        working-directory: ./functions/geohub-register
         run: |
           pnpm build
           rm -rf node_modules
+          echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
 
       - name: "Run Azure Functions Action"

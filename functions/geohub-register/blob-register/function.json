@@ -1,0 +1,18 @@
+{
+  "bindings": [
+    {
+      "name": "blob-register",
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "url": "req",
+      "methods": ["get", "post"]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ],
+  "scriptFile": "../dist/blob-register/index.js"
+}

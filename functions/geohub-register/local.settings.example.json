@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "",
+    "AZURE_STORAGE_ACCOUNT": "",
+    "AZURE_STORAGE_ACCESS_KEY": "",
+    "DATABASE_CONNECTION": "",
+    "TITILER_ENDPOINT": ""
+  }
+}
