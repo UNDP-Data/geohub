@@ -2,7 +2,7 @@
   "bindings": [
     {
       "name": "blob-register",
-      "authLevel": "function",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "url": "req",
