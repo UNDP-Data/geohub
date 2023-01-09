@@ -13,7 +13,6 @@
 		"watch": "tsc -w",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"prepare": "pnpm build",
 		"preinstall": "npx only-allow pnpm"
 	},
 	"keywords": [

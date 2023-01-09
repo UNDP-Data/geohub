@@ -49,10 +49,10 @@ jobs:
       - name: "Insatall and build Funciton app"
         working-directory: ./functions/geohub-blob-register
         run: |
+          pnpm --filter="." build
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
-          pnpm --filter="." build
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
