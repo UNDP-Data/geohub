@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**"],
+      "outputs": [
+        "build/**",
+        "node_modules/**",
+        "package/**",
+        "dist/**",
+        ".svelte-kit/**"
+      ]
+    },
+    "format": {
+      "cache": false,
+      "outputs": [],
+      "outputMode": "new-only"
+    },
+    "lint": {
+      "outputs": [],
+      "outputMode": "new-only"
+    },
+    "precommit": {
+      "dependsOn": ["lint", "format"],
+      "outputs": [],
+      "outputMode": "new-only"
+    },
+    "test": {
+      "outputs": [],
+      "outputMode": "new-only"
+    },
+    "dev": {
+      "cache": false,
+      "outputMode": "new-only"
+    }
+  },
+  "globalDependencies": [".eslintrc.json", ".prettierrc", "tsconfig.json"]
+}

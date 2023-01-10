@@ -1,30 +1,45 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
+  import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
+  import { Button } from '@undp-data/svelte-undp-design'
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
-  import { getLayerStyle } from '$lib/helper'
 
   let isModalVisible = false
   let styleURL: string
   let radioDisabled = false
-  let selectedOption: 'all' | 'geohub' = 'all'
+
   let styleName = 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
 
-  const open = () => {
-    selectedOption = 'all'
+  let layerClassification: { [key: string]: string } = {}
+  let layerColormap: { [key: string]: string } = {}
+  $: {
+    if ($map) {
+      $map.on('classification:changed', (e: { layerId: string; classification: string }) => {
+        layerClassification[e.layerId] = e.classification
+      })
 
+      $map.on('colormap:changed', (e: { layerId: string; colorMapName: string }) => {
+        layerColormap[e.layerId] = e.colorMapName
+      })
+    }
+  }
+
+  const open = () => {
     radioDisabled = $layerList.length === 0
     isModalVisible = !isModalVisible
     styleURL = undefined
 
     untargetedLayers = []
+    const names: string[] = []
     if ($layerList.length > 0) {
       $layerList.forEach((layer) => {
         const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
@@ -34,56 +49,92 @@
 
         if (stacType?.value === 'microsoft-pc') {
           untargetedLayers.push(layer)
+        } else {
+          names.push(layer.name)
         }
       })
+      if (names.length > 0) {
+        styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+      } else {
+        styleName = 'UNDP GeoHub style'
+      }
     }
     createStyleJSON2Generate()
   }
 
   export const share = async () => {
+    // add classification in the top level of layer object in style.json
+    // in order to keep state of selection of classifying
+    exportedStyleJSON.layers.forEach((l) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (l.classification) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete l.classification
+      }
+      if (layerClassification[l.id]) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        l.classification = layerClassification[l.id]
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (l.colormap) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete l.colormap
+      }
+      if (layerColormap[l.id]) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        l.colormap = layerColormap[l.id]
+      }
+    })
+
+    let savedLayerList = JSON.parse(JSON.stringify($layerList))
+    const untargetdIds = untargetedLayers.map((l) => l.id)
+    savedLayerList = savedLayerList.filter((l) => !untargetdIds.includes(l.id))
+
     const data = {
       name: exportedStyleJSON.name,
       style: exportedStyleJSON,
+      layers: savedLayerList,
     }
 
-    const res = await fetch('/api/style', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-    console.log(res)
-    const resjson = await res.json()
-    styleURL = resjson.url
+    const styleId = $page.url.searchParams.get('style')
+    let resjson
+    if (styleId) {
+      data['id'] = styleId
+
+      const res = await fetch('/api/style', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      })
+      resjson = await res.json()
+    } else {
+      const res = await fetch('/api/style', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+      resjson = await res.json()
+    }
+
+    styleURL = resjson.viewer
+    if (!styleId) {
+      $page.url.searchParams.set('style', resjson.id)
+      goto(`?${$page.url.searchParams.toString()}`)
+    }
   }
 
   $: styleName, createStyleJSON2Generate()
-  $: selectedOption, createStyleJSON2Generate()
 
   const createStyleJSON2Generate = () => {
     if (!$map) return
     const style: StyleSpecification = $map.getStyle()
-    if (selectedOption === 'geohub') {
-      if ($layerList.length === 0) {
-        return
-      }
-      const newSources = {}
-      Object.keys(style.sources).forEach((key: string) => {
-        $layerList.forEach((l: Layer) => {
-          const style = getLayerStyle($map, l.id)
-          if (style && style.source === key) {
-            newSources[key] = $map.getStyle().sources[key]
-          }
-        })
-      })
-      style.sources = newSources
-      const newLayers = []
-      style.layers.forEach((layer) => {
-        $layerList.forEach((l: Layer) => {
-          if (l.id === layer.id) {
-            newLayers.push(layer)
-          }
-        })
-      })
-      style.layers = newLayers
+    if ($layerList.length === 0) {
+      return
     }
 
     untargetedLayers.forEach((layer) => {
@@ -177,34 +228,6 @@
             </div>
           </div>
 
-          {#if radioDisabled === false}
-            <div style="display: block">
-              <div
-                class="radio-input"
-                style="margin: 10%; align-items: center">
-                <input
-                  on:input={() => (selectedOption = 'all')}
-                  checked={selectedOption === 'all'}
-                  type="radio"
-                  name="amount"
-                  value="all"
-                  id="all" />
-                <label for="all"> All Layers </label>
-              </div>
-              <div
-                class="radio-input"
-                style="margin: 10%">
-                <input
-                  on:input={() => (selectedOption = 'geohub')}
-                  checked={selectedOption === 'geohub'}
-                  type="radio"
-                  name="amount"
-                  value="geohub"
-                  id="geohub" />
-                <label for="geohub"> GeoHub </label>
-              </div>
-            </div>
-          {/if}
           {#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
             <article class="message is-warning">
               <div class="message-header">
@@ -250,33 +273,27 @@
         {/if}
       </section>
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-        <div>
-          <button
-            class="button secondary-button"
-            alt="Close"
-            title="Close"
-            on:click={handleClose}>
-            Cancel
-          </button>
-          {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
-            <button
-              class="button primary-button"
-              alt="Share"
-              title="Share"
-              on:click={handleShare}>
-              Share
-            </button>
-          {/if}
+        <div class="is-6 px-1">
+          <Button
+            title="Cancel"
+            on:clicked={handleClose}
+            isPrimary={false} />
         </div>
+
+        {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
+          <div class="is-6 px-1">
+            <Button
+              title="Share"
+              on:clicked={handleShare}
+              isPrimary={true} />
+          </div>
+        {/if}
       </footer>
     </div>
   </div>
 {/if}
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
-  @import 'src/styles/undp-design/radio.min';
-
   .icon {
     cursor: pointer;
   }

@@ -4,25 +4,20 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { ClassificationMethodTypes, LayerInitialValues, TabNames } from '$lib/constants'
+  import { ClassificationMethodTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
-  import { getRandomColormap } from '$lib/helper'
-  import Tabs from '$components//controls/Tabs.svelte'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
-  export let layer: Layer = LayerInitialValues
-  let colorMapName = getRandomColormap()
-  let classificationMethod: ClassificationMethodTypes
-  let applyToOption: string
+  export let layer: Layer
+  export let classificationMethod: ClassificationMethodTypes
+  export let colorMapName: string
+  let applyToOption: VectorApplyToTypes
   let legendType: string
-  let defaultColor: string = undefined
-  let defaultLineColor: string = undefined
+  let defaultColor: string
+  let defaultLineColor: string
 
   let activeTab = ''
-  let isLabelPanelVisible: boolean
-  let isLegendPanelVisible: boolean
-  let isOpacityPanelVisible: boolean
-  let isFilterPanelVisible: boolean
 
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -30,29 +25,6 @@
     { label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
-
-  $: {
-    isLabelPanelVisible = false
-    isLegendPanelVisible = false
-    isOpacityPanelVisible = false
-    isFilterPanelVisible = false
-    switch (activeTab) {
-      case TabNames.LEGEND:
-        isLegendPanelVisible = true
-        break
-      case TabNames.FILTER:
-        isFilterPanelVisible = true
-        break
-      case TabNames.LABEL:
-        isLabelPanelVisible = true
-        break
-      case TabNames.OPACITY:
-        isOpacityPanelVisible = true
-        break
-      default:
-        break
-    }
-  }
 </script>
 
 <div
@@ -60,35 +32,33 @@
   transition:fade
   data-testid="vector-layer-view-container">
   <nav class="panel">
-    <p class="panel-heading">
+    <p class="panel-heading has-background-grey-lighter p-2">
       <LayerNameGroup {layer} />
     </p>
 
     <Tabs
       bind:tabs
       bind:activeTab
-      fontSize="small"
+      fontSize="medium"
       isToggleTab={true} />
 
     <p class="panel-content">
-      <VectorLegendPanel
-        {layer}
-        {isLegendPanelVisible}
-        bind:colorMapName
-        bind:classificationMethod
-        bind:applyToOption
-        bind:legendType
-        bind:defaultColor
-        bind:defaultLineColor />
-      <VectorFilterPanelWizard
-        {layer}
-        {isFilterPanelVisible} />
-      <VectorLabelPanel
-        {layer}
-        {isLabelPanelVisible} />
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
+      {#if activeTab === TabNames.LEGEND}
+        <VectorLegendPanel
+          {layer}
+          bind:colorMapName
+          bind:classificationMethod
+          bind:applyToOption
+          bind:legendType
+          bind:defaultColor
+          bind:defaultLineColor />
+      {:else if activeTab === TabNames.FILTER}
+        <VectorFilterPanelWizard {layer} />
+      {:else if activeTab === TabNames.LABEL}
+        <VectorLabelPanel {layer} />
+      {:else if activeTab === TabNames.OPACITY}
+        <OpacityPanel {layer} />
+      {/if}
     </p>
   </nav>
 </div>

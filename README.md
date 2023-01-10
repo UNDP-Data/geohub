@@ -4,13 +4,16 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 
 ## Repositories managed
 
-|App|Language|Library|Source code|
-|---|---|---|---|
-|GeoHub|TypeScript|sveltekit|[sites/geohub](./sites/geohub/)|
-|@undp-data/style-switcher|TypeScript|sveltekit|[packages/style-switcher](./packages/style-switcher/)|
-|@undp-data/current-location|TypeScript|sveltekit|[packages/current-location](./packages/current-location/)|
-|geohub-cli|TypeScript|-|[packages/geohub-cli](./packages/geohub-cli/)|
-|Documentation|Python|mkdocs|[documentation](./documentation/)|
+| App                           | Language   | Library   | Source code                                                   |
+| ----------------------------- | ---------- | --------- | ------------------------------------------------------------- |
+| GeoHub                        | TypeScript | sveltekit | [sites/geohub](./sites/geohub/)                               |
+| Electricity dashboard         | TypeScript | sveltekit | [apps/electricity-dashboard](./apps/electricity-dashboard/)   |
+| @undp-data/current-location   | TypeScript | sveltekit | [packages/current-location](./packages/current-location/)     |
+| @undp-data/style-switcher     | TypeScript | sveltekit | [packages/style-switcher](./packages/style-switcher/)         |
+| @undp-data/style-viewer       | TypeScript | sveltekit | [packages/style-viewer](./packages/style-viewer/)             |
+| @undp-data/svelte-undp-design | TypeScript | sveltekit | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
+| @undp-data/geohub-cli         | TypeScript | -         | [packages/geohub-cli](./packages/geohub-cli/)                 |
+| Documentation                 | Python     | mkdocs    | [documentation](./documentation/)                             |
 
 ## Development
 
@@ -31,3 +34,15 @@ cd sites/geohub
 pnpm i
 pnpm dev
 ```
+
+## Release packages
+
+- create release note by the following command
+
+```
+pnpm changeset
+```
+
+- create new PR to merge to develop branch
+- changeset will create new PR to release packages
+- changeset will release packages once the PR is merged to develop

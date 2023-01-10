@@ -1,13 +1,16 @@
 <script lang="ts">
-  import LayerControlGroup from '$components/control-groups/LayerControlGroup.svelte'
-  import { LayerIconTypes, LayerTypes } from '$lib/constants'
+  import DeleteButton from '$components/controls/DeleteButton.svelte'
+  import VisibilityButton from '$components/controls/VisibilityButton.svelte'
+  import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte'
+  import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte'
   import { clean, getLayerStyle } from '$lib/helper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { onDestroy, onMount } from 'svelte'
+  import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
+  import Legend from '$components/controls/vector-styles/Legend.svelte'
 
   export let layer: Layer
-  let bandName = ''
   let hasLayerLabel = false
 
   onMount(() => {
@@ -24,104 +27,54 @@
     hasLayerLabel = e.isCreated ?? false
   }
 
-  const layerStyle = getLayerStyle($map, layer.id)
-  if (layerStyle.type === 'raster') {
-    const rasterInfo = layer.info as RasterTileMetadata
-    if (rasterInfo?.isMosaicJson === true) {
-      bandName = 'Mosaic'
-    } else {
-      bandName = `B${rasterInfo?.active_band_no}`
-    }
-  }
-
-  let icon = LayerIconTypes.find((icon) => icon.id === layerStyle.type)
-  if (layerStyle.type !== LayerTypes.RASTER) {
-    switch (layerStyle.type) {
-      case 'fill':
-        icon = LayerIconTypes.find((icon) => icon.id === 'polygon')
-        break
-      case 'line':
-        icon = LayerIconTypes.find((icon) => icon.id === 'line')
-        break
-      case 'symbol':
-        icon = LayerIconTypes.find((icon) => icon.id === 'point')
-        break
-      case 'heatmap':
-        icon = LayerIconTypes.find((icon) => icon.id === 'heatmap')
-        break
-    }
-  }
+  let layerStyle = getLayerStyle($map, layer.id)
 </script>
 
 <div class="layer-header">
-  <div>
-    <div class="layer-header-name">
-      <div style="display: flex; align-items: center">
-        <i
-          class="{icon.icon} sm"
-          style="color: {icon.color};" />
-        <span style="padding-left: 5px;">
-          {#if hasLayerLabel}
-            <span class="tag is-info"><i class="fa-solid fa-text-height" /></span>
-          {/if}
-        </span>
-      </div>
-      {#if layerStyle.type === 'raster'}
-        <div style="display: flex; align-items: center">
-          <span class="tag is-success">{bandName}</span>
-        </div>
-      {/if}
-      <div class="layer-name">
-        <div>
-          <span style="padding-left: 5px;">
-            {clean(layer.name)}
-          </span>
-        </div>
-      </div>
-      <div>
-        <LayerControlGroup {layer} />
-      </div>
+  <Legend
+    bind:map={$map}
+    bind:layer={layerStyle} />
+  {#if hasLayerLabel}
+    <span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
+  {/if}
+
+  {#if layerStyle?.type === 'raster'}
+    <span class="pl-1"><RasterBandSelector {layer} /></span>
+  {/if}
+  <div class="layer-name ml-1">
+    <div>
+      {clean(layer.name)}
     </div>
+  </div>
+  <div class="group">
+    <DataCardInfoButton {layer} />
+    <VisibilityButton {layer} />
+    <DeleteButton {layer} />
+    <ZoomToLayerButton {layer} />
   </div>
 </div>
 <slot />
 
 <style lang="scss">
   .layer-header {
-    .layer-header-name {
-      align-items: center;
-      display: flex;
+    display: flex;
+    align-items: center;
+
+    .layer-name {
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      display: -webkit-box;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       font-family: ProximaNova, sans-serif;
       height: 20px;
       justify-content: left;
-
-      .layer-name {
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        display: -webkit-box;
-        font-size: 14px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-      }
     }
-  }
 
-  .label {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    color: #fff;
-  }
-
-  .description,
-  .unit {
-    font-weight: normal;
-    color: #fff;
-    margin-bottom: 10px;
-  }
-
-  .description {
-    margin-bottom: 15px;
+    .group {
+      display: flex;
+      margin-left: auto;
+    }
   }
 </style>

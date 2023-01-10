@@ -2,9 +2,9 @@
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
-  import type { DataCategory } from '$lib/types'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
 
-  export let category: DataCategory
+  export let category: Breadcrumb
   export let size: 'small' | 'medium' = 'medium'
 
   const handleClick = () => {
@@ -13,6 +13,7 @@
 </script>
 
 {#if category}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="container p-2"
     on:click={handleClick}>

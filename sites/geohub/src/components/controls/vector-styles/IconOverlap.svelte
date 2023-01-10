@@ -1,11 +1,10 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const choices = ['never', 'always', 'cooperative']
   const layerId = layer.id

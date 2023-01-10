@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Slider from '$components/controls/vector-styles/Slider.svelte'
-  import { DEFAULT_LINE_WIDTH, LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { DEFAULT_LINE_WIDTH, LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { getLineWidth } from '$lib/helper'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const layerId = layer.id
 

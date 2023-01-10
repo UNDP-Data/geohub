@@ -10,6 +10,7 @@
   } from '$lib/types'
   import { RasterTileData } from '$lib/RasterTileData'
   import { VectorTileData } from '$lib/VectorTileData'
+  import { Loader } from '@undp-data/svelte-undp-design'
 
   export let feature: StacItemFeature
   export let width = '100%'
@@ -98,10 +99,7 @@
 
 <div class="map-container">
   {#if isLoading}
-    <div
-      class="loader"
-      aria-busy="true"
-      aria-live="polite" />
+    <div class="loader-container"><Loader size="small" /></div>
   {/if}
 
   {#if !previewImageUrl}
@@ -118,20 +116,16 @@
 </div>
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/loader.min.css';
-
   .map-container {
     position: relative;
+    text-align: center;
+    vertical-align: middle;
 
-    .loader {
+    .loader-container {
       position: absolute;
       z-index: 10;
-      top: 25%;
-      left: 35%;
-      transform: translate(-25%, -35%);
-      -webkit-transform: translate(-25%, -35%);
-      -ms-transform: translate(-25%, -35%);
+      top: 45%;
+      left: 45%;
     }
 
     .map {

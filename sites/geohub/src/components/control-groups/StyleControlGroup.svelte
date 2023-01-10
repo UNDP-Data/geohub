@@ -18,7 +18,6 @@
     padding: 1em 1em 0.5em 1em;
     border: solid 0.5px #1c1c1c;
     border-radius: 8px;
-
     .box-title {
       position: absolute;
       display: inline-block;

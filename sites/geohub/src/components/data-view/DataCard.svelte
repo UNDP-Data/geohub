@@ -8,7 +8,8 @@
     VectorTileMetadata,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
-  import Accordion from '$components/controls/Accordion.svelte'
+  import { Accordion, Radios } from '@undp-data/svelte-undp-design'
+  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import MiniMap from '$components/data-view/MiniMap.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
@@ -16,8 +17,18 @@
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
 
   export let feature: StacItemFeature
-  let isExpanded: boolean
+  export let isExpanded: boolean
   let symbolVectorType: 'point' | 'heatmap' = 'point'
+  let symbolVectorTypes: Radio[] = [
+    {
+      label: 'Point',
+      value: 'point',
+    },
+    {
+      label: 'Heatmap',
+      value: 'heatmap',
+    },
+  ]
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number
@@ -30,6 +41,23 @@
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
   const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
   const stacType = tags?.find((tag) => tag.key === 'stac')
+
+  let expanded: { [key: string]: boolean } = {}
+  let expandedDatasetAssetId: string
+  $: {
+    let expandedDatasets = Object.keys(expanded).filter(
+      (key) => expanded[key] === true && key !== expandedDatasetAssetId,
+    )
+    if (expandedDatasets.length > 0) {
+      expandedDatasetAssetId = expandedDatasets[0]
+      Object.keys(expanded)
+        .filter((key) => key !== expandedDatasetAssetId)
+        .forEach((key) => {
+          expanded[key] = false
+        })
+      expanded[expandedDatasets[0]] = true
+    }
+  }
 
   const addLayer = async () => {
     try {
@@ -99,6 +127,7 @@
       const assets = f.assets
       const itemProperties = f.properties
       const collectionId = f.collection
+      assetList = []
       Object.keys(assets).forEach((assetName) => {
         const asset = assets[assetName]
         if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return
@@ -166,31 +195,13 @@
                 .find((t) => t.key === 'geometry_type')
                 ?.value.toLowerCase()))}
           <p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
+
           <div class="vector-symbol-radios">
-            <div class="radio-form">
-              <input
-                type="radio"
-                id="point"
-                class="radio-button"
-                name="vector-type"
-                bind:group={symbolVectorType}
-                value="point" />
-              <label
-                for="point"
-                class="radio-form">Point</label>
-            </div>
-            <div class="radio-form">
-              <input
-                type="radio"
-                id="heatmap"
-                class="radio-button"
-                name="vector-type"
-                bind:group={symbolVectorType}
-                value="heatmap" />
-              <label
-                for="heatmap"
-                class="radio-form">Heatmap</label>
-            </div>
+            <Radios
+              bind:radios={symbolVectorTypes}
+              bind:value={symbolVectorType}
+              groupName="vector-type"
+              isVertical={false} />
           </div>
         {/if}
       {/if}
@@ -206,7 +217,8 @@
         {#each assetList as asset}
           <DataStacAssetCard
             bind:asset
-            bind:feature />
+            bind:feature
+            bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]} />
         {/each}
       {/if}
     </div>
@@ -214,9 +226,6 @@
 {/if}
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/cta-link.min.css';
-  @use '../../styles/undp-design/radio.min.css';
   .card-container {
     display: flex;
     flex-direction: column;
@@ -227,21 +236,7 @@
     }
 
     .vector-symbol-radios {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-gap: 0.1rem;
-      vertical-align: baseline;
       padding-bottom: 0.5rem;
-
-      .radio-form {
-        cursor: pointer;
-
-        .radio-button {
-          position: relative;
-          top: 0.2rem;
-          margin-right: 0.5rem;
-        }
-      }
     }
   }
 </style>

@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  geohub:
+    image: undp-data/geohub:v0.1
+    build: .
+    restart: unless-stopped
+    container_name: geohub
+    ports:
+      - 3000:3000
+    env_file:
+      - sites/geohub/.env

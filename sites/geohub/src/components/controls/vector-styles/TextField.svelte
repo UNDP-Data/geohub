@@ -1,29 +1,31 @@
 <script lang="ts">
-  import type { LayerSpecification } from 'maplibre-gl'
+  import type { SymbolLayerSpecification } from 'maplibre-gl'
   import { createEventDispatcher } from 'svelte'
 
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
-  import { getLayerStyle } from '$lib/helper'
+  import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   export let decimalPosition = undefined
   export let fieldType: string = undefined
+  export let textFieldValue = ''
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
   const propertyName = 'text-field'
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
-
-  let textFieldValue = ''
+  let style = getLayerStyle($map, layer.id)
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
+    if (!$map) return
+    if (!$map.getLayer(layerId)) return
+    if (['line', 'fill'].includes($map.getLayer(layerId).type)) return
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
       let propertyValue: any = ['get', textFieldValue]
@@ -51,29 +53,9 @@
 
   const setDefaultProperty = (selectOptions: string[]) => {
     if (selectOptions.length === 0) return
-    textFieldValue = getCurrentValue()
+    textFieldValue = getPropertyValueFromExpression(style, propertyName, 'layout')
     setTextField()
     return textFieldValue
-  }
-
-  const getCurrentValue = () => {
-    let value = ''
-    if (style.layout && style.layout[propertyName]) {
-      const values: any = style.layout[propertyName]
-      for (let i = 0; i < values.length; i++) {
-        const expression = values[i]
-        if (Array.isArray(expression)) {
-          if (expression[0] === 'get') {
-            value = expression[1]
-            break
-          }
-        } else if (expression === 'get') {
-          value = values[i + 1]
-          break
-        }
-      }
-    }
-    return value
   }
 
   const isInt = (n: number) => {
@@ -112,10 +94,37 @@
   }
 
   const setTextField = () => {
-    if (!style) return
+    if (!style && !textFieldValue) return
+    if (!style && layer.parentId) {
+      const parentStyle = getLayerStyle($map, layer.parentId)
+      const childLayer: SymbolLayerSpecification = {
+        id: layerId,
+        type: LayerTypes.SYMBOL,
+        source: parentStyle['source'],
+        'source-layer': parentStyle['source-layer'],
+        minzoom: parentStyle.minzoom,
+        maxzoom: parentStyle.maxzoom,
+        layout: {
+          visibility: 'visible',
+          'text-size': 16,
+          'text-max-width': 10,
+        },
+        paint: {
+          'text-color': 'rgba(0,0,0,1)',
+          'text-halo-color': 'rgba(255,255,255,1)',
+          'text-halo-width': 1,
+        },
+      }
+      style = childLayer
+    }
+
     if (style.type !== LayerTypes.SYMBOL) return
 
     if (textFieldValue) {
+      if (!$map.getLayer(layerId)) {
+        $map.addLayer(style)
+      }
+
       setDesimalPosition()
 
       // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
@@ -123,10 +132,16 @@
       $map.setLayoutProperty(layerId, 'text-radial-offset', 0.5)
       $map.setLayoutProperty(layerId, 'text-justify', 'auto')
     } else {
-      $map.setLayoutProperty(layerId, propertyName, undefined)
-      $map.setLayoutProperty(layerId, 'text-variable-anchor', undefined)
-      $map.setLayoutProperty(layerId, 'text-radial-offset', undefined)
-      $map.setLayoutProperty(layerId, 'text-justify', undefined)
+      if (layer.parentId) {
+        if ($map.getLayer(layerId)) {
+          $map.removeLayer(layerId)
+        }
+      } else {
+        $map.setLayoutProperty(layerId, propertyName, undefined)
+        $map.setLayoutProperty(layerId, 'text-variable-anchor', undefined)
+        $map.setLayoutProperty(layerId, 'text-radial-offset', undefined)
+        $map.setLayoutProperty(layerId, 'text-justify', undefined)
+      }
     }
 
     dispatch('change', {

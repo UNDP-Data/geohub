@@ -1,11 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
-  import { LayerInitialValues, LayerTypes } from '$lib/constants'
+  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
@@ -23,9 +23,9 @@
     | 'hillshade'
     | 'background' = LayerTypes.SYMBOL
 
-  const parentLayer = layer.parent
-  if (parentLayer) {
-    const parentStyle = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === parentLayer.id)[0]
+  const parentId = layer.parentId
+  if (parentId) {
+    const parentStyle = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === parentId)[0]
     parentType = parentStyle.type
   }
 
@@ -63,7 +63,7 @@
 </script>
 
 <div
-  class="select is-rounded"
+  class="select"
   style="height: 30px;">
   <select
     bind:value={selected}

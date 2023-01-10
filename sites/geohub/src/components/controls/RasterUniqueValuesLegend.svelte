@@ -5,7 +5,7 @@
 
   import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
-  import { ColorMapTypes, LayerInitialValues } from '$lib/constants'
+  import { ColorMapTypes } from '$lib/constants'
   import {
     updateParamsInURL,
     remapInputValue,
@@ -17,7 +17,7 @@
   import { map } from '$stores'
 
   export let colorPickerVisibleIndex: number
-  export let layerConfig: Layer = LayerInitialValues
+  export let layerConfig: Layer
   export let colorMapName: string
 
   let info: RasterTileMetadata

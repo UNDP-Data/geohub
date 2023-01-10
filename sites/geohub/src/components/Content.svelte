@@ -2,33 +2,48 @@
   import DataView from '$components/DataView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import { TabNames } from '$lib/constants'
-  import { map } from '$stores'
+  import { map, layerList } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
-  import Tabs from './controls/Tabs.svelte'
+  import { Tabs } from '@undp-data/svelte-undp-design'
+  import type { Tab } from '@undp-data/svelte-undp-design/interfaces'
   import ContentSidebar from './ContentSidebar.svelte'
-  import type { Tab } from '$lib/types'
 
   export let drawerOpen = false
   export let headerHeight: number = undefined
   let tabsHeight: number
 
   let tabs: Tab[] = [
-    { label: TabNames.DATA, icon: 'fas fa-database' },
-    { label: TabNames.LAYERS, icon: 'fas fa-layer-group' },
+    {
+      label: TabNames.DATA,
+      icon: 'fas fa-database',
+    },
+    {
+      label: TabNames.LAYERS,
+      icon: 'fas fa-layer-group',
+      labelFunction: (label: string) => {
+        if ($layerList.length === 0) {
+          return label
+        } else {
+          return `${label} (${$layerList.length})`
+        }
+      },
+    },
   ]
   let activeTab: string = tabs[0].label
 </script>
 
 <ContentSidebar
   bind:map={$map}
-  bind:isMenuShown={drawerOpen}
-  bind:headerHeight>
+  bind:isMenuShown={drawerOpen}>
   <div slot="primary">
     <div class="drawer-content">
-      <Tabs
-        bind:tabs
-        bind:activeTab
-        bind:height={tabsHeight} />
+      {#key $layerList}
+        <Tabs
+          bind:tabs
+          bind:activeTab
+          fontSize="large"
+          bind:height={tabsHeight} />
+      {/key}
 
       <div class="container p-0 m-0">
         <div hidden={activeTab !== TabNames.DATA}>
@@ -39,7 +54,8 @@
         <div hidden={activeTab !== TabNames.LAYERS}>
           <LayerList
             bind:headerHeight
-            bind:tabsHeight />
+            bind:tabsHeight
+            bind:activeTab />
         </div>
       </div>
     </div>

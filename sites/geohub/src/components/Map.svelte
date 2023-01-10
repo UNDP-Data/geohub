@@ -3,7 +3,7 @@
   import maplibregl, { Map } from 'maplibre-gl'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
-  import MapQueryInfoPanel from '$components/MapQueryInfoPanel.svelte'
+  import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte'
   import StyleSwicher from '@undp-data/style-switcher'
   import CurrentLocation from '@undp-data/current-location'
   import { styles } from '$lib/constants'
@@ -64,33 +64,24 @@
   })
 </script>
 
-<svelte:head>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/maplibre-gl@2.1.1/dist/maplibre-gl.css" />
-</svelte:head>
-
 <div
   bind:this={container}
-  class="map"
-  id="map">
-  {#if map}
-    <slot />
-  {/if}
-</div>
+  class="map" />
 
 <CurrentLocation
   bind:map={$map}
   azureBaseUrl={PUBLIC_AZURE_URL}
   isHover={false}
   position="top-left" />
-<MapQueryInfoPanel bind:map={$map} />
+<MapQueryInfoControl bind:map={$map} />
 <StyleSwicher
   bind:map={$map}
   {styles}
   position="bottom-left" />
 
 <style lang="scss">
+  @import 'maplibre-gl/dist/maplibre-gl.css';
+
   .map {
     height: calc(100vh - 93.44px);
     width: 100%;

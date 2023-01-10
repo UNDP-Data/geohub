@@ -1,5 +1,5 @@
-import type { DataCategory, Layer } from '$lib/types'
 import type { StyleDefinition } from '@undp-data/style-switcher'
+import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -39,13 +39,6 @@ export enum ClassificationMethodNames {
   NATURAL_BREAK = 'Natural Breaks',
 }
 
-export const LayerInitialValues: Layer = {
-  id: '',
-  name: 'GeoHub',
-  info: {},
-  dataset: undefined,
-}
-
 export enum ErrorMessages {
   UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
   FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
@@ -56,56 +49,6 @@ export enum ErrorMessages {
   COMPONENT_NOT_RENDERED = 'Step Component cannot be rendered outside the Wizard component',
   TOO_SMALL_ZOOM_LEVEL = 'Please zoom in more than zoom level: 5 in order to load the layer',
 }
-export const LayerIconTypes = [
-  {
-    id: 'point',
-    label: 'Point',
-    icon: 'fa-solid fa-cubes-stacked',
-    color: 'lightseagreen',
-  },
-  {
-    id: 'symbol',
-    label: 'Symbol',
-    icon: 'fa-solid fa-cubes-stacked',
-    color: 'lightseagreen',
-  },
-  {
-    id: 'line',
-    label: 'Line',
-    icon: 'fa-solid fa-bacon',
-    color: 'mediumpurple',
-  },
-  {
-    id: 'polygon',
-    label: 'Polygon',
-    icon: 'fa-solid fa-vector-square',
-    color: 'crimson',
-  },
-  {
-    id: 'fill',
-    label: 'Polygon',
-    icon: 'fa-solid fa-vector-square',
-    color: 'crimson',
-  },
-  {
-    id: 'vector',
-    label: 'Vector',
-    icon: 'fa-solid fa-bezier-curve',
-    color: 'peru',
-  },
-  {
-    id: 'raster',
-    label: 'Raster',
-    icon: 'fa-brands fa-windows',
-    color: '#0b0b45',
-  },
-  {
-    id: 'heatmap',
-    label: 'Heatmap',
-    icon: 'fa-solid fa-braille',
-    color: 'crimson',
-  },
-]
 
 export enum ColorMapTypes {
   SEQUENTIAL = 'sequential',
@@ -120,29 +63,14 @@ export enum DynamicLayerLegendTypes {
   INTERVALS = 'intervals',
 }
 
-export enum VectorLayerSymbolLegendTypes {
+export enum VectorLegendTypes {
   SIMPLE = 'simple',
   ADVANCED = 'advanced',
 }
 
-export enum VectorLayerSymbolLegendApplyToTypes {
-  ICON_COLOR = 'Icon color',
-  ICON_SIZE = 'Icon size',
-}
-
-export enum VectorLayerLineLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
-}
-
-export enum VectorLayerPolygonLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
-}
-
-export enum VectorLayerLineLegendApplyToTypes {
-  LINE_COLOR = 'Line color',
-  LINE_WIDTH = 'Line width',
+export enum VectorApplyToTypes {
+  COLOR = 'color',
+  SIZE = 'size',
 }
 
 export enum DynamicLayerResolutionTypes {
@@ -206,15 +134,15 @@ export const rasterArithmeticOperators = [
   { value: '**', label: 'Power', text: 'raise to power', disabled: false, symbol: '^' },
 ]
 
-export const DataCategories: DataCategory[] = [
+export const DataCategories: Breadcrumb[] = [
   {
     name: 'SDG',
-    icon: '/sdgs/SDG Wheel_WEB.png',
+    icon: 'assets/sdgs/SDG Wheel_WEB.png',
     url: '/api/tags?key=sdg_goal',
   },
   {
     name: 'Climate change',
-    icon: '/sdgs/13.png',
+    icon: 'assets/sdgs/13.png',
     url: '/api/datasets?sdg_goal=13',
   },
   {
@@ -224,35 +152,35 @@ export const DataCategories: DataCategory[] = [
   },
   {
     name: 'pg_tileserv',
-    icon: '/crunchy-spatial-logo.png',
+    icon: 'assets/crunchy-spatial-logo.png',
     url: '/api/datasets?type=pgtileserv',
   },
   {
     name: 'martin',
-    icon: '/maplibre.png',
+    icon: 'assets/maplibre.png',
     url: '/api/datasets?type=martin',
   },
 ]
 
-export const SortingColumns = [
+export const SortingColumns: Radio[] = [
   {
-    column: 'name',
+    value: 'name',
     label: 'Name',
   },
   {
-    column: 'source',
+    value: 'source',
     label: 'Source',
   },
   // {
-  //   column: 'license',
+  //   value: 'license',
   //   label: 'Data license'
   // },
   {
-    column: 'updatedat',
+    value: 'updatedat',
     label: 'Updated date',
   },
   {
-    column: 'createdat',
+    value: 'createdat',
     label: 'Created date',
   },
 ]
