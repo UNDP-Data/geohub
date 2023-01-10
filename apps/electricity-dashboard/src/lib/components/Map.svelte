@@ -40,6 +40,10 @@
 		newMap.addControl(new AttributionControl({ compact: true }), 'bottom-right');
 		newMap.getCanvas().style.cursor = 'pointer';
 
+		newMap.on('load', () => {
+			newMap.resize();
+		});
+
 		map.update(() => newMap);
 	});
 </script>

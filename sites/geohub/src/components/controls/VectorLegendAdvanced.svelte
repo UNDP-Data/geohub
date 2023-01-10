@@ -258,6 +258,7 @@
       colorMapRows[rowIndex + 1].start = inputValue
     }
 
+    rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     updateMap()
   }
 

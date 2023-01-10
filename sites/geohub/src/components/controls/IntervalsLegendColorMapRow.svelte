@@ -121,8 +121,8 @@ the key statement is necessary as it forces to rerender the legend item in case 
   <div class="columns is-mobile p-0 m-0 py-1">
     <div class="column is-2 p-0 m-0">
       <div
-        alt="Color Control"
-        title="Change color"
+        alt="Color Map Control"
+        title="Color Map Control"
         use:popperRef
         on:click={() => handleColorPickerClick()}
         class="discrete"
@@ -144,7 +144,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
     </div>
     <div class="column p-0 m-0">
       <input
-        width="{rowWidth + 20}px"
+        style="width:{rowWidth * 8}px"
         class="number-input"
         id="start"
         type="number"
@@ -156,7 +156,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
       <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
       <div class="column p-0 m-0">
         <input
-          width="{rowWidth + 20}px"
+          style="width:{rowWidth * 8}px"
           class="number-input"
           type="number"
           id="end"

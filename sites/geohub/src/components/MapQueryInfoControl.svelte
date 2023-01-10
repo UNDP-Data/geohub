@@ -386,6 +386,7 @@
       {/if}
       {#each features as feature}
         <Accordion
+          fontSize="small"
           headerTitle={`${feature.properties.name}`}
           bind:isExpanded={expanded[feature.id]}>
           <div

@@ -14,6 +14,10 @@ program
 		'-n, --name [container_name...]',
 		'Targeted Azure Blob Container name to scan. It will scan all containers if it is not specified.'
 	)
+	.option(
+		'-f, --file [file_name]',
+		'Targeted Azure Blob file name to scan. if this parameter is used container_name parameter will be ignored.'
+	)
 	.option('-o, --output [output]', 'Output directory for temporary working folder', 'tmp')
 	.option(
 		'-t, --titiler-url [titiler-url]',
@@ -27,6 +31,7 @@ program
 		const azaccount: string = options.azaccount;
 		const azaccountkey: string = options.azaccountkey;
 		const containerNames: string[] = options.name;
+		const file: string = options.file;
 		const outputDir: string = path.resolve(options.output);
 		const titilerUrl: string = options.titilerUrl;
 		if (!fs.existsSync(outputDir)) {
@@ -34,24 +39,38 @@ program
 		}
 
 		const blobManager = new BlobServiceAccountManager(azaccount, azaccountkey, titilerUrl);
-		let storages: Storages;
-		if (containerNames) {
-			const promises = containerNames.map((name) => blobManager.listContainers(name));
-			console.debug(`loaded ${promises.length} containers.`);
-			const _storages = await Promise.all(promises);
-			storages = new Storages(_storages.flat());
+
+		if (file) {
+			// scan file to register
+			const res = await blobManager.scanBlob(file);
+			if (!res.dataset) {
+				throw new Error('No dataset to register');
+			}
+			const storages: Storages = new Storages([res.storage]);
+			const datasets = new Datasets([res.dataset], outputDir);
+			const dbManager = new DatabaseManager(database);
+			await dbManager.register(storages, datasets);
 		} else {
-			const _storages = await blobManager.listContainers();
-			storages = new Storages(_storages);
+			// scan containers
+			let storages: Storages;
+			if (containerNames) {
+				const promises = containerNames.map((name) => blobManager.listContainers(name));
+				console.debug(`loaded ${promises.length} containers.`);
+				const _storages = await Promise.all(promises);
+				storages = new Storages(_storages.flat());
+			} else {
+				const _storages = await blobManager.listContainers();
+				storages = new Storages(_storages);
+			}
+
+			console.debug(`generated ${storages.getStorages().length} container objects`);
+			const _datasets = await blobManager.scanContainers(storages.getStorages());
+			const datasets = new Datasets(_datasets, outputDir);
+			console.debug(`generated ${datasets.getDatasets().length} dataset objects`);
+
+			const dbManager = new DatabaseManager(database);
+			await dbManager.registerAll(storages, datasets);
 		}
-
-		console.debug(`generated ${storages.getStorages().length} container objects`);
-		const _datasets = await blobManager.scanContainers(storages.getStorages());
-		const datasets = new Datasets(_datasets, outputDir);
-		console.debug(`generated ${datasets.getDatasets().length} dataset objects`);
-
-		const dbManager = new DatabaseManager(database);
-		await dbManager.registerAll(storages, datasets);
 
 		console.timeEnd('azblob');
 	});

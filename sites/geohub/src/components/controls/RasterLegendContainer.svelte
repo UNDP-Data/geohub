@@ -253,6 +253,7 @@
 
   .legend-toggle {
     padding-top: 15px;
+    max-height: 100px;
 
     .toggle-container {
       margin-left: 3.5px;

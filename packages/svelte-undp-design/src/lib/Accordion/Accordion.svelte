@@ -63,9 +63,10 @@
 
 		li button:before {
 			content: '';
-			margin-left: 0rem;
+			margin-left: 0;
 			position: absolute;
-			left: 0px;
+			left: 0;
+			top: auto;
 		}
 
 		.accordion-content {
