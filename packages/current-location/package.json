@@ -1,6 +1,7 @@
 {
 	"name": "@undp-data/current-location",
 	"version": "0.0.1",
+	"description": "This package is to show admin information at current map position in GeoHub",
 	"main": "package/index.js",
 	"files": [
 		"package"
@@ -15,6 +16,17 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"prepare": "pnpm build"
 	},
+	"private": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/UNDP-Data/geohub.git"
+	},
+	"author": "United Nations Development Programme",
+	"license": "BSD-3-Clause",
+	"bugs": {
+		"url": "https://github.com/UNDP-Data/geohub/issues"
+	},
+	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^1.0.0",
 		"@sveltejs/kit": "^1.0.1",
