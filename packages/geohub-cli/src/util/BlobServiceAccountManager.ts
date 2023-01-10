@@ -98,6 +98,34 @@ class BlobServiceAccountManager {
 		return datasets;
 	}
 
+	public async scanBlob(url: string) {
+		console.debug(`${url} started scanning`);
+
+		const blobUrl = new URL(url);
+		const paths = blobUrl.pathname.split('/');
+		const containerName = paths[1];
+		const blobName = paths.slice(2).join('/');
+		console.log(containerName);
+		console.log(blobName);
+
+		const storages = await this.listContainers(containerName);
+
+		const containerClient = this.blobServiceClient.getContainerClient(containerName);
+		const bclient = containerClient.getBlobClient(blobName);
+		const existsBlob = await bclient.exists();
+		if (!existsBlob) {
+			throw new Error(`The blob of '${url}' does not exist.`);
+		}
+
+		const dataset = await this.createDataset(containerClient, storages[0], blobName);
+		console.debug(`${url} ended scanning`);
+
+		return {
+			storage: storages[0],
+			dataset: dataset
+		};
+	}
+
 	public async listBlobs(containerClient: ContainerClient, storage: Storage, path?: string) {
 		let datasets: Dataset[] = [];
 		for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: path })) {
