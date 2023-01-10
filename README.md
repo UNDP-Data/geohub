@@ -34,3 +34,15 @@ cd sites/geohub
 pnpm i
 pnpm dev
 ```
+
+## Release packages
+
+- create release note by the following command
+
+```
+pnpm changeset
+```
+
+- create new PR to merge to develop branch
+- changeset will create new PR to release packages
+- changeset will release packages once the PR is merged to develop
