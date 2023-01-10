@@ -3,7 +3,14 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["build/**", "node_modules/**", "package/**", ".svelte-kit/**"]
+      "inputs": ["src/**"],
+      "outputs": [
+        "build/**",
+        "node_modules/**",
+        "package/**",
+        "dist/**",
+        ".svelte-kit/**"
+      ]
     },
     "format": {
       "cache": false,
