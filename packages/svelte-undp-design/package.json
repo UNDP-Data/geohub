@@ -1,6 +1,7 @@
 {
 	"name": "@undp-data/svelte-undp-design",
 	"version": "0.0.1",
+	"description": "This package is to manage svelte components for UNDP design system in GeoHub",
 	"main": "package/index.js",
 	"files": [
 		"package"
@@ -17,6 +18,17 @@
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build -o ../../sites/geohub/static/storybook"
 	},
+	"private": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/UNDP-Data/geohub.git"
+	},
+	"author": "United Nations Development Programme",
+	"license": "BSD-3-Clause",
+	"bugs": {
+		"url": "https://github.com/UNDP-Data/geohub/issues"
+	},
+	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
 		"@storybook/addon-essentials": "7.0.0-beta.12",
 		"@storybook/addon-interactions": "7.0.0-beta.12",
