@@ -9,5 +9,3 @@ Raster data acquired from different sources have been converted to Cloud Optimiz
 Raster data acquired from different sources have been converted to Cloud Optimized GeoTiffs (COG) which allows users to stream just the portion of data that it needs, improving processing times and creating real-time workflows previously not possible.
 
 <center> ![Figure_1.png](../assets/data/Figure_1.png)</p>
-
-<center> ![Figure_1.png](../assets/data/Figure_1.png)</p>
