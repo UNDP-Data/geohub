@@ -1,14 +1,11 @@
 # How is the data arranged in the GeoHub?
-documentationupdate10012023
 
 ## Data Structure
 
-develop
 Data is found as Raster and Vector files
 
 We follow a unique way to arrange our data sets! All the data sets within the UNDP GeoHub are arranged under three main “Buckets” and found under the Home page.
 
-documentationupdate10012023
 <justify>The first bucket is the “SDG” bucket which entails all data related to Sustainable Development Goals. This includes raster and vector data.</p>
 
 <justify> The second bucket is the “Climate Change” bucket which entails data related to projected and present data related to climate change.</p>
@@ -31,4 +28,3 @@ On the left most corner of the page, you can view the icons representing each SD
 <center>  ![Figure_5.png](../assets/data/Figure_5.png)
 
 <center>  ![type:video](https://undpngddlsgeohubdev01.blob.core.windows.net/docs-assets/Videos/DataStructure.webm)</center>
- develop
