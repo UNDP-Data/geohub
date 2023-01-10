@@ -43,7 +43,7 @@ importers:
       '@creativebulma/bulma-tooltip': 1.2.0
       '@undp-data/current-location': link:../../packages/current-location/package
       '@undp-data/style-switcher': link:../../packages/style-switcher/package
-      '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design/package
+      '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design
       '@watergis/svelte-maplibre-menu': 0.1.16
       chroma-js: 2.4.2
       d3-format: 3.1.0
@@ -67,63 +67,6 @@ importers:
       tslib: 2.4.1
       typescript: 4.9.4
       vite: 4.0.2
-
-  apps/electricity-dashboard/package:
-    specifiers:
-      '@creativebulma/bulma-tooltip': ^1.2.0
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
-      '@sveltejs/package': ^1.0.0
-      '@typescript-eslint/eslint-plugin': ^5.45.0
-      '@typescript-eslint/parser': ^5.45.0
-      '@undp-data/current-location': workspace:^0.0.1
-      '@undp-data/style-switcher': workspace:^0.0.1
-      '@undp-data/svelte-undp-design': workspace:^0.0.1
-      '@watergis/svelte-maplibre-menu': ^0.1.16
-      chroma-js: ^2.4.2
-      d3-format: ^3.1.0
-      eslint: ^8.28.0
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-svelte3: ^4.0.0
-      maplibre-gl: ^2.4.0
-      mime: ^3.0.0
-      prettier: ^2.8.0
-      prettier-plugin-svelte: ^2.8.1
-      svelte: ^3.54.0
-      svelte-check: ^2.9.2
-      svelte-range-slider-pips: ^2.1.1
-      svelte-vega: ^1.2.0
-      tslib: ^2.4.1
-      typescript: ^4.9.3
-      vite: ^4.0.0
-    dependencies:
-      '@creativebulma/bulma-tooltip': 1.2.0
-      '@undp-data/current-location': link:../../../packages/current-location/package
-      '@undp-data/style-switcher': link:../../../packages/style-switcher/package
-      '@undp-data/svelte-undp-design': link:../../../packages/svelte-undp-design/package
-      '@watergis/svelte-maplibre-menu': 0.1.16
-      chroma-js: 2.4.2
-      d3-format: 3.1.0
-      maplibre-gl: 2.4.0
-      mime: 3.0.0
-      svelte-range-slider-pips: 2.1.1
-      svelte-vega: 1.2.0
-    devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.1
-      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.1_niwyv7xychq2ag6arq5eqxbomm
-      '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
-      '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
-      eslint: 8.30.0
-      eslint-config-prettier: 8.5.0_eslint@8.30.0
-      eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
-      prettier: 2.8.1
-      prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
-      svelte: 3.55.0
-      svelte-check: 2.10.3_svelte@3.55.0
-      tslib: 2.4.1
-      typescript: 4.9.4
-      vite: 4.0.3
 
   packages/current-location:
     specifiers:
@@ -168,30 +111,30 @@ importers:
 
   packages/current-location/package:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.1
-      '@sveltejs/package': ^1.0.1
-      '@typescript-eslint/eslint-plugin': ^5.47.0
-      '@typescript-eslint/parser': ^5.47.0
-      eslint: ^8.30.0
+      '@sveltejs/adapter-auto': next
+      '@sveltejs/kit': next
+      '@sveltejs/package': next
+      '@typescript-eslint/eslint-plugin': ^5.46.0
+      '@typescript-eslint/parser': ^5.46.0
+      eslint: ^8.29.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
       maplibre-gl: ^2.4.0
       prettier: ^2.8.1
       prettier-plugin-svelte: ^2.9.0
-      sass: ^1.57.1
-      svelte: ^3.55.0
-      svelte-check: ^2.10.3
+      sass: ^1.56.2
+      svelte: ^3.54.0
+      svelte-check: ^2.10.2
       svelte-preprocess: ^5.0.0
       tslib: ^2.4.1
       typescript: ^4.9.4
-      vite: ^4.0.2
+      vite: ^4.0.0
     dependencies:
       maplibre-gl: 2.4.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.1
-      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.1_niwyv7xychq2ag6arq5eqxbomm
+      '@sveltejs/adapter-auto': 1.0.0-next.91_l5ueyfihz3gpzzvvyo2ean5u3e
+      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.3
+      '@sveltejs/package': 1.0.0-next.1_niwyv7xychq2ag6arq5eqxbomm
       '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
       '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
       eslint: 8.30.0
@@ -296,31 +239,31 @@ importers:
   packages/style-switcher/package:
     specifiers:
       '@creativebulma/bulma-tooltip': ^1.2.0
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.1
-      '@sveltejs/package': ^1.0.1
-      '@typescript-eslint/eslint-plugin': ^5.47.0
-      '@typescript-eslint/parser': ^5.47.0
-      eslint: ^8.30.0
+      '@sveltejs/adapter-auto': next
+      '@sveltejs/kit': next
+      '@sveltejs/package': next
+      '@typescript-eslint/eslint-plugin': ^5.46.0
+      '@typescript-eslint/parser': ^5.46.0
+      eslint: ^8.29.0
       eslint-config-prettier: ^8.5.0
       eslint-plugin-svelte3: ^4.0.0
       maplibre-gl: ^2.4.0
       prettier: ^2.8.1
       prettier-plugin-svelte: ^2.9.0
-      sass: ^1.57.1
-      svelte: ^3.55.0
-      svelte-check: ^2.10.3
+      sass: ^1.56.2
+      svelte: ^3.54.0
+      svelte-check: ^2.10.2
       svelte-preprocess: ^5.0.0
       tslib: ^2.4.1
       typescript: ^4.9.4
-      vite: ^4.0.2
+      vite: ^4.0.0
     dependencies:
       '@creativebulma/bulma-tooltip': 1.2.0
       maplibre-gl: 2.4.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.1
-      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.1_niwyv7xychq2ag6arq5eqxbomm
+      '@sveltejs/adapter-auto': 1.0.0-next.91_l5ueyfihz3gpzzvvyo2ean5u3e
+      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.3
+      '@sveltejs/package': 1.0.0-next.1_niwyv7xychq2ag6arq5eqxbomm
       '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
       '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
       eslint: 8.30.0
@@ -380,51 +323,6 @@ importers:
       tslib: 2.4.1
       typescript: 4.9.4
       vite: 4.0.2
-
-  packages/style-viewer/package:
-    specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.1
-      '@sveltejs/package': ^1.0.1
-      '@typescript-eslint/eslint-plugin': ^5.47.0
-      '@typescript-eslint/parser': ^5.47.0
-      '@undp-data/current-location': workspace:^0.0.1
-      '@watergis/maplibre-gl-legend': ^1.2.8
-      '@watergis/svelte-maplibre-attribute-popup': ^0.0.12
-      '@watergis/svelte-maplibre-export': ^0.1.20
-      eslint: ^8.30.0
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-svelte3: ^4.0.0
-      maplibre-gl: ^2.4.0
-      prettier: ^2.8.1
-      prettier-plugin-svelte: ^2.9.0
-      svelte: ^3.55.0
-      svelte-check: ^2.10.3
-      tslib: ^2.4.1
-      typescript: ^4.9.4
-      vite: ^4.0.2
-    dependencies:
-      '@undp-data/current-location': link:../../current-location/package
-      '@watergis/maplibre-gl-legend': 1.2.8
-      '@watergis/svelte-maplibre-attribute-popup': 0.0.12
-      '@watergis/svelte-maplibre-export': 0.1.20
-      maplibre-gl: 2.4.0
-    devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.1
-      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.1_niwyv7xychq2ag6arq5eqxbomm
-      '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
-      '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
-      eslint: 8.30.0
-      eslint-config-prettier: 8.5.0_eslint@8.30.0
-      eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
-      prettier: 2.8.1
-      prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
-      svelte: 3.55.0
-      svelte-check: 2.10.3_svelte@3.55.0
-      tslib: 2.4.1
-      typescript: 4.9.4
-      vite: 4.0.3
 
   packages/svelte-undp-design:
     specifiers:
@@ -488,69 +386,6 @@ importers:
       tslib: 2.4.1
       typescript: 4.9.4
       vite: 4.0.2_sass@1.57.1
-
-  packages/svelte-undp-design/package:
-    specifiers:
-      '@storybook/addon-essentials': 7.0.0-beta.12
-      '@storybook/addon-interactions': 7.0.0-beta.12
-      '@storybook/addon-links': 7.0.0-beta.12
-      '@storybook/blocks': 7.0.0-beta.12
-      '@storybook/svelte': 7.0.0-beta.12
-      '@storybook/sveltekit': 7.0.0-beta.12
-      '@storybook/testing-library': ^0.0.13
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.1
-      '@sveltejs/package': ^1.0.1
-      '@typescript-eslint/eslint-plugin': ^5.47.0
-      '@typescript-eslint/parser': ^5.47.0
-      bulma: ^0.9.4
-      eslint: ^8.30.0
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-storybook: ^0.6.8
-      eslint-plugin-svelte3: ^4.0.0
-      prettier: ^2.8.1
-      prettier-plugin-svelte: ^2.9.0
-      react: ^18.2.0
-      react-dom: ^18.2.0
-      sass: ^1.57.1
-      storybook: 7.0.0-beta.12
-      svelte: ^3.55.0
-      svelte-carousel: ^1.0.20
-      svelte-check: ^2.10.3
-      tslib: ^2.4.1
-      typescript: ^4.9.4
-      vite: ^4.0.2
-    dependencies:
-      svelte-carousel: 1.0.20
-    devDependencies:
-      '@storybook/addon-essentials': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
-      '@storybook/addon-interactions': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
-      '@storybook/addon-links': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
-      '@storybook/blocks': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
-      '@storybook/svelte': 7.0.0-beta.12_svelte@3.55.0
-      '@storybook/sveltekit': 7.0.0-beta.12_oyksg6xgou2rbmhn3ubdficn4q
-      '@storybook/testing-library': 0.0.13_biqbaboplfbrettd7655fr4n2y
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.1
-      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.1_niwyv7xychq2ag6arq5eqxbomm
-      '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
-      '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
-      bulma: 0.9.4
-      eslint: 8.30.0
-      eslint-config-prettier: 8.5.0_eslint@8.30.0
-      eslint-plugin-storybook: 0.6.8_lzzuuodtsqwxnvqeq4g4likcqa
-      eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
-      prettier: 2.8.1
-      prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      sass: 1.57.1
-      storybook: 7.0.0-beta.12
-      svelte: 3.55.0
-      svelte-check: 2.10.3_sass@1.57.1+svelte@3.55.0
-      tslib: 2.4.1
-      typescript: 4.9.4
-      vite: 4.0.3_sass@1.57.1
 
   sites/geohub:
     specifiers:
@@ -665,10 +500,10 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
       '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
       '@undp-data/current-location': link:../../packages/current-location/package
-      '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard/package
+      '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard
       '@undp-data/style-switcher': link:../../packages/style-switcher/package
-      '@undp-data/style-viewer': link:../../packages/style-viewer/package
-      '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design/package
+      '@undp-data/style-viewer': link:../../packages/style-viewer
+      '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design
       '@watergis/legend-symbol': 0.2.3
       '@watergis/maplibre-gl-export': 1.3.8
       '@watergis/svelte-maplibre-legend': 0.1.17_wbktlcl6xhsncvz2r5eelcs6le
@@ -2467,21 +2302,6 @@ packages:
       vite: 4.0.2_sass@1.57.1
     dev: true
 
-  /@joshwooding/vite-plugin-react-docgen-typescript/0.0.5_p2fwcaxbionflq6hjivvbcsv5a:
-    resolution: {integrity: sha512-HwAEj/vAP1+hzBfIv9DTCyg+1O0/LG48Up7j1RmJ+pFwjb/wRxzUBco4LqKFKe7SZ0M6IyASNh1oKP3yHnJElA==}
-    peerDependencies:
-      typescript: '>= 4.3.x'
-      vite: '>2.0.0-0'
-    dependencies:
-      '@rollup/pluginutils': 4.2.1
-      glob: 7.2.3
-      glob-promise: 4.2.2_glob@7.2.3
-      magic-string: 0.26.7
-      react-docgen-typescript: 2.2.2_typescript@4.9.4
-      typescript: 4.9.4
-      vite: 4.0.3_sass@1.57.1
-    dev: true
-
   /@jridgewell/gen-mapping/0.1.1:
     resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}
     engines: {node: '>=6.0.0'}
@@ -2694,21 +2514,6 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@rollup/pluginutils/5.0.2_rollup@3.7.5:
-    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.0
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
-      rollup: 3.7.5
-    dev: true
-
   /@rollup/pluginutils/5.0.2_rollup@3.8.1:
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
@@ -2835,7 +2640,7 @@ packages:
       '@storybook/components': 7.0.0-beta.12_biqbaboplfbrettd7655fr4n2y
       '@storybook/csf-plugin': 7.0.0-beta.12
       '@storybook/csf-tools': 7.0.0-beta.12
-      '@storybook/mdx2-csf': 1.0.0-next.2
+      '@storybook/mdx2-csf': 1.0.0-next.4
       '@storybook/node-logger': 7.0.0-beta.12
       '@storybook/postinstall': 7.0.0-beta.12
       '@storybook/preview-api': 7.0.0-beta.12
@@ -3164,7 +2969,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.12
       '@storybook/core-common': 7.0.0-beta.12
       '@storybook/csf-plugin': 7.0.0-beta.12
-      '@storybook/mdx2-csf': 1.0.0-next.2
+      '@storybook/mdx2-csf': 1.0.0-next.4
       '@storybook/node-logger': 7.0.0-beta.12
       '@storybook/preview': 7.0.0-beta.12
       '@storybook/preview-api': 7.0.0-beta.12
@@ -3176,51 +2981,11 @@ packages:
       glob: 7.2.3
       glob-promise: 4.2.2_glob@7.2.3
       magic-string: 0.26.7
-      rollup: 3.7.5
-      rollup-plugin-external-globals: 0.7.1_rollup@3.7.5
+      rollup: 3.8.1
+      rollup-plugin-external-globals: 0.7.1_rollup@3.8.1
       slash: 3.0.0
       typescript: 4.9.4
       vite: 4.0.2_sass@1.57.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@storybook/builder-vite/7.0.0-beta.12_p2fwcaxbionflq6hjivvbcsv5a:
-    resolution: {integrity: sha512-K1e6tS6uwygh9/g0Zg3n32ebnUOv1r/neMml532/jl7n9kcgQXz93WSmEuQtMDJ8hEEeVl/LMR0NEfsUVMsnHg==}
-    peerDependencies:
-      '@preact/preset-vite': '*'
-      typescript: '>= 4.3.x'
-      vite: ^3.0.0 || ^4.0.0
-      vite-plugin-glimmerx: '*'
-    peerDependenciesMeta:
-      '@preact/preset-vite':
-        optional: true
-      typescript:
-        optional: true
-      vite-plugin-glimmerx:
-        optional: true
-    dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.0.5_p2fwcaxbionflq6hjivvbcsv5a
-      '@storybook/client-logger': 7.0.0-beta.12
-      '@storybook/core-common': 7.0.0-beta.12
-      '@storybook/csf-plugin': 7.0.0-beta.12
-      '@storybook/mdx2-csf': 1.0.0-next.2
-      '@storybook/node-logger': 7.0.0-beta.12
-      '@storybook/preview': 7.0.0-beta.12
-      '@storybook/preview-api': 7.0.0-beta.12
-      '@storybook/types': 7.0.0-beta.12
-      browser-assert: 1.2.1
-      es-module-lexer: 0.9.3
-      express: 4.18.2
-      fs-extra: 9.1.0
-      glob: 7.2.3
-      glob-promise: 4.2.2_glob@7.2.3
-      magic-string: 0.26.7
-      rollup: 3.7.5
-      rollup-plugin-external-globals: 0.7.1_rollup@3.7.5
-      slash: 3.0.0
-      typescript: 4.9.4
-      vite: 4.0.3_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3560,8 +3325,8 @@ packages:
     resolution: {integrity: sha512-ZKQ8liot//OcThnfBUkeGNtLzTCMZdAvHKJKPJRGppAzjPopWt8cE1NyQYum+IoigGlLvGmXMg9mYFYv57WzVg==}
     dev: true
 
-  /@storybook/mdx2-csf/1.0.0-next.2:
-    resolution: {integrity: sha512-Mg6pYKhuuMrzF/DcCI5dEA36jx7156bBnCk9uFInthFrr1sLYlj+HfRMibFa/VdJx8L0Wsf/15cIu3xPWriinA==}
+  /@storybook/mdx2-csf/1.0.0-next.4:
+    resolution: {integrity: sha512-nvRgYdpYvXsvSgCzKc4LQA1JxtJzmv47IsFAsh1rTz5FoHyK8watLU2WqX9T4w52fpFXBHx7RwGEsCRt0XgZlQ==}
     dev: true
 
   /@storybook/node-logger/7.0.0-beta.12:
@@ -3668,33 +3433,6 @@ packages:
       - vite-plugin-glimmerx
     dev: true
 
-  /@storybook/svelte-vite/7.0.0-beta.12_ihovgb6mdu7ockk7dmct2h2wxa:
-    resolution: {integrity: sha512-JmdBa9FG0QGLZztov8pUBfE8fO78PteeOTio1aaJ4NtFgUBOUtzzGyASa0DU/JWAes/QUxuZ6uln76Pa8dKITA==}
-    engines: {node: ^14.18 || >=16}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      vite: ^3.0.0 || ^4.0.0
-    dependencies:
-      '@storybook/builder-vite': 7.0.0-beta.12_p2fwcaxbionflq6hjivvbcsv5a
-      '@storybook/node-logger': 7.0.0-beta.12
-      '@storybook/svelte': 7.0.0-beta.12_svelte@3.55.0
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.3
-      magic-string: 0.26.7
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      svelte: 3.55.0
-      sveltedoc-parser: 4.2.1
-      ts-dedent: 2.2.0
-      vite: 4.0.3_sass@1.57.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@preact/preset-vite'
-      - supports-color
-      - typescript
-      - vite-plugin-glimmerx
-    dev: true
-
   /@storybook/svelte/7.0.0-beta.12_svelte@3.55.0:
     resolution: {integrity: sha512-orIf0hT4ap2K1t97YY5K+kqAbAiz2M9avsgB/Eoikew3Akuk2Tv8TCKwv0ev7eRvsK3sQS/dBdkRw82/waRRqg==}
     engines: {node: '>=16.0.0'}
@@ -3725,27 +3463,6 @@ packages:
       '@storybook/svelte': 7.0.0-beta.12_svelte@3.55.0
       '@storybook/svelte-vite': 7.0.0-beta.12_flg53a4ixzgwfyw3p4nsxjosca
       vite: 4.0.2_sass@1.57.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@preact/preset-vite'
-      - react
-      - react-dom
-      - supports-color
-      - svelte
-      - typescript
-      - vite-plugin-glimmerx
-    dev: true
-
-  /@storybook/sveltekit/7.0.0-beta.12_oyksg6xgou2rbmhn3ubdficn4q:
-    resolution: {integrity: sha512-rCjlAmD5jMcRzfZoeivnQ9cdgwjWGz+6atjGE3tAer17jYQuyr/yspLhvu9jim7rzOYr7IvB73XPUI5T1ZC1NA==}
-    engines: {node: ^14.18 || >=16}
-    peerDependencies:
-      vite: ^4.0.0
-    dependencies:
-      '@storybook/builder-vite': 7.0.0-beta.12_p2fwcaxbionflq6hjivvbcsv5a
-      '@storybook/svelte': 7.0.0-beta.12_svelte@3.55.0
-      '@storybook/svelte-vite': 7.0.0-beta.12_ihovgb6mdu7ockk7dmct2h2wxa
-      vite: 4.0.3_sass@1.57.1
     transitivePeerDependencies:
       - '@babel/core'
       - '@preact/preset-vite'
@@ -3827,12 +3544,21 @@ packages:
       - supports-color
     dev: true
 
+  /@sveltejs/adapter-auto/1.0.0-next.91_l5ueyfihz3gpzzvvyo2ean5u3e:
+    resolution: {integrity: sha512-U57tQdzTfFINim8tzZSARC9ztWPzwOoHwNOpGdb2o6XrD0mEQwU9DsII7dBblvzg+xCnmd0pw7PDtXz5c5t96w==}
+    peerDependencies:
+      '@sveltejs/kit': ^1.0.0-next.587
+    dependencies:
+      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.3
+      import-meta-resolve: 2.2.0
+    dev: true
+
   /@sveltejs/adapter-auto/1.0.0_@sveltejs+kit@1.0.1:
     resolution: {integrity: sha512-yKyPvlLVua1bJ/42FrR3X041mFGdB4GzTZOAEoHUcNBRE5Mhx94+eqHpC3hNvAOiLEDcKfVO0ObyKSu7qldU+w==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
     dependencies:
-      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
+      '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.2
       import-meta-resolve: 2.2.0
     dev: true
 
@@ -3846,6 +3572,34 @@ packages:
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.8.1
       '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
       rollup: 3.8.1
+    dev: true
+
+  /@sveltejs/kit/1.0.0-next.589_svelte@3.55.0+vite@4.0.3:
+    resolution: {integrity: sha512-5ABRw46z9B+cCe/YWhcx+I/azNZg1NCDEkVJifZn8ToFoJ3a1eP0OexNIrvMEWpllMbNMPcJm2TC9tnz9oPfWQ==}
+    engines: {node: '>=16.14'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      svelte: ^3.54.0
+      vite: ^4.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.3
+      '@types/cookie': 0.5.1
+      cookie: 0.5.0
+      devalue: 4.2.0
+      esm-env: 1.0.0
+      kleur: 4.1.5
+      magic-string: 0.27.0
+      mime: 3.0.0
+      sade: 1.8.1
+      set-cookie-parser: 2.5.1
+      sirv: 2.0.2
+      svelte: 3.55.0
+      tiny-glob: 0.2.9
+      undici: 5.14.0
+      vite: 4.0.3_sass@1.57.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@sveltejs/kit/1.0.1_svelte@3.55.0+vite@4.0.2:
@@ -3899,9 +3653,25 @@ packages:
       svelte: 3.55.0
       tiny-glob: 0.2.9
       undici: 5.14.0
-      vite: 4.0.3
+      vite: 4.0.3_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@sveltejs/package/1.0.0-next.1_niwyv7xychq2ag6arq5eqxbomm:
+    resolution: {integrity: sha512-U8XBk6Cfy8MjKG41Uyo+fqBpdhu7xUSnhiCNoODRaAtWV02RZoLh+McXrsxEvqi/ycgymctlhJhssqDnD+E+FA==}
+    engines: {node: '>=16.9'}
+    hasBin: true
+    peerDependencies:
+      svelte: ^3.44.0
+    dependencies:
+      chokidar: 3.5.3
+      kleur: 4.1.5
+      sade: 1.8.1
+      svelte: 3.55.0
+      svelte2tsx: 0.5.23_niwyv7xychq2ag6arq5eqxbomm
+    transitivePeerDependencies:
+      - typescript
     dev: true
 
   /@sveltejs/package/1.0.1_niwyv7xychq2ag6arq5eqxbomm:
@@ -3952,7 +3722,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.0
       svelte-hmr: 0.15.1_svelte@3.55.0
-      vite: 4.0.3
+      vite: 4.0.3_sass@1.57.1
       vitefu: 0.2.4_vite@4.0.3
     transitivePeerDependencies:
       - supports-color
@@ -9661,16 +9431,16 @@ packages:
     resolution: {integrity: sha512-ndEIpszUHiG4HtDsQLeIuMvRsDnn8c8rYStabochtUeCvfuvNptb5TUbVD68LRAILPX7p9nqQGh4xJgn3EHS/g==}
     dev: true
 
-  /rollup-plugin-external-globals/0.7.1_rollup@3.7.5:
+  /rollup-plugin-external-globals/0.7.1_rollup@3.8.1:
     resolution: {integrity: sha512-3U2OBhCa/D57P2SA9fx1CGS1xi9h7x7L3+nnAJ0563nIucQysHQdebfKYoI+2WZVkRdVuZKh4M+rgoF0B5W9Ag==}
     peerDependencies:
       rollup: ^2.25.0 || ^3.3.0
     dependencies:
-      '@rollup/pluginutils': 5.0.2_rollup@3.7.5
+      '@rollup/pluginutils': 5.0.2_rollup@3.8.1
       estree-walker: 3.0.1
       is-reference: 3.0.0
       magic-string: 0.26.7
-      rollup: 3.7.5
+      rollup: 3.8.1
     dev: true
 
   /rollup/3.7.5:
@@ -11654,39 +11424,6 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite/4.0.3:
-    resolution: {integrity: sha512-HvuNv1RdE7deIfQb8mPk51UKjqptO/4RXZ5yXSAvurd5xOckwS/gg8h9Tky3uSbnjYTgUm0hVCet1cyhKd73ZA==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      esbuild: 0.16.10
-      postcss: 8.4.20
-      resolve: 1.22.1
-      rollup: 3.8.1
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /vite/4.0.3_gneikmxcpj2uc2xuqjosnroj4e:
     resolution: {integrity: sha512-HvuNv1RdE7deIfQb8mPk51UKjqptO/4RXZ5yXSAvurd5xOckwS/gg8h9Tky3uSbnjYTgUm0hVCet1cyhKd73ZA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -11775,7 +11512,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.3
+      vite: 4.0.3_sass@1.57.1
     dev: true
 
   /vitest/0.26.2_jsdom@20.0.3+sass@1.57.1:
