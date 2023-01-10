@@ -1,11 +1,16 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy, setContext, getContext } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterIntervalsLegend from '$components/controls/RasterIntervalsLegend.svelte'
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
-  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
+  import {
+    DynamicLayerLegendTypes,
+    COLOR_CLASS_COUNT_MAXIMUM,
+    COLOR_CLASS_COUNT,
+    ClassificationMethodTypes,
+  } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
@@ -15,41 +20,49 @@
     updateParamsInURL,
     getValueFromRasterTileUrl,
     getLayerStyle,
-    getRandomColormap,
+    getLayerSourceUrl,
+    sleep,
   } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let colorMapName: string
+  export let legendType: DynamicLayerLegendTypes = undefined
   export let classificationMethod: ClassificationMethodTypes
-
+  export let fakeProp: string
   let info
   ;({ info } = layer)
+
+  let classification: ClassificationMethodTypes = classificationMethod
 
   let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
-  let layerListCount = $layerList.length
   let showTooltip = false
-  let numberOfClasses: number
-  export let legendType: DynamicLayerLegendTypes = undefined
+  let numberOfClasses: number = COLOR_CLASS_COUNT
+  // let vizMode: 'continuous' | 'discrete' | undefined = undefined
+  let colorMapName: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
 
-  // hide colormap picker if change in layer list
-  $: {
-    if (layerListCount !== $layerList.length) {
-      showTooltip = false
-      layerListCount = $layerList.length
-    }
-  }
-
   onMount(async () => {
+    while ($map.loaded() === false) {
+      await sleep(100)
+    }
+
+    /**
+     * a raster layer can at any goven time be in two visualization contexts:
+     *  1. continuous colormap_name param in url
+     *  2. discrete (classes) colormap parameter
+     *
+     * These two mode are MUTUALLY exlcusive, that is only ONE can be active at any given time instance
+     * That means whenever the mode is changed this is done by removing the other mode from the url
+     */
+
     const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+
     if (colormap) {
       // either unique or interval
       const rasterInfo = layer.info as RasterTileMetadata
@@ -65,29 +78,24 @@
       }
     } else {
       // continuous
-      const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      if (colormap_name) {
-        colorMapName = colormap_name
-      } else {
-        colorMapName = getRandomColormap()
-      }
+      colorMapName = (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) || colorMapName
+
+      legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
-    if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      if (layerSrc?.tiles?.length > 0) {
-        await initialise()
-      } else {
-        setTimeout(initialise, 300)
-      }
-    }
+
+    // initialisation is not necessary when restoring or swhitching from other tabs
+    if (!('stats' in layer.info)) await initialise()
+
+    //console.log('RLCMOUNT', colorMapName, classificationMethod, numberOfClasses)
   })
 
   const initialise = async () => {
     const rasterInfo = layer.info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      if (!(layerSrc?.tiles?.length > 0)) return
-      const layerURL = new URL(layerSrc.tiles[0])
+      const layerUrl = getLayerSourceUrl($map, layer.id) as string
+
+      const layerURL = new URL(layerUrl)
+
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
       layerStats = await fetchUrl(statsURL)
       const band = info.active_band_no
@@ -108,7 +116,6 @@
         layerList.set([...layers])
       }
     }
-    legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
   }
 
   const {
@@ -147,32 +154,6 @@
     }
   }
 
-  $: colorMapName, colorMapChanged()
-  const colorMapChanged = () => {
-    if (!colorMapName) return
-    const rasterInfo = layer.info as RasterTileMetadata
-    const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
-    const tiles = source.tiles
-    if (!(tiles && tiles.length > 0)) return
-    const layerURL = new URL(tiles[0])
-    layerURL.searchParams.delete('colormap_name')
-    layerURL.searchParams.delete('rescale')
-    const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-    let updatedParams = Object.assign({ colormap_name: colorMapName })
-    if (rescale) {
-      updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-    }
-    const layerStyle = getLayerStyle($map, layer.id)
-    updateParamsInURL(layerStyle, layerURL, updatedParams)
-
-    colorPickerVisibleIndex = -1
-    const nlayer = { ...layer }
-    const layers = $layerList.map((lyr) => {
-      return layer.id !== lyr.id ? lyr : nlayer
-    })
-    layerList.set([...layers])
-  }
-
   const handleClosePopup = () => {
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
@@ -205,7 +186,7 @@
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex
           bind:colorMapName
-          bind:classificationMethod
+          bind:classificationMethod={classification}
           bind:numberOfClasses />
       </div>
     {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
@@ -257,8 +238,6 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
           bind:colorMapName
           bind:numberOfClasses />
         <div

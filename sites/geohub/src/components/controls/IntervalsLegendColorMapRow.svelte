@@ -12,6 +12,8 @@
   export let layer: Layer
   export let colorMapName: string
   export let rowWidth
+
+  let signal
   const dispatch = createEventDispatcher()
   const {
     ref: popperRef,
@@ -103,7 +105,7 @@
   const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
-
+    signal = value
     dispatch('changeIntervalValues', {
       index: colorMapRow.index,
       id,
@@ -112,54 +114,59 @@
   }
 </script>
 
-<div class="columns is-mobile p-0 m-0 py-1">
-  <div class="column is-2 p-0 m-0">
-    <div
-      alt="Color Map Control"
-      title="Color Map Control"
-      use:popperRef
-      on:click={() => handleColorPickerClick()}
-      class="discrete"
-      style="{colorPickerStyle}; width:20px; height:20px" />
-    {#if showToolTip && color}
+<!--
+the key statement is necessary as it forces to rerender the legend item in case an invalid valus is provided
+-->
+{#key signal}
+  <div class="columns is-mobile p-0 m-0 py-1">
+    <div class="column is-2 p-0 m-0">
       <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        transition:fade>
-        <ColorPicker
-          bind:color
-          on:closeColorPicker={() => handleColorPickerClick()} />
+        alt="Color Map Control"
+        title="Color Map Control"
+        use:popperRef
+        on:click={() => handleColorPickerClick()}
+        class="discrete"
+        style="{colorPickerStyle}; width:20px; height:20px" />
+      {#if showToolTip && color}
         <div
-          id="arrow"
-          data-popper-arrow />
-      </div>
-    {/if}
-  </div>
-  <div class="column p-0 m-0">
-    <input
-      style="width:{rowWidth * 8}px"
-      class="number-input"
-      id="start"
-      type="number"
-      value={colorMapRow.start}
-      on:change={handleInput}
-      required />
-  </div>
-  {#if colorMapRow.end}
-    <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+          id="tooltip"
+          data-testid="tooltip"
+          use:popperContent={popperOptions}
+          transition:fade>
+          <ColorPicker
+            bind:color
+            on:closeColorPicker={() => handleColorPickerClick()} />
+          <div
+            id="arrow"
+            data-popper-arrow />
+        </div>
+      {/if}
+    </div>
     <div class="column p-0 m-0">
       <input
         style="width:{rowWidth * 8}px"
         class="number-input"
+        id="start"
         type="number"
-        id="end"
-        value={colorMapRow.end}
+        value={colorMapRow.start}
         on:change={handleInput}
         required />
     </div>
-  {/if}
-</div>
+    {#if colorMapRow.end}
+      <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+      <div class="column p-0 m-0">
+        <input
+          style="width:{rowWidth * 8}px"
+          class="number-input"
+          type="number"
+          id="end"
+          value={colorMapRow.end}
+          on:change={handleInput}
+          required />
+      </div>
+    {/if}
+  </div>
+{/key}
 
 <style lang="scss">
   @import '../../styles/popper.scss';

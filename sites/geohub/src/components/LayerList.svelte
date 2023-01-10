@@ -56,6 +56,7 @@
     const layerStyle = restoredStyle?.layers.find((l) => l.id === layerId)
     let classificationMethod = ClassificationMethodTypes.EQUIDISTANT
     if (['fill', 'symbol'].includes(layerStyle?.type)) {
+      //point and polygon layers
       classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
     }
     if (layerStyle && layerStyle['classification']) {

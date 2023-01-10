@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { map } from '$stores'
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
@@ -7,43 +8,21 @@
   import { ClassificationMethodTypes, DynamicLayerLegendTypes, TabNames } from '$lib/constants'
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
-  import { Tabs } from '@undp-data/svelte-undp-design'
+  import { Loader, Tabs } from '@undp-data/svelte-undp-design'
+  import { getValueFromRasterTileUrl, sleep } from '$lib/helper'
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
-
   let expressions: RasterSimpleExpression[]
 
-  let activeTab = ''
-  let isRefinePanelVisible = false
-  let isLegendPanelVisible = false
-  let isOpacityPanelVisible = false
-  let isHistogramPanelVisible = false
-  let colorMapName: string = undefined
-  let legendType: DynamicLayerLegendTypes
-
-  $: {
-    isLegendPanelVisible = false
-    isRefinePanelVisible = false
-    isOpacityPanelVisible = false
-    isHistogramPanelVisible = false
-    switch (activeTab) {
-      case TabNames.LEGEND:
-        isLegendPanelVisible = true
-        break
-      case TabNames.TRANSFORM:
-        isRefinePanelVisible = true
-        break
-      case TabNames.OPACITY:
-        isOpacityPanelVisible = true
-        break
-      case TabNames.HISTOGRAM:
-        isHistogramPanelVisible = true
-        break
-      default:
-        break
+  const getURI = async () => {
+    while ($map.loaded() === false) {
+      await sleep(100)
     }
+    return getValueFromRasterTileUrl($map, layer.id, 'url') as string
   }
+
+  let uri = getURI()
 
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -51,6 +30,9 @@
     { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
+
+  let activeTab = TabNames.LEGEND
+  let legendType: DynamicLayerLegendTypes
 
   $: {
     const rasterInfo = layer.info as RasterTileMetadata
@@ -68,42 +50,47 @@
   }
 </script>
 
-<div
-  class="raster-layer-container has-background-white-bis"
-  transition:fade>
-  <nav class="panel">
-    <p class="panel-heading has-background-grey-lighter p-2">
-      <LayerNameGroup {layer} />
-    </p>
-    <Tabs
-      bind:tabs
-      bind:activeTab
-      fontSize="medium"
-      isToggleTab={true} />
+{#await uri}
+  <div class="loader-container">
+    <Loader size="small" />
+  </div>
+{:then uriValue}
+  <div
+    class="raster-layer-container has-background-white-bis"
+    transition:fade>
+    <nav class="panel">
+      <p class="panel-heading has-background-grey-lighter p-2">
+        <LayerNameGroup {layer} />
+      </p>
+      <Tabs
+        bind:tabs
+        bind:activeTab
+        fontSize="medium"
+        isToggleTab={true} />
 
-    <p class="panel-content">
-      {#if isLegendPanelVisible === true}
-        <RasterLegendContainer
-          bind:layer
-          bind:colorMapName
-          bind:classificationMethod
-          bind:legendType />
-      {/if}
-      {#if isHistogramPanelVisible}
-        <RasterHistogram bind:layer />
-      {/if}
-      {#if isRefinePanelVisible === true}
-        <RasterExpression
-          bind:layer
-          bind:expressions
-          bind:legendType />
-      {/if}
-      {#if isOpacityPanelVisible === true}
-        <OpacityPanel {layer} />
-      {/if}
-    </p>
-  </nav>
-</div>
+      <p class="panel-content">
+        {#if activeTab == TabNames.LEGEND}
+          <RasterLegendContainer
+            bind:layer
+            bind:classificationMethod
+            bind:legendType />
+        {/if}
+        {#if activeTab == TabNames.HISTOGRAM}
+          <RasterHistogram bind:layer />
+        {/if}
+        {#if activeTab == TabNames.TRANSFORM}
+          <RasterExpression
+            bind:layer
+            bind:expressions
+            bind:legendType />
+        {/if}
+        {#if activeTab == TabNames.OPACITY}
+          <OpacityPanel {layer} />
+        {/if}
+      </p>
+    </nav>
+  </div>
+{/await}
 
 <style lang="scss">
   .raster-layer-container {
@@ -111,5 +98,9 @@
       padding: 10px;
       padding-top: 15px;
     }
+  }
+  .loader-container {
+    width: fit-content;
+    margin: 0 auto;
   }
 </style>
