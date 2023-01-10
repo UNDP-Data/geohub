@@ -7,5 +7,5 @@
   "access": "restricted",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": ["geohub", "@undp-data/electricity-dashboard"]
 }
