@@ -4,12 +4,14 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { ClassificationMethodTypes, DynamicLayerLegendTypes, LayerInitialValues, TabNames } from '$lib/constants'
+  import { ClassificationMethodTypes, DynamicLayerLegendTypes, TabNames } from '$lib/constants'
   import type { Layer, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
-  import Tabs from '$components//controls/Tabs.svelte'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
+  export let classificationMethod: ClassificationMethodTypes
+
   let expressions: RasterSimpleExpression[]
 
   let activeTab = ''
@@ -18,7 +20,6 @@
   let isOpacityPanelVisible = false
   let isHistogramPanelVisible = false
   let colorMapName: string = undefined
-  let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.EQUIDISTANT
   let legendType: DynamicLayerLegendTypes
 
   $: {
@@ -71,13 +72,13 @@
   class="raster-layer-container has-background-white-bis"
   transition:fade>
   <nav class="panel">
-    <p class="panel-heading has-background-grey-lighter">
+    <p class="panel-heading has-background-grey-lighter p-2">
       <LayerNameGroup {layer} />
     </p>
     <Tabs
       bind:tabs
       bind:activeTab
-      fontSize="small"
+      fontSize="medium"
       isToggleTab={true} />
 
     <p class="panel-content">
@@ -97,9 +98,9 @@
           bind:expressions
           bind:legendType />
       {/if}
-      <OpacityPanel
-        {layer}
-        {isOpacityPanelVisible} />
+      {#if isOpacityPanelVisible === true}
+        <OpacityPanel {layer} />
+      {/if}
     </p>
   </nav>
 </div>

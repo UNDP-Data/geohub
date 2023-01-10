@@ -12,7 +12,6 @@
     "importsNotUsedAsValues": "error",
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "types": ["vi-fetch/matchers"],
     /**
 			To have warnings/errors of the Svelte compiler at the correct position,
 			enable source maps by default.

@@ -1,68 +1,89 @@
 <script lang="ts">
-  import DashboardCard from '../../dashboards/components/DashboardCard.svelte'
-  import DashboardHeader from '../../dashboards/components/DashboardHeader.svelte'
-  import DashboardFooter from '../../dashboards/components/DashboardFooter.svelte'
-  import MapStyleCardList from '../../dashboards/components/MapStyleCardList.svelte'
-  import type { PageData } from './$types'
+  import MapStyleCardList from '$lib/dashboards/MapStyleCardList.svelte'
+  import { Header, Footer, FluidCarousel } from '@undp-data/svelte-undp-design'
+  import type { CarouselContent } from '@undp-data/svelte-undp-design/interfaces'
+  import { browser } from '$app/environment'
 
-  let pages = [
+  let contents: CarouselContent[] = [
     {
-      title: 'Electricity',
-      link: 'dashboards/electricity',
+      tag: 'Dashboard',
+      imageUrl: 'assets/electricity-snapshot.png',
+      title: 'GeoHub Electricity Dashboard',
+      description:
+        'This dashboard presented here are two raster layers that display the likelihood of full electrification for a given area: High Resolution Electricity Access (HREA) and Machine Learning (ML). These are created by the University of Michigan, used to support the 2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and modern energy for all.',
+      linkName: 'Open dashboard',
+      linkUrl: 'dashboards/electricity',
     },
   ]
 
-  export let data: PageData
+  let headerHeight: number
 </script>
 
-<div style="height: 100vh!important; width: 100%; overflow-y: auto;overflow-x: hidden">
-  <DashboardHeader />
-  <div style="background:linear-gradient(140deg, #FBC412, #00C1FF); margin-top: 8vh; height: 22vh">
-    <div style="margin-left:5%; padding-top:2%">
-      <p class="title">Dashboards Gallery</p>
-      <div style="width: 120px; height: 5px; background: black; " />
-    </div>
-  </div>
+<svelte:head>
+  <title>GeoHub | Dashboards</title>
+</svelte:head>
+
+<Header
+  region="UNDP's one stop shop for spatial data and analytics"
+  siteTitle="GeoHub dashboards"
+  url="https://geohub.data.undp.org"
+  logoUrl="assets/undp-images/undp-logo-blue.svg"
+  bind:height={headerHeight}>
   <div
-    class="main-section"
-    style="height: max-content; min-height: 60vh">
+    slot="menu-buttons"
+    class="menu-buttons">
     <div
-      class="grid-x small-up-2 medium-up-4 large-up-6 content-card-wrapper"
-      style="width: 100%; margin-left: 2%; margin-right: 2%">
-      {#each pages as page}
-        <DashboardCard
-          bind:title={page.title}
-          bind:link={page.link} />
-      {/each}
+      class="has-tooltip-bottom has-tooltip-arrow"
+      data-tooltip="Home">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <a
+        role="button"
+        aria-label="Home"
+        class="menu-button"
+        tabindex="0"
+        href="/">
+        <span class="icon">
+          <i
+            class="fa-solid fa-home fa-xl"
+            style="color:#006eb5" />
+        </span>
+      </a>
     </div>
-    {#if data}
-      <hr />
-      <MapStyleCardList
-        bind:defaultPage={data.defaultPage}
-        bind:defaultPageSize={data.defaultPageSize}
-        bind:totalItemsCount={data.totalItemsCount}
-        bind:totalPagesCount={data.totalPagesCount} />
-    {/if}
   </div>
-  <DashboardFooter />
+</Header>
+
+<div
+  style="height: calc(100vh - {headerHeight}px)!important; width: 100%; overflow-y: auto;overflow-x: hidden;margin-top: {headerHeight}px; ">
+  <div class="main-section mb-4">
+    {#if browser}
+      <FluidCarousel bind:contents />
+    {/if}
+    <div class="is-divider" />
+    <MapStyleCardList />
+  </div>
+
+  <Footer logoUrl="assets/undp-images/undp-logo-white.svg" />
 </div>
 
 <style lang="scss">
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-  @import '../../styles/undp-design/base-minimal.min.css';
-  @import '../../styles/undp-design/fonts.css';
-  @import '../../styles/undp-design/footer.min.css';
+  @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
+  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
+  @import 'bulma-divider/dist/css/bulma-divider.min.css';
 
-  :global(.primary-button) {
-    background: #d12800 !important;
-    border-color: #d12800 !important;
-    border-radius: 0px !important;
-    color: white !important;
+  .menu-buttons {
+    display: flex;
+
+    .menu-button {
+      cursor: pointer;
+      margin-left: 20px;
+      margin-right: 5px;
+    }
   }
-  :global(.secondary-button) {
-    background: #3288ce !important;
-    border-color: #3288ce !important;
-    border-radius: 0px !important;
-    color: white !important;
+
+  .main-section {
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 </style>

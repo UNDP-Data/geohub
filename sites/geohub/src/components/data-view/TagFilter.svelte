@@ -3,6 +3,8 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
+  import { Button, Checkbox, Radios, Loader } from '@undp-data/svelte-undp-design'
+  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}
@@ -10,6 +12,17 @@
   export let selectedTags: Tag[]
   export let operatorType: 'and' | 'or'
   export let currentSearchUrl = ''
+
+  let operatorTypes: Radio[] = [
+    {
+      label: 'Match all selected tags',
+      value: 'and',
+    },
+    {
+      label: 'Match at least a tag selected',
+      value: 'or',
+    },
+  ]
 
   const colorOptions = [
     'is-black',
@@ -105,17 +118,12 @@
             {#if tags[key]}
               {#each tags[key] as tag}
                 <TreeLeaf>
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      id="{tag.key}-{tag.value}"
-                      name="{tag.key}-{tag.value}"
-                      on:click={() => {
-                        handleTagChecked(tag)
-                      }}
-                      checked={existTag(tag)} />
-                    <label for="{tag.key}-{tag.value}">{tag.value} ({tag.count})</label>
-                  </div>
+                  <Checkbox
+                    label="{tag.value} ({tag.count})"
+                    checked={existTag(tag)}
+                    on:clicked={() => {
+                      handleTagChecked(tag)
+                    }} />
                 </TreeLeaf>
               {/each}
             {/if}
@@ -126,53 +134,26 @@
   </TreeView>
   <div
     hidden={tags && Object.keys(tags).length > 0}
-    class="loader"
-    aria-busy="true"
-    aria-live="polite" />
+    class="loader-container">
+    <Loader size="small" />
+  </div>
 </div>
 
-<div class="tile is-vertical pb-2">
-  <div class="tile">
-    <label class="radio">
-      <input
-        class="radio-button"
-        type="radio"
-        name="operator"
-        bind:group={operatorType}
-        value="and" />
-      Match all selected tags
-    </label>
-  </div>
-  <div class="tile">
-    <label class="radio">
-      <input
-        class="radio-button"
-        type="radio"
-        name="operator"
-        bind:group={operatorType}
-        value="or" />
-      Match at least a tag selected
-    </label>
-  </div>
+<div class="container pb-2">
+  <Radios
+    bind:radios={operatorTypes}
+    bind:value={operatorType}
+    groupName="operator"
+    isVertical={true} />
 </div>
 
 {#if selectedTags?.length > 0}
-  <!-- svelte-ignore a11y-missing-attribute -->
-  <a
-    class="button button-primary button-without-arrow clear-tag-button"
-    role="button"
-    on:click={clearAllTags}>
-    Clear all tags
-  </a>
+  <Button
+    title="Clear all tags"
+    on:clicked={clearAllTags} />
 {/if}
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/checkbox.min.css';
-  @use '../../styles/undp-design/buttons.min.css';
-  @use '../../styles/undp-design/radio.min.css';
-  @use '../../styles/undp-design/loader.min.css';
-
   .subtitle {
     border-bottom: 1px solid gray;
     font-weight: bold;
@@ -184,21 +165,13 @@
     overflow-y: auto;
     border: 1px solid gray;
 
-    .loader {
+    .loader-container {
       position: absolute;
       z-index: 10;
-      top: 25px;
-      left: 50px;
+      top: 40%;
+      left: 45%;
       background-color: white;
-      transform: translate(-25%, -35%);
-      -webkit-transform: translate(-25%, -35%);
-      -ms-transform: translate(-25%, -35%);
     }
-  }
-
-  .radio-button {
-    position: relative;
-    top: 0.2rem;
   }
 
   .clear-tag-button {

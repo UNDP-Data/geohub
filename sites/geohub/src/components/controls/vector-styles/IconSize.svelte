@@ -3,11 +3,10 @@
   import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import { LayerInitialValues } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
 
   const layerId = layer.id
   const propertyName = 'icon-size'

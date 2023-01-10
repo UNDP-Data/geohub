@@ -7,7 +7,6 @@
     COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
-    LayerInitialValues,
   } from '$lib/constants'
   import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
@@ -23,9 +22,10 @@
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
 
   export let colorPickerVisibleIndex: number
-  export let layerConfig: Layer = LayerInitialValues
+  export let layerConfig: Layer
   export let numberOfClasses = COLOR_CLASS_COUNT
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
@@ -43,6 +43,7 @@
 
   let layerMax
   let layerMin
+  let rowWidth: number
   if ('stats' in info) {
     const band = Object.keys(info.stats)[bandIndex]
     layerMin = Number(info.stats[band].min)
@@ -128,7 +129,14 @@
       percentile98,
       colorMapName,
     )
+    rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     handleParamsUpdate()
+
+    // fire event for style sharing
+    $map?.fire('classification:changed', {
+      layerId: layerConfig.id,
+      classification: classificationMethod,
+    })
   }
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {
@@ -150,18 +158,72 @@
     reclassifyImage()
   }
 
+  const generateRowWidth = (colorMapRows) => {
+    // for each of the start and end of the colormap rows get the maximum
+    // generate rowWidth based on the maximum
+    rowWidth = Math.max(
+      ...colorMapRows.map((row) => {
+        return Math.max(row.start.toString().length, row.end.toString().length)
+      }),
+    )
+  }
+
   const handleColorPickerClick = (event: CustomEvent) => {
     colorPickerVisibleIndex = event.detail.index
   }
   const handleChangeIntervalValues = (event: CustomEvent) => {
     const rowIndex = event.detail.index
     const inputType = event.detail.id
-    const inputValue = event.detail.value
-    if (inputType === 'start' && rowIndex !== 0) {
-      colorMapRows[rowIndex - 1].end = inputValue
-    }
-    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
-      colorMapRows[rowIndex + 1].start = inputValue
+    let inputValue = event.detail.value as number
+    let currentRow = colorMapRows.at(rowIndex)
+    if (rowIndex == 0) {
+      const nextRow = colorMapRows.at(rowIndex + 1)
+      if (inputType == 'start') {
+        inputValue = !isNaN(inputValue) && inputValue < currentRow.end ? inputValue : (currentRow.start as number)
+        colorMapRows[rowIndex].start = inputValue
+      } else {
+        inputValue =
+          !isNaN(inputValue) && inputValue > currentRow.start && inputValue < nextRow.end
+            ? inputValue
+            : (currentRow.end as number)
+        colorMapRows[rowIndex].end = inputValue
+        colorMapRows[rowIndex + 1].start = inputValue
+      }
+    } else if (rowIndex == colorMapRows.length - 1) {
+      const prevRow = colorMapRows.at(rowIndex - 1)
+      if (inputType == 'start') {
+        inputValue =
+          !isNaN(inputValue) && inputValue < currentRow.end && inputValue > prevRow.start
+            ? inputValue
+            : (currentRow.start as number)
+        colorMapRows[rowIndex].start = inputValue
+        colorMapRows[rowIndex - 1].end = inputValue
+      } else {
+        inputValue =
+          !isNaN(inputValue) && inputValue <= currentRow.end && inputValue > prevRow.start
+            ? inputValue
+            : (currentRow.end as number)
+        colorMapRows[rowIndex].end = inputValue
+      }
+    } else {
+      const nextRow = colorMapRows.at(rowIndex + 1)
+      const prevRow = colorMapRows.at(rowIndex - 1)
+
+      if (inputType == 'start') {
+        inputValue =
+          !isNaN(inputValue) && inputValue > prevRow.start && inputValue < currentRow.end
+            ? inputValue
+            : (currentRow.start as number)
+        colorMapRows[rowIndex].start = inputValue
+        colorMapRows[rowIndex - 1].end = inputValue
+      } else {
+        inputValue =
+          !isNaN(inputValue) && inputValue > currentRow.start && inputValue < nextRow.end
+            ? inputValue
+            : (currentRow.end as number)
+        colorMapRows[rowIndex].end = inputValue
+        colorMapRows[rowIndex + 1].start = inputValue
+      }
     }
     handleParamsUpdate()
   }
@@ -202,10 +264,12 @@
     </div>
   </div>
   <div class="is-divider separator mb-4" />
+
   {#each colorMapRows as colorMapRow}
     <IntervalsLegendColorMapRow
       bind:colorMapRow
       bind:colorMapName
+      bind:rowWidth
       layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}

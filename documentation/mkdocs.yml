@@ -88,6 +88,7 @@ plugins:
 nav:
   - "Get Started": "Index.md"
   - Data:
+documentationupdate10012023
       - Introduction: "data/Introduction.md"
       - Data Structure: "data/Data Structure.md"
       - Special Buckets: "data/Special Buckets.md"
@@ -97,3 +98,13 @@ nav:
       - Zooming: "visualization/Zooming.md"
       - Layer Tab: "visualization/Layer Tab.md"
       - Legend: "visualization/Legend.md"
+
+    - Introduction: "data/Introduction.md"
+    - Data Structure: "data/Data Structure.md"
+    - Special Buckets: "data/Special Buckets.md"
+  - Visualization:
+    - Map View: "visualization/Map View.md"
+    - Search Data: "visualization/Search Data.md"
+    - Add Remove Layers: "visualization/Add Remove Layers.md"
+    - Zooming: "vizualization/Zooming.md"
+ develop

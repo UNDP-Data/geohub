@@ -170,8 +170,7 @@
 {/if}
 
 <style lang="scss">
-  @import 'src/styles/undp-design/base-minimal.min';
-  @import 'src/styles/popper.scss';
+  @import '../../styles/popper.scss';
 
   $input-margin: 0px !important;
 

@@ -1,12 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { SortingColumns } from '$lib/constants'
   import type { DataOrderType, DataSortingColumn } from '$lib/types'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
+  import { Checkbox, Radios } from '@undp-data/svelte-undp-design'
+  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()
@@ -16,8 +17,30 @@
   export let query = ''
   export let queryForSearch = ''
   let queryType: 'and' | 'or' = 'and'
+  let queryTypes: Radio[] = [
+    {
+      label: 'Match all words typed',
+      value: 'and',
+    },
+    {
+      label: 'Match at least a word typed',
+      value: 'or',
+    },
+  ]
+
   export let sortingColumn: DataSortingColumn = 'name'
   export let orderType: DataOrderType = 'asc'
+  let orderTypes: Radio[] = [
+    {
+      label: 'A to Z (small to large)',
+      value: 'asc',
+    },
+    {
+      label: 'Z to A (large to small)',
+      value: 'desc',
+    },
+  ]
+
   export let bbox: [number, number, number, number] = undefined
 
   export let isFilterByBBox: boolean = undefined
@@ -102,6 +125,7 @@
       <i class="fas fa-search" />
     </span>
     {#if !isQueryEmpty}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <span
         class="clear-button"
         on:click={clearInput}>
@@ -130,48 +154,19 @@
 
     <p class="subtitle is-6 pb-0 pt-2 my-1">Sort by</p>
 
-    <div class="tile is-vertical">
-      {#each SortingColumns as column}
-        <div class="tile">
-          <label class="radio">
-            <input
-              class="radio-button"
-              type="radio"
-              name="sortby"
-              bind:group={sortingColumn}
-              value={column.column} />
-            {column.label}
-          </label>
-        </div>
-      {/each}
-    </div>
+    <Radios
+      radios={SortingColumns}
+      bind:value={sortingColumn}
+      groupName="sortby"
+      isVertical={true} />
 
     <p class="subtitle is-6 pb-0 pt-2 my-1">Ordering</p>
 
-    <div class="tile is-vertical">
-      <div class="tile">
-        <label class="radio">
-          <input
-            class="radio-button"
-            type="radio"
-            name="orderby"
-            bind:group={orderType}
-            value="asc" />
-          A to Z (small to large)
-        </label>
-      </div>
-      <div class="tile">
-        <label class="radio">
-          <input
-            class="radio-button"
-            type="radio"
-            name="orderby"
-            bind:group={orderType}
-            value="desc" />
-          Z to A (large to small)
-        </label>
-      </div>
-    </div>
+    <Radios
+      bind:radios={orderTypes}
+      bind:value={orderType}
+      groupName="orderby"
+      isVertical={true} />
   </PanelButton>
 
   <PanelButton
@@ -182,47 +177,19 @@
     <p class="title is-5 m-0 p-0">Search settings</p>
     <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
 
-    <div class="tile is-vertical">
-      <div class="tile">
-        <label class="radio">
-          <input
-            class="radio-button"
-            type="radio"
-            name="queryType"
-            bind:group={queryType}
-            value="and" />
-          Match all words typed
-        </label>
-      </div>
-      <div class="tile">
-        <label class="radio">
-          <input
-            class="radio-button"
-            type="radio"
-            name="queryType"
-            bind:group={queryType}
-            value="or" />
-          Match at least a word typed
-        </label>
-      </div>
-    </div>
+    <Radios
+      bind:radios={queryTypes}
+      bind:value={queryType}
+      groupName="queryType"
+      isVertical={true} />
     <p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
-    <div class="form-check">
-      <input
-        type="checkbox"
-        id="bbox-filter-checkbox"
-        name="bbox-filter-checkbox"
-        bind:checked={isFilterByBBox} />
-      <label for="bbox-filter-checkbox">Filter by current map extent</label>
-    </div>
+    <Checkbox
+      label="Filter by current map extent"
+      bind:checked={isFilterByBBox} />
   </PanelButton>
 </div>
 
 <style lang="scss">
-  @use '../../styles/undp-design/base-minimal.min.css';
-  @use '../../styles/undp-design/radio.min.css';
-  @use '../../styles/undp-design/checkbox.min.css';
-
   .filter-text {
     display: flex;
 
@@ -244,9 +211,9 @@
       font-weight: bold;
     }
 
-    .radio-button {
-      position: relative;
-      top: 0.2rem;
-    }
+    // .radio-button {
+    //   position: relative;
+    //   top: 0.2rem;
+    // }
   }
 </style>

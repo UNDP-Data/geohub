@@ -9,6 +9,7 @@
   export let showEmptyFields = false
   export let showOnlyNumberFields = false
   export let inLegend = false
+  export let emptyFieldLabel = 'No Label'
 
   let propertySelectOptions: string[]
 
@@ -47,7 +48,7 @@
 <div class="control has-icons-left">
   <div
     style="margin-right: 2%"
-    class="select is-flex is-justify-content-left select is-small">
+    class="select is-flex is-justify-content-left select is-normal">
     <select
       style="width: 100%"
       class="is-normal"
@@ -60,7 +61,7 @@
             class="legend-text"
             alt="Property Option"
             title="Property Option"
-            value={propertySelectOption}>{propertySelectOption}</option>
+            value={propertySelectOption}>{!propertySelectOption ? emptyFieldLabel : propertySelectOption}</option>
         {/each}
       {/if}
     </select>

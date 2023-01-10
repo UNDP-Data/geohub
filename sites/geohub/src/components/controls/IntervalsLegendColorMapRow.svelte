@@ -11,7 +11,7 @@
   export let colorPickerVisibleIndex: number
   export let layer: Layer
   export let colorMapName: string
-
+  export let rowWidth
   const dispatch = createEventDispatcher()
   const {
     ref: popperRef,
@@ -28,7 +28,6 @@
   let color: Color
   let colorPickerStyle: string
   let showToolTip = false
-
   $: colorPickerStyle = getColorPickerStyle(colorMapRow?.color.join())
   $: {
     if (colorPickerVisibleIndex === colorMapRow?.index) {
@@ -104,14 +103,6 @@
   const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
-    // const value = e.target.textContent
-
-    if (id === 'start') {
-      colorMapRow.start = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
-    }
-    if (id === 'end') {
-      colorMapRow.end = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
-    }
 
     dispatch('changeIntervalValues', {
       index: colorMapRow.index,
@@ -121,12 +112,9 @@
   }
 </script>
 
-<!--<div class="columns is-vcentered is-gapless colormap-editor" data-testid="intervals-legend-color-map-row-container">-->
-
-<div class="grid-x">
-  <div class="cell small-2">
+<div class="columns is-mobile p-0 m-0 py-1">
+  <div class="column is-2 p-0 m-0">
     <div
-      id={`interval-${colorMapRow?.index}`}
       alt="Color Map Control"
       title="Color Map Control"
       use:popperRef
@@ -148,42 +136,48 @@
       </div>
     {/if}
   </div>
-  <div class="cell small-4">
+  <div class="column p-0 m-0">
     <input
-      style="border: none; width: fit-content"
+      width="{rowWidth + 20}px"
+      class="number-input"
       id="start"
       type="number"
       value={colorMapRow.start}
-      on:input={handleInput} />
+      on:change={handleInput}
+      required />
   </div>
   {#if colorMapRow.end}
-    <div class="cell small-2">—</div>
-    <div class="cell small-4">
+    <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+    <div class="column p-0 m-0">
       <input
-        style="border: none"
-        id="end"
+        width="{rowWidth + 20}px"
+        class="number-input"
         type="number"
+        id="end"
         value={colorMapRow.end}
-        on:input={handleInput} />
+        on:change={handleInput}
+        required />
     </div>
   {/if}
 </div>
 
 <style lang="scss">
   @import '../../styles/popper.scss';
-  @import '../../styles/undp-design/base-minimal.min';
 
   $input-margin: 5px !important;
 
-  .cell {
-    padding: 0 !important;
-    margin-top: 2%;
+  .number-input {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background-color: transparent;
   }
 
   .discrete {
     cursor: pointer !important;
     height: 20px;
     width: 20px;
+    border: 1px solid gray;
   }
 
   :global(.discrete):hover {
@@ -194,28 +188,6 @@
   input:focus {
     outline: none;
     background: rgb(220, 220, 220, 0.3);
-  }
-  .colormap-editor {
-    margin-bottom: $input-margin;
-
-    .column.end {
-      margin-left: 5px;
-    }
-
-    .color-picker {
-      margin-right: $input-margin;
-    }
-
-    .discrete {
-      cursor: pointer !important;
-      height: 20px;
-      width: 20px;
-
-      &:hover {
-        padding: 0;
-        border: 1px solid hsl(204, 86%, 53%);
-      }
-    }
   }
 
   input::-webkit-outer-spin-button,

@@ -2,12 +2,11 @@
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
 
-  import { LayerInitialValues } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
 
-  export let layer: Layer = LayerInitialValues
+  export let layer: Layer
   import Keydown from 'svelte-keydown'
   let confirmDeleteLayerDialogVisible = false
 
@@ -20,12 +19,16 @@
       const delSourceId = getLayerStyle($map, layer.id).source
       if (layer.children && layer.children.length > 0) {
         layer.children.forEach((child) => {
-          $map.removeLayer(child.id)
+          if ($map.getLayer(child.id)) {
+            $map.removeLayer(child.id)
+          }
         })
         layer.children = []
       }
       $layerList = $layerList.filter((item) => item.id !== layerId)
-      $map.removeLayer(layerId)
+      if ($map.getLayer(layerId)) {
+        $map.removeLayer(layerId)
+      }
       const layerListforDelSource = $layerList.filter((item) => getLayerStyle($map, item.id).source === delSourceId)
       if (layerListforDelSource.length === 0) {
         $map.removeSource(delSourceId)
@@ -49,14 +52,12 @@
   on:Escape={() => (confirmDeleteLayerDialogVisible = false)} />
 
 <div
-  class="has-tooltip-bottom"
+  class="has-tooltip-bottom has-tooltip-arrow"
   data-tooltip="Delete layer">
   <div
     class="container icon-selected"
     tabindex="0"
     role="button"
-    title="Delete layer"
-    aria-label="Delete layer"
     on:click={() => (confirmDeleteLayerDialogVisible = true)}
     on:keydown={handleKeyDown}>
     <i class="fa-solid fa-trash fa-sm" />

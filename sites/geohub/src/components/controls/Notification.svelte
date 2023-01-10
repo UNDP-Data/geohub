@@ -10,9 +10,20 @@
     icon = 'fa-solid fa-skull-crossbones'
     color = '#cc3300'
   }
+
+  let nodeRef
+
+  const close = () => {
+    nodeRef.parentNode.removeChild(nodeRef)
+  }
 </script>
 
-<div class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message">
+<div
+  bind:this={nodeRef}
+  class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message">
+  <button
+    class="delete"
+    on:click={close} />
   <div class="icon">
     <i
       class="fa-solid {icon} fa-lg"
