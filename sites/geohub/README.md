@@ -52,13 +52,3 @@ act  --secret-file .env -n
 # run default mode
 act --secret-file .env
 ```
-
-## Migrate husky to lefthook
-
-This repo recently migrated from husky to lefthook. If you are the developer of geohub when husky was installed, you have to execute following command to enable lefthook in your local environment. The commands will remove husky properly and install lefthook from the lefthook.yml.
-
-```
-rm -rf .husky
-git config --unset core.hooksPath
-npx lefthook install
-```
