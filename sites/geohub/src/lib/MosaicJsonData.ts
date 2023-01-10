@@ -157,12 +157,12 @@ export class MosaicJsonData {
     if (source.maxzoom > 24) {
       source.maxzoom = 24
     }
-    const sourceId = this.feature.properties.id
+    const layerId = uuidv4()
+    const sourceId = layerId
     if (!this.map.getSource(sourceId)) {
       this.map.addSource(sourceId, source)
     }
 
-    const layerId = uuidv4()
     const layer: RasterLayerSpecification = {
       id: layerId,
       type: 'raster',

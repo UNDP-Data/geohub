@@ -1,11 +1,5 @@
-<script
-  lang="ts"
-  context="module">
-  let rlcState = {}
-</script>
-
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount, onDestroy, setContext, getContext } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
@@ -34,26 +28,26 @@
   export let layer: Layer
   export let legendType: DynamicLayerLegendTypes = undefined
   export let classificationMethod: ClassificationMethodTypes
-
+  export let fakeProp: string
   let info
   ;({ info } = layer)
+
+  let classification: ClassificationMethodTypes = classificationMethod
 
   let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let showTooltip = false
-  let numberOfClasses: number = rlcState?.[layer.id]?.['numberOfClasses'] || COLOR_CLASS_COUNT
+  let numberOfClasses: number = COLOR_CLASS_COUNT
   // let vizMode: 'continuous' | 'discrete' | undefined = undefined
-  let colorMapName: string = rlcState?.[layer.id]?.['colorMapName']
+  let colorMapName: string
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let bandIndex = getActiveBandIndex(layer.info)
 
   onMount(async () => {
-    rlcState[layer.id] = {}
-    console.log('RLCMOUNT', classificationMethod)
     while ($map.loaded() === false) {
       await sleep(100)
     }
@@ -90,7 +84,9 @@
     }
 
     // initialisation is not necessary when restoring or swhitching from other tabs
-    if (!('stats' in Object.keys(layer.info))) await initialise()
+    if (!('stats' in layer.info)) await initialise()
+
+    //console.log('RLCMOUNT', colorMapName, classificationMethod, numberOfClasses)
   })
 
   const initialise = async () => {
@@ -120,7 +116,6 @@
         layerList.set([...layers])
       }
     }
-    //legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
   }
 
   const {
@@ -159,48 +154,6 @@
     }
   }
 
-  $: {
-    rlcState[layer.id] = { ...rlcState[layer.id], colorMapName: colorMapName }
-  }
-
-  $: {
-    rlcState[layer.id] = { ...rlcState, numberOfClasses: numberOfClasses }
-  }
-
-  $: {
-    console.log('CMet', classificationMethod)
-  }
-
-  // const colorMapChanged = (e: CustomEvent) => {
-  //   console.log('CLMPC in container')
-  //   const newCM = e.detail.colorMapName as string
-
-  //   if (newCM === undefined || (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) == newCM) return
-
-  //   const layerURI = getLayerSourceUrl($map, layer.id) as string
-  //   const layerURL = new URL(layerURI)
-
-  //   layerURL.searchParams.delete('colormap_name')
-  //   layerURL.searchParams.delete('rescale')
-  //   const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-  //   let updatedParams = Object.assign({ colormap_name: newCM })
-  //   if (rescale) {
-  //     updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-  //   }
-  //   const layerStyle = getLayerStyle($map, layer.id)
-  //   updateParamsInURL(layerStyle, layerURL, updatedParams)
-
-  //   colorPickerVisibleIndex = -1
-  //   const nlayer = { ...layer }
-  //   const layers = $layerList.map((lyr) => {
-  //     return layer.id !== lyr.id ? lyr : nlayer
-  //   })
-  //   layerList.set([...layers])
-
-  //   colorMapName= newCM
-
-  // }
-
   const handleClosePopup = () => {
     showTooltip = !showTooltip
     colorPickerVisibleIndex = -1
@@ -233,7 +186,7 @@
           bind:layerConfig={layer}
           bind:colorPickerVisibleIndex
           bind:colorMapName
-          bind:classificationMethod
+          bind:classificationMethod={classification}
           bind:numberOfClasses />
       </div>
     {:else if legendType === DynamicLayerLegendTypes.UNIQUE}

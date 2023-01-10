@@ -8,7 +8,7 @@
   import RangeSlider from 'svelte-range-slider-pips'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
-  import { COLOR_CLASS_COUNT, ColorMapTypes } from '$lib/constants'
+  import { ColorMapTypes } from '$lib/constants'
   import {
     getActiveBandIndex,
     getLayerStyle,
@@ -23,10 +23,6 @@
   export let layerConfig: Layer
   export let colorMapName: string
   export let numberOfClasses
-
-  const lUrl = getLayerSourceUrl($map, layerConfig.id) as string
-
-  console.log('CONTINUOUS LEGEND', colorMapName)
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
@@ -91,40 +87,6 @@
     const layerStyle = getLayerStyle($map, layerConfig.id)
     updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
-
-  /**
-   * please keep the next  fucntion here as It is not lcear whay it has been designed as such
-   */
-
-  // const rescaleColorMap = () => {
-  //   if (!$map) return
-  //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
-  //   const layerURL = new URL(layerUrl)
-  //   if (!(layerUrl && layerUrl.length > 0)) return
-  //   if (layerURL.searchParams.has('colormap')) {
-  //     //console.log('rescale color map')
-  //     let params = {}
-  //     layerURL.searchParams.delete('colormap')
-  //     if (!layerURL.searchParams.has('rescale')) {
-  //       params = { rescale: rangeSliderValues.join(',') }
-  //     } else {
-  //       let rescaleParam = layerURL.searchParams.get('rescale')
-  //       let rescaleMin = '',
-  //         rescaleMax = ''
-  //       ;[rescaleMin, rescaleMax] = rescaleParam.split(',')
-  //       if (Number(rescaleMin) !== rangeSliderValues[0] || Number(rescaleMax) !== rangeSliderValues[1]) {
-  //         params = { rescale: rangeSliderValues.join(',') }
-  //       }
-  //     }
-
-  //     params = Object.assign(params, { colormap_name: colorMapName })
-  //     Object.keys(params).forEach((key) => {
-  //       layerURL.searchParams.set(key, params[key])
-  //     })
-  //     const layerStyle = getLayerStyle($map, layerConfig.id)
-  //     updateParamsInURL(layerStyle, layerURL, params)
-  //   }
-  // }
 
   const onSliderStop = () => {
     const layerStyle = getLayerStyle($map, layerConfig.id)

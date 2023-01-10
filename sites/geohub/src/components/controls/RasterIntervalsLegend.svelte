@@ -25,7 +25,7 @@
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
-  export let numberOfClasses
+  export let numberOfClasses: number
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
@@ -34,7 +34,6 @@
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
-    console.log('IL CMAPNAME', colorMapName, numberOfClasses, classificationMethod)
     getColorMapRows()
     reclassifyImage()
   }
@@ -82,7 +81,7 @@
     if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
       if (skewness > 1 && skewness > -1) {
         // Layer isn't higly skewed.
-        console.log('HERE')
+
         classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
       } else {
         classificationMethod = ClassificationMethodTypes.LOGARITHMIC
@@ -120,7 +119,7 @@
     let isClassificationMethodEdited = false
     if (e) {
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
-      console.log('passed m', classificationMethod)
+
       isClassificationMethodEdited = true
     }
     // Fixme: Possible bug in titiler. The Max value is not the real max in some layers
@@ -257,6 +256,7 @@
         </select>
       </div>
     </div>
+
     <div class="column number-classes">
       <div class="has-text-centered">Number of Classes</div>
       <NumberInput

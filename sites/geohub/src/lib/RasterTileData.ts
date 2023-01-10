@@ -87,8 +87,9 @@ export class RasterTileData {
       // @ts-ignore
       bounds: rasterInfo['bounds'],
     }
-
-    const sourceId = this.feature.properties.id
+    const layerId = uuidv4()
+    //const sourceId = this.feature.properties.id
+    const sourceId = layerId
     if (!this.map.getSource(sourceId)) {
       this.map.addSource(sourceId, source)
     }
@@ -97,7 +98,6 @@ export class RasterTileData {
       this.map.removeLayer(this.feature.properties.id)
     }
 
-    const layerId = uuidv4()
     const layer: RasterLayerSpecification = {
       id: layerId,
       type: 'raster',
