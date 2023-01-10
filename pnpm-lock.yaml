@@ -270,6 +270,7 @@ importers:
       svelte: ^3.55.0
       svelte-carousel: ^1.0.20
       svelte-check: ^2.10.3
+      svelte-preprocess: ^5.0.0
       tslib: ^2.4.1
       typescript: ^4.9.4
       vite: ^4.0.4
@@ -301,6 +302,7 @@ importers:
       sass: 1.57.1
       storybook: 7.0.0-beta.12
       svelte-check: 2.10.3_qmq3frm7bg2dnp5lup2qxdg2ne
+      svelte-preprocess: 5.0.0_qjp4cylkilk52ju6eusbkgubxi
       tslib: 2.4.1
       typescript: 4.9.4
       vite: 4.0.4_sass@1.57.1
@@ -3725,7 +3727,7 @@ packages:
       svelte: 3.55.0
       tiny-glob: 0.2.9
       undici: 5.14.0
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3759,7 +3761,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.0
       svelte-hmr: 0.15.1_svelte@3.55.0
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.57.1
       vitefu: 0.2.4_vite@4.0.4
     transitivePeerDependencies:
       - supports-color
@@ -3879,7 +3881,7 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 16.18.11
+      '@types/node': 18.11.18
     dev: true
 
   /@types/chai-subset/1.3.3:
@@ -3912,7 +3914,7 @@ packages:
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 16.18.11
+      '@types/node': 18.11.18
     dev: true
 
   /@types/cookie/0.5.1:
@@ -3933,7 +3935,7 @@ packages:
   /@types/express-serve-static-core/4.17.32:
     resolution: {integrity: sha512-aI5h/VOkxOF2Z1saPy0Zsxs5avets/iaiAJYznQFm5By/pamU31xWKL//epiF4OfUA2qTOc9PV6tCUjhO8wlZA==}
     dependencies:
-      '@types/node': 16.18.11
+      '@types/node': 18.11.18
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
     dev: true
@@ -4166,7 +4168,7 @@ packages:
     resolution: {integrity: sha512-z5xyF6uh8CbjAu9760KDKsH2FcDxZ2tFCsA4HIMWE6IkiYMXfVoa+4f9KX+FN0ZLsaMw1WNG2ETLA6N+/YA+cg==}
     dependencies:
       '@types/mime': 3.0.1
-      '@types/node': 16.18.11
+      '@types/node': 18.11.18
     dev: true
 
   /@types/sleep/0.0.8:
@@ -11034,6 +11036,56 @@ packages:
       typescript: 4.9.4
     dev: true
 
+  /svelte-preprocess/5.0.0_qjp4cylkilk52ju6eusbkgubxi:
+    resolution: {integrity: sha512-q7lpa7i2FBu8Pa+G0MmuQQWETBwCKgsGmuq1Sf6n8q4uaG9ZLcLP0Y+etC6bF4sE6EbLxfiI38zV6RfPe3RSfg==}
+    engines: {node: '>= 14.10.0'}
+    requiresBuild: true
+    peerDependencies:
+      '@babel/core': ^7.10.2
+      coffeescript: ^2.5.1
+      less: ^3.11.3 || ^4.0.0
+      postcss: ^7 || ^8
+      postcss-load-config: ^2.1.0 || ^3.0.0 || ^4.0.0
+      pug: ^3.0.0
+      sass: ^1.26.8
+      stylus: ^0.55.0
+      sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
+      svelte: ^3.23.0
+      typescript: ^3.9.5 || ^4.0.0
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      coffeescript:
+        optional: true
+      less:
+        optional: true
+      postcss:
+        optional: true
+      postcss-load-config:
+        optional: true
+      pug:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@babel/core': 7.20.12
+      '@types/pug': 2.0.6
+      '@types/sass': 1.43.1
+      detect-indent: 6.1.0
+      magic-string: 0.27.0
+      sass: 1.57.1
+      sorcery: 0.10.0
+      strip-indent: 3.0.0
+      svelte: 3.55.0
+      typescript: 4.9.4
+    dev: true
+
   /svelte-range-slider-pips/2.1.1:
     resolution: {integrity: sha512-fLkhfnyEc4uMOCZCl8IPyC0e9lujrjqdSyrKw28Y8j99YUPZR+pHnSxde7PqhM0ST6eyO4ugh2nFnLZTIoG9aQ==}
 
@@ -12228,7 +12280,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.57.1
     dev: true
 
   /vitest/0.26.3_jsdom@20.0.3+sass@1.57.1:
