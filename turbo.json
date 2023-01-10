@@ -15,7 +15,7 @@
       "outputMode": "new-only"
     },
     "precommit": {
-      "dependsOn": ["format", "lint"],
+      "dependsOn": ["lint", "format"],
       "outputs": [],
       "outputMode": "new-only"
     },
