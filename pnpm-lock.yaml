@@ -43,8 +43,8 @@ importers:
       vite: ^4.0.0
     dependencies:
       '@creativebulma/bulma-tooltip': 1.2.0
-      '@undp-data/current-location': link:../../packages/current-location/package
-      '@undp-data/style-switcher': link:../../packages/style-switcher/package
+      '@undp-data/current-location': link:../../packages/current-location
+      '@undp-data/style-switcher': link:../../packages/style-switcher
       '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design
       '@watergis/svelte-maplibre-menu': 0.1.16
       chroma-js: 2.4.2
@@ -110,47 +110,6 @@ importers:
       tslib: 2.4.1
       typescript: 4.9.4
       vite: 4.0.2_sass@1.57.1
-
-  packages/current-location/package:
-    specifiers:
-      '@sveltejs/adapter-auto': next
-      '@sveltejs/kit': next
-      '@sveltejs/package': next
-      '@typescript-eslint/eslint-plugin': ^5.46.0
-      '@typescript-eslint/parser': ^5.46.0
-      eslint: ^8.29.0
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-svelte3: ^4.0.0
-      maplibre-gl: ^2.4.0
-      prettier: ^2.8.1
-      prettier-plugin-svelte: ^2.9.0
-      sass: ^1.56.2
-      svelte: ^3.54.0
-      svelte-check: ^2.10.2
-      svelte-preprocess: ^5.0.0
-      tslib: ^2.4.1
-      typescript: ^4.9.4
-      vite: ^4.0.0
-    dependencies:
-      maplibre-gl: 2.4.0
-    devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0-next.91_l5ueyfihz3gpzzvvyo2ean5u3e
-      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.0-next.1_niwyv7xychq2ag6arq5eqxbomm
-      '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
-      '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
-      eslint: 8.30.0
-      eslint-config-prettier: 8.5.0_eslint@8.30.0
-      eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
-      prettier: 2.8.1
-      prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
-      sass: 1.57.1
-      svelte: 3.55.0
-      svelte-check: 2.10.3_sass@1.57.1+svelte@3.55.0
-      svelte-preprocess: 5.0.0_cfliyikhlimajcn5n7qvd3jsli
-      tslib: 2.4.1
-      typescript: 4.9.4
-      vite: 4.0.3_sass@1.57.1
 
   packages/geohub-cli:
     specifiers:
@@ -238,49 +197,6 @@ importers:
       typescript: 4.9.4
       vite: 4.0.2_sass@1.57.1
 
-  packages/style-switcher/package:
-    specifiers:
-      '@creativebulma/bulma-tooltip': ^1.2.0
-      '@sveltejs/adapter-auto': next
-      '@sveltejs/kit': next
-      '@sveltejs/package': next
-      '@typescript-eslint/eslint-plugin': ^5.46.0
-      '@typescript-eslint/parser': ^5.46.0
-      eslint: ^8.29.0
-      eslint-config-prettier: ^8.5.0
-      eslint-plugin-svelte3: ^4.0.0
-      maplibre-gl: ^2.4.0
-      prettier: ^2.8.1
-      prettier-plugin-svelte: ^2.9.0
-      sass: ^1.56.2
-      svelte: ^3.54.0
-      svelte-check: ^2.10.2
-      svelte-preprocess: ^5.0.0
-      tslib: ^2.4.1
-      typescript: ^4.9.4
-      vite: ^4.0.0
-    dependencies:
-      '@creativebulma/bulma-tooltip': 1.2.0
-      maplibre-gl: 2.4.0
-    devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0-next.91_l5ueyfihz3gpzzvvyo2ean5u3e
-      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.3
-      '@sveltejs/package': 1.0.0-next.1_niwyv7xychq2ag6arq5eqxbomm
-      '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
-      '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
-      eslint: 8.30.0
-      eslint-config-prettier: 8.5.0_eslint@8.30.0
-      eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
-      prettier: 2.8.1
-      prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
-      sass: 1.57.1
-      svelte: 3.55.0
-      svelte-check: 2.10.3_sass@1.57.1+svelte@3.55.0
-      svelte-preprocess: 5.0.0_cfliyikhlimajcn5n7qvd3jsli
-      tslib: 2.4.1
-      typescript: 4.9.4
-      vite: 4.0.3_sass@1.57.1
-
   packages/style-viewer:
     specifiers:
       '@sveltejs/adapter-auto': ^1.0.0
@@ -304,7 +220,7 @@ importers:
       typescript: ^4.9.4
       vite: ^4.0.2
     dependencies:
-      '@undp-data/current-location': link:../current-location/package
+      '@undp-data/current-location': link:../current-location
       '@watergis/maplibre-gl-legend': 1.2.8
       '@watergis/svelte-maplibre-attribute-popup': 0.0.12
       '@watergis/svelte-maplibre-export': 0.1.20
@@ -501,9 +417,9 @@ importers:
       '@types/uuid': 9.0.0
       '@typescript-eslint/eslint-plugin': 5.47.0_ncmi6noazr3nzas7jxykisekym
       '@typescript-eslint/parser': 5.47.0_lzzuuodtsqwxnvqeq4g4likcqa
-      '@undp-data/current-location': link:../../packages/current-location/package
+      '@undp-data/current-location': link:../../packages/current-location
       '@undp-data/electricity-dashboard': link:../../apps/electricity-dashboard
-      '@undp-data/style-switcher': link:../../packages/style-switcher/package
+      '@undp-data/style-switcher': link:../../packages/style-switcher
       '@undp-data/style-viewer': link:../../packages/style-viewer
       '@undp-data/svelte-undp-design': link:../../packages/svelte-undp-design
       '@watergis/legend-symbol': 0.2.3
@@ -3750,15 +3666,6 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/adapter-auto/1.0.0-next.91_l5ueyfihz3gpzzvvyo2ean5u3e:
-    resolution: {integrity: sha512-U57tQdzTfFINim8tzZSARC9ztWPzwOoHwNOpGdb2o6XrD0mEQwU9DsII7dBblvzg+xCnmd0pw7PDtXz5c5t96w==}
-    peerDependencies:
-      '@sveltejs/kit': ^1.0.0-next.587
-    dependencies:
-      '@sveltejs/kit': 1.0.0-next.589_svelte@3.55.0+vite@4.0.3
-      import-meta-resolve: 2.2.0
-    dev: true
-
   /@sveltejs/adapter-auto/1.0.0_@sveltejs+kit@1.0.1:
     resolution: {integrity: sha512-yKyPvlLVua1bJ/42FrR3X041mFGdB4GzTZOAEoHUcNBRE5Mhx94+eqHpC3hNvAOiLEDcKfVO0ObyKSu7qldU+w==}
     peerDependencies:
@@ -3778,34 +3685,6 @@ packages:
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.8.1
       '@sveltejs/kit': 1.0.1_svelte@3.55.0+vite@4.0.3
       rollup: 3.8.1
-    dev: true
-
-  /@sveltejs/kit/1.0.0-next.589_svelte@3.55.0+vite@4.0.3:
-    resolution: {integrity: sha512-5ABRw46z9B+cCe/YWhcx+I/azNZg1NCDEkVJifZn8ToFoJ3a1eP0OexNIrvMEWpllMbNMPcJm2TC9tnz9oPfWQ==}
-    engines: {node: '>=16.14'}
-    hasBin: true
-    requiresBuild: true
-    peerDependencies:
-      svelte: ^3.54.0
-      vite: ^4.0.0
-    dependencies:
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.3
-      '@types/cookie': 0.5.1
-      cookie: 0.5.0
-      devalue: 4.2.0
-      esm-env: 1.0.0
-      kleur: 4.1.5
-      magic-string: 0.27.0
-      mime: 3.0.0
-      sade: 1.8.1
-      set-cookie-parser: 2.5.1
-      sirv: 2.0.2
-      svelte: 3.55.0
-      tiny-glob: 0.2.9
-      undici: 5.14.0
-      vite: 4.0.3_sass@1.57.1
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /@sveltejs/kit/1.0.1_svelte@3.55.0+vite@4.0.2:
@@ -3862,22 +3741,6 @@ packages:
       vite: 4.0.3_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@sveltejs/package/1.0.0-next.1_niwyv7xychq2ag6arq5eqxbomm:
-    resolution: {integrity: sha512-U8XBk6Cfy8MjKG41Uyo+fqBpdhu7xUSnhiCNoODRaAtWV02RZoLh+McXrsxEvqi/ycgymctlhJhssqDnD+E+FA==}
-    engines: {node: '>=16.9'}
-    hasBin: true
-    peerDependencies:
-      svelte: ^3.44.0
-    dependencies:
-      chokidar: 3.5.3
-      kleur: 4.1.5
-      sade: 1.8.1
-      svelte: 3.55.0
-      svelte2tsx: 0.5.23_niwyv7xychq2ag6arq5eqxbomm
-    transitivePeerDependencies:
-      - typescript
     dev: true
 
   /@sveltejs/package/1.0.1_niwyv7xychq2ag6arq5eqxbomm:
