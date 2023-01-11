@@ -92,12 +92,17 @@ jobs:
         run: |
           pnpm format
 
-      - name: Run build GeoHub
-        run: pnpm build
+      - name: build packages
+        run: |
+          pnpm --filter="./packages/**" build
+          pnpm --filter="./apps/**" build
 
       - name: Run build storybook
         working-directory: ./packages/svelte-undp-design
         run: pnpm build-storybook
+
+      - name: Run build GeoHub
+        run: pnpm --filter="./sites/geohub" build
 
       - name: Run unit tests
         run: pnpm test
