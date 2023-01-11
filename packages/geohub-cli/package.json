@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/geohub-cli",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "This repository is to manage CLI tools for GeoHub",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -12,9 +12,7 @@
 		"build": "rimraf build && tsc -p .",
 		"watch": "tsc -w",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
-		"prepare": "pnpm build",
-		"preinstall": "npx only-allow pnpm"
+		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"keywords": [
 		"geohub",
@@ -54,10 +52,6 @@
 		"pg": "^8.8.0",
 		"pg-copy-streams": "^6.0.4",
 		"wkx": "^0.5.0"
-	},
-	"packageManager": "pnpm@7.13.5",
-	"engines": {
-		"pnpm": "^7.0.0"
 	},
 	"type": "commonjs"
 }

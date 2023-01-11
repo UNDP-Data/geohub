@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/current-location",
-	"version": "0.0.2",
+	"version": "0.0.4",
 	"description": "This package is to show admin information at current map position in GeoHub",
 	"main": "package/index.js",
 	"files": [
@@ -12,8 +12,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
-		"prepare": "pnpm build"
+		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"private": false,
 	"repository": {
