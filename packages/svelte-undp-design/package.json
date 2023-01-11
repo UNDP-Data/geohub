@@ -12,8 +12,8 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build -o ../../sites/geohub/static/storybook",
-		"prepack": "pushd package",
-		"postpack": "popd"
+		"prepack": "cd package",
+		"postpack": "cd .."
 	},
 	"private": false,
 	"repository": {
