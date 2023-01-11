@@ -1,5 +1,15 @@
 # @undp-data/electricity-dashboard
 
+## 0.0.5
+
+### Patch Changes
+
+- f94ccdc: revert changes to use prepack
+- Updated dependencies [f94ccdc]
+  - @undp-data/svelte-undp-design@0.0.5
+  - @undp-data/current-location@0.0.4
+  - @undp-data/style-switcher@0.0.4
+
 ## 0.0.4
 
 ### Patch Changes

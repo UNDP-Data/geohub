@@ -1,5 +1,13 @@
 # @undp-data/style-viewer
 
+## 0.0.4
+
+### Patch Changes
+
+- f94ccdc: revert changes to use prepack
+- Updated dependencies [f94ccdc]
+  - @undp-data/current-location@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

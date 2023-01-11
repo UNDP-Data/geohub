@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 0.0.4
+
+### Patch Changes
+
+- f94ccdc: revert changes to use prepack
+
 ## 0.0.3
 
 ### Patch Changes
