@@ -144,7 +144,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
     </div>
     <div class="column p-0 m-0">
       <input
-        style="width:{rowWidth * 8}px"
+        style="width:{rowWidth * 8}px; max-width:100px"
         class="number-input"
         id="start"
         type="number"
@@ -156,7 +156,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
       <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
       <div class="column p-0 m-0">
         <input
-          style="width:{rowWidth * 8}px"
+          style="width:{rowWidth * 8}px; max-width:100px"
           class="number-input"
           type="number"
           id="end"
