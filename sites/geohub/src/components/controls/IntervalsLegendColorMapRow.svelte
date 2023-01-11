@@ -9,7 +9,7 @@
 
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number
-  export let layer: Layer
+  // export let layer: Layer
   export let colorMapName: string
   export let rowWidth
 
@@ -124,7 +124,10 @@ the key statement is necessary as it forces to rerender the legend item in case 
         alt="Color Map Control"
         title="Color Map Control"
         use:popperRef
-        on:click={() => handleColorPickerClick()}
+        on:click={() => {
+          console.log('divclick')
+          handleColorPickerClick()
+        }}
         class="discrete"
         style="{colorPickerStyle}; width:20px; height:20px" />
       {#if showToolTip && color}

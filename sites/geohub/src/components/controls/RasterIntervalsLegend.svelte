@@ -272,7 +272,6 @@
       bind:colorMapRow
       bind:colorMapName
       bind:rowWidth
-      layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
       on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}

@@ -136,19 +136,19 @@
   }
 </script>
 
-{#await url}
-  <div class="loader-container">
-    <Loader size="small" />
-    <button class="button is-primary">Cnacel</button>
-  </div>
-{:then uriValue}
-  <div
-    class="raster-layer-container has-background-white-bis"
-    transition:fade>
-    <nav class="panel">
-      <p class="panel-heading has-background-grey-lighter p-2">
-        <LayerNameGroup {layer} />
-      </p>
+<div
+  class="raster-layer-container has-background-white-bis"
+  transition:fade>
+  <nav class="panel">
+    <p class="panel-heading has-background-grey-lighter p-2">
+      <LayerNameGroup {layer} />
+    </p>
+
+    {#await url}
+      <div class="loader-container">
+        <Loader size="small" />
+      </div>
+    {:then uriValue}
       <Tabs
         bind:tabs
         bind:activeTab
@@ -177,9 +177,9 @@
           <OpacityPanel {layer} />
         {/if}
       </p>
-    </nav>
-  </div>
-{/await}
+    {/await}
+  </nav>
+</div>
 
 <style lang="scss">
   .raster-layer-container {
@@ -193,6 +193,5 @@
     align-items: center;
     width: fit-content;
     margin: 0 auto;
-    border: 1px solid red;
   }
 </style>
