@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.5
+
+### Patch Changes
+
+- f94ccdc: revert changes to use prepack
+
 ## 0.0.4
 
 ### Patch Changes
