@@ -48,7 +48,9 @@ jobs:
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
 
       - name: build packages
-        run: pnpm build
+        run: |
+          pnpm --filter="./packages/**" build
+          pnpm --filter="./apps/**" build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
