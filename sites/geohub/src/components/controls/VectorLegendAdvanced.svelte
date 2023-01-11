@@ -37,6 +37,7 @@
   import { Radios } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
+  import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
   export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   export let layer: Layer
@@ -246,18 +247,7 @@
   }
 
   const handleChangeIntervalValues = (event: CustomEvent) => {
-    const rowIndex = event.detail.index
-    const inputType = event.detail.id
-    const inputValue = event.detail.value
-
-    if (inputType === 'start' && rowIndex !== 0) {
-      colorMapRows[rowIndex - 1].end = inputValue
-    }
-
-    if (inputType === 'end' && rowIndex < colorMapRows.length - 1) {
-      colorMapRows[rowIndex + 1].start = inputValue
-    }
-
+    colorMapRows = updateIntervalValues(event, colorMapRows)
     rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     updateMap()
   }
