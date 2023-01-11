@@ -34,12 +34,10 @@
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
-    getColorMapRows()
     reclassifyImage()
   }
 
-  let info: RasterTileMetadata
-  ;({ info } = layerConfig)
+  let { info }: Layer = layerConfig
   const bandIndex = getActiveBandIndex(info)
 
   let layerMax
@@ -66,15 +64,15 @@
 
   onMount(async () => {
     const rasterInfo = info as RasterTileMetadata
-    if (!rasterInfo?.isMosaicJson) {
-      const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    // if (!rasterInfo?.isMosaicJson) {
+    //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
 
-      const layerURL = new URL(layerUrl)
+    //   const layerURL = new URL(layerUrl)
 
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
-      const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-      info = { ...info, stats: layerStats }
-    }
+    //   const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
+    //   const layerStats: RasterLayerStats = await fetchUrl(statsURL)
+    //   info = { ...info, stats: layerStats }
+    // }
     const band = info.active_band_no
     percentile98 = info.stats[band]['percentile_98']
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
