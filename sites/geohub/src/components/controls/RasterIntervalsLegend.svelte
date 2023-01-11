@@ -22,7 +22,7 @@
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
-  import {updateIntervalValues} from "$lib/helper/updateIntervalValues";
+  import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -174,7 +174,6 @@
     rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     handleParamsUpdate()
   }
-
 </script>
 
 <div

@@ -37,7 +37,7 @@
   import { Radios } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
-  import {updateIntervalValues} from "$lib/helper/updateIntervalValues";
+  import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
   export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   export let layer: Layer
