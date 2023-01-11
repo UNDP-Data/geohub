@@ -3,9 +3,6 @@
 	"version": "0.0.3",
 	"description": "This package is to manage svelte components for UNDP design system in GeoHub",
 	"main": "package/index.js",
-	"files": [
-		"package"
-	],
 	"scripts": {
 		"dev": "vite dev",
 		"build": "svelte-kit sync && svelte-package",
@@ -14,7 +11,9 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build -o ../../sites/geohub/static/storybook"
+		"build-storybook": "storybook build -o ../../sites/geohub/static/storybook",
+		"prepack": "pushd package",
+		"postpack": "popd"
 	},
 	"private": false,
 	"repository": {
