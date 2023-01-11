@@ -4,34 +4,31 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 
 ## Repositories managed
 
-| App                           | Language   | Library   | Source code                                                   |
-| ----------------------------- | ---------- | --------- | ------------------------------------------------------------- |
-| GeoHub                        | TypeScript | sveltekit | [sites/geohub](./sites/geohub/)                               |
-| Electricity dashboard         | TypeScript | sveltekit | [apps/electricity-dashboard](./apps/electricity-dashboard/)   |
-| @undp-data/current-location   | TypeScript | sveltekit | [packages/current-location](./packages/current-location/)     |
-| @undp-data/style-switcher     | TypeScript | sveltekit | [packages/style-switcher](./packages/style-switcher/)         |
-| @undp-data/style-viewer       | TypeScript | sveltekit | [packages/style-viewer](./packages/style-viewer/)             |
-| @undp-data/svelte-undp-design | TypeScript | sveltekit | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
-| @undp-data/geohub-cli         | TypeScript | -         | [packages/geohub-cli](./packages/geohub-cli/)                 |
-| Documentation                 | Python     | mkdocs    | [documentation](./documentation/)                             |
+| App                              | Language   | Library   | NPM                                                                            | Source code                                                 |
+| -------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| GeoHub                           | TypeScript | sveltekit |                                                                                | [sites/geohub](./sites/geohub/)                             |
+| @undp-data/electricity-dashboard | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/electricity-dashboard) | [apps/electricity-dashboard](./apps/electricity-dashboard/) |
+| @undp-data/current-location      | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/current-location)      | [apps/electricity-dashboard](./apps/electricity-dashboard/) | [packages/current-location](./packages/current-location/)     |
+| @undp-data/style-switcher        | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/style-switcher)        | [apps/electricity-dashboard](./apps/electricity-dashboard/) | [packages/style-switcher](./packages/style-switcher/)         |
+| @undp-data/style-viewer          | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/style-viewer)          | [apps/electricity-dashboard](./apps/electricity-dashboard/) | [packages/style-viewer](./packages/style-viewer/)             |
+| @undp-data/svelte-undp-design    | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/svelte-undp-design)    | [apps/electricity-dashboard](./apps/electricity-dashboard/) | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
+| @undp-data/geohub-cli            | TypeScript | -         | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/geohub-cli)            | [apps/electricity-dashboard](./apps/electricity-dashboard/) | [packages/geohub-cli](./packages/geohub-cli/)                 |
+| Documentation                    | Python     | mkdocs    |                                                                                | [documentation](./documentation/)                           |
 
 ## Development
 
 You can operate multiple packages at once by filtering as follows.
 
 ```bash
-pnpm --filter="./sites/*" install
-pnpm --filter="./sites/*" update
-pnpm --filter="./sites/*" lint
-pnpm --filter="./sites/*" format
-pnpm --filter="./sites/*" build
+pnpm install
+pnpm build
 ```
 
-Or, just simpley to move current directory to continue develop
+Or, just simply to move current directory to continue develop
 
 ```bash
 cd sites/geohub
-pnpm i
+pnpm --filter="." i
 pnpm dev
 ```
 
