@@ -5,30 +5,22 @@
     RasterTileMetadata,
     StacItemFeature,
     StacItemFeatureCollection,
+    VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
-  import { Accordion, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Accordion } from '@undp-data/svelte-undp-design'
   import MiniMap from '$components/data-view/MiniMap.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
+  import DataVectorCard from '$components/data-view/DataVectorCard.svelte'
+  import { onMount } from 'svelte'
 
   export let feature: StacItemFeature
   export let isExpanded: boolean
-  let symbolVectorType: 'point' | 'heatmap' = 'point'
-  let symbolVectorTypes: Radio[] = [
-    {
-      label: 'Point',
-      value: 'point',
-    },
-    {
-      label: 'Heatmap',
-      value: 'heatmap',
-    },
-  ]
+
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number
@@ -44,6 +36,18 @@
 
   let expanded: { [key: string]: boolean } = {}
   let expandedDatasetAssetId: string
+
+  let tilestatsLayers: VectorLayerTileStatLayer[] = []
+
+  onMount(async () => {
+    if (!is_raster) {
+      const vectorTile = new VectorTileData($map, feature)
+      const res = await vectorTile.getMetadata()
+      metadata = res.metadata
+      tilestatsLayers = res.metadata.json.tilestats.layers
+    }
+  })
+
   $: {
     let expandedDatasets = Object.keys(expanded).filter(
       (key) => expanded[key] === true && key !== expandedDatasetAssetId,
@@ -82,29 +86,6 @@
             ...$layerList,
           ]
         }
-      } else {
-        // vector tile
-
-        let layerType: 'point' | 'heatmap'
-        if (
-          tags &&
-          (['point', 'multipoint'].includes(tags.find((t) => t.key === 'geometrytype')?.value.toLowerCase()) ||
-            ['point', 'multipoint'].includes(tags.find((t) => t.key === 'geometry_type')?.value.toLowerCase()))
-        ) {
-          layerType = symbolVectorType
-        }
-        const vectorTile = new VectorTileData($map, feature)
-        const data = await vectorTile.add(layerType, defaultColor)
-
-        $layerList = [
-          {
-            id: data.layer.id,
-            name: feature.properties.name,
-            info: data.metadata,
-            dataset: feature,
-          },
-          ...$layerList,
-        ]
       }
     } finally {
       $indicatorProgress = false
@@ -157,72 +138,81 @@
 </script>
 
 {#if feature}
-  <Accordion
-    headerTitle={feature.properties.name}
-    bind:isExpanded>
-    <div slot="button">
-      {#if !stacType && !isExpanded}
-        <AddLayerButton
-          title="Add layer"
-          isIconButton={true}
-          on:clicked={addLayer} />
-      {/if}
-    </div>
-    <div
-      slot="content"
-      class="card-container px-1"
-      bind:clientWidth>
-      <!-- <p class="title is-5">{feature.properties.name}</p> -->
-      <DataCardInfo
-        bind:feature
-        bind:metadata>
-        <div class="map">
-          <MiniMap
-            bind:feature
-            bind:width
-            height={'150px'}
-            bind:isLoadMap={isExpanded}
-            bind:metadata
-            bind:defaultColor
-            bind:defaultColormap />
-        </div>
-      </DataCardInfo>
-
-      {#if !is_raster}
-        {#if tags && (['point', 'multipoint'].includes(tags
-              .find((t) => t.key === 'geometrytype')
-              ?.value.toLowerCase()) || ['point', 'multipoint'].includes(tags
-                .find((t) => t.key === 'geometry_type')
-                ?.value.toLowerCase()))}
-          <p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
-
-          <div class="vector-symbol-radios">
-            <Radios
-              bind:radios={symbolVectorTypes}
-              bind:value={symbolVectorType}
-              groupName="vector-type"
-              isVertical={false} />
-          </div>
+  {#if tilestatsLayers.length === 1}
+    <DataVectorCard
+      bind:layer={tilestatsLayers[0]}
+      bind:feature
+      bind:isExpanded
+      bind:defaultColor
+      bind:metadata
+      isShowInfo={true} />
+  {:else}
+    <Accordion
+      headerTitle={feature.properties.name}
+      bind:isExpanded>
+      <div slot="button">
+        {#if tilestatsLayers.length < 2}
+          {#if !stacType && !isExpanded}
+            <AddLayerButton
+              title="Add layer"
+              isIconButton={true}
+              on:clicked={addLayer} />
+          {/if}
         {/if}
-      {/if}
-
-      {#if !stacType}
-        <AddLayerButton
-          title="Add layer"
-          on:clicked={addLayer} />
-      {/if}
-
-      {#if stacType && stacType.key === 'stac' && assetList}
-        <!--show asset list-->
-        {#each assetList as asset}
-          <DataStacAssetCard
-            bind:asset
+      </div>
+      <div
+        slot="content"
+        class="card-container px-1"
+        bind:clientWidth>
+        {#if !is_raster && tilestatsLayers.length > 1}
+          <DataCardInfo
             bind:feature
-            bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]} />
-        {/each}
-      {/if}
-    </div>
-  </Accordion>
+            bind:metadata />
+
+          {#each tilestatsLayers as layer}
+            <DataVectorCard
+              bind:layer
+              bind:feature
+              bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
+              bind:defaultColor
+              bind:metadata
+              isShowInfo={false} />
+          {/each}
+        {:else}
+          <DataCardInfo
+            bind:feature
+            bind:metadata>
+            <div class="map">
+              <MiniMap
+                bind:feature
+                bind:width
+                height={'150px'}
+                bind:isLoadMap={isExpanded}
+                bind:metadata
+                bind:defaultColor
+                bind:defaultColormap />
+            </div>
+          </DataCardInfo>
+
+          {#if !stacType}
+            <AddLayerButton
+              title="Add layer"
+              on:clicked={addLayer} />
+          {/if}
+
+          {#if stacType && stacType.key === 'stac' && assetList}
+            <!--show asset list-->
+            {#each assetList as asset}
+              <DataStacAssetCard
+                bind:asset
+                bind:feature
+                bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]} />
+            {/each}
+          {/if}
+        {/if}
+      </div>
+    </Accordion>
+  {/if}
 {/if}
 
 <style lang="scss">
