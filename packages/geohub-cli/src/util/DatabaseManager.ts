@@ -97,6 +97,27 @@ class DatabaseManager {
 		}
 	}
 
+	public async deleteDataset(url: string) {
+		const tags: Tags = new Tags([]);
+		try {
+			const client = await this.transactionStart();
+			console.log(`start deleteing storage url = ${url}`);
+			const dataset_id = generateHashKey(url);
+
+			const datasets = new Datasets([]);
+			datasets.delete(client, dataset_id);
+			console.log(`deleted dataset by dataset_id: ${dataset_id}`);
+
+			await tags.cleanup(client);
+			console.debug(`unused tags were cleaned`);
+		} catch (e) {
+			await this.transactionRollback();
+			throw e;
+		} finally {
+			await this.transactionEnd();
+		}
+	}
+
 	public async deleteStorage(url: string, tmpDir: string) {
 		const tags: Tags = new Tags([]);
 		try {
