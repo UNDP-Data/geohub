@@ -23,7 +23,6 @@
   let layerHeaderHeight = 39
 
   const getLegendState = async () => {
-    let legendState = {}
     try {
       $indicatorProgress = true
       const styleId = $page.url.searchParams.get('style')
@@ -37,6 +36,7 @@
       const styleInfo = await res.json()
 
       if (styleInfo.layers) {
+        let legendState = {}
         //console.log('restoring ', styleInfo.layers.length)
         const style: StyleSpecification = styleInfo.style
 
@@ -64,13 +64,13 @@
         })
         $layerList = styleInfo.layers
         activeTab = TabNames.LAYERS
+        return legendState
       } else {
         $page.url.searchParams.delete('style')
         //goto(`?${$page.url.searchParams.toString()}`)
       }
     } finally {
       $indicatorProgress = false
-      return legendState
     }
   }
 
