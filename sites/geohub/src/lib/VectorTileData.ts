@@ -40,9 +40,13 @@ export class VectorTileData {
       }
     } else {
       // static
-      const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'))
-      const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
-      metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
+      if (this.url.startsWith('pmtiles://')) {
+        metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(this.url)}`
+      } else {
+        const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'))
+        const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
+        metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
+      }
     }
     const res = await fetch(metadataUrl)
     const data: VectorTileMetadata = await res.json()
@@ -63,12 +67,18 @@ export class VectorTileData {
     const maxzoom = Number(
       vectorInfo.metadata.maxzoom && vectorInfo.metadata.maxzoom <= 24 ? vectorInfo.metadata.maxzoom : 24,
     )
-
+    const isPmtiles = this.url.startsWith('pmtiles://')
     let source: VectorSourceSpecification
     if (vectorInfo.type) {
       source = {
         type: 'vector',
         url: vectorInfo.url.replace('metadata.json', 'tile.json'),
+      }
+    } else if (isPmtiles) {
+      source = {
+        type: 'vector',
+        url: this.url,
+        attribution: vectorInfo.metadata.attribution,
       }
     } else {
       source = {
@@ -78,6 +88,7 @@ export class VectorTileData {
         maxzoom: maxzoom,
       }
     }
+    console.log(source)
     if (!this.map.getSource(tileSourceId)) {
       this.map.addSource(tileSourceId, source)
     }
@@ -179,7 +190,7 @@ export class VectorTileData {
     }
     layer.minzoom = 0
     layer.maxzoom = maxzoom
-
+    console.log(layer)
     this.map.addLayer(layer)
     const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))
     this.map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))

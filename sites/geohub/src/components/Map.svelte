@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import maplibregl, { Map } from 'maplibre-gl'
+  import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte'
@@ -13,6 +14,9 @@
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   let container: HTMLDivElement
+
+  let protocol = new pmtiles.Protocol()
+  maplibregl.addProtocol('pmtiles', protocol.tile)
 
   onMount(async () => {
     const newMap = new Map({
