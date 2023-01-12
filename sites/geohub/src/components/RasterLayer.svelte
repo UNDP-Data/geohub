@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount, tick } from 'svelte'
   import { map, layerList } from '$stores'
+
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
@@ -21,6 +23,7 @@
   // exports
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
+  export let colorMapName: string
 
   //local vars
   let tabs = [
@@ -35,15 +38,15 @@
   let layerStats: RasterLayerStats
 
   // state vars
-  let expressions: RasterSimpleExpression[]
+  //let expressions: RasterSimpleExpression[]
   let legendType: DynamicLayerLegendTypes
-  let colorMapName: string
-  let numberOfClasses: number = COLOR_CLASS_COUNT
   let classification: ClassificationMethodTypes = classificationMethod
+  let cMapName: string = colorMapName
+  let numberOfClasses: number = COLOR_CLASS_COUNT
 
   /**
    * Force syncing with map lifecycle.
-   * The svlete UI lifecycle is much faster but it has to be forced to "wait"
+   * The svelte UI lifecycle is much faster but it has to be forced to "wait"
    * for the map&layers to be ready. This is done through sleep fucntion
    *
    * A little peculiar but doing this in onMount DOES NOT WORK
@@ -78,10 +81,9 @@
       } else {
         legendType = DynamicLayerLegendTypes.INTERVALS
       }
+      //
     } else {
-      // continuous
-      colorMapName = (getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string) || colorMapName
-
+      if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
       legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
 
@@ -134,6 +136,16 @@
       }
     }
   }
+
+  $: {
+    if (cMapName && $map) {
+      // fire event for style sharing
+      $map?.fire('colormap:changed', {
+        layerId: layer.id,
+        colorMapName: cMapName,
+      })
+    }
+  }
 </script>
 
 <div
@@ -145,7 +157,7 @@
     </p>
 
     {#await url}
-      <div class="loader-container">
+      <div class="loader-container p-3">
         <Loader size="small" />
       </div>
     {:then uriValue}
@@ -161,17 +173,14 @@
             bind:layer
             bind:classificationMethod={classification}
             bind:legendType
-            bind:colorMapName
+            bind:colorMapName={cMapName}
             bind:numberOfClasses />
         {/if}
         {#if activeTab == TabNames.HISTOGRAM}
           <RasterHistogram bind:layer />
         {/if}
         {#if activeTab == TabNames.TRANSFORM}
-          <RasterExpression
-            bind:layer
-            bind:expressions
-            bind:legendType />
+          <RasterExpression bind:layer />
         {/if}
         {#if activeTab == TabNames.OPACITY}
           <OpacityPanel {layer} />

@@ -35,7 +35,7 @@
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
-    reclassifyImage()
+    if (colorMapName) reclassifyImage() // not right
   }
 
   let { info }: Layer = layerConfig
@@ -77,15 +77,16 @@
     const band = info.active_band_no
     percentile98 = info.stats[band]['percentile_98']
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
-    if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-      if (skewness > 1 && skewness > -1) {
-        // Layer isn't higly skewed.
+    //TODO discuss with Joseph
+    // if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
+    //   if (skewness > 1 && skewness > -1) {
+    //     // Layer isn't higly skewed.
 
-        classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-      } else {
-        classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-      }
-    }
+    //     classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
+    //   } else {
+    //     classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+    //   }
+    // }
 
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
