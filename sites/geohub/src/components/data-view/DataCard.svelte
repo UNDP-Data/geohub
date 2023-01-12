@@ -9,7 +9,7 @@
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Accordion, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
   import MiniMap from '$components/data-view/MiniMap.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'

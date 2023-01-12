@@ -1,6 +1,8 @@
 import { error } from '@sveltejs/kit'
 import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
 import * as pmtiles from 'pmtiles'
+import arraystat from 'arraystat'
+import { mean, std, median } from 'mathjs'
 
 /**
  * get metadata json of static pbf
@@ -8,7 +10,8 @@ import * as pmtiles from 'pmtiles'
  * @returns return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
  */
 export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
-  if (url.startsWith('pmtiles://')) {
+  const isPmtiles = url.startsWith('pmtiles://')
+  if (isPmtiles) {
     const p = new pmtiles.PMTiles(`${url.replace('pmtiles://', '')}`)
     const metadata = await p.getMetadata()
     const header = await p.getHeader()
@@ -31,6 +34,26 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
         tilestats: metadata.tilestats,
       },
     }
+
+    data.json.tilestats.layers.forEach((layer) => {
+      layer.attributes.forEach((attribute) => {
+        if (attribute.type !== 'number') return
+        const values = attribute.values as number[]
+        attribute.mean = mean(values)
+        attribute.median = median(values)
+        attribute.std = std(values)
+        if (values.length > 25) {
+          const histogram = { count: [], bins: [] }
+          arraystat(values).histogram.map((item) => {
+            histogram.bins.push(item.max), histogram.count.push(item.nb)
+          })
+          histogram.bins.unshift(Math.min(...values))
+
+          attribute['histogram'] = histogram
+        }
+      })
+    })
+
     return data
   } else {
     //static pbf
