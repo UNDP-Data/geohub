@@ -42,13 +42,20 @@ program
 
 		if (file) {
 			// scan file to register
+			const dbManager = new DatabaseManager(database);
+
 			const res = await blobManager.scanBlob(file);
 			if (!res.dataset) {
-				throw new Error('No dataset to register');
+				await dbManager.deleteDataset(file);
+				throw new Error(
+					`The blob of '${file}' does not exist and it was deleted from the database.`
+				);
 			}
 			const storages: Storages = new Storages([res.storage]);
+			if (storages.getStorages().length === 0) {
+				throw new Error(`Cannot delete the dataset under this blob container`);
+			}
 			const datasets = new Datasets([res.dataset], outputDir);
-			const dbManager = new DatabaseManager(database);
 			await dbManager.register(storages, datasets);
 		} else {
 			// scan containers

@@ -113,11 +113,12 @@ class BlobServiceAccountManager {
 		const containerClient = this.blobServiceClient.getContainerClient(containerName);
 		const bclient = containerClient.getBlobClient(blobName);
 		const existsBlob = await bclient.exists();
-		if (!existsBlob) {
-			throw new Error(`The blob of '${url}' does not exist.`);
+
+		let dataset: Dataset | undefined = undefined;
+		if (existsBlob) {
+			dataset = await this.createDataset(containerClient, storages[0], blobName);
 		}
 
-		const dataset = await this.createDataset(containerClient, storages[0], blobName);
 		console.debug(`${url} ended scanning`);
 
 		return {
