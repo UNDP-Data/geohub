@@ -4,6 +4,7 @@ import {
 	ServiceListContainersOptions,
 	StorageSharedKeyCredential
 } from '@azure/storage-blob';
+import * as pmtiles from 'pmtiles';
 import type {
 	BandMetadata,
 	ContainerMetadata,
@@ -159,8 +160,10 @@ class BlobServiceAccountManager {
 		storage: Storage,
 		itemName: string
 	) {
+		const isStaticMVT = itemName.indexOf('metadata.json') !== -1;
+		const isPmtiles = itemName.indexOf('.pmtiles') !== -1;
 		let isRaster = false;
-		if (itemName.indexOf('metadata.json') === -1) {
+		if (isStaticMVT === false && isPmtiles === false) {
 			// raster
 			if (isRasterExtension(itemName)) {
 				isRaster = true;
@@ -206,10 +209,19 @@ class BlobServiceAccountManager {
 		const metadata = isRaster
 			? await this.getRasterMetadata(url)
 			: await this.getVectorMetadata(url);
+		if (!metadata) throw new Error('cannot fetch metadata.');
 		const urlObj = new URL(url).pathname.replace('/metadata.json', '').split('/');
+
+		let dataUrl = url;
+		if (isStaticMVT) {
+			dataUrl = url.replace('/metadata.json', '/{z}/{x}/{y}.pbf');
+		} else if (isPmtiles) {
+			dataUrl = `pmtiles://${url}`;
+		}
+
 		const dataset: Dataset = {
 			id: generateHashKey(url),
-			url: isRaster ? url : url.replace('/metadata.json', '/{z}/{x}/{y}.pbf'),
+			url: dataUrl,
 			name: cleanName(urlObj.pop()),
 			is_raster: isRaster,
 			description: metadata.description,
@@ -253,22 +265,42 @@ class BlobServiceAccountManager {
 	}
 
 	private async getVectorMetadata(url: string) {
-		const apiUrl = `${url}${this.sasToken}`;
-		const res = await fetch(apiUrl);
-		const metadata = await res.json();
-		const bounds: string = metadata.bounds;
-		const description: string | undefined = metadata.description;
-		const source: string | undefined = metadata.attribution;
-		return {
-			bounds: (bounds ? bounds.split(',').map((b) => Number(b)) : [-180, -90, 180, 90]) as [
-				number,
-				number,
-				number,
-				number
-			],
-			description,
-			source
-		};
+		const isPmtiles = url.indexOf('.pmtiles') !== -1;
+		if (isPmtiles) {
+			const p = new pmtiles.PMTiles(`${url}${this.sasToken}`);
+			const metadata = await p.getMetadata();
+			const header = await p.getHeader();
+			const bounds: [number, number, number, number] = [
+				header.minLon,
+				header.minLat,
+				header.maxLon,
+				header.maxLat
+			];
+			const description: string | undefined = metadata.description;
+			const source: string | undefined = metadata.attribution;
+			return {
+				bounds: bounds,
+				description,
+				source
+			};
+		} else {
+			const apiUrl = `${url}${this.sasToken}`;
+			const res = await fetch(apiUrl);
+			const metadata = await res.json();
+			const bounds: string = metadata.bounds;
+			const description: string | undefined = metadata.description;
+			const source: string | undefined = metadata.attribution;
+			return {
+				bounds: (bounds ? bounds.split(',').map((b) => Number(b)) : [-180, -90, 180, 90]) as [
+					number,
+					number,
+					number,
+					number
+				],
+				description,
+				source
+			};
+		}
 	}
 }
 
