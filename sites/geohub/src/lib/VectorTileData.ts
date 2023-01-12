@@ -23,7 +23,7 @@ export class VectorTileData {
     this.url = feature.properties.url
   }
 
-  private getMetadata = async () => {
+  public getMetadata = async () => {
     const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
       { key: string; value: string },
     ]
@@ -58,11 +58,13 @@ export class VectorTileData {
     }
   }
 
-  public add = async (layerType?: 'point' | 'heatmap', defaultColor?: string) => {
+  public add = async (layerType?: 'point' | 'heatmap', defaultColor?: string, targetLayer?: string) => {
     const vectorInfo = await this.getMetadata()
 
     const tileSourceId = this.feature.properties.id
-    const selectedLayerId = vectorInfo.metadata.json.vector_layers[0].id
+    const selectedLayerId = targetLayer ?? vectorInfo.metadata.json.vector_layers[0].id
+
+    const selectedLayer = vectorInfo.metadata.json.tilestats.layers.find((l) => l.layer === selectedLayerId)
 
     const maxzoom = Number(
       vectorInfo.metadata.maxzoom && vectorInfo.metadata.maxzoom <= 24 ? vectorInfo.metadata.maxzoom : 24,
@@ -96,7 +98,7 @@ export class VectorTileData {
     const layerId = uuidv4()
     let layer: LineLayerSpecification | FillLayerSpecification | SymbolLayerSpecification | HeatmapLayerSpecification
 
-    const geomType = layerType ?? vectorInfo.metadata.json.tilestats.layers[0].geometry
+    const geomType = layerType ?? selectedLayer.geometry
     const color = defaultColor ? chroma(defaultColor) : chroma.random()
     switch (geomType.toLocaleLowerCase()) {
       case 'point':
@@ -189,7 +191,7 @@ export class VectorTileData {
         return
     }
     layer.minzoom = 0
-    layer.maxzoom = maxzoom
+    // layer.maxzoom = maxzoom
 
     this.map.addLayer(layer)
     const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))

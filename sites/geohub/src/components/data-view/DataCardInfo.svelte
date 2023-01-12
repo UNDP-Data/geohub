@@ -7,6 +7,8 @@
   export let feature: StacItemFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
+  const is_raster: boolean = feature.properties.is_raster as unknown as boolean
+
   let isFullDescription = false
   let descriptionLength = 100
 </script>

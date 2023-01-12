@@ -7,6 +7,7 @@
     StacCollection,
     StacItemFeature,
     StacItemFeatureCollection,
+    VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
   import { RasterTileData } from '$lib/RasterTileData'
@@ -19,6 +20,9 @@
   export let isLoadMap = false
   export let defaultColor: string = undefined
   export let defaultColormap: string = undefined
+  export let layer: VectorLayerTileStatLayer = undefined
+
+  const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
 
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
@@ -77,7 +81,12 @@
           defaultColormap = data.colormap
         } else {
           const vectorTile = new VectorTileData(map, feature)
-          const data = await vectorTile.add()
+          let layerName = layer ? layer.layer : undefined
+          let layerType: 'point' | 'heatmap' = undefined
+          if (layer?.geometry.toLocaleLowerCase() === 'point') {
+            layerType = 'point'
+          }
+          const data = await vectorTile.add(layerType, undefined, layerName)
           metadata = data.metadata
           defaultColor = data.color
         }

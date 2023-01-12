@@ -1,12 +1,10 @@
 <script lang="ts">
   import { LegendPanel } from '@watergis/svelte-maplibre-legend'
   import { map, layerList } from '$stores'
-  import type { StyleSpecification } from 'maplibre-gl'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import { Checkbox } from '@undp-data/svelte-undp-design'
   import { clean } from '$lib/helper'
 
-  let style: StyleSpecification
   let onlyRendered = false
   let onlyRelative = true
   let enableLayerOrder = true
@@ -14,12 +12,10 @@
 
   $: if ($map) {
     $map.on('styledata', function (e) {
-      style = $map.getStyle()
       updateLayerOrderList()
     })
     $map.on('sourcedata', function (e) {
       if (e.isSourceLoaded) {
-        style = $map.getStyle()
         updateLayerOrderList()
       }
     })
@@ -31,8 +27,6 @@
 
   const updateLayerOrderList = () => {
     if ($map && $map.isStyleLoaded() && $layerList) {
-      style = $map.getStyle()
-
       relativeLayers = {}
       $layerList.forEach((layer) => {
         relativeLayers[layer.id] = clean(layer.name)
@@ -64,7 +58,6 @@
   <div class="layer-order">
     <LegendPanel
       bind:map={$map}
-      {style}
       bind:onlyRendered
       bind:onlyRelative
       bind:enableLayerOrder
