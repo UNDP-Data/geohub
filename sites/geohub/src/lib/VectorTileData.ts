@@ -88,7 +88,7 @@ export class VectorTileData {
         maxzoom: maxzoom,
       }
     }
-    console.log(source)
+
     if (!this.map.getSource(tileSourceId)) {
       this.map.addSource(tileSourceId, source)
     }
@@ -190,7 +190,7 @@ export class VectorTileData {
     }
     layer.minzoom = 0
     layer.maxzoom = maxzoom
-    console.log(layer)
+
     this.map.addLayer(layer)
     const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))
     this.map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))
