@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Map, NavigationControl } from 'maplibre-gl'
+  import maplibregl, { Map, NavigationControl } from 'maplibre-gl'
+  import * as pmtiles from 'pmtiles'
   import { styles } from '$lib/constants'
   import type {
     RasterTileMetadata,
@@ -18,6 +19,9 @@
   export let isLoadMap = false
   export let defaultColor: string = undefined
   export let defaultColormap: string = undefined
+
+  let protocol = new pmtiles.Protocol()
+  maplibregl.addProtocol('pmtiles', protocol.tile)
 
   let mapContainer: HTMLDivElement
   let map: Map
