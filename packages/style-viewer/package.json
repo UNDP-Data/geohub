@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/style-viewer",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "This package is to provide a simple maplibre style viewer in GeoHub",
 	"main": "package/index.js",
 	"files": [

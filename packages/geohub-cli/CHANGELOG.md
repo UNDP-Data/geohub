@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.0.3
+
+### Patch Changes
+
+- e9f5548: pmtiles support for geohub-cli
+
 ## 1.0.2
 
 ### Patch Changes
