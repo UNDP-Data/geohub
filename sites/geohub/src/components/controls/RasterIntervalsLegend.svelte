@@ -37,7 +37,7 @@
 
   const colorManNameChanged = () => {
     //console.log('RIL', colorMapName, colorMapRows.length)
-    if (colorMapRows.length > 0) return
+    //if (colorMapRows.length > 0) return
 
     if (colorMapName) reclassifyImage() // not right
   }
