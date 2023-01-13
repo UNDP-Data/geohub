@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte'
   import { map, layerList } from '$stores'
-
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
@@ -14,7 +13,13 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT,
   } from '$lib/constants'
-  import type { Layer, RasterLayerStats, RasterSimpleExpression, RasterTileMetadata } from '$lib/types'
+  import type {
+    IntervalLegendColorMapRow,
+    Layer,
+    RasterLayerStats,
+    RasterSimpleExpression,
+    RasterTileMetadata,
+  } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Loader, Tabs } from '@undp-data/svelte-undp-design'
   import { getValueFromRasterTileUrl, sleep, getLayerSourceUrl, fetchUrl } from '$lib/helper'
@@ -43,6 +48,7 @@
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
+  let colorMapRows: Array<IntervalLegendColorMapRow> = []
 
   /**
    * Force syncing with map lifecycle.
@@ -174,7 +180,8 @@
             bind:classificationMethod={classification}
             bind:legendType
             bind:colorMapName={cMapName}
-            bind:numberOfClasses />
+            bind:numberOfClasses
+            bind:colorMapRows />
         {/if}
         {#if activeTab == TabNames.HISTOGRAM}
           <RasterHistogram bind:layer />

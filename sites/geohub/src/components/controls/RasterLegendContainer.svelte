@@ -6,13 +6,14 @@
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { Layer, RasterTileMetadata, IntervalLegendColorMapRow } from '$lib/types'
 
   export let layer: Layer
   export let legendType: DynamicLayerLegendTypes = undefined
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
   export let numberOfClasses: number
+  export let colorMapRows: Array<IntervalLegendColorMapRow>
 
   let { info }: Layer = layer
 
@@ -91,7 +92,8 @@
           bind:colorPickerVisibleIndex
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses />
+          bind:numberOfClasses
+          bind:colorMapRows />
       </div>
     {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>

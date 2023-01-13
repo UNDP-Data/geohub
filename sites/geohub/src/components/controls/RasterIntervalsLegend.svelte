@@ -31,10 +31,14 @@
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes
+  export let colorMapRows: Array<IntervalLegendColorMapRow>
 
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
+    //console.log('RIL', colorMapName, colorMapRows.length)
+    if (colorMapRows.length > 0) return
+
     if (colorMapName) reclassifyImage() // not right
   }
 
@@ -61,7 +65,6 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
-  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   onMount(async () => {
     const rasterInfo = info as RasterTileMetadata

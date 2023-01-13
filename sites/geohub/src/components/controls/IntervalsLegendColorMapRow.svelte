@@ -120,12 +120,12 @@ the key statement is necessary as it forces to rerender the legend item in case 
 {#key signal}
   <div class="columns is-mobile p-0 m-0 py-1">
     <div class="column is-2 p-0 m-0">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         alt="Color Map Control"
         title="Color Map Control"
         use:popperRef
         on:click={() => {
-          console.log('divclick')
           handleColorPickerClick()
         }}
         class="discrete"
