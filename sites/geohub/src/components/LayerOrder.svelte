@@ -1,21 +1,24 @@
 <script lang="ts">
-  import { LegendPanel } from '@watergis/svelte-maplibre-legend'
   import { map, layerList } from '$stores'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import { Checkbox } from '@undp-data/svelte-undp-design'
   import { clean } from '$lib/helper'
+  import LegendPanel from './layer-order/LegendPanel.svelte'
+  import type { StyleSpecification } from 'maplibre-gl'
 
   let onlyRendered = false
   let onlyRelative = true
-  let enableLayerOrder = true
   let relativeLayers: { [key: string]: string } = {}
+  let style: StyleSpecification
 
   $: if ($map) {
     $map.on('styledata', function (e) {
+      style = $map.getStyle()
       updateLayerOrderList()
     })
     $map.on('sourcedata', function (e) {
       if (e.isSourceLoaded) {
+        style = $map.getStyle()
         updateLayerOrderList()
       }
     })
@@ -58,9 +61,9 @@
   <div class="layer-order">
     <LegendPanel
       bind:map={$map}
+      bind:style
       bind:onlyRendered
       bind:onlyRelative
-      bind:enableLayerOrder
       bind:relativeLayers />
   </div>
 </PanelButton>
@@ -73,13 +76,5 @@
   .layer-order {
     overflow-y: auto;
     max-height: 300px;
-  }
-
-  :global(.legend) {
-    display: none;
-  }
-
-  :global(.layer-position) {
-    margin-right: 1rem;
   }
 </style>
