@@ -8,7 +8,7 @@ We follow a unique way to arrange our data sets! All the data sets within the UN
 
 <justify>The first bucket is the “SDG” bucket which entails all data related to Sustainable Development Goals. This includes raster and vector data.</p>
 
-<justify> The second bucket is the “Climate Change” bucket which entails data related to projected and present data related to climate change.</p>
+<justify> The second bucket is the “Climate Change” bucket which entails data associated to projected and present data related to climate change.</p>
 
 <justify>The third bucket is the “Microsoft Planetary” which connects to all the satellite data sets of the Microsoft Planetary Computer where the user can get engage in further analysis.</p>
 
