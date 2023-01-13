@@ -3,6 +3,7 @@ import { getActiveBandIndex, getBase64EncodedUrl, getRandomColormap, paramsToQue
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
+import { MAP_ATTRIBUTION } from './constants'
 
 export class RasterTileData {
   private feature: StacItemFeature
@@ -77,6 +78,11 @@ export class RasterTileData {
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 
+    let attribution = MAP_ATTRIBUTION
+    if (this.feature.properties.source) {
+      attribution = this.feature.properties.source
+    }
+
     const source: RasterSourceSpecification = {
       type: 'raster',
       tiles: [tileUrl],
@@ -86,6 +92,7 @@ export class RasterTileData {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       bounds: rasterInfo['bounds'],
+      attribution,
     }
     const layerId = uuidv4()
     //const sourceId = this.feature.properties.id

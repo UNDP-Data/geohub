@@ -238,9 +238,12 @@
     const data = await res.json()
 
     let layerHasNoDataValue = false
-    for (const value of data.values) {
-      if (value === rasterInfo.nodata_value) layerHasNoDataValue = true
+    if (data.values && data.values.length > 0) {
+      for (const value of data.values) {
+        if (value === rasterInfo.nodata_value) layerHasNoDataValue = true
+      }
     }
+
     if (layerHasNoDataValue) {
       return
     }
@@ -251,14 +254,16 @@
       name: layer.name,
     }
 
-    data.values.forEach((value) => {
-      if (layerUniqueValues) {
-        const key = layerUniqueValues[value]
-        props[key ? key : `Band=${rasterInfo.active_band_no}`] = value
-      } else {
-        props[`Band=${rasterInfo.active_band_no}`] = value
-      }
-    })
+    if (data.values && data.values.length > 0) {
+      data.values.forEach((value) => {
+        if (layerUniqueValues) {
+          const key = layerUniqueValues[value]
+          props[key ? key : `Band=${rasterInfo.active_band_no}`] = value
+        } else {
+          props[`Band=${rasterInfo.active_band_no}`] = value
+        }
+      })
+    }
 
     return createFeature(lng, lat, layer.id, props)
   }
