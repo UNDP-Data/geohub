@@ -4,7 +4,7 @@
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
   import { Button, Checkbox, Radios, Loader } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
   import SelectedTags from './SelectedTags.svelte'
 
   let tags: { [key: string]: Tag[] } = {}

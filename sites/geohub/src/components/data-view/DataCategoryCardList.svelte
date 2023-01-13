@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
-  import type { Breadcrumb } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
   import DataCategoryCard from '$components/data-view/DataCategoryCard.svelte'
   import { indicatorProgress } from '$stores'
   import { onMount } from 'svelte'

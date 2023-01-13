@@ -1,4 +1,4 @@
-site_name: Geohub
+site_name: GeoHub
 site_description: UNDP's one stop shop for spatial data and analytics
 
 docs_dir: docs
@@ -86,7 +86,8 @@ plugins:
         frameborder: "0"
 
 nav:
-  - "Get Started": "Index.md"
+  - Getting Started:
+      - Welcome: "getting started/Welcome.md"
   - Data:
       - Introduction: "data/Introduction.md"
       - Data Structure: "data/Data Structure.md"
@@ -94,6 +95,5 @@ nav:
   - Visualization:
       - Map View: "visualization/Map View.md"
       - Search Data: "visualization/Search Data.md"
-      - Zooming: "visualization/Zooming.md"
       - Layer Tab: "visualization/Layer Tab.md"
       - Legend: "visualization/Legend.md"

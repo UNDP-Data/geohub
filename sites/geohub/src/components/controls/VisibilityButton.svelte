@@ -43,11 +43,10 @@
 
 <div
   class="has-tooltip-bottom has-tooltip-arrow"
-  data-tooltip={`${visibility === 'visible' ? 'Show Layer' : 'Hide Layer'}`}>
+  data-tooltip={`${visibility === 'visible' ? 'Hide layer' : 'Show layer'}`}>
   <div
     class="icon-selected"
-    title="Toggle Visibility"
-    aria-label="Toggle Visibility"
+    aria-label="Change layer visibility"
     tabindex="0"
     role="button"
     on:click={() => toggleVisibility()}

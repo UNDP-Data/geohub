@@ -16,9 +16,10 @@
   export let layer: Layer
   export let operator
 
-  const propertyProps = (layer.info as VectorTileMetadata).json.tilestats.layers[0].attributes.find(
-    (e) => e['attribute'] === propertySelectedValue,
-  )
+  const layerStyle = getLayerStyle($map, layer.id)
+  const metadata = layer.info as VectorTileMetadata
+  const tilestatLayer = metadata.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
+  const propertyProps = tilestatLayer.attributes.find((e) => e['attribute'] === propertySelectedValue)
   const dataType = propertyProps['type']
   let warningSingleTagEqual = false
   let badSingleTagValue
@@ -26,10 +27,7 @@
 
   const layerId = layer.id
 
-  const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
-    (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
-  )
-  const attrstats = stats?.attributes.filter((el: VectorLayerTileStatAttribute) => {
+  const attrstats = tilestatLayer.attributes.filter((el: VectorLayerTileStatAttribute) => {
     return el.attribute == propertySelectedValue
   })[0]
 

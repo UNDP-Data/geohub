@@ -4,11 +4,9 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
   } from '$lib/constants'
-  import type { RasterTileSource } from 'maplibre-gl'
   import { cloneDeep, debounce } from 'lodash-es'
   import {
     fetchUrl,
@@ -17,28 +15,34 @@
     getLayerStyle,
     getValueFromRasterTileUrl,
     updateParamsInURL,
+    getLayerSourceUrl,
     getMaxValueOfCharsInIntervals,
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
-  export let numberOfClasses = COLOR_CLASS_COUNT
+  export let numberOfClasses: number
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
+  export let classificationMethod: ClassificationMethodTypes
+  export let colorMapRows: Array<IntervalLegendColorMapRow>
+
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
-    getColorMapRows()
-    reclassifyImage()
+    //console.log('RIL', colorMapName, colorMapRows.length)
+    //if (colorMapRows.length > 0) return
+
+    if (colorMapName) reclassifyImage() // not right
   }
 
-  let info: RasterTileMetadata
-  ;({ info } = layerConfig)
+  let { info }: Layer = layerConfig
   const bandIndex = getActiveBandIndex(info)
 
   let layerMax
@@ -54,7 +58,6 @@
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
 
-  export let classificationMethod: ClassificationMethodTypes
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -62,28 +65,32 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
-  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   onMount(async () => {
     const rasterInfo = info as RasterTileMetadata
-    if (!rasterInfo?.isMosaicJson) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-      const layerURL = new URL(layerSrc.tiles[0])
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
-      const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-      info = { ...info, stats: layerStats }
-    }
+    // if (!rasterInfo?.isMosaicJson) {
+    //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+
+    //   const layerURL = new URL(layerUrl)
+
+    //   const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
+    //   const layerStats: RasterLayerStats = await fetchUrl(statsURL)
+    //   info = { ...info, stats: layerStats }
+    // }
     const band = info.active_band_no
     percentile98 = info.stats[band]['percentile_98']
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
-    if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-      if (skewness > 1 && skewness > -1) {
-        // Layer isn't higly skewed.
-        classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-      } else {
-        classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-      }
-    }
+    //TODO discuss with Joseph
+    // if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
+    //   if (skewness > 1 && skewness > -1) {
+    //     // Layer isn't higly skewed.
+
+    //     classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
+    //   } else {
+    //     classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+    //   }
+    // }
+
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
       return layerConfig.id !== layer.id ? layer : layerConfig
@@ -108,13 +115,14 @@
         })
       })
     }
-    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+    numberOfClasses = colorMapRows.length === 0 ? numberOfClasses : colorMapRows.length
   }
 
   const reclassifyImage = (e?: CustomEvent) => {
     let isClassificationMethodEdited = false
     if (e) {
       classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes
+
       isClassificationMethodEdited = true
     }
     // Fixme: Possible bug in titiler. The Max value is not the real max in some layers
@@ -138,11 +146,13 @@
       classification: classificationMethod,
     })
   }
+
   // encode colormap and update url parameters
   const handleParamsUpdate = debounce(() => {
     const encodeColorMapRows = JSON.stringify(colorMapRows.map((row) => [[row.start, row.end], row.color]))
-    const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layerConfig.id).source) as RasterTileSource
-    const layerURL = new URL(layerSrc.tiles[0])
+    const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    if (!(layerUrl && layerUrl.length > 0)) return
+    const layerURL = new URL(layerUrl)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
@@ -162,59 +172,7 @@
     colorPickerVisibleIndex = event.detail.index
   }
   const handleChangeIntervalValues = (event: CustomEvent) => {
-    const rowIndex = event.detail.index
-    const inputType = event.detail.id
-    let inputValue = event.detail.value as number
-    let currentRow = colorMapRows.at(rowIndex)
-    if (rowIndex == 0) {
-      const nextRow = colorMapRows.at(rowIndex + 1)
-      if (inputType == 'start') {
-        inputValue = !isNaN(inputValue) && inputValue < currentRow.end ? inputValue : (currentRow.start as number)
-        colorMapRows[rowIndex].start = inputValue
-      } else {
-        inputValue =
-          !isNaN(inputValue) && inputValue > currentRow.start && inputValue < nextRow.end
-            ? inputValue
-            : (currentRow.end as number)
-        colorMapRows[rowIndex].end = inputValue
-        colorMapRows[rowIndex + 1].start = inputValue
-      }
-    } else if (rowIndex == colorMapRows.length - 1) {
-      const prevRow = colorMapRows.at(rowIndex - 1)
-      if (inputType == 'start') {
-        inputValue =
-          !isNaN(inputValue) && inputValue < currentRow.end && inputValue > prevRow.start
-            ? inputValue
-            : (currentRow.start as number)
-        colorMapRows[rowIndex].start = inputValue
-        colorMapRows[rowIndex - 1].end = inputValue
-      } else {
-        inputValue =
-          !isNaN(inputValue) && inputValue <= currentRow.end && inputValue > prevRow.start
-            ? inputValue
-            : (currentRow.end as number)
-        colorMapRows[rowIndex].end = inputValue
-      }
-    } else {
-      const nextRow = colorMapRows.at(rowIndex + 1)
-      const prevRow = colorMapRows.at(rowIndex - 1)
-
-      if (inputType == 'start') {
-        inputValue =
-          !isNaN(inputValue) && inputValue > prevRow.start && inputValue < currentRow.end
-            ? inputValue
-            : (currentRow.start as number)
-        colorMapRows[rowIndex].start = inputValue
-        colorMapRows[rowIndex - 1].end = inputValue
-      } else {
-        inputValue =
-          !isNaN(inputValue) && inputValue > currentRow.start && inputValue < nextRow.end
-            ? inputValue
-            : (currentRow.end as number)
-        colorMapRows[rowIndex].end = inputValue
-        colorMapRows[rowIndex + 1].start = inputValue
-      }
-    }
+    colorMapRows = updateIntervalValues(event, colorMapRows)
     rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     handleParamsUpdate()
   }
@@ -223,6 +181,7 @@
 <div
   class="intervals-view-container"
   data-testid="intervals-view-container">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="columns is-gapless controls"
     on:click={() => (colorPickerVisibleIndex = -1)}>
@@ -245,6 +204,7 @@
         </select>
       </div>
     </div>
+
     <div class="column number-classes">
       <div class="has-text-centered">Number of Classes</div>
       <NumberInput
@@ -261,7 +221,6 @@
       bind:colorMapRow
       bind:colorMapName
       bind:rowWidth
-      layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
       on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}

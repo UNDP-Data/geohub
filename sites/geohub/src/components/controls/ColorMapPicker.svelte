@@ -5,12 +5,10 @@
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
-  import type { Tab } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
-  export let layerMax: number
-  export let layerMin: number
   export let colorMapName: string
   export let numberOfClasses: number
 
@@ -26,9 +24,14 @@
   })
 
   const handleColorMapClick = (cmName: string) => {
+    //the lines below if removed will break  all the components that use this component and bind
+    // two ways the colormap
+    // i recommend using the evend instead and bind the colormap one way only
     if (cmName !== colorMapName) {
       colorMapName = cmName
     }
+
+    dispatch('colorMapChanged', { colorMapName: cmName })
   }
 
   const handleClosePopup = () => {
@@ -76,8 +79,6 @@
                 <ColorMapPickerCard
                   colorMapName={cmName}
                   colorMapType={ColorMapTypes.SEQUENTIAL}
-                  {layerMax}
-                  {layerMin}
                   {numberOfClasses}
                   isSelected={colorMapName === cmName} />
               </li>

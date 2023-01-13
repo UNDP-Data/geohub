@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/electricity-dashboard",
-	"version": "0.0.3",
+	"version": "0.0.5",
 	"description": "This dashboard app is to visualise electricity data in GeoHub",
 	"main": "package/index.js",
 	"files": [
@@ -12,8 +12,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
-		"prepare": "pnpm build"
+		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"private": false,
 	"repository": {
@@ -45,9 +44,9 @@
 	"type": "module",
 	"dependencies": {
 		"@creativebulma/bulma-tooltip": "^1.2.0",
-		"@undp-data/current-location": "workspace:^0.0.2",
-		"@undp-data/style-switcher": "workspace:^0.0.2",
-		"@undp-data/svelte-undp-design": "workspace:^0.0.3",
+		"@undp-data/current-location": "workspace:^0.0.4",
+		"@undp-data/style-switcher": "workspace:^0.0.4",
+		"@undp-data/svelte-undp-design": "workspace:^0.0.5",
 		"@watergis/svelte-maplibre-menu": "^0.1.17",
 		"chroma-js": "^2.4.2",
 		"d3-format": "^3.1.0",

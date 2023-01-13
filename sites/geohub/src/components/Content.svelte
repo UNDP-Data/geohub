@@ -5,7 +5,7 @@
   import { map, layerList } from '$stores'
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import type { Tab } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
   import ContentSidebar from './ContentSidebar.svelte'
 
   export let drawerOpen = false
