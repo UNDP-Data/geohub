@@ -42,7 +42,7 @@
 
   onMount(() => {
     // restore filter expression from layer style
-    const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.id)
+    const layerStyle = getLayerStyle($map, layer.id)
     const filter = layerStyle.filter
     if (filter) {
       expressionsArray = []
@@ -77,9 +77,10 @@
   const handlePropertySelect = (e) => {
     if (e.detail.prop) {
       propertySelectValue = e.detail.prop
-      const propertyProps = (layer.info as VectorTileMetadata).json.tilestats.layers[0].attributes.find(
-        (e) => e['attribute'] === propertySelectValue,
-      )
+      const layerStyle = getLayerStyle($map, layer.id)
+      const metadata = layer.info as VectorTileMetadata
+      const tilestatLayer = metadata.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
+      const propertyProps = tilestatLayer.attributes.find((e) => e['attribute'] === propertySelectValue)
       const dataType = propertyProps['type']
       if (dataType) {
         stringProperty = dataType === 'string'

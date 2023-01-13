@@ -127,6 +127,7 @@ importers:
       eslint-config-prettier: ^8.5.0
       pg: ^8.8.0
       pg-copy-streams: ^6.0.4
+      pmtiles: ^2.7.0
       prettier: ^2.8.1
       rimraf: ^3.0.2
       ts-node: ^10.9.1
@@ -138,6 +139,7 @@ importers:
       crypto: 1.0.1
       pg: 8.8.0
       pg-copy-streams: 6.0.4
+      pmtiles: 2.7.0
       wkx: 0.5.0
     devDependencies:
       '@types/cli-progress': 3.11.0
@@ -212,6 +214,7 @@ importers:
       eslint-config-prettier: ^8.6.0
       eslint-plugin-svelte3: ^4.0.0
       maplibre-gl: ^2.4.0
+      pmtiles: ^2.7.0
       prettier: ^2.8.2
       prettier-plugin-svelte: ^2.9.0
       svelte: ^3.55.0
@@ -225,6 +228,7 @@ importers:
       '@watergis/svelte-maplibre-attribute-popup': 0.0.12
       '@watergis/svelte-maplibre-export': 0.1.20
       maplibre-gl: 2.4.0
+      pmtiles: 2.7.0
       svelte: 3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.11
@@ -363,6 +367,7 @@ importers:
       papaparse: ^5.3.2
       pbf: ^3.2.1
       pg: ^8.8.0
+      pmtiles: ^2.7.0
       prettier: ^2.8.2
       prettier-plugin-svelte: ^2.9.0
       sass: ^1.57.1
@@ -444,6 +449,7 @@ importers:
       maplibre-gl: 2.4.0
       marked: 4.2.5
       papaparse: 5.3.2
+      pmtiles: 2.7.0
       prettier: 2.8.2
       prettier-plugin-svelte: 2.9.0_74vfyr7qjo56zgjcvkwi6gyjxm
       sass: 1.57.1
@@ -6800,6 +6806,9 @@ packages:
   /fflate/0.4.8:
     resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
 
+  /fflate/0.7.4:
+    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
+
   /file-entry-cache/6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -9459,6 +9468,11 @@ packages:
       mlly: 1.1.0
       pathe: 1.0.0
     dev: true
+
+  /pmtiles/2.7.0:
+    resolution: {integrity: sha512-/0WERHBKCt9P8dlQaROQd1CE/J1sqYhdGkDgOROaxCjnpm/U+guWNNxZPPduUy6Wu7wQtPghA7sS4t0T18FKAA==}
+    dependencies:
+      fflate: 0.7.4
 
   /polished/4.2.2:
     resolution: {integrity: sha512-Sz2Lkdxz6F2Pgnpi9U5Ng/WdWAUZxmHrNPoVlm3aAemxoy2Qy7LGjQg4uf8qKelDAUW94F4np3iH2YPf2qefcQ==}

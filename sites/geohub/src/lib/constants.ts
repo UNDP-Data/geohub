@@ -1,5 +1,5 @@
-import type { StyleDefinition } from '@undp-data/style-switcher'
-import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/interfaces'
+import type { StyleDefinition } from '@undp-data/style-switcher/package'
+import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/package/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
@@ -10,6 +10,7 @@ export const NO_RANDOM_SAMPLING_POINTS = 1000
 export const SEARCH_PAGINATION_LIMIT = 25
 export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
 export const STAC_MINIMUM_ZOOM = 5
+export const UNIQUE_VALUE_THRESHOLD = 25
 
 export enum TabNames {
   ANALYZE = 'Analyze',

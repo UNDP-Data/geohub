@@ -14,6 +14,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     NO_RANDOM_SAMPLING_POINTS,
+    UNIQUE_VALUE_THRESHOLD,
     VectorApplyToTypes,
   } from '$lib/constants'
   import {
@@ -35,7 +36,7 @@
   import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
   import { Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
@@ -284,8 +285,8 @@
             layerMin = stat.min
 
             const propertySelectValues = []
-
-            if (stat['values'] !== undefined) {
+            const values = stat.values
+            if (values && values.length <= UNIQUE_VALUE_THRESHOLD) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
@@ -350,7 +351,7 @@
   const updateMap = () => {
     if (!propertySelectValue) return
     if (layerType === 'fill') {
-      const stops = colorMapRows.map((row, index) => {
+      let stops = colorMapRows.map((row, index) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
           row.color[3],
           0,
@@ -367,7 +368,8 @@
 
         return [row.start, rgb]
       })
-      // console.log(stops)
+
+      stops = sortStops(stops)
       $map.setPaintProperty(layer.id, 'fill-outline-color', defaultOutlineColor)
       $map.setPaintProperty(layer.id, 'fill-color', {
         property: propertySelectValue,
@@ -375,7 +377,7 @@
         stops: stops,
       })
     } else {
-      const stops = colorMapRows.map((row) => {
+      let stops = colorMapRows.map((row) => {
         return [
           row.start,
           hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
@@ -385,6 +387,7 @@
       })
 
       if (stops.length > 0) {
+        stops = sortStops(stops)
         if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
           if (layerType === 'symbol') {
             const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
@@ -444,6 +447,19 @@
         }
       }
     }
+  }
+
+  const sortStops = (stops: (string | number)[][]) => {
+    stops = stops.sort((first, second) => {
+      if (first[0] > second[0]) {
+        return 1
+      } else if (first[0] < second[0]) {
+        return -1
+      } else {
+        return 0
+      }
+    })
+    return stops
   }
 </script>
 
