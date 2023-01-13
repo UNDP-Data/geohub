@@ -67,7 +67,7 @@
         return legendState
       } else {
         $page.url.searchParams.delete('style')
-        //goto(`?${$page.url.searchParams.toString()}`)
+        goto(`?${$page.url.searchParams.toString()}`)
       }
     } finally {
       $indicatorProgress = false
