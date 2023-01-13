@@ -1,8 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification, Map } from 'maplibre-gl'
-  import Fa from 'svelte-fa'
-  import { faSortUp, faSortDown, faGripVertical } from '@fortawesome/free-solid-svg-icons'
 
   const dispatch = createEventDispatcher()
 
@@ -89,7 +87,7 @@
   <span
     class="draggable-icon has-tooltip-right has-tooltip-arrow"
     data-tooltip="Drag to change order">
-    <Fa icon={faGripVertical} />
+    <i class="fa-solid fa-grip-vertical" />
   </span>
   <div class="layer-name">
     {layerTitle}
@@ -106,9 +104,7 @@
         data-tooltip="Bring backward in map"
         on:click={moveBefore}
         on:keydown={handleKeydownMoveBefore}>
-        <Fa
-          icon={faSortUp}
-          size="lg" />
+        <i class="fa-solid fa-sort-up" />
       </span>
     {/if}
     {#if !isLastLayer}
@@ -119,9 +115,7 @@
         data-tooltip="Bring forward in map"
         on:click={moveAfter}
         on:keydown={handleKeydownmoveAfter}>
-        <Fa
-          icon={faSortDown}
-          size="lg" />
+        <i class="fa-solid fa-sort-down" />
       </span>
     {/if}
   </div>
