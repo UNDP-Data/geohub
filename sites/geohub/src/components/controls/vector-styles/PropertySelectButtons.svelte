@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
-  import { clean } from '$lib/helper'
+  import { clean, getLayerStyle } from '$lib/helper'
+  import { map } from '$stores'
+  import type { VectorTileMetadata } from '$lib/types'
   export let layer
   export let propertySelectValue
   export let showEmptyFields = false //this needs to be removed TODO
@@ -11,19 +13,21 @@
 
   const dispatch = createEventDispatcher()
 
+  const layerStyle = getLayerStyle($map, layer.id)
+  const metadata = layer.info as VectorTileMetadata
+  const tilestatLayer = metadata.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
+
   onMount(() => {
     inLegend && !propertySelectOptions ? setPropertyList() : null
     !inLegend ? setPropertyList() : null
   })
 
   function setPropertyList() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    propertySelectOptions = layer.info.json.tilestats.layers[0].attributes.map((e) => e.attribute)
+    propertySelectOptions = tilestatLayer.attributes.map((e) => e.attribute)
     if (showOnlyNumberFields) {
-      propertySelectOptions = layer.info.json.tilestats.layers[0].attributes.map((el) => {
+      propertySelectOptions = tilestatLayer.attributes.map((el) => {
         if (el['type'] === 'number') {
-          return el
+          return el.attribute
         }
       })
     }
@@ -45,6 +49,7 @@
   $: propertySelectValue, propertyChanged()
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   style="max-height: 200px; overflow-y: auto"
   class="grid-wrapper "
@@ -52,8 +57,8 @@
   on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
-      {@const propertyProps = layer.info.json.tilestats.layers[0].attributes.find((e) => {
-        return e['attribute'] === propertySelectOption
+      {@const propertyProps = tilestatLayer.attributes.find((e) => {
+        return e.attribute === propertySelectOption
       })}
 
       <div
@@ -82,7 +87,7 @@
           </span>
         </div>
         <div class="content ">
-          {#if propertyProps['type'] === 'string'}
+          {#if propertyProps.type === 'string'}
             <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
               <i class="fa-solid fa-a" />...<i class="fa-solid fa-z" />
             </span>
