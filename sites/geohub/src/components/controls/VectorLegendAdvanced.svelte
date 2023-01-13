@@ -14,6 +14,7 @@
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
     NO_RANDOM_SAMPLING_POINTS,
+    UNIQUE_VALUE_THRESHOLD,
     VectorApplyToTypes,
   } from '$lib/constants'
   import {
@@ -284,8 +285,8 @@
             layerMin = stat.min
 
             const propertySelectValues = []
-
-            if (stat['values'] !== undefined) {
+            const values = stat.values
+            if (values && values.length <= UNIQUE_VALUE_THRESHOLD) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
