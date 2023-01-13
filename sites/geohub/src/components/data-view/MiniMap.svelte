@@ -75,12 +75,14 @@
         }
 
         if (is_raster === true) {
-          const rasterTile = new RasterTileData(map, feature)
+          const rasterInfo = metadata as RasterTileMetadata
+          const rasterTile = new RasterTileData(map, feature, rasterInfo)
           const data = await rasterTile.add()
           metadata = data.metadata
           defaultColormap = data.colormap
         } else {
-          const vectorTile = new VectorTileData(map, feature)
+          const vectorInfo = metadata as VectorTileMetadata
+          const vectorTile = new VectorTileData(map, feature, vectorInfo)
           let layerName = layer ? layer.layer : undefined
           let layerType: 'point' | 'heatmap' = undefined
           if (layer?.geometry.toLocaleLowerCase() === 'point') {
