@@ -4,7 +4,7 @@
   import { isEqual, sortBy } from 'lodash-es'
   import chroma from 'chroma-js'
   import { Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
 
   import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'

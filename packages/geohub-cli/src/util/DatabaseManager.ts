@@ -63,6 +63,61 @@ class DatabaseManager {
 		}
 	}
 
+	public async register(storages: Storages, datasets: Datasets) {
+		const tags: Tags = new Tags([]);
+
+		try {
+			storages.addTags(tags);
+			datasets.addTags(tags);
+			const client = await this.transactionStart();
+
+			await tags.insert(client);
+			console.debug(`${tags.getTags().length} tags were registered into PostGIS.`);
+
+			storages.updateTags(tags);
+			datasets.updateTags(tags);
+
+			for (const storage of storages.getStorages()) {
+				await storages.upsert(client, storage);
+			}
+			console.debug(`${storages.getStorages().length} storages were registered into PostGIS.`);
+
+			for (const dataset of datasets.getDatasets()) {
+				await datasets.upsert(client, dataset);
+			}
+			console.debug(`${datasets.getDatasets().length} datasets were registered into PostGIS.`);
+
+			await tags.cleanup(client);
+			console.debug(`unused tags were cleaned`);
+		} catch (e) {
+			await this.transactionRollback();
+			throw e;
+		} finally {
+			await this.transactionEnd();
+		}
+	}
+
+	public async deleteDataset(url: string) {
+		const tags: Tags = new Tags([]);
+		try {
+			const client = await this.transactionStart();
+			console.log(`start deleteing storage url = ${url}`);
+			const dataset_id = generateHashKey(url);
+
+			const datasets = new Datasets([]);
+			datasets.delete(client, dataset_id);
+			console.log(`deleted dataset by dataset_id: ${dataset_id}`);
+
+			await tags.cleanup(client);
+			console.debug(`unused tags were cleaned`);
+		} catch (e) {
+			await this.transactionRollback();
+			throw e;
+		} finally {
+			await this.transactionEnd();
+		}
+	}
+
 	public async deleteStorage(url: string, tmpDir: string) {
 		const tags: Tags = new Tags([]);
 		try {

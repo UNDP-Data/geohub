@@ -15,9 +15,9 @@ class Datasets {
 
 	private tmpDir: string;
 
-	constructor(datasets: Dataset[], tmpDir: string) {
+	constructor(datasets: Dataset[], tmpDir?: string) {
 		this.datasets = datasets;
-		this.tmpDir = tmpDir;
+		this.tmpDir = tmpDir ?? __dirname;
 	}
 
 	public addTags(tags: Tags) {
@@ -189,15 +189,52 @@ class Datasets {
 			${dataset.bounds[2]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[1]}))`;
 		let query = {
 			text: `
-			INSERT INTO geohub.dataset (id, storage_id, url, is_raster, source, license, bounds, createdat, updatedat) 
-			values ($1, $2, $3, $4, $5, $6, ST_GeomFROMTEXT('${wkt}', 4326), $7::timestamptz, $8::timestamptz)
+			INSERT INTO geohub.dataset (
+			  id, 
+			  storage_id, 
+			  url, 
+			  name, 
+			  description, 
+			  is_raster, 
+			  source, 
+			  license, 
+			  bounds, 
+			  createdat, 
+			  updatedat
+			) 
+			values (
+			  $1, 
+			  $2, 
+			  $3, 
+			  $4, 
+			  $5, 
+			  $6, 
+			  $7, 
+			  $8, 
+			  ST_GeomFROMTEXT('${wkt}', 4326), 
+			  $9::timestamptz, 
+			  $10::timestamptz
+			) 
 			ON CONFLICT (id)
 			DO
-			UPDATE SET storage_id=$2, url=$3, is_raster=$4, source=$5, license=$6, bounds=ST_GeomFROMTEXT('${wkt}', 4326), createdat=$7::timestamptz, updatedat=$8::timestamptz`,
+			UPDATE
+			 SET
+			  storage_id=$2,
+			  url=$3, 
+			  name=$4, 
+			  description=$5, 
+			  is_raster=$6, 
+			  source=$7, 
+			  license=$8, 
+			  bounds=ST_GeomFROMTEXT('${wkt}', 4326), 
+			  createdat=$9::timestamptz, 
+			  updatedat=$10::timestamptz`,
 			values: [
 				dataset.id,
 				dataset.storage.id,
 				dataset.url,
+				dataset.name,
+				dataset.description,
 				dataset.is_raster,
 				dataset.source,
 				dataset.license,
@@ -223,6 +260,22 @@ class Datasets {
 		}
 
 		return dataset;
+	}
+
+	public async delete(client: PoolClient, datasetId: string) {
+		const queryDatasetTag = {
+			text: `
+			DELETE FROM geohub.dataset_tag WHERE dataset_id = $1
+			`,
+			values: [datasetId]
+		};
+		await client.query(queryDatasetTag);
+
+		const queryDataset = {
+			text: `DELETE FROM geohub.dataset WHERE id = $1`,
+			values: [datasetId]
+		};
+		await client.query(queryDataset);
 	}
 }
 

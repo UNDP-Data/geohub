@@ -6,8 +6,7 @@
   export let colorMapType: ColorMapTypes
   export let isCardStyle = true
   export let isSelected: boolean
-  export let layerMax: number
-  export let layerMin: number
+
   export let numberOfClasses: number
 
   let cardStyle: string
@@ -17,7 +16,7 @@
   }
 
   const setCardStyle = () => {
-    cardStyle = colorMapStyle(colorMapType, colorMapName, layerMin, layerMax, numberOfClasses, isCardStyle)
+    cardStyle = colorMapStyle(colorMapType, colorMapName, numberOfClasses, isCardStyle)
   }
 </script>
 

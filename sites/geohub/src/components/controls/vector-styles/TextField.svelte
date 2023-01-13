@@ -102,8 +102,6 @@
         type: LayerTypes.SYMBOL,
         source: parentStyle['source'],
         'source-layer': parentStyle['source-layer'],
-        minzoom: parentStyle.minzoom,
-        maxzoom: parentStyle.maxzoom,
         layout: {
           visibility: 'visible',
           'text-size': 16,
@@ -115,22 +113,26 @@
           'text-halo-width': 1,
         },
       }
+      if (parentStyle.minzoom) {
+        childLayer.minzoom = parentStyle.minzoom
+      }
+      if (parentStyle.maxzoom) {
+        childLayer.maxzoom = parentStyle.maxzoom
+      }
       style = childLayer
     }
 
     if (style.type !== LayerTypes.SYMBOL) return
 
     if (textFieldValue) {
+      // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
+      style.layout['text-variable-anchor'] = ['top', 'bottom', 'left', 'right']
+      style.layout['text-radial-offset'] = 0.5
+      style.layout['text-justify'] = 'auto'
       if (!$map.getLayer(layerId)) {
         $map.addLayer(style)
       }
-
       setDesimalPosition()
-
-      // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
-      $map.setLayoutProperty(layerId, 'text-variable-anchor', ['top', 'bottom', 'left', 'right'])
-      $map.setLayoutProperty(layerId, 'text-radial-offset', 0.5)
-      $map.setLayoutProperty(layerId, 'text-justify', 'auto')
     } else {
       if (layer.parentId) {
         if ($map.getLayer(layerId)) {

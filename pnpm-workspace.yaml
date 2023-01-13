@@ -1,4 +1,8 @@
 packages:
   - "sites/geohub"
-  - "packages/**"
-  - "apps/**"
+  - "packages/current-location"
+  - "packages/geohub-cli"
+  - "packages/style-switcher"
+  - "packages/style-viewer"
+  - "packages/svelte-undp-design"
+  - "apps/electricity-dashboard"

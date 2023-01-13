@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import { fade, slide } from 'svelte/transition'
   import ColorMapPicker from '$components/controls/ColorMapPicker.svelte'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
@@ -7,109 +6,21 @@
   import RasterUniqueValuesLegend from '$components/controls/RasterUniqueValuesLegend.svelte'
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { layerList, map } from '$stores'
-  import {
-    getActiveBandIndex,
-    fetchUrl,
-    updateParamsInURL,
-    getValueFromRasterTileUrl,
-    getLayerStyle,
-    getRandomColormap,
-  } from '$lib/helper'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import type { RasterTileSource } from 'maplibre-gl'
+  import type { Layer, RasterTileMetadata, IntervalLegendColorMapRow } from '$lib/types'
 
   export let layer: Layer
-  export let colorMapName: string
+  export let legendType: DynamicLayerLegendTypes = undefined
   export let classificationMethod: ClassificationMethodTypes
+  export let colorMapName: string
+  export let numberOfClasses: number
+  export let colorMapRows: Array<IntervalLegendColorMapRow>
 
-  let info
-  ;({ info } = layer)
+  let { info }: Layer = layer
 
-  let layerStats
   let colorPickerVisibleIndex: number
   let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
-  let layerListCount = $layerList.length
   let showTooltip = false
-  let numberOfClasses: number
-  export let legendType: DynamicLayerLegendTypes = undefined
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  let bandIndex = getActiveBandIndex(layer.info)
-
-  // hide colormap picker if change in layer list
-  $: {
-    if (layerListCount !== $layerList.length) {
-      showTooltip = false
-      layerListCount = $layerList.length
-    }
-  }
-
-  onMount(async () => {
-    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
-    if (colormap) {
-      // either unique or interval
-      const rasterInfo = layer.info as RasterTileMetadata
-      const band = info.active_band_no
-      layerHasUniqueValues = false
-      if (rasterInfo.stats[band] && rasterInfo.stats[band]['unique']) {
-        layerHasUniqueValues = Number(rasterInfo.stats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
-      }
-      if (layerHasUniqueValues) {
-        legendType = DynamicLayerLegendTypes.UNIQUE
-      } else {
-        legendType = DynamicLayerLegendTypes.INTERVALS
-      }
-    } else {
-      // continuous
-      const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      if (colormap_name) {
-        colorMapName = colormap_name
-      } else {
-        colorMapName = getRandomColormap()
-      }
-    }
-    if (![DynamicLayerLegendTypes.INTERVALS, DynamicLayerLegendTypes.UNIQUE].includes(legendType)) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      if (layerSrc?.tiles?.length > 0) {
-        await initialise()
-      } else {
-        setTimeout(initialise, 300)
-      }
-    }
-  })
-
-  const initialise = async () => {
-    const rasterInfo = layer.info as RasterTileMetadata
-    if (!rasterInfo?.isMosaicJson) {
-      const layerSrc: RasterTileSource = $map.getSource(getLayerStyle($map, layer.id).source) as RasterTileSource
-      if (!(layerSrc?.tiles?.length > 0)) return
-      const layerURL = new URL(layerSrc.tiles[0])
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
-      layerStats = await fetchUrl(statsURL)
-      const band = info.active_band_no
-
-      layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
-      if (layerHasUniqueValues) {
-        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get(
-          'url',
-        )}&categorical=true`
-        layerStats = await fetchUrl(statsURL)
-      }
-      if (!('stats' in info)) {
-        info = { ...info, stats: layerStats }
-        layer = { ...layer, info: info }
-        const layers = $layerList.map((lyr) => {
-          return layer.id !== lyr.id ? lyr : layer
-        })
-        layerList.set([...layers])
-      }
-    }
-    legendType = legendType ? legendType : DynamicLayerLegendTypes.CONTINUOUS
-  }
 
   const {
     ref: popperRef,
@@ -127,14 +38,15 @@
     colorPickerVisibleIndex = -1
     isLegendSwitchAnimate = true
     let bandName
-    const rasterInfo = layer.info as RasterTileMetadata
+
     try {
-      bandName = Object.keys(rasterInfo.stats)
+      bandName = Object.keys((info as RasterTileMetadata).stats)
     } catch (e) {
       console.log(e)
     }
     layerHasUniqueValues =
-      Number(rasterInfo.stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM && !rasterInfo.dtype.startsWith('float')
+      Number((info as RasterTileMetadata).stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM &&
+      !(info as RasterTileMetadata).dtype.startsWith('float')
 
     setTimeout(() => {
       isLegendSwitchAnimate = false
@@ -145,32 +57,6 @@
     } else {
       legendType = DynamicLayerLegendTypes.CONTINUOUS
     }
-  }
-
-  $: colorMapName, colorMapChanged()
-  const colorMapChanged = () => {
-    if (!colorMapName) return
-    const rasterInfo = layer.info as RasterTileMetadata
-    const source: RasterTileSource = $map.getSource($map.getLayer(layer.id).source) as RasterTileSource
-    const tiles = source.tiles
-    if (!(tiles && tiles.length > 0)) return
-    const layerURL = new URL(tiles[0])
-    layerURL.searchParams.delete('colormap_name')
-    layerURL.searchParams.delete('rescale')
-    const rescale = getValueFromRasterTileUrl($map, layer.id, 'rescale') as number[]
-    let updatedParams = Object.assign({ colormap_name: colorMapName })
-    if (rescale) {
-      updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') })
-    }
-    const layerStyle = getLayerStyle($map, layer.id)
-    updateParamsInURL(layerStyle, layerURL, updatedParams)
-
-    colorPickerVisibleIndex = -1
-    const nlayer = { ...layer }
-    const layers = $layerList.map((lyr) => {
-      return layer.id !== lyr.id ? lyr : nlayer
-    })
-    layerList.set([...layers])
   }
 
   const handleClosePopup = () => {
@@ -206,7 +92,8 @@
           bind:colorPickerVisibleIndex
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses />
+          bind:numberOfClasses
+          bind:colorMapRows />
       </div>
     {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
@@ -257,8 +144,6 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          layerMin={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MINIMUM'])}
-          layerMax={Number(layer.info['band_metadata'][bandIndex]['1']['STATISTICS_MAXIMUM'])}
           bind:colorMapName
           bind:numberOfClasses />
         <div
@@ -270,10 +155,11 @@
 </div>
 
 <style lang="scss">
-  @import 'src/styles/popper.scss';
+  @import '../../styles/popper.scss';
 
   .legend-toggle {
     padding-top: 15px;
+    max-height: 100px;
 
     .toggle-container {
       margin-left: 3.5px;

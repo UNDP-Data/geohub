@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { Map, NavigationControl } from 'maplibre-gl'
+  import maplibregl, { Map, NavigationControl } from 'maplibre-gl'
+  import * as pmtiles from 'pmtiles'
   import { styles } from '$lib/constants'
   import type {
     RasterTileMetadata,
     StacCollection,
     StacItemFeature,
     StacItemFeatureCollection,
+    VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
   import { RasterTileData } from '$lib/RasterTileData'
@@ -18,6 +20,12 @@
   export let isLoadMap = false
   export let defaultColor: string = undefined
   export let defaultColormap: string = undefined
+  export let layer: VectorLayerTileStatLayer = undefined
+
+  const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
+
+  let protocol = new pmtiles.Protocol()
+  maplibregl.addProtocol('pmtiles', protocol.tile)
 
   let mapContainer: HTMLDivElement
   let map: Map
@@ -67,13 +75,20 @@
         }
 
         if (is_raster === true) {
-          const rasterTile = new RasterTileData(map, feature)
+          const rasterInfo = metadata as RasterTileMetadata
+          const rasterTile = new RasterTileData(map, feature, rasterInfo)
           const data = await rasterTile.add()
           metadata = data.metadata
           defaultColormap = data.colormap
         } else {
-          const vectorTile = new VectorTileData(map, feature)
-          const data = await vectorTile.add()
+          const vectorInfo = metadata as VectorTileMetadata
+          const vectorTile = new VectorTileData(map, feature, vectorInfo)
+          let layerName = layer ? layer.layer : undefined
+          let layerType: 'point' | 'heatmap' = undefined
+          if (layer?.geometry.toLocaleLowerCase() === 'point') {
+            layerType = 'point'
+          }
+          const data = await vectorTile.add(layerType, undefined, layerName)
           metadata = data.metadata
           defaultColor = data.color
         }

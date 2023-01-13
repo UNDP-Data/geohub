@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, STAC_MINIMUM_ZOOM } from './constants'
+import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, MAP_ATTRIBUTION, STAC_MINIMUM_ZOOM } from './constants'
 import { getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
@@ -143,6 +143,11 @@ export class MosaicJsonData {
 
     const maxzoom = Number(tilejson.maxzoom && tilejson.maxzoom <= 24 ? tilejson.maxzoom : 24)
 
+    let attribution = MAP_ATTRIBUTION
+    if (this.feature.properties.source) {
+      attribution = this.feature.properties.source
+    }
+
     const source: RasterSourceSpecification = {
       type: 'raster',
       // convert http to https because titiler's /mosaicjson/tilejson.json does not return https protocol currently
@@ -150,19 +155,17 @@ export class MosaicJsonData {
       minzoom: 0,
       maxzoom: maxzoom ?? 22,
       bounds: tilejson.bounds,
-      attribution:
-        'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
-              Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
+      attribution,
     }
     if (source.maxzoom > 24) {
       source.maxzoom = 24
     }
-    const sourceId = this.feature.properties.id
+    const layerId = uuidv4()
+    const sourceId = layerId
     if (!this.map.getSource(sourceId)) {
       this.map.addSource(sourceId, source)
     }
 
-    const layerId = uuidv4()
     const layer: RasterLayerSpecification = {
       id: layerId,
       type: 'raster',

@@ -1,0 +1,63 @@
+name: Changesets
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-store
+
+permissions: {}
+jobs:
+  release:
+    # prevents this action from running on forks
+    if: github.repository == 'undp-data/geohub'
+    permissions:
+      contents: write # to create release (changesets/action)
+      pull-requests: write # to create pull request (changesets/action)
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # setup environmental variables
+      - name: Create environment file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          directory: ./sites/geohub
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
+          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
+          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
+          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
+
+      - name: build packages
+        run: |
+          pnpm --filter="./packages/**" build
+          pnpm --filter="./apps/**" build
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

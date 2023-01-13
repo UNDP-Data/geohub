@@ -18,3 +18,5 @@ export const bannerMessages = writable(<BannerMessage[]>[])
 export const spriteImageList = writable(<SpriteImage[]>[])
 
 export const filterInputTags = writable([])
+
+export const layerState = writable({})
