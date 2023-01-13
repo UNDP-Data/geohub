@@ -3,11 +3,25 @@
   import Time from 'svelte-time'
   import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
   import { CtaLink } from '@undp-data/svelte-undp-design'
+  import { MAP_ATTRIBUTION } from '$lib/constants'
 
   export let feature: StacItemFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
+
+  let attribution = MAP_ATTRIBUTION
+  if (feature.properties.source) {
+    attribution = feature.properties.source
+  }
+  $: if (metadata) {
+    if (!is_raster) {
+      const vectorInfo = metadata as VectorTileMetadata
+      if (vectorInfo.attribution) {
+        attribution = vectorInfo.attribution
+      }
+    }
+  }
 
   let isFullDescription = false
   let descriptionLength = 100
@@ -62,7 +76,7 @@
             {/if} -->
           {/if}
         {/if}
-        <p><b>Source: </b> {feature.properties.source}</p>
+        <p><b>Source: </b> {@html attribution}</p>
         <p>
           <b>Updated at: </b>
           <Time

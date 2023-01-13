@@ -86,6 +86,7 @@ export class VectorTileData {
       source = {
         type: 'vector',
         tiles: [this.url],
+        attribution: vectorInfo.metadata.attribution,
         minzoom: 0,
         maxzoom: maxzoom,
       }

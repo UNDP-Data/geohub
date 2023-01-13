@@ -26,7 +26,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
       bounds: bounds.join(','),
       minzoom: header.minZoom,
       maxzoom: header.maxZoom,
-      attribution: metadata.attribution,
+      attribution: metadata.attribution ?? MAP_ATTRIBUTION,
       description: metadata.description,
       type: metadata.type,
       version: metadata.version,
@@ -62,8 +62,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
     //static pbf
 
     const pbfpath = decodeURI(url)
-    const metaURI = pbfpath.replace('{z}/{x}/{y}.pbf', 'metadata.json')
-
+    const metaURI = pbfpath.replace('{z}/{x}/{y}.pbf', 'metadata.json').replace('0/0/0.pbf', 'metadata.json')
     const res = await fetch(metaURI)
     if (!res.ok) {
       throw error(res.status, { message: res.statusText })
