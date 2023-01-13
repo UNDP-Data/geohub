@@ -34,6 +34,7 @@
       type: 'raster-dem',
       url: 'pmtiles://https://pub-9288c68512ed46eca46ddcade307709b.r2.dev/protomaps-sample-datasets/terrarium_z9.pmtiles',
       tileSize: 256,
+      encoding: 'terrarium',
       attribution:
         '<a target="_top" rel="noopener" href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">©Tilezen Joerd</a>',
     })
@@ -75,7 +76,7 @@
       newMap.addControl(
         new TerrainControl({
           source: 'terrainSource',
-          exaggeration: 0.03,
+          exaggeration: 1,
         }),
         'bottom-right',
       )
