@@ -30,11 +30,10 @@
 
 <div
   class="has-tooltip-bottom has-tooltip-arrow"
-  data-tooltip={`${isPopupShown ? 'Hide infomation' : 'Show infomation'}`}>
+  data-tooltip="Show layer info">
   <div
     class="icon-selected"
-    title="Toggle Infomation"
-    aria-label="Toggle Infomation"
+    aria-label="Show layer info"
     tabindex="0"
     role="button"
     use:popperRef

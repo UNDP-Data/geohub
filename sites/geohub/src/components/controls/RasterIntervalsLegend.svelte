@@ -31,16 +31,18 @@
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes
+  export let colorMapRows: Array<IntervalLegendColorMapRow>
 
   $: colorMapName, colorManNameChanged()
 
   const colorManNameChanged = () => {
-    getColorMapRows()
-    reclassifyImage()
+    //console.log('RIL', colorMapName, colorMapRows.length)
+    if (colorMapRows.length > 0) return
+
+    if (colorMapName) reclassifyImage() // not right
   }
 
-  let info: RasterTileMetadata
-  ;({ info } = layerConfig)
+  let { info }: Layer = layerConfig
   const bandIndex = getActiveBandIndex(info)
 
   let layerMax
@@ -63,31 +65,31 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
-  let colorMapRows: IntervalLegendColorMapRow[] = []
 
   onMount(async () => {
     const rasterInfo = info as RasterTileMetadata
-    if (!rasterInfo?.isMosaicJson) {
-      const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    // if (!rasterInfo?.isMosaicJson) {
+    //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
 
-      const layerURL = new URL(layerUrl)
+    //   const layerURL = new URL(layerUrl)
 
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
-      const layerStats: RasterLayerStats = await fetchUrl(statsURL)
-      info = { ...info, stats: layerStats }
-    }
+    //   const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=20`
+    //   const layerStats: RasterLayerStats = await fetchUrl(statsURL)
+    //   info = { ...info, stats: layerStats }
+    // }
     const band = info.active_band_no
     percentile98 = info.stats[band]['percentile_98']
     const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
-    if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-      if (skewness > 1 && skewness > -1) {
-        // Layer isn't higly skewed.
+    //TODO discuss with Joseph
+    // if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
+    //   if (skewness > 1 && skewness > -1) {
+    //     // Layer isn't higly skewed.
 
-        classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-      } else {
-        classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-      }
-    }
+    //     classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
+    //   } else {
+    //     classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+    //   }
+    // }
 
     layerConfig = { ...layerConfig, info: info }
     const layers = $layerList.map((layer) => {
@@ -219,7 +221,6 @@
       bind:colorMapRow
       bind:colorMapName
       bind:rowWidth
-      layer={layerConfig}
       {colorPickerVisibleIndex}
       on:clickColorPicker={handleColorPickerClick}
       on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
