@@ -35,14 +35,14 @@
         showZoom: true,
         showCompass: true,
       }),
-      'top-right',
+      'bottom-right',
     )
     newMap.addControl(
       new GeolocateControl({
         positionOptions: { enableHighAccuracy: true },
         trackUserLocation: true,
       }),
-      'top-right',
+      'bottom-right',
     )
     newMap.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
 
