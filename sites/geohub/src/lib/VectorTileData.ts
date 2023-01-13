@@ -16,11 +16,13 @@ export class VectorTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
+  private metadata: VectorTileMetadata
 
-  constructor(map: Map, feature: StacItemFeature) {
+  constructor(map: Map, feature: StacItemFeature, metadata?: VectorTileMetadata) {
     this.map = map
     this.feature = feature
     this.url = feature.properties.url
+    this.metadata = metadata
   }
 
   public getMetadata = async () => {
@@ -48,8 +50,11 @@ export class VectorTileData {
         metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`
       }
     }
-    const res = await fetch(metadataUrl)
-    const data: VectorTileMetadata = await res.json()
+    let data: VectorTileMetadata = this.metadata
+    if (!data) {
+      const res = await fetch(metadataUrl)
+      data = await res.json()
+    }
 
     return {
       metadata: data,
