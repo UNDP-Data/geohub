@@ -3,7 +3,7 @@ import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
 import * as pmtiles from 'pmtiles'
 import arraystat from 'arraystat'
 import { mean, std, median } from 'mathjs'
-import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
+import { MAP_ATTRIBUTION, UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
 
 /**
  * get metadata json of static pbf
@@ -80,7 +80,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
     }
 
     if (!data.attribution) {
-      data.attribution = 'United Nations Development Programme'
+      data.attribution = MAP_ATTRIBUTION
     }
 
     const layers = await getStats(origin, pbfpath, data.json.tilestats.layers)
