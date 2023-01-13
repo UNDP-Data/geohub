@@ -8,6 +8,7 @@
     ScaleControl,
     TerrainControl,
     type MapTerrainEvent,
+    type TerrainSpecification,
   } from 'maplibre-gl'
   import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
@@ -26,6 +27,10 @@
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
 
+  const terrainOptions: TerrainSpecification = {
+    source: 'terrainSource',
+    exaggeration: 1,
+  }
   const setTerrainRgb = (map: Map) => {
     if (!map) return
     const sourceId = 'terrainSource'
@@ -33,11 +38,11 @@
     map.addSource(sourceId, {
       type: 'raster-dem',
       url: 'pmtiles://https://pub-9288c68512ed46eca46ddcade307709b.r2.dev/protomaps-sample-datasets/terrarium_z9.pmtiles',
-      tileSize: 256,
       encoding: 'terrarium',
       attribution:
         '<a target="_top" rel="noopener" href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">©Tilezen Joerd</a>',
     })
+    map.setMaxPitch(85)
   }
 
   onMount(async () => {
@@ -73,22 +78,18 @@
       newMap.resize()
 
       setTerrainRgb(newMap)
-      newMap.addControl(
-        new TerrainControl({
-          source: 'terrainSource',
-          exaggeration: 1,
-        }),
-        'bottom-right',
-      )
-      newMap.on('terrain', (e: MapTerrainEvent) => {
-        if (e['terrain']) {
-          newMap.setMaxPitch(85)
-        } else {
-          newMap.setMaxPitch(60)
-        }
-      })
+      newMap.addControl(new TerrainControl(terrainOptions), 'bottom-right')
       newMap.on('styledata', () => {
+        const isTerrain = newMap.getTerrain()
+        if (isTerrain) {
+          newMap.setTerrain(null)
+        }
         setTerrainRgb(newMap)
+        if (isTerrain) {
+          setTimeout(() => {
+            newMap.setTerrain(terrainOptions)
+          }, 500)
+        }
       })
 
       const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
