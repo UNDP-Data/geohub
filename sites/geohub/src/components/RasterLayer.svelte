@@ -71,9 +71,22 @@
       await sleep(100)
     }
 
-    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    const colormap: number[][][] = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][]
 
     if (colormap) {
+      //layer  is beeing loaded form a saved map and is classified
+      colormap.forEach((row: number[][], index: number) => {
+        const [start, end] = row[0]
+        const color = row[1]
+        colorMapRows.push({
+          color: color,
+          index: index,
+          start: start,
+          end: end,
+        })
+      })
+      numberOfClasses = colorMapRows.length
+
       // either unique or interval
 
       const band = (info as RasterTileMetadata).active_band_no
