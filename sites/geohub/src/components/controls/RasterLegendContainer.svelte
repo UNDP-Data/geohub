@@ -93,7 +93,8 @@
           bind:colorMapName
           bind:classificationMethod
           bind:numberOfClasses
-          bind:colorMapRows />
+          bind:colorMapRows
+          bind:generateCmap={showTooltip} />
       </div>
     {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
