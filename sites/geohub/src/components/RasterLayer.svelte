@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte'
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
