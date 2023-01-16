@@ -3,9 +3,10 @@
 
 	export let url: string;
 	export let title = '';
-	export let bytes = 0;
+	export let bytes: number | undefined = undefined;
+	let extension = '';
 
-	export const downloadFile = () => {
+	const downloadFile = () => {
 		const element = document.createElement('a');
 		element.href = url;
 		element.download = url;
@@ -18,6 +19,18 @@
 			downloadFile();
 		}
 	};
+
+	const fileUrl = new URL(url);
+	const filePath = fileUrl.pathname.split('/');
+	const fileName = filePath[filePath.length - 1];
+	if (!title) {
+		title = fileName;
+	}
+	const fileExtensions = fileName.split('.');
+	extension = '';
+	if (fileExtensions.length > 1) {
+		extension = fileExtensions[fileExtensions.length - 1].toLocaleUpperCase();
+	}
 </script>
 
 <div class="download-card">
@@ -27,9 +40,9 @@
 			{#if title}
 				<p class="title">{title}</p>
 			{/if}
-			{#if bytes > 0}
-				<p class="format">PDF ({filesize(bytes, { round: 2, precision: 1 })})</p>
-			{/if}
+			<p class="format">
+				{extension} ({bytes && bytes > 0 ? filesize(bytes, { round: 1 }) : 'N/A'})
+			</p>
 			<span class="download">
 				Download
 				<span class="download-animated"><i /></span>

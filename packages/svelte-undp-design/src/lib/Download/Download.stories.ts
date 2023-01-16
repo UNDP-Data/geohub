@@ -16,6 +16,11 @@ const meta = {
 			type: 'string',
 			description: 'Title for file',
 			defaultValue: ''
+		},
+		bytes: {
+			type: 'number',
+			description: 'Content Length of file (unit is bytes)',
+			defaultValue: undefined
 		}
 	}
 } satisfies Meta<Download>;
