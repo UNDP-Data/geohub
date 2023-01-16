@@ -57,6 +57,12 @@
   // update color intervals upon change of color map name
   $: colorMapName, updateMapWithNewColorMap()
 
+
+  let classificationMethodsDefault = [
+    { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
+    { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
+    { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
+  ]
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
   let layerStyle = getLayerStyle($map, layer.id)
@@ -67,11 +73,7 @@
   let sizeArray: number[]
   let highlySkewed: boolean
   let hasUniqueValues = false
-  let classificationMethodsDefault = [
-    { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
-    { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
-    { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
-  ]
+
   let applyToOptions: Radio[] = [
     {
       label: layerType === 'symbol' ? 'Icon color' : 'Line color',
