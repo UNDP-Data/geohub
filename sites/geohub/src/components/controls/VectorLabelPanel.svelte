@@ -23,7 +23,7 @@
 
   let decimalPosition: number
   let fieldType: string
-  let textFieldValue: string
+  let textFieldValue = ''
   let isAdvancedSettings = false
   let targetLayer = style.type === 'symbol' ? layer : undefined
   let targetLayerId = targetLayer ? layer.id : undefined
@@ -74,6 +74,7 @@
 
       const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
       textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
+      console.log(textFieldValue)
       fireLabelChanged()
     }
   }
@@ -83,11 +84,8 @@
   }
 
   const fireLabelChanged = () => {
-    if (textFieldValue) {
-      isLabelCreated = true
-    } else {
-      isLabelCreated = false
-    }
+    console.log(textFieldValue)
+    isLabelCreated = !!textFieldValue
     $map.fire('label:changed', {
       parentId: parentLayerId,
       layerId: targetLayer.id,

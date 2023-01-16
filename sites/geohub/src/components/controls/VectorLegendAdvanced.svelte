@@ -40,12 +40,15 @@
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
-  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
+  export let applyToOption: VectorApplyToTypes
   export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
   export let defaultColor: string
+  export let propertySelectValue
+  export let numberOfClasses: number
+  export let colorMapRows: IntervalLegendColorMapRow[]
 
   let layerStyle = getLayerStyle($map, layer.id)
   let layerType = layerStyle.type
@@ -64,11 +67,9 @@
   let cssIconFilter: string
   let icon: SpriteImage
   let rowWidth: number
-  export let numberOfClasses = COLOR_CLASS_COUNT
-  let propertySelectValue: string = null
+
   let sizeArray: number[]
   let highlySkewed: boolean
-  let colorMapRows: IntervalLegendColorMapRow[] = []
   // update layer store upon change of apply to option
   $: applyToOption, updateMap()
 
@@ -84,19 +85,32 @@
   ]
 
   // update color intervals upon change of color map name
-  $: colorMapName, colorMapChanged()
-  const colorMapChanged = () => {
-    getPropertySelectValue()
-    getColorMapRows()
-    setIntervalValues()
+  $: colorMapName, updateMapWithNewColorMap()
+
+  const updateMapWithNewColorMap = () => {
+    // generate new colors depending on the color map name and number of classes
+    const colors = chroma.scale(colorMapName).colors(numberOfClasses)
+    // update color intervals
+    colorMapRows = colorMapRows.map((row, index) => {
+      return {
+        ...row,
+        color: [
+          chroma(colors[index]).rgba()[0],
+          chroma(colors[index]).rgba()[1],
+          chroma(colors[index]).rgba()[2],
+          remapInputValue(chroma(colors[index]).alpha(), 0, 1, 0, 255),
+        ],
+      }
+    })
+    updateMap()
   }
 
   onMount(() => {
     if (layerType === 'symbol') {
       icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     }
-    setCssIconFilter()
     getPropertySelectValue()
+    setCssIconFilter()
     getColorMapRows()
     setIntervalValues()
 
@@ -213,12 +227,6 @@
       })
     })
     numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
-  }
-
-  const setDefaultProperty = (selectOptions: string[]) => {
-    if (selectOptions.length === 0) return ''
-    setIntervalValues()
-    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
@@ -368,7 +376,6 @@
 
         return [row.start, rgb]
       })
-
       stops = sortStops(stops)
       $map.setPaintProperty(layer.id, 'fill-outline-color', defaultOutlineColor)
       $map.setPaintProperty(layer.id, 'fill-color', {
@@ -473,8 +480,7 @@
         bind:propertySelectValue
         on:select={handlePropertyChange}
         {layer}
-        showOnlyNumberFields={true}
-        {setDefaultProperty} />
+        showOnlyNumberFields={true} />
     </div>
     {#if layerType !== 'fill' && hasUniqueValues === false}
       <div class="column">
@@ -528,7 +534,6 @@
               bind:colorMapRow
               bind:colorMapName
               bind:rowWidth
-              {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
               on:changeColorMap={handleParamsUpdate}

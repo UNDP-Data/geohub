@@ -19,9 +19,11 @@
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
+  export let applyToOption: VectorApplyToTypes
   export let legendType: string
+  export let colorMapRows
 
+  export let numberOfClasses
   const layerId = layer.id
   const style: LayerSpecification = $map
     .getStyle()
@@ -93,7 +95,7 @@
   let layerMax: number
   let showTooltip = false
   let layerNumberProperties = 0
-  let numberOfClasses: number
+  let propertySelectValue
 
   onMount(() => {
     // set default values
@@ -128,10 +130,9 @@
     }
   }
 
-  $: colorMapName, colorMapChanged()
+  // $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
-    const layerClone = cloneDeep(layer)
-    layer = layerClone
+    layer = cloneDeep(layer)
     colorPickerVisibleIndex = -1
 
     // fire event for style sharing
@@ -187,10 +188,13 @@
           bind:layer
           bind:layerMin
           bind:layerMax
+          bind:propertySelectValue
           bind:colorMapName
           bind:classificationMethod
           bind:numberOfClasses
           bind:defaultColor
+          bind:colorMapRows
+          bind:applyToOption
           bind:defaultOutlineColor={defaultLineColor} />
       </div>
     {/if}
@@ -244,6 +248,7 @@
             {layerMin}
             {layerMax}
             bind:colorMapName
+            on:colorMapChanged={colorMapChanged}
             bind:numberOfClasses />
           <div
             id="arrow"
