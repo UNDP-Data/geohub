@@ -13,6 +13,7 @@
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
+
   let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   let legendType: string
   let defaultColor: string

@@ -49,30 +49,29 @@
   export let propertySelectValue
   export let numberOfClasses: number
   export let colorMapRows: IntervalLegendColorMapRow[]
+  export let defaultOutlineColor: string
+  export let classificationMethod: ClassificationMethodTypes
 
+  // update layer store upon change of apply to option
+  $: applyToOption, updateMap()
+  // update color intervals upon change of color map name
+  $: colorMapName, updateMapWithNewColorMap()
+
+  let classificationMethods = classificationMethodsDefault
+  let colorPickerVisibleIndex: number
   let layerStyle = getLayerStyle($map, layer.id)
   let layerType = layerStyle.type
-
+  let cssIconFilter: string
+  let icon: SpriteImage
+  let rowWidth: number
+  let sizeArray: number[]
+  let highlySkewed: boolean
+  let hasUniqueValues = false
   let classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
-
-  let hasUniqueValues = false
-  export let classificationMethod: ClassificationMethodTypes
-  let classificationMethods = classificationMethodsDefault
-  let colorPickerVisibleIndex: number
-  export let defaultOutlineColor: string
-  let cssIconFilter: string
-  let icon: SpriteImage
-  let rowWidth: number
-
-  let sizeArray: number[]
-  let highlySkewed: boolean
-  // update layer store upon change of apply to option
-  $: applyToOption, updateMap()
-
   let applyToOptions: Radio[] = [
     {
       label: layerType === 'symbol' ? 'Icon color' : 'Line color',
@@ -83,27 +82,6 @@
       value: VectorApplyToTypes.SIZE,
     },
   ]
-
-  // update color intervals upon change of color map name
-  $: colorMapName, updateMapWithNewColorMap()
-
-  const updateMapWithNewColorMap = () => {
-    // generate new colors depending on the color map name and number of classes
-    const colors = chroma.scale(colorMapName).colors(numberOfClasses)
-    // update color intervals
-    colorMapRows = colorMapRows.map((row, index) => {
-      return {
-        ...row,
-        color: [
-          chroma(colors[index]).rgba()[0],
-          chroma(colors[index]).rgba()[1],
-          chroma(colors[index]).rgba()[2],
-          remapInputValue(chroma(colors[index]).alpha(), 0, 1, 0, 255),
-        ],
-      }
-    })
-    updateMap()
-  }
 
   onMount(() => {
     if (layerType === 'symbol') {
@@ -133,6 +111,24 @@
     if (!$map) return
     $map.off('zoom', updateMap)
   })
+
+  const updateMapWithNewColorMap = () => {
+    // generate new colors depending on the color map name and number of classes
+    const colors = chroma.scale(colorMapName).colors(numberOfClasses)
+    // update color intervals
+    colorMapRows = colorMapRows.map((row, index) => {
+      return {
+        ...row,
+        color: [
+          chroma(colors[index]).rgba()[0],
+          chroma(colors[index]).rgba()[1],
+          chroma(colors[index]).rgba()[2],
+          remapInputValue(chroma(colors[index]).alpha(), 0, 1, 0, 255),
+        ],
+      }
+    })
+    updateMap()
+  }
 
   const setCssIconFilter = () => {
     if (layerType === 'fill') return

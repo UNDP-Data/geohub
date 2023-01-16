@@ -22,8 +22,8 @@
   export let applyToOption: VectorApplyToTypes
   export let legendType: string
   export let colorMapRows
-
   export let numberOfClasses
+
   const layerId = layer.id
   const style: LayerSpecification = $map
     .getStyle()
@@ -130,7 +130,6 @@
     }
   }
 
-  // $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
     layer = cloneDeep(layer)
     colorPickerVisibleIndex = -1

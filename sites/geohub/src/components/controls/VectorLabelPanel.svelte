@@ -20,7 +20,6 @@
 
   const parentLayerId = layer.id
   let style: LayerSpecification = getLayerStyle($map, layer.id)
-
   let decimalPosition: number
   let fieldType: string
   let textFieldValue = ''
