@@ -57,7 +57,6 @@
   // update color intervals upon change of color map name
   $: colorMapName, updateMapWithNewColorMap()
 
-
   let classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
