@@ -59,6 +59,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"filesize": "^10.0.6",
 		"svelte": "^3.55.0",
 		"svelte-carousel": "^1.0.20"
 	},
