@@ -15,6 +15,9 @@
 
   const url = feature.properties.url
 
+  const isStac = is_raster && stacType ? true : false
+  const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf')
+
   let attribution = MAP_ATTRIBUTION
   if (feature.properties.source) {
     attribution = feature.properties.source
@@ -34,34 +37,16 @@
   interface FileOptions {
     title: string
     url: string
-    bytes: number
   }
 
-  const getFileSize = () => {
-    return new Promise<FileOptions>((resolve, reject) => {
-      const isStac = is_raster && stacType ? true : false
-      const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf')
-      if (!(isStac === true || isPbf === true)) {
-        // only accept COG file in raster and pmtiles in vector
-        const fileUrl = new URL(url.replace('pmtiles://', ''))
-        const filePath = fileUrl.pathname.split('/')
-        const file: FileOptions = {
-          title: filePath[filePath.length - 1],
-          url: fileUrl.toString(),
-          bytes: 0,
-        }
-
-        fetch(fileUrl.toString()).then((res) => {
-          if (res.ok) {
-            const contentLength = res.headers.get('content-length')
-            if (contentLength) {
-              file.bytes = Number(contentLength)
-            }
-          }
-          resolve(file)
-        })
-      }
-    })
+  let file: FileOptions
+  if (!(isStac === true || isPbf === true)) {
+    const fileUrl = new URL(url.replace('pmtiles://', ''))
+    const filePath = fileUrl.pathname.split('/')
+    file = {
+      title: filePath[filePath.length - 1],
+      url: fileUrl.toString(),
+    }
   }
 </script>
 
@@ -121,12 +106,11 @@
             timestamp={feature.properties.updatedat}
             format="h:mm A, MMMM D, YYYY" />
         </p>
-        {#await getFileSize() then file}
+        {#if file}
           <Download
             title={file.title}
-            url={file.url}
-            bytes={file.bytes} />
-        {/await}
+            url={file.url} />
+        {/if}
       {/if}
     </div>
   {/if}

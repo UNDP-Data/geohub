@@ -3,7 +3,6 @@
 
 	export let url: string;
 	export let title = '';
-	export let bytes: number | undefined = undefined;
 	let extension = '';
 
 	const downloadFile = () => {
@@ -31,6 +30,30 @@
 	if (fileExtensions.length > 1) {
 		extension = fileExtensions[fileExtensions.length - 1].toLocaleUpperCase();
 	}
+
+	let fileFormat = extension;
+
+	const getFileSize = () => {
+		return new Promise<void>((resolve, reject) => {
+			const fileUrl = new URL(url.replace('pmtiles://', ''));
+			const filePath = fileUrl.pathname.split('/');
+			let bytes = 'N/A';
+			fetch(fileUrl.toString()).then((res) => {
+				if (res.ok) {
+					const contentLength = res.headers.get('content-length');
+					if (contentLength) {
+						bytes = filesize(Number(contentLength), { round: 1 }) as string;
+					}
+				}
+				fileFormat = `${fileFormat} (${bytes})`;
+				resolve();
+			});
+		});
+	};
+
+	$: if (url) {
+		getFileSize();
+	}
 </script>
 
 <div class="download-card">
@@ -41,7 +64,7 @@
 				<p class="title">{title}</p>
 			{/if}
 			<p class="format">
-				{extension} ({bytes && bytes > 0 ? filesize(bytes, { round: 1 }) : 'N/A'})
+				{fileFormat}
 			</p>
 			<span class="download">
 				Download

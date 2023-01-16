@@ -16,11 +16,6 @@ const meta = {
 			type: 'string',
 			description: 'Title for file',
 			defaultValue: ''
-		},
-		bytes: {
-			type: 'number',
-			description: 'Content Length of file (unit is bytes)',
-			defaultValue: undefined
 		}
 	}
 } satisfies Meta<Download>;
@@ -32,7 +27,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		url: 'assets/undp-logo-blue.svg',
-		title: 'undp-logo-blue.svg',
-		bytes: 1000000
+		title: 'undp-logo-blue.svg'
 	}
 };
