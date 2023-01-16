@@ -1,7 +1,5 @@
 # How is the data arranged in the GeoHub?
 
-## Data Structure
-
 Data is found as Raster and Vector files
 
 We follow a unique way to arrange our data sets! All the data sets within the UNDP GeoHub are arranged under three main “Buckets” and found under the Home page.
