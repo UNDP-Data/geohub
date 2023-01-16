@@ -60,13 +60,7 @@
 
 		.description {
 			width: fit-content;
-			max-width: 330px;
-
-			.title {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
+			max-width: 300px;
 		}
 	}
 </style>

@@ -50,9 +50,9 @@
     use:popperContent={popperOptions}
     use:clickOutside={() => (isPopupShown = false)}
     transition:fade>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="close"
-      alt="Close"
       title="Close"
       on:click={() => (isPopupShown = false)}>
       <i class="fa-solid fa-xmark sm" />
@@ -75,7 +75,7 @@
 
   @import '../../styles/popper.scss';
   #tooltip {
-    max-width: 300px;
+    max-width: 330px;
     inset: -10px auto auto 0px !important;
 
     .close {
@@ -91,6 +91,7 @@
       font-weight: lighter;
       max-height: 300px;
       overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 </style>
