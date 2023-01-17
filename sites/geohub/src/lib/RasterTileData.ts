@@ -3,37 +3,41 @@ import { getActiveBandIndex, getBase64EncodedUrl, getRandomColormap, paramsToQue
 import type { RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
+import { MAP_ATTRIBUTION } from './constants'
 
 export class RasterTileData {
   private feature: StacItemFeature
   private map: Map
   private url: string
+  private metadata: RasterTileMetadata
 
-  constructor(map: Map, feature: StacItemFeature) {
+  constructor(map: Map, feature: StacItemFeature, metadata?: RasterTileMetadata) {
     this.map = map
     this.feature = feature
     this.url = feature.properties.url
+    this.metadata = metadata
   }
 
-  private getMetadata = async () => {
+  public getMetadata = async () => {
+    if (this.metadata) return this.metadata
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
-    const data: RasterTileMetadata = await res.json()
+    this.metadata = await res.json()
     if (
-      data &&
-      data.band_metadata &&
-      data.band_metadata.length > 0 &&
+      this.metadata &&
+      this.metadata.band_metadata &&
+      this.metadata.band_metadata.length > 0 &&
       //TODO needs fix: Ioan band
-      Object.keys(data.band_metadata[0][1]).length === 0
+      Object.keys(this.metadata.band_metadata[0][1]).length === 0
     ) {
       const resStatistics = await fetch(`${PUBLIC_TITILER_ENDPOINT}/statistics?url=${b64EncodedUrl}`)
       const statistics = await resStatistics.json()
       if (statistics) {
-        for (let i = 0; i < data.band_metadata.length; i++) {
-          const bandValue = data.band_metadata[i][0]
+        for (let i = 0; i < this.metadata.band_metadata.length; i++) {
+          const bandValue = this.metadata.band_metadata[i][0]
           const bandDetails = statistics[bandValue]
           if (bandDetails) {
-            data.band_metadata[i][1] = {
+            this.metadata.band_metadata[i][1] = {
               STATISTICS_MAXIMUM: `${bandDetails.max}`,
               STATISTICS_MEAN: `${bandDetails.mean}`,
               STATISTICS_MINIMUM: `${bandDetails.min}`,
@@ -45,7 +49,7 @@ export class RasterTileData {
       }
     }
 
-    return data
+    return this.metadata
   }
 
   public add = async (defaultColormap?: string) => {
@@ -77,6 +81,11 @@ export class RasterTileData {
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 
+    let attribution = MAP_ATTRIBUTION
+    if (this.feature.properties.source) {
+      attribution = this.feature.properties.source
+    }
+
     const source: RasterSourceSpecification = {
       type: 'raster',
       tiles: [tileUrl],
@@ -86,6 +95,7 @@ export class RasterTileData {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       bounds: rasterInfo['bounds'],
+      attribution,
     }
     const layerId = uuidv4()
     //const sourceId = this.feature.properties.id
@@ -134,7 +144,8 @@ export class RasterTileData {
     let classesMap = {}
     // local rasters
     const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
-    if (uvString) {
+    if (!uvString) return classesMap
+    if (uvString && uvString.length > 0) {
       classesMap = JSON.parse(uvString)
     }
     return classesMap

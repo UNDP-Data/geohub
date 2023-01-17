@@ -2,15 +2,52 @@
   import { marked } from 'marked'
   import Time from 'svelte-time'
   import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
-  import { CtaLink } from '@undp-data/svelte-undp-design'
+  import { CtaLink, Download } from '@undp-data/svelte-undp-design'
+  import { MAP_ATTRIBUTION } from '$lib/constants'
 
   export let feature: StacItemFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
 
+  const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
+  const stacType = tags?.find((tag) => tag.key === 'stac')
+
+  const url = feature.properties.url
+
+  const isStac = is_raster && stacType ? true : false
+  const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf')
+
+  let attribution = MAP_ATTRIBUTION
+  if (feature.properties.source) {
+    attribution = feature.properties.source
+  }
+  $: if (metadata) {
+    if (!is_raster) {
+      const vectorInfo = metadata as VectorTileMetadata
+      if (vectorInfo.attribution) {
+        attribution = vectorInfo.attribution
+      }
+    }
+  }
+
   let isFullDescription = false
   let descriptionLength = 100
+
+  interface FileOptions {
+    title: string
+    url: string
+  }
+
+  let file: FileOptions
+  if (!(isStac === true || isPbf === true)) {
+    const fileUrl = new URL(url.replace('pmtiles://', ''))
+    const filePath = fileUrl.pathname.split('/')
+    file = {
+      title: filePath[filePath.length - 1],
+      url: fileUrl.toString(),
+    }
+  }
 </script>
 
 <div class="container">
@@ -62,13 +99,18 @@
             {/if} -->
           {/if}
         {/if}
-        <p><b>Source: </b> {feature.properties.source}</p>
+        <p><b>Source: </b> {@html attribution}</p>
         <p>
           <b>Updated at: </b>
           <Time
             timestamp={feature.properties.updatedat}
             format="h:mm A, MMMM D, YYYY" />
         </p>
+        {#if file}
+          <Download
+            title={file.title}
+            url={file.url} />
+        {/if}
       {/if}
     </div>
   {/if}

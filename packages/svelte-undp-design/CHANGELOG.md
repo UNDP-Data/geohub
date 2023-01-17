@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.6
+
+### Patch Changes
+
+- 310179a: added Download component in svelte-undp-design
+
 ## 0.0.5
 
 ### Patch Changes

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import maplibregl, { Map } from 'maplibre-gl'
+  import maplibregl, { AttributionControl, GeolocateControl, Map, NavigationControl, ScaleControl } from 'maplibre-gl'
   import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte'
   import StyleSwicher from '@undp-data/style-switcher'
   import CurrentLocation from '@undp-data/current-location'
-  import { styles } from '$lib/constants'
+  import { MAP_ATTRIBUTION, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
   import { map, spriteImageList } from '$stores'
@@ -25,24 +25,41 @@
       center: [0, 0],
       zoom: 3,
       hash: true,
+      attributionControl: false,
     })
 
-    newMap.addControl(new maplibregl.NavigationControl({}), 'top-right')
-    newMap.addControl(new maplibregl.ScaleControl({}), 'bottom-left')
+    newMap.addControl(new AttributionControl({ compact: true, customAttribution: MAP_ATTRIBUTION }), 'bottom-right')
+    newMap.addControl(
+      new NavigationControl({
+        visualizePitch: true,
+        showZoom: true,
+        showCompass: true,
+      }),
+      'bottom-right',
+    )
+    newMap.addControl(
+      new GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true,
+      }),
+      'bottom-right',
+    )
+    newMap.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
 
-    const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
-    const exportControl = new MaplibreExportControl({
-      PageSize: Size.A4,
-      PageOrientation: PageOrientation.Landscape,
-      Format: Format.PNG,
-      DPI: DPI[96],
-      Crosshair: true,
-      PrintableArea: true,
-    })
-    newMap.addControl(exportControl, 'top-right')
-
-    newMap.on('load', () => {
+    newMap.on('load', async () => {
       newMap.resize()
+
+      const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
+      const exportControl = new MaplibreExportControl({
+        PageSize: Size.A4,
+        PageOrientation: PageOrientation.Landscape,
+        Format: Format.PNG,
+        DPI: DPI[96],
+        Crosshair: true,
+        PrintableArea: true,
+      })
+      newMap.addControl(exportControl, 'top-right')
+
       const styleUrl = newMap.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
       const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
       promise

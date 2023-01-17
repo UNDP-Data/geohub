@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, createEventDispatcher } from 'svelte'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import {
     ClassificationMethodNames,
@@ -23,7 +23,7 @@
   import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
-
+  //console.clear()
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
   export let numberOfClasses: number
@@ -32,32 +32,45 @@
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapRows: Array<IntervalLegendColorMapRow>
+  // this var is necessary to maintain the state of teh colormap when switching the legend.
+  // and it should be set by the bool flags that control the colormap picker visibility from parent container
+  export let generateCmap: boolean
 
-  $: colorMapName, colorManNameChanged()
+  $: colorMapName, colorMapNameChanged()
 
-  const colorManNameChanged = () => {
-    //console.log('RIL', colorMapName, colorMapRows.length)
-    if (colorMapRows.length > 0) return
+  const colorMapNameChanged = () => {
+    // this also happens on init/mounting. because of this it is not posisble to know when the colormap has been changed
+    // or when the component is being created. On demand (event based approach) might be better
 
-    if (colorMapName) reclassifyImage() // not right
+    // the map is updated whene the colormap is chenged intentionally or whne it is initialized first time
+
+    if ((colorMapName && generateCmap) || (colorMapName && colorMapRows.length == 0)) {
+      reclassifyImage()
+    } // not right
+    else {
+      handleParamsUpdate()
+    }
   }
 
   let { info }: Layer = layerConfig
   const bandIndex = getActiveBandIndex(info)
-
   let layerMax
   let layerMin
+  let layerMean
   let rowWidth: number
   if ('stats' in info) {
     const band = Object.keys(info.stats)[bandIndex]
+
     layerMin = Number(info.stats[band].min)
     layerMax = Number(info.stats[band].max)
+    layerMean = Number(info.stats[band].mean)
   } else {
     const [band, bandMetaStats] = info['band_metadata'][bandIndex]
     layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
+    layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
   }
-
+  const layerMeanToMax = layerMean / layerMax
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -66,8 +79,14 @@
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
 
+  if (layerMeanToMax >= -0.5 && layerMeanToMax <= 0.5) classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+  if ((layerMeanToMax > -5 && layerMeanToMax < -0.5) || (layerMeanToMax > 0.5 && layerMeanToMax < 5))
+    classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
+  if (layerMeanToMax <= -5 && layerMeanToMax >= 5) classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+
   onMount(async () => {
-    const rasterInfo = info as RasterTileMetadata
+    //const rasterInfo = info as RasterTileMetadata
+
     // if (!rasterInfo?.isMosaicJson) {
     //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
 
@@ -77,46 +96,61 @@
     //   const layerStats: RasterLayerStats = await fetchUrl(statsURL)
     //   info = { ...info, stats: layerStats }
     // }
-    const band = info.active_band_no
-    percentile98 = info.stats[band]['percentile_98']
-    const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
-    //TODO discuss with Joseph
-    // if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-    //   if (skewness > 1 && skewness > -1) {
-    //     // Layer isn't higly skewed.
+    // const band = info?.active_band_no
+    // percentile98 = info?.stats[band]['percentile_98']
 
-    //     classificationMethod = ClassificationMethodTypes.EQUIDISTANT // Default classification method
-    //   } else {
-    //     classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-    //   }
-    // }
+    // //skewness based
+    // const skewness = 3 * ((info.stats[band].mean - info.stats[band].median) / info.stats[band].std)
+    // if (skewness>-.5 && skewness < .5) classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+    // if (skewness>-1 && skewness<-.5 || skewness>.5 && skewness < 1) classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
+    // if (skewness<-1 || skewness> 1) classificationMethod = ClassificationMethodTypes.LOGARITHMIC
 
-    layerConfig = { ...layerConfig, info: info }
-    const layers = $layerList.map((layer) => {
-      return layerConfig.id !== layer.id ? layer : layerConfig
-    })
-    layerList.set([...layers])
-    getColorMapRows()
-    colorMapRows.length > 0 ? null : reclassifyImage()
+    //based on mean/max ratio
+
+    // if (layerMeanToMax >= -0.5 && layerMeanToMax <= 0.5) classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+    // if ((layerMeanToMax > -5 && layerMeanToMax < -0.5) || (layerMeanToMax > 0.5 && layerMeanToMax < 5))
+    //   classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
+    // if (layerMeanToMax <= -5 && layerMeanToMax >= 5) classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+
+    // layerConfig = { ...layerConfig, info: info }
+    // const layers = $layerList.map((layer) => {
+    //   return layerConfig.id !== layer.id ? layer : layerConfig
+    // })
+    // layerList.set([...layers])
+
+    // this fucntion is useless, really, at the time when on mount is executed the map has not been yet updated and
+    // the colormap object does not exist in the layer's url. A forced sync with the map might be better
+    // and could work. However, with the introduction of colorMapRows in te state management
+    // this funcntion becomes obsolete. and should be removed
+
+    if (colorMapRows.length == 0) {
+      reclassifyImage()
+    }
   })
 
-  const getColorMapRows = () => {
-    const colormap: number[][][] = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as number[][][]
-    colorMapRows = []
-    if (colormap && colormap.length > 0) {
-      colormap.forEach((row: number[][], index: number) => {
-        const values = row[0]
-        const color = row[1]
-        colorMapRows.push({
-          color: color,
-          index: index,
-          start: values[0],
-          end: values[1],
-        })
-      })
-    }
-    numberOfClasses = colorMapRows.length === 0 ? numberOfClasses : colorMapRows.length
-  }
+  // const getColorMapRows = () => {
+  //   const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+  //   const layerURL = new URL(layerUrl)
+  //   console.log(layerUrl)
+
+  //   const colormap: number[][][] = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as number[][][]
+
+  //   console.log(colormap)
+  //   colorMapRows = []
+  //   if (colormap && colormap.length > 0) {
+  //     colormap.forEach((row: number[][], index: number) => {
+  //       const values = row[0]
+  //       const color = row[1]
+  //       colorMapRows.push({
+  //         color: color,
+  //         index: index,
+  //         start: values[0],
+  //         end: values[1],
+  //       })
+  //     })
+  //   }
+  //   numberOfClasses = colorMapRows.length === 0 ? numberOfClasses : colorMapRows.length
+  // }
 
   const reclassifyImage = (e?: CustomEvent) => {
     let isClassificationMethodEdited = false
@@ -147,8 +181,9 @@
     })
   }
 
+  // it is very interesting that without debounce it does NOW properly
   // encode colormap and update url parameters
-  const handleParamsUpdate = debounce(() => {
+  const handleParamsUpdate = () => {
     const encodeColorMapRows = JSON.stringify(colorMapRows.map((row) => [[row.start, row.end], row.color]))
     const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
     if (!(layerUrl && layerUrl.length > 0)) return
@@ -158,7 +193,7 @@
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
     const layerStyle = getLayerStyle($map, layerConfig.id)
     updateParamsInURL(layerStyle, layerURL, updatedParams)
-  }, 500)
+  }
 
   const handleIncrementDecrementClasses = (e: CustomEvent) => {
     numberOfClasses = e.detail.value

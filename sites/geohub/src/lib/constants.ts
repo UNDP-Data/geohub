@@ -12,6 +12,9 @@ export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
 export const STAC_MINIMUM_ZOOM = 5
 export const UNIQUE_VALUE_THRESHOLD = 25
 
+export const MAP_ATTRIBUTION =
+  '<a target="_top" rel="noopener" href="http://undp.org">© United Nations Development Programme</a>'
+
 export enum TabNames {
   ANALYZE = 'Analyze',
   DATA = 'Data',
