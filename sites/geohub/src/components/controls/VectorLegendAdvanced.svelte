@@ -81,7 +81,6 @@
   let colorMapRows: IntervalLegendColorMapRow[]
   let defaultOutlineColor: string
 
-
   let applyToOptions: Radio[] = [
     {
       label: layerType === 'symbol' ? 'Icon color' : 'Line color',

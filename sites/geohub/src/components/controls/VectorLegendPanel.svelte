@@ -189,8 +189,7 @@
           bind:colorMapName
           bind:classificationMethod
           bind:defaultColor
-          bind:applyToOption
-        />
+          bind:applyToOption />
       </div>
     {/if}
   </div>
