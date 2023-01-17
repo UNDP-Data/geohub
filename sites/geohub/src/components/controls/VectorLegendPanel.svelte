@@ -115,86 +115,68 @@
     const vectorLayerMeta = getLayerProperties($map, layer)
     return Object.keys(vectorLayerMeta.fields).length
   }
-
-  const handleEnterKey = (event: any) => {
-    if (event.key === 'Enter') {
-      event.target.click()
-    }
-  }
 </script>
 
-<div
-  class="columns is-mobile"
-  data-testid="line-view-container">
-  <div class={`column ${style.type !== LayerTypes.HEATMAP && layerNumberProperties > 0 ? 'is-10' : 'is-12'}`}>
-    {#if style.type === LayerTypes.HEATMAP}
-      <VectorHeatmap bind:layer />
-    {:else if legendType === VectorLegendTypes.SIMPLE}
-      <div transition:slide>
-        {#if style.type === LayerTypes.LINE}
-          <VectorLine
-            bind:layer
-            bind:defaultColor={defaultLineColor} />
-        {:else if style.type === LayerTypes.FILL}
-          <VectorPolygon
-            bind:layer
-            bind:defaultFillColor={defaultColor}
-            bind:defaultFillOutlineColor={defaultLineColor} />
-        {:else if style.type === LayerTypes.SYMBOL}
-          <VectorSymbol
-            bind:layer
-            bind:defaultColor />
-        {/if}
-      </div>
-    {:else if legendType === VectorLegendTypes.ADVANCED}
-      <div transition:slide>
-        <VectorLegendAdvanced
-          bind:layer
-          bind:layerMin
-          bind:layerMax
-          bind:colorMapName
-          bind:classificationMethod
-          bind:defaultColor
-          bind:applyToOption />
-      </div>
+{#if style.type !== LayerTypes.HEATMAP}
+  <div class="centered pb-2">
+    <div class="field has-addons">
+      <p class="control">
+        <button
+          class="button is-small {`${
+            legendType === VectorLegendTypes.SIMPLE ? 'is-danger is-active' : 'is-danger is-light'
+          }`}"
+          on:click={() => (legendType = VectorLegendTypes.SIMPLE)}>
+          <span>Simple</span>
+        </button>
+      </p>
+      <p class="control">
+        <button
+          class="button is-small {`${
+            legendType === VectorLegendTypes.ADVANCED ? 'is-danger is-active' : 'is-danger is-light'
+          }`}"
+          on:click={() => (legendType = VectorLegendTypes.ADVANCED)}>
+          <span>Advanced</span>
+        </button>
+      </p>
+    </div>
+  </div>
+{/if}
+
+{#if style.type === LayerTypes.HEATMAP}
+  <VectorHeatmap bind:layer />
+{:else if legendType === VectorLegendTypes.SIMPLE}
+  <div transition:slide>
+    {#if style.type === LayerTypes.LINE}
+      <VectorLine
+        bind:layer
+        bind:defaultColor={defaultLineColor} />
+    {:else if style.type === LayerTypes.FILL}
+      <VectorPolygon
+        bind:layer
+        bind:defaultFillColor={defaultColor}
+        bind:defaultFillOutlineColor={defaultLineColor} />
+    {:else if style.type === LayerTypes.SYMBOL}
+      <VectorSymbol
+        bind:layer
+        bind:defaultColor />
     {/if}
   </div>
-  {#if style.type !== LayerTypes.HEATMAP}
-    <div
-      class="columm legend-toggle"
-      transition:slide>
-      {#if layerNumberProperties > 0}
-        <div
-          role="button"
-          aria-label="Switch legend type"
-          class="toggle-container has-tooltip-left has-tooltip-arrow icon m-1"
-          data-tooltip="Toggle Legend Type"
-          tabindex="0"
-          on:click={handleLegendToggleClick}
-          on:keydown={handleEnterKey}
-          data-testid="legend-toggle-container">
-          <i
-            class="fa-solid fa-retweet {isLegendSwitchAnimate ? 'fa-spin' : ''}"
-            style="font-size: 16px; color: white" />
-        </div>
-        <br />
-      {/if}
-    </div>
-  {/if}
-</div>
+{:else if legendType === VectorLegendTypes.ADVANCED}
+  <div transition:slide>
+    <VectorLegendAdvanced
+      bind:layer
+      bind:layerMin
+      bind:layerMax
+      bind:colorMapName
+      bind:classificationMethod
+      bind:defaultColor
+      bind:applyToOption />
+  </div>
+{/if}
 
 <style lang="scss">
-  .legend-toggle {
-    padding-top: 15px;
-
-    .toggle-container {
-      margin-left: 3.5px;
-      background: #d12800;
-      padding: 10px;
-      width: 32px;
-      height: 32px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  :global(.centered) {
+    width: max-content;
+    margin: auto !important;
   }
 </style>

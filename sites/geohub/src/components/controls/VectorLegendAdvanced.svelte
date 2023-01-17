@@ -548,7 +548,7 @@
           </div>
         </div>
       </div>
-      <div class="field pr-2">
+      <div class="number-classes field pr-2">
         <label class="label has-text-centered">Number of Classes</label>
         <div class="control">
           <NumberInput
@@ -684,6 +684,10 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
+
+      .number-classes {
+        margin: 0 auto;
+      }
 
       .toggle-container {
         margin-left: auto;
