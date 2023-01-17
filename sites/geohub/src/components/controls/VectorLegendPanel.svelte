@@ -9,8 +9,6 @@
   import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { getLayerProperties } from '$lib/helper'
-  import { onMount } from 'svelte'
   import chroma from 'chroma-js'
 
   export let layer: Layer
@@ -84,37 +82,8 @@
       ? getDefaultColor('fill-outline-color')
       : undefined
 
-  let colorPickerVisibleIndex: number
-  let isLegendSwitchAnimate = false
-  let layerMin: number
-  let layerMax: number
-  let layerNumberProperties = 0
-
-  onMount(() => {
-    // set default values
-    legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
-    layerNumberProperties = getLayerNumberPropertiesCount()
-  })
-
-  const handleLegendToggleClick = () => {
-    colorPickerVisibleIndex = -1
-    isLegendSwitchAnimate = true
-
-    setTimeout(() => {
-      isLegendSwitchAnimate = false
-    }, 400)
-
-    if (legendType === VectorLegendTypes.SIMPLE) {
-      legendType = VectorLegendTypes.ADVANCED
-    } else {
-      legendType = VectorLegendTypes.SIMPLE
-    }
-  }
-
-  const getLayerNumberPropertiesCount = () => {
-    const vectorLayerMeta = getLayerProperties($map, layer)
-    return Object.keys(vectorLayerMeta.fields).length
-  }
+  // set default values
+  legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
 </script>
 
 {#if style.type !== LayerTypes.HEATMAP}
@@ -165,8 +134,6 @@
   <div transition:slide>
     <VectorLegendAdvanced
       bind:layer
-      bind:layerMin
-      bind:layerMax
       bind:colorMapName
       bind:classificationMethod
       bind:defaultColor

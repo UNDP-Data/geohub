@@ -45,12 +45,12 @@
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
-  export let layerMax: number
-  export let layerMin: number
   export let colorMapName: string
   export let defaultColor: string
-
   export let classificationMethod: ClassificationMethodTypes
+
+  let layerMax: number
+  let layerMin: number
 
   // update color intervals upon change of color map name
   $: colorMapName, colorMapChanged()
@@ -277,9 +277,8 @@
     // set to default values
     classificationMethods = classificationMethodsDefault
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const tilestats = layer?.info?.json?.tilestats
+    const metadata = layer?.info as VectorTileMetadata
+    const tilestats = metadata.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
