@@ -185,7 +185,6 @@
           bind:layer
           bind:layerMin
           bind:layerMax
-          bind:propertySelectValue
           bind:colorMapName
           bind:classificationMethod
           bind:defaultColor

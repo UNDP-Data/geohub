@@ -73,7 +73,6 @@
 
       const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
       textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
-      console.log(textFieldValue)
       fireLabelChanged()
     }
   }
@@ -83,7 +82,6 @@
   }
 
   const fireLabelChanged = () => {
-    console.log(textFieldValue)
     isLabelCreated = !!textFieldValue
     $map.fire('label:changed', {
       parentId: parentLayerId,
