@@ -20,8 +20,6 @@
   let defaultLineColor: string
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
-  let numberOfClasses: number = COLOR_CLASS_COUNT
-  let colorMapRows: Array<IntervalLegendColorMapRow> = []
   let activeTab = TabNames.LEGEND
 
   let tabs = [
@@ -55,9 +53,7 @@
           bind:classificationMethod={classification}
           bind:applyToOption
           bind:legendType
-          bind:numberOfClasses
           bind:defaultColor
-          bind:colorMapRows
           bind:defaultLineColor />
       {:else if activeTab === TabNames.FILTER}
         <VectorFilterPanelWizard {layer} />

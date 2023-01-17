@@ -21,8 +21,6 @@
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: VectorApplyToTypes
   export let legendType: string
-  export let colorMapRows
-  export let numberOfClasses
 
   const layerId = layer.id
   const style: LayerSpecification = $map
@@ -96,7 +94,7 @@
   let showTooltip = false
   let layerNumberProperties = 0
   let propertySelectValue
-
+  let numberOfClasses
   onMount(() => {
     // set default values
     legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
@@ -190,11 +188,9 @@
           bind:propertySelectValue
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses
           bind:defaultColor
-          bind:colorMapRows
           bind:applyToOption
-          bind:defaultOutlineColor={defaultLineColor} />
+        />
       </div>
     {/if}
   </div>

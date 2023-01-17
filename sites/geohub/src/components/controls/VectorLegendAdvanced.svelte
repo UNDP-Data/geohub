@@ -46,16 +46,20 @@
   export let layerMin: number
   export let colorMapName: string
   export let defaultColor: string
-  export let propertySelectValue
-  export let numberOfClasses: number
-  export let colorMapRows: IntervalLegendColorMapRow[]
-  export let defaultOutlineColor: string
+
   export let classificationMethod: ClassificationMethodTypes
 
+  // update color intervals upon change of color map name
+  $: colorMapName, colorMapChanged()
   // update layer store upon change of apply to option
   $: applyToOption, updateMap()
-  // update color intervals upon change of color map name
-  $: colorMapName, updateMapWithNewColorMap()
+
+  const colorMapChanged = () => {
+    getPropertySelectValue()
+    getColorMapRows()
+    // updateMapWithNewColorMap()
+    setIntervalValues()
+  }
 
   let classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -72,6 +76,11 @@
   let sizeArray: number[]
   let highlySkewed: boolean
   let hasUniqueValues = false
+  let propertySelectValue
+  let numberOfClasses: number
+  let colorMapRows: IntervalLegendColorMapRow[]
+  let defaultOutlineColor: string
+
 
   let applyToOptions: Radio[] = [
     {
@@ -112,24 +121,6 @@
     if (!$map) return
     $map.off('zoom', updateMap)
   })
-
-  const updateMapWithNewColorMap = () => {
-    // generate new colors depending on the color map name and number of classes
-    const colors = chroma.scale(colorMapName).colors(numberOfClasses)
-    // update color intervals
-    colorMapRows = colorMapRows.map((row, index) => {
-      return {
-        ...row,
-        color: [
-          chroma(colors[index]).rgba()[0],
-          chroma(colors[index]).rgba()[1],
-          chroma(colors[index]).rgba()[2],
-          remapInputValue(chroma(colors[index]).alpha(), 0, 1, 0, 255),
-        ],
-      }
-    })
-    updateMap()
-  }
 
   const setCssIconFilter = () => {
     if (layerType === 'fill') return
