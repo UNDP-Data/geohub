@@ -91,20 +91,26 @@
     <div class="field has-addons">
       <p class="control">
         <button
-          class="button is-small {`${
+          class="button is-normal {`${
             legendType === VectorLegendTypes.SIMPLE ? 'is-danger is-active' : 'is-danger is-light'
           }`}"
           on:click={() => (legendType = VectorLegendTypes.SIMPLE)}>
-          <span>Simple</span>
+          <span>
+            <i class="fa-solid fa-minus" />
+            Simple
+          </span>
         </button>
       </p>
       <p class="control">
         <button
-          class="button is-small {`${
+          class="button is-normal {`${
             legendType === VectorLegendTypes.ADVANCED ? 'is-danger is-active' : 'is-danger is-light'
           }`}"
           on:click={() => (legendType = VectorLegendTypes.ADVANCED)}>
-          <span>Advanced</span>
+          <span>
+            <i class="fa-solid fa-list" />
+            Advanced
+          </span>
         </button>
       </p>
     </div>
