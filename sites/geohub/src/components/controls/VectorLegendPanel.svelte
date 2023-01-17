@@ -19,7 +19,7 @@
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
-  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
+  export let applyToOption: VectorApplyToTypes
   export let legendType: string
 
   const layerId = layer.id
@@ -93,8 +93,8 @@
   let layerMax: number
   let showTooltip = false
   let layerNumberProperties = 0
-  let numberOfClasses: number
-
+  let propertySelectValue
+  let numberOfClasses
   onMount(() => {
     // set default values
     legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
@@ -128,10 +128,8 @@
     }
   }
 
-  $: colorMapName, colorMapChanged()
   const colorMapChanged = () => {
-    const layerClone = cloneDeep(layer)
-    layer = layerClone
+    layer = cloneDeep(layer)
     colorPickerVisibleIndex = -1
 
     // fire event for style sharing
@@ -189,9 +187,8 @@
           bind:layerMax
           bind:colorMapName
           bind:classificationMethod
-          bind:numberOfClasses
           bind:defaultColor
-          bind:defaultOutlineColor={defaultLineColor} />
+          bind:applyToOption />
       </div>
     {/if}
   </div>
@@ -241,10 +238,8 @@
           transition:fade>
           <ColorMapPicker
             on:handleClosePopup={handleClosePopup}
-            {layerMin}
-            {layerMax}
             bind:colorMapName
-            bind:numberOfClasses />
+            on:colorMapChanged={colorMapChanged} />
           <div
             id="arrow"
             data-popper-arrow />

@@ -145,8 +145,7 @@
         transition:fade>
         <ColorMapPicker
           on:handleClosePopup={handleClosePopup}
-          bind:colorMapName
-          bind:numberOfClasses />
+          bind:colorMapName />
         <div
           id="arrow"
           data-popper-arrow />

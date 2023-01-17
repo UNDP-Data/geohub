@@ -35,21 +35,13 @@ export const ColorMaps = {
  * Returns an style based on a color map name
  * @param colorMapType Color map type (e.x.:  sequential, diverging, qualitative)
  * @param colorMapName Color map name (e.x.: viridis)
- * @param numberOfClasses Number of color classes
  * @param isCardStyle Card style (card or list)
  * @returns string
  */
-export const colorMapStyle = (
-  colorMapType: ColorMapTypes,
-  colorMapName: string,
-  // layerMin: number,
-  // layerMax: number,
-  numberOfClasses: number,
-  isCardStyle: boolean,
-) => {
+export const colorMapStyle = (colorMapType: ColorMapTypes, colorMapName: string, isCardStyle: boolean) => {
   let colorMap = []
   let style = ''
-
+  const numberOfClasses = 5
   if (colorMapType === ColorMapTypes.SEQUENTIAL) {
     colorMap = chroma
       .scale(colorMapName)

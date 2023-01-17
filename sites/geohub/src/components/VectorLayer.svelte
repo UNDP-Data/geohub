@@ -12,12 +12,12 @@
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
-  let applyToOption: VectorApplyToTypes
+
+  let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   let legendType: string
   let defaultColor: string
   let defaultLineColor: string
-
-  let activeTab = ''
+  let activeTab = TabNames.LEGEND
 
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },

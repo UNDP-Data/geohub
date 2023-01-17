@@ -40,37 +40,46 @@
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
 
-  export let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
+  export let applyToOption: VectorApplyToTypes
   export let layer: Layer
   export let layerMax: number
   export let layerMin: number
   export let colorMapName: string
   export let defaultColor: string
 
-  let layerStyle = getLayerStyle($map, layer.id)
-  let layerType = layerStyle.type
+  export let classificationMethod: ClassificationMethodTypes
+
+  // update color intervals upon change of color map name
+  $: colorMapName, colorMapChanged()
+  // update layer store upon change of apply to option
+  $: applyToOption, updateMap()
+
+  const colorMapChanged = () => {
+    getPropertySelectValue()
+    getColorMapRows()
+    // updateMapWithNewColorMap()
+    setIntervalValues()
+  }
 
   let classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
-
-  let hasUniqueValues = false
-  export let classificationMethod: ClassificationMethodTypes
   let classificationMethods = classificationMethodsDefault
   let colorPickerVisibleIndex: number
-  export let defaultOutlineColor: string
+  let layerStyle = getLayerStyle($map, layer.id)
+  let layerType = layerStyle.type
   let cssIconFilter: string
   let icon: SpriteImage
   let rowWidth: number
-  export let numberOfClasses = COLOR_CLASS_COUNT
-  let propertySelectValue: string = null
   let sizeArray: number[]
   let highlySkewed: boolean
-  let colorMapRows: IntervalLegendColorMapRow[] = []
-  // update layer store upon change of apply to option
-  $: applyToOption, updateMap()
+  let hasUniqueValues = false
+  let propertySelectValue
+  let numberOfClasses: number
+  let colorMapRows: IntervalLegendColorMapRow[]
+  let defaultOutlineColor: string
 
   let applyToOptions: Radio[] = [
     {
@@ -83,20 +92,12 @@
     },
   ]
 
-  // update color intervals upon change of color map name
-  $: colorMapName, colorMapChanged()
-  const colorMapChanged = () => {
-    getPropertySelectValue()
-    getColorMapRows()
-    setIntervalValues()
-  }
-
   onMount(() => {
     if (layerType === 'symbol') {
       icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
     }
-    setCssIconFilter()
     getPropertySelectValue()
+    setCssIconFilter()
     getColorMapRows()
     setIntervalValues()
 
@@ -213,12 +214,6 @@
       })
     })
     numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
-  }
-
-  const setDefaultProperty = (selectOptions: string[]) => {
-    if (selectOptions.length === 0) return ''
-    setIntervalValues()
-    return propertySelectValue
   }
 
   const handlePropertyChange = (e) => {
@@ -368,7 +363,6 @@
 
         return [row.start, rgb]
       })
-
       stops = sortStops(stops)
       $map.setPaintProperty(layer.id, 'fill-outline-color', defaultOutlineColor)
       $map.setPaintProperty(layer.id, 'fill-color', {
@@ -473,8 +467,7 @@
         bind:propertySelectValue
         on:select={handlePropertyChange}
         {layer}
-        showOnlyNumberFields={true}
-        {setDefaultProperty} />
+        showOnlyNumberFields={true} />
     </div>
     {#if layerType !== 'fill' && hasUniqueValues === false}
       <div class="column">
@@ -528,7 +521,6 @@
               bind:colorMapRow
               bind:colorMapName
               bind:rowWidth
-              {layer}
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
               on:changeColorMap={handleParamsUpdate}
