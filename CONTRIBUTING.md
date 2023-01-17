@@ -6,7 +6,7 @@ This document contains a set of guidelines to help developers during the contrib
 
 #### Step 1: Fork the Project and Set up the Development Environment
 
-Fork this Repository. This will create a Local Copy of this Repository on your GitHub Profile. Keep a reference to the original project in `upstream` remote.
+Fork this Repository. This will create a Local Copy of this Repository on your computer. Keep a reference to the original project in `upstream` remote.
 
 ```bash
 git clone https://github.com/UNDP-Data/geohub.git
@@ -14,6 +14,13 @@ git clone https://github.com/UNDP-Data/geohub.git
 ```
 Install the dependencies
 
+As we use `pnpm` as our package manager, if it is not installed already, you need to install it first by running the following command:
+
+```bash
+npm install -g pnpm
+```
+
+Then install the project dependencies by running the following command:
 ```bash
 pnpm install
 ```
@@ -59,12 +66,14 @@ Other types of commit messages are:
 git commit -m "message"
 ```
 
-#### Step 5: Rebase
+#### Step 5: Merge the latest changes from upstream
 
 Always take a pull from the upstream repository to your main branch to keep it at par with the main project(updated repository).
 
 ```bash
-git pull upstream develop
+git fetch upstream
+git merge upstream/develop
+
 ```
 
 #### Step 6: Push
@@ -100,6 +109,7 @@ Add the same issue number in the PR description. Example:
 ### All Pull Request Guidelines Summary
 
 - Make sure your PR's description contains GitHub's special keyword references that automatically close the related issue when the PR is merged. (Check [this](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue/) for more info)
+- All pull requests should be made relating and against **_only one_** issue.
 - When you're submitting a PR for a UI-related issue, make sure you add a screenshot of your change.
 - Pull Requests should be made against `develop` branch.
 - Make sure your code lints.
