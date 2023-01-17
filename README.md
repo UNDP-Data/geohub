@@ -90,6 +90,8 @@ sequenceDiagram
     user->>client: close GeoHub
 ```
 
+the diagram was created by [mermaid online editor](https://mermaid.live/edit). Please read syntax of mermaid from the [documentation](https://mermaid.js.org/syntax/sequenceDiagram.htm)
+
 - related repositories
   - [style](https://github.com/UNDP-Data/style): manage maplibre style.json for Geohub
   - [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions): manage to deploy Azure Funcitons for Geohub
