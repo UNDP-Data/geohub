@@ -10,12 +10,13 @@
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import chroma from 'chroma-js'
+  import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
 
   export let layer: Layer
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: VectorApplyToTypes
-  export let legendType: string
+  export let legendType: 'simple' | 'advanced'
 
   const layerId = layer.id
   const style: LayerSpecification = $map
@@ -87,34 +88,7 @@
 </script>
 
 {#if style.type !== LayerTypes.HEATMAP}
-  <div class="centered pb-2">
-    <div class="field has-addons">
-      <p class="control">
-        <button
-          class="button is-normal {`${
-            legendType === VectorLegendTypes.SIMPLE ? 'is-primary is-active' : 'is-primary is-light'
-          }`}"
-          on:click={() => (legendType = VectorLegendTypes.SIMPLE)}>
-          <span>
-            <i class="fa-solid fa-minus" />
-            Simple
-          </span>
-        </button>
-      </p>
-      <p class="control">
-        <button
-          class="button is-normal {`${
-            legendType === VectorLegendTypes.ADVANCED ? 'is-primary is-active' : 'is-primary is-light'
-          }`}"
-          on:click={() => (legendType = VectorLegendTypes.ADVANCED)}>
-          <span>
-            <i class="fa-solid fa-list" />
-            Advanced
-          </span>
-        </button>
-      </p>
-    </div>
-  </div>
+  <LegendTypeSwitcher bind:legendType />
 {/if}
 
 {#if style.type === LayerTypes.HEATMAP}
@@ -146,10 +120,3 @@
       bind:applyToOption />
   </div>
 {/if}
-
-<style lang="scss">
-  :global(.centered) {
-    width: max-content;
-    margin: auto !important;
-  }
-</style>
