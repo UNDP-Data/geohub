@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { fade, slide } from 'svelte/transition'
-  import { cloneDeep } from 'lodash-es'
+  import { slide } from 'svelte/transition'
   import type { LayerSpecification } from 'maplibre-gl'
   import VectorLine from './VectorLine.svelte'
   import VectorPolygon from './VectorPolygon.svelte'
@@ -10,8 +9,6 @@
   import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import ColorMapPicker from './ColorMapPicker.svelte'
-  import Popper from '$lib/popper'
   import { getLayerProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import chroma from 'chroma-js'
@@ -91,27 +88,13 @@
   let isLegendSwitchAnimate = false
   let layerMin: number
   let layerMax: number
-  let showTooltip = false
   let layerNumberProperties = 0
-  let propertySelectValue
-  let numberOfClasses
+
   onMount(() => {
     // set default values
     legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
     layerNumberProperties = getLayerNumberPropertiesCount()
   })
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-end',
-      strategy: 'fixed',
-    },
-    [10, 15],
-  ).init()
 
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
@@ -128,25 +111,9 @@
     }
   }
 
-  const colorMapChanged = () => {
-    layer = cloneDeep(layer)
-    colorPickerVisibleIndex = -1
-
-    // fire event for style sharing
-    $map?.fire('colormap:changed', {
-      layerId: layer.id,
-      colorMapName: colorMapName,
-    })
-  }
-
   const getLayerNumberPropertiesCount = () => {
     const vectorLayerMeta = getLayerProperties($map, layer)
     return Object.keys(vectorLayerMeta.fields).length
-  }
-
-  const handleClosePopup = () => {
-    showTooltip = !showTooltip
-    colorPickerVisibleIndex = -1
   }
 
   const handleEnterKey = (event: any) => {
@@ -212,46 +179,11 @@
         </div>
         <br />
       {/if}
-
-      {#if legendType === VectorLegendTypes.ADVANCED && (applyToOption === VectorApplyToTypes.COLOR || style.type === LayerTypes.FILL)}
-        <div
-          class="toggle-container icon m-1"
-          role="button"
-          aria-label="Open color scheme picker"
-          tabindex="0"
-          use:popperRef
-          on:click={handleClosePopup}
-          on:keydown={handleEnterKey}
-          data-testid="colormap-toggle-container"
-          transition:fade>
-          <i
-            class="fa-solid fa-palette"
-            style="font-size: 16px; color: white" />
-        </div>
-      {/if}
-
-      {#if showTooltip}
-        <div
-          id="tooltip"
-          data-testid="tooltip"
-          use:popperContent={popperOptions}
-          transition:fade>
-          <ColorMapPicker
-            on:handleClosePopup={handleClosePopup}
-            bind:colorMapName
-            on:colorMapChanged={colorMapChanged} />
-          <div
-            id="arrow"
-            data-popper-arrow />
-        </div>
-      {/if}
     </div>
   {/if}
 </div>
 
 <style lang="scss">
-  @import '../../styles/popper.scss';
-
   .legend-toggle {
     padding-top: 15px;
 
@@ -264,12 +196,5 @@
       border-radius: 5px;
       cursor: pointer;
     }
-  }
-
-  $tooltip-background: #fff;
-
-  #tooltip {
-    max-width: 470px;
-    width: 470px;
   }
 </style>
