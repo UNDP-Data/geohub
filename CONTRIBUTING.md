@@ -112,7 +112,7 @@ Add the same issue number in the PR description. Example:
 - Please follow the PR description convention: `type(scope): description`, e.g. `fix: typo in README.md`.
 - In case of multiple commits, please squash them into one commit.
 - In case of a failing CI/CD build/check/test/deployment **please** don't make a merge to the `develop` branch. Instead, fix the issue and make a new commit to the same PR.
-- Add the relevant labels to your PR. Example of tags: [bug]:[https://github.com/UNDP-Data/geohub/labels/bug], [fix]:[https://github.com/UNDP-Data/geohub/labels/bug]
+- Add the relevant labels to your PR. Example of tags: [https://github.com/UNDP-Data/geohub/labels/bug], [https://github.com/UNDP-Data/geohub/labels/enhancement]
 - Request a review from one of the developers when you are ready to have your PR reviewed.
 
 #### Step 8: CONGRATULATIONS
@@ -126,7 +126,7 @@ You have made your contribution to the GeoHub project.
 - Click on `New issue`.
 - Select the appropriate issue for your issue type and fill out the required information.
 - Fill the issue template as per the issue type, and as being as descriptive as possible.
-- Add the relevant labels to your issue. Example of tags: [bug]:[https://github.com/UNDP-Data/geohub/labels/bug], [fix]:[https://github.com/UNDP-Data/geohub/labels/bug]
+- Add the relevant labels to your issue. Example of tags: [https://github.com/UNDP-Data/geohub/labels/bug], [https://github.com/UNDP-Data/geohub/labels/enhancement]
 - Click on `Submit new issue`.
 - You have successfully created a new issue.
 - You can also comment, close, reopen, assign on an existing issue.
