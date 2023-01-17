@@ -23,7 +23,8 @@
 <style
   global
   lang="scss">
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
+  @import '../styles/geohubstyle.scss';
+  /* @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css'; */
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
   @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import 'bulma-switch/dist/css/bulma-switch.min.css';

@@ -92,7 +92,7 @@
       <p class="control">
         <button
           class="button is-normal {`${
-            legendType === VectorLegendTypes.SIMPLE ? 'is-danger is-active' : 'is-danger is-light'
+            legendType === VectorLegendTypes.SIMPLE ? 'is-primary is-active' : 'is-primary is-light'
           }`}"
           on:click={() => (legendType = VectorLegendTypes.SIMPLE)}>
           <span>
@@ -104,7 +104,7 @@
       <p class="control">
         <button
           class="button is-normal {`${
-            legendType === VectorLegendTypes.ADVANCED ? 'is-danger is-active' : 'is-danger is-light'
+            legendType === VectorLegendTypes.ADVANCED ? 'is-primary is-active' : 'is-primary is-light'
           }`}"
           on:click={() => (legendType = VectorLegendTypes.ADVANCED)}>
           <span>
