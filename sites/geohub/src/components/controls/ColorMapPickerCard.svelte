@@ -7,16 +7,14 @@
   export let isCardStyle = true
   export let isSelected: boolean
 
-  export let numberOfClasses: number
-
   let cardStyle: string
 
   $: {
-    if (colorMapName || numberOfClasses) setCardStyle()
+    if (colorMapName) setCardStyle()
   }
 
   const setCardStyle = () => {
-    cardStyle = colorMapStyle(colorMapType, colorMapName, numberOfClasses, isCardStyle)
+    cardStyle = colorMapStyle(colorMapType, colorMapName, isCardStyle)
   }
 </script>
 

@@ -10,7 +10,6 @@
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let colorMapName: string
-  export let numberOfClasses: number
 
   const dispatch = createEventDispatcher()
   const colorMapTypes = [
@@ -79,7 +78,6 @@
                 <ColorMapPickerCard
                   colorMapName={cmName}
                   colorMapType={ColorMapTypes.SEQUENTIAL}
-                  {numberOfClasses}
                   isSelected={colorMapName === cmName} />
               </li>
             {/each}

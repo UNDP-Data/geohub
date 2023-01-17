@@ -239,11 +239,8 @@
           transition:fade>
           <ColorMapPicker
             on:handleClosePopup={handleClosePopup}
-            {layerMin}
-            {layerMax}
             bind:colorMapName
-            on:colorMapChanged={colorMapChanged}
-            bind:numberOfClasses />
+            on:colorMapChanged={colorMapChanged} />
           <div
             id="arrow"
             data-popper-arrow />
