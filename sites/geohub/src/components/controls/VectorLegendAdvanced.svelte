@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import { onDestroy, onMount } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
   import { hexToCSSFilter } from 'hex-to-css-filter'
-
+  import { cloneDeep } from 'lodash-es'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
@@ -39,15 +40,17 @@
   import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
+  import ColorMapPicker from './ColorMapPicker.svelte'
+  import Popper from '$lib/popper'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
-  export let layerMax: number
-  export let layerMin: number
   export let colorMapName: string
   export let defaultColor: string
-
   export let classificationMethod: ClassificationMethodTypes
+
+  let layerMax: number
+  let layerMin: number
 
   // update color intervals upon change of color map name
   $: colorMapName, colorMapChanged()
@@ -55,10 +58,19 @@
   $: applyToOption, updateMap()
 
   const colorMapChanged = () => {
+    layer = cloneDeep(layer)
+    colorPickerVisibleIndex = -1
+
     getPropertySelectValue()
     getColorMapRows()
     // updateMapWithNewColorMap()
     setIntervalValues()
+
+    // fire event for style sharing
+    $map?.fire('colormap:changed', {
+      layerId: layer.id,
+      colorMapName: colorMapName,
+    })
   }
 
   let classificationMethodsDefault = [
@@ -80,6 +92,7 @@
   let numberOfClasses: number
   let colorMapRows: IntervalLegendColorMapRow[]
   let defaultOutlineColor: string
+  let showTooltip = false
 
   let applyToOptions: Radio[] = [
     {
@@ -91,6 +104,18 @@
       value: VectorApplyToTypes.SIZE,
     },
   ]
+
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [10, 15],
+  ).init()
 
   onMount(() => {
     if (layerType === 'symbol') {
@@ -252,9 +277,8 @@
     // set to default values
     classificationMethods = classificationMethodsDefault
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const tilestats = layer?.info?.json?.tilestats
+    const metadata = layer?.info as VectorTileMetadata
+    const tilestats = metadata.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
         (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
@@ -455,6 +479,17 @@
     })
     return stops
   }
+
+  const handleClosePopup = () => {
+    showTooltip = !showTooltip
+    colorPickerVisibleIndex = -1
+  }
+
+  const handleEnterKey = (event: any) => {
+    if (event.key === 'Enter') {
+      event.target.click()
+    }
+  }
 </script>
 
 <div
@@ -462,54 +497,98 @@
   data-testid="advanced-container">
   <div class="columns is-mobile">
     <div class="column">
-      <div class="has-text-centered pb-2">Property:</div>
-      <PropertySelect
-        bind:propertySelectValue
-        on:select={handlePropertyChange}
-        {layer}
-        showOnlyNumberFields={true} />
+      <div class="field">
+        <label class="label has-text-centered">Property:</label>
+        <div class="control">
+          <PropertySelect
+            bind:propertySelectValue
+            on:select={handlePropertyChange}
+            {layer}
+            showOnlyNumberFields={true} />
+        </div>
+      </div>
     </div>
     {#if layerType !== 'fill' && hasUniqueValues === false}
       <div class="column">
-        <div class="has-text-centered pb-2">Apply To</div>
-        <div class="is-flex is-justify-content-center">
-          <Radios
-            bind:radios={applyToOptions}
-            bind:value={applyToOption}
-            groupName="layer-type-{layer.id}}"
-            isVertical={true} />
+        <div class="field">
+          <label class="label has-text-centered">Apply To</label>
+          <div class="control">
+            <div class="is-flex is-justify-content-center">
+              <Radios
+                bind:radios={applyToOptions}
+                bind:value={applyToOption}
+                groupName="layer-type-{layer.id}}"
+                isVertical={true} />
+            </div>
+          </div>
         </div>
       </div>
     {/if}
   </div>
 
   {#if hasUniqueValues === false}
-    <div class="columns is-mobile">
-      <div class="column">
-        <div class="has-text-centered pb-2">Classification</div>
-        <div class="select is-normal">
-          <select
-            bind:value={classificationMethod}
-            on:change={handleClassificationChange}
-            style="width: 110px;"
-            title="Classification Methods">
-            {#each classificationMethods as classificationMethod}
-              <option
-                class="legend-text"
-                title="Classification Method"
-                value={classificationMethod.code}>{classificationMethod.name}</option>
-            {/each}
-          </select>
+    <div class="legend-controls">
+      <div class="field pr-2">
+        <label class="label has-text-centered">Classification</label>
+        <div class="control">
+          <div class="select is-normal">
+            <select
+              bind:value={classificationMethod}
+              on:change={handleClassificationChange}
+              style="width: 110px;"
+              title="Classification Methods">
+              {#each classificationMethods as classificationMethod}
+                <option
+                  class="legend-text"
+                  title="Classification Method"
+                  value={classificationMethod.code}>{classificationMethod.name}</option>
+              {/each}
+            </select>
+          </div>
         </div>
       </div>
-      <div class="column">
-        <div class="has-text-centered">Number of Classes</div>
-        <NumberInput
-          bind:value={numberOfClasses}
-          minValue={COLOR_CLASS_COUNT_MINIMUM}
-          maxValue={COLOR_CLASS_COUNT_MAXIMUM}
-          on:change={handleIncrementDecrementClasses} />
+      <div class="number-classes field pr-2">
+        <label class="label has-text-centered">Number of Classes</label>
+        <div class="control">
+          <NumberInput
+            bind:value={numberOfClasses}
+            minValue={COLOR_CLASS_COUNT_MINIMUM}
+            maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+            on:change={handleIncrementDecrementClasses} />
+        </div>
       </div>
+      {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
+        <div
+          class="toggle-container icon"
+          role="button"
+          aria-label="Open color scheme picker"
+          tabindex="0"
+          use:popperRef
+          on:click={handleClosePopup}
+          on:keydown={handleEnterKey}
+          data-testid="colormap-toggle-container"
+          transition:fade>
+          <i
+            class="fa-solid fa-palette"
+            style="font-size: 16px; color: white" />
+        </div>
+      {/if}
+
+      {#if showTooltip}
+        <div
+          id="tooltip"
+          data-testid="tooltip"
+          use:popperContent={popperOptions}
+          transition:fade>
+          <ColorMapPicker
+            on:handleClosePopup={handleClosePopup}
+            bind:colorMapName
+            on:colorMapChanged={colorMapChanged} />
+          <div
+            id="arrow"
+            data-popper-arrow />
+        </div>
+      {/if}
     </div>
   {/if}
   <div class="columns">
@@ -576,6 +655,8 @@
 </div>
 
 <style lang="scss">
+  @import '../../styles/popper.scss';
+
   div {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -596,6 +677,33 @@
 
     .applyto-title {
       cursor: grab;
+    }
+
+    .legend-controls {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      .number-classes {
+        margin: 0 auto;
+      }
+
+      .toggle-container {
+        margin-left: auto;
+        background: #d12800;
+        padding: 10px;
+        width: 32px;
+        height: 32px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      $tooltip-background: #fff;
+
+      #tooltip {
+        max-width: 470px;
+        width: 470px;
+      }
     }
   }
 </style>
