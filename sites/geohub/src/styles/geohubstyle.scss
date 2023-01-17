@@ -1,6 +1,6 @@
 // 1. Import the initial variables
-@import './bulma/sass/utilities/initial-variables.sass';
-@import './bulma/sass/utilities/functions.sass';
+@import 'bulma/sass/utilities/initial-variables.sass';
+@import 'bulma/sass/utilities/functions.sass';
 
 // 2. Set your own initial variables
 // Update blue
@@ -30,7 +30,7 @@ $github: #333;
 $github-invert: findColorInvert($github);
 
 // 5. Add new color variables to the color map.
-@import './bulma/sass/utilities/derived-variables.sass';
+@import 'bulma/sass/utilities/derived-variables.sass';
 $addColors: (
   'twitter': (
     $twitter,
@@ -48,4 +48,4 @@ $addColors: (
 $colors: map-merge($colors, $addColors);
 
 // 6. Import the rest of Bulma
-@import './bulma/bulma.sass';
+@import 'bulma/bulma.sass';
