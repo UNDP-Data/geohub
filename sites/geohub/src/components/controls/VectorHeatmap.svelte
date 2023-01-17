@@ -8,7 +8,7 @@
   export let layer: Layer
 </script>
 
-<div class="columns">
+<div class="columns is-mobile">
   <div class="column">
     <div class="has-text-centered pb-2">Heatmap Color</div>
     <div>
@@ -16,7 +16,7 @@
     </div>
   </div>
   <div class="column">
-    <div class="columns">
+    <div class="columns is-mobile">
       <div class="column pb-0">
         <div class="has-text-centered pb-2">Heatmap Intensity</div>
         <div class="is-flex is-justify-content-center">
@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="columns">
+    <div class="columns is-mobile">
       <div class="column pb-0">
         <div class="has-text-centered pb-2">Heatmap Radius</div>
         <div class="is-flex is-justify-content-center">
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="columns">
+    <div class="columns is-mobile">
       <div class="column pb-0">
         <div class="has-text-centered pb-2">Heatmap Weight</div>
         <div class="is-flex is-justify-content-center">

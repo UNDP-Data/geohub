@@ -93,7 +93,7 @@
 </script>
 
 <div
-  class="columns is-vcentered is-gapless color-editor"
+  class="columns is-vcentered is-gapless color-editor is-mobile"
   data-testid="heatmap-color-map-row-container">
   <div class="column is-1 color-picker">
     <div
