@@ -1,30 +1,26 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { onMount } from 'svelte'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
   } from '$lib/constants'
-  import { cloneDeep, debounce } from 'lodash-es'
+  import { cloneDeep } from 'lodash-es'
   import {
-    fetchUrl,
     generateColorMap,
     getActiveBandIndex,
     getLayerStyle,
-    getValueFromRasterTileUrl,
     updateParamsInURL,
     getLayerSourceUrl,
     getMaxValueOfCharsInIntervals,
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
-  import { layerList, map } from '$stores'
+  import type { IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   //console.clear()
-  export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
   export let numberOfClasses: number
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
@@ -203,9 +199,6 @@
     reclassifyImage()
   }
 
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
   const handleChangeIntervalValues = (event: CustomEvent) => {
     colorMapRows = updateIntervalValues(event, colorMapRows)
     rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
@@ -217,9 +210,7 @@
   class="intervals-view-container"
   data-testid="intervals-view-container">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div
-    class="columns is-gapless controls"
-    on:click={() => (colorPickerVisibleIndex = -1)}>
+  <div class="columns is-gapless controls">
     <div class="column classification">
       <div class="has-text-centered pb-2">Classification</div>
       <div
@@ -229,7 +220,6 @@
           bind:value={classificationMethod}
           on:change={(e) => reclassifyImage(e)}
           style="width: 114px;"
-          alt="Classification Methods"
           title="Classification Methods">
           {#each classificationMethods as classificationMethod}
             <option
@@ -256,9 +246,6 @@
       bind:colorMapRow
       bind:colorMapName
       bind:rowWidth
-      {colorPickerVisibleIndex}
-      on:clickColorPicker={handleColorPickerClick}
-      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
       on:changeColorMap={handleParamsUpdate}
       on:changeIntervalValues={handleChangeIntervalValues} />
   {/each}
