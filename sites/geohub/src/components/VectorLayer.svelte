@@ -14,7 +14,7 @@
   export let colorMapName: string
 
   let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
-  let legendType: string
+  let legendType: 'simple' | 'advanced'
   let defaultColor: string
   let defaultLineColor: string
   let activeTab = TabNames.LEGEND
