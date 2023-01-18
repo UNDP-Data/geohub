@@ -99,16 +99,8 @@ the diagram was created by [mermaid online editor](https://mermaid.live/edit). P
 
 ## Contributing
 
-Please refer to [CONTRIBUTING.MD](./CONTRIBUTING.md) for more information about developing GeoHub.
+Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for more information about developing GeoHub.
 
-## Release packages
+## License
 
-- create release note by the following command
-
-```
-pnpm changeset
-```
-
-- create new PR to merge to develop branch
-- changeset will create new PR to release packages
-- changeset will release packages once the PR is merged to develop
+[BSD-3-Clause license](./LICENSE)

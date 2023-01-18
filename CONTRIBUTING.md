@@ -12,6 +12,7 @@ Fork this Repository. This will create a Local Copy of this Repository on your c
 git clone https://github.com/UNDP-Data/geohub.git
 
 ```
+
 Install the dependencies
 
 As we use `pnpm` as our package manager, if it is not installed already, you need to install it first by running the following command:
@@ -21,6 +22,7 @@ npm install -g pnpm
 ```
 
 Then install the project dependencies by running the following command:
+
 ```bash
 pnpm install
 ```
@@ -45,7 +47,7 @@ git add .
 #### Step 4: Commit
 
 To commit give a descriptive message for the convenience of reviewer by:
-Example:  `git commit -m "docs: updated contributing guidelines"`
+Example: `git commit -m "docs: updated contributing guidelines"`
 
 Other types of commit messages are:
 
@@ -101,10 +103,10 @@ When your PR fixes an issue, add the issue number in the PR title and descriptio
 `docs: updated contributing guidelines (fixes #10)`
 
 Add the same issue number in the PR description. Example:
+
 ```
 - Fixes #10
 ```
-
 
 ### All Pull Request Guidelines Summary
 
@@ -129,7 +131,6 @@ Add the same issue number in the PR description. Example:
 
 You have made your contribution to the GeoHub project.
 
-
 # How to create a new issue
 
 - Go to the [issues](https://github.com/UNDP-Data/geohub/issues) tab of the repository.
@@ -143,5 +144,11 @@ You have made your contribution to the GeoHub project.
 
 #### Fill the issue reporting form properly and as completely as possible.
 
+# Release packages
 
+The procedure for releasing packages to NPM is as follows.
 
+- create release note by the following command `pnpm changeset`.
+- create new PR to merge to develop branch.
+- changeset will create new PR to release packages.
+- changeset will release packages once the PR is merged to develop.
