@@ -3,13 +3,12 @@
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { abs } from 'mathjs'
+  import { clickOutside } from 'svelte-use-click-outside'
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
-  import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import type { Color, IntervalLegendColorMapRow } from '$lib/types'
 
   export let colorMapRow: IntervalLegendColorMapRow
-  export let colorPickerVisibleIndex: number
-  // export let layer: Layer
   export let colorMapName: string
   export let rowWidth
 
@@ -31,13 +30,6 @@
   let colorPickerStyle: string
   let showToolTip = false
   $: colorPickerStyle = getColorPickerStyle(colorMapRow?.color.join())
-  $: {
-    if (colorPickerVisibleIndex === colorMapRow?.index) {
-      showToolTip = true
-    } else {
-      showToolTip = false
-    }
-  }
 
   $: color, updateColorMap(color)
 
@@ -100,15 +92,6 @@
     }
   }
 
-  const handleColorPickerClick = () => {
-    if (showToolTip === false) {
-      dispatch('clickColorPicker', { index: colorMapRow.index })
-    } else {
-      dispatch('closeColorPicker')
-      showToolTip = false
-    }
-  }
-
   const handleInput = (e) => {
     const id = e.target.id
     const value = (e.target as HTMLInputElement).value
@@ -129,12 +112,9 @@ the key statement is necessary as it forces to rerender the legend item in case 
     <div class="column is-2 p-0 m-0">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
-        alt="Color Map Control"
         title="Color Map Control"
         use:popperRef
-        on:click={() => {
-          handleColorPickerClick()
-        }}
+        on:click={() => (showToolTip = !showToolTip)}
         class="discrete"
         style="{colorPickerStyle}; width:20px; height:20px" />
       {#if showToolTip && color}
@@ -142,10 +122,11 @@ the key statement is necessary as it forces to rerender the legend item in case 
           id="tooltip"
           data-testid="tooltip"
           use:popperContent={popperOptions}
+          use:clickOutside={() => (showToolTip = false)}
           transition:fade>
           <ColorPicker
             bind:color
-            on:closeColorPicker={() => handleColorPickerClick()} />
+            on:closeColorPicker={() => (showToolTip = false)} />
           <div
             id="arrow"
             data-popper-arrow />

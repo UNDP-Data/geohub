@@ -60,7 +60,6 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
   let classificationMethods = classificationMethodsDefault
-  let colorPickerVisibleIndex: number
   let layerStyle = getLayerStyle($map, layer.id)
   let layerType = layerStyle.type
   let cssIconFilter: string
@@ -255,10 +254,6 @@
   const handleParamsUpdate = debounce(() => {
     updateMap()
   }, 500)
-
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
 
   const handleChangeIntervalValues = (event: CustomEvent) => {
     colorMapRows = updateIntervalValues(event, colorMapRows)
@@ -475,7 +470,6 @@
 
   const handleClosePopup = () => {
     showTooltip = !showTooltip
-    colorPickerVisibleIndex = -1
   }
 
   const handleEnterKey = (event: any) => {
@@ -596,10 +590,7 @@
                 bind:colorMapRow
                 bind:colorMapName
                 bind:rowWidth
-                {colorPickerVisibleIndex}
-                on:clickColorPicker={handleColorPickerClick}
                 on:changeColorMap={handleParamsUpdate}
-                on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
                 on:changeIntervalValues={handleChangeIntervalValues} />
             {/each}
           {:else if applyToOption === VectorApplyToTypes.SIZE}
