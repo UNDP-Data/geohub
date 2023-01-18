@@ -14,6 +14,7 @@
     updateParamsInURL,
     getLayerSourceUrl,
     getMaxValueOfCharsInIntervals,
+    remapInputValue,
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
@@ -181,7 +182,17 @@
   // it is very interesting that without debounce it does NOW properly
   // encode colormap and update url parameters
   const handleParamsUpdate = () => {
-    const encodeColorMapRows = JSON.stringify(colorMapRows.map((row) => [[row.start, row.end], row.color]))
+    const encodeColorMapRows = JSON.stringify(
+      colorMapRows.map((row) => {
+        if (row.color[3] === 255) {
+          return [[row.start, row.end], row.color]
+        } else {
+          const a = remapInputValue(row.color[3], 0, 1, 0, 255)
+          const color = [row.color[0], row.color[1], row.color[2], Math.floor(a)]
+          return [[row.start, row.end], color]
+        }
+      }),
+    )
     const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
     if (!(layerUrl && layerUrl.length > 0)) return
     const layerURL = new URL(layerUrl)
