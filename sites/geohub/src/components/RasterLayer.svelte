@@ -5,13 +5,7 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import {
-    ClassificationMethodTypes,
-    DynamicLayerLegendTypes,
-    TabNames,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    COLOR_CLASS_COUNT,
-  } from '$lib/constants'
+  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT_MAXIMUM, COLOR_CLASS_COUNT } from '$lib/constants'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -43,7 +37,7 @@
 
   // state vars
   //let expressions: RasterSimpleExpression[]
-  let legendType: DynamicLayerLegendTypes
+  let legendType: 'simple' | 'advanced'
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
@@ -87,22 +81,10 @@
       })
       numberOfClasses = colorMapRows.length
 
-      // either unique or interval
-
-      const band = (info as RasterTileMetadata).active_band_no
-      layerHasUniqueValues = false
-      if ((info as RasterTileMetadata).stats[band] && (info as RasterTileMetadata).stats[band]['unique']) {
-        layerHasUniqueValues = Number((info as RasterTileMetadata).stats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
-      }
-      if (layerHasUniqueValues) {
-        legendType = DynamicLayerLegendTypes.UNIQUE
-      } else {
-        legendType = DynamicLayerLegendTypes.INTERVALS
-      }
-      //
+      legendType = 'advanced'
     } else {
       if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      legendType = DynamicLayerLegendTypes.CONTINUOUS
+      legendType = 'simple'
     }
 
     // initialisation is not necessary when restoring or swhitching from other tabs

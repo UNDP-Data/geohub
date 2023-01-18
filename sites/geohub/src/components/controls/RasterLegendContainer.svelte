@@ -7,18 +7,20 @@
   import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM, ClassificationMethodTypes } from '$lib/constants'
   import Popper from '$lib/popper'
   import type { Layer, RasterTileMetadata, IntervalLegendColorMapRow } from '$lib/types'
+  import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
 
   export let layer: Layer
-  export let legendType: DynamicLayerLegendTypes = undefined
+  export let legendType: 'simple' | 'advanced'
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
   export let numberOfClasses: number
   export let colorMapRows: Array<IntervalLegendColorMapRow>
 
+  let rasterLegendType: DynamicLayerLegendTypes
+
   let { info }: Layer = layer
 
   let colorPickerVisibleIndex: number
-  let isLegendSwitchAnimate = false
   let layerHasUniqueValues = false
   let showTooltip = false
 
@@ -34,9 +36,9 @@
     [10, 15],
   ).init()
 
+  $: legendType, handleLegendToggleClick()
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
-    isLegendSwitchAnimate = true
     let bandName
 
     try {
@@ -48,14 +50,10 @@
       Number((info as RasterTileMetadata).stats[bandName]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM &&
       !(info as RasterTileMetadata).dtype.startsWith('float')
 
-    setTimeout(() => {
-      isLegendSwitchAnimate = false
-    }, 400)
-
-    if (legendType === DynamicLayerLegendTypes.CONTINUOUS) {
-      legendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
+    if (legendType === 'advanced') {
+      rasterLegendType = layerHasUniqueValues ? DynamicLayerLegendTypes.UNIQUE : DynamicLayerLegendTypes.INTERVALS
     } else {
-      legendType = DynamicLayerLegendTypes.CONTINUOUS
+      rasterLegendType = DynamicLayerLegendTypes.CONTINUOUS
     }
   }
 
@@ -64,11 +62,6 @@
     colorPickerVisibleIndex = -1
   }
 
-  const handleEnterKeyForSwitch = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleLegendToggleClick()
-    }
-  }
   const handleEnterKeyForColor = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       handleClosePopup()
@@ -76,27 +69,28 @@
   }
 </script>
 
+<LegendTypeSwitcher bind:legendType />
+
 <div class="columns">
   <div class="column is-10">
-    {#if legendType === DynamicLayerLegendTypes.CONTINUOUS}
+    {#if rasterLegendType === DynamicLayerLegendTypes.CONTINUOUS}
       <div transition:slide>
         <RasterContinuousLegend
           bind:layerConfig={layer}
           bind:colorMapName
           bind:numberOfClasses />
       </div>
-    {:else if legendType === DynamicLayerLegendTypes.INTERVALS}
+    {:else if rasterLegendType === DynamicLayerLegendTypes.INTERVALS}
       <div transition:slide>
         <RasterIntervalsLegend
           bind:layerConfig={layer}
-          bind:colorPickerVisibleIndex
           bind:colorMapName
           bind:classificationMethod
           bind:numberOfClasses
           bind:colorMapRows
           bind:generateCmap={showTooltip} />
       </div>
-    {:else if legendType === DynamicLayerLegendTypes.UNIQUE}
+    {:else if rasterLegendType === DynamicLayerLegendTypes.UNIQUE}
       <div transition:slide>
         <RasterUniqueValuesLegend
           bind:layerConfig={layer}
@@ -108,20 +102,6 @@
   <div
     class="columm legend-toggle"
     transition:slide>
-    <div
-      role="button"
-      class="toggle-container has-tooltip-left has-tooltip-arrow icon m-1"
-      aria-label="Switch Legend Type"
-      data-tooltip="Toggle Legend Type"
-      tabindex="0"
-      on:keydown={handleEnterKeyForSwitch}
-      on:click={handleLegendToggleClick}
-      data-testid="legend-toggle-container">
-      <i
-        class="fa-solid fa-retweet {isLegendSwitchAnimate ? 'fa-spin' : ''}"
-        style="font-size: 16px; color: white" />
-    </div>
-    <br />
     <div
       role="button"
       class="toggle-container has-tooltip-left has-tooltip-arrow m-1"
