@@ -294,7 +294,7 @@
                   index: i,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore:next-line
-                  color: [...scaleColorList(i).rgb(), 255],
+                  color: [...scaleColorList(i).rgb(), 1],
                   start: stat.values[i],
                   end: '',
                 }
@@ -324,7 +324,7 @@
                   index: i,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore:next-line
-                  color: [...scaleColorList(intervalList[i]).rgb(), 255],
+                  color: [...scaleColorList(intervalList[i]).rgb(), 1],
                   start: intervalList[i],
                   end: intervalList[i + 1],
                 }
@@ -345,13 +345,7 @@
     if (!propertySelectValue) return
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row, index) => {
-        const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
-          row.color[3],
-          0,
-          255,
-          0,
-          1,
-        )})`
+        const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
         const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
         // set default line color to be middle of colors
@@ -373,7 +367,7 @@
         return [
           row.start,
           hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
-            ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+            ? chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).css()
             : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
         ]
       })
@@ -589,6 +583,13 @@
           {/if}
         </div>
       </div>
+      {#if hasUniqueValues}
+        <div class="colormap-picker pr-4 pt-2">
+          <ColorMapPicker
+            bind:colorMapName
+            on:colorMapChanged={handleColormapNameChanged} />
+        </div>
+      {/if}
     </div>
   {/await}
 </div>
