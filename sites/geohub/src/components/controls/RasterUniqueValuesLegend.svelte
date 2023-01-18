@@ -3,7 +3,6 @@
   import chroma from 'chroma-js'
   import type { RasterTileSource } from 'maplibre-gl'
 
-  import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
   import {
@@ -15,6 +14,7 @@
   } from '$lib/helper'
   import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -28,7 +28,7 @@
   let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
   let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
-
+  let isUniqueValues = true
   let colorMap = {}
   let layerColorMap: chroma.Scale = undefined
   let colorMapRows: IntervalLegendColorMapRow[] = []
@@ -116,6 +116,8 @@
       })
     }
 
+    console.log(colorMapRows)
+
     handleParamsUpdate(colorMap)
   }
 
@@ -145,22 +147,6 @@
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
-
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
-
-  const handleChangeColorMap = (e) => {
-    const valuesList = Object.keys(colorMap)
-    colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
-    colorMapRows.splice(colorPickerVisibleIndex, 1, {
-      index: colorPickerVisibleIndex,
-      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255 * e.detail.color.a],
-      start: colorMapRows[colorPickerVisibleIndex].start,
-      end: colorMapRows[colorPickerVisibleIndex].end,
-    })
-    reclassifyImage(true)
-  }
 </script>
 
 {#if legendLabels}
@@ -171,14 +157,11 @@
     class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
     data-testid="unique-view-container">
     {#each colorMapRows as colorMapRow}
-      <UniqueValuesLegendColorMapRow
+      <IntervalsLegendColorMapRow
         bind:colorMapRow
+        bind:colorPickerVisibleIndex
         bind:colorMapName
-        layer={layerConfig}
-        {colorPickerVisibleIndex}
-        on:clickColorPicker={handleColorPickerClick}
-        on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-        on:changeColorMap={handleChangeColorMap} />
+        bind:hasUniqueValues={isUniqueValues} />
     {/each}
   </div>
 {/if}

@@ -322,7 +322,7 @@
                   // @ts-ignore:next-line
                   color: [...scaleColorList(i).rgb(), 255],
                   start: stat.values[i],
-                  end: '',
+                  end: stat.values[i],
                 }
                 propertySelectValues.push(row)
               }
@@ -526,8 +526,10 @@
     {/if}
   </div>
 
-  {#if hasUniqueValues === false}
-    <div class="legend-controls">
+  <div
+    class="legend-controls"
+    style={hasUniqueValues ? `width:min-content; position:absolute; right:20px` : null}>
+    {#if hasUniqueValues === false}
       <div class="field pr-2">
         <label class="label has-text-centered">Classification</label>
         <div class="control">
@@ -557,40 +559,41 @@
             on:change={handleIncrementDecrementClasses} />
         </div>
       </div>
-      {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
-        <div
-          class="toggle-container icon"
-          role="button"
-          aria-label="Open color scheme picker"
-          tabindex="0"
-          use:popperRef
-          on:click={handleClosePopup}
-          on:keydown={handleEnterKey}
-          data-testid="colormap-toggle-container"
-          transition:fade>
-          <i
-            class="fa-solid fa-palette"
-            style="font-size: 16px; color: white" />
-        </div>
-      {/if}
+    {/if}
+    {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
+      <div
+        class="toggle-container icon"
+        role="button"
+        aria-label="Open color scheme picker"
+        tabindex="0"
+        use:popperRef
+        on:click={handleClosePopup}
+        on:keydown={handleEnterKey}
+        data-testid="colormap-toggle-container"
+        transition:fade>
+        <i
+          class="fa-solid fa-palette"
+          style="font-size: 16px; color: white" />
+      </div>
+    {/if}
 
-      {#if showTooltip}
+    {#if showTooltip}
+      <div
+        id="tooltip"
+        data-testid="tooltip"
+        use:popperContent={popperOptions}
+        transition:fade>
+        <ColorMapPicker
+          on:handleClosePopup={handleClosePopup}
+          bind:colorMapName
+          on:colorMapChanged={colorMapChanged} />
         <div
-          id="tooltip"
-          data-testid="tooltip"
-          use:popperContent={popperOptions}
-          transition:fade>
-          <ColorMapPicker
-            on:handleClosePopup={handleClosePopup}
-            bind:colorMapName
-            on:colorMapChanged={colorMapChanged} />
-          <div
-            id="arrow"
-            data-popper-arrow />
-        </div>
-      {/if}
-    </div>
-  {/if}
+          id="arrow"
+          data-popper-arrow />
+      </div>
+    {/if}
+  </div>
+
   <div class="columns">
     <div class="column size">
       <div>
@@ -600,6 +603,7 @@
               bind:colorMapRow
               bind:colorMapName
               bind:rowWidth
+              bind:hasUniqueValues
               {colorPickerVisibleIndex}
               on:clickColorPicker={handleColorPickerClick}
               on:changeColorMap={handleParamsUpdate}

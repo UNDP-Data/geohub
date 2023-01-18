@@ -5,14 +5,14 @@
   import { abs } from 'mathjs'
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
-  import type { Color, IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import type { Color, IntervalLegendColorMapRow } from '$lib/types'
 
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorPickerVisibleIndex: number
   // export let layer: Layer
   export let colorMapName: string
   export let rowWidth
-
+  export let hasUniqueValues: boolean
   let signal
   const dispatch = createEventDispatcher()
   const {
@@ -32,11 +32,7 @@
   let showToolTip = false
   $: colorPickerStyle = getColorPickerStyle(colorMapRow?.color.join())
   $: {
-    if (colorPickerVisibleIndex === colorMapRow?.index) {
-      showToolTip = true
-    } else {
-      showToolTip = false
-    }
+    showToolTip = colorPickerVisibleIndex === colorMapRow?.index
   }
 
   $: color, updateColorMap(color)
@@ -152,29 +148,32 @@ the key statement is necessary as it forces to rerender the legend item in case 
         </div>
       {/if}
     </div>
-    <div class="column p-0 m-0">
-      <input
-        style="width:{rowWidth * 8}px; max-width:100px"
-        class="number-input"
-        id="start"
-        type="number"
-        value={colorMapRow.start}
-        on:change={handleInput}
-        required />
-    </div>
-    {#if colorMapRow.end}
-      <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+    {#if !hasUniqueValues}
       <div class="column p-0 m-0">
         <input
           style="width:{rowWidth * 8}px; max-width:100px"
           class="number-input"
+          id="start"
           type="number"
-          id="end"
-          value={colorMapRow.end}
+          value={colorMapRow.start}
           on:change={handleInput}
           required />
       </div>
     {/if}
+    <div class="is-3 column p-0 m-0">
+      <p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
+    </div>
+    <div class="column p-0 m-0">
+      <input
+        disabled={hasUniqueValues}
+        style={hasUniqueValues ? `width:max-content` : `width:${rowWidth * 8}px; max-width:100px`}
+        class="number-input"
+        type={hasUniqueValues ? 'text' : 'number'}
+        id="end"
+        value={isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
+        on:change={handleInput}
+        required />
+    </div>
   </div>
 {/key}
 
