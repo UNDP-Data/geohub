@@ -15,6 +15,7 @@
   } from '$lib/helper'
   import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
+  import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -167,19 +168,27 @@
   <div
     class="is-divider"
     data-content="Unique values" />
-  <div
-    class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
-    data-testid="unique-view-container">
-    {#each colorMapRows as colorMapRow}
-      <UniqueValuesLegendColorMapRow
-        bind:colorMapRow
+  <div class="legend-controls">
+    <div
+      class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
+      data-testid="unique-view-container">
+      {#each colorMapRows as colorMapRow}
+        <UniqueValuesLegendColorMapRow
+          bind:colorMapRow
+          bind:colorMapName
+          layer={layerConfig}
+          {colorPickerVisibleIndex}
+          on:clickColorPicker={handleColorPickerClick}
+          on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
+          on:changeColorMap={handleChangeColorMap} />
+      {/each}
+    </div>
+
+    <div class="colormap-picker">
+      <ColorMapPicker
         bind:colorMapName
-        layer={layerConfig}
-        {colorPickerVisibleIndex}
-        on:clickColorPicker={handleColorPickerClick}
-        on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-        on:changeColorMap={handleChangeColorMap} />
-    {/each}
+        on:colorMapChanged={colorMapNameChanged} />
+    </div>
   </div>
 {/if}
 
@@ -196,5 +205,15 @@
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
+  }
+
+  .legend-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .colormap-picker {
+      margin-left: auto;
+    }
   }
 </style>

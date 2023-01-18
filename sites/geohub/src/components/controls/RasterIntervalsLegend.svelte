@@ -20,6 +20,8 @@
   import type { IntervalLegendColorMapRow, Layer } from '$lib/types'
   import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
+  import ColorMapPicker from './ColorMapPicker.svelte'
+
   //console.clear()
   export let layerConfig: Layer
   export let numberOfClasses: number
@@ -39,7 +41,6 @@
     // or when the component is being created. On demand (event based approach) might be better
 
     // the map is updated whene the colormap is chenged intentionally or whne it is initialized first time
-
     if ((colorMapName && generateCmap) || (colorMapName && colorMapRows.length == 0)) {
       reclassifyImage()
     } // not right
@@ -210,12 +211,11 @@
   class="intervals-view-container"
   data-testid="intervals-view-container">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="columns is-gapless controls">
-    <div class="column classification">
-      <div class="has-text-centered pb-2">Classification</div>
-      <div
-        class="select is-flex is-justify-content-center"
-        style="height: 30px; width: fit-content">
+  <div class="legend-controls">
+    <div class="classification field pr-2">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Classification</label>
+      <div class="control">
         <select
           bind:value={classificationMethod}
           on:change={(e) => reclassifyImage(e)}
@@ -230,13 +230,25 @@
       </div>
     </div>
 
-    <div class="column number-classes">
-      <div class="has-text-centered">Number of Classes</div>
-      <NumberInput
-        bind:value={numberOfClasses}
-        bind:minValue={colorClassCountMin}
-        bind:maxValue={colorClassCountMax}
-        on:change={handleIncrementDecrementClasses} />
+    <div class="number-classes field pr-2">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Number of Classes</label>
+      <div class="control">
+        <NumberInput
+          bind:value={numberOfClasses}
+          bind:minValue={colorClassCountMin}
+          bind:maxValue={colorClassCountMax}
+          on:change={handleIncrementDecrementClasses} />
+      </div>
+    </div>
+
+    <div class="colormap-picker">
+      <ColorMapPicker
+        bind:colorMapName
+        on:colorMapChanged={() => {
+          colorMapNameChanged()
+          reclassifyImage()
+        }} />
     </div>
   </div>
   <div class="is-divider separator mb-4" />
@@ -259,5 +271,19 @@
   }
   :global(.select:not(.is-multiple):not(.is-loading)::after) {
     border-color: #ff0000;
+  }
+
+  .legend-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    .number-classes {
+      margin: 0 auto;
+    }
+
+    .colormap-picker {
+      margin-left: auto;
+    }
   }
 </style>

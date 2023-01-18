@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade, slide } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
 
@@ -7,6 +8,7 @@
   import { ColorMapTypes } from '$lib/constants'
   import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
   import { Tabs } from '@undp-data/svelte-undp-design'
+  import Popper from '$lib/popper'
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let colorMapName: string
@@ -22,6 +24,20 @@
     return { label: type.name }
   })
 
+  let showTooltip = false
+
+  const {
+    ref: popperRef,
+    options: popperOptions,
+    content: popperContent,
+  } = new Popper(
+    {
+      placement: 'right-end',
+      strategy: 'fixed',
+    },
+    [10, 15],
+  ).init()
+
   const handleColorMapClick = (cmName: string) => {
     //the lines below if removed will break  all the components that use this component and bind
     // two ways the colormap
@@ -34,7 +50,7 @@
   }
 
   const handleClosePopup = () => {
-    dispatch('handleClosePopup')
+    showTooltip = !showTooltip
   }
 
   const handleEnterKey = (event: KeyboardEvent) => {
@@ -46,49 +62,94 @@
   }
 </script>
 
-<div
-  data-testid="color-map-picker"
-  use:clickOutside={handleClosePopup}>
-  <div class="columns is-vcentered is-mobile">
-    <div class="column is-11">
-      <Tabs
-        bind:tabs
-        bind:activeTab={activeColorMapType} />
-    </div>
-    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<div class="columm legend-toggle">
+  <span
+    role="button"
+    class="colormap-button icon has-tooltip-left has-tooltip-arrow"
+    aria-label="Open Color Scheme Picker"
+    data-tooltip="Change color map"
+    tabindex="0"
+    use:popperRef
+    on:keydown={handleEnterKey}
+    on:click={handleClosePopup}
+    data-testid="colormap-toggle-container">
+    <i
+      class="fa-solid fa-palette fa-lg"
+      style="color: white" />
+  </span>
+
+  {#if showTooltip}
     <div
-      tabindex="0"
-      class="column is-1 close"
-      alt="Close Colormap Picker"
-      title="Close Colormap Picker"
-      on:click={handleClosePopup}
-      on:keydown={handleEnterKey}>
-      <i class="fa-solid fa-xmark" />
+      id="tooltip"
+      data-testid="tooltip"
+      use:popperContent={popperOptions}
+      transition:fade>
+      <div
+        data-testid="color-map-picker"
+        use:clickOutside={handleClosePopup}>
+        <div class="columns is-vcentered is-mobile">
+          <div class="column is-11">
+            <Tabs
+              bind:tabs
+              bind:activeTab={activeColorMapType} />
+          </div>
+          <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+          <div
+            tabindex="0"
+            class="column is-1 close"
+            title="Close Colormap Picker"
+            on:click={handleClosePopup}
+            on:keydown={handleEnterKey}>
+            <i class="fa-solid fa-xmark" />
+          </div>
+        </div>
+        <div class="columns">
+          <div class="column card-color">
+            <ul class="is-size-6">
+              {#each colorMapTypes as colorMapType}
+                {#if activeColorMapType === colorMapType.name}
+                  {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+                    <li
+                      on:click={() => handleColorMapClick(cmName)}
+                      on:keydown={handleEnterKey}>
+                      <ColorMapPickerCard
+                        colorMapName={cmName}
+                        colorMapType={ColorMapTypes.SEQUENTIAL}
+                        isSelected={colorMapName === cmName} />
+                    </li>
+                  {/each}
+                {/if}
+              {/each}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="arrow"
+        data-popper-arrow />
     </div>
-  </div>
-  <div class="columns">
-    <div class="column card-color">
-      <ul class="is-size-6">
-        {#each colorMapTypes as colorMapType}
-          {#if activeColorMapType === colorMapType.name}
-            {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
-              <li
-                on:click={() => handleColorMapClick(cmName)}
-                on:keydown={handleEnterKey}>
-                <ColorMapPickerCard
-                  colorMapName={cmName}
-                  colorMapType={ColorMapTypes.SEQUENTIAL}
-                  isSelected={colorMapName === cmName} />
-              </li>
-            {/each}
-          {/if}
-        {/each}
-      </ul>
-    </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="scss">
+  @import '../../styles/popper.scss';
+
+  .legend-toggle {
+    .colormap-button {
+      background: #d12800;
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+
+  #tooltip {
+    max-height: 300px;
+    max-width: 470px;
+  }
+
   .close {
     cursor: pointer;
   }

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
   import { onDestroy } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
@@ -40,7 +39,6 @@
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
-  import Popper from '$lib/popper'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -84,18 +82,6 @@
       value: VectorApplyToTypes.SIZE,
     },
   ]
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-end',
-      strategy: 'fixed',
-    },
-    [10, 15],
-  ).init()
 
   const initialise = () => {
     return new Promise<void>((resolve) => {
@@ -468,16 +454,6 @@
     return stops
   }
 
-  const handleClosePopup = () => {
-    showTooltip = !showTooltip
-  }
-
-  const handleEnterKey = (event: any) => {
-    if (event.key === 'Enter') {
-      event.target.click()
-    }
-  }
-
   let isInitialising = initialise()
 </script>
 
@@ -548,35 +524,10 @@
           </div>
         </div>
         {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
-          <div
-            class="toggle-container icon"
-            role="button"
-            aria-label="Open color scheme picker"
-            tabindex="0"
-            use:popperRef
-            on:click={handleClosePopup}
-            on:keydown={handleEnterKey}
-            data-testid="colormap-toggle-container"
-            transition:fade>
-            <i
-              class="fa-solid fa-palette"
-              style="font-size: 16px; color: white" />
-          </div>
-        {/if}
-
-        {#if showTooltip}
-          <div
-            id="tooltip"
-            data-testid="tooltip"
-            use:popperContent={popperOptions}
-            transition:fade>
+          <div class="colormap-picker">
             <ColorMapPicker
-              on:handleClosePopup={handleClosePopup}
               bind:colorMapName
               on:colorMapChanged={handleColormapNameChanged} />
-            <div
-              id="arrow"
-              data-popper-arrow />
           </div>
         {/if}
       </div>
@@ -676,21 +627,8 @@
         margin: 0 auto;
       }
 
-      .toggle-container {
+      .colormap-picker {
         margin-left: auto;
-        background: #d12800;
-        padding: 10px;
-        width: 32px;
-        height: 32px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      $tooltip-background: #fff;
-
-      #tooltip {
-        max-width: 470px;
-        width: 470px;
       }
     }
   }
