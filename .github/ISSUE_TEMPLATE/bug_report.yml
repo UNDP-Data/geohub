@@ -70,9 +70,11 @@ body:
     id: bug-system-information
     attributes:
       label: "Bug System Information"
-      description: "If applicable, add information about your system configuration."
+      description: |
+        If applicable, add information about your system configuration.
+        Paste the output of `npx envinfo --system --binaries --browsers --npmPackages "{svelte,@sveltejs/*,vite}"`
       value: |
         - OS: [e.g. Windows 10]
         - Browser: [e.g. Google Chrome, Firefox]
     validations:
-        required: false
+      required: false

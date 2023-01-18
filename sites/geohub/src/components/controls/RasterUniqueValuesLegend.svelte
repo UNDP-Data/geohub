@@ -15,6 +15,7 @@
   import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
   import { map } from '$stores'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
+  import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
@@ -115,9 +116,6 @@
         colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
       })
     }
-
-    console.log(colorMapRows)
-
     handleParamsUpdate(colorMap)
   }
 
@@ -144,8 +142,13 @@
     if (layerURL.searchParams.has('rescale')) {
       layerURL.searchParams.delete('rescale')
     }
+    console.log('encodeColorMapRows', encodeColorMapRows)
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(layerStyle, layerURL, updatedParams)
+  }
+
+  const handleChangeOfColorMap = () => {
+    reclassifyImage(true)
   }
 </script>
 
@@ -153,16 +156,25 @@
   <div
     class="is-divider"
     data-content="Unique values" />
-  <div
-    class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
-    data-testid="unique-view-container">
-    {#each colorMapRows as colorMapRow}
-      <IntervalsLegendColorMapRow
-        bind:colorMapRow
-        bind:colorPickerVisibleIndex
+  <div class="legend-controls">
+    <div
+      class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
+      data-testid="unique-view-container">
+      {#each colorMapRows as colorMapRow}
+        <IntervalsLegendColorMapRow
+          bind:colorMapRow
+          bind:colorPickerVisibleIndex
+          bind:colorMapName
+          on:changeColorMap={handleChangeOfColorMap}
+          bind:hasUniqueValues={isUniqueValues} />
+      {/each}
+    </div>
+
+    <div class="colormap-picker">
+      <ColorMapPicker
         bind:colorMapName
-        bind:hasUniqueValues={isUniqueValues} />
-    {/each}
+        on:colorMapChanged={colorMapNameChanged} />
+    </div>
   </div>
 {/if}
 
@@ -179,5 +191,15 @@
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
+  }
+
+  .legend-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .colormap-picker {
+      margin-left: auto;
+    }
   }
 </style>

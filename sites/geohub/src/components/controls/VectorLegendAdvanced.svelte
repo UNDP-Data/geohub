@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
   import { hexToCSSFilter } from 'hex-to-css-filter'
-  import { cloneDeep } from 'lodash-es'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
@@ -41,7 +39,6 @@
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
-  import Popper from '$lib/popper'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -52,26 +49,8 @@
   let layerMax: number
   let layerMin: number
 
-  // update color intervals upon change of color map name
-  $: colorMapName, colorMapChanged()
   // update layer store upon change of apply to option
   $: applyToOption, updateMap()
-
-  const colorMapChanged = () => {
-    layer = cloneDeep(layer)
-    colorPickerVisibleIndex = -1
-
-    getPropertySelectValue()
-    getColorMapRows()
-    // updateMapWithNewColorMap()
-    setIntervalValues()
-
-    // fire event for style sharing
-    $map?.fire('colormap:changed', {
-      layerId: layer.id,
-      colorMapName: colorMapName,
-    })
-  }
 
   let classificationMethodsDefault = [
     { name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
@@ -79,7 +58,6 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
   ]
   let classificationMethods = classificationMethodsDefault
-  let colorPickerVisibleIndex: number
   let layerStyle = getLayerStyle($map, layer.id)
   let layerType = layerStyle.type
   let cssIconFilter: string
@@ -105,41 +83,31 @@
     },
   ]
 
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-end',
-      strategy: 'fixed',
-    },
-    [10, 15],
-  ).init()
-
-  onMount(() => {
-    if (layerType === 'symbol') {
-      icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
-    }
-    getPropertySelectValue()
-    setCssIconFilter()
-    getColorMapRows()
-    setIntervalValues()
-
-    if (layerType === 'line') {
-      if (highlySkewed) {
-        classificationMethods = [
-          ...classificationMethods,
-          ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
-        ]
-        classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-      } else {
-        classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+  const initialise = () => {
+    return new Promise<void>((resolve) => {
+      if (layerType === 'symbol') {
+        icon = $spriteImageList.find((icon) => icon.alt === getIconImageName())
       }
-    }
-    if (!$map) return
-    $map.on('zoom', updateMap)
-  })
+      getPropertySelectValue()
+      setCssIconFilter()
+      getColorMapRows()
+      setIntervalValues()
+
+      if (layerType === 'line') {
+        if (highlySkewed) {
+          classificationMethods = [
+            ...classificationMethods,
+            ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
+          ]
+          classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+        } else {
+          classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+        }
+      }
+      $map?.on('zoom', updateMap)
+      resolve()
+    })
+  }
 
   onDestroy(() => {
     if (!$map) return
@@ -241,6 +209,16 @@
     numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
   }
 
+  const handleColormapNameChanged = () => {
+    setIntervalValues()
+
+    // fire event for style sharing
+    $map?.fire('colormap:changed', {
+      layerId: layer.id,
+      colorMapName: colorMapName,
+    })
+  }
+
   const handlePropertyChange = (e) => {
     propertySelectValue = e.detail.prop
     setIntervalValues()
@@ -262,10 +240,6 @@
   const handleParamsUpdate = debounce(() => {
     updateMap()
   }, 500)
-
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
 
   const handleChangeIntervalValues = (event: CustomEvent) => {
     colorMapRows = updateIntervalValues(event, colorMapRows)
@@ -320,7 +294,7 @@
                   index: i,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore:next-line
-                  color: [...scaleColorList(i).rgb(), 255],
+                  color: [...scaleColorList(i).rgb(), 1],
                   start: stat.values[i],
                   end: stat.values[i],
                 }
@@ -350,7 +324,7 @@
                   index: i,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore:next-line
-                  color: [...scaleColorList(intervalList[i]).rgb(), 255],
+                  color: [...scaleColorList(intervalList[i]).rgb(), 1],
                   start: intervalList[i],
                   end: intervalList[i + 1],
                 }
@@ -371,13 +345,7 @@
     if (!propertySelectValue) return
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row, index) => {
-        const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${remapInputValue(
-          row.color[3],
-          0,
-          255,
-          0,
-          1,
-        )})`
+        const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
         const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
 
         // set default line color to be middle of colors
@@ -399,7 +367,7 @@
         return [
           row.start,
           hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
-            ? chroma([row.color[0], row.color[1], row.color[2]]).hex('rgb')
+            ? chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).css()
             : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
         ]
       })
@@ -480,182 +448,151 @@
     return stops
   }
 
-  const handleClosePopup = () => {
-    showTooltip = !showTooltip
-    colorPickerVisibleIndex = -1
-  }
-
-  const handleEnterKey = (event: any) => {
-    if (event.key === 'Enter') {
-      event.target.click()
-    }
-  }
+  let isInitialising = initialise()
 </script>
 
 <div
   class="advanced-container"
   data-testid="advanced-container">
-  <div class="columns is-mobile">
-    <div class="column">
-      <div class="field">
-        <label class="label has-text-centered">Property:</label>
-        <div class="control">
-          <PropertySelect
-            bind:propertySelectValue
-            on:select={handlePropertyChange}
-            {layer}
-            showOnlyNumberFields={true} />
-        </div>
-      </div>
-    </div>
-    {#if layerType !== 'fill' && hasUniqueValues === false}
+  {#await isInitialising then}
+    <div class="columns is-mobile">
       <div class="column">
         <div class="field">
-          <label class="label has-text-centered">Apply To</label>
+          <label class="label has-text-centered">Property:</label>
           <div class="control">
-            <div class="is-flex is-justify-content-center">
-              <Radios
-                bind:radios={applyToOptions}
-                bind:value={applyToOption}
-                groupName="layer-type-{layer.id}}"
-                isVertical={true} />
+            <PropertySelect
+              bind:propertySelectValue
+              on:select={handlePropertyChange}
+              {layer}
+              showOnlyNumberFields={true} />
+          </div>
+        </div>
+      </div>
+      {#if layerType !== 'fill' && hasUniqueValues === false}
+        <div class="column">
+          <div class="field">
+            <label class="label has-text-centered">Apply To</label>
+            <div class="control">
+              <div class="is-flex is-justify-content-center">
+                <Radios
+                  bind:radios={applyToOptions}
+                  bind:value={applyToOption}
+                  groupName="layer-type-{layer.id}}"
+                  isVertical={true} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    {/if}
-  </div>
+      {/if}
+    </div>
 
-  <div
-    class="legend-controls"
-    style={hasUniqueValues ? `width:min-content; position:absolute; right:20px` : null}>
     {#if hasUniqueValues === false}
-      <div class="field pr-2">
-        <label class="label has-text-centered">Classification</label>
-        <div class="control">
-          <div class="select is-normal">
-            <select
-              bind:value={classificationMethod}
-              on:change={handleClassificationChange}
-              style="width: 110px;"
-              title="Classification Methods">
-              {#each classificationMethods as classificationMethod}
-                <option
-                  class="legend-text"
-                  title="Classification Method"
-                  value={classificationMethod.code}>{classificationMethod.name}</option>
-              {/each}
-            </select>
+      <div class="legend-controls">
+        <div class="field pr-2">
+          <label class="label has-text-centered">Classification</label>
+          <div class="control">
+            <div class="select is-normal">
+              <select
+                bind:value={classificationMethod}
+                on:change={handleClassificationChange}
+                style="width: 110px;"
+                title="Classification Methods">
+                {#each classificationMethods as classificationMethod}
+                  <option
+                    class="legend-text"
+                    title="Classification Method"
+                    value={classificationMethod.code}>{classificationMethod.name}</option>
+                {/each}
+              </select>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="number-classes field pr-2">
-        <label class="label has-text-centered">Number of Classes</label>
-        <div class="control">
-          <NumberInput
-            bind:value={numberOfClasses}
-            minValue={COLOR_CLASS_COUNT_MINIMUM}
-            maxValue={COLOR_CLASS_COUNT_MAXIMUM}
-            on:change={handleIncrementDecrementClasses} />
+        <div class="number-classes field pr-2">
+          <label class="label has-text-centered">Number of Classes</label>
+          <div class="control">
+            <NumberInput
+              bind:value={numberOfClasses}
+              minValue={COLOR_CLASS_COUNT_MINIMUM}
+              maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+              on:change={handleIncrementDecrementClasses} />
+          </div>
         </div>
-      </div>
-    {/if}
-    {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
-      <div
-        class="toggle-container icon"
-        role="button"
-        aria-label="Open color scheme picker"
-        tabindex="0"
-        use:popperRef
-        on:click={handleClosePopup}
-        on:keydown={handleEnterKey}
-        data-testid="colormap-toggle-container"
-        transition:fade>
-        <i
-          class="fa-solid fa-palette"
-          style="font-size: 16px; color: white" />
-      </div>
-    {/if}
-
-    {#if showTooltip}
-      <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        transition:fade>
-        <ColorMapPicker
-          on:handleClosePopup={handleClosePopup}
-          bind:colorMapName
-          on:colorMapChanged={colorMapChanged} />
-        <div
-          id="arrow"
-          data-popper-arrow />
-      </div>
-    {/if}
-  </div>
-
-  <div class="columns">
-    <div class="column size">
-      <div>
-        {#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
-          {#each colorMapRows as colorMapRow}
-            <IntervalsLegendColorMapRow
-              bind:colorMapRow
+        {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
+          <div class="colormap-picker">
+            <ColorMapPicker
               bind:colorMapName
-              bind:rowWidth
-              bind:hasUniqueValues
-              {colorPickerVisibleIndex}
-              on:clickColorPicker={handleColorPickerClick}
-              on:changeColorMap={handleParamsUpdate}
-              on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-              on:changeIntervalValues={handleChangeIntervalValues} />
-          {/each}
-        {:else if applyToOption === VectorApplyToTypes.SIZE}
-          <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-            <thead>
-              <tr>
-                <th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
-                <th>Start</th>
-                <th>End</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#if layerType === 'symbol'}
-                {#each colorMapRows as row, index}
-                  {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
-                  <tr data-testid="icon-size-row-container">
-                    <td class="has-text-centered">
-                      {#if icon}
-                        <img
-                          src={icon.src}
-                          alt={icon.alt}
-                          style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
-                      {/if}
-                    </td>
-                    <td>{row.start}</td>
-                    <td>{row.end}</td>
-                  </tr>
-                {/each}
-              {:else if layerType === 'line'}
-                {#if sizeArray && sizeArray.length > 0}
+              on:colorMapChanged={handleColormapNameChanged} />
+          </div>
+        {/if}
+      </div>
+    {/if}
+    <div class="columns">
+      <div class="column size">
+        <div>
+          {#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
+            {#each colorMapRows as colorMapRow}
+              <IntervalsLegendColorMapRow
+                bind:colorMapRow
+                bind:colorMapName
+                bind:rowWidth
+                on:changeColorMap={handleParamsUpdate}
+                bind:hasUniqueValues
+                on:changeIntervalValues={handleChangeIntervalValues} />
+            {/each}
+          {:else if applyToOption === VectorApplyToTypes.SIZE}
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
+                  <th>Start</th>
+                  <th>End</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#if layerType === 'symbol'}
                   {#each colorMapRows as row, index}
-                    <tr data-testid="line-width-row-container">
+                    {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
+                    <tr data-testid="icon-size-row-container">
                       <td class="has-text-centered">
-                        <div
-                          style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`} />
+                        {#if icon}
+                          <img
+                            src={icon.src}
+                            alt={icon.alt}
+                            style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
+                        {/if}
                       </td>
                       <td>{row.start}</td>
                       <td>{row.end}</td>
                     </tr>
                   {/each}
+                {:else if layerType === 'line'}
+                  {#if sizeArray && sizeArray.length > 0}
+                    {#each colorMapRows as row, index}
+                      <tr data-testid="line-width-row-container">
+                        <td class="has-text-centered">
+                          <div
+                            style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`} />
+                        </td>
+                        <td>{row.start}</td>
+                        <td>{row.end}</td>
+                      </tr>
+                    {/each}
+                  {/if}
                 {/if}
-              {/if}
-            </tbody>
-          </table>
-        {/if}
+              </tbody>
+            </table>
+          {/if}
+        </div>
       </div>
+      {#if hasUniqueValues}
+        <div class="colormap-picker pr-4 pt-2">
+          <ColorMapPicker
+            bind:colorMapName
+            on:colorMapChanged={handleColormapNameChanged} />
+        </div>
+      {/if}
     </div>
-  </div>
+  {/await}
 </div>
 
 <style lang="scss">
@@ -692,21 +629,8 @@
         margin: 0 auto;
       }
 
-      .toggle-container {
+      .colormap-picker {
         margin-left: auto;
-        background: #d12800;
-        padding: 10px;
-        width: 32px;
-        height: 32px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      $tooltip-background: #fff;
-
-      #tooltip {
-        max-width: 470px;
-        width: 470px;
       }
     }
   }

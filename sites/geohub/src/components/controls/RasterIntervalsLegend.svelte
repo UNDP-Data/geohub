@@ -1,30 +1,29 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { onMount } from 'svelte'
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
     COLOR_CLASS_COUNT_MAXIMUM,
     COLOR_CLASS_COUNT_MINIMUM,
   } from '$lib/constants'
-  import { cloneDeep, debounce } from 'lodash-es'
+  import { cloneDeep } from 'lodash-es'
   import {
-    fetchUrl,
     generateColorMap,
     getActiveBandIndex,
     getLayerStyle,
-    getValueFromRasterTileUrl,
     updateParamsInURL,
     getLayerSourceUrl,
     getMaxValueOfCharsInIntervals,
+    remapInputValue,
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
-  import { layerList, map } from '$stores'
+  import type { IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
+  import ColorMapPicker from './ColorMapPicker.svelte'
+
   //console.clear()
-  export let colorPickerVisibleIndex: number
   export let layerConfig: Layer
   export let numberOfClasses: number
   export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
@@ -43,7 +42,6 @@
     // or when the component is being created. On demand (event based approach) might be better
 
     // the map is updated whene the colormap is chenged intentionally or whne it is initialized first time
-
     if ((colorMapName && generateCmap) || (colorMapName && colorMapRows.length == 0)) {
       reclassifyImage()
     } // not right
@@ -184,7 +182,17 @@
   // it is very interesting that without debounce it does NOW properly
   // encode colormap and update url parameters
   const handleParamsUpdate = () => {
-    const encodeColorMapRows = JSON.stringify(colorMapRows.map((row) => [[row.start, row.end], row.color]))
+    const encodeColorMapRows = JSON.stringify(
+      colorMapRows.map((row) => {
+        if (row.color[3] === 255) {
+          return [[row.start, row.end], row.color]
+        } else {
+          const a = remapInputValue(row.color[3], 0, 1, 0, 255)
+          const color = [row.color[0], row.color[1], row.color[2], Math.floor(a)]
+          return [[row.start, row.end], color]
+        }
+      }),
+    )
     const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
     if (!(layerUrl && layerUrl.length > 0)) return
     const layerURL = new URL(layerUrl)
@@ -203,9 +211,6 @@
     reclassifyImage()
   }
 
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
   const handleChangeIntervalValues = (event: CustomEvent) => {
     colorMapRows = updateIntervalValues(event, colorMapRows)
     rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
@@ -217,19 +222,15 @@
   class="intervals-view-container"
   data-testid="intervals-view-container">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div
-    class="columns is-gapless controls"
-    on:click={() => (colorPickerVisibleIndex = -1)}>
-    <div class="column classification">
-      <div class="has-text-centered pb-2">Classification</div>
-      <div
-        class="select is-flex is-justify-content-center"
-        style="height: 30px; width: fit-content">
+  <div class="legend-controls">
+    <div class="classification field pr-2">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Classification</label>
+      <div class="control">
         <select
           bind:value={classificationMethod}
           on:change={(e) => reclassifyImage(e)}
           style="width: 114px;"
-          alt="Classification Methods"
           title="Classification Methods">
           {#each classificationMethods as classificationMethod}
             <option
@@ -240,13 +241,25 @@
       </div>
     </div>
 
-    <div class="column number-classes">
-      <div class="has-text-centered">Number of Classes</div>
-      <NumberInput
-        bind:value={numberOfClasses}
-        bind:minValue={colorClassCountMin}
-        bind:maxValue={colorClassCountMax}
-        on:change={handleIncrementDecrementClasses} />
+    <div class="number-classes field pr-2">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Number of Classes</label>
+      <div class="control">
+        <NumberInput
+          bind:value={numberOfClasses}
+          bind:minValue={colorClassCountMin}
+          bind:maxValue={colorClassCountMax}
+          on:change={handleIncrementDecrementClasses} />
+      </div>
+    </div>
+
+    <div class="colormap-picker">
+      <ColorMapPicker
+        bind:colorMapName
+        on:colorMapChanged={() => {
+          colorMapNameChanged()
+          reclassifyImage()
+        }} />
     </div>
   </div>
   <div class="is-divider separator mb-4" />
@@ -256,9 +269,6 @@
       bind:colorMapRow
       bind:colorMapName
       bind:rowWidth
-      {colorPickerVisibleIndex}
-      on:clickColorPicker={handleColorPickerClick}
-      on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
       on:changeColorMap={handleParamsUpdate}
       on:changeIntervalValues={handleChangeIntervalValues} />
   {/each}
@@ -272,5 +282,19 @@
   }
   :global(.select:not(.is-multiple):not(.is-loading)::after) {
     border-color: #ff0000;
+  }
+
+  .legend-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    .number-classes {
+      margin: 0 auto;
+    }
+
+    .colormap-picker {
+      margin-left: auto;
+    }
   }
 </style>
