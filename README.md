@@ -97,32 +97,10 @@ the diagram was created by [mermaid online editor](https://mermaid.live/edit). P
   - [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions): manage to deploy Azure Funcitons for Geohub
   - [kubexp](https://github.com/UNDP-Data/kubexp): manage configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes
 
+## Contributing
 
-## Development
+Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for more information about developing GeoHub.
 
-You can operate multiple packages at once by filtering as follows.
+## License
 
-```bash
-pnpm install
-pnpm build
-```
-
-Or, just simply to move current directory to continue develop
-
-```bash
-cd sites/geohub
-pnpm --filter="." i
-pnpm dev
-```
-
-## Release packages
-
-- create release note by the following command
-
-```
-pnpm changeset
-```
-
-- create new PR to merge to develop branch
-- changeset will create new PR to release packages
-- changeset will release packages once the PR is merged to develop
+[BSD-3-Clause license](./LICENSE)
