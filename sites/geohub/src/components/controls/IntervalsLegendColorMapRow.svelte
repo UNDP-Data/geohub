@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { abs } from 'mathjs'
   import { clickOutside } from 'svelte-use-click-outside'
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
@@ -54,7 +53,7 @@
       g,
       b,
       a,
-      hex: chroma([r, g, b]).hex('rgba'),
+      hex: chroma([r, g, b, a]).hex('rgba'),
       h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],
       v: chroma([r, g, b]).hsv()[2],
@@ -62,12 +61,13 @@
   }
 
   const getColorPickerStyle = () => {
-    const rowColor: number[] = colorMapRow.color
-    const r = rowColor[0]
-    const g = rowColor[1]
-    const b = rowColor[2]
-    const a = rowColor[3]
-    const rgba = `rgba(${r}, ${g}, ${b}, ${a})`
+    if (!color) return
+    let rgba = chroma(color.r, color.g, color.b, color.a).css()
+    const rgba2 = chroma(colorMapRow.color).css()
+    if (rgba !== rgba2) {
+      rgba = rgba2
+      setColorFromProp()
+    }
     colorPickerStyle = `caret-color:${rgba}; background-color: ${rgba}`
     return colorPickerStyle
   }
@@ -76,7 +76,9 @@
   const handleVisibilityChanged = () => {
     if (isVisible) {
       color.a = 1
-    } else [(color.a = 0)]
+    } else {
+      ;[(color.a = 0)]
+    }
     updateColorMap(color)
   }
 
@@ -111,8 +113,6 @@
   }
 
   const handleColorChanged = () => {
-    colorMapRow.color = [color.r, color.g, color.b, color.a]
-    colorPickerStyle = getColorPickerStyle()
     updateColorMap(color)
     dispatch('changeColorMap', {
       color,
