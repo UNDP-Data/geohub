@@ -70,7 +70,6 @@
   let numberOfClasses: number
   let colorMapRows: IntervalLegendColorMapRow[]
   let defaultOutlineColor: string
-  let showTooltip = false
 
   let applyToOptions: Radio[] = [
     {
@@ -91,7 +90,6 @@
       getPropertySelectValue()
       setCssIconFilter()
       getColorMapRows()
-      setIntervalValues()
 
       if (layerType === 'line') {
         if (highlySkewed) {
@@ -195,7 +193,11 @@
       (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
     )
     const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
-
+    if (!layerMax) {
+      if (stat?.max) {
+        layerMax = stat.max
+      }
+    }
     stops?.forEach((stop, index: number) => {
       const value: number = stop[0]
       const color: string = stop[1]
@@ -292,8 +294,6 @@
               for (let i = 0; i < stat.values.length; i++) {
                 const row: IntervalLegendColorMapRow = {
                   index: i,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore:next-line
                   color: [...scaleColorList(i).rgb(), 1],
                   start: stat.values[i],
                   end: '',
@@ -322,8 +322,6 @@
               for (let i = 0; i < intervalList.length - 1; i++) {
                 const row: IntervalLegendColorMapRow = {
                   index: i,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore:next-line
                   color: [...scaleColorList(intervalList[i]).rgb(), 1],
                   start: intervalList[i],
                   end: intervalList[i + 1],
@@ -343,6 +341,9 @@
 
   const updateMap = () => {
     if (!propertySelectValue) return
+    if (!(colorMapRows && colorMapRows.length > 0)) {
+      setIntervalValues()
+    }
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row, index) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`

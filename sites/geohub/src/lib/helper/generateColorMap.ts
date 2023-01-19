@@ -22,9 +22,7 @@ export const generateColorMap = (
     for (let i = 0; i <= numberOfClasses - 2; i++) {
       const row: IntervalLegendColorMapRow = {
         index: i,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
-        color: [...scaleColorList(intervalList[i]).rgb(), 255],
+        color: [...scaleColorList(intervalList[i]).rgb(), 1],
         start:
           isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.start
             ? colorMapRows[i].start
@@ -38,9 +36,7 @@ export const generateColorMap = (
     }
     const lastRow: IntervalLegendColorMapRow = {
       index: numberOfClasses - 1,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      color: [...scaleColorList(intervalList[numberOfClasses - 1]).rgb(), 255],
+      color: [...scaleColorList(intervalList[numberOfClasses - 1]).rgb(), 1],
       start: Math.floor(percentile98),
       end: Math.ceil(layerMax),
     }
@@ -56,9 +52,7 @@ export const generateColorMap = (
     for (let i = 0; i <= numberOfClasses - 1; i++) {
       const row: IntervalLegendColorMapRow = {
         index: i,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
-        color: [...scaleColorList(intervalList[i]).rgb(), 255],
+        color: [...scaleColorList(intervalList[i]).rgb(), 1],
         start:
           isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.start
             ? colorMapRows[i].start
