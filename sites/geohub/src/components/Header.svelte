@@ -2,6 +2,7 @@
   import { Header } from '@undp-data/svelte-undp-design'
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
+  import UserAccount from './UserAccount.svelte'
 
   export let drawerOpen = true
   export let height: number = undefined
@@ -26,7 +27,7 @@
   isPositionFixed={false}>
   <div
     slot="menu-buttons"
-    class="menu-buttons">
+    class="menu-buttons is-align-items-center	">
     <div
       class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
@@ -93,6 +94,10 @@
             style="color:#006eb5" />
         </span>
       </div>
+    </div>
+
+    <div class="menu-button">
+      <UserAccount />
     </div>
   </div>
 </Header>
