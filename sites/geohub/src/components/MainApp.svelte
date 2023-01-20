@@ -1,10 +1,16 @@
 <script lang="ts">
-  import type { Map } from 'maplibre-gl'
+  import type { Map as MaplibreMap } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
-  import { onMount } from 'svelte'
+  import Header from '$components/Header.svelte'
+  import BannerMessageControl from '$components/BannerMessageControl.svelte'
+  import Map from '$components/Map.svelte'
+  import Content from './Content.svelte'
+  import { map as mapStore } from '$stores'
 
-  export let map: Map
-  export let isMenuShown = false
+  let map: MaplibreMap
+  let headerHeight: number
+  let isMenuShown = true
+
   let innerWidth: number
   let innerHeight: number
   let initialPrimaryWidth = 355
@@ -19,9 +25,10 @@
   $: innerWidth, resizeMap()
   $: innerHeight, resizeMap()
 
-  onMount(() => {
+  $: if (map) {
+    mapStore.update(() => map)
     setSplitControl()
-  })
+  }
 
   const setWidthPercent = () => {
     widthPecent = (initialPrimaryWidth / innerWidth) * 100
@@ -69,6 +76,10 @@
   bind:innerWidth
   bind:innerHeight />
 
+<Header
+  bind:drawerOpen={isMenuShown}
+  bind:height={headerHeight} />
+
 <div class="split-container">
   <Split
     initialPrimarySize={`${widthPecent}%`}
@@ -80,13 +91,15 @@
     <div
       slot="primary"
       class="primary-content">
-      <slot name="primary" />
+      <Content bind:headerHeight />
     </div>
 
     <div
       slot="secondary"
       class="secondary-content">
-      <slot name="secondary" />
+      <BannerMessageControl>
+        <Map bind:map />
+      </BannerMessageControl>
     </div>
   </Split>
 </div>

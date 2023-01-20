@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
@@ -23,7 +22,9 @@ export const GET: RequestHandler = async () => {
 
     return new Response(JSON.stringify({ count: Number(res.rows[0].count) }))
   } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 400,
+    })
   } finally {
     client.release()
     pool.end()

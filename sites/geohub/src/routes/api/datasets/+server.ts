@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
@@ -50,16 +49,27 @@ export const GET: RequestHandler = async ({ url }) => {
       const targetSortingOrder = ['asc', 'desc']
       if (!targetSortingColumns.includes(column)) {
         console.log(targetSortingColumns, column)
-        throw error(400, `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`)
+        return new Response(
+          JSON.stringify({
+            message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`,
+          }),
+          {
+            status: 400,
+          },
+        )
       }
       sortByColumn = column
 
       if (values.length > 1) {
         const order: string = values[1].trim().toLowerCase()
         if (!targetSortingOrder.includes(order)) {
-          throw error(
-            400,
-            `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(', ')}'`,
+          return new Response(
+            JSON.stringify({
+              message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(', ')}'`,
+            }),
+            {
+              status: 400,
+            },
           )
         }
         SortOrder = order as 'asc' | 'desc'
@@ -185,7 +195,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
     return new Response(JSON.stringify(geojson))
   } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 400,
+    })
   } finally {
     client.release()
     pool.end()
