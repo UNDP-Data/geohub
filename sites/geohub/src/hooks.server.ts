@@ -4,6 +4,7 @@ import AzureADProvider from '@auth/core/providers/azure-ad'
 import { AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID } from '$env/static/private'
 
 export const handle = SvelteKitAuth({
+  trustHost: true,
   providers: [
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

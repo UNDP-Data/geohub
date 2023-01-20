@@ -89,7 +89,6 @@ jobs:
           envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
           envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
           envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-          envkey_NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL_DEV }}
 
       - name: Run lint
         run: |
