@@ -66,8 +66,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       # install dependencies
+      # https://github.com/evanw/esbuild/issues/1646
       - name: Install dependencies
         run: |
+          pnpm install esbuild -g
           pnpm install --frozen-lockfile
 
       # setup environmental variables
