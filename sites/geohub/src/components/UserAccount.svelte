@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { signIn, signOut } from '@auth/sveltekit/client'
   import { page } from '$app/stores'
   import { slide } from 'svelte/transition'
