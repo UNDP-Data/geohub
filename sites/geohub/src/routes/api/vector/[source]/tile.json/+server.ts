@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
@@ -17,11 +16,15 @@ export const GET: RequestHandler = async ({ params, url }) => {
   const type = url.searchParams.get('type')
 
   if (!table) {
-    throw error(400, { message: `Missing table parameter` })
+    return new Response(JSON.stringify({ message: `Missing table parameter` }), {
+      status: 400,
+    })
   }
 
   if (source === 'pgtileserv' && !['table', 'function'].includes(type)) {
-    throw error(400, { message: `type should be either table or function` })
+    return new Response(JSON.stringify({ message: `type should be either table or function` }), {
+      status: 400,
+    })
   }
 
   let tilejson: TileJson
@@ -39,7 +42,9 @@ export const GET: RequestHandler = async ({ params, url }) => {
       }
       break
     default:
-      throw error(400, { message: `Invalid source parameter.` })
+      return new Response(JSON.stringify({ message: `Invalid source parameter.` }), {
+        status: 400,
+      })
   }
 
   return new Response(JSON.stringify(tilejson))

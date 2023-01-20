@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
@@ -16,7 +15,9 @@ export const GET: RequestHandler = async ({ params }) => {
   try {
     const styleId = params.id
     if (!styleId) {
-      throw new Error(`id parameter is required.`)
+      return new Response(JSON.stringify({ message: `id parameter is required.` }), {
+        status: 400,
+      })
     }
     const query = {
       text: `SELECT style FROM geohub.style WHERE id = $1`,
@@ -25,12 +26,16 @@ export const GET: RequestHandler = async ({ params }) => {
 
     const res = await client.query(query)
     if (res.rowCount === 0) {
-      throw new Error(`${styleId} does not exist in the database`)
+      return new Response(JSON.stringify({ message: `${styleId} does not exist in the database` }), {
+        status: 404,
+      })
     }
     const style = res.rows[0].style
     return new Response(JSON.stringify(style))
   } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 400,
+    })
   } finally {
     client.release()
     pool.end()

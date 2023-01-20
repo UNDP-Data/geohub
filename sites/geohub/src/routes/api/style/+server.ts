@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
@@ -37,16 +36,27 @@ export const GET: RequestHandler = async ({ url }) => {
       const targetSortingColumns = ['id', 'name', 'createdat', 'updatedat']
       const targetSortingOrder = ['asc', 'desc']
       if (!targetSortingColumns.includes(column)) {
-        throw error(400, `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`)
+        return new Response(
+          JSON.stringify({
+            message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(', ')}'`,
+          }),
+          {
+            status: 400,
+          },
+        )
       }
       sortByColumn = column
 
       if (values.length > 1) {
         const order: string = values[1].trim().toLowerCase()
         if (!targetSortingOrder.includes(order)) {
-          throw error(
-            400,
-            `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(', ')}'`,
+          return new Response(
+            JSON.stringify({
+              message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(', ')}'`,
+            }),
+            {
+              status: 400,
+            },
           )
         }
         sortOrder = order as 'asc' | 'desc'
@@ -83,7 +93,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const res = await client.query(sql)
     if (res.rowCount === 0) {
-      throw error(404)
+      return new Response(undefined, {
+        status: 404,
+      })
     }
 
     const nextUrl = new URL(url.toString())
@@ -152,7 +164,13 @@ export const GET: RequestHandler = async ({ url }) => {
  *   layers: json
  * }
  */
-export const POST: RequestHandler = async ({ request, url }) => {
+export const POST: RequestHandler = async ({ request, url, locals }) => {
+  const session = await locals.getSession()
+  if (!session) {
+    return new Response(JSON.stringify({ message: 'Permission error' }), {
+      status: 403,
+    })
+  }
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -186,7 +204,9 @@ export const POST: RequestHandler = async ({ request, url }) => {
       }),
     )
   } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 400,
+    })
   } finally {
     client.release()
     pool.end()
@@ -239,7 +259,9 @@ export const PUT: RequestHandler = async ({ request, url }) => {
       }),
     )
   } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 400,
+    })
   } finally {
     client.release()
     pool.end()

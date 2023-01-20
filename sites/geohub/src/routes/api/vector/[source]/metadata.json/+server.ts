@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
 import {
@@ -27,14 +26,18 @@ export const GET: RequestHandler = async ({ url, params }) => {
   switch (source) {
     case 'azstorage':
       if (!pbfpath) {
-        throw error(400, { message: `'pbfpath' is required.` })
+        return new Response(JSON.stringify({ message: `'pbfpath' is required.` }), {
+          status: 400,
+        })
       }
       metadatajson = await getStaticPbfMetadataJson(url.origin, pbfpath)
       break
     case 'martin':
       tilejson = await getMartinTileJson(table, PUBLIC_MARTIN_API_ENDPOINT)
       if (!tilejson) {
-        throw error(404, { message: `table: ${table} not found.` })
+        return new Response(JSON.stringify({ message: `table: ${table} not found.` }), {
+          status: 404,
+        })
       }
       metadatajson = await generateMetadataJson(tilejson)
       break
@@ -43,7 +46,9 @@ export const GET: RequestHandler = async ({ url, params }) => {
       metadatajson = await generateMetadataJson(tilejson)
       break
     default:
-      throw error(400, { message: `Invalid source parameter.` })
+      return new Response(JSON.stringify({ message: `Invalid source parameter.` }), {
+        status: 400,
+      })
   }
 
   return new Response(JSON.stringify(metadatajson))

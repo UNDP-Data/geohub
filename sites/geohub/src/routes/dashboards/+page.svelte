@@ -3,6 +3,7 @@
   import { Header, Footer, FluidCarousel } from '@undp-data/svelte-undp-design'
   import type { CarouselContent } from '@undp-data/svelte-undp-design/package/interfaces'
   import { browser } from '$app/environment'
+  import UserAccount from '$components/UserAccount.svelte'
 
   let contents: CarouselContent[] = [
     {
@@ -63,10 +64,11 @@
   siteTitle="GeoHub dashboards"
   url="https://geohub.data.undp.org"
   logoUrl="assets/undp-images/undp-logo-blue.svg"
+  isPositionFixed={false}
   bind:height={headerHeight}>
   <div
     slot="menu-buttons"
-    class="menu-buttons">
+    class="menu-buttons is-align-items-center">
     <div
       class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip="Home">
@@ -84,11 +86,14 @@
         </span>
       </a>
     </div>
+
+    <div class="menu-button">
+      <UserAccount />
+    </div>
   </div>
 </Header>
 
-<div
-  style="height: calc(100vh - {headerHeight}px)!important; width: 100%; overflow-y: auto;overflow-x: hidden;margin-top: {headerHeight}px; ">
+<div style="height: calc(100vh - {headerHeight}px)!important; width: 100%; overflow-y: auto;overflow-x: hidden;">
   <div class="main-section mb-4">
     {#if browser}
       <FluidCarousel bind:contents />

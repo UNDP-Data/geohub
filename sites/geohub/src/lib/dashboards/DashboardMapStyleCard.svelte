@@ -66,10 +66,12 @@
     const res = await fetch(`../api/style/${style.id}`, {
       method: 'DELETE',
     })
-    dispatch('deleted', {
-      style: style,
-    })
-    confirmDeleteDialogVisible = false
+    if (res.ok) {
+      dispatch('deleted', {
+        style: style,
+      })
+      confirmDeleteDialogVisible = false
+    }
   }
 
   const handleClose = () => {
@@ -132,24 +134,26 @@
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
-        <div class="tile is-4 m-auto is-parent">
-          <div
-            class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
-            data-tooltip="Edit map">
-            <Button
-              title="Edit"
-              isPrimary={true}
-              on:clicked={() => window.open(style.editor, '_blank')} />
+        {#if $page.data.session}
+          <div class="tile is-4 m-auto is-parent">
+            <div
+              class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
+              data-tooltip="Edit map">
+              <Button
+                title="Edit"
+                isPrimary={true}
+                on:clicked={() => window.open(style.editor, '_blank')} />
+            </div>
+            <div
+              class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
+              data-tooltip="Delete map">
+              <Button
+                title="Delete"
+                isPrimary={false}
+                on:clicked={() => (confirmDeleteDialogVisible = true)} />
+            </div>
           </div>
-          <div
-            class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
-            data-tooltip="Delete map">
-            <Button
-              title="Delete"
-              isPrimary={false}
-              on:clicked={() => (confirmDeleteDialogVisible = true)} />
-          </div>
-        </div>
+        {/if}
       </div>
     </div>
   </div>
