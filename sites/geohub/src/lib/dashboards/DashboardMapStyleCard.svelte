@@ -66,10 +66,12 @@
     const res = await fetch(`../api/style/${style.id}`, {
       method: 'DELETE',
     })
-    dispatch('deleted', {
-      style: style,
-    })
-    confirmDeleteDialogVisible = false
+    if (res.ok) {
+      dispatch('deleted', {
+        style: style,
+      })
+      confirmDeleteDialogVisible = false
+    }
   }
 
   const handleClose = () => {
