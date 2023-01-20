@@ -68,8 +68,7 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm install
+          pnpm install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
@@ -119,6 +118,7 @@ jobs:
         # if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
+          echo "shared-workspace-lockfile = false" >> .npmrc
           pnpm --filter="." install --prod
           cp package.json build/.
           cp pnpm-lock.yaml build/.
