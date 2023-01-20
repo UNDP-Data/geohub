@@ -296,7 +296,7 @@
                   index: i,
                   color: [...scaleColorList(i).rgb(), 1],
                   start: stat.values[i],
-                  end: '',
+                  end: stat.values[i],
                 }
                 propertySelectValues.push(row)
               }
@@ -537,6 +537,7 @@
                 bind:colorMapName
                 bind:rowWidth
                 on:changeColorMap={handleParamsUpdate}
+                bind:hasUniqueValues
                 on:changeIntervalValues={handleChangeIntervalValues} />
             {/each}
           {:else if applyToOption === VectorApplyToTypes.SIZE}
