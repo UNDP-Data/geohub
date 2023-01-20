@@ -119,7 +119,7 @@ jobs:
         run: |
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
-          echo "hoist-pattern[]=!@esbuild/android-arm" >> .npmrc
+          echo "hoist-pattern[]=@esbuild/*" >> .npmrc
           pnpm --filter="." install --prod
           cp package.json build/.
           cp pnpm-lock.yaml build/.
