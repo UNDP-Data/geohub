@@ -10,7 +10,7 @@
   export let colorMapRow: IntervalLegendColorMapRow
   export let colorMapName: string
   export let rowWidth
-
+  export let hasUniqueValues: boolean
   let signal
   const dispatch = createEventDispatcher()
   const {
@@ -36,7 +36,7 @@
   // load color map upon change of layer color map name
   $: colorMapName, setColorFromProp()
 
-  $: isVisible = color.a === 0 ? false : true
+  $: isVisible = color.a !== 0
 
   // set color based on default value
   const setColorFromProp = () => {
@@ -180,29 +180,37 @@ the key statement is necessary as it forces to rerender the legend item in case 
         </div>
       {/if}
     </div>
-    <div class="column p-0 m-0">
-      <input
-        style="width:{rowWidth * 8}px; max-width:100px"
-        class="number-input"
-        id="start"
-        type="number"
-        value={colorMapRow.start}
-        on:change={handleInput}
-        required />
-    </div>
-    {#if colorMapRow.end}
-      <div class="is-3 column p-0 m-0"><p style="margin-left: {rowWidth + 5}px">—</p></div>
+    {#if !hasUniqueValues}
       <div class="column p-0 m-0">
         <input
           style="width:{rowWidth * 8}px; max-width:100px"
+          class="number-input"
+          id="start"
+          type="number"
+          value={colorMapRow.start}
+          on:change={handleInput}
+          required />
+      </div>
+    {/if}
+    <div class="is-3 column p-0 m-0">
+      <p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
+    </div>
+    <div class="column p-0 m-0">
+      {#if hasUniqueValues}
+        <span>
+          {isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
+        </span>
+      {:else}
+        <input
+          style={`width:${rowWidth * 8}px; max-width:100px`}
           class="number-input"
           type="number"
           id="end"
           value={colorMapRow.end}
           on:change={handleInput}
           required />
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 {/key}
 

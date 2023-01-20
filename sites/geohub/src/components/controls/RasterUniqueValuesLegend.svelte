@@ -3,7 +3,6 @@
   import chroma from 'chroma-js'
   import type { RasterTileSource } from 'maplibre-gl'
 
-  import UniqueValuesLegendColorMapRow from '$components/controls/UniqueValuesLegendColorMapRow.svelte'
   import { ColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
   import {
@@ -12,9 +11,12 @@
     getActiveBandIndex,
     getValueFromRasterTileUrl,
     getLayerStyle,
+    getBase64EncodedUrl,
+    getLayerSourceUrl,
   } from '$lib/helper'
-  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, UniqueLegendColorMapRow } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
+  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
   import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let colorPickerVisibleIndex: number
@@ -26,54 +28,55 @@
     // @ts-ignore
   ;({ info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  let layerMin = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MINIMUM'])
-  let layerMax = Number(info['band_metadata'][bandIndex][1]['STATISTICS_MAXIMUM'])
   let legendLabels = info.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
-
+  let isUniqueValues = true
   let colorMap = {}
-  let layerColorMap: chroma.Scale = undefined
+  let layerColorMap: string[] = undefined
   let colorMapRows: IntervalLegendColorMapRow[] = []
 
-  $: colorMapName, colorMapNameChanged()
+  // $: colorMapName, colorMapNameChanged()
   const colorMapNameChanged = () => {
-    if (!colorMapName) return
-    if ($map.isStyleLoaded()) {
-      getColorMapRows()
-      reclassifyImage()
-    } else {
-      // wait a bit if map style is not loaded after changing colormap_name
-      setTimeout(() => {
-        getColorMapRows()
-        reclassifyImage()
-      }, 300)
-    }
+    reclassifyImage()
   }
 
   onMount(() => {
-    if (!$map.isStyleLoaded()) return
-    getColorMapRows()
-    colorMapRows.length > 0 ? reclassifyImage(true) : reclassifyImage(false)
-  })
-
-  const getColorMapRows = () => {
-    const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as {
-      [key: string]: number[]
+    // check if layerURL is already set
+    const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap')
+    if (!colormap) {
+      setColorMapRows()
+      reclassifyImage()
+    } else {
+      setColorMapRowsFromURL()
     }
+  })
+  const setColorMapRows = () => {
+    setColorMap()
     colorMapRows = []
-    if (!(colormap && Object.keys(colormap).length > 0)) return
-    Object.keys(colormap).forEach((key) => {
-      const color = colormap[key]
+    const colors = layerColorMap.map((color) => chroma(color).rgba())
+    Object.keys(legendLabels).forEach((key, index) => {
       colorMapRows.push({
-        color: color,
-        index: colorMapRows.length === 0 ? 0 : colorMapRows.length - 1,
-        start: key,
-        end: Object.keys(legendLabels).length > 0 ? legendLabels[key] : key,
+        index: index,
+        start: Number(key),
+        end: legendLabels[key],
+        color: colors[index],
       })
     })
   }
 
-  const reclassifyImage = (useLayerColorMapRows = false) => {
-    setColorMap()
+  const setColorMapRowsFromURL = () => {
+    colorMapRows = []
+    const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap')
+    Object.keys(colormap).forEach((key, index) => {
+      colorMapRows.push({
+        index: index,
+        start: Number(key),
+        end: legendLabels[key],
+        color: colormap[key],
+      })
+    })
+  }
+
+  const reclassifyImage = () => {
     const layerStyle = getLayerStyle($map, layerConfig.id)
     const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
     if (!(layerSrc.tiles?.length > 0)) return
@@ -81,86 +84,31 @@
     if (layerURL.searchParams.has('rescale')) {
       layerURL.searchParams.delete('rescale')
     }
-    if (useLayerColorMapRows === false) {
-      const bandName = Object.keys(layerConfig.info.stats)
-      layerMin = layerConfig.info.stats[bandName]['min']
-      layerMax = layerConfig.info.stats[bandName]['max']
-      setColorMap()
-      const uValues = info.stats[bandName]['histogram'][1]
-
-      const layerUniqueValues = uValues.map((v) => {
-        return { name: v, value: v }
-      })
-      const _colorMapRows = []
-      let index = 0
-      layerUniqueValues.forEach((row: UniqueLegendColorMapRow) => {
-        const key = row.value
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
-        const color = [...layerColorMap(key).rgb(), 255]
-
-        colorMap[parseInt(remapInputValue(key, layerMin, layerMax, layerMin, layerMax))] = color
-        //colorMap[key] = color
-        _colorMapRows.push({
-          index,
-          color,
-          start: key,
-          end: Object.keys(legendLabels).length > 0 ? legendLabels[key] : row.value,
-        })
-        index++
-      })
-
-      colorMapRows = _colorMapRows
-    } else {
-      colorMapRows.forEach((row) => {
-        colorMap[parseInt(remapInputValue(row.start, layerMin, layerMax, layerMin, layerMax))] = row.color
-      })
-    }
-
-    handleParamsUpdate(colorMap)
+    setColorMapRows()
+    handleParamsUpdate(colorMapRows)
   }
 
   const setColorMap = () => {
-    for (let [colorMapType, colorMaps] of Object.entries(ColorMaps)) {
-      colorMaps.forEach((cmName: string) => {
-        if (colorMapName === cmName) {
-          if (colorMapType === ColorMapTypes.SEQUENTIAL) {
-            layerColorMap = chroma.scale(colorMapName).mode('lrgb').padding([0.25, 0]).domain([layerMin, layerMax])
-          } else {
-            layerColorMap = chroma.scale(colorMapName).mode('lrgb').domain([layerMin, layerMax])
-          }
-        }
-      })
-    }
+    layerColorMap = chroma.scale(colorMapName).mode('lrgb').colors(Object.keys(legendLabels).length)
   }
 
-  const handleParamsUpdate = (cmap) => {
-    const encodeColorMapRows = JSON.stringify(cmap)
+  const handleParamsUpdate = async (cmaprows) => {
+    cmaprows.forEach((row) => {
+      colorMap[row.start] = [row.color[0], row.color[1], row.color[2], remapInputValue(row.color[3], 0, 1, 0, 255)]
+    })
+    const encodeColorMapRows = JSON.stringify(colorMap)
+    const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    if (!(layerUrl && layerUrl.length > 0)) return
+    const layerURL = new URL(layerUrl)
+    layerURL.searchParams.has('colormap_name') ? layerURL.searchParams.delete('colormap_name') : null
+    layerURL.searchParams.has('rescale') ? layerURL.searchParams.delete('rescale') : null
     const layerStyle = getLayerStyle($map, layerConfig.id)
-    const layerSrc: RasterTileSource = $map.getSource(layerStyle.source) as RasterTileSource
-    const layerURL = new URL(layerSrc.tiles[0])
-    layerURL.searchParams.delete('colormap_name')
-    if (layerURL.searchParams.has('rescale')) {
-      layerURL.searchParams.delete('rescale')
-    }
     let updatedParams = Object.assign({ colormap: encodeColorMapRows })
     updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
 
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
-
-  const handleChangeColorMap = (e) => {
-    const valuesList = Object.keys(colorMap)
-    colorMap[valuesList[colorPickerVisibleIndex]] = [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255]
-    colorMapRows.splice(colorPickerVisibleIndex, 1, {
-      index: colorPickerVisibleIndex,
-      color: [e.detail.color.r, e.detail.color.g, e.detail.color.b, 255 * e.detail.color.a],
-      start: colorMapRows[colorPickerVisibleIndex].start,
-      end: colorMapRows[colorPickerVisibleIndex].end,
-    })
-    reclassifyImage(true)
+  const handleChangeOfColorMap = () => {
+    handleParamsUpdate(colorMapRows)
   }
 </script>
 
@@ -173,14 +121,11 @@
       class="unique-view-container {Object.keys(legendLabels).length > 1 ? 'height-labels' : 'height'}"
       data-testid="unique-view-container">
       {#each colorMapRows as colorMapRow}
-        <UniqueValuesLegendColorMapRow
+        <IntervalsLegendColorMapRow
           bind:colorMapRow
           bind:colorMapName
-          layer={layerConfig}
-          {colorPickerVisibleIndex}
-          on:clickColorPicker={handleColorPickerClick}
-          on:closeColorPicker={() => (colorPickerVisibleIndex = -1)}
-          on:changeColorMap={handleChangeColorMap} />
+          on:changeColorMap={handleChangeOfColorMap}
+          bind:hasUniqueValues={isUniqueValues} />
       {/each}
     </div>
 
@@ -194,7 +139,7 @@
 
 <style lang="scss">
   .unique-view-container {
-    width: fit-content;
+    width: 90%;
   }
 
   .height {
