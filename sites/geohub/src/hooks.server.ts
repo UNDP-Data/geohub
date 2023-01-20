@@ -1,10 +1,11 @@
 import * as Sentry from '@sentry/node'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import AzureADProvider from '@auth/core/providers/azure-ad'
-import { AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID } from '$env/static/private'
+import { AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID, AUTH_SECRET } from '$env/static/private'
 
 export const handle = SvelteKitAuth({
   trustHost: true,
+  secret: AUTH_SECRET,
   providers: [
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
