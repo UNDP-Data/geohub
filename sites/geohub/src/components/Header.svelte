@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { Header } from '@undp-data/svelte-undp-design'
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
@@ -64,7 +65,7 @@
       </div>
     </div>
 
-    {#if $layerList.length > 0}
+    {#if $page.data.session && $layerList.length > 0}
       <div
         class="has-tooltip-bottom has-tooltip-arrow"
         data-tooltip="Share map">
