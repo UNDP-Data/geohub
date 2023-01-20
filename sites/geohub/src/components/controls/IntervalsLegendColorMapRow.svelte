@@ -196,15 +196,20 @@ the key statement is necessary as it forces to rerender the legend item in case 
       <p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
     </div>
     <div class="column p-0 m-0">
-      <input
-        disabled={hasUniqueValues}
-        style={hasUniqueValues ? `width:max-content` : `width:${rowWidth * 8}px; max-width:100px`}
-        class="number-input"
-        type={hasUniqueValues ? 'text' : 'number'}
-        id="end"
-        value={isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
-        on:change={handleInput}
-        required />
+      {#if hasUniqueValues}
+        <span>
+          {isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
+        </span>
+      {:else}
+        <input
+          style={`width:${rowWidth * 8}px; max-width:100px`}
+          class="number-input"
+          type="number"
+          id="end"
+          value={colorMapRow.end}
+          on:change={handleInput}
+          required />
+      {/if}
     </div>
   </div>
 {/key}
