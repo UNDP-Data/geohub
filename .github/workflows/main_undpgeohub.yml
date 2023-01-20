@@ -42,7 +42,7 @@ jobs:
       - name: pnpm setup
         uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7
+          version: 7.25.x
           run_install: false
 
       # setup Node
@@ -66,8 +66,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       # install dependencies
+      # https://github.com/evanw/esbuild/issues/1646
       - name: Install dependencies
         run: |
+          pnpm install esbuild -g
           pnpm install --frozen-lockfile
 
       # setup environmental variables
@@ -115,13 +117,14 @@ jobs:
       # echo "shared-workspace-lockfile = false" >> .npmrc
       - name: Copy package.json / lock files to build folder
         working-directory: ./sites/geohub
-        if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
+        # if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
-          echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm --filter="." install --prod
+          sed -e 's/workspace://g' ./package.json > ./package2.json
+          rm package.json
+          mv package2.json package.json
+          npm install --omit=dev
           cp package.json build/.
-          cp pnpm-lock.yaml build/.
           mv node_modules build/.
           mv build/client/docs build/prerendered/docs
 

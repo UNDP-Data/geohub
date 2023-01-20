@@ -9,8 +9,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "precommit": "turbo run precommit",
-    "release": "changeset publish",
-    "preinstall": "npx only-allow pnpm"
+    "release": "changeset publish"
   },
   "repository": {
     "type": "git",
@@ -25,7 +24,7 @@
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
   "packageManager": "pnpm@7.18.0",
   "engines": {
-    "pnpm": "^7.0.0"
+    "pnpm": "^7.25.x"
   },
   "type": "module",
   "dependencies": {
