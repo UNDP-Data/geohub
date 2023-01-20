@@ -120,8 +120,10 @@ jobs:
         # if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
-          echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm --filter="." install --prod
+          sed -e 's/workspace://g' ./package.json > ./package2.json
+          rm package.json
+          mv package2.json package.json
+          npm install --omit=dev
           cp package.json build/.
           cp pnpm-lock.yaml build/.
           mv node_modules build/.
