@@ -1,5 +1,6 @@
 <script lang="ts">
   export let type: 'info' | 'warning' | 'danger' | '' = 'info'
+  export let showCloseButton = true
 
   let color = 'dodgerblue'
   let icon = 'fa-solid fa-circle-info'
@@ -21,9 +22,11 @@
 <div
   bind:this={nodeRef}
   class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message">
-  <button
-    class="delete"
-    on:click={close} />
+  {#if showCloseButton}
+    <button
+      class="delete"
+      on:click={close} />
+  {/if}
   <div class="icon">
     <i
       class="fa-solid {icon} fa-lg"

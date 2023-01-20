@@ -27,7 +27,7 @@
   isPositionFixed={false}>
   <div
     slot="menu-buttons"
-    class="menu-buttons is-align-items-center	">
+    class="menu-buttons is-align-items-center">
     <div
       class="has-tooltip-bottom has-tooltip-arrow"
       data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>

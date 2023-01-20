@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import AzureADProvider from '@auth/core/providers/azure-ad'
 import { AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID } from '$env/static/private'
@@ -15,3 +16,13 @@ export const handle = SvelteKitAuth({
     }),
   ],
 })
+
+export function handleError({ error, event }) {
+  // example integration with https://sentry.io/
+  Sentry.captureException(error, { event })
+
+  return {
+    message: error.message ?? 'Whoops!',
+    code: error?.code,
+  }
+}
