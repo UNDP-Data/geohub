@@ -11,8 +11,7 @@
     "lint": "prettier --plugin-search-dir . --check  \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore && eslint ./src --fix",
     "format": "prettier --plugin-search-dir . --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore",
     "test": "vitest --run --dir src --passWithNoTests",
-    "test:watch": "vitest --watch --dir src --passWithNoTests",
-    "preinstall": "npx only-allow pnpm"
+    "test:watch": "vitest --watch --dir src --passWithNoTests"
   },
   "keywords": [
     "geohub",
@@ -54,11 +53,11 @@
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
-    "@undp-data/current-location": "workspace:^0.0.4",
-    "@undp-data/electricity-dashboard": "workspace:^0.0.6",
-    "@undp-data/style-switcher": "workspace:^0.0.4",
-    "@undp-data/style-viewer": "workspace:^0.0.5",
-    "@undp-data/svelte-undp-design": "workspace:^0.0.6",
+    "@undp-data/current-location": "^0.0.4",
+    "@undp-data/electricity-dashboard": "^0.0.6",
+    "@undp-data/style-switcher": "^0.0.4",
+    "@undp-data/style-viewer": "^0.0.5",
+    "@undp-data/svelte-undp-design": "^0.0.6",
     "@watergis/legend-symbol": "^0.2.3",
     "@watergis/maplibre-gl-export": "^1.3.8",
     "bignumber.js": "^9.1.1",
