@@ -115,7 +115,7 @@ jobs:
       # echo "shared-workspace-lockfile = false" >> .npmrc
       - name: Copy package.json / lock files to build folder
         working-directory: ./sites/geohub
-        if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
+        # if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
           echo "shared-workspace-lockfile = false" >> .npmrc
