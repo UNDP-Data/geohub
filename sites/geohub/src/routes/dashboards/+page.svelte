@@ -17,6 +17,41 @@
   ]
 
   let headerHeight: number
+
+  let footerItems: { [key: string]: { title: string; url: string }[] } = {
+    GeoHub: [
+      {
+        title: 'GeoHub',
+        url: 'https://geohub.data.undp.org',
+      },
+      {
+        title: 'Dashboards',
+        url: 'https://geohub.data.undp.org/dashboards',
+      },
+      {
+        title: 'Electricity Dashboard',
+        url: 'https://geohub.data.undp.org/dashboard/electricity',
+      },
+      {
+        title: 'Documentation',
+        url: 'https://geohub.data.undp.org/docs/index.html',
+      },
+    ],
+    'For Developers': [
+      {
+        title: 'GeoHub Dev',
+        url: 'https://dev.undpgeohub.org',
+      },
+      {
+        title: 'GeoHub API documentation',
+        url: 'https://geohub.data.undp.org/api/docs/index.html',
+      },
+      {
+        title: 'Svelte UNDP design sytem',
+        url: 'https://geohub.data.undp.org/storybook/index.html',
+      },
+    ],
+  }
 </script>
 
 <svelte:head>
@@ -62,7 +97,9 @@
     <MapStyleCardList />
   </div>
 
-  <Footer logoUrl="assets/undp-images/undp-logo-white.svg" />
+  <Footer
+    logoUrl="assets/undp-images/undp-logo-white.svg"
+    bind:footerItems />
 </div>
 
 <style lang="scss">
