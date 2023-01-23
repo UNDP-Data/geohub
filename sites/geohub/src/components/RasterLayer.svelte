@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
@@ -22,6 +23,8 @@
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
+
+  const isReadonly = $page.url.pathname === '/viewer'
 
   //local vars
   let tabs = [
@@ -123,7 +126,10 @@
     }
   }
 
-  $: {
+  if (isReadonly) {
+    tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
+    activeTab = undefined
+  } else {
     if ((info as RasterTileMetadata)?.isMosaicJson === true) {
       // disable other menus since they are not working for mosaicjson layer currently
       tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import DataView from '$components/DataView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import { TabNames } from '$lib/constants'
@@ -26,6 +27,11 @@
       },
     },
   ]
+  const isReadonly = $page.url.pathname === '/viewer'
+  if (isReadonly) {
+    tabs.splice(0, 1)
+  }
+
   let activeTab: string = tabs[0].label
 </script>
 

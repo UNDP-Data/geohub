@@ -7,6 +7,8 @@
 
   export let drawerOpen = true
   export let height: number = undefined
+  const isReadonly = $page.url.pathname === '/viewer'
+
   $: showProgressBar = $indicatorProgress
 
   const onKeyPressed = (e: KeyboardEvent) => {
@@ -65,7 +67,7 @@
       </div>
     </div>
 
-    {#if $page.data.session && $layerList.length > 0}
+    {#if !isReadonly && $page.data.session && $layerList.length > 0}
       <div
         class="has-tooltip-bottom has-tooltip-arrow"
         data-tooltip="Share map">
