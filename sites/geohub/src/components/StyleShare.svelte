@@ -14,7 +14,7 @@
   let styleURL: string
   let radioDisabled = false
 
-  let styleName = 'UNDP GeoHub style'
+  let styleName = $page.data.style?.name ?? 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification

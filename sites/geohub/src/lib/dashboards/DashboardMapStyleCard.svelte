@@ -32,7 +32,7 @@
 
   const inistialise = async () => {
     style.style = `${url.origin}/api/style/${style.id}.json`
-    style.viewer = `${url.origin}/viewer?style=${style.style}`
+    style.viewer = `${url.origin}/viewer?style=${style.id}`
     style.editor = `${url.origin}?style=${style.id}`
   }
 

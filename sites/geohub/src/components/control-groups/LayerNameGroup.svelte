@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import DeleteButton from '$components/controls/DeleteButton.svelte'
   import VisibilityButton from '$components/controls/VisibilityButton.svelte'
   import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte'
@@ -9,6 +10,8 @@
   import { onDestroy, onMount } from 'svelte'
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
   import Legend from '$components/controls/vector-styles/Legend.svelte'
+
+  const isReadonly = $page.url.pathname === '/viewer'
 
   export let layer: Layer
   let hasLayerLabel = false
@@ -49,7 +52,9 @@
   <div class="group">
     <DataCardInfoButton {layer} />
     <VisibilityButton {layer} />
-    <DeleteButton {layer} />
+    {#if !isReadonly}
+      <DeleteButton {layer} />
+    {/if}
     <ZoomToLayerButton {layer} />
   </div>
 </div>
