@@ -42,6 +42,7 @@
     tabindex="0"
     on:click={togglePanel}
     on:keydown={handleKeyDown}
+    use:clickOutside={() => (isPanelOpen = false)}
     use:popperRef>
     {#if $page.data.session.user?.image}
       <span
@@ -68,7 +69,6 @@
       data-testid="tooltip"
       style="max-width: {panelWidth};"
       use:popperContent={popperOptions}
-      use:clickOutside={() => (isPanelOpen = false)}
       transition:slide>
       <div class="panel container p-4">
         <button
