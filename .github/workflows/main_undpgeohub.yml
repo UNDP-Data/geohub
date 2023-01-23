@@ -85,10 +85,6 @@ jobs:
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
           envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
 
       - name: Run lint
         run: |
@@ -127,7 +123,6 @@ jobs:
           cp package.json build/.
           mv node_modules build/.
           mv build/client/docs build/prerendered/docs
-          mv .env build/.
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
