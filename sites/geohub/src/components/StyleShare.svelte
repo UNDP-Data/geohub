@@ -10,7 +10,7 @@
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
 
-  let isModalVisible = false
+  export let isModalVisible = false
   let styleURL: string
   let radioDisabled = false
 
@@ -33,9 +33,12 @@
     }
   }
 
+  $: if (isModalVisible) {
+    open()
+  }
+
   const open = () => {
     radioDisabled = $layerList.length === 0
-    isModalVisible = !isModalVisible
     styleURL = undefined
 
     untargetedLayers = []
@@ -182,7 +185,7 @@
   }
 </script>
 
-{#if $layerList.length > 0}
+<!-- {#if $layerList.length > 0}
   <div
     class="icon"
     on:click={() => open()}
@@ -194,7 +197,7 @@
         style="color:#006eb5" />
     </span>
   </div>
-{/if}
+{/if} -->
 
 {#if isModalVisible}
   <div

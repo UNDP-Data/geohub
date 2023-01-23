@@ -3,6 +3,16 @@
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { Footer, Header } from '@undp-data/svelte-undp-design'
+  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+
+  let links: HeaderLink[] = [
+    {
+      id: 'header-link-home',
+      title: 'Home',
+      href: '/',
+      icon: 'fa-solid fa-home pr-1',
+    },
+  ]
 </script>
 
 <Header
@@ -10,31 +20,10 @@
   siteTitle="GeoHub dashboards"
   url="https://geohub.data.undp.org"
   logoUrl="assets/undp-images/undp-logo-blue.svg"
-  isPositionFixed={false}>
-  <div
-    slot="menu-buttons"
-    class="menu-buttons is-align-items-center">
-    <div
-      class="has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip="Home">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <a
-        role="button"
-        aria-label="Home"
-        class="menu-button"
-        tabindex="0"
-        href="/">
-        <span class="icon">
-          <i
-            class="fa-solid fa-home fa-xl"
-            style="color:#006eb5" />
-        </span>
-      </a>
-    </div>
-
-    <div class="menu-button">
-      <UserAccount />
-    </div>
+  isPositionFixed={false}
+  bind:links>
+  <div slot="custom-button">
+    <UserAccount />
   </div>
 </Header>
 
