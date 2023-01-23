@@ -50,7 +50,7 @@
     {:else}
       <span
         class="initial-avator is-flex is-justify-content-center	is-align-items-center"
-        style="background-color: {chroma.random().hex()}">
+        style="background-color: {chroma.random()}">
         {#each names as name}
           <p
             class="name"
