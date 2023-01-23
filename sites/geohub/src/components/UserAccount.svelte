@@ -22,7 +22,7 @@
       placement: 'bottom-end',
       strategy: 'fixed',
     },
-    [0, 10],
+    [0, 45],
   ).init()
 
   const togglePanel = () => {
