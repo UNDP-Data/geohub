@@ -51,7 +51,7 @@
 						<ul class="grid-x grid-margin-x align-content-middle">
 							{#each links as link}
 								<li
-									class="menu-item has-tooltip-bottom"
+									class="menu-item has-tooltip-bottom has-tooltip-arrow"
 									data-menu-id={link.id}
 									data-tooltip={link.tooltip ?? link.title}
 								>
