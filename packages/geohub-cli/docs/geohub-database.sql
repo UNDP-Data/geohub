@@ -90,6 +90,9 @@ CREATE TABLE geohub.style
   createdat timestamp with time zone NOT NULL DEFAULT now(),
   updatedat timestamp with time zone NOT NULL DEFAULT now(),
   layers json,
+  access_level integer                  NOT NULL DEFAULT 1,
+  created_user character varying(100)   ,
+  updated_user character varying(100)   ,
   PRIMARY KEY (id)
 );
 
