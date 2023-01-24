@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { HeaderLink } from '$lib/interfaces';
 	import { onMount } from 'svelte';
 
 	export let region: string;
@@ -8,10 +9,21 @@
 	export let height = 75;
 	export let showProgressBar = false;
 	export let isPositionFixed = true;
+	export let links: HeaderLink[] = [];
 
 	onMount(() => {
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
+
+	let showMobileMenu = false;
+
+	const onKeyPressed = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
 </script>
 
 <header
@@ -34,11 +46,97 @@
 						<span>{siteTitle}</span>
 					</div>
 				</div>
-				<div class="cell large-3 small-3 top-right">
-					<slot name="menu-buttons" />
+				{#if links.length > 0}
+					<nav class="menu">
+						<ul class="grid-x grid-margin-x align-content-middle">
+							{#each links as link}
+								<li
+									class="menu-item has-tooltip-bottom has-tooltip-arrow"
+									data-menu-id={link.id}
+									data-tooltip={link.tooltip ?? link.title}
+								>
+									{#if link.callback}
+										{@const callback = link.callback}
+										<div
+											role="button"
+											on:click={() => callback(link.id)}
+											tabindex="0"
+											on:keydown={onKeyPressed}
+										>
+											{#if link.icon}
+												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
+											{/if}
+										</div>
+									{:else}
+										<a href={link.href} tabindex="0">
+											{#if link.icon}
+												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
+											{/if}
+										</a>
+									{/if}
+								</li>
+							{/each}
+							<li data-menu-id="header-link-custom" class="custom-button-mega menu-item">
+								<slot name="custom-button" />
+							</li>
+						</ul>
+					</nav>
+				{/if}
+				<div class="cell large-3 small-3 top-right menu-buttons">
+					<button
+						class="menu-hamburger"
+						aria-label="menu-icon"
+						on:click={() => (showMobileMenu = !showMobileMenu)}
+					>
+						<span class="hamburger-line line-top" />
+						<span class="hamburger-line line-middle" />
+						<span class="hamburger-line line-bottom" />
+						Nav toggle
+					</button>
+					<div class="custom-button"><slot name="custom-button" /></div>
 				</div>
+				{#if links.length > 0}
+					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">
+						<div class="grid-x">
+							<div class="cell mobile-links">
+								<ul>
+									{#each links as link}
+										<li>
+											{#if link.callback}
+												{@const callback = link.callback}
+												<div
+													role="button"
+													class="cta__link cta--space"
+													on:click={() => {
+														showMobileMenu = false;
+														callback(link.id);
+													}}
+													on:keydown={onKeyPressed}
+													id={link.id}
+												>
+													{#if link.icon}
+														<i class={link.icon} style="color:#006eb5" />
+													{/if}
+													{link.title}
+												</div>
+											{:else}
+												<a class="cta__link cta--space" href={link.href} id={link.id}>
+													{#if link.icon}
+														<i class={link.icon} style="color:#006eb5" />
+													{/if}
+													{link.title}
+												</a>
+											{/if}
+										</li>
+									{/each}
+								</ul>
+							</div>
+						</div>
+					</div>
+				{/if}
 			</div>
 		</div>
+
 		{#if showProgressBar}
 			<progress class="progress is-small is-info" max="100" />
 		{/if}
@@ -48,5 +146,34 @@
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
 	@use '../css/country-site-header.min.css';
-	@use 'bulma/css/bulma.css';
+	@use '../css/menu.min.css';
+	@use '../css/mega-menu.min.css';
+	@use '../css/mobile-nav.min.css';
+	@use '../css/cta-link.min.css';
+	// @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+
+	:global(.menu-buttons) {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.custom-button-mega {
+		display: block;
+		cursor: pointer;
+
+		@media (max-width: 89.9375em) {
+			display: none;
+		}
+	}
+
+	.custom-button {
+		display: none;
+		cursor: pointer;
+
+		@media (max-width: 89.9375em) {
+			display: block;
+			margin-left: 0.75rem !important;
+		}
+	}
 </style>

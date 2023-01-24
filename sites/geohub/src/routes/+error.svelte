@@ -1,31 +1,51 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import Notification from '$components/controls/Notification.svelte'
+  import UserAccount from '$components/UserAccount.svelte'
+  import { footerItems } from '$lib/constants'
+  import { Footer, Header } from '@undp-data/svelte-undp-design'
+  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+
+  let links: HeaderLink[] = [
+    {
+      id: 'header-link-home',
+      title: 'GeoHub home',
+      href: '/',
+      icon: 'fa-solid fa-home pr-1',
+    },
+    {
+      id: 'header-link-documentation',
+      title: 'User guide',
+      href: '/docs/index.html',
+      icon: 'fa-regular fa-circle-question pr-1',
+    },
+  ]
 </script>
 
-<div class="container m-4 error-container">
-  <Notification
-    type="danger"
-    showCloseButton={false}>
-    <p class="title is-4">Whoops! Something wrong!</p>
-    <p class="subtitle is-5 has-text-justified pt-4">{$page.error.message}</p>
-    <p class="subtitle is-5 has-text-justified">Please contact administrator.</p>
-  </Notification>
+<Header
+  region="UNDP's one stop shop for spatial data and analytics"
+  siteTitle="GeoHub dashboards"
+  url="https://geohub.data.undp.org"
+  logoUrl="assets/undp-images/undp-logo-blue.svg"
+  isPositionFixed={false}
+  bind:links>
+  <div slot="custom-button">
+    <UserAccount />
+  </div>
+</Header>
+
+<div class="container mt-6 m-4">
+  <p class="title is-4">Whoops! Something wrong!</p>
+  <p class="subtitle is-5 has-text-justified pt-4">{$page.error.message}</p>
+  <p class="subtitle is-5 has-text-justified">Please contact administrator.</p>
 </div>
+
+<Footer
+  logoUrl="assets/undp-images/undp-logo-white.svg"
+  {footerItems} />
 
 <style
   global
   lang="scss">
   @import '../styles/geohubstyle.scss';
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-
-  body,
-  html {
-    font-family: ProximaNova, sans-serif;
-    font-size: 13px;
-  }
-
-  .error-container {
-    width: 30%;
-  }
 </style>

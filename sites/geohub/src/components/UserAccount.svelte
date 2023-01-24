@@ -5,9 +5,13 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import Popper from '$lib/popper'
   import { Button } from '@undp-data/svelte-undp-design'
+  import chroma from 'chroma-js'
 
   let isPanelOpen = false
   let panelWidth = '350px'
+
+  const name = $page.data.session?.user.name
+  const names = name?.split(' ') ?? []
 
   const {
     ref: popperRef,
@@ -18,7 +22,7 @@
       placement: 'bottom-end',
       strategy: 'fixed',
     },
-    [0, 50],
+    [0, 45],
   ).init()
 
   const togglePanel = () => {
@@ -38,14 +42,23 @@
     tabindex="0"
     on:click={togglePanel}
     on:keydown={handleKeyDown}
+    use:clickOutside={() => (isPanelOpen = false)}
     use:popperRef>
     {#if $page.data.session.user?.image}
       <span
         style="background-image: url('{$page.data.session.user.image}')"
         class="avatar" />
     {:else}
-      <span class="avatar">
-        <i class="fa-solid fa-user" />
+      <span
+        class="initial-avator is-flex is-justify-content-center	is-align-items-center"
+        style="background-color: {chroma.random()}">
+        {#each names as name}
+          <p
+            class="name"
+            style="color: white">
+            {name.slice(0, 1)}
+          </p>
+        {/each}
       </span>
     {/if}
   </div>
@@ -56,14 +69,16 @@
       data-testid="tooltip"
       style="max-width: {panelWidth};"
       use:popperContent={popperOptions}
-      use:clickOutside={() => (isPanelOpen = false)}
       transition:slide>
       <div class="panel container p-4">
         <button
           class="delete close-button"
           aria-label="delete"
           on:click={() => (isPanelOpen = false)} />
-        <p class="title is-5">{$page.data.session.user.name}</p>
+        <p class="title is-4">{$page.data.session.user.name}</p>
+        {#if $page.data.session.user['jobTitle']}
+          <p class="subtitle is-5 mb-2">{$page.data.session.user['jobTitle']}</p>
+        {/if}
         <p class="subtitle is-6">{$page.data.session.user.email}</p>
 
         <Button
@@ -109,5 +124,17 @@
     background-color: white;
     background-size: cover;
     background-repeat: no-repeat;
+  }
+
+  .initial-avator {
+    border-radius: 2rem;
+    height: 2.8rem;
+    width: 2.8rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    .name {
+      font-size: large;
+    }
   }
 </style>

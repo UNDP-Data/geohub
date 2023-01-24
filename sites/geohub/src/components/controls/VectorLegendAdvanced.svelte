@@ -69,7 +69,6 @@
   let propertySelectValue
   let numberOfClasses: number
   let colorMapRows: IntervalLegendColorMapRow[]
-  let defaultOutlineColor: string
 
   let applyToOptions: Radio[] = [
     {
@@ -346,17 +345,23 @@
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row, index) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
-        const hex = chroma([row.color[0], row.color[1], row.color[2]]).hex()
-
-        // set default line color to be middle of colors
-        if (index === Math.floor(colorMapRows.length / 2)) {
-          defaultOutlineColor = chroma(hex).darken(2.6).hex()
-        }
-
         return [row.start, rgb]
       })
       stops = sortStops(stops)
-      $map.setPaintProperty(layer.id, 'fill-outline-color', defaultOutlineColor)
+
+      let outlineStops = colorMapRows.map((row) => {
+        const hex = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex()
+        const rgb = chroma(hex).darken(2.6).rgb(true)
+        const cssColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${row.color[3]})`
+        return [row.start, cssColor]
+      })
+      outlineStops = sortStops(outlineStops)
+
+      $map.setPaintProperty(layer.id, 'fill-outline-color', {
+        property: propertySelectValue,
+        type: 'interval',
+        stops: outlineStops,
+      })
       $map.setPaintProperty(layer.id, 'fill-color', {
         type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
         property: propertySelectValue,
