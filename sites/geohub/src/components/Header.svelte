@@ -80,13 +80,12 @@
   isPositionFixed={false}
   bind:links={finalLink}>
   <div slot="custom-button">
-    <StyleShare bind:isModalVisible={isStyleShareVisible} />
-
     <div class="menu-button">
       <UserAccount />
     </div>
   </div>
 </Header>
+<StyleShare bind:isModalVisible={isStyleShareVisible} />
 
 <style lang="scss">
   :global(.menu-item) {
