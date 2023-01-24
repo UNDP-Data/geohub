@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.7
+
+### Patch Changes
+
+- 5c98d25: feat: redesigned UNDP header design to adopt responsive menu
+
 ## 0.0.6
 
 ### Patch Changes
