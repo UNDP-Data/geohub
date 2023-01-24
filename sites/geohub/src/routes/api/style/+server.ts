@@ -20,7 +20,9 @@ const connectionString = DATABASE_CONNECTION
  *   }
  * ]
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const session = await locals.getSession()
+
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -75,6 +77,25 @@ export const GET: RequestHandler = async ({ url }) => {
       values.push(query)
     }
 
+    const email = session?.user?.email
+    let domain: string
+    if (email) {
+      domain = email.split('@').pop()
+    }
+
+    const where = `
+    WHERE (
+      x.access_level = 3 
+      ${domain ? `OR (x.access_level = 2 AND x.created_user LIKE '%${domain}')` : ''}
+      ${email ? `OR (x.created_user = '${email}')` : ''}
+    )
+    ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+    `
+
+    // only can access to
+    // access_level = 3
+    // or access_lavel = 2 which were created by user with @undp.org email
+    // or created_user = login user email
     const sql = {
       text: `
       SELECT
@@ -86,7 +107,7 @@ export const GET: RequestHandler = async ({ url }) => {
         x.updatedat,
         x.updated_user
       FROM geohub.style x
-      ${query ? 'WHERE to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+      ${where}
       ORDER BY
           x.${sortByColumn} ${sortOrder} 
       LIMIT ${limit}
@@ -138,7 +159,7 @@ export const GET: RequestHandler = async ({ url }) => {
       })
     }
 
-    const totalCount = await getStyleCount()
+    const totalCount = await getStyleCount(where, values)
     let totalPages = Math.ceil(totalCount / Number(limit))
     if (totalPages === 0) {
       totalPages = 1

@@ -3,13 +3,16 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { getStyleById } from '$lib/server/helpers'
 const connectionString = DATABASE_CONNECTION
 
 /**
  * Get style.json which is stored in PostgreSQL database
  * GET: ./api/style/{id}.json
  */
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, locals }) => {
+  const session = await locals.getSession()
+
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -19,19 +22,36 @@ export const GET: RequestHandler = async ({ params }) => {
         status: 400,
       })
     }
-    const query = {
-      text: `SELECT style FROM geohub.style WHERE id = $1`,
-      values: [styleId],
-    }
+    const style = await getStyleById(styleId)
 
-    const res = await client.query(query)
-    if (res.rowCount === 0) {
-      return new Response(JSON.stringify({ message: `${styleId} does not exist in the database` }), {
+    if (!style) {
+      return new Response(undefined, {
         status: 404,
       })
     }
-    const style = res.rows[0].style
-    return new Response(JSON.stringify(style))
+
+    const email = session?.user?.email
+    let domain: string
+    if (email) {
+      domain = email.split('@').pop()
+    }
+
+    const accessLevel = style.access_level
+    if (accessLevel === 1) {
+      if (!(email && email === style.created_user)) {
+        return new Response(JSON.stringify({ message: 'Permission error' }), {
+          status: 403,
+        })
+      }
+    } else if (accessLevel === 2) {
+      if (!(domain && style.created_user?.indexOf(domain) > -1)) {
+        return new Response(JSON.stringify({ message: 'Permission error' }), {
+          status: 403,
+        })
+      }
+    }
+
+    return new Response(JSON.stringify(style.style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
