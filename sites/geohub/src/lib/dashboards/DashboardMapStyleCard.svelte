@@ -122,11 +122,21 @@
               timestamp={style.createdat}
               format="h:mm A · MMMM D, YYYY" />
           </p>
+          {#if style.created_user}
+            <p class="p-0 m-0">
+              <b>Created by: </b>{style.created_user}
+            </p>
+          {/if}
           <p class="p-0 m-0">
             <b>Updated at: </b><Time
               timestamp={style.updatedat}
               format="h:mm A · MMMM D, YYYY" />
           </p>
+          {#if style.updated_user}
+            <p class="p-0 m-0">
+              <b>Updated by: </b>{style.updated_user}
+            </p>
+          {/if}
         </div>
         <div class="tile is-parent">
           <CtaLink
@@ -134,7 +144,7 @@
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
-        {#if $page.data.session}
+        {#if $page.data.session && style.created_user === $page.data.session.user.email}
           <div class="tile is-4 m-auto is-parent">
             <div
               class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
@@ -142,7 +152,7 @@
               <Button
                 title="Edit"
                 isPrimary={true}
-                on:clicked={() => window.open(style.editor, '_blank')} />
+                on:clicked={() => (location.href = style.editor)} />
             </div>
             <div
               class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
