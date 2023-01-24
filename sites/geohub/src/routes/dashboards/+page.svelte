@@ -21,9 +21,15 @@
   let links: HeaderLink[] = [
     {
       id: 'header-link-home',
-      title: 'Home',
+      title: 'GeoHub home',
       href: '/',
       icon: 'fa-solid fa-home pr-1',
+    },
+    {
+      id: 'header-link-documentation',
+      title: 'User guide',
+      href: '/docs/index.html',
+      icon: 'fa-regular fa-circle-question pr-1',
     },
   ]
 
