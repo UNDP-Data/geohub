@@ -359,7 +359,7 @@
 
       $map.setPaintProperty(layer.id, 'fill-outline-color', {
         property: propertySelectValue,
-        type: 'interval',
+        type: isNaN(outlineStops[0][0]) ? 'categorical' : 'interval',
         stops: outlineStops,
       })
       $map.setPaintProperty(layer.id, 'fill-color', {

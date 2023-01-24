@@ -28,7 +28,7 @@
     const expr = layoutProperties.includes(property)
       ? $map.getLayoutProperty(layer.id, property)
       : $map.getPaintProperty(layer.id, property)
-    return expr?.type === 'interval'
+    return expr?.type === 'interval' || expr?.type === 'categorical'
   }
 
   if (style.type === 'line') {
@@ -57,7 +57,7 @@
     let color = $map.getPaintProperty(layer.id, property)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (!color || (color && color.type === 'interval')) {
+    if (!color || (color && (color.type === 'interval' || (color && color.type === 'categorical')))) {
       if (property === 'fill-outline-color') {
         color = chroma(defaultColor).darken(2.5).hex()
       } else {
