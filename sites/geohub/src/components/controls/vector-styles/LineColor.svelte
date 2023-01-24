@@ -15,7 +15,7 @@
     let lineColor = $map.getPaintProperty(layerId, 'line-color')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (!lineColor || (lineColor && lineColor.type === 'interval')) {
+    if (!lineColor || (lineColor && lineColor.type === 'interval') || (lineColor && lineColor.type === 'categorical')) {
       lineColor = defaultColor
     }
     return lineColor as string
