@@ -107,7 +107,10 @@
 												<div
 													role="button"
 													class="cta__link cta--space"
-													on:click={() => callback(link.id)}
+													on:click={() => {
+														showMobileMenu = false;
+														callback(link.id);
+													}}
 													on:keydown={onKeyPressed}
 													id={link.id}
 												>

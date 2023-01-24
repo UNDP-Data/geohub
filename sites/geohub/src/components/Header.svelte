@@ -17,7 +17,7 @@
 
   const shareLink = {
     id: 'header-link-styleshare',
-    title: 'Share',
+    title: 'Save & share map',
     href: '#',
     icon: 'fa-solid fa-share pr-1',
     callback: (id) => {
@@ -29,20 +29,24 @@
   let links: HeaderLink[] = [
     {
       id: 'header-link-sidebar',
-      title: 'Sidebar',
+      title: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
       href: '#',
       icon: 'fa-solid fa-table-columns pr-1',
-      callback: () => {
+      callback: (id) => {
+        const link = links.find((l) => l.id === id)
         if (drawerOpen) {
           drawerOpen = false
+          link.title = 'Open sidebar'
         } else {
           drawerOpen = true
+          link.title = 'Close sidebar'
         }
+        initLinks()
       },
     },
     {
       id: 'header-link-dashboard',
-      title: 'Dashboards',
+      title: 'Go to dashboards',
       href: '/dashboards',
       icon: 'fa-solid fa-chalkboard-user pr-1',
     },
