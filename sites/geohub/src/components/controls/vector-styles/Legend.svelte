@@ -168,7 +168,7 @@
             if (icon) {
               let color: any = map.getPaintProperty(layer.id, 'icon-color')
               let cssStyle = ''
-              if ((color && color.type === 'interval') || color.type === 'categorical') {
+              if (color && (color.type === 'interval' || color.type === 'categorical')) {
                 const colormap = chroma
                   .scale(color.stops.map((stop) => stop[1]))
                   .mode('lrgb')
