@@ -3,37 +3,25 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { getStyleById } from '$lib/server/helpers'
 const connectionString = DATABASE_CONNECTION
 
 export const GET: RequestHandler = async ({ params }) => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
-  try {
-    const styleId = params.id
-    if (!styleId) {
-      return new Response(JSON.stringify({ message: `id parameter is required.` }), {
-        status: 400,
-      })
-    }
-
-    const query = {
-      text: `SELECT id, name, style, layers, createdat, updatedat FROM geohub.style where id = $1`,
-      values: [styleId],
-    }
-
-    const res = await client.query(query)
-
-    if (res.rowCount === 0) {
-      return new Response(undefined, {
-        status: 404,
-      })
-    }
-
-    return new Response(JSON.stringify(res.rows[0]))
-  } finally {
-    client.release()
-    pool.end()
+  const styleId = params.id
+  if (!styleId) {
+    return new Response(JSON.stringify({ message: `id parameter is required.` }), {
+      status: 400,
+    })
   }
+  const style = await getStyleById(styleId)
+
+  if (!style) {
+    return new Response(undefined, {
+      status: 404,
+    })
+  }
+
+  return new Response(JSON.stringify(style))
 }
 
 /**

@@ -4,7 +4,7 @@ const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
-import { getStyleCount, pageNumber } from '$lib/server/helpers'
+import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -80,8 +80,11 @@ export const GET: RequestHandler = async ({ url }) => {
       SELECT
         x.id, 
         x.name, 
-        x.createdat, 
-        x.updatedat 
+        x.access_level,
+        x.createdat,
+        x.created_user, 
+        x.updatedat,
+        x.updated_user
       FROM geohub.style x
       ${query ? 'WHERE to_tsvector(x.name) @@ to_tsquery($1)' : ''}
       ORDER BY
@@ -184,10 +187,19 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
     if (!body.layers) {
       throw new Error('layers property is required')
     }
+    if (!body.access_level) {
+      throw new Error('access_level property is required')
+    }
 
     const query = {
-      text: `INSERT INTO geohub.style (name, style, layers) VALUES ($1, $2, $3) returning id`,
-      values: [body.name, JSON.stringify(body.style), JSON.stringify(body.layers)],
+      text: `INSERT INTO geohub.style (name, style, layers, access_level, created_user) VALUES ($1, $2, $3, $4, $5) returning id`,
+      values: [
+        body.name,
+        JSON.stringify(body.style),
+        JSON.stringify(body.layers),
+        body.access_level,
+        session.user.email,
+      ],
     }
 
     const res = await client.query(query)
@@ -196,13 +208,10 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
     }
     const id = res.rows[0].id
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
-    return new Response(
-      JSON.stringify({
-        id: id,
-        style: styleJsonUrl,
-        viewer: `${url.origin}/viewer?style=${styleJsonUrl}`,
-      }),
-    )
+    const style = await getStyleById(id)
+    style.style = styleJsonUrl
+    style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
+    return new Response(JSON.stringify(style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
@@ -223,7 +232,13 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
  *   layers: json
  * }
  */
-export const PUT: RequestHandler = async ({ request, url }) => {
+export const PUT: RequestHandler = async ({ request, url, locals }) => {
+  const session = await locals.getSession()
+  if (!session) {
+    return new Response(JSON.stringify({ message: 'Permission error' }), {
+      status: 403,
+    })
+  }
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -237,27 +252,35 @@ export const PUT: RequestHandler = async ({ request, url }) => {
     if (!body.layers) {
       throw new Error('layers property is required')
     }
+    if (!body.access_level) {
+      throw new Error('access_level property is required')
+    }
 
     const now = new Date().toISOString()
     const id = body.id
     const query = {
       text: `
       UPDATE geohub.style
-      SET name=$1, style=$2, layers=$3, updatedat=$4::timestamptz
-      WHERE id=$5`,
-      values: [body.name, JSON.stringify(body.style), JSON.stringify(body.layers), now, id],
+      SET name=$1, style=$2, layers=$3, updatedat=$4::timestamptz, access_level=$5, updated_user=$6
+      WHERE id=$7`,
+      values: [
+        body.name,
+        JSON.stringify(body.style),
+        JSON.stringify(body.layers),
+        now,
+        body.access_level,
+        session.user.email,
+        id,
+      ],
     }
 
     await client.query(query)
 
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
-    return new Response(
-      JSON.stringify({
-        id: id,
-        style: styleJsonUrl,
-        viewer: `${url.origin}/viewer?style=${styleJsonUrl}`,
-      }),
-    )
+    const style = await getStyleById(id)
+    style.style = styleJsonUrl
+    style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
+    return new Response(JSON.stringify(style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,

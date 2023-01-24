@@ -765,11 +765,20 @@ paths:
                           type: string
                         updatedat:
                           type: string
+                        access_level:
+                          type: integer
+                          default: 1
+                          description: '1: login user, 2: UNDP, 3: public'
+                        created_user:
+                          type: string
+                        updated_user:
+                          type: string
                       required:
                         - id
                         - createdat
                         - name
                         - updatedat
+                        - access_level
                   links:
                     type: array
                     items:
@@ -891,10 +900,18 @@ paths:
                   description: $layerList object
                   items:
                     type: object
+                access_level:
+                  type: integer
+                  enum:
+                    - 1
+                    - 2
+                    - 3
+                  description: '1: login user, 2: UNDP, 3: public'
               required:
                 - name
                 - style
                 - layers
+                - access_level
       tags:
         - style
     put:
@@ -941,11 +958,15 @@ paths:
                   description: $layerList object
                   items:
                     type: object
+                access_level:
+                  type: integer
+                  description: '1: login user, 2: UNDP, 3: public'
               required:
                 - id
                 - name
                 - styles
                 - layers
+                - access_level
       tags:
         - style
   '/style/{id}':
@@ -990,6 +1011,13 @@ paths:
                     type: string
                   updatedat:
                     type: string
+                  access_level:
+                    type: integer
+                    description: '1: login user, 2: UNDP, 3: public'
+                  created_user:
+                    type: string
+                  updated_user:
+                    type: string
                 required:
                   - id
                   - name
@@ -997,6 +1025,7 @@ paths:
                   - layers
                   - createdat
                   - updatedat
+                  - access_level
       description: get style information by style id
       tags:
         - style
