@@ -16,6 +16,14 @@
 	});
 
 	let showMobileMenu = false;
+
+	const onKeyPressed = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
 </script>
 
 <header
@@ -40,23 +48,30 @@
 				</div>
 				{#if links.length > 0}
 					<nav class="menu">
-						<ul>
+						<ul class="grid-x grid-margin-x align-content-middle">
 							{#each links as link}
-								<li class="menu-item" data-menu-id={link.id}>
+								<li
+									class="menu-item has-tooltip-bottom"
+									data-menu-id={link.id}
+									data-tooltip={link.tooltip ?? link.title}
+								>
 									{#if link.callback}
 										{@const callback = link.callback}
-										<a on:click={() => callback(link.id)} tabindex="0">
+										<div
+											role="button"
+											on:click={() => callback(link.id)}
+											tabindex="0"
+											on:keydown={onKeyPressed}
+										>
 											{#if link.icon}
-												<i class={link.icon} style="color:#006eb5" />
+												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
 											{/if}
-											{link.title}
-										</a>
+										</div>
 									{:else}
 										<a href={link.href} tabindex="0">
 											{#if link.icon}
-												<i class={link.icon} style="color:#006eb5" />
+												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
 											{/if}
-											{link.title}
 										</a>
 									{/if}
 								</li>
@@ -89,16 +104,18 @@
 										<li>
 											{#if link.callback}
 												{@const callback = link.callback}
-												<a
+												<div
+													role="button"
 													class="cta__link cta--space"
 													on:click={() => callback(link.id)}
+													on:keydown={onKeyPressed}
 													id={link.id}
 												>
 													{#if link.icon}
 														<i class={link.icon} style="color:#006eb5" />
 													{/if}
 													{link.title}
-												</a>
+												</div>
 											{:else}
 												<a class="cta__link cta--space" href={link.href} id={link.id}>
 													{#if link.icon}
@@ -140,6 +157,7 @@
 
 	.custom-button-mega {
 		display: block;
+		cursor: pointer;
 
 		@media (max-width: 89.9375em) {
 			display: none;
@@ -148,14 +166,11 @@
 
 	.custom-button {
 		display: none;
+		cursor: pointer;
 
 		@media (max-width: 89.9375em) {
 			display: block;
+			margin-left: 0.75rem !important;
 		}
-	}
-
-	:global(.menu) {
-		display: flex;
-		align-items: center !important;
 	}
 </style>

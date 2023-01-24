@@ -28,10 +28,10 @@
 
   let links: HeaderLink[] = [
     {
-      id: 'header-link-edit',
-      title: 'Edit',
+      id: 'header-link-sidebar',
+      title: 'Sidebar',
       href: '#',
-      icon: 'fa-solid fa-pen-to-square pr-1',
+      icon: 'fa-solid fa-table-columns pr-1',
       callback: () => {
         if (drawerOpen) {
           drawerOpen = false
@@ -89,7 +89,7 @@
     margin: 0.75rem 0 0.75rem 1.6875rem !important;
   }
 
-  :global(.custom-button-mega) {
-    margin: 0 0 0 1.6875rem !important;
-  }
+  // :global(.custom-button-mega) {
+  //   margin: 0 0 0 1.6875rem !important;
+  // }
 </style>

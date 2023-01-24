@@ -42,14 +42,4 @@
   lang="scss">
   @import '../styles/geohubstyle.scss';
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-
-  .menu-buttons {
-    display: flex;
-
-    .menu-button {
-      cursor: pointer;
-      margin-left: 20px;
-      margin-right: 5px;
-    }
-  }
 </style>
