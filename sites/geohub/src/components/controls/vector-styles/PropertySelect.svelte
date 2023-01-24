@@ -7,8 +7,7 @@
   export let layer
   export let propertySelectValue
   export let showEmptyFields = false
-  export let showOnlyNumberFields = false
-  export let inLegend = false
+  export let inLegend
   export let emptyFieldLabel = 'No Label'
 
   let propertySelectOptions: string[]
@@ -16,12 +15,11 @@
   const dispatch = createEventDispatcher()
 
   onMount(() => {
-    inLegend && !propertySelectOptions ? setPropertyList() : null
-    !inLegend ? setPropertyList() : null
+    setPropertyList()
   })
 
   function setPropertyList() {
-    const vectorLayerMeta = getLayerProperties($map, layer, showOnlyNumberFields)
+    const vectorLayerMeta = getLayerProperties($map, layer, inLegend)
     propertySelectOptions = Object.keys(vectorLayerMeta.fields)
     if (showEmptyFields === true) {
       propertySelectOptions = ['', ...propertySelectOptions]

@@ -156,7 +156,7 @@
   }
 
   const getColorMapRows = () => {
-    let stops: [[number, string]]
+    let stops: [[number | string, string]]
     if (layerType === 'fill') {
       const colorValue = $map.getPaintProperty(layer.id, 'fill-color')
       if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
@@ -193,19 +193,20 @@
       (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
     )
     const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
+    stat.values ? (hasUniqueValues = true) : (hasUniqueValues = false)
     if (!layerMax) {
       if (stat?.max) {
         layerMax = stat.max
       }
     }
     stops?.forEach((stop, index: number) => {
-      const value: number = stop[0]
+      const value: number | string = stop[0]
       const color: string = stop[1]
       colorMapRows.push({
         color: chroma(color).rgba(),
         index: index,
         start: value,
-        end: stat.values ? '' : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
+        end: hasUniqueValues ? value : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
       })
     })
     numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
@@ -264,6 +265,7 @@
         const tileStatLayerAttribute = tileStatLayer.attributes.find(
           (val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue,
         )
+
         if (tileStatLayerAttribute) {
           const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
             (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
@@ -285,16 +287,13 @@
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
-              const scaleColorList = chroma
-                .scale(colorMapName)
-                .mode('lrgb')
-                .padding([0.25, 0])
-                .domain([0, stat.values.length])
+              const scaleColorList = chroma.scale(colorMapName).mode('lrgb').colors(values.length)
 
               for (let i = 0; i < stat.values.length; i++) {
+                const color = chroma(scaleColorList[i]).rgb()
                 const row: IntervalLegendColorMapRow = {
                   index: i,
-                  color: [...scaleColorList(i).rgb(), 1],
+                  color: [...color, 1],
                   start: stat.values[i],
                   end: stat.values[i],
                 }
@@ -359,8 +358,8 @@
       stops = sortStops(stops)
       $map.setPaintProperty(layer.id, 'fill-outline-color', defaultOutlineColor)
       $map.setPaintProperty(layer.id, 'fill-color', {
+        type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
         property: propertySelectValue,
-        type: 'interval',
         stops: stops,
       })
     } else {
@@ -372,7 +371,6 @@
             : remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10),
         ]
       })
-
       if (stops.length > 0) {
         stops = sortStops(stops)
         if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
@@ -382,16 +380,16 @@
               $map.setLayoutProperty(layer.id, 'icon-size', 1)
             }
             $map.setPaintProperty(layer.id, 'icon-color', {
+              type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
               property: propertySelectValue,
-              type: 'interval',
               stops: stops,
             })
           } else if (layerType === 'line') {
             $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
             $map.setPaintProperty(layer.id, 'line-color', {
+              type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
               property: propertySelectValue,
-              type: 'interval',
-              stops,
+              stops: stops,
             })
           }
         } else if (applyToOption === VectorApplyToTypes.SIZE) {
@@ -465,7 +463,7 @@
               bind:propertySelectValue
               on:select={handlePropertyChange}
               {layer}
-              showOnlyNumberFields={true} />
+              inLegend={true} />
           </div>
         </div>
       </div>

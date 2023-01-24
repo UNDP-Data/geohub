@@ -168,7 +168,7 @@
             if (icon) {
               let color: any = map.getPaintProperty(layer.id, 'icon-color')
               let cssStyle = ''
-              if (color && color.type === 'interval') {
+              if ((color && color.type === 'interval') || color.type === 'categorical') {
                 const colormap = chroma
                   .scale(color.stops.map((stop) => stop[1]))
                   .mode('lrgb')
@@ -178,6 +178,7 @@
                 cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`
               } else {
                 const rgba = chroma(color).rgba()
+
                 cssStyle = `filter: ${hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter}`
               }
               const img = document.createElement('img')
