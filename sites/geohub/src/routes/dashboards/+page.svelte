@@ -1,7 +1,7 @@
 <script lang="ts">
   import MapStyleCardList from '$lib/dashboards/MapStyleCardList.svelte'
   import { Header, Footer, FluidCarousel } from '@undp-data/svelte-undp-design'
-  import type { CarouselContent } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { CarouselContent, HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
   import { browser } from '$app/environment'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
@@ -18,6 +18,21 @@
     },
   ]
 
+  let links: HeaderLink[] = [
+    {
+      id: 'header-link-home',
+      title: 'GeoHub home',
+      href: '/',
+      icon: 'fa-solid fa-home pr-1',
+    },
+    {
+      id: 'header-link-documentation',
+      title: 'User guide',
+      href: '/docs/index.html',
+      icon: 'fa-regular fa-circle-question pr-1',
+    },
+  ]
+
   let headerHeight: number
 </script>
 
@@ -31,31 +46,10 @@
   url="https://geohub.data.undp.org"
   logoUrl="assets/undp-images/undp-logo-blue.svg"
   isPositionFixed={false}
+  bind:links
   bind:height={headerHeight}>
-  <div
-    slot="menu-buttons"
-    class="menu-buttons is-align-items-center">
-    <div
-      class="has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip="Home">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <a
-        role="button"
-        aria-label="Home"
-        class="menu-button"
-        tabindex="0"
-        href="/">
-        <span class="icon">
-          <i
-            class="fa-solid fa-home fa-xl"
-            style="color:#006eb5" />
-        </span>
-      </a>
-    </div>
-
-    <div class="menu-button">
-      <UserAccount />
-    </div>
+  <div slot="custom-button">
+    <UserAccount />
   </div>
 </Header>
 
@@ -78,16 +72,6 @@
   @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
   @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import 'bulma-divider/dist/css/bulma-divider.min.css';
-
-  .menu-buttons {
-    display: flex;
-
-    .menu-button {
-      cursor: pointer;
-      margin-left: 20px;
-      margin-right: 5px;
-    }
-  }
 
   .main-section {
     padding-top: 1rem;
