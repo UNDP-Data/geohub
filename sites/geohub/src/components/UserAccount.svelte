@@ -75,7 +75,10 @@
           class="delete close-button"
           aria-label="delete"
           on:click={() => (isPanelOpen = false)} />
-        <p class="title is-5">{$page.data.session.user.name}</p>
+        <p class="title is-4">{$page.data.session.user.name}</p>
+        {#if $page.data.session.user['jobTitle']}
+          <p class="subtitle is-5 mb-2">{$page.data.session.user['jobTitle']}</p>
+        {/if}
         <p class="subtitle is-6">{$page.data.session.user.email}</p>
 
         <Button
