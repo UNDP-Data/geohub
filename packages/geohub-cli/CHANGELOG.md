@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.0.4
+
+### Patch Changes
+
+- ae19979: updated style table schema to add access level and user column
+
 ## 1.0.3
 
 ### Patch Changes
