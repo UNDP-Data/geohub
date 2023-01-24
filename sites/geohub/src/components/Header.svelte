@@ -90,7 +90,7 @@
 
 <style lang="scss">
   :global(.menu-item) {
-    margin: 0.75rem 2.75rem 0.75rem 0!important;
+    margin: 0.75rem 2.75rem 0.75rem 0 !important;
   }
 
   // :global(.custom-button-mega) {
