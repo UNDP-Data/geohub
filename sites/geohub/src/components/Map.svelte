@@ -138,7 +138,7 @@
     position="bottom-left" />
   <LayerVisibilitySwitcher
     bind:map
-    position="top-right" />
+    position="bottom-right" />
 {/if}
 
 <style lang="scss">
