@@ -1,5 +1,13 @@
 <script lang="ts">
-  import maplibregl, { AttributionControl, GeolocateControl, Map, NavigationControl, ScaleControl } from 'maplibre-gl'
+  import maplibregl, {
+    AttributionControl,
+    GeolocateControl,
+    Map,
+    NavigationControl,
+    ScaleControl,
+    TerrainControl,
+    type TerrainSpecification,
+  } from 'maplibre-gl'
   import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
@@ -17,6 +25,11 @@
 
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
+
+  const terrainOptions: TerrainSpecification = {
+    source: 'terrarium',
+    exaggeration: 1,
+  }
 
   const initialise = () => {
     return new Promise<void>((resolve) => {
@@ -45,6 +58,21 @@
         }),
         'bottom-right',
       )
+      map.setMaxPitch(85)
+      map.addControl(new TerrainControl(terrainOptions), 'bottom-right')
+
+      map.on('styledata', () => {
+        const isTerrain = map.getTerrain()
+        if (isTerrain) {
+          map.setTerrain(null)
+        }
+        if (isTerrain) {
+          setTimeout(() => {
+            map.setTerrain(terrainOptions)
+          }, 500)
+        }
+      })
+
       map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
 
       map.on('load', async () => {
