@@ -218,7 +218,7 @@
                     class="button is-normal {`${accessLevel === 1 ? 'is-primary is-active' : 'is-primary is-light'}`}"
                     on:click={() => (accessLevel = 1)}>
                     <span>
-                      <i class="fa-solid fa-person" />
+                      <i class="fa-solid fa-user-lock" />
                       Me
                     </span>
                   </button>
@@ -228,7 +228,7 @@
                     class="button is-normal {`${accessLevel === 2 ? 'is-primary is-active' : 'is-primary is-light'}`}"
                     on:click={() => (accessLevel = 2)}>
                     <span>
-                      <i class="fa-solid fa-building" />
+                      <i class="fa-solid fa-building-lock" />
                       UNDP
                     </span>
                   </button>
@@ -238,7 +238,7 @@
                     class="button is-normal {`${accessLevel === 3 ? 'is-primary is-active' : 'is-primary is-light'}`}"
                     on:click={() => (accessLevel = 3)}>
                     <span>
-                      <i class="fa-solid fa-earth-africa" />
+                      <i class="fa-solid fa-lock-open" />
                       Public
                     </span>
                   </button>
