@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.8
+
+### Patch Changes
+
+- 77a8dac: feat: added headerIcon property in accordion header
+
 ## 0.0.7
 
 ### Patch Changes
