@@ -8,6 +8,8 @@
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
+  import { AccessLevel } from '$lib/constants'
+  import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
 
   const url: URL = $page.url
 
@@ -21,6 +23,12 @@
   let offset = $page.url.searchParams.get('offset') ? Number($page.url.searchParams.get('offset')) : 0
 
   let query = $page.url.searchParams.get('query') ?? ''
+
+  let accessLevel: AccessLevel = !$page.data.session
+    ? AccessLevel.PUBLIC
+    : $page.url.searchParams.get('accesslevel')
+    ? Number($page.url.searchParams.get('accesslevel'))
+    : AccessLevel.PRIVATE
 
   let expanded: { [key: string]: boolean } = {}
   let expandedStyleId: string
@@ -85,6 +93,7 @@
 
   $: limit, handleLimitChanged()
   $: sortby, handleSortbyChanged()
+  $: accessLevel, handleAccessLevelChanged()
 
   const handleLimitChanged = async () => {
     if (!browser) return
@@ -103,10 +112,18 @@
     await updateStylePage('next')
   }
 
+  const handleAccessLevelChanged = async () => {
+    if (!browser) return
+    offset = 0
+    links = []
+    await updateStylePage('next')
+  }
+
   const setPageUrl = () => {
     $page.url.searchParams.set('limit', `${limit}`)
     $page.url.searchParams.set('offset', `${offset}`)
     $page.url.searchParams.set('sortby', `${sortby}`)
+    $page.url.searchParams.set('accesslevel', `${accessLevel}`)
     if (query && query.length > 0) {
       $page.url.searchParams.set('query', `${query}`)
     } else {
@@ -128,6 +145,7 @@
       apiUrl.searchParams.set('limit', `${limit}`)
       apiUrl.searchParams.set('offset', `${offset}`)
       apiUrl.searchParams.set('sortby', `${sortby}`)
+      apiUrl.searchParams.set('accesslevel', `${accessLevel}`)
 
       const link = links?.find((l) => l.rel === type)
       if (link) {
@@ -212,6 +230,17 @@
       {/if}
     </div>
   </div>
+
+  {#if $page.data.session}
+    <div class="tile is-parent">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Search maps only published to:</label>
+        <AccessLevelSwitcher bind:accessLevel />
+      </div>
+    </div>
+  {/if}
+
   <div class="tile is-parent">
     <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->

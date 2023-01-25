@@ -7,6 +7,7 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import { Accordion, Button, CtaLink } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
+  import { AccessLevel } from '$lib/constants'
 
   const dispatch = createEventDispatcher()
 
@@ -21,6 +22,8 @@
   let confirmDeleteDialogVisible = false
 
   let styleJSON: StyleSpecification
+
+  let headerIcon = ''
 
   onMount(async () => {
     await inistialise()
@@ -83,10 +86,21 @@
       setTimeout(handleClose, 100)
     }
   }
+
+  if (style.access_level) {
+    if (style.access_level === AccessLevel.PRIVATE) {
+      headerIcon = 'fa-solid fa-user-lock has-text-primary'
+    } else if (style.access_level === AccessLevel.ORGANIZATION) {
+      headerIcon = 'fa-solid fa-building-lock has-text-primary'
+    } else {
+      headerIcon = 'fa-solid fa-lock-open has-text-primary'
+    }
+  }
 </script>
 
 <Accordion
   headerTitle={style.name}
+  bind:headerIcon
   bind:isExpanded>
   <div
     slot="button"
@@ -116,17 +130,30 @@
 
       <div class="tile is-parent is-half is-vertical">
         <div class="tile is-vertical align-center">
-          <p class="title is-5 style-name align-center">{style.name}</p>
+          <p class="title is-5 style-name align-center">
+            <i class={headerIcon} />
+            {style.name}
+          </p>
           <p class="p-0 m-0">
             <b>Created at: </b><Time
               timestamp={style.createdat}
               format="h:mm A · MMMM D, YYYY" />
           </p>
+          {#if style.created_user}
+            <p class="p-0 m-0">
+              <b>Created by: </b>{style.created_user}
+            </p>
+          {/if}
           <p class="p-0 m-0">
             <b>Updated at: </b><Time
               timestamp={style.updatedat}
               format="h:mm A · MMMM D, YYYY" />
           </p>
+          {#if style.updated_user}
+            <p class="p-0 m-0">
+              <b>Updated by: </b>{style.updated_user}
+            </p>
+          {/if}
         </div>
         <div class="tile is-parent">
           <CtaLink
@@ -134,7 +161,7 @@
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
-        {#if $page.data.session}
+        {#if $page.data.session && style.created_user === $page.data.session.user.email}
           <div class="tile is-4 m-auto is-parent">
             <div
               class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
@@ -142,7 +169,7 @@
               <Button
                 title="Edit"
                 isPrimary={true}
-                on:clicked={() => window.open(style.editor, '_blank')} />
+                on:clicked={() => (location.href = style.editor)} />
             </div>
             <div
               class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"

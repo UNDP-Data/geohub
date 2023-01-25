@@ -9,10 +9,12 @@
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
+  import { AccessLevel } from '$lib/constants'
+  import AccessLevelSwitcher from './AccessLevelSwitcher.svelte'
 
   export let isModalVisible = false
   let styleURL: string
-  let radioDisabled = false
+  let accessLevel: AccessLevel = $page.data.style?.access_level ?? AccessLevel.PRIVATE
 
   let styleName = $page.data.style?.name ?? 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
@@ -38,7 +40,6 @@
   }
 
   const open = () => {
-    radioDisabled = $layerList.length === 0
     styleURL = undefined
 
     untargetedLayers = []
@@ -104,6 +105,7 @@
       name: exportedStyleJSON.name,
       style: exportedStyleJSON,
       layers: savedLayerList,
+      access_level: accessLevel,
     }
 
     const styleId = $page.url.searchParams.get('style')
@@ -126,6 +128,9 @@
 
     styleURL = resjson.viewer
     if (!styleId) {
+      if ($page.data.style) {
+        $page.data.style = resjson
+      }
       $page.url.searchParams.set('style', resjson.id)
       goto(`?${$page.url.searchParams.toString()}`)
     }
@@ -169,14 +174,6 @@
     await share()
   }
 
-  const onKeyPressed = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      e.target.click()
-    }
-  }
-
   const handleCopy = () => {
     textCopyButton = 'copied'
     setTimeout(() => {
@@ -184,20 +181,6 @@
     }, 5000)
   }
 </script>
-
-<!-- {#if $layerList.length > 0}
-  <div
-    class="icon"
-    on:click={() => open()}
-    on:keydown={onKeyPressed}
-    tabindex="0">
-    <span class="icon">
-      <i
-        class="fa-solid fa-share fa-xl"
-        style="color:#006eb5" />
-    </span>
-  </div>
-{/if} -->
 
 {#if isModalVisible}
   <div
@@ -209,11 +192,10 @@
       on:click={handleClose} />
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title has-text-weight-bold">Share</p>
+        <p class="modal-card-title has-text-weight-bold">Share map</p>
         <button
           class="delete"
           aria-label="close"
-          alt="Close"
           title="Close"
           on:click={handleClose} />
       </header>
@@ -221,13 +203,20 @@
         {#if !styleURL}
           <div class="field">
             <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label class="label">Style name</label>
+            <label class="label">Map name:</label>
             <div class="control">
               <input
                 class="input text-stylename"
                 type="text"
                 placeholder="Style name"
                 bind:value={styleName} />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Saved map will be published to: </label>
+            <div class="control">
+              <AccessLevelSwitcher bind:accessLevel />
             </div>
           </div>
 
