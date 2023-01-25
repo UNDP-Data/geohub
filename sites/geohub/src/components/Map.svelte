@@ -19,6 +19,7 @@
   import type { Sprite } from '$lib/types'
   import { spriteImageList } from '$stores'
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
+  import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte'
 
   let container: HTMLDivElement
   export let map: Map
@@ -135,6 +136,9 @@
     bind:map
     {styles}
     position="bottom-left" />
+  <LayerVisibilitySwitcher
+    bind:map
+    position="bottom-right" />
 {/if}
 
 <style lang="scss">

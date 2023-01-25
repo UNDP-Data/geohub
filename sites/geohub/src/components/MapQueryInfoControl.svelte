@@ -154,18 +154,9 @@
   // @ts-ignore
   let mapQueryInfoControl: MapQueryInfoControl = null
 
-  $: {
-    if (map) {
-      if (mapQueryInfoControl !== null && map.hasControl(mapQueryInfoControl) === false) {
-        map.addControl(mapQueryInfoControl, 'top-right')
-      }
-    }
-  }
-
   onMount(async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     mapQueryInfoControl = new MapQueryInfoControl()
+    map.addControl(mapQueryInfoControl, 'top-right')
   })
 
   onDestroy(() => {
