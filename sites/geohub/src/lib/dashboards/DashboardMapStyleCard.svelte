@@ -22,6 +22,8 @@
 
   let styleJSON: StyleSpecification
 
+  let headerIcon = ''
+
   onMount(async () => {
     await inistialise()
   })
@@ -83,10 +85,21 @@
       setTimeout(handleClose, 100)
     }
   }
+
+  if (style.access_level) {
+    if (style.access_level === 1) {
+      headerIcon = 'fa-solid fa-user-lock has-text-primary'
+    } else if (style.access_level === 2) {
+      headerIcon = 'fa-solid fa-building-lock has-text-primary'
+    } else {
+      headerIcon = 'fa-solid fa-lock-open has-text-primary'
+    }
+  }
 </script>
 
 <Accordion
   headerTitle={style.name}
+  bind:headerIcon
   bind:isExpanded>
   <div
     slot="button"
@@ -116,7 +129,10 @@
 
       <div class="tile is-parent is-half is-vertical">
         <div class="tile is-vertical align-center">
-          <p class="title is-5 style-name align-center">{style.name}</p>
+          <p class="title is-5 style-name align-center">
+            <i class={headerIcon} />
+            {style.name}
+          </p>
           <p class="p-0 m-0">
             <b>Created at: </b><Time
               timestamp={style.createdat}

@@ -68,8 +68,8 @@
 </div>
 
 <style lang="scss">
+  @import '../../styles/geohubstyle.scss';
   @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
   @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import 'bulma-divider/dist/css/bulma-divider.min.css';
 
