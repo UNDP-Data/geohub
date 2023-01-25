@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import pkg from 'pg'
 const { Pool } = pkg
 
@@ -69,7 +68,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const res = await client.query(sql)
     if (res.rowCount === 0) {
-      throw error(404, `no tag found`)
+      return new Response(JSON.stringify({ message: `No tag found` }), {
+        status: 404,
+      })
     }
 
     const result: { [key: string]: Tag[] } = {}
@@ -91,7 +92,9 @@ export const GET: RequestHandler = async ({ url }) => {
 
     return new Response(JSON.stringify(result))
   } catch (err) {
-    throw error(400, JSON.stringify({ message: err.message }))
+    return new Response(JSON.stringify({ message: err.message }), {
+      status: 400,
+    })
   } finally {
     client.release()
     pool.end()

@@ -48,11 +48,12 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
 
     if (isNaN(propsObj[property][0])) {
       // The first value is not a number, mathematical operations will result in NaN
+      const values = [...new Set(propsObj[property])]
       const attribute = {
         attribute: property,
         type: String(typeof propsObj[property][0]),
         count: propsObj[property].length,
-        values: propsObj[property].slice(0, 100),
+        values: values.length > UNIQUE_VALUE_THRESHOLD ? values.slice(0, 100) : values,
       }
       // Add the attribute to the attributes array
       attributesArray.push(attribute)

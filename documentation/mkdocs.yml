@@ -1,4 +1,4 @@
-site_name: Geohub
+site_name: GeoHub
 site_description: UNDP's one stop shop for spatial data and analytics
 
 docs_dir: docs
@@ -86,14 +86,14 @@ plugins:
         frameborder: "0"
 
 nav:
-  - "Get Started": "Index.md"
+  - Getting Started: index.md
   - Data:
-      - Introduction: "data/Introduction.md"
-      - Data Structure: "data/Data Structure.md"
-      - Special Buckets: "data/Special Buckets.md"
+      - Introduction: data/introduction.md
+      - Data Structure: data/data_structure.md
+      - Special Buckets: data/special_buckets.md
   - Visualization:
-      - Map View: "visualization/Map View.md"
-      - Search Data: "visualization/Search Data.md"
-      - Zooming: "visualization/Zooming.md"
-      - Layer Tab: "visualization/Layer Tab.md"
-      - Legend: "visualization/Legend.md"
+      - Map View: visualization/map_view.md
+      - Search Data: visualization/search_data.md
+      - Layer Tab: visualization/layer_tab.md
+      - Legend: visualization/legend.md
+      - Histograms: visualization/histograms.md

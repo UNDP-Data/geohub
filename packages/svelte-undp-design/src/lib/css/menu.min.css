@@ -1,0 +1,21 @@
+.menu ul {
+	padding: 0;
+}
+.menu ul li {
+	display: inline-block;
+	margin: 0.75rem 3.75rem 0.75rem 0;
+	padding-left: 0;
+}
+.menu ul li:last-of-type {
+	margin-right: 0;
+}
+[dir='rtl'] .menu ul li {
+	margin-left: 3.75rem;
+	margin-right: 0;
+}
+[dir='rtl'] .menu ul li a {
+	margin: 0;
+}
+[dir='rtl'] .menu ul li:last-of-type {
+	margin-left: 0;
+}

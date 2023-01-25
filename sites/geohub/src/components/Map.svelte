@@ -1,15 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import maplibregl, {
-    AttributionControl,
-    GeolocateControl,
-    Map,
-    NavigationControl,
-    ScaleControl,
-    TerrainControl,
-    type MapTerrainEvent,
-    type TerrainSpecification,
-  } from 'maplibre-gl'
+  import maplibregl, { AttributionControl, GeolocateControl, Map, NavigationControl, ScaleControl } from 'maplibre-gl'
   import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
@@ -19,129 +9,105 @@
   import { MAP_ATTRIBUTION, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
-  import { map, spriteImageList } from '$stores'
+  import { spriteImageList } from '$stores'
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
 
   let container: HTMLDivElement
+  export let map: Map
 
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
 
-  const terrainOptions: TerrainSpecification = {
-    source: 'terrainSource',
-    exaggeration: 1,
-  }
-  const setTerrainRgb = (map: Map) => {
-    if (!map) return
-    const sourceId = 'terrainSource'
-    if (map.getSource(sourceId)) return
-    map.addSource(sourceId, {
-      type: 'raster-dem',
-      url: 'pmtiles://https://pub-9288c68512ed46eca46ddcade307709b.r2.dev/protomaps-sample-datasets/terrarium_z9.pmtiles',
-      encoding: 'terrarium',
-      attribution:
-        '<a target="_top" rel="noopener" href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">©Tilezen Joerd</a>',
-    })
-    map.setMaxPitch(85)
-  }
-
-  onMount(async () => {
-    const newMap = new Map({
-      container,
-      style: styles[0].uri,
-      center: [0, 0],
-      zoom: 3,
-      hash: true,
-      attributionControl: false,
-    })
-
-    newMap.addControl(new AttributionControl({ compact: true, customAttribution: MAP_ATTRIBUTION }), 'bottom-right')
-    newMap.addControl(
-      new NavigationControl({
-        visualizePitch: true,
-        showZoom: true,
-        showCompass: true,
-      }),
-      'bottom-right',
-    )
-    newMap.addControl(
-      new GeolocateControl({
-        positionOptions: { enableHighAccuracy: true },
-        trackUserLocation: true,
-      }),
-      'bottom-right',
-    )
-
-    newMap.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
-
-    newMap.on('load', async () => {
-      newMap.resize()
-
-      setTerrainRgb(newMap)
-      newMap.addControl(new TerrainControl(terrainOptions), 'bottom-right')
-      newMap.on('styledata', () => {
-        const isTerrain = newMap.getTerrain()
-        if (isTerrain) {
-          newMap.setTerrain(null)
-        }
-        setTerrainRgb(newMap)
-        if (isTerrain) {
-          setTimeout(() => {
-            newMap.setTerrain(terrainOptions)
-          }, 500)
-        }
+  const initialise = () => {
+    return new Promise<void>((resolve) => {
+      map = new Map({
+        container,
+        style: styles[0].uri,
+        center: [0, 0],
+        zoom: 3,
+        hash: true,
+        attributionControl: false,
       })
 
-      const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export')
-      const exportControl = new MaplibreExportControl({
-        PageSize: Size.A4,
-        PageOrientation: PageOrientation.Landscape,
-        Format: Format.PNG,
-        DPI: DPI[96],
-        Crosshair: true,
-        PrintableArea: true,
-      })
-      newMap.addControl(exportControl, 'top-right')
+      map.addControl(new AttributionControl({ compact: true, customAttribution: MAP_ATTRIBUTION }), 'bottom-right')
+      map.addControl(
+        new NavigationControl({
+          visualizePitch: true,
+          showZoom: true,
+          showCompass: true,
+        }),
+        'bottom-right',
+      )
+      map.addControl(
+        new GeolocateControl({
+          positionOptions: { enableHighAccuracy: true },
+          trackUserLocation: true,
+        }),
+        'bottom-right',
+      )
+      map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
 
-      const styleUrl = newMap.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
-      const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
-      promise
-        .then(([dataUrl, json]) => {
-          const sprite: Sprite = {
-            dataUrl,
-            json,
-          }
-          return sprite
+      map.on('load', async () => {
+        map.resize()
+
+        const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import(
+          '@watergis/maplibre-gl-export'
+        )
+        const exportControl = new MaplibreExportControl({
+          PageSize: Size.A4,
+          PageOrientation: PageOrientation.Landscape,
+          Format: Format.PNG,
+          DPI: DPI[96],
+          Crosshair: true,
+          PrintableArea: true,
         })
-        .then((sprite: Sprite) => {
-          const promises = []
-          Object.keys(sprite.json).forEach((id) => {
-            promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
+        map.addControl(exportControl, 'top-right')
+
+        const styleUrl = map.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite')
+        const promise = Promise.all([loadImageToDataUrl(`${styleUrl}@4x.png`), fetchUrl(`${styleUrl}@4x.json`)])
+        promise
+          .then(([dataUrl, json]) => {
+            const sprite: Sprite = {
+              dataUrl,
+              json,
+            }
+            return sprite
           })
-          return Promise.all(promises)
-        })
-        .then((iconList) => {
-          spriteImageList.update(() => iconList)
-        })
+          .then((sprite: Sprite) => {
+            const promises = []
+            Object.keys(sprite.json).forEach((id) => {
+              promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]))
+            })
+            return Promise.all(promises)
+          })
+          .then((iconList) => {
+            spriteImageList.update(() => iconList)
+            resolve()
+          })
+      })
     })
-    map.update(() => newMap)
-  })
+  }
+
+  $: if (container) {
+    initialise()
+  }
 </script>
 
 <div
   bind:this={container}
   class="map" />
-
-<CurrentLocation
-  bind:map={$map}
-  azureBaseUrl={PUBLIC_AZURE_URL}
-  isHover={false}
-  position="top-left" />
-<MapQueryInfoControl bind:map={$map} />
-<StyleSwicher
-  bind:map={$map}
-  {styles}
-  position="bottom-left" />
+{#if map}
+  <CurrentLocation
+    bind:map
+    azureBaseUrl={PUBLIC_AZURE_URL}
+    isHover={false}
+    position="top-left" />
+  <MapQueryInfoControl bind:map />
+  <StyleSwicher
+    bind:map
+    {styles}
+    position="bottom-left" />
+{/if}
 
 <style lang="scss">
   @import 'maplibre-gl/dist/maplibre-gl.css';

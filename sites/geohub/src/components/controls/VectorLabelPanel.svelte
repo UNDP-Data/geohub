@@ -20,10 +20,9 @@
 
   const parentLayerId = layer.id
   let style: LayerSpecification = getLayerStyle($map, layer.id)
-
   let decimalPosition: number
   let fieldType: string
-  let textFieldValue: string
+  let textFieldValue = ''
   let isAdvancedSettings = false
   let targetLayer = style.type === 'symbol' ? layer : undefined
   let targetLayerId = targetLayer ? layer.id : undefined
@@ -83,11 +82,7 @@
   }
 
   const fireLabelChanged = () => {
-    if (textFieldValue) {
-      isLabelCreated = true
-    } else {
-      isLabelCreated = false
-    }
+    isLabelCreated = !!textFieldValue
     $map.fire('label:changed', {
       parentId: parentLayerId,
       layerId: targetLayer.id,

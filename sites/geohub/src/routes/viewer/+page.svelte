@@ -1,10 +1,25 @@
 <script lang="ts">
-  import StyleViewer from '@undp-data/style-viewer'
-  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
+  import MainApp from '$components/MainApp.svelte'
 </script>
 
 <svelte:head>
-  <title>Geohub | Simple Map Viewer</title>
+  <title>GeoHub | United Nations Development Programme</title>
 </svelte:head>
 
-<StyleViewer azureBaseUrl={PUBLIC_AZURE_URL} />
+<MainApp />
+
+<style
+  global
+  lang="scss">
+  @import 'src/styles/geohubstyle.scss';
+  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
+  @import 'bulma-switch/dist/css/bulma-switch.min.css';
+  @import 'bulma-divider/dist/css/bulma-divider.min.css';
+
+  body,
+  html {
+    font-family: ProximaNova, sans-serif;
+    font-size: 13px;
+  }
+</style>

@@ -9,8 +9,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "precommit": "turbo run precommit",
-    "release": "changeset publish",
-    "preinstall": "npx only-allow pnpm"
+    "release": "changeset publish"
   },
   "repository": {
     "type": "git",
@@ -23,16 +22,16 @@
     "url": "https://github.com/UNDP-Data/geohub/issues"
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
-  "packageManager": "pnpm@7.18.0",
+  "packageManager": "pnpm@7.25.0",
   "engines": {
-    "pnpm": "^7.0.0"
+    "pnpm": "^7.25.x"
   },
   "type": "module",
   "dependencies": {
-    "lefthook": "^1.2.5"
+    "lefthook": "^1.2.7"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
-    "turbo": "^1.6.3"
+    "turbo": "^1.7.0"
   }
 }

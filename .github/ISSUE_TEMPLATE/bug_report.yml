@@ -1,0 +1,80 @@
+name: "Bug Report"
+description: "Report a bug in this project"
+title: "[BUG] "
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Before you report the bug, please make sure that:
+        - You are using the latest version of the project. especially the `develop` branch.
+        - You have searched the [issues](https://github.com/UNDP-Data/geohub/issues) for similar bug reports.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: "Bug Description"
+      description: "A clear and concise description of what the bug is."
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-reproduction
+    attributes:
+      label: "Bug Reproduction"
+      description: "A clear and concise description of how to reproduce the bug."
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-expected-behavior
+    attributes:
+      label: "Bug Expected Behavior"
+      description: "A clear and concise description of what you expected to happen."
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-actual-behavior
+    attributes:
+      label: "Bug Actual Behavior"
+      description: "A clear and concise description of what actually happened."
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-impact
+    attributes:
+      label: "Bug Impact"
+      description: "A clear and concise description of the impact of the bug."
+    validations:
+      required: false
+
+  - type: textarea
+    id: bug-screenshots
+    attributes:
+      label: "Bug Screenshots"
+      description: "If applicable, add screenshots to help explain your problem."
+    validations:
+      required: false
+
+  - type: textarea
+    id: bug-references
+    attributes:
+      label: "Bug References"
+      description: "If applicable, add links to any relevant bug reports or feature requests."
+    validations:
+      required: false
+
+  - type: textarea
+    id: bug-system-information
+    attributes:
+      label: "Bug System Information"
+      description: |
+        If applicable, add information about your system configuration.
+        Paste the output of `npx envinfo --system --binaries --browsers --npmPackages "{svelte,@sveltejs/*,vite}"`
+      value: |
+        - OS: [e.g. Windows 10]
+        - Browser: [e.g. Google Chrome, Firefox]
+    validations:
+      required: false

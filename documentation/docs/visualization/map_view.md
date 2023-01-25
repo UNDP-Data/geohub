@@ -2,7 +2,6 @@
 
 GeoHub is designed to allow for a user-friendly experience with increased accessibility functionality! You can further improve your map view with the following tips.
 
-
 1. Divider: You can enlarge the size of the map view by expanding/contracting the slider.
 
 2. Pan the map: Use your mouse to drag the portion of the map you would like to view into the middle of the screen.
@@ -27,8 +26,4 @@ GeoHub is designed to allow for a user-friendly experience with increased access
 
 5. Share : Allows the user to share layers and data via a sharable URL via the ![Map_Share.png](../assets/data/Map_Share.png) icon.
 
-Geo Hub has also allowed for improved information efficiency by displaying the scale of the map to the preferred zoom level as displayed on the bottom left corner of the map. With increased spatial information, you can also identify the name of the place of interest to the lowest subnational level as displayed on the upper left corner of the map.
-
 <center> ![type:video](https://undpngddlsgeohubdev01.blob.core.windows.net/docs-assets/Videos/How_do_I_adjust_the_map_view_.webm)</center>
-
-

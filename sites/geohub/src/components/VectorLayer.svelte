@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
@@ -12,12 +13,14 @@
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
-  let applyToOption: VectorApplyToTypes
-  let legendType: string
+
+  const isReadonly = $page.url.pathname === '/viewer'
+
+  let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
+  let legendType: 'simple' | 'advanced'
   let defaultColor: string
   let defaultLineColor: string
-
-  let activeTab = ''
+  let activeTab = TabNames.LEGEND
 
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -25,6 +28,11 @@
     { label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
+
+  if (isReadonly) {
+    tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
+    activeTab = undefined
+  }
 </script>
 
 <div

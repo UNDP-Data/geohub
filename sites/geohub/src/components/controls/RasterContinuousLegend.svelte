@@ -15,10 +15,10 @@
     getValueFromRasterTileUrl,
     updateParamsInURL,
     getLayerSourceUrl,
-    sleep,
   } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
+  import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let layerConfig: Layer
   export let colorMapName: string
@@ -99,32 +99,42 @@
   }
 </script>
 
-<div
-  class="group"
-  data-testid="continuous-view-container">
-  <div class="active-color-map">
-    <ColorMapPickerCard
-      {colorMapName}
-      colorMapType={ColorMapTypes.SEQUENTIAL}
-      {numberOfClasses}
-      isSelected={false}
-      isCardStyle={false} />
-  </div>
+<div class="columns is-mobile">
+  <div class="column">
+    <div
+      class="group"
+      data-testid="continuous-view-container">
+      <div class="active-color-map">
+        <ColorMapPickerCard
+          {colorMapName}
+          colorMapType={ColorMapTypes.SEQUENTIAL}
+          isSelected={false}
+          isCardStyle={false} />
+      </div>
 
-  <div class="range-slider">
-    <RangeSlider
-      bind:values={rangeSliderValues}
-      float
-      range
-      min={layerMin}
-      max={layerMax}
-      {step}
-      pips
-      pipstep={Math.round(step * 10)}
-      first="label"
-      last="label"
-      rest={false}
-      on:stop={onSliderStop} />
+      <div class="range-slider">
+        <RangeSlider
+          bind:values={rangeSliderValues}
+          float
+          range
+          min={layerMin}
+          max={layerMax}
+          {step}
+          pips
+          pipstep={Math.round(step * 10)}
+          first="label"
+          last="label"
+          rest={false}
+          on:stop={onSliderStop} />
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div class="colormap-picker">
+      <ColorMapPicker
+        bind:colorMapName
+        on:colorMapChanged={colorMapNameChanged} />
+    </div>
   </div>
 </div>
 

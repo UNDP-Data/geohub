@@ -11,6 +11,7 @@ import Radios from './Radios/Radios.svelte';
 import Loader from './Loader/Loader.svelte';
 import Pagination from './Pagination/Pagination.svelte';
 import FluidCarousel from './FluidCarousel/FluidCarousel.svelte';
+import Download from './Download/Download.svelte';
 
 export {
 	Accordion,
@@ -18,6 +19,7 @@ export {
 	Breadcrumbs,
 	Checkbox,
 	CardWithImage,
+	Download,
 	Header,
 	Footer,
 	Tabs,

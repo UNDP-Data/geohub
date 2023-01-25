@@ -1,18 +1,12 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte'
+  import { page } from '$app/stores'
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
   import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import {
-    ClassificationMethodTypes,
-    DynamicLayerLegendTypes,
-    TabNames,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    COLOR_CLASS_COUNT,
-  } from '$lib/constants'
+  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT_MAXIMUM, COLOR_CLASS_COUNT } from '$lib/constants'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -30,6 +24,8 @@
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
 
+  const isReadonly = $page.url.pathname === '/viewer'
+
   //local vars
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -44,7 +40,7 @@
 
   // state vars
   //let expressions: RasterSimpleExpression[]
-  let legendType: DynamicLayerLegendTypes
+  let legendType: 'simple' | 'advanced'
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
@@ -72,25 +68,26 @@
       await sleep(100)
     }
 
-    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    const colormap: number[][][] = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][]
 
     if (colormap) {
-      // either unique or interval
+      //layer  is beeing loaded form a saved map and is classified
+      colormap.forEach((row: number[][], index: number) => {
+        const [start, end] = row[0]
+        const color = row[1]
+        colorMapRows.push({
+          color: color,
+          index: index,
+          start: start,
+          end: end,
+        })
+      })
+      numberOfClasses = colorMapRows.length
 
-      const band = (info as RasterTileMetadata).active_band_no
-      layerHasUniqueValues = false
-      if ((info as RasterTileMetadata).stats[band] && (info as RasterTileMetadata).stats[band]['unique']) {
-        layerHasUniqueValues = Number((info as RasterTileMetadata).stats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
-      }
-      if (layerHasUniqueValues) {
-        legendType = DynamicLayerLegendTypes.UNIQUE
-      } else {
-        legendType = DynamicLayerLegendTypes.INTERVALS
-      }
-      //
+      legendType = 'advanced'
     } else {
       if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      legendType = DynamicLayerLegendTypes.CONTINUOUS
+      legendType = 'simple'
     }
 
     // initialisation is not necessary when restoring or swhitching from other tabs
@@ -129,7 +126,10 @@
     }
   }
 
-  $: {
+  if (isReadonly) {
+    tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
+    activeTab = undefined
+  } else {
     if ((info as RasterTileMetadata)?.isMosaicJson === true) {
       // disable other menus since they are not working for mosaicjson layer currently
       tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]

@@ -1,8 +1,9 @@
 import type { Layer, VectorLayerMetadata, VectorLayerTileStatLayer } from '$lib/types'
 import type { Map } from 'maplibre-gl'
 import { getLayerStyle } from './getLayerStyle'
+import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
 
-export const getLayerProperties = (map: Map, layer: Layer, onlyNumber = true) => {
+export const getLayerProperties = (map: Map, layer: Layer, inLegend = true) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const vectorInfo: VectorLayerMetadata[] = layer.info.json.vector_layers
@@ -16,7 +17,7 @@ export const getLayerProperties = (map: Map, layer: Layer, onlyNumber = true) =>
     JSON.stringify(vectorInfo.find((l) => l.id === getLayerStyle(map, layerId)['source-layer'])),
   )
 
-  if (onlyNumber === true) {
+  if (inLegend === true) {
     const tilestats: {
       layerCount: number
       layers: VectorLayerTileStatLayer[]
@@ -26,7 +27,7 @@ export const getLayerProperties = (map: Map, layer: Layer, onlyNumber = true) =>
     if (tilestats) {
       const vectorLayerStats = tilestats.layers.find((l) => l.layer === getLayerStyle(map, layerId)['source-layer'])
       vectorLayerStats.attributes.forEach((attr) => {
-        if (attr.type.toLowerCase() !== 'number') {
+        if (attr.type.toLowerCase() === 'string' && attr.values.length > UNIQUE_VALUE_THRESHOLD) {
           delete vectorLayerMeta.fields[attr.attribute]
         }
       })
