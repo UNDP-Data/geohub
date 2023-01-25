@@ -30,6 +30,18 @@ export const updateParamsInURL = (
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       style.sources[layerStyle.source].tiles = [decodeURI(layerURL.toString())]
+
+      // delete all props which have undefined value
+      // probably it is a bug of maplibre to add undefined property (like url, bounds) to the style,
+      // and maplibre complains it has error which some of properties are not defined.
+      Object.keys(style.sources).forEach((key) => {
+        const src = style.sources[key]
+        Object.keys(src).forEach((prop) => {
+          if (!src[prop]) {
+            delete src[prop]
+          }
+        })
+      })
       mapStore.setStyle(style)
     }
   }
