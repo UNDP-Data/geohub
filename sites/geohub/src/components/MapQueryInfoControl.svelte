@@ -21,6 +21,7 @@
 
   export let map: Map
   let popup: Popup | undefined
+  let queryButton: HTMLButtonElement
   let popupContainer: HTMLDivElement
   let isActive = false
   let isValuesRounded = true
@@ -33,19 +34,15 @@
   function MapQueryInfoControl() {}
 
   MapQueryInfoControl.prototype.onAdd = function () {
-    // this.map = map
     this.container = document.createElement('div')
     this.container.title = 'Query Layer Information'
     this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
 
-    this.button = document.createElement('button')
-    this.button.classList.add('mapboxgl-query-info-control')
-    this.button.type = 'button'
-    this.button.addEventListener('click', () => {
+    queryButton.addEventListener('click', () => {
       this.changeButtonCondition()
     })
-    this.container.appendChild(this.button)
-    this.button.dispatchEvent(new Event('click'))
+    this.container.appendChild(queryButton)
+    queryButton.dispatchEvent(new Event('click'))
     return this.container
   }
 
@@ -347,6 +344,18 @@
   }
 </script>
 
+<button
+  class="maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+  bind:this={queryButton}
+  data-tooltip={!isActive ? 'Start to query information' : 'Stop to query information'}>
+  <span class="fa-stack fa-xl">
+    <i class="fa-solid fa-comment fa-stack-1x {isActive ? 'has-text-success' : ''}" />
+    <i
+      class="fa-solid fa-info fa-stack fa-inverse mb-2"
+      style="font-size: 0.5rem;" />
+  </span>
+</button>
+
 <div
   bind:this={popupContainer}
   class="popup-container">
@@ -494,12 +503,17 @@
     }
   }
 
-  :global(.mapboxgl-query-info-control) {
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-size: 75% !important;
-    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>');
+  .maplibre-ctrl-icon {
+    width: 29px;
+    height: 29px;
+    cursor: pointer;
   }
+
+  .align-center {
+    width: max-content;
+    margin: auto;
+  }
+
   :global(.maplibregl-popup-close-button) {
     top: 15px !important;
     right: 10px !important;
