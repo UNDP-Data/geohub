@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
-    const styleId = params.id
+    const styleId = Number(params.id)
     if (!styleId) {
       return new Response(JSON.stringify({ message: `id parameter is required.` }), {
         status: 400,

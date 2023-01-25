@@ -276,9 +276,18 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
     if (!body.access_level) {
       throw new Error('access_level property is required')
     }
+    const id = body.id
+
+    let style = await getStyleById(id)
+    const email = session?.user?.email
+    // only allow to delete style created by login user it self.
+    if (!(email && email === style.created_user)) {
+      return new Response(JSON.stringify({ message: 'Permission error' }), {
+        status: 403,
+      })
+    }
 
     const now = new Date().toISOString()
-    const id = body.id
     const query = {
       text: `
       UPDATE geohub.style
@@ -298,7 +307,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
     await client.query(query)
 
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
-    const style = await getStyleById(id)
+    style = await getStyleById(id)
     style.style = styleJsonUrl
     style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
     return new Response(JSON.stringify(style))
