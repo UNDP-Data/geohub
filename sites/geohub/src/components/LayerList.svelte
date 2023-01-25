@@ -46,14 +46,39 @@
         if (!$map.isStyleLoaded()) {
           $map.once('styledata', () => {
             $layerList = styleInfo.layers
+            setDefaultLayerValues(styleInfo.legendState)
             resolve(styleInfo.legendState)
           })
         } else {
           $layerList = styleInfo.layers
+          setDefaultLayerValues(styleInfo.legendState)
           resolve(styleInfo.legendState)
         }
       } finally {
         $indicatorProgress = false
+      }
+    })
+  }
+
+  /**
+   * Fire legend state (classification and colorMapName) to register for saved map feature
+   * @param legendState LegendState object
+   */
+  const setDefaultLayerValues = (legendState: LegendState) => {
+    if (!legendState) return
+    Object.keys(legendState).forEach((layerId) => {
+      const state = legendState[layerId]
+      if (state.colorMapName) {
+        $map?.fire('colormap:changed', {
+          layerId: layerId,
+          colorMapName: state.colorMapName,
+        })
+      }
+      if (state.classification) {
+        $map?.fire('classification:changed', {
+          layerId: layerId,
+          classification: state.classification,
+        })
       }
     })
   }
