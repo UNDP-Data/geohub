@@ -18,10 +18,13 @@
   let isVisible = isLayerVisible()
   let isLoading = false
 
+  let isAerialStyle = false
+
   $: isVisible, setVisibility()
 
   const setVisibility = () => {
     if (!map?.isStyleLoaded()) return
+    isAerialStyle = map.getStyle().sources['bing'] ? true : false
     if (isVisible) {
       map.setLayoutProperty(target, 'visibility', 'visible')
     } else {
@@ -46,7 +49,17 @@
     }
   }
 
-  let visiblilityButton: HTMLDivElement
+  map.on('styledata', function (e) {
+    const newStyle = map.getStyle().sources['bing'] ? true : false
+    if (newStyle !== isAerialStyle) {
+      if (!isVisible) {
+        isVisible = true
+      }
+      isAerialStyle = newStyle
+    }
+  })
+
+  let visiblilityButton: HTMLButtonElement
 
   // eslint-disable-next-line
   function VisibilityControl() {}
@@ -86,17 +99,23 @@
   })
 </script>
 
-<div
-  class="maplibre-ctrl-icon is-flex is-align-items-center"
+<button
+  class="maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
   bind:this={visiblilityButton}
-  aria-disabled={isLoading}>
-  <i class="{faIcon} fa-2xl ml-1 {isVisible ? 'has-text-success' : ''}" />
-</div>
+  data-tooltip={!isVisible ? 'Show hillshade' : 'Hide hillshade'}
+  disabled={isLoading}>
+  <i class="{faIcon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
+</button>
 
 <style lang="scss">
   .maplibre-ctrl-icon {
     width: 29px;
     height: 29px;
     cursor: pointer;
+  }
+
+  .align-center {
+    width: max-content;
+    margin: auto;
   }
 </style>
