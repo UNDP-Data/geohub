@@ -860,6 +860,16 @@ paths:
           in: query
           name: query
           description: text to search styles by name
+        - schema:
+            type: integer
+            default: 1
+            enum:
+              - 1
+              - 2
+              - 3
+          in: query
+          name: accesslevel
+          description: 'access Level published to 1: login user 2: UNDP 3: public'
     post:
       summary: Style register API
       operationId: post-style

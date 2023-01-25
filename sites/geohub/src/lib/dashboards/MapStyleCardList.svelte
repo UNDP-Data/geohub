@@ -22,6 +22,8 @@
 
   let query = $page.url.searchParams.get('query') ?? ''
 
+  let accessLevel = $page.url.searchParams.get('accesslevel') ? Number($page.url.searchParams.get('accesslevel')) : 1
+
   let expanded: { [key: string]: boolean } = {}
   let expandedStyleId: string
   $: {
@@ -85,6 +87,7 @@
 
   $: limit, handleLimitChanged()
   $: sortby, handleSortbyChanged()
+  $: accessLevel, handleAccessLevelChanged()
 
   const handleLimitChanged = async () => {
     if (!browser) return
@@ -103,10 +106,18 @@
     await updateStylePage('next')
   }
 
+  const handleAccessLevelChanged = async () => {
+    if (!browser) return
+    offset = 0
+    links = []
+    await updateStylePage('next')
+  }
+
   const setPageUrl = () => {
     $page.url.searchParams.set('limit', `${limit}`)
     $page.url.searchParams.set('offset', `${offset}`)
     $page.url.searchParams.set('sortby', `${sortby}`)
+    $page.url.searchParams.set('accesslevel', `${accessLevel}`)
     if (query && query.length > 0) {
       $page.url.searchParams.set('query', `${query}`)
     } else {
@@ -128,6 +139,7 @@
       apiUrl.searchParams.set('limit', `${limit}`)
       apiUrl.searchParams.set('offset', `${offset}`)
       apiUrl.searchParams.set('sortby', `${sortby}`)
+      apiUrl.searchParams.set('accesslevel', `${accessLevel}`)
 
       const link = links?.find((l) => l.rel === type)
       if (link) {
@@ -212,6 +224,46 @@
       {/if}
     </div>
   </div>
+
+  <div class="tile is-parent">
+    <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label">Search maps only published to:</label>
+      <div class="field has-addons">
+        <p class="control">
+          <button
+            class="button is-normal {`${accessLevel === 1 ? 'is-primary is-active' : 'is-primary is-light'}`}"
+            on:click={() => (accessLevel = 1)}>
+            <span>
+              <i class="fa-solid fa-user-lock" />
+              Me
+            </span>
+          </button>
+        </p>
+        <p class="control">
+          <button
+            class="button is-normal {`${accessLevel === 2 ? 'is-primary is-active' : 'is-primary is-light'}`}"
+            on:click={() => (accessLevel = 2)}>
+            <span>
+              <i class="fa-solid fa-building-lock" />
+              UNDP
+            </span>
+          </button>
+        </p>
+        <p class="control">
+          <button
+            class="button is-normal {`${accessLevel === 3 ? 'is-primary is-active' : 'is-primary is-light'}`}"
+            on:click={() => (accessLevel = 3)}>
+            <span>
+              <i class="fa-solid fa-lock-open" />
+              Public
+            </span>
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+
   <div class="tile is-parent">
     <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->
