@@ -4,6 +4,7 @@ const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import { getStyleById } from '$lib/server/helpers'
+import { AccessLevel } from '$lib/constants'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -36,14 +37,14 @@ export const GET: RequestHandler = async ({ params, locals }) => {
       domain = email.split('@').pop()
     }
 
-    const accessLevel = style.access_level
-    if (accessLevel === 1) {
+    const accessLevel: AccessLevel = style.access_level
+    if (accessLevel === AccessLevel.PRIVATE) {
       if (!(email && email === style.created_user)) {
         return new Response(JSON.stringify({ message: 'Permission error' }), {
           status: 403,
         })
       }
-    } else if (accessLevel === 2) {
+    } else if (accessLevel === AccessLevel.ORGANIZATION) {
       if (!(domain && style.created_user?.indexOf(domain) > -1)) {
         return new Response(JSON.stringify({ message: 'Permission error' }), {
           status: 403,

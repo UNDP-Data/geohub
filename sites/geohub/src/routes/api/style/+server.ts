@@ -5,6 +5,7 @@ const { Pool } = pkg
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers'
+import { AccessLevel } from '$lib/constants'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -86,16 +87,16 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     const where = `
     WHERE (
-      x.access_level = 3 
-      ${domain ? `OR (x.access_level = 2 AND x.created_user LIKE '%${domain}')` : ''}
+      x.access_level = ${AccessLevel.PUBLIC} 
+      ${domain ? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')` : ''}
       ${email ? `OR (x.created_user = '${email}')` : ''}
     )
     ${
-      accessLevel === 1
+      accessLevel === AccessLevel.PRIVATE
         ? `AND (x.created_user = '${email}')`
-        : accessLevel === 2
-        ? `AND (x.access_level = 2 AND x.created_user LIKE '%${domain}')`
-        : 'AND x.access_level = 3'
+        : accessLevel === AccessLevel.ORGANIZATION
+        ? `AND (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+        : `AND x.access_level = ${AccessLevel.PUBLIC}`
     }
     ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
     `

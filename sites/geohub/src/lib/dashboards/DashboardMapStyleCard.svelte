@@ -7,6 +7,7 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import { Accordion, Button, CtaLink } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
+  import { AccessLevel } from '$lib/constants'
 
   const dispatch = createEventDispatcher()
 
@@ -87,9 +88,9 @@
   }
 
   if (style.access_level) {
-    if (style.access_level === 1) {
+    if (style.access_level === AccessLevel.PRIVATE) {
       headerIcon = 'fa-solid fa-user-lock has-text-primary'
-    } else if (style.access_level === 2) {
+    } else if (style.access_level === AccessLevel.ORGANIZATION) {
       headerIcon = 'fa-solid fa-building-lock has-text-primary'
     } else {
       headerIcon = 'fa-solid fa-lock-open has-text-primary'

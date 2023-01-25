@@ -8,6 +8,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
+  import { AccessLevel } from '$lib/constants'
 
   const url: URL = $page.url
 
@@ -22,7 +23,11 @@
 
   let query = $page.url.searchParams.get('query') ?? ''
 
-  let accessLevel = $page.url.searchParams.get('accesslevel') ? Number($page.url.searchParams.get('accesslevel')) : 1
+  let accessLevel: AccessLevel = !$page.data.session
+    ? AccessLevel.PUBLIC
+    : $page.url.searchParams.get('accesslevel')
+    ? Number($page.url.searchParams.get('accesslevel'))
+    : AccessLevel.PRIVATE
 
   let expanded: { [key: string]: boolean } = {}
   let expandedStyleId: string
@@ -225,44 +230,52 @@
     </div>
   </div>
 
-  <div class="tile is-parent">
-    <div class="field">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label">Search maps only published to:</label>
-      <div class="field has-addons">
-        <p class="control">
-          <button
-            class="button is-normal {`${accessLevel === 1 ? 'is-primary is-active' : 'is-primary is-light'}`}"
-            on:click={() => (accessLevel = 1)}>
-            <span>
-              <i class="fa-solid fa-user-lock" />
-              Me
-            </span>
-          </button>
-        </p>
-        <p class="control">
-          <button
-            class="button is-normal {`${accessLevel === 2 ? 'is-primary is-active' : 'is-primary is-light'}`}"
-            on:click={() => (accessLevel = 2)}>
-            <span>
-              <i class="fa-solid fa-building-lock" />
-              UNDP
-            </span>
-          </button>
-        </p>
-        <p class="control">
-          <button
-            class="button is-normal {`${accessLevel === 3 ? 'is-primary is-active' : 'is-primary is-light'}`}"
-            on:click={() => (accessLevel = 3)}>
-            <span>
-              <i class="fa-solid fa-lock-open" />
-              Public
-            </span>
-          </button>
-        </p>
+  {#if $page.data.session}
+    <div class="tile is-parent">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Search maps only published to:</label>
+        <div class="field has-addons">
+          <p class="control">
+            <button
+              class="button is-normal {`${
+                accessLevel === AccessLevel.PRIVATE ? 'is-primary is-active' : 'is-primary is-light'
+              }`}"
+              on:click={() => (accessLevel = AccessLevel.PRIVATE)}>
+              <span>
+                <i class="fa-solid fa-user-lock" />
+                Me
+              </span>
+            </button>
+          </p>
+          <p class="control">
+            <button
+              class="button is-normal {`${
+                accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
+              }`}"
+              on:click={() => (accessLevel = AccessLevel.ORGANIZATION)}>
+              <span>
+                <i class="fa-solid fa-building-lock" />
+                UNDP
+              </span>
+            </button>
+          </p>
+          <p class="control">
+            <button
+              class="button is-normal {`${
+                accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
+              }`}"
+              on:click={() => (accessLevel = AccessLevel.PUBLIC)}>
+              <span>
+                <i class="fa-solid fa-lock-open" />
+                Public
+              </span>
+            </button>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
+  {/if}
 
   <div class="tile is-parent">
     <div class="field">

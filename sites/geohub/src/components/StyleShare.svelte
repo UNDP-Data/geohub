@@ -9,10 +9,11 @@
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
+  import { AccessLevel } from '$lib/constants'
 
   export let isModalVisible = false
   let styleURL: string
-  let accessLevel = $page.data.style?.access_level ?? 1
+  let accessLevel: AccessLevel = $page.data.style?.access_level ?? AccessLevel.PRIVATE
 
   let styleName = $page.data.style?.name ?? 'UNDP GeoHub style'
   let textCopyButton = 'Copy'
@@ -215,8 +216,10 @@
               <div class="field has-addons">
                 <p class="control">
                   <button
-                    class="button is-normal {`${accessLevel === 1 ? 'is-primary is-active' : 'is-primary is-light'}`}"
-                    on:click={() => (accessLevel = 1)}>
+                    class="button is-normal {`${
+                      accessLevel === AccessLevel.PRIVATE ? 'is-primary is-active' : 'is-primary is-light'
+                    }`}"
+                    on:click={() => (accessLevel = AccessLevel.PRIVATE)}>
                     <span>
                       <i class="fa-solid fa-user-lock" />
                       Me
@@ -225,8 +228,10 @@
                 </p>
                 <p class="control">
                   <button
-                    class="button is-normal {`${accessLevel === 2 ? 'is-primary is-active' : 'is-primary is-light'}`}"
-                    on:click={() => (accessLevel = 2)}>
+                    class="button is-normal {`${
+                      accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
+                    }`}"
+                    on:click={() => (accessLevel = AccessLevel.ORGANIZATION)}>
                     <span>
                       <i class="fa-solid fa-building-lock" />
                       UNDP
@@ -235,8 +240,10 @@
                 </p>
                 <p class="control">
                   <button
-                    class="button is-normal {`${accessLevel === 3 ? 'is-primary is-active' : 'is-primary is-light'}`}"
-                    on:click={() => (accessLevel = 3)}>
+                    class="button is-normal {`${
+                      accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
+                    }`}"
+                    on:click={() => (accessLevel = AccessLevel.PUBLIC)}>
                     <span>
                       <i class="fa-solid fa-lock-open" />
                       Public
