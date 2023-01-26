@@ -74,6 +74,7 @@ jobs:
 
       # setup environmental variables
       - name: Create environment file
+        if: ${{ (github.ref != 'refs/heads/main') }}
         uses: SpicyPizza/create-envfile@v1.3
         with:
           directory: ./sites/geohub
@@ -85,31 +86,28 @@ jobs:
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
           envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-
-      - name: Create environment file for develop
-        working-directory: ./sites/geohub
-        if: ${{ (github.ref != 'refs/heads/main') }}
-        env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-        run: |
-          echo "AUTH_SECRET=${AUTH_SECRET}" >> .env
-          echo "AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID}" >> .env
-          echo "AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET}" >> .env
+          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
 
       - name: Create environment file for production
-        working-directory: ./sites/geohub
         if: ${{ (github.ref == 'refs/heads/main') }}
-        env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET_PROD }}
-          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID_PROD }}
-          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET_PROD }}
-        run: |
-          echo "AUTH_SECRET=${AUTH_SECRET}" >> .env
-          echo "AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID}" >> .env
-          echo "AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET}" >> .env
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          directory: ./sites/geohub
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
+          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
+          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
+          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET_PROD }}
+          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID_PROD }}
+          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET_PROD }}
 
       - name: Run lint
         run: |
