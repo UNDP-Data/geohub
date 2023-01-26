@@ -16,7 +16,14 @@
   } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Loader, Tabs } from '@undp-data/svelte-undp-design'
-  import { getValueFromRasterTileUrl, sleep, getLayerSourceUrl, fetchUrl } from '$lib/helper'
+  import {
+    getValueFromRasterTileUrl,
+    sleep,
+    getLayerSourceUrl,
+    fetchUrl,
+    getActiveBandIndex,
+    remapInputValue,
+  } from '$lib/helper'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
 
   // exports
@@ -34,8 +41,14 @@
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
   let { info }: Layer = layer
+  const bandIndex = getActiveBandIndex(info)
+  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  let layerHasUniqueValues = Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
+  let legendLabels = {}
+  if (layerHasUniqueValues) {
+    legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES']
+  }
   let activeTab = TabNames.LEGEND
-  let layerHasUniqueValues = false
   let layerStats: RasterLayerStats
 
   // state vars
@@ -68,22 +81,37 @@
       await sleep(100)
     }
 
-    const colormap: number[][][] = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][]
-
+    const colormap: object = getValueFromRasterTileUrl($map, layer.id, 'colormap')
     if (colormap) {
-      //layer  is beeing loaded form a saved map and is classified
-      colormap.forEach((row: number[][], index: number) => {
-        const [start, end] = row[0]
-        const color = row[1]
-        colorMapRows.push({
-          color: color,
-          index: index,
-          start: start,
-          end: end,
+      //layer  is being loaded form a saved map and is classified
+      if (layerHasUniqueValues) {
+        colorMapRows = Object.keys(colormap).map((key, index) => {
+          return {
+            index: index,
+            start: key,
+            end: legendLabels[key],
+            color: [
+              colormap[key][0],
+              colormap[key][1],
+              colormap[key][2],
+              remapInputValue(colormap[key][3], 0, 255, 0, 1),
+            ],
+          }
         })
-      })
-      numberOfClasses = colorMapRows.length
+      } else {
+        colormap.forEach((row: number[][], index: number) => {
+          const [start, end] = row[0]
+          const color = row[1]
+          colorMapRows.push({
+            color: color,
+            index: index,
+            start: start,
+            end: end,
+          })
+        })
+      }
 
+      numberOfClasses = colorMapRows.length
       legendType = 'advanced'
     } else {
       if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
@@ -107,8 +135,6 @@
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=50`
       layerStats = await fetchUrl(statsURL)
       const band = (info as RasterTileMetadata).active_band_no
-
-      layerHasUniqueValues = Number(layerStats[band]['unique']) <= COLOR_CLASS_COUNT_MAXIMUM
       if (layerHasUniqueValues) {
         const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get(
           'url',

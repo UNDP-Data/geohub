@@ -222,42 +222,46 @@
   class="intervals-view-container"
   data-testid="intervals-view-container">
   <!-- svelte-ignore a11y-click-teevents-have-key-events -->
+
   <div class="legend-controls">
-    <div
-      class="classification field pr-2"
-      hidden={layerHasUniqueValues}>
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label has-text-centered">Classification</label>
-      <div class="control">
-        <select
-          bind:value={classificationMethod}
-          on:change={handleClassificationMethodChange}
-          style="width: 114px;"
-          title="Classification Methods">
-          {#each classificationMethods as classificationMethod}
-            <option
-              class="legend-text"
-              value={classificationMethod.code}>{classificationMethod.name}</option>
-          {/each}
-        </select>
+    {#if layerHasUniqueValues}
+      <div
+        class="classification field pr-2"
+        hidden={layerHasUniqueValues}>
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label has-text-centered">Classification</label>
+        <div class="control">
+          <select
+            bind:value={classificationMethod}
+            on:change={handleClassificationMethodChange}
+            style="width: 114px;"
+            title="Classification Methods">
+            {#each classificationMethods as classificationMethod}
+              <option
+                class="legend-text"
+                value={classificationMethod.code}>{classificationMethod.name}</option>
+            {/each}
+          </select>
+        </div>
       </div>
-    </div>
 
-    <div
-      class="number-classes field pr-2"
-      hidden={layerHasUniqueValues}>
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label has-text-centered">Number of Classes</label>
-      <div class="control">
-        <NumberInput
-          bind:value={numberOfClasses}
-          bind:minValue={colorClassCountMin}
-          bind:maxValue={colorClassCountMax}
-          on:change={handleIncrementDecrementClasses} />
+      <div
+        class="number-classes field pr-2"
+        hidden={layerHasUniqueValues}>
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label has-text-centered">Number of Classes</label>
+        <div class="control">
+          <NumberInput
+            bind:value={numberOfClasses}
+            bind:minValue={colorClassCountMin}
+            bind:maxValue={colorClassCountMax}
+            on:change={handleIncrementDecrementClasses} />
+        </div>
       </div>
-    </div>
-
-    <div class="colormap-picker">
+    {/if}
+    <div
+      class="colormap-picker"
+      style={layerHasUniqueValues ? 'margin-right:0%' : null}>
       <ColorMapPicker
         bind:colorMapName
         on:colorMapChanged={() => {
@@ -266,7 +270,7 @@
     </div>
   </div>
   <div
-    hidden={layerHasUniqueValues}
+    style={layerHasUniqueValues ? 'margin:0' : null}
     class="is-divider separator mb-4" />
 
   {#each colorMapRows as colorMapRow}
