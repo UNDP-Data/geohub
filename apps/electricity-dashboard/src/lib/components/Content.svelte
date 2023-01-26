@@ -51,7 +51,7 @@
 	minPrimaryWidth={`${drawerWidth}px`}
 	initialPrimaryWidth={drawerWidth}
 >
-	<div slot="primary" class="drawer-content container m-0 p-4">
+	<div slot="primary" class="drawer-content container m-0 px-4 pt-4">
 		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
 		<IntroductionPanel bind:showIntro />
 
@@ -98,7 +98,7 @@
 
 	.drawer-content {
 		width: 100%;
-		height: 100vh;
+		height: 100%;
 		overflow: auto;
 		display: flex;
 		flex-direction: column;

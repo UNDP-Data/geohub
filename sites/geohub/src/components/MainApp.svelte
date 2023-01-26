@@ -13,6 +13,8 @@
 
   let innerWidth: number
   let innerHeight: number
+  $: splitHeight = innerHeight - headerHeight
+
   let initialPrimaryWidth = 355
   let minPrimaryWidth = '360px'
   let minSecondaryWidth = '50%'
@@ -76,7 +78,9 @@
   bind:drawerOpen={isMenuShown}
   bind:height={headerHeight} />
 
-<div class="split-container">
+<div
+  class="split-container"
+  style="height:{splitHeight}px;">
   <Split
     initialPrimarySize={`${widthPecent}%`}
     minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
@@ -87,7 +91,7 @@
     <div
       slot="primary"
       class="primary-content">
-      <Content bind:headerHeight />
+      <Content bind:splitterHeight={splitHeight} />
     </div>
 
     <div
