@@ -110,19 +110,23 @@
 }
 @media (min-width: 90em) {
 	.country-header .header .top-left .logo img {
-		height: 122px;
+		height: 7.1875rem;
+		/* height: 122px; */
 		width: 60px;
 	}
 	.country-header .header .top-left .logo img.scrolled {
-		height: 115px;
+		height: 7.1875rem;
+		/* height: 115px; */
 	}
 }
 @media (max-width: 89.9375em) {
 	.country-header .header .top-left .logo img {
-		height: 82px;
+		height: 4.6875rem;
+		/* height: 82px; */
 	}
 	.country-header .header .top-left .logo img.scrolled {
-		height: 75px;
+		height: 4.6875rem;
+		/* height: 75px; */
 	}
 }
 .color-white {
