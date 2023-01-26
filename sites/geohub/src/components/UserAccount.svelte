@@ -10,6 +10,9 @@
   let isPanelOpen = false
   let panelWidth = '350px'
 
+  let innerWidth = 0
+  $: isMobile = innerWidth < 768 ? true : false
+
   const name = $page.data.session?.user.name
   const names = name?.split(' ') ?? []
 
@@ -35,6 +38,8 @@
     }
   }
 </script>
+
+<svelte:window bind:innerWidth />
 
 {#if $page.data.session}
   <div
@@ -89,10 +94,9 @@
     </div>
   {/if}
 {:else}
-  <Button
-    title="Sign In"
-    isPrimary={true}
-    on:clicked={() => signIn('azure-ad')} />
+  <button
+    class="button is-primary {isMobile ? 'is-small' : 'is-normal'}"
+    on:click={() => signIn('azure-ad')}><b>SIGN IN</b></button>
 {/if}
 
 <style lang="scss">
