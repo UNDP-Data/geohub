@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.9
+
+### Patch Changes
+
+- 96ea065: fix: set logo height as the same with header height
+
 ## 0.0.8
 
 ### Patch Changes
