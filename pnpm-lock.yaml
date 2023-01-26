@@ -343,7 +343,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.48.2
       '@typescript-eslint/parser': ^5.48.2
       '@undp-data/current-location': workspace:^0.0.4
-      '@undp-data/electricity-dashboard': workspace:^0.0.9
+      '@undp-data/electricity-dashboard': workspace:^0.0.10
       '@undp-data/style-switcher': workspace:^0.0.4
       '@undp-data/svelte-undp-design': workspace:^0.0.9
       '@watergis/legend-symbol': ^0.2.3
