@@ -11,12 +11,12 @@
   import LayerOrder from './LayerOrder.svelte'
   import type { LegendState } from '$lib/types'
 
-  export let headerHeight: number = undefined
-  export let tabsHeight: number = undefined
+  export let contentHeight: number
   export let activeTab: string
-  let marginTop = 5
   let layerHeaderHeight = 39
   let legendState: LegendState = $page.data.style?.legendState
+
+  $: totalHeight = contentHeight - layerHeaderHeight
 
   const getLegendState = () => {
     return new Promise<LegendState>((resolve) => {
@@ -101,10 +101,7 @@
 {/if}
 <div
   class="layer-list mx-2 mt-1"
-  style="height: calc(100vh - {headerHeight +
-    tabsHeight +
-    layerHeaderHeight +
-    marginTop}px); margin-top: {marginTop}px;">
+  style="height: {totalHeight}px;">
   {#if $layerList?.length === 0}
     <Notification type="info">
       No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.

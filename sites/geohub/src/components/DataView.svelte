@@ -12,11 +12,10 @@
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
-  export let headerHeight: number = undefined
-  export let tabsHeight = 38
+  export let contentHeight: number
   let optionsHeight = 41.5
 
-  $: totalHeight = headerHeight + tabsHeight + optionsHeight
+  $: totalHeight = contentHeight - optionsHeight
 
   let containerDivElement: HTMLDivElement
   let breadcrumbs: Breadcrumb[] = [
@@ -304,7 +303,7 @@
 </div>
 <div
   class="container data-view-container mx-4"
-  style="height: calc(100vh - {totalHeight}px);overflow-y: auto"
+  style="height: {totalHeight}px;"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
@@ -337,6 +336,8 @@
 
 <style lang="scss">
   .data-view-container {
+    overflow-y: auto;
+
     .loader-container {
       position: absolute;
       z-index: 10;

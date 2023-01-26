@@ -7,8 +7,9 @@
   import { Tabs } from '@undp-data/svelte-undp-design'
   import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
 
-  export let headerHeight: number
+  export let splitterHeight: number
   let tabsHeight: number
+  $: contentHeight = splitterHeight - tabsHeight
 
   let tabs: Tab[] = [
     {
@@ -46,14 +47,11 @@
 
   <div class="container p-0 m-0">
     <div hidden={activeTab !== TabNames.DATA}>
-      <DataView
-        bind:headerHeight
-        bind:tabsHeight />
+      <DataView bind:contentHeight />
     </div>
     <div hidden={activeTab !== TabNames.LAYERS}>
       <LayerList
-        bind:headerHeight
-        bind:tabsHeight
+        bind:contentHeight
         bind:activeTab />
     </div>
   </div>
