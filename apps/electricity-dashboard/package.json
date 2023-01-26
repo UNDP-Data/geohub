@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/electricity-dashboard",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "This dashboard app is to visualise electricity data in GeoHub",
 	"main": "package/index.js",
 	"files": [

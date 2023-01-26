@@ -1,5 +1,11 @@
 # @undp-data/electricity-dashboard
 
+## 0.0.10
+
+### Patch Changes
+
+- 3b3c906: fix: don't use 100vh in electricity dashboard
+
 ## 0.0.9
 
 ### Patch Changes
