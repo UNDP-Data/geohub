@@ -88,22 +88,28 @@ jobs:
           envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
 
       - name: Create environment file for develop
+        working-directory: ./sites/geohub
         if: ${{ (github.ref != 'refs/heads/main') }}
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./sites/geohub
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+        run: |
+          echo "AUTH_SECRET=${AUTH_SECRET}" >> .env
+          echo "AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID}" >> .env
+          echo "AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET}" >> .env
 
       - name: Create environment file for production
+        working-directory: ./sites/geohub
         if: ${{ (github.ref == 'refs/heads/main') }}
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./sites/geohub
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET_PROD }}
-          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID_PROD }}
-          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET_PROD }}
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET_PROD }}
+          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID_PROD }}
+          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET_PROD }}
+        run: |
+          echo "AUTH_SECRET=${AUTH_SECRET}" >> .env
+          echo "AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID}" >> .env
+          echo "AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET}" >> .env
 
       - name: Run lint
         run: |
