@@ -1,5 +1,25 @@
 # @undp-data/electricity-dashboard
 
+## 0.0.10
+
+### Patch Changes
+
+- 3b3c906: fix: don't use 100vh in electricity dashboard
+
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies [96ea065]
+  - @undp-data/svelte-undp-design@0.0.9
+
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies [77a8dac]
+  - @undp-data/svelte-undp-design@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes

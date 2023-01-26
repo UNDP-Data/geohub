@@ -13,6 +13,8 @@
 
   let innerWidth: number
   let innerHeight: number
+  $: splitHeight = innerHeight - headerHeight
+
   let initialPrimaryWidth = 355
   let minPrimaryWidth = '360px'
   let minSecondaryWidth = '50%'
@@ -36,7 +38,7 @@
 
   const resizeMap = () => {
     if (!map) return
-    repaintMap()
+    // repaintMap()
     map.resize()
   }
 
@@ -63,12 +65,8 @@
     setSplitControl()
   }
 
-  const splitterChanged = () => {
-    repaintMap()
-
-    if (isMenuShown !== true) {
-      resizeMap()
-    }
+  const splitterChanged = (e) => {
+    resizeMap()
   }
 </script>
 
@@ -80,7 +78,9 @@
   bind:drawerOpen={isMenuShown}
   bind:height={headerHeight} />
 
-<div class="split-container">
+<div
+  class="split-container"
+  style="height:{splitHeight}px;">
   <Split
     initialPrimarySize={`${widthPecent}%`}
     minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
@@ -91,7 +91,7 @@
     <div
       slot="primary"
       class="primary-content">
-      <Content bind:headerHeight />
+      <Content bind:splitterHeight={splitHeight} />
     </div>
 
     <div
@@ -112,6 +112,8 @@
 
     .secondary-content {
       position: relative;
+      width: 100%;
+      height: 100%;
     }
   }
 </style>

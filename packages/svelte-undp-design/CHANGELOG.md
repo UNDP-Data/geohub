@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.9
+
+### Patch Changes
+
+- 96ea065: fix: set logo height as the same with header height
+
+## 0.0.8
+
+### Patch Changes
+
+- 77a8dac: feat: added headerIcon property in accordion header
+
 ## 0.0.7
 
 ### Patch Changes

@@ -101,6 +101,12 @@ export enum StatusTypes {
   DANGER = 'danger',
 }
 
+export enum AccessLevel {
+  PRIVATE = 1,
+  ORGANIZATION = 2,
+  PUBLIC = 3,
+}
+
 export const styles: StyleDefinition[] = [
   {
     title: 'Carto',

@@ -19,6 +19,7 @@
   import type { Sprite } from '$lib/types'
   import { spriteImageList } from '$stores'
   import { PUBLIC_AZURE_URL } from '$lib/variables/public'
+  import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte'
 
   let container: HTMLDivElement
   export let map: Map
@@ -135,18 +136,18 @@
     bind:map
     {styles}
     position="bottom-left" />
+  <LayerVisibilitySwitcher
+    bind:map
+    position="bottom-right" />
 {/if}
 
 <style lang="scss">
   @import 'maplibre-gl/dist/maplibre-gl.css';
 
   .map {
-    height: calc(100vh - 93.44px);
+    position: absolute;
+    top: 0;
+    bottom: 0;
     width: 100%;
-  }
-  @media (max-width: 89.9375em) {
-    .map {
-      height: calc(100vh - 60.94px);
-    }
   }
 </style>

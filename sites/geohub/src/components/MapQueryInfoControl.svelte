@@ -21,6 +21,7 @@
 
   export let map: Map
   let popup: Popup | undefined
+  let queryButton: HTMLButtonElement
   let popupContainer: HTMLDivElement
   let isActive = false
   let isValuesRounded = true
@@ -28,24 +29,21 @@
   let features: PointFeature[] = []
   let coordinates: number[]
   let showProgress = false
+  let showPopup = false
 
   // eslint-disable-next-line
   function MapQueryInfoControl() {}
 
   MapQueryInfoControl.prototype.onAdd = function () {
-    // this.map = map
     this.container = document.createElement('div')
     this.container.title = 'Query Layer Information'
     this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
 
-    this.button = document.createElement('button')
-    this.button.classList.add('mapboxgl-query-info-control')
-    this.button.type = 'button'
-    this.button.addEventListener('click', () => {
+    queryButton.addEventListener('click', () => {
       this.changeButtonCondition()
     })
-    this.container.appendChild(this.button)
-    this.button.dispatchEvent(new Event('click'))
+    this.container.appendChild(queryButton)
+    queryButton.dispatchEvent(new Event('click'))
     return this.container
   }
 
@@ -108,8 +106,10 @@
     if (popup) {
       popup.remove()
       popup = undefined
+      showPopup = false
     }
     popup = new Popup().setLngLat(e.lngLat).setDOMContent(popupContainer).setMaxWidth('300px').addTo(map)
+    showPopup = true
 
     coordinates = [e.lngLat.lng, e.lngLat.lat]
 
@@ -125,6 +125,7 @@
           if (popup) {
             popup.remove()
             popup = undefined
+            showPopup = false
           }
         } else {
           features.forEach((feature, index) => {
@@ -154,18 +155,9 @@
   // @ts-ignore
   let mapQueryInfoControl: MapQueryInfoControl = null
 
-  $: {
-    if (map) {
-      if (mapQueryInfoControl !== null && map.hasControl(mapQueryInfoControl) === false) {
-        map.addControl(mapQueryInfoControl, 'top-right')
-      }
-    }
-  }
-
   onMount(async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     mapQueryInfoControl = new MapQueryInfoControl()
+    map.addControl(mapQueryInfoControl, 'top-right')
   })
 
   onDestroy(() => {
@@ -356,106 +348,120 @@
   }
 </script>
 
+<button
+  class="maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+  bind:this={queryButton}
+  data-tooltip={!isActive ? 'Start to query information' : 'Stop to query information'}>
+  <span class="fa-stack fa-xl">
+    <i class="fa-solid fa-comment fa-stack-1x {isActive ? 'has-text-success' : ''}" />
+    <i
+      class="fa-solid fa-info fa-stack fa-inverse mb-2"
+      style="font-size: 0.5rem;" />
+  </span>
+</button>
+
 <div
   bind:this={popupContainer}
   class="popup-container">
-  <div class="container is-fullhd">
-    <div class="notification p-2 m-0 mb-2">
-      <b>Query information</b>
-    </div>
-  </div>
-  <div class="contents">
-    {#if showProgress}
-      <div class="loader-container">
-        <Loader size="small" />
+  {#if showPopup}
+    <div class="container is-fullhd">
+      <div class="notification p-2 m-0 mb-2">
+        <b>Query information</b>
       </div>
-    {:else}
-      <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>
-      {#if coordinates && coordinates.length === 2}
-        <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-          <thead>
-            <tr>
-              <th>Longitude</th>
-              <th>Latitude</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#key coordinates}
+    </div>
+    <div class="contents">
+      {#if showProgress}
+        <div class="loader-container">
+          <Loader size="small" />
+        </div>
+      {:else}
+        <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>
+        {#if coordinates && coordinates.length === 2}
+          <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+            <thead>
               <tr>
-                <td>{coordinates[0]}</td>
-                <td>{coordinates[1]}</td>
+                <th>Longitude</th>
+                <th>Latitude</th>
               </tr>
-            {/key}
-          </tbody>
-        </table>
-      {/if}
-      {#each features as feature}
-        <Accordion
-          fontSize="small"
-          headerTitle={`${feature.properties.name}`}
-          bind:isExpanded={expanded[feature.id]}>
-          <div
-            slot="content"
-            class="accordion-content px-1">
-            <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-              <thead>
+            </thead>
+            <tbody>
+              {#key coordinates}
                 <tr>
-                  <th>Property</th>
-                  <th>Value</th>
+                  <td>{coordinates[0]}</td>
+                  <td>{coordinates[1]}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {#key isValuesRounded}
-                  {#each Object.keys(feature.properties) as property}
-                    {#if property !== 'name'}
-                      <tr>
-                        <td>{clean(property)}</td>
-                        <td>{formatValue(feature.properties[property])}</td>
-                      </tr>
-                    {/if}
-                  {/each}
-                {/key}
-              </tbody>
-            </table>
-          </div>
-        </Accordion>
-      {/each}
-    {/if}
-  </div>
-
-  <div class="is-divider p-0 m-0 py-2" />
-  <div class="container actions">
-    <Checkbox
-      label="Round values"
-      bind:checked={isValuesRounded} />
-    <div
-      class="download"
-      hidden={!(features && features.length > 0)}>
-      <button
-        class="button is-small download"
-        on:click={() => downloadGeoJson()}
-        title="Download GeoJSON">
-        <span class="icon is-small pointer">
-          <i class="fa-solid fa-download fa-lg" />
-        </span>
-        <span class="label">GeoJSON</span>
-      </button>
+              {/key}
+            </tbody>
+          </table>
+        {/if}
+        {#each features as feature}
+          <Accordion
+            fontSize="small"
+            headerTitle={`${feature.properties.name}`}
+            bind:isExpanded={expanded[feature.id]}>
+            <div
+              slot="content"
+              class="accordion-content px-1">
+              <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+                <thead>
+                  <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {#key isValuesRounded}
+                    {#each Object.keys(feature.properties) as property}
+                      {#if property !== 'name'}
+                        <tr>
+                          <td>{clean(property)}</td>
+                          <td>{formatValue(feature.properties[property])}</td>
+                        </tr>
+                      {/if}
+                    {/each}
+                  {/key}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+        {/each}
+      {/if}
     </div>
 
-    <div
-      class="download"
-      hidden={!(features && features.length > 0)}>
-      <button
-        class="button is-small download"
-        on:click={() => downloadCsv()}
-        title="Download CSV">
-        <span class="icon is-small pointer">
-          <i class="fa-solid fa-download fa-lg" />
-        </span>
-        <span class="label">CSV</span>
-      </button>
+    <div class="is-divider p-0 m-0 py-2" />
+    <div class="container actions">
+      <Checkbox
+        label="Round values"
+        bind:checked={isValuesRounded} />
+      <div
+        class="download"
+        hidden={!(features && features.length > 0)}>
+        <button
+          class="button is-small download"
+          on:click={() => downloadGeoJson()}
+          title="Download GeoJSON">
+          <span class="icon is-small pointer">
+            <i class="fa-solid fa-download fa-lg" />
+          </span>
+          <span class="label">GeoJSON</span>
+        </button>
+      </div>
+
+      <div
+        class="download"
+        hidden={!(features && features.length > 0)}>
+        <button
+          class="button is-small download"
+          on:click={() => downloadCsv()}
+          title="Download CSV">
+          <span class="icon is-small pointer">
+            <i class="fa-solid fa-download fa-lg" />
+          </span>
+          <span class="label">CSV</span>
+        </button>
+      </div>
     </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -503,12 +509,17 @@
     }
   }
 
-  :global(.mapboxgl-query-info-control) {
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-size: 75% !important;
-    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>');
+  .maplibre-ctrl-icon {
+    width: 29px;
+    height: 29px;
+    cursor: pointer;
   }
+
+  .align-center {
+    width: max-content;
+    margin: auto;
+  }
+
   :global(.maplibregl-popup-close-button) {
     top: 15px !important;
     right: 10px !important;

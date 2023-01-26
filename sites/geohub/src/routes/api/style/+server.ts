@@ -4,7 +4,8 @@ const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
-import { getStyleCount, pageNumber } from '$lib/server/helpers'
+import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers'
+import { AccessLevel } from '$lib/constants'
 const connectionString = DATABASE_CONNECTION
 
 /**
@@ -20,12 +21,15 @@ const connectionString = DATABASE_CONNECTION
  *   }
  * ]
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const session = await locals.getSession()
+
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
     const limit = url.searchParams.get('limit') ?? '10'
     const offset = url.searchParams.get('offset') ?? '0'
+    const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1')
 
     const sortby = url.searchParams.get('sortby')
     let sortByColumn = 'name'
@@ -75,15 +79,44 @@ export const GET: RequestHandler = async ({ url }) => {
       values.push(query)
     }
 
+    const email = session?.user?.email
+    let domain: string
+    if (email) {
+      domain = email.split('@').pop()
+    }
+
+    const where = `
+    WHERE (
+      x.access_level = ${AccessLevel.PUBLIC} 
+      ${domain ? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')` : ''}
+      ${email ? `OR (x.created_user = '${email}')` : ''}
+    )
+    ${
+      accessLevel === AccessLevel.PRIVATE
+        ? `AND (x.created_user = '${email}')`
+        : accessLevel === AccessLevel.ORGANIZATION
+        ? `AND (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+        : `AND x.access_level = ${AccessLevel.PUBLIC}`
+    }
+    ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+    `
+
+    // only can access to
+    // access_level = 3
+    // or access_lavel = 2 which were created by user with @undp.org email
+    // or created_user = login user email
     const sql = {
       text: `
       SELECT
         x.id, 
         x.name, 
-        x.createdat, 
-        x.updatedat 
+        x.access_level,
+        x.createdat,
+        x.created_user, 
+        x.updatedat,
+        x.updated_user
       FROM geohub.style x
-      ${query ? 'WHERE to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+      ${where}
       ORDER BY
           x.${sortByColumn} ${sortOrder} 
       LIMIT ${limit}
@@ -135,7 +168,7 @@ export const GET: RequestHandler = async ({ url }) => {
       })
     }
 
-    const totalCount = await getStyleCount()
+    const totalCount = await getStyleCount(where, values)
     let totalPages = Math.ceil(totalCount / Number(limit))
     if (totalPages === 0) {
       totalPages = 1
@@ -184,10 +217,19 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
     if (!body.layers) {
       throw new Error('layers property is required')
     }
+    if (!body.access_level) {
+      throw new Error('access_level property is required')
+    }
 
     const query = {
-      text: `INSERT INTO geohub.style (name, style, layers) VALUES ($1, $2, $3) returning id`,
-      values: [body.name, JSON.stringify(body.style), JSON.stringify(body.layers)],
+      text: `INSERT INTO geohub.style (name, style, layers, access_level, created_user) VALUES ($1, $2, $3, $4, $5) returning id`,
+      values: [
+        body.name,
+        JSON.stringify(body.style),
+        JSON.stringify(body.layers),
+        body.access_level,
+        session.user.email,
+      ],
     }
 
     const res = await client.query(query)
@@ -196,13 +238,10 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
     }
     const id = res.rows[0].id
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
-    return new Response(
-      JSON.stringify({
-        id: id,
-        style: styleJsonUrl,
-        viewer: `${url.origin}/viewer?style=${styleJsonUrl}`,
-      }),
-    )
+    const style = await getStyleById(id)
+    style.style = styleJsonUrl
+    style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
+    return new Response(JSON.stringify(style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
@@ -223,7 +262,13 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
  *   layers: json
  * }
  */
-export const PUT: RequestHandler = async ({ request, url }) => {
+export const PUT: RequestHandler = async ({ request, url, locals }) => {
+  const session = await locals.getSession()
+  if (!session) {
+    return new Response(JSON.stringify({ message: 'Permission error' }), {
+      status: 403,
+    })
+  }
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -237,27 +282,44 @@ export const PUT: RequestHandler = async ({ request, url }) => {
     if (!body.layers) {
       throw new Error('layers property is required')
     }
+    if (!body.access_level) {
+      throw new Error('access_level property is required')
+    }
+    const id = body.id
+
+    let style = await getStyleById(id)
+    const email = session?.user?.email
+    // only allow to delete style created by login user it self.
+    if (!(email && email === style.created_user)) {
+      return new Response(JSON.stringify({ message: 'Permission error' }), {
+        status: 403,
+      })
+    }
 
     const now = new Date().toISOString()
-    const id = body.id
     const query = {
       text: `
       UPDATE geohub.style
-      SET name=$1, style=$2, layers=$3, updatedat=$4::timestamptz
-      WHERE id=$5`,
-      values: [body.name, JSON.stringify(body.style), JSON.stringify(body.layers), now, id],
+      SET name=$1, style=$2, layers=$3, updatedat=$4::timestamptz, access_level=$5, updated_user=$6
+      WHERE id=$7`,
+      values: [
+        body.name,
+        JSON.stringify(body.style),
+        JSON.stringify(body.layers),
+        now,
+        body.access_level,
+        session.user.email,
+        id,
+      ],
     }
 
     await client.query(query)
 
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
-    return new Response(
-      JSON.stringify({
-        id: id,
-        style: styleJsonUrl,
-        viewer: `${url.origin}/viewer?style=${styleJsonUrl}`,
-      }),
-    )
+    style = await getStyleById(id)
+    style.style = styleJsonUrl
+    style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
+    return new Response(JSON.stringify(style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,

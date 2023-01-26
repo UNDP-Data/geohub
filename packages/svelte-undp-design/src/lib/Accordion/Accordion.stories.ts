@@ -22,6 +22,11 @@ const meta = {
 			type: 'string',
 			description: 'Font size of the accordion header title.',
 			defaultValue: 'medium'
+		},
+		headerIcon: {
+			type: 'string',
+			description: 'Fontawesome icon class name',
+			defaultValue: ''
 		}
 	},
 	parameters: {

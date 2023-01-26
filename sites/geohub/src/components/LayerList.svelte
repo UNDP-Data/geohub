@@ -11,12 +11,12 @@
   import LayerOrder from './LayerOrder.svelte'
   import type { LegendState } from '$lib/types'
 
-  export let headerHeight: number = undefined
-  export let tabsHeight: number = undefined
+  export let contentHeight: number
   export let activeTab: string
-  let marginTop = 5
   let layerHeaderHeight = 39
   let legendState: LegendState = $page.data.style?.legendState
+
+  $: totalHeight = contentHeight - layerHeaderHeight
 
   const getLegendState = () => {
     return new Promise<LegendState>((resolve) => {
@@ -46,14 +46,39 @@
         if (!$map.isStyleLoaded()) {
           $map.once('styledata', () => {
             $layerList = styleInfo.layers
+            setDefaultLayerValues(styleInfo.legendState)
             resolve(styleInfo.legendState)
           })
         } else {
           $layerList = styleInfo.layers
+          setDefaultLayerValues(styleInfo.legendState)
           resolve(styleInfo.legendState)
         }
       } finally {
         $indicatorProgress = false
+      }
+    })
+  }
+
+  /**
+   * Fire legend state (classification and colorMapName) to register for saved map feature
+   * @param legendState LegendState object
+   */
+  const setDefaultLayerValues = (legendState: LegendState) => {
+    if (!legendState) return
+    Object.keys(legendState).forEach((layerId) => {
+      const state = legendState[layerId]
+      if (state.colorMapName) {
+        $map?.fire('colormap:changed', {
+          layerId: layerId,
+          colorMapName: state.colorMapName,
+        })
+      }
+      if (state.classification) {
+        $map?.fire('classification:changed', {
+          layerId: layerId,
+          classification: state.classification,
+        })
       }
     })
   }
@@ -76,10 +101,7 @@
 {/if}
 <div
   class="layer-list mx-2 mt-1"
-  style="height: calc(100vh - {headerHeight +
-    tabsHeight +
-    layerHeaderHeight +
-    marginTop}px); margin-top: {marginTop}px;">
+  style="height: {totalHeight}px;">
   {#if $layerList?.length === 0}
     <Notification type="info">
       No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.

@@ -27,22 +27,6 @@ body:
       required: true
 
   - type: textarea
-    id: bug-expected-behavior
-    attributes:
-      label: "Bug Expected Behavior"
-      description: "A clear and concise description of what you expected to happen."
-    validations:
-      required: true
-
-  - type: textarea
-    id: bug-actual-behavior
-    attributes:
-      label: "Bug Actual Behavior"
-      description: "A clear and concise description of what actually happened."
-    validations:
-      required: true
-
-  - type: textarea
     id: bug-impact
     attributes:
       label: "Bug Impact"

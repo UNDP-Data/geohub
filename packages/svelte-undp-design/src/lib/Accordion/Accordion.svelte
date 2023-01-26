@@ -2,6 +2,7 @@
 	export let headerTitle: string;
 	export let isExpanded = false;
 	export let fontSize: 'small' | 'medium' = 'medium';
+	export let headerIcon = '';
 </script>
 
 <ul class="accordion" aria-label="accordion">
@@ -16,6 +17,9 @@
 				}}
 			>
 				<p class="accordion-header" style="font-size:{fontSize === 'small' ? 1 : 1.5}rem">
+					{#if headerIcon}
+						<i class={headerIcon} />
+					{/if}
 					{headerTitle}
 				</p>
 			</button>

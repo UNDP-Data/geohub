@@ -6,6 +6,8 @@
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
 
+  let headerHeight: number
+
   let contents: CarouselContent[] = [
     {
       tag: 'Dashboard',
@@ -32,46 +34,53 @@
       icon: 'fa-regular fa-circle-question pr-1',
     },
   ]
-
-  let headerHeight: number
 </script>
 
 <svelte:head>
   <title>GeoHub | Dashboards</title>
 </svelte:head>
 
-<Header
-  region="UNDP's one stop shop for spatial data and analytics"
-  siteTitle="GeoHub dashboards"
-  url="https://geohub.data.undp.org"
-  logoUrl="assets/undp-images/undp-logo-blue.svg"
-  isPositionFixed={false}
-  bind:links
-  bind:height={headerHeight}>
-  <div slot="custom-button">
-    <UserAccount />
-  </div>
-</Header>
-
-<div style="height: calc(100vh - {headerHeight}px)!important; width: 100%; overflow-y: auto;overflow-x: hidden;">
-  <div class="main-section mb-4">
-    {#if browser}
-      <FluidCarousel bind:contents />
-    {/if}
-    <div class="is-divider" />
-    <MapStyleCardList />
-  </div>
-
-  <Footer
-    logoUrl="assets/undp-images/undp-logo-white.svg"
-    {footerItems} />
+<div class="header">
+  <Header
+    region="UNDP's one stop shop for spatial data and analytics"
+    siteTitle="GeoHub dashboards"
+    url="https://geohub.data.undp.org"
+    logoUrl="assets/undp-images/undp-logo-blue.svg"
+    bind:height={headerHeight}
+    isPositionFixed={true}
+    bind:links>
+    <div slot="custom-button">
+      <UserAccount />
+    </div>
+  </Header>
 </div>
 
+<div
+  class="main-section mb-4"
+  style="margin-top: {headerHeight}px">
+  {#if browser}
+    <FluidCarousel bind:contents />
+  {/if}
+  <div class="is-divider" />
+  <MapStyleCardList />
+</div>
+
+<Footer
+  logoUrl="assets/undp-images/undp-logo-white.svg"
+  {footerItems} />
+
 <style lang="scss">
+  @import '../../styles/geohubstyle.scss';
   @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
   @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import 'bulma-divider/dist/css/bulma-divider.min.css';
+
+  .header {
+    position: fixed;
+    width: 100%;
+    background-color: white;
+    z-index: 99;
+  }
 
   .main-section {
     padding-top: 1rem;
