@@ -29,6 +29,7 @@
   let features: PointFeature[] = []
   let coordinates: number[]
   let showProgress = false
+  let showPopup = false
 
   // eslint-disable-next-line
   function MapQueryInfoControl() {}
@@ -105,8 +106,10 @@
     if (popup) {
       popup.remove()
       popup = undefined
+      showPopup = false
     }
     popup = new Popup().setLngLat(e.lngLat).setDOMContent(popupContainer).setMaxWidth('300px').addTo(map)
+    showPopup = true
 
     coordinates = [e.lngLat.lng, e.lngLat.lat]
 
@@ -122,6 +125,7 @@
           if (popup) {
             popup.remove()
             popup = undefined
+            showPopup = false
           }
         } else {
           features.forEach((feature, index) => {
@@ -359,103 +363,105 @@
 <div
   bind:this={popupContainer}
   class="popup-container">
-  <div class="container is-fullhd">
-    <div class="notification p-2 m-0 mb-2">
-      <b>Query information</b>
-    </div>
-  </div>
-  <div class="contents">
-    {#if showProgress}
-      <div class="loader-container">
-        <Loader size="small" />
+  {#if showPopup}
+    <div class="container is-fullhd">
+      <div class="notification p-2 m-0 mb-2">
+        <b>Query information</b>
       </div>
-    {:else}
-      <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>
-      {#if coordinates && coordinates.length === 2}
-        <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-          <thead>
-            <tr>
-              <th>Longitude</th>
-              <th>Latitude</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#key coordinates}
+    </div>
+    <div class="contents">
+      {#if showProgress}
+        <div class="loader-container">
+          <Loader size="small" />
+        </div>
+      {:else}
+        <Notification type="info">{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification>
+        {#if coordinates && coordinates.length === 2}
+          <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+            <thead>
               <tr>
-                <td>{coordinates[0]}</td>
-                <td>{coordinates[1]}</td>
+                <th>Longitude</th>
+                <th>Latitude</th>
               </tr>
-            {/key}
-          </tbody>
-        </table>
-      {/if}
-      {#each features as feature}
-        <Accordion
-          fontSize="small"
-          headerTitle={`${feature.properties.name}`}
-          bind:isExpanded={expanded[feature.id]}>
-          <div
-            slot="content"
-            class="accordion-content px-1">
-            <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-              <thead>
+            </thead>
+            <tbody>
+              {#key coordinates}
                 <tr>
-                  <th>Property</th>
-                  <th>Value</th>
+                  <td>{coordinates[0]}</td>
+                  <td>{coordinates[1]}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {#key isValuesRounded}
-                  {#each Object.keys(feature.properties) as property}
-                    {#if property !== 'name'}
-                      <tr>
-                        <td>{clean(property)}</td>
-                        <td>{formatValue(feature.properties[property])}</td>
-                      </tr>
-                    {/if}
-                  {/each}
-                {/key}
-              </tbody>
-            </table>
-          </div>
-        </Accordion>
-      {/each}
-    {/if}
-  </div>
-
-  <div class="is-divider p-0 m-0 py-2" />
-  <div class="container actions">
-    <Checkbox
-      label="Round values"
-      bind:checked={isValuesRounded} />
-    <div
-      class="download"
-      hidden={!(features && features.length > 0)}>
-      <button
-        class="button is-small download"
-        on:click={() => downloadGeoJson()}
-        title="Download GeoJSON">
-        <span class="icon is-small pointer">
-          <i class="fa-solid fa-download fa-lg" />
-        </span>
-        <span class="label">GeoJSON</span>
-      </button>
+              {/key}
+            </tbody>
+          </table>
+        {/if}
+        {#each features as feature}
+          <Accordion
+            fontSize="small"
+            headerTitle={`${feature.properties.name}`}
+            bind:isExpanded={expanded[feature.id]}>
+            <div
+              slot="content"
+              class="accordion-content px-1">
+              <table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+                <thead>
+                  <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {#key isValuesRounded}
+                    {#each Object.keys(feature.properties) as property}
+                      {#if property !== 'name'}
+                        <tr>
+                          <td>{clean(property)}</td>
+                          <td>{formatValue(feature.properties[property])}</td>
+                        </tr>
+                      {/if}
+                    {/each}
+                  {/key}
+                </tbody>
+              </table>
+            </div>
+          </Accordion>
+        {/each}
+      {/if}
     </div>
 
-    <div
-      class="download"
-      hidden={!(features && features.length > 0)}>
-      <button
-        class="button is-small download"
-        on:click={() => downloadCsv()}
-        title="Download CSV">
-        <span class="icon is-small pointer">
-          <i class="fa-solid fa-download fa-lg" />
-        </span>
-        <span class="label">CSV</span>
-      </button>
+    <div class="is-divider p-0 m-0 py-2" />
+    <div class="container actions">
+      <Checkbox
+        label="Round values"
+        bind:checked={isValuesRounded} />
+      <div
+        class="download"
+        hidden={!(features && features.length > 0)}>
+        <button
+          class="button is-small download"
+          on:click={() => downloadGeoJson()}
+          title="Download GeoJSON">
+          <span class="icon is-small pointer">
+            <i class="fa-solid fa-download fa-lg" />
+          </span>
+          <span class="label">GeoJSON</span>
+        </button>
+      </div>
+
+      <div
+        class="download"
+        hidden={!(features && features.length > 0)}>
+        <button
+          class="button is-small download"
+          on:click={() => downloadCsv()}
+          title="Download CSV">
+          <span class="icon is-small pointer">
+            <i class="fa-solid fa-download fa-lg" />
+          </span>
+          <span class="label">CSV</span>
+        </button>
+      </div>
     </div>
-  </div>
+  {/if}
 </div>
 
 <style lang="scss">

@@ -36,7 +36,7 @@
 
   const resizeMap = () => {
     if (!map) return
-    repaintMap()
+    // repaintMap()
     map.resize()
   }
 
@@ -63,12 +63,8 @@
     setSplitControl()
   }
 
-  const splitterChanged = () => {
-    repaintMap()
-
-    if (isMenuShown !== true) {
-      resizeMap()
-    }
+  const splitterChanged = (e) => {
+    resizeMap()
   }
 </script>
 
@@ -112,6 +108,8 @@
 
     .secondary-content {
       position: relative;
+      width: 100%;
+      height: 100%;
     }
   }
 </style>
