@@ -5,7 +5,7 @@
   import { Map, type StyleSpecification } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
-  import { Accordion, Button, CtaLink } from '@undp-data/svelte-undp-design'
+  import { Accordion, Button, CtaLink, Loader } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
   import { AccessLevel } from '$lib/constants'
 
@@ -17,6 +17,7 @@
   export let isExpanded = false
   let mapContainer: HTMLDivElement
   let map: Map
+  let isLoading = false
 
   let showContextMenu = false
   let confirmDeleteDialogVisible = false
@@ -41,11 +42,13 @@
 
   const inistialiseMap = async () => {
     if (!mapContainer) return
+    if (map) return
+    try {
+      isLoading = true
 
-    const res = await fetch(style.style)
-    styleJSON = await res.json()
+      const res = await fetch(style.style)
+      styleJSON = await res.json()
 
-    if (!map) {
       map = new Map({
         container: mapContainer,
         style: styleJSON,
@@ -54,14 +57,17 @@
         attributionControl: false,
         interactive: false,
       })
-    } else {
-      map.setStyle(styleJSON)
-      map.jumpTo({
-        center: [styleJSON.center[0], styleJSON.center[1]],
-        zoom: styleJSON.zoom,
-        bearing: styleJSON.bearing,
-        pitch: styleJSON.pitch,
-      })
+
+      if (map.loaded()) {
+        isLoading = false
+      } else {
+        map.on('load', () => {
+          isLoading = false
+        })
+      }
+    } catch (err) {
+      console.error(err)
+      isLoading = false
     }
   }
 
@@ -125,7 +131,11 @@
           class="image pointor has-tooltip-right has-tooltip-arrow mb-4"
           data-tooltip="Open map"
           on:click={() => window.open(style.viewer, '_blank')}
-          bind:this={mapContainer} />
+          bind:this={mapContainer}>
+          {#if isLoading}
+            <Loader size="medium" />
+          {/if}
+        </div>
       </div>
 
       <div class="column is-half">
@@ -237,6 +247,17 @@
     @media (max-width: 48em) {
       width: 100%;
       height: 150px;
+    }
+
+    :global(.loader) {
+      position: absolute;
+      top: calc(45%);
+      left: calc(45%);
+
+      @media (max-width: 48em) {
+        top: calc(35%);
+        left: calc(40%);
+      }
     }
   }
 
