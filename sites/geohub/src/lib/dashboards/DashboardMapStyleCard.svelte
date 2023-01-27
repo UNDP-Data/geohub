@@ -118,8 +118,8 @@
   <div
     slot="content"
     class="card-container px-4">
-    <div class="tile is-ancestor">
-      <div class="tile is-parent is-half">
+    <div class="columns">
+      <div class="column is-half">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="image pointor has-tooltip-right has-tooltip-arrow"
@@ -128,7 +128,7 @@
           bind:this={mapContainer} />
       </div>
 
-      <div class="tile is-parent is-half is-vertical">
+      <div class="column is-half">
         <div class="tile is-vertical align-center">
           <p class="title is-5 style-name align-center">
             <i class={headerIcon} />
