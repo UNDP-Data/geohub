@@ -11,7 +11,7 @@
 
   let isStyleShareVisible = false
 
-  const isReadonly = $page.url.pathname === '/viewer'
+  const isReadonly = $page.data.readOnly
 
   $: showProgressBar = $indicatorProgress
 
