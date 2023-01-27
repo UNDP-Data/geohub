@@ -5,6 +5,7 @@
   import { indicatorProgress, layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
   import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { createHeaderLinks } from '$lib/helper'
 
   export let drawerOpen = true
   export let height: number = undefined
@@ -44,24 +45,7 @@
         initLinks()
       },
     },
-    {
-      id: 'header-link-maps',
-      title: 'Explore maps',
-      href: '/maps',
-      icon: 'fa-solid fa-map pr-1',
-    },
-    {
-      id: 'header-link-dashboard',
-      title: 'Go to dashboards',
-      href: '/dashboards',
-      icon: 'fa-solid fa-chalkboard-user pr-1',
-    },
-    {
-      id: 'header-link-documentation',
-      title: 'User guide',
-      href: '/docs/index.html',
-      icon: 'fa-regular fa-circle-question pr-1',
-    },
+    ...createHeaderLinks(['maps', 'dashboard', 'userguide']),
   ]
 
   let finalLink: HeaderLink[] = []

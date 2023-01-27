@@ -4,6 +4,7 @@
   import { browser } from '$app/environment'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
+  import { createHeaderLinks } from '$lib/helper'
 
   let headerHeight: number
 
@@ -19,26 +20,7 @@
     },
   ]
 
-  let links: HeaderLink[] = [
-    {
-      id: 'header-link-home',
-      title: 'GeoHub home',
-      href: '/',
-      icon: 'fa-solid fa-home pr-1',
-    },
-    {
-      id: 'header-link-maps',
-      title: 'Explore maps',
-      href: '/maps',
-      icon: 'fa-solid fa-map pr-1',
-    },
-    {
-      id: 'header-link-documentation',
-      title: 'User guide',
-      href: '/docs/index.html',
-      icon: 'fa-regular fa-circle-question pr-1',
-    },
-  ]
+  let links: HeaderLink[] = createHeaderLinks(['home', 'maps', 'userguide'])
 </script>
 
 <svelte:head>

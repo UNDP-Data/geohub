@@ -4,29 +4,11 @@
   import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
+  import { createHeaderLinks } from '$lib/helper'
 
   let headerHeight: number
 
-  let links: HeaderLink[] = [
-    {
-      id: 'header-link-home',
-      title: 'GeoHub home',
-      href: '/',
-      icon: 'fa-solid fa-home pr-1',
-    },
-    {
-      id: 'header-link-dashboard',
-      title: 'Go to dashboards',
-      href: '/dashboards',
-      icon: 'fa-solid fa-chalkboard-user pr-1',
-    },
-    {
-      id: 'header-link-documentation',
-      title: 'User guide',
-      href: '/docs/index.html',
-      icon: 'fa-regular fa-circle-question pr-1',
-    },
-  ]
+  let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
 </script>
 
 <svelte:head>
