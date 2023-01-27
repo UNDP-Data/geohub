@@ -1,0 +1,179 @@
+div.download-card .download,
+div.download-card .format {
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+@media (min-width: 48em) {
+	div.download-card .download,
+	div.download-card .format {
+		font-size: 1rem;
+	}
+}
+div.download-card .title {
+	font-size: 1rem;
+}
+@media (min-width: 48em) {
+	div.download-card .title {
+		font-size: 1.25rem;
+	}
+}
+:lang(my) div.download-card .download,
+:lang(my) div.download-card .format,
+div.download-card :lang(my) .download,
+div.download-card :lang(my) .format {
+	font-size: 0.75rem;
+	line-height: 1.7;
+}
+@media (min-width: 48em) {
+	:lang(my) div.download-card .download,
+	:lang(my) div.download-card .format,
+	div.download-card :lang(my) .download,
+	div.download-card :lang(my) .format {
+		font-size: 0.875rem;
+	}
+}
+:lang(my) div.download-card .title,
+div.download-card :lang(my) .title {
+	font-size: 0.875rem;
+}
+@media (min-width: 48em) {
+	:lang(my) div.download-card .title,
+	div.download-card :lang(my) .title {
+		font-size: 1rem;
+	}
+}
+div.download-card {
+	display: inline-block;
+}
+@media (min-width: 48em) {
+	div.download-card {
+		min-width: 330px;
+	}
+}
+div.download-card > a {
+	background: none;
+}
+div.download-card:hover div.publication-thumbnail__image.yellow:after,
+div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(27.66deg, #ffeb00, transparent 70.49%);
+	opacity: 0.75;
+}
+div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
+	opacity: 0.75;
+}
+div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
+	opacity: 0.75;
+}
+div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
+	opacity: 0.75;
+}
+div.download-card:hover div.card-thumbnail__image.yellow:before,
+div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+	opacity: 0.75;
+}
+div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+	opacity: 0.75;
+}
+div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+	opacity: 0.75;
+}
+div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+	opacity: 0.75;
+}
+div.download-card:hover .download-animated:after {
+	-webkit-transform: rotate(-45deg) translate(7px, -7px);
+	-moz-transform: rotate(-45deg) translate(7px, -7px);
+	-ms-transform: rotate(-45deg) translate(7px, -7px);
+	-o-transform: rotate(-45deg) translate(7px, -7px);
+	transition: rotate(-45deg) translate(7px, -7px);
+}
+div.download-card:hover .download-animated:before {
+	-webkit-transform: translateY(-10px);
+	-moz-transform: translateY(-10px);
+	-ms-transform: translateY(-10px);
+	-o-transform: translateY(-10px);
+	transition: translate(0, -10px);
+}
+div.download-card:hover .external-link-animated:after {
+	-webkit-transform: translate(5px, -5px);
+	-moz-transform: translate(5px, -5px);
+	-ms-transform: translate(5px, -5px);
+	-o-transform: translate(5px, -5px);
+	transition: translate(5px, -5px);
+}
+div.download-card:hover .external-link-animated:before {
+	-webkit-transform: rotate(-45deg) translate(7px);
+	-moz-transform: rotate(-45deg) translate(7px);
+	-ms-transform: rotate(-45deg) translate(7px);
+	-o-transform: rotate(-45deg) translate(7px);
+	transition: rotate(-45deg) translate(7px, 0);
+}
+div.download-card .description {
+	background: #fafafa;
+	padding: 1.5rem;
+}
+div.download-card .title {
+	margin-bottom: 0.25rem;
+}
+div.download-card .format {
+	color: #55606e;
+	margin-bottom: 1rem;
+}
+div.download-card .download {
+	align-items: center;
+	background-image: none;
+	display: flex;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+div.download-card .download .download-animated {
+	margin-left: 0.75rem;
+}
+div.download-card .download .external-link-animated {
+	margin-bottom: 0.5rem;
+	margin-left: 0.75rem;
+}
+[dir='rtl'] div.download-card .download-animated,
+[dir='rtl'] div.download-card .external-link-animated {
+	margin-left: 0;
+	margin-right: 0.75rem;
+}
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.yellow:after,
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(318deg, #ffeb00, transparent 70.49%);
+}
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
+}
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(318deg, #6de354, transparent 70.49%);
+}
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
+}
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.yellow:before,
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] div.download-card div.download-card__download .download-animated,
+[dir='rtl'] div.download-card div.download-card__download:after {
+	margin-left: 0;
+	margin-right: 0.75rem;
+}

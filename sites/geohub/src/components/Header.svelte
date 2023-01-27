@@ -1,19 +1,73 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { Header } from '@undp-data/svelte-undp-design'
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
+  import UserAccount from './UserAccount.svelte'
+  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
 
   export let drawerOpen = true
   export let height: number = undefined
+
+  let isStyleShareVisible = false
+
+  const isReadonly = $page.url.pathname === '/viewer'
+
   $: showProgressBar = $indicatorProgress
 
-  const onKeyPressed = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      e.target.click()
+  const shareLink = {
+    id: 'header-link-styleshare',
+    title: 'Save & share map',
+    href: '#',
+    icon: 'fa-solid fa-share pr-1',
+    callback: (id) => {
+      console.log(id)
+      isStyleShareVisible = true
+    },
+  }
+
+  let links: HeaderLink[] = [
+    {
+      id: 'header-link-sidebar',
+      title: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
+      href: '#',
+      icon: 'fa-solid fa-table-columns pr-1',
+      callback: (id) => {
+        const link = links.find((l) => l.id === id)
+        if (drawerOpen) {
+          drawerOpen = false
+          link.title = 'Open sidebar'
+        } else {
+          drawerOpen = true
+          link.title = 'Close sidebar'
+        }
+        initLinks()
+      },
+    },
+    {
+      id: 'header-link-dashboard',
+      title: 'Go to dashboards',
+      href: '/dashboards',
+      icon: 'fa-solid fa-chalkboard-user pr-1',
+    },
+    {
+      id: 'header-link-documentation',
+      title: 'User guide',
+      href: '/docs/index.html',
+      icon: 'fa-regular fa-circle-question pr-1',
+    },
+  ]
+
+  let finalLink: HeaderLink[] = []
+
+  const initLinks = () => {
+    if (!isReadonly && $page.data.session && $layerList.length > 0) {
+      finalLink = [links[0], shareLink, ...links.slice(1)]
+    } else {
+      finalLink = [...links]
     }
   }
+  $: $layerList, initLinks()
 </script>
 
 <Header
@@ -23,88 +77,22 @@
   siteTitle="GeoHub"
   url="https://geohub.data.undp.org"
   logoUrl="assets/undp-images/undp-logo-blue.svg"
-  isPositionFixed={false}>
-  <div
-    slot="menu-buttons"
-    class="menu-buttons">
-    <div
-      class="has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip={`${drawerOpen ? 'Hide' : 'Open'} layer panel`}>
-      <div
-        role="button"
-        aria-label="Layer panel"
-        class="menu-button"
-        tabindex="0"
-        on:click={() => (drawerOpen = !drawerOpen)}
-        on:keydown={onKeyPressed}>
-        <span class="icon">
-          <i
-            class="fa-solid {drawerOpen ? 'fa-xmark' : 'fa-bars'} fa-xl"
-            style="color:#006eb5" />
-        </span>
-      </div>
-    </div>
-
-    <div
-      class="has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip="GeoHub Dashboards">
-      <div
-        role="button"
-        aria-label="GeoHub Dashboards"
-        class="menu-button has-tooltip-bottom has-tooltip-arrow"
-        tabindex="0"
-        on:click={() => window.open('/dashboards', '_blank')}
-        on:keydown={onKeyPressed}>
-        <span class="icon">
-          <i
-            class="fa-solid fa-chalkboard-user fa-xl"
-            style="color:#006eb5" />
-        </span>
-      </div>
-    </div>
-
-    {#if $layerList.length > 0}
-      <div
-        class="has-tooltip-bottom has-tooltip-arrow"
-        data-tooltip="Share map">
-        <div
-          class="menu-button"
-          role="button"
-          tabindex="0"
-          aria-label="Share map">
-          <StyleShare />
-        </div>
-      </div>
-    {/if}
-
-    <div
-      class="has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip="Documentation">
-      <div
-        role="button"
-        aria-label="Documentation"
-        class="menu-button"
-        tabindex="0"
-        on:click={() => window.open('/docs/index.html', '_blank')}
-        on:keydown={onKeyPressed}>
-        <span class="icon has-tooltip-bottom has-tooltip-arrow">
-          <i
-            class="fa-regular fa-circle-question fa-xl"
-            style="color:#006eb5" />
-        </span>
-      </div>
+  isPositionFixed={false}
+  bind:links={finalLink}>
+  <div slot="custom-button">
+    <div class="menu-button">
+      <UserAccount />
     </div>
   </div>
 </Header>
+<StyleShare bind:isModalVisible={isStyleShareVisible} />
 
 <style lang="scss">
-  .menu-buttons {
-    display: flex;
-
-    .menu-button {
-      cursor: pointer;
-      margin-left: 20px;
-      margin-right: 5px;
-    }
+  :global(.menu-item) {
+    margin: 0.75rem 2.75rem 0.75rem 0 !important;
   }
+
+  // :global(.custom-button-mega) {
+  //   margin: 0 0 0 1.6875rem !important;
+  // }
 </style>

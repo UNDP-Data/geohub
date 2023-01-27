@@ -1,0 +1,46 @@
+name: "Refactoring Request"
+description: "Suggest refactoring for this project"
+title: "[REFACTORING] "
+labels: [refactor]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this refactoring request! Before filling this refactoring request, please make sure that:
+        - You have the latest version of the project. especially the `develop` branch.
+        - You have searched the [issues](https://github.com/UNDP-Data/geohub/issues) for similar refactoring requests.
+
+  - type: textarea
+    id: refactoring-description
+    attributes:
+      label: "Refactoring Description"
+      description: "A clear and concise description of what refactoring is required."
+    validations:
+      required: true
+
+  - type: textarea
+    id: refactoring-components
+    attributes:
+      label: "Refacotring components"
+      description: |
+        Please list the components required refactoring.
+        If the target components are many, please consider to split several issues other than solving everything in an issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: refactoring-implementation
+    attributes:
+      label: "Refactoring Implementation"
+      description: "A clear and concise description of how the refactoring should be implemented for the components asked in former question."
+    validations:
+      required: true
+
+  - type: textarea
+    id: refactoring-impact
+    attributes:
+      label: "Refactoring Impact"
+      description: "A clear and concise description of the impact of the refactoring."
+    validations:
+      required: false

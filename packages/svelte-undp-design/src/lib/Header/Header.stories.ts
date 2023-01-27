@@ -1,3 +1,4 @@
+import type { HeaderLink } from '$lib/interfaces';
 import type { Meta, StoryObj } from '@storybook/svelte';
 
 import Header from './Header.svelte';
@@ -50,6 +51,45 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const links: HeaderLink[] = [
+	{
+		id: 'headerLink1',
+		title: 'Link 1',
+		href: '#',
+		icon: 'fa-solid fa-user'
+	},
+	{
+		id: 'headerLink2',
+		title: 'Link 2',
+		href: '#',
+		icon: 'fa-solid fa-user'
+	},
+	{
+		id: 'headerLink3',
+		title: 'Link 3',
+		href: '#',
+		icon: 'fa-solid fa-user'
+	},
+	{
+		id: 'headerLink4',
+		title: 'Link 4',
+		href: '#',
+		icon: 'fa-solid fa-user'
+	}
+	// {
+	// 	id: 'headerLink5',
+	// 	title: 'Link 5',
+	// 	href: '#',
+	// 	icon: 'fa-solid fa-user'
+	// },
+	// {
+	// 	id: 'headerLink6',
+	// 	title: 'Link 6',
+	// 	href: '#',
+	// 	icon: 'fa-solid fa-user'
+	// }
+];
+
 // More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args
 export const Primary: Story = {
 	args: {
@@ -57,7 +97,8 @@ export const Primary: Story = {
 		siteTitle: 'Site Title',
 		url: 'https://undpgeohub.org',
 		logoUrl: 'assets/undp-logo-blue.svg',
-		showProgressBar: false
+		showProgressBar: false,
+		links: links
 	}
 };
 

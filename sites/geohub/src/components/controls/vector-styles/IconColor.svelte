@@ -15,7 +15,7 @@
     let iconColor = $map.getPaintProperty(layer.id, 'icon-color')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (!iconColor || (iconColor && iconColor.type === 'interval')) {
+    if (!iconColor || (iconColor && iconColor.type === 'interval') || (iconColor && iconColor.type === 'categorical')) {
       iconColor = defaultColor
     }
     return iconColor as string

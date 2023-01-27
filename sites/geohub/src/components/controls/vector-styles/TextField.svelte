@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SymbolLayerSpecification } from 'maplibre-gl'
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
 
   import { LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
@@ -11,7 +11,7 @@
   export let layer: Layer
   export let decimalPosition = undefined
   export let fieldType: string = undefined
-  export let textFieldValue = ''
+  export let textFieldValue
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
@@ -20,6 +20,10 @@
   let showEmptyFields = true
 
   $: textFieldValue, setTextField()
+
+  onMount(() => {
+    getTextField()
+  })
 
   $: decimalPosition, setDesimalPosition()
   const setDesimalPosition = () => {
@@ -49,13 +53,6 @@
     } else {
       $map.setLayoutProperty(layerId, propertyName, undefined)
     }
-  }
-
-  const setDefaultProperty = (selectOptions: string[]) => {
-    if (selectOptions.length === 0) return
-    textFieldValue = getPropertyValueFromExpression(style, propertyName, 'layout')
-    setTextField()
-    return textFieldValue
   }
 
   const isInt = (n: number) => {
@@ -93,6 +90,24 @@
     }
   }
 
+  const getTextField = () => {
+    // get label text field
+    const textField = getPropertyValueFromExpression(style, 'text-field')
+    if (textField) {
+      if (Array.isArray(textField)) {
+        if (textField[0] === 'get') {
+          textFieldValue = textField[1]
+        } else if (textField[0] === 'number-format') {
+          textFieldValue = textField[1][1]
+          if (textField[2]['min-fraction-digits'] === textField[2]['max-fraction-digits']) {
+            decimalPosition = textField[2]['min-fraction-digits']
+          }
+        }
+      } else {
+        textFieldValue = textField
+      }
+    }
+  }
   const setTextField = () => {
     if (!style && !textFieldValue) return
     if (!style && layer.parentId) {
@@ -145,7 +160,6 @@
         $map.setLayoutProperty(layerId, 'text-justify', undefined)
       }
     }
-
     dispatch('change', {
       textFieldValue,
     })
@@ -156,5 +170,4 @@
   bind:showEmptyFields
   bind:propertySelectValue={textFieldValue}
   {layer}
-  on:select={setTextField}
-  {setDefaultProperty} />
+  on:select={setTextField} />

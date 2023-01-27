@@ -1,5 +1,36 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.10
+
+### Patch Changes
+
+- fd21cd2: - fix: show xmark button when hamburger button is clicked in header
+  - fix: enable expanding footer items in mobile
+
+## 0.0.9
+
+### Patch Changes
+
+- 96ea065: fix: set logo height as the same with header height
+
+## 0.0.8
+
+### Patch Changes
+
+- 77a8dac: feat: added headerIcon property in accordion header
+
+## 0.0.7
+
+### Patch Changes
+
+- 5c98d25: feat: redesigned UNDP header design to adopt responsive menu
+
+## 0.0.6
+
+### Patch Changes
+
+- 310179a: added Download component in svelte-undp-design
+
 ## 0.0.5
 
 ### Patch Changes

@@ -1,29 +1,33 @@
 <script lang="ts">
-  import Header from '$components/Header.svelte'
-  import Content from '$components/Content.svelte'
-  import Map from '$components/Map.svelte'
-
-  let drawerOpen = true
-  let headerHeight: number
+  import MainApp from '$components/MainApp.svelte'
 </script>
 
 <svelte:head>
   <title>GeoHub | United Nations Development Programme</title>
+
+  <style type="text/css">
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      /* mobile viewport bug fix */
+      min-height: -webkit-fill-available;
+    }
+
+    html {
+      overflow-y: hidden !important;
+      height: -webkit-fill-available;
+    }
+  </style>
 </svelte:head>
 
-<Header
-  bind:drawerOpen
-  bind:height={headerHeight} />
-<Content
-  bind:drawerOpen
-  bind:headerHeight>
-  <Map />
-</Content>
+<MainApp />
 
 <style
   global
   lang="scss">
-  @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css';
+  @import '../styles/geohubstyle.scss';
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
   @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
   @import 'bulma-switch/dist/css/bulma-switch.min.css';

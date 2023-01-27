@@ -9,7 +9,9 @@ export const GET: RequestHandler = async ({ url }) => {
     !url.searchParams.has('path') ||
     !url.searchParams.has('layer_name')
   ) {
-    throw error(400, JSON.stringify({ message: 'Bad request. Please verify the URL and/or parameters.' }))
+    return new Response(JSON.stringify({ message: 'Bad request. Please verify the URL and/or parameters.' }), {
+      status: 400,
+    })
   }
 
   const path = url.searchParams.get('path')

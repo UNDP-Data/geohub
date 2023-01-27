@@ -15,7 +15,7 @@
     let fillColor = $map.getPaintProperty(layerId, propertyName)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (!fillColor || (fillColor && fillColor.type === 'interval')) {
+    if (!fillColor || (fillColor && fillColor.type === 'interval') || (fillColor && fillColor.type === 'categorical')) {
       fillColor = defaultColor
     }
     return fillColor as string

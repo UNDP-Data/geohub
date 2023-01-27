@@ -101,6 +101,12 @@ export enum StatusTypes {
   DANGER = 'danger',
 }
 
+export enum AccessLevel {
+  PRIVATE = 1,
+  ORGANIZATION = 2,
+  PUBLIC = 3,
+}
+
 export const styles: StyleDefinition[] = [
   {
     title: 'Carto',
@@ -225,3 +231,38 @@ export const tagSearchKeys = [
     label: 'Schema',
   },
 ]
+
+export const footerItems: { [key: string]: { title: string; url: string }[] } = {
+  GeoHub: [
+    {
+      title: 'GeoHub',
+      url: 'https://geohub.data.undp.org',
+    },
+    {
+      title: 'Dashboards',
+      url: 'https://geohub.data.undp.org/dashboards',
+    },
+    {
+      title: 'Electricity Dashboard',
+      url: 'https://geohub.data.undp.org/dashboard/electricity',
+    },
+    {
+      title: 'Documentation',
+      url: 'https://geohub.data.undp.org/docs/index.html',
+    },
+  ],
+  'For Developers': [
+    {
+      title: 'GeoHub Dev',
+      url: 'https://dev.undpgeohub.org',
+    },
+    {
+      title: 'GeoHub API documentation',
+      url: 'https://geohub.data.undp.org/api/docs/index.html',
+    },
+    {
+      title: 'Svelte UNDP design sytem',
+      url: 'https://geohub.data.undp.org/storybook/index.html',
+    },
+  ],
+}

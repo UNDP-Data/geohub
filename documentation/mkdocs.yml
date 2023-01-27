@@ -86,14 +86,14 @@ plugins:
         frameborder: "0"
 
 nav:
-  - Getting Started:
-      - Welcome: "getting started/Welcome.md"
+  - Getting Started: index.md
   - Data:
-      - Introduction: "data/Introduction.md"
-      - Data Structure: "data/Data Structure.md"
-      - Special Buckets: "data/Special Buckets.md"
+      - Introduction: data/introduction.md
+      - Data Structure: data/data_structure.md
+      - Special Buckets: data/special_buckets.md
   - Visualization:
-      - Map View: "visualization/Map View.md"
-      - Search Data: "visualization/Search Data.md"
-      - Layer Tab: "visualization/Layer Tab.md"
-      - Legend: "visualization/Legend.md"
+      - Map View: visualization/map_view.md
+      - Search Data: visualization/search_data.md
+      - Layer Tab: visualization/layer_tab.md
+      - Legend: visualization/legend.md
+      - Histograms: visualization/histograms.md

@@ -42,7 +42,7 @@ jobs:
       - name: pnpm setup
         uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7
+          version: 7.25.x
           run_install: false
 
       # setup Node
@@ -66,12 +66,15 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       # install dependencies
+      # https://github.com/evanw/esbuild/issues/1646
       - name: Install dependencies
         run: |
+          pnpm install esbuild -g
           pnpm install --frozen-lockfile
 
       # setup environmental variables
       - name: Create environment file
+        if: ${{ (github.ref != 'refs/heads/main') }}
         uses: SpicyPizza/create-envfile@v1.3
         with:
           directory: ./sites/geohub
@@ -83,6 +86,28 @@ jobs:
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
           envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
           envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+
+      - name: Create environment file for production
+        if: ${{ (github.ref == 'refs/heads/main') }}
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          directory: ./sites/geohub
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
+          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
+          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
+          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET_PROD }}
+          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID_PROD }}
+          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET_PROD }}
 
       - name: Run lint
         run: |
@@ -114,11 +139,14 @@ jobs:
         if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
         run: |
           rm -rf node_modules
-          echo "shared-workspace-lockfile = false" >> .npmrc
-          pnpm --filter="." install --prod
+          sed -e 's/workspace://g' ./package.json > ./package2.json
+          rm package.json
+          mv package2.json package.json
+          npm install --omit=dev
           cp package.json build/.
-          cp pnpm-lock.yaml build/.
           mv node_modules build/.
+          mv build/client/docs build/prerendered/docs
+          mv .env build/.
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev

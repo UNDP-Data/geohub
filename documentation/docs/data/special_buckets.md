@@ -7,3 +7,5 @@ Data is arranged by the relevant goal and by clicking on each of the SDG icons ,
 <center> ![type:video](https://undpngddlsgeohubdev01.blob.core.windows.net/docs-assets/Videos/What_is_inside_SDG_Bucket_.webm)</center>
 
 ## What is inside the Microsoft Planetary bucket?
+
+Within the Microsoft Planetary bucket includes a direct connection to Satelite data sets of the Microsoft Planetary Computer.This allows the user to load a range of data sets from satelites such as MODIS, Landsat, Copernicus and many more.
