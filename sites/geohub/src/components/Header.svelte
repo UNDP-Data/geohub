@@ -45,6 +45,12 @@
       },
     },
     {
+      id: 'header-link-maps',
+      title: 'Explore maps',
+      href: '/maps',
+      icon: 'fa-solid fa-map pr-1',
+    },
+    {
       id: 'header-link-dashboard',
       title: 'Go to dashboards',
       href: '/dashboards',
@@ -89,7 +95,7 @@
 
 <style lang="scss">
   :global(.menu-item) {
-    margin: 0.75rem 2.75rem 0.75rem 0 !important;
+    margin: 0.75rem 1.75rem 0.75rem 0 !important;
   }
 
   // :global(.custom-button-mega) {
