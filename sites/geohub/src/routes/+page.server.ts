@@ -13,7 +13,7 @@ export const load: PageServerLoad = async (event) => {
       data = { style: styleInfo }
 
       if (styleInfo.layers) {
-        const legendState: legendState = {}
+        const legendState: LegendState = {}
         const style: StyleSpecification = styleInfo.style
 
         styleInfo.layers.map((el) => {
