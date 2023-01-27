@@ -223,7 +223,7 @@
   data-testid="intervals-view-container">
   <!-- svelte-ignore a11y-click-teevents-have-key-events -->
 
-  <div class="legend-controls mb-2">
+  <div class="legend-controls mb-4">
     <div
       class="classification field pr-2"
       hidden={layerHasUniqueValues}>
