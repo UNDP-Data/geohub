@@ -8,6 +8,7 @@
   import { Accordion, Button, CtaLink, Loader } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
   import { AccessLevel } from '$lib/constants'
+  import { sleep } from '$lib/helper'
 
   const dispatch = createEventDispatcher()
 
@@ -48,6 +49,10 @@
 
       const res = await fetch(style.style)
       styleJSON = await res.json()
+
+      while (mapContainer === null) {
+        await sleep(100)
+      }
 
       map = new Map({
         container: mapContainer,
