@@ -1,4 +1,4 @@
-import type { StyleDefinition } from '@undp-data/style-switcher/package'
+import type { StyleDefinition } from '@undp-data/style-switcher'
 import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/package/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
@@ -237,6 +237,10 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
     {
       title: 'GeoHub',
       url: 'https://geohub.data.undp.org',
+    },
+    {
+      title: 'Maps',
+      url: 'https://geohub.data.undp.org/maps',
     },
     {
       title: 'Dashboards',

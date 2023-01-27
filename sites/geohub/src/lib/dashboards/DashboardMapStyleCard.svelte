@@ -37,7 +37,6 @@
 
   const inistialise = async () => {
     style.style = `${url.origin}/api/style/${style.id}.json`
-    style.viewer = `${url.origin}/viewer?style=${style.id}`
     style.editor = `${url.origin}?style=${style.id}`
   }
 
@@ -122,7 +121,7 @@
       role="button"
       tabindex="0"
       data-tooltip="Open map"
-      on:click={() => window.open(style.viewer, '_blank')}>
+      on:click={() => window.open(style.editor, '_blank')}>
       <i class="fa-solid fa-arrow-up-right-from-square fa-xl" />
     </span>
   </div>
@@ -135,7 +134,7 @@
         <div
           class="image pointor has-tooltip-right has-tooltip-arrow mb-4"
           data-tooltip="Open map"
-          on:click={() => window.open(style.viewer, '_blank')}
+          on:click={() => window.open(style.editor, '_blank')}
           bind:this={mapContainer}>
           {#if isLoading}
             <Loader size="medium" />
@@ -173,21 +172,13 @@
         <div class="tile is-parent py-4">
           <CtaLink
             label="Open map"
-            on:clicked={() => window.open(style.viewer, '_blank')}
+            on:clicked={() => window.open(style.editor, '_blank')}
             isArrow={false} />
         </div>
         {#if $page.data.session && style.created_user === $page.data.session.user.email}
           <div class="columns is-12 align-center">
             <div
-              class="column is-half has-tooltip-top has-tooltip-arrow"
-              data-tooltip="Edit map">
-              <Button
-                title="Edit"
-                isPrimary={true}
-                on:clicked={() => (location.href = style.editor)} />
-            </div>
-            <div
-              class="column is-half has-tooltip-top has-tooltip-arrow"
+              class="column is-12 has-tooltip-top has-tooltip-arrow"
               data-tooltip="Delete map">
               <Button
                 title="Delete"
