@@ -267,7 +267,7 @@
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
         <div class="is-6 px-1">
           <Button
-            title="Cancel"
+            title={styleURL ? 'Close' : 'Cancel'}
             on:clicked={handleClose}
             isPrimary={false} />
         </div>

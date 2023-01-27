@@ -5,9 +5,10 @@
   import { Map, type StyleSpecification } from 'maplibre-gl'
   import Time from 'svelte-time'
   import { clickOutside } from 'svelte-use-click-outside'
-  import { Accordion, Button, CtaLink } from '@undp-data/svelte-undp-design'
+  import { Accordion, Button, CtaLink, Loader } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
   import { AccessLevel } from '$lib/constants'
+  import { sleep } from '$lib/helper'
 
   const dispatch = createEventDispatcher()
 
@@ -17,6 +18,7 @@
   export let isExpanded = false
   let mapContainer: HTMLDivElement
   let map: Map
+  let isLoading = false
 
   let showContextMenu = false
   let confirmDeleteDialogVisible = false
@@ -41,11 +43,17 @@
 
   const inistialiseMap = async () => {
     if (!mapContainer) return
+    if (map) return
+    try {
+      isLoading = true
 
-    const res = await fetch(style.style)
-    styleJSON = await res.json()
+      const res = await fetch(style.style)
+      styleJSON = await res.json()
 
-    if (!map) {
+      while (mapContainer === null) {
+        await sleep(100)
+      }
+
       map = new Map({
         container: mapContainer,
         style: styleJSON,
@@ -54,14 +62,17 @@
         attributionControl: false,
         interactive: false,
       })
-    } else {
-      map.setStyle(styleJSON)
-      map.jumpTo({
-        center: [styleJSON.center[0], styleJSON.center[1]],
-        zoom: styleJSON.zoom,
-        bearing: styleJSON.bearing,
-        pitch: styleJSON.pitch,
-      })
+
+      if (map.loaded()) {
+        isLoading = false
+      } else {
+        map.on('load', () => {
+          isLoading = false
+        })
+      }
+    } catch (err) {
+      console.error(err)
+      isLoading = false
     }
   }
 
@@ -122,15 +133,19 @@
       <div class="column is-half">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
-          class="image pointor has-tooltip-right has-tooltip-arrow"
+          class="image pointor has-tooltip-right has-tooltip-arrow mb-4"
           data-tooltip="Open map"
           on:click={() => window.open(style.viewer, '_blank')}
-          bind:this={mapContainer} />
+          bind:this={mapContainer}>
+          {#if isLoading}
+            <Loader size="medium" />
+          {/if}
+        </div>
       </div>
 
       <div class="column is-half">
         <div class="tile is-vertical align-center">
-          <p class="title is-5 style-name align-center">
+          <p class="title is-4 style-name pb-4">
             <i class={headerIcon} />
             {style.name}
           </p>
@@ -155,16 +170,16 @@
             </p>
           {/if}
         </div>
-        <div class="tile is-parent">
+        <div class="tile is-parent py-4">
           <CtaLink
             label="Open map"
             on:clicked={() => window.open(style.viewer, '_blank')}
             isArrow={false} />
         </div>
         {#if $page.data.session && style.created_user === $page.data.session.user.email}
-          <div class="tile is-4 m-auto is-parent">
+          <div class="columns is-12 align-center">
             <div
-              class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
+              class="column is-half has-tooltip-top has-tooltip-arrow"
               data-tooltip="Edit map">
               <Button
                 title="Edit"
@@ -172,7 +187,7 @@
                 on:clicked={() => (location.href = style.editor)} />
             </div>
             <div
-              class="tile is-half is-parent has-tooltip-top has-tooltip-arrow"
+              class="column is-half has-tooltip-top has-tooltip-arrow"
               data-tooltip="Delete map">
               <Button
                 title="Delete"
@@ -231,7 +246,24 @@
 <style lang="scss">
   .image {
     width: 100%;
-    height: 100%;
+    height: 300px;
+    border: 1px solid gray;
+
+    @media (max-width: 48em) {
+      width: 100%;
+      height: 150px;
+    }
+
+    :global(.loader) {
+      position: absolute;
+      top: calc(45%);
+      left: calc(45%);
+
+      @media (max-width: 48em) {
+        top: calc(35%);
+        left: calc(40%);
+      }
+    }
   }
 
   :global(.accordion-header) {
@@ -264,5 +296,12 @@
     width: 30px;
     height: 30px;
     color: #d12800;
+  }
+
+  .style-name {
+    // white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
   }
 </style>

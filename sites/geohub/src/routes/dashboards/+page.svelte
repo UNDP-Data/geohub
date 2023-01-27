@@ -43,7 +43,7 @@
 <div class="header">
   <Header
     region="UNDP's one stop shop for spatial data and analytics"
-    siteTitle="GeoHub dashboards"
+    siteTitle="GeoHub Dashboards"
     url="https://geohub.data.undp.org"
     logoUrl="assets/undp-images/undp-logo-blue.svg"
     bind:height={headerHeight}
