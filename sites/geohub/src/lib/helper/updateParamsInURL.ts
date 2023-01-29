@@ -43,6 +43,7 @@ export const updateParamsInURL = (
         })
       })
       map.setStyle(style)
+      mapStore.set(map)
     }
   }
 }
