@@ -2,7 +2,7 @@
   import { fade } from 'svelte/transition'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
+  import VectorLegend from '$components/controls/VectorLegend.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
   import { ClassificationMethodTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
@@ -44,7 +44,7 @@
 
     <p class="panel-content">
       {#if activeTab === TabNames.LEGEND}
-        <VectorLegendPanel
+        <VectorLegend
           {layer}
           bind:colorMapName
           bind:classificationMethod
