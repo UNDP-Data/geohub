@@ -385,7 +385,7 @@
           </button>
         {/if} -->
       <button
-        on:click={(e) => {
+        on:click={() => {
           handleCancelExpression()
           setStep(1)
         }}
@@ -426,7 +426,7 @@
         <i class="fa fa-angles-left" />&nbsp;Properties
       </button>
       <button
-        on:click={(e) => {
+        on:click={() => {
           handleCancelExpression()
           setStep(1)
         }}
@@ -467,7 +467,7 @@
         <i class="fa fa-angles-left" /> &nbsp;Operators
       </button>
       <button
-        on:click={(e) => {
+        on:click={() => {
           handleCancelExpression()
           setStep(1)
         }}

@@ -101,14 +101,14 @@
     //newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, ${info.nodata_value ?? layerMax});`
     newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, 0);`
     console.log(newParams['expression'])
-    const exprStatUrl = new URL(
-      `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
-        newParams['expression'],
-      )}`,
-    )
+    // const exprStatUrl = new URL(
+    //   `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
+    //     newParams['expression'],
+    //   )}`,
+    // )
     newParams['rescale'] = [Number(info.stats[band].min), Number(info.stats[band].max)].join(',')
 
-    const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
+    // const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
     //console.log(JSON.stringify(exprStats, null, '\t'))
     updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
     expressionApplied = true
@@ -131,15 +131,23 @@
   }
 
   let conditionExpressionButtonDisabled = true
-  const uf = (k, v) => {
-    return v ?? null
-  }
+  // const uf = (k, v) => {
+  //   return v ?? null
+  // }
   $: {
     //console.clear()
 
     //console.log(`${JSON.stringify(expression, uf, '\t')} `)
 
     conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true
+  }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
   }
 </script>
 
@@ -219,6 +227,7 @@
         {#if isVisible}
           <div
             class="card is-info is-clickable  has-text-centered "
+            on:keydown={handleEnterKey}
             on:click={() => {
               selectedOperator = operator.value
               expression = { ...expression, operator: selectedOperator }
@@ -306,11 +315,11 @@
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
       <button
-        on:click={(e) => {
+        on:click={() => {
           initialRasterFilterStep[layer.id] = 1
           clearState()
           setStep(1)
-          applyExpression(e)
+          applyExpression()
         }}
         disabled={conditionExpressionButtonDisabled}
         class="button is-small primary-button has-text-weight-bold">
