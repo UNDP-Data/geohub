@@ -27,16 +27,15 @@ function syncMap() {
     subscribe: subscribe,
     set: async (m: MaplibreMap) => {
       await loadMap(m)
-      console.log('map is loaded')
       set(m)
     },
-    update: (fn) =>
-      update((oldmap): MaplibreMap => {
-        const v = fn()
-        set(v)
-        console.log(oldmap, v)
-        return v
-      }),
+    // update: (fn) =>
+    //   update((oldmap): MaplibreMap => {
+    //     const v = fn()
+    //     set(v)
+    //     console.log(oldmap, v)
+    //     return v
+    //   }),
   }
 }
 export const map = syncMap()
