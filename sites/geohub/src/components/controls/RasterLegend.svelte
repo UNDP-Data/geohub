@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slide } from 'svelte/transition'
-  import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
+  import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte'
   import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte'
   import { DynamicLayerLegendTypes, ClassificationMethodTypes, LegendTypes } from '$lib/constants'
   import type { Layer, IntervalLegendColorMapRow } from '$lib/types'
@@ -32,7 +32,7 @@
 
 {#if rasterLegendType === DynamicLayerLegendTypes.CONTINUOUS}
   <div transition:slide>
-    <RasterContinuousLegend
+    <RasterDefaultLegend
       bind:layerConfig={layer}
       bind:colorMapName
       bind:numberOfClasses />
