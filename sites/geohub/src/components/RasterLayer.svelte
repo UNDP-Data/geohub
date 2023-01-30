@@ -1,7 +1,7 @@
 <script lang="ts">
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
-  import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
+  import RasterLegend from '$components/controls/RasterLegend.svelte'
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
@@ -199,7 +199,7 @@
 
       <p class="panel-content">
         {#if activeTab == TabNames.LEGEND}
-          <RasterLegendContainer
+          <RasterLegend
             bind:layer
             bind:classificationMethod={classification}
             bind:legendType
