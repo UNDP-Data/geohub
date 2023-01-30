@@ -19,7 +19,7 @@
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
   import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
@@ -38,7 +38,7 @@
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
   let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])

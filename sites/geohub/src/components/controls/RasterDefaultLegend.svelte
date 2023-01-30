@@ -16,13 +16,12 @@
     updateParamsInURL,
     getLayerSourceUrl,
   } from '$lib/helper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
   import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let layerConfig: Layer
   export let colorMapName: string
-  export let numberOfClasses
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
@@ -36,7 +35,7 @@
     layerMin = Number(info.stats[band].min)
     layerMax = Number(info.stats[band].max)
   } else {
-    const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+    const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
     layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }

@@ -123,8 +123,6 @@
       }
     } else {
       let divIcon: HTMLElement
-      let svgIcon: SVGSVGElement
-      let dataUrl: string
       switch (symbol.element) {
         case 'div': {
           if (

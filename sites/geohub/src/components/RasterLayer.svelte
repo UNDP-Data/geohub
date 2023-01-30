@@ -5,20 +5,8 @@
   import RasterTransform from '$components/controls/RasterTransform.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import {
-    ClassificationMethodTypes,
-    TabNames,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    COLOR_CLASS_COUNT,
-    LegendTypes,
-  } from '$lib/constants'
-  import type {
-    IntervalLegendColorMapRow,
-    Layer,
-    RasterLayerStats,
-    RasterSimpleExpression,
-    RasterTileMetadata,
-  } from '$lib/types'
+  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT, LegendTypes } from '$lib/constants'
+  import type { BandMetadata, IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Loader, Tabs } from '@undp-data/svelte-undp-design'
   import {
@@ -45,7 +33,7 @@
   ]
   let { info }: Layer = layer
   const bandIndex = getActiveBandIndex(info)
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata[]
   let layerHasUniqueValues = Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
   let legendLabels = {}
   if (layerHasUniqueValues) {
@@ -137,7 +125,6 @@
 
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=50`
       layerStats = await fetchUrl(statsURL)
-      const band = (info as RasterTileMetadata).active_band_no
       if (layerHasUniqueValues) {
         const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get(
           'url',

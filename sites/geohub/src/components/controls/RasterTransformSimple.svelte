@@ -3,7 +3,7 @@
   lang="ts">
   /* state variables used to keep the state of the wizard*/
   const originalRasterFilterUrl = {}
-  let selectedRasterFilterOperator = {}
+  let selectedRasterFilterOperator: { layerId?: string } = {}
   let rasterFilterExpressionApplied = {}
   let initialRasterFilterStep = {}
 </script>
@@ -13,18 +13,11 @@
   import type { BandMetadata, Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
-  import {
-    getActiveBandIndex,
-    getLayerStyle,
-    getValueFromRasterTileUrl,
-    updateParamsInURL,
-    getLayerSourceUrl,
-    fetchUrl,
-  } from '$lib/helper'
+  import { getActiveBandIndex, getLayerStyle, updateParamsInURL, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount, onDestroy } from 'svelte'
-  import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
+  import { onMount } from 'svelte'
+  import { rasterComparisonOperators } from '$lib/constants'
 
   export let layer: Layer
 
@@ -100,7 +93,7 @@
     rasterFilterExpressionApplied[layerId] = true
   }
 
-  const applyExpression = async (e: MouseEvent) => {
+  const applyExpression = async () => {
     let newParams = {}
 
     const expressionStringValue = `b${Object.values(expression).join(' ')}`

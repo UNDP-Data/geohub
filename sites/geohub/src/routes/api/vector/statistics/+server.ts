@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types'
-import { error } from '@sveltejs/kit'
 import { fetchVectorTileInfo } from '$lib/server/helpers'
 
 export const GET: RequestHandler = async ({ url }) => {

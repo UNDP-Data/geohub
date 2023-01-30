@@ -18,17 +18,10 @@ A component designed to apply where expression to a raster layer through titiler
   import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
-  import {
-    getActiveBandIndex,
-    getLayerStyle,
-    getValueFromRasterTileUrl,
-    updateParamsInURL,
-    getLayerSourceUrl,
-    fetchUrl,
-  } from '$lib/helper'
+  import { getActiveBandIndex, getLayerStyle, updateParamsInURL, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount } from 'svelte'
   import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
   import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte'
 
@@ -76,8 +69,6 @@ A component designed to apply where expression to a raster layer through titiler
   let whereExpression = { ...emptyWhereExpression }
   //int index accessor or the exression objects in the expression part array
   $: expressionIndex = whereExpression[currentExpressionPart].length - 1
-
-  let combineOperator = true
 
   let expression: string
 

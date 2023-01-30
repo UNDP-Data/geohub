@@ -18,7 +18,7 @@ export class MosaicJsonData {
     this.assetName = assetName
   }
 
-  private getMetadata = async (tilejson: { bounds: any; tiles: string[] }, isUniqueValue: boolean) => {
+  private getMetadata = async (tilejson: { bounds: number[]; tiles: string[] }, isUniqueValue: boolean) => {
     const tileUrl = new URL(tilejson.tiles[0])
     const mosaicUrl = tileUrl.searchParams.get('url')
     const mosaicAssetUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/${tilejson.bounds.join(

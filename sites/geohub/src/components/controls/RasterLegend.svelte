@@ -20,8 +20,7 @@
   <div transition:slide>
     <RasterDefaultLegend
       bind:layerConfig={layer}
-      bind:colorMapName
-      bind:numberOfClasses />
+      bind:colorMapName />
   </div>
 {:else if legendType === LegendTypes.CLASSIFY}
   <div transition:slide>

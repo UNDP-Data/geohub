@@ -172,7 +172,7 @@
     dispatch('apply')
   }
 
-  const apply = (e) => {
+  const apply = () => {
     if (!expressionValue) expressionValue = sv[0]
     tagsList = []
     clearClickLayer()
@@ -211,7 +211,7 @@
     }
   }
 
-  const getFromMap = async (e: Event) => {
+  const getFromMap = async () => {
     mapClickButtonDisabled = !mapClickButtonDisabled
     cursor = $map.getCanvas().style.cursor
     $map.getCanvas().style.cursor = 'cell'
@@ -300,9 +300,9 @@
           <div class=" ">
             <button
               class="button is-small primary-button"
-              on:click={(e) => {
+              on:click={() => {
                 expressionValue = Array.isArray(uv) ? uv : [uv]
-                apply(e)
+                apply()
                 restoreQ()
               }}>
               <i class="fa fa-hammer" />&nbsp; Apply

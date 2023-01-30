@@ -191,7 +191,7 @@
     await searchDatasets(url)
   }
 
-  const handleFilterInput = async (e) => {
+  const handleFilterInput = async () => {
     if (
       !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
       query === ''
