@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
-    "scrollLeft": 0,
+    "scrollTop": -101,
+    "scrollLeft": -4,
     "zoomLevel": 1,
     "show": {
       "tableComment": true,
@@ -1126,8 +1126,8 @@
           },
           {
             "name": "status",
-            "comment": "description of data processing status",
-            "dataType": "character varying",
+            "comment": "1: data uploaded, 2: started processing, 3: processing ended",
+            "dataType": "integer",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -1142,7 +1142,7 @@
               "pfk": false,
               "widthName": 60,
               "widthComment": 120,
-              "widthDataType": 115.04789733886719,
+              "widthDataType": 60,
               "widthDefault": 60
             },
             "id": "93b813e9-93df-42e5-8412-be98d1a5762c"
@@ -1175,7 +1175,7 @@
           "active": false,
           "left": 233.6673,
           "top": 46.9722,
-          "zIndex": 278,
+          "zIndex": 288,
           "widthName": 179.05984497070312,
           "widthComment": 120
         },
