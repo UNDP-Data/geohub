@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MapStyleCardList from '$lib/dashboards/MapStyleCardList.svelte'
+  import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
   import { Header, Footer } from '@undp-data/svelte-undp-design'
   import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
   import UserAccount from '$components/UserAccount.svelte'
