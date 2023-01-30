@@ -3,7 +3,7 @@ import type { RasterLayerStats } from './RasterLayerStats'
 
 export interface RasterTileMetadata {
   band_descriptions?: string[]
-  band_metadata?: string[] | BandMetadata[]
+  band_metadata?: [string[] | BandMetadata[]]
   bounds?: [] | string
   colorinterp?: []
   count?: number

@@ -19,7 +19,7 @@
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata } from '$lib/types'
   import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
@@ -35,7 +35,8 @@
   // this var is necessary to maintain the state of teh colormap when switching the legend.
   // and it should be set by the bool flags that control the colormap picker visibility from parent container
 
-  let { info }: Layer = layerConfig
+  let info: RasterTileMetadata
+  ;({ info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
   const [band, bandMetaStats] = info['band_metadata'][bandIndex]
 
@@ -157,7 +158,7 @@
         })
       }
     } else {
-      const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap')
+      const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as number[][][]
       if (colormap) {
         colorMapRows = colormap.map((item, index) => {
           return {

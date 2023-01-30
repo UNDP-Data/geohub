@@ -84,7 +84,7 @@
       await sleep(100)
     }
 
-    const colormap: object = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][]
     if (colormap) {
       //layer  is being loaded form a saved map and is classified
       if (layerHasUniqueValues) {

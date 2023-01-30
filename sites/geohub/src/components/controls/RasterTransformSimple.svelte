@@ -10,7 +10,7 @@
 
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-  import type { Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { BandMetadata, Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
   import {
@@ -63,7 +63,8 @@
   const bandIndex = getActiveBandIndex(info) //normally info should be called as well
 
   //necessary to create Slider
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const band = info['band_metadata'][bandIndex][0] as string
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
   layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
