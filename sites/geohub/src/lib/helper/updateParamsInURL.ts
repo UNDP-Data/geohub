@@ -27,6 +27,7 @@ export const updateParamsInURL = (
     const style = mapStore.getStyle()
 
     if (style?.sources) {
+      console.log(layerURL.toString())
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       style.sources[layerStyle.source].tiles = [decodeURI(layerURL.toString())]

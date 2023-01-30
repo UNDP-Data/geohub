@@ -9,6 +9,7 @@
   import type { Layer } from '$lib/types'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
+  import VectorParamsPanel from '$components/controls/VectorParamsPanel.svelte'
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
@@ -27,6 +28,7 @@
     { label: TabNames.FILTER, icon: 'fa-solid fa-filter' },
     { label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+    { label: TabNames.VECTORPARAMS, icon: 'fa-solid fa-sliders' },
   ]
 
   if (isReadonly) {
@@ -66,6 +68,8 @@
         <VectorLabelPanel {layer} />
       {:else if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />
+      {:else if activeTab === TabNames.VECTORPARAMS}
+        <VectorParamsPanel {layer} />
       {/if}
     </p>
   </nav>
