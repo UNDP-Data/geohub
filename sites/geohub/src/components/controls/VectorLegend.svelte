@@ -5,8 +5,8 @@
   import VectorPolygon from './VectorPolygon.svelte'
   import VectorSymbol from './VectorSymbol.svelte'
   import VectorHeatmap from './VectorHeatmap.svelte'
-  import VectorLegendAdvanced from './VectorLegendAdvanced.svelte'
-  import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, VectorLegendTypes } from '$lib/constants'
+  import VectorLegendAdvanced from './VectorClassifyLegend.svelte'
+  import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, LegendTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import chroma from 'chroma-js'
@@ -16,7 +16,7 @@
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: VectorApplyToTypes
-  export let legendType: 'simple' | 'advanced'
+  export let legendType: LegendTypes
 
   const layerId = layer.id
   const style: LayerSpecification = $map
@@ -33,23 +33,23 @@
 
   if (style.type === 'line') {
     if (isIntervalExpression('line-color')) {
-      legendType = VectorLegendTypes.ADVANCED
+      legendType = LegendTypes.CLASSIFY
       applyToOption = VectorApplyToTypes.COLOR
     } else if (isIntervalExpression('line-width')) {
-      legendType = VectorLegendTypes.ADVANCED
+      legendType = LegendTypes.CLASSIFY
       applyToOption = VectorApplyToTypes.SIZE
     }
   } else if (style.type === 'symbol') {
     if (isIntervalExpression('icon-color')) {
-      legendType = VectorLegendTypes.ADVANCED
+      legendType = LegendTypes.CLASSIFY
       applyToOption = VectorApplyToTypes.COLOR
     } else if (isIntervalExpression('icon-size')) {
-      legendType = VectorLegendTypes.ADVANCED
+      legendType = LegendTypes.CLASSIFY
       applyToOption = VectorApplyToTypes.SIZE
     }
   } else if (style.type === 'fill') {
     if (isIntervalExpression('fill-color')) {
-      legendType = VectorLegendTypes.ADVANCED
+      legendType = LegendTypes.CLASSIFY
     }
   }
 
@@ -84,7 +84,7 @@
       : undefined
 
   // set default values
-  legendType = legendType ? legendType : VectorLegendTypes.SIMPLE
+  legendType = legendType ? legendType : LegendTypes.DEFAULT
 </script>
 
 {#if style.type !== LayerTypes.HEATMAP}
@@ -93,7 +93,7 @@
 
 {#if style.type === LayerTypes.HEATMAP}
   <VectorHeatmap bind:layer />
-{:else if legendType === VectorLegendTypes.SIMPLE}
+{:else if legendType === LegendTypes.DEFAULT}
   <div transition:slide>
     {#if style.type === LayerTypes.LINE}
       <VectorLine
@@ -110,7 +110,7 @@
         bind:defaultColor />
     {/if}
   </div>
-{:else if legendType === VectorLegendTypes.ADVANCED}
+{:else if legendType === LegendTypes.CLASSIFY}
   <div transition:slide>
     <VectorLegendAdvanced
       bind:layer

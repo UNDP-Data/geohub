@@ -15,7 +15,7 @@ A component designed to apply where expression to a raster layer through titiler
 
 */
   import RangeSlider from 'svelte-range-slider-pips'
-  import type { Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
   import {
@@ -30,7 +30,7 @@ A component designed to apply where expression to a raster layer through titiler
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount, onDestroy } from 'svelte'
   import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
-  import RasterExpressionNumbersInput from '$components/controls/RasterExpressionNumbersInput.svelte'
+  import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte'
 
   export let layer: Layer
 
@@ -501,7 +501,7 @@ A component designed to apply where expression to a raster layer through titiler
             on:stop={onSliderStop} />
         </div>
       {:else if selectedInputCategory === 'numbers'}
-        <RasterExpressionNumbersInput on:click={onNumbersClick} />
+        <RasterTransformNumbersInput on:click={onNumbersClick} />
       {/if}
     </div>
 

@@ -1,11 +1,17 @@
 <script lang="ts">
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
-  import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
-  import RasterExpression from '$components/controls/RasterExpression.svelte'
+  import RasterLegend from '$components/controls/RasterLegend.svelte'
+  import RasterTransform from '$components/controls/RasterTransform.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT_MAXIMUM, COLOR_CLASS_COUNT } from '$lib/constants'
+  import {
+    ClassificationMethodTypes,
+    TabNames,
+    COLOR_CLASS_COUNT_MAXIMUM,
+    COLOR_CLASS_COUNT,
+    LegendTypes,
+  } from '$lib/constants'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -50,7 +56,7 @@
 
   // state vars
   //let expressions: RasterSimpleExpression[]
-  let legendType: 'simple' | 'advanced'
+  let legendType: LegendTypes
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
@@ -109,10 +115,10 @@
       }
 
       numberOfClasses = colorMapRows.length
-      legendType = 'advanced'
+      legendType = LegendTypes.CLASSIFY
     } else {
       if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      legendType = 'simple'
+      legendType = LegendTypes.DEFAULT
     }
 
     // initialisation is not necessary when restoring or swhitching from other tabs
@@ -193,7 +199,7 @@
 
       <p class="panel-content">
         {#if activeTab == TabNames.LEGEND}
-          <RasterLegendContainer
+          <RasterLegend
             bind:layer
             bind:classificationMethod={classification}
             bind:legendType
@@ -205,7 +211,7 @@
           <RasterHistogram bind:layer />
         {/if}
         {#if activeTab == TabNames.TRANSFORM}
-          <RasterExpression bind:layer />
+          <RasterTransform bind:layer />
         {/if}
         {#if activeTab == TabNames.OPACITY}
           <OpacityPanel {layer} />
