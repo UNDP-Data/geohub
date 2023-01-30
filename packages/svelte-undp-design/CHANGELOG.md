@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.11
+
+### Patch Changes
+
+- 321b5a0: set height variable of Tabs as optional parameter
+
 ## 0.0.10
 
 ### Patch Changes
