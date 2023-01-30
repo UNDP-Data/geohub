@@ -78,11 +78,18 @@
       updateLegend()
     }
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleClosePopup()
+    }
+  }
 </script>
 
 <div
   class="icon-button"
   use:popperRef
+  on:keydown={handleKeyDown}
   on:click={handleClosePopup}>
   <IconImagePickerCard
     bind:legendSymbolContainer

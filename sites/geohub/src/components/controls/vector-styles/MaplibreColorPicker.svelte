@@ -50,12 +50,20 @@
   const handleCloseColorPicker = () => {
     showToolTip = false
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div
   class="color-palette"
   on:click={handleColorPaletteClick}
-  alt={rgba}
+  on:keydown={handleEnterKey}
   title={rgba}
   style="background: {rgba};"
   use:popperRef />

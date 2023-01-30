@@ -5,7 +5,7 @@
   import PapaParse from 'papaparse'
   import { Accordion, Loader, Checkbox } from '@undp-data/svelte-undp-design'
   import { clean, downloadFile, getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper'
-  import type { Layer, RasterTileMetadata } from '$lib/types'
+  import type { Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import Notification from './controls/Notification.svelte'
 
@@ -240,7 +240,8 @@
       return
     }
 
-    const layerUniqueValues = rasterInfo.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
+    const band_metadata = rasterInfo.band_metadata[bandIndex] as BandMetadata[]
+    const layerUniqueValues = band_metadata[1].STATISTICS_UNIQUE_VALUES
 
     const props: { [key: string]: string | number } = {
       name: layer.name,
@@ -276,7 +277,8 @@
     const bandIndex = getActiveBandIndex(rasterInfo)
     const value = `${data.values[0][1]}`
     const values: number[] = value.split(',').map((v) => Number(v))
-    const layerUniqueValues = rasterInfo.band_metadata[bandIndex][1].STATISTICS_UNIQUE_VALUES
+    const band_metadata = rasterInfo.band_metadata[bandIndex] as BandMetadata[]
+    const layerUniqueValues = band_metadata[1].STATISTICS_UNIQUE_VALUES
 
     const props: { [key: string]: string | number } = {
       name: layer.name,

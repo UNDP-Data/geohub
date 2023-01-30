@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade, slide } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
 

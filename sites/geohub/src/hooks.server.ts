@@ -26,9 +26,11 @@ export const handle = SvelteKitAuth({
       }
       return token
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
       if (token?.accessToken) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         session.accessToken = token.accessToken
       }
       return session

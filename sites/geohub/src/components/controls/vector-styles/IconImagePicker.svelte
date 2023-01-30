@@ -66,6 +66,14 @@
 
     return groups
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div data-testid="icon-image-picker-container">
@@ -89,8 +97,8 @@
     </div>
     <div
       class="column is-1 close"
-      alt="Close Icon Picker"
       title="Close Icon Picker"
+      on:keydown={handleEnterKey}
       on:click={handleClosePopup}>
       <i class="fa-solid fa-xmark" />
     </div>
@@ -102,10 +110,10 @@
           {#if activeIconGroupId === iconGroup.id}
             {#each iconGroup.values as spriteImage}
               <li
+                on:keydown={handleEnterKey}
                 on:click={() => {
                   handleIconClick(spriteImage.alt)
                 }}
-                alt="Icon Picker Card"
                 title="Icon Picker Card">
                 <IconImagePickerCard
                   legendSymbolContainer={undefined}

@@ -33,7 +33,6 @@
   let filteringError = false
   let propertyStats
   let initialStep = 1
-  let guard = 0
   let stringProperty = false
   let numberProperty = false
   let acceptSingleTag = true
@@ -212,7 +211,7 @@
       : null
   }
 
-  const handleCancelExpression = (e) => {
+  const handleCancelExpression = () => {
     expressionsArray = expressionsArray.filter((e) => e.index < currentExpressionIndex)
     currentExpressionIndex -= 1
     if (expressionsArray.length == 0) {
@@ -254,20 +253,6 @@
     expressionsArray = [...expressionsArray, { index: currentExpressionIndex, property: '', operator: '', value: '' }]
   }
 
-  const setInitialExpression = () => {
-    currentExpressionIndex = 0
-    expressionsArray = [
-      {
-        index: 0,
-        property: '',
-        value: '',
-        operator: '',
-      },
-    ]
-    if ($filterInputTags.length > 0) {
-      $filterInputTags = []
-    }
-  }
   const handleDisableTags = () => {
     acceptSingleTag = true
   }
@@ -320,7 +305,7 @@
 <div
   style="margin:10px"
   class="is-divider" />
-<Wizard initialStep={1}>
+<Wizard {initialStep}>
   <Step
     num={1}
     let:nextStep>
@@ -400,9 +385,8 @@
           </button>
         {/if} -->
       <button
-        on:click={(e) => {
-          // setInitialExpression()
-          handleCancelExpression(e)
+        on:click={() => {
+          handleCancelExpression()
           setStep(1)
         }}
         class="button wizard-button is-small primary-button">
@@ -442,9 +426,8 @@
         <i class="fa fa-angles-left" />&nbsp;Properties
       </button>
       <button
-        on:click={(e) => {
-          //setInitialExpression()
-          handleCancelExpression(e)
+        on:click={() => {
+          handleCancelExpression()
           setStep(1)
         }}
         class="button wizard-button is-small primary-button">
@@ -484,9 +467,8 @@
         <i class="fa fa-angles-left" /> &nbsp;Operators
       </button>
       <button
-        on:click={(e) => {
-          //setInitialExpression()
-          handleCancelExpression(e)
+        on:click={() => {
+          handleCancelExpression()
           setStep(1)
         }}
         class="button wizard-button is-small primary-button">

@@ -49,7 +49,7 @@
     }
   }
 
-  map.on('styledata', function (e) {
+  map.on('styledata', function () {
     const newStyle = map.getStyle().sources['bing'] ? true : false
     if (newStyle !== isAerialStyle) {
       if (!isVisible) {

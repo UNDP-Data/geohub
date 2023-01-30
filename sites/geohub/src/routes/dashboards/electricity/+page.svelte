@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { style } from 'svelte-body'
   import { ElectricityDashboard } from '@undp-data/electricity-dashboard'
   import { styles } from '$lib/constants'
 </script>

@@ -343,7 +343,7 @@
       setIntervalValues()
     }
     if (layerType === 'fill') {
-      let stops = colorMapRows.map((row, index) => {
+      let stops = colorMapRows.map((row) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
         return [row.start, rgb]
       })
@@ -462,6 +462,7 @@
     <div class="columns is-mobile">
       <div class="column">
         <div class="field">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
           <label class="label has-text-centered">Property:</label>
           <div class="control">
             <PropertySelect
@@ -475,6 +476,7 @@
       {#if layerType !== 'fill' && hasUniqueValues === false}
         <div class="column">
           <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label has-text-centered">Apply To</label>
             <div class="control">
               <div class="is-flex is-justify-content-center">
@@ -493,6 +495,7 @@
     {#if hasUniqueValues === false}
       <div class="legend-controls">
         <div class="field pr-2">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
           <label class="label has-text-centered">Classification</label>
           <div class="control">
             <div class="select is-normal">
@@ -512,6 +515,7 @@
           </div>
         </div>
         <div class="number-classes field pr-2">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
           <label class="label has-text-centered">Number of Classes</label>
           <div class="control">
             <NumberInput

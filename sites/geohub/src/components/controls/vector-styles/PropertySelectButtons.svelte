@@ -6,7 +6,6 @@
   import type { VectorTileMetadata } from '$lib/types'
   export let layer
   export let propertySelectValue
-  export let showEmptyFields = false //this needs to be removed TODO
   export let showOnlyNumberFields = false
   export let inLegend = false
   let propertySelectOptions: string[]
