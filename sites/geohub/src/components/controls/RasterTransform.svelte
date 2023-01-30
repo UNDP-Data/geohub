@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Layer } from '$lib/types'
-  import RasterFilter from '$components/controls/RasterFilter.svelte'
-  import RasterFilterSimple from '$components/controls/RasterFilterSimple.svelte'
+  import RasterTransformAdvanced from '$components/controls/RasterTransformAdvanced.svelte'
+  import RasterTransformSimple from '$components/controls/RasterTransformSimple.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer
@@ -44,10 +44,10 @@
   <div class="block" />
   <p>
     {#if isSimplePanelVisible === true}
-      <RasterFilterSimple bind:layer />
+      <RasterTransformSimple bind:layer />
     {/if}
     {#if isAdvancedPanelVisible}
-      <RasterFilter bind:layer />
+      <RasterTransformAdvanced bind:layer />
     {/if}
   </p>
 </nav>

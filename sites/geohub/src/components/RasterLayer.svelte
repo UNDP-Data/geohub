@@ -2,7 +2,7 @@
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
   import RasterLegend from '$components/controls/RasterLegend.svelte'
-  import RasterExpression from '$components/controls/RasterExpression.svelte'
+  import RasterTransform from '$components/controls/RasterTransform.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import {
@@ -211,7 +211,7 @@
           <RasterHistogram bind:layer />
         {/if}
         {#if activeTab == TabNames.TRANSFORM}
-          <RasterExpression bind:layer />
+          <RasterTransform bind:layer />
         {/if}
         {#if activeTab == TabNames.OPACITY}
           <OpacityPanel {layer} />
