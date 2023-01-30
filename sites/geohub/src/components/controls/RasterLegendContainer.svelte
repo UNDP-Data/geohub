@@ -2,12 +2,12 @@
   import { slide } from 'svelte/transition'
   import RasterContinuousLegend from '$components/controls/RasterContinuousLegend.svelte'
   import RasterAdvancedLegend from '$components/controls/RasterAdvancedLegend.svelte'
-  import { DynamicLayerLegendTypes, ClassificationMethodTypes } from '$lib/constants'
+  import { DynamicLayerLegendTypes, ClassificationMethodTypes, LegendTypes } from '$lib/constants'
   import type { Layer, IntervalLegendColorMapRow } from '$lib/types'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
 
   export let layer: Layer
-  export let legendType: 'simple' | 'advanced'
+  export let legendType: LegendTypes
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
   export let numberOfClasses: number
@@ -16,12 +16,11 @@
   let rasterLegendType: DynamicLayerLegendTypes
 
   let colorPickerVisibleIndex: number
-  let showTooltip = false
 
   $: legendType, handleLegendToggleClick()
   const handleLegendToggleClick = () => {
     colorPickerVisibleIndex = -1
-    if (legendType === 'advanced') {
+    if (legendType === LegendTypes.CLASSIFY) {
       rasterLegendType = DynamicLayerLegendTypes.INTERVALS
     } else {
       rasterLegendType = DynamicLayerLegendTypes.CONTINUOUS
@@ -45,7 +44,6 @@
       bind:colorMapName
       bind:classificationMethod
       bind:numberOfClasses
-      bind:colorMapRows
-      bind:generateCmap={showTooltip} />
+      bind:colorMapRows />
   </div>
 {/if}

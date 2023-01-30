@@ -4,7 +4,7 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegend from '$components/controls/VectorLegend.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { ClassificationMethodTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, LegendTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
@@ -14,7 +14,7 @@
   export let colorMapName: string
 
   let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
-  let legendType: 'simple' | 'advanced'
+  let legendType: LegendTypes
   let defaultColor: string
   let defaultLineColor: string
   let activeTab = TabNames.LEGEND

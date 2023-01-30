@@ -67,9 +67,9 @@ export enum DynamicLayerLegendTypes {
   INTERVALS = 'intervals',
 }
 
-export enum VectorLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
+export enum LegendTypes {
+  DEFAULT = 'default',
+  CLASSIFY = 'classify',
 }
 
 export enum VectorApplyToTypes {

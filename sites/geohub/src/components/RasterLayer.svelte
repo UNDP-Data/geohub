@@ -5,7 +5,13 @@
   import RasterExpression from '$components/controls/RasterExpression.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT_MAXIMUM, COLOR_CLASS_COUNT } from '$lib/constants'
+  import {
+    ClassificationMethodTypes,
+    TabNames,
+    COLOR_CLASS_COUNT_MAXIMUM,
+    COLOR_CLASS_COUNT,
+    LegendTypes,
+  } from '$lib/constants'
   import type {
     IntervalLegendColorMapRow,
     Layer,
@@ -50,7 +56,7 @@
 
   // state vars
   //let expressions: RasterSimpleExpression[]
-  let legendType: 'simple' | 'advanced'
+  let legendType: LegendTypes
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
@@ -109,10 +115,10 @@
       }
 
       numberOfClasses = colorMapRows.length
-      legendType = 'advanced'
+      legendType = LegendTypes.CLASSIFY
     } else {
       if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      legendType = 'simple'
+      legendType = LegendTypes.DEFAULT
     }
 
     // initialisation is not necessary when restoring or swhitching from other tabs
