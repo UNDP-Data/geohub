@@ -5,7 +5,7 @@
 
 	export let activeTab: string | undefined;
 
-	export let height: number;
+	export let height = 0;
 	export let fontSize: 'medium' | 'large' | 'small' = 'medium';
 	export let isToggleTab = false;
 
