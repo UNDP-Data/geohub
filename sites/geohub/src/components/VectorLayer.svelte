@@ -6,7 +6,7 @@
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
   import { ClassificationMethodTypes, LegendTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
+  import VectorFilter from './controls/VectorFilter.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let layer: Layer
@@ -53,7 +53,7 @@
           bind:defaultColor
           bind:defaultLineColor />
       {:else if activeTab === TabNames.FILTER}
-        <VectorFilterPanelWizard {layer} />
+        <VectorFilter {layer} />
       {:else if activeTab === TabNames.LABEL}
         <VectorLabelPanel {layer} />
       {:else if activeTab === TabNames.OPACITY}
