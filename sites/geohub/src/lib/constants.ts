@@ -60,13 +60,6 @@ export enum ColorMapTypes {
   QUALITATIVE = 'qualitative',
 }
 
-export enum DynamicLayerLegendTypes {
-  BUCKETED = 'bucketed',
-  CONTINUOUS = 'continuous',
-  UNIQUE = 'unique',
-  INTERVALS = 'intervals',
-}
-
 export enum LegendTypes {
   DEFAULT = 'default',
   CLASSIFY = 'classify',

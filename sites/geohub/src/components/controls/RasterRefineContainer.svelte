@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DynamicLayerLegendTypes, COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
+  import { COLOR_CLASS_COUNT_MAXIMUM } from '$lib/constants'
 
   import {
     fetchUrl,
@@ -13,7 +13,6 @@
   import type { RasterTileSource } from 'maplibre-gl'
 
   export let layer: Layer
-  export let legendType: DynamicLayerLegendTypes
   let info: RasterTileMetadata
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -75,7 +74,6 @@
         layerURL.searchParams.delete('colormap')
         const colorMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
         layerURL.searchParams.set('colormap_name', colorMapName)
-        legendType = DynamicLayerLegendTypes.CONTINUOUS
       }
 
       updateParamsInURL(layerStyle, layerURL, updatedParams)
