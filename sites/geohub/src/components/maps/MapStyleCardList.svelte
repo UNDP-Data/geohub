@@ -3,7 +3,7 @@
   import { browser } from '$app/environment'
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
-  import DashboardMapStyleCard from './DashboardMapStyleCard.svelte'
+  import MapStyleCard from './MapStyleCard.svelte'
   import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
@@ -277,7 +277,7 @@
 {:else if styleList && styleList.length > 0}
   {#key styleList}
     {#each styleList as style}
-      <DashboardMapStyleCard
+      <MapStyleCard
         {style}
         bind:isExpanded={expanded[style.id]}
         on:deleted={handleStyleDeleted} />
