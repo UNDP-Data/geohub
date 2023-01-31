@@ -3,28 +3,21 @@
   lang="ts">
   /* state variables used to keep the state of the wizard*/
   const originalRasterFilterUrl = {}
-  let selectedRasterFilterOperator = {}
+  let selectedRasterFilterOperator: { layerId?: string } = {}
   let rasterFilterExpressionApplied = {}
   let initialRasterFilterStep = {}
 </script>
 
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-  import type { Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { BandMetadata, Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
-  import {
-    getActiveBandIndex,
-    getLayerStyle,
-    getValueFromRasterTileUrl,
-    updateParamsInURL,
-    getLayerSourceUrl,
-    fetchUrl,
-  } from '$lib/helper'
+  import { getActiveBandIndex, getLayerStyle, updateParamsInURL, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount, onDestroy } from 'svelte'
-  import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
+  import { onMount } from 'svelte'
+  import { rasterComparisonOperators } from '$lib/constants'
 
   export let layer: Layer
 
@@ -63,7 +56,8 @@
   const bandIndex = getActiveBandIndex(info) //normally info should be called as well
 
   //necessary to create Slider
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const band = info['band_metadata'][bandIndex][0] as string
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
   layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
@@ -99,7 +93,7 @@
     rasterFilterExpressionApplied[layerId] = true
   }
 
-  const applyExpression = async (e: MouseEvent) => {
+  const applyExpression = async () => {
     let newParams = {}
 
     const expressionStringValue = `b${Object.values(expression).join(' ')}`
@@ -107,14 +101,14 @@
     //newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, ${info.nodata_value ?? layerMax});`
     newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, 0);`
     console.log(newParams['expression'])
-    const exprStatUrl = new URL(
-      `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
-        newParams['expression'],
-      )}`,
-    )
+    // const exprStatUrl = new URL(
+    //   `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
+    //     newParams['expression'],
+    //   )}`,
+    // )
     newParams['rescale'] = [Number(info.stats[band].min), Number(info.stats[band].max)].join(',')
 
-    const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
+    // const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
     //console.log(JSON.stringify(exprStats, null, '\t'))
     updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
     expressionApplied = true
@@ -137,15 +131,23 @@
   }
 
   let conditionExpressionButtonDisabled = true
-  const uf = (k, v) => {
-    return v ?? null
-  }
+  // const uf = (k, v) => {
+  //   return v ?? null
+  // }
   $: {
     //console.clear()
 
     //console.log(`${JSON.stringify(expression, uf, '\t')} `)
 
     conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true
+  }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
   }
 </script>
 
@@ -225,6 +227,7 @@
         {#if isVisible}
           <div
             class="card is-info is-clickable  has-text-centered "
+            on:keydown={handleEnterKey}
             on:click={() => {
               selectedOperator = operator.value
               expression = { ...expression, operator: selectedOperator }
@@ -312,11 +315,11 @@
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
       <button
-        on:click={(e) => {
+        on:click={() => {
           initialRasterFilterStep[layer.id] = 1
           clearState()
           setStep(1)
-          applyExpression(e)
+          applyExpression()
         }}
         disabled={conditionExpressionButtonDisabled}
         class="button is-small primary-button has-text-weight-bold">

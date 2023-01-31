@@ -22,8 +22,6 @@
   export let defaultColormap: string = undefined
   export let layer: VectorLayerTileStatLayer = undefined
 
-  const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [{ key: string; value: string }]
-
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
 

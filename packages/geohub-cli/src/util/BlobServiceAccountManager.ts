@@ -210,7 +210,6 @@ class BlobServiceAccountManager {
 			? await this.getRasterMetadata(url)
 			: await this.getVectorMetadata(url);
 		if (!metadata) throw new Error('cannot fetch metadata.');
-		const urlObj = new URL(url).pathname.replace('/metadata.json', '').split('/');
 
 		let dataUrl = url;
 		if (isStaticMVT) {
@@ -222,7 +221,7 @@ class BlobServiceAccountManager {
 		const dataset: Dataset = {
 			id: generateHashKey(url),
 			url: dataUrl,
-			name: cleanName(urlObj.pop()),
+			name: metadata.name,
 			is_raster: isRaster,
 			description: metadata.description,
 			bounds: metadata.bounds,
@@ -241,6 +240,8 @@ class BlobServiceAccountManager {
 		const res = await fetch(apiUrl);
 		const json: RasterTileMetadata = await res.json();
 		const band_metadata = json.band_metadata;
+		const urlObj = new URL(url).pathname.split('/');
+		const name: string = cleanName(urlObj.pop());
 		let description: string | undefined;
 		let source: string | undefined;
 		band_metadata?.forEach((band) => {
@@ -253,6 +254,7 @@ class BlobServiceAccountManager {
 		});
 
 		return {
+			name,
 			bounds: (json.bounds ? json.bounds : [-180, -90, 180, 90]) as [
 				number,
 				number,
@@ -266,6 +268,7 @@ class BlobServiceAccountManager {
 
 	private async getVectorMetadata(url: string) {
 		const isPmtiles = url.indexOf('.pmtiles') !== -1;
+		const urlObj = new URL(url).pathname.replace('/metadata.json', '').split('/');
 		if (isPmtiles) {
 			const p = new pmtiles.PMTiles(`${url}${this.sasToken}`);
 			const metadata = await p.getMetadata();
@@ -276,9 +279,11 @@ class BlobServiceAccountManager {
 				header.maxLon,
 				header.maxLat
 			];
+			const name: string = metadata.name ?? cleanName(urlObj.pop());
 			const description: string | undefined = metadata.description;
 			const source: string | undefined = metadata.attribution;
 			return {
+				name: name,
 				bounds: bounds,
 				description,
 				source
@@ -287,10 +292,12 @@ class BlobServiceAccountManager {
 			const apiUrl = `${url}${this.sasToken}`;
 			const res = await fetch(apiUrl);
 			const metadata = await res.json();
+			const name: string = metadata.name ?? cleanName(urlObj.pop());
 			const bounds: string = metadata.bounds;
 			const description: string | undefined = metadata.description;
 			const source: string | undefined = metadata.attribution;
 			return {
+				name,
 				bounds: (bounds ? bounds.split(',').map((b) => Number(b)) : [-180, -90, 180, 90]) as [
 					number,
 					number,

@@ -180,6 +180,12 @@
       textCopyButton = 'Copy'
     }, 5000)
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleClose()
+    }
+  }
 </script>
 
 {#if isModalVisible}
@@ -188,7 +194,9 @@
     transition:fade
     use:clickOutside={handleClose}>
     <div
+      role="button"
       class="modal-background"
+      on:keydown={handleKeyDown}
       on:click={handleClose} />
     <div class="modal-card">
       <header class="modal-card-head">
@@ -214,6 +222,7 @@
           </div>
 
           <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label">Saved map will be published to: </label>
             <div class="control">
               <AccessLevelSwitcher bind:accessLevel />
