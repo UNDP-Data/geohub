@@ -42,13 +42,13 @@
   class="main-section mb-4"
   style="margin-top: {headerHeight}px">
   {#if stats}
-    <div class="tile">
+    <div
+      class="grid"
+      style={isMobile ? '' : `grid-template-columns: repeat(4, 1fr);`}>
       {#each stats as card}
-        <div class="tile">
-          <Stats
-            bind:card
-            size={isMobile ? 'large' : 'small'} />
-        </div>
+        <Stats
+          bind:card
+          size={isMobile ? 'medium' : 'small'} />
       {/each}
     </div>
     <div class="is-divider" />
@@ -78,5 +78,10 @@
     padding-top: 1rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+
+    .grid {
+      display: grid;
+      grid-gap: 5px;
+    }
   }
 </style>
