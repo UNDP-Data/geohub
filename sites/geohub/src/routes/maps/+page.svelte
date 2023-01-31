@@ -42,9 +42,7 @@
   class="main-section mb-4"
   style="margin-top: {headerHeight}px">
   {#if stats}
-    <div
-      class="grid"
-      style={isMobile ? '' : `grid-template-columns: repeat(4, 1fr);`}>
+    <div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
       {#each stats as card}
         <Stats
           bind:card
@@ -78,10 +76,5 @@
     padding-top: 1rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-
-    .grid {
-      display: grid;
-      grid-gap: 5px;
-    }
   }
 </style>
