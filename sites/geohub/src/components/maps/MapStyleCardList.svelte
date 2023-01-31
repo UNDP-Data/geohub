@@ -159,10 +159,16 @@
         setPageUrl()
       }
       const res = await fetch(apiUrl.toString())
-      const json = await res.json()
-      styleList = json.styles
-      links = json.links
-      pages = json.pages
+      if (res.ok) {
+        const json = await res.json()
+        styleList = [...json.styles]
+        links = json.links
+        pages = json.pages
+      } else {
+        styleList = []
+        links = []
+        pages = undefined
+      }
     } finally {
       isLoading = false
     }
