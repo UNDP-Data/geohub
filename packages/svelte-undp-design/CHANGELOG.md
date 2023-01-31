@@ -1,5 +1,18 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.11
+
+### Patch Changes
+
+- 321b5a0: set height variable of Tabs as optional parameter
+
+## 0.0.10
+
+### Patch Changes
+
+- fd21cd2: - fix: show xmark button when hamburger button is clicked in header
+  - fix: enable expanding footer items in mobile
+
 ## 0.0.9
 
 ### Patch Changes

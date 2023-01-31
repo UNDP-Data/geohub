@@ -15,22 +15,15 @@ A component designed to apply where expression to a raster layer through titiler
 
 */
   import RangeSlider from 'svelte-range-slider-pips'
-  import type { Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
-  import {
-    getActiveBandIndex,
-    getLayerStyle,
-    getValueFromRasterTileUrl,
-    updateParamsInURL,
-    getLayerSourceUrl,
-    fetchUrl,
-  } from '$lib/helper'
+  import { getActiveBandIndex, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount } from 'svelte'
   import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
-  import RasterExpressionNumbersInput from '$components/controls/RasterExpressionNumbersInput.svelte'
+  import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte'
 
   export let layer: Layer
 
@@ -77,10 +70,6 @@ A component designed to apply where expression to a raster layer through titiler
   //int index accessor or the exression objects in the expression part array
   $: expressionIndex = whereExpression[currentExpressionPart].length - 1
 
-  let combineOperator = true
-
-  let expression: string
-
   let layerMin: number
   let layerMax: number
   let layerMedian: number
@@ -94,13 +83,13 @@ A component designed to apply where expression to a raster layer through titiler
   const bandIndex = getActiveBandIndex(info) //normally info should be called as well
 
   //necessary to create Slider
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const band = info['band_metadata'][bandIndex][0] as string
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
   layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
 
   const url: string = getLayerSourceUrl($map, layer.id) as string
-  const lURL = new URL(url)
 
   originalRasterFilterUrl[layer.id] = url
 
@@ -124,27 +113,27 @@ A component designed to apply where expression to a raster layer through titiler
 
   let sliderBindValue: Array<number> = [(layerMax - layerMin) * 0.5]
 
-  const clearExpression = () => {
-    console.log(`clearing expression`)
-    updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {})
-  }
+  // const clearExpression = () => {
+  //   console.log(`clearing expression`)
+  //   updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {})
+  // }
 
-  const applyExpression = async (e: MouseEvent) => {
-    let newParams = {}
-    console.log(JSON.stringify(expression))
+  // const applyExpression = async (e: MouseEvent) => {
+  //   let newParams = {}
+  //   console.log(JSON.stringify(expression))
 
-    newParams['expression'] = ``
+  //   newParams['expression'] = ``
 
-    const exprStatUrl = new URL(
-      `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
-        newParams['expression'],
-      )}`,
-    )
+  //   const exprStatUrl = new URL(
+  //     `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
+  //       newParams['expression'],
+  //     )}`,
+  //   )
 
-    const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
+  //   const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
 
-    //updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
-  }
+  //   //updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
+  // }
 
   const clear = () => {
     selectedOperator = undefined
@@ -202,9 +191,9 @@ A component designed to apply where expression to a raster layer through titiler
 
   let continueExpressionButtonDisabled = true
   let conditionExpressionButtonDisabled = true
-  const uf = (k, v) => {
-    return v === undefined ? null : v
-  }
+  // const uf = (k, v) => {
+  //   return v === undefined ? null : v
+  // }
   $: {
     //console.clear()
 
@@ -221,6 +210,14 @@ A component designed to apply where expression to a raster layer through titiler
         lastKey && lastValue != undefined && rasterComparisonOperatorsValues.includes(lastKey) ? false : true
 
       //console.log(`lastkey: ${lastKey} lastValue: ${lastValue} \n continueExpressionButtonDisabled : ${continueExpressionButtonDisabled} \n conditionExpressionButtonDisabled ${conditionExpressionButtonDisabled}`)
+    }
+  }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
     }
   }
 </script>
@@ -367,6 +364,7 @@ A component designed to apply where expression to a raster layer through titiler
             selectedOperatorCategory
               ? 'has-background-success has-text-white-bis'
               : ''}"
+            on:keydown={handleEnterKey}
             on:click={() => {
               selectedOperatorCategory = name
               selectedRasterFilterOperatorCategory = selectedOperatorCategory
@@ -384,6 +382,7 @@ A component designed to apply where expression to a raster layer through titiler
           {#if isVisible}
             <div
               class="card is-info is-clickable  has-text-centered "
+              on:keydown={handleEnterKey}
               on:click={() => {
                 selectedOperator = operator.value
                 //  not necessary
@@ -474,6 +473,7 @@ A component designed to apply where expression to a raster layer through titiler
             selectedInputCategory
               ? 'has-background-success has-text-white-bis'
               : ''}"
+            on:keydown={handleEnterKey}
             on:click={() => {
               selectedInputCategory = inputCategory
               selectedRasterFilterInputCategory = selectedInputCategory
@@ -501,7 +501,7 @@ A component designed to apply where expression to a raster layer through titiler
             on:stop={onSliderStop} />
         </div>
       {:else if selectedInputCategory === 'numbers'}
-        <RasterExpressionNumbersInput on:click={onNumbersClick} />
+        <RasterTransformNumbersInput on:click={onNumbersClick} />
       {/if}
     </div>
 

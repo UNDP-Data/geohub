@@ -19,7 +19,7 @@
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { IntervalLegendColorMapRow, Layer } from '$lib/types'
+  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
   import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
@@ -35,9 +35,10 @@
   // this var is necessary to maintain the state of teh colormap when switching the legend.
   // and it should be set by the bool flags that control the colormap picker visibility from parent container
 
-  let { info }: Layer = layerConfig
+  let info: RasterTileMetadata
+  ;({ info } = layerConfig)
   const bandIndex = getActiveBandIndex(info)
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
   let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
@@ -157,7 +158,7 @@
         })
       }
     } else {
-      const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap')
+      const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as number[][][]
       if (colormap) {
         colorMapRows = colormap.map((item, index) => {
           return {
@@ -223,42 +224,40 @@
   data-testid="intervals-view-container">
   <!-- svelte-ignore a11y-click-teevents-have-key-events -->
 
-  <div class="legend-controls">
-    {#if layerHasUniqueValues}
-      <div
-        class="classification field pr-2"
-        hidden={layerHasUniqueValues}>
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-        <label class="label has-text-centered">Classification</label>
-        <div class="control">
-          <select
-            bind:value={classificationMethod}
-            on:change={handleClassificationMethodChange}
-            style="width: 114px;"
-            title="Classification Methods">
-            {#each classificationMethods as classificationMethod}
-              <option
-                class="legend-text"
-                value={classificationMethod.code}>{classificationMethod.name}</option>
-            {/each}
-          </select>
-        </div>
+  <div class="legend-controls mb-4">
+    <div
+      class="classification field pr-2"
+      hidden={layerHasUniqueValues}>
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Classification</label>
+      <div class="control">
+        <select
+          bind:value={classificationMethod}
+          on:change={handleClassificationMethodChange}
+          style="width: 114px;"
+          title="Classification Methods">
+          {#each classificationMethods as classificationMethod}
+            <option
+              class="legend-text"
+              value={classificationMethod.code}>{classificationMethod.name}</option>
+          {/each}
+        </select>
       </div>
+    </div>
 
-      <div
-        class="number-classes field pr-2"
-        hidden={layerHasUniqueValues}>
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-        <label class="label has-text-centered">Number of Classes</label>
-        <div class="control">
-          <NumberInput
-            bind:value={numberOfClasses}
-            bind:minValue={colorClassCountMin}
-            bind:maxValue={colorClassCountMax}
-            on:change={handleIncrementDecrementClasses} />
-        </div>
+    <div
+      class="number-classes field pr-2"
+      hidden={layerHasUniqueValues}>
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Number of Classes</label>
+      <div class="control">
+        <NumberInput
+          bind:value={numberOfClasses}
+          bind:minValue={colorClassCountMin}
+          bind:maxValue={colorClassCountMax}
+          on:change={handleIncrementDecrementClasses} />
       </div>
-    {/if}
+    </div>
     <div
       class="colormap-picker"
       style={layerHasUniqueValues ? 'margin-right:0%' : null}>
@@ -269,19 +268,18 @@
         }} />
     </div>
   </div>
-  <div
-    style={layerHasUniqueValues ? 'margin:0' : null}
-    class="is-divider separator mb-4" />
 
-  {#each colorMapRows as colorMapRow}
-    <IntervalsLegendColorMapRow
-      bind:colorMapRow
-      bind:colorMapName
-      bind:hasUniqueValues={layerHasUniqueValues}
-      bind:rowWidth
-      on:changeColorMap={handleChangeColorMap}
-      on:changeIntervalValues={handleChangeIntervalValues} />
-  {/each}
+  <div class="colormap-rows-container">
+    {#each colorMapRows as colorMapRow}
+      <IntervalsLegendColorMapRow
+        bind:colorMapRow
+        bind:colorMapName
+        bind:hasUniqueValues={layerHasUniqueValues}
+        bind:rowWidth
+        on:changeColorMap={handleChangeColorMap}
+        on:changeIntervalValues={handleChangeIntervalValues} />
+    {/each}
+  </div>
 </div>
 
 <style lang="scss">
@@ -306,5 +304,10 @@
     .colormap-picker {
       margin-left: auto;
     }
+  }
+
+  .colormap-rows-container {
+    overflow-y: auto;
+    max-height: 200px;
   }
 </style>

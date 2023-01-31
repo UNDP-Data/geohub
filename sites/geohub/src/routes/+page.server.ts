@@ -3,17 +3,26 @@ import type { StyleSpecification } from 'maplibre-gl'
 import type { LegendState } from '$lib/types'
 
 export const load: PageServerLoad = async (event) => {
+  const session = await event.locals.getSession()
+  const user = session?.user
+
   let data = {}
   const url = event.url
   const styleId = url.searchParams.get('style')
+  let isReadOnly = true
   if (styleId) {
     const res = await event.fetch(`/api/style/${styleId}`)
     if (res.ok) {
       const styleInfo = await res.json()
-      data = { style: styleInfo }
+
+      if (user?.email === styleInfo?.created_user) {
+        isReadOnly = false
+      }
+
+      data = { style: styleInfo, readOnly: isReadOnly }
 
       if (styleInfo.layers) {
-        const legendState: legendState = {}
+        const legendState: LegendState = {}
         const style: StyleSpecification = styleInfo.style
 
         styleInfo.layers.map((el) => {

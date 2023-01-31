@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.0.5
+
+### Patch Changes
+
+- 5046874: Use name property from metadata.json or pmtiles's metadata instead of using file name if name property is present.
+
 ## 1.0.4
 
 ### Patch Changes

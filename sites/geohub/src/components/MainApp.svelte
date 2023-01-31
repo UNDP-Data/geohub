@@ -65,7 +65,7 @@
     setSplitControl()
   }
 
-  const splitterChanged = (e) => {
+  const splitterChanged = () => {
     resizeMap()
   }
 </script>

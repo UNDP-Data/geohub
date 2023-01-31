@@ -11,7 +11,7 @@
   import RasterBandSelector from '$components/controls/RasterBandSelector.svelte'
   import Legend from '$components/controls/vector-styles/Legend.svelte'
 
-  const isReadonly = $page.url.pathname === '/viewer'
+  const isReadonly = $page.data.readOnly
 
   export let layer: Layer
   let hasLayerLabel = false

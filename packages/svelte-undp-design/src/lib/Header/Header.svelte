@@ -84,7 +84,7 @@
 				{/if}
 				<div class="cell large-3 small-3 top-right menu-buttons">
 					<button
-						class="menu-hamburger"
+						class="menu-hamburger {showMobileMenu ? 'is-active' : ''}"
 						aria-label="menu-icon"
 						on:click={() => (showMobileMenu = !showMobileMenu)}
 					>

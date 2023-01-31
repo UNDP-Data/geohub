@@ -5,7 +5,13 @@
 	export let footerItems: { [key: string]: { title: string; url: string }[] } = {};
 
 	const currentYear = new Date().getFullYear();
+
+	let panelExpanded: { [key: string]: boolean } = {};
+	let innerWidth: number;
+	$: isMobile = innerWidth < 768 ? true : false;
 </script>
+
+<svelte:window bind:innerWidth />
 
 <footer class="footer">
 	<div class="grid-x">
@@ -26,24 +32,42 @@
 				</div>
 			</div>
 			<div class="grid-x grid-margin-x" data-accordion="mobile">
-				{#each Object.keys(footerItems) as pageTitle}
+				{#each Object.keys(footerItems) as pageTitle, index}
+					{@const itemId = `footer-item-${index}`}
+					{@const panelId = `footer-panel-${index}`}
 					<div class="cell medium-2 footer-item">
 						<button
 							type="button"
-							id="footer-item-1"
-							class="footer-heading desktop-event-none"
+							id={itemId}
+							class="footer-heading desktop-event-none {panelExpanded[itemId] &&
+							panelExpanded[itemId] === true
+								? 'active'
+								: ''}"
 							tabindex="0"
-							aria-controls="footer-panel-1"
-							aria-expanded="false"
+							aria-controls={panelId}
+							aria-expanded={panelExpanded[itemId] && panelExpanded[itemId] === true}
+							on:click={() => {
+								if (!panelExpanded[itemId]) {
+									panelExpanded[itemId] = true;
+								} else {
+									panelExpanded[itemId] = !panelExpanded[itemId];
+								}
+							}}
 						>
 							{pageTitle}
 						</button>
 						<div
-							id="footer-panel-1"
+							id={panelId}
 							class="footer-panel desktop-visible"
-							aria-label="footer-item-1"
-							aria-hidden="false"
+							aria-label={itemId}
+							aria-hidden={!panelExpanded[itemId] ||
+								(panelExpanded[itemId] && panelExpanded[itemId] === false)}
 							role="region"
+							style="display: {!isMobile
+								? 'block'
+								: panelExpanded[itemId] && panelExpanded[itemId] === true
+								? 'block'
+								: 'none'}"
 						>
 							{#each footerItems[pageTitle] as item}
 								<a href={item.url} title="Page title">{item.title}</a>

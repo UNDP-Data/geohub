@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade, slide } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
 
@@ -63,9 +63,8 @@
 </script>
 
 <div class="columm legend-toggle">
-  <span
-    role="button"
-    class="colormap-button icon has-tooltip-left has-tooltip-arrow"
+  <button
+    class="colormap-button button icon has-tooltip-left has-tooltip-arrow"
     aria-label="Open Color Scheme Picker"
     data-tooltip="Change color map"
     tabindex="0"
@@ -76,7 +75,7 @@
     <i
       class="fa-solid fa-palette fa-lg"
       style="color: white" />
-  </span>
+  </button>
 
   {#if showTooltip}
     <div

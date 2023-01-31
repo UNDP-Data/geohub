@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, MAP_ATTRIBUTION, STAC_MINIMUM_ZOOM } from './constants'
 import { getBase64EncodedUrl, getRandomColormap } from './helper'
-import type { RasterTileMetadata, StacItemFeature } from './types'
+import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 
@@ -18,7 +18,7 @@ export class MosaicJsonData {
     this.assetName = assetName
   }
 
-  private getMetadata = async (tilejson: { bounds: any; tiles: string[] }, isUniqueValue: boolean) => {
+  private getMetadata = async (tilejson: { bounds: number[]; tiles: string[] }, isUniqueValue: boolean) => {
     const tileUrl = new URL(tilejson.tiles[0])
     const mosaicUrl = tileUrl.searchParams.get('url')
     const mosaicAssetUrl = `${PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')}/${tilejson.bounds.join(
@@ -68,15 +68,15 @@ export class MosaicJsonData {
       const statistics = await res.json()
       if (statistics) {
         for (let i = 0; i < data.band_metadata.length; i++) {
-          const bandValue = data.band_metadata[i][0]
+          const bandValue = data.band_metadata[i][0] as string
           const bandDetails = statistics[bandValue]
           if (bandDetails) {
             data.band_metadata[i][1] = {
-              STATISTICS_MAXIMUM: `${bandDetails.max}`,
-              STATISTICS_MEAN: `${bandDetails.mean}`,
-              STATISTICS_MINIMUM: `${bandDetails.min}`,
-              STATISTICS_STDDEV: `${bandDetails.std}`,
-              STATISTICS_VALID_PERCENT: `${bandDetails.valid_percent}`,
+              STATISTICS_MAXIMUM: bandDetails.max,
+              STATISTICS_MEAN: bandDetails.mean,
+              STATISTICS_MINIMUM: bandDetails.min,
+              STATISTICS_STDDEV: bandDetails.std,
+              STATISTICS_VALID_PERCENT: bandDetails.valid_percent,
             }
           }
         }
@@ -117,7 +117,7 @@ export class MosaicJsonData {
     if (!res.ok) throw new Error(res.statusText)
     const tilejson = await res.json()
     const rasterInfo = await this.getMetadata(tilejson, isUniqueValueLayer)
-    const bandMetaStats = rasterInfo.band_metadata[0][1]
+    const bandMetaStats = rasterInfo.band_metadata[0][1] as BandMetadata
     const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
     const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
 

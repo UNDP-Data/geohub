@@ -28,7 +28,7 @@
       },
     },
   ]
-  const isReadonly = $page.url.pathname === '/viewer'
+  const isReadonly = $page.data.readOnly
   if (isReadonly) {
     tabs.splice(0, 1)
   }

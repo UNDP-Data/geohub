@@ -7,7 +7,7 @@ export const getPropertyValueFromExpression = (
 ) => {
   let value = ''
   if (style && style[type] && style[type][propertyName]) {
-    const values: any = style[type][propertyName]
+    const values = style[type][propertyName]
     for (let i = 0; i < values.length; i++) {
       const expression = values[i]
       if (Array.isArray(expression)) {

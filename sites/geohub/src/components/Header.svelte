@@ -5,13 +5,14 @@
   import { indicatorProgress, layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
   import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { createHeaderLinks } from '$lib/helper'
 
   export let drawerOpen = true
   export let height: number = undefined
 
   let isStyleShareVisible = false
 
-  const isReadonly = $page.url.pathname === '/viewer'
+  const isReadonly = $page.data.readOnly
 
   $: showProgressBar = $indicatorProgress
 
@@ -44,18 +45,7 @@
         initLinks()
       },
     },
-    {
-      id: 'header-link-dashboard',
-      title: 'Go to dashboards',
-      href: '/dashboards',
-      icon: 'fa-solid fa-chalkboard-user pr-1',
-    },
-    {
-      id: 'header-link-documentation',
-      title: 'User guide',
-      href: '/docs/index.html',
-      icon: 'fa-regular fa-circle-question pr-1',
-    },
+    ...createHeaderLinks(['maps', 'dashboard', 'userguide']),
   ]
 
   let finalLink: HeaderLink[] = []
@@ -89,7 +79,7 @@
 
 <style lang="scss">
   :global(.menu-item) {
-    margin: 0.75rem 2.75rem 0.75rem 0 !important;
+    margin: 0.75rem 1.75rem 0.75rem 0 !important;
   }
 
   // :global(.custom-button-mega) {

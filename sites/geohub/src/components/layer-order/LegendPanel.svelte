@@ -9,7 +9,6 @@
   export let style: StyleSpecification
 
   let hovering: boolean | number | undefined = false
-  export let defaultEditorFormat: 'yaml' | 'json' = 'yaml'
   $: isShowLastDropArea = hovering === getLastVisibleIndex()
 
   $: allLayers = style ? style.layers : []

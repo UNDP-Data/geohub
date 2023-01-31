@@ -1,4 +1,4 @@
-import type { StyleDefinition } from '@undp-data/style-switcher/package'
+import type { StyleDefinition } from '@undp-data/style-switcher'
 import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/package/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
@@ -61,16 +61,9 @@ export enum ColorMapTypes {
   QUALITATIVE = 'qualitative',
 }
 
-export enum DynamicLayerLegendTypes {
-  BUCKETED = 'bucketed',
-  CONTINUOUS = 'continuous',
-  UNIQUE = 'unique',
-  INTERVALS = 'intervals',
-}
-
-export enum VectorLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
+export enum LegendTypes {
+  DEFAULT = 'default',
+  CLASSIFY = 'classify',
 }
 
 export enum VectorApplyToTypes {
@@ -238,6 +231,10 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
     {
       title: 'GeoHub',
       url: 'https://geohub.data.undp.org',
+    },
+    {
+      title: 'Maps',
+      url: 'https://geohub.data.undp.org/maps',
     },
     {
       title: 'Dashboards',

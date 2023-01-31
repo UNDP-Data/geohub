@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { AccessLevel } from '$lib/constants'
 
   export let accessLevel: AccessLevel
+
+  let userName: string = $page.data.session?.user.name
 </script>
 
 <div class="field has-addons">
@@ -13,7 +16,7 @@
       on:click={() => (accessLevel = AccessLevel.PRIVATE)}>
       <span>
         <i class="fa-solid fa-user-lock" />
-        Me
+        <b>{userName?.split(' ')[0] ?? 'me'}</b>
       </span>
     </button>
   </p>
@@ -25,7 +28,7 @@
       on:click={() => (accessLevel = AccessLevel.ORGANIZATION)}>
       <span>
         <i class="fa-solid fa-building-lock" />
-        UNDP
+        <b>UNDP</b>
       </span>
     </button>
   </p>
@@ -37,7 +40,7 @@
       on:click={() => (accessLevel = AccessLevel.PUBLIC)}>
       <span>
         <i class="fa-solid fa-lock-open" />
-        Public
+        <b>Public</b>
       </span>
     </button>
   </p>

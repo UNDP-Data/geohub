@@ -26,6 +26,14 @@
       operation: currentSelectedOperation,
     })
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div
@@ -34,6 +42,7 @@
   {#each operationOptions as operation}
     <div
       class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
+      on:keydown={handleEnterKey}
       on:click={() => {
         operation.disabled ? null : (currentSelectedOperation = operation.value)
         operation.disabled ? null : dispatch('click')

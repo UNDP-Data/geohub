@@ -18,6 +18,7 @@
   }
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <div
   class="card"
   data-testid="color-map-picker-card-container"
@@ -36,7 +37,6 @@
       {#if isSelected}
         <div
           class="column is-size-8 selected"
-          alt="Colormap Selected"
           title="Colormap Selected">
           <i class="fas fa-check" />
         </div>
