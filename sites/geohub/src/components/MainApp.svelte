@@ -28,7 +28,8 @@
   $: innerHeight, resizeMap()
 
   $: if (map) {
-    mapStore.update(() => map)
+    //mapStore.update(() => map)
+    mapStore.set(map)
     setSplitControl()
   }
 
