@@ -90,6 +90,12 @@
       showToolTip = false
     }
   }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleColorPickerClick()
+    }
+  }
 </script>
 
 <div
@@ -98,8 +104,8 @@
   <div class="column is-1 color-picker">
     <div
       id={`heatmap-${colorRow?.index}`}
-      alt="Color Map Control"
       title="Color Map Control"
+      on:keydown={handleKeyDown}
       on:click={() => handleColorPickerClick()}
       class="discrete"
       use:popperRef

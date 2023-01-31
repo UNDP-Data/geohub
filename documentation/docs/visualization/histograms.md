@@ -4,6 +4,4 @@ GeoHub offers the user to display their data set’s statistical information usi
 
 The first example displays the histogram for the Long-term Average Of Direct Normal Irradiation data set with a normal distribution and the second example is from the highly sked data set for the Population Density of 2020.
 
-![Histogram_normal.png](../assets/data/Histogram_normal.png) ![Histogram_skew.png](../assets/data/Histogram_skew.png)
-
-<img class="image-align-left" src="Histogram_normal.png"/><img class="image-align-left" src="Histogram_skew.png"/>
+![Histogram_normal.png](../assets/data/Histogram_normal.png)![Histogram_skew.png](../assets/data/Histogram_skew.png)

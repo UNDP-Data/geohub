@@ -47,7 +47,6 @@
   export let selectedTags: Tag[] = undefined
   export let tagFilterOperatorType: 'and' | 'or' = undefined
   export let currentSearchUrl: string = undefined
-  let tags: { [key: string]: Tag[] }
 
   $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
 
@@ -60,8 +59,7 @@
     fireChangeEvent('change', true)
   }
 
-  const handleFilterInput = debounce((e) => {
-    let query = (e.target as HTMLInputElement).value
+  const handleFilterInput = debounce(() => {
     fireChangeEvent('change', true)
   }, 500)
 
