@@ -1,15 +1,23 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
-  import { Header, Footer } from '@undp-data/svelte-undp-design'
-  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Header, Footer, Stats } from '@undp-data/svelte-undp-design'
+  import type { HeaderLink, StatsCard } from '@undp-data/svelte-undp-design/package/interfaces'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { createHeaderLinks } from '$lib/helper'
 
+  let innerWidth: number
+  $: isMobile = innerWidth < 768 ? true : false
+
   let headerHeight: number
 
   let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+
+  let stats: StatsCard[] = $page.data.stats
 </script>
+
+<svelte:window bind:innerWidth />
 
 <svelte:head>
   <title>GeoHub | Maps</title>
@@ -33,6 +41,19 @@
 <div
   class="main-section mb-4"
   style="margin-top: {headerHeight}px">
+  {#if stats}
+    <div class="tile">
+      {#each stats as card}
+        <div class="tile">
+          <Stats
+            bind:card
+            size={isMobile ? 'large' : 'small'} />
+        </div>
+      {/each}
+    </div>
+    <div class="is-divider" />
+  {/if}
+
   <MapStyleCardList />
 </div>
 
