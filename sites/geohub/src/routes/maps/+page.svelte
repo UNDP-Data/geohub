@@ -76,5 +76,14 @@
     padding-top: 1rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+
+    .grid {
+      margin: 0 auto;
+      width: fit-content;
+
+      :global(.stats-card) {
+        margin: 5px;
+      }
+    }
   }
 </style>
