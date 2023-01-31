@@ -232,7 +232,7 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
       url: 'https://geohub.data.undp.org',
     },
     {
-      title: 'Maps',
+      title: 'Shared Maps',
       url: 'https://geohub.data.undp.org/maps',
     },
     {

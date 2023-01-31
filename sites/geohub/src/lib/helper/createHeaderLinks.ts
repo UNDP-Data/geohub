@@ -12,7 +12,7 @@ export const createHeaderLinks = (linkNames: LineName[]) => {
     },
     maps: {
       id: 'header-link-maps',
-      title: 'Explore maps',
+      title: 'Explore shared maps',
       href: '/maps',
       icon: 'fa-solid fa-map pr-1',
     },
