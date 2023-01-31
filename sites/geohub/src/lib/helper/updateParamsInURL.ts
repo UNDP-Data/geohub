@@ -43,7 +43,6 @@ export const updateParamsInURL = (
         })
       })
       map.setStyle(style)
-      mapStore.set(map)
     }
   }
 }
@@ -76,7 +75,7 @@ export const updateLayerURL = async (layerID: string, layerURL: URL, params: Rec
       })
 
       map.setStyle(style)
-      //await loadMap(map)
+      await loadMap(map)
       mapStore.set(map)
     }
   }
