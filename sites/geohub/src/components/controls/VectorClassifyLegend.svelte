@@ -342,12 +342,18 @@
     if (!(colorMapRows && colorMapRows.length > 0)) {
       setIntervalValues()
     }
+    const vectorInfo = layer.info as VectorTileMetadata
+    const statLayer = vectorInfo.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
+    const attribute = statLayer?.attributes.find((attr) => attr.attribute === propertySelectValue)
+    const vectorLegendType = attribute.type !== 'number' ? 'categorical' : 'interval'
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
         return [row.start, rgb]
       })
-      stops = sortStops(stops)
+      if (attribute.type === 'number') {
+        stops = sortStops(stops)
+      }
 
       let outlineStops = colorMapRows.map((row) => {
         const hex = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex()
@@ -355,15 +361,16 @@
         const cssColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${row.color[3]})`
         return [row.start, cssColor]
       })
-      outlineStops = sortStops(outlineStops)
-
+      if (attribute.type === 'number') {
+        outlineStops = sortStops(outlineStops)
+      }
       $map.setPaintProperty(layer.id, 'fill-outline-color', {
         property: propertySelectValue,
-        type: isNaN(outlineStops[0][0]) ? 'categorical' : 'interval',
+        type: vectorLegendType,
         stops: outlineStops,
       })
       $map.setPaintProperty(layer.id, 'fill-color', {
-        type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
+        type: vectorLegendType,
         property: propertySelectValue,
         stops: stops,
       })
@@ -377,22 +384,24 @@
         ]
       })
       if (stops.length > 0) {
-        stops = sortStops(stops)
+        if (attribute.type === 'number') {
+          stops = sortStops(stops)
+        }
         if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
           if (layerType === 'symbol') {
             const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
-            if (!iconSize || (iconSize && iconSize.type === 'interval')) {
+            if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
               $map.setLayoutProperty(layer.id, 'icon-size', 1)
             }
             $map.setPaintProperty(layer.id, 'icon-color', {
-              type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
+              type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
             })
           } else if (layerType === 'line') {
             $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
             $map.setPaintProperty(layer.id, 'line-color', {
-              type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
+              type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
             })
