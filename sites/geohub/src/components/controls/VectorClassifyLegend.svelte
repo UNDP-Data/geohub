@@ -474,7 +474,7 @@
         </div>
       </div>
       {#if layerType !== 'fill' && hasUniqueValues === false}
-        <div class="column">
+        <div class="column is-4">
           <div class="field">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label has-text-centered">Apply To</label>
@@ -490,10 +490,24 @@
           </div>
         </div>
       {/if}
+      {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill' || hasUniqueValues}
+        <div class="column is-3">
+          <div class="field">
+            <label class="label has-text-centered">Colormap:</label>
+            <div class="control">
+              <div class="is-flex is-justify-content-center">
+                <ColorMapPicker
+                  bind:colorMapName
+                  on:colorMapChanged={handleColormapNameChanged} />
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
     </div>
 
-    {#if hasUniqueValues === false}
-      <div class="legend-controls">
+    <div class="legend-controls">
+      {#if hasUniqueValues === false}
         <div class="field pr-2">
           <!-- svelte-ignore a11y-label-has-associated-control -->
           <label class="label has-text-centered">Classification</label>
@@ -525,15 +539,8 @@
               on:change={handleIncrementDecrementClasses} />
           </div>
         </div>
-        {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
-          <div class="colormap-picker">
-            <ColorMapPicker
-              bind:colorMapName
-              on:colorMapChanged={handleColormapNameChanged} />
-          </div>
-        {/if}
-      </div>
-    {/if}
+      {/if}
+    </div>
     <div class="columns">
       <div class="column size">
         <div>
@@ -592,13 +599,6 @@
           {/if}
         </div>
       </div>
-      {#if hasUniqueValues}
-        <div class="colormap-picker pr-4 pt-2">
-          <ColorMapPicker
-            bind:colorMapName
-            on:colorMapChanged={handleColormapNameChanged} />
-        </div>
-      {/if}
     </div>
   {/await}
 </div>
@@ -635,10 +635,6 @@
 
       .number-classes {
         margin: 0 auto;
-      }
-
-      .colormap-picker {
-        margin-left: auto;
       }
     }
   }
