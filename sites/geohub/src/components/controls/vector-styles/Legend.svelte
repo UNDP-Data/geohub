@@ -229,24 +229,16 @@
     }
   }
 
-  map.on(
-    'styledata',
-    debounce(() => {
-      if (!layer) return
-      layer = getLayerStyle(map, layer.id)
-      update()
-    }, 300),
-  )
+  const updateLegend = debounce((e) => {
+    if (!layer) return
+    if (e.layerId && layer.id !== e.layerId) return
+    layer = getLayerStyle(map, layer.id)
+    update()
+  }, 300)
 
-  map.on(
-    'source:changed',
-    debounce((e) => {
-      if (!layer) return
-      if (layer.id !== e.layerId) return
-      layer = getLayerStyle(map, e.layerId)
-      update()
-    }, 300),
-  )
+  map.on('styledata', updateLegend)
+  // maplibre event is fired in updateParamsInURL function when raster's tiles URL is updated
+  map.on('source:changed', updateLegend)
 </script>
 
 <div class="legend">{@html container.innerHTML}</div>
