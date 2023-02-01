@@ -1,15 +1,23 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
-  import { Header, Footer } from '@undp-data/svelte-undp-design'
-  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Header, Footer, Stats } from '@undp-data/svelte-undp-design'
+  import type { HeaderLink, StatsCard } from '@undp-data/svelte-undp-design/package/interfaces'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { createHeaderLinks } from '$lib/helper'
 
+  let innerWidth: number
+  $: isMobile = innerWidth < 768 ? true : false
+
   let headerHeight: number
 
   let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+
+  let stats: StatsCard[] = $page.data.stats
 </script>
+
+<svelte:window bind:innerWidth />
 
 <svelte:head>
   <title>GeoHub | Maps</title>
@@ -33,6 +41,17 @@
 <div
   class="main-section mb-4"
   style="margin-top: {headerHeight}px">
+  {#if stats}
+    <div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
+      {#each stats as card}
+        <Stats
+          bind:card
+          size={isMobile ? 'medium' : 'small'} />
+      {/each}
+    </div>
+    <div class="is-divider" />
+  {/if}
+
   <MapStyleCardList />
 </div>
 
@@ -57,5 +76,14 @@
     padding-top: 1rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+
+    .grid {
+      margin: 0 auto;
+      width: fit-content;
+
+      :global(.stats-card) {
+        margin: 5px;
+      }
+    }
   }
 </style>

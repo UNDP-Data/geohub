@@ -6,7 +6,7 @@
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT, LegendTypes } from '$lib/constants'
-  import type { BandMetadata, IntervalLegendColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
+  import type { BandMetadata, ColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Loader, Tabs } from '@undp-data/svelte-undp-design'
   import {
@@ -48,7 +48,7 @@
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
-  let colorMapRows: Array<IntervalLegendColorMapRow> = []
+  let colorMapRows: Array<ColorMapRow> = []
 
   /**
    * Force syncing with map lifecycle.

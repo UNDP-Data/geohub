@@ -159,10 +159,16 @@
         setPageUrl()
       }
       const res = await fetch(apiUrl.toString())
-      const json = await res.json()
-      styleList = json.styles
-      links = json.links
-      pages = json.pages
+      if (res.ok) {
+        const json = await res.json()
+        styleList = [...json.styles]
+        links = json.links
+        pages = json.pages
+      } else {
+        styleList = []
+        links = []
+        pages = undefined
+      }
     } finally {
       isLoading = false
     }
@@ -205,7 +211,7 @@
 </script>
 
 <div class="align-center">
-  <p class="title is-3">Saved maps</p>
+  <p class="title is-3">Shared maps</p>
 </div>
 <div class="styles-header tile is-ancestor">
   <div class="tile is-parent">
@@ -235,7 +241,7 @@
     <div class="tile is-parent">
       <div class="field">
         <!-- svelte-ignore a11y-label-has-associated-control -->
-        <label class="label">Search maps only published to:</label>
+        <label class="label">Search maps shared to:</label>
         <AccessLevelSwitcher bind:accessLevel />
       </div>
     </div>

@@ -145,24 +145,14 @@ export const DataCategories: Breadcrumb[] = [
     url: '/api/tags?key=sdg_goal',
   },
   {
-    name: 'Climate change',
-    icon: 'assets/sdgs/13.png',
-    url: '/api/datasets?sdg_goal=13',
-  },
-  {
     name: 'Microsoft Planetary',
-    icon: 'fa-brands fa-microsoft',
+    icon: 'assets/microsoft.png',
     url: '/api/datasets?stac=microsoft-pc',
   },
   {
-    name: 'pg_tileserv',
-    icon: 'assets/crunchy-spatial-logo.png',
+    name: 'Dynamic vector data',
+    icon: 'assets/postgresql.png',
     url: '/api/datasets?type=pgtileserv',
-  },
-  {
-    name: 'martin',
-    icon: 'assets/maplibre.png',
-    url: '/api/datasets?type=martin',
   },
 ]
 
@@ -224,6 +214,10 @@ export const tagSearchKeys = [
     key: 'schema',
     label: 'Schema',
   },
+  {
+    key: 'type',
+    label: 'GIS Server',
+  },
 ]
 
 export const footerItems: { [key: string]: { title: string; url: string }[] } = {
@@ -233,7 +227,7 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
       url: 'https://geohub.data.undp.org',
     },
     {
-      title: 'Maps',
+      title: 'Shared Maps',
       url: 'https://geohub.data.undp.org/maps',
     },
     {

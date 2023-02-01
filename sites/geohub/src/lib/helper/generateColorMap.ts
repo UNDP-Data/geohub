@@ -1,4 +1,4 @@
-import type { IntervalLegendColorMapRow } from '../types'
+import type { ColorMapRow } from '../types'
 import { ClassificationMethodTypes, NO_RANDOM_SAMPLING_POINTS } from '../constants'
 import chroma from 'chroma-js'
 import { getSampleFromInterval } from './getSampleFromInterval'
@@ -7,7 +7,7 @@ import { getIntervalList } from './getIntervalList'
 export const generateColorMap = (
   layerMin: number,
   layerMax: number,
-  colorMapRows: IntervalLegendColorMapRow[],
+  colorMapRows: ColorMapRow[],
   numberOfClasses: number,
   classificationMethod: ClassificationMethodTypes,
   isClassificationMethodEdited: boolean,
@@ -20,7 +20,7 @@ export const generateColorMap = (
     const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 2; i++) {
-      const row: IntervalLegendColorMapRow = {
+      const row: ColorMapRow = {
         index: i,
         color: [...scaleColorList(intervalList[i]).rgb(), 1],
         start:
@@ -34,7 +34,7 @@ export const generateColorMap = (
       }
       colorMap.push(row)
     }
-    const lastRow: IntervalLegendColorMapRow = {
+    const lastRow: ColorMapRow = {
       index: numberOfClasses - 1,
       color: [...scaleColorList(intervalList[numberOfClasses - 1]).rgb(), 1],
       start: Math.floor(percentile98),
@@ -50,7 +50,7 @@ export const generateColorMap = (
     const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 1; i++) {
-      const row: IntervalLegendColorMapRow = {
+      const row: ColorMapRow = {
         index: i,
         color: [...scaleColorList(intervalList[i]).rgb(), 1],
         start:
