@@ -11,6 +11,9 @@ $pink-invert: #fff;
 // Add a serif family
 $family-serif: 'ProximaNova', sans-serif;
 
+$gray-light: hsl(0, 0%, 71%);
+$box-shadow: 0.2em 0.2em 3px $gray-light;
+
 // 3. Set the derived variables
 // Use the new pink as the primary color
 $primary: #d12800;
