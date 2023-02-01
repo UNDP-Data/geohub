@@ -5,9 +5,10 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
-  import type { Color, IntervalLegendColorMapRow } from '$lib/types'
+  import type { ColorMapRow } from '$lib/types'
+  import type { RgbaColor } from 'svelte-awesome-color-picker'
 
-  export let colorMapRow: IntervalLegendColorMapRow
+  export let colorMapRow: ColorMapRow
   export let colorMapName: string
   export let rowWidth
   export let hasUniqueValues: boolean
@@ -25,13 +26,11 @@
     [10, 15],
   ).init()
 
-  let color: Color
+  let color: RgbaColor
   let colorPickerStyle: string
   let showToolTip = false
-  // $: colorPickerStyle = getColorPickerStyle()
 
   $: colorMapRow.color, getColorPickerStyle()
-  $: color, updateColorMap(color)
 
   // load color map upon change of layer color map name
   $: colorMapName, setColorFromProp()
@@ -46,17 +45,11 @@
     const b = rowColor[2]
     const a = rowColor[3]
 
-    // sometimes h is NaN, causing the colorpicker to break
-    // To curb this, force it to zero
     color = {
       r,
       g,
       b,
       a,
-      hex: chroma([r, g, b, a]).hex('rgba'),
-      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
-      s: chroma([r, g, b]).hsv()[1],
-      v: chroma([r, g, b]).hsv()[2],
     }
   }
 
@@ -83,10 +76,9 @@
   }
 
   // set color of display and dispatch to update map
-  const updateColorMap = (colorSelected: Color) => {
+  const updateColorMap = (colorSelected: RgbaColor) => {
     if (colorSelected) {
       try {
-        // let rgba: number[] = chroma(colorSelected['hex']).rgba()
         const { r, g, b, a } = colorSelected
         let rgba: number[] = [r, g, b, a]
 
@@ -96,16 +88,10 @@
           for example and this triggers map rerendering in vain
           The solutin is to detect changes for every dimension of the color, sum the differences and only
           update the map on a consistent color change (larger delta)
-
-
         */
-
-        // const delta = rgba.map((el, i) => abs(el - colorMapRow.color[i])).reduce((a, b) => a + b, 0)
         colorMapRow.color = rgba
         colorPickerStyle = getColorPickerStyle()
-        dispatch('changeColorMap', {
-          color,
-        })
+        dispatch('changeColorMap')
       } catch (e) {
         console.log(e)
       }
@@ -114,9 +100,6 @@
 
   const handleColorChanged = () => {
     updateColorMap(color)
-    dispatch('changeColorMap', {
-      color,
-    })
   }
 
   const handleInput = (e) => {
@@ -130,8 +113,10 @@
     })
   }
 
-  const handleEnterKey = (e: { key: string; target: { click: () => void } }) => {
+  const handleEnterKey = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       e.target.click()
     }
   }

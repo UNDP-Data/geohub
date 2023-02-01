@@ -1,52 +1,45 @@
 <script lang="ts">
-  import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker'
+  import ColorPicker, { ChromeVariant, type RgbaColor } from 'svelte-awesome-color-picker'
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
-  import type { Color } from '$lib/types'
-  import chroma from 'chroma-js'
+  import { debounce } from 'lodash-es'
 
   const dispatch = createEventDispatcher()
 
-  export let color: Color
-  let rgb: { r: number; g: number; b: number; a: number } = { r: color.r, g: color.g, b: color.b, a: color.a }
+  export let color: RgbaColor
 
-  const setColor = () => {
-    if (!rgb) return
-    const { r, g, b, a } = rgb
-    color = {
-      r,
-      g,
-      b,
-      a,
-      hex: chroma([r, g, b]).hex('rgba'),
-      h: isNaN(chroma([r, g, b]).hsv()[0]) ? 0 : chroma([r, g, b]).hsv()[0],
-      s: chroma([r, g, b]).hsv()[1],
-      v: chroma([r, g, b]).hsv()[2],
+  const changeColor = debounce((e) => {
+    const newRgba: RgbaColor = e.detail.color.rgba
+    if (color.r === newRgba.r && color.g === newRgba.g && color.b === newRgba.b && color.a === newRgba.a) {
+      return
     }
-    return color
-  }
-
-  const changeColor = () => {
-    setColor()
+    color = newRgba
     dispatch('changeColor')
-  }
+  }, 300)
 
   const handleClose = () => {
-    dispatch('closeColorPicker', { index: -1 })
+    dispatch('closeColorPicker')
   }
 
-  $: rgb, changeColor()
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div
   class="default-color-picker-container"
   data-testid="default-color-picker-container"
   use:clickOutside={handleClose}>
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
+    role="button"
     class="close is-clickable"
-    alt="Close Color Picker"
     title="Close Color Picker"
+    tabindex="0"
+    on:keydown={handleEnterKey}
     on:click={handleClose}>
     <i class="fa-solid fa-xmark fa-sm" />
   </div>
@@ -58,7 +51,8 @@
     isAlpha={true}
     toRight={true}
     isOpen={true}
-    bind:rgb />
+    on:input={changeColor}
+    rgb={color} />
 </div>
 
 <style lang="scss">
