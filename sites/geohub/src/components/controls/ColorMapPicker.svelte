@@ -65,14 +65,14 @@
   let colorMapStyle = ''
   const getColorMapStyle = () => {
     const colorMap = chroma.scale(colorMapName).mode('lrgb').colors(5, 'rgba')
-    colorMapStyle = `height: 25px; width:50px; background: linear-gradient(90deg, ${colorMap});`
+    colorMapStyle = `height: 20px; width:40px; background: linear-gradient(90deg, ${colorMap});`
   }
   $: colorMapName, getColorMapStyle()
 </script>
 
 <div
   role="button"
-  class="colormap-button is-flex is-flex-direction-column is-align-items-center"
+  class="colormap-button box m-0 py-1 px-2 is-flex is-flex-direction-column is-align-items-center"
   aria-label="Open Color Scheme Picker"
   tabindex="0"
   use:popperRef
@@ -85,11 +85,7 @@
       style={colorMapStyle}
       data-testid="color-map-figure" />
   </div>
-  <div class="content is-size-7 columns is-gapless">
-    <div class="column is-10">
-      {colorMapName}
-    </div>
-  </div>
+  <p class="subtitle is-6">{colorMapName}</p>
 </div>
 
 {#if showTooltip}
@@ -149,8 +145,6 @@
   @import '../../styles/popper.scss';
 
   .colormap-button {
-    width: fit-content;
-    height: fit-content;
     cursor: pointer;
   }
 
