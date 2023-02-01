@@ -4,7 +4,7 @@
   import { debounce } from 'lodash-es'
   import type { LayerSpecification } from 'maplibre-gl'
   import { hexToCSSFilter } from 'hex-to-css-filter'
-  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
+  import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
   import {
     ClassificationMethodNames,
@@ -25,7 +25,7 @@
     remapInputValue,
   } from '$lib/helper'
   import type {
-    IntervalLegendColorMapRow,
+    ColorMapRow,
     Layer,
     SpriteImage,
     VectorLayerTileStatAttribute,
@@ -68,7 +68,7 @@
   let hasUniqueValues = false
   let propertySelectValue
   let numberOfClasses: number
-  let colorMapRows: IntervalLegendColorMapRow[]
+  let colorMapRows: ColorMapRow[]
 
   let applyToOptions: Radio[] = [
     {
@@ -290,7 +290,7 @@
 
               for (let i = 0; i < stat.values.length; i++) {
                 const color = chroma(scaleColorList[i]).rgb()
-                const row: IntervalLegendColorMapRow = {
+                const row: ColorMapRow = {
                   index: i,
                   color: [...color, 1],
                   start: stat.values[i],
@@ -318,7 +318,7 @@
 
               // create interval list (start / end)
               for (let i = 0; i < intervalList.length - 1; i++) {
-                const row: IntervalLegendColorMapRow = {
+                const row: ColorMapRow = {
                   index: i,
                   color: [...scaleColorList(intervalList[i]).rgb(), 1],
                   start: intervalList[i],
@@ -539,7 +539,7 @@
         <div>
           {#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
             {#each colorMapRows as colorMapRow}
-              <IntervalsLegendColorMapRow
+              <LegendColorMapRow
                 bind:colorMapRow
                 bind:colorMapName
                 bind:rowWidth

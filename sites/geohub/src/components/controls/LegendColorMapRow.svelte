@@ -5,10 +5,10 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
-  import type { IntervalLegendColorMapRow } from '$lib/types'
+  import type { ColorMapRow } from '$lib/types'
   import type { RgbaColor } from 'svelte-awesome-color-picker'
 
-  export let colorMapRow: IntervalLegendColorMapRow
+  export let colorMapRow: ColorMapRow
   export let colorMapName: string
   export let rowWidth
   export let hasUniqueValues: boolean

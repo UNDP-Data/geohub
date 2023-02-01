@@ -18,8 +18,8 @@
     updateParamsInURL,
   } from '$lib/helper'
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import IntervalsLegendColorMapRow from '$components/controls/IntervalsLegendColorMapRow.svelte'
-  import type { IntervalLegendColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
+  import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
+  import type { ColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
   import { map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
@@ -31,7 +31,7 @@
   export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
   export let colorMapName: string
   export let classificationMethod: ClassificationMethodTypes
-  export let colorMapRows: Array<IntervalLegendColorMapRow>
+  export let colorMapRows: Array<ColorMapRow>
   // this var is necessary to maintain the state of teh colormap when switching the legend.
   // and it should be set by the bool flags that control the colormap picker visibility from parent container
 
@@ -271,7 +271,7 @@
 
   <div class="colormap-rows-container">
     {#each colorMapRows as colorMapRow}
-      <IntervalsLegendColorMapRow
+      <LegendColorMapRow
         bind:colorMapRow
         bind:colorMapName
         bind:hasUniqueValues={layerHasUniqueValues}

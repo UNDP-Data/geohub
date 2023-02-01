@@ -3,7 +3,7 @@
   import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte'
   import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte'
   import { ClassificationMethodTypes, LegendTypes } from '$lib/constants'
-  import type { Layer, IntervalLegendColorMapRow } from '$lib/types'
+  import type { Layer, ColorMapRow } from '$lib/types'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
 
   export let layer: Layer
@@ -11,7 +11,7 @@
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
   export let numberOfClasses: number
-  export let colorMapRows: Array<IntervalLegendColorMapRow>
+  export let colorMapRows: Array<ColorMapRow>
 </script>
 
 <LegendTypeSwitcher bind:legendType />

@@ -1,6 +1,6 @@
-import type { IntervalLegendColorMapRow } from '$lib/types'
+import type { ColorMapRow } from '$lib/types'
 
-export const updateIntervalValues = (event: CustomEvent, colorMapRows: IntervalLegendColorMapRow[]) => {
+export const updateIntervalValues = (event: CustomEvent, colorMapRows: ColorMapRow[]) => {
   const rowIndex = event.detail.index
   const inputType = event.detail.id
   let inputValue = event.detail.value as number
