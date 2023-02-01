@@ -13,6 +13,7 @@
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let colorMapName: string
+  export let buttonWidth = 40
 
   const dispatch = createEventDispatcher()
   const colorMapTypes = [
@@ -65,9 +66,10 @@
   let colorMapStyle = ''
   const getColorMapStyle = () => {
     const colorMap = chroma.scale(colorMapName).mode('lrgb').colors(5, 'rgba')
-    colorMapStyle = `height: 20px; width:40px; background: linear-gradient(90deg, ${colorMap});`
+    colorMapStyle = `height: 20px; width:${buttonWidth}px; background: linear-gradient(90deg, ${colorMap});`
   }
   $: colorMapName, getColorMapStyle()
+  $: buttonWidth, getColorMapStyle()
 </script>
 
 <div

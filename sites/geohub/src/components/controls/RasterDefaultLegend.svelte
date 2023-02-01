@@ -6,9 +6,6 @@
 
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
-
-  import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
-  import { ColorMapTypes } from '$lib/constants'
   import {
     getActiveBandIndex,
     getLayerStyle,
@@ -26,19 +23,22 @@
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
 
+  let contentWidth = 300
   let layerMin = NaN
   let layerMax = NaN
 
   const bandIndex = getActiveBandIndex(info)
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
+
   if ('stats' in info) {
     const band = Object.keys(info.stats)[bandIndex]
     layerMin = Number(info.stats[band].min)
     layerMax = Number(info.stats[band].max)
   } else {
-    const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
     layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
+  const unit = bandMetaStats.Unit && bandMetaStats.Unit !== '-' ? bandMetaStats.Unit : ''
 
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
@@ -98,20 +98,23 @@
   }
 </script>
 
-<div class="columns is-mobile">
+<div
+  class="columns is-mobile"
+  bind:clientWidth={contentWidth}>
   <div class="column">
     <div
       class="group"
       data-testid="continuous-view-container">
-      <div class="active-color-map">
-        <ColorMapPickerCard
-          {colorMapName}
-          colorMapType={ColorMapTypes.SEQUENTIAL}
-          isSelected={false}
-          isCardStyle={false} />
+      <div
+        class="active-color-map has-tooltip-arrow has-tooltip-bottom"
+        data-tooltip="Choose a colormap">
+        <ColorMapPicker
+          bind:colorMapName
+          on:colorMapChanged={colorMapNameChanged}
+          buttonWidth={contentWidth - 30} />
       </div>
 
-      <div class="range-slider pt-4">
+      <div class="range-slider pt-5 px-2">
         <RangeSlider
           bind:values={rangeSliderValues}
           float
@@ -124,15 +127,9 @@
           first="label"
           last="label"
           rest={false}
+          suffix={unit}
           on:stop={onSliderStop} />
       </div>
-    </div>
-  </div>
-  <div class="column px-0 mr-2">
-    <div class="colormap-picker">
-      <ColorMapPicker
-        bind:colorMapName
-        on:colorMapChanged={colorMapNameChanged} />
     </div>
   </div>
 </div>
