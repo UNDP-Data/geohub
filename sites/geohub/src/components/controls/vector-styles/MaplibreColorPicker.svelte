@@ -5,21 +5,17 @@
 
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import Popper from '$lib/popper'
-  import type { Color } from '$lib/types'
+  import type { RgbaColor } from 'svelte-awesome-color-picker'
 
   const dispatch = createEventDispatcher()
 
   export let rgba = `rgba(0,0,0,1)`
 
-  let color: Color = {
+  let color: RgbaColor = {
     r: chroma(rgba).rgba()[0],
     g: chroma(rgba).rgba()[1],
     b: chroma(rgba).rgba()[2],
     a: chroma(rgba).rgba()[3],
-    hex: chroma(rgba).hex('rgb'),
-    h: isNaN(chroma(rgba).hsv()[0]) ? 0 : chroma(rgba).hsv()[0],
-    s: chroma(rgba).hsv()[1],
-    v: chroma(rgba).hsv()[2],
   }
 
   let showToolTip = false
