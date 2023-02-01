@@ -2,20 +2,24 @@
   import ColorPicker, { ChromeVariant, type RgbaColor } from 'svelte-awesome-color-picker'
   import { createEventDispatcher } from 'svelte'
   import { clickOutside } from 'svelte-use-click-outside'
+  import { debounce } from 'lodash-es'
 
   const dispatch = createEventDispatcher()
 
   export let color: RgbaColor
 
-  const changeColor = () => {
+  const changeColor = debounce((e) => {
+    const newRgba: RgbaColor = e.detail.color.rgba
+    if (color.r === newRgba.r && color.g === newRgba.g && color.b === newRgba.b && color.a === newRgba.a) {
+      return
+    }
+    color = newRgba
     dispatch('changeColor')
-  }
+  }, 300)
 
   const handleClose = () => {
     dispatch('closeColorPicker', { index: -1 })
   }
-
-  $: color, changeColor()
 
   const handleEnterKey = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -47,7 +51,8 @@
     isAlpha={true}
     toRight={true}
     isOpen={true}
-    bind:rgb={color} />
+    on:input={changeColor}
+    rgb={color} />
 </div>
 
 <style lang="scss">
