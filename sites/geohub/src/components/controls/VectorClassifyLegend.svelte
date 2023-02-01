@@ -69,6 +69,7 @@
   let propertySelectValue
   let numberOfClasses: number
   let colorMapRows: ColorMapRow[]
+  let randomSample: { [key: string]: number[] } = {}
 
   let applyToOptions: Radio[] = [
     {
@@ -280,6 +281,11 @@
             layerMax = stat.max
             layerMin = stat.min
 
+            if (!randomSample[stat.attribute]) {
+              randomSample[stat.attribute] = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+            }
+            const sample = randomSample[stat.attribute]
+
             const propertySelectValues = []
             const values = stat.values
             if (values && values.length <= UNIQUE_VALUE_THRESHOLD) {
@@ -306,14 +312,7 @@
                 ]
               }
 
-              const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-              const intervalList = getIntervalList(
-                classificationMethod,
-                stat.min,
-                stat.max,
-                randomSample,
-                numberOfClasses,
-              )
+              const intervalList = getIntervalList(classificationMethod, stat.min, stat.max, sample, numberOfClasses)
               const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
