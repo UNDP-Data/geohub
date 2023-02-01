@@ -18,9 +18,6 @@ describe('Color Map Picker Card : Card Style', () => {
       colorMapName: colormap,
       colorMapType: ColorMapTypes.SEQUENTIAL,
       isSelected: false,
-      layerMin: 100,
-      layerMax: 103,
-      numberOfClasses: 5,
       isCardStyle: true,
     })
     cardContainer = sut.getByTestId('color-map-picker-card-container')
@@ -57,9 +54,6 @@ describe('Color Map Picker Card : Card Style : Selected', () => {
       colorMapName: colormap,
       colorMapType: ColorMapTypes.SEQUENTIAL,
       isSelected: true,
-      layerMin: 100,
-      layerMax: 103,
-      numberOfClasses: 5,
       isCardStyle: true,
     })
     cardContainer = sut.getByTestId('color-map-picker-card-container')
@@ -80,9 +74,6 @@ describe('Color Map Picker Card : List Style', () => {
       colorMapName: colormap,
       colorMapType: ColorMapTypes.SEQUENTIAL,
       isSelected: false,
-      layerMin: 100,
-      layerMax: 103,
-      numberOfClasses: 5,
       isCardStyle: false,
     })
     cardContainer = sut.getByTestId('color-map-picker-card-container')
