@@ -21,7 +21,7 @@
   let showToolTip = false
 
   const setColor = () => {
-    rgba = `rgba(${color.r},${color.g},${color.b},${color.a})`
+    rgba = `rgba(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(color.b)},${color.a})`
     dispatch('change', {
       color: rgba,
     })

@@ -18,7 +18,7 @@
   }, 300)
 
   const handleClose = () => {
-    dispatch('closeColorPicker', { index: -1 })
+    dispatch('closeColorPicker')
   }
 
   const handleEnterKey = (e: KeyboardEvent) => {

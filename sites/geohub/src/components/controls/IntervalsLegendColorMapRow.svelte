@@ -31,7 +31,6 @@
   let showToolTip = false
 
   $: colorMapRow.color, getColorPickerStyle()
-  $: color, updateColorMap(color)
 
   // load color map upon change of layer color map name
   $: colorMapName, setColorFromProp()
