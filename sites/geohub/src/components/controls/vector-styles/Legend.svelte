@@ -237,6 +237,16 @@
       update()
     }, 300),
   )
+
+  map.on(
+    'source:changed',
+    debounce((e) => {
+      if (!layer) return
+      if (layer.id !== e.layerId) return
+      layer = getLayerStyle(map, e.layerId)
+      update()
+    }, 300),
+  )
 </script>
 
 <div class="legend">{@html container.innerHTML}</div>

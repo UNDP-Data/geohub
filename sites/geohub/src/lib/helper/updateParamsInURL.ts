@@ -3,7 +3,9 @@ import type {
   HeatmapLayerSpecification,
   LineLayerSpecification,
   RasterLayerSpecification,
+  RasterSourceSpecification,
   SymbolLayerSpecification,
+  VectorSourceSpecification,
 } from 'maplibre-gl'
 
 import { get } from 'svelte/store'
@@ -24,10 +26,14 @@ export const updateParamsInURL = (
   })
   const map = get(mapStore)
   if (map.getSource(layerStyle.source)) {
-    map.getSource(layerStyle.source).tiles = [decodeURI(layerURL.toString())]
+    const source = map.getSource(layerStyle.source) as RasterSourceSpecification | VectorSourceSpecification
+    source.tiles = [decodeURI(layerURL.toString())]
     map.style.sourceCaches[layerStyle.source].clearTiles()
     map.style.sourceCaches[layerStyle.source].update(map.transform)
     map.triggerRepaint()
+    map.fire('source:changed', {
+      layerId: layerStyle.id,
+    })
   }
 }
 
