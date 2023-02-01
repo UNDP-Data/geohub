@@ -111,7 +111,7 @@
           isCardStyle={false} />
       </div>
 
-      <div class="range-slider">
+      <div class="range-slider pt-4">
         <RangeSlider
           bind:values={rangeSliderValues}
           float
@@ -128,7 +128,7 @@
       </div>
     </div>
   </div>
-  <div class="column">
+  <div class="column px-0 mr-2">
     <div class="colormap-picker">
       <ColorMapPicker
         bind:colorMapName
@@ -143,19 +143,12 @@
   }
 
   .group {
-    padding: 2px;
-
     .range-slider {
       --range-handle-focus: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
       --range-range-inactive: #2196f3;
       margin: 0;
-    }
-
-    .active-color-map {
-      padding-bottom: 10px;
-      padding-top: 4px;
     }
   }
 </style>
