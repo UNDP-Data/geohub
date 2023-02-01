@@ -493,6 +493,7 @@
       {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill' || hasUniqueValues}
         <div class="column is-3">
           <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label has-text-centered">Colormap:</label>
             <div class="control">
               <div class="is-flex is-justify-content-center">

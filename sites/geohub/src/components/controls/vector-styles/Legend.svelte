@@ -145,7 +145,7 @@
           divIcon.style.opacity = symbol.attributes.style.opacity
 
           const color: any = map.getPaintProperty(layer.id, 'fill-color')
-          if (color && color.type === 'interval') {
+          if (color && ['interval', 'categorical'].includes(color.type)) {
             const colormap = chroma
               .scale(color.stops.map((stop) => stop[1]))
               .mode('lrgb')
@@ -188,7 +188,7 @@
             }
           } else {
             let color: any = map.getPaintProperty(layer.id, 'line-color')
-            if (color && color.type === 'interval') {
+            if (color && ['interval', 'categorical'].includes(color.type)) {
               const colormap = chroma
                 .scale(color.stops.map((stop) => stop[1]))
                 .mode('lrgb')
