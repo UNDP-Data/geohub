@@ -16,7 +16,7 @@
   const propertyName = 'line-dasharray'
   const layerId = layer.id
   const lineTypes = [
-    { title: 'solid', value: [1], pattern: '______' },
+    { title: 'solid', value: '', pattern: '______' },
     { title: 'dash', value: [10, 4], pattern: '_____&nbsp;&nbsp;' },
     { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '_____&nbsp;&nbsp;_&nbsp;&nbsp;' },
     { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_' },
@@ -26,7 +26,9 @@
   let linePatternColorRgba = defaultColor
   let lineType = (
     style?.paint[propertyName]
-      ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
+      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
       : lineTypes.find((item) => item.title === 'solid')
   ).title
 
@@ -64,7 +66,13 @@
 
   const setLineType = () => {
     if (style?.type !== LayerTypes.LINE || lineType === undefined) return
-    $map.setPaintProperty(layerId, propertyName, lineTypes.find((item) => item.title === lineType).value)
+
+    const value = lineTypes.find((item) => item.title === lineType).value
+    if (value) {
+      $map.setPaintProperty(layer.id, propertyName, value)
+    } else {
+      $map.setPaintProperty(layer.id, propertyName, undefined)
+    }
   }
 </script>
 
