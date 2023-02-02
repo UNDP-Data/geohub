@@ -3,8 +3,6 @@
 </script>
 
 <svelte:head>
-  <title>GeoHub | United Nations Development Programme</title>
-
   <style type="text/css">
     html,
     body {
