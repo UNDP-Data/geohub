@@ -39,6 +39,11 @@
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
+  import IconImage from './vector-styles/IconImage.svelte'
+  import IconOverlap from './vector-styles/IconOverlap.svelte'
+  import IconColor from './vector-styles/IconColor.svelte'
+  import IconSize from '$components/controls/vector-styles/IconSize.svelte'
+  import VectorLine from './VectorLine.svelte'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -69,6 +74,7 @@
   let propertySelectValue
   let numberOfClasses: number
   let colorMapRows: ColorMapRow[]
+  let randomSample: { [key: string]: number[] } = {}
 
   let applyToOptions: Radio[] = [
     {
@@ -102,6 +108,7 @@
         }
       }
       $map?.on('zoom', updateMap)
+      $map?.on('icon-color:changed', setCssIconFilter)
       resolve()
     })
   }
@@ -280,6 +287,11 @@
             layerMax = stat.max
             layerMin = stat.min
 
+            if (!randomSample[stat.attribute]) {
+              randomSample[stat.attribute] = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+            }
+            const sample = randomSample[stat.attribute]
+
             const propertySelectValues = []
             const values = stat.values
             if (values && values.length <= UNIQUE_VALUE_THRESHOLD) {
@@ -306,14 +318,7 @@
                 ]
               }
 
-              const randomSample = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
-              const intervalList = getIntervalList(
-                classificationMethod,
-                stat.min,
-                stat.max,
-                randomSample,
-                numberOfClasses,
-              )
+              const intervalList = getIntervalList(classificationMethod, stat.min, stat.max, sample, numberOfClasses)
               const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
 
               // create interval list (start / end)
@@ -342,12 +347,18 @@
     if (!(colorMapRows && colorMapRows.length > 0)) {
       setIntervalValues()
     }
+    const vectorInfo = layer.info as VectorTileMetadata
+    const statLayer = vectorInfo.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
+    const attribute = statLayer?.attributes.find((attr) => attr.attribute === propertySelectValue)
+    const vectorLegendType = attribute.type !== 'number' ? 'categorical' : 'interval'
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
         return [row.start, rgb]
       })
-      stops = sortStops(stops)
+      if (attribute.type === 'number') {
+        stops = sortStops(stops)
+      }
 
       let outlineStops = colorMapRows.map((row) => {
         const hex = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex()
@@ -355,15 +366,16 @@
         const cssColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${row.color[3]})`
         return [row.start, cssColor]
       })
-      outlineStops = sortStops(outlineStops)
-
+      if (attribute.type === 'number') {
+        outlineStops = sortStops(outlineStops)
+      }
       $map.setPaintProperty(layer.id, 'fill-outline-color', {
         property: propertySelectValue,
-        type: isNaN(outlineStops[0][0]) ? 'categorical' : 'interval',
+        type: vectorLegendType,
         stops: outlineStops,
       })
       $map.setPaintProperty(layer.id, 'fill-color', {
-        type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
+        type: vectorLegendType,
         property: propertySelectValue,
         stops: stops,
       })
@@ -377,22 +389,24 @@
         ]
       })
       if (stops.length > 0) {
-        stops = sortStops(stops)
+        if (attribute.type === 'number') {
+          stops = sortStops(stops)
+        }
         if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
           if (layerType === 'symbol') {
             const iconSize = $map.getLayoutProperty(layer.id, 'icon-size')
-            if (!iconSize || (iconSize && iconSize.type === 'interval')) {
+            if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
               $map.setLayoutProperty(layer.id, 'icon-size', 1)
             }
             $map.setPaintProperty(layer.id, 'icon-color', {
-              type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
+              type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
             })
           } else if (layerType === 'line') {
             $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
             $map.setPaintProperty(layer.id, 'line-color', {
-              type: isNaN(stops[0][0]) ? 'categorical' : 'interval',
+              type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
             })
@@ -459,6 +473,61 @@
   class="advanced-container"
   data-testid="advanced-container">
   {#await isInitialising then}
+    {#if layerType === 'symbol'}
+      <div class="columns is-mobile px-2 py-2">
+        <div class="column is-flex is-justify-content-center p-0">
+          <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="label has-text-centered">Icon</label>
+            <div class="control">
+              <IconImage
+                bind:layer
+                bind:defaultColor />
+            </div>
+          </div>
+        </div>
+        <div class="column is-flex is-justify-content-center p-0 pl-2">
+          <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="label has-text-centered">Overlap Priority</label>
+            <div class="control pt-1">
+              <IconOverlap {layer} />
+            </div>
+          </div>
+        </div>
+
+        {#if applyToOption === VectorApplyToTypes.SIZE}
+          <div class="column is-flex is-justify-content-center p-0 pl-2">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Color</label>
+              <div class="control pl-2 pt-2">
+                <IconColor
+                  bind:layer
+                  bind:defaultColor />
+              </div>
+            </div>
+          </div>
+        {/if}
+        {#if hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
+          <div class="column is-flex is-justify-content-center p-0 pl-2">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Size</label>
+              <div class="control">
+                <IconSize {layer} />
+              </div>
+            </div>
+          </div>
+        {/if}
+      </div>
+    {:else if layerType === 'line'}
+      <VectorLine
+        bind:layer
+        bind:defaultColor
+        showLineColor={applyToOption === VectorApplyToTypes.SIZE}
+        showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR} />
+    {/if}
     <div class="columns is-mobile">
       <div class="column">
         <div class="field">
@@ -474,7 +543,7 @@
         </div>
       </div>
       {#if layerType !== 'fill' && hasUniqueValues === false}
-        <div class="column">
+        <div class="column is-4">
           <div class="field">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label has-text-centered">Apply To</label>
@@ -490,10 +559,25 @@
           </div>
         </div>
       {/if}
+      {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill' || hasUniqueValues}
+        <div class="column is-3">
+          <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="label has-text-centered">Colormap:</label>
+            <div class="control">
+              <div class="is-flex is-justify-content-center">
+                <ColorMapPicker
+                  bind:colorMapName
+                  on:colorMapChanged={handleColormapNameChanged} />
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
     </div>
 
-    {#if hasUniqueValues === false}
-      <div class="legend-controls">
+    <div class="legend-controls">
+      {#if hasUniqueValues === false}
         <div class="field pr-2">
           <!-- svelte-ignore a11y-label-has-associated-control -->
           <label class="label has-text-centered">Classification</label>
@@ -525,15 +609,8 @@
               on:change={handleIncrementDecrementClasses} />
           </div>
         </div>
-        {#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill'}
-          <div class="colormap-picker">
-            <ColorMapPicker
-              bind:colorMapName
-              on:colorMapChanged={handleColormapNameChanged} />
-          </div>
-        {/if}
-      </div>
-    {/if}
+      {/if}
+    </div>
     <div class="columns">
       <div class="column size">
         <div>
@@ -562,12 +639,14 @@
                     {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
                     <tr data-testid="icon-size-row-container">
                       <td class="has-text-centered">
-                        {#if icon}
-                          <img
-                            src={icon.src}
-                            alt={icon.alt}
-                            style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
-                        {/if}
+                        {#key cssIconFilter}
+                          {#if icon}
+                            <img
+                              src={icon.src}
+                              alt={icon.alt}
+                              style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`} />
+                          {/if}
+                        {/key}
                       </td>
                       <td>{row.start}</td>
                       <td>{row.end}</td>
@@ -592,13 +671,6 @@
           {/if}
         </div>
       </div>
-      {#if hasUniqueValues}
-        <div class="colormap-picker pr-4 pt-2">
-          <ColorMapPicker
-            bind:colorMapName
-            on:colorMapChanged={handleColormapNameChanged} />
-        </div>
-      {/if}
     </div>
   {/await}
 </div>
@@ -635,10 +707,6 @@
 
       .number-classes {
         margin: 0 auto;
-      }
-
-      .colormap-picker {
-        margin-left: auto;
       }
     }
   }

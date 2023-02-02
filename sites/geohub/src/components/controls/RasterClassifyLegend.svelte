@@ -259,13 +259,21 @@
       </div>
     </div>
     <div
-      class="colormap-picker"
-      style={layerHasUniqueValues ? 'margin-right:0%' : null}>
-      <ColorMapPicker
-        bind:colorMapName
-        on:colorMapChanged={() => {
-          colorMapNameChanged()
-        }} />
+      class="field"
+      hidden={layerHasUniqueValues}>
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label class="label has-text-centered">Colormap</label>
+      <div class="control">
+        <div
+          class="colormap-picker"
+          style={layerHasUniqueValues ? 'margin-right:0%' : null}>
+          <ColorMapPicker
+            bind:colorMapName
+            on:colorMapChanged={() => {
+              colorMapNameChanged()
+            }} />
+        </div>
+      </div>
     </div>
   </div>
 

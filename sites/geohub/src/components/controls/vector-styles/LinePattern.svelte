@@ -16,17 +16,19 @@
   const propertyName = 'line-dasharray'
   const layerId = layer.id
   const lineTypes = [
-    { title: 'solid', value: [1], pattern: '______' },
-    { title: 'dash', value: [10, 4], pattern: '_____&nbsp;&nbsp;' },
-    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '_____&nbsp;&nbsp;_&nbsp;&nbsp;' },
-    { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_' },
+    { title: 'solid', value: '', pattern: '____________' },
+    { title: 'dash', value: [10, 4], pattern: '_____&nbsp;&nbsp;_____' },
+    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '_____&nbsp;_&nbsp;_____&nbsp;' },
+    { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_' },
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let linePatternColorRgba = defaultColor
   let lineType = (
     style?.paint[propertyName]
-      ? lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
+      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
       : lineTypes.find((item) => item.title === 'solid')
   ).title
 
@@ -40,7 +42,7 @@
             style="color: ${chroma(
               linePatternColorRgba,
             ).hex()};font-family: monospace;position:relative;left: 10px;top:-4px;position:relative;font-weight: bold;">
-            ${type.pattern} ${type.pattern}
+            ${type.pattern}
           </span>`
 
       return {
@@ -64,7 +66,13 @@
 
   const setLineType = () => {
     if (style?.type !== LayerTypes.LINE || lineType === undefined) return
-    $map.setPaintProperty(layerId, propertyName, lineTypes.find((item) => item.title === lineType).value)
+
+    const value = lineTypes.find((item) => item.title === lineType).value
+    if (value) {
+      $map.setPaintProperty(layer.id, propertyName, value)
+    } else {
+      $map.setPaintProperty(layer.id, propertyName, undefined)
+    }
   }
 </script>
 

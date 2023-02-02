@@ -6,40 +6,56 @@
 
   export let layer: Layer
   export let defaultColor: string = undefined
+  export let showLineColor = true
+  export let showLineWidth = true
 </script>
 
-<div
-  class="line-simple-container"
-  data-testid="line-simple-container">
-  <div class="columns is-mobile">
-    <div class="column is-5">
-      <div class="has-text-centered pb-2">Line Color</div>
-      <div class="is-flex is-justify-content-center bring-to-front">
-        <LineColor
-          bind:layer
-          bind:defaultColor />
-      </div>
-    </div>
-    <div class="column is-7">
-      <div class="has-text-centered">Line Width</div>
-      <div class="is-flex is-justify-content-center send-to-back">
-        <LineWidth bind:layer />
+<div class="columns is-mobile">
+  <div class="column">
+    <div
+      class="is-flex is-justify-content-center p-0 m-0"
+      style="width: 170px;">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label has-text-centered">Line Pattern</label>
+        <div class="control">
+          <LinePattern
+            bind:layer
+            bind:defaultColor />
+        </div>
       </div>
     </div>
   </div>
-
-  <div
-    class="is-divider separator mt-3 mb-3"
-    style="margin-right: -56px;" />
-
-  <div class="columns line-pattern pl-2">
-    <div class="column">
-      <div class="pb-2">Line Pattern</div>
-      <div class="is-flex is-justify-content-center">
-        <LinePattern
-          bind:layer
-          bind:defaultColor />
-      </div>
+  <div class="column p-0 m-0">
+    <div class="tile is-vertical is-parent">
+      {#if showLineColor}
+        <div class="tile is-child">
+          <div class="is-flex is-justify-content-center p-0 m-0">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Color</label>
+              <div class="control pl-2">
+                <LineColor
+                  bind:layer
+                  bind:defaultColor />
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
+      {#if showLineWidth}
+        <div class="tile is-child">
+          <div class="is-flex is-justify-content-center p-0 m-0">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Width</label>
+              <div class="control">
+                <LineWidth bind:layer />
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
     </div>
   </div>
 </div>

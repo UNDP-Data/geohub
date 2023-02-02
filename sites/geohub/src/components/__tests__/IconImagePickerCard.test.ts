@@ -12,7 +12,6 @@ describe('Icon Image Picker : Card Style', () => {
   beforeEach(() => {
     sut = render(IconImagePickerCard, {
       iconImageAlt: 'circle',
-      legendSymbolContainer: undefined,
     })
     cardContainer = sut.getByTestId('icon-image-picker-card-container')
   })
@@ -46,22 +45,6 @@ describe('Icon Image Picker : Card Style', () => {
   })
 })
 
-describe('Icon Picker Card : Card Style : Legend Symbol Container', () => {
-  let sut: RenderResult
-
-  beforeEach(() => {
-    sut = render(IconImagePickerCard, {
-      iconImageAlt: 'circle',
-      legendSymbolContainer: document.createElement('div'),
-    })
-  })
-
-  it('should render the legend symbol container', () => {
-    const legendSymbolContainer = sut.getByTestId('legend-symbol-container')
-    expect(legendSymbolContainer).toBeDefined()
-  })
-})
-
 describe('Icon Picker Card : Card Style : Selected', () => {
   let sut: RenderResult
 
@@ -69,7 +52,6 @@ describe('Icon Picker Card : Card Style : Selected', () => {
     sut = render(IconImagePickerCard, {
       iconImageAlt: 'circle',
       isSelected: true,
-      legendSymbolContainer: undefined,
     })
   })
 

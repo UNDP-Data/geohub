@@ -3,7 +3,6 @@
 
   export let iconImageAlt: string
   export let iconImageSrc = null
-  export let legendSymbolContainer: HTMLElement
   export let isSelected = false
 </script>
 
@@ -15,20 +14,14 @@
       <figure
         class={`image is-24x24 ${isSelected ? '' : 'is-clickable'}`}
         data-testid="icon-figure">
-        {#if legendSymbolContainer}
-          <div
-            data-testid="legend-symbol-container"
-            bind:this={legendSymbolContainer} />
-        {:else}
-          <input
-            data-testid="icon-image"
-            type="image"
-            src={iconImageSrc}
-            alt={clean(iconImageAlt)}
-            title={clean(iconImageAlt)}
-            style="width:24px; height:24px; color: white;"
-            value={iconImageAlt} />
-        {/if}
+        <input
+          data-testid="icon-image"
+          type="image"
+          src={iconImageSrc}
+          alt={clean(iconImageAlt)}
+          title={clean(iconImageAlt)}
+          style="width:24px; height:24px; color: white;"
+          value={iconImageAlt} />
       </figure>
     </div>
     <div
@@ -36,14 +29,12 @@
       style="padding-top: 5px;">
       <div
         class="column is-flex is-justify-content-center sprite-image-title"
-        alt={iconImageAlt}
         title={iconImageAlt}>
         {clean(iconImageAlt)}
       </div>
       {#if isSelected}
         <div
           class="selected"
-          alt="Icon Selected"
           title="Icon Selected">
           <i class="fa-solid fa-check" />
         </div>
