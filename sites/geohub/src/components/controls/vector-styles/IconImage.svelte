@@ -7,11 +7,10 @@
   import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
-  import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
   import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
-  import { getLayerStyle } from '$lib/helper'
+  import { clean, getLayerStyle } from '$lib/helper'
 
   export let layer: Layer
   export let defaultColor: string = undefined
@@ -22,12 +21,19 @@
 
   let iconImage = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   let isIconListPanelVisible = false
-  let legendSymbolContainer: HTMLElement = document.createElement('div')
+
+  let iconColor: string
+  let iconImageSrc: string
+  let iconImageStyle: string
 
   onMount(async () => {
     if (!$map) return
     updateLegend()
-    $map.on('icon-color:changed', updateLegend)
+    $map.on('icon-color:changed', (e) => {
+      console.log(e)
+      iconColor = e.color
+      updateLegend()
+    })
   })
 
   const {
@@ -48,22 +54,13 @@
     $map.setPaintProperty(layerId, 'icon-halo-width', 1)
     const layerStyle = getLayerStyle($map, layerId)
 
-    if (!legendSymbolContainer) {
-      legendSymbolContainer = document.createElement('div')
-    }
-    legendSymbolContainer.innerHTML = ''
-
     if (layerStyle.layout && layerStyle.layout['icon-image']) {
       const icon = $spriteImageList.find((icon) => icon.alt === layerStyle.layout['icon-image'])
+      iconImageSrc = icon.src
       if (icon) {
-        const rgba = chroma(defaultColor).rgba()
+        const rgba = iconColor ? chroma(iconColor).rgba() : chroma(defaultColor).rgba()
         const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
-        const img = document.createElement('img')
-        img.src = icon.src
-        img.alt = icon.alt
-        img.title = icon.alt
-        img.style.cssText = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
-        legendSymbolContainer.appendChild(img)
+        iconImageStyle = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
       }
     }
   }
@@ -91,9 +88,30 @@
   use:popperRef
   on:keydown={handleKeyDown}
   on:click={handleClosePopup}>
-  <IconImagePickerCard
-    bind:legendSymbolContainer
-    iconImageAlt={iconImage} />
+  <div class="card">
+    <div class="card-content">
+      <div class="media is-flex is-justify-content-center">
+        <figure
+          class={`image is-24x24`}
+          data-testid="icon-figure">
+          <img
+            src={iconImageSrc}
+            alt={clean(iconImage)}
+            title={clean(iconImage)}
+            style={iconImageStyle} />
+        </figure>
+      </div>
+      <div
+        class="content is-size-7 columns is-gapless"
+        style="padding-top: 5px;">
+        <div
+          class="column is-flex is-justify-content-center sprite-image-title"
+          title={iconImage}>
+          {clean(iconImage)}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {#if isIconListPanelVisible}
@@ -123,5 +141,17 @@
 
   #tooltip {
     max-width: 440px;
+  }
+
+  .card {
+    cursor: pointer;
+
+    .card-content {
+      padding: 5px;
+
+      .media {
+        margin: 0;
+      }
+    }
   }
 </style>

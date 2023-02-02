@@ -116,7 +116,6 @@
                 }}
                 title="Icon Picker Card">
                 <IconImagePickerCard
-                  legendSymbolContainer={undefined}
                   iconImageAlt={spriteImage.alt}
                   iconImageSrc={spriteImage.src}
                   isSelected={iconImageAlt === spriteImage.alt ? true : false} />
