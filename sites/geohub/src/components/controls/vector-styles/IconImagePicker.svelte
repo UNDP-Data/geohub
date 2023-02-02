@@ -26,10 +26,6 @@
 
   const dispatch = createEventDispatcher()
 
-  const handleSetActiveIconGroup = (iconGroupId: string) => {
-    activeIconGroupId = iconGroupId
-  }
-
   const handleIconClick = (spriteImageAlt: string) => {
     dispatch('handleIconClick', { spriteImageAlt })
   }
