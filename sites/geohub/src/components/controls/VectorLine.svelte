@@ -10,11 +10,11 @@
   export let showLineWidth = true
 </script>
 
-<div class="tile is-ancestor">
-  <div class="tile is-parent">
+<div class="columns is-mobile">
+  <div class="column">
     <div
       class="is-flex is-justify-content-center p-0 m-0"
-      style="width: 200px;">
+      style="width: 170px;">
       <div class="field">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label has-text-centered">Line Pattern</label>
@@ -26,34 +26,36 @@
       </div>
     </div>
   </div>
-  <div class="tile is-vertical is-parent">
-    {#if showLineColor}
-      <div class="tile is-child">
-        <div class="is-flex is-justify-content-center p-0 m-0">
-          <div class="field">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label class="label has-text-centered">Color</label>
-            <div class="control pl-2">
-              <LineColor
-                bind:layer
-                bind:defaultColor />
+  <div class="column">
+    <div class="tile is-vertical is-parent">
+      {#if showLineColor}
+        <div class="tile is-child">
+          <div class="is-flex is-justify-content-center p-0 m-0">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Color</label>
+              <div class="control pl-2">
+                <LineColor
+                  bind:layer
+                  bind:defaultColor />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    {/if}
-    {#if showLineWidth}
-      <div class="tile is-child">
-        <div class="is-flex is-justify-content-center p-0 m-0">
-          <div class="field">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label class="label has-text-centered">Width</label>
-            <div class="control">
-              <LineWidth bind:layer />
+      {/if}
+      {#if showLineWidth}
+        <div class="tile is-child">
+          <div class="is-flex is-justify-content-center p-0 m-0">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Width</label>
+              <div class="control">
+                <LineWidth bind:layer />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 </div>
