@@ -14,6 +14,7 @@
   import { VectorTileData } from '$lib/VectorTileData'
   import MiniMap from './MiniMap.svelte'
   import DataCardInfo from './DataCardInfo.svelte'
+    import { loadMap } from '$lib/helper'
 
   export let layer: VectorLayerTileStatLayer
   export let feature: StacItemFeature
@@ -62,6 +63,7 @@
         },
         ...$layerList,
       ]
+      await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,

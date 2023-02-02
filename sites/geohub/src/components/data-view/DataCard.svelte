@@ -17,6 +17,7 @@
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
   import DataVectorCard from '$components/data-view/DataVectorCard.svelte'
   import { onMount } from 'svelte'
+  import { loadMap } from '$lib/helper'
 
   export let feature: StacItemFeature
   export let isExpanded: boolean
@@ -97,6 +98,8 @@
             ...$layerList,
           ]
         }
+        
+        await loadMap($map)
       }
     } finally {
       $indicatorProgress = false
