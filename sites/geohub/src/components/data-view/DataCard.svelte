@@ -98,7 +98,7 @@
             ...$layerList,
           ]
         }
-        
+
         await loadMap($map)
       }
     } finally {
