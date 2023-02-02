@@ -2,6 +2,8 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
   import { spriteImageList } from '$stores'
+  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let iconImageAlt: string
 
@@ -10,6 +12,10 @@
     { id: 'i - q', range: Array.from({ length: 9 }, (_, i) => String.fromCharCode('i'.charCodeAt(0) + i)) },
     { id: 'r - z', range: Array.from({ length: 9 }, (_, i) => String.fromCharCode('r'.charCodeAt(0) + i)) },
   ]
+
+  let tabs: Tab[] = iconGroupRanges.map((type) => {
+    return { label: type.id }
+  })
 
   let activeIconGroupId = iconGroupRanges[0].id
   let iconGroupsByLetter = []
@@ -76,24 +82,15 @@
   }
 </script>
 
-<div data-testid="icon-image-picker-container">
+<div
+  class="icon-image-picker-container"
+  data-testid="icon-image-picker-container">
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
-      <div class="tabs">
-        <ul>
-          {#each iconGroupsByLetter as iconGroup}
-            <li
-              class={activeIconGroupId === iconGroup.id ? 'is-active' : ''}
-              data-testid="group-letter-tab">
-              <a
-                href={'#'}
-                on:click={() => handleSetActiveIconGroup(iconGroup.id)}>
-                {iconGroup.id.toUpperCase()}
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </div>
+      <Tabs
+        bind:tabs
+        bind:activeTab={activeIconGroupId}
+        fontSize="medium" />
     </div>
     <div
       class="column is-1 close"
@@ -129,6 +126,13 @@
 </div>
 
 <style lang="scss">
+  .icon-image-picker-container {
+    :global(.icon-text) {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+
   .card-icon {
     max-height: 260px;
     overflow-y: auto;
