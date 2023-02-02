@@ -26,7 +26,7 @@
       </div>
     </div>
   </div>
-  <div class="column">
+  <div class="column p-0 m-0">
     <div class="tile is-vertical is-parent">
       {#if showLineColor}
         <div class="tile is-child">
