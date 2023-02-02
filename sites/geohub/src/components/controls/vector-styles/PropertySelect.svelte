@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getLayerProperties } from '$lib/helper'
+  import { clean, getLayerProperties } from '$lib/helper'
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
   import { map } from '$stores'
@@ -42,15 +42,13 @@
       class="is-normal"
       bind:value={propertySelectValue}
       on:change={propertyChanged}
-      alt="Property Options"
       title="Property Options">
       {#if propertySelectOptions}
         {#each propertySelectOptions as propertySelectOption}
           <option
-            class="legend-text"
-            alt="Property Option"
             title="Property Option"
-            value={propertySelectOption}>{!propertySelectOption ? emptyFieldLabel : propertySelectOption}</option>
+            value={propertySelectOption}
+            >{!propertySelectOption ? emptyFieldLabel : clean(propertySelectOption)}</option>
         {/each}
       {/if}
     </select>
@@ -61,6 +59,3 @@
       class="fas fa-table-list" />
   </span>
 </div>
-
-<style lang="scss">
-</style>

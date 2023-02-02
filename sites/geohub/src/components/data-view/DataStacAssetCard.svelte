@@ -5,6 +5,7 @@
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
+  import { loadMap } from '$lib/helper'
 
   export let asset: AssetOptions
   export let feature: StacItemFeature
@@ -25,6 +26,7 @@
         },
         ...$layerList,
       ]
+      await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,

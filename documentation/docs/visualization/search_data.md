@@ -16,8 +16,7 @@ The option of selecting "Match all selected tags" will allow the user to select 
 
 ## Sort settings
 
-documentationupdate10012023
-Once the GeoHub generates the data sets that is requested, the user can arrange the data sets in the oder of Name,Source,Updated date,Created date or alphabatically.
+Once the GeoHub generates the data sets that are requested, the user can arrange the data sets in the oder of Name,Source,Updated date,Created date or Alphabatically.
 As the data sets appear on the website, the GeoHub generates a preview of the layer including its meta data.Then simply click the
 "Add layer" button to view the complete result.
 
