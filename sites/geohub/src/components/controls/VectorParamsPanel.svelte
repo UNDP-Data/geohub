@@ -1,23 +1,32 @@
 <script lang="ts">
   import type { Layer } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
-  import { fetchUrl, getLayerSourceUrl, getLayerStyle, updateParamsInURL, clean, loadMap } from '$lib/helper'
+  import { Loader } from '@undp-data/svelte-undp-design/src/lib'
+  import {
+    clean,
+    fetchUrl,
+    getLayerSourceUrl,
+    getLayerStyle,
+    loadMap,
+    updateLayerURL,
+    updateParamsInURL,
+  } from '$lib/helper'
   import { map } from '$stores'
 
   export let layer: Layer
-  let isHDIlayer = false
   let args
   let isLoaded = false
-  let selectedArgument = {}
   let selectedArguments = []
+  let currentSelectedArgument = {}
   let argumentValues = []
   let minValue
   let maxValue
   let suffix = ''
-  let argsCopy = []
   let params = {}
   let showSlider = false
+  $: currentSelectedValue = currentSelectedArgument.value
 
+  // $: currentSelectedArgument,
   const getArgumentsInURL = (url) => {
     const urlParams = new URLSearchParams(url.split('?')[1])
     params = {}
@@ -27,131 +36,183 @@
     return params
   }
 
-  const getArguments = async () => {
+  const getInitializingArguments = async () => {
     isLoaded = await loadMap($map)
     const url = layer.dataset.properties.url
+
     const layerUrl = getLayerSourceUrl($map, layer.id) as string
     const argsInUrl = getArgumentsInURL(layerUrl)
+
     const metaJson = await fetchUrl(url.replace('/{z}/{x}/{y}.pbf', '.json'))
+
     args = JSON.parse(metaJson.arguments[0].default)
-    console.log(args)
+
+    if (argsInUrl.params) {
+      Object.keys(JSON.parse(argsInUrl.params)).map((key) => {
+        selectedArguments = [...selectedArguments, args[key]]
+      })
+      selectedArguments.forEach((arg) => {
+        const id = arg.id
+        arg.value = JSON.parse(argsInUrl.params)[id].value
+      })
+      currentSelectedArgument = selectedArguments[selectedArguments.length - 1]
+      argumentValues = [Number(currentSelectedArgument.value)]
+      showSlider = true
+    }
     return args
   }
 
-  const setArgument = (arg) => {
-    selectedArgument = args[arg]
-    setValuesForSlider(selectedArgument)
-    const index = selectedArguments.findIndex((a) => a.name === selectedArgument.param_name)
-    if (index > -1) {
-      selectedArguments.splice(index, 1)
-      selectedArguments[index] = selectedArgument
-      argumentValues = [Number(selectedArgument.value)]
+  const setArgument = (key) => {
+    currentSelectedArgument = args[key]
+    if (selectedArguments.map((a) => a.id).includes(currentSelectedArgument.id)) {
+      selectedArguments = selectedArguments.filter((a) => a.id !== currentSelectedArgument.id)
+      currentSelectedArgument = {}
+      currentSelectedArgument.value = -5
+      argumentValues = [0]
     } else {
-      selectedArguments = [...selectedArguments, arg]
-      argumentValues = [Number(selectedArgument.param_name)]
+      // push the argument to the selectedArguments array
+      selectedArguments = [...selectedArguments, currentSelectedArgument]
+      setValuesForSlider(currentSelectedArgument)
+      showSlider = true
     }
-    showSlider = true
   }
   const setValuesForSlider = (arg) => {
+    // const key = Object.keys(arg)[0]
     argumentValues = [Number(arg.value)]
     minValue = Number(arg.limits.min)
     maxValue = Number(arg.limits.max)
     suffix = arg.units
   }
 
-  const applyParameters = () => {
-    const layerURL = new URL(getLayerSourceUrl($map, layer.id))
+  const applyParameters = async () => {
+    if (selectedArguments.length === 0) {
+      return
+    }
     const layerStyle = getLayerStyle($map, layer.id)
-    console.log(selectedArguments)
+    const layerURL = new URL(getLayerSourceUrl($map, layer.id).split('?')[0])
+    let parameters = {}
+    // parameters format needs to be as follows = {arg.id: {value: arg.value}, arg.id: {value: arg.value}}
     selectedArguments.forEach((arg) => {
-      if (args.find((a) => a.default !== arg.default)) {
-        params[arg.name] = arg.default
+      const id = arg.id
+      parameters[id] = {
+        value: arg.value,
       }
     })
-    updateParamsInURL(layerStyle, layerURL, params)
+    params = {
+      params: JSON.stringify(parameters),
+    }
+    await updateLayerURL(layerStyle, layerURL, params)
   }
 
   const clearParameters = () => {
     selectedArguments = []
-    args = [...argsCopy]
-    selectedArgument = {}
+    currentSelectedArgument = {}
+    argumentValues = [0]
+    const keys = Object.keys(args)
+    keys.forEach((key) => {
+      args[key].value = 0
+    })
     const layerURL = new URL(getLayerSourceUrl($map, layer.id).split('?')[0])
     const layerStyle = getLayerStyle($map, layer.id)
-    updateParamsInURL(layerStyle, layerURL, {})
-  }
-
-  const removeArgument = (arg) => {
-    selectedArguments = selectedArguments.filter((a) => a.name !== arg.name)
-    if (selectedArgument.param_name === arg.name) {
-      selectedArgument = {}
-    }
-    args = argsCopy.map((a) => {
-      if (a.name === arg.name) {
-        a.default = arg.default
-      }
-      return a
-    })
-  }
-
-  const setArgValue = (e) => {
-    selectedArgument.param_name = e.detail.value
+    updateLayerURL(layerStyle, layerURL, {})
   }
 
   const changeArgValue = (e) => {
-    console.log(e.detail.value)
-    argumentValues = [e.detail.value]
-    console.log(argumentValues)
-    selectedArgument.param_name = e.detail.value
-    args = args.map((arg) => {
-      if (arg.name === selectedArgument.param_name) {
-        arg.default = e.detail.value
-      }
-      return arg
-    })
+    if (Object.keys(currentSelectedArgument).length === 0) {
+      return
+    }
+    currentSelectedArgument.value = e.detail.value
   }
 </script>
 
 <div>
-  {#await getArguments()}
-    <p>loading</p>
+  {#await getInitializingArguments()}
+    <div>
+      <div class="loader-container">
+        <Loader size="small" />
+      </div>
+    </div>
   {:then args}
-    <!--{#if isHDIlayer}-->
     <div class="grid-wrapper">
       {#each Object.entries(args) as [key, v], i}
-        {@const { param_name: arg_name, icon: icon, value: value } = v}
+        {@const { param_name: arg_name, icon: icon, value: value, units: units, label: label, id: id } = v}
         <div
           on:click={() => setArgument(key)}
-          class="grid-item card  m-10 is-info is-clickable has-text-centered">
-          <div
-            class="card-header is-size-6 pb-0 pt-0 m-0 {arg_name === selectedArgument.param_name
-              ? 'has-background-success'
-              : 'has-background-info-dark'}">
-            <span class="card-header-title grid-item is-centered is-v-centered has-text-white-ter ">
-              {clean(arg_name)}
-            </span>
-            <!--{#if selectedArguments.map((a) => a.name).includes(key)}-->
-            <button
-              on:click={(e) => {
-                e.stopPropagation()
-              }}
-              class="card-header-icon button remove-arg-button"
-              aria-label="Remove Argument">
-              <span class="icon is-large">
-                <i class="fas fa-times has-text-white-ter" />
+          class="grid-item card is-info is-clickable has-text-centered">
+          <header class="card-header is-flex is-justify-content-space-between is-align-content-center	">
+            <div class="card-header-title is-10">
+              <span class="m-auto icon has-text-primary is-size-7 has-text-weight-bold">
+                <i class="fas fa-3x {icon}" />
               </span>
-            </button>
-          </div>
+            </div>
+            <div class="is-2">
+              {#if selectedArguments
+                .map((a) => {
+                  return a.id
+                })
+                .includes(key)}
+                <button
+                  class="card-header-icon"
+                  aria-label="more options">
+                  <span class="icon has-text-success">
+                    <i
+                      class="fas fa-circle-check"
+                      aria-hidden="true" />
+                  </span>
+                </button>
+              {/if}
+            </div>
+          </header>
           <div class="card-content">
-            <span class="icon has-text-danger-dark is-size-7 has-text-weight-bold">
-              <i class="fas fa-2x {icon}" />
-            </span>
+            <div class="content multiline has-text-weight-bold">
+              {label}
+            </div>
           </div>
           <div class="card-footer">
             <span class="m-auto">
-              {value}
+              {currentSelectedArgument.id === id ? currentSelectedArgument.value : value}
+              {units}
             </span>
           </div>
         </div>
+
+        <!--        <div-->
+        <!--          on:click={() => setArgument(key)}-->
+        <!--          class="grid-item card  m-10 is-info is-clickable has-text-centered">-->
+        <!--          <div-->
+        <!--            class="card-header is-size-6 pb-0 pt-0 m-0 {currentSelectedArgument.param_name === arg_name-->
+        <!--              ? 'has-background-success'-->
+        <!--              : 'has-background-info-dark'}">-->
+        <!--            <span class="card-header-title grid-item is-centered is-v-centered has-text-white-ter ">-->
+        <!--              {clean(label)}-->
+        <!--            </span>-->
+        <!--            {#if selectedArguments.map((a) => {return a.id}).includes(key)}-->
+        <!--              <button-->
+        <!--                on:click={(e) => {-->
+        <!--                  e.stopPropagation()-->
+        <!--                  removeArgument(key)-->
+        <!--                }}-->
+        <!--                class="card-header-icon button remove-arg-button"-->
+        <!--                aria-label="Remove Argument">-->
+        <!--                <span class="icon is-large">-->
+        <!--                  <i class="fas fa-times has-text-white-ter" />-->
+        <!--                </span>-->
+        <!--              </button>-->
+        <!--            {/if}-->
+        <!--          </div>-->
+        <!--          <div class="card-content">-->
+        <!--            <span class="icon has-text-black is-size-7 has-text-weight-bold">-->
+        <!--              <i class="fas fa-2x {icon}" />-->
+        <!--            </span>-->
+        <!--          </div>-->
+        <!--          <div class="card-footer">-->
+        <!--            <span class="m-auto">-->
+        <!--              {currentSelectedArgument.param_name === arg_name-->
+        <!--                ? currentSelectedArgument.value-->
+        <!--                : value} {units}-->
+        <!--            </span>-->
+        <!--          </div>-->
+        <!--        </div>-->
       {/each}
     </div>
 
@@ -168,7 +229,6 @@
           bind:values={argumentValues}
           on:change={changeArgValue}
           pips="true"
-          {suffix}
           all="label" />
       {/if}
     </div>
@@ -180,7 +240,6 @@
         on:click={clearParameters}
         class="button m-auto is-secondary">Clear</button>
     </div>
-    <!--{/if}-->
   {/await}
 </div>
 
@@ -205,5 +264,14 @@
   }
   .remove-arg-button:hover {
     font-color: #1bbbf5;
+  }
+  .multiline {
+    white-space: pre-wrap;
+  }
+  .loader-container {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
   }
 </style>
