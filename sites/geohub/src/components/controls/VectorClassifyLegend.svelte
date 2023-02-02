@@ -39,6 +39,10 @@
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
+  import IconImage from './vector-styles/IconImage.svelte'
+  import IconOverlap from './vector-styles/IconOverlap.svelte'
+  import IconColor from './vector-styles/IconColor.svelte'
+  import IconSize from '$components/controls/vector-styles/IconSize.svelte'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -467,6 +471,55 @@
   class="advanced-container"
   data-testid="advanced-container">
   {#await isInitialising then}
+    {#if layerType === 'symbol'}
+      <div class="columns is-mobile px-2 py-2">
+        <div class="column is-flex is-justify-content-center p-0">
+          <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="label has-text-centered">Icon</label>
+            <div class="control">
+              <IconImage
+                bind:layer
+                bind:defaultColor />
+            </div>
+          </div>
+        </div>
+        <div class="column is-flex is-justify-content-center p-0 pl-2">
+          <div class="field">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="label has-text-centered">Overlap Priority</label>
+            <div class="control pt-1">
+              <IconOverlap {layer} />
+            </div>
+          </div>
+        </div>
+
+        {#if hasUniqueValues || applyToOption === VectorApplyToTypes.SIZE}
+          <div class="column is-flex is-justify-content-center p-0 pl-2">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Color</label>
+              <div class="control pl-2 pt-2">
+                <IconColor
+                  bind:layer
+                  bind:defaultColor />
+              </div>
+            </div>
+          </div>
+        {/if}
+        {#if hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
+          <div class="column is-flex is-justify-content-center p-0 pl-2">
+            <div class="field">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label class="label has-text-centered">Size</label>
+              <div class="control">
+                <IconSize {layer} />
+              </div>
+            </div>
+          </div>
+        {/if}
+      </div>
+    {/if}
     <div class="columns is-mobile">
       <div class="column">
         <div class="field">

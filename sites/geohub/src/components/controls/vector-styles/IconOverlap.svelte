@@ -20,7 +20,7 @@
 
 <div
   class="range-slider"
-  style="width: 150px;">
+  style="width: 130px;">
   <RangeSlider
     bind:values={selected}
     min={0}
@@ -35,6 +35,5 @@
 
   .range-slider {
     font-size: 11px;
-    width: 100%;
   }
 </style>
