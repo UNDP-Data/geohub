@@ -6,6 +6,7 @@ import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
 export const getLayerProperties = (map: Map, layer: Layer, inLegend = true) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+
   const vectorInfo: VectorLayerMetadata[] = layer.info.json.vector_layers
 
   let layerId = layer.id
@@ -24,10 +25,11 @@ export const getLayerProperties = (map: Map, layer: Layer, inLegend = true) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
     } = layer.info.json.tilestats
+
     if (tilestats) {
       const vectorLayerStats = tilestats.layers.find((l) => l.layer === getLayerStyle(map, layerId)['source-layer'])
       vectorLayerStats.attributes.forEach((attr) => {
-        if (attr.type.toLowerCase() === 'string' && attr.values.length > UNIQUE_VALUE_THRESHOLD) {
+        if (attr.type.toLowerCase() === 'string' && attr.values?.length > UNIQUE_VALUE_THRESHOLD) {
           delete vectorLayerMeta.fields[attr.attribute]
         }
       })
