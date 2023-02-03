@@ -45,7 +45,7 @@ const meta = {
 			description: 'If enabled, header will be shown at the top of window',
 			defaultValue: true
 		},
-		progressBarSize:{
+		progressBarSize: {
 			type: 'string',
 			description: 'Size of progress bar',
 			defaultValue: 'small'
