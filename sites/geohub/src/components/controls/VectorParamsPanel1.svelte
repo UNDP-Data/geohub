@@ -108,9 +108,8 @@
 {:then initialized}
   <div class="grid-wrapper pb-5">
     {#each Object.entries(args) as [argId, arg]}
-      {@const { param_name: arg_name, icon: icon, value: value, units: units, label: label, id: id } = arg}
+      {@const { icon: icon, value: value, units: units, label: label, id: id } = arg}
 
-      {@const toggleButtonText = currentSelectedArg && currentSelectedArg == argId ? 'Current' : 'Other'}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
 
       <div class="card">
