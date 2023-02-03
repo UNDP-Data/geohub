@@ -2,6 +2,7 @@
   import type { Layer } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
   import { Loader } from '@undp-data/svelte-undp-design/src/lib'
+
   import {
     clean,
     fetchUrl,
@@ -111,32 +112,33 @@
 
       <!-- svelte-ignore a11y-click-events-have-key-events -->
 
-      <div class="card">
+      <div class="card {currentSelectedArg && currentSelectedArg == argId ? 'bbp' : 'bbw'}">
         <header
-          class={currentSelectedArg && currentSelectedArg == argId
-            ? 'card-header has-background-success'
-            : 'card-header has-background-info'}>
+          class={argId in selectedArgs ? 'card-header has-background-success' : 'card-header has-background-info'}>
           <p class="card-header-title">&NonBreakingSpace;</p>
 
-          {#if Object.keys(selectedArgs).includes(argId)}
+          {#if argId in selectedArgs}
             <button
               class="card-header-icon"
               aria-label="more options"
               on:click={() => deleteArgument(argId)}>
               <span class="icon has-text-white">
                 <i
-                  class="far fa-circle-check fa-2x"
+                  class="fas fa-circle-xmark fa-2x"
+                  title="Remove parameter from simulation"
                   aria-hidden="true" />
               </span>
             </button>
           {/if}
         </header>
         <div
-          class="card-content is-clickable  p-0"
+          class="card-content is-clickable p-0"
           on:click={() => {
             currentSelectedArg = argId
           }}>
-          <div class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-space-evenly ">
+          <div
+            class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-space-evenly "
+            style="height:80px">
             <div class="has-text-primary">
               <i
                 class="fas fa-3x {icon} p-2"
@@ -183,6 +185,14 @@
 {/await}
 
 <style lang="scss">
+  @import '../../styles/geohubstyle.scss';
+  .bbp {
+    border-bottom: 3px solid $primary;
+  }
+  .bbw {
+    border-bottom: 3px solid $white;
+  }
+
   .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
