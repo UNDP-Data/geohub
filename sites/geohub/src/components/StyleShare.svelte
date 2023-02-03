@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto, invalidateAll, preloadData } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
