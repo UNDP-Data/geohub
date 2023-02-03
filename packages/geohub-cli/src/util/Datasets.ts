@@ -271,6 +271,12 @@ class Datasets {
 		};
 		await client.query(queryDatasetTag);
 
+		const queryStar = {
+			text: `DELETE FROM geohub.dataset_favourite WHERE dataset_id = $1`,
+			values: [datasetId]
+		};
+		await client.query(queryStar);
+
 		const queryDataset = {
 			text: `DELETE FROM geohub.dataset WHERE id = $1`,
 			values: [datasetId]
