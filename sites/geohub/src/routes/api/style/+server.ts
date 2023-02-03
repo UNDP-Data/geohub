@@ -240,7 +240,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
     const style = await getStyleById(id)
     style.style = styleJsonUrl
-    style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
+    style.viewer = `${url.origin}?style=${id}`
     return new Response(JSON.stringify(style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
@@ -318,7 +318,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
     const styleJsonUrl = `${url.origin}/api/style/${id}.json`
     style = await getStyleById(id)
     style.style = styleJsonUrl
-    style.viewer = `${url.origin}/viewer?style=${styleJsonUrl}`
+    style.viewer = `${url.origin}?style=${id}`
     return new Response(JSON.stringify(style))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
