@@ -37,7 +37,7 @@
   }
 
   const init = async () => {
-    //const isLoaded = await loadMap($map)
+    const isLoaded = await loadMap($map)
     const metaUrl = layerUrl.replace('/{z}/{x}/{y}.pbf', '.json')
     const jsonString = await fetchUrl(metaUrl)
     args = JSON.parse(jsonString.arguments[0].default)
@@ -49,16 +49,18 @@
     if (selectedArgs) currentSelectedArg = Object.keys(selectedArgs).at(-1)
     //console.log('hinit', JSON.stringify(selectedArgs, null, 2))
 
-    return true
+    return isLoaded
   }
 
   const deleteArgument = async (argId: string) => {
+    currentSelectedArg = argId
     selectedArgs = { ...(delete selectedArgs[argId] && selectedArgs) }
     await applyParams()
   }
 
   const reset = async () => {
     selectedArgs = {}
+    currentSelectedArg = undefined
     await applyParams()
   }
 
@@ -116,18 +118,16 @@
           class={currentSelectedArg && currentSelectedArg == argId
             ? 'card-header has-background-success'
             : 'card-header has-background-info'}>
-          <p class="card-header-title">
-            {toggleButtonText}
-          </p>
+          <p class="card-header-title">&NonBreakingSpace;</p>
 
           {#if Object.keys(selectedArgs).includes(argId)}
             <button
               class="card-header-icon"
               aria-label="more options"
-              on:click={() => deleteArgument(currentSelectedArg)}>
+              on:click={() => deleteArgument(argId)}>
               <span class="icon has-text-white">
                 <i
-                  class="fas fa-trash"
+                  class="far fa-circle-check fa-2x"
                   aria-hidden="true" />
               </span>
             </button>
