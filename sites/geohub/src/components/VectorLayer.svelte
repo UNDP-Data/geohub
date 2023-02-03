@@ -8,7 +8,7 @@
   import type { Layer } from '$lib/types'
   import VectorFilter from './controls/VectorFilter.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import VectorParamsPanel from '$components/controls/VectorParamsPanel.svelte'
+  import VectorParamsPanel1 from '$components/controls/VectorParamsPanel1.svelte'
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
@@ -61,7 +61,7 @@
       {:else if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />
       {:else if activeTab === TabNames.VECTORPARAMS}
-        <VectorParamsPanel {layer} />
+        <VectorParamsPanel1 layerId={layer.id} />
       {/if}
     </p>
   </nav>
