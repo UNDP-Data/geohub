@@ -170,8 +170,7 @@
         values={sliderConfig.values}
         on:stop={setSliderValue}
         pips="true"
-        all="label"
-         />
+        all="label" />
     {/if}
   </div>
   <div class="columns p-3 mt-1">
