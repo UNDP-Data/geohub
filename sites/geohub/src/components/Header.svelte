@@ -6,14 +6,11 @@
   import UserAccount from './UserAccount.svelte'
   import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
   import { createHeaderLinks } from '$lib/helper'
-  import type { StyleSpecification } from 'maplibre-gl'
 
   export let drawerOpen = true
   export let height: number = undefined
 
   let isStyleShareVisible = false
-
-  const isReadonly = $page.data.readOnly
 
   $: showProgressBar = $indicatorProgress
 
@@ -52,20 +49,14 @@
   let finalLink: HeaderLink[] = []
 
   const initLinks = () => {
-    if (!isReadonly && $page.data.session && $layerList.length > 0) {
+    if ($page.data.session && $layerList.length > 0) {
       finalLink = [links[0], shareLink, ...links.slice(1)]
     } else {
       finalLink = [...links]
     }
   }
   $: $layerList, initLinks()
-
-  let style: StyleSpecification = $page.data?.style?.style
 </script>
-
-<svelte:head>
-  <title>{style ? `${style.name} | GeoHub` : 'GeoHub | United Nations Development Programme'}</title>
-</svelte:head>
 
 <Header
   bind:height

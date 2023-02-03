@@ -12,7 +12,6 @@
     updateParamsInURL,
   } from '$lib/helper'
   import { map, layerList } from '$stores'
-
   /*EXPORTS*/
   export let layerId
 
