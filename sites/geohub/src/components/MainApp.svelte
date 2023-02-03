@@ -16,7 +16,7 @@
   $: splitHeight = innerHeight - headerHeight
 
   let initialPrimaryWidth = 355
-  let minPrimaryWidth = '360px'
+  let minPrimaryWidth = '400px'
   let minSecondaryWidth = '50%'
   let defaultsplitterSize = '10px'
   let widthPecent = 0
