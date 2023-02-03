@@ -1,5 +1,5 @@
 ---
-"@undp-data/svelte-undp-design": minor
+"@undp-data/svelte-undp-design": patch
 ---
 
 Add more options for progress bar size
