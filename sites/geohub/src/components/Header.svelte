@@ -12,8 +12,6 @@
 
   let isStyleShareVisible = false
 
-  const isReadonly = $page.data.readOnly
-
   $: showProgressBar = $indicatorProgress
 
   const shareLink = {
@@ -51,7 +49,7 @@
   let finalLink: HeaderLink[] = []
 
   const initLinks = () => {
-    if (!isReadonly && $page.data.session && $layerList.length > 0) {
+    if ($page.data.session && $layerList.length > 0) {
       finalLink = [links[0], shareLink, ...links.slice(1)]
     } else {
       finalLink = [...links]

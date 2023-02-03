@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
@@ -11,12 +11,15 @@
   import { map, layerList } from '$stores'
   import { AccessLevel } from '$lib/constants'
   import AccessLevelSwitcher from './AccessLevelSwitcher.svelte'
+  import Notification from './controls/Notification.svelte'
+
+  $: isReadonly = $page.data.readOnly
 
   export let isModalVisible = false
   let styleURL: string
   let accessLevel: AccessLevel = $page.data.style?.access_level ?? AccessLevel.PRIVATE
 
-  let styleName = $page.data.style?.name ?? 'UNDP GeoHub style'
+  let styleName: string
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
@@ -57,10 +60,15 @@
           names.push(layer.name)
         }
       })
-      if (names.length > 0) {
-        styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+
+      if ($page.data.style?.name) {
+        styleName = $page.data.style?.name
       } else {
-        styleName = 'UNDP GeoHub style'
+        if (names.length > 0) {
+          styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+        } else {
+          styleName = 'UNDP GeoHub style'
+        }
       }
     }
     createStyleJSON2Generate()
@@ -109,31 +117,24 @@
     }
 
     const styleId = $page.url.searchParams.get('style')
-    let resjson
-    if (styleId) {
-      data['id'] = styleId
 
-      const res = await fetch('/api/style', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      })
-      resjson = await res.json()
-    } else {
-      const res = await fetch('/api/style', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      })
-      resjson = await res.json()
+    let method = 'POST'
+    if (styleId && !isReadonly) {
+      data['id'] = styleId
+      method = 'PUT'
     }
+
+    const res = await fetch('/api/style', {
+      method: method,
+      body: JSON.stringify(data),
+    })
+    let resjson = await res.json()
 
     styleURL = resjson.viewer
-    if (!styleId) {
-      if ($page.data.style) {
-        $page.data.style = resjson
-      }
-      $page.url.searchParams.set('style', resjson.id)
-      goto(`?${$page.url.searchParams.toString()}`)
-    }
+    $page.url.searchParams.set('style', resjson.id)
+    await goto(`?${$page.url.searchParams.toString()}`)
+    await invalidateAll()
+    styleName = $page.data.style.name
   }
 
   $: styleName, createStyleJSON2Generate()
@@ -209,6 +210,14 @@
       </header>
       <section class="modal-card-body">
         {#if !styleURL}
+          {#if isReadonly}
+            <Notification
+              type="info"
+              showCloseButton={false}>
+              This map was created by other user. It will be saved as new map.
+            </Notification>
+          {/if}
+
           <div class="field">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label">Map name:</label>
