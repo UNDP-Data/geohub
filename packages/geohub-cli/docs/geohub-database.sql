@@ -153,3 +153,28 @@ CREATE INDEX IF NOT EXISTS tag_idx_value
     ON geohub.tag USING btree
     (value COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
+
+CREATE TABLE geohub.dataset_favourite
+(
+    dataset_id character varying NOT NULL,
+    user_email character varying(100) NOT NULL,
+    savedat timestamp with time zone NOT NULL,
+    CONSTRAINT dataset_favourite_pkey PRIMARY KEY (dataset_id, user_email),
+    CONSTRAINT "FK_dataset_TO_dataset_favourite" FOREIGN KEY (dataset_id)
+        REFERENCES geohub.dataset (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+COMMENT ON TABLE geohub.dataset_favourite
+    IS 'This table manages users to save their favourite datasets';
+
+COMMENT ON COLUMN geohub.dataset_favourite.dataset_id
+    IS 'md5 hash generated from URL';
+
+COMMENT ON COLUMN geohub.dataset_favourite.user_email
+    IS 'user email address';
+
+COMMENT ON COLUMN geohub.dataset_favourite.savedat
+    IS 'timestamp which users saved';
