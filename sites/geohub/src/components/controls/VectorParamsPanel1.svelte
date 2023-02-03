@@ -12,7 +12,7 @@
     updateParamsInURL,
   } from '$lib/helper'
   import { map, layerList } from '$stores'
-  import { arg } from 'mathjs'
+
   /*EXPORTS*/
   export let layerId
 
@@ -22,33 +22,22 @@
   let selectedArgs = {}
   let currentSelectedArg
   let sliderConfig = {}
-  let showSlider = Object.keys(selectedArgs).length > 0
+  //let showSlider = Object.keys(selectedArgs).length > 0
   /*REACTIVE STATE*/
   $: layer = $layerList.find((l) => l.id == layerId) as Layer
   $: url = layer?.dataset?.properties?.url
   $: layerUrl = getLayerSourceUrl($map, layerId) as string
   $: layerURL = url ? new URL(url) : undefined
-  $: showSlider = Object.keys(selectedArgs).length > 0
+  $: showSlider = currentSelectedArg ? true : false
 
   /* FUNCTIONS*/
   const getArgumentsInURL = () => {
     const llayerURL = new URL(layerUrl)
-
     return JSON.parse(llayerURL.searchParams.get('params'))
   }
 
-  const setArgument = (argId: string) => {
-    if (!(argId in selectedArgs)) {
-      selectedArgs[argId] = { ...defaultArgs[argId] }
-      currentSelectedArg = argId
-    } else {
-      selectedArgs = { ...(delete selectedArgs[argId] && selectedArgs) }
-      currentSelectedArg = undefined
-    }
-  }
-
   const init = async () => {
-    const isLoaded = await loadMap($map)
+    //const isLoaded = await loadMap($map)
     const metaUrl = layerUrl.replace('/{z}/{x}/{y}.pbf', '.json')
     const jsonString = await fetchUrl(metaUrl)
     args = JSON.parse(jsonString.arguments[0].default)
@@ -60,7 +49,12 @@
     if (selectedArgs) currentSelectedArg = Object.keys(selectedArgs).at(-1)
     //console.log('hinit', JSON.stringify(selectedArgs, null, 2))
 
-    return isLoaded
+    return true
+  }
+
+  const deleteArgument = async (argId: string) => {
+    selectedArgs = { ...(delete selectedArgs[argId] && selectedArgs) }
+    await applyParams()
   }
 
   const reset = async () => {
@@ -68,9 +62,13 @@
     await applyParams()
   }
 
-  const setSliderValue = (e) => {
-    if (currentSelectedArg && currentSelectedArg in selectedArgs) {
+  const setSliderValue = async (e) => {
+    if (currentSelectedArg) {
+      if (!(currentSelectedArg in selectedArgs)) {
+        selectedArgs[currentSelectedArg] = { ...defaultArgs[currentSelectedArg] }
+      }
       selectedArgs[currentSelectedArg].value = e.detail.value
+      await applyParams()
     }
   }
 
@@ -79,9 +77,7 @@
     const params = {
       params: JSON.stringify(selectedArgs),
     }
-    // console.log(url)
     await updateLayerURL(layerStyle, layerURL, params)
-    //console.log(layerURL.toString())
   }
 
   $: {
@@ -92,8 +88,9 @@
         value,
       } = currentArgDef
       const step = (max - min) * 1e-2
+      const v = currentSelectedArg in selectedArgs ? selectedArgs[currentSelectedArg].value : value
 
-      sliderConfig = { min: min, max: max, step: step, values: [value] }
+      sliderConfig = { min: min, max: max, step: step, values: [v] }
     }
   }
 
@@ -107,56 +104,67 @@
     </div>
   </div>
 {:then initialized}
-  <div class="grid-wrapper">
+  <div class="grid-wrapper pb-5">
     {#each Object.entries(args) as [argId, arg]}
       {@const { param_name: arg_name, icon: icon, value: value, units: units, label: label, id: id } = arg}
-      {@const displayValue =
-        currentSelectedArg && currentSelectedArg in selectedArgs && currentSelectedArg == argId
-          ? selectedArgs[currentSelectedArg].value
-          : value}
+
+      {@const toggleButtonText = currentSelectedArg && currentSelectedArg == argId ? 'Current' : 'Other'}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        class="card  is-info is-clickable "
-        on:click={() => setArgument(argId)}>
-        <header class="card-header">
-          <div
-            class="card-header-title is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-center pr-0 mr-0 ">
-            <span class="icon has-text-primary is-flex-grow-5 m-2">
+
+      <div class="card">
+        <header
+          class={currentSelectedArg && currentSelectedArg == argId
+            ? 'card-header has-background-success'
+            : 'card-header has-background-info'}>
+          <p class="card-header-title">
+            {toggleButtonText}
+          </p>
+
+          {#if Object.keys(selectedArgs).includes(argId)}
+            <button
+              class="card-header-icon"
+              aria-label="more options"
+              on:click={() => deleteArgument(currentSelectedArg)}>
+              <span class="icon has-text-white">
+                <i
+                  class="fas fa-trash"
+                  aria-hidden="true" />
+              </span>
+            </button>
+          {/if}
+        </header>
+        <div
+          class="card-content is-clickable  p-0"
+          on:click={() => {
+            currentSelectedArg = argId
+          }}>
+          <div class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-space-evenly ">
+            <div class="has-text-primary">
               <i
-                class="fas fa-3x {icon}"
-                aria-hidden="false" />
-            </span>
-            <div class="icon has-text-success is-align-self-end p-0 m-0 ">
-              <i
-                class={!Object.keys(selectedArgs).includes(argId)
-                  ? 'fas fa-circle-check is-hidden'
-                  : 'fas fa-circle-check'}
+                class="fas fa-3x {icon} p-2"
                 aria-hidden="false" />
             </div>
-          </div>
-        </header>
-        <div class="card-content">
-          <div class="content multiline has-text-weight-bold">
-            {label}
+            <div class="is-size-6 has-text-weight-bold p-2">{label}</div>
           </div>
         </div>
-        <footer class="card-footer has-background-info-light">
-          <div class="content m-auto has-text-info-dark  has-text-weight-bold">
-            {displayValue}
+        <footer class="card-footer">
+          <div class="content m-auto has-text-primary  has-text-weight-bold">
+            {argId in selectedArgs ? selectedArgs[argId].value : value}
             {units}
           </div>
         </footer>
       </div>
     {/each}
   </div>
-  <div class="is-9 m-auto mt-1">
+  <div class="m-auto">
     {#if showSlider}
       <RangeSlider
         min={sliderConfig.min}
         max={sliderConfig.max}
         step={0.1}
-        pipstep={sliderConfig.step}
+        pipstep={Math.round(sliderConfig.step * 10)}
         rest={false}
+        float
         first="label"
         last="label"
         values={sliderConfig.values}
@@ -166,10 +174,6 @@
     {/if}
   </div>
   <div class="columns p-3 mt-1">
-    <button
-      on:click={applyParams}
-      disabled={!showSlider}
-      class="button m-auto is-primary">Apply</button>
     <button
       disabled={!showSlider}
       on:click={reset}
@@ -183,7 +187,7 @@
 <style lang="scss">
   .grid-wrapper {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
   .grid-item {
