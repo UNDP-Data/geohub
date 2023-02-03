@@ -15,12 +15,20 @@
   let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
 
   let stats: StatsCard[] = $page.data.stats
+
+  let title = 'GeoHub | Maps'
 </script>
 
 <svelte:window bind:innerWidth />
 
 <svelte:head>
-  <title>GeoHub | Maps</title>
+  <title>{title}</title>
+  <meta
+    property="og:site_name"
+    content={title} />
+  <meta
+    property="og:title"
+    content={title} />
 </svelte:head>
 
 <div class="header">

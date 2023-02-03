@@ -1,8 +1,22 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import MainApp from '$components/MainApp.svelte'
+  import type { StyleSpecification } from 'maplibre-gl'
+
+  $: style = $page.data?.style?.style as StyleSpecification
+
+  $: title = style ? `${style.name} | GeoHub` : 'GeoHub | United Nations Development Programme'
 </script>
 
 <svelte:head>
+  <title>{title}</title>
+  <meta
+    property="og:site_name"
+    content={title} />
+  <meta
+    property="og:title"
+    content={title} />
+
   <style type="text/css">
     html,
     body {

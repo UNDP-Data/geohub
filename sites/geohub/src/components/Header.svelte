@@ -6,7 +6,6 @@
   import UserAccount from './UserAccount.svelte'
   import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
   import { createHeaderLinks } from '$lib/helper'
-  import type { StyleSpecification } from 'maplibre-gl'
 
   export let drawerOpen = true
   export let height: number = undefined
@@ -59,13 +58,7 @@
     }
   }
   $: $layerList, initLinks()
-
-  let style: StyleSpecification = $page.data?.style?.style
 </script>
-
-<svelte:head>
-  <title>{style ? `${style.name} | GeoHub` : 'GeoHub | United Nations Development Programme'}</title>
-</svelte:head>
 
 <Header
   bind:height
