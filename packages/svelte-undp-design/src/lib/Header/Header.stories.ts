@@ -48,7 +48,7 @@ const meta = {
 		progressBarSize: {
 			type: 'string',
 			description: 'Size of progress bar',
-			defaultValue: 'small'
+			defaultValue: 'xsmall'
 		}
 	}
 } satisfies Meta<Header>;

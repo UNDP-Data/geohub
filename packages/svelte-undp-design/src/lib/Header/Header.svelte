@@ -10,7 +10,7 @@
 	export let showProgressBar = false;
 	export let isPositionFixed = true;
 	export let links: HeaderLink[] = [];
-	export let progressBarSize: 'small' | 'normal' = 'small';
+	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
 	onMount(() => {
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
@@ -139,7 +139,7 @@
 		{#if showProgressBar}
 			<progress
 				style="height:0.2rem!important;"
-				class="progress {progressBarSize === 'small' ? 'is-xsmall' : 'is-small'} is-info"
+				class="progress is-{progressBarSize} is-info"
 				max="100"
 			/>
 		{/if}
