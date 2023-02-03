@@ -29,6 +29,8 @@
   ]
 
   const { value: layerType } = layer.dataset.properties.tags.find((t) => t.key == 'layertype')
+
+  if (layerType != 'function') tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
 </script>
 
 <div
@@ -62,7 +64,7 @@
         <VectorLabelPanel {layer} />
       {:else if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />
-      {:else if activeTab === TabNames.SIMULATION && layerType == 'function'}
+      {:else if activeTab === TabNames.SIMULATION}
         <VectorParamsPanel layerId={layer.id} />
       {/if}
     </p>
