@@ -15,6 +15,9 @@
   import MiniMap from './MiniMap.svelte'
   import DataCardInfo from './DataCardInfo.svelte'
   import { loadMap } from '$lib/helper'
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
 
   export let layer: VectorLayerTileStatLayer
   export let feature: StacItemFeature
@@ -77,6 +80,10 @@
       $indicatorProgress = false
     }
   }
+
+  const handleStarDeleted = (e) => {
+    dispatch('starDeleted', e.detail)
+  }
 </script>
 
 <Accordion
@@ -98,7 +105,8 @@
     {#if isShowInfo}
       <DataCardInfo
         bind:feature
-        bind:metadata>
+        bind:metadata
+        on:starDeleted={handleStarDeleted}>
         <div class="map">
           <MiniMap
             bind:feature

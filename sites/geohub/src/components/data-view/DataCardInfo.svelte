@@ -1,9 +1,16 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+
   import { marked } from 'marked'
   import Time from 'svelte-time'
   import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
   import { CtaLink, Download } from '@undp-data/svelte-undp-design'
   import { MAP_ATTRIBUTION } from '$lib/constants'
+  import Star from './Star.svelte'
+
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
 
   export let feature: StacItemFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
@@ -48,11 +55,25 @@
       url: fileUrl.toString(),
     }
   }
+
+  const handleStarDeleted = (e) => {
+    dispatch('starDeleted', e.detail)
+  }
 </script>
 
 <div class="container">
   {#if feature}
-    <p class="title is-5 has-text-left">{feature.properties.name}</p>
+    <div class="card-title is-flex is-flex-direction-row is-align-content-center">
+      <p class="title is-5 has-text-left">{feature.properties.name}</p>
+      {#if $page.data.session}
+        <div class="pl-1">
+          <Star
+            bind:dataset_id={feature.properties.id}
+            bind:isStar={feature.properties.is_star}
+            on:starDeleted={handleStarDeleted} />
+        </div>
+      {/if}
+    </div>
     <slot />
     <div class="description has-text-justified">
       {#if !isFullDescription}

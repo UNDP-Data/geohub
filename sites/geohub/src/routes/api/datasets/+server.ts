@@ -30,7 +30,10 @@ import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDa
  * - operator = 'and' or 'or'. This operator can be applied for tag search of {key}={value}
  * @returns GeojSON FeatureCollection
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const session = await locals.getSession()
+  const user_email = session?.user.email
+
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -76,7 +79,7 @@ export const GET: RequestHandler = async ({ url }) => {
       }
     }
 
-    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x')
+    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x', user_email)
     const values = whereExpressesion.values
 
     const sql = {
@@ -121,7 +124,20 @@ export const GET: RequestHandler = async ({ url }) => {
             x.license, 
             x.createdat, 
             x.updatedat,
-            y.tags
+            y.tags,
+            ${
+              user_email
+                ? `
+              CASE
+                WHEN (
+                SELECT count(dataset_id) as count FROM geohub.dataset_favourite 
+                WHERE dataset_id=x.id and user_email='${user_email}'
+                ) > 0 THEN true
+                ELSE false
+              END as is_star
+              `
+                : 'false as is_star'
+            }
           ) AS p
           )) AS properties
           FROM geohub.dataset x
