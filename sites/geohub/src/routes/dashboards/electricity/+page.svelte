@@ -1,10 +1,18 @@
 <script lang="ts">
   import { ElectricityDashboard } from '@undp-data/electricity-dashboard'
   import { styles } from '$lib/constants'
+
+  let title = 'GeoHub | Electricity Dashboard'
 </script>
 
 <svelte:head>
-  <title>GeoHub | Electricity Dashboard</title>
+  <title>{title}</title>
+  <meta
+    property="og:site_name"
+    content={title} />
+  <meta
+    property="og:title"
+    content={title} />
 
   <style type="text/css">
     html,

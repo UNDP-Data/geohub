@@ -21,10 +21,18 @@
   ]
 
   let links: HeaderLink[] = createHeaderLinks(['home', 'maps', 'userguide'])
+
+  let title = 'GeoHub | Dashboards'
 </script>
 
 <svelte:head>
-  <title>GeoHub | Dashboards</title>
+  <title>{title}</title>
+  <meta
+    property="og:site_name"
+    content={title} />
+  <meta
+    property="og:title"
+    content={title} />
 </svelte:head>
 
 <div class="header">
