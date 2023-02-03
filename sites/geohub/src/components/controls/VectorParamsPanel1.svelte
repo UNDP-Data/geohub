@@ -22,17 +22,18 @@
   let selectedArgs = {}
   let currentSelectedArg
   let sliderConfig = {}
-
+  let showSlider = Object.keys(selectedArgs).length > 0
   /*REACTIVE STATE*/
   $: layer = $layerList.find((l) => l.id == layerId) as Layer
-  $: url = layer.dataset.properties.url
-  $: layerUrl = getLayerSourceUrl($map, layer.id) as string
-  $: layerURL = new URL(url)
+  $: url = layer?.dataset?.properties?.url
+  $: layerUrl = getLayerSourceUrl($map, layerId) as string
+  $: layerURL = url ? new URL(url) : undefined
   $: showSlider = Object.keys(selectedArgs).length > 0
 
   /* FUNCTIONS*/
   const getArgumentsInURL = () => {
     const llayerURL = new URL(layerUrl)
+
     return JSON.parse(llayerURL.searchParams.get('params'))
   }
 
@@ -55,8 +56,10 @@
     for (const [k, v] of Object.entries(args)) {
       defaultArgs[k] = { value: Number(v.value) }
     }
-    selectedArgs = getArgumentsInURL()
-    console.log('hinit', JSON.stringify(selectedArgs, null, 2))
+    selectedArgs = getArgumentsInURL() || selectedArgs
+    if (selectedArgs) currentSelectedArg = Object.keys(selectedArgs).at(-1)
+    //console.log('hinit', JSON.stringify(selectedArgs, null, 2))
+
     return isLoaded
   }
 
@@ -78,7 +81,7 @@
     }
     // console.log(url)
     await updateLayerURL(layerStyle, layerURL, params)
-    console.log(layerURL.toString())
+    //console.log(layerURL.toString())
   }
 
   $: {
@@ -172,6 +175,9 @@
       on:click={reset}
       class="button m-auto is-info">Reset</button>
   </div>
+{:catch error}
+  Failed to load parameters for {layerId}
+  <p style="color: red">{error.message}</p>
 {/await}
 
 <style lang="scss">
