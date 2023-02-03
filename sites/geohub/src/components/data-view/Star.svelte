@@ -51,7 +51,7 @@
   }
 </script>
 
-<span
+<div
   class="star icon has-tooltip-arrow has-tooltip-left"
   data-tooltip={isStar ? 'Remove from favourite' : 'Add to favourite'}
   on:click={handleClicked}
@@ -63,7 +63,7 @@
   {:else}
     <i class="fa-regular fa-star fa-xl" />
   {/if}
-</span>
+</div>
 
 <style lang="scss">
   .star {
