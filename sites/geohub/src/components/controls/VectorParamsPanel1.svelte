@@ -156,21 +156,22 @@
       </div>
     {/each}
   </div>
-  <div class="m-auto">
+  <div class=" range-slider m-auto">
     {#if showSlider}
       <RangeSlider
         min={sliderConfig.min}
         max={sliderConfig.max}
         step={0.1}
-        pipstep={Math.round(sliderConfig.step * 10)}
-        rest={false}
+        pipstep={Math.round(sliderConfig.step * 200)}
+        rest={true}
         float
         first="label"
         last="label"
         values={sliderConfig.values}
         on:stop={setSliderValue}
         pips="true"
-        all="label" />
+        all="label"
+         />
     {/if}
   </div>
   <div class="columns p-3 mt-1">
@@ -188,7 +189,7 @@
   .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 5px;
   }
   .grid-item {
     //display: inline-block;
