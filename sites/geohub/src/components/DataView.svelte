@@ -12,6 +12,11 @@
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
+  const session = $page.data.session
+  const dataCategories: Breadcrumb[] = session
+    ? DataCategories
+    : DataCategories.filter((category) => category.name !== 'Favourite')
+
   export let contentHeight: number
   let optionsHeight = 41.5
 
@@ -35,6 +40,7 @@
   let selectedTags: Tag[] = []
   let tagFilterOperatorType: 'and' | 'or' = 'and'
   let DataItemFeatureCollection: StacItemFeatureCollection
+  let isFavouriteSearch = false
 
   $: currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
 
@@ -81,6 +87,8 @@
       const sdg_goal = originUrl.searchParams.get('sdg_goal')
       const type = originUrl.searchParams.get('type')
       const stac = originUrl.searchParams.get('stac')
+      const starOnly = originUrl.searchParams.get('staronly')
+      isFavouriteSearch = starOnly && starOnly.toLowerCase() === 'true' ? true : false
 
       const apiUrl = new URL(`${originUrl.origin}${originUrl.pathname}`)
       if (sdg_goal) apiUrl.searchParams.set('sdg_goal', sdg_goal)
@@ -126,6 +134,10 @@
 
       apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
       apiUrl.searchParams.set('limit', LIMIT.toString())
+
+      if (starOnly) {
+        apiUrl.searchParams.set('staronly', starOnly)
+      }
 
       if (selectedTags?.length > 0) {
         apiUrl.searchParams.set('operator', tagFilterOperatorType)
@@ -248,6 +260,7 @@
       breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
       selectedTags = []
+      isFavouriteSearch = false
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -263,6 +276,7 @@
         selectedTags = []
       }
     }
+    expanded = {}
   }
 
   let clearFiltertext = () => {
@@ -310,16 +324,22 @@
     {#each DataItemFeatureCollection.features as feature}
       <DataCard
         {feature}
-        bind:isExpanded={expanded[feature.properties.id]} />
+        bind:isExpanded={expanded[feature.properties.id]}
+        bind:isStarOnly={isFavouriteSearch} />
     {/each}
     {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
       <Notification type="info">All data loaded.</Notification>
     {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <Notification type="warning">No data found. Try another keyword.</Notification>
+    {#if isFavouriteSearch}
+      <Notification type="info"
+        >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+    {:else}
+      <Notification type="warning">No data found. Try another keyword.</Notification>
+    {/if}
   {:else}
     <DataCategoryCardList
-      categories={DataCategories}
+      categories={dataCategories}
       cardSize="medium"
       on:selected={handleCategorySelected}
       bind:breadcrumbs />

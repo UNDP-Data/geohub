@@ -21,7 +21,9 @@
 
   export let feature: StacItemFeature
   export let isExpanded: boolean
+  export let isStarOnly = false
 
+  let nodeRef
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number
@@ -149,85 +151,96 @@
       $indicatorProgress = false
     }
   }
+
+  const handleStarDeleted = () => {
+    if (isStarOnly === true) {
+      nodeRef.parentNode.removeChild(nodeRef)
+    }
+  }
 </script>
 
-{#if tilestatsLayers.length === 1}
-  <DataVectorCard
-    bind:layer={tilestatsLayers[0]}
-    bind:feature
-    bind:isExpanded
-    bind:defaultColor
-    bind:metadata
-    isShowInfo={true} />
-{:else}
-  <Accordion
-    headerTitle={feature.properties.name}
-    bind:isExpanded>
-    <div slot="button">
-      {#await isGettingMetadata then}
-        {#if tilestatsLayers.length < 2}
-          {#if !stacType && !isExpanded}
+<div bind:this={nodeRef}>
+  {#if tilestatsLayers.length === 1}
+    <DataVectorCard
+      bind:layer={tilestatsLayers[0]}
+      bind:feature
+      bind:isExpanded
+      bind:defaultColor
+      bind:metadata
+      on:starDeleted={handleStarDeleted}
+      isShowInfo={true} />
+  {:else}
+    <Accordion
+      headerTitle={feature.properties.name}
+      bind:isExpanded>
+      <div slot="button">
+        {#await isGettingMetadata then}
+          {#if tilestatsLayers.length < 2}
+            {#if !stacType && !isExpanded}
+              <AddLayerButton
+                title="Add layer"
+                isIconButton={true}
+                on:clicked={addLayer} />
+            {/if}
+          {/if}
+        {/await}
+      </div>
+      <div
+        slot="content"
+        class="card-container px-1"
+        bind:clientWidth>
+        {#if !is_raster && tilestatsLayers.length > 1}
+          <DataCardInfo
+            bind:feature
+            bind:metadata
+            on:starDeleted={handleStarDeleted} />
+
+          {#each tilestatsLayers as layer}
+            <DataVectorCard
+              bind:layer
+              bind:feature
+              bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
+              bind:defaultColor
+              bind:metadata
+              isShowInfo={false} />
+          {/each}
+        {:else}
+          <DataCardInfo
+            bind:feature
+            bind:metadata
+            on:starDeleted={handleStarDeleted}>
+            <div class="map">
+              <MiniMap
+                bind:feature
+                bind:width
+                height={'150px'}
+                bind:isLoadMap={isExpanded}
+                bind:metadata
+                bind:defaultColor
+                bind:defaultColormap />
+            </div>
+          </DataCardInfo>
+
+          {#if !stacType}
             <AddLayerButton
               title="Add layer"
-              isIconButton={true}
               on:clicked={addLayer} />
           {/if}
-        {/if}
-      {/await}
-    </div>
-    <div
-      slot="content"
-      class="card-container px-1"
-      bind:clientWidth>
-      {#if !is_raster && tilestatsLayers.length > 1}
-        <DataCardInfo
-          bind:feature
-          bind:metadata />
 
-        {#each tilestatsLayers as layer}
-          <DataVectorCard
-            bind:layer
-            bind:feature
-            bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
-            bind:defaultColor
-            bind:metadata
-            isShowInfo={false} />
-        {/each}
-      {:else}
-        <DataCardInfo
-          bind:feature
-          bind:metadata>
-          <div class="map">
-            <MiniMap
-              bind:feature
-              bind:width
-              height={'150px'}
-              bind:isLoadMap={isExpanded}
-              bind:metadata
-              bind:defaultColor
-              bind:defaultColormap />
-          </div>
-        </DataCardInfo>
-
-        {#if !stacType}
-          <AddLayerButton
-            title="Add layer"
-            on:clicked={addLayer} />
+          {#if stacType && stacType.key === 'stac' && assetList}
+            <!--show asset list-->
+            {#each assetList as asset}
+              <DataStacAssetCard
+                bind:asset
+                bind:feature
+                bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]} />
+            {/each}
+          {/if}
         {/if}
-
-        {#if stacType && stacType.key === 'stac' && assetList}
-          <!--show asset list-->
-          {#each assetList as asset}
-            <DataStacAssetCard
-              bind:asset
-              bind:feature
-              bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]} />
-          {/each}
-        {/if}
-      {/if}
-    </div>
-  </Accordion>
-{/if}
+      </div>
+    </Accordion>
+  {/if}
+</div>
 
 <style lang="scss">
   .card-container {

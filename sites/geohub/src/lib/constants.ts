@@ -154,6 +154,11 @@ export const DataCategories: Breadcrumb[] = [
     icon: 'assets/postgresql.png',
     url: '/api/datasets?type=pgtileserv',
   },
+  {
+    name: 'Favourite',
+    icon: 'assets/star.png',
+    url: '/api/datasets?staronly=true',
+  },
 ]
 
 export const SortingColumns: Radio[] = [
@@ -177,9 +182,22 @@ export const SortingColumns: Radio[] = [
     value: 'createdat',
     label: 'Created date',
   },
+  {
+    value: 'no_stars',
+    label: 'Stars',
+  },
 ]
 
-export const DatasetSearchQueryParams = ['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby', 'operator']
+export const DatasetSearchQueryParams = [
+  'query',
+  'offset',
+  'limit',
+  'storage_id',
+  'bbox',
+  'sortby',
+  'operator',
+  'staronly',
+]
 
 export const tagSearchKeys = [
   {

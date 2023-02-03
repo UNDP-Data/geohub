@@ -74,6 +74,10 @@ paths:
                             type: array
                             items:
                               $ref: '#/components/schemas/Tag'
+                          is_star:
+                            type: boolean
+                          no_stars:
+                            type: integer
                         required:
                           - id
                           - storage_id
@@ -277,6 +281,12 @@ paths:
           in: query
           name: year_value
           description: search by year value
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: staronly
+          description: 'if true, only search for favourite datasets'
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API
@@ -1075,6 +1085,51 @@ paths:
               Example 1:
                 value:
                   count: 6
+  '/datasets/{id}/star':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset id
+    post:
+      summary: Register dataset to favourite
+      operationId: post-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  user_email:
+                    type: string
+                  savedat:
+                    type: string
+                required:
+                  - dataset_id
+                  - user_email
+                  - savedat
+      description: |-
+        Register dataset to favourite
+        This API only can be used when user sign in.
+      tags:
+        - star
+    delete:
+      summary: Delete star from dataset
+      operationId: delete-datasets-id-star
+      responses:
+        '204':
+          description: No Content
+      description: |-
+        Delete star from dataset
+        This API only can be used when user sign in.
+      tags:
+        - star
 components:
   schemas:
     Tag:
