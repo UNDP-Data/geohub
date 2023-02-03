@@ -76,6 +76,8 @@ paths:
                               $ref: '#/components/schemas/Tag'
                           is_star:
                             type: boolean
+                          no_stars:
+                            type: integer
                         required:
                           - id
                           - storage_id

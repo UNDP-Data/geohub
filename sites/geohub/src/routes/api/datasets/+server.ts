@@ -48,7 +48,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     if (sortby) {
       const values = sortby.split(',')
       const column: string = values[0].trim().toLowerCase()
-      const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat']
+      const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat', 'no_stars']
       const targetSortingOrder = ['asc', 'desc']
       if (!targetSortingColumns.includes(column)) {
         console.log(targetSortingColumns, column)
@@ -101,6 +101,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
         ON y.tag_id = z.id
         GROUP BY
           x.id
+      ),
+      no_stars as (
+        SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
       )
       SELECT row_to_json(featurecollection) AS geojson 
       FROM (
@@ -125,6 +128,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
             x.createdat, 
             x.updatedat,
             y.tags,
+            CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
             ${
               user_email
                 ? `
@@ -143,9 +147,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
           FROM geohub.dataset x
           LEFT JOIN datasetTags y
           ON x.id = y.id
+          LEFT JOIN no_stars z
+          ON x.id = z.dataset_id
         ${whereExpressesion.sql}
         ORDER BY
-          x.${sortByColumn} ${SortOrder}
+          ${sortByColumn} ${SortOrder} NULLS ${SortOrder === 'asc' ? 'FIRST' : 'LAST'}
         LIMIT ${limit}
         OFFSET ${offset}
         ) AS feature

@@ -182,6 +182,10 @@ export const SortingColumns: Radio[] = [
     value: 'createdat',
     label: 'Created date',
   },
+  {
+    value: 'no_stars',
+    label: 'Stars',
+  },
 ]
 
 export const DatasetSearchQueryParams = [
