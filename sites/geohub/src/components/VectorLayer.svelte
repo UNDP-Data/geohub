@@ -8,7 +8,7 @@
   import type { Layer } from '$lib/types'
   import VectorFilter from './controls/VectorFilter.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import VectorParamsPanel1 from '$components/controls/VectorParamsPanel1.svelte'
+  import VectorParamsPanel from './controls/VectorParamsPanel.svelte'
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
@@ -25,8 +25,10 @@
     { label: TabNames.FILTER, icon: 'fa-solid fa-filter' },
     { label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
-    { label: TabNames.VECTORPARAMS, icon: 'fa-solid fa-sliders' },
+    { label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' },
   ]
+
+  const { value: layerType } = layer.dataset.properties.tags.find((t) => t.key == 'layertype')
 </script>
 
 <div
@@ -60,8 +62,8 @@
         <VectorLabelPanel {layer} />
       {:else if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />
-      {:else if activeTab === TabNames.VECTORPARAMS}
-        <VectorParamsPanel1 layerId={layer.id} />
+      {:else if activeTab === TabNames.SIMULATION && layerType == 'function'}
+        <VectorParamsPanel layerId={layer.id} />
       {/if}
     </p>
   </nav>
