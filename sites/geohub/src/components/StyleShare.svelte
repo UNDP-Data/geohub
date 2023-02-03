@@ -45,24 +45,25 @@
   const open = () => {
     styleURL = undefined
 
-    if ($page.data.style?.name) {
-      styleName = $page.data.style?.name
-    } else {
-      untargetedLayers = []
-      const names: string[] = []
-      if ($layerList.length > 0) {
-        $layerList.forEach((layer) => {
-          const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
-            { key: string; value: string },
-          ]
-          const stacType = tags?.find((tag) => tag.key === 'stac')
+    untargetedLayers = []
+    const names: string[] = []
+    if ($layerList.length > 0) {
+      $layerList.forEach((layer) => {
+        const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
+          { key: string; value: string },
+        ]
+        const stacType = tags?.find((tag) => tag.key === 'stac')
 
-          if (stacType?.value === 'microsoft-pc') {
-            untargetedLayers.push(layer)
-          } else {
-            names.push(layer.name)
-          }
-        })
+        if (stacType?.value === 'microsoft-pc') {
+          untargetedLayers.push(layer)
+        } else {
+          names.push(layer.name)
+        }
+      })
+
+      if ($page.data.style?.name) {
+        styleName = $page.data.style?.name
+      } else {
         if (names.length > 0) {
           styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
         } else {
