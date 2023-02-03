@@ -63,6 +63,7 @@
 <Header
   bind:height
   bind:showProgressBar
+  progressBarSize="small"
   region="UNDP's one stop shop for spatial data and analytics"
   siteTitle="GeoHub"
   url="https://geohub.data.undp.org"
