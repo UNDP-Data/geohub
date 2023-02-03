@@ -219,6 +219,7 @@
     <div class="is-9 m-auto mt-1">
       {#if showSlider}
         <RangeSlider
+          disabled={selectedArguments.length === 0}
           min={minValue}
           max={maxValue}
           step={0.1}
@@ -234,9 +235,11 @@
     </div>
     <div class="columns p-3 mt-1">
       <button
+        disabled={selectedArguments.length === 0}
         on:click={applyParameters}
         class="button m-auto is-primary">Apply</button>
       <button
+        disabled={selectedArguments.length === 0}
         on:click={clearParameters}
         class="button m-auto is-secondary">Clear</button>
     </div>
