@@ -32,14 +32,8 @@
 
   /* FUNCTIONS*/
   const getArgumentsInURL = () => {
-    const params = {}
-
     const llayerURL = new URL(layerUrl)
-    console.log(llayerURL.toString())
-    for (const [key, value] of llayerURL.searchParams) {
-      params[key] = JSON.parse(value)
-    }
-    return params
+    return JSON.parse(llayerURL.searchParams.get('params'))
   }
 
   const setArgument = (argId: string) => {
@@ -61,8 +55,8 @@
     for (const [k, v] of Object.entries(args)) {
       defaultArgs[k] = { value: Number(v.value) }
     }
-
-    // console.log('hinit', JSON.stringify(selectedArgs, null, 2))
+    selectedArgs = getArgumentsInURL()
+    console.log('hinit', JSON.stringify(selectedArgs, null, 2))
     return isLoaded
   }
 
