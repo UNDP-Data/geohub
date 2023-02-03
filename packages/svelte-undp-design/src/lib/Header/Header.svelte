@@ -138,7 +138,7 @@
 		</div>
 
 		{#if showProgressBar}
-			<progress class="progress is-small is-info" max="100" />
+			<progress style="height:0.2rem!important;" class="progress is-small is-info" max="100" />
 		{/if}
 	</section>
 </header>
@@ -150,7 +150,6 @@
 	@use '../css/mega-menu.min.css';
 	@use '../css/mobile-nav.min.css';
 	@use '../css/cta-link.min.css';
-	// @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 
 	:global(.menu-buttons) {
 		display: flex;
