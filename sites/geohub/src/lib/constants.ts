@@ -27,7 +27,7 @@ export enum TabNames {
   ZOOM = 'Zoom',
   HISTOGRAM = 'Histogram',
   FILTER = 'Filter',
-  VECTORPARAMS = 'Parameters',
+  SIMULATION = 'Simulation',
 }
 
 export enum ClassificationMethodTypes {
