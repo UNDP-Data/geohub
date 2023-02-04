@@ -54,6 +54,7 @@
     { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
     { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
   ]
+  let containerWidth: number
 
   if (!layerHasUniqueValues) {
     const layerMeanToMax = layerMean / layerMax
@@ -221,7 +222,8 @@
 
 <div
   class="intervals-view-container"
-  data-testid="intervals-view-container">
+  data-testid="intervals-view-container"
+  bind:clientWidth={containerWidth}>
   <!-- svelte-ignore a11y-click-teevents-have-key-events -->
 
   <div class="legend-controls mb-4">
@@ -258,17 +260,14 @@
           on:change={handleIncrementDecrementClasses} />
       </div>
     </div>
-    <div
-      class="field"
-      hidden={layerHasUniqueValues}>
+    <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label has-text-centered">Colormap</label>
       <div class="control">
-        <div
-          class="colormap-picker"
-          style={layerHasUniqueValues ? 'margin-right:0%' : null}>
+        <div class="colormap-picker">
           <ColorMapPicker
             bind:colorMapName
+            buttonWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
             on:colorMapChanged={() => {
               colorMapNameChanged()
             }} />
