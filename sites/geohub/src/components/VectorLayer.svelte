@@ -28,9 +28,9 @@
     { label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' },
   ]
 
-  const { value: layerType } = layer.dataset.properties.tags.find((t) => t.key == 'layertype')
+  const layerType = layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.['value']
 
-  if (layerType != 'function') tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
+  if (!layerType || layerType != 'function') tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
 </script>
 
 <div
