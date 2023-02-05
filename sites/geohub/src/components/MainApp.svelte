@@ -5,7 +5,7 @@
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import Map from '$components/Map.svelte'
   import Content from './Content.svelte'
-  import { map as mapStore } from '$stores'
+  import { map as mapStore, indicatorProgress } from '$stores'
 
   let map: MaplibreMap
   let headerHeight: number
@@ -98,6 +98,12 @@
       slot="secondary"
       class="secondary-content">
       <BannerMessageControl>
+        <progress
+          style="height:0.2rem; opacity:{$indicatorProgress == true
+            ? 1
+            : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
+          class="progress is-large is-info "
+          max={100} />
         <Map bind:map />
       </BannerMessageControl>
     </div>
