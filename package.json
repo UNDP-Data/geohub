@@ -4,11 +4,11 @@
   "description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
   "scripts": {
     "prepare": "lefthook install",
-    "lint": "turbo run lint",
-    "format": "turbo run format",
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "precommit": "turbo run precommit",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "precommit": "pnpm -r lint && pnpm -r format",
     "release": "changeset publish"
   },
   "repository": {
@@ -31,7 +31,6 @@
     "lefthook": "^1.2.8"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.0",
-    "turbo": "^1.7.2"
+    "@changesets/cli": "^2.26.0"
   }
 }
