@@ -1110,6 +1110,8 @@ paths:
                     type: string
                   savedat:
                     type: string
+                  no_stars:
+                    type: integer
                 required:
                   - dataset_id
                   - user_email
@@ -1123,13 +1125,48 @@ paths:
       summary: Delete star from dataset
       operationId: delete-datasets-id-star
       responses:
-        '204':
-          description: No Content
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
       description: |-
         Delete star from dataset
         This API only can be used when user sign in.
       tags:
         - star
+  '/datasets/{id}/star/count':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
+    get:
+      summary: get star count
+      tags:
+        - star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      operationId: get-datasets-id-star-count
+      description: get the number of stars for a dataset
 components:
   schemas:
     Tag:

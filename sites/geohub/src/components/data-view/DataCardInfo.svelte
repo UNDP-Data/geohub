@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-
   import { marked } from 'marked'
   import Time from 'svelte-time'
   import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
@@ -65,14 +63,12 @@
   {#if feature}
     <div class="card-title is-flex is-flex-direction-row is-align-content-center">
       <p class="title is-5 has-text-left">{feature.properties.name}</p>
-      {#if $page.data.session}
-        <div class="star pr-3">
-          <Star
-            bind:dataset_id={feature.properties.id}
-            bind:isStar={feature.properties.is_star}
-            on:starDeleted={handleStarDeleted} />
-        </div>
-      {/if}
+    </div>
+    <div class="star py-2">
+      <Star
+        bind:dataset_id={feature.properties.id}
+        bind:isStar={feature.properties.is_star}
+        on:starDeleted={handleStarDeleted} />
     </div>
     <slot />
     <div class="description has-text-justified">
@@ -145,10 +141,6 @@
 
     .description {
       padding-bottom: 0.5rem;
-    }
-
-    .star {
-      margin-left: auto;
     }
   }
 </style>

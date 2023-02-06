@@ -1,20 +1,25 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
   import { bannerMessages, indicatorProgress } from '$stores'
   import { createEventDispatcher } from 'svelte'
+  import millify from 'millify'
 
   const dispatch = createEventDispatcher()
 
   export let dataset_id: string
   export let isStar
+  let no_stars = 0
 
   const updateStar = async (method: 'POST' | 'DELETE') => {
     $indicatorProgress = true
     try {
-      await fetch(`/api/datasets/${dataset_id}/star`, {
+      const res = await fetch(`/api/datasets/${dataset_id}/star`, {
         method: method,
       })
+      const json = await res.json()
+      no_stars = json.no_stars
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,
@@ -41,6 +46,7 @@
       await updateStar('POST')
     }
     isStar = !isStar
+    console.log(no_stars)
   }
   const handleEnterKey = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -49,24 +55,71 @@
       e.target.click()
     }
   }
+
+  const getStarCount = async () => {
+    const res = await fetch(`/api/datasets/${dataset_id}/star/count`)
+    const json = await res.json()
+    no_stars = json.no_stars
+    return no_stars
+  }
+
+  const starLoading = getStarCount()
 </script>
 
-<div
-  class="star icon has-tooltip-arrow has-tooltip-left"
-  data-tooltip={isStar ? 'Remove from favourite' : 'Add to favourite'}
-  on:click={handleClicked}
-  on:keydown={handleEnterKey}>
-  {#if isStar}
-    <i
-      class="fa-solid fa-star fa-xl"
-      style="color:#fccf03" />
-  {:else}
-    <i class="fa-regular fa-star fa-xl" />
-  {/if}
-</div>
+{#if $page.data.session}
+  <button
+    class="button is-small"
+    on:click={handleClicked}
+    on:keydown={handleEnterKey}
+    disabled={$indicatorProgress}>
+    <span class="icon">
+      {#if isStar}
+        <i
+          class="fa-solid fa-star fa-lg"
+          style="color:#fccf03" />
+      {:else}
+        <i class="fa-regular fa-star fa-lg" />
+      {/if}
+    </span>
+    <span>
+      {#if isStar}
+        Starred
+      {:else}
+        Star
+      {/if}
+      {#await starLoading then}
+        <div class="Counter">{millify(no_stars)}</div>
+      {/await}
+    </span>
+  </button>
+{:else}
+  <button
+    class="button is-small"
+    disabled>
+    <span class="icon">
+      <i
+        class="fa-solid fa-star fa-lg"
+        style="color:#fccf03" />
+    </span>
+    <span class="star-container-no-login">
+      Star
+      {#await starLoading then}
+        <div class="Counter">{millify(no_stars)}</div>
+      {/await}
+    </span>
+  </button>
+{/if}
 
 <style lang="scss">
-  .star {
-    cursor: pointer;
+  .Counter {
+    background-color: #1b1f2413;
+    border-radius: 2em;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: calc(20px - 1px * 2);
+    min-width: 20px;
+    padding: 0 6px;
+    text-align: center;
   }
 </style>

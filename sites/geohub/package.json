@@ -76,6 +76,7 @@
     "lodash-es": "^4.17.21",
     "maplibre-gl": "^2.4.0",
     "marked": "^4.2.12",
+    "millify": "^5.0.1",
     "papaparse": "^5.3.2",
     "pmtiles": "^2.7.0",
     "prettier": "^2.8.3",
