@@ -76,6 +76,7 @@ export class RasterTileData {
       resampling: 'nearest',
       rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
       return_mask: true,
+      colormap_name: defaultColormap,
     }
 
     const colorMap = {}

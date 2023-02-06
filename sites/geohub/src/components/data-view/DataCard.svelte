@@ -89,7 +89,6 @@
           const rasterInfo = metadata as RasterTileMetadata
           const rasterTile = new RasterTileData($map, feature, rasterInfo)
           const data = await rasterTile.add(defaultColormap)
-          console.log(data)
           $layerList = [
             {
               id: data.layer.id,

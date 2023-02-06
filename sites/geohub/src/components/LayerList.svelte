@@ -86,7 +86,6 @@
   $: if ($map) {
     $map.once('load', () => {
       getLegendState()
-      console.log(layerList)
     })
   }
 </script>
