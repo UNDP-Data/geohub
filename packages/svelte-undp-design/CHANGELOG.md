@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.13
+
+### Patch Changes
+
+- e83a97b: Add size option for Header
+- e83a97b: Add more options for progress bar size
+- e83a97b: Changed Size of loader in header
+
 ## 0.0.12
 
 ### Patch Changes
