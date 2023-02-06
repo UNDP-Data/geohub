@@ -10,7 +10,7 @@
 
   export let dataset_id: string
   export let isStar
-  let no_stars: number = 0
+  let no_stars = 0
 
   const updateStar = async (method: 'POST' | 'DELETE') => {
     $indicatorProgress = true
@@ -87,9 +87,7 @@
         Star
       {/if}
       {#await starLoading then}
-        {#if no_stars > 0}
-          <div class="Counter">{millify(no_stars)}</div>
-        {/if}
+        <div class="Counter">{millify(no_stars)}</div>
       {/await}
     </span>
   </button>
@@ -105,9 +103,7 @@
     <span class="star-container-no-login">
       Star
       {#await starLoading then}
-        {#if no_stars > 0}
-          <div class="Counter">{millify(no_stars)}</div>
-        {/if}
+        <div class="Counter">{millify(no_stars)}</div>
       {/await}
     </span>
   </button>
