@@ -163,28 +163,24 @@ export const DataCategories: Breadcrumb[] = [
 
 export const SortingColumns: Radio[] = [
   {
-    value: 'name',
-    label: 'Name',
+    value: 'name,asc',
+    label: 'A to Z',
   },
   {
-    value: 'source',
-    label: 'Source',
-  },
-  // {
-  //   value: 'license',
-  //   label: 'Data license'
-  // },
-  {
-    value: 'updatedat',
-    label: 'Updated date',
+    value: 'name,desc',
+    label: 'Z to A',
   },
   {
-    value: 'createdat',
-    label: 'Created date',
+    value: 'no_stars,desc',
+    label: 'Most favourite',
   },
   {
-    value: 'no_stars',
-    label: 'Stars',
+    value: 'updatedat,desc',
+    label: 'Most recent',
+  },
+  {
+    value: 'updatedat,asc',
+    label: 'Less recent',
   },
 ]
 
