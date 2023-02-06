@@ -4,6 +4,7 @@ import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import { MAP_ATTRIBUTION } from './constants'
+import chroma from 'chroma-js'
 
 export class RasterTileData {
   private feature: StacItemFeature
@@ -65,6 +66,7 @@ export class RasterTileData {
 
     // choose default colormap randomly
     const colormap = defaultColormap ?? getRandomColormap()
+
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -74,8 +76,21 @@ export class RasterTileData {
       resampling: 'nearest',
       rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
       return_mask: true,
-      colormap_name: colormap,
     }
+
+    const colorMap = {}
+    if (Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0) {
+      const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
+      const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
+      colorMapKeys.forEach((key, index) => {
+        const color = chroma(colorsList[index]).rgba()
+        colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
+      })
+      delete titilerApiUrlParams['colormap_name']
+      delete titilerApiUrlParams['rescale']
+      titilerApiUrlParams['colormap'] = JSON.stringify(colorMap)
+    }
+
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 
@@ -134,7 +149,7 @@ export class RasterTileData {
       source,
       sourceId,
       metadata: rasterInfo,
-      colormap: colormap,
+      colorMapName: colormap,
     }
   }
 

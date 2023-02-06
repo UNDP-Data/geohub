@@ -86,6 +86,7 @@
   $: if ($map) {
     $map.once('load', () => {
       getLegendState()
+      console.log(layerList)
     })
   }
 </script>
@@ -113,7 +114,9 @@
     <div class="box p-0 mx-1 my-3">
       {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
         {@const cmp =
-          legendState?.[layer.id]?.colorMapName || getValueFromRasterTileUrl($map, layer.id, 'colormap_name')}
+          legendState?.[layer.id]?.colorMapName ||
+          getValueFromRasterTileUrl($map, layer.id, 'colormap_name') ||
+          layer.colorMapName}
         <RasterLayer
           {layer}
           classificationMethod={cls}
