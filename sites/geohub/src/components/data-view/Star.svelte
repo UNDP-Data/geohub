@@ -70,7 +70,8 @@
   <button
     class="button is-small"
     on:click={handleClicked}
-    on:keydown={handleEnterKey}>
+    on:keydown={handleEnterKey}
+    disabled={$indicatorProgress}>
     <span class="icon">
       {#if isStar}
         <i
