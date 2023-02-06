@@ -10,6 +10,6 @@ export interface Layer {
   children?: Layer[]
   parentId?: string
   dataset: StacItemFeature
-  colormapName?: string
+  colorMapName?: string
   classificationMethod?: ClassificationMethodTypes
 }

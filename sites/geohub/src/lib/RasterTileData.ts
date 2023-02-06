@@ -4,6 +4,7 @@ import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import { MAP_ATTRIBUTION } from './constants'
+import chroma from 'chroma-js'
 
 export class RasterTileData {
   private feature: StacItemFeature
@@ -19,7 +20,7 @@ export class RasterTileData {
   }
 
   public getMetadata = async () => {
-    if (this.metadata) return this.metadata
+    // if (this.metadata) return this.metadata
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
     this.metadata = await res.json()
@@ -59,12 +60,12 @@ export class RasterTileData {
 
     const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata
     bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
-
     const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
     const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
-
+    const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0
     // choose default colormap randomly
-    const colormap = defaultColormap ?? getRandomColormap()
+    const colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
+
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -76,6 +77,20 @@ export class RasterTileData {
       return_mask: true,
       colormap_name: colormap,
     }
+
+    const colorMap = {}
+    if (isUniqueValueLayer) {
+      const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
+      const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
+      colorMapKeys.forEach((key, index) => {
+        const color = chroma(colorsList[index]).rgba()
+        colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
+      })
+      delete titilerApiUrlParams['colormap_name']
+      delete titilerApiUrlParams['rescale']
+      titilerApiUrlParams['colormap'] = JSON.stringify(colorMap)
+    }
+
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 

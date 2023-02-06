@@ -4,6 +4,7 @@ import { getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
+import chroma from 'chroma-js'
 
 export class MosaicJsonData {
   private feature: StacItemFeature
@@ -98,7 +99,6 @@ export class MosaicJsonData {
       bounds.getNorthEast().lng,
       bounds.getNorthEast().lat,
     ]
-
     const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
       { key: string; value: string },
     ]
@@ -112,7 +112,7 @@ export class MosaicJsonData {
     if (!res.ok) throw new Error(res.statusText)
     const mosaicjson = await res.json()
     const numberOfClasses = mosaicjson.classmap ? Object.keys(mosaicjson.classmap).length : 0
-    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= COLOR_CLASS_COUNT_MAXIMUM ? true : false
+    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= COLOR_CLASS_COUNT_MAXIMUM
     res = await fetch(mosaicjson.tilejson)
     if (!res.ok) throw new Error(res.statusText)
     const tilejson = await res.json()
@@ -123,7 +123,7 @@ export class MosaicJsonData {
 
     bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjson.classmap
 
-    let colormap = defaultColormap ?? getRandomColormap()
+    let colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
     if (rasterInfo.band_metadata.length > 1) {
       colormap = ''
     }
@@ -133,11 +133,24 @@ export class MosaicJsonData {
         return tile
       } else {
         const _url = new URL(tile)
-        _url.searchParams.delete('colormap_name')
-        _url.searchParams.delete('rescale')
-        _url.searchParams.set('colormap_name', colormap)
-        _url.searchParams.set('rescale', [layerBandMetadataMin, layerBandMetadataMax].join(','))
-        return decodeURI(_url.toString())
+        if (isUniqueValueLayer) {
+          const colorsList = chroma.scale(colormap).colors(Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length)
+          const colorMap = {}
+          Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).forEach((key, index) => {
+            const color = chroma(colorsList[index]).rgba()
+            colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
+          })
+          _url.searchParams.delete('colormap_name')
+          _url.searchParams.delete('rescale')
+          _url.searchParams.set('colormap', JSON.stringify(colorMap))
+          return decodeURI(_url.toString())
+        } else {
+          _url.searchParams.delete('colormap_name')
+          _url.searchParams.delete('rescale')
+          _url.searchParams.set('colormap_name', colormap)
+          _url.searchParams.set('rescale', [layerBandMetadataMin, layerBandMetadataMax].join(','))
+          return decodeURI(_url.toString())
+        }
       }
     })
 
@@ -194,6 +207,7 @@ export class MosaicJsonData {
       source,
       sourceId,
       metadata: rasterInfo,
+      colormap: colormap,
     }
   }
 }
