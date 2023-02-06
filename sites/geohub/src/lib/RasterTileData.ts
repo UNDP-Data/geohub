@@ -20,7 +20,7 @@ export class RasterTileData {
   }
 
   public getMetadata = async () => {
-    if (this.metadata) return this.metadata
+    // if (this.metadata) return this.metadata
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
     this.metadata = await res.json()
@@ -60,7 +60,6 @@ export class RasterTileData {
 
     const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata
     bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
-
     const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
     const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
 
@@ -76,7 +75,7 @@ export class RasterTileData {
       resampling: 'nearest',
       rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
       return_mask: true,
-      colormap_name: defaultColormap,
+      colormap_name: colormap,
     }
 
     const colorMap = {}
@@ -150,7 +149,7 @@ export class RasterTileData {
       source,
       sourceId,
       metadata: rasterInfo,
-      colorMapName: colormap,
+      colormap: colormap,
     }
   }
 

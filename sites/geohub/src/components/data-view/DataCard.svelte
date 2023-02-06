@@ -95,7 +95,7 @@
               name: feature.properties.name,
               info: data.metadata,
               dataset: feature,
-              colorMapName: data.colorMapName,
+              colorMapName: data.colormap,
             },
             ...$layerList,
           ]

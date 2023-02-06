@@ -23,6 +23,7 @@
           name: `${asset.collectionId}-${asset.title}`,
           info: data.metadata,
           dataset: feature,
+          colorMapName: data.colormap,
         },
         ...$layerList,
       ]
