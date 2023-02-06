@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
   import { SortingColumns } from '$lib/constants'
-  import type { DataSortingColumn } from '$lib/types'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
