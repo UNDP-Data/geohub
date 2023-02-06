@@ -1,11 +1,11 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
+  import type { StacItemFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
+  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM, SortingColumns } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
   import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
@@ -33,8 +33,7 @@
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
   let queryForSearch: string
-  let sortingColumn: DataSortingColumn = 'name'
-  let orderType: DataOrderType = 'asc'
+  let sortingColumn: string = SortingColumns[0].value
   let bbox: [number, number, number, number]
   let isFilterByBBox = false
   let selectedTags: Tag[] = []
@@ -132,7 +131,7 @@
         apiUrl.searchParams.set('bbox', bbox.join(','))
       }
 
-      apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
+      apiUrl.searchParams.set('sortby', sortingColumn)
       apiUrl.searchParams.set('limit', LIMIT.toString())
 
       if (starOnly) {
@@ -294,7 +293,6 @@
     bind:query
     bind:queryForSearch
     bind:sortingColumn
-    bind:orderType
     bind:bbox
     bind:isFilterByBBox
     bind:selectedTags
