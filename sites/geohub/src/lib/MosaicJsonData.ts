@@ -123,7 +123,7 @@ export class MosaicJsonData {
 
     bandMetaStats.STATISTICS_UNIQUE_VALUES = mosaicjson.classmap
 
-    let colormap = defaultColormap ?? getRandomColormap()
+    let colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
     if (rasterInfo.band_metadata.length > 1) {
       colormap = ''
     }

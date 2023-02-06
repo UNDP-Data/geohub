@@ -62,9 +62,9 @@ export class RasterTileData {
     bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
     const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
     const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
-
+    const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0
     // choose default colormap randomly
-    const colormap = defaultColormap ?? getRandomColormap()
+    const colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
 
     const titilerApiUrlParams = {
       scale: 1,
@@ -79,7 +79,7 @@ export class RasterTileData {
     }
 
     const colorMap = {}
-    if (Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0) {
+    if (isUniqueValueLayer) {
       const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
       const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
       colorMapKeys.forEach((key, index) => {
