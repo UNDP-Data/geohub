@@ -3,6 +3,7 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { getStarCount } from '$lib/server/helpers'
 const connectionString = DATABASE_CONNECTION
 
 export const POST: RequestHandler = async ({ locals, params }) => {
@@ -40,10 +41,13 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 
     await client.query(query)
 
+    const stars = await getStarCount(client, dataset_id)
+
     const res = {
       dataset_id,
       user_email,
       savedat: now,
+      no_stars: stars,
     }
 
     return new Response(JSON.stringify(res))
@@ -78,9 +82,14 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 
     await client.query(query)
 
-    return new Response(undefined, {
-      status: 204,
-    })
+    const stars = await getStarCount(client, dataset_id)
+
+    const res = {
+      dataset_id,
+      no_stars: stars,
+    }
+
+    return new Response(JSON.stringify(res))
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
