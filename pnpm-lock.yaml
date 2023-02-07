@@ -320,7 +320,6 @@ importers:
       '@geoffcox/svelte-splitter': ^1.0.1
       '@mapbox/vector-tile': ^1.3.1
       '@neodrag/svelte': ^1.2.4
-      '@popperjs/core': ^2.11.6
       '@sentry/node': ^7.35.0
       '@sveltejs/adapter-node': ^1.1.4
       '@sveltejs/kit': ^1.3.9
@@ -380,7 +379,6 @@ importers:
       svelte-check: ^3.0.3
       svelte-copy: ^1.3.0
       svelte-keydown: ^0.5.0
-      svelte-popperjs: ^1.3.2
       svelte-preprocess: ^5.0.1
       svelte-range-slider-pips: ^2.1.1
       svelte-step-wizard: ^0.0.2
@@ -389,7 +387,6 @@ importers:
       svelte-tree-view-component: ^1.0.3
       svelte-use-click-outside: ^1.0.0
       svelte-vega: ^1.2.0
-      sveltejs-tippy: ^3.0.0
       tippy.js: ^6.3.7
       tslib: ^2.5.0
       typescript: ^4.9.5
@@ -414,7 +411,6 @@ importers:
       '@creativebulma/bulma-tooltip': 1.2.0
       '@geoffcox/svelte-splitter': 1.0.1
       '@neodrag/svelte': 1.2.4
-      '@popperjs/core': 2.11.6
       '@sveltejs/adapter-node': 1.1.4_@sveltejs+kit@1.3.9
       '@sveltejs/kit': 1.3.9_svelte@3.55.1+vite@4.0.4
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.1+vite@4.0.4
@@ -468,7 +464,6 @@ importers:
       svelte-check: 3.0.3_sass@1.58.0+svelte@3.55.1
       svelte-copy: 1.3.0
       svelte-keydown: 0.5.0
-      svelte-popperjs: 1.3.2_u2a26nokcckqacvdxkzji6ia64
       svelte-preprocess: 5.0.1_cjyprvzu4kavkaguwtgkgx5cp4
       svelte-range-slider-pips: 2.1.1
       svelte-step-wizard: 0.0.2
@@ -477,7 +472,6 @@ importers:
       svelte-tree-view-component: 1.0.3
       svelte-use-click-outside: 1.0.0
       svelte-vega: 1.2.0_36sthfwhgi34qytpvkzggbhnle
-      sveltejs-tippy: 3.0.0
       tippy.js: 6.3.7
       tslib: 2.5.0
       typescript: 4.9.5
@@ -11052,16 +11046,6 @@ packages:
     resolution: {integrity: sha512-DgY6AYlKbBocSvjC3kUeNPcStJQOTOCxAGG9ymVHzJdsQ1hRJuB8pcnB4UFH8uH3bAPdYyXXa3LwenLDL41eqQ==}
     dev: true
 
-  /svelte-popperjs/1.3.2_u2a26nokcckqacvdxkzji6ia64:
-    resolution: {integrity: sha512-fwrErlkvngL876WXRnL3OLlfk/n9YkZwwLxuKRpZOYCJLt1zrwhoKTXS+/sRgDveD/zd6GQ35hV89EOip+NBGA==}
-    peerDependencies:
-      '@popperjs/core': '>=2'
-      svelte: '>=3'
-    dependencies:
-      '@popperjs/core': 2.11.6
-      svelte: 3.55.1
-    dev: true
-
   /svelte-preprocess/4.10.7_atrrhq7vg4ekua4nnyrpuardle:
     resolution: {integrity: sha512-sNPBnqYD6FnmdBrUmBCaqS00RyCsCpj2BG58A1JBswNF7b0OKviwxqVrOL/CKyJrLSClrSeqQv5BXNg2RUbPOw==}
     engines: {node: '>= 9.11.2'}
@@ -11339,12 +11323,6 @@ packages:
       - supports-color
     dev: true
 
-  /sveltejs-tippy/3.0.0:
-    resolution: {integrity: sha512-LAfQikm61AeqZW1hCFWUsmGEMmhMHDvrPV0JhbT38Ell9SqBjmFaY//+YKUxaJvx6nLMxGQdlcHA1rDg2Ml8tQ==}
-    dependencies:
-      tippy.js: 6.0.3
-    dev: true
-
   /svg-pathdata/6.0.3:
     resolution: {integrity: sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==}
     engines: {node: '>=12.0.0'}
@@ -11445,12 +11423,6 @@ packages:
   /tinyspy/1.0.2:
     resolution: {integrity: sha512-bSGlgwLBYf7PnUsQ6WOc6SJ3pGOcd+d8AA6EUnLDDM0kWEstC1JIlSZA3UNliDXhd9ABoS7hiRBDCu+XP/sf1Q==}
     engines: {node: '>=14.0.0'}
-    dev: true
-
-  /tippy.js/6.0.3:
-    resolution: {integrity: sha512-buQF6HugTA4YeSA/s9xBhu0ferEAx7sRSn45G+Juh3p+Dz3vEKfxtqdg6JUnHIWDCV/r0u8Lrobs9AB4dtYcUQ==}
-    dependencies:
-      '@popperjs/core': 2.11.6
     dev: true
 
   /tippy.js/6.3.7:

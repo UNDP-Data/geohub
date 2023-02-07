@@ -1,5 +1,12 @@
 import { createTippy, type TippyProps } from 'svelte-tippy'
 
+/**
+ * Create Tippy object
+ * see available options here.
+ * https://atomiks.github.io/tippyjs/v6/all-props/
+ * @param options TippyProps
+ * @returns Tippy object
+ */
 export const initTippy = (options?: TippyProps) => {
   let props: TippyProps = {
     arrow: true,
