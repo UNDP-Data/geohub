@@ -45,7 +45,7 @@
     <Tabs
       bind:tabs
       bind:activeTab
-      fontSize="medium"
+      fontSize={tabs.find((t) => t.label === TabNames.SIMULATION) ? 'small' : 'medium'}
       isToggleTab={true} />
 
     <p class="panel-content">
