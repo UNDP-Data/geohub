@@ -1,12 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
-  import { clickOutside } from 'svelte-use-click-outside'
   import ColorPicker from '$components/controls/ColorPicker.svelte'
-  import Popper from '$lib/popper'
   import type { ColorMapRow } from '$lib/types'
   import type { RgbaColor } from 'svelte-awesome-color-picker'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   export let colorMapRow: ColorMapRow
   export let colorMapName: string
@@ -14,21 +15,9 @@
   export let hasUniqueValues: boolean
   let signal
   const dispatch = createEventDispatcher()
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-start',
-      strategy: 'fixed',
-    },
-    [10, 15],
-  ).init()
 
   let color: RgbaColor
   let colorPickerStyle: string
-  let showToolTip = false
 
   $: colorMapRow.color, getColorPickerStyle()
 
@@ -144,26 +133,17 @@ the key statement is necessary as it forces to rerender the legend item in case 
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         title="Color Map Control"
-        use:popperRef
-        on:click={() => (showToolTip = !showToolTip)}
+        use:tippy={{ content: tooltipContent }}
         class="discrete"
         style="{colorPickerStyle}; width:20px; height:20px" />
-      {#if showToolTip && color}
-        <div
-          id="tooltip"
-          data-testid="tooltip"
-          use:popperContent={popperOptions}
-          use:clickOutside={() => (showToolTip = false)}
-          transition:fade>
-          <ColorPicker
-            bind:color
-            on:changeColor={handleColorChanged}
-            on:closeColorPicker={() => (showToolTip = false)} />
-          <div
-            id="arrow"
-            data-popper-arrow />
-        </div>
-      {/if}
+      <div
+        class="tooltip"
+        data-testid="tooltip"
+        bind:this={tooltipContent}>
+        <ColorPicker
+          bind:color
+          on:changeColor={handleColorChanged} />
+      </div>
     </div>
     {#if !hasUniqueValues}
       <div class="column p-0 m-0">
@@ -200,9 +180,17 @@ the key statement is necessary as it forces to rerender the legend item in case 
 {/key}
 
 <style lang="scss">
-  @import '../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
   $input-margin: 5px !important;
+
+  .tooltip {
+    z-index: 10;
+    padding: 0;
+    height: 255px;
+    width: 260px;
+  }
 
   .visible-button {
     cursor: pointer;
@@ -242,10 +230,10 @@ the key statement is necessary as it forces to rerender the legend item in case 
     -moz-appearance: textfield;
   }
 
-  #tooltip {
-    height: 280px;
-    padding: 0;
-    width: 290px;
-    max-width: 290px;
-  }
+  // #tooltip {
+  //   height: 280px;
+  //   padding: 0;
+  //   width: 290px;
+  //   max-width: 290px;
+  // }
 </style>

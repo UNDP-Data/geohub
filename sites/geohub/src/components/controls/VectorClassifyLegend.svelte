@@ -676,8 +676,6 @@
 </div>
 
 <style lang="scss">
-  @import '../../styles/popper.scss';
-
   div {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

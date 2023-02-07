@@ -1,16 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
   import type { LayerSpecification } from 'maplibre-gl'
-  import { clickOutside } from 'svelte-use-click-outside'
   import chroma from 'chroma-js'
   import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
-  import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
   import { clean, getLayerStyle } from '$lib/helper'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   export let layer: Layer
   export let defaultColor: string = undefined
@@ -35,18 +36,6 @@
       updateLegend()
     })
   })
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'auto',
-      strategy: 'fixed',
-    },
-    [0, 0],
-  ).init()
 
   const updateLegend = () => {
     $map.setLayoutProperty(layerId, propertyName, iconImage)
@@ -75,19 +64,11 @@
       updateLegend()
     }
   }
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleClosePopup()
-    }
-  }
 </script>
 
 <div
   class="icon-button"
-  use:popperRef
-  on:keydown={handleKeyDown}
-  on:click={handleClosePopup}>
+  use:tippy={{ content: tooltipContent }}>
   <div class="card">
     <div class="card-content">
       <div class="media is-flex is-justify-content-center">
@@ -114,33 +95,29 @@
   </div>
 </div>
 
-{#if isIconListPanelVisible}
-  <div
-    id="tooltip"
-    data-testid="tooltip"
-    use:popperContent={popperOptions}
-    use:clickOutside={handleClosePopup}
-    transition:fade>
-    <IconImagePicker
-      on:handleIconClick={handleIconClick}
-      on:handleClosePopup={handleClosePopup}
-      iconImageAlt={iconImage} />
-
-    <div
-      id="arrow"
-      data-popper-arrow />
-  </div>
-{/if}
+<div
+  class="tooltip pb-2"
+  data-testid="tooltip"
+  bind:this={tooltipContent}>
+  <IconImagePicker
+    on:handleIconClick={handleIconClick}
+    on:handleClosePopup={handleClosePopup}
+    iconImageAlt={iconImage} />
+</div>
 
 <style lang="scss">
-  @import '../../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
   .icon-button {
     width: 65px;
   }
 
-  #tooltip {
-    max-width: 440px;
+  .tooltip {
+    font-size: 13px;
+    z-index: 10;
+    width: 300px;
+    height: 250px;
   }
 
   .card {

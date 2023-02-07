@@ -1,7 +1,6 @@
 <script lang="ts">
   import ColorPicker, { ChromeVariant, type RgbaColor } from 'svelte-awesome-color-picker'
   import { createEventDispatcher } from 'svelte'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { debounce } from 'lodash-es'
 
   const dispatch = createEventDispatcher()
@@ -16,31 +15,16 @@
     color = newRgba
     dispatch('changeColor')
   }, 300)
-
-  const handleClose = () => {
-    dispatch('closeColorPicker')
-  }
-
-  const handleEnterKey = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      e.target.click()
-    }
-  }
 </script>
 
 <div
   class="default-color-picker-container"
-  data-testid="default-color-picker-container"
-  use:clickOutside={handleClose}>
+  data-testid="default-color-picker-container">
   <div
     role="button"
     class="close is-clickable"
     title="Close Color Picker"
-    tabindex="0"
-    on:keydown={handleEnterKey}
-    on:click={handleClose}>
+    tabindex="0">
     <i class="fa-solid fa-xmark fa-sm" />
   </div>
   <ColorPicker
@@ -58,6 +42,10 @@
 <style lang="scss">
   .default-color-picker-container {
     position: relative;
+
+    :global(.wrapper) {
+      padding: 0;
+    }
 
     .close {
       position: absolute;
