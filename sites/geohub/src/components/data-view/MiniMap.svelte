@@ -128,9 +128,12 @@
         src={imageUrl}
         style="width:{width}" />
     {:else}
+      {#if isLoading}
+        <div class="loader-container"><Loader size="small" /></div>
+      {/if}
       <div
         class="map"
-        style="width:{width}; height:{height}; opacity: {isLoading ? '0' : '1'};"
+        style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading ? '0' : '1'};"
         bind:this={mapContainer} />
     {/if}
   {/await}
