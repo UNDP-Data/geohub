@@ -16,9 +16,7 @@
 
 <svelte:window bind:innerWidth />
 {#if $page.data.session}
-  <div
-    style="max-width: {panelWidth}"
-    class="dropdown is-right {dropdownActive ? 'is-active' : null}">
+  <div class="dropdown is-right {dropdownActive ? 'is-active' : null}">
     <div class="dropdown-trigger">
       <div
         role="button"
@@ -47,14 +45,15 @@
     <div
       use:clickOutside={() => (dropdownActive = false)}
       class="dropdown-menu"
-      id="dropdown-menu2"
+      style="max-width: {panelWidth}"
       role="menu">
       <div class="dropdown-content">
-        <div class="dropdown-item">
+        <div class="dropdown-item has-text-centered">
           <p class="title mb-2 is-4">{$page.data.session.user.name}</p>
           {#if $page.data.session.user['jobTitle']}
-            <p class="subtitle is-5 mb-2">{$page.data.session.user['jobTitle']}</p>
+            <p class="has-text-weight-bold">{$page.data.session.user['jobTitle']}</p>
           {/if}
+          <hr class="dropdown-divider" />
           <p>{$page.data.session.user.email}</p>
         </div>
         <div class="dropdown-item">
@@ -73,8 +72,6 @@
 {/if}
 
 <style lang="scss">
-  @import '../styles/popper.scss';
-
   .avatar {
     border-radius: 2rem;
     float: left;
