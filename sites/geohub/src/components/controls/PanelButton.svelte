@@ -1,65 +1,45 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
-  import { clickOutside } from 'svelte-use-click-outside'
-  import Popper from '$lib/popper'
+  import { initTippy } from '$lib/helper'
 
-  let isPanelOpen = false
-
-  //fontawesome icon name e.g., https://fontawesome.com/search
   export let icon: string
   export let iconDisabled = ''
   export let width: string
   export let tooltip: string
   export let position: 'top' | 'bottom' | 'right' | 'left' = 'top'
   export let disabled = false
-  export let popupPoistion = 'bottom-end'
 
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: popupPoistion,
-      strategy: 'fixed',
-    },
-    [0, 3],
-  ).init()
+  const tippy = initTippy({ placement: 'bottom-end' })
+  let tooltipContent: HTMLElement
 </script>
 
 <div
   class="panel-control has-tooltip-arrow {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
-  data-tooltip={tooltip}
-  use:popperRef
-  use:clickOutside={() => (isPanelOpen = false)}>
+  data-tooltip={tooltip}>
   <button
     class="button"
     {disabled}
-    on:click={() => (isPanelOpen = !isPanelOpen)}>
+    use:tippy={{ content: tooltipContent }}>
     <span class="icon is-small">
       <i class={disabled && iconDisabled ? iconDisabled : icon} />
     </span>
   </button>
 
-  {#if isPanelOpen}
+  <div
+    class="tooltip"
+    data-testid="tooltip"
+    style="width: {width}"
+    bind:this={tooltipContent}>
     <div
-      id="tooltip"
-      data-testid="tooltip"
-      style="max-width: {width}"
-      use:popperContent={popperOptions}
-      use:clickOutside={() => (isPanelOpen = false)}
-      transition:fade>
-      <div
-        class="panel container p-4"
-        style="width: {width}">
-        <slot />
-      </div>
+      class="panel container p-2"
+      style="width: {width}">
+      <slot />
     </div>
-  {/if}
+  </div>
 </div>
 
 <style lang="scss">
-  @import '../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
   .panel-control {
     position: relative;
@@ -70,8 +50,7 @@
     }
   }
 
-  #tooltip {
-    background-color: white;
+  .tooltip {
     margin: 0;
     padding: 0;
     z-index: 20;

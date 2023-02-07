@@ -130,7 +130,7 @@
   }
 
   .card-icon {
-    max-height: 260px;
+    max-height: 190px;
     overflow-y: auto;
 
     ul {
@@ -152,6 +152,6 @@
   .close {
     cursor: pointer;
     position: relative;
-    right: -13px;
+    right: 0px;
   }
 </style>

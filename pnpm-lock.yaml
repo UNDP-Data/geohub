@@ -320,7 +320,6 @@ importers:
       '@geoffcox/svelte-splitter': ^1.0.1
       '@mapbox/vector-tile': ^1.3.1
       '@neodrag/svelte': ^1.2.4
-      '@popperjs/core': ^2.11.6
       '@sentry/node': ^7.35.0
       '@sveltejs/adapter-node': ^1.1.4
       '@sveltejs/kit': ^1.3.9
@@ -380,14 +379,15 @@ importers:
       svelte-check: ^3.0.3
       svelte-copy: ^1.3.0
       svelte-keydown: ^0.5.0
-      svelte-popperjs: ^1.3.2
       svelte-preprocess: ^5.0.1
       svelte-range-slider-pips: ^2.1.1
       svelte-step-wizard: ^0.0.2
       svelte-time: ^0.7.1
+      svelte-tippy: ^1.3.2
       svelte-tree-view-component: ^1.0.3
       svelte-use-click-outside: ^1.0.0
       svelte-vega: ^1.2.0
+      tippy.js: ^6.3.7
       tslib: ^2.5.0
       typescript: ^4.9.5
       uuid: ^9.0.0
@@ -411,7 +411,6 @@ importers:
       '@creativebulma/bulma-tooltip': 1.2.0
       '@geoffcox/svelte-splitter': 1.0.1
       '@neodrag/svelte': 1.2.4
-      '@popperjs/core': 2.11.6
       '@sveltejs/adapter-node': 1.1.4_@sveltejs+kit@1.3.9
       '@sveltejs/kit': 1.3.9_svelte@3.55.1+vite@4.0.4
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.1+vite@4.0.4
@@ -465,14 +464,15 @@ importers:
       svelte-check: 3.0.3_sass@1.58.0+svelte@3.55.1
       svelte-copy: 1.3.0
       svelte-keydown: 0.5.0
-      svelte-popperjs: 1.3.2_u2a26nokcckqacvdxkzji6ia64
       svelte-preprocess: 5.0.1_cjyprvzu4kavkaguwtgkgx5cp4
       svelte-range-slider-pips: 2.1.1
       svelte-step-wizard: 0.0.2
       svelte-time: 0.7.1
+      svelte-tippy: 1.3.2
       svelte-tree-view-component: 1.0.3
       svelte-use-click-outside: 1.0.0
       svelte-vega: 1.2.0_36sthfwhgi34qytpvkzggbhnle
+      tippy.js: 6.3.7
       tslib: 2.5.0
       typescript: 4.9.5
       uuid: 9.0.0
@@ -3875,7 +3875,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.1
       svelte-hmr: 0.15.1_svelte@3.55.1
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.58.0
       vitefu: 0.2.4_vite@4.0.4
     transitivePeerDependencies:
       - supports-color
@@ -11046,16 +11046,6 @@ packages:
     resolution: {integrity: sha512-DgY6AYlKbBocSvjC3kUeNPcStJQOTOCxAGG9ymVHzJdsQ1hRJuB8pcnB4UFH8uH3bAPdYyXXa3LwenLDL41eqQ==}
     dev: true
 
-  /svelte-popperjs/1.3.2_u2a26nokcckqacvdxkzji6ia64:
-    resolution: {integrity: sha512-fwrErlkvngL876WXRnL3OLlfk/n9YkZwwLxuKRpZOYCJLt1zrwhoKTXS+/sRgDveD/zd6GQ35hV89EOip+NBGA==}
-    peerDependencies:
-      '@popperjs/core': '>=2'
-      svelte: '>=3'
-    dependencies:
-      '@popperjs/core': 2.11.6
-      svelte: 3.55.1
-    dev: true
-
   /svelte-preprocess/4.10.7_atrrhq7vg4ekua4nnyrpuardle:
     resolution: {integrity: sha512-sNPBnqYD6FnmdBrUmBCaqS00RyCsCpj2BG58A1JBswNF7b0OKviwxqVrOL/CKyJrLSClrSeqQv5BXNg2RUbPOw==}
     engines: {node: '>= 9.11.2'}
@@ -11270,6 +11260,12 @@ packages:
       dayjs: 1.11.7
     dev: true
 
+  /svelte-tippy/1.3.2:
+    resolution: {integrity: sha512-41f+85hwhKBRqX0UNYrgFsi34Kk/KDvUkIZXYANxkWoA2NTVTCZbUC2J8hRNZ4TRVxObTshoZRjK2co5+i6LMw==}
+    dependencies:
+      tippy.js: 6.3.7
+    dev: true
+
   /svelte-tree-view-component/1.0.3:
     resolution: {integrity: sha512-QA8rOCXE6Ts6QDH4BtA6uyDLv56dmFnYKiUECqXHeZD66W+qDKIQ2N+nmG4JjbqwicGBIn/HPWtMRSCbNUpKpg==}
     dev: true
@@ -11427,6 +11423,12 @@ packages:
   /tinyspy/1.0.2:
     resolution: {integrity: sha512-bSGlgwLBYf7PnUsQ6WOc6SJ3pGOcd+d8AA6EUnLDDM0kWEstC1JIlSZA3UNliDXhd9ABoS7hiRBDCu+XP/sf1Q==}
     engines: {node: '>=14.0.0'}
+    dev: true
+
+  /tippy.js/6.3.7:
+    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
+    dependencies:
+      '@popperjs/core': 2.11.6
     dev: true
 
   /tmp/0.0.33:
@@ -12402,6 +12404,7 @@ packages:
       rollup: 3.10.1
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /vite/4.0.4_f5vcjb3akvjdur4ffzogu2hewu:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
@@ -12513,7 +12516,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.58.0
 
   /vitest/0.26.3_jsdom@20.0.3+sass@1.58.0:
     resolution: {integrity: sha512-FmHxU9aUCxTi23keF3vxb/Qp0lYXaaJ+jRLGOUmMS3qVTOJvgGE+f1VArupA6pEhaG2Ans4X+zV9dqM5WISMbg==}
