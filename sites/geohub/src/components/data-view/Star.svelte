@@ -3,7 +3,7 @@
   import { StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
   import { bannerMessages, indicatorProgress } from '$stores'
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import millify from 'millify'
 
   const dispatch = createEventDispatcher()
@@ -46,7 +46,6 @@
       await updateStar('POST')
     }
     isStar = !isStar
-    console.log(no_stars)
   }
   const handleEnterKey = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {

@@ -8,12 +8,10 @@ import chroma from 'chroma-js'
 
 export class MosaicJsonData {
   private feature: StacItemFeature
-  private map: Map
   private url: string
   private assetName: string
 
-  constructor(map: Map, feature: StacItemFeature, assetUrl: string, assetName: string) {
-    this.map = map
+  constructor(feature: StacItemFeature, assetUrl: string, assetName: string) {
     this.feature = feature
     this.url = assetUrl
     this.assetName = assetName
@@ -86,13 +84,13 @@ export class MosaicJsonData {
     return data
   }
 
-  public add = async (defaultColormap?: string) => {
-    const zoom = this.map.getZoom()
+  public add = async (map: Map, defaultColormap?: string) => {
+    const zoom = map.getZoom()
     if (zoom < STAC_MINIMUM_ZOOM) {
       throw new Error(ErrorMessages.TOO_SMALL_ZOOM_LEVEL)
     }
 
-    const bounds = this.map.getBounds()
+    const bounds = map.getBounds()
     const bbox = [
       bounds.getSouthWest().lng,
       bounds.getSouthWest().lat,
@@ -175,8 +173,8 @@ export class MosaicJsonData {
     }
     const layerId = uuidv4()
     const sourceId = layerId
-    if (!this.map.getSource(sourceId)) {
-      this.map.addSource(sourceId, source)
+    if (!map.getSource(sourceId)) {
+      map.addSource(sourceId, source)
     }
 
     const layer: RasterLayerSpecification = {
@@ -190,17 +188,17 @@ export class MosaicJsonData {
     }
 
     let firstSymbolId = undefined
-    for (const layer of this.map.getStyle().layers) {
+    for (const layer of map.getStyle().layers) {
       if (layer.type === 'symbol') {
         firstSymbolId = layer.id
         break
       }
     }
-    this.map.addLayer(layer, firstSymbolId)
+    map.addLayer(layer, firstSymbolId)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.map.fitBounds(rasterInfo.bounds)
+    map.fitBounds(rasterInfo.bounds)
 
     return {
       layer,

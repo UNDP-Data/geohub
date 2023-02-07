@@ -8,12 +8,10 @@ import chroma from 'chroma-js'
 
 export class RasterTileData {
   private feature: StacItemFeature
-  private map: Map
   private url: string
   private metadata: RasterTileMetadata
 
-  constructor(map: Map, feature: StacItemFeature, metadata?: RasterTileMetadata) {
-    this.map = map
+  constructor(feature: StacItemFeature, metadata?: RasterTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
@@ -53,7 +51,7 @@ export class RasterTileData {
     return this.metadata
   }
 
-  public add = async (defaultColormap?: string) => {
+  public add = async (map: Map, defaultColormap?: string) => {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const rasterInfo = await this.getMetadata()
     const bandIndex = getActiveBandIndex(rasterInfo)
@@ -113,12 +111,12 @@ export class RasterTileData {
     const layerId = uuidv4()
     //const sourceId = this.feature.properties.id
     const sourceId = layerId
-    if (!this.map.getSource(sourceId)) {
-      this.map.addSource(sourceId, source)
+    if (!map.getSource(sourceId)) {
+      map.addSource(sourceId, source)
     }
 
-    if (this.map.getLayer(this.feature.properties.id)) {
-      this.map.removeLayer(this.feature.properties.id)
+    if (map.getLayer(this.feature.properties.id)) {
+      map.removeLayer(this.feature.properties.id)
     }
 
     const layer: RasterLayerSpecification = {
@@ -132,17 +130,17 @@ export class RasterTileData {
     }
 
     let firstSymbolId = undefined
-    for (const layer of this.map.getStyle().layers) {
+    for (const layer of map.getStyle().layers) {
       if (layer.type === 'symbol') {
         firstSymbolId = layer.id
         break
       }
     }
-    this.map.addLayer(layer, firstSymbolId)
+    map.addLayer(layer, firstSymbolId)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.map.fitBounds(rasterInfo.bounds)
+    map.fitBounds(rasterInfo.bounds)
 
     return {
       layer,

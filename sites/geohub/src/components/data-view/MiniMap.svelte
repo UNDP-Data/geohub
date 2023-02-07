@@ -27,15 +27,55 @@
 
   let mapContainer: HTMLDivElement
   let map: Map
-  let previewImageUrl: string
+  let previewImageUrl: Promise<string>
   let isLoading = false
 
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
-  $: if (isLoadMap === true) {
-    if (!map) {
-      loadMiniMap()
+  const is_raster: boolean = feature.properties.is_raster as unknown as boolean
+  const url: string = feature.properties.url
+
+  let rasterTile: RasterTileData
+  let vectorTile: VectorTileData
+
+  const addStacPreview = async (url: string) => {
+    const res = await fetch(url.replace('/items', ''))
+    const collection: StacCollection = await res.json()
+    let previewImage = collection.assets?.thumbnail?.href
+    if (previewImage) {
+      return previewImage
     }
+    const resItems = await fetch(`${url}?limit=1`)
+    const fc: StacItemFeatureCollection = await resItems.json()
+    previewImage = fc.features[0].assets.thumbnail?.href
+    return previewImage
+  }
+
+  const preloadMap = async () => {
+    const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+      { key: string; value: string },
+    ]
+    const type = tags?.find((tag) => tag.key === 'stac')
+
+    let previewUrl: string
+    if (type) {
+      previewUrl = await addStacPreview(url)
+    } else if (is_raster === true) {
+      const rasterInfo = metadata as RasterTileMetadata
+      rasterTile = new RasterTileData(feature, rasterInfo)
+      metadata = await rasterTile.getMetadata()
+    } else {
+      const vectorInfo = metadata as VectorTileMetadata
+      vectorTile = new VectorTileData(feature, vectorInfo)
+      metadata = await (await vectorTile.getMetadata()).metadata
+    }
+    return previewUrl
+  }
+
+  previewImageUrl = preloadMap()
+
+  $: if (mapContainer && isLoadMap === true) {
+    loadMiniMap()
   }
   const loadMiniMap = async () => {
     if (!mapContainer) return
@@ -55,38 +95,19 @@
     map.dragRotate.disable()
     map.touchZoomRotate.disableRotation()
 
-    // console.log(feature)
-    map.on('load', async () => {
+    map.once('load', async () => {
       try {
-        const is_raster: boolean = feature.properties.is_raster as unknown as boolean
-        const url: string = feature.properties.url
-
-        if (is_raster) {
-          const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
-            { key: string; value: string },
-          ]
-          const type = tags?.find((tag) => tag.key === 'stac')
-          if (type) {
-            previewImageUrl = await addStacPreview(url)
-            return
-          }
-        }
-
         if (is_raster === true) {
-          const rasterInfo = metadata as RasterTileMetadata
-          const rasterTile = new RasterTileData(map, feature, rasterInfo)
-          const data = await rasterTile.add()
+          const data = await rasterTile.add(map)
           metadata = data.metadata
           defaultColormap = data.colormap
         } else {
-          const vectorInfo = metadata as VectorTileMetadata
-          const vectorTile = new VectorTileData(map, feature, vectorInfo)
           let layerName = layer ? layer.layer : undefined
           let layerType: 'point' | 'heatmap' = undefined
           if (layer?.geometry.toLocaleLowerCase() === 'point') {
             layerType = 'point'
           }
-          const data = await vectorTile.add(layerType, undefined, layerName)
+          const data = await vectorTile.add(map, layerType, undefined, layerName)
           metadata = data.metadata
           defaultColor = data.color
         }
@@ -95,37 +116,24 @@
       }
     })
   }
-
-  const addStacPreview = async (url: string) => {
-    const res = await fetch(url.replace('/items', ''))
-    const collection: StacCollection = await res.json()
-    let previewImage = collection.assets?.thumbnail?.href
-    if (previewImage) {
-      return previewImage
-    }
-    const resItems = await fetch(`${url}?limit=1`)
-    const fc: StacItemFeatureCollection = await resItems.json()
-    previewImage = fc.features[0].assets.thumbnail?.href
-    return previewImage
-  }
 </script>
 
 <div class="map-container">
-  {#if isLoading}
+  {#await previewImageUrl}
     <div class="loader-container"><Loader size="small" /></div>
-  {/if}
-
-  {#if !previewImageUrl}
-    <div
-      class="map"
-      style="width:{width}; height:{height}"
-      bind:this={mapContainer} />
-  {:else}
-    <!-- svelte-ignore a11y-missing-attribute -->
-    <img
-      src={previewImageUrl}
-      style="width:{width}" />
-  {/if}
+  {:then imageUrl}
+    {#if imageUrl}
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <img
+        src={imageUrl}
+        style="width:{width}" />
+    {:else}
+      <div
+        class="map"
+        style="width:{width}; height:{height}; opacity: {isLoading ? '0' : '1'};"
+        bind:this={mapContainer} />
+    {/if}
+  {/await}
 </div>
 
 <style lang="scss">
@@ -135,10 +143,8 @@
     vertical-align: middle;
 
     .loader-container {
-      position: absolute;
-      z-index: 10;
-      top: 45%;
-      left: 45%;
+      width: fit-content;
+      margin: auto;
     }
 
     .map {

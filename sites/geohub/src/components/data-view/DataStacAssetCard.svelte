@@ -14,8 +14,8 @@
   const addStacMosaicLayer = async (asset: AssetOptions) => {
     try {
       $indicatorProgress = true
-      const mosaicjson = new MosaicJsonData($map, feature, asset.url, asset.assetName)
-      const data = await mosaicjson.add()
+      const mosaicjson = new MosaicJsonData(feature, asset.url, asset.assetName)
+      const data = await mosaicjson.add($map)
 
       $layerList = [
         {
