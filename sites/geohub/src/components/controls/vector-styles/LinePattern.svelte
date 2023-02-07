@@ -16,9 +16,9 @@
   const propertyName = 'line-dasharray'
   const layerId = layer.id
   const lineTypes = [
-    { title: 'solid', value: '', pattern: '____________' },
-    { title: 'dash', value: [10, 4], pattern: '_____&nbsp;&nbsp;_____' },
-    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '_____&nbsp;_&nbsp;_____&nbsp;' },
+    { title: 'solid', value: '', pattern: '___________' },
+    { title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
+    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '___&nbsp;_&nbsp;___&nbsp;' },
     { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_' },
   ]
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
