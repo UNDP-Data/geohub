@@ -16,7 +16,6 @@
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
   import DataVectorCard from '$components/data-view/DataVectorCard.svelte'
-  import { onMount } from 'svelte'
   import { loadMap } from '$lib/helper'
 
   export let feature: StacItemFeature
@@ -44,22 +43,13 @@
 
   let isGettingMetadata: Promise<void>
   const getMetadata = async () => {
-    if (is_raster) {
-      if (!stacType) {
-        const rasterTile = new RasterTileData($map, feature)
-        metadata = await rasterTile.getMetadata()
-      }
-    } else {
-      const vectorTile = new VectorTileData($map, feature)
+    if (!is_raster) {
+      const vectorTile = new VectorTileData(feature)
       const res = await vectorTile.getMetadata()
       metadata = res.metadata
       tilestatsLayers = res.metadata.json.tilestats.layers
     }
   }
-
-  onMount(() => {
-    isGettingMetadata = getMetadata()
-  })
 
   $: {
     let expandedDatasets = Object.keys(expanded).filter(
@@ -87,8 +77,8 @@
         } else {
           // COG
           const rasterInfo = metadata as RasterTileMetadata
-          const rasterTile = new RasterTileData($map, feature, rasterInfo)
-          const data = await rasterTile.add(defaultColormap)
+          const rasterTile = new RasterTileData(feature, rasterInfo)
+          const data = await rasterTile.add($map, defaultColormap)
           $layerList = [
             {
               id: data.layer.id,
@@ -108,7 +98,10 @@
     }
   }
 
-  $: isExpanded, getStacAssetList()
+  $: if (isExpanded === true) {
+    isGettingMetadata = getMetadata()
+    getStacAssetList()
+  }
 
   const getStacAssetList = async () => {
     if (!isExpanded) return
@@ -255,10 +248,5 @@
     .vector-symbol-radios {
       padding-bottom: 0.5rem;
     }
-  }
-
-  .loader-container {
-    width: max-content;
-    margin: auto;
   }
 </style>

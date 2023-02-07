@@ -50,8 +50,9 @@
       if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
         layerType = symbolVectorType
       }
-      const vectorTile = new VectorTileData($map, feature, metadata)
-      const data = await vectorTile.add(layerType, defaultColor, layer.layer)
+      const vectorInfo = metadata as VectorTileMetadata
+      const vectorTile = new VectorTileData(feature, vectorInfo)
+      const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`
       if (!isShowInfo) {
