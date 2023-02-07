@@ -22,10 +22,10 @@
     content: popperContent,
   } = new Popper(
     {
-      placement: 'bottom-end',
+      placement: 'bottom',
       strategy: 'fixed',
     },
-    [0, 45],
+    [0, 10],
   ).init()
 
   const togglePanel = () => {
