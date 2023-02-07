@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide, fade } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
@@ -152,22 +152,20 @@
         <div class="column is-6 m-auto">
           <div class="field">
             <input
-              id="switchAdvancedSettings"
+              id="switchAdvancedSettings-{layer.id}"
               type="checkbox"
-              name="switchSmall"
+              name="switchSmall-{layer.id}"
               class="switch is-small is-rounded is-info"
               bind:checked={isAdvancedSettings} />
             <label
-              for="switchAdvancedSettings"
+              for="switchAdvancedSettings-{layer.id}"
               class="is-size-6">Advanced Settings</label>
           </div>
         </div>
       </div>
 
       {#if isAdvancedSettings}
-        <div
-          class="advanced-settings-container pb-4"
-          transition:slide={{ duration: 750 }}>
+        <div class="advanced-settings-container pb-4">
           <div class="columns is-mobile">
             {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
               <div class="column">
