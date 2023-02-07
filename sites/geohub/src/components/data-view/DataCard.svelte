@@ -43,12 +43,11 @@
 
   let isGettingMetadata: Promise<void>
   const getMetadata = async () => {
-    if (!is_raster) {
-      const vectorTile = new VectorTileData(feature)
-      const res = await vectorTile.getMetadata()
-      metadata = res.metadata
-      tilestatsLayers = res.metadata.json.tilestats.layers
-    }
+    if (is_raster) return
+    const vectorTile = new VectorTileData(feature)
+    const res = await vectorTile.getMetadata()
+    metadata = res.metadata
+    tilestatsLayers = res.metadata.json.tilestats.layers
   }
 
   $: {
@@ -98,11 +97,6 @@
     }
   }
 
-  $: if (isExpanded === true) {
-    isGettingMetadata = getMetadata()
-    getStacAssetList()
-  }
-
   const getStacAssetList = async () => {
     if (!isExpanded) return
     if (!stacType) return
@@ -149,6 +143,17 @@
     if (isStarOnly === true) {
       nodeRef.parentNode.removeChild(nodeRef)
     }
+  }
+
+  if (!is_raster) {
+    isGettingMetadata = getMetadata()
+  }
+
+  $: if (isExpanded === true) {
+    if (is_raster) {
+      isGettingMetadata = getMetadata()
+    }
+    getStacAssetList()
   }
 </script>
 
@@ -214,11 +219,13 @@
             </div>
           </DataCardInfo>
 
-          {#if !stacType}
-            <AddLayerButton
-              title="Add layer"
-              on:clicked={addLayer} />
-          {/if}
+          {#await isGettingMetadata then}
+            {#if !stacType}
+              <AddLayerButton
+                title="Add layer"
+                on:clicked={addLayer} />
+            {/if}
+          {/await}
 
           {#if stacType && stacType.key === 'stac' && assetList}
             <!--show asset list-->
