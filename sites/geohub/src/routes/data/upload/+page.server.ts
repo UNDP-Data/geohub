@@ -13,15 +13,15 @@ export const actions = {
   /**
    * An action to get SAS URL for data uploading
    */
-  getSasUrl: async (event) => {
+  getSasUrl: async ({ request, locals }) => {
     try {
-      const session = await event.locals.getSession()
+      const session = await locals.getSession()
       if (!session) {
         return fail(403, { message: 'No permission' })
       }
       const user_email = session?.user.email
       const containerName = 'data-upload'
-      const fileName = (await event.request.formData()).get('fileName') as string
+      const fileName = (await request.formData()).get('fileName') as string
       const sasUrl = await getSasUrl(user_email, containerName, fileName)
       return { sasUrl }
     } catch (error) {

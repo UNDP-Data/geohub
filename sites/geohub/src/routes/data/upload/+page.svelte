@@ -3,10 +3,15 @@
   import { BlockBlobClient } from '@azure/storage-blob'
   import { filesize } from 'filesize'
   import Dropzone from 'svelte-file-dropzone'
+  import AutoComplete from 'simple-svelte-autocomplete'
+
   import Notification from '$components/controls/Notification.svelte'
+
+  const targetKeys = ['extent', 'granularity', 'resolution', 'sdg_goal', 'theme', 'year_value', 'keyword']
 
   let fileInput: HTMLInputElement
   let selectedFile: File
+  $: selectedFileName = selectedFile?.name
 
   let uploadingFile: Promise<{ success: boolean }>
   let uploadedLength = 0
@@ -16,6 +21,7 @@
   let description = ''
   let attribution = ''
   let license = ''
+  let selectedTags: { [key: string]: string } = {}
 
   $: {
     if (selectedFile && !name) {
@@ -39,7 +45,6 @@
       return
     }
     uploadedLength = 0
-    console.log(sasUrl)
     const blockBlobClient = new BlockBlobClient(sasUrl)
     const promises = []
     promises.push(blockBlobClient.uploadData(selectedFile, { onProgress: onProgress }))
@@ -58,6 +63,21 @@
     const { acceptedFiles } = e.detail
     selectedFile = acceptedFiles[0]
   }
+
+  const getTags = async () => {
+    const res = await fetch('/api/tags')
+    const json = await res.json()
+
+    const tags: { [key: string]: string[] } = {}
+    targetKeys.forEach((key) => {
+      const values: { key: string; value: string; count: number }[] = json[key]
+      if (!values) return
+      tags[key] = values.map((v) => v.value)
+    })
+    return tags
+  }
+
+  const loadingTags = getTags()
 </script>
 
 <p class="title is-4">Upload data to GeoHub</p>
@@ -109,6 +129,7 @@
     <input
       class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
       type="text"
+      name="name"
       placeholder="Type name of dataset"
       bind:value={name} />
     {#if name}
@@ -127,6 +148,7 @@
   <div class="control has-icons-right">
     <textarea
       class="textarea {description.length > 0 ? 'is-success' : 'is-danger'}"
+      name="description"
       placeholder="Type description of dataset"
       bind:value={description} />
     {#if description}
@@ -146,6 +168,7 @@
     <input
       class="input {attribution.length > 0 ? 'is-success' : 'is-danger'}"
       type="text"
+      name="attribution"
       placeholder="Type attribution of dataset"
       bind:value={attribution} />
     {#if attribution}
@@ -163,7 +186,9 @@
   <label class="label">License</label>
   <div class="control has-icons-right">
     <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
-      <select bind:value={license}>
+      <select
+        bind:value={license}
+        name="license">
         <option value="">Select a data license</option>
         {#each licenses as lc}
           <option value={lc}>{lc}</option>
@@ -181,6 +206,31 @@
   {/if}
 </div>
 
+{#await loadingTags then tags}
+  {#each targetKeys as key}
+    <div class="field">
+      <label class="label">{key}</label>
+      <div class="control has-icons-right">
+        <div class="select is-fullwidth {selectedTags[key] ? 'is-success' : ''}">
+          <select
+            bind:value={selectedTags[key]}
+            name={key}>
+            <option value="">Select a {key}</option>
+            {#each tags[key] as value}
+              <option {value}>{value}</option>
+            {/each}
+          </select>
+        </div>
+        {#if selectedTags[key]}
+          <span class="icon is-small is-right">
+            <i class="fas fa-check has-text-success	" />
+          </span>
+        {/if}
+      </div>
+    </div>
+  {/each}
+{/await}
+
 <form
   method="POST"
   action="?/getSasUrl"
@@ -191,13 +241,11 @@
       uploadingFile = uploadFile(sasUrl)
     }
   }}>
-  {#if selectedFile}
-    <input
-      class="input"
-      type="hidden"
-      name="fileName"
-      bind:value={selectedFile.name} />
-  {/if}
+  <input
+    class="input"
+    type="hidden"
+    name="fileName"
+    bind:value={selectedFileName} />
 
   <div class="field is-grouped py-4">
     <div class="control">
@@ -223,3 +271,9 @@
       showCloseButton={false}>Successfully uploaded the file to GeoHub!</Notification>
   {/if}
 {/await}
+
+<style lang="scss">
+  // .parent :global(.childClass) {
+  //   color: red;
+  // }
+</style>
