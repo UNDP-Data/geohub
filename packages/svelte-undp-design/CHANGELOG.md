@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.14
+
+### Patch Changes
+
+- b066709: Add width style to ensure that the accordions are aligned at the same level
+
 ## 0.0.13
 
 ### Patch Changes
