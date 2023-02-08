@@ -1,17 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
   import type { LayerSpecification } from 'maplibre-gl'
-  import { clickOutside } from 'svelte-use-click-outside'
   import chroma from 'chroma-js'
   import { hexToCSSFilter } from 'hex-to-css-filter'
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
-  import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
-  import Popper from '$lib/popper'
   import type { Layer } from '$lib/types'
   import { map, spriteImageList } from '$stores'
-  import { getLayerStyle } from '$lib/helper'
+  import { clean, getLayerStyle } from '$lib/helper'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   export let layer: Layer
   export let defaultColor: string = undefined
@@ -22,25 +22,20 @@
 
   let iconImage = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
   let isIconListPanelVisible = false
-  let legendSymbolContainer: HTMLElement = document.createElement('div')
+
+  let iconColor: string
+  let iconImageSrc: string
+  let iconImageStyle: string
 
   onMount(async () => {
     if (!$map) return
     updateLegend()
-    $map.on('icon-color:changed', updateLegend)
+    $map.on('icon-color:changed', (e) => {
+      console.log(e)
+      iconColor = e.color
+      updateLegend()
+    })
   })
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'auto',
-      strategy: 'fixed',
-    },
-    [0, 0],
-  ).init()
 
   const updateLegend = () => {
     $map.setLayoutProperty(layerId, propertyName, iconImage)
@@ -48,22 +43,13 @@
     $map.setPaintProperty(layerId, 'icon-halo-width', 1)
     const layerStyle = getLayerStyle($map, layerId)
 
-    if (!legendSymbolContainer) {
-      legendSymbolContainer = document.createElement('div')
-    }
-    legendSymbolContainer.innerHTML = ''
-
     if (layerStyle.layout && layerStyle.layout['icon-image']) {
       const icon = $spriteImageList.find((icon) => icon.alt === layerStyle.layout['icon-image'])
+      iconImageSrc = icon.src
       if (icon) {
-        const rgba = chroma(defaultColor).rgba()
+        const rgba = iconColor ? chroma(iconColor).rgba() : chroma(defaultColor).rgba()
         const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex())
-        const img = document.createElement('img')
-        img.src = icon.src
-        img.alt = icon.alt
-        img.title = icon.alt
-        img.style.cssText = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
-        legendSymbolContainer.appendChild(img)
+        iconImageStyle = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
       }
     }
   }
@@ -82,39 +68,67 @@
 
 <div
   class="icon-button"
-  use:popperRef
-  on:click={handleClosePopup}>
-  <IconImagePickerCard
-    bind:legendSymbolContainer
+  use:tippy={{ content: tooltipContent }}>
+  <div class="card">
+    <div class="card-content">
+      <div class="media is-flex is-justify-content-center">
+        <figure
+          class={`image is-24x24`}
+          data-testid="icon-figure">
+          <img
+            src={iconImageSrc}
+            alt={clean(iconImage)}
+            title={clean(iconImage)}
+            style={iconImageStyle} />
+        </figure>
+      </div>
+      <div
+        class="content is-size-7 columns is-gapless"
+        style="padding-top: 5px;">
+        <div
+          class="column is-flex is-justify-content-center sprite-image-title"
+          title={iconImage}>
+          {clean(iconImage)}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="tooltip pb-2"
+  data-testid="tooltip"
+  bind:this={tooltipContent}>
+  <IconImagePicker
+    on:handleIconClick={handleIconClick}
+    on:handleClosePopup={handleClosePopup}
     iconImageAlt={iconImage} />
 </div>
 
-{#if isIconListPanelVisible}
-  <div
-    id="tooltip"
-    data-testid="tooltip"
-    use:popperContent={popperOptions}
-    use:clickOutside={handleClosePopup}
-    transition:fade>
-    <IconImagePicker
-      on:handleIconClick={handleIconClick}
-      on:handleClosePopup={handleClosePopup}
-      iconImageAlt={iconImage} />
-
-    <div
-      id="arrow"
-      data-popper-arrow />
-  </div>
-{/if}
-
 <style lang="scss">
-  @import '../../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
   .icon-button {
     width: 65px;
   }
 
-  #tooltip {
-    max-width: 440px;
+  .tooltip {
+    font-size: 13px;
+    z-index: 10;
+    width: 300px;
+    height: 250px;
+  }
+
+  .card {
+    cursor: pointer;
+
+    .card-content {
+      padding: 5px;
+
+      .media {
+        margin: 0;
+      }
+    }
   }
 </style>

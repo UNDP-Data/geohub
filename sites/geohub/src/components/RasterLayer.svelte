@@ -1,19 +1,12 @@
 <script lang="ts">
-  import { page } from '$app/stores'
   import { map, layerList } from '$stores'
   import { fade } from 'svelte/transition'
-  import RasterLegendContainer from '$components/controls/RasterLegendContainer.svelte'
-  import RasterExpression from '$components/controls/RasterExpression.svelte'
+  import RasterLegend from '$components/controls/RasterLegend.svelte'
+  import RasterTransform from '$components/controls/RasterTransform.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT_MAXIMUM, COLOR_CLASS_COUNT } from '$lib/constants'
-  import type {
-    IntervalLegendColorMapRow,
-    Layer,
-    RasterLayerStats,
-    RasterSimpleExpression,
-    RasterTileMetadata,
-  } from '$lib/types'
+  import { ClassificationMethodTypes, TabNames, COLOR_CLASS_COUNT, LegendTypes } from '$lib/constants'
+  import type { BandMetadata, ColorMapRow, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Loader, Tabs } from '@undp-data/svelte-undp-design'
   import {
@@ -31,8 +24,6 @@
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
 
-  const isReadonly = $page.url.pathname === '/viewer'
-
   //local vars
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -42,7 +33,7 @@
   ]
   let { info }: Layer = layer
   const bandIndex = getActiveBandIndex(info)
-  const [band, bandMetaStats] = info['band_metadata'][bandIndex]
+  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata[]
   let layerHasUniqueValues = Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
   let legendLabels = {}
   if (layerHasUniqueValues) {
@@ -53,11 +44,11 @@
 
   // state vars
   //let expressions: RasterSimpleExpression[]
-  let legendType: 'simple' | 'advanced'
+  let legendType: LegendTypes
   let classification: ClassificationMethodTypes = classificationMethod
   let cMapName: string = colorMapName
   let numberOfClasses: number = COLOR_CLASS_COUNT
-  let colorMapRows: Array<IntervalLegendColorMapRow> = []
+  let colorMapRows: Array<ColorMapRow> = []
 
   /**
    * Force syncing with map lifecycle.
@@ -81,7 +72,7 @@
       await sleep(100)
     }
 
-    const colormap: object = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][]
     if (colormap) {
       //layer  is being loaded form a saved map and is classified
       if (layerHasUniqueValues) {
@@ -112,10 +103,10 @@
       }
 
       numberOfClasses = colorMapRows.length
-      legendType = 'advanced'
+      legendType = LegendTypes.CLASSIFY
     } else {
       if (!cMapName) cMapName = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string
-      legendType = 'simple'
+      legendType = LegendTypes.DEFAULT
     }
 
     // initialisation is not necessary when restoring or swhitching from other tabs
@@ -134,7 +125,6 @@
 
       const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=50`
       layerStats = await fetchUrl(statsURL)
-      const band = (info as RasterTileMetadata).active_band_no
       if (layerHasUniqueValues) {
         const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get(
           'url',
@@ -152,20 +142,15 @@
     }
   }
 
-  if (isReadonly) {
+  if ((info as RasterTileMetadata)?.isMosaicJson === true) {
+    // disable other menus since they are not working for mosaicjson layer currently
     tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
-    activeTab = undefined
-  } else {
-    if ((info as RasterTileMetadata)?.isMosaicJson === true) {
-      // disable other menus since they are not working for mosaicjson layer currently
-      tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
-      if ((info as RasterTileMetadata).band_metadata.length < 2) {
-        tabs = [
-          { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-          { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
-          ...tabs,
-        ]
-      }
+    if ((info as RasterTileMetadata).band_metadata.length < 2) {
+      tabs = [
+        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+        { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
+        ...tabs,
+      ]
     }
   }
 
@@ -201,7 +186,7 @@
 
       <p class="panel-content">
         {#if activeTab == TabNames.LEGEND}
-          <RasterLegendContainer
+          <RasterLegend
             bind:layer
             bind:classificationMethod={classification}
             bind:legendType
@@ -213,7 +198,7 @@
           <RasterHistogram bind:layer />
         {/if}
         {#if activeTab == TabNames.TRANSFORM}
-          <RasterExpression bind:layer />
+          <RasterTransform bind:layer />
         {/if}
         {#if activeTab == TabNames.OPACITY}
           <OpacityPanel {layer} />

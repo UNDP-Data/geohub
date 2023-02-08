@@ -1,5 +1,31 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.14
+
+### Patch Changes
+
+- b066709: Add width style to ensure that the accordions are aligned at the same level
+
+## 0.0.13
+
+### Patch Changes
+
+- e83a97b: Add size option for Header
+- e83a97b: Add more options for progress bar size
+- e83a97b: Changed Size of loader in header
+
+## 0.0.12
+
+### Patch Changes
+
+- 7fc0cc7: added Stats component in undp design system
+
+## 0.0.11
+
+### Patch Changes
+
+- 321b5a0: set height variable of Tabs as optional parameter
+
 ## 0.0.10
 
 ### Patch Changes

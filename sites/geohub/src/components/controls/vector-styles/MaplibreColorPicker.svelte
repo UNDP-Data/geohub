@@ -1,82 +1,50 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
 
   import ColorPicker from '$components/controls/ColorPicker.svelte'
-  import Popper from '$lib/popper'
-  import type { Color } from '$lib/types'
+  import type { RgbaColor } from 'svelte-awesome-color-picker'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   const dispatch = createEventDispatcher()
 
   export let rgba = `rgba(0,0,0,1)`
 
-  let color: Color = {
+  let color: RgbaColor = {
     r: chroma(rgba).rgba()[0],
     g: chroma(rgba).rgba()[1],
     b: chroma(rgba).rgba()[2],
     a: chroma(rgba).rgba()[3],
-    hex: chroma(rgba).hex('rgb'),
-    h: isNaN(chroma(rgba).hsv()[0]) ? 0 : chroma(rgba).hsv()[0],
-    s: chroma(rgba).hsv()[1],
-    v: chroma(rgba).hsv()[2],
   }
 
-  let showToolTip = false
-
   const setColor = () => {
-    rgba = `rgba(${color.r},${color.g},${color.b},${color.a})`
+    rgba = `rgba(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(color.b)},${color.a})`
     dispatch('change', {
       color: rgba,
     })
-  }
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'auto',
-      strategy: 'fixed',
-    },
-    [0, 15],
-  ).init()
-
-  const handleColorPaletteClick = () => {
-    showToolTip === false ? (showToolTip = true) : (showToolTip = false)
-  }
-
-  const handleCloseColorPicker = () => {
-    showToolTip = false
   }
 </script>
 
 <div
   class="color-palette"
-  on:click={handleColorPaletteClick}
-  alt={rgba}
+  use:tippy={{ content: tooltipContent }}
   title={rgba}
-  style="background: {rgba};"
-  use:popperRef />
-{#if showToolTip}
-  <div
-    id="tooltip"
-    data-testid="tooltip"
-    use:popperContent={popperOptions}
-    transition:fade>
-    <ColorPicker
-      bind:color
-      on:closeColorPicker={handleCloseColorPicker}
-      on:changeColor={setColor} />
-    <div
-      id="arrow"
-      data-popper-arrow />
-  </div>
-{/if}
+  style="background: {rgba};" />
+<div
+  class="tooltip"
+  data-testid="tooltip"
+  bind:this={tooltipContent}>
+  <ColorPicker
+    bind:color
+    on:changeColor={setColor} />
+</div>
 
 <style lang="scss">
-  @import '../../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
   .color-palette {
     border: 1px solid hsl(0, 0%, 0%);
@@ -93,10 +61,9 @@
 
   $tooltip-background: #fff;
 
-  #tooltip {
-    height: 280px;
+  .tooltip {
     padding: 0;
-    width: 290px;
-    max-width: 290px;
+    height: 255px;
+    width: 260px;
   }
 </style>

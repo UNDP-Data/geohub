@@ -1,5 +1,35 @@
 # @undp-data/electricity-dashboard
 
+## 0.0.15
+
+### Patch Changes
+
+- Updated dependencies [b066709]
+  - @undp-data/svelte-undp-design@0.0.14
+
+## 0.0.14
+
+### Patch Changes
+
+- Updated dependencies [e83a97b]
+- Updated dependencies [e83a97b]
+- Updated dependencies [e83a97b]
+  - @undp-data/svelte-undp-design@0.0.13
+
+## 0.0.13
+
+### Patch Changes
+
+- Updated dependencies [7fc0cc7]
+  - @undp-data/svelte-undp-design@0.0.12
+
+## 0.0.12
+
+### Patch Changes
+
+- Updated dependencies [321b5a0]
+  - @undp-data/svelte-undp-design@0.0.11
+
 ## 0.0.11
 
 ### Patch Changes

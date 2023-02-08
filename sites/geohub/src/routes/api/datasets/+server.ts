@@ -30,7 +30,10 @@ import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDa
  * - operator = 'and' or 'or'. This operator can be applied for tag search of {key}={value}
  * @returns GeojSON FeatureCollection
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const session = await locals.getSession()
+  const user_email = session?.user.email
+
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -45,7 +48,7 @@ export const GET: RequestHandler = async ({ url }) => {
     if (sortby) {
       const values = sortby.split(',')
       const column: string = values[0].trim().toLowerCase()
-      const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat']
+      const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat', 'no_stars']
       const targetSortingOrder = ['asc', 'desc']
       if (!targetSortingColumns.includes(column)) {
         console.log(targetSortingColumns, column)
@@ -76,7 +79,7 @@ export const GET: RequestHandler = async ({ url }) => {
       }
     }
 
-    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x')
+    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x', user_email)
     const values = whereExpressesion.values
 
     const sql = {
@@ -98,6 +101,9 @@ export const GET: RequestHandler = async ({ url }) => {
         ON y.tag_id = z.id
         GROUP BY
           x.id
+      ),
+      no_stars as (
+        SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
       )
       SELECT row_to_json(featurecollection) AS geojson 
       FROM (
@@ -121,15 +127,31 @@ export const GET: RequestHandler = async ({ url }) => {
             x.license, 
             x.createdat, 
             x.updatedat,
-            y.tags
+            y.tags,
+            CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
+            ${
+              user_email
+                ? `
+              CASE
+                WHEN (
+                SELECT count(dataset_id) as count FROM geohub.dataset_favourite 
+                WHERE dataset_id=x.id and user_email='${user_email}'
+                ) > 0 THEN true
+                ELSE false
+              END as is_star
+              `
+                : 'false as is_star'
+            }
           ) AS p
           )) AS properties
           FROM geohub.dataset x
           LEFT JOIN datasetTags y
           ON x.id = y.id
+          LEFT JOIN no_stars z
+          ON x.id = z.dataset_id
         ${whereExpressesion.sql}
         ORDER BY
-          x.${sortByColumn} ${SortOrder}
+          ${sortByColumn} ${SortOrder} NULLS ${SortOrder === 'asc' ? 'FIRST' : 'LAST'}
         LIMIT ${limit}
         OFFSET ${offset}
         ) AS feature

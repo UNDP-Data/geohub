@@ -2,6 +2,8 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
   import { spriteImageList } from '$stores'
+  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Tabs } from '@undp-data/svelte-undp-design'
 
   export let iconImageAlt: string
 
@@ -11,6 +13,10 @@
     { id: 'r - z', range: Array.from({ length: 9 }, (_, i) => String.fromCharCode('r'.charCodeAt(0) + i)) },
   ]
 
+  let tabs: Tab[] = iconGroupRanges.map((type) => {
+    return { label: type.id }
+  })
+
   let activeIconGroupId = iconGroupRanges[0].id
   let iconGroupsByLetter = []
 
@@ -19,10 +25,6 @@
   })
 
   const dispatch = createEventDispatcher()
-
-  const handleSetActiveIconGroup = (iconGroupId: string) => {
-    activeIconGroupId = iconGroupId
-  }
 
   const handleIconClick = (spriteImageAlt: string) => {
     dispatch('handleIconClick', { spriteImageAlt })
@@ -66,31 +68,30 @@
 
     return groups
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
-<div data-testid="icon-image-picker-container">
+<div
+  class="icon-image-picker-container"
+  data-testid="icon-image-picker-container">
   <div class="columns is-vcentered is-mobile">
     <div class="column is-11">
-      <div class="tabs">
-        <ul>
-          {#each iconGroupsByLetter as iconGroup}
-            <li
-              class={activeIconGroupId === iconGroup.id ? 'is-active' : ''}
-              data-testid="group-letter-tab">
-              <a
-                href={'#'}
-                on:click={() => handleSetActiveIconGroup(iconGroup.id)}>
-                {iconGroup.id.toUpperCase()}
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </div>
+      <Tabs
+        bind:tabs
+        bind:activeTab={activeIconGroupId}
+        fontSize="medium" />
     </div>
     <div
       class="column is-1 close"
-      alt="Close Icon Picker"
       title="Close Icon Picker"
+      on:keydown={handleEnterKey}
       on:click={handleClosePopup}>
       <i class="fa-solid fa-xmark" />
     </div>
@@ -102,13 +103,12 @@
           {#if activeIconGroupId === iconGroup.id}
             {#each iconGroup.values as spriteImage}
               <li
+                on:keydown={handleEnterKey}
                 on:click={() => {
                   handleIconClick(spriteImage.alt)
                 }}
-                alt="Icon Picker Card"
                 title="Icon Picker Card">
                 <IconImagePickerCard
-                  legendSymbolContainer={undefined}
                   iconImageAlt={spriteImage.alt}
                   iconImageSrc={spriteImage.src}
                   isSelected={iconImageAlt === spriteImage.alt ? true : false} />
@@ -122,8 +122,15 @@
 </div>
 
 <style lang="scss">
+  .icon-image-picker-container {
+    :global(.icon-text) {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+
   .card-icon {
-    max-height: 260px;
+    max-height: 190px;
     overflow-y: auto;
 
     ul {
@@ -145,6 +152,6 @@
   .close {
     cursor: pointer;
     position: relative;
-    right: -13px;
+    right: 0px;
   }
 </style>

@@ -5,6 +5,7 @@
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
+  import { loadMap } from '$lib/helper'
 
   export let asset: AssetOptions
   export let feature: StacItemFeature
@@ -13,8 +14,8 @@
   const addStacMosaicLayer = async (asset: AssetOptions) => {
     try {
       $indicatorProgress = true
-      const mosaicjson = new MosaicJsonData($map, feature, asset.url, asset.assetName)
-      const data = await mosaicjson.add()
+      const mosaicjson = new MosaicJsonData(feature, asset.url, asset.assetName)
+      const data = await mosaicjson.add($map)
 
       $layerList = [
         {
@@ -22,9 +23,11 @@
           name: `${asset.collectionId}-${asset.title}`,
           info: data.metadata,
           dataset: feature,
+          colorMapName: data.colormap,
         },
         ...$layerList,
       ]
+      await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,

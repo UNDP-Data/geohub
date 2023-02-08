@@ -1,25 +1,24 @@
 import { v4 as uuidv4 } from 'uuid'
 import { getActiveBandIndex, getBase64EncodedUrl, getRandomColormap, paramsToQueryString } from './helper'
-import type { RasterTileMetadata, StacItemFeature } from './types'
+import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import { MAP_ATTRIBUTION } from './constants'
+import chroma from 'chroma-js'
 
 export class RasterTileData {
   private feature: StacItemFeature
-  private map: Map
   private url: string
   private metadata: RasterTileMetadata
 
-  constructor(map: Map, feature: StacItemFeature, metadata?: RasterTileMetadata) {
-    this.map = map
+  constructor(feature: StacItemFeature, metadata?: RasterTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
   }
 
   public getMetadata = async () => {
-    if (this.metadata) return this.metadata
+    // if (this.metadata) return this.metadata
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${b64EncodedUrl}`)
     this.metadata = await res.json()
@@ -34,15 +33,15 @@ export class RasterTileData {
       const statistics = await resStatistics.json()
       if (statistics) {
         for (let i = 0; i < this.metadata.band_metadata.length; i++) {
-          const bandValue = this.metadata.band_metadata[i][0]
+          const bandValue = this.metadata.band_metadata[i][0] as string
           const bandDetails = statistics[bandValue]
           if (bandDetails) {
             this.metadata.band_metadata[i][1] = {
-              STATISTICS_MAXIMUM: `${bandDetails.max}`,
-              STATISTICS_MEAN: `${bandDetails.mean}`,
-              STATISTICS_MINIMUM: `${bandDetails.min}`,
-              STATISTICS_STDDEV: `${bandDetails.std}`,
-              STATISTICS_VALID_PERCENT: `${bandDetails.valid_percent}`,
+              STATISTICS_MAXIMUM: bandDetails.max,
+              STATISTICS_MEAN: bandDetails.mean,
+              STATISTICS_MINIMUM: bandDetails.min,
+              STATISTICS_STDDEV: bandDetails.std,
+              STATISTICS_VALID_PERCENT: bandDetails.valid_percent,
             }
           }
         }
@@ -52,21 +51,19 @@ export class RasterTileData {
     return this.metadata
   }
 
-  public add = async (defaultColormap?: string) => {
+  public add = async (map: Map, defaultColormap?: string) => {
     const b64EncodedUrl = getBase64EncodedUrl(this.url)
     const rasterInfo = await this.getMetadata()
     const bandIndex = getActiveBandIndex(rasterInfo)
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const [bandName, bandMetaStats] = rasterInfo.band_metadata[bandIndex]
+    const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata
     bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
-
-    const layerBandMetadataMin = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
-    const layerBandMetadataMax = rasterInfo.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
-
+    const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
+    const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
+    const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0
     // choose default colormap randomly
-    const colormap = defaultColormap ?? getRandomColormap()
+    const colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
+
     const titilerApiUrlParams = {
       scale: 1,
       TileMatrixSetId: 'WebMercatorQuad',
@@ -78,6 +75,20 @@ export class RasterTileData {
       return_mask: true,
       colormap_name: colormap,
     }
+
+    const colorMap = {}
+    if (isUniqueValueLayer) {
+      const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
+      const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
+      colorMapKeys.forEach((key, index) => {
+        const color = chroma(colorsList[index]).rgba()
+        colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
+      })
+      delete titilerApiUrlParams['colormap_name']
+      delete titilerApiUrlParams['rescale']
+      titilerApiUrlParams['colormap'] = JSON.stringify(colorMap)
+    }
+
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 
@@ -100,12 +111,12 @@ export class RasterTileData {
     const layerId = uuidv4()
     //const sourceId = this.feature.properties.id
     const sourceId = layerId
-    if (!this.map.getSource(sourceId)) {
-      this.map.addSource(sourceId, source)
+    if (!map.getSource(sourceId)) {
+      map.addSource(sourceId, source)
     }
 
-    if (this.map.getLayer(this.feature.properties.id)) {
-      this.map.removeLayer(this.feature.properties.id)
+    if (map.getLayer(this.feature.properties.id)) {
+      map.removeLayer(this.feature.properties.id)
     }
 
     const layer: RasterLayerSpecification = {
@@ -119,17 +130,17 @@ export class RasterTileData {
     }
 
     let firstSymbolId = undefined
-    for (const layer of this.map.getStyle().layers) {
+    for (const layer of map.getStyle().layers) {
       if (layer.type === 'symbol') {
         firstSymbolId = layer.id
         break
       }
     }
-    this.map.addLayer(layer, firstSymbolId)
+    map.addLayer(layer, firstSymbolId)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.map.fitBounds(rasterInfo.bounds)
+    map.fitBounds(rasterInfo.bounds)
 
     return {
       layer,

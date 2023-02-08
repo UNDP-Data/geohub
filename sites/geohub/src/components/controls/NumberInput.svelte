@@ -43,8 +43,10 @@
     return 0
   }
 
-  const handleEnterKey = (e: any) => {
+  const handleEnterKey = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       e.target.click()
     }
   }
@@ -60,13 +62,11 @@
       on:click={() => handleIncrementDecrementClasses('-')}
       on:keydown={handleEnterKey}
       tabindex="0"
-      alt="Decrease number"
       title="Decrease number">
       <i class="fa-solid fa-circle-minus" />
     </div>
     <div
       class="tag is-info is-light is-medium"
-      alt="Number Label"
       title="Number Label">
       {round(value, countDecimals(step)).toFixed(countDecimals(step))}
     </div>
@@ -76,7 +76,6 @@
       on:click={() => handleIncrementDecrementClasses('+')}
       on:keydown={handleEnterKey}
       tabindex="0"
-      alt="Increase number"
       title="Increase number">
       <i class="fa-solid fa-circle-plus" />
     </div>

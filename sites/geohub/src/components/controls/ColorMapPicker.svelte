@@ -1,17 +1,20 @@
 <script lang="ts">
-  import { fade, slide } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
-  import { clickOutside } from 'svelte-use-click-outside'
 
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
   import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import Popper from '$lib/popper'
+  import chroma from 'chroma-js'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let colorMapName: string
+  export let buttonWidth = 40
 
   const dispatch = createEventDispatcher()
   const colorMapTypes = [
@@ -24,20 +27,6 @@
     return { label: type.name }
   })
 
-  let showTooltip = false
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-end',
-      strategy: 'fixed',
-    },
-    [10, 15],
-  ).init()
-
   const handleColorMapClick = (cmName: string) => {
     //the lines below if removed will break  all the components that use this component and bind
     // two ways the colormap
@@ -49,10 +38,6 @@
     dispatch('colorMapChanged', { colorMapName: cmName })
   }
 
-  const handleClosePopup = () => {
-    showTooltip = !showTooltip
-  }
-
   const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -60,93 +45,85 @@
       event.target.click()
     }
   }
+
+  let colorMapStyle = ''
+  const getColorMapStyle = () => {
+    const colorMap = chroma.scale(colorMapName).mode('lrgb').colors(5, 'rgba')
+    colorMapStyle = `height: 20px; width:${buttonWidth}px; background: linear-gradient(90deg, ${colorMap});`
+  }
+  $: colorMapName, getColorMapStyle()
+  $: buttonWidth, getColorMapStyle()
 </script>
 
-<div class="columm legend-toggle">
-  <button
-    class="colormap-button button icon has-tooltip-left has-tooltip-arrow"
-    aria-label="Open Color Scheme Picker"
-    data-tooltip="Change color map"
-    tabindex="0"
-    use:popperRef
-    on:keydown={handleEnterKey}
-    on:click={handleClosePopup}
-    data-testid="colormap-toggle-container">
-    <i
-      class="fa-solid fa-palette fa-lg"
-      style="color: white" />
-  </button>
+<div
+  role="button"
+  class="colormap-button box m-0 py-1 px-2 is-flex is-flex-direction-column is-align-items-center"
+  aria-label="Open Color Scheme Picker"
+  tabindex="0"
+  use:tippy={{ content: tooltipContent }}
+  data-testid="colormap-toggle-container">
+  <div class="media">
+    <figure
+      class={`image`}
+      style={colorMapStyle}
+      data-testid="color-map-figure" />
+  </div>
+  <p class="subtitle is-6">{colorMapName}</p>
+</div>
 
-  {#if showTooltip}
-    <div
-      id="tooltip"
-      data-testid="tooltip"
-      use:popperContent={popperOptions}
-      transition:fade>
-      <div
-        data-testid="color-map-picker"
-        use:clickOutside={handleClosePopup}>
-        <div class="columns is-vcentered is-mobile">
-          <div class="column is-11">
-            <Tabs
-              bind:tabs
-              bind:activeTab={activeColorMapType} />
-          </div>
-          <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-          <div
-            tabindex="0"
-            class="column is-1 close"
-            title="Close Colormap Picker"
-            on:click={handleClosePopup}
-            on:keydown={handleEnterKey}>
-            <i class="fa-solid fa-xmark" />
-          </div>
-        </div>
-        <div class="columns">
-          <div class="column card-color">
-            <ul class="is-size-6">
-              {#each colorMapTypes as colorMapType}
-                {#if activeColorMapType === colorMapType.name}
-                  {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
-                    <li
-                      on:click={() => handleColorMapClick(cmName)}
-                      on:keydown={handleEnterKey}>
-                      <ColorMapPickerCard
-                        colorMapName={cmName}
-                        colorMapType={ColorMapTypes.SEQUENTIAL}
-                        isSelected={colorMapName === cmName} />
-                    </li>
-                  {/each}
-                {/if}
-              {/each}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div
-        id="arrow"
-        data-popper-arrow />
+<div
+  bind:this={tooltipContent}
+  data-testid="color-map-picker"
+  class="tooltip p-2">
+  <div class="columns is-vcentered is-mobile">
+    <div class="column is-11">
+      <Tabs
+        bind:tabs
+        bind:activeTab={activeColorMapType} />
     </div>
-  {/if}
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+    <div
+      tabindex="0"
+      class="column is-1 close"
+      title="Close Colormap Picker"
+      on:keydown={handleEnterKey}>
+      <i class="fa-solid fa-xmark" />
+    </div>
+  </div>
+  <div class="columns">
+    <div class="column card-color">
+      <ul class="is-size-6">
+        {#each colorMapTypes as colorMapType}
+          {#if activeColorMapType === colorMapType.name}
+            {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+              <li
+                on:click={() => handleColorMapClick(cmName)}
+                on:keydown={handleEnterKey}>
+                <ColorMapPickerCard
+                  colorMapName={cmName}
+                  colorMapType={ColorMapTypes.SEQUENTIAL}
+                  isSelected={colorMapName === cmName} />
+              </li>
+            {/each}
+          {/if}
+        {/each}
+      </ul>
+    </div>
+  </div>
 </div>
 
 <style lang="scss">
-  @import '../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
-  .legend-toggle {
-    .colormap-button {
-      background: #d12800;
-      width: 32px;
-      height: 32px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  .colormap-button {
+    cursor: pointer;
   }
 
-  #tooltip {
-    max-height: 300px;
-    max-width: 470px;
+  .tooltip {
+    font-size: 13px;
+    z-index: 10;
+    width: 260px;
   }
 
   .close {

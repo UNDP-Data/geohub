@@ -10,7 +10,7 @@
 	export let showProgressBar = false;
 	export let isPositionFixed = true;
 	export let links: HeaderLink[] = [];
-
+	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
 	onMount(() => {
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
@@ -136,9 +136,12 @@
 				{/if}
 			</div>
 		</div>
-
 		{#if showProgressBar}
-			<progress class="progress is-small is-info" max="100" />
+			<progress
+				style="height:0.2rem!important;"
+				class="progress is-{progressBarSize} is-info"
+				max="100"
+			/>
 		{/if}
 	</section>
 </header>
@@ -150,7 +153,6 @@
 	@use '../css/mega-menu.min.css';
 	@use '../css/mobile-nav.min.css';
 	@use '../css/cta-link.min.css';
-	// @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 
 	:global(.menu-buttons) {
 		display: flex;
@@ -175,5 +177,9 @@
 			display: block;
 			margin-left: 0.75rem !important;
 		}
+	}
+
+	.is-xsmall {
+		height: 0.2rem;
 	}
 </style>

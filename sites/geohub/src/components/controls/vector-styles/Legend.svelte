@@ -123,8 +123,6 @@
       }
     } else {
       let divIcon: HTMLElement
-      let svgIcon: SVGSVGElement
-      let dataUrl: string
       switch (symbol.element) {
         case 'div': {
           if (
@@ -147,7 +145,7 @@
           divIcon.style.opacity = symbol.attributes.style.opacity
 
           const color: any = map.getPaintProperty(layer.id, 'fill-color')
-          if (color && color.type === 'interval') {
+          if (color && ['interval', 'categorical'].includes(color.type)) {
             const colormap = chroma
               .scale(color.stops.map((stop) => stop[1]))
               .mode('lrgb')
@@ -190,7 +188,7 @@
             }
           } else {
             let color: any = map.getPaintProperty(layer.id, 'line-color')
-            if (color && color.type === 'interval') {
+            if (color && ['interval', 'categorical'].includes(color.type)) {
               const colormap = chroma
                 .scale(color.stops.map((stop) => stop[1]))
                 .mode('lrgb')
@@ -231,14 +229,16 @@
     }
   }
 
-  map.on(
-    'styledata',
-    debounce(() => {
-      if (!layer) return
-      layer = getLayerStyle(map, layer.id)
-      update()
-    }, 300),
-  )
+  const updateLegend = debounce((e) => {
+    if (!layer) return
+    if (e.layerId && layer.id !== e.layerId) return
+    layer = getLayerStyle(map, layer.id)
+    update()
+  }, 300)
+
+  map.on('styledata', updateLegend)
+  // maplibre event is fired in updateParamsInURL function when raster's tiles URL is updated
+  map.on('source:changed', updateLegend)
 </script>
 
 <div class="legend">{@html container.innerHTML}</div>

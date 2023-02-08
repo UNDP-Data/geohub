@@ -14,6 +14,10 @@
   import { VectorTileData } from '$lib/VectorTileData'
   import MiniMap from './MiniMap.svelte'
   import DataCardInfo from './DataCardInfo.svelte'
+  import { loadMap } from '$lib/helper'
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
 
   export let layer: VectorLayerTileStatLayer
   export let feature: StacItemFeature
@@ -46,8 +50,9 @@
       if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
         layerType = symbolVectorType
       }
-      const vectorTile = new VectorTileData($map, feature, metadata)
-      const data = await vectorTile.add(layerType, defaultColor, layer.layer)
+      const vectorInfo = metadata as VectorTileMetadata
+      const vectorTile = new VectorTileData(feature, vectorInfo)
+      const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`
       if (!isShowInfo) {
@@ -62,6 +67,7 @@
         },
         ...$layerList,
       ]
+      await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,
@@ -74,6 +80,10 @@
     } finally {
       $indicatorProgress = false
     }
+  }
+
+  const handleStarDeleted = (e) => {
+    dispatch('starDeleted', e.detail)
   }
 </script>
 
@@ -96,7 +106,8 @@
     {#if isShowInfo}
       <DataCardInfo
         bind:feature
-        bind:metadata>
+        bind:metadata
+        on:starDeleted={handleStarDeleted}>
         <div class="map">
           <MiniMap
             bind:feature

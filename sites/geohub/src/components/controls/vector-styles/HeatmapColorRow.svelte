@@ -1,43 +1,24 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
 
   import ColorPicker from '$components/controls/ColorPicker.svelte'
-  import Popper from '$lib/popper'
   import type { Color, HeatmapColorRow } from '$lib/types'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   export let colorRow: HeatmapColorRow
-  export let colorPickerVisibleIndex: number
 
   const dispatch = createEventDispatcher()
 
   let color: Color
   let colorPickerStyle: string
-  let showToolTip = false
 
   $: color, updateColorMap(color)
   $: colorPickerStyle = getColorPickerStyle(colorRow?.color)
-  $: {
-    if (colorPickerVisibleIndex === colorRow?.index) {
-      showToolTip = true
-    } else {
-      showToolTip = false
-    }
-  }
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'auto',
-      strategy: 'fixed',
-    },
-    [0, 15],
-  ).init()
 
   onMount(() => {
     setColorFromProp()
@@ -82,43 +63,24 @@
     const rgb = [color.r, color.g, color.b].join()
     return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`
   }
-
-  const handleColorPickerClick = () => {
-    if (showToolTip === false) {
-      dispatch('clickColorPicker', { index: colorRow.index })
-    } else {
-      showToolTip = false
-    }
-  }
 </script>
 
 <div
   class="columns is-vcentered is-gapless color-editor is-mobile"
   data-testid="heatmap-color-map-row-container">
   <div class="column is-1 color-picker">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-      id={`heatmap-${colorRow?.index}`}
-      alt="Color Map Control"
       title="Color Map Control"
-      on:click={() => handleColorPickerClick()}
+      use:tippy={{ content: tooltipContent }}
       class="discrete"
-      use:popperRef
-      style={colorPickerStyle} />
-
-    {#if showToolTip && color}
-      <div
-        id="tooltip"
-        data-testid="tooltip"
-        use:popperContent={popperOptions}
-        transition:fade>
-        <ColorPicker
-          bind:color
-          on:closeColorPicker={() => handleColorPickerClick()} />
-        <div
-          id="arrow"
-          data-popper-arrow />
-      </div>
-    {/if}
+      style="{colorPickerStyle}; width:20px; height:20px" />
+    <div
+      class="tooltip"
+      data-testid="tooltip"
+      bind:this={tooltipContent}>
+      <ColorPicker bind:color />
+    </div>
   </div>
 
   <div class="column value">
@@ -134,7 +96,8 @@
 </div>
 
 <style lang="scss">
-  @import '../../../styles/popper.scss';
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
 
   $input-margin: 5px !important;
 
@@ -163,10 +126,10 @@
     }
   }
 
-  #tooltip {
-    height: 280px;
+  .tooltip {
+    z-index: 10;
     padding: 0;
-    width: 290px;
-    max-width: 290px;
+    height: 255px;
+    width: 260px;
   }
 </style>

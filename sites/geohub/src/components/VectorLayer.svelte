@@ -1,23 +1,21 @@
 <script lang="ts">
-  import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import VectorLegendPanel from '$components/controls/VectorLegendPanel.svelte'
+  import VectorLegend from '$components/controls/VectorLegend.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { ClassificationMethodTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
+  import { ClassificationMethodTypes, LegendTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import VectorFilterPanelWizard from './controls/VectorFilterPanelWizard.svelte'
+  import VectorFilter from './controls/VectorFilter.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
+  import VectorParamsPanel from './controls/VectorParamsPanel.svelte'
 
   export let layer: Layer
   export let classificationMethod: ClassificationMethodTypes
   export let colorMapName: string
 
-  const isReadonly = $page.url.pathname === '/viewer'
-
   let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
-  let legendType: 'simple' | 'advanced'
+  let legendType: LegendTypes
   let defaultColor: string
   let defaultLineColor: string
   let activeTab = TabNames.LEGEND
@@ -27,12 +25,12 @@
     { label: TabNames.FILTER, icon: 'fa-solid fa-filter' },
     { label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+    { label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' },
   ]
 
-  if (isReadonly) {
-    tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
-    activeTab = undefined
-  }
+  const layerType = layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.['value']
+
+  if (!layerType || layerType != 'function') tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
 </script>
 
 <div
@@ -47,12 +45,12 @@
     <Tabs
       bind:tabs
       bind:activeTab
-      fontSize="medium"
+      fontSize={tabs.find((t) => t.label === TabNames.SIMULATION) ? 'small' : 'medium'}
       isToggleTab={true} />
 
     <p class="panel-content">
       {#if activeTab === TabNames.LEGEND}
-        <VectorLegendPanel
+        <VectorLegend
           {layer}
           bind:colorMapName
           bind:classificationMethod
@@ -61,11 +59,13 @@
           bind:defaultColor
           bind:defaultLineColor />
       {:else if activeTab === TabNames.FILTER}
-        <VectorFilterPanelWizard {layer} />
+        <VectorFilter {layer} />
       {:else if activeTab === TabNames.LABEL}
         <VectorLabelPanel {layer} />
       {:else if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />
+      {:else if activeTab === TabNames.SIMULATION}
+        <VectorParamsPanel layerId={layer.id} />
       {/if}
     </p>
   </nav>

@@ -3,12 +3,16 @@ import type {
   HeatmapLayerSpecification,
   LineLayerSpecification,
   RasterLayerSpecification,
+  RasterSourceSpecification,
+  StyleSpecification,
   SymbolLayerSpecification,
+  VectorSourceSpecification,
 } from 'maplibre-gl'
 
 import { get } from 'svelte/store'
-import { map } from '$stores'
-
+import { map as mapStore } from '$stores'
+import { loadMap } from './loadMap'
+import { getLayerStyle } from '$lib/helper/getLayerStyle'
 export const updateParamsInURL = (
   layerStyle:
     | RasterLayerSpecification
@@ -22,27 +26,31 @@ export const updateParamsInURL = (
   Object.keys(params).forEach((key) => {
     layerURL.searchParams.set(key, params[key])
   })
-  const mapStore = get(map)
-  if ('getStyle' in mapStore) {
-    const style = mapStore.getStyle()
-
-    if (style?.sources) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      style.sources[layerStyle.source].tiles = [decodeURI(layerURL.toString())]
-
-      // delete all props which have undefined value
-      // probably it is a bug of maplibre to add undefined property (like url, bounds) to the style,
-      // and maplibre complains it has error which some of properties are not defined.
-      Object.keys(style.sources).forEach((key) => {
-        const src = style.sources[key]
-        Object.keys(src).forEach((prop) => {
-          if (!src[prop]) {
-            delete src[prop]
-          }
-        })
-      })
-      mapStore.setStyle(style)
-    }
+  const map = get(mapStore)
+  if (map.getSource(layerStyle.source)) {
+    const source = map.getSource(layerStyle.source) as RasterSourceSpecification | VectorSourceSpecification
+    source.tiles = [decodeURI(layerURL.toString())]
+    map.style.sourceCaches[layerStyle.source].clearTiles()
+    map.style.sourceCaches[layerStyle.source].update(map.transform)
+    map.triggerRepaint()
+    map.fire('source:changed', {
+      layerId: layerStyle.id,
+    })
   }
+}
+
+export const updateLayerURL = async (
+  layerStyle:
+    | RasterLayerSpecification
+    | LineLayerSpecification
+    | FillLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification,
+  layerURL: URL,
+  params: Record<string, string>,
+) => {
+  const map = get(mapStore)
+  updateParamsInURL(layerStyle, layerURL, params)
+  await loadMap(map)
+  mapStore.set(map)
 }

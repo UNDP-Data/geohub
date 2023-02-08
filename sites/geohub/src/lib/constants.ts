@@ -1,4 +1,4 @@
-import type { StyleDefinition } from '@undp-data/style-switcher/package'
+import type { StyleDefinition } from '@undp-data/style-switcher'
 import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/package/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
@@ -27,6 +27,7 @@ export enum TabNames {
   ZOOM = 'Zoom',
   HISTOGRAM = 'Histogram',
   FILTER = 'Filter',
+  SIMULATION = 'Simulation',
 }
 
 export enum ClassificationMethodTypes {
@@ -60,16 +61,9 @@ export enum ColorMapTypes {
   QUALITATIVE = 'qualitative',
 }
 
-export enum DynamicLayerLegendTypes {
-  BUCKETED = 'bucketed',
-  CONTINUOUS = 'continuous',
-  UNIQUE = 'unique',
-  INTERVALS = 'intervals',
-}
-
-export enum VectorLegendTypes {
-  SIMPLE = 'simple',
-  ADVANCED = 'advanced',
+export enum LegendTypes {
+  DEFAULT = 'default',
+  CLASSIFY = 'classify',
 }
 
 export enum VectorApplyToTypes {
@@ -151,51 +145,55 @@ export const DataCategories: Breadcrumb[] = [
     url: '/api/tags?key=sdg_goal',
   },
   {
-    name: 'Climate change',
-    icon: 'assets/sdgs/13.png',
-    url: '/api/datasets?sdg_goal=13',
-  },
-  {
     name: 'Microsoft Planetary',
-    icon: 'fa-brands fa-microsoft',
+    icon: 'assets/microsoft.png',
     url: '/api/datasets?stac=microsoft-pc',
   },
   {
-    name: 'pg_tileserv',
-    icon: 'assets/crunchy-spatial-logo.png',
+    name: 'Dynamic vector data',
+    icon: 'assets/postgresql.png',
     url: '/api/datasets?type=pgtileserv',
   },
   {
-    name: 'martin',
-    icon: 'assets/maplibre.png',
-    url: '/api/datasets?type=martin',
+    name: 'Favourite',
+    icon: 'assets/star.png',
+    url: '/api/datasets?staronly=true',
   },
 ]
 
 export const SortingColumns: Radio[] = [
   {
-    value: 'name',
-    label: 'Name',
+    value: 'name,asc',
+    label: 'A to Z',
   },
   {
-    value: 'source',
-    label: 'Source',
-  },
-  // {
-  //   value: 'license',
-  //   label: 'Data license'
-  // },
-  {
-    value: 'updatedat',
-    label: 'Updated date',
+    value: 'name,desc',
+    label: 'Z to A',
   },
   {
-    value: 'createdat',
-    label: 'Created date',
+    value: 'no_stars,desc',
+    label: 'Most favourite',
+  },
+  {
+    value: 'updatedat,desc',
+    label: 'Most recent',
+  },
+  {
+    value: 'updatedat,asc',
+    label: 'Less recent',
   },
 ]
 
-export const DatasetSearchQueryParams = ['query', 'offset', 'limit', 'storage_id', 'bbox', 'sortby', 'operator']
+export const DatasetSearchQueryParams = [
+  'query',
+  'offset',
+  'limit',
+  'storage_id',
+  'bbox',
+  'sortby',
+  'operator',
+  'staronly',
+]
 
 export const tagSearchKeys = [
   {
@@ -230,6 +228,10 @@ export const tagSearchKeys = [
     key: 'schema',
     label: 'Schema',
   },
+  {
+    key: 'type',
+    label: 'GIS Server',
+  },
 ]
 
 export const footerItems: { [key: string]: { title: string; url: string }[] } = {
@@ -237,6 +239,10 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
     {
       title: 'GeoHub',
       url: 'https://geohub.data.undp.org',
+    },
+    {
+      title: 'Shared Maps',
+      url: 'https://geohub.data.undp.org/maps',
     },
     {
       title: 'Dashboards',

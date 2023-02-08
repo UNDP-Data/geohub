@@ -5,4 +5,7 @@ export interface BandMetadata {
   STATISTICS_STDDEV: number
   STATISTICS_VALID_PERCENT: number
   STATISTICS_UNIQUE_VALUES?: object
+  Description?: string
+  Source?: string
+  Unit?: string
 }

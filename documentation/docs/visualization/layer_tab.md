@@ -8,7 +8,7 @@ The user can add or remove a layer of their choice by the following steps.
 
 3. Click on the “Layers” tab for more features for layers.
 
-4. By hovering and clicking on the ![Layer_Information.png](../assets/data/Layer_Information.png) icon will allow the user to view important meta data related to the layer.
+4. By hovering and clicking on the ![Layer_Information.png](../assets/data/Layer_Information.png) icon will allow the user to view important meta data related to the layer.By further clicking on the "Read more" arrow will allow the user to also download the layer.
 
 The user has the option to improve the layer view by checking the options available under the “Layer” tab. Under the layer tab, it will display all the layers the user had selected, and one can improve the layer view through the following options.
 

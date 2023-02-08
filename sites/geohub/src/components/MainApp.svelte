@@ -5,7 +5,7 @@
   import BannerMessageControl from '$components/BannerMessageControl.svelte'
   import Map from '$components/Map.svelte'
   import Content from './Content.svelte'
-  import { map as mapStore } from '$stores'
+  import { map as mapStore, indicatorProgress } from '$stores'
 
   let map: MaplibreMap
   let headerHeight: number
@@ -13,10 +13,11 @@
 
   let innerWidth: number
   let innerHeight: number
+  $: isMobile = innerWidth < 768 ? true : false
   $: splitHeight = innerHeight - headerHeight
 
-  let initialPrimaryWidth = 355
-  let minPrimaryWidth = '360px'
+  let initialPrimaryWidth = 360
+  let minPrimaryWidth = `${initialPrimaryWidth}px`
   let minSecondaryWidth = '50%'
   let defaultsplitterSize = '10px'
   let widthPecent = 0
@@ -29,7 +30,7 @@
 
   $: if (map) {
     mapStore.update(() => map)
-    setSplitControl()
+    // setSplitControl()
   }
 
   const setWidthPercent = () => {
@@ -50,9 +51,15 @@
   const setSplitControl = () => {
     if (!splitControl) return
     if (isMenuShown === true) {
-      setWidthPercent()
-      splitControl.setPercent(widthPecent)
-      splitterSize = defaultsplitterSize
+      if (isMobile) {
+        splitControl.setPercent(100)
+        splitterSize = '0px'
+      } else {
+        const widthPecent = (initialPrimaryWidth / innerWidth) * 100
+        setWidthPercent()
+        splitControl.setPercent(widthPecent)
+        splitterSize = defaultsplitterSize
+      }
     } else {
       splitControl.setPercent(0)
       splitterSize = '0px'
@@ -65,8 +72,12 @@
     setSplitControl()
   }
 
-  const splitterChanged = (e) => {
+  const splitterChanged = () => {
     resizeMap()
+  }
+
+  $: if (splitControl) {
+    setSplitControl()
   }
 </script>
 
@@ -84,13 +95,25 @@
   <Split
     initialPrimarySize={`${widthPecent}%`}
     minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
-    minSecondarySize={minSecondaryWidth}
+    minSecondarySize={isMobile ? '0px' : minSecondaryWidth}
     {splitterSize}
     on:changed={splitterChanged}
     bind:this={splitControl}>
     <div
       slot="primary"
       class="primary-content">
+      {#if isMobile}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <span
+          class="span close-icon"
+          on:click={() => {
+            isMenuShown = false
+          }}>
+          <i
+            class="fa-solid fa-circle-xmark fa-2x"
+            style="color:#1c1c1c;" />
+        </span>
+      {/if}
       <Content bind:splitterHeight={splitHeight} />
     </div>
 
@@ -98,6 +121,12 @@
       slot="secondary"
       class="secondary-content">
       <BannerMessageControl>
+        <progress
+          style="height:0.2rem; opacity:{$indicatorProgress == true
+            ? 1
+            : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
+          class="progress is-large is-info "
+          max={100} />
         <Map bind:map />
       </BannerMessageControl>
     </div>
@@ -108,6 +137,14 @@
   .split-container {
     .primary-content {
       position: relative;
+
+      .close-icon {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.6rem;
+        cursor: pointer;
+        z-index: 5;
+      }
     }
 
     .secondary-content {

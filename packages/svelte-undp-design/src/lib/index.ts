@@ -12,6 +12,7 @@ import Loader from './Loader/Loader.svelte';
 import Pagination from './Pagination/Pagination.svelte';
 import FluidCarousel from './FluidCarousel/FluidCarousel.svelte';
 import Download from './Download/Download.svelte';
+import Stats from './Stats/Stats.svelte';
 
 export {
 	Accordion,
@@ -27,5 +28,6 @@ export {
 	CtaLink,
 	Loader,
 	Pagination,
-	FluidCarousel
+	FluidCarousel,
+	Stats
 };

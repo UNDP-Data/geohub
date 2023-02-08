@@ -1,16 +1,21 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { DataOrderType, DataSortingColumn, StacItemFeatureCollection } from '$lib/types'
+  import type { StacItemFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
+  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM, SortingColumns } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
   import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
+
+  const session = $page.data.session
+  const dataCategories: Breadcrumb[] = session
+    ? DataCategories
+    : DataCategories.filter((category) => category.name !== 'Favourite')
 
   export let contentHeight: number
   let optionsHeight = 41.5
@@ -28,31 +33,31 @@
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
   let queryForSearch: string
-  let sortingColumn: DataSortingColumn = 'name'
-  let orderType: DataOrderType = 'asc'
+  let sortingColumn: string = SortingColumns[0].value
   let bbox: [number, number, number, number]
   let isFilterByBBox = false
   let selectedTags: Tag[] = []
   let tagFilterOperatorType: 'and' | 'or' = 'and'
   let DataItemFeatureCollection: StacItemFeatureCollection
+  let isFavouriteSearch = false
 
   $: currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
 
   let expanded: { [key: string]: boolean } = {}
-  // uncomment this if only an accordion is expanded
-  // let expandedDatasetId: string
-  // $: {
-  //   let expandedDatasets = Object.keys(expanded).filter((key) =>  expanded[key] === true && key !== expandedDatasetId)
-  //   if (expandedDatasets.length > 0) {
-  //     expandedDatasetId = expandedDatasets[0]
-  //     Object.keys(expanded)
-  //       .filter((key) => key !== expandedDatasetId)
-  //       .forEach((key) => {
-  //         expanded[key] = false
-  //       })
-  //     expanded[expandedDatasets[0]] = true
-  //   }
-  // }
+  // to allow only an accordion to be expanded
+  let expandedDatasetId: string
+  $: {
+    let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
+    if (expandedDatasets.length > 0) {
+      expandedDatasetId = expandedDatasets[0]
+      Object.keys(expanded)
+        .filter((key) => key !== expandedDatasetId)
+        .forEach((key) => {
+          expanded[key] = false
+        })
+      expanded[expandedDatasets[0]] = true
+    }
+  }
 
   const fetchNextDatasets = async () => {
     if (DataItemFeatureCollection?.features.length === 0) return
@@ -81,6 +86,8 @@
       const sdg_goal = originUrl.searchParams.get('sdg_goal')
       const type = originUrl.searchParams.get('type')
       const stac = originUrl.searchParams.get('stac')
+      const starOnly = originUrl.searchParams.get('staronly')
+      isFavouriteSearch = starOnly && starOnly.toLowerCase() === 'true' ? true : false
 
       const apiUrl = new URL(`${originUrl.origin}${originUrl.pathname}`)
       if (sdg_goal) apiUrl.searchParams.set('sdg_goal', sdg_goal)
@@ -124,8 +131,12 @@
         apiUrl.searchParams.set('bbox', bbox.join(','))
       }
 
-      apiUrl.searchParams.set('sortby', [sortingColumn, orderType].join(','))
+      apiUrl.searchParams.set('sortby', sortingColumn)
       apiUrl.searchParams.set('limit', LIMIT.toString())
+
+      if (starOnly) {
+        apiUrl.searchParams.set('staronly', starOnly)
+      }
 
       if (selectedTags?.length > 0) {
         apiUrl.searchParams.set('operator', tagFilterOperatorType)
@@ -191,7 +202,7 @@
     await searchDatasets(url)
   }
 
-  const handleFilterInput = async (e) => {
+  const handleFilterInput = async () => {
     if (
       !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
       query === ''
@@ -248,6 +259,7 @@
       breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
       selectedTags = []
+      isFavouriteSearch = false
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -263,6 +275,7 @@
         selectedTags = []
       }
     }
+    expanded = {}
   }
 
   let clearFiltertext = () => {
@@ -280,7 +293,6 @@
     bind:query
     bind:queryForSearch
     bind:sortingColumn
-    bind:orderType
     bind:bbox
     bind:isFilterByBBox
     bind:selectedTags
@@ -310,16 +322,22 @@
     {#each DataItemFeatureCollection.features as feature}
       <DataCard
         {feature}
-        bind:isExpanded={expanded[feature.properties.id]} />
+        bind:isExpanded={expanded[feature.properties.id]}
+        bind:isStarOnly={isFavouriteSearch} />
     {/each}
     {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
       <Notification type="info">All data loaded.</Notification>
     {/if}
   {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    <Notification type="warning">No data found. Try another keyword.</Notification>
+    {#if isFavouriteSearch}
+      <Notification type="info"
+        >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+    {:else}
+      <Notification type="warning">No data found. Try another keyword.</Notification>
+    {/if}
   {:else}
     <DataCategoryCardList
-      categories={DataCategories}
+      categories={dataCategories}
       cardSize="medium"
       on:selected={handleCategorySelected}
       bind:breadcrumbs />

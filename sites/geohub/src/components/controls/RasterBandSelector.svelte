@@ -42,12 +42,10 @@
   }
 
   if (layerStyle.type === LayerTypes.RASTER) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     ;({ info } = layer)
     selected = info.active_band_no
     if (info.band_metadata.length > 0) {
-      bands = info.band_metadata.map((meta) => meta[0])
+      bands = info.band_metadata.map((meta) => meta[0]) as string[]
     }
   }
 

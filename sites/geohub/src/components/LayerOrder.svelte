@@ -12,7 +12,7 @@
   let style: StyleSpecification
 
   $: if ($map) {
-    $map.on('styledata', function (e) {
+    $map.on('styledata', function () {
       style = $map.getStyle()
       updateLayerOrderList()
     })

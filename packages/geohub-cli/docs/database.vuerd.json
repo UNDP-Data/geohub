@@ -5,7 +5,7 @@
     "height": 2000,
     "scrollTop": 0,
     "scrollLeft": 0,
-    "zoomLevel": 0.9,
+    "zoomLevel": 1,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -304,7 +304,7 @@
           "active": false,
           "left": 125.1019,
           "top": 218.2722,
-          "zIndex": 6,
+          "zIndex": 26,
           "widthName": 101.83992004394531,
           "widthComment": 120
         },
@@ -828,7 +828,7 @@
           "active": false,
           "left": 150.885,
           "top": 948.2498,
-          "zIndex": 57,
+          "zIndex": 43,
           "widthName": 83.61393737792969,
           "widthComment": 120
         },
@@ -896,6 +896,91 @@
         },
         "visible": true,
         "id": "39dfaf50-3665-4bdd-b2cd-942cb0d31c33"
+      },
+      {
+        "name": "geohub.dataset_favourite",
+        "comment": "This table manages users to save their favourite datasets",
+        "columns": [
+          {
+            "name": "dataset_id",
+            "comment": "md5 hash generated from URL",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 68.169921875,
+              "widthComment": 120,
+              "widthDataType": 115.04789733886719,
+              "widthDefault": 60
+            },
+            "id": "b073fd4b-be60-4187-8504-e5ffa1e0d6f6"
+          },
+          {
+            "name": "user_email",
+            "comment": "user email address",
+            "dataType": "character varying(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 70.09393310546875,
+              "widthComment": 120,
+              "widthDataType": 149.9268798828125,
+              "widthDefault": 60
+            },
+            "id": "df94d296-6544-4d9b-88a2-e7531b932762"
+          },
+          {
+            "name": "savedat",
+            "comment": "timestamp which users saved",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 167.4248809814453,
+              "widthDefault": 60
+            },
+            "id": "648d1496-e6d2-47cf-9b55-11701b200d43"
+          }
+        ],
+        "ui": {
+          "active": true,
+          "left": 616.4443,
+          "top": 36.7778,
+          "zIndex": 87,
+          "widthName": 165.9038543701172,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "f3fc394f-5431-4fca-9cc5-17b546080624"
       }
     ],
     "indexes": [
@@ -1063,6 +1148,32 @@
         "constraintName": "fk_geohub.storage_to_geohub.storage_tag",
         "visible": true,
         "id": "41e34c2f-139c-4952-bf33-a813180f6645"
+      },
+      {
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "6d8bc276-7cd1-43ce-95a2-df870a3f108c",
+          "columnIds": [
+            "6739c38f-4385-4b45-8c01-0f3948df0b7e"
+          ],
+          "x": 390.8063143676758,
+          "y": 218.2722,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "f3fc394f-5431-4fca-9cc5-17b546080624",
+          "columnIds": [
+            "b073fd4b-be60-4187-8504-e5ffa1e0d6f6"
+          ],
+          "x": 616.4443,
+          "y": 102.0278,
+          "direction": "left"
+        },
+        "constraintName": "fk_geohub.dataset_to_geohub.dataset_favourite",
+        "visible": true,
+        "id": "f21f3a41-52f0-41d8-92e1-61471db9a6f2"
       }
     ]
   }

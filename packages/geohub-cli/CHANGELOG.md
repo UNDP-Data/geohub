@@ -1,5 +1,18 @@
 # @undp-data/geohub-cli
 
+## 1.0.6
+
+### Patch Changes
+
+- cb5ae93: - doc: added dataset_favourite table to manage stars for each dataset/user
+  - delete dataset_favourite when dataset is deleted.
+
+## 1.0.5
+
+### Patch Changes
+
+- 5046874: Use name property from metadata.json or pmtiles's metadata instead of using file name if name property is present.
+
 ## 1.0.4
 
 ### Patch Changes

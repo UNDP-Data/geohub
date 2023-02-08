@@ -87,13 +87,22 @@ plugins:
 
 nav:
   - Getting Started: index.md
+  - User Login: user_account.md
   - Data:
       - Introduction: data/introduction.md
       - Data Structure: data/data_structure.md
-      - Special Buckets: data/special_buckets.md
+      - Exploring Buckets: data/special_buckets.md
   - Visualization:
       - Map View: visualization/map_view.md
+      - Header Features: visualization/header_features.md
       - Search Data: visualization/search_data.md
       - Layer Tab: visualization/layer_tab.md
       - Legend: visualization/legend.md
       - Histograms: visualization/histograms.md
+      - Opacity: visualization/opacity.md
+  - Dashboards:
+      - Introduction: dashboards/introduction.md
+      - Available Dashboards: dashboards/dashboard.md
+      - Functions: dashboards/functions.md
+  - Explore Maps:
+      - Saving maps: explore_maps/save_maps.md
