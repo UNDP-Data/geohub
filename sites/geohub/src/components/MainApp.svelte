@@ -143,7 +143,7 @@
         top: 0.5rem;
         right: 0.6rem;
         cursor: pointer;
-        z-index: 10;
+        z-index: 5;
       }
     }
 
