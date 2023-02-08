@@ -7,7 +7,6 @@ import {
   BlockBlobClient,
   StorageSharedKeyCredential,
 } from '@azure/storage-blob'
-import crypto from 'crypto'
 import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
 
 export const actions = {
@@ -35,9 +34,7 @@ async function getSasUrl(userId: string, containerName: string, fileName: string
   const containerClient = getContainerClient(containerName)
 
   // save file in user email folder
-  const blockBlobClient: BlockBlobClient = containerClient.getBlockBlobClient(
-    userId + '/' + crypto.randomUUID() + '_' + fileName,
-  )
+  const blockBlobClient: BlockBlobClient = containerClient.getBlockBlobClient(userId + '/' + fileName)
 
   return blockBlobClient.generateSasUrl({
     // allow user to write
