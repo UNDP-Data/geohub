@@ -3,7 +3,6 @@
   import { BlockBlobClient } from '@azure/storage-blob'
   import { filesize } from 'filesize'
   import Dropzone from 'svelte-file-dropzone'
-  import AutoComplete from 'simple-svelte-autocomplete'
 
   import Notification from '$components/controls/Notification.svelte'
 
