@@ -6,6 +6,7 @@
 
   import Notification from '$components/controls/Notification.svelte'
   import Tags from '$components/data-upload/Tags.svelte'
+  import SdgPicker from '$components/data-upload/SdgPicker.svelte'
 
   let fileInput: HTMLInputElement
   let selectedFile: File
@@ -219,6 +220,13 @@
         {/if}
       </div>
     </div>
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">SDGs</label>
+  <div class="control">
+    <SdgPicker />
   </div>
 </div>
 
