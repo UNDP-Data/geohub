@@ -5,8 +5,7 @@
   import Dropzone from 'svelte-file-dropzone'
 
   import Notification from '$components/controls/Notification.svelte'
-
-  const targetKeys = ['extent', 'granularity', 'resolution', 'sdg_goal', 'theme', 'year_value', 'keyword']
+  import Tags from '$components/data-upload/Tags.svelte'
 
   let fileInput: HTMLInputElement
   let selectedFile: File
@@ -20,7 +19,6 @@
   let description = ''
   let attribution = ''
   let license = ''
-  let selectedTags: { [key: string]: string } = {}
 
   $: {
     if (selectedFile && !name) {
@@ -62,24 +60,50 @@
     const { acceptedFiles } = e.detail
     selectedFile = acceptedFiles[0]
   }
-
-  const getTags = async () => {
-    const res = await fetch('/api/tags')
-    const json = await res.json()
-
-    const tags: { [key: string]: string[] } = {}
-    targetKeys.forEach((key) => {
-      const values: { key: string; value: string; count: number }[] = json[key]
-      if (!values) return
-      tags[key] = values.map((v) => v.value)
-    })
-    return tags
-  }
-
-  const loadingTags = getTags()
 </script>
 
 <p class="title is-4">Upload data to GeoHub</p>
+
+<form
+  method="POST"
+  action="?/getSasUrl"
+  use:enhance={() => {
+    return async ({ result, update }) => {
+      await update()
+      const sasUrl = result.data.sasUrl
+      uploadingFile = uploadFile(sasUrl)
+    }
+  }}>
+  <input
+    class="input"
+    type="hidden"
+    name="fileName"
+    bind:value={selectedFileName} />
+
+  <div class="field is-grouped py-4">
+    <div class="control">
+      <button
+        class="button is-primary"
+        type="submit"
+        disabled={!selectedFile}>Upload</button>
+    </div>
+  </div>
+</form>
+
+{#await uploadingFile}
+  <progress
+    class="progress is-success"
+    value={progress}
+    max="100">{progress}%</progress>
+
+  <p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
+{:then result}
+  {#if result?.success}
+    <Notification
+      type="info"
+      showCloseButton={false}>Successfully uploaded the file to GeoHub!</Notification>
+  {/if}
+{/await}
 
 <div class="field">
   <label class="label">Geospatial file</label>
@@ -122,157 +146,86 @@
   </div>
 </div>
 
-<div class="field">
-  <label class="label">Name</label>
-  <div class="control has-icons-right">
-    <input
-      class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
-      type="text"
-      name="name"
-      placeholder="Type name of dataset"
-      bind:value={name} />
-    {#if name}
-      <span class="icon is-small is-right">
-        <i class="fas fa-check has-text-success" />
-      </span>
-    {/if}
-  </div>
-  {#if !name}
-    <p class="help is-danger">Name is required</p>
-  {/if}
-</div>
-
-<div class="field">
-  <label class="label">Description</label>
-  <div class="control has-icons-right">
-    <textarea
-      class="textarea {description.length > 0 ? 'is-success' : 'is-danger'}"
-      name="description"
-      placeholder="Type description of dataset"
-      bind:value={description} />
-    {#if description}
-      <span class="icon is-small is-right">
-        <i class="fas fa-check has-text-success" />
-      </span>
-    {/if}
-  </div>
-  {#if !description}
-    <p class="help is-danger">Description is required</p>
-  {/if}
-</div>
-
-<div class="field">
-  <label class="label">Attribution</label>
-  <div class="control has-icons-right">
-    <input
-      class="input {attribution.length > 0 ? 'is-success' : 'is-danger'}"
-      type="text"
-      name="attribution"
-      placeholder="Type attribution of dataset"
-      bind:value={attribution} />
-    {#if attribution}
-      <span class="icon is-small is-right">
-        <i class="fas fa-check has-text-success	" />
-      </span>
-    {/if}
-  </div>
-  {#if !attribution}
-    <p class="help is-danger">Attribution is required</p>
-  {/if}
-</div>
-
-<div class="field">
-  <label class="label">License</label>
-  <div class="control has-icons-right">
-    <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
-      <select
-        bind:value={license}
-        name="license">
-        <option value="">Select a data license</option>
-        {#each licenses as lc}
-          <option value={lc}>{lc}</option>
-        {/each}
-      </select>
-    </div>
-    {#if license}
-      <span class="icon is-small is-right">
-        <i class="fas fa-check has-text-success	" />
-      </span>
-    {/if}
-  </div>
-  {#if !license}
-    <p class="help is-danger">license is required</p>
-  {/if}
-</div>
-
-{#await loadingTags then tags}
-  {#each targetKeys as key}
+<div class="columns">
+  <div class="column">
     <div class="field">
-      <label class="label">{key}</label>
+      <label class="label">Name</label>
       <div class="control has-icons-right">
-        <div class="select is-fullwidth {selectedTags[key] ? 'is-success' : ''}">
-          <select
-            bind:value={selectedTags[key]}
-            name={key}>
-            <option value="">Select a {key}</option>
-            {#each tags[key] as value}
-              <option {value}>{value}</option>
-            {/each}
-          </select>
-        </div>
-        {#if selectedTags[key]}
+        <input
+          class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
+          type="text"
+          name="name"
+          placeholder="Type name of dataset"
+          bind:value={name} />
+        {#if name}
+          <span class="icon is-small is-right">
+            <i class="fas fa-check has-text-success" />
+          </span>
+        {/if}
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Attribution</label>
+      <div class="control has-icons-right">
+        <input
+          class="input {attribution.length > 0 ? 'is-success' : 'is-danger'}"
+          type="text"
+          name="attribution"
+          placeholder="Type attribution of dataset"
+          bind:value={attribution} />
+        {#if attribution}
           <span class="icon is-small is-right">
             <i class="fas fa-check has-text-success	" />
           </span>
         {/if}
       </div>
     </div>
-  {/each}
-{/await}
 
-<form
-  method="POST"
-  action="?/getSasUrl"
-  use:enhance={() => {
-    return async ({ result, update }) => {
-      await update()
-      const sasUrl = result.data.sasUrl
-      uploadingFile = uploadFile(sasUrl)
-    }
-  }}>
-  <input
-    class="input"
-    type="hidden"
-    name="fileName"
-    bind:value={selectedFileName} />
-
-  <div class="field is-grouped py-4">
-    <div class="control">
-      <button
-        class="button is-primary"
-        type="submit"
-        disabled={!selectedFile}>Submit</button>
+    <div class="field">
+      <label class="label">License</label>
+      <div class="control has-icons-right">
+        <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
+          <select
+            bind:value={license}
+            name="license">
+            <option value="">Select a data license</option>
+            {#each licenses as lc}
+              <option value={lc}>{lc}</option>
+            {/each}
+          </select>
+        </div>
+        {#if license}
+          <span class="icon is-small is-right">
+            <i class="fas fa-check has-text-success	" />
+          </span>
+        {/if}
+      </div>
     </div>
   </div>
-</form>
+  <div class="column">
+    <div class="field">
+      <label class="label">Description</label>
+      <div class="control has-icons-right">
+        <textarea
+          class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
+          name="description"
+          placeholder="Type description of dataset"
+          bind:value={description} />
+        {#if description}
+          <span class="icon is-small is-right">
+            <i class="fas fa-check has-text-success" />
+          </span>
+        {/if}
+      </div>
+    </div>
+  </div>
+</div>
 
-{#await uploadingFile}
-  <progress
-    class="progress is-success"
-    value={progress}
-    max="100">{progress}%</progress>
-
-  <p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
-{:then result}
-  {#if result?.success}
-    <Notification
-      type="info"
-      showCloseButton={false}>Successfully uploaded the file to GeoHub!</Notification>
-  {/if}
-{/await}
+<Tags />
 
 <style lang="scss">
-  // .parent :global(.childClass) {
-  //   color: red;
-  // }
+  .description {
+    height: 210px;
+  }
 </style>
