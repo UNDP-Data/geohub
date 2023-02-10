@@ -5,7 +5,7 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
-  import { Button } from '@undp-data/svelte-undp-design'
+  import { Button, Loader } from '@undp-data/svelte-undp-design'
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
@@ -23,6 +23,7 @@
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
+  let shareLoading = false
 
   $: if (isModalVisible) {
     open()
@@ -61,7 +62,7 @@
   }
 
   export const share = async () => {
-    const style = $map.getStyle()
+    shareLoading = true
     let savedLayerList = JSON.parse(JSON.stringify($layerList))
     const untargetdIds = untargetedLayers.map((l) => l.id)
     savedLayerList = savedLayerList.filter((l) => !untargetdIds.includes(l.id))
@@ -92,6 +93,7 @@
     await goto(`?${$page.url.searchParams.toString()}`)
     await invalidateAll()
     styleName = $page.data.style.name
+    shareLoading = false
   }
 
   $: styleName, createStyleJSON2Generate()
@@ -249,10 +251,16 @@
 
         {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
           <div class="is-6 px-1">
-            <Button
-              title="Share"
-              on:clicked={handleShare}
-              isPrimary={true} />
+            {#if shareLoading}
+              <div class="loader-container">
+                <Loader size="x-small" />
+              </div>
+            {:else}
+              <Button
+                title="Share"
+                on:clicked={handleShare}
+                isPrimary={true} />
+            {/if}
           </div>
         {/if}
       </footer>
@@ -277,5 +285,11 @@
     .modal-card {
       width: 300px;
     }
+  }
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
   }
 </style>

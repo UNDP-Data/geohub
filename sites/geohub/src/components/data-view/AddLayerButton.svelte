@@ -1,10 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { Button } from '@undp-data/svelte-undp-design'
+  import { Loader } from '@undp-data/svelte-undp-design'
   const dispatch = createEventDispatcher()
 
   export let isIconButton = false
   export let title = ''
+  export let isLoading = false
 
   const handleClicked = () => {
     dispatch('clicked')
@@ -17,7 +19,11 @@
   }
 </script>
 
-{#if isIconButton}
+{#if isLoading}
+  <div class="loader-container">
+    <Loader size="x-small" />
+  </div>
+{:else if isIconButton}
   <span
     class="button-icon fa-stack fa-xl"
     role="button"
@@ -46,5 +52,12 @@
       color: d12800;
     }
     color: #d12800;
+  }
+
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 </style>

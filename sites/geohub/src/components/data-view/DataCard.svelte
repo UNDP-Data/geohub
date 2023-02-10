@@ -26,6 +26,7 @@
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number
+  let layerLoading = false
   $: width = `${clientWidth * 0.95}px`
 
   let assetList: AssetOptions[] = []
@@ -67,6 +68,7 @@
 
   const addLayer = async () => {
     try {
+      layerLoading = true
       $indicatorProgress = true
 
       if (is_raster) {
@@ -93,6 +95,7 @@
         await loadMap($map)
       }
     } finally {
+      layerLoading = false
       $indicatorProgress = false
     }
   }
@@ -176,6 +179,7 @@
           {#if tilestatsLayers.length < 2}
             {#if !stacType && !isExpanded}
               <AddLayerButton
+                bind:isLoading={layerLoading}
                 title="Add layer"
                 isIconButton={true}
                 on:clicked={addLayer} />
@@ -222,6 +226,7 @@
           {#await isGettingMetadata then}
             {#if !stacType}
               <AddLayerButton
+                bind:isLoading={layerLoading}
                 title="Add layer"
                 on:clicked={addLayer} />
             {/if}

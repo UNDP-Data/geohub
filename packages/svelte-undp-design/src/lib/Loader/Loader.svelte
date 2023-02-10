@@ -1,9 +1,13 @@
 <script lang="ts">
-	export let size: 'small' | 'medium' | 'large' = 'medium';
+	export let size: 'x-small' | 'small' | 'medium' | 'large' = 'medium';
 </script>
 
 <div
-	class="loader {size === 'small' ? 'small-loader' : size === 'medium' ? 'medium-loader' : null}"
+	class="loader {size === 'small'
+		? 'small-loader'
+		: size === 'medium'
+		? 'medium-loader'
+		: 'smallest-loader'}"
 	aria-busy="true"
 	aria-live="polite"
 />
@@ -21,6 +25,12 @@
 	.medium-loader {
 		width: 50px;
 		height: 50px;
+		border: 4px solid #006eb5;
+		border-top-color: #edeff0;
+	}
+	.smallest-loader {
+		width: 20px;
+		height: 20px;
 		border: 4px solid #006eb5;
 		border-top-color: #edeff0;
 	}

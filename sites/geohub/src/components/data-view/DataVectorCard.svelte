@@ -29,6 +29,8 @@
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
 
+  let layerLoading = false
+
   let symbolVectorType: 'point' | 'heatmap' = 'point'
 
   let symbolVectorTypes: Radio[] = [
@@ -45,7 +47,7 @@
   const addLayer = async () => {
     try {
       $indicatorProgress = true
-
+      layerLoading = true
       let layerType: 'point' | 'heatmap'
       if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
         layerType = symbolVectorType
@@ -79,6 +81,7 @@
       console.error(err)
     } finally {
       $indicatorProgress = false
+      layerLoading = false
     }
   }
 
@@ -94,6 +97,7 @@
   <div slot="button">
     {#if !isExpanded}
       <AddLayerButton
+        bind:isLoading={layerLoading}
         title="Add layer"
         isIconButton={true}
         on:clicked={addLayer} />
@@ -145,6 +149,7 @@
     {/if}
 
     <AddLayerButton
+      bind:isLoading={layerLoading}
       title="Add layer"
       on:clicked={addLayer} />
   </div>

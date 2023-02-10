@@ -11,9 +11,11 @@
   export let feature: StacItemFeature
   export let isExpanded = false
 
+  let layerLoading = false
   const addStacMosaicLayer = async (asset: AssetOptions) => {
     try {
       $indicatorProgress = true
+      layerLoading = true
       const mosaicjson = new MosaicJsonData(feature, asset.url, asset.assetName)
       const data = await mosaicjson.add($map)
 
@@ -39,6 +41,7 @@
       console.error(err)
     } finally {
       $indicatorProgress = false
+      layerLoading = false
     }
   }
 </script>
@@ -50,6 +53,7 @@
   <div slot="button">
     {#if !isExpanded}
       <AddLayerButton
+        bind:isLoading={layerLoading}
         title="Add layer"
         isIconButton={true}
         on:clicked={() => addStacMosaicLayer(asset)} />
@@ -79,6 +83,7 @@
       {/if}
     </div>
     <AddLayerButton
+      bind:isLoading={layerLoading}
       title="Add layer"
       on:clicked={() => addStacMosaicLayer(asset)} />
   </div>
