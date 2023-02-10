@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.0.7
+
+### Patch Changes
+
+- 838ba12: deleted storage table from PostGIS and updated geohub-cli not to use storage table anymore
+
 ## 1.0.6
 
 ### Patch Changes

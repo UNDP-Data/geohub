@@ -56,26 +56,10 @@ class BlobServiceAccountManager {
 		for await (const containerItem of this.blobServiceClient.listContainers(options)) {
 			const metadata: ContainerMetadata = containerItem.metadata as unknown as ContainerMetadata;
 			if (metadata.published !== 'true') continue;
-			const tagValues: string[] = metadata.tags.split(',');
-			const tags: Tag[] = tagValues.map((tag) => {
-				const t: Tag = { key: 'keyword', value: tag.trim() };
-				return t;
-			});
-			if (metadata.sdg) {
-				tags.push({
-					key: 'sdg',
-					value: metadata.sdg
-				});
-			}
 			const url = `${this.baseUrl}/${containerItem.name}`;
 			const storage: Storage = {
-				id: generateHashKey(url),
 				name: containerItem.name,
-				url: url,
-				label: metadata.label,
-				description: metadata.description,
-				icon: metadata.icon,
-				tags: tags.filter((t) => t.value.length > 0)
+				url: url
 			};
 			storages.push(storage);
 		}
@@ -94,7 +78,7 @@ class BlobServiceAccountManager {
 	public async scanContainer(storage: Storage) {
 		console.debug(`${storage.name} started scanning`);
 		const containerClient = this.blobServiceClient.getContainerClient(storage.name);
-		const datasets = await this.listBlobs(containerClient, storage);
+		const datasets = await this.listBlobs(containerClient);
 		console.debug(`${storage.name} ended scanning ${datasets.length} datasets`);
 		return datasets;
 	}
@@ -109,26 +93,23 @@ class BlobServiceAccountManager {
 		console.log(containerName);
 		console.log(blobName);
 
-		const storages = await this.listContainers(containerName);
-
 		const containerClient = this.blobServiceClient.getContainerClient(containerName);
 		const bclient = containerClient.getBlobClient(blobName);
 		const existsBlob = await bclient.exists();
 
 		let dataset: Dataset | undefined = undefined;
 		if (existsBlob) {
-			dataset = await this.createDataset(containerClient, storages[0], blobName);
+			dataset = await this.createDataset(containerClient, blobName);
 		}
 
 		console.debug(`${url} ended scanning`);
 
 		return {
-			storage: storages[0],
 			dataset: dataset
 		};
 	}
 
-	public async listBlobs(containerClient: ContainerClient, storage: Storage, path?: string) {
+	public async listBlobs(containerClient: ContainerClient, path?: string) {
 		let datasets: Dataset[] = [];
 		for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: path })) {
 			if (item.kind === 'prefix') {
@@ -137,17 +118,17 @@ class BlobServiceAccountManager {
 				const bclient = containerClient.getBlobClient(metadataJsonFileName);
 				const isVectorTile: boolean = await bclient.exists();
 				if (isVectorTile) {
-					const dataset = await this.createDataset(containerClient, storage, metadataJsonFileName);
+					const dataset = await this.createDataset(containerClient, metadataJsonFileName);
 					if (!dataset) continue;
 					datasets.push(dataset);
 				} else {
-					const dataset = await this.listBlobs(containerClient, storage, item.name);
+					const dataset = await this.listBlobs(containerClient, item.name);
 					if (dataset.length === 0) continue;
 					datasets = [...datasets, ...dataset];
 				}
 			} else {
 				// blob
-				const dataset = await this.createDataset(containerClient, storage, item.name);
+				const dataset = await this.createDataset(containerClient, item.name);
 				if (!dataset) continue;
 				datasets.push(dataset);
 			}
@@ -155,11 +136,7 @@ class BlobServiceAccountManager {
 		return datasets;
 	}
 
-	private async createDataset(
-		containerClient: ContainerClient,
-		storage: Storage,
-		itemName: string
-	) {
+	private async createDataset(containerClient: ContainerClient, itemName: string) {
 		const isStaticMVT = itemName.indexOf('metadata.json') !== -1;
 		const isPmtiles = itemName.indexOf('.pmtiles') !== -1;
 		let isRaster = false;
@@ -204,6 +181,16 @@ class BlobServiceAccountManager {
 			}
 		}
 
+		tags.push({
+			key: 'type',
+			value: 'azure'
+		});
+
+		tags.push({
+			key: 'container',
+			value: containerClient.containerName
+		});
+
 		const url = blockBlobClient.url;
 		const properties = await blockBlobClient.getProperties();
 		const metadata = isRaster
@@ -226,7 +213,6 @@ class BlobServiceAccountManager {
 			description: metadata.description,
 			bounds: metadata.bounds,
 			source: metadata.source,
-			storage: storage,
 			tags: tags,
 			createdat: properties.createdOn ? properties.createdOn.toISOString() : '',
 			updatedat: properties.lastModified ? properties.lastModified.toISOString() : ''

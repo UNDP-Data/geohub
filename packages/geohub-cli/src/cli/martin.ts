@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
-import { DatabaseManager, Datasets, MartinManager, Storages } from '../util';
+import { DatabaseManager, Datasets, MartinManager } from '../util';
 
 const program = new Command();
 program
@@ -27,13 +27,11 @@ program
 		const martinManager = new MartinManager(martinUrl);
 		const data = await martinManager.load();
 
-		const storages = new Storages(data.storages);
-		console.log(`${storages.getStorages().length} storage object were created`);
 		const datasets = new Datasets(data.datasets, outputDir);
 		console.log(`${datasets.getDatasets().length} dataset object were created`);
 
 		const dbManager = new DatabaseManager(database);
-		await dbManager.registerAll(storages, datasets);
+		await dbManager.registerAll(datasets);
 
 		console.timeEnd('martin');
 	});

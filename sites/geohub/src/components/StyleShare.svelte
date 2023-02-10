@@ -24,20 +24,6 @@
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
 
-  let layerClassification: { [key: string]: string } = {}
-  let layerColormap: { [key: string]: string } = {}
-  $: {
-    if ($map) {
-      $map.on('classification:changed', (e: { layerId: string; classification: string }) => {
-        layerClassification[e.layerId] = e.classification
-      })
-
-      $map.on('colormap:changed', (e: { layerId: string; colorMapName: string }) => {
-        layerColormap[e.layerId] = e.colorMapName
-      })
-    }
-  }
-
   $: if (isModalVisible) {
     open()
   }
@@ -75,36 +61,7 @@
   }
 
   export const share = async () => {
-    // add classification in the top level of layer object in style.json
-    // in order to keep state of selection of classifying
-    exportedStyleJSON.layers.forEach((l) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (l.classification) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        delete l.classification
-      }
-      if (layerClassification[l.id]) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        l.classification = layerClassification[l.id]
-      }
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (l.colormap) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        delete l.colormap
-      }
-      if (layerColormap[l.id]) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        l.colormap = layerColormap[l.id]
-      }
-    })
-
+    const style = $map.getStyle()
     let savedLayerList = JSON.parse(JSON.stringify($layerList))
     const untargetdIds = untargetedLayers.map((l) => l.id)
     savedLayerList = savedLayerList.filter((l) => !untargetdIds.includes(l.id))

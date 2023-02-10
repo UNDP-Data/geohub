@@ -1,7 +1,6 @@
 <script lang="ts">
   import { signIn, signOut } from '@auth/sveltekit/client'
   import { page } from '$app/stores'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { Button } from '@undp-data/svelte-undp-design'
   import chroma from 'chroma-js'
 
@@ -12,6 +11,10 @@
 
   const name = $page.data.session?.user.name
   const names = name?.split(' ') ?? []
+
+  const handleDropdown = () => {
+    dropdownActive = !dropdownActive
+  }
 </script>
 
 <svelte:window bind:innerWidth />
@@ -21,8 +24,12 @@
       <div
         role="button"
         tabindex="0"
-        on:keydown={() => (dropdownActive = !dropdownActive)}
-        on:click={() => (dropdownActive = !dropdownActive)}>
+        on:click={() => handleDropdown()}
+        on:keydown={(e) => {
+          if (e.key === 'Enter') {
+            handleDropdown()
+          }
+        }}>
         {#if $page.data.session.user?.image}
           <span
             style="background-image: url('{$page.data.session.user.image}')"
@@ -43,7 +50,6 @@
       </div>
     </div>
     <div
-      use:clickOutside={() => (dropdownActive = false)}
       class="dropdown-menu"
       style="max-width: {panelWidth}"
       role="menu">

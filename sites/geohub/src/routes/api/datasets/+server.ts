@@ -20,7 +20,6 @@ import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDa
  *     AND search is `aaa and bbb`
  *     OR search is `aaa or bbb`
  *     If queried text contains space like 'water quality', query='water quality' should be used with single quatation.
- * - storage_id = you can also filter by directly storage_id
  * - bbox = you can filter the data by bounding box (minx, miny, maxx, maxy)
  * - sortby = set parameter like "sortby=name, desc". support sorting by 'name', 'source', 'license', 'createdat', 'updatedat'. Default order is ASC.
  * - limit = default is 10
@@ -118,7 +117,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
           SELECT p FROM (
           SELECT
             x.id, 
-            x.storage_id, 
             x.url, 
             x.name,
             x.description,

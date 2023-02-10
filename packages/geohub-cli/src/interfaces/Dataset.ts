@@ -1,4 +1,3 @@
-import { Storage } from './Storage';
 import { Tag } from './Tag';
 
 export interface Dataset {
@@ -12,6 +11,5 @@ export interface Dataset {
 	bounds: [number, number, number, number];
 	createdat: string;
 	updatedat: string;
-	storage: Storage;
 	tags?: Tag[];
 }

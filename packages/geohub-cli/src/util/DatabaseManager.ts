@@ -1,7 +1,6 @@
 import { Pool, PoolClient } from 'pg';
 import { generateHashKey } from '../helpers';
 import Datasets from './Datasets';
-import Storages from './Storages';
 import Tags from './Tags';
 
 class DatabaseManager {
@@ -33,22 +32,17 @@ class DatabaseManager {
 		this.pool?.end();
 	}
 
-	public async registerAll(storages: Storages, datasets: Datasets) {
+	public async registerAll(datasets: Datasets) {
 		const tags: Tags = new Tags([]);
 
 		try {
-			storages.addTags(tags);
 			datasets.addTags(tags);
 			const client = await this.transactionStart();
 
 			await tags.insert(client);
 			console.debug(`${tags.getTags().length} tags were registered into PostGIS.`);
 
-			storages.updateTags(tags);
 			datasets.updateTags(tags);
-
-			await storages.insertAll(client);
-			console.debug(`${storages.getStorages().length} storages were registered into PostGIS.`);
 
 			await datasets.insertAll(client);
 			console.debug(`${datasets.getDatasets().length} datasets were registered into PostGIS.`);
@@ -63,24 +57,17 @@ class DatabaseManager {
 		}
 	}
 
-	public async register(storages: Storages, datasets: Datasets) {
+	public async register(datasets: Datasets) {
 		const tags: Tags = new Tags([]);
 
 		try {
-			storages.addTags(tags);
 			datasets.addTags(tags);
 			const client = await this.transactionStart();
 
 			await tags.insert(client);
 			console.debug(`${tags.getTags().length} tags were registered into PostGIS.`);
 
-			storages.updateTags(tags);
 			datasets.updateTags(tags);
-
-			for (const storage of storages.getStorages()) {
-				await storages.upsert(client, storage);
-			}
-			console.debug(`${storages.getStorages().length} storages were registered into PostGIS.`);
 
 			for (const dataset of datasets.getDatasets()) {
 				await datasets.upsert(client, dataset);
@@ -107,31 +94,6 @@ class DatabaseManager {
 			const datasets = new Datasets([]);
 			datasets.delete(client, dataset_id);
 			console.log(`deleted dataset by dataset_id: ${dataset_id}`);
-
-			await tags.cleanup(client);
-			console.debug(`unused tags were cleaned`);
-		} catch (e) {
-			await this.transactionRollback();
-			throw e;
-		} finally {
-			await this.transactionEnd();
-		}
-	}
-
-	public async deleteStorage(url: string, tmpDir: string) {
-		const tags: Tags = new Tags([]);
-		try {
-			const client = await this.transactionStart();
-			console.log(`start deleteing storage url = ${url}`);
-			const storage_id = generateHashKey(url);
-
-			const datasets = new Datasets([], tmpDir);
-			datasets.clearAll(client, [storage_id]);
-			console.log(`deleted dataset by storage_id: ${storage_id}`);
-
-			const storages = new Storages([]);
-			storages.clearAll(client, [storage_id]);
-			console.log(`deleted storage by storage_id: ${storage_id}`);
 
 			await tags.cleanup(client);
 			console.debug(`unused tags were cleaned`);
