@@ -72,6 +72,7 @@
   }
 
   const initializeLegend = async () => {
+    await loadMap($map)
     if (!('stats' in layer.info)) await setStatsToInfo()
     if (!legendType) decideLegendType()
     return legendType

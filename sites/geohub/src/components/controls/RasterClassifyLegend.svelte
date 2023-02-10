@@ -152,6 +152,7 @@
         })
       }
     }
+    numberOfClasses = colorMapRows.length
   }
   const colorMapNameChanged = () => {
     const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses)

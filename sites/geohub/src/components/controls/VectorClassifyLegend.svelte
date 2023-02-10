@@ -208,7 +208,7 @@
       (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
     )
     const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
-    stat.values ? (hasUniqueValues = true) : (hasUniqueValues = false)
+    stat.values && stat.values.length <= UNIQUE_VALUE_THRESHOLD ? (hasUniqueValues = true) : (hasUniqueValues = false)
     if (!layerMax) {
       if (stat?.max) {
         layerMax = stat.max
