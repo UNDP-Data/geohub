@@ -1,5 +1,5 @@
 import { cleanName, generateHashKey } from '../helpers';
-import { Storage, Dataset, PgtileservIndexJson, PgtileservDetailJson } from '../interfaces';
+import { Dataset, PgtileservIndexJson, PgtileservDetailJson } from '../interfaces';
 
 class PgtileservManager {
 	private pgtileservUrl: string;
@@ -9,21 +9,6 @@ class PgtileservManager {
 	}
 
 	public async load() {
-		const storage: Storage = {
-			id: generateHashKey(this.pgtileservUrl),
-			name: 'pgTileServ Vector Tiles API',
-			url: this.pgtileservUrl,
-			label: 'pgTileServ Vector Tiles API',
-			description: 'Dynamic vector tiles sources from PostGIS database',
-			icon: 'https://access.crunchydata.com/documentation/pg_tileserv/latest/crunchy-spatial-logo.png',
-			tags: [
-				{
-					key: 'type',
-					value: 'pgtileserv'
-				}
-			]
-		};
-
 		const res = await fetch(this.pgtileservUrl);
 		const indexJson: PgtileservIndexJson = await res.json();
 		const datasets: Dataset[] = [];
@@ -52,7 +37,6 @@ class PgtileservManager {
 				bounds: bounds,
 				createdat: now,
 				updatedat: now,
-				storage: storage,
 				tags: [
 					{
 						key: 'type',
@@ -84,7 +68,7 @@ class PgtileservManager {
 			}
 			datasets.push(dataset);
 		}
-		return { storages: [storage], datasets: datasets };
+		return { datasets: datasets };
 	}
 }
 

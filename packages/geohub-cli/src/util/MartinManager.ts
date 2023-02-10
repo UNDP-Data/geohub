@@ -1,5 +1,5 @@
 import { cleanName, generateHashKey } from '../helpers';
-import { MartinIndexJson, Storage, Dataset } from '../interfaces';
+import { MartinIndexJson, Dataset } from '../interfaces';
 
 class MartinManager {
 	private martinUrl: string;
@@ -9,21 +9,6 @@ class MartinManager {
 	}
 
 	public async load() {
-		const storage: Storage = {
-			id: generateHashKey(this.martinUrl),
-			name: 'Martin Vector Tiles API',
-			url: this.martinUrl,
-			label: 'Martin Vector Tiles API',
-			description: 'Dynamic vector tiles sources from PostGIS database',
-			icon: 'fa-solid fa-database',
-			tags: [
-				{
-					key: 'type',
-					value: 'martin'
-				}
-			]
-		};
-
 		const res = await fetch(this.martinUrl);
 		const indexJson: MartinIndexJson = await res.json();
 		const datasets: Dataset[] = [];
@@ -42,7 +27,6 @@ class MartinManager {
 				bounds: layer.bounds,
 				createdat: now,
 				updatedat: now,
-				storage: storage,
 				tags: [
 					{
 						key: 'type',
@@ -83,7 +67,7 @@ class MartinManager {
 			datasets.push(dataset);
 		});
 
-		return { storages: [storage], datasets: datasets };
+		return { datasets: datasets };
 	}
 }
 
