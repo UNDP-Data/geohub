@@ -52,8 +52,6 @@ paths:
                         properties:
                           id:
                             type: string
-                          storage_id:
-                            type: string
                           url:
                             type: string
                           name:
@@ -80,7 +78,6 @@ paths:
                             type: integer
                         required:
                           - id
-                          - storage_id
                           - url
                           - name
                           - description
@@ -121,7 +118,6 @@ paths:
                                 - -59.492685518
                         properties:
                           id: 87538d7d497cfcc67e12505e8a29f893
-                          storage_id: da3cd4ffd3ac844db37bf1f87e2fc200
                           url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/end-poverty/Population_Density/2000_Population_density_per_squareKm.tif?sv=2021-10-04&ss=b&srt=o&se=2023-12-05T15%3A25%3A26Z&sp=r&sig=t30dcAo8pKix1mAcnCAOq0k3vssfaLlSwrjaXxr9PGE%3D'
                           name: 2000 Population density per squareKm
                           description: Estimated population density per grid-cell.
