@@ -237,8 +237,6 @@
   }, 300)
 
   map.on('styledata', updateLegend)
-  // maplibre event is fired in updateParamsInURL function when raster's tiles URL is updated
-  map.on('source:changed', updateLegend)
 </script>
 
 <div class="legend">{@html container.innerHTML}</div>

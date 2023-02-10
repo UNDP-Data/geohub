@@ -4,15 +4,13 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegend from '$components/controls/VectorLegend.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { ClassificationMethodTypes, LegendTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
+  import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import VectorFilter from './controls/VectorFilter.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
   import VectorParamsPanel from './controls/VectorParamsPanel.svelte'
 
   export let layer: Layer
-  export let classificationMethod: ClassificationMethodTypes
-  export let colorMapName: string
 
   let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR
   let legendType: LegendTypes
@@ -52,8 +50,6 @@
       {#if activeTab === TabNames.LEGEND}
         <VectorLegend
           {layer}
-          bind:colorMapName
-          bind:classificationMethod
           bind:applyToOption
           bind:legendType
           bind:defaultColor
