@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.15
+
+### Patch Changes
+
+- 7d37599: Add `x-small` option to loader
+
 ## 0.0.14
 
 ### Patch Changes
