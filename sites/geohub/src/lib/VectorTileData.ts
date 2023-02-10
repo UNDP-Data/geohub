@@ -74,7 +74,7 @@ export class VectorTileData {
     )
     const isPmtiles = this.url.startsWith('pmtiles://')
     let source: VectorSourceSpecification
-    if (vectorInfo.type) {
+    if (vectorInfo.type && ['pgtileserv', 'martin'].includes(vectorInfo.type.value)) {
       source = {
         type: 'vector',
         url: vectorInfo.url.replace('metadata.json', 'tile.json'),
