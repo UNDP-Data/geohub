@@ -1,11 +1,5 @@
 import { generateHashKey } from '../helpers';
-import {
-	Dataset,
-	StacCatalog,
-	StacCollections,
-	StacItemFeatureCollection,
-	Storage
-} from '../interfaces';
+import { Dataset, StacCatalog, StacCollections, StacItemFeatureCollection } from '../interfaces';
 
 class StacManager {
 	private stacUrl: string;
@@ -14,38 +8,28 @@ class StacManager {
 	}
 
 	public async load() {
-		const storage = await this.loadStorage();
-		const datasets: Dataset[] = await this.loadDatasets(storage);
+		const datasets: Dataset[] = await this.loadDatasets();
 
 		return {
-			storages: [storage],
 			datasets: datasets
 		};
 	}
 
-	private async loadStorage() {
+	private async loadStac() {
 		const res = await fetch(this.stacUrl);
 		const stacCatalog: StacCatalog = await res.json();
 
-		const storage: Storage = {
-			id: generateHashKey(this.stacUrl),
+		return {
 			name: stacCatalog.id,
 			url: this.stacUrl,
 			label: stacCatalog.title,
-			description: stacCatalog.description,
-			icon: '/stac.png',
-			tags: [
-				{
-					key: 'type',
-					value: 'stac'
-				}
-			]
+			description: stacCatalog.description
 		};
-		return storage;
 	}
 
-	private async loadDatasets(storage: Storage) {
-		const res = await fetch(`${storage.url}/collections`);
+	private async loadDatasets() {
+		const stacInfo = await this.loadStac();
+		const res = await fetch(`${stacInfo.url}/collections`);
 		const stacCollections: StacCollections = await res.json();
 
 		const datasets: Dataset[] = [];
@@ -75,12 +59,11 @@ class StacManager {
 				is_raster: true,
 				name: collection.title || collection.id,
 				description: collection.description,
-				source: storage.label,
+				source: stacInfo.label,
 				license: collection.license,
 				bounds: bounds,
 				createdat: temporal[0],
 				updatedat: temporal[1] ? temporal[1] : now,
-				storage: storage,
 				tags: [
 					{
 						key: 'type',
@@ -88,7 +71,7 @@ class StacManager {
 					},
 					{
 						key: 'stac',
-						value: storage.name
+						value: stacInfo.name
 					}
 				]
 			};

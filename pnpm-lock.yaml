@@ -21,7 +21,7 @@ importers:
       '@typescript-eslint/parser': ^5.48.1
       '@undp-data/current-location': workspace:^0.0.4
       '@undp-data/style-switcher': workspace:^0.0.4
-      '@undp-data/svelte-undp-design': workspace:^0.0.13
+      '@undp-data/svelte-undp-design': workspace:^0.0.14
       '@watergis/svelte-maplibre-menu': ^0.1.17
       chroma-js: ^2.4.2
       d3-format: ^3.1.0
@@ -340,9 +340,9 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.50.0
       '@typescript-eslint/parser': ^5.50.0
       '@undp-data/current-location': workspace:^0.0.4
-      '@undp-data/electricity-dashboard': workspace:^0.0.14
+      '@undp-data/electricity-dashboard': workspace:^0.0.15
       '@undp-data/style-switcher': workspace:^0.0.4
-      '@undp-data/svelte-undp-design': workspace:^0.0.13
+      '@undp-data/svelte-undp-design': workspace:^0.0.14
       '@watergis/legend-symbol': ^0.2.3
       '@watergis/maplibre-gl-export': ^1.3.8
       arraystat: ^1.7.2
@@ -3814,7 +3814,7 @@ packages:
       svelte: 3.55.1
       tiny-glob: 0.2.9
       undici: 5.15.1
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3875,7 +3875,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.1
       svelte-hmr: 0.15.1_svelte@3.55.1
-      vite: 4.0.4_sass@1.58.0
+      vite: 4.0.4_sass@1.57.1
       vitefu: 0.2.4_vite@4.0.4
     transitivePeerDependencies:
       - supports-color
@@ -10381,7 +10381,6 @@ packages:
       chokidar: 3.5.3
       immutable: 4.2.2
       source-map-js: 1.0.2
-    dev: true
 
   /sass/1.58.0:
     resolution: {integrity: sha512-PiMJcP33DdKtZ/1jSjjqVIKihoDc6yWmYr9K/4r3fVVIEDAluD0q7XZiRKrNJcPK3qkLRF/79DND1H5q1LBjgg==}
@@ -12473,7 +12472,6 @@ packages:
       sass: 1.57.1
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /vite/4.0.4_sass@1.58.0:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
@@ -12516,7 +12514,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.4_sass@1.58.0
+      vite: 4.0.4_sass@1.57.1
 
   /vitest/0.26.3_jsdom@20.0.3+sass@1.58.0:
     resolution: {integrity: sha512-FmHxU9aUCxTi23keF3vxb/Qp0lYXaaJ+jRLGOUmMS3qVTOJvgGE+f1VArupA6pEhaG2Ans4X+zV9dqM5WISMbg==}
