@@ -181,11 +181,6 @@ paths:
         - schema:
             type: string
           in: query
-          name: storage_id
-          description: you can also filter by directly storage_id
-        - schema:
-            type: string
-          in: query
           name: bbox
           description: 'you can filter the data by bounding box (minx, miny, maxx, maxy)'
         - schema:
@@ -353,74 +348,6 @@ paths:
           in: query
           name: type
           description: 'type of STAC. e.g., microsoft-pc'
-  /storages:
-    get:
-      summary: Storage search API
-      tags:
-        - search
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  url:
-                    type: string
-                  label:
-                    type: string
-                  description:
-                    type: string
-                  icon:
-                    type: string
-                  tags:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Tag'
-      operationId: get-storages
-      description: |-
-        This api can return the list of storages which contain datasets.
-
-        It can search any key/value of tags stored in storage table as the following specification.
-
-        {key}={value} e.g., type=stac to filter where tag key is 'type' and value is 'stac'. If multiple key/value are set, it will filter by OR operator. if you want to filter by SDG1 and 2, you can query like '&sdg=1&sdg=2'. 'keyword', 'type' and 'sdg' are available for key value.
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: query
-          description: 'ree text to search in label and description. AND search is aaa and bbb OR search is aaa or bbb If queried text contains space like ''water quality'', query=''water quality'' should be used with single quatation.'
-        - schema:
-            type: string
-          in: query
-          name: keyword
-        - schema:
-            type: string
-            enum:
-              - '1'
-              - '2'
-              - '3'
-              - '4'
-              - '5'
-              - '6'
-              - '7'
-              - '8'
-              - '9'
-              - '10'
-              - '11'
-              - '12'
-              - '13'
-              - '14'
-              - '15'
-              - '16'
-              - '17'
-          in: query
-          name: sdg
   /tags:
     get:
       summary: Tag search API
