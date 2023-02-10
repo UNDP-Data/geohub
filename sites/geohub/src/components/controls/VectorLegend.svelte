@@ -6,15 +6,15 @@
   import VectorSymbol from './VectorSymbol.svelte'
   import VectorHeatmap from './VectorHeatmap.svelte'
   import VectorLegendAdvanced from './VectorClassifyLegend.svelte'
-  import { ClassificationMethodTypes, LayerTypes, VectorApplyToTypes, LegendTypes } from '$lib/constants'
+  import { LayerTypes, LegendTypes, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import chroma from 'chroma-js'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
+  import { Loader } from '@undp-data/svelte-undp-design'
+  import { loadMap } from '$lib/helper'
 
   export let layer: Layer
-  export let colorMapName: string
-  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: VectorApplyToTypes
   export let legendType: LegendTypes
 
@@ -85,38 +85,54 @@
 
   // set default values
   legendType = legendType ? legendType : LegendTypes.DEFAULT
+
+  const vectorLayerLoaded = async () => {
+    return await loadMap($map)
+  }
 </script>
 
 {#if style.type !== LayerTypes.HEATMAP}
   <LegendTypeSwitcher bind:legendType />
 {/if}
+{#await vectorLayerLoaded()}
+  <div class="loader-container p-3">
+    <Loader size="small" />
+  </div>
+{:then vectorLayerAvailable}
+  {#if style.type === LayerTypes.HEATMAP}
+    <VectorHeatmap bind:layer />
+  {:else if legendType === LegendTypes.DEFAULT}
+    <div transition:slide>
+      {#if style.type === LayerTypes.LINE}
+        <VectorLine
+          bind:layer
+          bind:defaultColor={defaultLineColor} />
+      {:else if style.type === LayerTypes.FILL}
+        <VectorPolygon
+          bind:layer
+          bind:defaultFillColor={defaultColor}
+          bind:defaultFillOutlineColor={defaultLineColor} />
+      {:else if style.type === LayerTypes.SYMBOL}
+        <VectorSymbol
+          bind:layer
+          bind:defaultColor />
+      {/if}
+    </div>
+  {:else if legendType === LegendTypes.CLASSIFY}
+    <div transition:slide>
+      <VectorLegendAdvanced
+        bind:layer
+        bind:defaultColor
+        bind:applyToOption />
+    </div>
+  {/if}
+{/await}
 
-{#if style.type === LayerTypes.HEATMAP}
-  <VectorHeatmap bind:layer />
-{:else if legendType === LegendTypes.DEFAULT}
-  <div transition:slide>
-    {#if style.type === LayerTypes.LINE}
-      <VectorLine
-        bind:layer
-        bind:defaultColor={defaultLineColor} />
-    {:else if style.type === LayerTypes.FILL}
-      <VectorPolygon
-        bind:layer
-        bind:defaultFillColor={defaultColor}
-        bind:defaultFillOutlineColor={defaultLineColor} />
-    {:else if style.type === LayerTypes.SYMBOL}
-      <VectorSymbol
-        bind:layer
-        bind:defaultColor />
-    {/if}
-  </div>
-{:else if legendType === LegendTypes.CLASSIFY}
-  <div transition:slide>
-    <VectorLegendAdvanced
-      bind:layer
-      bind:colorMapName
-      bind:classificationMethod
-      bind:defaultColor
-      bind:applyToOption />
-  </div>
-{/if}
+<style lang="scss">
+  .loader-container {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
+  }
+</style>

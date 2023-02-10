@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
-import { DatabaseManager, Datasets, StacManager, Storages } from '../util';
+import { DatabaseManager, Datasets, StacManager } from '../util';
 
 const program = new Command();
 program
@@ -27,16 +27,14 @@ program
 		const data = await stacManager.load();
 
 		if (data.datasets.length === 0) {
-			throw new Error(`No collections to register in the STAC: ${data.storages[0].url}`);
+			throw new Error(`No collections to register in the STAC`);
 		}
 
-		const storages = new Storages(data.storages);
-		console.log(`${storages.getStorages().length} storage object were created`);
 		const datasets = new Datasets(data.datasets, outputDir);
 		console.log(`${datasets.getDatasets().length} dataset object were created`);
 
 		const dbManager = new DatabaseManager(database);
-		await dbManager.registerAll(storages, datasets);
+		await dbManager.registerAll(datasets);
 
 		console.timeEnd('stac');
 	});

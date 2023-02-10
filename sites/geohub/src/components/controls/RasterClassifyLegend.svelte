@@ -20,42 +20,32 @@
   import NumberInput from '$components/controls/NumberInput.svelte'
   import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import type { ColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
-  import { map } from '$stores'
+  import { layerList, map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
   import chroma from 'chroma-js'
-  //console.clear()
-  export let layerConfig: Layer
+  import { updateLayerList } from '$lib/helper/updateLayerList'
+  export let layer: Layer
+  export let layerHasUniqueValues: boolean
   export let numberOfClasses: number
-  export let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
-  export let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
-  export let colorMapName: string
-  export let classificationMethod: ClassificationMethodTypes
-  export let colorMapRows: Array<ColorMapRow>
-  // this var is necessary to maintain the state of teh colormap when switching the legend.
-  // and it should be set by the bool flags that control the colormap picker visibility from parent container
 
   let info: RasterTileMetadata
-  ;({ info } = layerConfig)
+  ;({ info } = layer)
   const bandIndex = getActiveBandIndex(info)
   const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
+  let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
+  let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
+  let colorMapName = layer.colorMapName
+  let classificationMethod: ClassificationMethodTypes = layer.classificationMethod
+  let colorMapRows: Array<ColorMapRow> = []
   let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
-
-  let legendLabels = {}
-  let layerHasUniqueValues = Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
   let rowWidth: number
   let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
-  let classificationMethods = [
-    { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
-    { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
-    { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
-    { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
-  ]
-  let containerWidth: number
 
+  let legendLabels = {}
   if (!layerHasUniqueValues) {
     const layerMeanToMax = layerMean / layerMax
     if (layerMeanToMax >= -0.5 && layerMeanToMax <= 0.5) classificationMethod = ClassificationMethodTypes.LOGARITHMIC
@@ -64,9 +54,17 @@
     if (layerMeanToMax <= -5 && layerMeanToMax >= 5) classificationMethod = ClassificationMethodTypes.EQUIDISTANT
   } else {
     legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES']
+    numberOfClasses = Object.keys(legendLabels).length
   }
+  let classificationMethods = [
+    { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
+    { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
+    { name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
+    { name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC },
+  ]
+  let containerWidth: number
 
-  const setColorMapRows = (e?: CustomEvent) => {
+  const setInitialColorMapRows = (e?: CustomEvent) => {
     if (layerHasUniqueValues) {
       let colorsList = chroma.scale(colorMapName).mode('lrgb').colors(Object.keys(legendLabels).length)
       colorMapRows = Object.keys(legendLabels).map((key, index) => {
@@ -97,22 +95,7 @@
       )
       rowWidth = getMaxValueOfCharsInIntervals(colorMapRows)
     }
-    numberOfClasses = colorMapRows.length
   }
-
-  const isInitialMount = () => {
-    const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap')
-    return colormap === null
-  }
-
-  onMount(async () => {
-    if (isInitialMount()) {
-      setColorMapRows()
-      classifyImage()
-    } else {
-      setColorMapRowsFromURL()
-    }
-  })
 
   const classifyImage = () => {
     let encodedColorMapRows
@@ -133,16 +116,14 @@
       encodedColorMapRows = JSON.stringify(urlColorMap)
     }
     handleParamsUpdate(encodedColorMapRows)
-    // fire event for style sharing
-    $map?.fire('classification:changed', {
-      layerId: layerConfig.id,
-      classification: classificationMethod,
-    })
+    layer.classificationMethod = classificationMethod
+    layer.colorMapName = colorMapName
+    layerList.set(updateLayerList(layer, $layerList))
   }
 
   const setColorMapRowsFromURL = () => {
     if (layerHasUniqueValues) {
-      const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap')
+      const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
       if (colormap) {
         colorMapRows = Object.keys(colormap).map((key, index) => {
           return {
@@ -159,7 +140,7 @@
         })
       }
     } else {
-      const colormap = getValueFromRasterTileUrl($map, layerConfig.id, 'colormap') as number[][][]
+      const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][]
       if (colormap) {
         colorMapRows = colormap.map((item, index) => {
           return {
@@ -171,6 +152,7 @@
         })
       }
     }
+    numberOfClasses = colorMapRows.length
   }
   const colorMapNameChanged = () => {
     const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses)
@@ -187,9 +169,9 @@
 
   const handleIncrementDecrementClasses = (e: CustomEvent) => {
     numberOfClasses = e.detail.value
-    layerConfig = cloneDeep(layerConfig)
+    layer = cloneDeep(layer)
     colorMapRows = []
-    setColorMapRows()
+    setInitialColorMapRows()
     classifyImage()
   }
 
@@ -200,24 +182,35 @@
   }
 
   const handleClassificationMethodChange = (e) => {
-    setColorMapRows(e)
+    setInitialColorMapRows(e)
     classifyImage()
   }
 
   const handleParamsUpdate = (encodeColorMapRows) => {
-    const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string
+    const layerUrl = getLayerSourceUrl($map, layer.id) as string
     if (!(layerUrl && layerUrl.length > 0)) return
     const layerURL = new URL(layerUrl)
     layerURL.searchParams.delete('colormap_name')
     layerURL.searchParams.delete('rescale')
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
-    const layerStyle = getLayerStyle($map, layerConfig.id)
+    const layerStyle = getLayerStyle($map, layer.id)
     updateParamsInURL(layerStyle, layerURL, updatedParams)
   }
 
   const handleChangeColorMap = () => {
     classifyImage()
   }
+
+  onMount(async () => {
+    const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap')
+    if (!colormap) {
+      setInitialColorMapRows()
+      classifyImage()
+    } else {
+      setColorMapRowsFromURL()
+    }
+    return colorMapRows
+  })
 </script>
 
 <div
@@ -225,7 +218,6 @@
   data-testid="intervals-view-container"
   bind:clientWidth={containerWidth}>
   <!-- svelte-ignore a11y-click-teevents-have-key-events -->
-
   <div class="legend-controls mb-4">
     <div
       class="classification field pr-2"

@@ -18,7 +18,7 @@
   import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let layerConfig: Layer
-  export let colorMapName: string
+  let colorMapName: string = layerConfig.colorMapName
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
@@ -85,6 +85,7 @@
 
     const layerStyle = getLayerStyle($map, layerConfig.id)
     updateParamsInURL(layerStyle, layerURL, updatedParams)
+    layerConfig.colorMapName = colorMapName
   }
 
   const onSliderStop = () => {
@@ -94,7 +95,6 @@
     const layerURL = new URL(layerUrl)
     updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') })
     rclState['rescale'] = rangeSliderValues
-    console.log(rangeSliderValues.join('::'))
   }
 </script>
 

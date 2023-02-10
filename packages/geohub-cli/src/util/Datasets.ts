@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { Dataset } from '../interfaces';
 import Tags from './Tags';
-import { cleanText } from '../helpers';
+import { cleanText, distinct } from '../helpers';
 
 class Datasets {
 	private datasets: Dataset[];
@@ -42,14 +42,85 @@ class Datasets {
 		});
 	}
 
+	private async getDeleteIds(client: PoolClient) {
+		if (this.datasets.length === 0) return;
+
+		// consider all datasets are the same `type`
+		const first = this.datasets[0];
+		const type = first?.tags?.find((t) => t.key === 'type');
+		if (!type) return [];
+
+		let query: { text: string; values: string[] };
+		if (type.value === 'azure') {
+			const containerTags = this.datasets.map((data) => {
+				return data.tags?.find((t) => t.key === 'container');
+			});
+			if (!containerTags) return [];
+			const ids = containerTags.map((c) => c?.value).filter(distinct);
+
+			query = {
+				text: `
+				SELECT b.dataset_id
+				FROM geohub.tag as a 
+				INNER JOIN geohub.dataset_tag as b
+				ON a.id = b.tag_id
+				WHERE a.key = 'type' and a.value = $1
+				INTERSECT
+				SELECT b.dataset_id
+				FROM geohub.tag as a 
+				INNER JOIN geohub.dataset_tag as b
+				ON a.id = b.tag_id
+				WHERE a.key = 'container' and a.value IN (${ids.map((id) => `'${id}'`).join(',')})
+				`,
+				values: [type.value]
+			};
+		} else if (type.value === 'stac') {
+			const stacTag = first.tags?.find((t) => t.key === 'stac');
+			if (!stacTag) return [];
+
+			query = {
+				text: `
+				SELECT b.dataset_id
+				FROM geohub.tag as a 
+				INNER JOIN geohub.dataset_tag as b
+				ON a.id = b.tag_id
+				WHERE a.key = 'type' and a.value = $1
+				INTERSECT
+				SELECT b.dataset_id
+				FROM geohub.tag as a 
+				INNER JOIN geohub.dataset_tag as b
+				ON a.id = b.tag_id
+				WHERE a.key = 'stac' and a.value = $2
+				`,
+				values: [type.value, stacTag.value]
+			};
+		} else {
+			query = {
+				text: `
+				SELECT dataset_id 
+				FROM geohub.dataset_tag
+				WHERE EXISTS (
+					SELECT id 
+					FROM geohub.tag 
+					WHERE id=tag_id 
+					AND key='type' 
+					AND value=$1
+				)
+				`,
+				values: [type.value]
+			};
+		}
+
+		const res = await client.query(query);
+		const ids: string[] = res.rows.map((row) => row.dataset_id);
+		return ids;
+	}
+
 	public async insertAll(client: PoolClient) {
-		const storageIds = this.datasets.map((dataset) => dataset.storage.id);
-		const ids: string[] = [];
-		storageIds.forEach((id) => {
-			if (ids.includes(id)) return;
-			ids.push(id);
-		});
-		await this.clearAll(client, ids);
+		const ids = await this.getDeleteIds(client);
+		if (ids && ids.length > 0) {
+			await this.clearAll(client, ids);
+		}
 
 		this.datasets = await this.bulkInsert(client, this.datasets);
 		await this.bulkInsertTabs(client, this.datasets);
@@ -67,7 +138,6 @@ class Datasets {
 
 			const values = [
 				dataset.id,
-				dataset.storage.id,
 				dataset.url,
 				dataset.name,
 				cleanText(dataset.description),
@@ -84,7 +154,7 @@ class Datasets {
 		return new Promise<Dataset[]>((resolve, reject) => {
 			const stream = client.query(
 				copyFrom(
-					'COPY geohub.dataset (id, storage_id, url, name, description, is_raster, source, license, bounds, createdat, updatedat ) FROM STDIN'
+					'COPY geohub.dataset (id, url, name, description, is_raster, source, license, bounds, createdat, updatedat ) FROM STDIN'
 				)
 			);
 			const fileStream = fs.createReadStream(tsvFile);
@@ -125,25 +195,19 @@ class Datasets {
 		});
 	}
 
-	public async clearAll(client: PoolClient, storageIds: string[]) {
+	public async clearAll(client: PoolClient, datasetIds: string[]) {
+		if (datasetIds.length === 0) return;
+
 		const queryDatasetTag = {
 			text: `
-			WITH datasetIds as (
-				SELECT a.dataset_id as id 
-				FROM geohub.dataset_tag a 
-				INNER JOIN geohub.dataset b 
-				ON a.dataset_id = b.id
-				WHERE b.storage_id IN (${storageIds.map((id) => `'${id}'`).join(',')})
-			)
 			DELETE FROM geohub.dataset_tag as a
-			USING datasetIds as b
-			WHERE a.dataset_id = b.id
+			WHERE a.dataset_id IN (${datasetIds.map((id) => `'${id}'`).join(',')})
 			`
 		};
 		await client.query(queryDatasetTag);
 
 		const queryDataset = {
-			text: `DELETE FROM geohub.dataset WHERE storage_id IN (${storageIds
+			text: `DELETE FROM geohub.dataset WHERE id IN (${datasetIds
 				.map((id) => `'${id}'`)
 				.join(',')})`
 		};
@@ -155,11 +219,10 @@ class Datasets {
 			${dataset.bounds[2]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[1]}))`;
 		const query = {
 			text: `
-			INSERT INTO geohub.dataset (id, storage_id, url, name, description, is_raster, source, license, bounds, createdat, updatedat) 
-			values ($1, $2, $3, $4, $5, $6, $7, $8, ST_GeomFROMTEXT('${wkt}', 4326), $9::timestamptz, $9::timestamptz)`,
+			INSERT INTO geohub.dataset (id, url, name, description, is_raster, source, license, bounds, createdat, updatedat) 
+			values ($1, $2, $3, $4, $5, $6, $7, ST_GeomFROMTEXT('${wkt}', 4326), $8::timestamptz, $9::timestamptz)`,
 			values: [
 				dataset.id,
-				dataset.storage.id,
 				dataset.url,
 				dataset.name,
 				cleanText(dataset.description),
@@ -191,7 +254,6 @@ class Datasets {
 			text: `
 			INSERT INTO geohub.dataset (
 			  id, 
-			  storage_id, 
 			  url, 
 			  name, 
 			  description, 
@@ -210,28 +272,25 @@ class Datasets {
 			  $5, 
 			  $6, 
 			  $7, 
-			  $8, 
 			  ST_GeomFROMTEXT('${wkt}', 4326), 
-			  $9::timestamptz, 
-			  $10::timestamptz
+			  $8::timestamptz, 
+			  $9::timestamptz
 			) 
 			ON CONFLICT (id)
 			DO
 			UPDATE
 			 SET
-			  storage_id=$2,
-			  url=$3, 
-			  name=$4, 
-			  description=$5, 
-			  is_raster=$6, 
-			  source=$7, 
-			  license=$8, 
+			  url=$2, 
+			  name=$3, 
+			  description=$4, 
+			  is_raster=$5, 
+			  source=$6, 
+			  license=$7, 
 			  bounds=ST_GeomFROMTEXT('${wkt}', 4326), 
-			  createdat=$9::timestamptz, 
-			  updatedat=$10::timestamptz`,
+			  createdat=$8::timestamptz, 
+			  updatedat=$9::timestamptz`,
 			values: [
 				dataset.id,
-				dataset.storage.id,
 				dataset.url,
 				dataset.name,
 				dataset.description,

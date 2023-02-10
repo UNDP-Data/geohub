@@ -1,7 +1,8 @@
 import { Command } from 'commander';
-import { BlobServiceAccountManager, DatabaseManager, Storages, Datasets } from '../util';
+import { BlobServiceAccountManager, DatabaseManager, Datasets } from '../util';
 import fs from 'fs';
 import path from 'path';
+import type { Storage } from '../interfaces';
 
 const program = new Command();
 program
@@ -51,32 +52,27 @@ program
 					`The blob of '${file}' does not exist and it was deleted from the database.`
 				);
 			}
-			const storages: Storages = new Storages([res.storage]);
-			if (storages.getStorages().length === 0) {
-				throw new Error(`Cannot delete the dataset under this blob container`);
-			}
 			const datasets = new Datasets([res.dataset], outputDir);
-			await dbManager.register(storages, datasets);
+			await dbManager.register(datasets);
 		} else {
 			// scan containers
-			let storages: Storages;
+			let storages: Storage[];
 			if (containerNames) {
 				const promises = containerNames.map((name) => blobManager.listContainers(name));
 				console.debug(`loaded ${promises.length} containers.`);
-				const _storages = await Promise.all(promises);
-				storages = new Storages(_storages.flat());
+				const storagesList = await Promise.all(promises);
+				storages = storagesList.flat();
 			} else {
-				const _storages = await blobManager.listContainers();
-				storages = new Storages(_storages);
+				storages = await blobManager.listContainers();
 			}
 
-			console.debug(`generated ${storages.getStorages().length} container objects`);
-			const _datasets = await blobManager.scanContainers(storages.getStorages());
+			console.debug(`generated ${storages.length} container objects`);
+			const _datasets = await blobManager.scanContainers(storages);
 			const datasets = new Datasets(_datasets, outputDir);
 			console.debug(`generated ${datasets.getDatasets().length} dataset objects`);
 
 			const dbManager = new DatabaseManager(database);
-			await dbManager.registerAll(storages, datasets);
+			await dbManager.registerAll(datasets);
 		}
 
 		console.timeEnd('azblob');
