@@ -1,4 +1,3 @@
-import { Storage } from './Storage';
 import { Tag } from './Tag';
 
 export interface Dataset {
