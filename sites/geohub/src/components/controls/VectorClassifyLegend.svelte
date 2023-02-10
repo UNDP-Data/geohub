@@ -21,6 +21,7 @@
     getLayerProperties,
     getLayerStyle,
     getLineWidth,
+    getRandomColormap,
     getSampleFromInterval,
     remapInputValue,
   } from '$lib/helper'
@@ -47,9 +48,17 @@
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
-  export let colorMapName: string
+
+  const setColorMapName = () => {
+    if (!layer.colorMapName) {
+      layer.colorMapName = getRandomColormap()
+    }
+    return layer.colorMapName
+  }
+
+  $: colorMapName = setColorMapName()
   export let defaultColor: string
-  export let classificationMethod: ClassificationMethodTypes
+  let classificationMethod: ClassificationMethodTypes = layer.classificationMethod
 
   let layerMax: number
   let layerMin: number
@@ -220,12 +229,7 @@
 
   const handleColormapNameChanged = () => {
     setIntervalValues()
-
-    // fire event for style sharing
-    $map?.fire('colormap:changed', {
-      layerId: layer.id,
-      colorMapName: colorMapName,
-    })
+    layer.colorMapName = colorMapName
   }
 
   const handlePropertyChange = (e) => {
@@ -234,11 +238,7 @@
   }
 
   const handleClassificationChange = () => {
-    // fire event for style sharing
-    $map?.fire('classification:changed', {
-      layerId: layer.id,
-      classification: classificationMethod,
-    })
+    layer.classificationMethod = classificationMethod
     setIntervalValues()
   }
 

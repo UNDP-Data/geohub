@@ -13,8 +13,6 @@
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
 
   export let layer: Layer
-  export let colorMapName: string
-  export let classificationMethod: ClassificationMethodTypes = ClassificationMethodTypes.NATURAL_BREAK
   export let applyToOption: VectorApplyToTypes
   export let legendType: LegendTypes
 
@@ -114,8 +112,6 @@
   <div transition:slide>
     <VectorLegendAdvanced
       bind:layer
-      bind:colorMapName
-      bind:classificationMethod
       bind:defaultColor
       bind:applyToOption />
   </div>
