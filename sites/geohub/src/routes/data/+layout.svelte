@@ -8,7 +8,7 @@
 
   let headerHeight: number
 
-  let links: HeaderLink[] = createHeaderLinks(['home', 'maps', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = createHeaderLinks(['home', 'userguide'])
 
   let title = 'GeoHub | Dashboards'
 </script>
@@ -26,7 +26,7 @@
 <div class="header">
   <Header
     region="UNDP's one stop shop for spatial data and analytics"
-    siteTitle="GeoHub Dashboards"
+    siteTitle="GeoHub Data"
     url="https://geohub.data.undp.org"
     logoUrl="/assets/undp-images/undp-logo-blue.svg"
     bind:height={headerHeight}

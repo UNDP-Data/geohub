@@ -7,7 +7,10 @@ import {
   BlockBlobClient,
   StorageSharedKeyCredential,
 } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
+import { AZURE_STORAGE_ACCOUNT_UPLOAD, AZURE_STORAGE_ACCESS_KEY_UPLOAD } from '$lib/server/variables/private'
+import { generateHashKey } from '$lib/server/helpers'
+
+const CONTAINER_NAME = 'userdata'
 
 export const actions = {
   /**
@@ -20,9 +23,9 @@ export const actions = {
         return fail(403, { message: 'No permission' })
       }
       const user_email = session?.user.email
-      const containerName = 'data-upload'
+      const userHash = generateHashKey(user_email)
       const fileName = (await request.formData()).get('fileName') as string
-      const sasUrl = await getSasUrl(user_email, containerName, fileName)
+      const sasUrl = await getSasUrl(userHash, CONTAINER_NAME, fileName)
       return { sasUrl }
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
@@ -54,12 +57,15 @@ function getContainerClient(containerName: string) {
 }
 
 function getBlobServiceClient() {
-  if (!AZURE_STORAGE_ACCOUNT || !AZURE_STORAGE_ACCESS_KEY) {
+  if (!AZURE_STORAGE_ACCOUNT_UPLOAD || !AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
     throw Error('Azure Storage credentials not found')
   }
-  const baseUrl = `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
+  const baseUrl = `https://${AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
 
-  const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
+  const sharedKeyCredential = new StorageSharedKeyCredential(
+    AZURE_STORAGE_ACCOUNT_UPLOAD,
+    AZURE_STORAGE_ACCESS_KEY_UPLOAD,
+  )
   const blobServiceClient: BlobServiceClient = new BlobServiceClient(baseUrl, sharedKeyCredential)
 
   return blobServiceClient
