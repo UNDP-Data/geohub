@@ -1,5 +1,6 @@
 <script lang="ts">
   import { initTippy } from '$lib/helper'
+  import SdgCard from './SdgCard.svelte'
 
   const tippy = initTippy()
   let tooltipContent: HTMLElement
@@ -9,21 +10,11 @@
 
   let selectedSDGs: { [key: number]: boolean } = {}
 
-  const handleSDGSelected = (goal: number) => {
-    // const index = selectedSDGs.indexOf(goal)
-    if (selectedSDGs[goal] && selectedSDGs[goal] === true) {
-      selectedSDGs[goal] = false
-    } else {
-      selectedSDGs[goal] = true
-    }
-  }
+  const handleSDGSelected = (e) => {
+    const sdg = e.detail.sdg
+    const isSelected = e.detail.isSelected
 
-  const handleEnterKey = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      e.target.click()
-    }
+    selectedSDGs[sdg] = isSelected
   }
 </script>
 
@@ -31,14 +22,24 @@
   class="sdgs-select-button"
   use:tippy={{ content: tooltipContent }}>
   <div class="box p-2">
-    <figure
-      class={`image is-48x48`}
-      data-testid="icon-figure">
-      <img
-        src="{BASE_ASSEST_URL}/SDG Wheel_WEB.png"
-        alt="SDG Wheel_WEB.png"
-        title="SDG Wheel_WEB.png" />
-    </figure>
+    {#if Object.keys(selectedSDGs).filter((sdg) => selectedSDGs[sdg] === true).length > 0}
+      <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+        {#each Object.keys(selectedSDGs).filter((sdg) => selectedSDGs[sdg] === true) as sdg}
+          <SdgCard
+            sdg={Number(sdg)}
+            isSelectable={false} />
+        {/each}
+      </div>
+    {:else}
+      <figure
+        class={`image is-48x48`}
+        data-testid="icon-figure">
+        <img
+          src="{BASE_ASSEST_URL}/SDG Wheel_WEB.png"
+          alt="SDG Wheel_WEB.png"
+          title="SDG Wheel_WEB.png" />
+      </figure>
+    {/if}
   </div>
 </div>
 
@@ -48,29 +49,9 @@
   bind:this={tooltipContent}>
   <div class="grid">
     {#each sdgs as sdg}
-      <div
-        class="sdg-button"
-        on:click={() => {
-          handleSDGSelected(sdg)
-        }}
-        on:keydown={handleEnterKey}>
-        <figure
-          class={`sdg image is-64x64`}
-          data-testid="icon-figure">
-          <img
-            src="{BASE_ASSEST_URL}/{sdg}.png"
-            alt="SDG {sdg}"
-            title="SDG {sdg}" />
-
-          {#if selectedSDGs[sdg] && selectedSDGs[sdg] === true}
-            <div
-              class="selected"
-              title="Colormap Selected">
-              <i class="fa-solid fa-circle-check has-text-success-light" />
-            </div>
-          {/if}
-        </figure>
-      </div>
+      <SdgCard
+        bind:sdg
+        on:sdgSelected={handleSDGSelected} />
     {/each}
   </div>
 </div>
@@ -85,33 +66,13 @@
   }
 
   .tooltip {
-    .sdg-button {
-      cursor: pointer;
-      position: relative;
-
-      :hover {
-        border: 2px solid rgb(60, 255, 0);
-      }
-
-      .selected {
-        // color: hsl(141, 53%, 53%);
-        position: absolute;
-        right: 3px;
-        bottom: 3px;
-      }
-    }
+    max-height: 250px;
+    overflow-y: auto;
 
     .grid {
       display: grid;
       grid-gap: 5px;
       grid-template-columns: repeat(4, 1fr);
-    }
-
-    .selected {
-      //   color: hsl(141, 53%, 53%);
-      position: absolute;
-      right: 2px;
-      top: 1.5px;
     }
   }
 </style>
