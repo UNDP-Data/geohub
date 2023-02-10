@@ -12,6 +12,5 @@ export interface Dataset {
 	bounds: [number, number, number, number];
 	createdat: string;
 	updatedat: string;
-	storage: Storage;
 	tags?: Tag[];
 }
