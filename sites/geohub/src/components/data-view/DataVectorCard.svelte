@@ -66,7 +66,6 @@
       } else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
         layerType = polygonVectorType
       }
-      console.log(layer.geometry, layerType)
       const vectorInfo = metadata as VectorTileMetadata
       const vectorTile = new VectorTileData(feature, vectorInfo)
       const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)

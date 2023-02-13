@@ -39,9 +39,7 @@
       const label = `
           ${type.title}
           <span
-            style="color: ${chroma(
-              linePatternColorRgba,
-            ).hex()};font-family: monospace;position:relative;left: 10px;top:-4px;position:relative;font-weight: bold;">
+            style="font-family: monospace;position:relative;left: 10px;top:-4px;position:relative;font-weight: bold;">
             ${type.pattern}
           </span>`
 
@@ -59,8 +57,6 @@
     if (!$map) return
     $map.on('line-color:changed', () => {
       linePatternColorRgba = defaultColor
-
-      linePatterns = setLinePatterns()
     })
   })
 
