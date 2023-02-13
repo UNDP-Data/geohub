@@ -11,6 +11,7 @@ import { AZURE_STORAGE_ACCOUNT_UPLOAD, AZURE_STORAGE_ACCESS_KEY_UPLOAD } from '$
 import { generateHashKey } from '$lib/server/helpers'
 
 const CONTAINER_NAME = 'userdata'
+const FOLDER_NAME = 'raw'
 
 export const actions = {
   /**
@@ -25,7 +26,8 @@ export const actions = {
       const user_email = session?.user.email
       const userHash = generateHashKey(user_email)
       const fileName = (await request.formData()).get('fileName') as string
-      const sasUrl = await getSasUrl(userHash, CONTAINER_NAME, fileName)
+      const folder = `${userHash}/${FOLDER_NAME}`
+      const sasUrl = await getSasUrl(folder, CONTAINER_NAME, fileName)
       return { sasUrl }
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
