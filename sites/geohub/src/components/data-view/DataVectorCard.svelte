@@ -44,14 +44,29 @@
     },
   ]
 
+  let polygonVectorType: 'polygon' | 'linestring' = 'polygon'
+  let polygonVectorTypes: Radio[] = [
+    {
+      label: 'Polygon',
+      value: 'polygon',
+    },
+    {
+      label: 'Line',
+      value: 'linestring',
+    },
+  ]
+
   const addLayer = async () => {
     try {
       $indicatorProgress = true
       layerLoading = true
-      let layerType: 'point' | 'heatmap'
+      let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring'
       if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
         layerType = symbolVectorType
+      } else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
+        layerType = polygonVectorType
       }
+      console.log(layer.geometry, layerType)
       const vectorInfo = metadata as VectorTileMetadata
       const vectorTile = new VectorTileData(feature, vectorInfo)
       const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
@@ -143,7 +158,17 @@
         <Radios
           bind:radios={symbolVectorTypes}
           bind:value={symbolVectorType}
-          groupName="vector-type-{layer.layer}"
+          groupName="vector-symbol-type-{layer.layer}"
+          isVertical={false} />
+      </div>
+    {:else if ['polygon', 'multipolygon'].includes(layer.geometry.toLocaleLowerCase())}
+      <p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
+
+      <div class="vector-polygon-radios">
+        <Radios
+          bind:radios={polygonVectorTypes}
+          bind:value={polygonVectorType}
+          groupName="vector-polygon-type-{layer.layer}"
           isVertical={false} />
       </div>
     {/if}
@@ -160,7 +185,8 @@
     padding-bottom: 0.5rem;
   }
 
-  .vector-symbol-radios {
+  .vector-symbol-radios,
+  .vector-polygon-radios {
     padding-bottom: 0.5rem;
   }
 </style>
