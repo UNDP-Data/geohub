@@ -126,3 +126,20 @@ COMMENT ON COLUMN geohub.dataset_favourite.user_email
 
 COMMENT ON COLUMN geohub.dataset_favourite.savedat
     IS 'timestamp which users saved';
+
+DROP TABLE IF EXISTS geohub.country;
+
+CREATE TABLE IF NOT EXISTS geohub.country
+(
+    iso_3 character varying  NOT NULL,
+    iso_code integer  NOT NULL,
+    iso_2 character varying NULL,
+    name character varying  NOT NULL,
+    region1_code integer NOT NULL,
+    region1_name character varying  NOT NULL,
+    region2_code integer NOT NULL,
+    region2_name character varying  NOT NULL,
+    region3_code integer NOT NULL,
+    region3_name character varying  NOT NULL,
+    CONSTRAINT country_pkey PRIMARY KEY (iso_3)
+)
