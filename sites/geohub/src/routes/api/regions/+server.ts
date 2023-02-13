@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ url }) => {
   const client = await pool.connect()
   const continent_code = url.searchParams.get('continent')
   try {
-    let values = []
+    const values = []
     if (continent_code) {
       values.push(continent_code)
     }

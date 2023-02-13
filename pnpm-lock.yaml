@@ -358,6 +358,7 @@ importers:
       eslint-config-prettier: ^8.6.0
       eslint-plugin-svelte3: ^4.0.0
       filesize: ^10.0.6
+      flag-icons: ^6.6.6
       hex-to-css-filter: ^5.4.0
       image-clipper: ^0.4.4
       jsdom: ^21.1.0
@@ -449,6 +450,7 @@ importers:
       eslint-config-prettier: 8.6.0_eslint@8.33.0
       eslint-plugin-svelte3: 4.0.0_4omm2ewoudhgnmf7aocafatnc4
       filesize: 10.0.6
+      flag-icons: 6.6.6
       hex-to-css-filter: 5.4.0
       image-clipper: 0.4.4
       jsdom: 21.1.0
@@ -3825,7 +3827,7 @@ packages:
       svelte: 3.55.1
       tiny-glob: 0.2.9
       undici: 5.15.1
-      vite: 4.0.4_sass@1.57.1
+      vite: 4.0.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3886,7 +3888,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.1
       svelte-hmr: 0.15.1_svelte@3.55.1
-      vite: 4.0.4_sass@1.57.1
+      vite: 4.0.4
       vitefu: 0.2.4_vite@4.0.4
     transitivePeerDependencies:
       - supports-color
@@ -7078,6 +7080,10 @@ packages:
     dependencies:
       micromatch: 4.0.5
       pkg-dir: 4.2.0
+    dev: true
+
+  /flag-icons/6.6.6:
+    resolution: {integrity: sha512-4lHDKxldnQ7q617pf9Dx9nAetT+9zcMpUexbRrc9kjLw9KJgZ83zA5Dky3Vv7ZDzUjAiZ46x/cy5P0HnEnqA2A==}
     dev: true
 
   /flat-cache/3.0.4:
@@ -12666,7 +12672,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.4_sass@1.57.1
+      vite: 4.0.4
     dev: true
 
   /vitefu/0.2.4_vite@4.1.1:

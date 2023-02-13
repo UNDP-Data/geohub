@@ -15,8 +15,8 @@ export const GET: RequestHandler = async ({ url }) => {
   const continent_code = url.searchParams.get('continent')
   const region_code = url.searchParams.get('region')
   try {
-    let values = []
-    let wheres: string[] = []
+    const values = []
+    const wheres: string[] = []
     if (continent_code) {
       values.push(continent_code)
       wheres.push(` region1_code=$${values.length} `)

@@ -1,6 +1,7 @@
 <script lang="ts">
   import Tags from '$components/data-upload/Tags.svelte'
   import SdgPicker from '$components/data-upload/SdgPicker.svelte'
+  import CountryPicker from '$components/data-upload/CountryPicker.svelte'
 
   let name = ''
   let description = ''
@@ -103,6 +104,13 @@
         {/if}
       </div>
     </div>
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Countries</label>
+  <div class="control">
+    <CountryPicker />
   </div>
 </div>
 

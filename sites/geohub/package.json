@@ -70,6 +70,7 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "filesize": "^10.0.6",
+    "flag-icons": "^6.6.6",
     "hex-to-css-filter": "^5.4.0",
     "image-clipper": "^0.4.4",
     "jsdom": "^21.1.0",
