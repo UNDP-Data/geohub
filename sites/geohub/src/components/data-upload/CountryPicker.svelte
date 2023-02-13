@@ -124,7 +124,7 @@
     {#if selectedRegion !== -1}
       <label class="label">Countries</label>
       <div class="country-list control">
-        <div class="grid">
+        <div class="grid p-1">
           {#await countries}
             <Loader size="x-small" />
           {:then rows}
@@ -153,7 +153,7 @@
   }
 
   .tooltip {
-    max-width: 400px;
+    max-width: 350px;
 
     .country-list {
       max-height: 200px;

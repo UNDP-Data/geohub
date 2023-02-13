@@ -63,7 +63,7 @@
       {/if}
     </div>
     <div class="content is-size-7 columns is-gapless">
-      <p class="column is-10 is-align-content-center">
+      <p class="column is-10">
         {country.country_name}
       </p>
     </div>
@@ -88,7 +88,7 @@
         }
 
         .fi {
-          width: 64px !important;
+          width: 48px !important;
           line-height: 2em !important;
         }
 
@@ -109,6 +109,11 @@
           top: 1.5px;
         }
       }
+    }
+
+    .content {
+      width: fit-content;
+      margin: auto;
     }
   }
 
