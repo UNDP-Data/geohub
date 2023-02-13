@@ -12,8 +12,8 @@
   const tippy = initTippy()
   let tooltipContent: HTMLElement
 
-  export let activeColorMapType = ColorMapTypes.SEQUENTIAL
   export let colorMapName: string
+
   export let buttonWidth = 40
 
   const dispatch = createEventDispatcher()
@@ -22,6 +22,11 @@
     { name: ColorMapTypes.DIVERGING, codes: DivergingColorMaps },
     { name: ColorMapTypes.QUALITATIVE, codes: QualitativeColorMaps },
   ]
+
+  export let activeColorMapType =
+    colorMapTypes
+      .map((type) => (type.codes.find((code) => code === colorMapName) ? type.name : null))
+      .find((name) => name !== null) || colorMapTypes[0].name
 
   let tabs: Tab[] = colorMapTypes.map((type) => {
     return { label: type.name }
