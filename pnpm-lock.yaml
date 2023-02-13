@@ -3825,7 +3825,7 @@ packages:
       svelte: 3.55.1
       tiny-glob: 0.2.9
       undici: 5.15.1
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.57.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3886,7 +3886,7 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.1
       svelte-hmr: 0.15.1_svelte@3.55.1
-      vite: 4.0.4
+      vite: 4.0.4_sass@1.57.1
       vitefu: 0.2.4_vite@4.0.4
     transitivePeerDependencies:
       - supports-color
@@ -10445,7 +10445,6 @@ packages:
       immutable: 4.2.2
       source-map-js: 1.0.2
     dev: true
-    dev: true
 
   /sass/1.58.0:
     resolution: {integrity: sha512-PiMJcP33DdKtZ/1jSjjqVIKihoDc6yWmYr9K/4r3fVVIEDAluD0q7XZiRKrNJcPK3qkLRF/79DND1H5q1LBjgg==}
@@ -12555,6 +12554,7 @@ packages:
       rollup: 3.10.1
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /vite/4.0.4_sass@1.57.1:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
@@ -12667,6 +12667,7 @@ packages:
         optional: true
     dependencies:
       vite: 4.0.4_sass@1.57.1
+    dev: true
 
   /vitefu/0.2.4_vite@4.1.1:
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
