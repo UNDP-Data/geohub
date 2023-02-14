@@ -6,7 +6,6 @@ export interface Dataset {
 	is_raster: boolean;
 	name: string;
 	description?: string;
-	source?: string;
 	license?: string;
 	bounds: [number, number, number, number];
 	createdat: string;

@@ -3,10 +3,10 @@
   import Time from 'svelte-time'
   import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
   import { CtaLink, Download } from '@undp-data/svelte-undp-design'
-  import { MAP_ATTRIBUTION } from '$lib/constants'
   import Star from './Star.svelte'
 
   import { createEventDispatcher } from 'svelte'
+  import { createAttributionFromTags } from '$lib/helper'
 
   const dispatch = createEventDispatcher()
 
@@ -23,10 +23,7 @@
   const isStac = is_raster && stacType ? true : false
   const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf')
 
-  let attribution = MAP_ATTRIBUTION
-  if (feature.properties.source) {
-    attribution = feature.properties.source
-  }
+  let attribution = createAttributionFromTags(tags)
   $: if (metadata) {
     if (!is_raster) {
       const vectorInfo = metadata as VectorTileMetadata
