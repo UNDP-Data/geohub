@@ -6,7 +6,6 @@ CREATE TABLE geohub.dataset
   name       character varying        NOT NULL,
   description     character varying       ,
   is_raster  boolean                  NOT NULL,
-  source     character varying       ,
   license    character varying       ,
   bounds     geometry (Polygon, 4326) NOT NULL,
   createdat  timestamp with time zone NOT NULL,
@@ -21,8 +20,6 @@ COMMENT ON COLUMN geohub.dataset.id IS 'md5 hash generated from URL';
 COMMENT ON COLUMN geohub.dataset.url IS 'stores URL for dataset. e.g., URL for azure blob, URL for mosaicjson';
 
 COMMENT ON COLUMN geohub.dataset.is_raster IS 'raster or vector';
-
-COMMENT ON COLUMN geohub.dataset.source IS 'data source';
 
 COMMENT ON COLUMN geohub.dataset.license IS 'data license';
 

@@ -33,7 +33,6 @@ class PgtileservManager {
 				is_raster: false,
 				name: `${layer.schema} ${cleanName(layer.name)}`,
 				description: layer.description,
-				source: `United Nations Development Programme`,
 				bounds: bounds,
 				createdat: now,
 				updatedat: now,
@@ -57,6 +56,10 @@ class PgtileservManager {
 					{
 						key: 'id',
 						value: layer.id
+					},
+					{
+						key: 'provider',
+						value: 'United Nations Development Programme (UNDP)'
 					}
 				]
 			};
