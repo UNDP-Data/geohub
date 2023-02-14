@@ -1,7 +1,9 @@
 <script lang="ts">
+  import Notification from '$components/controls/Notification.svelte'
   import { initTippy } from '$lib/helper'
   import type { Continent, Country, Region } from '$lib/types'
   import Loader from '@undp-data/svelte-undp-design/src/lib/Loader/Loader.svelte'
+  import { debounce } from 'lodash-es'
   import CountryCard from './CountryCard.svelte'
   const tippy = initTippy()
   let tooltipContent: HTMLElement
@@ -9,6 +11,7 @@
   let selectedContinent = -1
   let selectedRegion = -1
   let selectedCountries: Country[] = []
+  let query = ''
 
   let continentsMaster: Continent[] = []
   let regionsMaster: Region[] = []
@@ -43,15 +46,14 @@
       countriesMaster = json as Country[]
     }
 
-    if (continent_code !== -1 && region_code !== -1) {
-      return countriesMaster.filter((c) => c.continent_code === continent_code && c.region_code === region_code)
-    } else if (continent_code !== -1 && region_code === -1) {
-      return countriesMaster.filter((c) => c.continent_code === continent_code)
-    } else if (continent_code === -1 && region_code !== -1) {
-      return countriesMaster.filter((c) => c.region_code === region_code)
-    } else {
-      return countriesMaster
+    let filtered = countriesMaster
+    if (continent_code !== -1) {
+      filtered = filtered.filter((c) => c.continent_code === continent_code)
     }
+    if (region_code !== -1) {
+      filtered = filtered.filter((c) => c.region_code === region_code)
+    }
+    return filtered
   }
 
   let continents: Promise<Continent[]> = getContinents()
@@ -63,11 +65,25 @@
   const continentSelected = () => {
     regions = getRegions(selectedContinent)
     selectedRegion = -1
+    query = ''
   }
 
   const regionSelected = () => {
     countries = getCountries(selectedContinent, selectedRegion)
+    query = ''
   }
+
+  $: query, handleSearch()
+  const handleSearch = debounce(async () => {
+    if (countriesMaster.length === 0) return
+    let filtered = await getCountries(selectedContinent, selectedRegion)
+    if (query.length > 0) {
+      filtered = filtered.filter((t) => t.country_name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
+    }
+    countries = new Promise<Country[]>((resolve) => {
+      resolve(filtered)
+    })
+  }, 300)
 
   const handleCountrySelected = (e) => {
     const country = e.detail.country
@@ -84,16 +100,9 @@
   }
 </script>
 
-<div class="country-selected is-flex">
-  {#each selectedCountries as country}
-    <CountryCard
-      bind:country
-      isSelectable={false}
-      on:countrySelected={handleCountrySelected} />
-  {/each}
-
+<div class="country-selected is-flex is-align-content-center">
   <div
-    class="country-select-button"
+    class="country-select-button pr-2"
     use:tippy={{ content: tooltipContent }}>
     <div class="box p-2">
       <span class="icon is-large">
@@ -101,6 +110,15 @@
       </span>
     </div>
   </div>
+
+  {#each selectedCountries as country}
+    <div class="px-1">
+      <CountryCard
+        bind:country
+        isSelectable={false}
+        on:countrySelected={handleCountrySelected} />
+    </div>
+  {/each}
 </div>
 
 <div
@@ -141,21 +159,47 @@
       {/await}
     </div>
     <label class="label">Countries</label>
+    <p class="control has-icons-left pb-2">
+      <input
+        class="input"
+        type="text"
+        placeholder="Type a country name"
+        bind:value={query} />
+      <span class="icon is-left">
+        <i
+          class="fas fa-search"
+          aria-hidden="true" />
+      </span>
+      {#if query.length > 0}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <span
+          class="clear-button"
+          on:click={() => (query = '')}>
+          <i class="fas fa-xmark sm" />
+        </span>
+      {/if}
+    </p>
     <div class="country-list control">
-      <div class="grid p-1">
-        {#await countries}
-          <Loader size="x-small" />
-        {:then rows}
-          {#if rows}
+      {#await countries}
+        <Loader size="x-small" />
+      {:then rows}
+        {#if rows && rows.length > 0}
+          <div class="country-list-grid p-1">
             {#each rows as country}
               <CountryCard
                 bind:country
                 isSelected={selectedCountries.find((c) => c.iso_3 === country.iso_3) ? true : false}
                 on:countrySelected={handleCountrySelected} />
             {/each}
-          {/if}
-        {/await}
-      </div>
+          </div>
+        {:else}
+          <Notification
+            type="info"
+            showCloseButton={false}>
+            No country found. Try another name.
+          </Notification>
+        {/if}
+      {/await}
     </div>
   </div>
 </div>
@@ -172,12 +216,20 @@
   .tooltip {
     max-width: 350px;
 
+    .clear-button {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.8rem;
+      cursor: pointer;
+      color: gray;
+    }
+
     .country-list {
       max-height: 200px;
       overflow-y: auto;
     }
 
-    .grid {
+    .country-list-grid {
       display: grid;
       grid-gap: 5px;
       grid-template-columns: repeat(3, 1fr);

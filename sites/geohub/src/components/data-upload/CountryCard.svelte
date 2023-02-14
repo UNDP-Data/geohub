@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Country } from '$lib/types'
+  import chroma from 'chroma-js'
   import { createEventDispatcher } from 'svelte'
 
   const dispatch = createEventDispatcher()
@@ -46,13 +47,15 @@
         {#if country.iso_2}
           <span class="fi fi-{country.iso_2.toLowerCase()}" />
         {:else}
-          <i class="no-flag fa-solid fa-flag fa-2xl" />
+          <i
+            class="no-flag fa-solid fa-flag fa-2xl"
+            style="color: {chroma.random().css()}" />
         {/if}
       </figure>
       {#if isSelectable && isSelected}
         <div
           class="is-size-8 selected"
-          title="Colormap Selected">
+          title="Country selected">
           <i class="fas fa-check" />
         </div>
       {/if}
