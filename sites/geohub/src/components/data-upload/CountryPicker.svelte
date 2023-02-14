@@ -10,42 +10,63 @@
   let selectedRegion = -1
   let selectedCountries: Country[] = []
 
+  let continentsMaster: Continent[] = []
+  let regionsMaster: Region[] = []
+  let countriesMaster: Country[] = []
+
   const getContinents = async () => {
-    const res = await fetch(`/api/continents`)
-    const json = await res.json()
-    return json as Continent[]
+    if (continentsMaster.length === 0) {
+      const res = await fetch(`/api/continents`)
+      const json = await res.json()
+      continentsMaster = json as Continent[]
+    }
+    return continentsMaster
   }
 
   const getRegions = async (continent_code: number) => {
-    const res = await fetch(`/api/regions?continent=${continent_code}`)
-    const json = await res.json()
-    return json as Region[]
+    if (regionsMaster.length === 0) {
+      const res = await fetch(`/api/regions`)
+      const json = await res.json()
+      regionsMaster = json as Region[]
+    }
+    if (continent_code !== -1) {
+      return regionsMaster.filter((r) => r.continent_code === continent_code)
+    } else {
+      return regionsMaster
+    }
   }
 
   const getCountries = async (continent_code: number, region_code: number) => {
-    const res = await fetch(`/api/countries?continent=${continent_code}&region=${region_code}`)
-    const json = await res.json()
-    return json as Country[]
+    if (countriesMaster.length === 0) {
+      const res = await fetch(`/api/countries`)
+      const json = await res.json()
+      countriesMaster = json as Country[]
+    }
+
+    if (continent_code !== -1 && region_code !== -1) {
+      return countriesMaster.filter((c) => c.continent_code === continent_code && c.region_code === region_code)
+    } else if (continent_code !== -1 && region_code === -1) {
+      return countriesMaster.filter((c) => c.continent_code === continent_code)
+    } else if (continent_code === -1 && region_code !== -1) {
+      return countriesMaster.filter((c) => c.region_code === region_code)
+    } else {
+      return countriesMaster
+    }
   }
 
   let continents: Promise<Continent[]> = getContinents()
-  let regions: Promise<Region[]>
-  let countries: Promise<Country[]>
+  let regions: Promise<Region[]> = getRegions(-1)
+  let countries: Promise<Country[]> = getCountries(-1, -1)
 
   $: selectedContinent, continentSelected()
   $: selectedRegion, regionSelected()
   const continentSelected = () => {
-    if (selectedContinent === -1) {
-      selectedRegion = -1
-    } else {
-      regions = getRegions(selectedContinent)
-    }
+    regions = getRegions(selectedContinent)
+    selectedRegion = -1
   }
 
   const regionSelected = () => {
-    if (selectedRegion > -1) {
-      countries = getCountries(selectedContinent, selectedRegion)
-    }
+    countries = getCountries(selectedContinent, selectedRegion)
   }
 
   const handleCountrySelected = (e) => {
@@ -94,7 +115,7 @@
       {:then rows}
         <div class="select is-fullwidth">
           <select bind:value={selectedContinent}>
-            <option value={-1}>Select a continent</option>
+            <option value={-1}>All continents</option>
             {#each rows as continent}
               <option value={continent.continent_code}>{continent.continent_name}</option>
             {/each}
@@ -102,44 +123,40 @@
         </div>
       {/await}
     </div>
-    {#if selectedContinent !== -1}
-      <label class="label">Region</label>
-      <div class="control">
-        {#await regions}
-          <Loader size="x-small" />
-        {:then rows}
-          <div class="select is-fullwidth">
-            <select bind:value={selectedRegion}>
-              <option value={-1}>Select a region</option>
-              {#if rows}
-                {#each rows as region}
-                  <option value={region.region_code}>{region.region_name}</option>
-                {/each}
-              {/if}
-            </select>
-          </div>
-        {/await}
-      </div>
-    {/if}
-    {#if selectedRegion !== -1}
-      <label class="label">Countries</label>
-      <div class="country-list control">
-        <div class="grid p-1">
-          {#await countries}
-            <Loader size="x-small" />
-          {:then rows}
+    <label class="label">Region</label>
+    <div class="control">
+      {#await regions}
+        <Loader size="x-small" />
+      {:then rows}
+        <div class="select is-fullwidth">
+          <select bind:value={selectedRegion}>
+            <option value={-1}>All regions</option>
             {#if rows}
-              {#each rows as country}
-                <CountryCard
-                  bind:country
-                  isSelected={selectedCountries.find((c) => c.iso_3 === country.iso_3) ? true : false}
-                  on:countrySelected={handleCountrySelected} />
+              {#each rows as region}
+                <option value={region.region_code}>{region.region_name}</option>
               {/each}
             {/if}
-          {/await}
+          </select>
         </div>
+      {/await}
+    </div>
+    <label class="label">Countries</label>
+    <div class="country-list control">
+      <div class="grid p-1">
+        {#await countries}
+          <Loader size="x-small" />
+        {:then rows}
+          {#if rows}
+            {#each rows as country}
+              <CountryCard
+                bind:country
+                isSelected={selectedCountries.find((c) => c.iso_3 === country.iso_3) ? true : false}
+                on:countrySelected={handleCountrySelected} />
+            {/each}
+          {/if}
+        {/await}
       </div>
-    {/if}
+    </div>
   </div>
 </div>
 
@@ -163,7 +180,7 @@
     .grid {
       display: grid;
       grid-gap: 5px;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>
