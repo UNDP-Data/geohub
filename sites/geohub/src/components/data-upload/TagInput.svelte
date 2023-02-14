@@ -21,7 +21,7 @@
   let keys = [
     {
       key: 'extent',
-      label: 'Region',
+      label: 'Extent',
     },
     {
       key: 'granularity',
@@ -130,6 +130,57 @@
         <i class="fa-solid fa-magnifying-glass" />
       </span>
     </button>
+    {#if tag.key}
+      <nav
+        class="panel tooltip"
+        bind:this={tooltipContent}>
+        <p class="panel-heading">
+          {keys.find((t) => t.key === tag.key).label}
+        </p>
+        <div class="panel-block">
+          <p class="control has-icons-left">
+            <input
+              class="input"
+              type="text"
+              placeholder="Search"
+              bind:value={query} />
+            <span class="icon is-left">
+              <i
+                class="fas fa-search"
+                aria-hidden="true" />
+            </span>
+          </p>
+        </div>
+        <div class="tag-list">
+          {#if filterTagList?.length > 0}
+            {#each filterTagList as t}
+              <!-- svelte-ignore a11y-missing-attribute -->
+              <a
+                class="panel-block"
+                on:click={() => {
+                  handleTagClicked(t.value)
+                }}
+                on:keydown={handleEnterKey}>
+                <span class="panel-icon">
+                  <i
+                    class="fa-solid fa-tag"
+                    aria-hidden="true" />
+                </span>
+                {t.value} ({t.count})
+              </a>
+            {/each}
+          {:else}
+            <div class="p-2">
+              <Notification
+                type="info"
+                showCloseButton={false}>
+                No tag found. Try another keyword.
+              </Notification>
+            </div>
+          {/if}
+        </div>
+      </nav>
+    {/if}
   </div>
   {#if isAdd}
     <div>
@@ -155,58 +206,6 @@
     </div>
   {/if}
 </div>
-
-{#if tag.key}
-  <nav
-    class="panel tooltip"
-    bind:this={tooltipContent}>
-    <p class="panel-heading">
-      {keys.find((t) => t.key === tag.key).label}
-    </p>
-    <div class="panel-block">
-      <p class="control has-icons-left">
-        <input
-          class="input"
-          type="text"
-          placeholder="Search"
-          bind:value={query} />
-        <span class="icon is-left">
-          <i
-            class="fas fa-search"
-            aria-hidden="true" />
-        </span>
-      </p>
-    </div>
-    <div class="tag-list">
-      {#if filterTagList?.length > 0}
-        {#each filterTagList as t}
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a
-            class="panel-block"
-            on:click={() => {
-              handleTagClicked(t.value)
-            }}
-            on:keydown={handleEnterKey}>
-            <span class="panel-icon">
-              <i
-                class="fa-solid fa-tag"
-                aria-hidden="true" />
-            </span>
-            {t.value} ({t.count})
-          </a>
-        {/each}
-      {:else}
-        <div class="p-2">
-          <Notification
-            type="info"
-            showCloseButton={false}>
-            No tag found. Try another keyword.
-          </Notification>
-        </div>
-      {/if}
-    </div>
-  </nav>
-{/if}
 
 <style lang="scss">
   @import 'tippy.js/dist/tippy.css';

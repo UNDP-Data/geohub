@@ -1,20 +1,37 @@
 <script lang="ts">
   import { initTippy } from '$lib/helper'
+  import type { Tag } from '$lib/types'
   import SdgCard from './SdgCard.svelte'
 
   const tippy = initTippy()
   let tooltipContent: HTMLElement
 
   const BASE_ASSEST_URL = '/assets/sdgs'
+  const TAG_KEY = 'sdg_goal'
   let sdgs = [...Array(17)].map((v, i) => i + 1)
+  export let tags: Tag[] = []
 
   let selectedSDGs: { [key: number]: boolean } = {}
+  $: selectedSDGs, updateTags()
 
   const handleSDGSelected = (e) => {
     const sdg = e.detail.sdg
     const isSelected = e.detail.isSelected
 
     selectedSDGs[sdg] = isSelected
+  }
+
+  const updateTags = () => {
+    tags = []
+    Object.keys(selectedSDGs)?.forEach((key) => {
+      tags = [
+        ...tags,
+        {
+          key: TAG_KEY,
+          value: key,
+        },
+      ]
+    })
   }
 </script>
 

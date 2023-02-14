@@ -66,7 +66,7 @@
       {/if}
     </div>
     <div class="content is-size-7 columns is-gapless">
-      <p class="column is-10">
+      <p class="column">
         {country.country_name}
       </p>
     </div>
@@ -115,7 +115,7 @@
     }
 
     .content {
-      width: fit-content;
+      width: 70px;
       margin: auto;
     }
   }

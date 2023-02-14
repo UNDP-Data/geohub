@@ -2,7 +2,7 @@
   import type { Tag } from '$lib/types/Tag'
   import TagInput from './TagInput.svelte'
 
-  let tags: Tag[] = []
+  export let tags: Tag[] = []
   let inputTag: Tag = {
     key: '',
     value: '',
@@ -38,32 +38,15 @@
   }
 </script>
 
-<div class="field">
-  <!-- <div class="is-flex is-flex-direction-row is-align-items-center"> -->
-  <label class="label">Tags</label>
-
-  <!-- <button
-      class="button add-button"
-      disabled={addButonDisable}
-      on:click={addTagInput}>
-      <span class="icon is-small">
-        <i class="fa-solid fa-plus" />
-      </span>
-    </button> -->
-  <!-- </div> -->
-
-  <div class="control">
-    {#each tags as tag}
-      <TagInput
-        bind:tag
-        on:deleted={handleTagDeleted} />
-    {/each}
-    <TagInput
-      bind:tag={inputTag}
-      isAdd={true}
-      on:added={handleTagAdded} />
-  </div>
-</div>
+{#each tags as tag}
+  <TagInput
+    bind:tag
+    on:deleted={handleTagDeleted} />
+{/each}
+<TagInput
+  bind:tag={inputTag}
+  isAdd={true}
+  on:added={handleTagAdded} />
 
 <style lang="scss">
   .add-button {

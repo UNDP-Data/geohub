@@ -1,12 +1,14 @@
 <script lang="ts">
   import Notification from '$components/controls/Notification.svelte'
   import { initTippy } from '$lib/helper'
-  import type { Continent, Country, Region } from '$lib/types'
+  import type { Continent, Country, Region, Tag } from '$lib/types'
   import Loader from '@undp-data/svelte-undp-design/src/lib/Loader/Loader.svelte'
   import { debounce } from 'lodash-es'
   import CountryCard from './CountryCard.svelte'
   const tippy = initTippy()
   let tooltipContent: HTMLElement
+
+  export let tags: Tag[] = []
 
   let selectedContinent = -1
   let selectedRegion = -1
@@ -98,6 +100,46 @@
     }
     selectedCountries = [...selectedCountries]
   }
+
+  $: selectedCountries, updateTags()
+  const updateTags = () => {
+    tags = []
+
+    let continentTags: Tag[] = []
+    let regionTags: Tag[] = []
+    let countryTags: Tag[] = []
+    selectedCountries?.forEach((country) => {
+      if (!continentTags.find((t) => t.value === country.continent_name)) {
+        continentTags = [
+          ...continentTags,
+          {
+            key: 'continent',
+            value: country.continent_name,
+          },
+        ]
+      }
+
+      if (!regionTags.find((t) => t.value === country.region_name)) {
+        regionTags = [
+          ...regionTags,
+          {
+            key: 'region',
+            value: country.region_name,
+          },
+        ]
+      }
+
+      countryTags = [
+        ...countryTags,
+        {
+          key: 'country',
+          value: country.iso_3,
+        },
+      ]
+    })
+
+    tags = continentTags.concat(regionTags, countryTags)
+  }
 </script>
 
 <div class="country-selected is-flex is-align-content-center">
@@ -111,6 +153,89 @@
     </div>
   </div>
 
+  <div
+    class="tooltip p-2"
+    data-testid="tooltip"
+    bind:this={tooltipContent}>
+    <div class="field">
+      <label class="label">Continent</label>
+      <div class="control">
+        {#await continents}
+          <Loader size="x-small" />
+        {:then rows}
+          <div class="select is-fullwidth">
+            <select bind:value={selectedContinent}>
+              <option value={-1}>All continents</option>
+              {#each rows as continent}
+                <option value={continent.continent_code}>{continent.continent_name}</option>
+              {/each}
+            </select>
+          </div>
+        {/await}
+      </div>
+      <label class="label">Region</label>
+      <div class="control">
+        {#await regions}
+          <Loader size="x-small" />
+        {:then rows}
+          <div class="select is-fullwidth">
+            <select bind:value={selectedRegion}>
+              <option value={-1}>All regions</option>
+              {#if rows}
+                {#each rows as region}
+                  <option value={region.region_code}>{region.region_name}</option>
+                {/each}
+              {/if}
+            </select>
+          </div>
+        {/await}
+      </div>
+      <label class="label">Countries</label>
+      <p class="control has-icons-left pb-2">
+        <input
+          class="input"
+          type="text"
+          placeholder="Type a country name"
+          bind:value={query} />
+        <span class="icon is-left">
+          <i
+            class="fas fa-search"
+            aria-hidden="true" />
+        </span>
+        {#if query.length > 0}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <span
+            class="clear-button"
+            on:click={() => (query = '')}>
+            <i class="fas fa-xmark sm" />
+          </span>
+        {/if}
+      </p>
+      <div class="country-list control">
+        {#await countries}
+          <Loader size="x-small" />
+        {:then rows}
+          {#if rows && rows.length > 0}
+            <div class="country-list-grid p-1">
+              {#each rows as country}
+                <CountryCard
+                  bind:country
+                  isSelected={selectedCountries.find((c) => c.iso_3 === country.iso_3) ? true : false}
+                  on:countrySelected={handleCountrySelected} />
+              {/each}
+            </div>
+          {:else}
+            <Notification
+              type="info"
+              showCloseButton={false}>
+              No country found. Try another name.
+            </Notification>
+          {/if}
+        {/await}
+      </div>
+    </div>
+  </div>
+
   {#each selectedCountries as country}
     <div class="px-1">
       <CountryCard
@@ -119,89 +244,6 @@
         on:countrySelected={handleCountrySelected} />
     </div>
   {/each}
-</div>
-
-<div
-  class="tooltip p-2"
-  data-testid="tooltip"
-  bind:this={tooltipContent}>
-  <div class="field">
-    <label class="label">Continent</label>
-    <div class="control">
-      {#await continents}
-        <Loader size="x-small" />
-      {:then rows}
-        <div class="select is-fullwidth">
-          <select bind:value={selectedContinent}>
-            <option value={-1}>All continents</option>
-            {#each rows as continent}
-              <option value={continent.continent_code}>{continent.continent_name}</option>
-            {/each}
-          </select>
-        </div>
-      {/await}
-    </div>
-    <label class="label">Region</label>
-    <div class="control">
-      {#await regions}
-        <Loader size="x-small" />
-      {:then rows}
-        <div class="select is-fullwidth">
-          <select bind:value={selectedRegion}>
-            <option value={-1}>All regions</option>
-            {#if rows}
-              {#each rows as region}
-                <option value={region.region_code}>{region.region_name}</option>
-              {/each}
-            {/if}
-          </select>
-        </div>
-      {/await}
-    </div>
-    <label class="label">Countries</label>
-    <p class="control has-icons-left pb-2">
-      <input
-        class="input"
-        type="text"
-        placeholder="Type a country name"
-        bind:value={query} />
-      <span class="icon is-left">
-        <i
-          class="fas fa-search"
-          aria-hidden="true" />
-      </span>
-      {#if query.length > 0}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span
-          class="clear-button"
-          on:click={() => (query = '')}>
-          <i class="fas fa-xmark sm" />
-        </span>
-      {/if}
-    </p>
-    <div class="country-list control">
-      {#await countries}
-        <Loader size="x-small" />
-      {:then rows}
-        {#if rows && rows.length > 0}
-          <div class="country-list-grid p-1">
-            {#each rows as country}
-              <CountryCard
-                bind:country
-                isSelected={selectedCountries.find((c) => c.iso_3 === country.iso_3) ? true : false}
-                on:countrySelected={handleCountrySelected} />
-            {/each}
-          </div>
-        {:else}
-          <Notification
-            type="info"
-            showCloseButton={false}>
-            No country found. Try another name.
-          </Notification>
-        {/if}
-      {/await}
-    </div>
-  </div>
 </div>
 
 <style lang="scss">
