@@ -1,9 +1,14 @@
 import { v4 as uuidv4 } from 'uuid'
-import { getActiveBandIndex, getBase64EncodedUrl, getRandomColormap, paramsToQueryString } from './helper'
+import {
+  createAttributionFromTags,
+  getActiveBandIndex,
+  getBase64EncodedUrl,
+  getRandomColormap,
+  paramsToQueryString,
+} from './helper'
 import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
-import { MAP_ATTRIBUTION } from './constants'
 import chroma from 'chroma-js'
 
 export class RasterTileData {
@@ -92,10 +97,10 @@ export class RasterTileData {
     const tileUrl = `${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
     const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
 
-    let attribution = MAP_ATTRIBUTION
-    if (this.feature.properties.source) {
-      attribution = this.feature.properties.source
-    }
+    const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
+      { key: string; value: string },
+    ]
+    const attribution = createAttributionFromTags(tags)
 
     const source: RasterSourceSpecification = {
       type: 'raster',

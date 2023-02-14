@@ -47,7 +47,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     if (sortby) {
       const values = sortby.split(',')
       const column: string = values[0].trim().toLowerCase()
-      const targetSortingColumns = ['name', 'source', 'license', 'createdat', 'updatedat', 'no_stars']
+      const targetSortingColumns = ['name', 'license', 'createdat', 'updatedat', 'no_stars']
       const targetSortingOrder = ['asc', 'desc']
       if (!targetSortingColumns.includes(column)) {
         console.log(targetSortingColumns, column)
@@ -121,7 +121,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
             x.name,
             x.description,
             x.is_raster, 
-            x.source, 
             x.license, 
             x.createdat, 
             x.updatedat,
