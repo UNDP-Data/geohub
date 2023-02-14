@@ -1,1 +1,1 @@
-export type LegendState = { [key: string]: { classification: string; colorMapName: string } }
+export type LegendState = { [key: string]: { classificationMethod: string; colorMapName: string } }

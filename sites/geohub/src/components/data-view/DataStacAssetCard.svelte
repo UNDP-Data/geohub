@@ -5,16 +5,19 @@
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { StatusTypes } from '$lib/constants'
+  import { loadMap } from '$lib/helper'
 
   export let asset: AssetOptions
   export let feature: StacItemFeature
   export let isExpanded = false
 
+  let layerLoading = false
   const addStacMosaicLayer = async (asset: AssetOptions) => {
     try {
       $indicatorProgress = true
-      const mosaicjson = new MosaicJsonData($map, feature, asset.url, asset.assetName)
-      const data = await mosaicjson.add()
+      layerLoading = true
+      const mosaicjson = new MosaicJsonData(feature, asset.url, asset.assetName)
+      const data = await mosaicjson.add($map)
 
       $layerList = [
         {
@@ -22,9 +25,11 @@
           name: `${asset.collectionId}-${asset.title}`,
           info: data.metadata,
           dataset: feature,
+          colorMapName: data.colormap,
         },
         ...$layerList,
       ]
+      await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,
@@ -36,6 +41,7 @@
       console.error(err)
     } finally {
       $indicatorProgress = false
+      layerLoading = false
     }
   }
 </script>
@@ -47,6 +53,7 @@
   <div slot="button">
     {#if !isExpanded}
       <AddLayerButton
+        bind:isLoading={layerLoading}
         title="Add layer"
         isIconButton={true}
         on:clicked={() => addStacMosaicLayer(asset)} />
@@ -76,6 +83,7 @@
       {/if}
     </div>
     <AddLayerButton
+      bind:isLoading={layerLoading}
       title="Add layer"
       on:clicked={() => addStacMosaicLayer(asset)} />
   </div>

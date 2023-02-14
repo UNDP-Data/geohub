@@ -1,31 +1,12 @@
 <script lang="ts">
   import type { Layer } from '$lib/types'
-  import Popper from '$lib/popper'
-  import { fade } from 'svelte/transition'
-  import { clickOutside } from 'svelte-use-click-outside'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy()
+  let tooltipContent: HTMLElement
 
   export let layer: Layer = undefined
-
-  let isPopupShown = false
-
-  const {
-    ref: popperRef,
-    options: popperOptions,
-    content: popperContent,
-  } = new Popper(
-    {
-      placement: 'right-start',
-      strategy: 'fixed',
-    },
-    [-25, -5],
-  ).init()
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      isPopupShown = !isPopupShown
-    }
-  }
 </script>
 
 <div
@@ -36,46 +17,36 @@
     aria-label="Show layer info"
     tabindex="0"
     role="button"
-    use:popperRef
-    on:click={() => (isPopupShown = !isPopupShown)}
-    on:keydown={handleKeyDown}>
+    use:tippy={{ content: tooltipContent }}>
     <i class="fa-solid fa-info-circle sm" />
   </div>
 </div>
 
-{#if isPopupShown}
+<div
+  class="tooltip"
+  data-testid="tooltip"
+  bind:this={tooltipContent}>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
-    id="tooltip"
-    data-testid="tooltip"
-    use:popperContent={popperOptions}
-    use:clickOutside={() => (isPopupShown = false)}
-    transition:fade>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div
-      class="close"
-      title="Close"
-      on:click={() => (isPopupShown = false)}>
-      <i class="fa-solid fa-xmark sm" />
-    </div>
-
-    <div class="data-card">
-      <DataCardInfo
-        bind:feature={layer.dataset}
-        bind:metadata={layer.info} />
-    </div>
-
-    <div
-      id="arrow"
-      data-popper-arrow />
+    class="close"
+    title="Close">
+    <i class="fa-solid fa-xmark sm" />
   </div>
-{/if}
+
+  <div class="data-card">
+    <DataCardInfo
+      bind:feature={layer.dataset}
+      bind:metadata={layer.info} />
+  </div>
+</div>
 
 <style lang="scss">
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
   @import '../../styles/button-icons-selected.scss';
 
-  @import '../../styles/popper.scss';
-  #tooltip {
-    max-width: 330px;
+  .tooltip {
+    width: 300px;
     inset: -10px auto auto 0px !important;
 
     .close {

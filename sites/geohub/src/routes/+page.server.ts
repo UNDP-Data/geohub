@@ -27,8 +27,8 @@ export const load: PageServerLoad = async (event) => {
 
         styleInfo.layers.map((el) => {
           const layerStyle = style.layers.find((l) => l.id === el.id)
-          const cmap = layerStyle?.['colormap']
-          const classification = layerStyle?.['classification']
+          const cmap = layerStyle?.['colorMapName']
+          const classification = layerStyle?.['classificationMethod']
           const lid = layerStyle?.['id']
           if (cmap && classification && lid) {
             //reuse state

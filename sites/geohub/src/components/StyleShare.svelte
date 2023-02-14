@@ -1,39 +1,29 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import { page } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
-  import { Button } from '@undp-data/svelte-undp-design'
+  import { Button, Loader } from '@undp-data/svelte-undp-design'
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
   import { AccessLevel } from '$lib/constants'
   import AccessLevelSwitcher from './AccessLevelSwitcher.svelte'
+  import Notification from './controls/Notification.svelte'
+
+  $: isReadonly = $page.data.readOnly
 
   export let isModalVisible = false
   let styleURL: string
   let accessLevel: AccessLevel = $page.data.style?.access_level ?? AccessLevel.PRIVATE
 
-  let styleName = $page.data.style?.name ?? 'UNDP GeoHub style'
+  let styleName: string
   let textCopyButton = 'Copy'
   let untargetedLayers: Layer[] = []
   let exportedStyleJSON: StyleSpecification
-
-  let layerClassification: { [key: string]: string } = {}
-  let layerColormap: { [key: string]: string } = {}
-  $: {
-    if ($map) {
-      $map.on('classification:changed', (e: { layerId: string; classification: string }) => {
-        layerClassification[e.layerId] = e.classification
-      })
-
-      $map.on('colormap:changed', (e: { layerId: string; colorMapName: string }) => {
-        layerColormap[e.layerId] = e.colorMapName
-      })
-    }
-  }
+  let shareLoading = false
 
   $: if (isModalVisible) {
     open()
@@ -57,46 +47,22 @@
           names.push(layer.name)
         }
       })
-      if (names.length > 0) {
-        styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+
+      if ($page.data.style?.name) {
+        styleName = $page.data.style?.name
       } else {
-        styleName = 'UNDP GeoHub style'
+        if (names.length > 0) {
+          styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`
+        } else {
+          styleName = 'UNDP GeoHub style'
+        }
       }
     }
     createStyleJSON2Generate()
   }
 
   export const share = async () => {
-    // add classification in the top level of layer object in style.json
-    // in order to keep state of selection of classifying
-    exportedStyleJSON.layers.forEach((l) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (l.classification) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        delete l.classification
-      }
-      if (layerClassification[l.id]) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        l.classification = layerClassification[l.id]
-      }
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (l.colormap) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        delete l.colormap
-      }
-      if (layerColormap[l.id]) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        l.colormap = layerColormap[l.id]
-      }
-    })
-
+    shareLoading = true
     let savedLayerList = JSON.parse(JSON.stringify($layerList))
     const untargetdIds = untargetedLayers.map((l) => l.id)
     savedLayerList = savedLayerList.filter((l) => !untargetdIds.includes(l.id))
@@ -109,31 +75,25 @@
     }
 
     const styleId = $page.url.searchParams.get('style')
-    let resjson
-    if (styleId) {
-      data['id'] = styleId
 
-      const res = await fetch('/api/style', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      })
-      resjson = await res.json()
-    } else {
-      const res = await fetch('/api/style', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      })
-      resjson = await res.json()
+    let method = 'POST'
+    if (styleId && !isReadonly) {
+      data['id'] = styleId
+      method = 'PUT'
     }
+
+    const res = await fetch('/api/style', {
+      method: method,
+      body: JSON.stringify(data),
+    })
+    let resjson = await res.json()
 
     styleURL = resjson.viewer
-    if (!styleId) {
-      if ($page.data.style) {
-        $page.data.style = resjson
-      }
-      $page.url.searchParams.set('style', resjson.id)
-      goto(`?${$page.url.searchParams.toString()}`)
-    }
+    $page.url.searchParams.set('style', resjson.id)
+    await goto(`?${$page.url.searchParams.toString()}`)
+    await invalidateAll()
+    styleName = $page.data.style.name
+    shareLoading = false
   }
 
   $: styleName, createStyleJSON2Generate()
@@ -209,6 +169,14 @@
       </header>
       <section class="modal-card-body">
         {#if !styleURL}
+          {#if isReadonly}
+            <Notification
+              type="info"
+              showCloseButton={false}>
+              This map was created by other user. It will be saved as new map.
+            </Notification>
+          {/if}
+
           <div class="field">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label class="label">Map name:</label>
@@ -283,10 +251,16 @@
 
         {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
           <div class="is-6 px-1">
-            <Button
-              title="Share"
-              on:clicked={handleShare}
-              isPrimary={true} />
+            {#if shareLoading}
+              <div class="loader-container">
+                <Loader size="x-small" />
+              </div>
+            {:else}
+              <Button
+                title="Share"
+                on:clicked={handleShare}
+                isPrimary={true} />
+            {/if}
           </div>
         {/if}
       </footer>
@@ -311,5 +285,11 @@
     .modal-card {
       width: 300px;
     }
+  }
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
   }
 </style>

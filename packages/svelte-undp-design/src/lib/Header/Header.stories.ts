@@ -44,6 +44,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If enabled, header will be shown at the top of window',
 			defaultValue: true
+		},
+		progressBarSize: {
+			type: 'string',
+			description: 'Size of progress bar',
+			defaultValue: 'xsmall'
 		}
 	}
 } satisfies Meta<Header>;
@@ -98,7 +103,8 @@ export const Primary: Story = {
 		url: 'https://undpgeohub.org',
 		logoUrl: 'assets/undp-logo-blue.svg',
 		showProgressBar: false,
-		links: links
+		links: links,
+		progressBarSize: 'small'
 	}
 };
 

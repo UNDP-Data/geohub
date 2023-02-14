@@ -23,8 +23,9 @@
 					{headerTitle}
 				</p>
 			</button>
-
-			<slot name="button" />
+			<div style="width:10%">
+				<slot name="button" />
+			</div>
 		</div>
 		<div
 			class={!isExpanded ? 'accordion__panel' : 'accordion--active'}
@@ -61,6 +62,7 @@
 				overflow: hidden;
 				text-overflow: ellipsis;
 				text-transform: capitalize;
+				text-align: left;
 				width: 90%;
 			}
 		}

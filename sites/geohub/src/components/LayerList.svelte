@@ -5,8 +5,8 @@
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
-  import { ClassificationMethodTypes, LayerTypes, TabNames } from '$lib/constants'
-  import { getLayerStyle, getRandomColormap, getValueFromRasterTileUrl } from '$lib/helper'
+  import { LayerTypes, TabNames } from '$lib/constants'
+  import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'
   import type { LegendState } from '$lib/types'
@@ -14,11 +14,10 @@
   export let contentHeight: number
   export let activeTab: string
   let layerHeaderHeight = 39
-  let legendState: LegendState = $page.data.style?.legendState
 
   $: totalHeight = contentHeight - layerHeaderHeight
 
-  const getLegendState = () => {
+  const getLayerListFromStyle = () => {
     return new Promise<LegendState>((resolve) => {
       try {
         $indicatorProgress = true
@@ -34,8 +33,8 @@
         }
 
         const style: StyleSpecification = styleInfo.style
-
         $map.setStyle(style)
+
         $map.flyTo({
           center: [style.center[0], style.center[1]],
           zoom: style.zoom,
@@ -46,13 +45,9 @@
         if (!$map.isStyleLoaded()) {
           $map.once('styledata', () => {
             $layerList = styleInfo.layers
-            setDefaultLayerValues(styleInfo.legendState)
-            resolve(styleInfo.legendState)
           })
         } else {
           $layerList = styleInfo.layers
-          setDefaultLayerValues(styleInfo.legendState)
-          resolve(styleInfo.legendState)
         }
       } finally {
         $indicatorProgress = false
@@ -60,32 +55,9 @@
     })
   }
 
-  /**
-   * Fire legend state (classification and colorMapName) to register for saved map feature
-   * @param legendState LegendState object
-   */
-  const setDefaultLayerValues = (legendState: LegendState) => {
-    if (!legendState) return
-    Object.keys(legendState).forEach((layerId) => {
-      const state = legendState[layerId]
-      if (state.colorMapName) {
-        $map?.fire('colormap:changed', {
-          layerId: layerId,
-          colorMapName: state.colorMapName,
-        })
-      }
-      if (state.classification) {
-        $map?.fire('classification:changed', {
-          layerId: layerId,
-          classification: state.classification,
-        })
-      }
-    })
-  }
-
   $: if ($map) {
     $map.once('load', () => {
-      getLegendState()
+      getLayerListFromStyle()
     })
   }
 </script>
@@ -109,21 +81,11 @@
   {/if}
 
   {#each $layerList as layer (layer.id)}
-    {@const cls = legendState?.[layer.id]?.classification || ClassificationMethodTypes.EQUIDISTANT}
     <div class="box p-0 mx-1 my-3">
       {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
-        {@const cmp =
-          legendState?.[layer.id]?.colorMapName || getValueFromRasterTileUrl($map, layer.id, 'colormap_name')}
-        <RasterLayer
-          {layer}
-          classificationMethod={cls}
-          colorMapName={cmp} />
+        <RasterLayer {layer} />
       {:else}
-        {@const cmp = legendState?.[layer.id]?.colorMapName || getRandomColormap()}
-        <VectorLayer
-          {layer}
-          classificationMethod={cls}
-          colorMapName={cmp} />
+        <VectorLayer {layer} />
       {/if}
     </div>
   {/each}

@@ -52,8 +52,6 @@ paths:
                         properties:
                           id:
                             type: string
-                          storage_id:
-                            type: string
                           url:
                             type: string
                           name:
@@ -74,9 +72,12 @@ paths:
                             type: array
                             items:
                               $ref: '#/components/schemas/Tag'
+                          is_star:
+                            type: boolean
+                          no_stars:
+                            type: integer
                         required:
                           - id
-                          - storage_id
                           - url
                           - name
                           - description
@@ -117,7 +118,6 @@ paths:
                                 - -59.492685518
                         properties:
                           id: 87538d7d497cfcc67e12505e8a29f893
-                          storage_id: da3cd4ffd3ac844db37bf1f87e2fc200
                           url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/end-poverty/Population_Density/2000_Population_density_per_squareKm.tif?sv=2021-10-04&ss=b&srt=o&se=2023-12-05T15%3A25%3A26Z&sp=r&sig=t30dcAo8pKix1mAcnCAOq0k3vssfaLlSwrjaXxr9PGE%3D'
                           name: 2000 Population density per squareKm
                           description: Estimated population density per grid-cell.
@@ -174,11 +174,6 @@ paths:
           in: query
           name: query
           description: 'free text to search in name, description'
-        - schema:
-            type: string
-          in: query
-          name: storage_id
-          description: you can also filter by directly storage_id
         - schema:
             type: string
           in: query
@@ -277,6 +272,12 @@ paths:
           in: query
           name: year_value
           description: search by year value
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: staronly
+          description: 'if true, only search for favourite datasets'
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API
@@ -343,74 +344,6 @@ paths:
           in: query
           name: type
           description: 'type of STAC. e.g., microsoft-pc'
-  /storages:
-    get:
-      summary: Storage search API
-      tags:
-        - search
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  url:
-                    type: string
-                  label:
-                    type: string
-                  description:
-                    type: string
-                  icon:
-                    type: string
-                  tags:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Tag'
-      operationId: get-storages
-      description: |-
-        This api can return the list of storages which contain datasets.
-
-        It can search any key/value of tags stored in storage table as the following specification.
-
-        {key}={value} e.g., type=stac to filter where tag key is 'type' and value is 'stac'. If multiple key/value are set, it will filter by OR operator. if you want to filter by SDG1 and 2, you can query like '&sdg=1&sdg=2'. 'keyword', 'type' and 'sdg' are available for key value.
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: query
-          description: 'ree text to search in label and description. AND search is aaa and bbb OR search is aaa or bbb If queried text contains space like ''water quality'', query=''water quality'' should be used with single quatation.'
-        - schema:
-            type: string
-          in: query
-          name: keyword
-        - schema:
-            type: string
-            enum:
-              - '1'
-              - '2'
-              - '3'
-              - '4'
-              - '5'
-              - '6'
-              - '7'
-              - '8'
-              - '9'
-              - '10'
-              - '11'
-              - '12'
-              - '13'
-              - '14'
-              - '15'
-              - '16'
-              - '17'
-          in: query
-          name: sdg
   /tags:
     get:
       summary: Tag search API
@@ -1075,6 +1008,88 @@ paths:
               Example 1:
                 value:
                   count: 6
+  '/datasets/{id}/star':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset id
+    post:
+      summary: Register dataset to favourite
+      operationId: post-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  user_email:
+                    type: string
+                  savedat:
+                    type: string
+                  no_stars:
+                    type: integer
+                required:
+                  - dataset_id
+                  - user_email
+                  - savedat
+      description: |-
+        Register dataset to favourite
+        This API only can be used when user sign in.
+      tags:
+        - star
+    delete:
+      summary: Delete star from dataset
+      operationId: delete-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      description: |-
+        Delete star from dataset
+        This API only can be used when user sign in.
+      tags:
+        - star
+  '/datasets/{id}/star/count':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
+    get:
+      summary: get star count
+      tags:
+        - star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      operationId: get-datasets-id-star-count
+      description: get the number of stars for a dataset
 components:
   schemas:
     Tag:

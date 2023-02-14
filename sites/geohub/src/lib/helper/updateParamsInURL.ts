@@ -4,6 +4,7 @@ import type {
   LineLayerSpecification,
   RasterLayerSpecification,
   RasterSourceSpecification,
+  StyleSpecification,
   SymbolLayerSpecification,
   VectorSourceSpecification,
 } from 'maplibre-gl'
@@ -11,6 +12,7 @@ import type {
 import { get } from 'svelte/store'
 import { map as mapStore } from '$stores'
 import { loadMap } from './loadMap'
+import { getLayerStyle } from '$lib/helper/getLayerStyle'
 export const updateParamsInURL = (
   layerStyle:
     | RasterLayerSpecification
@@ -25,33 +27,13 @@ export const updateParamsInURL = (
     layerURL.searchParams.set(key, params[key])
   })
   const map = get(mapStore)
-  if (map.getSource(layerStyle.source)) {
-    const source = map.getSource(layerStyle.source) as RasterSourceSpecification | VectorSourceSpecification
-    source.tiles = [decodeURI(layerURL.toString())]
-    map.style.sourceCaches[layerStyle.source].clearTiles()
-    map.style.sourceCaches[layerStyle.source].update(map.transform)
-    map.triggerRepaint()
-    map.fire('source:changed', {
-      layerId: layerStyle.id,
-    })
-  }
-}
-
-export const updateLayerURL = async (layerID: string, layerURL: URL, params: Record<string, string>) => {
-  const map = get(mapStore)
-  //console.log(JSON.stringify(Object.fromEntries(layerURL.searchParams), null, '\t'))
-  Object.keys(params).forEach((key) => {
-    layerURL.searchParams.set(key, params[key])
-  })
-  //console.log(JSON.stringify(Object.fromEntries(layerURL.searchParams), null, '\t'))
-
   if ('getStyle' in map) {
     const style = map.getStyle()
 
     if (style?.sources) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      style.sources[layerID].tiles = [decodeURI(layerURL.toString())]
+      style.sources[layerStyle.source].tiles = [decodeURI(layerURL.toString())]
       // delete all props which have undefined value
       // probably it is a bug of maplibre to add undefined property (like url, bounds) to the style,
       // and maplibre complains it has error which some of properties are not defined.
@@ -63,10 +45,23 @@ export const updateLayerURL = async (layerID: string, layerURL: URL, params: Rec
           }
         })
       })
-
       map.setStyle(style)
-      await loadMap(map)
-      mapStore.set(map)
     }
   }
+}
+
+export const updateLayerURL = async (
+  layerStyle:
+    | RasterLayerSpecification
+    | LineLayerSpecification
+    | FillLayerSpecification
+    | SymbolLayerSpecification
+    | HeatmapLayerSpecification,
+  layerURL: URL,
+  params: Record<string, string>,
+) => {
+  const map = get(mapStore)
+  updateParamsInURL(layerStyle, layerURL, params)
+  await loadMap(map)
+  mapStore.set(map)
 }

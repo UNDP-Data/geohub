@@ -14,6 +14,10 @@
   import { VectorTileData } from '$lib/VectorTileData'
   import MiniMap from './MiniMap.svelte'
   import DataCardInfo from './DataCardInfo.svelte'
+  import { loadMap } from '$lib/helper'
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
 
   export let layer: VectorLayerTileStatLayer
   export let feature: StacItemFeature
@@ -24,6 +28,8 @@
 
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
+
+  let layerLoading = false
 
   let symbolVectorType: 'point' | 'heatmap' = 'point'
 
@@ -38,16 +44,31 @@
     },
   ]
 
+  let polygonVectorType: 'polygon' | 'linestring' = 'polygon'
+  let polygonVectorTypes: Radio[] = [
+    {
+      label: 'Polygon',
+      value: 'polygon',
+    },
+    {
+      label: 'Line',
+      value: 'linestring',
+    },
+  ]
+
   const addLayer = async () => {
     try {
       $indicatorProgress = true
-
-      let layerType: 'point' | 'heatmap'
+      layerLoading = true
+      let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring'
       if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
         layerType = symbolVectorType
+      } else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
+        layerType = polygonVectorType
       }
-      const vectorTile = new VectorTileData($map, feature, metadata)
-      const data = await vectorTile.add(layerType, defaultColor, layer.layer)
+      const vectorInfo = metadata as VectorTileMetadata
+      const vectorTile = new VectorTileData(feature, vectorInfo)
+      const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`
       if (!isShowInfo) {
@@ -62,6 +83,7 @@
         },
         ...$layerList,
       ]
+      await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {
         type: StatusTypes.WARNING,
@@ -73,7 +95,12 @@
       console.error(err)
     } finally {
       $indicatorProgress = false
+      layerLoading = false
     }
+  }
+
+  const handleStarDeleted = (e) => {
+    dispatch('starDeleted', e.detail)
   }
 </script>
 
@@ -84,6 +111,7 @@
   <div slot="button">
     {#if !isExpanded}
       <AddLayerButton
+        bind:isLoading={layerLoading}
         title="Add layer"
         isIconButton={true}
         on:clicked={addLayer} />
@@ -96,7 +124,8 @@
     {#if isShowInfo}
       <DataCardInfo
         bind:feature
-        bind:metadata>
+        bind:metadata
+        on:starDeleted={handleStarDeleted}>
         <div class="map">
           <MiniMap
             bind:feature
@@ -128,12 +157,23 @@
         <Radios
           bind:radios={symbolVectorTypes}
           bind:value={symbolVectorType}
-          groupName="vector-type-{layer.layer}"
+          groupName="vector-symbol-type-{layer.layer}"
+          isVertical={false} />
+      </div>
+    {:else if ['polygon', 'multipolygon'].includes(layer.geometry.toLocaleLowerCase())}
+      <p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
+
+      <div class="vector-polygon-radios">
+        <Radios
+          bind:radios={polygonVectorTypes}
+          bind:value={polygonVectorType}
+          groupName="vector-polygon-type-{layer.layer}"
           isVertical={false} />
       </div>
     {/if}
 
     <AddLayerButton
+      bind:isLoading={layerLoading}
       title="Add layer"
       on:clicked={addLayer} />
   </div>
@@ -144,7 +184,8 @@
     padding-bottom: 0.5rem;
   }
 
-  .vector-symbol-radios {
+  .vector-symbol-radios,
+  .vector-polygon-radios {
     padding-bottom: 0.5rem;
   }
 </style>

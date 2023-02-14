@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { slide, fade } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte'
@@ -95,7 +95,7 @@
   <div
     class="action"
     data-testid="vector-label-panel-container">
-    <div class="columns is-10 mb-0 is-vcentered is-justify-content-space-between">
+    <div class="columns is-mobile is-10 mb-0 is-vcentered is-justify-content-space-between">
       <div class="column is-3">Property:&nbsp;</div>
       <div class="column pl-0 pr-5 is-7">
         <TextField
@@ -109,7 +109,7 @@
     {#if isLabelCreated}
       {#if fieldType && ['number', 'float'].includes(fieldType)}
         <div
-          class="columns is-12 m-auto is-vcentered"
+          class="columns is-mobile is-12 m-auto is-vcentered"
           transition:fade>
           <div class="column is-8 pl-0">Number of decimal places</div>
           <div class="column is-3 is-flex is-justify-content-center">
@@ -119,7 +119,7 @@
           </div>
         </div>
       {/if}
-      <div class="columns is-12 mb-0 pb-0 is-vcentered">
+      <div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
         <div class="column is-3 pr-0">Font color:</div>
         <div class="column pl-0 is-1">
           <TextColor
@@ -133,7 +133,7 @@
             bind:layer={targetLayer} />
         </div>
       </div>
-      <div class="columns is-12 mb-0 pb-0 is-vcentered">
+      <div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
         <div class="column is-3 pr-0">Halo color:</div>
         <div class="column pl-0 is-1">
           <TextHaloCalor
@@ -148,27 +148,25 @@
         </div>
       </div>
 
-      <div class="columns advanced-settings">
+      <div class="columns is-mobile advanced-settings">
         <div class="column is-6 m-auto">
           <div class="field">
             <input
-              id="switchAdvancedSettings"
+              id="switchAdvancedSettings-{layer.id}"
               type="checkbox"
-              name="switchSmall"
+              name="switchSmall-{layer.id}"
               class="switch is-small is-rounded is-info"
               bind:checked={isAdvancedSettings} />
             <label
-              for="switchAdvancedSettings"
+              for="switchAdvancedSettings-{layer.id}"
               class="is-size-6">Advanced Settings</label>
           </div>
         </div>
       </div>
 
       {#if isAdvancedSettings}
-        <div
-          class="advanced-settings-container pb-4"
-          transition:slide={{ duration: 750 }}>
-          <div class="columns">
+        <div class="advanced-settings-container pb-4">
+          <div class="columns is-mobile">
             {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
               <div class="column">
                 <div class="has-text-centered pb-2">Label position relative to geometry</div>

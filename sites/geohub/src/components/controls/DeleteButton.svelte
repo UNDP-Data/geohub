@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import { clickOutside } from 'svelte-use-click-outside'
 
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer } from '$lib/types'
@@ -8,6 +7,7 @@
 
   export let layer: Layer
   import Keydown from 'svelte-keydown'
+  import Button from '@undp-data/svelte-undp-design/src/lib/Button/Button.svelte'
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {
@@ -64,55 +64,47 @@
   </div>
 </div>
 
-{#if confirmDeleteLayerDialogVisible}
+<div
+  class="modal {confirmDeleteLayerDialogVisible ? 'is-active' : ''}"
+  data-testid="delete-layer-view-container"
+  transition:fade>
   <div
-    class="modal is-active"
-    data-testid="delete-layer-view-container"
-    transition:fade
-    use:clickOutside={handleCancel}>
-    <div class="modal-background" />
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Delete Layer</p>
-        <button
-          class="delete"
-          aria-label="close"
-          alt="Close Delete Layer Button"
-          title="Close Delete Layer Button"
-          on:click={handleCancel} />
-      </header>
-      <section class="modal-card-body is-size-6 has-text-weight-normal">
-        <div class="has-text-weight-medium">Are you sure you want to delete this layer?</div>
-        <br />
-        {clean(layer.name)}
-      </section>
-      <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-        <div>
-          <button
-            class="button secondary-button"
-            alt="Cancel Delete Layer Button"
-            title="Cancel Delete Layer Button"
-            on:click={handleCancel}>
-            Cancel
-          </button>
-
-          <button
-            class="button primary-button"
-            alt="Delete Layer Button"
-            title="Delete Layer Button"
-            on:click={handleDelete}>Delete</button>
-        </div>
-      </footer>
-    </div>
+    class="modal-background"
+    on:click={handleCancel}
+    on:keydown={handleKeyDown} />
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Delete Layer</p>
+      <button
+        class="delete"
+        aria-label="close"
+        title="Close Delete Layer Button"
+        on:click={handleCancel} />
+    </header>
+    <section class="modal-card-body has-text-weight-normal">
+      <div class="has-text-weight-medium">Are you sure you want to delete this layer?</div>
+      <br />
+      {clean(layer.name)}
+    </section>
+    <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+      <div class="footer-button px-2">
+        <Button
+          title="Cancel"
+          isPrimary={false}
+          on:clicked={handleCancel} />
+      </div>
+      <div class="footer-button px-2">
+        <Button
+          title="Delete"
+          isPrimary={true}
+          on:clicked={handleDelete} />
+      </div>
+    </footer>
   </div>
-{/if}
+</div>
 
 <style lang="scss">
-  @import '../../styles/button-icons-selected.scss';
-
-  .modal {
-    .modal-card {
-      width: 450px;
-    }
+  .footer-button {
+    width: 150px;
   }
 </style>

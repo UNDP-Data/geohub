@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
   import { SortingColumns } from '$lib/constants'
-  import type { DataOrderType, DataSortingColumn } from '$lib/types'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
@@ -28,18 +27,7 @@
     },
   ]
 
-  export let sortingColumn: DataSortingColumn = 'name'
-  export let orderType: DataOrderType = 'asc'
-  let orderTypes: Radio[] = [
-    {
-      label: 'A to Z (small to large)',
-      value: 'asc',
-    },
-    {
-      label: 'Z to A (large to small)',
-      value: 'desc',
-    },
-  ]
+  export let sortingColumn: string = SortingColumns[0].value
 
   export let bbox: [number, number, number, number] = undefined
 
@@ -48,12 +36,9 @@
   export let tagFilterOperatorType: 'and' | 'or' = undefined
   export let currentSearchUrl: string = undefined
 
-  $: sortIcon = orderType === 'asc' ? 'fas fa-arrow-down-short-wide' : 'fas fa-arrow-up-short-wide'
-
   $: isQueryEmpty = !query || query?.length === 0
   $: queryType, handleQueryTypeChanged()
   $: sortingColumn, fireChangeEvent('change', true)
-  $: orderType, fireChangeEvent('change', true)
   const handleQueryTypeChanged = () => {
     if (query === '') return
     fireChangeEvent('change', true)
@@ -145,25 +130,15 @@
   </PanelButton>
 
   <PanelButton
-    bind:icon={sortIcon}
+    icon="fas fa-arrow-down-short-wide"
     tooltip="Sort"
     width="200px">
-    <p class="title is-5 m-0 p-0">Sort settings</p>
-
-    <p class="subtitle is-6 pb-0 pt-2 my-1">Sort by</p>
+    <p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
     <Radios
       radios={SortingColumns}
       bind:value={sortingColumn}
       groupName="sortby"
-      isVertical={true} />
-
-    <p class="subtitle is-6 pb-0 pt-2 my-1">Ordering</p>
-
-    <Radios
-      bind:radios={orderTypes}
-      bind:value={orderType}
-      groupName="orderby"
       isVertical={true} />
   </PanelButton>
 

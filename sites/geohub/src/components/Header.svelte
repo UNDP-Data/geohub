@@ -12,8 +12,6 @@
 
   let isStyleShareVisible = false
 
-  const isReadonly = $page.data.readOnly
-
   $: showProgressBar = $indicatorProgress
 
   const shareLink = {
@@ -27,42 +25,42 @@
     },
   }
 
-  let links: HeaderLink[] = [
-    {
-      id: 'header-link-sidebar',
-      title: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
-      href: '#',
-      icon: 'fa-solid fa-table-columns pr-1',
-      callback: (id) => {
-        const link = links.find((l) => l.id === id)
-        if (drawerOpen) {
-          drawerOpen = false
-          link.title = 'Open sidebar'
-        } else {
-          drawerOpen = true
-          link.title = 'Close sidebar'
-        }
-        initLinks()
-      },
-    },
-    ...createHeaderLinks(['maps', 'dashboard', 'userguide']),
-  ]
-
   let finalLink: HeaderLink[] = []
 
   const initLinks = () => {
-    if (!isReadonly && $page.data.session && $layerList.length > 0) {
+    let links: HeaderLink[] = [
+      {
+        id: 'header-link-sidebar',
+        title: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
+        href: '#',
+        icon: 'fa-solid fa-table-columns pr-1',
+        callback: (id) => {
+          const link = links.find((l) => l.id === id)
+          if (drawerOpen) {
+            drawerOpen = false
+            link.title = 'Open sidebar'
+          } else {
+            drawerOpen = true
+            link.title = 'Close sidebar'
+          }
+          initLinks()
+        },
+      },
+      ...createHeaderLinks(['maps', 'dashboard', 'userguide']),
+    ]
+
+    if ($page.data.session && $layerList.length > 0) {
       finalLink = [links[0], shareLink, ...links.slice(1)]
     } else {
       finalLink = [...links]
     }
   }
   $: $layerList, initLinks()
+  $: drawerOpen, initLinks()
 </script>
 
 <Header
   bind:height
-  bind:showProgressBar
   region="UNDP's one stop shop for spatial data and analytics"
   siteTitle="GeoHub"
   url="https://geohub.data.undp.org"

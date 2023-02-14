@@ -3,7 +3,6 @@ import azblob from './azblob';
 import martin from './martin';
 import pgtileserv from './pgtileserv';
 import stac from './stac';
-import deleteStorage from './deleteStorage';
 
 const program = new Command();
 const version = require('../../package.json').version;
@@ -12,7 +11,6 @@ program
 	.addCommand(azblob)
 	.addCommand(martin)
 	.addCommand(pgtileserv)
-	.addCommand(stac)
-	.addCommand(deleteStorage);
+	.addCommand(stac);
 
 program.parse(process.argv);

@@ -14,12 +14,10 @@ import chroma from 'chroma-js'
 
 export class VectorTileData {
   private feature: StacItemFeature
-  private map: Map
   private url: string
   private metadata: VectorTileMetadata
 
-  constructor(map: Map, feature: StacItemFeature, metadata?: VectorTileMetadata) {
-    this.map = map
+  constructor(feature: StacItemFeature, metadata?: VectorTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
@@ -63,7 +61,12 @@ export class VectorTileData {
     }
   }
 
-  public add = async (layerType?: 'point' | 'heatmap', defaultColor?: string, targetLayer?: string) => {
+  public add = async (
+    map: Map,
+    layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring',
+    defaultColor?: string,
+    targetLayer?: string,
+  ) => {
     const vectorInfo = await this.getMetadata()
 
     const tileSourceId = this.feature.properties.id
@@ -76,7 +79,7 @@ export class VectorTileData {
     )
     const isPmtiles = this.url.startsWith('pmtiles://')
     let source: VectorSourceSpecification
-    if (vectorInfo.type) {
+    if (vectorInfo.type && ['pgtileserv', 'martin'].includes(vectorInfo.type.value)) {
       source = {
         type: 'vector',
         url: vectorInfo.url.replace('metadata.json', 'tile.json'),
@@ -97,8 +100,8 @@ export class VectorTileData {
       }
     }
 
-    if (!this.map.getSource(tileSourceId)) {
-      this.map.addSource(tileSourceId, source)
+    if (!map.getSource(tileSourceId)) {
+      map.addSource(tileSourceId, source)
     }
 
     const layerId = uuidv4()
@@ -199,9 +202,9 @@ export class VectorTileData {
     layer.minzoom = 0
     // layer.maxzoom = maxzoom
 
-    this.map.addLayer(layer)
+    map.addLayer(layer)
     const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val))
-    this.map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))
+    map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]))
 
     return {
       layer,

@@ -16,7 +16,10 @@ const connectionString = DATABASE_CONNECTION
  * - url = URL used for dataset search to filter available tags
  * @returns the list of key and value in tag table
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const session = await locals.getSession()
+  const user_email = session?.user.email
+
   const pool = new Pool({ connectionString })
   const client = await pool.connect()
   try {
@@ -30,7 +33,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
     let whereSql = ''
     if (currentQueryUrl) {
-      const whereExpressesion = await createDatasetSearchWhereExpression(new URL(currentQueryUrl), 'x')
+      const whereExpressesion = await createDatasetSearchWhereExpression(new URL(currentQueryUrl), 'x', user_email)
       whereSql = whereExpressesion.sql
       values = [...values, ...whereExpressesion.values]
     }

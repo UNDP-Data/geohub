@@ -1,8 +1,7 @@
 import { DatasetSearchQueryParams } from '$lib/constants'
 
-export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: string) => {
+export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: string, user_email?: string) => {
   let query = url.searchParams.get('query')
-  const storage_id = url.searchParams.get('storage_id')
   const bbox = url.searchParams.get('bbox')
   let bboxCoordinates: number[]
   if (bbox) {
@@ -27,6 +26,9 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
     })
   })
 
+  const _onlyStar = url.searchParams.get('staronly') || 'false'
+  const onlyStar = _onlyStar.toLowerCase() === 'true'
+
   const values = []
   if (query) {
     // normalise query text for to_tsquery function
@@ -49,24 +51,23 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
      OR to_tsvector(${tableAlias}.description) @@ to_tsquery($1)
      )`
     }
-    ${getStorageIdFilter(storage_id, values, tableAlias)}
     ${operator === 'and' ? getTagFilterAND(filters, values, tableAlias) : getTagFilterOR(filters, values, tableAlias)}
     ${getBBoxFilter(bboxCoordinates, values, tableAlias)}
+    ${
+      onlyStar && user_email
+        ? `
+    and exists (
+      SELECT dataset_id FROM geohub.dataset_favourite WHERE dataset_id=${tableAlias}.id AND user_email='${user_email}'
+    )
+    `
+        : ''
+    }
     `
 
   return {
     sql,
     values,
   }
-}
-
-const getStorageIdFilter = (storage_id: string, values: string[], tableAlias: string) => {
-  if (storage_id) {
-    values.push(storage_id)
-  } else {
-    return ''
-  }
-  return `AND ${tableAlias}.storage_id=$${values.length} `
 }
 
 const getTagFilterOR = (filters: { key?: string; value: string }[], values: string[], tableAlias: string) => {
