@@ -34,7 +34,7 @@
 <div class="columns">
   <div class="column">
     <div class="field">
-      <label class="label">Name</label>
+      <label class="label">Dataset name</label>
       <div class="control has-icons-right">
         <input
           class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
@@ -51,7 +51,7 @@
     </div>
 
     <div class="field">
-      <label class="label">Attribution</label>
+      <label class="label">Data providers</label>
       <div class="control has-icons-right">
         <input
           class="input {attribution.length > 0 ? 'is-success' : 'is-danger'}"
