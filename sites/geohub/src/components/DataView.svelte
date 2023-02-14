@@ -85,6 +85,7 @@
       const originUrl = new URL(url)
       const sdg_goal = originUrl.searchParams.get('sdg_goal')
       const type = originUrl.searchParams.get('type')
+      const provider = originUrl.searchParams.get('provider')
       const stac = originUrl.searchParams.get('stac')
       const starOnly = originUrl.searchParams.get('staronly')
       isFavouriteSearch = starOnly && starOnly.toLowerCase() === 'true' ? true : false
@@ -92,6 +93,7 @@
       const apiUrl = new URL(`${originUrl.origin}${originUrl.pathname}`)
       if (sdg_goal) apiUrl.searchParams.set('sdg_goal', sdg_goal)
       if (type) apiUrl.searchParams.set('type', type)
+      if (provider) apiUrl.searchParams.set('provider', provider)
       if (stac) apiUrl.searchParams.set('stac', stac)
 
       if (breadcrumbs.length === 1) {

@@ -60,8 +60,6 @@ paths:
                             type: string
                           is_raster:
                             type: boolean
-                          source:
-                            type: string
                           license:
                             type: string
                           createdat:

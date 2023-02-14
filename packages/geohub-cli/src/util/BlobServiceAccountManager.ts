@@ -205,6 +205,26 @@ class BlobServiceAccountManager {
 			dataUrl = `pmtiles://${url}`;
 		}
 
+		if (metadata.source) {
+			const providers = metadata.source.split(',');
+			providers.forEach((name) => {
+				let value = name.replace(/"/g, '').replace('_x000D_', '');
+				if (value === 'UNDP') {
+					value = 'United Nations Development Programme (UNDP)';
+				} else if (value === 'UNICEF') {
+					value = `United Nations Children's Fund (UNICEF)`;
+				}
+				value = value.trim();
+				value.split('\n').forEach((v) => {
+					v = v.trim();
+					tags.push({
+						key: 'provider',
+						value: v
+					});
+				});
+			});
+		}
+
 		const dataset: Dataset = {
 			id: generateHashKey(url),
 			url: dataUrl,
@@ -212,7 +232,6 @@ class BlobServiceAccountManager {
 			is_raster: isRaster,
 			description: metadata.description,
 			bounds: metadata.bounds,
-			source: metadata.source,
 			tags: tags,
 			createdat: properties.createdOn ? properties.createdOn.toISOString() : '',
 			updatedat: properties.lastModified ? properties.lastModified.toISOString() : ''

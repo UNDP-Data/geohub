@@ -15,7 +15,7 @@
 {#if category}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
-    class="container p-2"
+    class="container p-2 is-flex is-flex-direction-column is-justify-content-center"
     on:click={handleClick}>
     <figure class="category image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
       {#if category.icon.startsWith('fa')}

@@ -59,7 +59,6 @@ class StacManager {
 				is_raster: true,
 				name: collection.title || collection.id,
 				description: collection.description,
-				source: stacInfo.label,
 				license: collection.license,
 				bounds: bounds,
 				createdat: temporal[0],
@@ -77,7 +76,14 @@ class StacManager {
 			};
 
 			if (collection.providers) {
-				dataset.source = collection.providers.map((provider) => provider.name).join(', ');
+				if (collection.providers) {
+					collection.providers.forEach((provider) => {
+						dataset.tags?.push({
+							key: 'provider',
+							value: provider.name.trim()
+						});
+					});
+				}
 			}
 
 			if (collection.keywords) {

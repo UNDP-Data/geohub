@@ -162,29 +162,6 @@
             "id": "61a6d1f7-9638-4f3b-9b7b-c4ae9f6b1813"
           },
           {
-            "name": "source",
-            "comment": "data source",
-            "dataType": "character varying",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 78.66093444824219,
-              "widthDataType": 115.04789733886719,
-              "widthDefault": 60
-            },
-            "id": "d07a01f2-a9f7-413f-b660-5e464b63efb4"
-          },
-          {
             "name": "license",
             "comment": "data license",
             "dataType": "character varying",
@@ -281,7 +258,7 @@
           "active": false,
           "left": 125.1019,
           "top": 218.2722,
-          "zIndex": 5,
+          "zIndex": 9,
           "widthName": 101.83992004394531,
           "widthComment": 120
         },
@@ -982,7 +959,7 @@
           "active": false,
           "left": 144,
           "top": 574,
-          "zIndex": 120,
+          "zIndex": 6,
           "widthName": 103.26994323730469,
           "widthComment": 120
         },
@@ -1062,7 +1039,7 @@
             "6739c38f-4385-4b45-8c01-0f3948df0b7e"
           ],
           "x": 656.5107287353516,
-          "y": 355.2722,
+          "y": 281.6472,
           "direction": "right"
         },
         "end": {
@@ -1087,9 +1064,9 @@
           "columnIds": [
             "6739c38f-4385-4b45-8c01-0f3948df0b7e"
           ],
-          "x": 390.8063143676758,
-          "y": 218.2722,
-          "direction": "top"
+          "x": 656.5107287353516,
+          "y": 408.3972,
+          "direction": "right"
         },
         "end": {
           "tableId": "f3fc394f-5431-4fca-9cc5-17b546080624",
