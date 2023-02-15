@@ -13,14 +13,10 @@ export const actions = {
         return fail(403, { message: 'No permission' })
       }
       const data = await request.formData()
+
       const name = data.get('name') as string
       if (!name) {
         return fail(400, { type: 'danger', message: 'Dataset name is required' })
-      }
-
-      const source = data.get('source') as string
-      if (!source) {
-        return fail(400, { type: 'warning', message: 'Data prividers are required' })
       }
 
       const license = data.get('license') as string
@@ -36,7 +32,11 @@ export const actions = {
       const tagsStr = data.get('tags') as string
       const tags: Tag[] = tagsStr ? JSON.parse(tagsStr) : ''
 
-      const dataset = { name, source, license, description, tags: tags }
+      if (tags.filter((t) => t.key === 'provider').length === 0) {
+        return fail(400, { type: 'warning', message: 'Data provider is required' })
+      }
+
+      const dataset = { name, license, description, tags: tags }
       return dataset
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })

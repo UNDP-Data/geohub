@@ -149,6 +149,14 @@
                 class="fas fa-search"
                 aria-hidden="true" />
             </span>
+            {#if query.length > 0}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <span
+                class="clear-button"
+                on:click={() => (query = '')}>
+                <i class="fas fa-xmark sm" />
+              </span>
+            {/if}
           </p>
         </div>
         <div class="tag-list">
@@ -219,6 +227,14 @@
   }
 
   .tooltip {
+    .clear-button {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.8rem;
+      cursor: pointer;
+      color: gray;
+    }
+
     .tag-list {
       max-height: 250px;
       overflow-y: auto;
