@@ -14,7 +14,9 @@ export interface DatasetFeature {
     is_raster: boolean
     license?: string
     createdat?: string
+    created_user?: string
     updatedat?: string
+    updated_user?: string
     tags?: Tag[]
     no_stars?: number
     is_star?: boolean
