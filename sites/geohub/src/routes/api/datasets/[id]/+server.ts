@@ -53,7 +53,9 @@ export const GET: RequestHandler = async ({ params, locals }) => {
             x.is_raster, 
             x.license, 
             x.createdat, 
+            x.created_user,
             x.updatedat,
+            x.updated_user,
             y.tags,
             CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
             ${
@@ -91,11 +93,12 @@ export const GET: RequestHandler = async ({ params, locals }) => {
     const feature: DatasetFeature = res.rows[0].feature
 
     // add SAS token if it is Azure Blob source
-    const sasToken = generateAzureBlobSasToken(feature.properties.url)
     const tags: Tag[] = feature.properties.tags
     const type = tags?.find((tag) => tag.key === 'type')
-    if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
-    feature.properties.url = `${feature.properties.url}${sasToken}`
+    if (!(type && ['martin', 'pgtileserv', 'stac'].includes(type.value))) {
+      const sasToken = generateAzureBlobSasToken(feature.properties.url)
+      feature.properties.url = `${feature.properties.url}${sasToken}`
+    }
 
     return new Response(JSON.stringify(feature))
   } catch (err) {

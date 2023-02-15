@@ -64,7 +64,11 @@ paths:
                             type: string
                           createdat:
                             type: string
+                          created_user:
+                            type: string
                           updatedat:
+                            type: string
+                          updated_user:
                             type: string
                           tags:
                             type: array
@@ -1088,190 +1092,176 @@ paths:
                     type: integer
       operationId: get-datasets-id-star-count
       description: get the number of stars for a dataset
-  /continents:
+  '/datasets/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
     get:
-      summary: get continents
+      summary: Get dataset feature by ID
       tags:
-        - country
+        - search
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    continent_code:
-                      type: integer
-                    continent_name:
-                      type: string
-                  required:
-                    - continent_code
-                    - continent_name
-              examples:
-                Example:
-                  value:
-                    - continent_code: 2
-                      continent_name: Africa
-                    - continent_code: 19
-                      continent_name: Americas
-                    - continent_code: 0
-                      continent_name: Antarctica
-                    - continent_code: 142
-                      continent_name: Asia
-                    - continent_code: 150
-                      continent_name: Europe
-                    - continent_code: 9
-                      continent_name: Oceania
-      operationId: get-continents
-      description: get continents master data
-  /regions:
-    get:
-      summary: get regions
-      tags:
-        - country
-      responses: {}
-      operationId: get-regions
-      description: get regions master data from database
-      parameters:
-        - schema:
-            type: integer
-            enum:
-              - 2
-              - 19
-              - 0
-              - 142
-              - 150
-              - 9
-          in: query
-          name: continent
-          description: continent code. check code from /continents api
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
                 type: object
                 properties:
-                  region_code:
-                    type: integer
-                  region_name:
+                  type:
                     type: string
-                  continent_code:
-                    type: integer
-                  continent_name:
-                    type: string
-                required:
-                  - region_code
-                  - region_name
-                  - continent_code
-                  - continent_name
-            examples:
-              Example:
-                value:
-                  - region_code: 0
-                    region_name: Antarctica
-                    continent_code: 0
-                    continent_name: Antarctica
-                  - region_code: 53
-                    region_name: Australia and New Zealand
-                    continent_code: 9
-                    continent_name: Oceania
-                  - region_code: 143
-                    region_name: Central Asia
-                    continent_code: 142
-                    continent_name: Asia
-                  - region_code: 30
-                    region_name: Eastern Asia
-                    continent_code: 142
-                    continent_name: Asia
-                  - region_code: 151
-                    region_name: Eastern Europe
-                    continent_code: 150
-                    continent_name: Europe
-                  - region_code: 419
-                    region_name: Latin America and the Caribbean
-                    continent_code: 19
-                    continent_name: Americas
-                  - region_code: 54
-                    region_name: Melanesia
-                    continent_code: 9
-                    continent_name: Oceania
-                  - region_code: 57
-                    region_name: Micronesia
-                    continent_code: 9
-                    continent_name: Oceania
-                  - region_code: 15
-                    region_name: Northern Africa
-                    continent_code: 2
-                    continent_name: Africa
-                  - region_code: 21
-                    region_name: Northern America
-                    continent_code: 19
-                    continent_name: Americas
-                  - region_code: 154
-                    region_name: Northern Europe
-                    continent_code: 150
-                    continent_name: Europe
-                  - region_code: 61
-                    region_name: Polynesia
-                    continent_code: 9
-                    continent_name: Oceania
-                  - region_code: 35
-                    region_name: South-eastern Asia
-                    continent_code: 142
-                    continent_name: Asia
-                  - region_code: 34
-                    region_name: Southern Asia
-                    continent_code: 142
-                    continent_name: Asia
-                  - region_code: 39
-                    region_name: Southern Europe
-                    continent_code: 150
-                    continent_name: Europe
-                  - region_code: 202
-                    region_name: Sub-Saharan Africa
-                    continent_code: 2
-                    continent_name: Africa
-                  - region_code: 145
-                    region_name: Western Asia
-                    continent_code: 142
-                    continent_name: Asia
-                  - region_code: 155
-                    region_name: Western Europe
-                    continent_code: 150
-                    continent_name: Europe
-        description: ''
-  /countries:
-    get:
-      summary: get countries
-      tags:
-        - country
-      responses: {}
-      operationId: get-countries
-      description: get countries master data from database
-      parameters:
-        - schema:
-            type: integer
-            enum:
-              - 2
-              - 19
-              - 0
-              - 142
-              - 150
-              - 9
-          in: query
-          name: continent
-          description: continent code. check code from /continents api
-        - schema:
-            type: integer
-          in: query
-          name: region
-          description: region code. check code from /regions api
+                  geometry:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      coordinates:
+                        type: array
+                        items:
+                          type: number
+                  properties:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      url:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      is_raster:
+                        type: boolean
+                      license:
+                        type: string
+                      createdat:
+                        type: string
+                      created_user:
+                        type: string
+                      updatedat:
+                        type: string
+                      updated_user:
+                        type: string
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            value:
+                              type: string
+                      no_stars:
+                        type: integer
+                      is_star:
+                        type: boolean
+                x-examples:
+                  Example 1:
+                    type: Feature
+                    geometry:
+                      type: Polygon
+                      coordinates:
+                        - - - 34.7979108
+                            - -1.2417317
+                          - - 36.3692221
+                            - -1.2417317
+                          - - 36.3692221
+                            - -0.8327202
+                          - - 34.7979108
+                            - -0.8327202
+                          - - 34.7979108
+                            - -1.2417317
+                    properties:
+                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
+                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
+                      name: narwassco_vectortiles
+                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
+                      is_raster: false
+                      license: ''
+                      createdat: '2023-01-12T15:32:02+00:00'
+                      created_user: geohub-cli
+                      updatedat: '2023-01-12T15:32:02+00:00'
+                      updated_user: geohub-cli
+                      tags:
+                        - key: granularity
+                          value: Subnational
+                        - key: extent
+                          value: Kenya
+                        - key: year_value
+                          value: '2021'
+                        - key: type
+                          value: azure
+                        - key: container
+                          value: test
+                        - key: sdg_goal
+                          value: '6'
+                        - key: sdg_target
+                          value: safe water
+                        - key: theme
+                          value: drinking water
+                        - key: provider
+                          value: Ltd.
+                        - key: provider
+                          value: ©Narok Water and Sewerage Services Co.
+                      no_stars: 2
+                      is_star: true
+              examples:
+                Example 1:
+                  value:
+                    type: Feature
+                    geometry:
+                      type: Polygon
+                      coordinates:
+                        - - - 34.7979108
+                            - -1.2417317
+                          - - 36.3692221
+                            - -1.2417317
+                          - - 36.3692221
+                            - -0.8327202
+                          - - 34.7979108
+                            - -0.8327202
+                          - - 34.7979108
+                            - -1.2417317
+                    properties:
+                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
+                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
+                      name: narwassco_vectortiles
+                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
+                      is_raster: false
+                      license: ''
+                      createdat: '2023-01-12T15:32:02+00:00'
+                      created_user: geohub-cli
+                      updatedat: '2023-01-12T15:32:02+00:00'
+                      updated_user: geohub-cli
+                      tags:
+                        - key: granularity
+                          value: Subnational
+                        - key: extent
+                          value: Kenya
+                        - key: year_value
+                          value: '2021'
+                        - key: type
+                          value: azure
+                        - key: container
+                          value: test
+                        - key: sdg_goal
+                          value: '6'
+                        - key: sdg_target
+                          value: safe water
+                        - key: theme
+                          value: drinking water
+                        - key: provider
+                          value: Ltd.
+                        - key: provider
+                          value: ©Narok Water and Sewerage Services Co.
+                      no_stars: 2
+                      is_star: true
+      operationId: get-datasets-id
+      description: get dataset feature by dataset ID
 components:
   schemas:
     Tag:

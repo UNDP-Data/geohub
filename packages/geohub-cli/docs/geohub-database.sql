@@ -9,7 +9,9 @@ CREATE TABLE geohub.dataset
   license    character varying       ,
   bounds     geometry (Polygon, 4326) NOT NULL,
   createdat  timestamp with time zone NOT NULL,
+  created_user character varying(100) NOT NULL,
   updatedat  timestamp with time zone,
+  updated_user character varying(100)   ,
   PRIMARY KEY (id)
 );
 

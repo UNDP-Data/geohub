@@ -121,7 +121,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
             x.is_raster, 
             x.license, 
             x.createdat, 
+            x.created_user,
             x.updatedat,
+            x.updated_user,
             y.tags,
             CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
             ${
