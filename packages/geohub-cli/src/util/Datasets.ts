@@ -142,7 +142,6 @@ class Datasets {
 				dataset.name,
 				cleanText(dataset.description),
 				dataset.is_raster,
-				cleanText(dataset.source),
 				cleanText(dataset.license),
 				Buffer.from(geometry.toWkb()).toString('hex'),
 				dataset.createdat,
@@ -154,7 +153,7 @@ class Datasets {
 		return new Promise<Dataset[]>((resolve, reject) => {
 			const stream = client.query(
 				copyFrom(
-					'COPY geohub.dataset (id, url, name, description, is_raster, source, license, bounds, createdat, updatedat ) FROM STDIN'
+					'COPY geohub.dataset (id, url, name, description, is_raster, license, bounds, createdat, updatedat ) FROM STDIN'
 				)
 			);
 			const fileStream = fs.createReadStream(tsvFile);
@@ -172,10 +171,13 @@ class Datasets {
 		if (fs.existsSync(tsvFile)) {
 			fs.unlinkSync(tsvFile);
 		}
+		const exported: string[] = [];
 		datasets.forEach((dataset) => {
 			if (dataset.tags && dataset.tags.length > 0) {
 				dataset.tags.forEach((tag) => {
 					const values = [dataset.id, tag.id];
+					if (exported.includes(values.join(','))) return;
+					exported.push(values.join(','));
 					fs.appendFileSync(tsvFile, `${values.join('\t')}\n`);
 				});
 			}
@@ -219,15 +221,14 @@ class Datasets {
 			${dataset.bounds[2]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[1]}))`;
 		const query = {
 			text: `
-			INSERT INTO geohub.dataset (id, url, name, description, is_raster, source, license, bounds, createdat, updatedat) 
-			values ($1, $2, $3, $4, $5, $6, $7, ST_GeomFROMTEXT('${wkt}', 4326), $8::timestamptz, $9::timestamptz)`,
+			INSERT INTO geohub.dataset (id, url, name, description, is_raster, license, bounds, createdat, updatedat) 
+			values ($1, $2, $3, $4, $5, $6, ST_GeomFROMTEXT('${wkt}', 4326), $7::timestamptz, $8::timestamptz)`,
 			values: [
 				dataset.id,
 				dataset.url,
 				dataset.name,
 				cleanText(dataset.description),
 				dataset.is_raster,
-				cleanText(dataset.source),
 				cleanText(dataset.license),
 				dataset.createdat,
 				dataset.updatedat
@@ -258,7 +259,6 @@ class Datasets {
 			  name, 
 			  description, 
 			  is_raster, 
-			  source, 
 			  license, 
 			  bounds, 
 			  createdat, 
@@ -271,10 +271,9 @@ class Datasets {
 			  $4, 
 			  $5, 
 			  $6, 
-			  $7, 
 			  ST_GeomFROMTEXT('${wkt}', 4326), 
-			  $8::timestamptz, 
-			  $9::timestamptz
+			  $7::timestamptz, 
+			  $8::timestamptz
 			) 
 			ON CONFLICT (id)
 			DO
@@ -284,18 +283,16 @@ class Datasets {
 			  name=$3, 
 			  description=$4, 
 			  is_raster=$5, 
-			  source=$6, 
-			  license=$7, 
+			  license=$6, 
 			  bounds=ST_GeomFROMTEXT('${wkt}', 4326), 
-			  createdat=$8::timestamptz, 
-			  updatedat=$9::timestamptz`,
+			  createdat=$7::timestamptz, 
+			  updatedat=$8::timestamptz`,
 			values: [
 				dataset.id,
 				dataset.url,
 				dataset.name,
 				dataset.description,
 				dataset.is_raster,
-				dataset.source,
 				dataset.license,
 				dataset.createdat,
 				dataset.updatedat

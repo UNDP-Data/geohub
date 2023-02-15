@@ -23,7 +23,6 @@ class MartinManager {
 				is_raster: false,
 				name: `${layer.schema} ${cleanName(layer.table)}`,
 				description: `${layer.table} data in ${layer.schema} schema in PostGIS database`,
-				source: `United Nations Development Programme`,
 				bounds: layer.bounds,
 				createdat: now,
 				updatedat: now,
@@ -55,6 +54,10 @@ class MartinManager {
 					{
 						key: 'id',
 						value: layer.id
+					},
+					{
+						key: 'provider',
+						value: 'United Nations Development Programme (UNDP)'
 					}
 				]
 			};

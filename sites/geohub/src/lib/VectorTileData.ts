@@ -61,7 +61,12 @@ export class VectorTileData {
     }
   }
 
-  public add = async (map: Map, layerType?: 'point' | 'heatmap', defaultColor?: string, targetLayer?: string) => {
+  public add = async (
+    map: Map,
+    layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring',
+    defaultColor?: string,
+    targetLayer?: string,
+  ) => {
     const vectorInfo = await this.getMetadata()
 
     const tileSourceId = this.feature.properties.id

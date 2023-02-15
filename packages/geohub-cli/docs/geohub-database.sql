@@ -6,7 +6,6 @@ CREATE TABLE geohub.dataset
   name       character varying        NOT NULL,
   description     character varying       ,
   is_raster  boolean                  NOT NULL,
-  source     character varying       ,
   license    character varying       ,
   bounds     geometry (Polygon, 4326) NOT NULL,
   createdat  timestamp with time zone NOT NULL,
@@ -21,8 +20,6 @@ COMMENT ON COLUMN geohub.dataset.id IS 'md5 hash generated from URL';
 COMMENT ON COLUMN geohub.dataset.url IS 'stores URL for dataset. e.g., URL for azure blob, URL for mosaicjson';
 
 COMMENT ON COLUMN geohub.dataset.is_raster IS 'raster or vector';
-
-COMMENT ON COLUMN geohub.dataset.source IS 'data source';
 
 COMMENT ON COLUMN geohub.dataset.license IS 'data license';
 
@@ -126,3 +123,20 @@ COMMENT ON COLUMN geohub.dataset_favourite.user_email
 
 COMMENT ON COLUMN geohub.dataset_favourite.savedat
     IS 'timestamp which users saved';
+
+DROP TABLE IF EXISTS geohub.country;
+
+CREATE TABLE IF NOT EXISTS geohub.country
+(
+    iso_3 character varying  NOT NULL,
+    iso_code integer  NOT NULL,
+    iso_2 character varying NULL,
+    name character varying  NOT NULL,
+    region1_code integer NOT NULL,
+    region1_name character varying  NOT NULL,
+    region2_code integer NOT NULL,
+    region2_name character varying  NOT NULL,
+    region3_code integer NOT NULL,
+    region3_name character varying  NOT NULL,
+    CONSTRAINT country_pkey PRIMARY KEY (iso_3)
+)
