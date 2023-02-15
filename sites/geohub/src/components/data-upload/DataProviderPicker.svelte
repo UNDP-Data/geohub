@@ -39,12 +39,30 @@
     }
   }, 300)
 
+  const clear = () => {
+    query = ''
+    filterTagList = tagList
+    hideAll()
+  }
+
   const handleTagClicked = (value: Tag) => {
     if (!tags.find((t) => t.value === value.value)) {
       value.color = getBulmaTagColor()
       tags = [...tags, value]
     }
-    hideAll()
+    clear()
+  }
+
+  const handleProviderAdded = () => {
+    tags = [
+      ...tags,
+      {
+        key: TAG_KEY,
+        value: query.trim(),
+        color: getBulmaTagColor(),
+      },
+    ]
+    clear()
   }
 
   const handleEnterKey = (e: KeyboardEvent) => {
@@ -120,7 +138,11 @@
             <Notification
               type="info"
               showCloseButton={false}>
-              No provider found. Try another keyword.
+              No provider found. Try another keyword or create new provider by the below button.
+              <br /><br />
+              <button
+                class="button is-primary"
+                on:click={handleProviderAdded}>Add provider</button>
             </Notification>
           </div>
         {/if}
