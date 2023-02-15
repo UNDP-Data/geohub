@@ -135,7 +135,7 @@
         class="panel tooltip"
         bind:this={tooltipContent}>
         <p class="panel-heading">
-          {keys.find((t) => t.key === tag.key).label}
+          {keys.find((t) => t.key === tag.key)?.label ?? tag.key}
         </p>
         <div class="panel-block">
           <p class="control has-icons-left">

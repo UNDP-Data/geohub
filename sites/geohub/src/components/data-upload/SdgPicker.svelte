@@ -14,6 +14,13 @@
   let selectedSDGs: { [key: number]: boolean } = {}
   $: selectedSDGs, updateTags()
 
+  const initSelectedSDGs = () => {
+    tags?.forEach((t) => {
+      selectedSDGs[Number(t.value)] = true
+    })
+  }
+  initSelectedSDGs()
+
   const handleSDGSelected = (e) => {
     const sdg = e.detail.sdg
     const isSelected = e.detail.isSelected

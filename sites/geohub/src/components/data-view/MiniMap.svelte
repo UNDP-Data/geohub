@@ -5,16 +5,17 @@
   import type {
     RasterTileMetadata,
     StacCollection,
-    StacItemFeature,
-    StacItemFeatureCollection,
+    DatasetFeature,
+    DatasetFeatureCollection,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
+    StacItemFeatureCollection,
   } from '$lib/types'
   import { RasterTileData } from '$lib/RasterTileData'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Loader } from '@undp-data/svelte-undp-design'
 
-  export let feature: StacItemFeature
+  export let feature: DatasetFeature
   export let width = '100%'
   export let height = '100%'
   export let isLoadMap = false

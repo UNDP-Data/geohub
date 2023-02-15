@@ -1,6 +1,30 @@
-import type { Actions } from './$types'
-import { fail } from '@sveltejs/kit'
-import type { Tag } from '$lib/types'
+import type { Actions, PageServerLoad } from './$types'
+import { error, fail } from '@sveltejs/kit'
+import type { DatasetFeature, Tag } from '$lib/types'
+import { generateHashKey } from '$lib/server/helpers'
+
+export const load: PageServerLoad = async ({ locals, url }) => {
+  const session = await locals.getSession()
+  if (!session) throw error(403, { message: 'No permission' })
+  // const user = session?.user
+
+  const datasetUrl = url.searchParams.get('url')
+  if (!datasetUrl) return
+
+  const datasetId = generateHashKey(datasetUrl)
+
+  const apiUrl = `${url.origin}/api/datasets/${datasetId}`
+  const res = await fetch(apiUrl)
+  if (!res.ok) throw error(500, { message: res.statusText })
+  if (res.status === 404) {
+    return
+  }
+  const feature: DatasetFeature = await res.json()
+
+  return {
+    feature,
+  }
+}
 
 export const actions = {
   /**

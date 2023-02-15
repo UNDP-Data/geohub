@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { StacItemFeatureCollection } from '$lib/types'
+  import type { DatasetFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
@@ -38,7 +38,7 @@
   let isFilterByBBox = false
   let selectedTags: Tag[] = []
   let tagFilterOperatorType: 'and' | 'or' = 'and'
-  let DataItemFeatureCollection: StacItemFeatureCollection
+  let DataItemFeatureCollection: DatasetFeatureCollection
   let isFavouriteSearch = false
 
   $: currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
@@ -67,7 +67,7 @@
     try {
       $indicatorProgress = true
       const res = await fetch(link.href)
-      const json: StacItemFeatureCollection = await res.json()
+      const json: DatasetFeatureCollection = await res.json()
       if (json.features.length > 0) {
         json.features = [...DataItemFeatureCollection.features, ...json.features]
       }
@@ -150,7 +150,7 @@
       if (DataItemFeatureCollection) {
         DataItemFeatureCollection.features = []
       }
-      const json: StacItemFeatureCollection = await res.json()
+      const json: DatasetFeatureCollection = await res.json()
       DataItemFeatureCollection = json
     } finally {
       $indicatorProgress = false

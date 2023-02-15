@@ -1,20 +1,38 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { enhance } from '$app/forms'
   import Tags from '$components/data-upload/Tags.svelte'
   import SdgPicker from '$components/data-upload/SdgPicker.svelte'
   import CountryPicker from '$components/data-upload/CountryPicker.svelte'
-  import type { Tag } from '$lib/types'
+  import type { DatasetFeature, Tag } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
 
-  let name = ''
-  let description = ''
-  let license = ''
+  const feature: DatasetFeature = $page.data.feature
+
+  let name = feature?.properties.name ?? ''
+  let description = feature?.properties.description ?? ''
+  let license = feature?.properties.license ?? ''
   let tags = ''
-  let providers: Tag[] = []
-  let sdgs: Tag[] = []
-  let countries: Tag[] = []
-  let otherTags: Tag[] = []
+
+  const initTags = (key: 'provider' | 'sdg_goal' | 'country' | 'other') => {
+    const _tags: Tag[] = feature?.properties?.tags
+    if (key === 'other') {
+      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', 'type', 'container']
+      return _tags?.filter((t) => !keys.includes(t.key)) ?? []
+    } else {
+      let keys: string[] = [key]
+      if (key === 'country') {
+        keys = ['country', 'region', 'continent']
+      }
+      return _tags?.filter((t) => keys.includes(t.key)) ?? []
+    }
+  }
+
+  let providers: Tag[] = initTags('provider')
+  let sdgs: Tag[] = initTags('sdg_goal')
+  let countries: Tag[] = initTags('country')
+  let otherTags: Tag[] = initTags('other')
   let errorMessage: { type: 'info' | 'warning' | 'danger'; message: string }
 
   let licenses = [

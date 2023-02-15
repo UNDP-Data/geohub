@@ -19,12 +19,34 @@
   let regionsMaster: Region[] = []
   let countriesMaster: Country[] = []
 
+  const initSelectedCountries = () => {
+    tags?.forEach((t) => {
+      if (t.key === 'continent') {
+        const continenet = continentsMaster.find((c) => c.continent_name === t.value)
+        if (continenet) {
+          selectedContinent = continenet.continent_code
+        }
+      } else if (t.key === 'region') {
+        const region = regionsMaster.find((r) => r.region_name === t.value)
+        if (region) {
+          selectedRegion = region.region_code
+        }
+      } else if (t.key === 'country') {
+        const country = countriesMaster.find((c) => c.iso_3 === t.value)
+        if (country) {
+          selectedCountries = [...selectedCountries, country]
+        }
+      }
+    })
+  }
+
   const getContinents = async () => {
     if (continentsMaster.length === 0) {
       const res = await fetch(`/api/continents`)
       const json = await res.json()
       continentsMaster = json as Continent[]
     }
+    initSelectedCountries()
     return continentsMaster
   }
 
@@ -33,6 +55,7 @@
       const res = await fetch(`/api/regions`)
       const json = await res.json()
       regionsMaster = json as Region[]
+      initSelectedCountries()
     }
     if (continent_code !== -1) {
       return regionsMaster.filter((r) => r.continent_code === continent_code)
@@ -46,6 +69,7 @@
       const res = await fetch(`/api/countries`)
       const json = await res.json()
       countriesMaster = json as Country[]
+      initSelectedCountries()
     }
 
     let filtered = countriesMaster
