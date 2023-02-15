@@ -10,7 +10,7 @@
 
   let links: HeaderLink[] = createHeaderLinks(['home', 'userguide'])
 
-  let title = 'GeoHub | Dashboards'
+  let title = 'GeoHub | Data'
 </script>
 
 <svelte:head>
