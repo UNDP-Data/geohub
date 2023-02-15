@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { AssetOptions, BannerMessage, StacItemFeature } from '$lib/types'
+  import type { AssetOptions, BannerMessage, DatasetFeature } from '$lib/types'
   import { Accordion } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
@@ -8,7 +8,7 @@
   import { loadMap } from '$lib/helper'
 
   export let asset: AssetOptions
-  export let feature: StacItemFeature
+  export let feature: DatasetFeature
   export let isExpanded = false
 
   let layerLoading = false

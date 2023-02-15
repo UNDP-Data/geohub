@@ -1,17 +1,17 @@
 import { v4 as uuidv4 } from 'uuid'
-import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, MAP_ATTRIBUTION, STAC_MINIMUM_ZOOM } from './constants'
+import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, STAC_MINIMUM_ZOOM } from './constants'
 import { createAttributionFromTags, getBase64EncodedUrl, getRandomColormap } from './helper'
-import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
+import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import chroma from 'chroma-js'
 
 export class MosaicJsonData {
-  private feature: StacItemFeature
+  private feature: DatasetFeature
   private url: string
   private assetName: string
 
-  constructor(feature: StacItemFeature, assetUrl: string, assetName: string) {
+  constructor(feature: DatasetFeature, assetUrl: string, assetName: string) {
     this.feature = feature
     this.url = assetUrl
     this.assetName = assetName

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { DEFAULT_LINE_WIDTH } from './constants'
-import type { StacItemFeature, VectorTileMetadata } from './types'
+import type { DatasetFeature, VectorTileMetadata } from './types'
 import {
   LngLatBounds,
   type FillLayerSpecification,
@@ -13,11 +13,11 @@ import {
 import chroma from 'chroma-js'
 
 export class VectorTileData {
-  private feature: StacItemFeature
+  private feature: DatasetFeature
   private url: string
   private metadata: VectorTileMetadata
 
-  constructor(feature: StacItemFeature, metadata?: VectorTileMetadata) {
+  constructor(feature: DatasetFeature, metadata?: VectorTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata

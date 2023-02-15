@@ -3,13 +3,11 @@ import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
-import type { StacLink } from '$lib/types'
+import type { DatasetFeatureCollection, StacLink, Tag } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
-import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
-import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
+import { generateAzureBlobSasToken } from '$lib/server/helpers'
 
 /**
  * Datasets search API
@@ -158,7 +156,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     }
     // console.log(sql)
     const res = await client.query(sql)
-    const geojson = res.rows[0].geojson
+    const geojson: DatasetFeatureCollection = res.rows[0].geojson
     if (!geojson.features) {
       geojson.features = []
     }
@@ -204,11 +202,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     geojson.totalCount = await getTotalCount(client, whereExpressesion.sql, values)
 
     // add SAS token if it is Azure Blob source
-    const sasToken = generateAzureBlobSasToken()
     geojson.features.forEach((feature) => {
-      const tags: [{ key: string; value: string }] = feature.properties.tags
+      const tags: Tag[] = feature.properties.tags
       const type = tags?.find((tag) => tag.key === 'type')
       if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
+      const sasToken = generateAzureBlobSasToken(feature.properties.url)
       feature.properties.url = `${feature.properties.url}${sasToken}`
     })
 
@@ -236,25 +234,4 @@ const getTotalCount = async (client: PoolClient, whereSql: string, values: strin
   const res = await client.query(sql)
   const count = Number(res.rows[0]['count'])
   return count
-}
-
-const generateAzureBlobSasToken = () => {
-  const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
-  // create storage container
-  const blobServiceClient = new BlobServiceClient(
-    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
-    sharedKeyCredential,
-  )
-
-  // generate account SAS token for vector tiles. This is needed because the
-  // blob level SAS tokens have the blob name encoded inside the SAS token and the
-  // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
-
-  const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
-    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
-    AccountSASPermissions.parse('r'),
-    'o',
-  )
-  const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
-  return ACCOUNT_SAS_TOKEN_URL.search
 }

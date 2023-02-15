@@ -6,17 +6,17 @@ import {
   getRandomColormap,
   paramsToQueryString,
 } from './helper'
-import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
+import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import chroma from 'chroma-js'
 
 export class RasterTileData {
-  private feature: StacItemFeature
+  private feature: DatasetFeature
   private url: string
   private metadata: RasterTileMetadata
 
-  constructor(feature: StacItemFeature, metadata?: RasterTileMetadata) {
+  constructor(feature: DatasetFeature, metadata?: RasterTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata

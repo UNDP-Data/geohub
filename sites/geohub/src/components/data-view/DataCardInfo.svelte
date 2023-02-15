@@ -1,7 +1,7 @@
 <script lang="ts">
   import { marked } from 'marked'
   import Time from 'svelte-time'
-  import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
+  import type { RasterTileMetadata, DatasetFeature, VectorTileMetadata } from '$lib/types'
   import { CtaLink, Download } from '@undp-data/svelte-undp-design'
   import Star from './Star.svelte'
 
@@ -10,7 +10,7 @@
 
   const dispatch = createEventDispatcher()
 
-  export let feature: StacItemFeature = undefined
+  export let feature: DatasetFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean

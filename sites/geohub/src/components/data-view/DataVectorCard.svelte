@@ -1,6 +1,7 @@
 <script lang="ts">
   import type {
     BannerMessage,
+    DatasetFeature,
     RasterTileMetadata,
     StacItemFeature,
     VectorLayerTileStatLayer,
@@ -20,7 +21,7 @@
   const dispatch = createEventDispatcher()
 
   export let layer: VectorLayerTileStatLayer
-  export let feature: StacItemFeature
+  export let feature: DatasetFeature
   export let isExpanded = false
   export let defaultColor: string
   export let metadata: RasterTileMetadata | VectorTileMetadata

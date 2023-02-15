@@ -3,10 +3,11 @@
   import type {
     AssetOptions,
     RasterTileMetadata,
-    StacItemFeature,
-    StacItemFeatureCollection,
+    DatasetFeature,
+    DatasetFeatureCollection,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
+    StacItemFeatureCollection,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Accordion } from '@undp-data/svelte-undp-design'
@@ -18,7 +19,7 @@
   import DataVectorCard from '$components/data-view/DataVectorCard.svelte'
   import { loadMap } from '$lib/helper'
 
-  export let feature: StacItemFeature
+  export let feature: DatasetFeature
   export let isExpanded: boolean
   export let isStarOnly = false
 

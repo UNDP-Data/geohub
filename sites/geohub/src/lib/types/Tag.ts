@@ -1,6 +1,6 @@
 export interface Tag {
   key: string
   value: string
-  count: number
+  count?: number
   color?: string
 }

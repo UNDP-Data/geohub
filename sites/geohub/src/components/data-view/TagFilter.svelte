@@ -6,6 +6,7 @@
   import { Button, Checkbox, Radios, Loader } from '@undp-data/svelte-undp-design'
   import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
   import SelectedTags from './SelectedTags.svelte'
+  import { getBulmaTagColor } from '$lib/helper'
 
   let tags: { [key: string]: Tag[] } = {}
 
@@ -22,22 +23,6 @@
       label: 'Match at least a tag selected',
       value: 'or',
     },
-  ]
-
-  const colorOptions = [
-    'is-black',
-    'is-primary',
-    'is-link',
-    'is-info',
-    'is-success',
-    'is-warning',
-    'is-danger',
-    'is-primary is-light',
-    'is-link is-light',
-    'is-info is-light',
-    'is-success is-light',
-    'is-warning is-light',
-    'is-danger is-light',
   ]
 
   onMount(async () => {
@@ -65,7 +50,7 @@
       selectedTags = [...selectedTags]
     } else {
       if (!value.color) {
-        value.color = getTagColor()
+        value.color = getBulmaTagColor()
       }
       selectedTags = [...selectedTags, value]
     }
@@ -91,11 +76,6 @@
 
   const getTagSearchKey = (key: string) => {
     return tagSearchKeys?.find((t) => t.key === key)
-  }
-
-  const getTagColor = () => {
-    const index = Math.floor(Math.random() * colorOptions.length)
-    return colorOptions[index]
   }
 </script>
 
