@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.0.8
+
+### Patch Changes
+
+- 704c2b7: feat: remove source column from table and create tag for provider
+
 ## 1.0.7
 
 ### Patch Changes

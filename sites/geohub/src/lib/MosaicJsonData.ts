@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, MAP_ATTRIBUTION, STAC_MINIMUM_ZOOM } from './constants'
-import { getBase64EncodedUrl, getRandomColormap } from './helper'
+import { createAttributionFromTags, getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { BandMetadata, RasterTileMetadata, StacItemFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
@@ -154,10 +154,7 @@ export class MosaicJsonData {
 
     const maxzoom = Number(tilejson.maxzoom && tilejson.maxzoom <= 24 ? tilejson.maxzoom : 24)
 
-    let attribution = MAP_ATTRIBUTION
-    if (this.feature.properties.source) {
-      attribution = this.feature.properties.source
-    }
+    const attribution = createAttributionFromTags(tags)
 
     const source: RasterSourceSpecification = {
       type: 'raster',

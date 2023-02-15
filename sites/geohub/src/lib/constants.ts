@@ -13,7 +13,7 @@ export const STAC_MINIMUM_ZOOM = 5
 export const UNIQUE_VALUE_THRESHOLD = 25
 
 export const MAP_ATTRIBUTION =
-  '<a target="_top" rel="noopener" href="http://undp.org">© United Nations Development Programme</a>'
+  '<a target="_top" rel="noopener" href="http://undp.org">United Nations Development Programme (UNDP)</a>'
 
 export enum TabNames {
   ANALYZE = 'Analyze',
@@ -145,6 +145,11 @@ export const DataCategories: Breadcrumb[] = [
     url: '/api/tags?key=sdg_goal',
   },
   {
+    name: 'UNDP',
+    icon: 'assets/undp-images/undp-logo.png',
+    url: '/api/datasets?provider=undp',
+  },
+  {
     name: 'Microsoft Planetary',
     icon: 'assets/microsoft.png',
     url: '/api/datasets?stac=microsoft-pc',
@@ -227,6 +232,10 @@ export const tagSearchKeys = [
   {
     key: 'schema',
     label: 'Schema',
+  },
+  {
+    key: 'provider',
+    label: 'Data Provider',
   },
   {
     key: 'type',
