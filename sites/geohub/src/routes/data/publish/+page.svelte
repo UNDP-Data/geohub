@@ -9,7 +9,8 @@
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
 
   const feature: DatasetFeature = $page.data.feature
-
+  const isNew: boolean = $page.data.isNew ?? true
+  console.log(feature)
   let name = feature?.properties.name ?? ''
   let description = feature?.properties.description ?? ''
   let license = feature?.properties.license ?? ''
@@ -33,7 +34,7 @@
   let sdgs: Tag[] = initTags('sdg_goal')
   let countries: Tag[] = initTags('country')
   let otherTags: Tag[] = initTags('other')
-  let errorMessage: { type: 'info' | 'warning' | 'danger'; message: string }
+  let message: { type: 'info' | 'warning' | 'danger'; message: string }
 
   let licenses = [
     'Creative Commons Zero 1.0 Universal',
@@ -61,17 +62,33 @@
   $: otherTags, updateTags()
   $: providers, updateTags()
   const updateTags = () => {
+    const excludes = [
+      'provider',
+      'sdg_goal',
+      'country',
+      'region',
+      'continent',
+      'extent',
+      'granularity',
+      'resolution',
+      'year_value',
+      'sdg_target',
+      'theme',
+    ]
+    const originalTags = feature?.properties?.tags?.filter((t) => !excludes.includes(t.key))
+
     const joined = sdgs.concat(
       providers,
       countries,
       otherTags.filter((t) => t.value.length > 0),
+      originalTags,
     )
 
     tags = JSON.stringify(joined)
   }
 </script>
 
-<p class="title is-4">Publish data in GeoHub</p>
+<p class="title is-4">{isNew ? 'Publish' : 'Update'} metadata of the dataset</p>
 <form
   method="POST"
   action="?/publish"
@@ -79,10 +96,10 @@
     return async ({ result, update }) => {
       if (result.status === 200) {
         console.log(result.data)
-        await update()
-        errorMessage = undefined
+        // await update()
+        message = { type: 'info', message: 'Dataset was registered successfully.' }
       } else {
-        errorMessage = result.data
+        message = result.data
       }
     }
   }}>
@@ -91,14 +108,14 @@
       <button
         class="button is-primary"
         disabled={!(name && license && description && providers.length > 0)}
-        type="submit">Publish</button>
+        type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
   </div>
 
-  {#if errorMessage}
+  {#if message}
     <Notification
-      type={errorMessage.type}
-      showCloseButton={false}>{errorMessage.message}</Notification>
+      type={message.type}
+      showCloseButton={false}>{message.message}</Notification>
   {/if}
 
   <div class="field">
@@ -215,9 +232,33 @@
       <button
         class="button is-primary"
         disabled={!(name && license && description && providers.length > 0)}
-        type="submit">Publish</button>
+        type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
   </div>
+
+  <input
+    class="input"
+    type="hidden"
+    name="geometry"
+    value={feature?.geometry ? JSON.stringify(feature?.geometry) : ''} />
+
+  <input
+    class="input"
+    type="hidden"
+    name="id"
+    value={feature?.properties?.id ?? ''} />
+
+  <input
+    class="input"
+    type="hidden"
+    name="url"
+    value={feature?.properties?.url ?? ''} />
+
+  <input
+    class="input"
+    type="hidden"
+    name="is_raster"
+    value={feature?.properties?.is_raster ?? ''} />
 
   <input
     class="input"

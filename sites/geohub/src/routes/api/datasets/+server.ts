@@ -202,11 +202,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     geojson.totalCount = await getTotalCount(client, whereExpressesion.sql, values)
 
     // add SAS token if it is Azure Blob source
-    const sasToken = generateAzureBlobSasToken()
     geojson.features.forEach((feature) => {
       const tags: Tag[] = feature.properties.tags
       const type = tags?.find((tag) => tag.key === 'type')
       if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
+      const sasToken = generateAzureBlobSasToken(feature.properties.url)
       feature.properties.url = `${feature.properties.url}${sasToken}`
     })
 

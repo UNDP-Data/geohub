@@ -1,14 +1,20 @@
 import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
+import {
+  AZURE_STORAGE_ACCOUNT,
+  AZURE_STORAGE_ACCESS_KEY,
+  AZURE_STORAGE_ACCOUNT_UPLOAD,
+  AZURE_STORAGE_ACCESS_KEY_UPLOAD,
+} from '$lib/server/variables/private'
 import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 
-export const generateAzureBlobSasToken = () => {
-  const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
+export const generateAzureBlobSasToken = (url: string) => {
+  const account = url.indexOf(AZURE_STORAGE_ACCOUNT) !== -1 ? AZURE_STORAGE_ACCOUNT : AZURE_STORAGE_ACCOUNT_UPLOAD
+  const accessKey =
+    url.indexOf(AZURE_STORAGE_ACCOUNT) !== -1 ? AZURE_STORAGE_ACCESS_KEY : AZURE_STORAGE_ACCESS_KEY_UPLOAD
+
+  const sharedKeyCredential = new StorageSharedKeyCredential(account, accessKey)
   // create storage container
-  const blobServiceClient = new BlobServiceClient(
-    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
-    sharedKeyCredential,
-  )
+  const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential)
 
   // generate account SAS token for vector tiles. This is needed because the
   // blob level SAS tokens have the blob name encoded inside the SAS token and the

@@ -4,6 +4,7 @@ const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import { generateAzureBlobSasToken } from '$lib/server/helpers'
+import type { DatasetFeature, Tag } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
 export const GET: RequestHandler = async ({ params, locals }) => {
@@ -87,11 +88,11 @@ export const GET: RequestHandler = async ({ params, locals }) => {
         status: 404,
       })
     }
-    const feature = res.rows[0].feature
+    const feature: DatasetFeature = res.rows[0].feature
 
     // add SAS token if it is Azure Blob source
-    const sasToken = generateAzureBlobSasToken()
-    const tags: [{ key: string; value: string }] = feature.properties.tags
+    const sasToken = generateAzureBlobSasToken(feature.properties.url)
+    const tags: Tag[] = feature.properties.tags
     const type = tags?.find((tag) => tag.key === 'type')
     if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
     feature.properties.url = `${feature.properties.url}${sasToken}`
