@@ -149,7 +149,6 @@ jobs:
           npm install --omit=dev
           cp package.json build/.
           mv node_modules build/.
-          mv build/client/docs build/prerendered/docs
           mv .env build/.
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
