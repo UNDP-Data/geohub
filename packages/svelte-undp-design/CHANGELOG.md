@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.0.16
+
+### Patch Changes
+
+- c060dd9: update storybook version
+- 4230281: fixed bug of Download componenent. Also, deleted storybook from GeoHub's static folder
+
 ## 0.0.15
 
 ### Patch Changes
