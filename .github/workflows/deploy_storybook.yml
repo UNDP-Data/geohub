@@ -2,7 +2,7 @@ name: Deploy svelte UNDP design storybook
 
 on:
   push:
-    # branches: [develop]
+    branches: [develop]
   pull_request:
   workflow_dispatch:
 
