@@ -30,7 +30,7 @@ jobs:
           pnpm --filter="./packages/svelte-undp-design build-storybook
 
       - name: deploy storybook to Blob container
-        if: ${{ (github.ref == 'refs/heads/develop') }}
+        # if: ${{ (github.ref == 'refs/heads/develop') }}
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: packages/svelte-undp-design/storybook-static
