@@ -3,7 +3,7 @@ import type { Map } from 'maplibre-gl'
 import { getLayerStyle } from './getLayerStyle'
 import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
 
-export const getLayerProperties = (map: Map, layer: Layer, inLegend = false) => {
+export const getLayerProperties = (map: Map, layer: Layer, inLegend = true) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
 
