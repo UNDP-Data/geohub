@@ -275,9 +275,9 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
       title: 'GeoHub API documentation',
       url: 'https://geohub.data.undp.org/api/docs/index.html',
     },
-    {
-      title: 'Svelte UNDP design sytem',
-      url: 'https://geohub.data.undp.org/storybook/index.html',
-    },
+    // {
+    //   title: 'Svelte UNDP design sytem',
+    //   url: 'https://geohub.data.undp.org/storybook/index.html',
+    // },
   ],
 }

@@ -19,8 +19,8 @@
 		}
 	};
 
-	const fileUrl = new URL(url);
-	const filePath = fileUrl.pathname.split('/');
+	const fileUrl = url.split('?')[0];
+	const filePath = fileUrl.split('/');
 	const fileName = filePath[filePath.length - 1];
 	if (!title) {
 		title = fileName;
@@ -35,8 +35,8 @@
 
 	const getFileSize = () => {
 		return new Promise<void>((resolve, reject) => {
-			const fileUrl = new URL(url.replace('pmtiles://', ''));
-			const filePath = fileUrl.pathname.split('/');
+			const fileUrl = url.replace('pmtiles://', '');
+			const filePath = fileUrl.split('/');
 			let bytes = 'N/A';
 			fetch(fileUrl.toString()).then((res) => {
 				if (res.ok) {
