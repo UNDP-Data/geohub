@@ -262,8 +262,8 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
       url: 'https://geohub.data.undp.org/dashboard/electricity',
     },
     {
-      title: 'Documentation',
-      url: 'https://geohub.data.undp.org/docs/index.html',
+      title: 'User Guide',
+      url: 'https://docs.undpgeohub.org',
     },
   ],
   'For Developers': [
@@ -273,7 +273,7 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
     },
     {
       title: 'GeoHub API documentation',
-      url: 'https://docs.undpgeohub.org',
+      url: '/api/docs/index.html',
     },
     {
       title: 'Svelte UNDP design sytem',

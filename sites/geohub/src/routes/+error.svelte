@@ -23,7 +23,7 @@
 
 <Header
   region="UNDP's one stop shop for spatial data and analytics"
-  siteTitle="GeoHub dashboards"
+  siteTitle="GeoHub"
   url="https://geohub.data.undp.org"
   logoUrl="assets/undp-images/undp-logo-blue.svg"
   isPositionFixed={false}
@@ -48,4 +48,8 @@
   lang="scss">
   @import '../styles/geohubstyle.scss';
   @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+
+  :global(.menu-item) {
+    margin: 0.75rem 1.75rem 0.75rem 0 !important;
+  }
 </style>
