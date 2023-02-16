@@ -37,5 +37,4 @@ jobs:
           container_name: svelte-undp-design
           connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_UPLOAD }}
           # WARNING: this will overwrite existing blobs in your blob storage
-          overwrite: "true"
           sync: "true"
