@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.0.9
+
+### Patch Changes
+
+- 0988a8c: added created_user and updated_user in dataset table
+
 ## 1.0.8
 
 ### Patch Changes
