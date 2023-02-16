@@ -12,6 +12,7 @@
   export let decimalPosition = undefined
   export let fieldType: string = undefined
   export let textFieldValue
+  export let inLegend
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
@@ -167,6 +168,7 @@
 </script>
 
 <PropertySelect
+  bind:inLegend
   bind:showEmptyFields
   bind:propertySelectValue={textFieldValue}
   {layer}
