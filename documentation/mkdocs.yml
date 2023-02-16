@@ -2,13 +2,13 @@ site_name: GeoHub
 site_description: UNDP's one stop shop for spatial data and analytics
 
 docs_dir: docs
-site_dir: ../sites/geohub/static/docs
+site_dir: site
 
 # Repository
 repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
 edit_uri: https://github.com/undp-data/geohub/blob/main/documentation/docs
-site_url: https://geohub.data.undp.org/docs/
+site_url: https://docs.undpgeohub.org
 
 # Copyright
 copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Development Programme</a>
