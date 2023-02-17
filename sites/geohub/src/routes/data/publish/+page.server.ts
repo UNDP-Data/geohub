@@ -1,8 +1,18 @@
 import type { Actions, PageServerLoad } from './$types'
 import { error, fail } from '@sveltejs/kit'
 import type { DatasetFeature, Tag } from '$lib/types'
-import { generateHashKey, getRasterMetadata, getVectorMetadata, isRasterExtension } from '$lib/server/helpers'
+import {
+  generateHashKey,
+  getRasterMetadata,
+  getVectorMetadata,
+  isRasterExtension,
+  upsertDataset,
+} from '$lib/server/helpers'
 
+/**
+ * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
+ * to generate Feature geojson object for data updating.
+ */
 export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
   if (!session) throw error(403, { message: 'No permission' })
@@ -11,6 +21,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   if (!datasetUrl) throw error(400, { message: `url on query param is required.` })
 
   const datasetId = generateHashKey(datasetUrl)
+
+  const names = new URL(datasetUrl).pathname.split('.')
+  const extention = names[names.length - 1]
+  const isPmtiles = extention.toLowerCase() === 'pmtiles' ? true : false
 
   const apiUrl = `${url.origin}/api/datasets/${datasetId}`
   const res = await fetch(apiUrl)
@@ -40,7 +54,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       },
       properties: {
         id: datasetId,
-        url: datasetUrl,
+        url: `${isPmtiles ? 'pmtiles://' : ''}${datasetUrl}`,
         name: metadata.name,
         description: metadata.description,
         is_raster,
@@ -53,7 +67,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     }
   }
 
+  // delete SAS token from URL
   const feature: DatasetFeature = await res.json()
+  feature.properties.url = removeSasToken(feature.properties.url)
 
   return {
     feature,
@@ -63,7 +79,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 export const actions = {
   /**
-   * An action to get SAS URL for data uploading
+   * An action to update / register dataset metadata
    */
   publish: async ({ request, locals }) => {
     try {
@@ -95,19 +111,34 @@ export const actions = {
         return fail(400, { type: 'warning', message: 'Data provider is required' })
       }
 
-      const id = data.get('id') as string
-      const url = data.get('url') as string
-      const is_raster = data.get('is_raster') === 'true' ? true : false
-      const geometry = data.get('geometry') ? JSON.parse(data.get('geometry')) : ''
+      const featureString = data.get('feature') as string
+      const dataset: DatasetFeature = JSON.parse(featureString)
+      dataset.properties.name = name
+      dataset.properties.license = license
+      dataset.properties.description = description
+      dataset.properties.tags = tags
 
-      const dataset: DatasetFeature = {
-        type: 'Feature',
-        geometry: geometry,
-        properties: { id, url, name, license, description, is_raster, tags: tags },
+      const user_email = session?.user.email
+      const now = new Date().toISOString()
+      if (!dataset.properties.created_user) {
+        dataset.properties.created_user = user_email
+        dataset.properties.createdat = now
       }
+      dataset.properties.updated_user = user_email
+      dataset.properties.updatedat = now
+      dataset.properties.url = decodeURI(dataset.properties.url)
+
+      await upsertDataset(dataset)
+
       return dataset
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
     }
   },
 } satisfies Actions
+
+const removeSasToken = (url) => {
+  const isPmtiles = url.indexOf('pmtiles://') !== -1 ? true : false
+  const _url = new URL(url.replace('pmtiles://', ''))
+  return `${isPmtiles ? 'pmtiles://' : ''}${_url.origin}${_url.pathname}`
+}
