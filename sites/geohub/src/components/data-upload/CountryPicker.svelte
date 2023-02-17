@@ -12,33 +12,12 @@
 
   let selectedContinent = -1
   let selectedRegion = -1
-  let selectedCountries: Country[] = []
+  let selectedCountries: Country[]
   let query = ''
 
   let continentsMaster: Continent[] = []
   let regionsMaster: Region[] = []
   let countriesMaster: Country[] = []
-
-  const initSelectedCountries = () => {
-    tags?.forEach((t) => {
-      if (t.key === 'continent') {
-        const continenet = continentsMaster.find((c) => c.continent_name === t.value)
-        if (continenet) {
-          selectedContinent = continenet.continent_code
-        }
-      } else if (t.key === 'region') {
-        const region = regionsMaster.find((r) => r.region_name === t.value)
-        if (region) {
-          selectedRegion = region.region_code
-        }
-      } else if (t.key === 'country') {
-        const country = countriesMaster.find((c) => c.iso_3 === t.value)
-        if (country) {
-          selectedCountries = [...selectedCountries, country]
-        }
-      }
-    })
-  }
 
   const getContinents = async () => {
     if (continentsMaster.length === 0) {
@@ -46,7 +25,6 @@
       const json = await res.json()
       continentsMaster = json as Continent[]
     }
-    initSelectedCountries()
     return continentsMaster
   }
 
@@ -55,7 +33,6 @@
       const res = await fetch(`/api/regions`)
       const json = await res.json()
       regionsMaster = json as Region[]
-      initSelectedCountries()
     }
     if (continent_code !== -1) {
       return regionsMaster.filter((r) => r.continent_code === continent_code)
@@ -69,7 +46,20 @@
       const res = await fetch(`/api/countries`)
       const json = await res.json()
       countriesMaster = json as Country[]
-      initSelectedCountries()
+
+      tags?.forEach((t) => {
+        if (t.key === 'country') {
+          const country = countriesMaster.find((c) => c.iso_3 === t.value)
+          if (country) {
+            if (!selectedCountries) {
+              selectedCountries = []
+            }
+            if (!selectedCountries?.find((c) => c.iso_3 === t.value)) {
+              selectedCountries = [...selectedCountries, country]
+            }
+          }
+        }
+      })
     }
 
     let filtered = countriesMaster
@@ -114,6 +104,9 @@
   const handleCountrySelected = (e) => {
     const country = e.detail.country
     const isSelected = e.detail.isSelected
+    if (!selectedCountries) {
+      selectedCountries = []
+    }
     if (isSelected) {
       selectedCountries.push(country)
     } else {
@@ -123,9 +116,9 @@
       }
     }
     selectedCountries = [...selectedCountries]
+    updateTags()
   }
 
-  $: selectedCountries, updateTags()
   const updateTags = () => {
     tags = []
 
@@ -244,7 +237,7 @@
               {#each rows as country}
                 <CountryCard
                   bind:country
-                  isSelected={selectedCountries.find((c) => c.iso_3 === country.iso_3) ? true : false}
+                  isSelected={selectedCountries?.find((c) => c.iso_3 === country.iso_3) ? true : false}
                   on:countrySelected={handleCountrySelected} />
               {/each}
             </div>
@@ -260,14 +253,16 @@
     </div>
   </div>
 
-  {#each selectedCountries as country}
-    <div class="px-1">
-      <CountryCard
-        bind:country
-        isSelectable={false}
-        on:countrySelected={handleCountrySelected} />
-    </div>
-  {/each}
+  {#if selectedCountries}
+    {#each selectedCountries as country}
+      <div class="px-1">
+        <CountryCard
+          bind:country
+          isSelectable={false}
+          on:countrySelected={handleCountrySelected} />
+      </div>
+    {/each}
+  {/if}
 </div>
 
 <style lang="scss">

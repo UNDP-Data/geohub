@@ -2,6 +2,15 @@ import type { Actions, PageServerLoad } from './$types'
 import { error, fail } from '@sveltejs/kit'
 import type { DatasetFeature, Tag } from '$lib/types'
 import { generateHashKey, getRasterMetadata, getVectorMetadata, isRasterExtension } from '$lib/server/helpers'
+import DatabaseManager from '$lib/server/DatabaseManager'
+import TagManager from '$lib/server/TagManager'
+import DatasetManager from '$lib/server/DatasetManager'
+
+const removeSasToken = (url) => {
+  const isPmtiles = url.indexOf('pmtiles://') !== -1 ? true : false
+  const _url = new URL(url.replace('pmtiles://', ''))
+  return `${isPmtiles ? 'pmtiles://' : ''}${_url.origin}${_url.pathname}`
+}
 
 export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
@@ -53,11 +62,45 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     }
   }
 
+  // delete SAS token from URL
   const feature: DatasetFeature = await res.json()
+  feature.properties.url = removeSasToken(feature.properties.url)
 
   return {
     feature,
     isNew: false,
+  }
+}
+
+const upsertDataset = async (feature: DatasetFeature) => {
+  const dbm = new DatabaseManager()
+  try {
+    console.debug(`dataset (id=${feature.properties.id}) started registering`)
+    const client = await dbm.transactionStart()
+
+    const dsManager = new DatasetManager(feature)
+
+    const tags: TagManager = new TagManager()
+
+    dsManager.addTags(tags)
+
+    await tags.insert(client)
+    console.debug(`${tags.getTags().length} tags were registered into PostGIS.`)
+
+    dsManager.updateTags(tags)
+
+    await dsManager.upsert(client)
+    console.debug(`dataset (id=${feature.properties.id}) was registered into PostGIS.`)
+
+    await tags.cleanup(client)
+    console.debug(`unused tags were cleaned`)
+
+    console.debug(`dataset (id=${feature.properties.id}) ended registering`)
+  } catch (e) {
+    await dbm.transactionRollback()
+    throw e
+  } finally {
+    await dbm.transactionEnd()
   }
 }
 
@@ -95,16 +138,25 @@ export const actions = {
         return fail(400, { type: 'warning', message: 'Data provider is required' })
       }
 
-      const id = data.get('id') as string
-      const url = data.get('url') as string
-      const is_raster = data.get('is_raster') === 'true' ? true : false
-      const geometry = data.get('geometry') ? JSON.parse(data.get('geometry')) : ''
+      const featureString = data.get('feature') as string
+      const dataset: DatasetFeature = JSON.parse(featureString)
+      dataset.properties.name = name
+      dataset.properties.license = license
+      dataset.properties.description = description
+      dataset.properties.tags = tags
 
-      const dataset: DatasetFeature = {
-        type: 'Feature',
-        geometry: geometry,
-        properties: { id, url, name, license, description, is_raster, tags: tags },
+      const user_email = session?.user.email
+      const now = new Date().toISOString()
+      if (!dataset.properties.created_user) {
+        dataset.properties.created_user = user_email
+        dataset.properties.createdat = now
       }
+      dataset.properties.updated_user = user_email
+      dataset.properties.updatedat = now
+      dataset.properties.url = decodeURI(dataset.properties.url)
+
+      await upsertDataset(dataset)
+
       return dataset
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })

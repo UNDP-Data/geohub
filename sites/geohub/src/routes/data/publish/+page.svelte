@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { enhance } from '$app/forms'
+  import { invalidateAll } from '$app/navigation'
   import Tags from '$components/data-upload/Tags.svelte'
   import SdgPicker from '$components/data-upload/SdgPicker.svelte'
   import CountryPicker from '$components/data-upload/CountryPicker.svelte'
@@ -8,18 +9,33 @@
   import Notification from '$components/controls/Notification.svelte'
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
 
-  const feature: DatasetFeature = $page.data.feature
+  let feature: DatasetFeature = $page.data.feature
   const isNew: boolean = $page.data.isNew ?? true
-  console.log(feature)
+
   let name = feature?.properties.name ?? ''
   let description = feature?.properties.description ?? ''
   let license = feature?.properties.license ?? ''
   let tags = ''
+  let isRegistering = false
+
+  const excludedTagForEditing = [
+    'type',
+    'container',
+    'geometry_column',
+    'geometrytype',
+    'geometry_type',
+    'id',
+    'id_column',
+    'layertype',
+    'schema',
+    'srid',
+    'table',
+  ]
 
   const initTags = (key: 'provider' | 'sdg_goal' | 'country' | 'other') => {
     const _tags: Tag[] = feature?.properties?.tags
     if (key === 'other') {
-      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', 'type', 'container']
+      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...excludedTagForEditing]
       return _tags?.filter((t) => !keys.includes(t.key)) ?? []
     } else {
       let keys: string[] = [key]
@@ -92,21 +108,28 @@
 <form
   method="POST"
   action="?/publish"
-  use:enhance={() => {
+  use:enhance={({ cancel }) => {
+    if (isRegistering) {
+      cancel()
+    }
+    isRegistering = true
+
     return async ({ result, update }) => {
       if (result.status === 200) {
-        console.log(result.data)
+        feature = result.data
         // await update()
         message = { type: 'info', message: 'Dataset was registered successfully.' }
+        await invalidateAll()
       } else {
         message = result.data
       }
+      isRegistering = false
     }
   }}>
   <div class="field is-grouped py-2">
     <div class="control">
       <button
-        class="button is-primary"
+        class="button is-primary {isRegistering ? 'is-loading' : ''}"
         disabled={!(name && license && description && providers.length > 0)}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
@@ -230,7 +253,7 @@
   <div class="field is-grouped py-2">
     <div class="control">
       <button
-        class="button is-primary"
+        class="button is-primary {isRegistering ? 'is-loading' : ''}"
         disabled={!(name && license && description && providers.length > 0)}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
@@ -239,26 +262,8 @@
   <input
     class="input"
     type="hidden"
-    name="geometry"
-    value={feature?.geometry ? JSON.stringify(feature?.geometry) : ''} />
-
-  <input
-    class="input"
-    type="hidden"
-    name="id"
-    value={feature?.properties?.id ?? ''} />
-
-  <input
-    class="input"
-    type="hidden"
-    name="url"
-    value={feature?.properties?.url ?? ''} />
-
-  <input
-    class="input"
-    type="hidden"
-    name="is_raster"
-    value={feature?.properties?.is_raster ?? ''} />
+    name="feature"
+    value={JSON.stringify(feature)} />
 
   <input
     class="input"
