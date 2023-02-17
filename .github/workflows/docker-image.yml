@@ -3,8 +3,6 @@ name: Docker Image CI
 on:
   push:
     branches: ["develop"]
-    tags:
-      - "v*"
   pull_request:
     workflow_dispatch:
 
@@ -18,63 +16,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      # setup environmental variables
+      - name: Create environment file
+        uses: SpicyPizza/create-envfile@v1.3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          directory: ./sites/geohub
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
+          envkey_AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
+          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
+          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
+          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
+          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build Docker image
-        if: ${{ (github.ref != 'refs/heads/develop') }}
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            AZURE_STORAGE_ACCOUNT=${{ secrets.AZURE_STORAGE_ACCOUNT }}
-            AZURE_STORAGE_ACCESS_KEY=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-            AZURE_STORAGE_ACCOUNT_UPLOAD=${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
-            AZURE_STORAGE_ACCESS_KEY_UPLOAD=${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
-            DATABASE_CONNECTION=${{ secrets.DATABASE_CONNECTION }}
-            PUBLIC_TITILER_ENDPOINT=${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-            PUBLIC_AZURE_BLOB_TOKEN=${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
-            PUBLIC_AZURE_URL=${{ secrets.PUBLIC_AZURE_URL }}
-            PUBLIC_MARTIN_API_ENDPOINT=${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
-            PUBLIC_PGTILESERV_API_ENDPOINT=${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
-            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-            AZURE_AD_TENANT_ID=${{ secrets.AZURE_AD_TENANT_ID }}
-            AZURE_AD_CLIENT_ID=${{ secrets.AZURE_AD_CLIENT_ID }}
-            AZURE_AD_CLIENT_SECRET=${{ secrets.AZURE_AD_CLIENT_SECRET }}
-
-      - name: Build and push Docker image
-        if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            AZURE_STORAGE_ACCOUNT=${{ secrets.AZURE_STORAGE_ACCOUNT }}
-            AZURE_STORAGE_ACCESS_KEY=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-            AZURE_STORAGE_ACCOUNT_UPLOAD=${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
-            AZURE_STORAGE_ACCESS_KEY_UPLOAD=${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
-            DATABASE_CONNECTION=${{ secrets.DATABASE_CONNECTION }}
-            PUBLIC_TITILER_ENDPOINT=${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-            PUBLIC_AZURE_BLOB_TOKEN=${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
-            PUBLIC_AZURE_URL=${{ secrets.PUBLIC_AZURE_URL }}
-            PUBLIC_MARTIN_API_ENDPOINT=${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
-            PUBLIC_PGTILESERV_API_ENDPOINT=${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
-            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-            AZURE_AD_TENANT_ID=${{ secrets.AZURE_AD_TENANT_ID }}
-            AZURE_AD_CLIENT_ID=${{ secrets.AZURE_AD_CLIENT_ID }}
-            AZURE_AD_CLIENT_SECRET=${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s)
