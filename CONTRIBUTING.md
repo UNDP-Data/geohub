@@ -27,6 +27,12 @@ Then install the project dependencies by running the following command:
 pnpm install
 ```
 
+Install lefthook by the following command. This is required for the first time when you clone from Github.
+
+```bash
+pnpm lefthook install.
+```
+
 #### Step 2: Create a Branch
 
 Create a new branch. Use its name to identify the issue your addressing.
