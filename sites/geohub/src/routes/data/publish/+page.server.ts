@@ -1,17 +1,18 @@
 import type { Actions, PageServerLoad } from './$types'
 import { error, fail } from '@sveltejs/kit'
 import type { DatasetFeature, Tag } from '$lib/types'
-import { generateHashKey, getRasterMetadata, getVectorMetadata, isRasterExtension } from '$lib/server/helpers'
-import DatabaseManager from '$lib/server/DatabaseManager'
-import TagManager from '$lib/server/TagManager'
-import DatasetManager from '$lib/server/DatasetManager'
+import {
+  generateHashKey,
+  getRasterMetadata,
+  getVectorMetadata,
+  isRasterExtension,
+  upsertDataset,
+} from '$lib/server/helpers'
 
-const removeSasToken = (url) => {
-  const isPmtiles = url.indexOf('pmtiles://') !== -1 ? true : false
-  const _url = new URL(url.replace('pmtiles://', ''))
-  return `${isPmtiles ? 'pmtiles://' : ''}${_url.origin}${_url.pathname}`
-}
-
+/**
+ * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
+ * to generate Feature geojson object for data updating.
+ */
 export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
   if (!session) throw error(403, { message: 'No permission' })
@@ -76,41 +77,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 }
 
-const upsertDataset = async (feature: DatasetFeature) => {
-  const dbm = new DatabaseManager()
-  try {
-    console.debug(`dataset (id=${feature.properties.id}) started registering`)
-    const client = await dbm.transactionStart()
-
-    const dsManager = new DatasetManager(feature)
-
-    const tags: TagManager = new TagManager()
-
-    dsManager.addTags(tags)
-
-    await tags.insert(client)
-    console.debug(`${tags.getTags().length} tags were registered into PostGIS.`)
-
-    dsManager.updateTags(tags)
-
-    await dsManager.upsert(client)
-    console.debug(`dataset (id=${feature.properties.id}) was registered into PostGIS.`)
-
-    await tags.cleanup(client)
-    console.debug(`unused tags were cleaned`)
-
-    console.debug(`dataset (id=${feature.properties.id}) ended registering`)
-  } catch (e) {
-    await dbm.transactionRollback()
-    throw e
-  } finally {
-    await dbm.transactionEnd()
-  }
-}
-
 export const actions = {
   /**
-   * An action to get SAS URL for data uploading
+   * An action to update / register dataset metadata
    */
   publish: async ({ request, locals }) => {
     try {
@@ -167,3 +136,9 @@ export const actions = {
     }
   },
 } satisfies Actions
+
+const removeSasToken = (url) => {
+  const isPmtiles = url.indexOf('pmtiles://') !== -1 ? true : false
+  const _url = new URL(url.replace('pmtiles://', ''))
+  return `${isPmtiles ? 'pmtiles://' : ''}${_url.origin}${_url.pathname}`
+}
