@@ -1,4 +1,4 @@
-import type { DatasetFeature, Tag } from '$lib/types'
+import type { DatasetFeature } from '$lib/types'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import TagManager from '$lib/server/TagManager'
 import DatasetManager from '$lib/server/DatasetManager'

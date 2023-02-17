@@ -1,9 +1,10 @@
-import { Pool, type PoolClient } from 'pg'
+import pkg, { type PoolClient } from 'pg'
+const { Pool } = pkg
 import { DATABASE_CONNECTION } from './variables/private'
 
 class DatabaseManager {
   private connectionString: string
-  private pool: Pool | undefined = undefined
+  private pool = undefined
   private client: PoolClient | undefined = undefined
 
   constructor(connectionString?: string) {
