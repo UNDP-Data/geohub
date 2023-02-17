@@ -6,10 +6,9 @@ importers:
     specifiers:
       '@changesets/cli': ^2.26.0
       lefthook: ^1.2.9
-    dependencies:
-      lefthook: 1.2.9
     devDependencies:
       '@changesets/cli': 2.26.0
+      lefthook: 1.2.9
 
   apps/electricity-dashboard:
     specifiers:
@@ -8356,7 +8355,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-darwin-x64/1.2.9:
@@ -8364,7 +8363,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-freebsd-arm64/1.2.9:
@@ -8372,7 +8371,7 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-freebsd-x64/1.2.9:
@@ -8380,7 +8379,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-linux-arm64/1.2.9:
@@ -8388,7 +8387,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-linux-x64/1.2.9:
@@ -8396,7 +8395,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-windows-arm64/1.2.9:
@@ -8404,7 +8403,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook-windows-x64/1.2.9:
@@ -8412,7 +8411,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /lefthook/1.2.9:
@@ -8428,7 +8427,7 @@ packages:
       lefthook-linux-x64: 1.2.9
       lefthook-windows-arm64: 1.2.9
       lefthook-windows-x64: 1.2.9
-    dev: false
+    dev: true
 
   /lerp/1.0.3:
     resolution: {integrity: sha512-70Rh4rCkJDvwWiTsyZ1HmJGvnyfFah4m6iTux29XmasRiZPDBpT9Cfa4ai73+uLZxnlKruUS62jj2lb11wURiA==}
