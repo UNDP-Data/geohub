@@ -25,7 +25,7 @@ export const createHeaderLinks = (linkNames: LineName[]) => {
     userguide: {
       id: 'header-link-documentation',
       title: 'User guide',
-      href: '/docs/index.html',
+      href: 'https://docs.undpgeohub.org',
       icon: 'fa-regular fa-circle-question pr-1',
     },
   }

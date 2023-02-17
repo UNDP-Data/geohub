@@ -26,17 +26,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v3
-      - name: Install dependecies
-        working-directory: ./documentation
-        run: |
-          pip install pipenv
-          pipenv install --system
-
-      - name: Build documentation
-        working-directory: ./documentation
-        run: mkdocs build
-
       # pnpm setup
       # refer to https://github.com/pnpm/action-setup
       - name: pnpm setup
@@ -125,10 +114,6 @@ jobs:
         run: |
           pnpm --filter="./packages/**" build
           pnpm --filter="./apps/**" build
-
-      # - name: Run build storybook
-      #   working-directory: ./packages/svelte-undp-design
-      #   run: pnpm build-storybook
 
       - name: Run build GeoHub
         run: pnpm --filter="./sites/geohub" build

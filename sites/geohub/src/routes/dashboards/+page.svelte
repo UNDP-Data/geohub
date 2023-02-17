@@ -71,6 +71,10 @@
     width: 100%;
     background-color: white;
     z-index: 99;
+
+    :global(.menu-item) {
+      margin: 0.75rem 1.75rem 0.75rem 0 !important;
+    }
   }
 
   .main-section {
