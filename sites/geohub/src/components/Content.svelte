@@ -7,6 +7,7 @@
   import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
 
   export let splitterHeight: number
+  export let sidebarPosition: 'left' | 'right' = 'left'
   let tabsHeight: number
   $: contentHeight = splitterHeight - tabsHeight
 
@@ -28,18 +29,33 @@
     },
   ]
 
+  const setSideBarPosition = () => {
+    sidebarPosition = sidebarPosition === 'left' ? 'right' : 'left'
+  }
   let activeTab: string = tabs[0].label
 </script>
 
 <div class="drawer-content">
-  {#key $layerList}
-    <Tabs
-      bind:tabs
-      bind:activeTab
-      fontSize="large"
-      bind:height={tabsHeight} />
-  {/key}
-
+  <div class="is-flex">
+    <div style="width: 91%">
+      {#key $layerList}
+        <Tabs
+          bind:tabs
+          bind:activeTab
+          fontSize="large"
+          bind:height={tabsHeight} />
+      {/key}
+    </div>
+    <div style="width: 9%; margin-top:1%">
+      <button
+        class="button"
+        on:click={setSideBarPosition}>
+        <span class="icon is-small">
+          <i class="fas fa-chevron-right" />
+        </span>
+      </button>
+    </div>
+  </div>
   <div class="container p-0 m-0">
     <div hidden={activeTab !== TabNames.DATA}>
       <DataView bind:contentHeight />
