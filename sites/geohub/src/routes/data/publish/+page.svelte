@@ -141,102 +141,110 @@
       showCloseButton={false}>{message.message}</Notification>
   {/if}
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Dataset name</label>
-    <div class="control has-icons-right">
-      <input
-        class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
-        type="text"
-        name="name"
-        placeholder="Type name of dataset"
-        bind:value={name} />
-      {#if name}
-        <span class="icon is-small is-right">
-          <i class="fas fa-check has-text-success" />
-        </span>
-      {/if}
-    </div>
-    <p class="help is-dark">Name the dataset shortly and precisely.</p>
-  </div>
-
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Description</label>
-    <div class="control has-icons-right">
-      <textarea
-        class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
-        name="description"
-        placeholder="Type description of dataset"
-        bind:value={description} />
-      {#if description}
-        <span class="icon is-small is-right">
-          <i class="fas fa-check has-text-success" />
-        </span>
-      {/if}
-    </div>
-    <p class="help is-dark">Describe the dataset briefly. This information will be shown in data catalog.</p>
-  </div>
-
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">License</label>
-    <div class="control has-icons-right">
-      <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
-        <select
-          bind:value={license}
-          name="license">
-          <option value="">Select a data license</option>
-          {#each licenses as lc}
-            <option value={lc}>{lc}</option>
-          {/each}
-        </select>
+  <div class="columns">
+    <div class="column is-6">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Dataset name</label>
+        <div class="control has-icons-right">
+          <input
+            class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
+            type="text"
+            name="name"
+            placeholder="Type name of dataset"
+            disabled={isRegistering}
+            bind:value={name} />
+          {#if name}
+            <span class="icon is-small is-right">
+              <i class="fas fa-check has-text-success" />
+            </span>
+          {/if}
+        </div>
+        <p class="help is-dark">Name the dataset shortly and precisely.</p>
       </div>
-      {#if license}
-        <span class="icon is-small is-right">
-          <i class="fas fa-check has-text-success	" />
-        </span>
-      {/if}
-    </div>
-    <p class="help is-dark">
-      Open data license definition can be found at<a
-        href="https://opendefinition.org/licenses/"
-        target="_blank"
-        rel="noreferrer">https://opendefinition.org</a
-      >.
-    </p>
-  </div>
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Data providers</label>
-    <div class="control">
-      <DataProviderPicker bind:tags={providers} />
-    </div>
-    <p class="help is-dark">Select at least a data provider for the dataset.</p>
-  </div>
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Description</label>
+        <div class="control has-icons-right">
+          <textarea
+            class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
+            name="description"
+            placeholder="Type description of dataset"
+            disabled={isRegistering}
+            bind:value={description} />
+          {#if description}
+            <span class="icon is-small is-right">
+              <i class="fas fa-check has-text-success" />
+            </span>
+          {/if}
+        </div>
+        <p class="help is-dark">Describe the dataset briefly. This information will be shown in data catalog.</p>
+      </div>
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Countries (Optional)</label>
-    <div class="control">
-      <CountryPicker bind:tags={countries} />
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">License</label>
+        <div class="control has-icons-right">
+          <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
+            <select
+              bind:value={license}
+              disabled={isRegistering}
+              name="license">
+              <option value="">Select a data license</option>
+              {#each licenses as lc}
+                <option value={lc}>{lc}</option>
+              {/each}
+            </select>
+          </div>
+          {#if license}
+            <span class="icon is-small is-right">
+              <i class="fas fa-check has-text-success	" />
+            </span>
+          {/if}
+        </div>
+        <p class="help is-dark">
+          Open data license definition can be found at<a
+            href="https://opendefinition.org/licenses/"
+            target="_blank"
+            rel="noreferrer">https://opendefinition.org</a
+          >.
+        </p>
+      </div>
     </div>
-    <p class="help is-dark">Select relevant countries which the dataset is related to.</p>
-  </div>
+    <div class="column is-6">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Data providers</label>
+        <div class="control">
+          <DataProviderPicker bind:tags={providers} />
+        </div>
+        <p class="help is-dark">Select at least a data provider for the dataset.</p>
+      </div>
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">SDGs (Optional)</label>
-    <div class="control">
-      <SdgPicker bind:tags={sdgs} />
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Countries (Optional)</label>
+        <div class="control">
+          <CountryPicker bind:tags={countries} />
+        </div>
+        <p class="help is-dark">Select relevant countries which the dataset is related to.</p>
+      </div>
+
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">SDGs (Optional)</label>
+        <div class="control">
+          <SdgPicker bind:tags={sdgs} />
+        </div>
+        <p class="help is-dark">
+          Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
+            href="https://www.undp.org/sustainable-development-goals"
+            target="_blank"
+            rel="noreferrer">here</a>
+        </p>
+      </div>
     </div>
-    <p class="help is-dark">
-      Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
-        href="https://www.undp.org/sustainable-development-goals"
-        target="_blank"
-        rel="noreferrer">here</a>
-    </p>
   </div>
 
   <div class="field">
