@@ -21,6 +21,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   const datasetId = generateHashKey(datasetUrl)
 
+  const names = new URL(datasetUrl).pathname.split('.')
+  const extention = names[names.length - 1]
+  const isPmtiles = extention.toLowerCase() === 'pmtiles' ? true : false
+
   const apiUrl = `${url.origin}/api/datasets/${datasetId}`
   const res = await fetch(apiUrl)
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
@@ -49,7 +53,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       },
       properties: {
         id: datasetId,
-        url: datasetUrl,
+        url: `${isPmtiles ? 'pmtiles://' : ''}${datasetUrl}`,
         name: metadata.name,
         description: metadata.description,
         is_raster,
