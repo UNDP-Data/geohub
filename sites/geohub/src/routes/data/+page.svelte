@@ -125,7 +125,7 @@
 <div class="datasets-header tile is-ancestor">
   <div class="tile is-parent">
     <button
-      class="button is-primary is-medium upload-button"
+      class="button is-primary upload-button"
       on:click={gotoUploadPage}>
       <span class="icon">
         <i class="fa-solid fa-cloud-arrow-up" />
