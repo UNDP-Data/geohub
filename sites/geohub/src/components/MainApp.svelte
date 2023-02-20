@@ -13,7 +13,7 @@
 
   let innerWidth: number
   let innerHeight: number
-  $: isMobile = innerWidth < 768 ? true : false
+  $: isMobile = innerWidth < 768
   $: splitHeight = innerHeight - headerHeight
 
   let initialPrimaryWidth = 360
@@ -79,17 +79,12 @@
       minPrimaryWidth = `${initialPrimaryWidth}px`
       minSecondaryWidth = '50%'
     } else {
-      minPrimaryWidth = '50%'
+      minPrimaryWidth = `${innerWidth - initialPrimaryWidth}px`
       minSecondaryWidth = `${initialPrimaryWidth}px`
     }
     resizeMap()
+    repaintMap()
   }
-  // const flipSplitPercent = () => {
-  //   if(!splitControl) return
-  //   const percent = splitControl.getPercent();
-  //   splitControl.setPercent(100 - percent);
-  // }
-
   const splitterChanged = () => {
     resizeMap()
   }
@@ -110,19 +105,20 @@
 <div
   class="split-container"
   style="height:{splitHeight}px;">
-  {#if sidebarPosition === 'left'}
-    <Split
-      initialPrimarySize={`${widthPecent}%`}
-      minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
-      minSecondarySize={isMobile ? '0px' : minSecondaryWidth}
-      {splitterSize}
-      on:changed={splitterChanged}
-      bind:this={splitControl}>
-      <div
-        slot="primary"
-        class="primary-content">
+  <!--{#if sidebarPosition === 'left'}-->
+  <Split
+    initialPrimarySize={`${widthPecent}%`}
+    minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
+    minSecondarySize={isMobile ? '0px' : minSecondaryWidth}
+    {splitterSize}
+    on:changed={splitterChanged}
+    bind:this={splitControl}>
+    <div
+      slot="primary"
+      class="primary-content">
+      {#if sidebarPosition === 'left'}
         {#if isMobile}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!--           svelte-ignore a11y-click-events-have-key-events -->
           <span
             class="span close-icon"
             on:click={() => {
@@ -136,11 +132,7 @@
         <Content
           bind:sidebarPosition
           bind:splitterHeight={splitHeight} />
-      </div>
-
-      <div
-        slot="secondary"
-        class="secondary-content">
+      {:else}
         <BannerMessageControl>
           <progress
             style="height:0.2rem; opacity:{$indicatorProgress == true
@@ -150,19 +142,12 @@
             max={100} />
           <Map bind:map />
         </BannerMessageControl>
-      </div>
-    </Split>
-  {:else}
-    <Split
-      initialPrimarySize={`${widthPecent}%`}
-      minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}
-      minSecondarySize={isMobile ? '0px' : minSecondaryWidth}
-      {splitterSize}
-      on:changed={splitterChanged}
-      bind:this={splitControl}>
-      <div
-        slot="primary"
-        class="primary-content">
+      {/if}
+    </div>
+    <div
+      slot="secondary"
+      class="secondary-content">
+      {#if sidebarPosition === 'left'}
         <BannerMessageControl>
           <progress
             style="height:0.2rem; opacity:{$indicatorProgress == true
@@ -170,14 +155,12 @@
               : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
             class="progress is-large is-info "
             max={100} />
+          <slot name="map" />
           <Map bind:map />
         </BannerMessageControl>
-      </div>
-      <div
-        slot="secondary"
-        class="secondary-content">
+      {:else}
         {#if isMobile}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!--           svelte-ignore a11y-click-events-have-key-events -->
           <span
             class="span close-icon"
             on:click={() => {
@@ -191,9 +174,62 @@
         <Content
           bind:sidebarPosition
           bind:splitterHeight={splitHeight} />
-      </div>
-    </Split>
-  {/if}
+      {/if}
+      <!--      <BannerMessageControl>-->
+      <!--        <progress-->
+      <!--          style="height:0.2rem; opacity:{$indicatorProgress == true-->
+      <!--            ? 1-->
+      <!--            : 0}; z-index:1; position:absolute; top:{splitHeight}px;"-->
+      <!--          class="progress is-large is-info "-->
+      <!--          max={100} />-->
+      <!--        <Map-->
+      <!--          bind:this={mapDiv}-->
+      <!--          bind:map />-->
+      <!--      </BannerMessageControl>-->
+    </div>
+  </Split>
+  <!--{:else}-->
+  <!--  <Split-->
+  <!--    initialPrimarySize={`${widthPecent}%`}-->
+  <!--    minPrimarySize={isMenuShown ? `${minPrimaryWidth}` : '0px'}-->
+  <!--    minSecondarySize={isMobile ? '0px' : minSecondaryWidth}-->
+  <!--    {splitterSize}-->
+  <!--    on:changed={splitterChanged}-->
+  <!--    bind:this={splitControl}>-->
+  <!--    <div-->
+  <!--      slot="primary"-->
+  <!--      class="primary-content">-->
+  <!--      <BannerMessageControl>-->
+  <!--        <progress-->
+  <!--          style="height:0.2rem; opacity:{$indicatorProgress == true-->
+  <!--            ? 1-->
+  <!--            : 0}; z-index:1; position:absolute; top:{splitHeight}px;"-->
+  <!--          class="progress is-large is-info "-->
+  <!--          max={100} />-->
+  <!--        <Map bind:this={mapDiv} bind:map />-->
+  <!--      </BannerMessageControl>-->
+  <!--    </div>-->
+  <!--    <div-->
+  <!--      slot="secondary"-->
+  <!--      class="secondary-content">-->
+  <!--      {#if isMobile}-->
+  <!--        &lt;!&ndash; svelte-ignore a11y-click-events-have-key-events &ndash;&gt;-->
+  <!--        <span-->
+  <!--          class="span close-icon"-->
+  <!--          on:click={() => {-->
+  <!--            isMenuShown = false-->
+  <!--          }}>-->
+  <!--          <i-->
+  <!--            class="fa-solid fa-circle-xmark fa-2x"-->
+  <!--            style="color:#1c1c1c;" />-->
+  <!--        </span>-->
+  <!--      {/if}-->
+  <!--      <Content-->
+  <!--        bind:sidebarPosition-->
+  <!--        bind:splitterHeight={splitHeight} />-->
+  <!--    </div>-->
+  <!--  </Split>-->
+  <!--{/if}-->
 </div>
 
 <style lang="scss">

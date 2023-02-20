@@ -46,15 +46,15 @@
           bind:height={tabsHeight} />
       {/key}
     </div>
-    <div style="width: 9%; margin-top:1%">
-      <button
-        class="button"
-        on:click={setSideBarPosition}>
-        <span class="icon is-small">
-          <i class="fas fa-chevron-right" />
-        </span>
-      </button>
-    </div>
+    <!--    <div style="width: 9%; margin-top:1%">-->
+    <!--      <button-->
+    <!--        class="button"-->
+    <!--        on:click={setSideBarPosition}>-->
+    <!--        <span class="icon is-small">-->
+    <!--          <i class="fas fa-chevron-right" />-->
+    <!--        </span>-->
+    <!--      </button>-->
+    <!--    </div>-->
   </div>
   <div class="container p-0 m-0">
     <div hidden={activeTab !== TabNames.DATA}>
