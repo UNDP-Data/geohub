@@ -114,11 +114,26 @@
     const url4edit = removeSasTokenFromDatasetUrl(url)
     goto(`/data/publish?url=${url4edit}`)
   }
+
+  const gotoUploadPage = () => {
+    goto(`/data/upload`)
+  }
 </script>
 
 <p class="title align-center">Datasets</p>
 
 <div class="datasets-header tile is-ancestor">
+  <div class="tile is-parent">
+    <button
+      class="button is-primary is-medium upload-button"
+      on:click={gotoUploadPage}>
+      <span class="icon">
+        <i class="fa-solid fa-cloud-arrow-up" />
+      </span>
+      <span>Data upload</span>
+    </button>
+  </div>
+
   <div class="tile is-parent">
     <div class="control has-icons-left filter-text-box">
       <input
@@ -223,6 +238,10 @@
   .datasets-header {
     width: fit-content;
     margin-left: auto;
+
+    .upload-button {
+      margin-top: auto;
+    }
 
     .filter-text-box {
       position: relative;
