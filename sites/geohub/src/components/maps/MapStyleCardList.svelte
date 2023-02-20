@@ -6,15 +6,14 @@
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
-  import { AccessLevel } from '$lib/constants'
+  import { AccessLevel, DEFAULT_LIMIT, LimitOptions, MapOrderByOptions } from '$lib/constants'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
 
   let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
 
   let isLoading = false
 
-  let limits = [5, 10, 25, 50, 100]
-  let limit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : 10
+  let limit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : DEFAULT_LIMIT
   let offset = $page.url.searchParams.get('offset') ? Number($page.url.searchParams.get('offset')) : 0
 
   let query = $page.url.searchParams.get('query') ?? ''
@@ -50,36 +49,17 @@
 
   $: isQueryEmpty = !query || query?.length === 0
 
-  let orderbyOptions = [
-    {
-      value: 'updatedat,desc',
-      label: 'Most recent',
-    },
-    {
-      value: 'updatedat,asc',
-      label: 'less recent',
-    },
-    {
-      value: 'name,asc',
-      label: 'A to Z',
-    },
-    {
-      value: 'name,desc',
-      label: 'Z to A',
-    },
-  ]
-
   const getSortByFromUrl = (url: URL) => {
     const sortByValue = url.searchParams.get('sortby')
     if (sortByValue) {
-      const option = orderbyOptions.find((opt) => opt.value === sortByValue)
+      const option = MapOrderByOptions.find((opt) => opt.value === sortByValue)
       if (option) {
         return option.value
       }
     }
   }
 
-  let sortby = getSortByFromUrl($page.url) ?? orderbyOptions[0].value
+  let sortby = getSortByFromUrl($page.url) ?? MapOrderByOptions[0].value
 
   $: limit, handleLimitChanged()
   $: sortby, handleSortbyChanged()
@@ -122,6 +102,7 @@
       isLoading = true
       await goto(`?${url.searchParams.toString()}`, {
         invalidateAll: true,
+        noScroll: true,
       })
       styles = $page.data.styles
     } finally {
@@ -220,7 +201,7 @@
       <label class="label">Order by:</label>
       <div class="select">
         <select bind:value={sortby}>
-          {#each orderbyOptions as option}
+          {#each MapOrderByOptions as option}
             <option value={option.value}>{option.label}</option>
           {/each}
         </select>
@@ -234,7 +215,7 @@
       <label class="label">Shown in:</label>
       <div class="select">
         <select bind:value={limit}>
-          {#each limits as limit}
+          {#each LimitOptions as limit}
             <option value={limit}>{limit}</option>
           {/each}
         </select>
