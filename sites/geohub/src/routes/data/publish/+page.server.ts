@@ -9,6 +9,7 @@ import {
   upsertDataset,
 } from '$lib/server/helpers'
 import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_UPLOAD } from '$lib/server/variables/private'
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
@@ -35,6 +36,21 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
 
   if (res.status === 404) {
+    const isGeneralStorageAccount = datasetUrl.indexOf(AZURE_STORAGE_ACCOUNT) === -1 ? false : true
+    const isUploadStorageAccount = datasetUrl.indexOf(AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
+
+    if (!isGeneralStorageAccount && !isUploadStorageAccount) {
+      // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
+      throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
+    } else if (isUploadStorageAccount) {
+      const user_email = session?.user.email
+      const userHash = generateHashKey(user_email)
+      const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true
+      if (!isLoginUserDataset) {
+        throw error(403, { message: `No permission to access this dataset` })
+      }
+    }
+
     const is_raster = isRasterExtension(datasetUrl)
     const metadata = is_raster ? await getRasterMetadata(datasetUrl) : await getVectorMetadata(datasetUrl)
     const tags: Tag[] = []
@@ -73,6 +89,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // delete SAS token from URL
   const feature: DatasetFeature = await res.json()
+
+  // only accept dataset on Azure blob container
+  const type = feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'azure')
+  if (!type) {
+    throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
+  }
+
   feature.properties.url = removeSasTokenFromDatasetUrl(feature.properties.url)
 
   return {
