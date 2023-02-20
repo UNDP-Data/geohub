@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types'
-import { error, fail } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
 import type { DatasetFeature, Tag } from '$lib/types'
 import {
   generateHashKey,
@@ -8,6 +8,8 @@ import {
   isRasterExtension,
   upsertDataset,
 } from '$lib/server/helpers'
+import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_UPLOAD } from '$lib/server/variables/private'
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
@@ -17,8 +19,11 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
   if (!session) throw error(403, { message: 'No permission' })
 
-  const datasetUrl = url.searchParams.get('url')
-  if (!datasetUrl) throw error(400, { message: `url on query param is required.` })
+  let datasetUrl = url.searchParams.get('url')
+  if (!datasetUrl) {
+    throw redirect(301, '/data')
+  }
+  datasetUrl = datasetUrl.replace('pmtiles://', '')
 
   const datasetId = generateHashKey(datasetUrl)
 
@@ -31,6 +36,21 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
 
   if (res.status === 404) {
+    const isGeneralStorageAccount = datasetUrl.indexOf(AZURE_STORAGE_ACCOUNT) === -1 ? false : true
+    const isUploadStorageAccount = datasetUrl.indexOf(AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
+
+    if (!isGeneralStorageAccount && !isUploadStorageAccount) {
+      // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
+      throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
+    } else if (isUploadStorageAccount) {
+      const user_email = session?.user.email
+      const userHash = generateHashKey(user_email)
+      const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true
+      if (!isLoginUserDataset) {
+        throw error(403, { message: `No permission to access this dataset` })
+      }
+    }
+
     const is_raster = isRasterExtension(datasetUrl)
     const metadata = is_raster ? await getRasterMetadata(datasetUrl) : await getVectorMetadata(datasetUrl)
     const tags: Tag[] = []
@@ -69,7 +89,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // delete SAS token from URL
   const feature: DatasetFeature = await res.json()
-  feature.properties.url = removeSasToken(feature.properties.url)
+
+  // only accept dataset on Azure blob container
+  const type = feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'azure')
+  if (!type) {
+    throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
+  }
+
+  feature.properties.url = removeSasTokenFromDatasetUrl(feature.properties.url)
 
   return {
     feature,
@@ -136,9 +163,3 @@ export const actions = {
     }
   },
 } satisfies Actions
-
-const removeSasToken = (url) => {
-  const isPmtiles = url.indexOf('pmtiles://') !== -1 ? true : false
-  const _url = new URL(url.replace('pmtiles://', ''))
-  return `${isPmtiles ? 'pmtiles://' : ''}${_url.origin}${_url.pathname}`
-}

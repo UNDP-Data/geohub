@@ -1,5 +1,5 @@
-import type { Actions } from './$types'
-import { fail } from '@sveltejs/kit'
+import type { Actions, PageServerLoad } from './$types'
+import { fail, error } from '@sveltejs/kit'
 import {
   BlobSASPermissions,
   BlobServiceClient,
@@ -12,6 +12,12 @@ import { generateHashKey } from '$lib/server/helpers'
 
 const CONTAINER_NAME = 'userdata'
 const FOLDER_NAME = 'raw'
+
+export const load: PageServerLoad = async ({ locals }) => {
+  const session = await locals.getSession()
+  if (!session) throw error(403, { message: 'No permission' })
+  return {}
+}
 
 export const actions = {
   /**

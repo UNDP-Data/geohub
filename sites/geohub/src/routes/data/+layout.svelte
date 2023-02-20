@@ -8,7 +8,7 @@
 
   let headerHeight: number
 
-  let links: HeaderLink[] = createHeaderLinks(['home', 'userguide'])
+  let links: HeaderLink[] = createHeaderLinks(['home', 'maps', 'dashboard', 'userguide'])
 
   let title = 'GeoHub | Data'
 </script>

@@ -3,11 +3,11 @@ import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
 import { DATABASE_CONNECTION } from '$lib/server/variables/private'
-import type { DatasetFeatureCollection, StacLink, Tag } from '$lib/types'
+import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types'
 const connectionString = DATABASE_CONNECTION
 
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
-import { generateAzureBlobSasToken } from '$lib/server/helpers'
+import { generateAzureBlobSasToken, pageNumber } from '$lib/server/helpers'
 
 /**
  * Datasets search API
@@ -201,7 +201,20 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     geojson.links = links
 
-    geojson.totalCount = await getTotalCount(client, whereExpressesion.sql, values)
+    const totalCount = await getTotalCount(client, whereExpressesion.sql, values)
+
+    let totalPages = Math.ceil(totalCount / Number(limit))
+    if (totalPages === 0) {
+      totalPages = 1
+    }
+    const currentPage = pageNumber(totalCount, Number(limit), Number(offset))
+    const pages: Pages = {
+      totalCount,
+      totalPages,
+      currentPage,
+    }
+
+    geojson.pages = pages
 
     // add SAS token if it is Azure Blob source
     geojson.features.forEach((feature) => {

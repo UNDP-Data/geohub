@@ -312,7 +312,7 @@
     isClearButtonShown={true} />
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
     {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
-    <Notification type="info">{DataItemFeatureCollection.totalCount} {dsText} found.</Notification>
+    <Notification type="info">{DataItemFeatureCollection.pages.totalCount} {dsText} found.</Notification>
   {/if}
 </div>
 <div
