@@ -29,7 +29,7 @@ jobs:
       # pnpm setup
       # refer to https://github.com/pnpm/action-setup
       - name: pnpm setup
-        uses: pnpm/action-setup@v2.2.2
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 7.25.x
           run_install: false
