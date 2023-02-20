@@ -1,4 +1,4 @@
-FROM node:18 as build
+FROM node:19 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
@@ -42,7 +42,7 @@ RUN cp package.json build/.
 RUN mv node_modules build/.
 
 # production image
-FROM node:18-slim
+FROM node:19-slim
 
 WORKDIR /geohub
 # copy build folder from build image
