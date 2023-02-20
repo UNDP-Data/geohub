@@ -40,7 +40,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"maplibre-gl": "^2.4.0"
+		"@sveltejs/kit": "^1.7.2",
+		"maplibre-gl": "^2.4.0",
+		"svelte": "^3.55.1"
 	},
 	"peerDependencies": {
 		"@sveltejs/kit": "^1.7.2",

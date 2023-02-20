@@ -39,6 +39,7 @@
 	"type": "module",
 	"dependencies": {
 		"@creativebulma/bulma-tooltip": "^1.2.0",
+		"@sveltejs/kit": "^1.7.2",
 		"@undp-data/current-location": "workspace:^0.0.4",
 		"@undp-data/style-switcher": "workspace:^0.0.4",
 		"@undp-data/svelte-undp-design": "workspace:^0.0.16",
@@ -47,6 +48,7 @@
 		"d3-format": "^3.1.0",
 		"maplibre-gl": "^2.4.0",
 		"mime": "^3.0.0",
+		"svelte": "^3.55.1",
 		"svelte-range-slider-pips": "^2.1.1",
 		"svelte-vega": "^1.2.0"
 	},
