@@ -16,11 +16,11 @@ export const load: PageServerLoad = async (event) => {
     sortby = MapOrderByOptions[0].value
   }
 
-  let accesslevel: string = !locals.session ? `${AccessLevel.PUBLIC}` : url.searchParams.get('accesslevel')
+  const session = await locals.getSession()
+  let accesslevel: string = !session ? `${AccessLevel.PUBLIC}` : url.searchParams.get('accesslevel')
   if (!accesslevel) {
     accesslevel = `${AccessLevel.PRIVATE}`
   }
-
   const query: string = url.searchParams.get('query') ?? ''
 
   const params: { [key: string]: string } = {

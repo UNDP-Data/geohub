@@ -1,12 +1,11 @@
 import type { PageServerLoad } from './$types'
-import { error } from '@sveltejs/kit'
 import type { DatasetFeatureCollection } from '$lib/types'
 import { DEFAULT_LIMIT, SortingColumns } from '$lib/constants'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url } = event
   const session = await locals.getSession()
-  if (!session) throw error(403, { message: 'No permission' })
+  if (!session) return {}
 
   const limit = url.searchParams.get('limit') ? url.searchParams.get('limit') : `${DEFAULT_LIMIT}`
   const offset = url.searchParams.get('offset') ? url.searchParams.get('offset') : '0'
