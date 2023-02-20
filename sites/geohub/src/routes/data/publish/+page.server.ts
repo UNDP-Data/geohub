@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types'
-import { error, fail } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
 import type { DatasetFeature, Tag } from '$lib/types'
 import {
   generateHashKey,
@@ -8,6 +8,7 @@ import {
   isRasterExtension,
   upsertDataset,
 } from '$lib/server/helpers'
+import { removeSasTokenFromDatasetUrl } from '$lib/helper'
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
@@ -17,8 +18,11 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
   if (!session) throw error(403, { message: 'No permission' })
 
-  const datasetUrl = url.searchParams.get('url')
-  if (!datasetUrl) throw error(400, { message: `url on query param is required.` })
+  let datasetUrl = url.searchParams.get('url')
+  if (!datasetUrl) {
+    throw redirect(301, '/data')
+  }
+  datasetUrl = datasetUrl.replace('pmtiles://', '')
 
   const datasetId = generateHashKey(datasetUrl)
 
@@ -69,7 +73,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // delete SAS token from URL
   const feature: DatasetFeature = await res.json()
-  feature.properties.url = removeSasToken(feature.properties.url)
+  feature.properties.url = removeSasTokenFromDatasetUrl(feature.properties.url)
 
   return {
     feature,
@@ -136,9 +140,3 @@ export const actions = {
     }
   },
 } satisfies Actions
-
-const removeSasToken = (url) => {
-  const isPmtiles = url.indexOf('pmtiles://') !== -1 ? true : false
-  const _url = new URL(url.replace('pmtiles://', ''))
-  return `${isPmtiles ? 'pmtiles://' : ''}${_url.origin}${_url.pathname}`
-}

@@ -2,12 +2,16 @@
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
   import type { DatasetFeatureCollection } from '$lib/types'
-  import { Accordion, Pagination } from '@undp-data/svelte-undp-design'
+  import { Accordion, Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
+  import Notification from '$components/controls/Notification.svelte'
+  import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
+  import { removeSasTokenFromDatasetUrl } from '$lib/helper'
 
   let fc: DatasetFeatureCollection = $page.data.features
   let expanded: { [key: string]: boolean } = {}
+  let isLoading = false
 
   let limits = [5, 10, 25, 50, 100].map((n) => `${n}`)
   let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : '10'
@@ -20,10 +24,15 @@
   $: sortby, handleSortbyChanged()
 
   const reload = async (url: URL) => {
-    await goto(`?${url.searchParams.toString()}`, {
-      invalidateAll: true,
-    })
-    fc = $page.data.features
+    try {
+      isLoading = true
+      await goto(`?${url.searchParams.toString()}`, {
+        invalidateAll: true,
+      })
+      fc = $page.data.features
+    } finally {
+      isLoading = false
+    }
   }
 
   const handleFilterInput = debounce(async (e) => {
@@ -100,6 +109,11 @@
       await reload(href)
     }
   }
+
+  const gotoEditMetadataPage = (url: string) => {
+    const url4edit = removeSasTokenFromDatasetUrl(url)
+    goto(`/data/publish?url=${url4edit}`)
+  }
 </script>
 
 <p class="title align-center">Datasets</p>
@@ -157,24 +171,48 @@
   </div>
 </div>
 
-{#each fc.features as feature}
-  <Accordion
-    headerTitle={feature.properties.name}
-    bind:isExpanded={expanded[feature.properties.id]}>
-    <div
-      slot="content"
-      class="card-container px-4">
-      <p class="title is-6">{feature.properties.name}</p>
-    </div>
-  </Accordion>
-{/each}
+{#if isLoading}
+  <div class="align-center">
+    <Loader />
+  </div>
+{:else if fc.pages.totalCount > 0}
+  {#each fc.features as feature}
+    <Accordion
+      headerTitle={feature.properties.name}
+      bind:isExpanded={expanded[feature.properties.id]}>
+      <div
+        slot="content"
+        class="columns pb-2">
+        <div class="column is-10">
+          <DataCardInfo bind:feature />
+        </div>
+        <div class="column is-2">
+          <button
+            class="button is-primary"
+            on:click={() => {
+              gotoEditMetadataPage(feature.properties.url)
+            }}>
+            <span class="icon">
+              <i class="fa-solid fa-pen-to-square" />
+            </span>
+            <span>metadata</span>
+          </button>
+        </div>
+      </div>
+    </Accordion>
+  {/each}
 
-<div class="align-center pt-2">
-  <Pagination
-    bind:totalPages={fc.pages.totalPages}
-    bind:currentPage={fc.pages.currentPage}
-    on:clicked={handlePaginationClicked} />
-</div>
+  <div class="align-center pt-2">
+    <Pagination
+      bind:totalPages={fc.pages.totalPages}
+      bind:currentPage={fc.pages.currentPage}
+      on:clicked={handlePaginationClicked} />
+  </div>
+{:else}
+  <Notification
+    type="info"
+    showCloseButton={false}>No datasets found</Notification>
+{/if}
 
 <style lang="scss">
   .align-center {

@@ -46,6 +46,7 @@ export const load: PageServerLoad = async (event) => {
     limit,
     offset,
     sortby,
+    type: 'azure', // only azure's user data is avalable for data page
   }
   if (query) {
     params.query = query
