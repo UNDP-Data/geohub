@@ -6,7 +6,7 @@
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import { Checkbox, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
   import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()

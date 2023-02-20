@@ -1,5 +1,15 @@
 # @undp-data/svelte-undp-design
 
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
+### Patch Changes
+
+- 66b2886: update dependencies
+
 ## 0.0.16
 
 ### Patch Changes

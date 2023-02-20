@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Layer } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
-  import { Loader } from '@undp-data/svelte-undp-design/src/lib'
+  import { Loader } from '@undp-data/svelte-undp-design'
 
   import {
     clean,

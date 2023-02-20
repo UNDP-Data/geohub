@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.1.0
+
+### Minor Changes
+
+- 171ac40: chore: updated dependencies of geohub-cli
+
 ## 1.0.9
 
 ### Patch Changes

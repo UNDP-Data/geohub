@@ -55,4 +55,4 @@ EXPOSE 3000
 
 # rum pm2 cluster with maximum 4 instances
 # https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/#pm2-runtime-helper
-CMD ["pm2", "start", "index.js", "-i", "4"]
+CMD ["pm2-runtime", "index.js", "-i", "4"]
