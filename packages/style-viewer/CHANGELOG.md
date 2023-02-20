@@ -1,5 +1,17 @@
 # @undp-data/style-viewer
 
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
+### Patch Changes
+
+- 66b2886: update dependencies
+- Updated dependencies [8ca24d8]
+  - @undp-data/current-location@0.1.0
+
 ## 0.0.5
 
 ### Patch Changes

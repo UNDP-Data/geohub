@@ -1,5 +1,20 @@
 # @undp-data/electricity-dashboard
 
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
+### Patch Changes
+
+- 66b2886: update dependencies
+- Updated dependencies [8ca24d8]
+- Updated dependencies [66b2886]
+  - @undp-data/svelte-undp-design@0.1.0
+  - @undp-data/current-location@0.1.0
+  - @undp-data/style-switcher@0.1.0
+
 ## 0.0.17
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/electricity-dashboard",
-	"version": "0.0.17",
+	"version": "0.1.0",
 	"description": "This dashboard app is to visualise electricity data in GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -40,9 +40,9 @@
 	"dependencies": {
 		"@creativebulma/bulma-tooltip": "^1.2.0",
 		"@sveltejs/kit": "^1.7.2",
-		"@undp-data/current-location": "workspace:^0.0.4",
-		"@undp-data/style-switcher": "workspace:^0.0.4",
-		"@undp-data/svelte-undp-design": "workspace:^0.0.16",
+		"@undp-data/current-location": "workspace:^0.1.0",
+		"@undp-data/style-switcher": "workspace:^0.1.0",
+		"@undp-data/svelte-undp-design": "workspace:^0.1.0",
 		"@watergis/svelte-maplibre-menu": "^0.2.0",
 		"chroma-js": "^2.4.2",
 		"d3-format": "^3.1.0",
