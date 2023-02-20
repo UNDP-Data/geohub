@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { browser } from '$app/environment'
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
   import MapStyleCard from './MapStyleCard.svelte'
@@ -11,11 +9,8 @@
   import { AccessLevel } from '$lib/constants'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
 
-  const url: URL = $page.url
+  let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
 
-  let styleList: DashboardMapStyle[]
-  let links: StacLink[]
-  let pages: Pages
   let isLoading = false
 
   let limits = [5, 10, 25, 50, 100]
@@ -53,7 +48,6 @@
     }
   }
 
-  let queryForSearch = normaliseQuery()
   $: isQueryEmpty = !query || query?.length === 0
 
   let orderbyOptions = [
@@ -87,90 +81,59 @@
 
   let sortby = getSortByFromUrl($page.url) ?? orderbyOptions[0].value
 
-  onMount(async () => {
-    setPageUrl()
-  })
-
   $: limit, handleLimitChanged()
   $: sortby, handleSortbyChanged()
   $: accessLevel, handleAccessLevelChanged()
 
   const handleLimitChanged = async () => {
-    if (!browser) return
-    const currentLimit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : undefined
+    const apiUrl = new URL($page.url.toString())
+    const currentLimit = apiUrl.searchParams.get('limit') ? Number(apiUrl.searchParams.get('limit')) : undefined
     if (currentLimit && currentLimit !== limit) {
       offset = 0
-      links = []
+      apiUrl.searchParams.set('offset', `${offset}`)
     }
-    await updateStylePage('next')
+    apiUrl.searchParams.set('limit', `${limit}`)
+
+    await reload(apiUrl)
   }
 
   const handleSortbyChanged = async () => {
-    if (!browser) return
     offset = 0
-    links = []
-    await updateStylePage('next')
+
+    const apiUrl = new URL($page.url.toString())
+    apiUrl.searchParams.set('offset', `${offset}`)
+    apiUrl.searchParams.set('sortby', sortby)
+
+    await reload(apiUrl)
   }
 
   const handleAccessLevelChanged = async () => {
-    if (!browser) return
     offset = 0
-    links = []
-    await updateStylePage('next')
+
+    const apiUrl = new URL($page.url.toString())
+    apiUrl.searchParams.set('offset', `${offset}`)
+    apiUrl.searchParams.set('accesslevel', `${accessLevel}`)
+
+    await reload(apiUrl)
   }
 
-  const setPageUrl = () => {
-    $page.url.searchParams.set('limit', `${limit}`)
-    $page.url.searchParams.set('offset', `${offset}`)
-    $page.url.searchParams.set('sortby', `${sortby}`)
-    $page.url.searchParams.set('accesslevel', `${accessLevel}`)
-    if (query && query.length > 0) {
-      $page.url.searchParams.set('query', `${query}`)
-    } else {
-      $page.url.searchParams.delete('query')
-    }
-    if (browser) {
-      goto(`?${$page.url.searchParams.toString()}`)
+  const reload = async (url: URL) => {
+    try {
+      isLoading = true
+      await goto(`?${url.searchParams.toString()}`, {
+        invalidateAll: true,
+      })
+      styles = $page.data.styles
+    } finally {
+      isLoading = false
     }
   }
 
   const updateStylePage = async (type: 'next' | 'previous') => {
-    try {
-      isLoading = true
-
-      let apiUrl = new URL(`${url.origin}/api/style`)
-      if (queryForSearch && queryForSearch.length > 0) {
-        apiUrl.searchParams.set('query', queryForSearch)
-      }
-      apiUrl.searchParams.set('limit', `${limit}`)
-      apiUrl.searchParams.set('offset', `${offset}`)
-      apiUrl.searchParams.set('sortby', `${sortby}`)
-      apiUrl.searchParams.set('accesslevel', `${accessLevel}`)
-
-      const link = links?.find((l) => l.rel === type)
-      if (link) {
-        const newURL = new URL(link.href)
-        limit = Number(newURL.searchParams.get('limit'))
-        offset = Number(newURL.searchParams.get('offset'))
-        sortby = getSortByFromUrl(newURL)
-        apiUrl = new URL(link.href)
-        setPageUrl()
-      } else {
-        setPageUrl()
-      }
-      const res = await fetch(apiUrl.toString())
-      if (res.ok) {
-        const json = await res.json()
-        styleList = [...json.styles]
-        links = json.links
-        pages = json.pages
-      } else {
-        styleList = []
-        links = []
-        pages = undefined
-      }
-    } finally {
-      isLoading = false
+    const link = styles.links?.find((l) => l.rel === type)
+    if (link) {
+      const apiUrl = new URL(link.href)
+      await reload(apiUrl)
     }
   }
 
@@ -181,32 +144,36 @@
 
   const handleStyleDeleted = (e) => {
     const deletedStyle: DashboardMapStyle = e.detail.style
-    const index = styleList.map((s) => s.id).indexOf(deletedStyle.id)
+    const index = styles.styles.map((s) => s.id).indexOf(deletedStyle.id)
     if (index !== -1) {
-      styleList.splice(index, 1)
-      styleList = [...styleList]
+      styles.styles.splice(index, 1)
+      styles.styles = [...styles.styles]
     }
   }
 
   const handleFilterInput = debounce(async (e) => {
     query = (e.target as HTMLInputElement).value
-    queryForSearch = query
+    let queryForSearch = query
     if (query.length > 0) {
-      queryForSearch = normaliseQuery()
-
+      const apiUrl = new URL($page.url.toString())
       offset = 0
-      links = []
-      await updateStylePage('next')
+      apiUrl.searchParams.set('offset', `${offset}`)
+      queryForSearch = normaliseQuery()
+      if (queryForSearch && queryForSearch.length > 0) {
+        apiUrl.searchParams.set('query', queryForSearch)
+      }
+      await reload(apiUrl)
     }
   }, 500)
 
   const clearInput = async () => {
     if (isQueryEmpty === true) return
+    const apiUrl = new URL($page.url.toString())
     query = ''
-    queryForSearch = ''
     offset = 0
-    links = []
-    await updateStylePage('next')
+    apiUrl.searchParams.set('offset', `${offset}`)
+    apiUrl.searchParams.delete('query')
+    await reload(apiUrl)
   }
 </script>
 
@@ -280,9 +247,9 @@
   <div class="align-center">
     <Loader size="medium" />
   </div>
-{:else if styleList && styleList.length > 0}
-  {#key styleList}
-    {#each styleList as style}
+{:else if styles.styles && styles.styles.length > 0}
+  {#key styles.styles}
+    {#each styles.styles as style}
       <MapStyleCard
         {style}
         bind:isExpanded={expanded[style.id]}
@@ -292,8 +259,8 @@
 
   <div class="align-center pt-2">
     <Pagination
-      bind:totalPages={pages.totalPages}
-      bind:currentPage={pages.currentPage}
+      bind:totalPages={styles.pages.totalPages}
+      bind:currentPage={styles.pages.currentPage}
       on:clicked={handlePaginationClicked} />
   </div>
 {:else}
