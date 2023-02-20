@@ -74,13 +74,21 @@
   }
 </script>
 
-<div
-  class="country-select-button pr-2"
-  use:tippy={{ content: tooltipContent }}>
-  <div class="box p-2">
-    <span class="icon is-large">
-      <i class="fa-solid fa-magnifying-glass fa-2xl" />
-    </span>
+<div class="is-flex">
+  <div
+    class="country-select-button pr-2"
+    use:tippy={{ content: tooltipContent }}>
+    <div class="box p-2">
+      <span class="icon is-large">
+        <i class="fa-solid fa-magnifying-glass fa-2xl" />
+      </span>
+    </div>
+  </div>
+
+  <div class="provider-selected py-2">
+    <SelectedTags
+      bind:selectedTags={tags}
+      isClearButtonShown={true} />
   </div>
 </div>
 
@@ -149,12 +157,6 @@
       {/await}
     </div>
   </nav>
-</div>
-
-<div class="provider-selected pt-2 is-flex is-align-content-center">
-  <SelectedTags
-    bind:selectedTags={tags}
-    isClearButtonShown={true} />
 </div>
 
 <style lang="scss">

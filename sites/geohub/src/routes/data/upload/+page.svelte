@@ -1,10 +1,21 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
+  import { goto, afterNavigate } from '$app/navigation'
+  import { base } from '$app/paths'
   import { BlockBlobClient } from '@azure/storage-blob'
   import { filesize } from 'filesize'
   import Dropzone from 'svelte-file-dropzone'
 
   import Notification from '$components/controls/Notification.svelte'
+
+  // preserve previous page URL
+  let previousPage: string = base
+  afterNavigate(({ from }) => {
+    if (from?.url) {
+      previousPage = `${from?.url.pathname}${from?.url.search}`
+    }
+  })
+  const REDIRECRT_TIME = 2000 // two second
 
   let fileInput: HTMLInputElement
   let selectedFile: File
@@ -23,6 +34,16 @@
     const promises = []
     promises.push(blockBlobClient.uploadData(selectedFile, { onProgress: onProgress }))
     await Promise.all(promises)
+
+    setTimeout(() => {
+      let redirectPage = previousPage
+      if (!previousPage) {
+        redirectPage = '/data'
+      }
+      goto(redirectPage, {
+        replaceState: true,
+      })
+    }, REDIRECRT_TIME)
 
     return {
       success: true,
@@ -62,7 +83,12 @@
       <button
         class="button is-primary"
         type="submit"
-        disabled={!selectedFile}>Upload</button>
+        disabled={!selectedFile}>
+        <span class="icon">
+          <i class="fa-solid fa-cloud-arrow-up" />
+        </span>
+        <span>Upload</span>
+      </button>
     </div>
   </div>
 </form>
@@ -78,7 +104,7 @@
   {#if result?.success}
     <Notification
       type="info"
-      showCloseButton={false}>Successfully uploaded the file to GeoHub!</Notification>
+      showCloseButton={false}>Successfully uploaded the file to GeoHub! It is going back to Data page.</Notification>
   {/if}
 {/await}
 

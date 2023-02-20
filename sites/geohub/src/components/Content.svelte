@@ -4,7 +4,7 @@
   import { TabNames } from '$lib/constants'
   import { layerList } from '$stores'
   import { Tabs } from '@undp-data/svelte-undp-design'
-  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Tab } from '@undp-data/svelte-undp-design/dist/interfaces'
 
   export let splitterHeight: number
   export let sidebarPosition: 'left' | 'right' = 'left'

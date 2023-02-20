@@ -8,7 +8,7 @@
   import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM, SortingColumns } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
-  import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/dist/interfaces'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
@@ -312,7 +312,7 @@
     isClearButtonShown={true} />
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
     {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
-    <Notification type="info">{DataItemFeatureCollection.totalCount} {dsText} found.</Notification>
+    <Notification type="info">{DataItemFeatureCollection.pages.totalCount} {dsText} found.</Notification>
   {/if}
 </div>
 <div

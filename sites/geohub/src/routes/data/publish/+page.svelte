@@ -1,6 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { enhance } from '$app/forms'
+  import { invalidateAll, goto, afterNavigate } from '$app/navigation'
+  import { base } from '$app/paths'
   import Tags from '$components/data-upload/Tags.svelte'
   import SdgPicker from '$components/data-upload/SdgPicker.svelte'
   import CountryPicker from '$components/data-upload/CountryPicker.svelte'
@@ -8,18 +10,42 @@
   import Notification from '$components/controls/Notification.svelte'
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
 
-  const feature: DatasetFeature = $page.data.feature
+  // preserve previous page URL
+  let previousPage: string = base
+  afterNavigate(({ from }) => {
+    if (from?.url) {
+      previousPage = `${from?.url.pathname}${from?.url.search}`
+    }
+  })
+  const REDIRECRT_TIME = 2000 // two second
+
+  let feature: DatasetFeature = $page.data.feature
   const isNew: boolean = $page.data.isNew ?? true
-  console.log(feature)
+
   let name = feature?.properties.name ?? ''
   let description = feature?.properties.description ?? ''
   let license = feature?.properties.license ?? ''
   let tags = ''
+  let isRegistering = false
+
+  const excludedTagForEditing = [
+    'type',
+    'container',
+    'geometry_column',
+    'geometrytype',
+    'geometry_type',
+    'id',
+    'id_column',
+    'layertype',
+    'schema',
+    'srid',
+    'table',
+  ]
 
   const initTags = (key: 'provider' | 'sdg_goal' | 'country' | 'other') => {
     const _tags: Tag[] = feature?.properties?.tags
     if (key === 'other') {
-      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', 'type', 'container']
+      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...excludedTagForEditing]
       return _tags?.filter((t) => !keys.includes(t.key)) ?? []
     } else {
       let keys: string[] = [key]
@@ -92,21 +118,40 @@
 <form
   method="POST"
   action="?/publish"
-  use:enhance={() => {
+  use:enhance={({ cancel }) => {
+    if (isRegistering) {
+      cancel()
+    }
+    isRegistering = true
+
     return async ({ result, update }) => {
       if (result.status === 200) {
-        console.log(result.data)
+        feature = result.data
         // await update()
-        message = { type: 'info', message: 'Dataset was registered successfully.' }
+        if (previousPage) {
+          message = {
+            type: 'info',
+            message: 'Dataset was registered successfully. It is going back to the previous page.',
+          }
+          setTimeout(() => {
+            goto(previousPage, {
+              replaceState: true,
+            })
+          }, REDIRECRT_TIME)
+        } else {
+          message = { type: 'info', message: 'Dataset was registered successfully. ' }
+          await invalidateAll()
+        }
       } else {
         message = result.data
       }
+      isRegistering = false
     }
   }}>
   <div class="field is-grouped py-2">
     <div class="control">
       <button
-        class="button is-primary"
+        class="button is-primary {isRegistering ? 'is-loading' : ''}"
         disabled={!(name && license && description && providers.length > 0)}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
@@ -118,102 +163,110 @@
       showCloseButton={false}>{message.message}</Notification>
   {/if}
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Dataset name</label>
-    <div class="control has-icons-right">
-      <input
-        class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
-        type="text"
-        name="name"
-        placeholder="Type name of dataset"
-        bind:value={name} />
-      {#if name}
-        <span class="icon is-small is-right">
-          <i class="fas fa-check has-text-success" />
-        </span>
-      {/if}
-    </div>
-    <p class="help is-dark">Name the dataset shortly and precisely.</p>
-  </div>
-
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Description</label>
-    <div class="control has-icons-right">
-      <textarea
-        class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
-        name="description"
-        placeholder="Type description of dataset"
-        bind:value={description} />
-      {#if description}
-        <span class="icon is-small is-right">
-          <i class="fas fa-check has-text-success" />
-        </span>
-      {/if}
-    </div>
-    <p class="help is-dark">Describe the dataset briefly. This information will be shown in data catalog.</p>
-  </div>
-
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">License</label>
-    <div class="control has-icons-right">
-      <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
-        <select
-          bind:value={license}
-          name="license">
-          <option value="">Select a data license</option>
-          {#each licenses as lc}
-            <option value={lc}>{lc}</option>
-          {/each}
-        </select>
+  <div class="columns">
+    <div class="column is-6">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Dataset name</label>
+        <div class="control has-icons-right">
+          <input
+            class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
+            type="text"
+            name="name"
+            placeholder="Type name of dataset"
+            disabled={isRegistering}
+            bind:value={name} />
+          {#if name}
+            <span class="icon is-small is-right">
+              <i class="fas fa-check has-text-success" />
+            </span>
+          {/if}
+        </div>
+        <p class="help is-dark">Name the dataset shortly and precisely.</p>
       </div>
-      {#if license}
-        <span class="icon is-small is-right">
-          <i class="fas fa-check has-text-success	" />
-        </span>
-      {/if}
-    </div>
-    <p class="help is-dark">
-      Open data license definition can be found at<a
-        href="https://opendefinition.org/licenses/"
-        target="_blank"
-        rel="noreferrer">https://opendefinition.org</a
-      >.
-    </p>
-  </div>
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Data providers</label>
-    <div class="control">
-      <DataProviderPicker bind:tags={providers} />
-    </div>
-    <p class="help is-dark">Select at least a data provider for the dataset.</p>
-  </div>
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Description</label>
+        <div class="control has-icons-right">
+          <textarea
+            class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
+            name="description"
+            placeholder="Type description of dataset"
+            disabled={isRegistering}
+            bind:value={description} />
+          {#if description}
+            <span class="icon is-small is-right">
+              <i class="fas fa-check has-text-success" />
+            </span>
+          {/if}
+        </div>
+        <p class="help is-dark">Describe the dataset briefly. This information will be shown in data catalog.</p>
+      </div>
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Countries (Optional)</label>
-    <div class="control">
-      <CountryPicker bind:tags={countries} />
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">License</label>
+        <div class="control has-icons-right">
+          <div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
+            <select
+              bind:value={license}
+              disabled={isRegistering}
+              name="license">
+              <option value="">Select a data license</option>
+              {#each licenses as lc}
+                <option value={lc}>{lc}</option>
+              {/each}
+            </select>
+          </div>
+          {#if license}
+            <span class="icon is-small is-right">
+              <i class="fas fa-check has-text-success	" />
+            </span>
+          {/if}
+        </div>
+        <p class="help is-dark">
+          Open data license definition can be found at<a
+            href="https://opendefinition.org/licenses/"
+            target="_blank"
+            rel="noreferrer">https://opendefinition.org</a
+          >.
+        </p>
+      </div>
     </div>
-    <p class="help is-dark">Select relevant countries which the dataset is related to.</p>
-  </div>
+    <div class="column is-6">
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Data providers</label>
+        <div class="control">
+          <DataProviderPicker bind:tags={providers} />
+        </div>
+        <p class="help is-dark">Select at least a data provider for the dataset.</p>
+      </div>
 
-  <div class="field">
-    <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">SDGs (Optional)</label>
-    <div class="control">
-      <SdgPicker bind:tags={sdgs} />
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">Countries (Optional)</label>
+        <div class="control">
+          <CountryPicker bind:tags={countries} />
+        </div>
+        <p class="help is-dark">Select relevant countries which the dataset is related to.</p>
+      </div>
+
+      <div class="field">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label">SDGs (Optional)</label>
+        <div class="control">
+          <SdgPicker bind:tags={sdgs} />
+        </div>
+        <p class="help is-dark">
+          Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
+            href="https://www.undp.org/sustainable-development-goals"
+            target="_blank"
+            rel="noreferrer">here</a>
+        </p>
+      </div>
     </div>
-    <p class="help is-dark">
-      Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
-        href="https://www.undp.org/sustainable-development-goals"
-        target="_blank"
-        rel="noreferrer">here</a>
-    </p>
   </div>
 
   <div class="field">
@@ -230,7 +283,7 @@
   <div class="field is-grouped py-2">
     <div class="control">
       <button
-        class="button is-primary"
+        class="button is-primary {isRegistering ? 'is-loading' : ''}"
         disabled={!(name && license && description && providers.length > 0)}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
@@ -239,26 +292,8 @@
   <input
     class="input"
     type="hidden"
-    name="geometry"
-    value={feature?.geometry ? JSON.stringify(feature?.geometry) : ''} />
-
-  <input
-    class="input"
-    type="hidden"
-    name="id"
-    value={feature?.properties?.id ?? ''} />
-
-  <input
-    class="input"
-    type="hidden"
-    name="url"
-    value={feature?.properties?.url ?? ''} />
-
-  <input
-    class="input"
-    type="hidden"
-    name="is_raster"
-    value={feature?.properties?.is_raster ?? ''} />
+    name="feature"
+    value={JSON.stringify(feature)} />
 
   <input
     class="input"

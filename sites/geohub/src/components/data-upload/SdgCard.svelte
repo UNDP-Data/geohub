@@ -6,7 +6,7 @@
 
   export let sdg: number
   export let isSelectable = true
-  let isSelected = false
+  export let isSelected = false
 
   const handleSDGSelected = () => {
     if (!isSelectable) return

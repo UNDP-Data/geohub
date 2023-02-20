@@ -1,5 +1,5 @@
 import type { StyleDefinition } from '@undp-data/style-switcher'
-import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+import type { Breadcrumb, Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
 
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25

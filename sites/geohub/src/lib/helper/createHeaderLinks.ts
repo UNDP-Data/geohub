@@ -1,6 +1,6 @@
-import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+import type { HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
 
-type LineName = 'home' | 'maps' | 'dashboard' | 'userguide'
+type LineName = 'home' | 'maps' | 'dashboard' | 'userguide' | 'data'
 
 export const createHeaderLinks = (linkNames: LineName[]) => {
   const links: { [key: string]: HeaderLink } = {
@@ -27,6 +27,12 @@ export const createHeaderLinks = (linkNames: LineName[]) => {
       title: 'User guide',
       href: 'https://docs.undpgeohub.org',
       icon: 'fa-regular fa-circle-question pr-1',
+    },
+    data: {
+      id: 'header-link-data',
+      title: 'My data',
+      href: '/Data',
+      icon: 'fa-solid fa-database pr-1',
     },
   }
 
