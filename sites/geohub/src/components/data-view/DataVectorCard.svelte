@@ -8,7 +8,7 @@
     VectorTileMetadata,
   } from '$lib/types'
   import { Accordion, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { StatusTypes } from '$lib/constants'

@@ -36,7 +36,7 @@
   import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
   import { Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'

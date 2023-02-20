@@ -2,7 +2,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { initTippy } from '$lib/helper'
   import type { Continent, Country, Region, Tag } from '$lib/types'
-  import Loader from '@undp-data/svelte-undp-design/src/lib/Loader/Loader.svelte'
+  import { Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
   import CountryCard from './CountryCard.svelte'
   const tippy = initTippy()

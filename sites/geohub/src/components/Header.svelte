@@ -4,7 +4,7 @@
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
-  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
   import { createHeaderLinks } from '$lib/helper'
 
   export let drawerOpen = true
