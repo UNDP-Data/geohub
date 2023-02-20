@@ -4,7 +4,7 @@
   import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte'
   import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps'
   import { ColorMapTypes } from '$lib/constants'
-  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Tab } from '@undp-data/svelte-undp-design/dist/interfaces'
   import { Tabs } from '@undp-data/svelte-undp-design'
   import chroma from 'chroma-js'
   import { initTippy } from '$lib/helper'

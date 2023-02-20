@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
-  import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design/dist/interfaces'
 
   export let category: Breadcrumb
   export let size: 'small' | 'medium' = 'medium'

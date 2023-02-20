@@ -7,7 +7,7 @@
 
   export let layer: Layer
   import Keydown from 'svelte-keydown'
-  import Button from '@undp-data/svelte-undp-design/src/lib/Button/Button.svelte'
+  import { Button } from '@undp-data/svelte-undp-design'
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {

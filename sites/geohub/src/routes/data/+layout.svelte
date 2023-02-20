@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { Header, Footer } from '@undp-data/svelte-undp-design'
-  import type { HeaderLink } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { createHeaderLinks } from '$lib/helper'
