@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
 ## 0.0.4
 
 ### Patch Changes
