@@ -12,7 +12,7 @@
   export let tags: Tag[] = []
 
   let selectedSDGs: { [key: number]: boolean } = {}
-  $: selectedSDGs, updateTags()
+  // $: selectedSDGs, updateTags()
 
   const initSelectedSDGs = () => {
     tags?.forEach((t) => {
@@ -26,19 +26,22 @@
     const isSelected = e.detail.isSelected
 
     selectedSDGs[sdg] = isSelected
-  }
 
-  const updateTags = () => {
-    tags = []
-    Object.keys(selectedSDGs)?.forEach((key) => {
-      tags = [
-        ...tags,
-        {
+    const index = tags.findIndex((t) => t.value === `${sdg}`)
+    if (isSelected) {
+      if (index === -1) {
+        tags.push({
           key: TAG_KEY,
-          value: key,
-        },
-      ]
-    })
+          value: `${sdg}`,
+        })
+        tags = [...tags]
+      }
+    } else {
+      if (index > -1) {
+        tags.splice(index, 1)
+        tags = [...tags]
+      }
+    }
   }
 </script>
 
@@ -75,6 +78,7 @@
     {#each sdgs as sdg}
       <SdgCard
         bind:sdg
+        isSelected={selectedSDGs[sdg] && selectedSDGs[sdg] === true ? true : false}
         on:sdgSelected={handleSDGSelected} />
     {/each}
   </div>

@@ -1,13 +1,23 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { enhance } from '$app/forms'
-  import { invalidateAll } from '$app/navigation'
+  import { invalidateAll, goto, afterNavigate } from '$app/navigation'
+  import { base } from '$app/paths'
   import Tags from '$components/data-upload/Tags.svelte'
   import SdgPicker from '$components/data-upload/SdgPicker.svelte'
   import CountryPicker from '$components/data-upload/CountryPicker.svelte'
   import type { DatasetFeature, Tag } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
+
+  // preserve previous page URL
+  let previousPage: string = base
+  afterNavigate(({ from }) => {
+    if (from?.url) {
+      previousPage = `${from?.url.pathname}${from?.url.search}`
+    }
+  })
+  const REDIRECRT_TIME = 2000 // two second
 
   let feature: DatasetFeature = $page.data.feature
   const isNew: boolean = $page.data.isNew ?? true
@@ -118,8 +128,20 @@
       if (result.status === 200) {
         feature = result.data
         // await update()
-        message = { type: 'info', message: 'Dataset was registered successfully.' }
-        await invalidateAll()
+        if (previousPage) {
+          message = {
+            type: 'info',
+            message: 'Dataset was registered successfully. It is going back to the previous page.',
+          }
+          setTimeout(() => {
+            goto(previousPage, {
+              replaceState: true,
+            })
+          }, REDIRECRT_TIME)
+        } else {
+          message = { type: 'info', message: 'Dataset was registered successfully. ' }
+          await invalidateAll()
+        }
       } else {
         message = result.data
       }
