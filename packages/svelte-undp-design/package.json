@@ -2,10 +2,6 @@
 	"name": "@undp-data/svelte-undp-design",
 	"version": "0.0.16",
 	"description": "This package is to manage svelte components for UNDP design system in GeoHub",
-	"main": "package/index.js",
-	"files": [
-		"package"
-	],
 	"scripts": {
 		"dev": "vite dev",
 		"build": "svelte-kit sync && svelte-package",
