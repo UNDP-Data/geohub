@@ -7,10 +7,23 @@
     "group:allNonMajor",
     ":semanticCommitTypeAll(chore)"
   ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "matchDepTypes": ["devDependencies", "dependencies"],
+      "matchPackageNames": ["@types/node", "vite"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchPackagePatterns": ["lint", "prettier"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true
     }
   ]
