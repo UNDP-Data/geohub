@@ -45,8 +45,7 @@
 
   //console.log(layer)
   let hideOptions = true
-  let step
-  let uv: any = undefined
+  let uv: string[] = undefined
   let clickFuncs: Listener[] = []
   let cursor: string
   let mapClickButtonDisabled = false

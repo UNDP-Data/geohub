@@ -31,3 +31,5 @@ export {
 	FluidCarousel,
 	Stats
 };
+
+export * from './interfaces';

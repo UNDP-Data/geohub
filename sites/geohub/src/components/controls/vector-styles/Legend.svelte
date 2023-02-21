@@ -11,7 +11,7 @@
   export let layer: LayerSpecification
   let container: HTMLElement = document.createElement('div')
 
-  const getColorFromExpression = (value: any) => {
+  const getColorFromExpression = (value) => {
     if (value && Array.isArray(value)) {
       if (value[0] === 'rgb') {
         value = chroma(value.splice(1, 3)).css()
@@ -144,14 +144,14 @@
           divIcon.style.backgroundRepeat = symbol.attributes.style.backgroundRepeat
           divIcon.style.opacity = symbol.attributes.style.opacity
 
-          const color: any = map.getPaintProperty(layer.id, 'fill-color')
-          if (color && ['interval', 'categorical'].includes(color.type)) {
+          const color = map.getPaintProperty(layer.id, 'fill-color')
+          if (color && ['interval', 'categorical'].includes(color['type'])) {
             const colormap = chroma
-              .scale(color.stops.map((stop) => stop[1]))
+              .scale(color['stops'].map((stop) => stop[1]))
               .mode('lrgb')
               .padding([0.25, 0])
               .domain([1, 100])
-              .colors(color.stops.length, 'rgba')
+              .colors(color['stops'].length, 'rgba')
             const style = `height: calc(1px * 24); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`
             divIcon.style.cssText = style
           }
@@ -164,18 +164,19 @@
           if (layer.layout && layer.layout['icon-image']) {
             const icon = $spriteImageList.find((ico) => ico.alt === layer.layout['icon-image'])
             if (icon) {
-              let color: any = map.getPaintProperty(layer.id, 'icon-color')
+              let color = map.getPaintProperty(layer.id, 'icon-color')
               let cssStyle = ''
-              if (color && (color.type === 'interval' || color.type === 'categorical')) {
+              if (color && (color['type'] === 'interval' || color['type'] === 'categorical')) {
                 const colormap = chroma
-                  .scale(color.stops.map((stop) => stop[1]))
+                  .scale(color['stops'].map((stop) => stop[1]))
                   .mode('lrgb')
                   .padding([0.25, 0])
                   .domain([1, 100])
-                  .colors(color.stops.length, 'rgba')
+                  .colors(color['stops'].length, 'rgba')
                 cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`
               } else {
-                const rgba = chroma(color).rgba()
+                const c = color as string
+                const rgba = chroma(c).rgba()
 
                 cssStyle = `filter: ${hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter}`
               }
@@ -187,14 +188,14 @@
               container.appendChild(img)
             }
           } else {
-            let color: any = map.getPaintProperty(layer.id, 'line-color')
-            if (color && ['interval', 'categorical'].includes(color.type)) {
+            let color = map.getPaintProperty(layer.id, 'line-color')
+            if (color && ['interval', 'categorical'].includes(color['type'])) {
               const colormap = chroma
-                .scale(color.stops.map((stop) => stop[1]))
+                .scale(color['stops'].map((stop) => stop[1]))
                 .mode('lrgb')
                 .padding([0.25, 0])
                 .domain([1, 100])
-                .colors(color.stops.length, 'rgba')
+                .colors(color['stops'].length, 'rgba')
               const cssStyle = `height: calc(1px * 5); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`
               const divColor = document.createElement('div')
               divColor.style.cssText = cssStyle

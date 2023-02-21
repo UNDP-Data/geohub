@@ -1,8 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
-  import { Header, Footer, Stats } from '@undp-data/svelte-undp-design'
-  import type { HeaderLink, StatsCard } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Header, Footer, Stats, type HeaderLink, type StatsCard } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { createHeaderLinks } from '$lib/helper'
