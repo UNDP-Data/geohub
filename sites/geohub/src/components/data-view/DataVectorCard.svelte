@@ -3,12 +3,10 @@
     BannerMessage,
     DatasetFeature,
     RasterTileMetadata,
-    StacItemFeature,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import { Accordion, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Accordion, Radios, type Radio } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { StatusTypes } from '$lib/constants'

@@ -2,7 +2,7 @@ import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
 import { env } from '$env/dynamic/private'
-import type { StatsCard } from '@undp-data/svelte-undp-design/dist/interfaces'
+import type { StatsCard } from '@undp-data/svelte-undp-design'
 import { AccessLevel } from '$lib/constants'
 const connectionString = env.DATABASE_CONNECTION
 

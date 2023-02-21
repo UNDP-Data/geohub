@@ -1,4 +1,4 @@
-import type { HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
+import type { HeaderLink } from '@undp-data/svelte-undp-design'
 
 type LineName = 'home' | 'maps' | 'dashboard' | 'userguide' | 'data'
 

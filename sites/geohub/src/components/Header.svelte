@@ -1,10 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { Header } from '@undp-data/svelte-undp-design'
+  import { Header, type HeaderLink } from '@undp-data/svelte-undp-design'
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
-  import type { HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
   import { createHeaderLinks } from '$lib/helper'
 
   export let drawerOpen = true
