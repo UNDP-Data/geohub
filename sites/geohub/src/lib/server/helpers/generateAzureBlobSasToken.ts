@@ -1,16 +1,12 @@
 import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import {
-  AZURE_STORAGE_ACCOUNT,
-  AZURE_STORAGE_ACCESS_KEY,
-  AZURE_STORAGE_ACCOUNT_UPLOAD,
-  AZURE_STORAGE_ACCESS_KEY_UPLOAD,
-} from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 
 export const generateAzureBlobSasToken = (url: string) => {
-  const account = url.indexOf(AZURE_STORAGE_ACCOUNT) !== -1 ? AZURE_STORAGE_ACCOUNT : AZURE_STORAGE_ACCOUNT_UPLOAD
+  const account =
+    url.indexOf(env.AZURE_STORAGE_ACCOUNT) !== -1 ? env.AZURE_STORAGE_ACCOUNT : env.AZURE_STORAGE_ACCOUNT_UPLOAD
   const accessKey =
-    url.indexOf(AZURE_STORAGE_ACCOUNT) !== -1 ? AZURE_STORAGE_ACCESS_KEY : AZURE_STORAGE_ACCESS_KEY_UPLOAD
+    url.indexOf(env.AZURE_STORAGE_ACCOUNT) !== -1 ? env.AZURE_STORAGE_ACCESS_KEY : env.AZURE_STORAGE_ACCESS_KEY_UPLOAD
 
   const sharedKeyCredential = new StorageSharedKeyCredential(account, accessKey)
   // create storage container

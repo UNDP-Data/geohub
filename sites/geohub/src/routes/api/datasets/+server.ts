@@ -2,9 +2,9 @@ import type { RequestHandler } from './$types'
 import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types'
-const connectionString = DATABASE_CONNECTION
+const connectionString = env.DATABASE_CONNECTION
 
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
 import { generateAzureBlobSasToken, pageNumber } from '$lib/server/helpers'

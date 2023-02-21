@@ -1,7 +1,7 @@
 import type { Map, SourceSpecification, FillLayerSpecification, PointLike } from 'maplibre-gl';
+import { PUBLIC_AZURE_URL } from '$env/static/public';
 
 export class AdminLayer {
-	private BASE_URL: string;
 	private ADM_ID: string;
 	private adminLevel = 0;
 	private hoveredStateId = null;
@@ -9,9 +9,8 @@ export class AdminLayer {
 
 	private map: Map;
 
-	constructor(map: Map, baseUrl: string, isHover = true, adminId: string) {
+	constructor(map: Map, isHover = true, adminId: string) {
 		this.map = map;
-		this.BASE_URL = baseUrl;
 		this.isHover = isHover;
 		this.ADM_ID = adminId;
 	}
@@ -27,7 +26,7 @@ export class AdminLayer {
 			type: 'vector',
 			maxzoom: 10,
 			promoteId: `adm${lvl}_id`,
-			tiles: [`${this.BASE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+			tiles: [`${PUBLIC_AZURE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
 		};
 		const layerFill: FillLayerSpecification = {
 			id: this.ADM_ID,

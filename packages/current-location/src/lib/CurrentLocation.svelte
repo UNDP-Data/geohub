@@ -5,7 +5,6 @@
 
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-left';
-	export let azureBaseUrl: string;
 	export let layerName = 'admin';
 	export let isHover = false;
 
@@ -13,11 +12,11 @@
 
 	let adminLayer: AdminLayer;
 	let isContainerVisible = false;
-	let adm0Name = null;
-	let adm1Name = null;
-	let adm2Name = null;
-	let adm3Name = null;
-	let adm4Name = null;
+	let adm0Name = '';
+	let adm1Name = '';
+	let adm2Name = '';
+	let adm3Name = '';
+	let adm4Name = '';
 
 	$: {
 		if (map) {
@@ -32,7 +31,7 @@
 
 	const initAdminLayer = () => {
 		if (!adminLayer) {
-			adminLayer = new AdminLayer(map, azureBaseUrl, isHover, layerName);
+			adminLayer = new AdminLayer(map, isHover, layerName);
 		}
 		adminLayer.load();
 		adminLayer.setInteraction();
@@ -49,11 +48,11 @@
 				adm4Name = features[0].properties.adm4_name;
 				isContainerVisible = Boolean(features[0].properties.adm0_name);
 			} else {
-				adm0Name = null;
-				adm1Name = null;
-				adm2Name = null;
-				adm3Name = null;
-				adm4Name = null;
+				adm0Name = '';
+				adm1Name = '';
+				adm2Name = '';
+				adm3Name = '';
+				adm4Name = '';
 				isContainerVisible = false;
 			}
 		}

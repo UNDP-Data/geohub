@@ -8,7 +8,7 @@
   import { layerList, map } from '$stores'
   import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, getValueFromRasterTileUrl, loadMap } from '$lib/helper'
   import { Loader } from '@undp-data/svelte-undp-design'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
 
   export let layer: Layer
   export let numberOfClasses: number
