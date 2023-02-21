@@ -9,17 +9,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: undp-data/geohub
-  AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-  AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-  AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
-  AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
-  DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
-  MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
-  PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
-  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-  AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-  AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-  AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
 
 jobs:
   build:
@@ -32,20 +21,20 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         with:
           directory: ./sites/geohub
-          # envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          # envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          # envkey_AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
-          # envkey_AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
-          # envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          envkey_AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
+          envkey_AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
+          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          envkey_MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
+          envkey_PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
+          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
           envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
           envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
-          # envkey_MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
-          # envkey_PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
-          # envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          # envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          # envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          # envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s)
