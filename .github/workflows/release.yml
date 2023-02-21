@@ -38,20 +38,20 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         with:
           directory: ./sites/geohub
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
-          envkey_AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
-          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+          # envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          # envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+          # envkey_AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
+          # envkey_AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
+          # envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
           envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
           envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
-          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
-          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+          # envkey_MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
+          # envkey_PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
+          # envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          # envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          # envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          # envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
 
       - name: build packages
         run: |

@@ -1,11 +1,6 @@
 FROM node:19 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update \
-    && apt install -y --no-install-recommends \
-    python3 \
-    python3-pip
-
 ENV DEBIAN_FRONTEND=dialog
 
 RUN npm install pnpm -g
