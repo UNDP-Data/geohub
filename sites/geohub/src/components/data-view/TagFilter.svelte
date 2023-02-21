@@ -26,7 +26,6 @@
 
   onMount(async () => {
     operatorType = ($page.url.searchParams.get('operator') as 'and' | 'or') ?? 'and'
-    console.log(operatorType)
 
     if (!(tags && Object.keys(tags).length > 0)) {
       await getTags()
