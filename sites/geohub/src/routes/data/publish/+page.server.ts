@@ -17,7 +17,7 @@ import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_UPLOAD } from '$lib/server
  */
 export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
-  if (!session) throw error(403, { message: 'No permission' })
+  if (!session) return
 
   let datasetUrl = url.searchParams.get('url')
   if (!datasetUrl) {

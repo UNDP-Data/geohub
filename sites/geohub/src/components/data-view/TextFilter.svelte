@@ -14,7 +14,6 @@
   export let map: Map
   export let placeholder: string
   export let query = ''
-  export let queryForSearch = ''
   let queryType: 'and' | 'or' = 'and'
   let queryTypes: Radio[] = [
     {
@@ -38,14 +37,14 @@
 
   $: isQueryEmpty = !query || query?.length === 0
   $: queryType, handleQueryTypeChanged()
-  $: sortingColumn, fireChangeEvent('change', true)
+  $: sortingColumn, fireChangeEvent('change')
   const handleQueryTypeChanged = () => {
     if (query === '') return
-    fireChangeEvent('change', true)
+    fireChangeEvent('change')
   }
 
   const handleFilterInput = debounce(() => {
-    fireChangeEvent('change', true)
+    fireChangeEvent('change')
   }, 500)
 
   const clearInput = () => {
@@ -54,14 +53,11 @@
     fireChangeEvent('clear')
   }
 
-  const fireChangeEvent = (eventName: 'change' | 'clear', isNormalise = false) => {
-    queryForSearch = query
-    if (isNormalise) {
-      if (query.length > 0) {
-        queryForSearch = queryForSearch.trim().replace(/\s/g, ` ${queryType} `)
-      }
-    }
-    dispatch(eventName)
+  const fireChangeEvent = (eventName: 'change' | 'clear') => {
+    dispatch(eventName, {
+      query: query,
+      queryoperator: queryType,
+    })
   }
 
   $: isFilterByBBox, registerMapMovedEvent()
@@ -91,7 +87,7 @@
       bbox = undefined
       map.off('moveend', handleMapMoved)
     }
-    fireChangeEvent('change', true)
+    fireChangeEvent('change')
   }
 </script>
 

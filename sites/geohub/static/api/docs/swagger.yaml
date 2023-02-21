@@ -280,6 +280,15 @@ paths:
           in: query
           name: staronly
           description: 'if true, only search for favourite datasets'
+        - schema:
+            type: string
+            default: and
+            enum:
+              - and
+              - or
+          in: query
+          name: queryoperator
+          description: operator for query search. convert space to either 'and' or 'or'
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API

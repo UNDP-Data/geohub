@@ -3,7 +3,7 @@
   import { goto } from '$app/navigation'
   import type { DatasetFeatureCollection } from '$lib/types'
   import { Accordion, Pagination, Loader } from '@undp-data/svelte-undp-design'
-  import { SortingColumns } from '$lib/constants'
+  import { DEFAULT_LIMIT, LimitOptions, SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
@@ -13,8 +13,7 @@
   let expanded: { [key: string]: boolean } = {}
   let isLoading = false
 
-  let limits = [5, 10, 25, 50, 100].map((n) => `${n}`)
-  let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : '10'
+  let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : `${DEFAULT_LIMIT}`
   let offset = $page.url.searchParams.get('offset') ? $page.url.searchParams.get('offset') : '0'
   let sortby = $page.url.searchParams.get('sortby') ? $page.url.searchParams.get('sortby') : 'name,asc'
   let query = $page.url.searchParams.get('query') ?? ''
@@ -28,6 +27,7 @@
       isLoading = true
       await goto(`?${url.searchParams.toString()}`, {
         invalidateAll: true,
+        noScroll: true,
       })
       fc = $page.data.features
     } finally {
@@ -37,28 +37,19 @@
 
   const handleFilterInput = debounce(async (e) => {
     query = (e.target as HTMLInputElement).value
-    let queryForSearch = query
     if (query.length > 0) {
-      queryForSearch = normaliseQuery()
       offset = '0'
 
       const link = fc.links.find((l) => l.rel === 'self')
       if (link) {
         const href = new URL(link.href)
-        href.searchParams.set('query', queryForSearch)
+        href.searchParams.set('query', query.trim())
+        href.searchParams.set('queryoperator', 'and')
         href.searchParams.set('offset', offset)
         await reload(href)
       }
     }
   }, 500)
-
-  const normaliseQuery = () => {
-    if (query.length > 0) {
-      return query.trim().replace(/\s/g, ` and `)
-    } else {
-      return query
-    }
-  }
 
   const clearInput = async () => {
     if (isQueryEmpty === true) return
@@ -91,7 +82,7 @@
   const handleSortbyChanged = async () => {
     offset = '0'
 
-    const link = fc.links.find((l) => l.rel === 'self')
+    const link = fc.links?.find((l) => l.rel === 'self')
     if (link) {
       const href = new URL(link.href)
       href.searchParams.set('sortby', sortby)
@@ -177,8 +168,8 @@
       <label class="label">Shown in:</label>
       <div class="select">
         <select bind:value={limit}>
-          {#each limits as limit}
-            <option value={limit}>{limit}</option>
+          {#each LimitOptions as limit}
+            <option value={`${limit}`}>{limit}</option>
           {/each}
         </select>
       </div>
@@ -190,7 +181,7 @@
   <div class="align-center">
     <Loader />
   </div>
-{:else if fc.pages.totalCount > 0}
+{:else if fc.pages?.totalCount > 0}
   {#each fc.features as feature}
     <Accordion
       headerTitle={feature.properties.name}

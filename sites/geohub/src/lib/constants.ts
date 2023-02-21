@@ -101,6 +101,9 @@ export enum AccessLevel {
   PUBLIC = 3,
 }
 
+export const LimitOptions = [5, 10, 25, 50, 100]
+export const DEFAULT_LIMIT = 10
+
 export const styles: StyleDefinition[] = [
   {
     title: 'Carto',
@@ -198,6 +201,7 @@ export const DatasetSearchQueryParams = [
   'sortby',
   'operator',
   'staronly',
+  'queryoperator',
 ]
 
 export const tagSearchKeys = [
@@ -281,3 +285,22 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
     },
   ],
 }
+
+export const MapOrderByOptions = [
+  {
+    value: 'updatedat,desc',
+    label: 'Most recent',
+  },
+  {
+    value: 'updatedat,asc',
+    label: 'less recent',
+  },
+  {
+    value: 'name,asc',
+    label: 'A to Z',
+  },
+  {
+    value: 'name,desc',
+    label: 'Z to A',
+  },
+]

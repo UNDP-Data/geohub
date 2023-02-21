@@ -15,8 +15,7 @@ const FOLDER_NAME = 'raw'
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.getSession()
-  if (!session) throw error(403, { message: 'No permission' })
-  return {}
+  if (!session) return
 }
 
 export const actions = {
@@ -26,9 +25,7 @@ export const actions = {
   getSasUrl: async ({ request, locals }) => {
     try {
       const session = await locals.getSession()
-      if (!session) {
-        return fail(403, { message: 'No permission' })
-      }
+      if (!session) return {}
       const user_email = session?.user.email
       const userHash = generateHashKey(user_email)
       const fileName = (await request.formData()).get('fileName') as string
