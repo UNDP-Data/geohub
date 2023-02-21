@@ -2,12 +2,12 @@
   import DataView from '$components/DataView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import { TabNames } from '$lib/constants'
-  import { layerList } from '$stores'
+  import { layerList, map } from '$stores'
   import { Tabs } from '@undp-data/svelte-undp-design'
   import type { Tab } from '@undp-data/svelte-undp-design/dist/interfaces'
 
   export let splitterHeight: number
-  export let sidebarPosition: 'left' | 'right' = 'left'
+  export let sideBarPosition: 'left' | 'right' = 'left'
   let tabsHeight: number
   $: contentHeight = splitterHeight - tabsHeight
 
@@ -30,8 +30,9 @@
   ]
 
   const setSideBarPosition = () => {
-    sidebarPosition = sidebarPosition === 'left' ? 'right' : 'left'
+    sideBarPosition = sideBarPosition === 'left' ? 'right' : 'left'
   }
+
   let activeTab: string = tabs[0].label
 </script>
 
@@ -46,15 +47,15 @@
           bind:height={tabsHeight} />
       {/key}
     </div>
-    <!--    <div style="width: 9%; margin-top:1%">-->
-    <!--      <button-->
-    <!--        class="button"-->
-    <!--        on:click={setSideBarPosition}>-->
-    <!--        <span class="icon is-small">-->
-    <!--          <i class="fas fa-chevron-right" />-->
-    <!--        </span>-->
-    <!--      </button>-->
-    <!--    </div>-->
+    <div style="width: 9%; margin-top:1%">
+      <button
+        class="button"
+        on:click={setSideBarPosition}>
+        <span class="icon is-small">
+          <i class="fas fa-chevron-right" />
+        </span>
+      </button>
+    </div>
   </div>
   <div class="container p-0 m-0">
     <div hidden={activeTab !== TabNames.DATA}>
