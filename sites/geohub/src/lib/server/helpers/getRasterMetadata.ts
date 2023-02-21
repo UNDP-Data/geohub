@@ -1,6 +1,6 @@
 import type { BandMetadata, RasterTileMetadata } from '$lib/types'
 import { generateAzureBlobSasToken } from '$lib/server/helpers'
-import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
 import { clean, getBase64EncodedUrl } from '$lib/helper'
 
 export const getRasterMetadata = async (url: string) => {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { VegaLite } from 'svelte-vega'
   import { onMount } from 'svelte'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import { fetchUrl, getLayerStyle } from '$lib/helper'
   import { map } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'

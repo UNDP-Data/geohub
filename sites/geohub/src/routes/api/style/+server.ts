@@ -2,11 +2,11 @@ import type { RequestHandler } from './$types'
 import pkg from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers'
 import { AccessLevel } from '$lib/constants'
-const connectionString = DATABASE_CONNECTION
+const connectionString = env.DATABASE_CONNECTION
 
 /**
  * Get the list of saved style from PostGIS database

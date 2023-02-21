@@ -15,7 +15,7 @@
   import Step from '$components/control-groups/Step.svelte'
   import { getActiveBandIndex, getLayerStyle, updateParamsInURL, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import { onMount } from 'svelte'
   import { rasterComparisonOperators } from '$lib/constants'
 

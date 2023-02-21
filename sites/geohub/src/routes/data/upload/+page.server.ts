@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types'
-import { fail, error } from '@sveltejs/kit'
+import { fail } from '@sveltejs/kit'
 import {
   BlobSASPermissions,
   BlobServiceClient,
@@ -7,7 +7,7 @@ import {
   BlockBlobClient,
   StorageSharedKeyCredential,
 } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT_UPLOAD, AZURE_STORAGE_ACCESS_KEY_UPLOAD } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import { generateHashKey } from '$lib/server/helpers'
 
 const CONTAINER_NAME = 'userdata'
@@ -62,14 +62,14 @@ function getContainerClient(containerName: string) {
 }
 
 function getBlobServiceClient() {
-  if (!AZURE_STORAGE_ACCOUNT_UPLOAD || !AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
+  if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
     throw Error('Azure Storage credentials not found')
   }
   const baseUrl = `https://${AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
 
   const sharedKeyCredential = new StorageSharedKeyCredential(
-    AZURE_STORAGE_ACCOUNT_UPLOAD,
-    AZURE_STORAGE_ACCESS_KEY_UPLOAD,
+    env.AZURE_STORAGE_ACCOUNT_UPLOAD,
+    env.AZURE_STORAGE_ACCESS_KEY_UPLOAD,
   )
   const blobServiceClient: BlobServiceClient = new BlobServiceClient(baseUrl, sharedKeyCredential)
 

@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { COLOR_CLASS_COUNT_MAXIMUM, ErrorMessages, STAC_MINIMUM_ZOOM } from './constants'
 import { createAttributionFromTags, getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
-import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
+import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import chroma from 'chroma-js'
 

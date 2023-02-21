@@ -2,9 +2,9 @@ import type { RequestHandler } from './$types'
 import pkg from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import { getStarCount } from '$lib/server/helpers'
-const connectionString = DATABASE_CONNECTION
+const connectionString = env.DATABASE_CONNECTION
 
 export const GET: RequestHandler = async ({ params }) => {
   const dataset_id = params.id

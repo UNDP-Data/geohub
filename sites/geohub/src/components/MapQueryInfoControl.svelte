@@ -6,7 +6,7 @@
   import { Accordion, Loader, Checkbox } from '@undp-data/svelte-undp-design'
   import { clean, downloadFile, getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper'
   import type { Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import Notification from './controls/Notification.svelte'
 
   interface PointFeature {

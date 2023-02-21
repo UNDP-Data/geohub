@@ -1,6 +1,6 @@
 import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
-import { DATABASE_CONNECTION } from './variables/private'
+import { env } from '$env/dynamic/private'
 
 class DatabaseManager {
   private connectionString: string
@@ -8,7 +8,7 @@ class DatabaseManager {
   private client: PoolClient | undefined = undefined
 
   constructor(connectionString?: string) {
-    this.connectionString = connectionString ?? DATABASE_CONNECTION
+    this.connectionString = connectionString ?? env.DATABASE_CONNECTION
   }
 
   public async transactionStart() {
