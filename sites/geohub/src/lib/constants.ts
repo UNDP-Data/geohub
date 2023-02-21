@@ -201,6 +201,7 @@ export const DatasetSearchQueryParams = [
   'sortby',
   'operator',
   'staronly',
+  'queryoperator',
 ]
 
 export const tagSearchKeys = [

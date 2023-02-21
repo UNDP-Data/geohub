@@ -37,28 +37,19 @@
 
   const handleFilterInput = debounce(async (e) => {
     query = (e.target as HTMLInputElement).value
-    let queryForSearch = query
     if (query.length > 0) {
-      queryForSearch = normaliseQuery()
       offset = '0'
 
       const link = fc.links.find((l) => l.rel === 'self')
       if (link) {
         const href = new URL(link.href)
-        href.searchParams.set('query', queryForSearch)
+        href.searchParams.set('query', query.trim())
+        href.searchParams.set('queryoperator', 'and')
         href.searchParams.set('offset', offset)
         await reload(href)
       }
     }
   }, 500)
-
-  const normaliseQuery = () => {
-    if (query.length > 0) {
-      return query.trim().replace(/\s/g, ` and `)
-    } else {
-      return query
-    }
-  }
 
   const clearInput = async () => {
     if (isQueryEmpty === true) return
