@@ -9,7 +9,6 @@
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'
-  import type { LegendState } from '$lib/types'
 
   export let contentHeight: number
   export let activeTab: string
@@ -18,18 +17,14 @@
   $: totalHeight = contentHeight - layerHeaderHeight
 
   const getLayerListFromStyle = () => {
-    return new Promise<LegendState>((resolve) => {
+    return new Promise<void>((resolve) => {
       try {
         $indicatorProgress = true
         const styleInfo = $page.data.style
-        if (!styleInfo || !styleInfo?.legendState) {
+        if (!styleInfo) {
           $page.url.searchParams.delete('style')
-          if ($page.url.pathname === '/viewer') {
-            goto(`../?${$page.url.searchParams.toString()}`)
-          } else {
-            goto(`?${$page.url.searchParams.toString()}`)
-          }
-          resolve({})
+          goto(`?${$page.url.searchParams.toString()}`)
+          resolve()
         }
 
         const style: StyleSpecification = styleInfo.style

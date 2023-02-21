@@ -1,6 +1,4 @@
 import type { PageServerLoad } from './$types'
-import type { StyleSpecification } from 'maplibre-gl'
-import type { LegendState } from '$lib/types'
 
 export const load: PageServerLoad = async (event) => {
   const session = await event.locals.getSession()
@@ -20,23 +18,6 @@ export const load: PageServerLoad = async (event) => {
       }
 
       data = { style: styleInfo, readOnly: isReadOnly }
-
-      if (styleInfo.layers) {
-        const legendState: LegendState = {}
-        const style: StyleSpecification = styleInfo.style
-
-        styleInfo.layers.map((el) => {
-          const layerStyle = style.layers.find((l) => l.id === el.id)
-          const cmap = layerStyle?.['colorMapName']
-          const classification = layerStyle?.['classificationMethod']
-          const lid = layerStyle?.['id']
-          if (cmap && classification && lid) {
-            //reuse state
-            legendState[lid] = { classification: classification, colorMapName: cmap }
-          }
-        })
-        styleInfo.legendState = legendState
-      }
     }
   }
   return data
