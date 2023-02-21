@@ -124,10 +124,9 @@
     }
     isRegistering = true
 
-    return async ({ result, update }) => {
+    return async ({ result }) => {
       if (result.status === 200) {
         feature = result.data
-        // await update()
         if (previousPage) {
           message = {
             type: 'info',

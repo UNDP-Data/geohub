@@ -4,7 +4,6 @@
     AssetOptions,
     RasterTileMetadata,
     DatasetFeature,
-    DatasetFeatureCollection,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
     StacItemFeatureCollection,

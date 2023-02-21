@@ -3,15 +3,7 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import { Loader } from '@undp-data/svelte-undp-design'
 
-  import {
-    clean,
-    fetchUrl,
-    getLayerSourceUrl,
-    getLayerStyle,
-    loadMap,
-    updateLayerURL,
-    updateParamsInURL,
-  } from '$lib/helper'
+  import { fetchUrl, getLayerSourceUrl, getLayerStyle, loadMap, updateLayerURL } from '$lib/helper'
   import { map, layerList } from '$stores'
   /*EXPORTS*/
   export let layerId
@@ -105,10 +97,10 @@
       <Loader size="small" />
     </div>
   </div>
-{:then initialized}
+{:then}
   <div class="grid-wrapper pb-5">
     {#each Object.entries(args) as [argId, arg]}
-      {@const { icon: icon, value: value, units: units, label: label, id: id } = arg}
+      {@const { icon: icon, value: value, units: units, label: label } = arg}
 
       <!-- svelte-ignore a11y-click-events-have-key-events -->
 

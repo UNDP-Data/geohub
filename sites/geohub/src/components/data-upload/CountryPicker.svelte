@@ -175,6 +175,7 @@
     data-testid="tooltip"
     bind:this={tooltipContent}>
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Continent</label>
       <div class="control">
         {#await continents}
@@ -190,6 +191,7 @@
           </div>
         {/await}
       </div>
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Region</label>
       <div class="control">
         {#await regions}
@@ -207,6 +209,7 @@
           </div>
         {/await}
       </div>
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Countries</label>
       <p class="control has-icons-left pb-2">
         <input

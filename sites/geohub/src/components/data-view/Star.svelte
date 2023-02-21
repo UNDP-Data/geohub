@@ -3,7 +3,7 @@
   import { StatusTypes } from '$lib/constants'
   import type { BannerMessage } from '$lib/types'
   import { bannerMessages, indicatorProgress } from '$stores'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import millify from 'millify'
 
   const dispatch = createEventDispatcher()

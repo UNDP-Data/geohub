@@ -33,7 +33,7 @@
     if (['line', 'fill'].includes($map.getLayer(layerId).type)) return
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
-      let propertyValue: any = ['get', textFieldValue]
+      let propertyValue = ['get', textFieldValue]
       if (fieldType && ['number', 'float'].includes(fieldType)) {
         if (!decimalPosition) {
           decimalPosition = 1

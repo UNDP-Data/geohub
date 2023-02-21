@@ -3,16 +3,13 @@ import type {
   HeatmapLayerSpecification,
   LineLayerSpecification,
   RasterLayerSpecification,
-  RasterSourceSpecification,
-  StyleSpecification,
   SymbolLayerSpecification,
-  VectorSourceSpecification,
 } from 'maplibre-gl'
 
 import { get } from 'svelte/store'
 import { map as mapStore } from '$stores'
 import { loadMap } from './loadMap'
-import { getLayerStyle } from '$lib/helper/getLayerStyle'
+
 export const updateParamsInURL = (
   layerStyle:
     | RasterLayerSpecification

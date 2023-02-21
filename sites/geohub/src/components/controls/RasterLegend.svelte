@@ -3,7 +3,7 @@
   import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte'
   import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte'
   import { LegendTypes } from '$lib/constants'
-  import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types'
+  import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
   import { layerList, map } from '$stores'
   import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, getValueFromRasterTileUrl, loadMap } from '$lib/helper'
@@ -29,7 +29,7 @@
   const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
   let layerHasUniqueValues = Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
   export let legendType: LegendTypes
-  let layerStats: any
+  let layerStats: RasterLayerStats
 
   const setStatsToInfo = async () => {
     // Add "stats" object to the "info" object

@@ -109,6 +109,7 @@
 {/await}
 
 <div class="field">
+  <!-- svelte-ignore a11y-label-has-associated-control -->
   <label class="label">Geospatial file</label>
   <div class="control">
     <p class="subtitle is-6">Select a geospatial file to upload to GeoHub.</p>
