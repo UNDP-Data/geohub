@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import { tagSearchKeys } from '$lib/constants'
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
@@ -11,8 +13,6 @@
 
   export let selectedTags: Tag[]
   export let operatorType: 'and' | 'or'
-  export let currentSearchUrl = ''
-
   let operatorTypes: Radio[] = [
     {
       label: 'Match all selected tags',
@@ -25,15 +25,33 @@
   ]
 
   onMount(async () => {
+    operatorType = ($page.url.searchParams.get('operator') as 'and' | 'or') ?? 'and'
+    console.log(operatorType)
+
     if (!(tags && Object.keys(tags).length > 0)) {
       await getTags()
     }
+    const apiUrl = $page.url
+    tagSearchKeys.forEach((key) => {
+      const values = apiUrl.searchParams.getAll(key.key)
+      values.forEach((v) => {
+        if (selectedTags.find((t) => t.key === key.key && t.value === v)) return
+        selectedTags.push({
+          key: key.key,
+          value: v,
+          color: getBulmaTagColor(),
+        })
+      })
+    })
+    selectedTags = [...selectedTags]
   })
 
-  $: currentSearchUrl, getTags()
-
   const getTags = async () => {
-    const res = await fetch(`/api/tags${currentSearchUrl ? `?url=${encodeURIComponent(currentSearchUrl)}` : ''}`)
+    const currentUrl = $page.url
+    const apiUrl = `/api/tags${
+      currentUrl.search ? `?url=${encodeURIComponent(`${currentUrl.origin}/api/datasets${currentUrl.search}`)}` : ''
+    }`
+    const res = await fetch(apiUrl)
     const json: { [key: string]: Tag[] } = await res.json()
 
     tagSearchKeys.forEach((t) => {
@@ -42,17 +60,34 @@
     })
   }
 
-  const handleTagChecked = (value: Tag) => {
+  const handleTagChecked = async (value: Tag) => {
     const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value)
+
+    let apiUrl = $page.url
     if (tag) {
       selectedTags.splice(selectedTags.indexOf(tag), 1)
       selectedTags = [...selectedTags]
+
+      const values = apiUrl.searchParams.getAll(value.key)
+      apiUrl.searchParams.delete(value.key)
+      values
+        .filter((v) => v !== value.value)
+        ?.forEach((v) => {
+          apiUrl.searchParams.append(value.key, v)
+        })
     } else {
       if (!value.color) {
         value.color = getBulmaTagColor()
       }
       selectedTags = [...selectedTags, value]
+      apiUrl.searchParams.append(value.key, value.value)
     }
+    await goto(apiUrl, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: false,
+    })
   }
 
   const existTag = (value: Tag) => {

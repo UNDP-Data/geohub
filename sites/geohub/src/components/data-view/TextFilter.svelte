@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
   import { SortingColumns } from '$lib/constants'
@@ -12,8 +14,8 @@
 
   export let map: Map
   export let placeholder: string
-  export let query = ''
-  let queryType: 'and' | 'or' = 'and'
+  export let query = $page.url.searchParams.get('query') ?? ''
+  let queryType: 'and' | 'or' = ($page.url.searchParams.get('queryoperator') as 'and' | 'or') ?? 'and'
   let queryTypes: Radio[] = [
     {
       label: 'Match all words typed',
@@ -25,34 +27,69 @@
     },
   ]
 
-  export let sortingColumn: string = SortingColumns[0].value
+  let sortingColumn: string = $page.url.searchParams.get('sortby') ?? SortingColumns[0].value
 
-  export let bbox: [number, number, number, number] = undefined
+  const bboxString = $page.url.searchParams.get('bbox')
+  const bboxArray = bboxString?.split(',').map((v) => Number(v))
+  let bbox: [number, number, number, number] = bboxString ? (bboxArray as [number, number, number, number]) : undefined
 
-  export let isFilterByBBox: boolean = undefined
+  let isFilterByBBox: boolean = bboxString ? true : false
   export let selectedTags: Tag[] = undefined
-  export let tagFilterOperatorType: 'and' | 'or' = undefined
-  export let currentSearchUrl: string = undefined
+  let tagFilterOperatorType: 'and' | 'or'
 
   $: isQueryEmpty = !query || query?.length === 0
   $: queryType, handleQueryTypeChanged()
-  $: sortingColumn, fireChangeEvent('change')
+  $: sortingColumn, handleSortingColumnChanged()
+  $: tagFilterOperatorType, handleTagOperatorChanged()
+
+  const handleTagOperatorChanged = () => {
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('operator')
+    if (tagFilterOperatorType) {
+      apiUrl.searchParams.set('operator', tagFilterOperatorType)
+      fireChangeEvent('change', apiUrl.toString())
+    }
+  }
+
+  const handleSortingColumnChanged = () => {
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('sortby')
+    apiUrl.searchParams.set('sortby', sortingColumn)
+    fireChangeEvent('change', apiUrl.toString())
+  }
+
   const handleQueryTypeChanged = () => {
-    if (query === '') return
-    fireChangeEvent('change')
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('queryoperator')
+    apiUrl.searchParams.set('queryoperator', queryType)
+    fireChangeEvent('change', apiUrl.toString())
   }
 
   const handleFilterInput = debounce(() => {
-    fireChangeEvent('change')
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    if (query.length > 0) {
+      apiUrl.searchParams.set('query', query)
+    }
+    fireChangeEvent('change', apiUrl.toString())
   }, 500)
 
   const clearInput = () => {
     if (isQueryEmpty === true) return
     query = ''
-    fireChangeEvent('clear')
+
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    fireChangeEvent('clear', apiUrl.toString())
   }
 
-  const fireChangeEvent = (eventName: 'change' | 'clear') => {
+  const fireChangeEvent = async (eventName: 'change' | 'clear', url: string) => {
+    await goto(url, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: false,
+    })
     dispatch(eventName, {
       query: query,
       queryoperator: queryType,
@@ -61,13 +98,17 @@
 
   $: isFilterByBBox, registerMapMovedEvent()
 
-  const registerMapMovedEvent = () => {
+  const registerMapMovedEvent = async () => {
     if (!map) return
     if (isFilterByBBox) {
       map.off('moveend', handleMapMoved)
       map.on('moveend', handleMapMoved)
     } else {
       map.off('moveend', handleMapMoved)
+      bbox = undefined
+      const apiUrl = $page.url
+      apiUrl.searchParams.delete('bbox')
+      await goto(apiUrl.toString())
     }
     handleMapMoved()
   }
@@ -82,11 +123,11 @@
         bounds.getNorthEast().lng,
         bounds.getNorthEast().lat,
       ]
-    } else {
-      bbox = undefined
-      map.off('moveend', handleMapMoved)
+      const apiUrl = $page.url
+      apiUrl.searchParams.delete('bbox')
+      apiUrl.searchParams.set('bbox', bbox.join(','))
+      fireChangeEvent('change', apiUrl.toString())
     }
-    fireChangeEvent('change')
   }
 </script>
 
@@ -120,8 +161,7 @@
     <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
     <TagFilter
       bind:selectedTags
-      bind:operatorType={tagFilterOperatorType}
-      bind:currentSearchUrl />
+      bind:operatorType={tagFilterOperatorType} />
   </PanelButton>
 
   <PanelButton
