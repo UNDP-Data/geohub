@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/node'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import AzureADProvider from '@auth/core/providers/azure-ad'
 import { env } from '$env/dynamic/private'
+import { getMe } from '$lib/server/helpers'
 
 export const handle = SvelteKitAuth({
   trustHost: true,
@@ -31,7 +32,15 @@ export const handle = SvelteKitAuth({
       if (token?.accessToken) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        session.accessToken = token.accessToken
+        const accessToken: string = token.accessToken
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        session.accessToken = accessToken
+
+        const me = await getMe(accessToken)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        session.user.jobTitle = me.jobTitle
       }
       return session
     },
