@@ -41,6 +41,7 @@
     justify-content: left;
     align-items: center;
     padding: 10px;
+    margin: 0;
 
     .text {
       padding-left: 15px;
