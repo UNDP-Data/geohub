@@ -1,18 +1,20 @@
 <script lang="ts">
   import { Header, Footer, type HeaderLink } from '@undp-data/svelte-undp-design'
-  import { Accordion } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { createHeaderLinks } from '$lib/helper'
-  let isExpanded = false
+
+  let isExpanded = true
   let headerHeight: number
   let activeSettingTab = 'Geohub'
   let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+  let applySettingsLoading = false
 
   // Default Settings
   const settings = {
     sideBarPosition: 'left',
   }
+
   const getCookie = (name: string) => {
     const value = `; ${document.cookie}`
     const parts = value.split(`; ${name}=`)
@@ -26,12 +28,14 @@
   let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
 
   const setSettingsToCookies = () => {
-    // set settings to session
+    applySettingsLoading = true
     sessionStorage.setItem('settings', JSON.stringify(settings))
-    // set settings to cookies
     document.cookie = `settings=${JSON.stringify(settings)}; path=/;`
-    // redirect to home page
-    window.location.href = '/'
+    applySettingsLoading = false
+  }
+
+  const collapseMiniMenu = () => {
+    isExpanded = !isExpanded
   }
 </script>
 
@@ -49,29 +53,33 @@
 </Header>
 
 <div
-  class="columns"
-  style="margin-top: {headerHeight}px">
+  class="columns is-one-quarter ml-auto mr-auto"
+  style="margin-top: {headerHeight}px; z-index:-1">
   <div class="column is-2">
     <aside class="menu">
-      <p class="menu-label">GeoHub Settings</p>
       <ul class="menu-list">
         <li>
           <a
-            on:click={() => (activeSettingTab = 'Geohub')}
-            class={activeSettingTab === 'Geohub' ? 'selected' : ''}
-            data-content="Geohub">GeoHub</a>
+            on:click={collapseMiniMenu}
+            href="#">GeoHub Settings</a>
+          <ul style="display: {!isExpanded ? 'none' : ''}">
+            <li>
+              <a
+                class={activeSettingTab === 'Geohub' ? 'selected' : ''}
+                on:click={() => (activeSettingTab = 'Geohub')}
+                href="#">Map Settings</a>
+            </li>
+            <li><a href="#">Another Setting</a></li>
+          </ul>
         </li>
-        <!--        <li><a on:click={() => activeSettingTab = 'notifications'} class="{activeSettingTab === 'notifications' ? 'selected' : ''}" data-content="notifications">Notifications</a></li>-->
-        <!--        <li><a on:click={() => activeSettingTab = 'privacy'} class="{activeSettingTab === 'privacy' ? 'selected' : ''}" data-content="privacy">Privacy</a></li>-->
-        <!--        <li><a on:click={() => activeSettingTab = 'billing'} class="{activeSettingTab === 'billing' ? 'selected' : ''}" data-content="billing">Billing</a></li>-->
       </ul>
     </aside>
   </div>
-  <div class="column">
+  <div class="column is-three-quarters m-auto">
     <section
       class="content {activeSettingTab !== 'Geohub' ? 'is-hidden' : ''}"
       id="Geohub">
-      <h2>Sidebar Settings</h2>
+      <h2>Sidebar Position</h2>
       <p>Change the sidebar position between left and right</p>
       <div class="columns">
         <div
@@ -108,24 +116,6 @@
         </div>
       </div>
     </section>
-    <section
-      class="content {activeSettingTab !== 'notifications' ? 'is-hidden' : ''}"
-      id="notifications">
-      <h2>Notification Settings</h2>
-      <p>Here you can update your notification settings.</p>
-    </section>
-    <section
-      class="content {activeSettingTab !== 'privacy' ? 'is-hidden' : ''}"
-      id="privacy">
-      <h2>Privacy Settings</h2>
-      <p>Here you can update your privacy settings.</p>
-    </section>
-    <section
-      class="content {activeSettingTab !== 'billing' ? 'is-hidden' : ''}"
-      id="billing">
-      <h2>Billing Settings</h2>
-      <p>Here you can update your billing settings.</p>
-    </section>
   </div>
 </div>
 <div
@@ -133,7 +123,7 @@
   style="width: fit-content">
   <button
     on:click={setSettingsToCookies}
-    class="button is-primary">Apply Settings</button>
+    class="button is-primary {applySettingsLoading ? 'is-loading' : ''}">Apply</button>
 </div>
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
