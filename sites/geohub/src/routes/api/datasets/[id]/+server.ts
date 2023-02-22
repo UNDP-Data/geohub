@@ -1,19 +1,15 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
 import { generateAzureBlobSasToken } from '$lib/server/helpers'
 import type { DatasetFeature, Tag } from '$lib/types'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
   const user_email = session?.user.email
 
   const id = params.id
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const sql = {
       text: `
@@ -106,7 +102,6 @@ export const GET: RequestHandler = async ({ params, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
