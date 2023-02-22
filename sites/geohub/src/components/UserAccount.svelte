@@ -15,6 +15,10 @@
   const handleDropdown = () => {
     dropdownActive = !dropdownActive
   }
+
+  const openSettingsPage = () => {
+    window.location.href = '/settings'
+  }
 </script>
 
 <svelte:window bind:innerWidth />
@@ -62,6 +66,21 @@
           <hr class="dropdown-divider" />
           <p>{$page.data.session.user.email}</p>
         </div>
+        <div
+          on:click={openSettingsPage}
+          class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center">
+          <div class="is-flex-grow-1">
+            <p class="pl-2">Settings</p>
+          </div>
+          <div class="is-flex-shrink-0">
+            <span class="icon is-small">
+              <i
+                class="fas fa-chevron-right"
+                aria-hidden="true" />
+            </span>
+          </div>
+        </div>
+        <hr class="dropdown-divider" />
         <div class="dropdown-item">
           <Button
             title="Sign Out"
@@ -97,6 +116,13 @@
 
     .name {
       font-size: large;
+    }
+  }
+
+  .settings-div {
+    cursor: pointer;
+    &:hover {
+      background-color: #f5f5f5;
     }
   }
 </style>
