@@ -5,12 +5,13 @@
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { DataCategories, STAC_MINIMUM_ZOOM } from '$lib/constants'
+  import { DataCategories, STAC_MINIMUM_ZOOM, tagSearchKeys } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
   import { goto } from '$app/navigation'
+  import { getSelectedTagsFromUrl } from '$lib/helper'
 
   const session = $page.data.session
   const dataCategories: Breadcrumb[] = session
@@ -23,38 +24,55 @@
   $: totalHeight = contentHeight - optionsHeight
 
   let containerDivElement: HTMLDivElement
-  let breadcrumbs: Breadcrumb[] = [
-    {
-      name: 'Home',
-      icon: 'fas fa-house',
-      url: '',
-    },
-  ]
 
-  const defaultCategory = DataCategories.find(
-    (c) => $page.url.search.indexOf(c.url.replace('/api/datasets', '')) !== -1,
-  )
-  if (defaultCategory) {
-    breadcrumbs = [...breadcrumbs, defaultCategory]
-  } else {
-    const sdg_goal = $page.url.searchParams.get('sdg_goal')
-    if (sdg_goal) {
-      breadcrumbs = [
-        ...breadcrumbs,
-        DataCategories.find((c) => c.name === 'SDG'),
-        {
-          name: `SDG${sdg_goal}`,
-          icon: `assets/sdgs/${sdg_goal}.png`,
-          url: `/api/datasets?sdg_goal=${sdg_goal}`,
-        },
-      ]
-    }
-  }
-
-  let query: string
-  let selectedTags: Tag[] = []
+  let isLoading = false
+  let query = $page.url.searchParams.get('query') ?? ''
+  let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features
   let isFavouriteSearch = false
+  let initTagfilter: (url?: URL) => Promise<void>
+
+  const initBreadcrumbs = () => {
+    let bc: Breadcrumb[] = [
+      {
+        name: 'Home',
+        icon: 'fas fa-house',
+        url: '',
+      },
+    ]
+
+    const defaultCategory = DataCategories.find(
+      (c) => $page.url.search.indexOf(c.url.replace('/api/datasets?', '')) !== -1,
+    )
+    if (defaultCategory) {
+      bc = [...bc, defaultCategory]
+    } else {
+      const sdg_goal = $page.url.searchParams.get('sdg_goal')
+      if (sdg_goal) {
+        bc = [
+          ...bc,
+          DataCategories.find((c) => c.name === 'SDG'),
+          {
+            name: `SDG${sdg_goal}`,
+            icon: `assets/sdgs/${sdg_goal}.png`,
+            url: `/api/datasets?sdg_goal=${sdg_goal}`,
+          },
+        ]
+      } else if (bc.length === 1 && (query !== '' || selectedTags.length > 0)) {
+        bc = [
+          ...bc,
+          {
+            name: 'Search result',
+            icon: 'fas fa-magnifying-glass',
+            url: `/api/datasets${$page.url.search}`,
+          },
+        ]
+      }
+    }
+    return bc
+  }
+
+  let breadcrumbs: Breadcrumb[] = initBreadcrumbs()
 
   let expanded: { [key: string]: boolean } = {}
   // to allow only an accordion to be expanded
@@ -76,6 +94,7 @@
     if (DataItemFeatureCollection?.features.length === 0) return
     const link = DataItemFeatureCollection.links.find((link) => link.rel === 'next')
     if (!link) return
+    if ($indicatorProgress) return
 
     try {
       $indicatorProgress = true
@@ -84,6 +103,7 @@
       if (json.features.length > 0) {
         json.features = [...DataItemFeatureCollection.features, ...json.features]
       }
+      console.log(json.features.length)
       DataItemFeatureCollection = json
     } finally {
       $indicatorProgress = false
@@ -96,19 +116,35 @@
       $map.zoomTo(STAC_MINIMUM_ZOOM)
     }
     if (category.url.startsWith('/api/datasets')) {
-      const url = `${$page.url.origin}${category.url}`
-      await reload(url)
+      const apiUrl = $page.url
+      const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
+      for (const key of categoryUrl.searchParams.keys()) {
+        const value = categoryUrl.searchParams.get(key)
+        if (apiUrl.searchParams.get(key) !== value) {
+          apiUrl.searchParams.set(key, value)
+        }
+      }
+      await reload(apiUrl.toString())
     }
   }
 
-  $: selectedTags, handleTagChanged()
-  const handleTagChanged = async () => {
+  const handleTagChanged = async (e) => {
+    selectedTags = e.detail.tags
+    const apiUrl = $page.url
+    tagSearchKeys.forEach((key) => {
+      apiUrl.searchParams.delete(key.key)
+    })
+    selectedTags?.forEach((t) => {
+      apiUrl.searchParams.append(t.key, t.value)
+    })
+
     if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
       if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
         if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
           DataItemFeatureCollection = undefined
           breadcrumbs.pop()
           breadcrumbs = [...breadcrumbs]
+          await goto(apiUrl)
           return
         }
       }
@@ -116,76 +152,45 @@
 
     if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
       DataItemFeatureCollection = undefined
+      await goto(apiUrl)
       return
     } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
       DataItemFeatureCollection = undefined
       breadcrumbs.pop()
       breadcrumbs = [...breadcrumbs]
+      await goto(apiUrl)
       return
     }
-
-    await reload($page.url.toString())
+    await reload(apiUrl.toString())
   }
 
-  const handleFilterInput = async (e) => {
-    query = e.detail.query
-    if (
-      !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
-      query === ''
-    ) {
-      return
-    }
-
-    if (breadcrumbs.length === 1) {
-      if (!query && selectedTags.length === 0) return
-
-      breadcrumbs = [
-        ...breadcrumbs,
-        {
-          name: 'Search result',
-          icon: 'fas fa-magnifying-glass',
-          url: `/api/datasets${$page.url.search}`,
-        },
-      ]
-    }
-    await reload($page.url.toString())
-  }
-
-  const clearFilter = async (e) => {
-    clearFiltertext()
-    if (breadcrumbs && breadcrumbs.length > 0) {
-      const lastCategory = breadcrumbs[breadcrumbs.length - 1]
-      if (lastCategory?.url?.startsWith('/api/datasets')) {
-        if (lastCategory.name === 'Search result' && selectedTags.length === 0) {
-          breadcrumbs.pop()
-          breadcrumbs = [...breadcrumbs]
-          DataItemFeatureCollection = undefined
-        } else {
-          const url = `${$page.url.origin}${lastCategory.url}`
-          await reload(url)
-        }
-        return
-      }
-    }
-
-    DataItemFeatureCollection = undefined
+  const handleFilterChanged = async (e) => {
+    const url = e.detail.url
+    await reload(url)
   }
 
   const reload = async (url: string) => {
     try {
-      $indicatorProgress = true
+      isLoading = true
 
       const datasetUrl = new URL(url)
       const apiUrl = `${$page.url.origin}${datasetUrl.search}`
+      DataItemFeatureCollection = undefined
+
       await goto(apiUrl, {
         replaceState: true,
         noScroll: true,
         keepFocus: true,
         invalidateAll: true,
       })
+      selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
+      if (initTagfilter) {
+        initTagfilter(new URL(apiUrl))
+      }
+      breadcrumbs = initBreadcrumbs()
       DataItemFeatureCollection = $page.data.features
     } finally {
-      $indicatorProgress = false
+      isLoading = false
     }
   }
 
@@ -195,13 +200,13 @@
     let currentScroll = scrollTop + containerDivElement.clientHeight
     let modifier = 100
     if (currentScroll + modifier > containerHeight) {
-      if (!$indicatorProgress && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
+      if (!isLoading && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
         await fetchNextDatasets()
       }
     }
   }
 
-  const handleBreadcrumpClicked = (e) => {
+  const handleBreadcrumpClicked = async (e) => {
     const index: number = e.detail.index
     const breadcrump: Breadcrumb = e.detail.breadcrumb
 
@@ -210,7 +215,6 @@
       clearFiltertext()
       breadcrumbs = [breadcrumbs[0]]
       DataItemFeatureCollection = undefined
-      selectedTags = []
       isFavouriteSearch = false
 
       const apiUrl = $page.url
@@ -220,11 +224,7 @@
       apiUrl.searchParams.delete('provider')
       apiUrl.searchParams.delete('stac')
       apiUrl.searchParams.delete('staronly')
-      goto(apiUrl, {
-        replaceState: true,
-        noScroll: true,
-        keepFocus: true,
-      })
+      await clearSelectedTags(apiUrl)
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -236,11 +236,23 @@
 
       breadcrumbs = [...breadcrumbs]
 
-      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets') && selectedTags.length > 0) {
-        selectedTags = []
+      selectedTags = getSelectedTagsFromUrl($page.url)
+      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets?') && selectedTags.length > 0) {
+        await clearSelectedTags($page.url)
+      }
+      if (initTagfilter) {
+        initTagfilter(new URL($page.url))
       }
     }
     expanded = {}
+  }
+
+  const clearSelectedTags = async (url: URL) => {
+    tagSearchKeys.forEach((key) => {
+      url.searchParams.delete(key.key)
+    })
+    selectedTags = []
+    await reload(url.toString())
   }
 
   let clearFiltertext = () => {
@@ -255,17 +267,20 @@
     placeholder="Type keywords to search data"
     bind:map={$map}
     bind:query
-    bind:selectedTags
-    on:change={handleFilterInput}
-    on:clear={clearFilter} />
+    bind:initTagfilter
+    on:change={handleFilterChanged} />
 
   <Breadcrumbs
     bind:breadcrumbs
     on:clicked={handleBreadcrumpClicked}
     fontSize="medium" />
-  <SelectedTags
-    bind:selectedTags
-    isClearButtonShown={true} />
+
+  {#key selectedTags}
+    <SelectedTags
+      on:change={handleTagChanged}
+      isClearButtonShown={true} />
+  {/key}
+
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
     {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
     <Notification type="info">{DataItemFeatureCollection.pages.totalCount} {dsText} found.</Notification>
@@ -276,7 +291,13 @@
   style="height: {totalHeight}px;"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
+  {#if isLoading}
+    <div
+      hidden={!isLoading}
+      class="loader-container">
+      <Loader size="medium" />
+    </div>
+  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
     {#each DataItemFeatureCollection.features as feature}
       <DataCard
         {feature}
@@ -286,7 +307,7 @@
     {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
       <Notification type="info">All data loaded.</Notification>
     {/if}
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
+  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
     {#if isFavouriteSearch}
       <Notification type="info"
         >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
@@ -300,14 +321,6 @@
       on:selected={handleCategorySelected}
       bind:breadcrumbs />
   {/if}
-
-  {#if !DataItemFeatureCollection}
-    <div
-      hidden={!$indicatorProgress}
-      class="loader-container">
-      <Loader size="medium" />
-    </div>
-  {/if}
 </div>
 
 <style lang="scss">
@@ -315,11 +328,13 @@
     overflow-y: auto;
 
     .loader-container {
-      position: absolute;
-      z-index: 10;
-      top: 25%;
-      left: 42%;
-      background-color: white;
+      width: max-content;
+      margin: auto;
+      // position: absolute;
+      // z-index: 10;
+      // top: 25%;
+      // left: 42%;
+      // background-color: white;
     }
   }
 </style>
