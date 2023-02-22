@@ -9,7 +9,7 @@ export const load: PageServerLoad = async (event) => {
   const session = await locals.getSession()
   const user = session?.user
 
-  let data: { style?: JSON; readOnly?: boolean; features?: DatasetFeatureCollection } = {}
+  const data: { style?: JSON; readOnly?: boolean; features?: DatasetFeatureCollection } = {}
   const styleId = url.searchParams.get('style')
   let isReadOnly = true
   if (styleId) {
@@ -21,7 +21,8 @@ export const load: PageServerLoad = async (event) => {
         isReadOnly = false
       }
 
-      data = { style: styleInfo, readOnly: isReadOnly }
+      data.style = styleInfo
+      data.readOnly = isReadOnly
     }
   }
 
@@ -59,13 +60,14 @@ export const load: PageServerLoad = async (event) => {
     throw redirect(300, `${apiUrl.origin}${apiUrl.search}`)
   }
 
-  const query = url.searchParams.get('query')
+  const query = apiUrl.searchParams.get('query')
   if (
     query ||
     DataCategories.find((c: Breadcrumb) => apiUrl.search.indexOf(c.url.replace('/api/datasets?', '')) !== -1) ||
     apiUrl.searchParams.get('sdg_goal') ||
     tags.length > 0
   ) {
+    apiUrl.searchParams.delete('style')
     const res2 = await event.fetch(`/api/datasets${apiUrl.search}`)
     const fc: DatasetFeatureCollection = await res2.json()
     data.features = fc

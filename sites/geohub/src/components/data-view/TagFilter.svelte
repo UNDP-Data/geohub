@@ -8,11 +8,12 @@
   import { Button, Checkbox, Radios, Loader, type Radio } from '@undp-data/svelte-undp-design'
   import SelectedTags from './SelectedTags.svelte'
   import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper'
+  import Notification from '$components/controls/Notification.svelte'
 
   const dispatch = createEventDispatcher()
 
   let tags: { [key: string]: Tag[] } = {}
-
+  let isLoading = false
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   let operatorType: 'and' | 'or' = ($page.url.searchParams.get('operator') as 'and' | 'or') ?? 'and'
   let operatorTypes: Radio[] = [
@@ -37,21 +38,27 @@
   }
 
   const getTags = async (newUrl?: URL) => {
-    const currentUrl = newUrl ?? $page.url
-    const apiUrl = `/api/tags${
-      currentUrl.search ? `?url=${encodeURIComponent(`${currentUrl.origin}/api/datasets${currentUrl.search}`)}` : ''
-    }`
-    if (newUrl) {
-      tags = {}
-    }
-    const res = await fetch(apiUrl)
-    if (!(res.ok && res.status === 200)) return
-    const json: { [key: string]: Tag[] } = await res.json()
+    try {
+      isLoading = true
 
-    tagSearchKeys.forEach((t) => {
-      if (!json[t.key]) return
-      tags[t.key] = json[t.key]
-    })
+      const currentUrl = newUrl ?? $page.url
+      currentUrl.searchParams.delete('style')
+      const apiUrl = `/api/tags${
+        currentUrl.search ? `?url=${encodeURIComponent(`${currentUrl.origin}/api/datasets${currentUrl.search}`)}` : ''
+      }`
+      if (newUrl) {
+        tags = {}
+      }
+      const res = await fetch(apiUrl)
+      const json: { [key: string]: Tag[] } = await res.json()
+
+      tagSearchKeys.forEach((t) => {
+        if (!json[t.key]) return
+        tags[t.key] = json[t.key]
+      })
+    } finally {
+      isLoading = false
+    }
   }
 
   $: operatorType, handleOperatorChanged()
@@ -155,34 +162,41 @@
     iconBackgroundColor="#ff0000"
     iconColor="#FFFFFF"
     branchHoverColor="#ff0000">
-    {#key selectedTags}
-      {#if tagSearchKeys}
-        {#each Object.keys(tags) as key}
-          <TreeBranch
-            rootContent={getTagSearchKey(key).label}
-            defaultClosed={checkChildrenTicked(key)}>
-            {#if tags[key]}
-              {#each tags[key] as tag}
-                <TreeLeaf>
-                  <Checkbox
-                    label="{tag.value} ({tag.count})"
-                    checked={existTag(tag)}
-                    on:clicked={() => {
-                      handleTagChecked(tag)
-                    }} />
-                </TreeLeaf>
-              {/each}
-            {/if}
-          </TreeBranch>
-        {/each}
-      {/if}
-    {/key}
+    {#if isLoading}
+      <div
+        hidden={!isLoading}
+        class="loader-container">
+        <Loader size="small" />
+      </div>
+    {:else if Object.keys(tags).length > 0}
+      {#key selectedTags}
+        {#if tagSearchKeys}
+          {#each Object.keys(tags) as key}
+            <TreeBranch
+              rootContent={getTagSearchKey(key).label}
+              defaultClosed={checkChildrenTicked(key)}>
+              {#if tags[key]}
+                {#each tags[key] as tag}
+                  <TreeLeaf>
+                    <Checkbox
+                      label="{tag.value} ({tag.count})"
+                      checked={existTag(tag)}
+                      on:clicked={() => {
+                        handleTagChecked(tag)
+                      }} />
+                  </TreeLeaf>
+                {/each}
+              {/if}
+            </TreeBranch>
+          {/each}
+        {/if}
+      {/key}
+    {:else}
+      <Notification
+        type="info"
+        showCloseButton={false}>No tag found</Notification>
+    {/if}
   </TreeView>
-  <div
-    hidden={tags && Object.keys(tags).length > 0}
-    class="loader-container">
-    <Loader size="small" />
-  </div>
 </div>
 
 <div class="container pb-2">
@@ -212,11 +226,8 @@
     border: 1px solid gray;
 
     .loader-container {
-      position: absolute;
-      z-index: 10;
-      top: 40%;
-      left: 45%;
-      background-color: white;
+      width: max-content;
+      margin: auto;
     }
   }
 

@@ -103,7 +103,6 @@
       if (json.features.length > 0) {
         json.features = [...DataItemFeatureCollection.features, ...json.features]
       }
-      console.log(json.features.length)
       DataItemFeatureCollection = json
     } finally {
       $indicatorProgress = false
@@ -330,11 +329,6 @@
     .loader-container {
       width: max-content;
       margin: auto;
-      // position: absolute;
-      // z-index: 10;
-      // top: 25%;
-      // left: 42%;
-      // background-color: white;
     }
   }
 </style>
