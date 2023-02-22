@@ -69,7 +69,6 @@
                 on:click={() => (activeSettingTab = 'Geohub')}
                 href="#">Map Settings</a>
             </li>
-            <li><a href="#">Another Setting</a></li>
           </ul>
         </li>
       </ul>
