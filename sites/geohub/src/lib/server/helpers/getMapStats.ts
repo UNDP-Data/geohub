@@ -1,18 +1,15 @@
-import pkg, { type PoolClient } from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
+import type { PoolClient } from 'pg'
 import type { StatsCard } from '@undp-data/svelte-undp-design'
 import { AccessLevel } from '$lib/constants'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Get the total count of styles stored in database
  * GET: ./api/style/count
  */
 export const getMapStats = async () => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const query = {
       text: `
@@ -56,8 +53,7 @@ export const getMapStats = async () => {
     cards.push(userstats)
     return cards
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
 

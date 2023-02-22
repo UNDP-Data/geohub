@@ -1,11 +1,7 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
 import { getStyleById } from '$lib/server/helpers'
 import { AccessLevel } from '$lib/constants'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Get style.json which is stored in PostgreSQL database
@@ -14,8 +10,8 @@ const connectionString = env.DATABASE_CONNECTION
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const styleId = Number(params.id)
     if (!styleId) {
@@ -58,7 +54,6 @@ export const GET: RequestHandler = async ({ params, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }

@@ -1,13 +1,9 @@
 import type { RequestHandler } from './$types'
-import pkg, { type PoolClient } from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
+import type { PoolClient } from 'pg'
 import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types'
-const connectionString = env.DATABASE_CONNECTION
-
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
 import { generateAzureBlobSasToken, pageNumber } from '$lib/server/helpers'
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Datasets search API
@@ -31,8 +27,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
   const user_email = session?.user.email
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const _limit = url.searchParams.get('limit') || 10
     const limit = Number(_limit)
@@ -231,8 +227,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
 

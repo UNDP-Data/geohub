@@ -1,11 +1,7 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
 import type { Tag } from '$lib/types/Tag'
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Tags API - return available keys and values in tag table
@@ -20,8 +16,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
   const user_email = session?.user.email
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const key = url.searchParams.get('key')
     const currentQueryUrl = url.searchParams.get('url')
@@ -99,7 +95,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
