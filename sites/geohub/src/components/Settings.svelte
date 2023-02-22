@@ -8,6 +8,31 @@
   let headerHeight: number
   let activeSettingTab = 'Geohub'
   let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+
+  // Default Settings
+  const settings = {
+    sideBarPosition: 'left',
+  }
+  const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop().split(';').shift()
+  }
+
+  let settingsFromCookies = JSON.parse(getCookie('settings') || '{}')
+  if (settingsFromCookies) {
+    settings.sideBarPosition = settingsFromCookies.sideBarPosition
+  }
+  let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
+
+  const setSettingsToCookies = () => {
+    // set settings to session
+    sessionStorage.setItem('settings', JSON.stringify(settings))
+    // set settings to cookies
+    document.cookie = `settings=${JSON.stringify(settings)}; path=/;`
+    // redirect to home page
+    window.location.href = '/'
+  }
 </script>
 
 <Header
@@ -24,7 +49,7 @@
 </Header>
 
 <div
-  class="columns is-half"
+  class="columns"
   style="margin-top: {headerHeight}px">
   <div class="column is-2">
     <aside class="menu">
@@ -36,9 +61,9 @@
             class={activeSettingTab === 'Geohub' ? 'selected' : ''}
             data-content="Geohub">GeoHub</a>
         </li>
-        <!--                <li><a on:click={() => activeSettingTab = 'notifications'} class="{activeSettingTab === 'notifications' ? 'selected' : ''}" data-content="notifications">Notifications</a></li>-->
-        <!--                <li><a on:click={() => activeSettingTab = 'privacy'} class="{activeSettingTab === 'privacy' ? 'selected' : ''}" data-content="privacy">Privacy</a></li>-->
-        <!--                <li><a on:click={() => activeSettingTab = 'billing'} class="{activeSettingTab === 'billing' ? 'selected' : ''}" data-content="billing">Billing</a></li>-->
+        <!--        <li><a on:click={() => activeSettingTab = 'notifications'} class="{activeSettingTab === 'notifications' ? 'selected' : ''}" data-content="notifications">Notifications</a></li>-->
+        <!--        <li><a on:click={() => activeSettingTab = 'privacy'} class="{activeSettingTab === 'privacy' ? 'selected' : ''}" data-content="privacy">Privacy</a></li>-->
+        <!--        <li><a on:click={() => activeSettingTab = 'billing'} class="{activeSettingTab === 'billing' ? 'selected' : ''}" data-content="billing">Billing</a></li>-->
       </ul>
     </aside>
   </div>
@@ -46,37 +71,39 @@
     <section
       class="content {activeSettingTab !== 'Geohub' ? 'is-hidden' : ''}"
       id="Geohub">
-      <h2>Sedebar Settings</h2>
+      <h2>Sidebar Settings</h2>
       <p>Change the sidebar position between left and right</p>
       <div class="columns">
-        <div class="column">
+        <div
+          on:click={() => (settings.sideBarPosition = 'left')}
+          class="column sidebar-col {settings.sideBarPosition === 'left' ? 'selected-sidebar' : ''}">
           <div class="card">
-            <header class="card-header">
-              <p class="card-header-title">Left</p>
-            </header>
-            <div class="card-image">
-              <figure class="image is-4by3">
+            <div class="card-header">
+              <p class="card-header-title">Left Sidebar</p>
+            </div>
+            <div class="card-content">
+              <div class="content">
                 <img
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="Placeholder image" />
-              </figure>
+                  src="/assets/sidebar/left-sidebar.png"
+                  alt="left sidebar" />
+              </div>
             </div>
           </div>
         </div>
-        <div class="column">
+        <div
+          on:click={() => (settings.sideBarPosition = 'right')}
+          class="column sidebar-col {settings.sideBarPosition === 'right' ? 'selected-sidebar' : ''}">
           <div class="card">
-            <header class="card-header">
-              <p class="card-header-title">Right</p>
-              <button
-                class="card-header-icon"
-                aria-label="more options">
-                <span class="icon">
-                  <i
-                    class="fas fa-angle-down"
-                    aria-hidden="true" />
-                </span>
-              </button>
-            </header>
+            <div class="card-header">
+              <p class="card-header-title">Right Sidebar</p>
+            </div>
+            <div class="card-content">
+              <div class="content">
+                <img
+                  src="/assets/sidebar/right-sidebar.png"
+                  alt="right sidebar" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -100,6 +127,13 @@
       <p>Here you can update your billing settings.</p>
     </section>
   </div>
+</div>
+<div
+  class="columns m-auto pb-2"
+  style="width: fit-content">
+  <button
+    on:click={setSettingsToCookies}
+    class="button is-primary">Apply Settings</button>
 </div>
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
@@ -130,5 +164,17 @@
   /* Change the content section when a menu item is clicked */
   .menu-list a {
     cursor: pointer;
+  }
+
+  .card {
+    z-index: -1;
+  }
+
+  .sidebar-col:hover {
+    cursor: pointer;
+  }
+
+  .selected-sidebar {
+    border: 2px solid #3273dc;
   }
 </style>

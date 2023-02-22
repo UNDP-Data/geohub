@@ -14,9 +14,20 @@
 
   let innerWidth: number
   let innerHeight: number
+  let settings = {
+    sideBarPosition: 'left',
+  }
+  const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(';').shift()
+  }
+
+  let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
   $: isMobile = innerWidth < 768
   $: splitHeight = innerHeight - headerHeight
-  let sideBarPosition = 'left'
+  $: console.log(document.cookie)
+
   let splitControl: Split
 </script>
 
@@ -24,9 +35,7 @@
   bind:map={$mapStore}
   bind:sideBarPosition>
   <div slot="sidebar">
-    <Content
-      bind:sideBarPosition
-      bind:splitterHeight={splitHeight} />
+    <Content bind:splitterHeight={splitHeight} />
   </div>
   <div slot="map">
     <Map bind:map={$mapStore} />
