@@ -1,7 +1,12 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import { createEventDispatcher } from 'svelte'
   import type { Tag } from '$lib/types/Tag'
+  import { getSelectedTagsFromUrl } from '$lib/helper'
 
-  export let selectedTags: Tag[] = []
+  const dispatch = createEventDispatcher()
+
+  let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   export let isClearButtonShown = false
 
   const handleTagDeleted = (value: Tag) => {
@@ -10,10 +15,17 @@
       selectedTags.splice(selectedTags.indexOf(tag), 1)
       selectedTags = [...selectedTags]
     }
+
+    dispatch('change', {
+      tags: selectedTags,
+    })
   }
 
   const handleClear = () => {
     selectedTags = []
+    dispatch('change', {
+      tags: selectedTags,
+    })
   }
 
   const handleKeydown = (e: KeyboardEvent) => {
@@ -25,17 +37,19 @@
 
 {#if selectedTags.length > 0}
   <div class="container tag-container p-1 m-0 mb-2 pr-4">
-    {#each selectedTags as tag}
-      <span class="tag is-small m-1 {tag.color}">
-        {tag.value}
-        {#if isClearButtonShown}
-          <button
-            class="delete is-small"
-            on:click={() => handleTagDeleted(tag)} />
-        {/if}
-      </span>
-    {/each}
-    <span
+    {#key selectedTags}
+      {#each selectedTags as tag}
+        <span class="tag is-small m-1 {tag.color}">
+          {tag.value}
+          {#if isClearButtonShown}
+            <button
+              class="delete is-small"
+              on:click={() => handleTagDeleted(tag)} />
+          {/if}
+        </span>
+      {/each}
+    {/key}
+    <div
       class="icon close-button has-tooltip-arrow has-tooltip-left"
       data-tooltip="Delete all tags"
       role="button"
@@ -43,7 +57,7 @@
       on:click={handleClear}
       on:keydown={handleKeydown}>
       <i class="fas fa-xmark fa-lg" />
-    </span>
+    </div>
   </div>
 {/if}
 

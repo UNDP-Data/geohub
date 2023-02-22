@@ -67,9 +67,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     const res = await client.query(sql)
     if (res.rowCount === 0) {
-      return new Response(JSON.stringify({ message: `No tag found` }), {
-        status: 404,
-      })
+      return new Response(JSON.stringify({}))
     }
 
     const result: { [key: string]: Tag[] } = {}
