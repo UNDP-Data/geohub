@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
   import { SortingColumns } from '$lib/constants'
@@ -6,14 +7,13 @@
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design'
-  import type { Tag } from '$lib/types/Tag'
 
   const dispatch = createEventDispatcher()
 
   export let map: Map
   export let placeholder: string
-  export let query = ''
-  let queryType: 'and' | 'or' = 'and'
+  export let query = $page.url.searchParams.get('query') ?? ''
+  let queryType: 'and' | 'or' = $page.url.searchParams.get('queryoperator') as 'and' | 'or'
   let queryTypes: Radio[] = [
     {
       label: 'Match all words typed',
@@ -25,49 +25,72 @@
     },
   ]
 
-  export let sortingColumn: string = SortingColumns[0].value
+  let sortingColumn: string = $page.url.searchParams.get('sortby')
+  export let initTagfilter: (url?: URL) => Promise<void>
 
-  export let bbox: [number, number, number, number] = undefined
+  const bboxString = $page.url.searchParams.get('bbox')
+  const bboxArray = bboxString?.split(',').map((v) => Number(v))
+  let bbox: [number, number, number, number] = bboxString ? (bboxArray as [number, number, number, number]) : undefined
 
-  export let isFilterByBBox: boolean = undefined
-  export let selectedTags: Tag[] = undefined
-  export let tagFilterOperatorType: 'and' | 'or' = undefined
-  export let currentSearchUrl: string = undefined
+  let isFilterByBBox: boolean = bboxString ? true : false
 
   $: isQueryEmpty = !query || query?.length === 0
   $: queryType, handleQueryTypeChanged()
-  $: sortingColumn, fireChangeEvent('change')
+  $: sortingColumn, handleSortingColumnChanged()
+
+  const handleSortingColumnChanged = () => {
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('sortby')
+    apiUrl.searchParams.set('sortby', sortingColumn)
+    fireChangeEvent(apiUrl)
+  }
+
   const handleQueryTypeChanged = () => {
-    if (query === '') return
-    fireChangeEvent('change')
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('queryoperator')
+    apiUrl.searchParams.set('queryoperator', queryType)
+    fireChangeEvent(apiUrl)
   }
 
   const handleFilterInput = debounce(() => {
-    fireChangeEvent('change')
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    if (query.length > 0) {
+      apiUrl.searchParams.set('query', query)
+    }
+    fireChangeEvent(apiUrl)
   }, 500)
 
   const clearInput = () => {
-    if (isQueryEmpty === true) return
     query = ''
-    fireChangeEvent('clear')
+
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    fireChangeEvent(apiUrl)
   }
 
-  const fireChangeEvent = (eventName: 'change' | 'clear') => {
-    dispatch(eventName, {
-      query: query,
-      queryoperator: queryType,
+  const fireChangeEvent = async (url: URL) => {
+    dispatch('change', {
+      url: url.toString(),
     })
+    if (initTagfilter) {
+      initTagfilter(url)
+    }
   }
 
   $: isFilterByBBox, registerMapMovedEvent()
 
-  const registerMapMovedEvent = () => {
+  const registerMapMovedEvent = async () => {
     if (!map) return
     if (isFilterByBBox) {
       map.off('moveend', handleMapMoved)
       map.on('moveend', handleMapMoved)
     } else {
       map.off('moveend', handleMapMoved)
+      bbox = undefined
+      const apiUrl = $page.url
+      apiUrl.searchParams.delete('bbox')
+      fireChangeEvent(apiUrl)
     }
     handleMapMoved()
   }
@@ -82,11 +105,16 @@
         bounds.getNorthEast().lng,
         bounds.getNorthEast().lat,
       ]
-    } else {
-      bbox = undefined
-      map.off('moveend', handleMapMoved)
+      const apiUrl = $page.url
+      apiUrl.searchParams.delete('bbox')
+      apiUrl.searchParams.set('bbox', bbox.join(','))
+      fireChangeEvent(apiUrl)
     }
-    fireChangeEvent('change')
+  }
+
+  const handleTagChanged = (e) => {
+    const url = new URL(e.detail.url)
+    fireChangeEvent(url)
   }
 </script>
 
@@ -119,9 +147,8 @@
     <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
     <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
     <TagFilter
-      bind:selectedTags
-      bind:operatorType={tagFilterOperatorType}
-      bind:currentSearchUrl />
+      bind:init={initTagfilter}
+      on:change={handleTagChanged} />
   </PanelButton>
 
   <PanelButton
