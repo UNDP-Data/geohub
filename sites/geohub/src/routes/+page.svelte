@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import MainApp from '$components/MainApp.svelte'
   import type { StyleSpecification } from 'maplibre-gl'
   import App from '$components/App.svelte'
 
@@ -34,8 +33,6 @@
     }
   </style>
 </svelte:head>
-
-<!--<MainApp />-->
 <App />
 
 <style
