@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types'
-import { PUBLIC_MARTIN_API_ENDPOINT, PUBLIC_PGTILESERV_API_ENDPOINT } from '$lib/variables/public'
+import { env } from '$env/dynamic/private'
 import type { TileJson } from '$lib/types/TileJson'
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata'
 import { getMartinTileJson, getPgtileservTileJson, generateMetadataJson } from '$lib/server/helpers'
@@ -31,10 +31,10 @@ export const GET: RequestHandler = async ({ params, url }) => {
   let metadatajson: VectorTileMetadata
   switch (source) {
     case 'martin':
-      tilejson = await getMartinTileJson(table, PUBLIC_MARTIN_API_ENDPOINT)
+      tilejson = await getMartinTileJson(table, env.MARTIN_API_ENDPOINT)
       break
     case 'pgtileserv':
-      tilejson = await getPgtileservTileJson(table, type, PUBLIC_PGTILESERV_API_ENDPOINT)
+      tilejson = await getPgtileservTileJson(table, type, env.PGTILESERV_API_ENDPOINT)
       if (tilejson.vector_layers.length === 0) {
         metadatajson = await generateMetadataJson(tilejson)
         tilejson.vector_layers = metadatajson.json.vector_layers

@@ -2,10 +2,10 @@ import type { RequestHandler } from './$types'
 import pkg from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import type { Tag } from '$lib/types/Tag'
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers'
-const connectionString = DATABASE_CONNECTION
+const connectionString = env.DATABASE_CONNECTION
 
 /**
  * Tags API - return available keys and values in tag table

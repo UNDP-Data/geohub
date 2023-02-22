@@ -6,7 +6,6 @@
     RasterTileMetadata,
     StacCollection,
     DatasetFeature,
-    DatasetFeatureCollection,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
     StacItemFeatureCollection,

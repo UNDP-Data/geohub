@@ -7,8 +7,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM, SortingColumns } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
-  import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
-  import type { Breadcrumb } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
 
@@ -32,7 +31,7 @@
   ]
   const LIMIT = SEARCH_PAGINATION_LIMIT
   let query: string
-  let queryForSearch: string
+  let queryoperator: 'and' | 'or' = 'and'
   let sortingColumn: string = SortingColumns[0].value
   let bbox: [number, number, number, number]
   let isFilterByBBox = false
@@ -123,10 +122,9 @@
         }
       }
 
-      if (queryForSearch) {
-        if (queryForSearch.length > 0) {
-          apiUrl.searchParams.set('query', queryForSearch)
-        }
+      if (query && query.length > 0) {
+        apiUrl.searchParams.set('query', query)
+        apiUrl.searchParams.set('queryoperator', queryoperator)
       }
 
       if (bbox && bbox.length === 4) {
@@ -204,7 +202,8 @@
     await searchDatasets(url)
   }
 
-  const handleFilterInput = async () => {
+  const handleFilterInput = async (e) => {
+    queryoperator = e.detail.queryoperator
     if (
       !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
       query === ''
@@ -219,7 +218,8 @@
     await searchDatasets(url)
   }
 
-  const clearFilter = async () => {
+  const clearFilter = async (e) => {
+    queryoperator = e.detail.queryoperator
     clearFiltertext()
     if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
@@ -282,7 +282,6 @@
 
   let clearFiltertext = () => {
     query = ''
-    queryForSearch = ''
   }
 </script>
 
@@ -293,7 +292,6 @@
     placeholder="Type keywords to search data"
     bind:map={$map}
     bind:query
-    bind:queryForSearch
     bind:sortingColumn
     bind:bbox
     bind:isFilterByBBox

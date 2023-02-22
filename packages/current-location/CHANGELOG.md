@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 0.1.1
+
+### Patch Changes
+
+- 1bf2a18: refactor: use $env/dynamic/private directly for server side variables. and use $env/static/public directly in frontend side
+
 ## 0.1.0
 
 ### Minor Changes

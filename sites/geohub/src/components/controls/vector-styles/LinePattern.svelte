@@ -2,8 +2,7 @@
   import { onMount } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
   import { isEqual, sortBy } from 'lodash-es'
-  import { Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Radios, type Radio } from '@undp-data/svelte-undp-design'
 
   import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'

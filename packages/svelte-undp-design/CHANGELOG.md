@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.1.1
+
+### Patch Changes
+
+- 342bcf3: refactor: added interfaces in index.ts to be exported
+
 ## 0.1.0
 
 ### Minor Changes

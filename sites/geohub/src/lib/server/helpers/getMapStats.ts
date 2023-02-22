@@ -1,10 +1,10 @@
 import pkg, { type PoolClient } from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
-import type { StatsCard } from '@undp-data/svelte-undp-design/dist/interfaces'
+import { env } from '$env/dynamic/private'
+import type { StatsCard } from '@undp-data/svelte-undp-design'
 import { AccessLevel } from '$lib/constants'
-const connectionString = DATABASE_CONNECTION
+const connectionString = env.DATABASE_CONNECTION
 
 /**
  * Get the total count of styles stored in database

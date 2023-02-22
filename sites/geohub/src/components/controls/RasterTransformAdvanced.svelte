@@ -20,7 +20,7 @@ A component designed to apply where expression to a raster layer through titiler
   import Step from '$components/control-groups/Step.svelte'
   import { getActiveBandIndex, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
+  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import { onMount } from 'svelte'
   import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
   import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte'

@@ -9,7 +9,7 @@ import {
   upsertDataset,
 } from '$lib/server/helpers'
 import { removeSasTokenFromDatasetUrl } from '$lib/helper'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_UPLOAD } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
@@ -17,7 +17,7 @@ import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_UPLOAD } from '$lib/server
  */
 export const load: PageServerLoad = async ({ locals, url }) => {
   const session = await locals.getSession()
-  if (!session) throw error(403, { message: 'No permission' })
+  if (!session) return
 
   let datasetUrl = url.searchParams.get('url')
   if (!datasetUrl) {
@@ -36,8 +36,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
 
   if (res.status === 404) {
-    const isGeneralStorageAccount = datasetUrl.indexOf(AZURE_STORAGE_ACCOUNT) === -1 ? false : true
-    const isUploadStorageAccount = datasetUrl.indexOf(AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
+    const isGeneralStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT) === -1 ? false : true
+    const isUploadStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
 
     if (!isGeneralStorageAccount && !isUploadStorageAccount) {
       // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error

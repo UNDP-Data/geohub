@@ -7,7 +7,7 @@ import {
   paramsToQueryString,
 } from './helper'
 import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
-import { PUBLIC_TITILER_ENDPOINT } from './variables/public'
+import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import chroma from 'chroma-js'
 

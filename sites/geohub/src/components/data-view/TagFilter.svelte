@@ -3,8 +3,7 @@
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
-  import { Button, Checkbox, Radios, Loader } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Button, Checkbox, Radios, Loader, type Radio } from '@undp-data/svelte-undp-design'
   import SelectedTags from './SelectedTags.svelte'
   import { getBulmaTagColor } from '$lib/helper'
 

@@ -2,8 +2,7 @@
   import { page } from '$app/stores'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
-  import { Footer, Header } from '@undp-data/svelte-undp-design'
-  import type { HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'
 
   let links: HeaderLink[] = [
     {

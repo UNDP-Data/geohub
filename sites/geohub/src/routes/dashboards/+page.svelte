@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Header, Footer, FluidCarousel } from '@undp-data/svelte-undp-design'
-  import type { CarouselContent, HeaderLink } from '@undp-data/svelte-undp-design/dist/interfaces'
+  import { Header, Footer, FluidCarousel, type CarouselContent, type HeaderLink } from '@undp-data/svelte-undp-design'
   import { browser } from '$app/environment'
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'

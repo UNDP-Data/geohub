@@ -2,10 +2,10 @@ import type { RequestHandler } from './$types'
 import pkg from 'pg'
 const { Pool } = pkg
 
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
+import { env } from '$env/dynamic/private'
 import { getStyleById } from '$lib/server/helpers'
 import { AccessLevel } from '$lib/constants'
-const connectionString = DATABASE_CONNECTION
+const connectionString = env.DATABASE_CONNECTION
 
 /**
  * Get style.json which is stored in PostgreSQL database

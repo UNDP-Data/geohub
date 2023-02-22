@@ -18,7 +18,6 @@
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
   import { spriteImageList } from '$stores'
-  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
   import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte'
 
   let container: HTMLDivElement
@@ -128,7 +127,6 @@
 {#if map}
   <CurrentLocation
     bind:map
-    azureBaseUrl={PUBLIC_AZURE_URL}
     isHover={false}
     position="top-left" />
   <MapQueryInfoControl bind:map />
