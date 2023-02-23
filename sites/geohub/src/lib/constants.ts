@@ -167,6 +167,11 @@ export const DataCategories: Breadcrumb[] = [
     icon: 'assets/star.png',
     url: '/api/datasets?staronly=true',
   },
+  {
+    name: 'My data',
+    icon: 'fa-solid fa-circle-user',
+    url: '/api/datasets?mydata=true',
+  },
 ]
 
 export const SortingColumns: Radio[] = [
