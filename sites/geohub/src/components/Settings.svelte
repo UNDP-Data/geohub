@@ -3,12 +3,13 @@
   import UserAccount from '$components/UserAccount.svelte'
   import { footerItems } from '$lib/constants'
   import { createHeaderLinks } from '$lib/helper'
+  import Notification from '$components/controls/Notification.svelte'
 
   let isExpanded = true
   let headerHeight: number
   let activeSettingTab = 'Geohub'
   let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
-  let applySettingsLoading = false
+  let settingsApplied = false
 
   // Default Settings
   const settings = {
@@ -23,17 +24,15 @@
 
   let settingsFromCookies = JSON.parse(getCookie('settings') || '{}')
   if (settingsFromCookies) {
-    settings.sideBarPosition = settingsFromCookies.sideBarPosition
+    settings.sideBarPosition = settingsFromCookies.sideBarPosition || 'left'
   }
   let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
 
   const setSettingsToCookies = () => {
-    applySettingsLoading = true
     sessionStorage.setItem('settings', JSON.stringify(settings))
     document.cookie = `settings=${JSON.stringify(settings)}; path=/;`
-    applySettingsLoading = false
+    settingsApplied = true
   }
-
   const collapseMiniMenu = () => {
     isExpanded = !isExpanded
   }
@@ -74,7 +73,7 @@
       </ul>
     </aside>
   </div>
-  <div class="column is-three-quarters m-auto">
+  <div class="column is-two-fifths m-auto">
     <section
       class="content {activeSettingTab !== 'Geohub' ? 'is-hidden' : ''}"
       id="Geohub">
@@ -87,6 +86,15 @@
           <div class="card">
             <div class="card-header">
               <p class="card-header-title">Left Sidebar</p>
+              <div
+                class="card-header-icon"
+                aria-label="more options">
+                <span class="icon">
+                  <i
+                    style="transform: rotate(-90deg)"
+                    class="fa-regular fa-window-maximize" />
+                </span>
+              </div>
             </div>
             <div class="card-content">
               <div class="content">
@@ -103,6 +111,15 @@
           <div class="card">
             <div class="card-header">
               <p class="card-header-title">Right Sidebar</p>
+              <div
+                class="card-header-icon"
+                aria-label="more options">
+                <span class="icon">
+                  <i
+                    style="transform: rotate(90deg)"
+                    class="fa-regular fa-window-maximize" />
+                </span>
+              </div>
             </div>
             <div class="card-content">
               <div class="content">
@@ -117,12 +134,23 @@
     </section>
   </div>
 </div>
+{#if settingsApplied}
+  <Notification
+    type="info"
+    on:close={() => (settingsApplied = false)}
+    showCloseButton={true}>
+    <p>Settings Applied Successfully!!</p>
+    <a
+      class="m-auto"
+      href="/">Go To GeoHub</a>
+  </Notification>
+{/if}
 <div
   class="columns m-auto pb-2"
   style="width: fit-content">
   <button
     on:click={setSettingsToCookies}
-    class="button is-primary {applySettingsLoading ? 'is-loading' : ''}">Apply</button>
+    class="button is-primary">Apply</button>
 </div>
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
@@ -148,7 +176,6 @@
   .menu-list a.selected {
     background-color: #3273dc;
     color: white;
-  }
 
   /* Change the content section when a menu item is clicked */
   .menu-list a {

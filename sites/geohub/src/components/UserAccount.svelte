@@ -3,6 +3,7 @@
   import { page } from '$app/stores'
   import { Button } from '@undp-data/svelte-undp-design'
   import chroma from 'chroma-js'
+  import { goto } from '$app/navigation'
 
   let panelWidth = '350px'
   let dropdownActive = false
@@ -17,7 +18,7 @@
   }
 
   const openSettingsPage = () => {
-    window.location.href = '/settings'
+    goto('/settings')
   }
 </script>
 

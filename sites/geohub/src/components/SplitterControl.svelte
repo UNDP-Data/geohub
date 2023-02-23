@@ -1,17 +1,18 @@
 <script lang="ts">
   import type { Map as MaplibreMap } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
-  import Header from '$components/Header.svelte'
-  import { map as mapStore } from '$stores'
+  import { map as mapStore, indicatorProgress } from '$stores'
+  import BannerMessageControl from '$components/BannerMessageControl.svelte'
   export let map: MaplibreMap
   export let isMenuShown = true
+  export let isMobile
   export let initialSideBarWidth = 360
   export let minSideBarWidth = `${initialSideBarWidth}px`
   export let minMapWidth = '50%'
+  export let splitHeight: number
   export let sideBarPosition = 'left'
-
-  let innerWidth: number
-  let innerHeight: number
+  export let innerWidth: number
+  export let innerHeight: number
   let headerHeight: number
   let defaultsplitterSize = '10px'
   let widthPecent = 0
@@ -20,25 +21,11 @@
   let minPrimaryWidth = sideBarPosition === 'left' ? minSideBarWidth : minMapWidth
   let minSecondaryWidth = sideBarPosition === 'left' ? minMapWidth : minSideBarWidth
 
-  $: isMobile = innerWidth < 768
-  $: splitHeight = innerHeight - headerHeight
-  $: innerWidth, resizeMap()
-  $: innerHeight, resizeMap()
-
-  const setWidthPercent = () => {
-    widthPecent = (initialSideBarWidth / innerWidth) * 100
-  }
-
   const resizeMap = () => {
     if (!$mapStore) {
       return
     }
     $mapStore.resize()
-  }
-
-  const repaintMap = () => {
-    if (!$mapStore) return
-    $mapStore.triggerRepaint()
   }
 
   const setSplitControl = () => {
@@ -66,7 +53,6 @@
           splitControl.setPercent(widthPecent)
         }
         splitterSize = '10px'
-        splitControl
       }
     } else {
       if (sideBarPosition === 'left') {
@@ -101,12 +87,6 @@
   }
 </script>
 
-<svelte:window
-  bind:innerWidth
-  bind:innerHeight />
-<Header
-  bind:drawerOpen={isMenuShown}
-  bind:height={headerHeight} />
 <div
   class="split-container"
   style="height:{splitHeight}px;">
@@ -123,7 +103,7 @@
       {#if sideBarPosition === 'left'}
         {#if isMobile}
           <span
-            class="span close-icon"
+            class="close-icon span"
             on:click={() => {
               isMenuShown = false
             }}>
@@ -133,14 +113,30 @@
         {/if}
         <slot name="sidebar" />
       {:else}
-        <slot name="map" />
+        <BannerMessageControl>
+          <progress
+            style="height:0.2rem; opacity:{$indicatorProgress == true
+              ? 1
+              : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
+            class="progress is-large is-info "
+            max={100} />
+          <slot name="map" />
+        </BannerMessageControl>
       {/if}
     </div>
     <div
       slot="secondary"
       class="secondary-content">
       {#if sideBarPosition === 'left'}
-        <slot name="map" />
+        <BannerMessageControl>
+          <progress
+            style="height:0.2rem; opacity:{$indicatorProgress == true
+              ? 1
+              : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
+            class="progress is-large is-info "
+            max={100} />
+          <slot name="map" />
+        </BannerMessageControl>
       {:else}
         {#if isMobile}
           <span
@@ -157,3 +153,32 @@
     </div>
   </Split>
 </div>
+
+<style lang="scss">
+  .split-container {
+    .primary-content {
+      position: relative;
+      height: 100%;
+      overflow-y: auto;
+      .close-icon {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.6rem !important;
+        cursor: pointer;
+        z-index: 5;
+      }
+    }
+    .secondary-content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      .close-icon {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.6rem !important;
+        cursor: pointer;
+        z-index: 5;
+      }
+    }
+  }
+</style>

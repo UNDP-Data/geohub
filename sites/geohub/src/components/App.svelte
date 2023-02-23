@@ -31,13 +31,29 @@
   let splitControl: Split
 </script>
 
+<svelte:window
+  bind:innerWidth
+  bind:innerHeight />
+<Header
+  bind:drawerOpen={isMenuShown}
+  bind:height={headerHeight} />
 <SplitterControl
+  bind:innerHeight
+  bind:innerWidth
+  bind:isMobile
+  bind:isMenuShown
   bind:map={$mapStore}
+  bind:splitHeight
   bind:sideBarPosition>
   <div slot="sidebar">
     <Content bind:splitterHeight={splitHeight} />
   </div>
-  <div slot="map">
+  <div
+    style="height: {splitHeight}px"
+    slot="map">
     <Map bind:map={$mapStore} />
   </div>
 </SplitterControl>
+
+<style lang="scss">
+</style>
