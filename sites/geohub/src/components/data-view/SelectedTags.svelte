@@ -36,17 +36,18 @@
 </script>
 
 {#if selectedTags.length > 0}
-  <div class="container tag-container p-1 m-0 mb-2 pr-4">
+  <div class="container tag-container tags p-1 m-0 mb-2 pr-4">
     {#key selectedTags}
       {#each selectedTags as tag}
-        <span class="tag is-small m-1 {tag.color}">
-          {tag.value}
+        <div class="tags has-addons p-0 pt-1 m-0">
+          <div class="tag {tag.color}">{tag.value}</div>
           {#if isClearButtonShown}
-            <button
-              class="delete is-small"
-              on:click={() => handleTagDeleted(tag)} />
+            <div
+              class="tag is-delete tag-delete"
+              on:click={() => handleTagDeleted(tag)}
+              on:keydown={handleKeydown} />
           {/if}
-        </span>
+        </div>
       {/each}
     {/key}
     <div
@@ -65,14 +66,14 @@
   .tag-container {
     position: relative;
     border: 1px solid gray;
-    border-radius: 25px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 
     .close-button {
       position: absolute;
-      top: 8px;
-      right: 10px;
+      top: 5px;
+      right: 5px;
       cursor: pointer;
       color: gray;
     }

@@ -4,7 +4,6 @@
   import { debounce } from 'lodash-es'
   import { hideAll } from 'tippy.js'
   import Notification from '$components/controls/Notification.svelte'
-  import SelectedTags from '$components/data-view/SelectedTags.svelte'
 
   const tippy = initTippy()
   let tooltipContent: HTMLElement
@@ -12,9 +11,8 @@
   const TAG_KEY = 'provider'
 
   export let tags: Tag[] = []
-
-  let tagList: Tag[]
-  let filterTagList: Tag[] = []
+  let tagList: Tag[] = tags
+  let filterTagList: Tag[] = tags
   let query = ''
 
   const getTags = async () => {
@@ -72,23 +70,35 @@
       e.target.click()
     }
   }
+
+  const handleTagDeleted = (t: Tag) => {
+    const index = tags.findIndex((tag) => tag.key === t.key && tag.value === t.value)
+    tags.splice(index, 1)
+    tags = [...tags]
+  }
 </script>
 
-<div class="is-flex">
-  <div
-    class="country-select-button pr-2"
-    use:tippy={{ content: tooltipContent }}>
-    <div class="box p-2">
-      <span class="icon is-large">
-        <i class="fa-solid fa-magnifying-glass fa-2xl" />
-      </span>
-    </div>
+<div class="provider-selected py-2">
+  <div class="tags p-0 m-0">
+    {#each tags as tag}
+      <div class="tags has-addons p-0 m-0 mx-1">
+        <div class="tag {getBulmaTagColor()}">{tag.value}</div>
+        <div
+          class="tag is-delete tag-delete"
+          on:click={() => handleTagDeleted(tag)}
+          on:keydown={handleEnterKey} />
+      </div>
+    {/each}
   </div>
+</div>
 
-  <div class="provider-selected py-2">
-    <SelectedTags
-      bind:selectedTags={tags}
-      isClearButtonShown={true} />
+<div
+  class="country-select-button pr-2"
+  use:tippy={{ content: tooltipContent }}>
+  <div class="box p-2">
+    <span class="icon is-large">
+      <i class="fa-solid fa-magnifying-glass fa-2xl" />
+    </span>
   </div>
 </div>
 
@@ -183,5 +193,9 @@
       max-height: 250px;
       overflow-y: auto;
     }
+  }
+
+  .tag-delete {
+    cursor: pointer;
   }
 </style>
