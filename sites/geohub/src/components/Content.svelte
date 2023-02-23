@@ -3,8 +3,7 @@
   import LayerList from '$components/LayerList.svelte'
   import { TabNames } from '$lib/constants'
   import { layerList, map } from '$stores'
-  import { Tabs } from '@undp-data/svelte-undp-design'
-  import type { Tab } from '@undp-data/svelte-undp-design'
+  import { Tabs, type Tab } from '@undp-data/svelte-undp-design'
 
   export let splitterHeight: number
   let tabsHeight: number

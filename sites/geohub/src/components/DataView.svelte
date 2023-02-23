@@ -323,9 +323,8 @@
 </div>
 
 <style lang="scss">
-  :global(.data-view-container) {
-    overflow-y: auto !important;
-
+  .data-view-container {
+    overflow-y: auto;
     .loader-container {
       width: max-content;
       margin: auto;
