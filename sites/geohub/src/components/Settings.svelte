@@ -176,6 +176,7 @@
   .menu-list a.selected {
     background-color: #3273dc;
     color: white;
+  }
 
   /* Change the content section when a menu item is clicked */
   .menu-list a {
