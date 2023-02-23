@@ -1,10 +1,6 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
 import { getStarCount } from '$lib/server/helpers'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 export const POST: RequestHandler = async ({ locals, params }) => {
   const session = await locals.getSession()
@@ -18,8 +14,8 @@ export const POST: RequestHandler = async ({ locals, params }) => {
   const user_email = session.user.email
   const now = new Date().toISOString()
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const query = {
       text: `
@@ -56,8 +52,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
 
@@ -72,8 +67,8 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
   const dataset_id = params.id
   const user_email = session.user.email
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const query = {
       text: `DELETE FROM geohub.dataset_favourite WHERE dataset_id=$1 and user_email=$2`,
@@ -95,7 +90,6 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
