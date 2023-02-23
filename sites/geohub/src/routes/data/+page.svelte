@@ -196,18 +196,16 @@
         <i class="fas fa-search" />
       </span>
       {#if !isQueryEmpty}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span
+        <div
           class="clear-button"
-          on:click={clearInput}>
+          on:click={clearInput}
+          on:keydown={handleEnterKey}>
           <i class="fas fa-xmark sm" />
-        </span>
+        </div>
       {/if}
     </div>
 
     <div class="field tag-filter">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <!-- <label class="label">Tags:</label> -->
       <PanelButton
         icon="fas fa-sliders"
         tooltip="Explore tags and filter data"
@@ -221,8 +219,6 @@
     </div>
 
     <div class="field sort-control">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <!-- <label class="label">Order by:</label> -->
       <PanelButton
         icon="fas fa-arrow-down-short-wide"
         tooltip="Sort"
@@ -238,7 +234,6 @@
     </div>
 
     <div class="field pl-1">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
       <div class="select">
         <select bind:value={limit}>
           {#each LimitOptions as limit}
