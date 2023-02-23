@@ -56,7 +56,6 @@
   }
 
   let providers: Tag[] = initTags('provider')
-  console.log(providers)
   let sdgs: Tag[] = initTags('sdg_goal')
   let countries: Tag[] = initTags('country')
   let otherTags: Tag[] = initTags('other')
