@@ -1,6 +1,7 @@
 import type { PoolClient } from 'pg'
 import type { DatasetFeature } from '$lib/types'
 import type TagManager from './TagManager'
+import { Permission } from '$lib/constants'
 
 class DatasetManager {
   private dataset: DatasetFeature
@@ -30,7 +31,20 @@ class DatasetManager {
     })
   }
 
+  public async getPermission(client: PoolClient, user_email: string) {
+    const query = {
+      text: `SELECT permission FROM geohub.dataset_permission WHERE dataset_id = $1 AND user = $2`,
+      values: [this.dataset.properties.id, user_email],
+    }
+    const res = await client.query(query)
+    if (res.rowCount === 0) {
+      return
+    }
+    return res.rows[0].permission as Permission
+  }
+
   public async upsert(client: PoolClient) {
+    console.debug(`started upserting ${this.dataset.properties.id}`)
     const rings = this.dataset.geometry.coordinates as [number, number][][]
     const coordinates = rings[0]
     const wkt = `POLYGON((
@@ -95,6 +109,7 @@ class DatasetManager {
       ],
     }
     await client.query(query)
+    console.debug(`updated dataset table`)
 
     query = {
       text: `DELETE FROM geohub.dataset_tag WHERE dataset_id=$1`,
@@ -109,7 +124,23 @@ class DatasetManager {
         .join(',')}`
       await client.query({ text: sql })
     }
+    console.debug(`updated dataset_tag table`)
 
+    // if it is new data, insert user email address as an owner of the dataset.
+    const permission = await this.getPermission(client, this.dataset.properties.updated_user)
+    if (!permission) {
+      query = {
+        text: `
+        INSERT INTO geohub.dataset_permission(
+          dataset_id, "user", permission)
+          VALUES ($1, $2, $3)
+        `,
+        values: [this.dataset.properties.id, this.dataset.properties.updated_user, Permission.OWNER.toString()],
+      }
+      await client.query(query)
+      console.debug(`added ${this.dataset.properties.updated_user} as an owner of the dataset`)
+    }
+    console.debug(`ended upserting ${this.dataset.properties.id}`)
     return this.dataset
   }
 
@@ -130,6 +161,13 @@ class DatasetManager {
     }
     await client.query(queryStar)
     console.debug(`deleted it from dataset_favourite table`)
+
+    const queryPermission = {
+      text: `DELETE FROM geohub.dataset_permission WHERE dataset_id = $1`,
+      values: [datasetId],
+    }
+    await client.query(queryPermission)
+    console.debug(`deleted it from dataset_permission table`)
 
     const queryDataset = {
       text: `DELETE FROM geohub.dataset WHERE id = $1`,

@@ -2,6 +2,7 @@ import type { RequestHandler } from './$types'
 import { getDatasetById } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import DatasetManager from '$lib/server/DatasetManager'
+import { Permission } from '$lib/constants'
 
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
@@ -44,6 +45,14 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
     }
 
     const dsm = new DatasetManager(dataset)
+
+    const permission = await dsm.getPermission(client, user_email)
+    if (!(permission && permission === Permission.OWNER)) {
+      return new Response(JSON.stringify({ message: `You don't have permission to delete this datasets.` }), {
+        status: 403,
+      })
+    }
+
     await dsm.delete(client, dataset.properties.id)
 
     return new Response(undefined, {

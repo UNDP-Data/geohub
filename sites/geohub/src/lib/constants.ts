@@ -304,3 +304,9 @@ export const MapOrderByOptions = [
     label: 'Z to A',
   },
 ]
+
+export enum Permission {
+  READ = 1,
+  WRITE = 2,
+  OWNER = 3,
+}
