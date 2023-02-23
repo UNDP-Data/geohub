@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types'
 import type { PoolClient } from 'pg'
 import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types'
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
-import { generateAzureBlobSasToken, pageNumber } from '$lib/server/helpers'
+import { generateAzureBlobSasToken, isSuperuser, pageNumber } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import { Permission } from '$lib/constants'
 
@@ -73,7 +73,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       }
     }
 
-    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x', user_email)
+    const is_superuser = await isSuperuser(user_email)
+
+    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x', is_superuser, user_email)
     const values = whereExpressesion.values
 
     const sql = {
@@ -100,7 +102,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
         SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
       )
       ${
-        user_email
+        !is_superuser && user_email
           ? `
       ,permission as (
         SELECT dataset_id, permission FROM geohub.dataset_permission 
@@ -133,9 +135,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
             y.tags,
             CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
             ${
-              user_email
+              !is_superuser && user_email
                 ? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
-                : `${Permission.READ}`
+                : `${is_superuser ? Permission.OWNER : Permission.READ}`
             } as permission,
             ${
               user_email
@@ -158,7 +160,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
           LEFT JOIN no_stars z
           ON x.id = z.dataset_id
           ${
-            user_email
+            !is_superuser && user_email
               ? `
           LEFT JOIN permission p
           ON x.id = p.dataset_id

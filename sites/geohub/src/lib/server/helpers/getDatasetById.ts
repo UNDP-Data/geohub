@@ -1,10 +1,9 @@
 import { generateAzureBlobSasToken } from '$lib/server/helpers'
 import type { DatasetFeature, Tag } from '$lib/types'
-import DatabaseManager from '$lib/server/DatabaseManager'
 import type { PoolClient } from 'pg'
 import { Permission } from '$lib/constants'
 
-export const getDatasetById = async (client: PoolClient, id: string, user_email?: string) => {
+export const getDatasetById = async (client: PoolClient, id: string, is_superuser: boolean, user_email?: string) => {
   const sql = {
     text: `
         WITH datasetTags as (
@@ -29,7 +28,7 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
           SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
         )
         ${
-          user_email
+          !is_superuser && user_email
             ? `
         ,permission as (
           SELECT dataset_id, permission FROM geohub.dataset_permission 
@@ -58,9 +57,9 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
               y.tags,
               CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
               ${
-                user_email
+                !is_superuser && user_email
                   ? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
-                  : `${Permission.READ}`
+                  : `${is_superuser ? Permission.OWNER : Permission.READ}`
               } as permission,
               ${
                 user_email
@@ -82,7 +81,7 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
             ON x.id = y.id
             LEFT JOIN no_stars z
             ON x.id = z.dataset_id
-            ${user_email ? `LEFT JOIN permission p ON x.id = p.dataset_id` : ''}
+            ${!is_superuser && user_email ? `LEFT JOIN permission p ON x.id = p.dataset_id` : ''}
             WHERE x.id=$1
           ) AS feature
         `,
@@ -94,7 +93,6 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
     return
   }
   const feature: DatasetFeature = res.rows[0].feature
-
   // add SAS token if it is Azure Blob source
   const tags: Tag[] = feature.properties.tags
   const type = tags?.find((tag) => tag.key === 'type')

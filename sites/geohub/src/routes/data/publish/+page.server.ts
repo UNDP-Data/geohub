@@ -6,6 +6,7 @@ import {
   getRasterMetadata,
   getVectorMetadata,
   isRasterExtension,
+  isSuperuser,
   upsertDataset,
 } from '$lib/server/helpers'
 import { removeSasTokenFromDatasetUrl } from '$lib/helper'
@@ -20,6 +21,7 @@ export const load: PageServerLoad = async (event) => {
   const { locals, url } = event
   const session = await locals.getSession()
   if (!session) return
+  const user_email = session?.user.email
 
   let datasetUrl = url.searchParams.get('url')
   if (!datasetUrl) {
@@ -45,7 +47,6 @@ export const load: PageServerLoad = async (event) => {
       // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
       throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
     } else if (isUploadStorageAccount) {
-      const user_email = session?.user.email
       const userHash = generateHashKey(user_email)
       const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true
       if (!isLoginUserDataset) {
