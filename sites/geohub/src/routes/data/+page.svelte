@@ -4,15 +4,32 @@
   import { goto, invalidateAll } from '$app/navigation'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types'
-  import { Accordion, Pagination, Loader, Button } from '@undp-data/svelte-undp-design'
-  import { DEFAULT_LIMIT, LimitOptions, SortingColumns } from '$lib/constants'
+  import { Pagination, Loader, Button, Radios } from '@undp-data/svelte-undp-design'
+  import { DEFAULT_LIMIT, LimitOptions, Permission, SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
   import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+  import Time from 'svelte-time/src/Time.svelte'
+  import TagFilter from '$components/data-view/TagFilter.svelte'
+  import PanelButton from '$components/controls/PanelButton.svelte'
 
   let fc: DatasetFeatureCollection = $page.data.features
   let expanded: { [key: string]: boolean } = {}
+  let expandedDatasetId: string
+  $: {
+    let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
+    if (expandedDatasets.length > 0) {
+      expandedDatasetId = expandedDatasets[0]
+      Object.keys(expanded)
+        .filter((key) => key !== expandedDatasetId)
+        .forEach((key) => {
+          expanded[key] = false
+        })
+      expanded[expandedDatasets[0]] = true
+    }
+  }
+
   let isLoading = false
 
   let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : `${DEFAULT_LIMIT}`
@@ -21,6 +38,7 @@
   let query = $page.url.searchParams.get('query') ?? ''
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
+  let initTagfilter: (url?: URL) => Promise<void>
   $: isQueryEmpty = !query || query?.length === 0
 
   $: limit, handleLimitChanged()
@@ -33,6 +51,9 @@
         invalidateAll: true,
         noScroll: true,
       })
+      if (initTagfilter) {
+        await initTagfilter(url)
+      }
       fc = $page.data.features
     } finally {
       isLoading = false
@@ -81,6 +102,11 @@
         await reload(href)
       }
     }
+  }
+
+  const handleTagChanged = async (e) => {
+    const url = new URL(e.detail.url)
+    await reload(url)
   }
 
   const handleSortbyChanged = async () => {
@@ -135,9 +161,17 @@
     confirmDeleteDialogVisible = false
     deletedDataset = undefined
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
-<p class="title align-center">My datasets</p>
+<p class="title align-center mb-4">My datasets</p>
 
 <div class="datasets-header tile is-ancestor">
   <div class="tile is-parent">
@@ -149,10 +183,8 @@
       </span>
       <span>Data upload</span>
     </button>
-  </div>
 
-  <div class="tile is-parent">
-    <div class="control has-icons-left filter-text-box">
+    <div class="control has-icons-left filter-text-box pl-1">
       <input
         data-testid="filter-bucket-input"
         class="input"
@@ -164,34 +196,44 @@
         <i class="fas fa-search" />
       </span>
       {#if !isQueryEmpty}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span
+        <div
           class="clear-button"
-          on:click={clearInput}>
+          on:click={clearInput}
+          on:keydown={handleEnterKey}>
           <i class="fas fa-xmark sm" />
-        </span>
+        </div>
       {/if}
     </div>
-  </div>
 
-  <div class="tile is-parent">
-    <div class="field">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label">Order by:</label>
-      <div class="select">
-        <select bind:value={sortby}>
-          {#each SortingColumns as option}
-            <option value={option.value}>{option.label}</option>
-          {/each}
-        </select>
-      </div>
+    <div class="field tag-filter">
+      <PanelButton
+        icon="fas fa-sliders"
+        tooltip="Explore tags and filter data"
+        width="230px">
+        <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+        <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+        <TagFilter
+          bind:init={initTagfilter}
+          on:change={handleTagChanged} />
+      </PanelButton>
     </div>
-  </div>
 
-  <div class="tile is-parent">
-    <div class="field">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label">Shown in:</label>
+    <div class="field sort-control">
+      <PanelButton
+        icon="fas fa-arrow-down-short-wide"
+        tooltip="Sort"
+        width="200px">
+        <p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+
+        <Radios
+          radios={SortingColumns}
+          bind:value={sortby}
+          groupName="sortby"
+          isVertical={true} />
+      </PanelButton>
+    </div>
+
+    <div class="field pl-1">
       <div class="select">
         <select bind:value={limit}>
           {#each LimitOptions as limit}
@@ -204,45 +246,111 @@
 </div>
 
 {#if isLoading}
-  <div class="align-center">
+  <div class="align-center my-4">
     <Loader />
   </div>
 {:else if fc.pages?.totalCount > 0}
-  {#each fc.features as feature}
-    <Accordion
-      headerTitle={feature.properties.name}
-      bind:isExpanded={expanded[feature.properties.id]}>
-      <div
-        slot="content"
-        class="columns pb-2">
-        <div class="column is-10">
-          <DataCardInfo bind:feature />
-        </div>
-        <div class="column is-1">
-          <button
-            class="button is-primary my-1"
-            on:click={() => {
-              gotoEditMetadataPage(feature.properties.url)
-            }}>
-            <span class="icon">
-              <i class="fa-solid fa-pen-to-square" />
-            </span>
-          </button>
-          <button
-            class="button is-link my-1"
-            on:click={() => {
-              confirmDeleteDialogVisible = true
-              deletedDataset = feature
-            }}>
-            <span class="icon">
-              <i class="fa-solid fa-trash" />
-            </span>
-          </button>
-        </div>
-      </div>
-    </Accordion>
-  {/each}
-
+  <div class="table-container">
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+      <thead>
+        <tr>
+          <th />
+          <th>Name</th>
+          <th><abbr title="Data type">Type</abbr></th>
+          <th>License</th>
+          <th>Created at</th>
+          <th>Updated at</th>
+          <th><i class="fa-solid fa-pen-to-square fa-lg" /></th>
+          <th><i class="fa-solid fa-trash fa-lg" /></th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each fc.features as feature}
+          <tr>
+            <td>
+              <div
+                on:click={() => {
+                  expanded[feature.properties.id] = !expanded[feature.properties.id]
+                }}
+                on:keydown={handleEnterKey}>
+                <i
+                  class="expand-button has-text-primary fa-solid {expanded[feature.properties.id] === true
+                    ? 'fa-angle-down'
+                    : 'fa-chevron-right'}" />
+              </div>
+            </td>
+            <td>{feature.properties.name}</td>
+            <td>{feature.properties.is_raster ? 'Raster' : 'Vector'}</td>
+            <td>{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}</td>
+            <td>
+              <Time
+                timestamp={feature.properties.createdat}
+                format="h:mm A · MMMM D, YYYY" />
+              <br />
+              {feature.properties.created_user}
+            </td>
+            <td>
+              <Time
+                timestamp={feature.properties.updatedat}
+                format="h:mm A · MMMM D, YYYY" />
+              <br />
+              {feature.properties.updated_user}
+            </td>
+            <td>
+              {#if feature.properties.permission > Permission.READ}
+                <button
+                  class="button is-primary my-1 table-button"
+                  on:click={() => {
+                    gotoEditMetadataPage(feature.properties.url)
+                  }}>
+                  <span class="icon">
+                    <i class="fa-solid fa-pen-to-square" />
+                  </span>
+                </button>
+              {:else}
+                <p>-</p>
+              {/if}
+            </td>
+            <td>
+              {#if feature.properties.permission > Permission.WRITE}
+                <button
+                  class="button is-link my-1 table-button"
+                  on:click={() => {
+                    confirmDeleteDialogVisible = true
+                    deletedDataset = feature
+                  }}>
+                  <span class="icon">
+                    <i class="fa-solid fa-trash" />
+                  </span>
+                </button>
+              {:else}
+                <p>-</p>
+              {/if}
+            </td>
+          </tr>
+          {#if expanded[feature.properties.id] === true}
+            <tr>
+              <td colspan="8">
+                <DataCardInfo bind:feature />
+              </td>
+            </tr>
+          {/if}
+        {/each}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th />
+          <th>Name</th>
+          <th><abbr title="Data type">Type</abbr></th>
+          <th>License</th>
+          <th>Created at</th>
+          <th>Updated at</th>
+          <th><i class="fa-solid fa-pen-to-square fa-lg" /></th>
+          <th><i class="fa-solid fa-trash fa-lg" /></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
   <div class="align-center pt-2">
     <Pagination
       bind:totalPages={fc.pages.totalPages}
@@ -326,15 +434,10 @@
     width: fit-content;
     margin-left: auto;
 
-    .upload-button {
-      margin-top: auto;
-    }
-
     .filter-text-box {
       position: relative;
       height: 35px;
       width: 200px;
-      margin-top: 33px;
 
       .clear-button {
         position: absolute;
@@ -343,5 +446,9 @@
         cursor: pointer;
       }
     }
+  }
+
+  .expand-button {
+    cursor: pointer;
   }
 </style>
