@@ -54,10 +54,17 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     const is_raster = isRasterExtension(datasetUrl)
     const metadata = is_raster ? await getRasterMetadata(datasetUrl) : await getVectorMetadata(datasetUrl)
     const tags: Tag[] = []
+    tags.push({
+      key: 'type',
+      value: 'azure',
+    })
     if (metadata.source) {
-      tags.push({
-        key: 'provider',
-        value: metadata.source,
+      const sources = metadata.source.split(',')
+      sources.forEach((src) => {
+        tags.push({
+          key: 'provider',
+          value: src.trim(),
+        })
       })
     }
     const feature: DatasetFeature = {
@@ -65,11 +72,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       geometry: {
         type: 'Polygon',
         coordinates: [
-          [metadata.bounds[0], metadata.bounds[1]],
-          [metadata.bounds[2], metadata.bounds[1]],
-          [metadata.bounds[2], metadata.bounds[3]],
-          [metadata.bounds[0], metadata.bounds[3]],
-          [metadata.bounds[0], metadata.bounds[1]],
+          [
+            [metadata.bounds[0], metadata.bounds[1]],
+            [metadata.bounds[2], metadata.bounds[1]],
+            [metadata.bounds[2], metadata.bounds[3]],
+            [metadata.bounds[0], metadata.bounds[3]],
+            [metadata.bounds[0], metadata.bounds[1]],
+          ],
         ],
       },
       properties: {

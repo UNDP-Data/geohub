@@ -21,7 +21,6 @@
 
   let feature: DatasetFeature = $page.data.feature
   const isNew: boolean = $page.data.isNew ?? true
-
   let name = feature?.properties.name ?? ''
   let description = feature?.properties.description ?? ''
   let license = feature?.properties.license ?? ''
@@ -57,6 +56,7 @@
   }
 
   let providers: Tag[] = initTags('provider')
+  console.log(providers)
   let sdgs: Tag[] = initTags('sdg_goal')
   let countries: Tag[] = initTags('country')
   let otherTags: Tag[] = initTags('other')
