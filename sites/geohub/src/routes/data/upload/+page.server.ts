@@ -65,7 +65,7 @@ function getBlobServiceClient() {
   if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
     throw Error('Azure Storage credentials not found')
   }
-  const baseUrl = `https://${AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
+  const baseUrl = `https://${env.AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
 
   const sharedKeyCredential = new StorageSharedKeyCredential(
     env.AZURE_STORAGE_ACCOUNT_UPLOAD,
