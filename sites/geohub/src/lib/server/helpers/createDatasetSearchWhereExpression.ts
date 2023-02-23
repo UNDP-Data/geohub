@@ -1,6 +1,11 @@
-import { DatasetSearchQueryParams } from '$lib/constants'
+import { DatasetSearchQueryParams, Permission } from '$lib/constants'
 
-export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: string, user_email?: string) => {
+export const createDatasetSearchWhereExpression = async (
+  url: URL,
+  tableAlias: string,
+  is_superuser: boolean,
+  user_email?: string,
+) => {
   let query = url.searchParams.get('query')
   let queryOperator = url.searchParams.get('queryoperator')
   if (!(queryOperator && ['and', 'or'].includes(queryOperator.trim().toLowerCase()))) {
@@ -41,6 +46,9 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
     values.push(query)
   }
 
+  const mydata = url.searchParams.get('mydata')
+  const mydataonly = mydata && mydata === 'true' ? true : false
+
   const sql = `
     WHERE 
     NOT ST_IsEmpty(${tableAlias}.bounds)
@@ -62,6 +70,12 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
       SELECT dataset_id FROM geohub.dataset_favourite WHERE dataset_id=${tableAlias}.id AND user_email='${user_email}'
     )
     `
+        : ''
+    }
+    ${
+      !is_superuser && user_email && mydataonly
+        ? `
+    AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' AND permission = ${Permission.OWNER} )`
         : ''
     }
     `

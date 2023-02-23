@@ -305,6 +305,15 @@ paths:
           in: query
           name: operator
           description: 'operator for tag search. '
+        - schema:
+            type: boolean
+            default: 'false'
+            enum:
+              - 'true'
+              - 'false'
+          in: query
+          name: mydata
+          description: 'if true, only fetch datasets owned by login user'
       tags:
         - datasets
   '/datasets/{id}':

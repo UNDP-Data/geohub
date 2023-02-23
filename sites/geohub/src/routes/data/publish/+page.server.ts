@@ -6,18 +6,22 @@ import {
   getRasterMetadata,
   getVectorMetadata,
   isRasterExtension,
+  isSuperuser,
   upsertDataset,
 } from '$lib/server/helpers'
 import { removeSasTokenFromDatasetUrl } from '$lib/helper'
 import { env } from '$env/dynamic/private'
+import { Permission } from '$lib/constants'
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
  * to generate Feature geojson object for data updating.
  */
-export const load: PageServerLoad = async ({ locals, url }) => {
+export const load: PageServerLoad = async (event) => {
+  const { locals, url } = event
   const session = await locals.getSession()
   if (!session) return
+  const user_email = session?.user.email
 
   let datasetUrl = url.searchParams.get('url')
   if (!datasetUrl) {
@@ -31,8 +35,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const extention = names[names.length - 1]
   const isPmtiles = extention.toLowerCase() === 'pmtiles' ? true : false
 
-  const apiUrl = `${url.origin}/api/datasets/${datasetId}`
-  const res = await fetch(apiUrl)
+  const apiUrl = `/api/datasets/${datasetId}`
+  const res = await event.fetch(apiUrl)
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
 
   if (res.status === 404) {
@@ -43,7 +47,6 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
       throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
     } else if (isUploadStorageAccount) {
-      const user_email = session?.user.email
       const userHash = generateHashKey(user_email)
       const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true
       if (!isLoginUserDataset) {
@@ -90,14 +93,19 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         tags,
       },
     }
+
     return {
       feature,
       isNew: true,
     }
   }
 
-  // delete SAS token from URL
   const feature: DatasetFeature = await res.json()
+
+  // check write permission of login user for datasets
+  if (!(feature.properties.permission > Permission.READ)) {
+    throw redirect(301, '/data')
+  }
 
   // only accept dataset on Azure blob container
   const type = feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'azure')
@@ -105,6 +113,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
   }
 
+  // delete SAS token from URL
   feature.properties.url = removeSasTokenFromDatasetUrl(feature.properties.url)
 
   return {
