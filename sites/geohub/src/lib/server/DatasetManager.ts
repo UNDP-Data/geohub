@@ -31,7 +31,7 @@ class DatasetManager {
     })
   }
 
-  public async getPermission(client: PoolClient, user_email: string) {
+  private async getPermission(client: PoolClient, user_email: string) {
     const query = {
       text: `SELECT permission FROM geohub.dataset_permission WHERE dataset_id = $1 AND user_email = $2`,
       values: [this.dataset.properties.id, user_email],
