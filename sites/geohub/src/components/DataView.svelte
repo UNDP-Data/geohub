@@ -16,7 +16,7 @@
   const session = $page.data.session
   const dataCategories: Breadcrumb[] = session
     ? DataCategories
-    : DataCategories.filter((category) => category.name !== 'Favourite')
+    : DataCategories.filter((category) => !['Favourite', 'My data'].includes(category.name))
 
   export let contentHeight: number
   let optionsHeight = 41.5
@@ -223,6 +223,7 @@
       apiUrl.searchParams.delete('provider')
       apiUrl.searchParams.delete('stac')
       apiUrl.searchParams.delete('staronly')
+      apiUrl.searchParams.delete('mydata')
       await clearSelectedTags(apiUrl)
     } else if (index < breadcrumbs.length - 1) {
       // middle ones

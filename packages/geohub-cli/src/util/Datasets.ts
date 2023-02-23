@@ -346,6 +346,12 @@ class Datasets {
 		};
 		await client.query(queryStar);
 
+		const queryPermission = {
+			text: `DELETE FROM geohub.dataset_permission WHERE dataset_id = $1`,
+			values: [datasetId]
+		};
+		await client.query(queryPermission);
+
 		const queryDataset = {
 			text: `DELETE FROM geohub.dataset WHERE id = $1`,
 			values: [datasetId]

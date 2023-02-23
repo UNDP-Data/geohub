@@ -167,6 +167,11 @@ export const DataCategories: Breadcrumb[] = [
     icon: 'assets/star.png',
     url: '/api/datasets?staronly=true',
   },
+  {
+    name: 'My data',
+    icon: 'fa-solid fa-circle-user',
+    url: '/api/datasets?mydata=true',
+  },
 ]
 
 export const SortingColumns: Radio[] = [
@@ -202,6 +207,7 @@ export const DatasetSearchQueryParams = [
   'operator',
   'staronly',
   'queryoperator',
+  'mydata',
 ]
 
 export const tagSearchKeys = [
@@ -304,3 +310,9 @@ export const MapOrderByOptions = [
     label: 'Z to A',
   },
 ]
+
+export enum Permission {
+  READ = 1,
+  WRITE = 2,
+  OWNER = 3,
+}

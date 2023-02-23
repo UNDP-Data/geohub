@@ -1,17 +1,20 @@
 import type { RequestHandler } from './$types'
-import { getDatasetById } from '$lib/server/helpers'
+import { getDatasetById, isSuperuser } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import DatasetManager from '$lib/server/DatasetManager'
+import { Permission } from '$lib/constants'
 
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
   const user_email = session?.user.email
   const id = params.id
 
+  const is_superuser = await isSuperuser(user_email)
+
   const dbm = new DatabaseManager()
   const client = await dbm.start()
   try {
-    const dataset = await getDatasetById(client, id, user_email)
+    const dataset = await getDatasetById(client, id, is_superuser, user_email)
     if (!dataset) {
       return new Response(JSON.stringify({ message: `No dataset found.` }), {
         status: 404,
@@ -33,13 +36,21 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
   const user_email = session?.user.email
   const id = params.id
 
+  const is_superuser = await isSuperuser(user_email)
+
   const dbm = new DatabaseManager()
   const client = await dbm.transactionStart()
   try {
-    const dataset = await getDatasetById(client, id, user_email)
+    const dataset = await getDatasetById(client, id, is_superuser, user_email)
     if (!dataset) {
       return new Response(JSON.stringify({ message: `No dataset found.` }), {
         status: 404,
+      })
+    }
+
+    if (!(dataset.properties.permission === Permission.OWNER)) {
+      return new Response(JSON.stringify({ message: `You don't have permission to delete this datasets.` }), {
+        status: 403,
       })
     }
 
