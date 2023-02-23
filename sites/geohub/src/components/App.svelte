@@ -26,7 +26,6 @@
   let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
   $: isMobile = innerWidth < 768
   $: splitHeight = innerHeight - headerHeight
-  $: console.log(document.cookie)
 
   let splitControl: Split
 </script>
