@@ -114,6 +114,7 @@ class DatasetManager {
   }
 
   public async delete(client: PoolClient, datasetId: string) {
+    console.debug(`started deleting ${datasetId}`)
     const queryDatasetTag = {
       text: `
 			DELETE FROM geohub.dataset_tag WHERE dataset_id = $1
@@ -121,18 +122,22 @@ class DatasetManager {
       values: [datasetId],
     }
     await client.query(queryDatasetTag)
+    console.debug(`deleted it from dataset_tag table`)
 
     const queryStar = {
       text: `DELETE FROM geohub.dataset_favourite WHERE dataset_id = $1`,
       values: [datasetId],
     }
     await client.query(queryStar)
+    console.debug(`deleted it from dataset_favourite table`)
 
     const queryDataset = {
       text: `DELETE FROM geohub.dataset WHERE id = $1`,
       values: [datasetId],
     }
     await client.query(queryDataset)
+    console.debug(`deleted it from dataset table`)
+    console.debug(`ended deleting ${datasetId}`)
   }
 }
 

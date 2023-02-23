@@ -11,6 +11,7 @@
   let tagList: Tag[]
 
   const tippy = initTippy({
+    placement: 'left-end',
     onTrigger: async () => {
       tagList = await getTags()
       filterTagList = tagList
@@ -123,6 +124,7 @@
   </div>
   <div class="pr-1">
     <button
+      type="button"
       class="button"
       use:tippy={{ content: tooltipContent }}
       disabled={tag.key ? false : true}>
@@ -193,6 +195,7 @@
   {#if isAdd}
     <div>
       <button
+        type="button"
         class="button"
         disabled={tag.key && tag.value ? false : true}
         on:click={handleAdded}>
@@ -204,6 +207,7 @@
   {:else}
     <div>
       <button
+        type="button"
         class="button"
         disabled={tag.key && tag.value ? false : true}
         on:click={handleDeleted}>

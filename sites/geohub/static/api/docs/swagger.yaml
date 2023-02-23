@@ -2,10 +2,19 @@ openapi: 3.0.0
 info:
   title: GeoHub API specification
   version: '1.0'
-  description: This documentation is for GeoHub's endpoints specification
+  description: |-
+    This documentation describes GeoHub's endpoints specification
+
+    Some endpoints (for POST, PUT, DELETE apis) are required to sign in prior to using them. GeoHub uses Azure Active Directory's authentication with Auth.js package. Auth.js package provides the following endpoints to sign in / sign out. Please sign in first before trying swagger.
+
+    - /auth/signin
+    - /auth/signout 
   contact:
     email: jin.igarashi@undp.org
     url: 'https://geohub.data.undp.org'
+  license:
+    name: BSD-3-Clause license
+    url: 'https://github.com/UNDP-Data/geohub/blob/develop/LICENSE'
 servers:
   - url: 'http://localhost:5173/api'
     description: localhost
@@ -17,8 +26,6 @@ paths:
   /datasets:
     get:
       summary: Datasets search API
-      tags:
-        - search
       responses:
         '200':
           description: GeoJSON feature collection
@@ -289,11 +296,281 @@ paths:
           in: query
           name: queryoperator
           description: operator for query search. convert space to either 'and' or 'or'
+        - schema:
+            type: string
+            default: and
+            enum:
+              - and
+              - or
+          in: query
+          name: operator
+          description: 'operator for tag search. '
+      tags:
+        - datasets
+  '/datasets/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
+    get:
+      summary: Get dataset feature by ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  geometry:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      coordinates:
+                        type: array
+                        items:
+                          type: number
+                  properties:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      url:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      is_raster:
+                        type: boolean
+                      license:
+                        type: string
+                      createdat:
+                        type: string
+                      created_user:
+                        type: string
+                      updatedat:
+                        type: string
+                      updated_user:
+                        type: string
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            value:
+                              type: string
+                      no_stars:
+                        type: integer
+                      is_star:
+                        type: boolean
+                x-examples:
+                  Example 1:
+                    type: Feature
+                    geometry:
+                      type: Polygon
+                      coordinates:
+                        - - - 34.7979108
+                            - -1.2417317
+                          - - 36.3692221
+                            - -1.2417317
+                          - - 36.3692221
+                            - -0.8327202
+                          - - 34.7979108
+                            - -0.8327202
+                          - - 34.7979108
+                            - -1.2417317
+                    properties:
+                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
+                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
+                      name: narwassco_vectortiles
+                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
+                      is_raster: false
+                      license: ''
+                      createdat: '2023-01-12T15:32:02+00:00'
+                      created_user: geohub-cli
+                      updatedat: '2023-01-12T15:32:02+00:00'
+                      updated_user: geohub-cli
+                      tags:
+                        - key: granularity
+                          value: Subnational
+                        - key: extent
+                          value: Kenya
+                        - key: year_value
+                          value: '2021'
+                        - key: type
+                          value: azure
+                        - key: container
+                          value: test
+                        - key: sdg_goal
+                          value: '6'
+                        - key: sdg_target
+                          value: safe water
+                        - key: theme
+                          value: drinking water
+                        - key: provider
+                          value: Ltd.
+                        - key: provider
+                          value: ©Narok Water and Sewerage Services Co.
+                      no_stars: 2
+                      is_star: true
+              examples:
+                Example 1:
+                  value:
+                    type: Feature
+                    geometry:
+                      type: Polygon
+                      coordinates:
+                        - - - 34.7979108
+                            - -1.2417317
+                          - - 36.3692221
+                            - -1.2417317
+                          - - 36.3692221
+                            - -0.8327202
+                          - - 34.7979108
+                            - -0.8327202
+                          - - 34.7979108
+                            - -1.2417317
+                    properties:
+                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
+                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
+                      name: narwassco_vectortiles
+                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
+                      is_raster: false
+                      license: ''
+                      createdat: '2023-01-12T15:32:02+00:00'
+                      created_user: geohub-cli
+                      updatedat: '2023-01-12T15:32:02+00:00'
+                      updated_user: geohub-cli
+                      tags:
+                        - key: granularity
+                          value: Subnational
+                        - key: extent
+                          value: Kenya
+                        - key: year_value
+                          value: '2021'
+                        - key: type
+                          value: azure
+                        - key: container
+                          value: test
+                        - key: sdg_goal
+                          value: '6'
+                        - key: sdg_target
+                          value: safe water
+                        - key: theme
+                          value: drinking water
+                        - key: provider
+                          value: Ltd.
+                        - key: provider
+                          value: ©Narok Water and Sewerage Services Co.
+                      no_stars: 2
+                      is_star: true
+      operationId: get-datasets-id
+      description: get dataset feature by dataset ID
+      tags:
+        - datasets
+    delete:
+      summary: Delete dataset by ID
+      operationId: delete-datasets-id
+      responses:
+        '200':
+          description: OK
+      description: Delete dataset feature by dataset ID. This endpoint is required to sign in.
+      tags:
+        - datasets
+  '/datasets/{id}/star':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset id
+    post:
+      summary: Register dataset to favourite
+      operationId: post-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  user_email:
+                    type: string
+                  savedat:
+                    type: string
+                  no_stars:
+                    type: integer
+                required:
+                  - dataset_id
+                  - user_email
+                  - savedat
+      description: |-
+        Register dataset to favourite
+        This API only can be used when user sign in.
+      tags:
+        - datasets
+    delete:
+      summary: Delete star from dataset
+      operationId: delete-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      description: |-
+        Delete star from dataset
+        This API only can be used when user sign in.
+      tags:
+        - datasets
+  '/datasets/{id}/star/count':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
+    get:
+      summary: get star count
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      operationId: get-datasets-id-star-count
+      description: get the number of stars for a dataset
+      tags:
+        - datasets
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API
-      tags:
-        - stac
       responses:
         '200':
           description: OK
@@ -355,334 +632,27 @@ paths:
           in: query
           name: type
           description: 'type of STAC. e.g., microsoft-pc'
-  /tags:
-    get:
-      summary: Tag search API
       tags:
-        - search
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-              examples:
-                Example for tags?key=extent:
-                  value:
-                    extent:
-                      - key: extent
-                        value: Afghanistan
-                        count: 2
-                      - key: extent
-                        value: Africa
-                        count: 5
-                      - key: extent
-                        value: America
-                        count: 1
-                      - key: extent
-                        value: Asia
-                        count: 5
-                      - key: extent
-                        value: Burundi
-                        count: 3
-                      - key: extent
-                        value: Cambodia
-                        count: 2
-                      - key: extent
-                        value: Conflict areas
-                        count: 1
-                      - key: extent
-                        value: Ethiopia
-                        count: 3
-                      - key: extent
-                        value: EU
-                        count: 3
-                      - key: extent
-                        value: Europe
-                        count: 9
-                      - key: extent
-                        value: Ghana
-                        count: 2
-                      - key: extent
-                        value: Global
-                        count: 3845
-                      - key: extent
-                        value: Greenland and Antarctica
-                        count: 1
-                      - key: extent
-                        value: India
-                        count: 2
-                      - key: extent
-                        value: Kenya
-                        count: 10
-                      - key: extent
-                        value: Madagascar
-                        count: 2
-                      - key: extent
-                        value: Malawi
-                        count: 4
-                      - key: extent
-                        value: Mali
-                        count: 2
-                      - key: extent
-                        value: Mozambique
-                        count: 2
-                      - key: extent
-                        value: Nepal
-                        count: 2
-                      - key: extent
-                        value: Nigeria
-                        count: 12
-                      - key: extent
-                        value: North America
-                        count: 1
-                      - key: extent
-                        value: Oceania
-                        count: 1
-                      - key: extent
-                        value: OECD
-                        count: 7
-                      - key: extent
-                        value: Pakistan
-                        count: 6
-                      - key: extent
-                        value: Rwanda
-                        count: 6
-                      - key: extent
-                        value: South America
-                        count: 1
-                      - key: extent
-                        value: SouthEast Asia
-                        count: 2
-                      - key: extent
-                        value: Tanzania
-                        count: 8
-                      - key: extent
-                        value: Uganda
-                        count: 10
-                      - key: extent
-                        value: West Africa
-                        count: 1
-                      - key: extent
-                        value: Zambia
-                        count: 2
-      operationId: get-tags
-      description: 'This API can return the list of available tags. If you simply query by /tags, it returns all tags. You can also filter a key value to list available tags.'
-      parameters:
-        - schema:
-            type: string
-            enum:
-              - extent
-              - granularity
-              - keyword
-              - layertype
-              - resolution
-              - schema
-              - sdg_goal
-              - sdg_target
-              - stac
-              - theme
-              - type
-              - year_value
-          in: query
-          name: key
-          description: Optional parameter to filter by key
-  /vector/statistics:
+        - stac
+  /style/count:
     get:
-      summary: Vector tile statistics API
+      summary: Get total count of styles
       tags:
-        - vectortile
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  layer:
-                    type: string
-                  geometry:
-                    type: string
-                  count:
-                    type: number
-                  attributeCount:
-                    type: number
-                  attributes:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        attribute:
-                          type: string
-                        type:
-                          type: string
-                        count:
-                          type: number
-                        min:
-                          type: number
-                        max:
-                          type: number
-                        mean:
-                          type: number
-                        median:
-                          type: number
-                        std:
-                          type: number
-                        histogram:
-                          type: object
-                          properties:
-                            count:
-                              type: array
-                              items:
-                                type: number
-                            bins:
-                              type: array
-                              items:
-                                type: number
-              examples:
-                Example for zambia.poverty:
-                  value:
-                    layer: zambia.poverty
-                    geometry: Polygon
-                    count: 145
-                    attributeCount: 7
-                    attributes:
-                      - attribute: poverty
-                        type: number
-                        count: 145
-                        min: 0.1
-                        max: 0.96
-                        mean: 0.6919310344827585
-                        median: 0.78
-                        std: 0.21315518783181625
-                        histogram:
-                          count:
-                            - 9
-                            - 19
-                            - 10
-                            - 36
-                            - 71
-                          bins:
-                            - 0.1
-                            - 0.272
-                            - 0.444
-                            - 0.616
-                            - 0.788
-                            - 0.96
-                Example for zambia.poverty_selector:
-                  value:
-                    layer: zambia.poverty_selector
-                    geometry: Polygon
-                    count: 5
-                    attributeCount: 1
-                    attributes:
-                      - attribute: district
-                        type: string
-                        count: 5
-                        values:
-                          - Chilubi
-                          - Kasama
-                          - Luwingu
-                          - Chinsali
-                          - Mpika
-      operationId: get-vector-statistics
-      description: This api it to calculate statistics for vector tiles from /0/0/0.pbf
-      parameters:
-        - schema:
-            type: string
-            example: 'https://martin.undpgeohub.org/zambia.poverty/0/0/0.pbf'
-          in: query
-          name: path
-          description: URL for vector tile. must be /0/0/0.pbf path
-          required: true
-        - schema:
-            type: string
-            example: zambia.poverty
-          in: query
-          name: layer_name
-          description: layer name for vector tile
-          required: true
-  '/vector/{source}/metadata.json':
-    get:
-      summary: Vector tile metadata.json API
-      tags:
-        - vectortile
+        - style
       responses: {}
-      operationId: 'get-vector-[source]-metadata.json'
-      description: |-
-        This api is to generate metadata.json for vector tiles.
-
-        return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
-      parameters:
-        - schema:
-            type: string
-            example: zambia.poverty
-          in: query
-          name: table
-          description: table name. only available for source = martin or pgtileserv
-        - schema:
-            type: string
-            enum:
-              - table
-              - function
-          in: query
-          name: type
-          description: type name. only available for source = pgtileserv
-        - schema:
-            type: string
-          in: query
-          name: pbfpath
-          description: pbf path. only available for soruce = azstorage
-    parameters:
-      - schema:
-          type: string
-          enum:
-            - azstorage
-            - pgtileserv
-            - martin
-        name: source
-        in: path
-        required: true
-        description: source type
-  '/vector/{source}/tile.json':
-    parameters:
-      - schema:
-          type: string
-          enum:
-            - pgtileserv
-            - martin
-        name: source
-        in: path
-        required: true
-        description: source type
-    get:
-      summary: Vector tile tile.json API
-      tags:
-        - vectortile
-      responses: {}
-      operationId: get-vector-source-tile.json
-      description: |-
-        This api is to generate tile.json for vector tiles.
-
-        return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
-      parameters:
-        - schema:
-            type: string
-            example: zambia.poverty
-          in: query
-          name: table
-          description: table name. only available for source = martin or pgtileserv
-          required: true
-        - schema:
-            type: string
-            enum:
-              - table
-              - function
-          in: query
-          name: type
-          description: type name. only available for source = pgtileserv
+      operationId: get-style-count
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+            examples:
+              Example 1:
+                value:
+                  count: 6
   /style:
     get:
       summary: Style list API
@@ -1000,36 +970,9 @@ paths:
           description: style.json object
       operationId: get-style-id-.json
       description: get style.json by ID
-  /style/count:
+  /tags:
     get:
-      summary: Get total count of styles
-      tags:
-        - style
-      responses: {}
-      operationId: get-style-count
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                count:
-                  type: integer
-            examples:
-              Example 1:
-                value:
-                  count: 6
-  '/datasets/{id}/star':
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset id
-    post:
-      summary: Register dataset to favourite
-      operationId: post-datasets-id-star
+      summary: Tag search API
       responses:
         '200':
           description: OK
@@ -1037,56 +980,132 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  dataset_id:
-                    type: string
-                  user_email:
-                    type: string
-                  savedat:
-                    type: string
-                  no_stars:
-                    type: integer
-                required:
-                  - dataset_id
-                  - user_email
-                  - savedat
-      description: |-
-        Register dataset to favourite
-        This API only can be used when user sign in.
+              examples:
+                Example for tags?key=extent:
+                  value:
+                    extent:
+                      - key: extent
+                        value: Afghanistan
+                        count: 2
+                      - key: extent
+                        value: Africa
+                        count: 5
+                      - key: extent
+                        value: America
+                        count: 1
+                      - key: extent
+                        value: Asia
+                        count: 5
+                      - key: extent
+                        value: Burundi
+                        count: 3
+                      - key: extent
+                        value: Cambodia
+                        count: 2
+                      - key: extent
+                        value: Conflict areas
+                        count: 1
+                      - key: extent
+                        value: Ethiopia
+                        count: 3
+                      - key: extent
+                        value: EU
+                        count: 3
+                      - key: extent
+                        value: Europe
+                        count: 9
+                      - key: extent
+                        value: Ghana
+                        count: 2
+                      - key: extent
+                        value: Global
+                        count: 3845
+                      - key: extent
+                        value: Greenland and Antarctica
+                        count: 1
+                      - key: extent
+                        value: India
+                        count: 2
+                      - key: extent
+                        value: Kenya
+                        count: 10
+                      - key: extent
+                        value: Madagascar
+                        count: 2
+                      - key: extent
+                        value: Malawi
+                        count: 4
+                      - key: extent
+                        value: Mali
+                        count: 2
+                      - key: extent
+                        value: Mozambique
+                        count: 2
+                      - key: extent
+                        value: Nepal
+                        count: 2
+                      - key: extent
+                        value: Nigeria
+                        count: 12
+                      - key: extent
+                        value: North America
+                        count: 1
+                      - key: extent
+                        value: Oceania
+                        count: 1
+                      - key: extent
+                        value: OECD
+                        count: 7
+                      - key: extent
+                        value: Pakistan
+                        count: 6
+                      - key: extent
+                        value: Rwanda
+                        count: 6
+                      - key: extent
+                        value: South America
+                        count: 1
+                      - key: extent
+                        value: SouthEast Asia
+                        count: 2
+                      - key: extent
+                        value: Tanzania
+                        count: 8
+                      - key: extent
+                        value: Uganda
+                        count: 10
+                      - key: extent
+                        value: West Africa
+                        count: 1
+                      - key: extent
+                        value: Zambia
+                        count: 2
+      operationId: get-tags
+      description: 'This API can return the list of available tags. If you simply query by /tags, it returns all tags. You can also filter a key value to list available tags.'
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - extent
+              - granularity
+              - keyword
+              - layertype
+              - resolution
+              - schema
+              - sdg_goal
+              - sdg_target
+              - stac
+              - theme
+              - type
+              - year_value
+          in: query
+          name: key
+          description: Optional parameter to filter by key
       tags:
-        - star
-    delete:
-      summary: Delete star from dataset
-      operationId: delete-datasets-id-star
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  dataset_id:
-                    type: string
-                  no_stars:
-                    type: integer
-      description: |-
-        Delete star from dataset
-        This API only can be used when user sign in.
-      tags:
-        - star
-  '/datasets/{id}/star/count':
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset ID
+        - tags
+  /vector/statistics:
     get:
-      summary: get star count
-      tags:
-        - star
+      summary: Vector tile statistics API
       responses:
         '200':
           description: OK
@@ -1095,182 +1114,190 @@ paths:
               schema:
                 type: object
                 properties:
-                  dataset_id:
-                    type: string
-                  no_stars:
-                    type: integer
-      operationId: get-datasets-id-star-count
-      description: get the number of stars for a dataset
-  '/datasets/{id}':
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset ID
-    get:
-      summary: Get dataset feature by ID
-      tags:
-        - search
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
+                  layer:
                     type: string
                   geometry:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      coordinates:
-                        type: array
-                        items:
+                    type: string
+                  count:
+                    type: number
+                  attributeCount:
+                    type: number
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        attribute:
+                          type: string
+                        type:
+                          type: string
+                        count:
                           type: number
-                  properties:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      url:
-                        type: string
-                      name:
-                        type: string
-                      description:
-                        type: string
-                      is_raster:
-                        type: boolean
-                      license:
-                        type: string
-                      createdat:
-                        type: string
-                      created_user:
-                        type: string
-                      updatedat:
-                        type: string
-                      updated_user:
-                        type: string
-                      tags:
-                        type: array
-                        items:
+                        min:
+                          type: number
+                        max:
+                          type: number
+                        mean:
+                          type: number
+                        median:
+                          type: number
+                        std:
+                          type: number
+                        histogram:
                           type: object
                           properties:
-                            key:
-                              type: string
-                            value:
-                              type: string
-                      no_stars:
-                        type: integer
-                      is_star:
-                        type: boolean
-                x-examples:
-                  Example 1:
-                    type: Feature
-                    geometry:
-                      type: Polygon
-                      coordinates:
-                        - - - 34.7979108
-                            - -1.2417317
-                          - - 36.3692221
-                            - -1.2417317
-                          - - 36.3692221
-                            - -0.8327202
-                          - - 34.7979108
-                            - -0.8327202
-                          - - 34.7979108
-                            - -1.2417317
-                    properties:
-                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
-                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
-                      name: narwassco_vectortiles
-                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
-                      is_raster: false
-                      license: ''
-                      createdat: '2023-01-12T15:32:02+00:00'
-                      created_user: geohub-cli
-                      updatedat: '2023-01-12T15:32:02+00:00'
-                      updated_user: geohub-cli
-                      tags:
-                        - key: granularity
-                          value: Subnational
-                        - key: extent
-                          value: Kenya
-                        - key: year_value
-                          value: '2021'
-                        - key: type
-                          value: azure
-                        - key: container
-                          value: test
-                        - key: sdg_goal
-                          value: '6'
-                        - key: sdg_target
-                          value: safe water
-                        - key: theme
-                          value: drinking water
-                        - key: provider
-                          value: Ltd.
-                        - key: provider
-                          value: ©Narok Water and Sewerage Services Co.
-                      no_stars: 2
-                      is_star: true
+                            count:
+                              type: array
+                              items:
+                                type: number
+                            bins:
+                              type: array
+                              items:
+                                type: number
               examples:
-                Example 1:
+                Example for zambia.poverty:
                   value:
-                    type: Feature
-                    geometry:
-                      type: Polygon
-                      coordinates:
-                        - - - 34.7979108
-                            - -1.2417317
-                          - - 36.3692221
-                            - -1.2417317
-                          - - 36.3692221
-                            - -0.8327202
-                          - - 34.7979108
-                            - -0.8327202
-                          - - 34.7979108
-                            - -1.2417317
-                    properties:
-                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
-                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
-                      name: narwassco_vectortiles
-                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
-                      is_raster: false
-                      license: ''
-                      createdat: '2023-01-12T15:32:02+00:00'
-                      created_user: geohub-cli
-                      updatedat: '2023-01-12T15:32:02+00:00'
-                      updated_user: geohub-cli
-                      tags:
-                        - key: granularity
-                          value: Subnational
-                        - key: extent
-                          value: Kenya
-                        - key: year_value
-                          value: '2021'
-                        - key: type
-                          value: azure
-                        - key: container
-                          value: test
-                        - key: sdg_goal
-                          value: '6'
-                        - key: sdg_target
-                          value: safe water
-                        - key: theme
-                          value: drinking water
-                        - key: provider
-                          value: Ltd.
-                        - key: provider
-                          value: ©Narok Water and Sewerage Services Co.
-                      no_stars: 2
-                      is_star: true
-      operationId: get-datasets-id
-      description: get dataset feature by dataset ID
+                    layer: zambia.poverty
+                    geometry: Polygon
+                    count: 145
+                    attributeCount: 7
+                    attributes:
+                      - attribute: poverty
+                        type: number
+                        count: 145
+                        min: 0.1
+                        max: 0.96
+                        mean: 0.6919310344827585
+                        median: 0.78
+                        std: 0.21315518783181625
+                        histogram:
+                          count:
+                            - 9
+                            - 19
+                            - 10
+                            - 36
+                            - 71
+                          bins:
+                            - 0.1
+                            - 0.272
+                            - 0.444
+                            - 0.616
+                            - 0.788
+                            - 0.96
+                Example for zambia.poverty_selector:
+                  value:
+                    layer: zambia.poverty_selector
+                    geometry: Polygon
+                    count: 5
+                    attributeCount: 1
+                    attributes:
+                      - attribute: district
+                        type: string
+                        count: 5
+                        values:
+                          - Chilubi
+                          - Kasama
+                          - Luwingu
+                          - Chinsali
+                          - Mpika
+      operationId: get-vector-statistics
+      description: This api it to calculate statistics for vector tiles from /0/0/0.pbf
+      parameters:
+        - schema:
+            type: string
+            example: 'https://martin.undpgeohub.org/zambia.poverty/0/0/0.pbf'
+          in: query
+          name: path
+          description: URL for vector tile. must be /0/0/0.pbf path
+          required: true
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: layer_name
+          description: layer name for vector tile
+          required: true
+      tags:
+        - vector tile
+  '/vector/{source}/metadata.json':
+    get:
+      summary: Vector tile metadata.json API
+      responses: {}
+      operationId: 'get-vector-[source]-metadata.json'
+      description: |-
+        This api is to generate metadata.json for vector tiles.
+
+        return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
+      parameters:
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: table
+          description: table name. only available for source = martin or pgtileserv
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: type
+          description: type name. only available for source = pgtileserv
+        - schema:
+            type: string
+          in: query
+          name: pbfpath
+          description: pbf path. only available for soruce = azstorage
+      tags:
+        - vector tile
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - azstorage
+            - pgtileserv
+            - martin
+        name: source
+        in: path
+        required: true
+        description: source type
+  '/vector/{source}/tile.json':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - pgtileserv
+            - martin
+        name: source
+        in: path
+        required: true
+        description: source type
+    get:
+      summary: Vector tile tile.json API
+      responses: {}
+      operationId: get-vector-source-tile.json
+      description: |-
+        This api is to generate tile.json for vector tiles.
+
+        return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
+      parameters:
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: table
+          description: table name. only available for source = martin or pgtileserv
+          required: true
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: type
+          description: type name. only available for source = pgtileserv
+      tags:
+        - vector tile
 components:
   schemas:
     Tag:
@@ -1288,3 +1315,4 @@ components:
       required:
         - key
         - value
+  securitySchemes: {}

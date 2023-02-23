@@ -21,7 +21,6 @@
 
   let feature: DatasetFeature = $page.data.feature
   const isNew: boolean = $page.data.isNew ?? true
-
   let name = feature?.properties.name ?? ''
   let description = feature?.properties.description ?? ''
   let license = feature?.properties.license ?? ''
