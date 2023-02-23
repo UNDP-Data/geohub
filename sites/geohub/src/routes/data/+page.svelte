@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
-  import type { DatasetFeatureCollection } from '$lib/types'
-  import { Accordion, Pagination, Loader } from '@undp-data/svelte-undp-design'
+  import { goto, invalidateAll } from '$app/navigation'
+  import { clickOutside } from 'svelte-use-click-outside'
+  import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types'
+  import { Accordion, Pagination, Loader, Button } from '@undp-data/svelte-undp-design'
   import { DEFAULT_LIMIT, LimitOptions, SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
@@ -17,6 +19,8 @@
   let offset = $page.url.searchParams.get('offset') ? $page.url.searchParams.get('offset') : '0'
   let sortby = $page.url.searchParams.get('sortby') ? $page.url.searchParams.get('sortby') : 'name,asc'
   let query = $page.url.searchParams.get('query') ?? ''
+  let confirmDeleteDialogVisible = false
+  let deletedDataset: DatasetFeature = undefined
   $: isQueryEmpty = !query || query?.length === 0
 
   $: limit, handleLimitChanged()
@@ -108,6 +112,28 @@
 
   const gotoUploadPage = () => {
     goto(`/data/upload`)
+  }
+
+  const handleDeleteDataset = async () => {
+    if (!deletedDataset) return
+    const res = await fetch(`/api/datasets/${deletedDataset.properties.id}`, {
+      method: 'DELETE',
+    })
+    if (res.ok && res.status === 204) {
+      const index = fc.features.findIndex((f) => f.properties.id === deletedDataset.properties.id)
+      if (index > -1) {
+        fc.features.splice(index, 1)
+        fc.features = [...fc.features]
+      }
+      confirmDeleteDialogVisible = false
+      await invalidateAll()
+      fc = $page.data.features
+    }
+  }
+
+  const closeDeleteDialog = () => {
+    confirmDeleteDialogVisible = false
+    deletedDataset = undefined
   }
 </script>
 
@@ -202,7 +228,12 @@
               <i class="fa-solid fa-pen-to-square" />
             </span>
           </button>
-          <button class="button is-link my-1">
+          <button
+            class="button is-link my-1"
+            on:click={() => {
+              confirmDeleteDialogVisible = true
+              deletedDataset = feature
+            }}>
             <span class="icon">
               <i class="fa-solid fa-trash" />
             </span>
@@ -222,6 +253,48 @@
   <Notification
     type="info"
     showCloseButton={false}>No datasets found</Notification>
+{/if}
+
+{#if confirmDeleteDialogVisible}
+  <div
+    class="modal is-active"
+    transition:fade
+    use:clickOutside={closeDeleteDialog}>
+    <div class="modal-background" />
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Delete dataset</p>
+        <button
+          class="delete"
+          aria-label="close"
+          title="Close"
+          on:click={closeDeleteDialog} />
+      </header>
+      <section class="modal-card-body is-size-6 has-text-weight-normal">
+        <div class="has-text-weight-medium">Are you sure you want to delete this dataset?</div>
+        <br />
+        {deletedDataset.properties.name}
+      </section>
+      <footer class="modal-card-foot">
+        <div
+          class="px-1"
+          style="width: 50%">
+          <Button
+            title="Cancel"
+            isPrimary={false}
+            on:clicked={closeDeleteDialog} />
+        </div>
+        <div
+          class="px-1"
+          style="width: 50%">
+          <Button
+            title="Delete"
+            isPrimary={true}
+            on:clicked={handleDeleteDataset} />
+        </div>
+      </footer>
+    </div>
+  </div>
 {/if}
 
 <hr />
