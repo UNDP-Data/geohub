@@ -111,7 +111,7 @@
   }
 </script>
 
-<p class="title align-center">Datasets</p>
+<p class="title align-center">My datasets</p>
 
 <div class="datasets-header tile is-ancestor">
   <div class="tile is-parent">
@@ -192,16 +192,20 @@
         <div class="column is-10">
           <DataCardInfo bind:feature />
         </div>
-        <div class="column is-2">
+        <div class="column is-1">
           <button
-            class="button is-primary"
+            class="button is-primary my-1"
             on:click={() => {
               gotoEditMetadataPage(feature.properties.url)
             }}>
             <span class="icon">
               <i class="fa-solid fa-pen-to-square" />
             </span>
-            <span>metadata</span>
+          </button>
+          <button class="button is-link my-1">
+            <span class="icon">
+              <i class="fa-solid fa-trash" />
+            </span>
           </button>
         </div>
       </div>
@@ -219,6 +223,25 @@
     type="info"
     showCloseButton={false}>No datasets found</Notification>
 {/if}
+
+<hr />
+
+<p class="title align-center mb-4">Processing datasets</p>
+
+<Notification
+  type="info"
+  showCloseButton={false}>
+  All datasets have already been processed and published! Do you want to upload new dataset? Click the below button!
+  <br />
+  <button
+    class="button is-primary upload-button my-2"
+    on:click={gotoUploadPage}>
+    <span class="icon">
+      <i class="fa-solid fa-cloud-arrow-up" />
+    </span>
+    <span>Data upload</span>
+  </button>
+</Notification>
 
 <style lang="scss">
   .align-center {

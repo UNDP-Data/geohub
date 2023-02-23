@@ -2,6 +2,7 @@ import { generateAzureBlobSasToken } from '$lib/server/helpers'
 import type { DatasetFeature, Tag } from '$lib/types'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import type { PoolClient } from 'pg'
+import { Permission } from '$lib/constants'
 
 export const getDatasetById = async (client: PoolClient, id: string, user_email?: string) => {
   const sql = {
@@ -27,6 +28,15 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
         no_stars as (
           SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
         )
+        ${
+          user_email
+            ? `
+        ,permission as (
+          SELECT dataset_id, permission FROM geohub.dataset_permission 
+          WHERE user_email='${user_email}'
+        )`
+            : ''
+        }
         SELECT row_to_json(feature) AS feature 
         FROM (
             SELECT
@@ -49,6 +59,11 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
               CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
               ${
                 user_email
+                  ? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
+                  : `${Permission.READ}`
+              } as permission,
+              ${
+                user_email
                   ? `
                 CASE
                   WHEN (
@@ -67,6 +82,7 @@ export const getDatasetById = async (client: PoolClient, id: string, user_email?
             ON x.id = y.id
             LEFT JOIN no_stars z
             ON x.id = z.dataset_id
+            ${user_email ? `LEFT JOIN permission p ON x.id = p.dataset_id` : ''}
             WHERE x.id=$1
           ) AS feature
         `,

@@ -10,8 +10,6 @@ import {
 } from '$lib/server/helpers'
 import { removeSasTokenFromDatasetUrl } from '$lib/helper'
 import { env } from '$env/dynamic/private'
-import DatasetManager from '$lib/server/DatasetManager'
-import DatabaseManager from '$lib/server/DatabaseManager'
 import { Permission } from '$lib/constants'
 
 /**
@@ -94,19 +92,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       },
     }
 
-    const dsm = new DatasetManager(feature)
-
     // check write permission of login user for datasets
-    const dbm = new DatabaseManager()
-    try {
-      const client = await dbm.start()
-      const user_email = session?.user.email
-      const permission = await dsm.getPermission(client, user_email)
-      if (!(permission && permission > Permission.READ)) {
-        throw redirect(301, '/data')
-      }
-    } finally {
-      dbm.end()
+    if (!(feature.properties.permission > Permission.READ)) {
+      throw redirect(301, '/data')
     }
 
     return {

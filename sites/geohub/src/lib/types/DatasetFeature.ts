@@ -1,3 +1,4 @@
+import type { Permission } from '$lib/constants'
 import type { Tag } from './Tag'
 
 export interface DatasetFeature {
@@ -20,5 +21,6 @@ export interface DatasetFeature {
     tags?: Tag[]
     no_stars?: number
     is_star?: boolean
+    permission?: Permission
   }
 }

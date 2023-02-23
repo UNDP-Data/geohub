@@ -4,7 +4,7 @@
 
 // 2. Set your own initial variables
 // Update blue
-$blue: #72d0eb;
+$blue: #006eb5;
 // Add pink and its invert
 $pink: #ffb3b3;
 $pink-invert: #fff;
@@ -18,7 +18,7 @@ $box-shadow: 0.2em 0.2em 3px $gray-light;
 // Use the new pink as the primary color
 $primary: #d12800;
 $primary-invert: $pink-invert;
-$link: #ffb3b3;
+$link: $blue;
 // Use the existing orange as the danger color
 // $danger: #d12800;
 // Use the new serif family

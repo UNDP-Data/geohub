@@ -22,6 +22,7 @@ export const load: PageServerLoad = async (event) => {
     offset,
     sortby,
     type: 'azure', // only azure's user data is avalable for data page
+    mydata: 'true', // only allow user owned data is available for data page
   }
   if (query) {
     params.query = query

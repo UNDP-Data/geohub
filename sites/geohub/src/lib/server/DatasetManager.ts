@@ -33,7 +33,7 @@ class DatasetManager {
 
   public async getPermission(client: PoolClient, user_email: string) {
     const query = {
-      text: `SELECT permission FROM geohub.dataset_permission WHERE dataset_id = $1 AND user = $2`,
+      text: `SELECT permission FROM geohub.dataset_permission WHERE dataset_id = $1 AND user_email = $2`,
       values: [this.dataset.properties.id, user_email],
     }
     const res = await client.query(query)
@@ -132,7 +132,7 @@ class DatasetManager {
       query = {
         text: `
         INSERT INTO geohub.dataset_permission(
-          dataset_id, "user", permission)
+          dataset_id, user_email, permission)
           VALUES ($1, $2, $3)
         `,
         values: [this.dataset.properties.id, this.dataset.properties.updated_user, Permission.OWNER.toString()],

@@ -161,11 +161,11 @@ COMMENT ON TABLE geohub.superuser
 CREATE TABLE geohub.dataset_permission
 (
     dataset_id character varying NOT NULL,
-    "user" character varying(100) NOT NULL,
+    user_email character varying(100) NOT NULL,
     permission smallint NOT NULL DEFAULT 1,
     createdat timestamp with time zone NOT NULL DEFAULT now(),
     updatedat timestamp with time zone,
-    CONSTRAINT dataset_permission_pkey PRIMARY KEY (dataset_id, "user"),
+    CONSTRAINT dataset_permission_pkey PRIMARY KEY (dataset_id, user_email),
     CONSTRAINT "FK_dataset_TO_dataset_permission" FOREIGN KEY (dataset_id)
         REFERENCES geohub.dataset (id) MATCH SIMPLE
         ON UPDATE NO ACTION
