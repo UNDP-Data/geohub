@@ -146,9 +146,9 @@ CREATE TABLE IF NOT EXISTS geohub.country
 -- superuser table
 CREATE TABLE geohub.superuser
 (
-    "user" character varying(100) NOT NULL,
+    user_email character varying(100) NOT NULL,
     createdat timestamp with time zone NOT NULL DEFAULT now(),
-    CONSTRAINT superuser_pkey PRIMARY KEY ("user")
+    CONSTRAINT superuser_pkey PRIMARY KEY (user_email)
 );
 
 ALTER TABLE IF EXISTS geohub.superuser
