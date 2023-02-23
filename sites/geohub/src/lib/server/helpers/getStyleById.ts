@@ -1,12 +1,8 @@
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 export const getStyleById = async (id: number) => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const query = {
       text: `SELECT id, name, style, layers, access_level, createdat, created_user, updatedat, updated_user FROM geohub.style where id = $1`,
@@ -21,7 +17,6 @@ export const getStyleById = async (id: number) => {
 
     return res.rows[0]
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }

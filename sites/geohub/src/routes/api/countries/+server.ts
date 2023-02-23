@@ -1,17 +1,13 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Country API
  * return country data
  */
 export const GET: RequestHandler = async ({ url }) => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   const continent_code = url.searchParams.get('continent')
   const region_code = url.searchParams.get('region')
   try {
@@ -59,7 +55,6 @@ export const GET: RequestHandler = async ({ url }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }

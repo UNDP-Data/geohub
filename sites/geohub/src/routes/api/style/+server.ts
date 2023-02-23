@@ -1,12 +1,8 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { env } from '$env/dynamic/private'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers'
 import { AccessLevel } from '$lib/constants'
-const connectionString = env.DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Get the list of saved style from PostGIS database
@@ -24,8 +20,8 @@ const connectionString = env.DATABASE_CONNECTION
 export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const limit = url.searchParams.get('limit') ?? '10'
     const offset = url.searchParams.get('offset') ?? '0'
@@ -183,8 +179,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     return new Response(JSON.stringify({ styles, links, pages }))
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
 
@@ -204,8 +199,8 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
       status: 403,
     })
   }
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const body = await request.json()
     if (!body.name) {
@@ -247,8 +242,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
 
@@ -269,8 +263,8 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
       status: 403,
     })
   }
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const body = await request.json()
     if (!body.name) {
@@ -325,7 +319,6 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
