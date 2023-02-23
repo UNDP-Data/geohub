@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 1.1.1
+
+### Patch Changes
+
+- 4bd349ee: feat: delete dataset_permission table if the dataset is deleted
+
 ## 1.1.0
 
 ### Minor Changes
