@@ -5,6 +5,7 @@
   import type { IngestingDataset } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import Time from 'svelte-time/src/Time.svelte'
+  import { removeSasTokenFromDatasetUrl } from '$lib/helper'
 
   let datasets: IngestingDataset[] = $page.data.ingestingDatasets
   let expanded: { [key: string]: boolean } = {}
@@ -20,6 +21,11 @@
         })
       expanded[expandedDatasets[0]] = true
     }
+  }
+
+  const gotoEditMetadataPage = (url: string) => {
+    const url4edit = removeSasTokenFromDatasetUrl(url)
+    goto(`/data/publish?url=${url4edit}`)
   }
 
   const gotoUploadPage = () => {
@@ -41,9 +47,9 @@
       <thead>
         <tr>
           <th />
-          <th>Name</th>
-          <th>Size</th>
+          <th>File name</th>
           <th>Status</th>
+          <th>Size</th>
           <th>Uploaded at</th>
           <th><i class="fa-solid fa-lock-open fa-lg" /> / <i class="fa-solid fa-lock fa-lg" /></th>
         </tr>
@@ -88,7 +94,11 @@
                 </td>
                 <td>
                   {#if ds.processing}
-                    <button class="button is-primary my-1 table-button">
+                    <button
+                      class="button is-primary my-1 table-button"
+                      on:click={() => {
+                        gotoEditMetadataPage(ds.url)
+                      }}>
                       <span class="icon">
                         <i class="fa-solid fa-lock-open fa-lg" />
                       </span>
@@ -112,9 +122,9 @@
       <tfoot>
         <tr>
           <th />
-          <th>Name</th>
-          <th>Size</th>
+          <th>File name</th>
           <th>Status</th>
+          <th>Size</th>
           <th>Uploaded at</th>
           <th><i class="fa-solid fa-lock-open fa-lg" /> / <i class="fa-solid fa-lock fa-lg" /></th>
         </tr>
@@ -137,3 +147,6 @@
     </button>
   </Notification>
 {/if}
+
+<style lang="scss">
+</style>
