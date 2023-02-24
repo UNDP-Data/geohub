@@ -326,7 +326,6 @@
 <style lang="scss">
   .data-view-container {
     overflow-y: auto;
-
     .loader-container {
       width: max-content;
       margin: auto;

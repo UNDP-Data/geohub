@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   export let type: 'info' | 'warning' | 'danger' | '' = 'info'
   export let showCloseButton = true
+
+  const dispatch = createEventDispatcher()
 
   let color = 'dodgerblue'
   let icon = 'fa-solid fa-circle-info'
@@ -16,6 +19,7 @@
 
   const close = () => {
     nodeRef.parentNode.removeChild(nodeRef)
+    dispatch('close')
   }
 </script>
 

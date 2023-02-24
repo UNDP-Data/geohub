@@ -2,7 +2,7 @@
   import DataView from '$components/DataView.svelte'
   import LayerList from '$components/LayerList.svelte'
   import { TabNames } from '$lib/constants'
-  import { layerList } from '$stores'
+  import { layerList, map } from '$stores'
   import { Tabs, type Tab } from '@undp-data/svelte-undp-design'
 
   export let splitterHeight: number
@@ -26,19 +26,21 @@
       },
     },
   ]
-
   let activeTab: string = tabs[0].label
 </script>
 
 <div class="drawer-content">
-  {#key $layerList}
-    <Tabs
-      bind:tabs
-      bind:activeTab
-      fontSize="large"
-      bind:height={tabsHeight} />
-  {/key}
-
+  <div class="is-flex">
+    <div style="width: 91%">
+      {#key $layerList}
+        <Tabs
+          bind:tabs
+          bind:activeTab
+          fontSize="large"
+          bind:height={tabsHeight} />
+      {/key}
+    </div>
+  </div>
   <div class="container p-0 m-0">
     <div hidden={activeTab !== TabNames.DATA}>
       <DataView bind:contentHeight />
