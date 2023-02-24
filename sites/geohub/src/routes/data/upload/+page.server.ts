@@ -29,8 +29,11 @@ export const actions = {
       const user_email = session?.user.email
       const userHash = generateHashKey(user_email)
       const fileName = (await request.formData()).get('fileName') as string
+      const now = new Date().toISOString().replace(/(\.\d{3})|[^\d]/g, '')
+      const names = fileName.split('.') as [string, string]
+      const newFileName = `${names[0]}_${now}.${names[1]}`
       const folder = `${userHash}/${FOLDER_NAME}`
-      const sasUrl = await getSasUrl(folder, CONTAINER_NAME, fileName)
+      const sasUrl = await getSasUrl(folder, CONTAINER_NAME, newFileName)
       return { sasUrl }
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
