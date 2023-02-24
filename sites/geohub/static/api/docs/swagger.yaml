@@ -577,6 +577,124 @@ paths:
       description: get the number of stars for a dataset
       tags:
         - datasets
+  /datasets/ingesting:
+    get:
+      summary: Get status of ingesting datasets
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                x-examples:
+                  Example 1:
+                    - raw:
+                        name: Anthropogenic_Biomes_20230224163255.tif
+                        url: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/raw/Anthropogenic_Biomes_20230224163255.tif?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                        contentLength: 832784
+                        createdat: '2023-02-24T16:32:58.000Z'
+                        updatedat: '2023-02-24T16:32:58.000Z'
+                        error: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/raw/Anthropogenic_Biomes_20230224163255.tif.error?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                    - raw:
+                        name: admin0_20230224161338.pmtiles
+                        url: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/raw/admin0_20230224161338.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                        contentLength: 11813331
+                        createdat: '2023-02-24T16:14:14.000Z'
+                        updatedat: '2023-02-24T16:14:14.000Z'
+                      datasets:
+                        - name: admin0_20230224161338.pmtiles
+                          url: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/datasets/admin0_20230224161338.pmtiles/admin0_20230224161338.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                          contentLength: 11813331
+                          createdat: '2023-02-24T16:19:35.000Z'
+                          updatedat: '2023-02-24T16:19:35.000Z'
+                          processing: true
+                items:
+                  type: object
+                  properties:
+                    raw:
+                      type: object
+                      required:
+                        - name
+                        - url
+                        - contentLength
+                        - createdat
+                        - updatedat
+                      properties:
+                        name:
+                          type: string
+                        url:
+                          type: string
+                        contentLength:
+                          type: integer
+                        createdat:
+                          type: string
+                        updatedat:
+                          type: string
+                        error:
+                          type: string
+                    datasets:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          url:
+                            type: string
+                          contentLength:
+                            type: integer
+                          createdat:
+                            type: string
+                          updatedat:
+                            type: string
+                          processing:
+                            type: boolean
+                        required:
+                          - name
+                          - url
+                          - contentLength
+                          - createdat
+                          - updatedat
+                          - processing
+                  required:
+                    - raw
+              examples:
+                Example:
+                  value:
+                    - raw:
+                        name: string
+                        url: string
+                        contentLength: 0
+                        createdat: string
+                        updatedat: string
+                        error: string
+                      datasets:
+                        - name: string
+                          url: string
+                          contentLength: 0
+                          createdat: string
+                          updatedat: string
+                          processing: true
+      operationId: get-datasets-ingesting
+      description: |-
+        This endpoint is going to scan data upload folder for login user to check the status of ingesting datasets.Authentication is required prior to using this API.
+
+        URLs will be attached SAS token (1 hour expiry period)
+
+        User's upload folder structure will be like this.
+
+        - userdata
+          - a85516c81c0b78d3e89d3f00099b8b15 (md5 hash key generated from email)
+            - raw
+              - aaa_yyyymmddhhmmss.tif - original data
+              - aaa_yyyymmddhhmmss.tif.error - in case data processing failed. Logs for data processing should be contained in .error file 
+            - datasets
+              - aaa_yyyymmddhhmmss.tif - subfolder
+                - aaa_yyyymmddhhmmss.tif - processed data
+                - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API

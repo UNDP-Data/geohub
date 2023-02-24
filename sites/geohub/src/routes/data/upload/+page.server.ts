@@ -1,18 +1,14 @@
 import type { Actions, PageServerLoad } from './$types'
 import { fail } from '@sveltejs/kit'
-import {
-  BlobSASPermissions,
-  BlobServiceClient,
-  ContainerClient,
-  BlockBlobClient,
-  StorageSharedKeyCredential,
-} from '@azure/storage-blob'
+import { BlobSASPermissions, ContainerClient, BlockBlobClient } from '@azure/storage-blob'
 import { env } from '$env/dynamic/private'
-import { generateHashKey } from '$lib/server/helpers'
-
-const CONTAINER_NAME = 'userdata'
-const FOLDER_NAME = 'raw'
-const BASE_URL = `https://${env.AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
+import {
+  generateHashKey,
+  getBlobServiceClient,
+  UPLOAD_BLOB_URL,
+  UPLOAD_CONTAINER_NAME,
+  UPLOAD_RAW_FOLDER_NAME,
+} from '$lib/server/helpers'
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.getSession()
@@ -33,9 +29,9 @@ export const actions = {
       const now = new Date().toISOString().replace(/(\.\d{3})|[^\d]/g, '')
       const names = fileName.split('.') as [string, string]
       const newFileName = `${names[0]}_${now}.${names[1]}`
-      const folder = `${userHash}/${FOLDER_NAME}`
-      const sasUrl = await getSasUrl(folder, CONTAINER_NAME, newFileName)
-      const blobUrl = `${BASE_URL}/${CONTAINER_NAME}/${folder}/${newFileName}`
+      const folder = `${userHash}/${UPLOAD_RAW_FOLDER_NAME}`
+      const sasUrl = await getSasUrl(folder, UPLOAD_CONTAINER_NAME, newFileName)
+      const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, user_email, newFileName)
       return { sasUrl, blobUrl }
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
@@ -44,6 +40,10 @@ export const actions = {
 } satisfies Actions
 
 async function getSasUrl(userId: string, containerName: string, fileName: string) {
+  if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
+    throw Error('Azure Storage credentials not found')
+  }
+
   const containerClient = getContainerClient(containerName)
 
   // save file in user email folder
@@ -61,20 +61,7 @@ async function getSasUrl(userId: string, containerName: string, fileName: string
 }
 
 function getContainerClient(containerName: string) {
-  const blobServiceClient = getBlobServiceClient()
+  const blobServiceClient = getBlobServiceClient(env.AZURE_STORAGE_ACCOUNT_UPLOAD, env.AZURE_STORAGE_ACCESS_KEY_UPLOAD)
   const containerClient: ContainerClient = blobServiceClient.getContainerClient(containerName)
   return containerClient
-}
-
-function getBlobServiceClient() {
-  if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
-    throw Error('Azure Storage credentials not found')
-  }
-
-  const sharedKeyCredential = new StorageSharedKeyCredential(
-    env.AZURE_STORAGE_ACCOUNT_UPLOAD,
-    env.AZURE_STORAGE_ACCESS_KEY_UPLOAD,
-  )
-  const blobServiceClient: BlobServiceClient = new BlobServiceClient(BASE_URL, sharedKeyCredential)
-  return blobServiceClient
 }

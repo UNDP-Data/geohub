@@ -2,7 +2,7 @@ import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } 
 import { env } from '$env/dynamic/private'
 import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 
-export const generateAzureBlobSasToken = (url: string) => {
+export const generateAzureBlobSasToken = (url: string, expiry_period: number = TOKEN_EXPIRY_PERIOD_MSEC) => {
   const account =
     url.indexOf(env.AZURE_STORAGE_ACCOUNT) !== -1 ? env.AZURE_STORAGE_ACCOUNT : env.AZURE_STORAGE_ACCOUNT_UPLOAD
   const accessKey =
@@ -17,7 +17,7 @@ export const generateAzureBlobSasToken = (url: string) => {
   // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
 
   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
-    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
+    new Date(new Date().valueOf() + expiry_period),
     AccountSASPermissions.parse('r'),
     'o',
   )
