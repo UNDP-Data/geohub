@@ -12,6 +12,7 @@ import { generateHashKey } from '$lib/server/helpers'
 
 const CONTAINER_NAME = 'userdata'
 const FOLDER_NAME = 'raw'
+const BASE_URL = `https://${env.AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.getSession()
@@ -34,7 +35,8 @@ export const actions = {
       const newFileName = `${names[0]}_${now}.${names[1]}`
       const folder = `${userHash}/${FOLDER_NAME}`
       const sasUrl = await getSasUrl(folder, CONTAINER_NAME, newFileName)
-      return { sasUrl }
+      const blobUrl = `${BASE_URL}/${CONTAINER_NAME}/${folder}/${newFileName}`
+      return { sasUrl, blobUrl }
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
     }
@@ -68,13 +70,11 @@ function getBlobServiceClient() {
   if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
     throw Error('Azure Storage credentials not found')
   }
-  const baseUrl = `https://${env.AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`
 
   const sharedKeyCredential = new StorageSharedKeyCredential(
     env.AZURE_STORAGE_ACCOUNT_UPLOAD,
     env.AZURE_STORAGE_ACCESS_KEY_UPLOAD,
   )
-  const blobServiceClient: BlobServiceClient = new BlobServiceClient(baseUrl, sharedKeyCredential)
-
+  const blobServiceClient: BlobServiceClient = new BlobServiceClient(BASE_URL, sharedKeyCredential)
   return blobServiceClient
 }

@@ -25,6 +25,8 @@
   let uploadedLength = 0
   $: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0
 
+  let blobUrl = ''
+
   const uploadFile = async (sasUrl: string) => {
     if (!selectedFile) {
       return
@@ -69,6 +71,7 @@
     return async ({ result, update }) => {
       await update()
       const sasUrl = result.data.sasUrl
+      blobUrl = result.data.blobUrl
       uploadingFile = uploadFile(sasUrl)
     }
   }}>
