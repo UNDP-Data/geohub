@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import type { DatasetFeatureCollection } from '$lib/types'
+import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
 import { DEFAULT_LIMIT, SortingColumns } from '$lib/constants'
 
 export const load: PageServerLoad = async (event) => {
@@ -33,9 +33,13 @@ export const load: PageServerLoad = async (event) => {
   apiUrl.searchParams.set('mydata', 'true')
 
   const res = await event.fetch(`/api/datasets${apiUrl.search}`)
-  const features: DatasetFeatureCollection = await res.json()
+  const datasets: DatasetFeatureCollection = await res.json()
+
+  const resIngesting = await event.fetch(`/api/datasets/ingesting`)
+  const ingestingDatasets: IngestingDataset[] = await resIngesting.json()
 
   return {
-    features,
+    datasets,
+    ingestingDatasets,
   }
 }
