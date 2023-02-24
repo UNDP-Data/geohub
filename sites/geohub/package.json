@@ -31,7 +31,6 @@
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
   "devDependencies": {
-    "@apidevtools/swagger-parser": "^10.1.0",
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "@geoffcox/svelte-splitter": "^1.0.1",
     "@neodrag/svelte": "^2.0.3",
