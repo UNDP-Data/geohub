@@ -24,24 +24,26 @@ export const handle = SvelteKitAuth({
       // Persist the OAuth access_token to the token right after signin
       if (account?.access_token) {
         token.accessToken = account.access_token
+
+        const me = await getMe(account.access_token)
+        token.jobTitle = me.jobTitle
       }
       return token
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      if (token?.accessToken) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const accessToken: string = token.accessToken
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        session.accessToken = accessToken
 
-        const me = await getMe(accessToken)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        session.user.jobTitle = me.jobTitle
-      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const accessToken: string = token.accessToken
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      session.accessToken = accessToken
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      session.user.jobTitle = token.jobTitle
+
+      // console.log(session)
       return session
     },
   },
