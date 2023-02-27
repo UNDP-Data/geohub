@@ -5,10 +5,12 @@ import { env } from '$env/dynamic/private'
 import {
   generateHashKey,
   getBlobServiceClient,
+  sendMessageToServiceBusQueue,
   UPLOAD_BLOB_URL,
   UPLOAD_CONTAINER_NAME,
   UPLOAD_RAW_FOLDER_NAME,
 } from '$lib/server/helpers'
+const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.getSession()
@@ -33,6 +35,19 @@ export const actions = {
       const sasUrl = await getSasUrl(folder, UPLOAD_CONTAINER_NAME, newFileName)
       const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, user_email, newFileName)
       return { sasUrl, blobUrl }
+    } catch (error) {
+      return fail(500, { status: error.status, message: 'error:' + error.message })
+    }
+  },
+  completingUpload: async ({ request, locals }) => {
+    try {
+      const session = await locals.getSession()
+      if (!session) return {}
+      const token = session.accessToken
+      const blobUrl = (await request.formData()).get('blobUrl') as string
+      const message = `${blobUrl};${token}`
+      await sendMessageToServiceBusQueue(queueName, message)
+      return JSON.stringify({ blobUrl })
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })
     }

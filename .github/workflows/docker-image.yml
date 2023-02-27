@@ -32,6 +32,8 @@ jobs:
           envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
           envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
           envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+          envkey_AZURE_SERVICE_BUS_CONNECTIONSTRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTIONSTRING }}
+          envkey_AZURE_SERVICE_BUS_QUEUE_NAME: ${{ secrets.AZURE_SERVICE_BUS_QUEUE_NAME }}
           envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
           envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
           envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
