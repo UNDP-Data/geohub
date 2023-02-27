@@ -16,7 +16,7 @@ export const sendMessageToServiceBusQueue = async (message: string) => {
 
   try {
     // create a batch object
-    let batch = await sender.createMessageBatch()
+    const batch = await sender.createMessageBatch()
     batch.tryAddMessage({
       body: message,
     })
