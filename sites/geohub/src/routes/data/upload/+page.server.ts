@@ -10,6 +10,7 @@ import {
   UPLOAD_CONTAINER_NAME,
   UPLOAD_RAW_FOLDER_NAME,
 } from '$lib/server/helpers'
+const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.getSession()
@@ -45,7 +46,7 @@ export const actions = {
       const token = session.accessToken
       const blobUrl = (await request.formData()).get('blobUrl') as string
       const message = `${blobUrl};${token}`
-      await sendMessageToServiceBusQueue(message)
+      await sendMessageToServiceBusQueue(queueName, message)
       return JSON.stringify({ blobUrl })
     } catch (error) {
       return fail(500, { status: error.status, message: 'error:' + error.message })

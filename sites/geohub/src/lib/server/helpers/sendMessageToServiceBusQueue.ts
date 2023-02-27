@@ -1,9 +1,8 @@
 import { ServiceBusClient } from '@azure/service-bus'
 import { env } from '$env/dynamic/private'
 
-export const sendMessageToServiceBusQueue = async (message: string) => {
+export const sendMessageToServiceBusQueue = async (queueName: string, message: string) => {
   const connectionString = env.AZURE_SERVICE_BUS_CONNECTIONSTRING
-  const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME
   if (!(connectionString && queueName)) {
     throw new Error(`Connection string for Azure Service Bus is missing`)
   }
