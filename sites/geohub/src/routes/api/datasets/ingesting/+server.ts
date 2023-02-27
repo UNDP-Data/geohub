@@ -40,7 +40,7 @@ export const GET: RequestHandler = async ({ locals }) => {
   const expiry_period = 3600000 // 1 hour
   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
     new Date(new Date().valueOf() + expiry_period),
-    AccountSASPermissions.parse('r'),
+    AccountSASPermissions.parse('rwd'),
     'o',
   )
   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI).search

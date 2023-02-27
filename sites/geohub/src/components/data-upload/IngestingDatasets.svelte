@@ -15,6 +15,7 @@
   let expandedDatasetId: string
   let confirmDeleteDialogVisible = false
   let cancelledDataset: IngestingDataset = undefined
+  let isCancelling = false
 
   $: {
     let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
@@ -64,9 +65,31 @@
   const handleCancelDataset = async () => {
     if (!cancelledDataset) return
 
-    confirmDeleteDialogVisible = false
-    await invalidateAll()
-    datasets = $page.data.ingestingDatasets
+    try {
+      isCancelling = true
+
+      const urls: string[] = [cancelledDataset.raw.url]
+      if (cancelledDataset.raw.error) {
+        urls.push(cancelledDataset.raw.error)
+      }
+      cancelledDataset?.datasets?.forEach((ds) => {
+        urls.push(ds.url)
+      })
+      for (const url of urls) {
+        const res = await fetch(url, {
+          method: 'DELETE',
+        })
+        if (!res.ok) {
+          throw new Error(`Failed to delete ${url}`)
+        }
+      }
+
+      await invalidateAll()
+      datasets = $page.data.ingestingDatasets
+      confirmDeleteDialogVisible = false
+    } finally {
+      isCancelling = false
+    }
   }
 
   const openCancelDialog = (dataset: IngestingDataset) => {
@@ -217,18 +240,16 @@
           <div
             class="px-1"
             style="width: 50%">
-            <Button
-              title="Cancel"
-              isPrimary={false}
-              on:clicked={closeCancelDialog} />
+            <button
+              class="button is-link is-fullwidth"
+              on:click={closeCancelDialog}>Cencel</button>
           </div>
           <div
             class="px-1"
             style="width: 50%">
-            <Button
-              title="Continue"
-              isPrimary={true}
-              on:clicked={handleCancelDataset} />
+            <button
+              class="button is-primary is-fullwidth {isCancelling ? 'is-loading' : ''}"
+              on:click={handleCancelDataset}>Continue</button>
           </div>
         </footer>
       </div>
