@@ -1,15 +1,21 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
+  import { fade } from 'svelte/transition'
+  import { clickOutside } from 'svelte-use-click-outside'
   import { filesize } from 'filesize'
   import type { IngestingDataset } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import Time from 'svelte-time/src/Time.svelte'
   import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+  import { Button } from '@undp-data/svelte-undp-design'
 
   let datasets: IngestingDataset[] = $page.data.ingestingDatasets
   let expanded: { [key: string]: boolean } = {}
   let expandedDatasetId: string
+  let confirmDeleteDialogVisible = false
+  let cancelledDataset: IngestingDataset = undefined
+
   $: {
     let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
     if (expandedDatasets.length > 0) {
@@ -53,6 +59,24 @@
     } else {
       return 'Ingestng'
     }
+  }
+
+  const handleCancelDataset = async () => {
+    if (!cancelledDataset) return
+
+    confirmDeleteDialogVisible = false
+    await invalidateAll()
+    datasets = $page.data.ingestingDatasets
+  }
+
+  const openCancelDialog = (dataset: IngestingDataset) => {
+    cancelledDataset = dataset
+    confirmDeleteDialogVisible = true
+  }
+
+  const closeCancelDialog = () => {
+    confirmDeleteDialogVisible = false
+    cancelledDataset = undefined
   }
 </script>
 
@@ -102,11 +126,15 @@
                   format="h:mm A · MMMM D, YYYY" />
               </td>
               <td>
-                <button class="button is-link my-1 table-button">
+                <button
+                  class="button is-link my-1 table-button"
+                  on:click={() => {
+                    openCancelDialog(dataset)
+                  }}>
                   <span class="icon">
-                    <i class="fa-solid fa-trash fa-lg" />
+                    <i class="fa-solid fa-xmark fa-lg" />
                   </span>
-                  <span>Delete</span>
+                  <span>Cancel</span>
                 </button>
               </td>
             </tr>
@@ -160,6 +188,52 @@
       </tfoot>
     </table>
   </div>
+
+  {#if confirmDeleteDialogVisible}
+    <div
+      class="modal is-active"
+      transition:fade>
+      <div
+        class="modal-background"
+        on:click={closeCancelDialog}
+        on:keydown={handleEnterKey} />
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Cancel data uploading</p>
+          <button
+            class="delete"
+            aria-label="close"
+            title="Close"
+            on:click={closeCancelDialog} />
+        </header>
+        <section class="modal-card-body is-size-6 has-text-weight-normal">
+          <div class="has-text-weight-medium">
+            If continue, the following data uploading process will be cancelled. Do you want to continue?
+          </div>
+          <br />
+          {cancelledDataset.raw.name}
+        </section>
+        <footer class="modal-card-foot">
+          <div
+            class="px-1"
+            style="width: 50%">
+            <Button
+              title="Cancel"
+              isPrimary={false}
+              on:clicked={closeCancelDialog} />
+          </div>
+          <div
+            class="px-1"
+            style="width: 50%">
+            <Button
+              title="Continue"
+              isPrimary={true}
+              on:clicked={handleCancelDataset} />
+          </div>
+        </footer>
+      </div>
+    </div>
+  {/if}
 {:else}
   <Notification
     type="info"
