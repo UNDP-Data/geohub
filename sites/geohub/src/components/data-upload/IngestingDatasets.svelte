@@ -39,6 +39,21 @@
       e.target.click()
     }
   }
+
+  const getStatus = (dataset: IngestingDataset) => {
+    if (dataset.raw.error) {
+      return 'Error'
+    }
+    if (dataset.datasets && dataset.datasets.length > 0) {
+      const published = dataset.datasets?.filter((ds) => ds.processing !== true)
+      if (dataset.datasets?.length === published?.length) {
+        return 'Published'
+      }
+      return 'Ingested'
+    } else {
+      return 'Ingestng'
+    }
+  }
 </script>
 
 {#if datasets && datasets.length > 0}
@@ -46,87 +61,101 @@
     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
       <thead>
         <tr>
-          <th />
-          <th>File name</th>
+          <th>Data file</th>
           <th>Status</th>
           <th>Size</th>
-          <th>Uploaded at</th>
-          <th><i class="fa-solid fa-lock-open fa-lg" /> / <i class="fa-solid fa-lock fa-lg" /></th>
+          <th>Date uploaded</th>
+          <th>Operation</th>
         </tr>
       </thead>
 
       <tbody>
         {#each datasets as dataset}
-          <tr>
-            <td>
-              <div
-                on:click={() => {
-                  expanded[dataset.raw.name] = !expanded[dataset.raw.name]
-                }}
-                on:keydown={handleEnterKey}>
-                <i
-                  class="expand-button has-text-primary fa-solid {expanded[dataset.raw.name] === true
-                    ? 'fa-angle-down'
-                    : 'fa-chevron-right'}" />
-              </div>
-            </td>
-            <td>{dataset.raw.name}</td>
-            <td>{dataset.raw.error ? 'Error' : dataset.datasets?.length > 0 ? 'Ingested' : 'Ingesting'}</td>
-            <td>{filesize(dataset.raw.contentLength, { round: 1 })}</td>
-            <td>
-              <Time
-                timestamp={dataset.raw.createdat}
-                format="h:mm A · MMMM D, YYYY" />
-            </td>
-            <td />
-          </tr>
-          {#if dataset.datasets && expanded[dataset.raw.name] === true}
-            {#each dataset.datasets as ds}
-              <tr>
-                <td><i class="fa-solid fa-file has-text-primary" /></td>
-                <td>{ds.name}</td>
-                <td>{ds.processing ? 'Unpublished' : 'Published'}</td>
-                <td>{filesize(ds.contentLength, { round: 1 })}</td>
-                <td>
-                  <Time
-                    timestamp={ds.createdat}
-                    format="h:mm A · MMMM D, YYYY" />
-                </td>
-                <td>
-                  {#if ds.processing}
-                    <button
-                      class="button is-primary my-1 table-button"
+          {@const status = getStatus(dataset)}
+          {#if status !== 'Published'}
+            <tr>
+              <td>
+                <div class="is-flex">
+                  {#if status === 'Ingested'}
+                    <div
+                      class="pr-2"
                       on:click={() => {
-                        gotoEditMetadataPage(ds.url)
-                      }}>
-                      <span class="icon">
-                        <i class="fa-solid fa-lock-open fa-lg" />
-                      </span>
-                      <span>Publish</span>
-                    </button>
+                        expanded[dataset.raw.name] = !expanded[dataset.raw.name]
+                      }}
+                      on:keydown={handleEnterKey}>
+                      <i
+                        class="expand-button has-text-primary fa-solid {expanded[dataset.raw.name] === true
+                          ? 'fa-angle-down'
+                          : 'fa-chevron-right'}" />
+                    </div>
                   {:else}
-                    <button class="button is-link my-1 table-button">
-                      <span class="icon">
-                        <i class="fa-solid fa-lock fa-lg" />
-                      </span>
-                      <span>Unpublish</span>
-                    </button>
+                    <i class="fa-solid fa-file has-text-primary pr-2" />
                   {/if}
-                </td>
-              </tr>
-            {/each}
+                  {dataset.raw.name}
+                </div>
+              </td>
+              <td>{status}</td>
+              <td>{filesize(dataset.raw.contentLength, { round: 1 })}</td>
+              <td>
+                <Time
+                  timestamp={dataset.raw.createdat}
+                  format="h:mm A · MMMM D, YYYY" />
+              </td>
+              <td>
+                <button class="button is-link my-1 table-button">
+                  <span class="icon">
+                    <i class="fa-solid fa-trash fa-lg" />
+                  </span>
+                  <span>Delete</span>
+                </button>
+              </td>
+            </tr>
+            {#if dataset.datasets && expanded[dataset.raw.name] === true}
+              {#each dataset.datasets as ds}
+                <tr>
+                  <td><div class="ml-4 is-flex"><i class="fa-solid fa-file has-text-primary pr-2" />{ds.name}</div></td>
+                  <td>{ds.processing ? 'Unpublished' : 'Published'}</td>
+                  <td>{filesize(ds.contentLength, { round: 1 })}</td>
+                  <td>
+                    <Time
+                      timestamp={ds.createdat}
+                      format="h:mm A · MMMM D, YYYY" />
+                  </td>
+                  <td>
+                    {#if ds.processing}
+                      <button
+                        class="button is-primary my-1 table-button"
+                        on:click={() => {
+                          gotoEditMetadataPage(ds.url)
+                        }}>
+                        <span class="icon">
+                          <i class="fa-solid fa-lock-open fa-lg" />
+                        </span>
+                        <span>Publish</span>
+                      </button>
+                    {:else}
+                      <button class="button is-link my-1 table-button">
+                        <span class="icon">
+                          <i class="fa-solid fa-lock fa-lg" />
+                        </span>
+                        <span>Unpublish</span>
+                      </button>
+                    {/if}
+                  </td>
+                </tr>
+              {/each}
+            {/if}
           {/if}
         {/each}
       </tbody>
 
       <tfoot>
         <tr>
-          <th />
           <th>File name</th>
           <th>Status</th>
           <th>Size</th>
           <th>Uploaded at</th>
-          <th><i class="fa-solid fa-lock-open fa-lg" /> / <i class="fa-solid fa-lock fa-lg" /></th>
+          <th>Operation</th>
         </tr>
       </tfoot>
     </table>
