@@ -2,13 +2,11 @@
   import { page } from '$app/stores'
   import { goto, invalidateAll } from '$app/navigation'
   import { fade } from 'svelte/transition'
-  import { clickOutside } from 'svelte-use-click-outside'
   import { filesize } from 'filesize'
   import type { IngestingDataset } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import Time from 'svelte-time/src/Time.svelte'
   import { removeSasTokenFromDatasetUrl } from '$lib/helper'
-  import { Button } from '@undp-data/svelte-undp-design'
 
   let datasets: IngestingDataset[] = $page.data.ingestingDatasets
   let expanded: { [key: string]: boolean } = {}
@@ -16,6 +14,8 @@
   let confirmDeleteDialogVisible = false
   let cancelledDataset: IngestingDataset = undefined
   let isCancelling = false
+  let ErrorDialogVisible = false
+  let errorText = ''
 
   $: {
     let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
@@ -101,6 +101,17 @@
     confirmDeleteDialogVisible = false
     cancelledDataset = undefined
   }
+
+  const showErrorDialog = async (errorFile: string) => {
+    const res = await fetch(errorFile)
+    errorText = await res.text()
+    ErrorDialogVisible = true
+  }
+
+  const closeErrorlDialog = () => {
+    ErrorDialogVisible = false
+    errorText = ''
+  }
 </script>
 
 {#if datasets && datasets.length > 0}
@@ -122,7 +133,7 @@
           {#if status !== 'Published'}
             <tr>
               <td>
-                <div class="is-flex">
+                <div class="is-flex is-align-items-center">
                   {#if status === 'Ingested'}
                     <div
                       class="pr-2"
@@ -131,17 +142,31 @@
                       }}
                       on:keydown={handleEnterKey}>
                       <i
-                        class="expand-button has-text-primary fa-solid {expanded[dataset.raw.name] === true
+                        class="expand-button has-text-primary fa-solid fa-lg {expanded[dataset.raw.name] === true
                           ? 'fa-angle-down'
                           : 'fa-chevron-right'}" />
                     </div>
                   {:else}
-                    <i class="fa-solid fa-file has-text-primary pr-2" />
+                    <i class="fa-solid fa-file has-text-primary fa-lg pr-2" />
                   {/if}
                   {dataset.raw.name}
                 </div>
               </td>
-              <td>{status}</td>
+              <td>
+                <div class="is-flex is-align-items-center">
+                  {status}
+                  {#if status === 'Error'}
+                    <div
+                      class="pl-2 icon error-dialog-button"
+                      on:click={() => {
+                        showErrorDialog(dataset.raw.error)
+                      }}
+                      on:keydown={handleEnterKey}>
+                      <i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
+                    </div>
+                  {/if}
+                </div>
+              </td>
               <td>{filesize(dataset.raw.contentLength, { round: 1 })}</td>
               <td>
                 <Time
@@ -255,6 +280,38 @@
       </div>
     </div>
   {/if}
+
+  {#if ErrorDialogVisible}
+    <div
+      class="modal is-active"
+      transition:fade>
+      <div
+        class="modal-background"
+        on:click={closeErrorlDialog}
+        on:keydown={handleEnterKey} />
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Error log</p>
+          <button
+            class="delete"
+            aria-label="close"
+            title="Close"
+            on:click={closeErrorlDialog} />
+        </header>
+        <section class="modal-card-body is-size-6 has-text-weight-normal">
+          <textarea
+            class="textarea error-log"
+            bind:value={errorText}
+            readonly />
+        </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button is-link is-fullwidth"
+            on:click={closeErrorlDialog}>Close</button>
+        </footer>
+      </div>
+    </div>
+  {/if}
 {:else}
   <Notification
     type="info"
@@ -273,4 +330,12 @@
 {/if}
 
 <style lang="scss">
+  .expand-button,
+  .error-dialog-button {
+    cursor: pointer;
+  }
+
+  .error-log {
+    resize: none;
+  }
 </style>
