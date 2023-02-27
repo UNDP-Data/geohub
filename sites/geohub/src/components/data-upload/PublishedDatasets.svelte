@@ -136,10 +136,6 @@
     goto(`/data/publish?url=${url4edit}`)
   }
 
-  const gotoUploadPage = () => {
-    goto(`/data/upload`)
-  }
-
   const handleDeleteDataset = async () => {
     if (!deletedDataset) return
     const res = await fetch(`/api/datasets/${deletedDataset.properties.id}`, {
@@ -173,15 +169,6 @@
 
 <div class="datasets-header tile is-ancestor">
   <div class="tile is-parent">
-    <button
-      class="button is-primary upload-button"
-      on:click={gotoUploadPage}>
-      <span class="icon">
-        <i class="fa-solid fa-cloud-arrow-up" />
-      </span>
-      <span>Data upload</span>
-    </button>
-
     <div class="control has-icons-left filter-text-box pl-1">
       <input
         data-testid="filter-bucket-input"
