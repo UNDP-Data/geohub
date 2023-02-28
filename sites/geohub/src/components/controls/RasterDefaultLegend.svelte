@@ -14,7 +14,7 @@
     getLayerSourceUrl,
   } from '$lib/helper'
   import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types'
-  import { isStyleEdited, map } from '$stores'
+  import { map } from '$stores'
   import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let layerConfig: Layer
@@ -86,7 +86,6 @@
     const layerStyle = getLayerStyle($map, layerConfig.id)
     updateParamsInURL(layerStyle, layerURL, updatedParams)
     layerConfig.colorMapName = colorMapName
-    $isStyleEdited = true
   }
 
   const onSliderStop = () => {
@@ -96,7 +95,6 @@
     const layerURL = new URL(layerUrl)
     updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') })
     rclState['rescale'] = rangeSliderValues
-    $isStyleEdited = true
   }
 </script>
 

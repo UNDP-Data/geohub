@@ -33,7 +33,7 @@
     VectorLayerTileStatLayer,
     VectorTileMetadata,
   } from '$lib/types'
-  import { isStyleEdited, map, spriteImageList } from '$stores'
+  import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
   import { Radios, type Radio } from '@undp-data/svelte-undp-design'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
@@ -450,7 +450,6 @@
         }
       }
     }
-    $isStyleEdited = true
   }
 
   const sortStops = (stops: (string | number)[][]) => {

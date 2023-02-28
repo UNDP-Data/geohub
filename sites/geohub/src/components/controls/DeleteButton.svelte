@@ -1,14 +1,12 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
-
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
+  import Modal from '$components/controls/Modal.svelte'
 
   export let layer: Layer
   import Keydown from 'svelte-keydown'
-  import { Button } from '@undp-data/svelte-undp-design'
-  import Modal from '$components/controls/Modal.svelte'
+
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {

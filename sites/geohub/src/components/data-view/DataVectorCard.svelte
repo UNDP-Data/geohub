@@ -8,7 +8,7 @@
   } from '$lib/types'
   import { Accordion, Radios, type Radio } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
-  import { map, layerList, indicatorProgress, bannerMessages, isStyleEdited } from '$stores'
+  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
   import { StatusTypes } from '$lib/constants'
   import { VectorTileData } from '$lib/VectorTileData'
   import MiniMap from './MiniMap.svelte'
@@ -82,7 +82,6 @@
         },
         ...$layerList,
       ]
-      $isStyleEdited = true
       await loadMap($map)
     } catch (err) {
       const bannerErrorMessage: BannerMessage = {

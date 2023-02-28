@@ -20,7 +20,7 @@
   import NumberInput from '$components/controls/NumberInput.svelte'
   import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import type { ColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
-  import { isStyleEdited, layerList, map } from '$stores'
+  import { layerList, map } from '$stores'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
   import chroma from 'chroma-js'
@@ -195,7 +195,6 @@
     const updatedParams = Object.assign({ colormap: encodeColorMapRows })
     const layerStyle = getLayerStyle($map, layer.id)
     updateParamsInURL(layerStyle, layerURL, updatedParams)
-    $isStyleEdited = true
   }
 
   const handleChangeColorMap = () => {

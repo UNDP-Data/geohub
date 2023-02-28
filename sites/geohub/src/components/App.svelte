@@ -1,17 +1,15 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
   import type { Map as MaplibreMap } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
   import Header from '$components/Header.svelte'
   import Map from '$components/Map.svelte'
-  import { Button } from '@undp-data/svelte-undp-design'
   import Content from './Content.svelte'
-  import { map as mapStore, layerList, isStyleEdited } from '$stores'
+  import { map as mapStore, layerList } from '$stores'
   import SplitterControl from '$components/SplitterControl.svelte'
   import { beforeNavigate, goto } from '$app/navigation'
-  import Notification from '$components/controls/Notification.svelte'
   import { page } from '$app/stores'
   import Modal from '$components/controls/Modal.svelte'
+  import { isEqual } from 'lodash-es'
 
   let map: MaplibreMap
   let headerHeight: number
@@ -45,9 +43,32 @@
     goto(toURL.pathname)
     dialogOpen = false
   }
+  const sortObject = (obj) => {
+    if (typeof obj !== 'object' || Array.isArray(obj)) return obj
+    return Object.keys(obj)
+      .sort()
+      .reduce((result, key) => {
+        result[key] = sortObject(obj[key])
+        return result
+      }, {})
+  }
+
+  const styleChanged = () => {
+    const currentSources = $mapStore.getStyle().sources
+    const savedSources = $page.data.style?.style.sources
+    const layersOnMap = $mapStore.getStyle().layers
+    const savedLayers = $page.data.style?.style.layers
+    const savedLayersOnMap = savedLayers.filter((layer) => $layerList.find((l) => l.id === layer.id))
+    const currentLayersOnMap = layersOnMap.filter((layer) => $layerList.find((l) => l.id === layer.id))
+    return (
+      !isEqual(savedLayersOnMap, currentLayersOnMap) ||
+      !isEqual(JSON.stringify(sortObject(currentSources)), JSON.stringify(sortObject(savedSources)))
+    )
+  }
 
   beforeNavigate(({ cancel, to }) => {
-    if (isContinueButtonClicked || $layerList.length === 0 || !isStyleEdited) {
+    if (isContinueButtonClicked || $layerList.length === 0 || !styleChanged()) {
+      layerList.set([])
       return
     }
     if (to.url.pathname !== $page.url.pathname) {

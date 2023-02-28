@@ -1,11 +1,7 @@
 <script lang="ts">
-  import { isStyleEdited } from '$stores'
-
   export let legendType: 'default' | 'classify' = 'default'
-
   const handleLegendTypeChange = () => {
     legendType = legendType === 'default' ? 'classify' : 'default'
-    $isStyleEdited = true
   }
 </script>
 
