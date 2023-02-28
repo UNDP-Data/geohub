@@ -25,6 +25,7 @@
   export let metadata: RasterTileMetadata | VectorTileMetadata
   export let isShowInfo = false
 
+  let vectorInfo = metadata as VectorTileMetadata
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
 
@@ -104,7 +105,7 @@
 </script>
 
 <Accordion
-  headerTitle={layer.layer}
+  headerTitle={vectorInfo.json.vector_layers.length > 1 ? layer.layer : feature.properties.name}
   bind:isExpanded
   fontSize={isShowInfo ? 'medium' : 'small'}>
   <div slot="button">

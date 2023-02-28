@@ -13,6 +13,7 @@ export interface IngestedDataset {
   createdat?: string
   updatedat?: string
   processing?: boolean
+  processingFile?: string
 }
 
 export interface IngestingDataset {

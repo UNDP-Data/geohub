@@ -2,6 +2,7 @@ import type { Actions, PageServerLoad } from './$types'
 import { error, fail, redirect } from '@sveltejs/kit'
 import type { DatasetFeature, Tag } from '$lib/types'
 import {
+  generateAzureBlobSasToken,
   generateHashKey,
   getRasterMetadata,
   getVectorMetadata,
@@ -126,7 +127,8 @@ export const actions = {
   /**
    * An action to update / register dataset metadata
    */
-  publish: async ({ request, locals }) => {
+  publish: async (event) => {
+    const { request, locals } = event
     try {
       const session = await locals.getSession()
       if (!session) {
@@ -174,6 +176,23 @@ export const actions = {
       dataset.properties.url = decodeURI(dataset.properties.url)
 
       await upsertDataset(dataset)
+
+      // if the dataset is under data-upload storage account, delete .ingesting file after registering metadata
+      const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD
+      if (dataset.properties.url.indexOf(azaccount) > -1) {
+        const ingestingFileUrl = `${dataset.properties.url.replace('pmtiles://', '')}.ingesting`
+        const ingestingUrlWithSasUrl = `${ingestingFileUrl}${generateAzureBlobSasToken(ingestingFileUrl, 60000, 'rwd')}`
+        const res = await event.fetch(ingestingUrlWithSasUrl)
+        if (res.ok) {
+          // if exists, delete file
+          const resDelete = await event.fetch(ingestingUrlWithSasUrl, {
+            method: 'DELETE',
+          })
+          if (resDelete.ok) {
+            console.debug(`Deleted ${ingestingUrlWithSasUrl}`)
+          }
+        }
+      }
 
       return dataset
     } catch (error) {

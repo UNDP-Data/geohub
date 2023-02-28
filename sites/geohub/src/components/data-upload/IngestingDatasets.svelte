@@ -7,8 +7,10 @@
   import Notification from '$components/controls/Notification.svelte'
   import Time from 'svelte-time/src/Time.svelte'
   import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
 
-  let datasets: IngestingDataset[] = $page.data.ingestingDatasets
+  export let datasets: IngestingDataset[]
   let expanded: { [key: string]: boolean } = {}
   let expandedDatasetId: string
   let confirmDeleteDialogVisible = false
@@ -74,6 +76,9 @@
       }
       cancelledDataset?.datasets?.forEach((ds) => {
         urls.push(ds.url)
+        if (ds.processing === true && ds.processingFile) {
+          urls.push(ds.processingFile)
+        }
       })
       for (const url of urls) {
         const res = await fetch(url, {
@@ -85,7 +90,7 @@
       }
 
       await invalidateAll()
-      datasets = $page.data.ingestingDatasets
+      dispatch('change')
       confirmDeleteDialogVisible = false
     } finally {
       isCancelling = false

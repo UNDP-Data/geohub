@@ -7,6 +7,7 @@
   import Dropzone from 'svelte-file-dropzone'
 
   import Notification from '$components/controls/Notification.svelte'
+  import { AccepedExtensions } from '$lib/constants'
 
   // preserve previous page URL
   let previousPage: string = base
@@ -26,6 +27,7 @@
   $: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0
 
   let blobUrl = ''
+  let errorMessage = ''
 
   const uploadFile = async (sasUrl: string) => {
     if (!selectedFile) {
@@ -75,8 +77,26 @@
   }
 
   const handleFilesSelect = (e) => {
+    errorMessage = ''
+    selectedFile = undefined
     const { acceptedFiles } = e.detail
-    selectedFile = acceptedFiles[0]
+    if (acceptedFiles.length > 1) {
+      errorMessage = 'Please select only a file. Make zip file if they are multiple files,'
+      return
+    }
+    const file = acceptedFiles[0]
+    const names = file.path.split('.')
+    if (names.length < 2) {
+      errorMessage = 'Please choose a supported file.'
+      return
+    }
+    const extension: string = names[1].toLowerCase().trim()
+    const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension))
+    if (formats.length === 0) {
+      errorMessage = `The file extension '${extension}' is not supported.`
+      return
+    }
+    selectedFile = file
   }
 </script>
 
@@ -133,7 +153,7 @@
   <!-- svelte-ignore a11y-label-has-associated-control -->
   <label class="label">Geospatial file</label>
   <div class="control">
-    <p class="subtitle is-6">Select a geospatial file to upload to GeoHub.</p>
+    <p class="subtitle is-6 m-0 pb-2">Select a geospatial file to upload to GeoHub.</p>
 
     <Dropzone
       noClick={true}
@@ -168,6 +188,25 @@
         {/if}
       </label>
     </div>
+    {#if errorMessage}
+      <p class="help is-danger">{errorMessage}</p>
+    {/if}
+    <p class="help is-link pb-2">
+      The following file formats are supported in GeoHub. Click a file format name to learn more about the format.
+    </p>
+    <ul>
+      {#each AccepedExtensions as ext}
+        <li>
+          <a
+            href={ext.href}
+            target="_blank"
+            rel="noreferrer"
+            ><p class="subtitle is-6 has-text-link pt-1">
+              {ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
+            </p></a>
+        </li>
+      {/each}
+    </ul>
   </div>
 </div>
 
