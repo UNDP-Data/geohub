@@ -20,7 +20,7 @@ export const load: PageServerLoad = async (event) => {
   }
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    apiUrl.searchParams.set('sortby', SortingColumns[0].value)
+    apiUrl.searchParams.set('sortby', SortingColumns.find((col) => col.value === 'updatedat,desc').value)
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {

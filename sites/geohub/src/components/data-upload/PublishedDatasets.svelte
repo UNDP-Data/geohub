@@ -37,7 +37,9 @@
 
   let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : `${DEFAULT_LIMIT}`
   let offset = $page.url.searchParams.get('offset') ? $page.url.searchParams.get('offset') : '0'
-  let sortby = $page.url.searchParams.get('sortby') ? $page.url.searchParams.get('sortby') : 'name,asc'
+  let sortby = $page.url.searchParams.get('sortby')
+    ? $page.url.searchParams.get('sortby')
+    : SortingColumns.find((col) => col.value === 'updatedat,desc').value
   let query = $page.url.searchParams.get('query') ?? ''
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
