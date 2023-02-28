@@ -11,7 +11,7 @@
   import { VectorTileData } from '$lib/VectorTileData'
   import { Accordion } from '@undp-data/svelte-undp-design'
   import MiniMap from '$components/data-view/MiniMap.svelte'
-  import { map, layerList, indicatorProgress } from '$stores'
+  import { map, layerList, indicatorProgress, isStyleEdited } from '$stores'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
@@ -94,6 +94,7 @@
 
         await loadMap($map)
       }
+      $isStyleEdited = true
     } finally {
       layerLoading = false
       $indicatorProgress = false

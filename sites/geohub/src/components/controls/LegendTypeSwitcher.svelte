@@ -1,5 +1,12 @@
 <script lang="ts">
+  import { isStyleEdited } from '$stores'
+
   export let legendType: 'default' | 'classify' = 'default'
+
+  const handleLegendTypeChange = () => {
+    legendType = legendType === 'default' ? 'classify' : 'default'
+    $isStyleEdited = true
+  }
 </script>
 
 <div class="centered pb-2">
@@ -7,7 +14,7 @@
     <p class="control">
       <button
         class="button is-normal {`${legendType === 'default' ? 'is-primary is-active' : 'is-primary is-light'}`}"
-        on:click={() => (legendType = 'default')}>
+        on:click={handleLegendTypeChange}>
         <span>
           <i class="fa-solid fa-minus" />
           Default
@@ -17,7 +24,7 @@
     <p class="control">
       <button
         class="button is-normal {`${legendType === 'classify' ? 'is-primary is-active' : 'is-primary is-light'}`}"
-        on:click={() => (legendType = 'classify')}>
+        on:click={handleLegendTypeChange}>
         <span>
           <i class="fa-solid fa-list" />
           Classify

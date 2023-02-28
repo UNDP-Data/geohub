@@ -1,14 +1,9 @@
 <script lang="ts">
-  import { Header, Footer, type HeaderLink } from '@undp-data/svelte-undp-design'
-  import UserAccount from '$components/UserAccount.svelte'
-  import { footerItems } from '$lib/constants'
-  import { createHeaderLinks } from '$lib/helper'
   import Notification from '$components/controls/Notification.svelte'
 
+  export let headerHeight: number
   let isExpanded = true
-  let headerHeight: number
   let activeSettingTab = 'Geohub'
-  let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
   let settingsApplied = false
 
   // Default Settings
@@ -37,19 +32,6 @@
     isExpanded = !isExpanded
   }
 </script>
-
-<Header
-  region="UNDP's one stop shop for spatial data and analytics"
-  siteTitle="GeoHub"
-  url="https://geohub.data.undp.org"
-  logoUrl="assets/undp-images/undp-logo-blue.svg"
-  bind:height={headerHeight}
-  bind:links
-  isPositionFixed={true}>
-  <div slot="custom-button">
-    <UserAccount />
-  </div>
-</Header>
 
 <div
   class="columns is-one-quarter ml-auto mr-auto"
@@ -152,33 +134,21 @@
     on:click={setSettingsToCookies}
     class="button is-primary">Apply</button>
 </div>
-<Footer
-  logoUrl="assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
 
 <style lang="scss">
-  /* Add some padding to the content */
   .content {
     padding: 1rem;
   }
-
-  /* Hide all content sections except for the first one */
   .content.is-hidden:not(:first-of-type) {
     display: none;
   }
-
-  /* Add some margin to the menu items */
   .menu-list li {
     margin-bottom: 0.5rem;
   }
-
-  /* Set the background color and text color of the selected menu item */
   .menu-list a.selected {
     background-color: #3273dc;
     color: white;
   }
-
-  /* Change the content section when a menu item is clicked */
   .menu-list a {
     cursor: pointer;
   }

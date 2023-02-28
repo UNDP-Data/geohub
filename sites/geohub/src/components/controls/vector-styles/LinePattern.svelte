@@ -6,7 +6,7 @@
 
   import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
-  import { map } from '$stores'
+  import { isStyleEdited, map } from '$stores'
 
   export let layer: Layer
   export let defaultColor: string = undefined
@@ -67,6 +67,7 @@
     } else {
       $map.setPaintProperty(layer.id, propertyName, undefined)
     }
+    $isStyleEdited = true
   }
 </script>
 
