@@ -58,8 +58,8 @@
     const savedSources = $page.data.style?.style.sources
     const layersOnMap = $mapStore.getStyle().layers
     const savedLayers = $page.data.style?.style.layers
-    const savedLayersOnMap = savedLayers.filter((layer) => $layerList.find((l) => l.id === layer.id))
-    const currentLayersOnMap = layersOnMap.filter((layer) => $layerList.find((l) => l.id === layer.id))
+    const savedLayersOnMap = savedLayers?.filter((layer) => $layerList.find((l) => l.id === layer.id))
+    const currentLayersOnMap = layersOnMap?.filter((layer) => $layerList.find((l) => l.id === layer.id))
     return (
       !isEqual(savedLayersOnMap, currentLayersOnMap) ||
       !isEqual(JSON.stringify(sortObject(currentSources)), JSON.stringify(sortObject(savedSources)))
@@ -119,7 +119,9 @@
   on:cancel={handleCancel}
   on:continue={handleContinue}
   title="Are you sure you want to leave this page?"
-  message="You have unsaved changes. If you leave this page, your changes will be lost." />
+  message="You have unsaved changes. If you leave this page, your changes will be lost."
+  cancelText="Cancel"
+  continueText="Continue" />
 
 <style lang="scss">
 </style>

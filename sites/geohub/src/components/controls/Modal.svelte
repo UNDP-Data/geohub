@@ -1,7 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import { createEventDispatcher } from 'svelte'
-  import { Button } from '@undp-data/svelte-undp-design'
   import Notification from '$components/controls/Notification.svelte'
 
   const dispatch = createEventDispatcher()
@@ -10,7 +9,8 @@
   export let message
   export let messageType: 'warning' | 'info' = 'warning'
   export let target
-
+  export let continueText
+  export let cancelText
   const handleCancel = () => {
     dispatch('cancel')
   }
@@ -55,16 +55,18 @@
     </section>
     <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
       <div class="footer-button px-2">
-        <Button
-          title="Cancel"
-          isPrimary={false}
-          on:clicked={handleCancel} />
+        <button
+          class="button is-link"
+          on:click={handleCancel}>
+          {cancelText}
+        </button>
       </div>
       <div class="footer-button px-2">
-        <Button
-          title="Continue"
-          isPrimary={true}
-          on:clicked={handleContinue} />
+        <button
+          class="button is-primary"
+          on:click={handleContinue}>
+          {continueText}
+        </button>
       </div>
     </footer>
   </div>

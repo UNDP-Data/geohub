@@ -68,7 +68,9 @@
   on:continue={handleDelete}
   title="Delete Layer"
   message="Are you sure you want to delete this layer?"
-  target={clean(layer.name)} />
+  target={clean(layer.name)}
+  cancelText="Cancel"
+  continueText="Delete" />
 
 <style lang="scss">
   .footer-button {
