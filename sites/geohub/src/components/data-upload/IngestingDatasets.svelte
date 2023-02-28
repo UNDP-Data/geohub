@@ -74,6 +74,9 @@
       }
       cancelledDataset?.datasets?.forEach((ds) => {
         urls.push(ds.url)
+        if (ds.processing === true && ds.processingFile) {
+          urls.push(ds.processingFile)
+        }
       })
       for (const url of urls) {
         const res = await fetch(url, {
