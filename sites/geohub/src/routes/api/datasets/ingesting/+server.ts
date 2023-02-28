@@ -105,6 +105,7 @@ export const GET: RequestHandler = async ({ locals }) => {
           ingesting.processing = false
         } else if (file_name === `${rawName}.ingesting`) {
           ingesting.processing = true
+          ingesting.processingFile = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`
         }
       }
       if (!dataset.datasets) {
@@ -113,6 +114,5 @@ export const GET: RequestHandler = async ({ locals }) => {
       dataset.datasets.push(ingesting)
     }
   }
-
   return new Response(JSON.stringify(datasets))
 }

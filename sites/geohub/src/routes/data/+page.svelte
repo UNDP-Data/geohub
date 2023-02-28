@@ -1,10 +1,20 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import { goto } from '$app/navigation'
   import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte'
   import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte'
+  import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
+
+  let datasets: DatasetFeatureCollection = $page.data.datasets
+  let ingestingDatasets: IngestingDataset[] = $page.data.ingestingDatasets
 
   const gotoUploadPage = () => {
     goto(`/data/upload`)
+  }
+
+  const updateDatasets = () => {
+    datasets = $page.data.datasets
+    ingestingDatasets = $page.data.ingestingDatasets
   }
 </script>
 
@@ -19,13 +29,17 @@
   <span>Data upload</span>
 </button>
 
-<IngestingDatasets />
+<IngestingDatasets
+  bind:datasets={ingestingDatasets}
+  on:change={updateDatasets} />
 
 <hr />
 
 <p class="title align-center mb-4">My datasets</p>
 
-<PublishedDatasets />
+<PublishedDatasets
+  bind:datasets
+  on:change={updateDatasets} />
 
 <style lang="scss">
   .align-center {

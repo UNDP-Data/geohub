@@ -41,7 +41,9 @@ export class VectorTileData {
     } else {
       // static
       if (this.url.startsWith('pmtiles://')) {
-        metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(this.url)}`
+        const layerURL = new URL(this.url.replace('pmtiles://', ''))
+        const pmtilesUrl = `${layerURL.origin}${layerURL.pathname}${layerURL.search}`
+        metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=pmtiles://${encodeURIComponent(pmtilesUrl)}`
       } else {
         const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'))
         const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
