@@ -2,7 +2,11 @@ import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } 
 import { env } from '$env/dynamic/private'
 import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
 
-export const generateAzureBlobSasToken = (url: string, expiry_period: number = TOKEN_EXPIRY_PERIOD_MSEC) => {
+export const generateAzureBlobSasToken = (
+  url: string,
+  expiry_period: number = TOKEN_EXPIRY_PERIOD_MSEC,
+  permission = 'r',
+) => {
   const account =
     url.indexOf(env.AZURE_STORAGE_ACCOUNT) !== -1 ? env.AZURE_STORAGE_ACCOUNT : env.AZURE_STORAGE_ACCOUNT_UPLOAD
   const accessKey =
@@ -18,7 +22,7 @@ export const generateAzureBlobSasToken = (url: string, expiry_period: number = T
 
   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
     new Date(new Date().valueOf() + expiry_period),
-    AccountSASPermissions.parse('r'),
+    AccountSASPermissions.parse(permission),
     'o',
   )
   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
