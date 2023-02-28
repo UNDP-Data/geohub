@@ -25,6 +25,8 @@
   let uploadedLength = 0
   $: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0
 
+  let blobUrl = ''
+
   const uploadFile = async (sasUrl: string) => {
     if (!selectedFile) {
       return
@@ -34,6 +36,8 @@
     const promises = []
     promises.push(blockBlobClient.uploadData(selectedFile, { onProgress: onProgress }))
     await Promise.all(promises)
+
+    const blobUrl = await completeUploading()
 
     setTimeout(() => {
       let redirectPage = previousPage
@@ -47,7 +51,23 @@
 
     return {
       success: true,
+      blobUrl: blobUrl,
     }
+  }
+
+  const completeUploading = async () => {
+    const formData = new FormData()
+    formData.append('blobUrl', blobUrl)
+    const res = await fetch('/data/upload?/completingUpload', {
+      method: 'POST',
+      body: formData,
+    })
+    const json = await res.json()
+    if (json.status !== 200) {
+      throw new Error('Failed to complete uploading')
+    }
+    const data = JSON.parse(JSON.parse(json.data)[0])
+    return data.blobUrl
   }
 
   const onProgress = (e) => {
@@ -69,6 +89,7 @@
     return async ({ result, update }) => {
       await update()
       const sasUrl = result.data.sasUrl
+      blobUrl = result.data.blobUrl
       uploadingFile = uploadFile(sasUrl)
     }
   }}>
