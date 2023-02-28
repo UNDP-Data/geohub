@@ -1,8 +1,9 @@
 import type { RequestHandler } from './$types'
-import { getDatasetById, isSuperuser } from '$lib/server/helpers'
+import { getBlobServiceClient, getDatasetById, isSuperuser } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import DatasetManager from '$lib/server/DatasetManager'
 import { Permission } from '$lib/constants'
+import { env } from '$env/dynamic/private'
 
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
@@ -56,6 +57,24 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
     const dsm = new DatasetManager(dataset)
     await dsm.delete(client, dataset.properties.id)
+
+    const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD
+    if (dataset.properties.url.indexOf(azaccount) > -1) {
+      const blobServiceClient = getBlobServiceClient(
+        env.AZURE_STORAGE_ACCOUNT_UPLOAD,
+        env.AZURE_STORAGE_ACCESS_KEY_UPLOAD,
+      )
+      const containerName = 'userdata'
+      const containerClient = blobServiceClient.getContainerClient(containerName)
+      let blobName = dataset.properties.url
+        .replace('pmtiles://', '')
+        .replace(`${containerClient.url}/`, '')
+        .split('?')[0]
+      blobName = `${blobName}.ingesting`
+      const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
+      const uploadBlobResponse = await blockBlobClient.upload('', 0)
+      console.log(`Upload .ingesting file (${blobName}) successfully`, uploadBlobResponse.requestId)
+    }
 
     return new Response(undefined, {
       status: 204,
