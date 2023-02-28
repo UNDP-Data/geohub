@@ -4,7 +4,7 @@
   import { goto, invalidateAll } from '$app/navigation'
   import { clickOutside } from 'svelte-use-click-outside'
   import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types'
-  import { Pagination, Loader, Button, Radios } from '@undp-data/svelte-undp-design'
+  import { Pagination, Loader, Radios } from '@undp-data/svelte-undp-design'
   import { DEFAULT_LIMIT, LimitOptions, Permission, SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
@@ -13,8 +13,10 @@
   import Time from 'svelte-time/src/Time.svelte'
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import PanelButton from '$components/controls/PanelButton.svelte'
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
 
-  let fc: DatasetFeatureCollection = $page.data.datasets
+  export let datasets: DatasetFeatureCollection
   let expanded: { [key: string]: boolean } = {}
   let expandedDatasetId: string
   $: {
@@ -31,6 +33,7 @@
   }
 
   let isLoading = false
+  let isDeleting = false
 
   let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : `${DEFAULT_LIMIT}`
   let offset = $page.url.searchParams.get('offset') ? $page.url.searchParams.get('offset') : '0'
@@ -54,7 +57,7 @@
       if (initTagfilter) {
         await initTagfilter(url)
       }
-      fc = $page.data.datasets
+      dispatch('change')
     } finally {
       isLoading = false
     }
@@ -65,7 +68,7 @@
     if (query.length > 0) {
       offset = '0'
 
-      const link = fc.links.find((l) => l.rel === 'self')
+      const link = datasets.links.find((l) => l.rel === 'self')
       if (link) {
         const href = new URL(link.href)
         href.searchParams.set('query', query.trim())
@@ -80,7 +83,7 @@
     if (isQueryEmpty === true) return
     query = ''
     offset = '0'
-    const link = fc.links.find((l) => l.rel === 'self')
+    const link = datasets.links.find((l) => l.rel === 'self')
     if (link) {
       const href = new URL(link.href)
       href.searchParams.delete('query')
@@ -94,7 +97,7 @@
     if (currentLimit && currentLimit !== limit) {
       offset = '0'
 
-      const link = fc.links.find((l) => l.rel === 'self')
+      const link = datasets.links.find((l) => l.rel === 'self')
       if (link) {
         const href = new URL(link.href)
         href.searchParams.set('limit', limit)
@@ -112,7 +115,7 @@
   const handleSortbyChanged = async () => {
     offset = '0'
 
-    const link = fc.links?.find((l) => l.rel === 'self')
+    const link = datasets.links?.find((l) => l.rel === 'self')
     if (link) {
       const href = new URL(link.href)
       href.searchParams.set('sortby', sortby)
@@ -124,7 +127,7 @@
   const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
     const type = e.detail.type
 
-    const link = fc.links.find((l) => l.rel === type)
+    const link = datasets.links.find((l) => l.rel === type)
     if (link) {
       const href = new URL(link.href)
       await reload(href)
@@ -138,18 +141,24 @@
 
   const handleDeleteDataset = async () => {
     if (!deletedDataset) return
-    const res = await fetch(`/api/datasets/${deletedDataset.properties.id}`, {
-      method: 'DELETE',
-    })
-    if (res.ok && res.status === 204) {
-      const index = fc.features.findIndex((f) => f.properties.id === deletedDataset.properties.id)
-      if (index > -1) {
-        fc.features.splice(index, 1)
-        fc.features = [...fc.features]
+    try {
+      isDeleting = true
+
+      const res = await fetch(`/api/datasets/${deletedDataset.properties.id}`, {
+        method: 'DELETE',
+      })
+      if (res.ok && res.status === 204) {
+        const index = datasets.features.findIndex((f) => f.properties.id === deletedDataset.properties.id)
+        if (index > -1) {
+          datasets.features.splice(index, 1)
+          datasets.features = [...datasets.features]
+        }
+        await invalidateAll()
+        dispatch('change')
+        confirmDeleteDialogVisible = false
       }
-      confirmDeleteDialogVisible = false
-      await invalidateAll()
-      fc = $page.data.features
+    } finally {
+      isDeleting = false
     }
   }
 
@@ -234,7 +243,7 @@
   <div class="align-center my-4">
     <Loader />
   </div>
-{:else if fc.pages?.totalCount > 0}
+{:else if datasets.pages?.totalCount > 0}
   <div class="table-container">
     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
       <thead>
@@ -250,7 +259,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each fc.features as feature}
+        {#each datasets.features as feature}
           <tr>
             <td>
               <div
@@ -338,8 +347,8 @@
   </div>
   <div class="align-center pt-2">
     <Pagination
-      bind:totalPages={fc.pages.totalPages}
-      bind:currentPage={fc.pages.currentPage}
+      bind:totalPages={datasets.pages.totalPages}
+      bind:currentPage={datasets.pages.currentPage}
       on:clicked={handlePaginationClicked} />
   </div>
 {:else}
@@ -372,18 +381,16 @@
         <div
           class="px-1"
           style="width: 50%">
-          <Button
-            title="Cancel"
-            isPrimary={false}
-            on:clicked={closeDeleteDialog} />
+          <button
+            class="button is-link is-fullwidth"
+            on:click={closeDeleteDialog}>Cencel</button>
         </div>
         <div
           class="px-1"
           style="width: 50%">
-          <Button
-            title="Delete"
-            isPrimary={true}
-            on:clicked={handleDeleteDataset} />
+          <button
+            class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
+            on:click={handleDeleteDataset}>Delete</button>
         </div>
       </footer>
     </div>
