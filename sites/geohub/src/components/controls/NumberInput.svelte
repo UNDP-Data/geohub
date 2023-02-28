@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import BigNumber from 'bignumber.js'
-  import { isStyleEdited } from '$stores'
 
   const dispatch = createEventDispatcher()
 
@@ -18,7 +17,6 @@
       value = new BigNumber(value).minus(step).toNumber()
     }
     dispatch('change', { value })
-    $isStyleEdited = true
   }
 
   // round number based on length of decimal places

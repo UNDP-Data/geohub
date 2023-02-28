@@ -5,7 +5,6 @@
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import type { RgbaColor } from 'svelte-awesome-color-picker'
   import { initTippy } from '$lib/helper'
-  import { isStyleEdited } from '$stores'
 
   const tippy = initTippy()
   let tooltipContent: HTMLElement
@@ -26,7 +25,6 @@
     dispatch('change', {
       color: rgba,
     })
-    $isStyleEdited = true
   }
 </script>
 

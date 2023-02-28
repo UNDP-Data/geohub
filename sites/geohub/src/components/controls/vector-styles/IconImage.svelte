@@ -6,7 +6,7 @@
 
   import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte'
   import type { Layer } from '$lib/types'
-  import { isStyleEdited, map, spriteImageList } from '$stores'
+  import { map, spriteImageList } from '$stores'
   import { clean, getLayerStyle } from '$lib/helper'
   import { initTippy } from '$lib/helper'
 
@@ -52,7 +52,6 @@
         iconImageStyle = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`
       }
     }
-    $isStyleEdited = true
   }
 
   const handleClosePopup = () => {

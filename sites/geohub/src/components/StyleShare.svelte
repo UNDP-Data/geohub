@@ -8,7 +8,7 @@
   import { Button, Loader } from '@undp-data/svelte-undp-design'
 
   import type { Layer } from '$lib/types'
-  import { map, layerList, isStyleEdited } from '$stores'
+  import { map, layerList } from '$stores'
   import { AccessLevel } from '$lib/constants'
   import AccessLevelSwitcher from './AccessLevelSwitcher.svelte'
   import Notification from './controls/Notification.svelte'
@@ -94,7 +94,6 @@
     await invalidateAll()
     styleName = $page.data.style.name
     shareLoading = false
-    $isStyleEdited = false
   }
 
   $: styleName, createStyleJSON2Generate()

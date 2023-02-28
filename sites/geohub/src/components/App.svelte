@@ -11,6 +11,7 @@
   import { beforeNavigate, goto } from '$app/navigation'
   import Notification from '$components/controls/Notification.svelte'
   import { page } from '$app/stores'
+  import Modal from '$components/controls/Modal.svelte'
 
   let map: MaplibreMap
   let headerHeight: number
@@ -92,49 +93,12 @@
     <Map bind:map={$mapStore} />
   </div>
 </SplitterControl>
-<div
-  class="modal {dialogOpen ? 'is-active' : ''}"
-  data-testid="delete-layer-view-container"
-  transition:fade>
-  <div
-    class="modal-background"
-    on:click={handleCancel}
-    on:keydown={handleKeyDown} />
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <span class="modal-card-title">Do you want to exit this page?</span>
-      <button
-        class="delete"
-        aria-label="close"
-        title="Close Delete Layer Button"
-        on:click={handleCancel} />
-    </header>
-    <section class="modal-card-body has-text-weight-normal">
-      <Notification
-        type="warning"
-        showCloseButton={false}>
-        <div class="has-text-weight-medium">
-          Your current state of the application will be deleted when you go to a different page. Please save your map
-          before continuing.
-        </div>
-      </Notification>
-    </section>
-    <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-      <div class="footer-button px-2">
-        <Button
-          title="Cancel"
-          isPrimary={false}
-          on:clicked={handleCancel} />
-      </div>
-      <div class="footer-button px-2">
-        <Button
-          title="Continue"
-          isPrimary={true}
-          on:clicked={handleContinue} />
-      </div>
-    </footer>
-  </div>
-</div>
+<Modal
+  bind:dialogOpen
+  on:cancel={handleCancel}
+  on:continue={handleContinue}
+  title="Are you sure you want to leave this page?"
+  message="You have unsaved changes. If you leave this page, your changes will be lost." />
 
 <style lang="scss">
 </style>
