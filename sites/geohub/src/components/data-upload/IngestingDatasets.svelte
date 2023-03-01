@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/stores'
   import { goto, invalidateAll } from '$app/navigation'
   import { fade } from 'svelte/transition'
   import { filesize } from 'filesize'
@@ -8,6 +7,7 @@
   import Time from 'svelte-time/src/Time.svelte'
   import { removeSasTokenFromDatasetUrl } from '$lib/helper'
   import { createEventDispatcher } from 'svelte'
+  import DataUploadButton from './DataUploadButton.svelte'
   const dispatch = createEventDispatcher()
 
   export let datasets: IngestingDataset[]
@@ -35,10 +35,6 @@
   const gotoEditMetadataPage = (url: string) => {
     const url4edit = removeSasTokenFromDatasetUrl(url)
     goto(`/data/publish?url=${url4edit}`)
-  }
-
-  const gotoUploadPage = () => {
-    goto(`/data/upload`)
   }
 
   const handleEnterKey = (e: KeyboardEvent) => {
@@ -232,10 +228,10 @@
 
       <tfoot>
         <tr>
-          <th>File name</th>
+          <th>Data file</th>
           <th>Status</th>
           <th>Size</th>
-          <th>Uploaded at</th>
+          <th>Date uploaded</th>
           <th>Operation</th>
         </tr>
       </tfoot>
@@ -323,14 +319,7 @@
     showCloseButton={false}>
     All datasets have already been processed and published! Do you want to upload new dataset? Click the below button!
     <br />
-    <button
-      class="button is-primary upload-button my-2"
-      on:click={gotoUploadPage}>
-      <span class="icon">
-        <i class="fa-solid fa-cloud-arrow-up" />
-      </span>
-      <span>Data upload</span>
-    </button>
+    <DataUploadButton />
   </Notification>
 {/if}
 

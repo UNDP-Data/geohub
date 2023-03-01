@@ -1,16 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
   import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte'
   import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte'
   import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
+  import DataUploadButton from '$components/data-upload/DataUploadButton.svelte'
 
   let datasets: DatasetFeatureCollection = $page.data.datasets
   let ingestingDatasets: IngestingDataset[] = $page.data.ingestingDatasets
-
-  const gotoUploadPage = () => {
-    goto(`/data/upload`)
-  }
 
   const updateDatasets = () => {
     datasets = $page.data.datasets
@@ -20,14 +16,7 @@
 
 <p class="title align-center mb-4">Ingesting datasets</p>
 
-<button
-  class="button is-primary upload-button mb-2"
-  on:click={gotoUploadPage}>
-  <span class="icon">
-    <i class="fa-solid fa-cloud-arrow-up" />
-  </span>
-  <span>Data upload</span>
-</button>
+<DataUploadButton />
 
 <IngestingDatasets
   bind:datasets={ingestingDatasets}
