@@ -19,6 +19,8 @@
   let ErrorDialogVisible = false
   let errorText = ''
 
+  const headerTitles: string[] = ['Data file', 'Status', 'Size', 'Date uploaded', 'Operation']
+
   $: {
     let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
     if (expandedDatasets.length > 0) {
@@ -120,11 +122,9 @@
     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
       <thead>
         <tr>
-          <th>Data file</th>
-          <th>Status</th>
-          <th>Size</th>
-          <th>Date uploaded</th>
-          <th>Operation</th>
+          {#each headerTitles as title}
+            <th>{title}</th>
+          {/each}
         </tr>
       </thead>
 
@@ -228,11 +228,9 @@
 
       <tfoot>
         <tr>
-          <th>Data file</th>
-          <th>Status</th>
-          <th>Size</th>
-          <th>Date uploaded</th>
-          <th>Operation</th>
+          {#each headerTitles as title}
+            <th>{title}</th>
+          {/each}
         </tr>
       </tfoot>
     </table>
