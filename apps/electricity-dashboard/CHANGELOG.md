@@ -1,5 +1,11 @@
 # @undp-data/electricity-dashboard
 
+## 0.1.1
+
+### Patch Changes
+
+- 60703e24: fix: deleted `PUBLIC_AZURE_BLOB_TOKEN` from electricity dashboard and to use /datasets api
+
 ## 0.1.0
 
 ### Minor Changes
