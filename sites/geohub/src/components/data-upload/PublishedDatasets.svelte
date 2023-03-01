@@ -44,6 +44,40 @@
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
   let initTagfilter: (url?: URL) => Promise<void>
+
+  const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
+    {
+      title: '',
+      abbr: '',
+      icon: '',
+    },
+    {
+      title: 'Dataset name',
+    },
+    {
+      title: 'Data type',
+      abbr: 'Type',
+    },
+    {
+      title: 'Data License',
+      abbr: 'License',
+    },
+    {
+      title: 'Date created',
+      abbr: 'Created at',
+    },
+    {
+      title: 'Date updated',
+      abbr: 'Updated at',
+    },
+    {
+      icon: 'fa-solid fa-pen-to-square fa-lg',
+    },
+    {
+      icon: 'fa-solid fa-trash fa-lg',
+    },
+  ]
+
   $: isQueryEmpty = !query || query?.length === 0
 
   $: limit, handleLimitChanged()
@@ -250,14 +284,20 @@
     <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
       <thead>
         <tr>
-          <th />
-          <th>Name</th>
-          <th><abbr title="Data type">Type</abbr></th>
-          <th>License</th>
-          <th>Created at</th>
-          <th>Updated at</th>
-          <th><i class="fa-solid fa-pen-to-square fa-lg" /></th>
-          <th><i class="fa-solid fa-trash fa-lg" /></th>
+          {#each headerTitles as title}
+            <th>
+              {#if title.icon}
+                <i class={title.icon} />
+              {:else if title.abbr && title.title}
+                <abbr
+                  class="has-tooltip-arrow has-tooltip-bottom"
+                  data-tooltip={title.title}
+                  title={title.title}>{title.abbr}</abbr>
+              {:else if title.title}
+                {title.title}
+              {/if}
+            </th>
+          {/each}
         </tr>
       </thead>
       <tbody>
@@ -335,14 +375,20 @@
       </tbody>
       <tfoot>
         <tr>
-          <th />
-          <th>Name</th>
-          <th><abbr title="Data type">Type</abbr></th>
-          <th>License</th>
-          <th>Created at</th>
-          <th>Updated at</th>
-          <th><i class="fa-solid fa-pen-to-square fa-lg" /></th>
-          <th><i class="fa-solid fa-trash fa-lg" /></th>
+          {#each headerTitles as title}
+            <th>
+              {#if title.icon}
+                <i class={title.icon} />
+              {:else if title.abbr && title.title}
+                <abbr
+                  class="has-tooltip-arrow has-tooltip-bottom"
+                  data-tooltip={title.title}
+                  title={title.title}>{title.abbr}</abbr>
+              {:else if title.title}
+                {title.title}
+              {/if}
+            </th>
+          {/each}
         </tr>
       </tfoot>
     </table>

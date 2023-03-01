@@ -57,6 +57,7 @@
 <style lang="scss">
   @import '../../styles/geohubstyle.scss';
   @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
+  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
 
   .header {
     position: fixed;
