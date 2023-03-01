@@ -85,6 +85,11 @@
         {#if feature.properties.description}
           <p><b>Description: </b>{@html marked(feature.properties.description)}</p>
         {/if}
+        <p>
+          <b>License: </b>{feature.properties.license?.length > 0
+            ? feature.properties.license
+            : 'License not specified'}
+        </p>
         {#if metadata}
           {#if metadata['band_metadata']}
             {#if metadata['band_metadata'][0][1]?.RepresentationType}
