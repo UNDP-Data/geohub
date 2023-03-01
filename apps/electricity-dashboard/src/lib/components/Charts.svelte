@@ -1,14 +1,15 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { VegaLite } from 'svelte-vega';
 	import type { VisualizationSpec } from 'svelte-vega';
 	import { format } from 'd3-format';
 	import { map, admin } from '$lib/stores';
 
-	import {
-		PUBLIC_TITILER_ENDPOINT,
-		PUBLIC_AZURE_BLOB_TOKEN,
-		PUBLIC_AZURE_URL
-	} from '$env/static/public';
+	import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public';
+	import type { ElectricityDatasets } from '$lib/interfaces';
+	import { getBase64EncodedUrl } from '$lib/utils/getBase64EncodedUrl';
+
+	const datasets: ElectricityDatasets = $page.data.datasets;
 
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
@@ -40,11 +41,15 @@
 	};
 
 	const getHreaUrl = (y: number) => {
-		return `${PUBLIC_AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`;
+		const dataset = datasets.hrea.find((ds) => ds.year === y);
+		const url: string = dataset?.url ?? '';
+		return getBase64EncodedUrl(url);
 	};
 
 	const getMlUrl = (y: number) => {
-		return `${PUBLIC_AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`;
+		const dataset = datasets.ml.find((ds) => ds.year === y);
+		const url: string = dataset?.url ?? '';
+		return getBase64EncodedUrl(url);
 	};
 
 	const adminInteraction = () => {
