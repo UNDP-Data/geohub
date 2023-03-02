@@ -173,7 +173,7 @@ const getMsStacToken = async (originUrl: string) => {
 const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
   // create storage container
   const blobServiceClient = new BlobServiceClient(
-    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
     sharedKeyCredential,
   )
 
@@ -214,7 +214,7 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
   //   )
   //   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
 
-  return `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`
+  return `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`
 }
 
 const getClassmap = async (baseUrl: string, collectionId: string, asset: string) => {
