@@ -9,10 +9,13 @@
   import SelectedTags from './SelectedTags.svelte'
   import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper'
   import Notification from '$components/controls/Notification.svelte'
+  import { debounce } from 'lodash-es'
 
   const dispatch = createEventDispatcher()
 
+  export let isShow = false
   let tags: { [key: string]: Tag[] } = {}
+  let filteredTags: { [key: string]: Tag[] } = {}
   let isLoading = false
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   let operatorType: 'and' | 'or' = ($page.url.searchParams.get('operator') as 'and' | 'or') ?? 'and'
@@ -26,22 +29,30 @@
       value: 'or',
     },
   ]
+  export let query = ''
+  $: isQueryEmpty = !query || query?.length === 0
 
   onMount(() => {
     init()
   })
 
+  $: if (isShow === true) {
+    // reload tags if tag panel is opened
+    init()
+  }
+
   export const init = async (url?: URL) => {
     const _url = url ?? $page.url
     await getTags(_url)
     selectedTags = [...getSelectedTagsFromUrl(_url)]
+    handleFilterInput()
   }
 
-  const getTags = async (newUrl?: URL) => {
+  const getTags = async (newUrl: URL) => {
     try {
       isLoading = true
 
-      const currentUrl = newUrl ?? $page.url
+      const currentUrl = newUrl
       currentUrl.searchParams.delete('style')
       const apiUrl = `/api/tags${
         currentUrl.search ? `?url=${encodeURIComponent(`${currentUrl.origin}/api/datasets${currentUrl.search}`)}` : ''
@@ -60,8 +71,6 @@
       isLoading = false
     }
   }
-
-  $: operatorType, handleOperatorChanged()
 
   const fireChangeEvent = async (url: URL) => {
     dispatch('change', {
@@ -104,7 +113,6 @@
       apiUrl.searchParams.append(value.key, value.value)
     }
     fireChangeEvent(apiUrl)
-    getTags(apiUrl)
   }
 
   const existTag = (value: Tag) => {
@@ -129,6 +137,7 @@
     })
     fireChangeEvent(apiUrl)
     getTags(apiUrl)
+    clearInput()
   }
 
   const getTagSearchKey = (key: string) => {
@@ -148,7 +157,46 @@
     fireChangeEvent(apiUrl)
     getTags(apiUrl)
   }
+
+  const handleFilterInput = debounce(() => {
+    if (query === '') {
+      filteredTags = tags
+    } else {
+      filteredTags = {}
+      Object.keys(tags).forEach((key) => {
+        const res = tags[key].filter((t) => t.value.toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
+        if (res.length === 0) return
+        filteredTags[key] = res
+      })
+    }
+  }, 500)
+
+  const clearInput = () => {
+    query = ''
+    handleFilterInput()
+  }
 </script>
+
+<div class="control has-icons-left filter-text-box my-2">
+  <input
+    data-testid="filter-bucket-input"
+    class="input"
+    type="text"
+    placeholder="Type keyword to search tags"
+    on:input={handleFilterInput}
+    bind:value={query} />
+  <span class="icon is-small is-left">
+    <i class="fas fa-search" />
+  </span>
+  {#if !isQueryEmpty}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <span
+      class="clear-button"
+      on:click={clearInput}>
+      <i class="fas fa-xmark sm" />
+    </span>
+  {/if}
+</div>
 
 {#key selectedTags}
   <SelectedTags
@@ -168,15 +216,15 @@
         class="loader-container">
         <Loader size="small" />
       </div>
-    {:else if Object.keys(tags).length > 0}
+    {:else if Object.keys(filteredTags).length > 0}
       {#key selectedTags}
         {#if tagSearchKeys}
-          {#each Object.keys(tags) as key}
+          {#each Object.keys(filteredTags) as key}
             <TreeBranch
               rootContent={getTagSearchKey(key).label}
               defaultClosed={checkChildrenTicked(key)}>
-              {#if tags[key]}
-                {#each tags[key] as tag}
+              {#if filteredTags[key]}
+                {#each filteredTags[key] as tag}
                   <TreeLeaf>
                     <Checkbox
                       label="{tag.value} ({tag.count})"
@@ -203,6 +251,7 @@
   <Radios
     bind:radios={operatorTypes}
     bind:value={operatorType}
+    on:change={handleOperatorChanged}
     groupName="operator"
     isVertical={true} />
 </div>
@@ -214,6 +263,20 @@
 {/if}
 
 <style lang="scss">
+  .filter-text-box {
+    display: flex;
+    position: relative;
+    height: 35px;
+    width: 100%;
+
+    .clear-button {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      cursor: pointer;
+    }
+  }
+
   .subtitle {
     border-bottom: 1px solid gray;
     font-weight: bold;
@@ -221,7 +284,7 @@
 
   .box {
     position: relative;
-    height: 150px;
+    height: 200px;
     overflow-y: auto;
     border: 1px solid gray;
 
