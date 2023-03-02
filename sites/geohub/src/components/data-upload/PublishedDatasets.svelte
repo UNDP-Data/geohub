@@ -5,7 +5,7 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types'
   import { Pagination, Loader, Radios } from '@undp-data/svelte-undp-design'
-  import { DEFAULT_LIMIT, LimitOptions, Permission, SortingColumns } from '$lib/constants'
+  import { LimitOptions, Permission, SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
@@ -35,11 +35,9 @@
   let isLoading = false
   let isDeleting = false
 
-  let limit = $page.url.searchParams.get('limit') ? $page.url.searchParams.get('limit') : `${DEFAULT_LIMIT}`
-  let offset = $page.url.searchParams.get('offset') ? $page.url.searchParams.get('offset') : '0'
+  let limit = $page.url.searchParams.get('limit')
+  let offset = $page.url.searchParams.get('offset')
   let sortby = $page.url.searchParams.get('sortby')
-    ? $page.url.searchParams.get('sortby')
-    : SortingColumns.find((col) => col.value === 'updatedat,desc').value
   let query = $page.url.searchParams.get('query') ?? ''
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
@@ -79,9 +77,6 @@
   ]
 
   $: isQueryEmpty = !query || query?.length === 0
-
-  $: limit, handleLimitChanged()
-  $: sortby, handleSortbyChanged()
 
   const reload = async (url: URL) => {
     try {
@@ -257,6 +252,7 @@
 
         <Radios
           radios={SortingColumns}
+          on:change={handleSortbyChanged}
           bind:value={sortby}
           groupName="sortby"
           isVertical={true} />
@@ -265,7 +261,9 @@
 
     <div class="field pl-1">
       <div class="select">
-        <select bind:value={limit}>
+        <select
+          bind:value={limit}
+          on:change={handleLimitChanged}>
           {#each LimitOptions as limit}
             <option value={`${limit}`}>{limit}</option>
           {/each}

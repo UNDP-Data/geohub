@@ -6,23 +6,19 @@
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
-  import { AccessLevel, DEFAULT_LIMIT, LimitOptions, MapOrderByOptions } from '$lib/constants'
+  import { AccessLevel, LimitOptions, MapOrderByOptions } from '$lib/constants'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
 
   let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
 
   let isLoading = false
 
-  let limit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : DEFAULT_LIMIT
-  let offset = $page.url.searchParams.get('offset') ? Number($page.url.searchParams.get('offset')) : 0
+  let limit = Number($page.url.searchParams.get('limit'))
+  let offset = Number($page.url.searchParams.get('offset'))
 
   let query = $page.url.searchParams.get('query') ?? ''
 
-  let accessLevel: AccessLevel = !$page.data.session
-    ? AccessLevel.PUBLIC
-    : $page.url.searchParams.get('accesslevel')
-    ? Number($page.url.searchParams.get('accesslevel'))
-    : AccessLevel.PRIVATE
+  let accessLevel: AccessLevel = Number($page.url.searchParams.get('accesslevel')) as AccessLevel
 
   let expanded: { [key: string]: boolean } = {}
   let expandedStyleId: string
@@ -60,10 +56,6 @@
   }
 
   let sortby = getSortByFromUrl($page.url) ?? MapOrderByOptions[0].value
-
-  $: limit, handleLimitChanged()
-  $: sortby, handleSortbyChanged()
-  $: accessLevel, handleAccessLevelChanged()
 
   const handleLimitChanged = async () => {
     const apiUrl = new URL($page.url.toString())
@@ -190,7 +182,9 @@
       <div class="field">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label">Search maps shared to:</label>
-        <AccessLevelSwitcher bind:accessLevel />
+        <AccessLevelSwitcher
+          bind:accessLevel
+          on:change={handleAccessLevelChanged} />
       </div>
     </div>
   {/if}
@@ -200,7 +194,9 @@
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Order by:</label>
       <div class="select">
-        <select bind:value={sortby}>
+        <select
+          bind:value={sortby}
+          on:change={handleSortbyChanged}>
           {#each MapOrderByOptions as option}
             <option value={option.value}>{option.label}</option>
           {/each}
@@ -214,7 +210,9 @@
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Shown in:</label>
       <div class="select">
-        <select bind:value={limit}>
+        <select
+          bind:value={limit}
+          on:change={handleLimitChanged}>
           {#each LimitOptions as limit}
             <option value={limit}>{limit}</option>
           {/each}
