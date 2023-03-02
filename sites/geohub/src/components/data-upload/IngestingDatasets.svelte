@@ -5,7 +5,7 @@
   import type { IngestingDataset } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import Time from 'svelte-time/src/Time.svelte'
-  import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+  import { downloadFile, removeSasTokenFromDatasetUrl } from '$lib/helper'
   import { createEventDispatcher } from 'svelte'
   import DataUploadButton from './DataUploadButton.svelte'
   const dispatch = createEventDispatcher()
@@ -19,7 +19,28 @@
   let ErrorDialogVisible = false
   let errorText = ''
 
-  const headerTitles: string[] = ['Data file', 'Status', 'Size', 'Date uploaded', 'Operation']
+  // const headerTitles: string[] = ['Data file', 'Status', 'Size', 'Date uploaded', 'Operation']
+
+  const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
+    {
+      title: 'Data file',
+    },
+    {
+      title: 'Status',
+    },
+    {
+      title: 'Download',
+    },
+    {
+      title: 'Size',
+    },
+    {
+      title: 'Date uploaded',
+    },
+    {
+      title: 'Operation',
+    },
+  ]
 
   $: {
     let expandedDatasets = Object.keys(expanded).filter((key) => expanded[key] === true && key !== expandedDatasetId)
@@ -115,6 +136,10 @@
     ErrorDialogVisible = false
     errorText = ''
   }
+
+  const handleDownloadClicked = (url: string) => {
+    downloadFile(url.replace('pmtiles://', ''))
+  }
 </script>
 
 {#if datasets && datasets.length > 0}
@@ -123,7 +148,18 @@
       <thead>
         <tr>
           {#each headerTitles as title}
-            <th>{title}</th>
+            <th>
+              {#if title.icon}
+                <i class={title.icon} />
+              {:else if title.abbr && title.title}
+                <abbr
+                  class="has-tooltip-arrow has-tooltip-bottom"
+                  data-tooltip={title.title}
+                  title={title.title}>{title.abbr}</abbr>
+              {:else if title.title}
+                {title.title}
+              {/if}
+            </th>
           {/each}
         </tr>
       </thead>
@@ -153,7 +189,7 @@
                   {dataset.raw.name}
                 </div>
               </td>
-              <td>
+              <td class="fit-content">
                 <div class="is-flex is-align-items-center">
                   {status}
                   {#if status === 'Error'}
@@ -168,15 +204,27 @@
                   {/if}
                 </div>
               </td>
-              <td>{filesize(dataset.raw.contentLength, { round: 1 })}</td>
-              <td>
+              <td class="fit-content">
+                <button
+                  class="button is-primary table-button is-small"
+                  on:click={() => {
+                    handleDownloadClicked(dataset.raw.url)
+                  }}>
+                  <span class="icon">
+                    <i class="fa-solid fa-download" />
+                  </span>
+                  <span>Download</span>
+                </button>
+              </td>
+              <td class="fit-content">{filesize(dataset.raw.contentLength, { round: 1 })}</td>
+              <td class="fit-content">
                 <Time
                   timestamp={dataset.raw.createdat}
                   format="h:mm A · MMMM D, YYYY" />
               </td>
-              <td>
+              <td class="fit-content">
                 <button
-                  class="button is-link my-1 table-button"
+                  class="button is-link my-1 table-button is-small"
                   on:click={() => {
                     openCancelDialog(dataset)
                   }}>
@@ -190,8 +238,24 @@
             {#if dataset.datasets && expanded[dataset.raw.name] === true}
               {#each dataset.datasets as ds}
                 <tr>
-                  <td><div class="ml-4 is-flex"><i class="fa-solid fa-file has-text-primary pr-2" />{ds.name}</div></td>
+                  <td
+                    ><div class="ml-4 is-flex">
+                      <i class="fa-solid fa-file has-text-primary pr-2" />
+                      {ds.name}
+                    </div></td>
                   <td>{ds.processing ? 'Unpublished' : 'Published'}</td>
+                  <td>
+                    <button
+                      class="button is-primary table-button is-small"
+                      on:click={() => {
+                        handleDownloadClicked(ds.url)
+                      }}>
+                      <span class="icon">
+                        <i class="fa-solid fa-download" />
+                      </span>
+                      <span>Download</span>
+                    </button>
+                  </td>
                   <td>{filesize(ds.contentLength, { round: 1 })}</td>
                   <td>
                     <Time
@@ -201,7 +265,7 @@
                   <td>
                     {#if ds.processing}
                       <button
-                        class="button is-primary my-1 table-button"
+                        class="button is-primary my-1 table-button is-small"
                         on:click={() => {
                           gotoEditMetadataPage(ds.url)
                         }}>
@@ -209,13 +273,6 @@
                           <i class="fa-solid fa-lock-open fa-lg" />
                         </span>
                         <span>Publish</span>
-                      </button>
-                    {:else}
-                      <button class="button is-link my-1 table-button">
-                        <span class="icon">
-                          <i class="fa-solid fa-lock fa-lg" />
-                        </span>
-                        <span>Unpublish</span>
                       </button>
                     {/if}
                   </td>
@@ -229,7 +286,18 @@
       <tfoot>
         <tr>
           {#each headerTitles as title}
-            <th>{title}</th>
+            <th>
+              {#if title.icon}
+                <i class={title.icon} />
+              {:else if title.abbr && title.title}
+                <abbr
+                  class="has-tooltip-arrow has-tooltip-bottom"
+                  data-tooltip={title.title}
+                  title={title.title}>{title.abbr}</abbr>
+              {:else if title.title}
+                {title.title}
+              {/if}
+            </th>
           {/each}
         </tr>
       </tfoot>
@@ -329,5 +397,10 @@
 
   .error-log {
     resize: none;
+  }
+
+  .fit-content {
+    width: 0;
+    white-space: nowrap;
   }
 </style>
