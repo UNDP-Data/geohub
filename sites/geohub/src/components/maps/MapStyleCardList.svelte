@@ -6,7 +6,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
-  import { AccessLevel, DEFAULT_LIMIT, LimitOptions, MapOrderByOptions } from '$lib/constants'
+  import { AccessLevel, LimitOptions, MapOrderByOptions } from '$lib/constants'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
 
   let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
