@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.1.2
+
+### Patch Changes
+
+- 421c883f: feature: added 'change' event in Radio button control
+
 ## 0.1.1
 
 ### Patch Changes
