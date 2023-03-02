@@ -19,24 +19,31 @@
   }
 </script>
 
-{#if isLoading}
-  <div class="loader-container">
-    <Loader size="x-small" />
-  </div>
-{:else if isIconButton}
-  <span
-    class="button-icon fa-stack fa-xl"
-    role="button"
-    tabindex="0"
-    on:keydown={handleKeyDown}
-    on:click={handleClicked}>
-    <i class="fa-solid fa-layer-group fa-stack-xl" />
-    <i class="fab fa-plus fa-sm fa-stack-1x" />
-  </span>
+{#if isIconButton}
+  {#if isLoading}
+    <div class="loader-container">
+      <Loader size="x-small" />
+    </div>
+  {:else}
+    <span
+      class="button-icon fa-stack fa-xl"
+      role="button"
+      tabindex="0"
+      on:keydown={handleKeyDown}
+      on:click={handleClicked}>
+      <i class="fa-solid fa-layer-group fa-stack-xl" />
+      <i class="fab fa-plus fa-sm fa-stack-1x" />
+    </span>
+  {/if}
 {:else}
-  <Button
-    {title}
-    on:clicked={handleClicked} />
+  <button
+    class="button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+    on:click={handleClicked}>
+    <span class="icon">
+      <i class="fa-solid fa-plus fa-lg" />
+    </span>
+    <span>{title}</span>
+  </button>
 {/if}
 
 <style lang="scss">
