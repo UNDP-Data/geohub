@@ -43,6 +43,7 @@
   let deletedDataset: DatasetFeature = undefined
   let deletedDatasetName = ''
   let initTagfilter: (url?: URL) => Promise<void>
+  let isTagFilterShow = false
 
   const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
     {
@@ -248,11 +249,13 @@
       <PanelButton
         icon="fas fa-sliders"
         tooltip="Explore tags and filter data"
-        width="230px">
+        bind:isShow={isTagFilterShow}
+        width="300px">
         <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
         <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
         <TagFilter
           bind:init={initTagfilter}
+          bind:isShow={isTagFilterShow}
           on:change={handleTagChanged} />
       </PanelButton>
     </div>
