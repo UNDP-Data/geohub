@@ -1,18 +1,33 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import type { Radio } from '../interfaces';
+
+	const dispatch = createEventDispatcher();
 
 	export let radios: Radio[];
 	export let groupName: string;
 	export let value: string;
 	export let isVertical = false;
 	export let allowHtml = false;
+
+	const handleRadioClicked = (val: string) => {
+		value = val;
+		dispatch('change');
+	};
 </script>
 
 <div class="radio-buttons" style="flex-direction: {isVertical ? 'column' : 'row'};">
 	{#each radios as radio}
 		<label class="radio">
 			<div class="vertical-align is-flex-row">
-				<input type="radio" name={groupName} bind:group={value} value={radio.value} />
+				<input
+					type="radio"
+					name={groupName}
+					value={radio.value}
+					on:click={() => {
+						handleRadioClicked(radio.value);
+					}}
+				/>
 				{#if allowHtml === true}
 					{@html radio.label}
 				{:else}

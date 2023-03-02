@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types'
 import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
 import { DEFAULT_LIMIT, SortingColumns } from '$lib/constants'
+import { redirect } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url } = event
@@ -25,6 +26,15 @@ export const load: PageServerLoad = async (event) => {
   const limit = url.searchParams.get('limit')
   if (!limit) {
     apiUrl.searchParams.set('limit', `${DEFAULT_LIMIT}`)
+  }
+
+  const offset = url.searchParams.get('offset')
+  if (!offset) {
+    apiUrl.searchParams.set('offset', `0`)
+  }
+
+  if (apiUrl.search !== url.search) {
+    throw redirect(300, `${apiUrl.pathname}${apiUrl.search}`)
   }
 
   // only azure's user data is avalable for data page
