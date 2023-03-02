@@ -10,6 +10,7 @@
   import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper'
   import Notification from '$components/controls/Notification.svelte'
   import { debounce } from 'lodash-es'
+  import type { Country } from '$lib/types'
 
   const dispatch = createEventDispatcher()
 
@@ -30,6 +31,7 @@
     },
   ]
   export let query = ''
+  let countriesMaster: Country[] = []
   $: isQueryEmpty = !query || query?.length === 0
 
   onMount(() => {
@@ -43,9 +45,18 @@
 
   export const init = async (url?: URL) => {
     const _url = url ?? $page.url
+    await getCountries()
     await getTags(_url)
     selectedTags = [...getSelectedTagsFromUrl(_url)]
     handleFilterInput()
+  }
+
+  const getCountries = async () => {
+    if (countriesMaster.length === 0) {
+      const res = await fetch(`/api/countries`)
+      const json = await res.json()
+      countriesMaster = json as Country[]
+    }
   }
 
   const getTags = async (newUrl: URL) => {
@@ -175,6 +186,15 @@
     query = ''
     handleFilterInput()
   }
+
+  const getLabel = (tag: Tag) => {
+    if (tag.key === 'country') {
+      const country = countriesMaster.find((c) => c.iso_3 === tag.value)
+      return `${country.country_name} (${tag.value})`
+    } else {
+      return tag.value
+    }
+  }
 </script>
 
 <div class="control has-icons-left filter-text-box my-2">
@@ -227,7 +247,7 @@
                 {#each filteredTags[key] as tag}
                   <TreeLeaf>
                     <Checkbox
-                      label="{tag.value} ({tag.count})"
+                      label="{getLabel(tag)} ({tag.count})"
                       checked={existTag(tag)}
                       on:clicked={() => {
                         handleTagChecked(tag)
