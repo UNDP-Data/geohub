@@ -1,4 +1,5 @@
 export interface RawDataset {
+  id: string
   name: string
   url: string
   contentLength: number
@@ -7,6 +8,7 @@ export interface RawDataset {
   error?: string
 }
 export interface IngestedDataset {
+  id?: string
   name?: string
   url?: string
   contentLength?: number

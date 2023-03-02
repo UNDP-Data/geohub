@@ -8,6 +8,7 @@
   import { downloadFile, removeSasTokenFromDatasetUrl } from '$lib/helper'
   import { createEventDispatcher } from 'svelte'
   import DataUploadButton from './DataUploadButton.svelte'
+  import DataPreview from './DataPreview.svelte'
   const dispatch = createEventDispatcher()
 
   export let datasets: IngestingDataset[]
@@ -29,7 +30,12 @@
       title: 'Status',
     },
     {
+      title: 'Preview',
+      icon: 'fa-solid fa-map',
+    },
+    {
       title: 'Download',
+      icon: 'fa-solid fa-download',
     },
     {
       title: 'Size',
@@ -150,7 +156,12 @@
           {#each headerTitles as title}
             <th>
               {#if title.icon}
-                <i class={title.icon} />
+                <div class="is-flex is-align-items-center">
+                  <i class={title.icon} />
+                  {#if title.title}
+                    <p class="pl-1">{title.title}</p>
+                  {/if}
+                </div>
               {:else if title.abbr && title.title}
                 <abbr
                   class="has-tooltip-arrow has-tooltip-bottom"
@@ -205,6 +216,11 @@
                 </div>
               </td>
               <td class="fit-content">
+                <DataPreview
+                  bind:id={dataset.raw.id}
+                  bind:url={dataset.raw.url} />
+              </td>
+              <td class="fit-content">
                 <button
                   class="button is-primary table-button is-small"
                   on:click={() => {
@@ -239,12 +255,17 @@
               {#each dataset.datasets as ds}
                 <tr>
                   <td
-                    ><div class="ml-4 is-flex">
-                      <i class="fa-solid fa-file has-text-primary pr-2" />
+                    ><div class="ml-4 is-flex is-align-items-center">
+                      <i class="fa-solid fa-server has-text-primary pr-2" />
                       {ds.name}
                     </div></td>
-                  <td>{ds.processing ? 'Unpublished' : 'Published'}</td>
-                  <td>
+                  <td class="fit-content">{ds.processing ? 'Unpublished' : 'Published'}</td>
+                  <td class="fit-content">
+                    <DataPreview
+                      bind:id={ds.id}
+                      bind:url={ds.url} />
+                  </td>
+                  <td class="fit-content">
                     <button
                       class="button is-primary table-button is-small"
                       on:click={() => {
@@ -256,13 +277,13 @@
                       <span>Download</span>
                     </button>
                   </td>
-                  <td>{filesize(ds.contentLength, { round: 1 })}</td>
-                  <td>
+                  <td class="fit-content">{filesize(ds.contentLength, { round: 1 })}</td>
+                  <td class="fit-content">
                     <Time
                       timestamp={ds.createdat}
                       format="h:mm A · MMMM D, YYYY" />
                   </td>
-                  <td>
+                  <td class="fit-content">
                     {#if ds.processing}
                       <button
                         class="button is-primary my-1 table-button is-small"
@@ -288,7 +309,12 @@
           {#each headerTitles as title}
             <th>
               {#if title.icon}
-                <i class={title.icon} />
+                <div class="is-flex is-align-items-center">
+                  <i class={title.icon} />
+                  {#if title.title}
+                    <p class="pl-1">{title.title}</p>
+                  {/if}
+                </div>
               {:else if title.abbr && title.title}
                 <abbr
                   class="has-tooltip-arrow has-tooltip-bottom"
