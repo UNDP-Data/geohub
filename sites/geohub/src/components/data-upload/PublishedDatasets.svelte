@@ -14,6 +14,7 @@
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import { createEventDispatcher } from 'svelte'
+  import MiniMap from '$components/data-view/MiniMap.svelte'
   const dispatch = createEventDispatcher()
 
   export let datasets: DatasetFeatureCollection
@@ -314,23 +315,23 @@
               </div>
             </td>
             <td>{feature.properties.name}</td>
-            <td>{feature.properties.is_raster ? 'Raster' : 'Vector'}</td>
+            <td class="fit-content">{feature.properties.is_raster ? 'Raster' : 'Vector'}</td>
             <td>{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}</td>
-            <td>
+            <td class="fit-content">
               <Time
                 timestamp={feature.properties.createdat}
-                format="h:mm A · MMMM D, YYYY" />
+                format="hh:mm A, MM/DD/YYYY" />
               <br />
               {feature.properties.created_user}
             </td>
-            <td>
+            <td class="fit-content">
               <Time
                 timestamp={feature.properties.updatedat}
-                format="h:mm A · MMMM D, YYYY" />
+                format="hh:mm A, MM/DD/YYYY" />
               <br />
               {feature.properties.updated_user}
             </td>
-            <td>
+            <td class="fit-content">
               {#if feature.properties.permission > Permission.READ}
                 <button
                   class="button is-primary my-1 table-button"
@@ -345,7 +346,7 @@
                 <p>-</p>
               {/if}
             </td>
-            <td>
+            <td class="fit-content">
               {#if feature.properties.permission > Permission.WRITE}
                 <button
                   class="button is-link my-1 table-button"
@@ -365,7 +366,18 @@
           {#if expanded[feature.properties.id] === true}
             <tr>
               <td colspan="8">
-                <DataCardInfo bind:feature />
+                <div class="columns">
+                  <div class="column">
+                    <DataCardInfo bind:feature />
+                  </div>
+                  <div class="column">
+                    <MiniMap
+                      bind:feature
+                      isLoadMap={expanded[feature.properties.id] === true}
+                      width="100%"
+                      height="200px" />
+                  </div>
+                </div>
               </td>
             </tr>
           {/if}
@@ -465,6 +477,11 @@
         cursor: pointer;
       }
     }
+  }
+
+  .fit-content {
+    width: 0;
+    white-space: nowrap;
   }
 
   .expand-button {

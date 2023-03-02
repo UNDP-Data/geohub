@@ -9,6 +9,7 @@
   import type { DatasetFeature, Tag } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
+  import DataPreview from '$components/data-upload/DataPreview.svelte'
 
   // preserve previous page URL
   let previousPage: string = base
@@ -151,7 +152,17 @@
       <button
         class="button is-primary {isRegistering ? 'is-loading' : ''}"
         disabled={!(name && license && description && providers.length > 0)}
-        type="submit">{isNew ? 'Publish' : 'Update'}</button>
+        type="submit">
+        <span class="icon">
+          <i class="fa-solid fa-cloud-arrow-up" />
+        </span>
+        <span> {isNew ? 'Publish' : 'Update'}</span>
+      </button>
+
+      <DataPreview
+        size="is-normal"
+        id={feature.properties.id}
+        url={feature.properties.url.replace('pmtiles://', '')} />
     </div>
   </div>
 

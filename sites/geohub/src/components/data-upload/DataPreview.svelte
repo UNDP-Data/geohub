@@ -7,6 +7,7 @@
   let isLoadMap = false
 
   const tippy = initTippy({
+    placement: 'bottom',
     maxWidth: 400,
     onShow(instance) {
       isLoadMap = true
@@ -19,6 +20,7 @@
 
   export let id: string
   export let url: string
+  export let size: 'is-small' | 'is-normal' | 'is-medium' | 'is-large' = 'is-small'
 
   let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false
 
@@ -38,7 +40,8 @@
 </script>
 
 <button
-  class="button is-primary table-button is-small"
+  class="button is-primary table-button {size}"
+  type="button"
   use:tippy={{ content: tooltipContent }}>
   <span class="icon">
     <i class="fa-solid fa-map" />
