@@ -71,6 +71,10 @@ export const load: PageServerLoad = async (event) => {
         })
       })
     }
+
+    const sasToken = generateAzureBlobSasToken(datasetUrl)
+    datasetUrl = `${datasetUrl}${sasToken}`
+
     const feature: DatasetFeature = {
       type: 'Feature',
       geometry: {
@@ -113,9 +117,6 @@ export const load: PageServerLoad = async (event) => {
   if (!type) {
     throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
   }
-
-  // delete SAS token from URL
-  feature.properties.url = removeSasTokenFromDatasetUrl(feature.properties.url)
 
   return {
     feature,
@@ -173,6 +174,9 @@ export const actions = {
       }
       dataset.properties.updated_user = user_email
       dataset.properties.updatedat = now
+
+      // delete SAS token from URL
+      dataset.properties.url = removeSasTokenFromDatasetUrl(dataset.properties.url)
       dataset.properties.url = decodeURI(dataset.properties.url)
 
       await upsertDataset(dataset)

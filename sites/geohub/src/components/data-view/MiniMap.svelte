@@ -102,15 +102,23 @@
           metadata = data.metadata
           defaultColormap = data.colormap
         } else {
-          let layerName = layer ? layer.layer : undefined
-          let layerType: 'point' | 'heatmap' = undefined
-          if (layer?.geometry.toLocaleLowerCase() === 'point') {
-            layerType = 'point'
+          if (layer) {
+            let layerName = layer ? layer.layer : undefined
+            let layerType: 'point' | 'heatmap' = undefined
+            if (layer?.geometry.toLocaleLowerCase() === 'point') {
+              layerType = 'point'
+            }
+            const data = await vectorTile.add(map, layerType, undefined, layerName)
+            metadata = data.metadata
+            defaultColor = data.color
+          } else {
+            const vectorInfo = metadata as VectorTileMetadata
+            for (const l of vectorInfo.json.vector_layers) {
+              await vectorTile.add(map, undefined, undefined, l.id)
+            }
           }
-          const data = await vectorTile.add(map, layerType, undefined, layerName)
-          metadata = data.metadata
-          defaultColor = data.color
         }
+        map.resize()
       } finally {
         isLoading = false
       }
@@ -140,6 +148,8 @@
 </div>
 
 <style lang="scss">
+  @import 'maplibre-gl/dist/maplibre-gl.css';
+
   .map-container {
     position: relative;
     text-align: center;

@@ -3,15 +3,15 @@ import type { Tag } from './Tag'
 
 export interface DatasetFeature {
   type: 'Feature'
-  geometry: {
+  geometry?: {
     type: string
     coordinates: [number, number] | [number, number][] | [number, number][][]
   }
   properties: {
-    id: string
+    id?: string
     url: string
-    name: string
-    description: string
+    name?: string
+    description?: string
     is_raster: boolean
     license?: string
     createdat?: string

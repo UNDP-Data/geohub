@@ -23,6 +23,7 @@
 				<input
 					type="radio"
 					name={groupName}
+					bind:group={value}
 					value={radio.value}
 					on:click={() => {
 						handleRadioClicked(radio.value);

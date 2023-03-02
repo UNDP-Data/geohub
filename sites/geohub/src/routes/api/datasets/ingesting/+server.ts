@@ -64,10 +64,13 @@ export const GET: RequestHandler = async ({ locals }) => {
       }
       const blockBlobClient = containerClient.getBlockBlobClient(item.name)
       const properties = await blockBlobClient.getProperties()
+      const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`
+      const id = generateHashKey(_url)
       const dataset: IngestingDataset = {
         raw: {
+          id: id,
           name: file_name,
-          url: `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`,
+          url: `${_url}${ACCOUNT_SAS_TOKEN_URL}`,
           contentLength: properties.contentLength,
           createdat: properties.createdOn.toISOString(),
           updatedat: properties.lastModified.toISOString(),
@@ -97,8 +100,10 @@ export const GET: RequestHandler = async ({ locals }) => {
         const names = item.name.split('/')
         const file_name = names[names.length - 1]
         if (file_name === rawName) {
+          const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`
+          ingesting.id = generateHashKey(_url)
           ingesting.name = file_name
-          ingesting.url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`
+          ingesting.url = `${_url}${ACCOUNT_SAS_TOKEN_URL}`
           ingesting.contentLength = properties.contentLength
           ingesting.createdat = properties.createdOn.toISOString()
           ingesting.updatedat = properties.lastModified.toISOString()
