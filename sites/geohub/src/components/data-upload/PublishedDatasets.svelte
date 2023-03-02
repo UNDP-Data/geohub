@@ -2,7 +2,6 @@
   import { fade } from 'svelte/transition'
   import { page } from '$app/stores'
   import { goto, invalidateAll } from '$app/navigation'
-  import { clickOutside } from 'svelte-use-click-outside'
   import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types'
   import { Pagination, Loader, Radios } from '@undp-data/svelte-undp-design'
   import { LimitOptions, Permission, SortingColumns } from '$lib/constants'
@@ -42,6 +41,7 @@
   let query = $page.url.searchParams.get('query') ?? ''
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
+  let deletedDatasetName = ''
   let initTagfilter: (url?: URL) => Promise<void>
 
   const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
@@ -188,6 +188,7 @@
         await invalidateAll()
         dispatch('change')
         confirmDeleteDialogVisible = false
+        disableScroll()
       }
     } finally {
       isDeleting = false
@@ -197,6 +198,18 @@
   const closeDeleteDialog = () => {
     confirmDeleteDialogVisible = false
     deletedDataset = undefined
+
+    enableScroll()
+  }
+
+  const disableScroll = () => {
+    const root = document.documentElement
+    root.classList.add('is-clipped')
+  }
+
+  const enableScroll = () => {
+    const root = document.documentElement
+    root.classList.remove('is-clipped')
   }
 
   const handleEnterKey = (e: KeyboardEvent) => {
@@ -353,6 +366,7 @@
                   on:click={() => {
                     confirmDeleteDialogVisible = true
                     deletedDataset = feature
+                    disableScroll()
                   }}>
                   <span class="icon">
                     <i class="fa-solid fa-trash" />
@@ -366,7 +380,7 @@
           {#if expanded[feature.properties.id] === true}
             <tr>
               <td colspan="8">
-                <div class="columns">
+                <div class="columns is-vcentered">
                   <div class="column">
                     <DataCardInfo bind:feature />
                   </div>
@@ -375,7 +389,7 @@
                       bind:feature
                       isLoadMap={expanded[feature.properties.id] === true}
                       width="100%"
-                      height="200px" />
+                      height="300px" />
                   </div>
                 </div>
               </td>
@@ -418,12 +432,14 @@
 {#if confirmDeleteDialogVisible}
   <div
     class="modal is-active"
-    transition:fade
-    use:clickOutside={closeDeleteDialog}>
-    <div class="modal-background" />
+    transition:fade>
+    <div
+      class="modal-background"
+      on:click={closeDeleteDialog}
+      on:keydown={handleEnterKey} />
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Delete dataset</p>
+        <p class="modal-card-title">Are you sure deleting the dataset?</p>
         <button
           class="delete"
           aria-label="close"
@@ -431,25 +447,30 @@
           on:click={closeDeleteDialog} />
       </header>
       <section class="modal-card-body is-size-6 has-text-weight-normal">
-        <div class="has-text-weight-medium">Are you sure you want to delete this dataset?</div>
+        <Notification
+          type="warning"
+          showCloseButton={false}>
+          Unexpected bad things will happen if you don't read this!
+        </Notification>
+        <div class="has-text-weight-medium mt-2 mx-1">
+          This action <b>cannot</b> be undone. This will delete <b>{deletedDataset.properties.name}</b> from GeoHub data
+          catalogue. It will not be searchable again from Data tab in GeoHub app.
+          <br />
+          Please type <b>{deletedDataset.properties.name}</b> to confirm.
+        </div>
         <br />
-        {deletedDataset.properties.name}
+        <input
+          class="input"
+          type="text"
+          bind:value={deletedDatasetName} />
       </section>
       <footer class="modal-card-foot">
-        <div
-          class="px-1"
-          style="width: 50%">
-          <button
-            class="button is-link is-fullwidth"
-            on:click={closeDeleteDialog}>Cencel</button>
-        </div>
-        <div
-          class="px-1"
-          style="width: 50%">
-          <button
-            class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
-            on:click={handleDeleteDataset}>Delete</button>
-        </div>
+        <button
+          class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
+          on:click={handleDeleteDataset}
+          disabled={deletedDatasetName !== deletedDataset.properties.name}>
+          I understand the consequences, delete this dataset
+        </button>
       </footer>
     </div>
   </div>

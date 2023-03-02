@@ -16,11 +16,10 @@
   let expandedDatasetId: string
   let confirmDeleteDialogVisible = false
   let cancelledDataset: IngestingDataset = undefined
+  let cancelledDatasetName = ''
   let isCancelling = false
   let ErrorDialogVisible = false
   let errorText = ''
-
-  // const headerTitles: string[] = ['Data file', 'Status', 'Size', 'Date uploaded', 'Operation']
 
   const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
     {
@@ -117,30 +116,47 @@
       await invalidateAll()
       dispatch('change')
       confirmDeleteDialogVisible = false
+      enableScroll()
     } finally {
       isCancelling = false
     }
   }
 
+  const disableScroll = () => {
+    const root = document.documentElement
+    root.classList.add('is-clipped')
+  }
+
+  const enableScroll = () => {
+    const root = document.documentElement
+    root.classList.remove('is-clipped')
+  }
+
   const openCancelDialog = (dataset: IngestingDataset) => {
     cancelledDataset = dataset
     confirmDeleteDialogVisible = true
+    cancelledDatasetName = ''
+    disableScroll()
   }
 
   const closeCancelDialog = () => {
     confirmDeleteDialogVisible = false
     cancelledDataset = undefined
+    cancelledDatasetName = ''
+    enableScroll()
   }
 
   const showErrorDialog = async (errorFile: string) => {
     const res = await fetch(errorFile)
     errorText = await res.text()
     ErrorDialogVisible = true
+    disableScroll()
   }
 
   const closeErrorlDialog = () => {
     ErrorDialogVisible = false
     errorText = ''
+    enableScroll()
   }
 
   const handleDownloadClicked = (url: string) => {
@@ -340,7 +356,7 @@
         on:keydown={handleEnterKey} />
       <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Cancel data uploading</p>
+          <p class="modal-card-title">Are you sure cancelling?</p>
           <button
             class="delete"
             aria-label="close"
@@ -348,27 +364,30 @@
             on:click={closeCancelDialog} />
         </header>
         <section class="modal-card-body is-size-6 has-text-weight-normal">
-          <div class="has-text-weight-medium">
-            If continue, the following data uploading process will be cancelled. Do you want to continue?
+          <Notification
+            type="warning"
+            showCloseButton={false}>
+            Unexpected bad things will happen if you don't read this!
+          </Notification>
+          <div class="has-text-weight-medium mt-2 mx-1">
+            This action <b>cannot</b> be undone. This will permanently delete <b>{cancelledDataset.raw.name}</b> which
+            were uploaded and ingested.
+            <br />
+            Please type <b>{cancelledDataset.raw.name}</b> to confirm.
           </div>
           <br />
-          {cancelledDataset.raw.name}
+          <input
+            class="input"
+            type="text"
+            bind:value={cancelledDatasetName} />
         </section>
         <footer class="modal-card-foot">
-          <div
-            class="px-1"
-            style="width: 50%">
-            <button
-              class="button is-link is-fullwidth"
-              on:click={closeCancelDialog}>Cencel</button>
-          </div>
-          <div
-            class="px-1"
-            style="width: 50%">
-            <button
-              class="button is-primary is-fullwidth {isCancelling ? 'is-loading' : ''}"
-              on:click={handleCancelDataset}>Continue</button>
-          </div>
+          <button
+            class="button is-primary is-fullwidth {isCancelling ? 'is-loading' : ''}"
+            on:click={handleCancelDataset}
+            disabled={cancelledDatasetName !== cancelledDataset?.raw.name}>
+            I understand the consequences, cancel this ingesting dataset
+          </button>
         </footer>
       </div>
     </div>
