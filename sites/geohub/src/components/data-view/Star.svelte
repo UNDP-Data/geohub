@@ -1,10 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { StatusTypes } from '$lib/constants'
-  import type { BannerMessage } from '$lib/types'
-  import { bannerMessages, indicatorProgress } from '$stores'
+  import { indicatorProgress } from '$stores'
   import { createEventDispatcher } from 'svelte'
   import millify from 'millify'
+  import { toast } from '@zerodevx/svelte-toast'
 
   const dispatch = createEventDispatcher()
 
@@ -17,18 +16,12 @@
     try {
       const res = await fetch(`/api/datasets/${dataset_id}/star`, {
         method: method,
+      }).catch((err) => {
+        toast.push(err.message)
+        throw err
       })
       const json = await res.json()
       no_stars = json.no_stars
-    } catch (err) {
-      const bannerErrorMessage: BannerMessage = {
-        type: StatusTypes.WARNING,
-        title: 'Whoops! Something went wrong.',
-        message: err.message,
-        error: err,
-      }
-      bannerMessages.update((data) => [...data, bannerErrorMessage])
-      throw err
     } finally {
       $indicatorProgress = false
     }

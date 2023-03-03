@@ -39,13 +39,6 @@ describe('downloadFile', () => {
   })
 })
 
-describe('fetchUrl', () => {
-  it('should return a json object upon no timeout ', async () => {
-    const json = await helper.fetchUrl('http://www.google.com')
-    expect(json).toEqual(null)
-  })
-})
-
 describe('clean', () => {
   it('should remove underscore characters', () => {
     const value = helper.clean('Proportion_of_local_governments_implementing_local_disaster_risk_reduction_strategies')

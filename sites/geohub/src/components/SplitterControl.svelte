@@ -2,7 +2,7 @@
   import type { Map as MaplibreMap } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
   import { map as mapStore, indicatorProgress } from '$stores'
-  import BannerMessageControl from '$components/BannerMessageControl.svelte'
+
   export let map: MaplibreMap
   export let isMenuShown = true
   export let isMobile
@@ -13,6 +13,7 @@
   export let sideBarPosition = 'left'
   export let innerWidth: number
   export let innerHeight: number
+
   let headerHeight: number
   let defaultsplitterSize = '10px'
   let widthPecent = 0
@@ -113,30 +114,26 @@
         {/if}
         <slot name="sidebar" />
       {:else}
-        <BannerMessageControl>
-          <progress
-            style="height:0.2rem; opacity:{$indicatorProgress == true
-              ? 1
-              : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
-            class="progress is-large is-info "
-            max={100} />
-          <slot name="map" />
-        </BannerMessageControl>
+        <progress
+          style="height:0.2rem; opacity:{$indicatorProgress == true
+            ? 1
+            : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
+          class="progress is-large is-info "
+          max={100} />
+        <slot name="map" />
       {/if}
     </div>
     <div
       slot="secondary"
       class="secondary-content">
       {#if sideBarPosition === 'left'}
-        <BannerMessageControl>
-          <progress
-            style="height:0.2rem; opacity:{$indicatorProgress == true
-              ? 1
-              : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
-            class="progress is-large is-info "
-            max={100} />
-          <slot name="map" />
-        </BannerMessageControl>
+        <progress
+          style="height:0.2rem; opacity:{$indicatorProgress == true
+            ? 1
+            : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
+          class="progress is-large is-info "
+          max={100} />
+        <slot name="map" />
       {:else}
         {#if isMobile}
           <span

@@ -1,20 +1,14 @@
 <script lang="ts">
-  import type {
-    BannerMessage,
-    DatasetFeature,
-    RasterTileMetadata,
-    VectorLayerTileStatLayer,
-    VectorTileMetadata,
-  } from '$lib/types'
+  import type { DatasetFeature, RasterTileMetadata, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
   import { Accordion, Radios, type Radio } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
-  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
-  import { StatusTypes } from '$lib/constants'
+  import { map, layerList, indicatorProgress } from '$stores'
   import { VectorTileData } from '$lib/VectorTileData'
   import MiniMap from './MiniMap.svelte'
   import DataCardInfo from './DataCardInfo.svelte'
   import { loadMap } from '$lib/helper'
   import { createEventDispatcher } from 'svelte'
+  import { toast } from '@zerodevx/svelte-toast'
 
   const dispatch = createEventDispatcher()
 
@@ -85,13 +79,7 @@
       ]
       await loadMap($map)
     } catch (err) {
-      const bannerErrorMessage: BannerMessage = {
-        type: StatusTypes.WARNING,
-        title: 'Whoops! Something went wrong.',
-        message: err.message,
-        error: err,
-      }
-      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      toast.push(err.message)
       console.error(err)
     } finally {
       $indicatorProgress = false

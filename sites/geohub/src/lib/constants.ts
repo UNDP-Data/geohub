@@ -45,17 +45,6 @@ export enum ClassificationMethodNames {
   NATURAL_BREAK = 'Natural Breaks',
 }
 
-export enum ErrorMessages {
-  UNDEFINED_BAND_METADATA_LAYER_MINMAX = 'Missing layer minimum and/or maximum metadata values.',
-  FETCH_TIMEOUT = 'The request took longer than expected. Please try again later.',
-  MAP_FILTER_NOT_APPLIED = 'The map filter was not applied. Please check the that all filters are valid.',
-  EXPRESSION_INVALID = 'The Raster Expression appears to be Invalid. Please check it and try again.',
-  NO_STYLE_EXISTS = 'No style id exists in the database',
-  FAILED_TO_PARSE_METADATA = 'Failed to parse JSON from metadata',
-  COMPONENT_NOT_RENDERED = 'Step Component cannot be rendered outside the Wizard component',
-  TOO_SMALL_ZOOM_LEVEL = 'Please zoom in more than zoom level: 5 in order to load the layer',
-}
-
 export enum ColorMapTypes {
   SEQUENTIAL = 'sequential',
   DIVERGING = 'diverging',
@@ -85,15 +74,6 @@ export enum LayerTypes {
   LINE = 'line',
   FILL = 'fill',
   HEATMAP = 'heatmap',
-}
-
-export enum StatusTypes {
-  PRIMARY = 'primary',
-  LINK = 'link',
-  SUCCESS = 'success',
-  INFO = 'info',
-  WARNING = 'warning',
-  DANGER = 'danger',
 }
 
 export enum AccessLevel {
