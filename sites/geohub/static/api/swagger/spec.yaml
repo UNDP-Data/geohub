@@ -8,7 +8,7 @@ info:
     Some endpoints (for POST, PUT, DELETE apis) are required to sign in prior to using them. GeoHub uses Azure Active Directory's authentication with Auth.js package. Auth.js package provides the following endpoints to sign in / sign out. Please sign in first before trying swagger.
 
     - /auth/signin
-    - /auth/signout 
+    - /auth/signout
   contact:
     email: jin.igarashi@undp.org
     url: 'https://geohub.data.undp.org'
@@ -16,12 +16,9 @@ info:
     name: BSD-3-Clause license
     url: 'https://github.com/UNDP-Data/geohub/blob/develop/LICENSE'
 servers:
-  - url: 'http://localhost:5173/api'
-    description: localhost
-  - url: 'https://dev.undpgeohub.org/api'
-    description: development
-  - url: 'https://geohub.data.undp.org/api'
-    description: production
+  - url: '/api'
+    description: GeoHub APIs
+
 paths:
   /datasets:
     get:
@@ -895,7 +892,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
         - schema:
             type: string
           in: query
