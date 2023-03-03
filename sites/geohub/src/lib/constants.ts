@@ -296,7 +296,7 @@ export const footerItems: { [key: string]: { title: string; url: string }[] } = 
     },
     {
       title: 'GeoHub API documentation',
-      url: '/api/docs/index.html',
+      url: '/api',
     },
     {
       title: 'Svelte UNDP design sytem',
