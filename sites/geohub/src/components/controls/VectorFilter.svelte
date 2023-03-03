@@ -1,8 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { bannerMessages, map, filterInputTags } from '$stores'
-  import { ErrorMessages, StatusTypes } from '$lib/constants'
-  import type { BannerMessage, Layer, VectorTileMetadata } from '$lib/types'
+  import { map, filterInputTags } from '$stores'
+  import type { Layer, VectorTileMetadata } from '$lib/types'
   import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte'
   import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte'
   import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
@@ -10,6 +9,7 @@
   import Step from '$components/control-groups/Step.svelte'
   import { vectorFilterOperations } from '$lib/constants'
   import { clean, getLayerStyle } from '$lib/helper'
+  import { toast } from '@zerodevx/svelte-toast'
 
   export let layer: Layer
 
@@ -171,23 +171,12 @@
       : null
     expressionApplied = true
     $map.on('error', (err: ErrorEvent) => {
-      showBannerMessage(err.error)
+      filteringError = true
+      toast.push(err.error ?? 'The map filter was not applied. Please check the that all filters are valid.')
     })
     if ($filterInputTags.length > 0) {
       $filterInputTags = []
     }
-  }
-
-  const showBannerMessage = (error: Error) => {
-    // This error is thrown when the expression is not valid.
-    filteringError = true
-    const bannerErrorMessage: BannerMessage = {
-      type: StatusTypes.WARNING,
-      title: 'Whoops! Something went wrong.',
-      message: ErrorMessages.MAP_FILTER_NOT_APPLIED,
-      error,
-    }
-    bannerMessages.update((data) => [...data, bannerErrorMessage])
   }
 
   // Clear all expressions applied to the layer and reset the UI

@@ -7,9 +7,9 @@
   import SdgPicker from '$components/data-upload/SdgPicker.svelte'
   import CountryPicker from '$components/data-upload/CountryPicker.svelte'
   import type { DatasetFeature, Tag } from '$lib/types'
-  import Notification from '$components/controls/Notification.svelte'
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
   import DataPreview from '$components/data-upload/DataPreview.svelte'
+  import { toast } from '@zerodevx/svelte-toast'
 
   // preserve previous page URL
   let previousPage: string = base
@@ -60,7 +60,6 @@
   let sdgs: Tag[] = initTags('sdg_goal')
   let countries: Tag[] = initTags('country')
   let otherTags: Tag[] = initTags('other')
-  let message: { type: 'info' | 'warning' | 'danger'; message: string }
 
   let licenses = [
     'Creative Commons Zero 1.0 Universal',
@@ -128,21 +127,21 @@
       if (result.status === 200) {
         feature = result.data
         if (previousPage) {
-          message = {
-            type: 'info',
-            message: 'Dataset was registered successfully. It is going back to the previous page.',
-          }
           setTimeout(() => {
             goto(previousPage, {
               replaceState: true,
             })
           }, REDIRECRT_TIME)
+
+          toast.push('Dataset was registered successfully. It is going back to the previous page.', {
+            duration: REDIRECRT_TIME,
+          })
         } else {
-          message = { type: 'info', message: 'Dataset was registered successfully. ' }
+          toast.push('Dataset was registered successfully. ')
           await invalidateAll()
         }
       } else {
-        message = result.data
+        toast.push(result.data)
       }
       isRegistering = false
     }
@@ -165,12 +164,6 @@
         url={feature.properties.url.replace('pmtiles://', '')} />
     </div>
   </div>
-
-  {#if message}
-    <Notification
-      type={message.type}
-      showCloseButton={false}>{message.message}</Notification>
-  {/if}
 
   <div class="columns">
     <div class="column is-6">

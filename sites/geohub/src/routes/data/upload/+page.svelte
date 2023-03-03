@@ -1,21 +1,13 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
-  import { goto, afterNavigate } from '$app/navigation'
-  import { base } from '$app/paths'
+  import { goto } from '$app/navigation'
   import { BlockBlobClient } from '@azure/storage-blob'
   import { filesize } from 'filesize'
   import Dropzone from 'svelte-file-dropzone'
+  import { toast } from '@zerodevx/svelte-toast'
 
-  import Notification from '$components/controls/Notification.svelte'
   import { AccepedExtensions } from '$lib/constants'
 
-  // preserve previous page URL
-  let previousPage: string = base
-  afterNavigate(({ from }) => {
-    if (from?.url) {
-      previousPage = `${from?.url.pathname}${from?.url.search}`
-    }
-  })
   const REDIRECRT_TIME = 2000 // two second
 
   let fileInput: HTMLInputElement
@@ -27,7 +19,6 @@
   $: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0
 
   let blobUrl = ''
-  let errorMessage = ''
 
   const uploadFile = async (sasUrl: string) => {
     if (!selectedFile) {
@@ -42,14 +33,14 @@
     const blobUrl = await completeUploading()
 
     setTimeout(() => {
-      let redirectPage = previousPage
-      if (!previousPage) {
-        redirectPage = '/data'
-      }
-      goto(redirectPage, {
+      goto('/data', {
         replaceState: true,
       })
     }, REDIRECRT_TIME)
+
+    toast.push('Successfully uploaded the file to GeoHub! It is going back to Data page.', {
+      duration: REDIRECRT_TIME,
+    })
 
     return {
       success: true,
@@ -66,7 +57,9 @@
     })
     const json = await res.json()
     if (json.status !== 200) {
-      throw new Error('Failed to complete uploading')
+      const message = json.message ?? 'Failed to complete uploading' ?? res.statusText
+      toast.push(message)
+      throw new Error(message)
     }
     const data = JSON.parse(JSON.parse(json.data)[0])
     return data.blobUrl
@@ -77,23 +70,22 @@
   }
 
   const handleFilesSelect = (e) => {
-    errorMessage = ''
     selectedFile = undefined
     const { acceptedFiles } = e.detail
     if (acceptedFiles.length > 1) {
-      errorMessage = 'Please select only a file. Make zip file if they are multiple files,'
+      toast.push('Please select only a file. Make zip file if they are multiple files,')
       return
     }
     const file = acceptedFiles[0]
     const names = file.path.split('.')
     if (names.length < 2) {
-      errorMessage = 'Please choose a supported file.'
+      toast.push('Please choose a supported file.')
       return
     }
     const extension: string = names[1].toLowerCase().trim()
     const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension))
     if (formats.length === 0) {
-      errorMessage = `The file extension '${extension}' is not supported.`
+      toast.push(`The file extension '${extension}' is not supported.`)
       return
     }
     selectedFile = file
@@ -141,12 +133,12 @@
     max="100">{progress}%</progress>
 
   <p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
-{:then result}
+  <!-- {:then result}
   {#if result?.success}
     <Notification
       type="info"
       showCloseButton={false}>Successfully uploaded the file to GeoHub! It is going back to Data page.</Notification>
-  {/if}
+  {/if} -->
 {/await}
 
 <div class="field">
@@ -188,9 +180,6 @@
         {/if}
       </label>
     </div>
-    {#if errorMessage}
-      <p class="help is-danger">{errorMessage}</p>
-    {/if}
     <p class="help is-link pb-2">
       The following file formats are supported in GeoHub. Click a file format name to learn more about the format.
     </p>

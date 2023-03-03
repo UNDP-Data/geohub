@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Map as MaplibreMap } from 'maplibre-gl'
-  import { Split } from '@geoffcox/svelte-splitter/src'
+  import type { Split } from '@geoffcox/svelte-splitter/src'
   import Header from '$components/Header.svelte'
   import Map from '$components/Map.svelte'
   import Content from './Content.svelte'
