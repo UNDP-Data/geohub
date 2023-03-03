@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types'
-import { getBlobServiceClient, getDatasetById, isSuperuser } from '$lib/server/helpers'
+import { generateHashKey, getBlobServiceClient, getDatasetById, isSuperuser } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import DatasetManager from '$lib/server/DatasetManager'
 import { Permission } from '$lib/constants'
@@ -65,15 +65,19 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
         env.AZURE_STORAGE_ACCESS_KEY_UPLOAD,
       )
       const containerName = 'userdata'
-      const containerClient = blobServiceClient.getContainerClient(containerName)
-      let blobName = dataset.properties.url
-        .replace('pmtiles://', '')
-        .replace(`${containerClient.url}/`, '')
-        .split('?')[0]
-      blobName = `${blobName}.ingesting`
-      const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
-      const uploadBlobResponse = await blockBlobClient.upload('', 0)
-      console.log(`Upload .ingesting file (${blobName}) successfully`, uploadBlobResponse.requestId)
+      const userHash = generateHashKey(user_email)
+      if (dataset.properties.url.indexOf(`${containerName}/${userHash}/datasets`) !== -1) {
+        // only generate .ingesting file if the file is under /userdata/{id}/raw folder
+        const containerClient = blobServiceClient.getContainerClient(containerName)
+        let blobName = dataset.properties.url
+          .replace('pmtiles://', '')
+          .replace(`${containerClient.url}/`, '')
+          .split('?')[0]
+        blobName = `${blobName}.ingesting`
+        const blockBlobClient = await containerClient.getBlockBlobClient(blobName)
+        const uploadBlobResponse = await blockBlobClient.upload('', 0)
+        console.log(`Upload .ingesting file (${blobName}) successfully`, uploadBlobResponse.requestId)
+      }
     }
 
     return new Response(undefined, {
