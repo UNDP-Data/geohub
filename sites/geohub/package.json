@@ -73,6 +73,7 @@
     "flag-icons": "^6.6.6",
     "hex-to-css-filter": "^5.4.0",
     "image-clipper": "^0.4.4",
+    "js-yaml": "^4.1.0",
     "jsdom": "^21.1.0",
     "lodash-es": "^4.17.21",
     "maplibre-gl": "^2.4.0",
