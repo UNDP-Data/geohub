@@ -115,8 +115,7 @@
 
       await invalidateAll()
       dispatch('change')
-      confirmDeleteDialogVisible = false
-      enableScroll()
+      closeCancelDialog()
     } finally {
       isCancelling = false
     }
