@@ -16,9 +16,8 @@ info:
     name: BSD-3-Clause license
     url: 'https://github.com/UNDP-Data/geohub/blob/develop/LICENSE'
 servers:
-  - url: '/api'
+  - url: /api
     description: GeoHub APIs
-
 paths:
   /datasets:
     get:
@@ -313,6 +312,8 @@ paths:
           description: 'if true, only fetch datasets owned by login user'
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   '/datasets/{id}':
     parameters:
       - schema:
@@ -483,6 +484,8 @@ paths:
       description: get dataset feature by dataset ID
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
     delete:
       summary: Delete dataset by ID
       operationId: delete-datasets-id
@@ -492,6 +495,8 @@ paths:
       description: Delete dataset feature by dataset ID. This endpoint is required to sign in.
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   '/datasets/{id}/star':
     parameters:
       - schema:
@@ -528,6 +533,8 @@ paths:
         This API only can be used when user sign in.
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
     delete:
       summary: Delete star from dataset
       operationId: delete-datasets-id-star
@@ -548,6 +555,8 @@ paths:
         This API only can be used when user sign in.
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   '/datasets/{id}/star/count':
     parameters:
       - schema:
@@ -574,6 +583,8 @@ paths:
       description: get the number of stars for a dataset
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   /datasets/ingesting:
     get:
       summary: Get status of ingesting datasets
@@ -692,6 +703,8 @@ paths:
               - aaa_yyyymmddhhmmss.tif - subfolder
                 - aaa_yyyymmddhhmmss.tif - processed data
                 - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
+      security:
+        - Azure AD authentication: []
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API
@@ -892,7 +905,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
         - schema:
             type: string
           in: query
@@ -908,6 +921,8 @@ paths:
           in: query
           name: accesslevel
           description: 'access Level published to 1: login user 2: UNDP 3: public'
+      security:
+        - Azure AD authentication: []
     post:
       summary: Style register API
       operationId: post-style
@@ -962,6 +977,8 @@ paths:
                 - access_level
       tags:
         - style
+      security:
+        - Azure AD authentication: []
     put:
       summary: Style update API
       operationId: put-style
@@ -1017,6 +1034,8 @@ paths:
                 - access_level
       tags:
         - style
+      security:
+        - Azure AD authentication: []
   '/style/{id}':
     parameters:
       - schema:
@@ -1034,6 +1053,8 @@ paths:
       description: Delete style by ID
       tags:
         - style
+      security:
+        - Azure AD authentication: []
     get:
       summary: Style info API
       operationId: get-style-id
@@ -1077,6 +1098,8 @@ paths:
       description: get style information by style id
       tags:
         - style
+      security:
+        - Azure AD authentication: []
   '/style/{id}.json':
     parameters:
       - schema:
@@ -1094,6 +1117,8 @@ paths:
           description: style.json object
       operationId: get-style-id-.json
       description: get style.json by ID
+      security:
+        - Azure AD authentication: []
   /tags:
     get:
       summary: Tag search API
@@ -1422,6 +1447,14 @@ paths:
           description: type name. only available for source = pgtileserv
       tags:
         - vector tile
+  /swagger/spec.json:
+    get:
+      summary: Get open API JSON definition
+      responses: {}
+      operationId: get-swagger-spec.json
+      description: Get open API JSON definition
+      tags:
+        - swagger
 components:
   schemas:
     Tag:
@@ -1439,4 +1472,8 @@ components:
       required:
         - key
         - value
-  securitySchemes: {}
+  securitySchemes:
+    Azure AD authentication:
+      type: http
+      scheme: oauth
+      description: Access to /auth/signin to sign in to Azure AD with your UNDP account.
