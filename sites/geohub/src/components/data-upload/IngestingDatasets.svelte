@@ -234,7 +234,8 @@
               <td class="fit-content">
                 <DataPreview
                   bind:id={dataset.raw.id}
-                  bind:url={dataset.raw.url} />
+                  bind:url={dataset.raw.url}
+                  disabled={dataset.raw.url.indexOf('.pmtiles') === -1 ? true : false} />
               </td>
               <td class="fit-content">
                 <button
