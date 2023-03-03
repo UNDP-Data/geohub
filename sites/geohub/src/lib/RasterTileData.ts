@@ -132,6 +132,9 @@ export class RasterTileData {
       layout: {
         visibility: 'visible',
       },
+      paint: {
+        'raster-resampling': 'nearest',
+      },
     }
 
     let firstSymbolId = undefined
