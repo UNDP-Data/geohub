@@ -188,18 +188,24 @@
         }
         await invalidateAll()
         dispatch('change')
-        confirmDeleteDialogVisible = false
-        disableScroll()
+        closeDeleteDialog()
       }
     } finally {
       isDeleting = false
     }
   }
 
+  const openDeleteDialog = (dataset: DatasetFeature) => {
+    deletedDataset = dataset
+    confirmDeleteDialogVisible = true
+    deletedDatasetName = ''
+    disableScroll()
+  }
+
   const closeDeleteDialog = () => {
     confirmDeleteDialogVisible = false
     deletedDataset = undefined
-
+    deletedDatasetName = ''
     enableScroll()
   }
 
@@ -367,9 +373,7 @@
                 <button
                   class="button is-link my-1 table-button"
                   on:click={() => {
-                    confirmDeleteDialogVisible = true
-                    deletedDataset = feature
-                    disableScroll()
+                    openDeleteDialog(feature)
                   }}>
                   <span class="icon">
                     <i class="fa-solid fa-trash" />
