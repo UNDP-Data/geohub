@@ -9,6 +9,7 @@
   import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, getValueFromRasterTileUrl, loadMap } from '$lib/helper'
   import { Loader } from '@undp-data/svelte-undp-design'
   import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
+  import RasterPropertyEditor from './RasterPropertyEditor.svelte'
 
   export let layer: Layer
   export let numberOfClasses: number
@@ -79,25 +80,28 @@
   }
 </script>
 
-{#await initializeLegend()}
-  <div class="loader-container p-3">
-    <Loader size="small" />
-  </div>
-{:then rasterLegendInitialized}
-  <LegendTypeSwitcher bind:legendType />
-  {#if legendType === LegendTypes.DEFAULT}
-    <div transition:slide>
-      <RasterDefaultLegend bind:layerConfig={layer} />
+<div class="legend-container">
+  {#await initializeLegend()}
+    <div class="loader-container p-3">
+      <Loader size="small" />
     </div>
-  {:else if legendType === LegendTypes.CLASSIFY}
-    <div transition:slide>
-      <RasterClassifyLegend
-        bind:layer
-        bind:numberOfClasses
-        bind:layerHasUniqueValues />
-    </div>
-  {/if}
-{/await}
+  {:then rasterLegendInitialized}
+    <LegendTypeSwitcher bind:legendType />
+    <div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
+    {#if legendType === LegendTypes.DEFAULT}
+      <div transition:slide>
+        <RasterDefaultLegend bind:layerConfig={layer} />
+      </div>
+    {:else if legendType === LegendTypes.CLASSIFY}
+      <div transition:slide>
+        <RasterClassifyLegend
+          bind:layer
+          bind:numberOfClasses
+          bind:layerHasUniqueValues />
+      </div>
+    {/if}
+  {/await}
+</div>
 
 <style lang="scss">
   .loader-container {
@@ -105,5 +109,15 @@
     align-items: center;
     width: fit-content;
     margin: 0 auto;
+  }
+
+  .legend-container {
+    position: relative;
+
+    .editor-button {
+      position: absolute;
+      top: 0em;
+      right: 0em;
+    }
   }
 </style>
