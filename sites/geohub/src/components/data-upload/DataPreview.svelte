@@ -21,6 +21,7 @@
   export let id: string
   export let url: string
   export let size: 'is-small' | 'is-normal' | 'is-medium' | 'is-large' = 'is-small'
+  export let disabled = false
 
   let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false
 
@@ -42,6 +43,7 @@
 <button
   class="button is-primary table-button {size}"
   type="button"
+  {disabled}
   use:tippy={{ content: tooltipContent }}>
   <span class="icon">
     <i class="fa-solid fa-map" />
