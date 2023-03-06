@@ -39,7 +39,6 @@ jobs:
         with:
           directory: ./sites/geohub
           envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
 
       - name: build packages
         run: |

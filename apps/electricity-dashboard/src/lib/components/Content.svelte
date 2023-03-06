@@ -2,12 +2,16 @@
 	import { onMount } from 'svelte';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { map } from '$lib/stores';
-	import { loadAdmin } from '$lib/utils/adminLayer';
+	import { loadAdmin, setAzureUrl } from '$lib/utils/adminLayer';
 	import Charts from './Charts.svelte';
 	import IntroductionPanel from './IntroductionPanel.svelte';
 	import OverlayControl from './OverlayControl.svelte';
 	import ElectricityControl from './ElectricityControl.svelte';
 	import DownloadData from './DownloadData.svelte';
+	import { page } from '$app/stores';
+
+	const azureUrl = $page.data.azureUrl;
+	setAzureUrl(azureUrl);
 
 	let showIntro = true;
 	let electricitySelected: any;

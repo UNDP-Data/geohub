@@ -4,7 +4,10 @@
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 
 	import { map, year } from '$lib/stores';
-	import { reloadAdmin } from '$lib/utils/adminLayer';
+	import { reloadAdmin, setAzureUrl } from '$lib/utils/adminLayer';
+
+	const azureUrl = $page.data.azureUrl;
+	setAzureUrl(azureUrl);
 
 	export let BEFORE_LAYER_ID: string;
 	export let electricitySelected: {

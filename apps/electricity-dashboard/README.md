@@ -9,6 +9,7 @@ Prior to use this package, please load required datasets from GeoHub API in your
 ```ts
 import { ELECTRICITY_DATASETS } from '$lib';
 import type { PageServerLoad } from './$types';
+import { env } from '$env/dynamic/private';
 
 const API_URL = 'https://dev.undpgeohub.org/api/datasets/';
 
@@ -28,7 +29,8 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
-		datasets
+		datasets,
+		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
 	};
 };
 ```

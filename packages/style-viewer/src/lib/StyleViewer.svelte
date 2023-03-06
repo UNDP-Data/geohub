@@ -17,7 +17,6 @@
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
 
-	export let azureBaseUrl: string;
 	let map: Map;
 	let mapContainer: HTMLDivElement;
 	let isMapLoaded = false;
@@ -99,7 +98,7 @@
 <div class="map" id="map" bind:this={mapContainer} />
 
 {#if isMapLoaded}
-	<CurrentLocation bind:map bind:azureBaseUrl isHover={false} position="top-left" />
+	<CurrentLocation bind:map isHover={false} position="top-left" />
 	<MapExportControl bind:map showPrintableArea={true} showCrosshair={true} position="top-right" />
 	<AttributePopupControl bind:map />
 {/if}

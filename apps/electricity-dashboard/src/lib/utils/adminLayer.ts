@@ -8,13 +8,17 @@ import { admin } from '$lib/stores';
 import { get } from 'svelte/store';
 import { map as mapStore, year as yearStore } from '$lib/stores';
 
-import { PUBLIC_AZURE_URL } from '$env/static/public';
 const ADM_ID = 'admin';
 const ADM0_ID = 'admin0';
 let adminLevel = 0;
 let hoveredStateId: string;
 let choropleth = true;
 let opacity = 0.8;
+let azureUrl = '';
+
+export const setAzureUrl = (url: string) => {
+	azureUrl = url;
+};
 
 export const getChoropleth = () => choropleth;
 
@@ -110,7 +114,7 @@ const loadAdmin0 = () => {
 		type: 'vector',
 		maxzoom: 10,
 		promoteId: 'adm0_id',
-		tiles: [`${PUBLIC_AZURE_URL}/admin/adm0_polygons/{z}/{x}/{y}.pbf`]
+		tiles: [`${azureUrl}/admin/adm0_polygons/{z}/{x}/{y}.pbf`]
 	};
 	const layerLine: LineLayerSpecification = {
 		id: ADM0_ID,
@@ -199,7 +203,7 @@ const loadAdminChoropleth = () => {
 		type: 'vector',
 		maxzoom: 10,
 		promoteId: `adm${lvl}_id`,
-		tiles: [`${PUBLIC_AZURE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+		tiles: [`${azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,
@@ -225,14 +229,14 @@ const loadAdminChoropleth = () => {
 	loadAdmin0();
 };
 
-export const loadAdminHover = () => {
+const loadAdminHover = () => {
 	const map = get(mapStore);
 	const lvl = getAdminLevel();
 	const layerSource: SourceSpecification = {
 		type: 'vector',
 		maxzoom: 10,
 		promoteId: `adm${lvl}_id`,
-		tiles: [`${PUBLIC_AZURE_URL}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+		tiles: [`${azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,

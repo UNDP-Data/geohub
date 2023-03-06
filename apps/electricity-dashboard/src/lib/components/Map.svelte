@@ -12,7 +12,6 @@
 	import StyleSwicher, { type StyleDefinition } from '@undp-data/style-switcher';
 
 	import { map } from '$lib/stores';
-	import { PUBLIC_AZURE_URL } from '$env/static/public';
 
 	export let styles: StyleDefinition[];
 	let mapContainer: HTMLDivElement;
@@ -49,12 +48,7 @@
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
-<CurrentLocation
-	bind:map={$map}
-	azureBaseUrl={PUBLIC_AZURE_URL}
-	isHover={true}
-	position="top-left"
-/>
+<CurrentLocation bind:map={$map} isHover={true} position="top-left" />
 <StyleSwicher bind:map={$map} {styles} position="bottom-left" />
 
 <style>

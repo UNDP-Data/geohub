@@ -7,15 +7,25 @@ This component is a simple maplibre style viewer.
 ```svelte
 <script lang="ts">
 	import { StyleViewer } from '@undp-data/style-viewer';
-	import { PUBLIC_AZURE_URL } from '$env/static/public';
 </script>
 
 <div>
-	<StyleViewer azureUrl={PUBLIC_AZURE_URL} />
+	<StyleViewer />
 </div>
 ```
 
-It requires to set Azure container URL which stores admin data. Please set it in `.env`
+in `+page.server.ts`, set azureUrl from `AZURE_STORAGE_ACCOUNT` variable.
+
+```ts
+import type { PageServerLoad } from './$types';
+import { env } from '$env/dynamic/private';
+
+export const load: PageServerLoad = async () => {
+	return {
+		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
+	};
+};
+```
 
 ## create svelte
 
