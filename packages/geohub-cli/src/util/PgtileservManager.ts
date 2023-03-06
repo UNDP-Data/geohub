@@ -16,6 +16,7 @@ class PgtileservManager {
 		for (let i = 0; i < tableNames.length; i++) {
 			const id = tableNames[i];
 			const layer = indexJson[id];
+			if (layer.name.startsWith('tool_')) continue;
 
 			const detailUrl = layer.detailurl;
 			const resDetail = await fetch(detailUrl);
@@ -31,7 +32,7 @@ class PgtileservManager {
 				id: generateHashKey(detailJson.tileurl),
 				url: detailJson.tileurl,
 				is_raster: false,
-				name: `${layer.schema} ${cleanName(layer.name)}`,
+				name: cleanName(layer.name),
 				description: layer.description,
 				bounds: bounds,
 				createdat: now,
