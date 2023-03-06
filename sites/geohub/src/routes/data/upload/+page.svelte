@@ -5,6 +5,7 @@
   import { filesize } from 'filesize'
   import Dropzone from 'svelte-file-dropzone'
   import { toast } from '@zerodevx/svelte-toast'
+  import isValidFilename from 'valid-filename'
 
   import { AccepedExtensions } from '$lib/constants'
 
@@ -77,11 +78,17 @@
       return
     }
     const file = acceptedFiles[0]
-    const names = file.path.split('.')
+    const names: string[] = file.path.split('.')
     if (names.length < 2) {
       toast.push('Please choose a supported file.')
       return
     }
+
+    if (!isValidFilename(names[0]) || /\+/g.test(names[0])) {
+      toast.push(`Special characters (<, >, ", /, \\, |, ?, *, +) cannot be used in file name.`)
+      return
+    }
+
     const extension: string = names[1].toLowerCase().trim()
     const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension))
     if (formats.length === 0) {
