@@ -2,6 +2,9 @@
 	import type { Map } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import { AdminLayer } from './AdminLayer';
+	import { page } from '$app/stores';
+
+	const azureUrl = $page.data.azureUrl;
 
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-left';
@@ -31,7 +34,7 @@
 
 	const initAdminLayer = () => {
 		if (!adminLayer) {
-			adminLayer = new AdminLayer(map, isHover, layerName);
+			adminLayer = new AdminLayer(map, azureUrl, isHover, layerName);
 		}
 		adminLayer.load();
 		adminLayer.setInteraction();

@@ -2,10 +2,14 @@
 	import { map } from '$lib/stores';
 	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import { loadAdmin, setOpacity, getChoropleth } from '$lib/utils/adminLayer';
+	import { loadAdmin, setOpacity, getChoropleth, setAzureUrl } from '$lib/utils/adminLayer';
 
-	import { PUBLIC_AZURE_URL } from '$env/static/public';
-	const POVERTY_URL = [`${PUBLIC_AZURE_URL}/admin/poverty_points/{z}/{x}/{y}.pbf`];
+	import { page } from '$app/stores';
+
+	const azureUrl = $page.data.azureUrl;
+	setAzureUrl(azureUrl);
+
+	const POVERTY_URL = [`${azureUrl}/admin/poverty_points/{z}/{x}/{y}.pbf`];
 	const OVERLAY_ID = 'overlay';
 	const ADMIN_ID = 'adm';
 	export let POVERTY_ID = 'poverty';

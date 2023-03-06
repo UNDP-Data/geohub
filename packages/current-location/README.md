@@ -10,11 +10,23 @@ pnppm i @undp-data/current-location
 
 ```svelte
 <script lang="ts">
-import CurrentLocation from '$lib';
-import { PUBLIC_AZURE_URL} from '$env/static/public';
+	import CurrentLocation from '$lib';
 </script>
 
-<CurrentLocation bind:map={map} position="bottom-left" azureBaseUrl={PUBLIC_AZURE_URL} isHover={true} />
+<CurrentLocation bind:map position="bottom-left" isHover={true} />
+```
+
+in `+page.server.ts`, set azureUrl from `AZURE_STORAGE_ACCOUNT` variable.
+
+```ts
+import type { PageServerLoad } from './$types';
+import { env } from '$env/dynamic/private';
+
+export const load: PageServerLoad = async () => {
+	return {
+		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
+	};
+};
 ```
 
 ## Creating a project
