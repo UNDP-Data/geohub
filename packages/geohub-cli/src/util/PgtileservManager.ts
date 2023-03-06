@@ -31,7 +31,7 @@ class PgtileservManager {
 				id: generateHashKey(detailJson.tileurl),
 				url: detailJson.tileurl,
 				is_raster: false,
-				name: `${layer.schema} ${cleanName(layer.name)}`,
+				name: cleanName(layer.name),
 				description: layer.description,
 				bounds: bounds,
 				createdat: now,
