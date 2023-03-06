@@ -13,3 +13,5 @@ export * from './StacCollections';
 export * from './StacItemFeature';
 export * from './StacItemFeatureCollection';
 export * from './StacLink';
+export * from './DatasetFeature';
+export * from './DatasetFeatureCollection';

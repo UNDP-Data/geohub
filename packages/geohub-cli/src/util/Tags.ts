@@ -44,11 +44,12 @@ class Tags {
 					text: sql,
 					values: values
 				};
-
+				// console.log(`${query.text}; ${query.values.join(',')}`);
 				const res = await client.query(query);
 				if (res.rowCount === 0) continue;
 				const id = res.rows[0].id;
 				tag.id = id;
+				masterTags.push(tag);
 			} else {
 				tag.id = masterTag.id;
 			}
