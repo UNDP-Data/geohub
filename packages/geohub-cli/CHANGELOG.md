@@ -1,5 +1,12 @@
 # @undp-data/geohub-cli
 
+## 1.1.2
+
+### Patch Changes
+
+- a2a3e01d: fix: removed schema name from name property for pgtileserv layer
+- a2a3e01d: fix: added a command to migrate Unit from COG metadata to postgis (this command is only one-time used)
+
 ## 1.1.1
 
 ### Patch Changes
