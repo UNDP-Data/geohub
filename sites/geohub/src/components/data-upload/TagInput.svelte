@@ -44,6 +44,10 @@
       key: 'theme',
       label: 'Theme',
     },
+    {
+      key: 'unit',
+      label: 'Unit',
+    },
   ]
 
   let nodeRef: HTMLDivElement
