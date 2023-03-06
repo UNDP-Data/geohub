@@ -5,6 +5,7 @@
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import { hideAll } from 'tippy.js'
+  import { tagInputValues } from '$lib/constants'
 
   const dispatch = createEventDispatcher()
 
@@ -18,37 +19,6 @@
     },
   })
   let tooltipContent: HTMLElement
-
-  let keys = [
-    {
-      key: 'extent',
-      label: 'Extent',
-    },
-    {
-      key: 'granularity',
-      label: 'Admin Level',
-    },
-    {
-      key: 'resolution',
-      label: 'Resolution',
-    },
-    {
-      key: 'year_value',
-      label: 'Year',
-    },
-    {
-      key: 'sdg_target',
-      label: 'SDG Topic',
-    },
-    {
-      key: 'theme',
-      label: 'Theme',
-    },
-    {
-      key: 'unit',
-      label: 'Unit',
-    },
-  ]
 
   let nodeRef: HTMLDivElement
   export let tag: Tag = {
@@ -114,7 +84,7 @@
   <div class="select {tag.key ? 'is-success' : 'is-danger'} pr-1 is-fullwidth tag-key">
     <select bind:value={tag.key}>
       <option value="">Select a key</option>
-      {#each keys as key}
+      {#each tagInputValues as key}
         <option value={key.key}>{key.label}</option>
       {/each}
     </select>
@@ -141,7 +111,7 @@
         class="panel tooltip"
         bind:this={tooltipContent}>
         <p class="panel-heading">
-          {keys.find((t) => t.key === tag.key)?.label ?? tag.key}
+          {tagInputValues.find((t) => t.key === tag.key)?.label ?? tag.key}
         </p>
         <div class="panel-block">
           <p class="control has-icons-left">
