@@ -197,6 +197,9 @@ export class MosaicJsonData {
       layout: {
         visibility: 'visible',
       },
+      paint: {
+        'raster-resampling': 'nearest',
+      },
     }
 
     let firstSymbolId = undefined

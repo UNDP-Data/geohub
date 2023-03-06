@@ -54,7 +54,6 @@
           bind:map={$map}
           bind:layerId />
       </div>
-      <p class="help is-link is-size-6">Increase or reduce the maximum brightness of the image</p>
     </div>
 
     <div class="field">
@@ -64,7 +63,6 @@
           bind:map={$map}
           bind:layerId />
       </div>
-      <p class="help is-link is-size-6">Increase or reduce the minimum brightness of the image</p>
     </div>
 
     <div class="field">
@@ -74,7 +72,6 @@
           bind:map={$map}
           bind:layerId />
       </div>
-      <p class="help is-link is-size-6">Increase or reduce the contrast of the image</p>
     </div>
 
     <div class="field">
@@ -84,7 +81,6 @@
           bind:map={$map}
           bind:layerId />
       </div>
-      <p class="help is-link is-size-6">Rotates hues around the color wheel</p>
     </div>
 
     <div class="field">
@@ -94,7 +90,6 @@
           bind:map={$map}
           bind:layerId />
       </div>
-      <p class="help is-link is-size-6">The resampling/interpolation method to use for overscaling</p>
     </div>
 
     <div class="field">
@@ -104,7 +99,6 @@
           bind:map={$map}
           bind:layerId />
       </div>
-      <p class="help is-link is-size-6">Increase or reduce the saturation of the image</p>
     </div>
   </div>
 </div>
