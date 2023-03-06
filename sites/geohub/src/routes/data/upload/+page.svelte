@@ -84,8 +84,8 @@
       return
     }
 
-    if (!isValidFilename(names[0]) || /\+/g.test(names[0])) {
-      toast.push(`Special characters (<, >, ", /, \\, |, ?, *, +) cannot be used in file name.`)
+    if (!isValidFilename(names[0]) || /[+\s&%]/g.test(names[0])) {
+      toast.push(`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab) cannot be used in file name.`)
       return
     }
 
