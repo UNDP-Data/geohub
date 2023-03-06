@@ -84,8 +84,14 @@
       return
     }
 
-    if (!isValidFilename(names[0]) || /[+\s&%]/g.test(names[0])) {
-      toast.push(`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab) cannot be used in file name.`)
+    if (
+      !isValidFilename(names[0]) ||
+      /[+\s&%]/g.test(names[0]) ||
+      /[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
+    ) {
+      toast.push(
+        `Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`,
+      )
       return
     }
 
