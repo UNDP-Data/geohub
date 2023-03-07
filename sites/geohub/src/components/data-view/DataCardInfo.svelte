@@ -23,6 +23,8 @@
   const isStac = is_raster && stacType ? true : false
   const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf')
 
+  const unit = tags?.find((t) => t.key === 'unit')?.value
+
   let attribution = createAttributionFromTags(tags)
   $: if (metadata) {
     if (!is_raster) {
@@ -95,9 +97,6 @@
             {#if metadata['band_metadata'][0][1]?.RepresentationType}
               <p><b>Representation Type: </b> {metadata['band_metadata'][0][1].RepresentationType}</p>
             {/if}
-            {#if metadata['band_metadata'][0][1]?.Unit}
-              <p><b>Units: </b> {metadata['band_metadata'][0][1].Unit}</p>
-            {/if}
             <!-- {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
               <p><b>Minimum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MINIMUM}</p>
             {/if}
@@ -117,6 +116,9 @@
               <p><b>Valid percent: </b> {metadata['band_metadata'][0][1].STATISTICS_VALID_PERCENT}</p>
             {/if} -->
           {/if}
+        {/if}
+        {#if unit}
+          <p><b>Units: </b> {unit}</p>
         {/if}
         <p><b>Source: </b> {@html attribution}</p>
         <p>
