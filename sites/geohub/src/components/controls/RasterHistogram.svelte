@@ -1,11 +1,13 @@
 <script lang="ts">
   import { VegaLite } from 'svelte-vega'
   import { onMount } from 'svelte'
-  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import { fetchUrl, getLayerStyle } from '$lib/helper'
   import { map } from '$stores'
   import type { RasterTileSource } from 'maplibre-gl'
   import type { Layer, RasterTileMetadata } from '$lib/types'
+  import { page } from '$app/stores'
+
+  const titilerUrl = $page.data.titilerUrl
 
   export let layer: Layer
 
@@ -19,7 +21,7 @@
   onMount(async () => {
     const rasterInfo = layer.info as RasterTileMetadata
     if (!rasterInfo?.isMosaicJson) {
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}`
+      const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get('url')}`
       let layerStats
       layerStats = await fetchUrl(statsURL)
       info.stats = layerStats

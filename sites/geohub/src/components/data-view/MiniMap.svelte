@@ -15,6 +15,8 @@
   import { MapStyles } from '$lib/config/AppConfig'
   import { page } from '$app/stores'
 
+  const titilerUrl = $page.data.titilerUrl
+
   export let feature: DatasetFeature
   export let width = '100%'
   export let height = '100%'
@@ -64,7 +66,7 @@
       previewUrl = await addStacPreview(url)
     } else if (is_raster === true) {
       const rasterInfo = metadata as RasterTileMetadata
-      rasterTile = new RasterTileData(feature, rasterInfo)
+      rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo)
       metadata = await rasterTile.getMetadata()
     } else {
       const vectorInfo = metadata as VectorTileMetadata

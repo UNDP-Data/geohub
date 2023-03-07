@@ -19,6 +19,8 @@
   import { loadMap } from '$lib/helper'
   import { page } from '$app/stores'
 
+  const titilerUrl = $page.data.titilerUrl
+
   export let feature: DatasetFeature
   export let isExpanded: boolean
   export let isStarOnly = false
@@ -80,7 +82,7 @@
         } else {
           // COG
           const rasterInfo = metadata as RasterTileMetadata
-          const rasterTile = new RasterTileData(feature, rasterInfo)
+          const rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo)
           const data = await rasterTile.add($map, defaultColormap)
           $layerList = [
             {

@@ -7,9 +7,11 @@
   import { layerList, map } from '$stores'
   import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, getValueFromRasterTileUrl, loadMap } from '$lib/helper'
   import { Loader } from '@undp-data/svelte-undp-design'
-  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import RasterPropertyEditor from './RasterPropertyEditor.svelte'
   import { LegendTypes } from '$lib/config/AppConfig'
+  import { page } from '$app/stores'
+
+  const titilerUrl = $page.data.titilerUrl
 
   export let layer: Layer
   export let numberOfClasses: number
@@ -40,12 +42,10 @@
     }
     if (!info.isMosaicJson) {
       const layerURL = new URL(getLayerSourceUrl($map, layer.id))
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=50`
+      const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get('url')}&histogram_bins=50`
       layerStats = await fetchUrl(statsURL)
       if (layerHasUniqueValues) {
-        const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${layerURL.searchParams.get(
-          'url',
-        )}&categorical=true`
+        const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get('url')}&categorical=true`
         layerStats = await fetchUrl(statsURL)
       }
       if (!('stats' in info)) {

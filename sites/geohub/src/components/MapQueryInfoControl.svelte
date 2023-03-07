@@ -6,8 +6,10 @@
   import { Accordion, Loader, Checkbox } from '@undp-data/svelte-undp-design'
   import { clean, downloadFile, getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper'
   import type { Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
-  import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import Notification from './controls/Notification.svelte'
+  import { page } from '$app/stores'
+
+  const titilerUrl = $page.data.titilerUrl
 
   interface PointFeature {
     type: 'Feature'
@@ -218,11 +220,9 @@
   const queryCOG = async (lng: number, lat: number, layer: Layer) => {
     const rasterInfo = layer.info as RasterTileMetadata
     const bandIndex = getActiveBandIndex(layer.info)
-    const baseUrl = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(
-      map,
-      layer.id,
-      'url',
-    )}&bidx=${bandIndex + 1}`
+    const baseUrl = `${titilerUrl}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(map, layer.id, 'url')}&bidx=${
+      bandIndex + 1
+    }`
     const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string
     const queryURL = !expression ? baseUrl : `${baseUrl}&expression=${encodeURIComponent(expression)}`
 
@@ -264,10 +264,11 @@
   const queryMosaicJson = async (lng: number, lat: number, layer: Layer) => {
     const rasterInfo = layer.info as RasterTileMetadata
 
-    const baseUrl = `${PUBLIC_TITILER_ENDPOINT.replace(
-      'cog',
-      'mosaicjson',
-    )}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(map, layer.id, 'url')}`
+    const baseUrl = `${titilerUrl.replace('cog', 'mosaicjson')}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(
+      map,
+      layer.id,
+      'url',
+    )}`
     const res = await fetch(baseUrl)
     const data = await res.json()
     if (!(data.values.length > 0 && data.values[0].length > 0 && data.values[0][1].length > 0)) {

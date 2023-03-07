@@ -1,12 +1,9 @@
 import type { StacCollection, StacItemFeatureCollection } from '$lib/types'
 import type { RequestHandler } from './$types'
-import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
-
-const TITILER_MOSAIC_ENDPOINT = PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')
-
-import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 import { env } from '$env/dynamic/private'
+import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 const sharedKeyCredential = new StorageSharedKeyCredential(env.AZURE_STORAGE_ACCOUNT, env.AZURE_STORAGE_ACCESS_KEY)
+const TITILER_MOSAIC_ENDPOINT = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson')
 
 import fs from 'fs'
 import path from 'path'

@@ -33,13 +33,6 @@ jobs:
       - name: install dependencies
         run: pnpm install --frozen-lockfile
 
-      # setup environmental variables
-      - name: Create environment file
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./sites/geohub
-          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-
       - name: build packages
         run: |
           pnpm --filter="./packages/**" build
