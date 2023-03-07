@@ -1,11 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import {
-    ClassificationMethodNames,
-    ClassificationMethodTypes,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    COLOR_CLASS_COUNT_MINIMUM,
-  } from '$lib/constants'
+  import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/constants'
   import { cloneDeep } from 'lodash-es'
   import {
     generateColorMap,
@@ -25,6 +20,7 @@
   import ColorMapPicker from './ColorMapPicker.svelte'
   import chroma from 'chroma-js'
   import { updateLayerList } from '$lib/helper/updateLayerList'
+  import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig'
   export let layer: Layer
   export let layerHasUniqueValues: boolean
   export let numberOfClasses: number
@@ -34,8 +30,8 @@
   const bandIndex = getActiveBandIndex(info)
   const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
 
-  let colorClassCountMax = COLOR_CLASS_COUNT_MAXIMUM
-  let colorClassCountMin = COLOR_CLASS_COUNT_MINIMUM
+  let colorClassCountMax = NumberOfClassesMaximum
+  let colorClassCountMin = NumberOfClassesMinimum
   let colorMapName = layer.colorMapName
   let classificationMethod: ClassificationMethodTypes = layer.classificationMethod
   let colorMapRows: Array<ColorMapRow> = []

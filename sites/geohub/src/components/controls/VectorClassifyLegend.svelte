@@ -9,9 +9,6 @@
   import {
     ClassificationMethodNames,
     ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    COLOR_CLASS_COUNT_MINIMUM,
     NO_RANDOM_SAMPLING_POINTS,
     UNIQUE_VALUE_THRESHOLD,
     VectorApplyToTypes,
@@ -44,6 +41,8 @@
   import IconColor from './vector-styles/IconColor.svelte'
   import IconSize from '$components/controls/vector-styles/IconSize.svelte'
   import VectorLine from './VectorLine.svelte'
+  import { page } from '$app/stores'
+  import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -223,7 +222,7 @@
         end: hasUniqueValues ? value : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
       })
     })
-    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+    numberOfClasses = colorMapRows.length === 0 ? $page.data.config.NumberOfClasses : colorMapRows.length
   }
 
   const handleColormapNameChanged = () => {
@@ -603,8 +602,8 @@
           <div class="control">
             <NumberInput
               bind:value={numberOfClasses}
-              minValue={COLOR_CLASS_COUNT_MINIMUM}
-              maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+              minValue={NumberOfClassesMinimum}
+              maxValue={NumberOfClassesMaximum}
               on:change={handleIncrementDecrementClasses} />
           </div>
         </div>

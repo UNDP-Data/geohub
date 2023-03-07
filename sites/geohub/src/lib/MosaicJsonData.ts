@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { COLOR_CLASS_COUNT_MAXIMUM, STAC_MINIMUM_ZOOM } from './constants'
+import { STAC_MINIMUM_ZOOM, UNIQUE_VALUE_THRESHOLD } from './constants'
 import { createAttributionFromTags, getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
@@ -122,7 +122,7 @@ export class MosaicJsonData {
     }
     const mosaicjson = await res.json()
     const numberOfClasses = mosaicjson.classmap ? Object.keys(mosaicjson.classmap).length : 0
-    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= COLOR_CLASS_COUNT_MAXIMUM
+    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= UNIQUE_VALUE_THRESHOLD
     res = await fetch(mosaicjson.tilejson)
     if (!res.ok) {
       const error = await res.json()
