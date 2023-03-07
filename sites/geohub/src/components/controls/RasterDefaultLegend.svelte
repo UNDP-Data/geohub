@@ -38,7 +38,9 @@
     layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
-  const unit = bandMetaStats.Unit && bandMetaStats.Unit !== '-' ? bandMetaStats.Unit : ''
+
+  const tags = layerConfig.dataset.properties.tags
+  const unit = tags?.find((t) => t.key === 'unit')?.value
 
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
