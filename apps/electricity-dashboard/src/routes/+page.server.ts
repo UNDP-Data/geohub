@@ -21,6 +21,7 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		datasets,
-		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
+		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+		titilerUrl: env.TITILER_ENDPOINT
 	};
 };

@@ -6,6 +6,9 @@
   import { MosaicJsonData } from '$lib/MosaicJsonData'
   import { loadMap } from '$lib/helper'
   import { toast } from '@zerodevx/svelte-toast'
+  import { page } from '$app/stores'
+
+  const titilerUrl = $page.data.titilerUrl
 
   export let asset: AssetOptions
   export let feature: DatasetFeature
@@ -16,7 +19,7 @@
     try {
       $indicatorProgress = true
       layerLoading = true
-      const mosaicjson = new MosaicJsonData(feature, asset.url, asset.assetName)
+      const mosaicjson = new MosaicJsonData(titilerUrl, feature, asset.url, asset.assetName)
       const data = await mosaicjson.add($map)
 
       $layerList = [

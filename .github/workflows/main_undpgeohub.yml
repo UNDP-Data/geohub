@@ -19,6 +19,7 @@ env:
   DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
   MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
   PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
+  TITILER_ENDPOINT: ${{ secrets.TITILER_ENDPOINT }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
   AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
@@ -75,13 +76,6 @@ jobs:
         run: |
           pnpm install esbuild -g
           pnpm install --frozen-lockfile
-
-      # setup environmental variables
-      - name: Create environment file
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./sites/geohub
-          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
 
       - name: Run lint
         run: |

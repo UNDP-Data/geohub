@@ -3,6 +3,21 @@ FROM node:19 as build
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=dialog
 
+ARG MARTIN_API_ENDPOINT
+ARG PGTILESERV_API_ENDPOINT
+ARG TITILER_ENDPOINT
+ARG AZURE_STORAGE_ACCOUNT
+ARG AZURE_STORAGE_ACCESS_KEY
+ARG AZURE_STORAGE_ACCOUNT_UPLOAD
+ARG AZURE_STORAGE_ACCESS_KEY_UPLOAD
+ARG AZURE_SERVICE_BUS_CONNECTIONSTRING
+ARG AZURE_SERVICE_BUS_QUEUE_NAME
+ARG DATABASE_CONNECTION
+ARG AUTH_SECRET
+ARG AZURE_AD_TENANT_ID
+ARG AZURE_AD_CLIENT_ID
+ARG AZURE_AD_CLIENT_SECRET
+
 RUN npm install pnpm -g
 
 # Create app directory
@@ -37,14 +52,11 @@ RUN cp package.json build/.
 RUN mv node_modules build/.
 
 # production image
-FROM node:19-slim
+FROM keymetrics/pm2:18-slim
 
 WORKDIR /geohub
 # copy build folder from build image
 COPY --from=build /app/sites/geohub/build /geohub
-
-# install pm2
-RUN npm i -g pm2
 
 EXPOSE 3000
 
