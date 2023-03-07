@@ -48,6 +48,7 @@
 
   <div class="controls-container">
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label is-normal"> Brightness max </label>
       <div class="control">
         <RasterBrightnessMax
@@ -57,6 +58,7 @@
     </div>
 
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label is-normal"> Brightness min </label>
       <div class="control">
         <RasterBrightnessMax
@@ -66,6 +68,7 @@
     </div>
 
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label is-normal"> Contrast </label>
       <div class="control">
         <RasterContrast
@@ -75,6 +78,7 @@
     </div>
 
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label is-normal"> Hue rotate </label>
       <div class="control">
         <RasterHueRotate
@@ -84,6 +88,7 @@
     </div>
 
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label is-normal"> Resampling </label>
       <div class="control">
         <RasterResampling
@@ -93,6 +98,7 @@
     </div>
 
     <div class="field">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label is-normal"> Saturation </label>
       <div class="control">
         <RasterSaturation

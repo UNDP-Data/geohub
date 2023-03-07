@@ -1,4 +1,4 @@
-import { DEFAULT_TIMEOUT_MS } from '../constants'
+import { FetchTimeoutMsec } from '$lib/config/AppConfig'
 import { fetchWithTimeout } from './fetchWithTimeout'
 
 /**
@@ -8,7 +8,7 @@ import { fetchWithTimeout } from './fetchWithTimeout'
  */
 export async function fetchUrl(url: string) {
   return new Promise<Response>((resolve, reject) => {
-    fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
+    fetchWithTimeout(url, { timeout: FetchTimeoutMsec })
       .then((res) => res.json())
       .then((json) => {
         resolve(json)

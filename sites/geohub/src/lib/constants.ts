@@ -1,8 +1,3 @@
-export const DEFAULT_TIMEOUT_MS = 60000
-export const NO_RANDOM_SAMPLING_POINTS = 1000
-export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
-export const STAC_MINIMUM_ZOOM = 5
-
 export enum TabNames {
   ANALYZE = 'Analyze',
   DATA = 'Data',

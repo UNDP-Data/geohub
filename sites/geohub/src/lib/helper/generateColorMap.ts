@@ -1,8 +1,9 @@
 import type { ColorMapRow } from '../types'
-import { ClassificationMethodTypes, NO_RANDOM_SAMPLING_POINTS } from '../constants'
+import { ClassificationMethodTypes } from '../constants'
 import chroma from 'chroma-js'
 import { getSampleFromInterval } from './getSampleFromInterval'
 import { getIntervalList } from './getIntervalList'
+import { NumberOfRandomSamplingPoints } from '$lib/config/AppConfig'
 
 export const generateColorMap = (
   layerMin: number,
@@ -16,7 +17,7 @@ export const generateColorMap = (
 ) => {
   const colorMap = []
   if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-    const randomSample = getSampleFromInterval(layerMin, percentile98, NO_RANDOM_SAMPLING_POINTS)
+    const randomSample = getSampleFromInterval(layerMin, percentile98, NumberOfRandomSamplingPoints)
     const intervalList = getIntervalList(classificationMethod, layerMin, percentile98, randomSample, numberOfClasses)
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 2; i++) {
@@ -46,7 +47,7 @@ export const generateColorMap = (
     replaceIndex['end'] = Math.floor(percentile98)
     colorMap.splice(colorMap.length - 2, replaceIndex)
   } else {
-    const randomSample = getSampleFromInterval(layerMin, layerMax, NO_RANDOM_SAMPLING_POINTS)
+    const randomSample = getSampleFromInterval(layerMin, layerMax, NumberOfRandomSamplingPoints)
     const intervalList = getIntervalList(classificationMethod, layerMin, layerMax, randomSample, numberOfClasses)
     const scaleColorList = chroma.scale(colorMapName).classes(intervalList)
     for (let i = 0; i <= numberOfClasses - 1; i++) {

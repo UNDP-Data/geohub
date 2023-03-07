@@ -6,12 +6,7 @@
   import { hexToCSSFilter } from 'hex-to-css-filter'
   import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import {
-    ClassificationMethodNames,
-    ClassificationMethodTypes,
-    NO_RANDOM_SAMPLING_POINTS,
-    VectorApplyToTypes,
-  } from '$lib/constants'
+  import { ClassificationMethodNames, ClassificationMethodTypes, VectorApplyToTypes } from '$lib/constants'
   import {
     getIntervalList,
     getLayerProperties,
@@ -41,7 +36,12 @@
   import IconSize from '$components/controls/vector-styles/IconSize.svelte'
   import VectorLine from './VectorLine.svelte'
   import { page } from '$app/stores'
-  import { NumberOfClassesMaximum, NumberOfClassesMinimum, UniqueValueThreshold } from '$lib/config/AppConfig'
+  import {
+    NumberOfClassesMaximum,
+    NumberOfClassesMinimum,
+    NumberOfRandomSamplingPoints,
+    UniqueValueThreshold,
+  } from '$lib/config/AppConfig'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -285,7 +285,7 @@
             layerMin = stat.min
 
             if (!randomSample[stat.attribute]) {
-              randomSample[stat.attribute] = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+              randomSample[stat.attribute] = getSampleFromInterval(stat.min, stat.max, NumberOfRandomSamplingPoints)
             }
             const sample = randomSample[stat.attribute]
 
