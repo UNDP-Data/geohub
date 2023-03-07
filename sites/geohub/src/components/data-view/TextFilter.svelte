@@ -2,11 +2,11 @@
   import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
-  import { SortingColumns } from '$lib/constants'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design'
+  import { DatasetSortingColumns } from '$lib/AppConfig'
 
   const dispatch = createEventDispatcher()
 
@@ -161,7 +161,7 @@
     <p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
     <Radios
-      radios={SortingColumns}
+      radios={DatasetSortingColumns}
       bind:value={sortingColumn}
       groupName="sortby"
       isVertical={true} />

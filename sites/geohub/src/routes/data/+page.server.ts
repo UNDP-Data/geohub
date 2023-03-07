@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types'
 import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
-import { DEFAULT_LIMIT, SortingColumns } from '$lib/constants'
+import { DEFAULT_LIMIT } from '$lib/constants'
 import { redirect } from '@sveltejs/kit'
+import { DatasetSortingColumns } from '$lib/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url } = event
@@ -21,7 +22,7 @@ export const load: PageServerLoad = async (event) => {
   }
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    apiUrl.searchParams.set('sortby', SortingColumns.find((col) => col.value === 'updatedat,desc').value)
+    apiUrl.searchParams.set('sortby', DatasetSortingColumns.find((col) => col.value === 'updatedat,desc').value)
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {

@@ -4,7 +4,7 @@ import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types'
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
 import { generateAzureBlobSasToken, isSuperuser, pageNumber } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
-import { Permission } from '$lib/constants'
+import { Permission } from '$lib/AppConfig'
 
 /**
  * Datasets search API

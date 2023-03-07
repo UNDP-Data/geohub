@@ -2,12 +2,11 @@
   import { page } from '$app/stores'
   import { Header, Footer, type HeaderLink } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { footerItems } from '$lib/constants'
-  import { createHeaderLinks } from '$lib/helper'
+  import { FooterItems, HeaderItems } from '$lib/AppConfig'
 
   let headerHeight: number
 
-  let links: HeaderLink[] = createHeaderLinks(['home', 'maps', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'dashboard', 'userguide'])
 
   let title = 'GeoHub | Data'
 </script>
@@ -52,7 +51,7 @@
 
 <Footer
   logoUrl="/assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
+  footerItems={FooterItems} />
 
 <style lang="scss">
   @import '../../styles/geohubstyle.scss';

@@ -5,7 +5,7 @@
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import { hideAll } from 'tippy.js'
-  import { tagInputValues } from '$lib/constants'
+  import { TagInputValues } from '$lib/AppConfig'
 
   const dispatch = createEventDispatcher()
 
@@ -84,7 +84,7 @@
   <div class="select {tag.key ? 'is-success' : 'is-danger'} pr-1 is-fullwidth tag-key">
     <select bind:value={tag.key}>
       <option value="">Select a key</option>
-      {#each tagInputValues as key}
+      {#each TagInputValues as key}
         <option value={key.key}>{key.label}</option>
       {/each}
     </select>
@@ -111,7 +111,7 @@
         class="panel tooltip"
         bind:this={tooltipContent}>
         <p class="panel-heading">
-          {tagInputValues.find((t) => t.key === tag.key)?.label ?? tag.key}
+          {TagInputValues.find((t) => t.key === tag.key)?.label ?? tag.key}
         </p>
         <div class="panel-block">
           <p class="control has-icons-left">

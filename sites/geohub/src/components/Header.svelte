@@ -4,7 +4,7 @@
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
-  import { createHeaderLinks } from '$lib/helper'
+  import { HeaderItems } from '$lib/AppConfig'
 
   export let drawerOpen = true
   export let height: number = undefined
@@ -45,7 +45,7 @@
           initLinks()
         },
       },
-      ...createHeaderLinks(['maps', 'dashboard', 'userguide']),
+      ...HeaderItems(['maps', 'dashboard', 'userguide']),
     ]
 
     if ($page.data.session && $layerList.length > 0) {

@@ -1,7 +1,6 @@
 import type { RequestHandler } from './$types'
 import { getStyleById } from '$lib/server/helpers'
-import { AccessLevel } from '$lib/constants'
-import DatabaseManager from '$lib/server/DatabaseManager'
+import { AccessLevel } from '$lib/AppConfig'
 
 /**
  * Get style.json which is stored in PostgreSQL database
@@ -10,8 +9,6 @@ import DatabaseManager from '$lib/server/DatabaseManager'
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
 
-  const dbm = new DatabaseManager()
-  const client = await dbm.start()
   try {
     const styleId = Number(params.id)
     if (!styleId) {
@@ -53,7 +50,5 @@ export const GET: RequestHandler = async ({ params, locals }) => {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
     })
-  } finally {
-    dbm.end()
   }
 }

@@ -1,4 +1,4 @@
-import { DatasetSearchQueryParams, Permission } from '$lib/constants'
+import { DatasetSearchQueryParams, Permission } from '$lib/AppConfig'
 
 export const createDatasetSearchWhereExpression = async (
   url: URL,

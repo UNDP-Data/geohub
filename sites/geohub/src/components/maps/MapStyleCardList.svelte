@@ -6,8 +6,8 @@
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
-  import { AccessLevel, LimitOptions, MapOrderByOptions } from '$lib/constants'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
+  import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/AppConfig'
 
   let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
 
@@ -48,14 +48,14 @@
   const getSortByFromUrl = (url: URL) => {
     const sortByValue = url.searchParams.get('sortby')
     if (sortByValue) {
-      const option = MapOrderByOptions.find((opt) => opt.value === sortByValue)
+      const option = MapSortingColumns.find((opt) => opt.value === sortByValue)
       if (option) {
         return option.value
       }
     }
   }
 
-  let sortby = getSortByFromUrl($page.url) ?? MapOrderByOptions[0].value
+  let sortby = getSortByFromUrl($page.url) ?? MapSortingColumns[0].value
 
   const handleLimitChanged = async () => {
     const apiUrl = new URL($page.url.toString())
@@ -197,7 +197,7 @@
         <select
           bind:value={sortby}
           on:change={handleSortbyChanged}>
-          {#each MapOrderByOptions as option}
+          {#each MapSortingColumns as option}
             <option value={option.value}>{option.label}</option>
           {/each}
         </select>

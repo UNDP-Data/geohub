@@ -2,8 +2,8 @@ import type { RequestHandler } from './$types'
 import { generateHashKey, getBlobServiceClient, getDatasetById, isSuperuser } from '$lib/server/helpers'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import DatasetManager from '$lib/server/DatasetManager'
-import { Permission } from '$lib/constants'
 import { env } from '$env/dynamic/private'
+import { Permission } from '$lib/AppConfig'
 
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()

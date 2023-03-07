@@ -1,4 +1,4 @@
-import { MAP_ATTRIBUTION } from '$lib/constants'
+import { attribution } from '$lib/AppConfig'
 import type { PgtileservDetailJson } from '$lib/types/PgtileservDetailJson'
 import type { PgtileservIndexJson } from '$lib/types/PgtileservIndexJson'
 import type { TileJson } from '$lib/types/TileJson'
@@ -30,7 +30,7 @@ const getTileJson = async (url: string) => {
     name: `${json.id}`,
     description: json.description,
     version: '1.0.0',
-    attribution: MAP_ATTRIBUTION,
+    attribution: attribution,
     scheme: 'xyz',
     tiles: [json.tileurl],
     center: [0, 0, 0],

@@ -9,7 +9,7 @@
 
   import type { Layer } from '$lib/types'
   import { map, layerList } from '$stores'
-  import { AccessLevel } from '$lib/constants'
+  import { AccessLevel } from '$lib/AppConfig'
   import AccessLevelSwitcher from './AccessLevelSwitcher.svelte'
   import Notification from './controls/Notification.svelte'
 

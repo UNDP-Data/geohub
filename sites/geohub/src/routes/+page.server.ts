@@ -1,4 +1,5 @@
-import { DataCategories, SEARCH_PAGINATION_LIMIT, SortingColumns, tagSearchKeys } from '$lib/constants'
+import { DataCategories, DatasetSortingColumns, TagSearchKeys } from '$lib/AppConfig'
+import { SEARCH_PAGINATION_LIMIT } from '$lib/constants'
 import type { DatasetFeatureCollection, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
@@ -27,7 +28,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const tags: Tag[] = []
-  tagSearchKeys.forEach((tag) => {
+  TagSearchKeys.forEach((tag) => {
     const values = url.searchParams.getAll(tag.key)
     values.forEach((v) => {
       tags.push({ key: tag.key, value: v })
@@ -46,7 +47,7 @@ export const load: PageServerLoad = async (event) => {
   }
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    params.sortby = SortingColumns[0].value
+    params.sortby = DatasetSortingColumns[0].value
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {

@@ -1,7 +1,6 @@
 <script lang="ts">
   import maplibregl, { Map, NavigationControl } from 'maplibre-gl'
   import * as pmtiles from 'pmtiles'
-  import { styles } from '$lib/constants'
   import type {
     RasterTileMetadata,
     StacCollection,
@@ -13,6 +12,7 @@
   import { RasterTileData } from '$lib/RasterTileData'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Loader } from '@undp-data/svelte-undp-design'
+  import { MapStyles } from '$lib/AppConfig'
 
   export let feature: DatasetFeature
   export let width = '100%'
@@ -82,7 +82,7 @@
     isLoading = true
     map = new Map({
       container: mapContainer,
-      style: styles[0].uri,
+      style: MapStyles[0].uri,
       attributionControl: false,
       // interactive: false,
     })
