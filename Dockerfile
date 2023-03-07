@@ -52,14 +52,11 @@ RUN cp package.json build/.
 RUN mv node_modules build/.
 
 # production image
-FROM node:19-slim
+FROM keymetrics/pm2:18-slim
 
 WORKDIR /geohub
 # copy build folder from build image
 COPY --from=build /app/sites/geohub/build /geohub
-
-# install pm2
-RUN npm i -g pm2
 
 EXPOSE 3000
 
