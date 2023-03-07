@@ -16,12 +16,12 @@
 		title: string;
 	};
 
-	import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public';
 	import type { ElectricityDatasets } from '$lib/interfaces';
 	import { getBase64EncodedUrl } from '$lib/utils/getBase64EncodedUrl';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
+	const titilerUrl = $page.data.titilerUrl;
 	const datasets: ElectricityDatasets = $page.data.datasets;
 
 	let minValue = 2012;
@@ -85,7 +85,7 @@
 
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
-		const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${url}`);
+		const res = await fetch(`${titilerUrl}/info?url=${url}`);
 		const layerInfo = await res.json();
 		if (!(layerInfo && layerInfo['band_metadata'])) {
 			return;
@@ -111,7 +111,7 @@
 
 		const layerSource: SourceSpecification = {
 			type: 'raster',
-			tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
+			tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
 			tileSize: 256,
 			bounds: layerInfo['bounds'],
 			attribution:

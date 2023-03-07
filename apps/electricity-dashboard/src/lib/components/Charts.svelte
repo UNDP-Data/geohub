@@ -5,10 +5,10 @@
 	import { format } from 'd3-format';
 	import { map, admin } from '$lib/stores';
 
-	import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public';
 	import type { ElectricityDatasets } from '$lib/interfaces';
 	import { getBase64EncodedUrl } from '$lib/utils/getBase64EncodedUrl';
 
+	const titilerUrl = $page.data.titilerUrl;
 	const datasets: ElectricityDatasets = $page.data.datasets;
 
 	const HREA_ID = 'HREA';
@@ -79,7 +79,7 @@
 		for (const [name, getDataURL, noData, ignoreValue, total] of options) {
 			for (let x = 2012; x <= 2020; x++) {
 				if (!ignoreValue.includes(x)) {
-					const url = `${PUBLIC_TITILER_ENDPOINT}/point/${lng},${lat}?url=${getDataURL(x)}`;
+					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}`;
 					fetch(url, { signal: controller.signal })
 						.then((r) => r.json())
 						.then((response) => {
