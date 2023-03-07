@@ -3,12 +3,14 @@ import { getMapStats } from '$lib/server/helpers'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import { AccessLevel } from '$lib/config/AppConfig'
+import type { UserConfig } from '$lib/config/DefaultUserConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url, parent } = event
   const session = await locals.getSession()
 
-  const { config } = await parent()
+  const parentData = await parent()
+  const config: UserConfig = parentData.config
 
   const apiUrl = new URL(url)
 

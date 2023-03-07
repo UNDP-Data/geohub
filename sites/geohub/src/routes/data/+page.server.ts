@@ -1,13 +1,15 @@
 import type { PageServerLoad } from './$types'
 import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
+import type { UserConfig } from '$lib/config/DefaultUserConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url, parent } = event
   const session = await locals.getSession()
   if (!session) return {}
 
-  const { config } = await parent()
+  const parentData = await parent()
+  const config: UserConfig = parentData.config
 
   const apiUrl = new URL(url)
 

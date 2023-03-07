@@ -1,4 +1,5 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
+import type { UserConfig } from '$lib/config/DefaultUserConfig'
 import type { DatasetFeatureCollection, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
@@ -9,7 +10,8 @@ export const load: PageServerLoad = async (event) => {
   const session = await locals.getSession()
   const user = session?.user
 
-  const { config } = await parent()
+  const parentData = await parent()
+  const config: UserConfig = parentData.config
 
   const data: { style?: JSON; readOnly?: boolean; features?: DatasetFeatureCollection } = {}
   const styleId = url.searchParams.get('style')
