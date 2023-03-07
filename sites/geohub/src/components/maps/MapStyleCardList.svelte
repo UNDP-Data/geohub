@@ -7,7 +7,7 @@
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
-  import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/AppConfig'
+  import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/config/AppConfig'
 
   let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
 

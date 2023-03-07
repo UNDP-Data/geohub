@@ -4,7 +4,7 @@ import * as pmtiles from 'pmtiles'
 import arraystat from 'arraystat'
 import { mean, std, median } from 'mathjs'
 import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
-import { attribution } from '$lib/AppConfig'
+import { attribution } from '$lib/config/AppConfig'
 
 /**
  * get metadata json of static pbf

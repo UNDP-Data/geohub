@@ -1,4 +1,4 @@
-import { DataCategories, DatasetSortingColumns, TagSearchKeys } from '$lib/AppConfig'
+import { DataCategories, DatasetSortingColumns, TagSearchKeys } from '$lib/config/AppConfig'
 import { SEARCH_PAGINATION_LIMIT } from '$lib/constants'
 import type { DatasetFeatureCollection, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'

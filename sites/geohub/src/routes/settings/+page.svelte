@@ -2,7 +2,7 @@
   import Settings from '$components/Settings.svelte'
   import { Header, type HeaderLink, Footer } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { HeaderItems, FooterItems } from '$lib/AppConfig'
+  import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
   let headerHeight: number
   let links: HeaderLink[] = HeaderItems(['home', 'dashboard', 'userguide'])
 </script>

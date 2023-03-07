@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { Header, Footer, type HeaderLink } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { FooterItems, HeaderItems } from '$lib/AppConfig'
+  import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
 
   let headerHeight: number
 

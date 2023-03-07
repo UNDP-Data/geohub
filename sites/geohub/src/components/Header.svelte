@@ -4,7 +4,7 @@
   import StyleShare from './StyleShare.svelte'
   import { indicatorProgress, layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
-  import { HeaderItems } from '$lib/AppConfig'
+  import { HeaderItems } from '$lib/config/AppConfig'
 
   export let drawerOpen = true
   export let height: number = undefined

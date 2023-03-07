@@ -1,4 +1,4 @@
-import { DataCategories, TagSearchKeys } from '$lib/AppConfig'
+import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
 import type { Tag } from '$lib/types'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import { getBulmaTagColor } from './getBulmaTagColor'

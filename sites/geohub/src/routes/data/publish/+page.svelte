@@ -10,7 +10,7 @@
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
   import DataPreview from '$components/data-upload/DataPreview.svelte'
   import { toast } from '@zerodevx/svelte-toast'
-  import { TagInputValues } from '$lib/AppConfig'
+  import { TagInputValues } from '$lib/config/AppConfig'
 
   // preserve previous page URL
   let previousPage: string = base

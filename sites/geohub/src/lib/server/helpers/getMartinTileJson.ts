@@ -1,4 +1,4 @@
-import { attribution } from '$lib/AppConfig'
+import { attribution } from '$lib/config/AppConfig'
 import type { MartinLayerMetadata } from '$lib/types/MartinLayerMetadata'
 import type { TileJson } from '$lib/types/TileJson'
 

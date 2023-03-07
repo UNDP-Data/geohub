@@ -1,4 +1,4 @@
-import type { Permission } from '$lib/AppConfig'
+import type { Permission } from '$lib/config/AppConfig'
 import type { Tag } from './Tag'
 
 export interface DatasetFeature {

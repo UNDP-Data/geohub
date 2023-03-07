@@ -3,7 +3,7 @@
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
   import { Header, Footer, Stats, type HeaderLink, type StatsCard } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { FooterItems, HeaderItems } from '$lib/AppConfig'
+  import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
 
   let innerWidth: number
   $: isMobile = innerWidth < 768 ? true : false

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { MapStyles } from '$lib/AppConfig'
+  import { MapStyles } from '$lib/config/AppConfig'
   import { ElectricityDashboard } from '@undp-data/electricity-dashboard'
 
   let title = 'GeoHub | Electricity Dashboard'

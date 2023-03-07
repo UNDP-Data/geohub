@@ -2,7 +2,7 @@
   import { Header, Footer, FluidCarousel, type CarouselContent, type HeaderLink } from '@undp-data/svelte-undp-design'
   import { browser } from '$app/environment'
   import UserAccount from '$components/UserAccount.svelte'
-  import { HeaderItems, FooterItems } from '$lib/AppConfig'
+  import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
 
   let headerHeight: number
 

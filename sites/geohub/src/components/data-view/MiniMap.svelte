@@ -12,7 +12,7 @@
   import { RasterTileData } from '$lib/RasterTileData'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Loader } from '@undp-data/svelte-undp-design'
-  import { MapStyles } from '$lib/AppConfig'
+  import { MapStyles } from '$lib/config/AppConfig'
 
   export let feature: DatasetFeature
   export let width = '100%'

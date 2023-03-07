@@ -3,7 +3,7 @@ import { getMapStats } from '$lib/server/helpers'
 import { DEFAULT_LIMIT } from '$lib/constants'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
-import { AccessLevel, MapSortingColumns } from '$lib/AppConfig'
+import { AccessLevel, MapSortingColumns } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url } = event

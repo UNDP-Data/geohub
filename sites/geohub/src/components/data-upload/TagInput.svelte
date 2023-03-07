@@ -5,7 +5,7 @@
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import { hideAll } from 'tippy.js'
-  import { TagInputValues } from '$lib/AppConfig'
+  import { TagInputValues } from '$lib/config/AppConfig'
 
   const dispatch = createEventDispatcher()
 

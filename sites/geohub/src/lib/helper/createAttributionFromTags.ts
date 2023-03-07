@@ -1,4 +1,4 @@
-import { attribution } from '$lib/AppConfig'
+import { attribution } from '$lib/config/AppConfig'
 
 export const createAttributionFromTags = (tags: [{ key: string; value: string }]) => {
   const providers = tags?.filter((t) => t.key === 'provider')

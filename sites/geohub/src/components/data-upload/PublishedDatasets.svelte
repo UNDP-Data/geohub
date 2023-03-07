@@ -13,7 +13,7 @@
   import PanelButton from '$components/controls/PanelButton.svelte'
   import { createEventDispatcher } from 'svelte'
   import MiniMap from '$components/data-view/MiniMap.svelte'
-  import { DatasetSortingColumns, LimitOptions, Permission } from '$lib/AppConfig'
+  import { DatasetSortingColumns, LimitOptions, Permission } from '$lib/config/AppConfig'
   const dispatch = createEventDispatcher()
 
   export let datasets: DatasetFeatureCollection

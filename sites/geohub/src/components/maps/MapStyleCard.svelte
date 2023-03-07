@@ -7,7 +7,7 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import { Accordion, Button, CtaLink, Loader } from '@undp-data/svelte-undp-design'
   import type { DashboardMapStyle } from '$lib/types'
-  import { AccessLevel } from '$lib/AppConfig'
+  import { AccessLevel } from '$lib/config/AppConfig'
   import { sleep } from '$lib/helper'
 
   const dispatch = createEventDispatcher()

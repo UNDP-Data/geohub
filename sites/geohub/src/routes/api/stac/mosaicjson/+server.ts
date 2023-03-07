@@ -12,7 +12,7 @@ import fs from 'fs'
 import path from 'path'
 import { error } from '@sveltejs/kit'
 import { fetchWithTimeout } from '$lib/helper/fetchWithTimeout'
-import { attribution } from '$lib/AppConfig'
+import { attribution } from '$lib/config/AppConfig'
 
 const __dirname = path.resolve()
 

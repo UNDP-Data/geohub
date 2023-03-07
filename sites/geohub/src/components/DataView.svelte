@@ -12,7 +12,7 @@
   import SelectedTags from './data-view/SelectedTags.svelte'
   import { goto } from '$app/navigation'
   import { getSelectedTagsFromUrl } from '$lib/helper'
-  import { DataCategories, TagSearchKeys } from '$lib/AppConfig'
+  import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
 
   const session = $page.data.session
   const dataCategories: Breadcrumb[] = session

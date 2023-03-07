@@ -1,7 +1,7 @@
 import type { PoolClient } from 'pg'
 import type { DatasetFeature } from '$lib/types'
 import type TagManager from './TagManager'
-import { Permission } from '$lib/AppConfig'
+import { Permission } from '$lib/config/AppConfig'
 
 class DatasetManager {
   private dataset: DatasetFeature

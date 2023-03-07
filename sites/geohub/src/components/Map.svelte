@@ -18,7 +18,7 @@
   import type { Sprite } from '$lib/types'
   import { spriteImageList } from '$stores'
   import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte'
-  import { attribution, MapStyles } from '$lib/AppConfig'
+  import { attribution, MapStyles } from '$lib/config/AppConfig'
 
   let container: HTMLDivElement
   export let map: Map

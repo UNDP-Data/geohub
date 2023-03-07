@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types'
 import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
 import { DEFAULT_LIMIT } from '$lib/constants'
 import { redirect } from '@sveltejs/kit'
-import { DatasetSortingColumns } from '$lib/AppConfig'
+import { DatasetSortingColumns } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url } = event

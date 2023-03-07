@@ -1,4 +1,4 @@
-import { attribution } from '$lib/AppConfig'
+import { attribution } from '$lib/config/AppConfig'
 import type { PgtileservDetailJson } from '$lib/types/PgtileservDetailJson'
 import type { PgtileservIndexJson } from '$lib/types/PgtileservIndexJson'
 import type { TileJson } from '$lib/types/TileJson'

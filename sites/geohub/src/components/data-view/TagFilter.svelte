@@ -10,7 +10,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { debounce } from 'lodash-es'
   import type { Country } from '$lib/types'
-  import { TagSearchKeys } from '$lib/AppConfig'
+  import { TagSearchKeys } from '$lib/config/AppConfig'
 
   const dispatch = createEventDispatcher()
 

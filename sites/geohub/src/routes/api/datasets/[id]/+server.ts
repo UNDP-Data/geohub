@@ -3,7 +3,7 @@ import { generateHashKey, getBlobServiceClient, getDatasetById, isSuperuser } fr
 import DatabaseManager from '$lib/server/DatabaseManager'
 import DatasetManager from '$lib/server/DatasetManager'
 import { env } from '$env/dynamic/private'
-import { Permission } from '$lib/AppConfig'
+import { Permission } from '$lib/config/AppConfig'
 
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()

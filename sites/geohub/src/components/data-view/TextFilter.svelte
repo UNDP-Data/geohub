@@ -6,7 +6,7 @@
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design'
-  import { DatasetSortingColumns } from '$lib/AppConfig'
+  import { DatasetSortingColumns } from '$lib/config/AppConfig'
 
   const dispatch = createEventDispatcher()
 

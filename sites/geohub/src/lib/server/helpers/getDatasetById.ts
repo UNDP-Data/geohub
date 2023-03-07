@@ -1,4 +1,4 @@
-import { Permission } from '$lib/AppConfig'
+import { Permission } from '$lib/config/AppConfig'
 import { generateAzureBlobSasToken } from '$lib/server/helpers'
 import type { DatasetFeature, Tag } from '$lib/types'
 import type { PoolClient } from 'pg'

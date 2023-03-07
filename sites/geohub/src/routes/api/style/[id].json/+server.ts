@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types'
 import { getStyleById } from '$lib/server/helpers'
-import { AccessLevel } from '$lib/AppConfig'
+import { AccessLevel } from '$lib/config/AppConfig'
 
 /**
  * Get style.json which is stored in PostgreSQL database

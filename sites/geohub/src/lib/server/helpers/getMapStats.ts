@@ -1,6 +1,6 @@
 import type { PoolClient } from 'pg'
 import type { StatsCard } from '@undp-data/svelte-undp-design'
-import { AccessLevel } from '$lib/AppConfig'
+import { AccessLevel } from '$lib/config/AppConfig'
 import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
