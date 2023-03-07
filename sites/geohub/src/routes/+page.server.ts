@@ -1,13 +1,17 @@
-import { DataCategories, SEARCH_PAGINATION_LIMIT, SortingColumns, tagSearchKeys } from '$lib/constants'
+import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
+import type { UserConfig } from '$lib/config/DefaultUserConfig'
 import type { DatasetFeatureCollection, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url } = event
+  const { locals, url, parent } = event
   const session = await locals.getSession()
   const user = session?.user
+
+  const parentData = await parent()
+  const config: UserConfig = parentData.config
 
   const data: { style?: JSON; readOnly?: boolean; features?: DatasetFeatureCollection } = {}
   const styleId = url.searchParams.get('style')
@@ -27,7 +31,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const tags: Tag[] = []
-  tagSearchKeys.forEach((tag) => {
+  TagSearchKeys.forEach((tag) => {
     const values = url.searchParams.getAll(tag.key)
     values.forEach((v) => {
       tags.push({ key: tag.key, value: v })
@@ -38,19 +42,19 @@ export const load: PageServerLoad = async (event) => {
   const params: { [key: string]: string } = {}
   const queryoperator = url.searchParams.get('queryoperator')
   if (!queryoperator) {
-    params.queryoperator = 'and'
+    params.queryoperator = config.DatasetSearchQueryOperator
   }
   const operator = url.searchParams.get('operator')
   if (!operator) {
-    params.operator = 'and'
+    params.operator = config.TagSearchOperator
   }
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    params.sortby = SortingColumns[0].value
+    params.sortby = config.DatasetSortingColumn
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {
-    params.limit = `${SEARCH_PAGINATION_LIMIT}`
+    params.limit = `${config.DatasetSearchLimit}`
   }
   const apiUrl = new URL(url.toString())
   if (Object.keys(params).length > 0) {

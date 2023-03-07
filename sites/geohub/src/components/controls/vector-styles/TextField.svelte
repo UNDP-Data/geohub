@@ -2,7 +2,6 @@
   import type { SymbolLayerSpecification } from 'maplibre-gl'
   import { createEventDispatcher, onMount } from 'svelte'
 
-  import { LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
@@ -115,7 +114,7 @@
       const parentStyle = getLayerStyle($map, layer.parentId)
       const childLayer: SymbolLayerSpecification = {
         id: layerId,
-        type: LayerTypes.SYMBOL,
+        type: 'symbol',
         source: parentStyle['source'],
         'source-layer': parentStyle['source-layer'],
         layout: {
@@ -138,7 +137,7 @@
       style = childLayer
     }
 
-    if (style.type !== LayerTypes.SYMBOL) return
+    if (style.type !== 'symbol') return
 
     if (textFieldValue) {
       // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/

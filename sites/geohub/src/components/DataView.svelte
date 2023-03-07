@@ -5,13 +5,13 @@
   import { map, indicatorProgress } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { DataCategories, STAC_MINIMUM_ZOOM, tagSearchKeys } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
   import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
   import { goto } from '$app/navigation'
   import { getSelectedTagsFromUrl } from '$lib/helper'
+  import { DataCategories, TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig'
 
   const session = $page.data.session
   const dataCategories: Breadcrumb[] = session
@@ -111,8 +111,8 @@
 
   const handleCategorySelected = async (e) => {
     const category = e.detail.category
-    if (category.name === 'Microsoft Planetary' && $map?.getZoom() < STAC_MINIMUM_ZOOM) {
-      $map.zoomTo(STAC_MINIMUM_ZOOM)
+    if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
+      $map.zoomTo(StacMinimumZoom)
     }
     if (category.url.startsWith('/api/datasets')) {
       const apiUrl = $page.url
@@ -130,7 +130,7 @@
   const handleTagChanged = async (e) => {
     selectedTags = e.detail.tags
     const apiUrl = $page.url
-    tagSearchKeys.forEach((key) => {
+    TagSearchKeys.forEach((key) => {
       apiUrl.searchParams.delete(key.key)
     })
     selectedTags?.forEach((t) => {
@@ -248,7 +248,7 @@
   }
 
   const clearSelectedTags = async (url: URL) => {
-    tagSearchKeys.forEach((key) => {
+    TagSearchKeys.forEach((key) => {
       url.searchParams.delete(key.key)
     })
     selectedTags = []

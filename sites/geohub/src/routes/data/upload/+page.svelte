@@ -6,8 +6,7 @@
   import Dropzone from 'svelte-file-dropzone'
   import { toast } from '@zerodevx/svelte-toast'
   import isValidFilename from 'valid-filename'
-
-  import { AccepedExtensions } from '$lib/constants'
+  import { AccepedExtensions } from '$lib/config/AppConfig'
 
   const REDIRECRT_TIME = 2000 // two second
 

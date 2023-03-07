@@ -2,7 +2,6 @@
   import { slide } from 'svelte/transition'
   import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte'
   import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte'
-  import { LegendTypes } from '$lib/constants'
   import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
   import { layerList, map } from '$stores'
@@ -10,6 +9,7 @@
   import { Loader } from '@undp-data/svelte-undp-design'
   import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import RasterPropertyEditor from './RasterPropertyEditor.svelte'
+  import { LegendTypes } from '$lib/config/AppConfig'
 
   export let layer: Layer
   export let numberOfClasses: number

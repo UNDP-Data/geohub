@@ -3,15 +3,14 @@
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
   import { Header, Footer, Stats, type HeaderLink, type StatsCard } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { footerItems } from '$lib/constants'
-  import { createHeaderLinks } from '$lib/helper'
+  import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
 
   let innerWidth: number
   $: isMobile = innerWidth < 768 ? true : false
 
   let headerHeight: number
 
-  let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'dashboard', 'userguide'])
 
   let stats: StatsCard[] = $page.data.stats
 
@@ -64,7 +63,7 @@
 
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
+  footerItems={FooterItems} />
 
 <style lang="scss">
   @import '../../styles/geohubstyle.scss';

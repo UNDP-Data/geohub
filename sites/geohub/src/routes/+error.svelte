@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import UserAccount from '$components/UserAccount.svelte'
-  import { footerItems } from '$lib/constants'
+  import { FooterItems } from '$lib/config/AppConfig'
   import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'
 
   let links: HeaderLink[] = [
@@ -40,7 +40,7 @@
 
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
+  footerItems={FooterItems} />
 
 <style
   global

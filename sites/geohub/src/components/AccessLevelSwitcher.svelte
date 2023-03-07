@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { AccessLevel } from '$lib/constants'
+  import { AccessLevel } from '$lib/config/AppConfig'
   import { createEventDispatcher } from 'svelte'
 
   const dispatch = createEventDispatcher()

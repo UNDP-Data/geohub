@@ -7,12 +7,11 @@ import {
   getRasterMetadata,
   getVectorMetadata,
   isRasterExtension,
-  isSuperuser,
   upsertDataset,
 } from '$lib/server/helpers'
 import { removeSasTokenFromDatasetUrl } from '$lib/helper'
 import { env } from '$env/dynamic/private'
-import { Permission } from '$lib/constants'
+import { Permission } from '$lib/config/AppConfig'
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)

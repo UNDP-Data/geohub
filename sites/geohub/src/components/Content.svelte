@@ -1,8 +1,8 @@
 <script lang="ts">
   import DataView from '$components/DataView.svelte'
   import LayerList from '$components/LayerList.svelte'
-  import { TabNames } from '$lib/constants'
-  import { layerList, map } from '$stores'
+  import { TabNames } from '$lib/config/AppConfig'
+  import { layerList } from '$stores'
   import { Tabs, type Tab } from '@undp-data/svelte-undp-design'
 
   export let splitterHeight: number

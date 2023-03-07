@@ -17,7 +17,7 @@
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import { onMount } from 'svelte'
-  import { rasterComparisonOperators } from '$lib/constants'
+  import { RasterComparisonOperators } from '$lib/config/AppConfig'
 
   export let layer: Layer
 
@@ -222,7 +222,7 @@
     <!-- </div> -->
 
     <div class="grid pt-5">
-      {#each rasterComparisonOperators as operator}
+      {#each RasterComparisonOperators as operator}
         {@const isVisible = !operator.disabled}
         {#if isVisible}
           <div

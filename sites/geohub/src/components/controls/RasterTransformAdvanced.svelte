@@ -22,7 +22,7 @@ A component designed to apply where expression to a raster layer through titiler
   import { map } from '$stores'
   import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
   import { onMount } from 'svelte'
-  import { rasterComparisonOperators, rasterArithmeticOperators } from '$lib/constants'
+  import { RasterComparisonOperators, RasterArithmeticOperators } from '$lib/config/AppConfig'
   import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte'
 
   export let layer: Layer
@@ -37,15 +37,15 @@ A component designed to apply where expression to a raster layer through titiler
   let currentExpressionPart = 'condition'
   //operator categories
   const operatorCategories = [
-    { name: 'comparison', op: rasterComparisonOperators },
-    { name: 'arithmetic', op: rasterArithmeticOperators },
+    { name: 'comparison', op: RasterComparisonOperators },
+    { name: 'arithmetic', op: RasterArithmeticOperators },
   ]
-  const rasterComparisonOperatorsValues = rasterComparisonOperators.map((e) => e.value)
+  const rasterComparisonOperatorsValues = RasterComparisonOperators.map((e) => e.value)
   let selectedOperatorCategory: string = selectedRasterFilterOperatorCategory || undefined
 
   //operators
   let selectedOperator: string = selectedRasterFilterOperator || undefined
-  let selectedOperatorObject = rasterComparisonOperators
+  let selectedOperatorObject = RasterComparisonOperators
 
   //input categories (numbers and slider binded to the layer Min<=>Max)
   const inputCategories = ['layer', 'numbers']
@@ -137,7 +137,7 @@ A component designed to apply where expression to a raster layer through titiler
 
   const clear = () => {
     selectedOperator = undefined
-    selectedOperatorObject = rasterComparisonOperators
+    selectedOperatorObject = RasterComparisonOperators
     selectedOperatorCategory = 'comparison'
     selectedInputCategory = 'layer'
   }

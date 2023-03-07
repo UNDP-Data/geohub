@@ -2,10 +2,9 @@
   import Settings from '$components/Settings.svelte'
   import { Header, type HeaderLink, Footer } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { createHeaderLinks } from '$lib/helper'
-  import { footerItems } from '$lib/constants'
+  import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
   let headerHeight: number
-  let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'dashboard', 'userguide'])
 </script>
 
 <Header
@@ -23,4 +22,4 @@
 <Settings bind:headerHeight />
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
+  footerItems={FooterItems} />

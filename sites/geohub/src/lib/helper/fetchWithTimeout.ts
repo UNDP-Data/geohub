@@ -1,8 +1,8 @@
-import { DEFAULT_TIMEOUT_MS } from '../constants'
+import { FetchTimeoutMsec } from '$lib/config/AppConfig'
 
-export async function fetchWithTimeout(resource: string, options = { timeout: DEFAULT_TIMEOUT_MS }) {
+export async function fetchWithTimeout(resource: string, options = { timeout: FetchTimeoutMsec }) {
   return new Promise<Response>((resolve, reject) => {
-    const { timeout = DEFAULT_TIMEOUT_MS } = options
+    const { timeout = FetchTimeoutMsec } = options
     const controller = new AbortController()
     const id = setTimeout(() => controller.abort(), timeout)
     fetch(resource, {

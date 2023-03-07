@@ -4,7 +4,6 @@
   import { isEqual, sortBy } from 'lodash-es'
   import { Radios, type Radio } from '@undp-data/svelte-undp-design'
 
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -59,7 +58,7 @@
   })
 
   const setLineType = () => {
-    if (style?.type !== LayerTypes.LINE || lineType === undefined) return
+    if (style?.type !== 'line' || lineType === undefined) return
 
     const value = lineTypes.find((item) => item.title === lineType).value
     if (value) {

@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers'
-import { AccessLevel } from '$lib/constants'
+import { AccessLevel } from '$lib/config/AppConfig'
 import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**

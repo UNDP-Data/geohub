@@ -10,7 +10,7 @@
   import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte'
   import DataPreview from '$components/data-upload/DataPreview.svelte'
   import { toast } from '@zerodevx/svelte-toast'
-  import { tagInputValues } from '$lib/constants'
+  import { TagInputValues } from '$lib/config/AppConfig'
 
   // preserve previous page URL
   let previousPage: string = base
@@ -88,7 +88,7 @@
   $: otherTags, updateTags()
   $: providers, updateTags()
   const updateTags = () => {
-    const excludes = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...tagInputValues.map((t) => t.key)]
+    const excludes = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...TagInputValues.map((t) => t.key)]
     const originalTags = feature?.properties?.tags?.filter((t) => !excludes.includes(t.key))
 
     const joined = sdgs.concat(

@@ -9,6 +9,7 @@
   import { loadMap } from '$lib/helper'
   import { createEventDispatcher } from 'svelte'
   import { toast } from '@zerodevx/svelte-toast'
+  import { page } from '$app/stores'
 
   const dispatch = createEventDispatcher()
 
@@ -19,6 +20,7 @@
   export let metadata: RasterTileMetadata | VectorTileMetadata
   export let isShowInfo = false
 
+  let defaultLineWidth = $page.data.config.LineWidth
   let vectorInfo = metadata as VectorTileMetadata
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
@@ -61,7 +63,7 @@
         layerType = polygonVectorType
       }
       const vectorInfo = metadata as VectorTileMetadata
-      const vectorTile = new VectorTileData(feature, vectorInfo)
+      const vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo)
       const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`

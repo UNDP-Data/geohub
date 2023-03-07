@@ -1,23 +1,27 @@
 import type { PageServerLoad } from './$types'
 import { getMapStats } from '$lib/server/helpers'
-import { AccessLevel, DEFAULT_LIMIT, MapOrderByOptions } from '$lib/constants'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
+import { AccessLevel } from '$lib/config/AppConfig'
+import type { UserConfig } from '$lib/config/DefaultUserConfig'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url } = event
+  const { locals, url, parent } = event
   const session = await locals.getSession()
+
+  const parentData = await parent()
+  const config: UserConfig = parentData.config
 
   const apiUrl = new URL(url)
 
   // reset default query params if it is not in queryparams
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    apiUrl.searchParams.set('sortby', MapOrderByOptions[0].value)
+    apiUrl.searchParams.set('sortby', config.MapPageSortingColumn)
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {
-    apiUrl.searchParams.set('limit', `${DEFAULT_LIMIT}`)
+    apiUrl.searchParams.set('limit', `${config.SearchLimit}`)
   }
   const offset = url.searchParams.get('offset')
   if (!offset) {

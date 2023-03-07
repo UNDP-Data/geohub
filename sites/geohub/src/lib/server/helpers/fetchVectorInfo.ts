@@ -2,7 +2,7 @@ import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
 import { mean, std, median } from 'mathjs'
-import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
+import { UniqueValueThreshold } from '$lib/config/AppConfig'
 
 // fetch vector tiles info from
 export const fetchVectorTileInfo = async (path: string, layerName: string) => {
@@ -53,7 +53,7 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
         attribute: property,
         type: String(typeof propsObj[property][0]),
         count: propsObj[property].length,
-        values: values.length > UNIQUE_VALUE_THRESHOLD ? values.slice(0, 100) : values,
+        values: values.length > UniqueValueThreshold ? values.slice(0, 100) : values,
       }
       // Add the attribute to the attributes array
       attributesArray.push(attribute)
@@ -73,7 +73,7 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
       // Look for the unique values, if the number of unique values is less/equal to 25,
       // this is a unique value attribute
       const uniqueValues = [...new Set(propsObj[property])]
-      if (uniqueValues.length <= UNIQUE_VALUE_THRESHOLD) {
+      if (uniqueValues.length <= UniqueValueThreshold) {
         attribute['values'] = [...new Set(propsObj[property])].sort((previous: number, after: number) => {
           return previous - after
         })

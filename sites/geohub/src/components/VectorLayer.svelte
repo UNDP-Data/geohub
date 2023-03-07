@@ -4,11 +4,11 @@
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
   import VectorLegend from '$components/controls/VectorLegend.svelte'
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
-  import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import VectorFilter from './controls/VectorFilter.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
   import VectorParamsPanel from './controls/VectorParamsPanel.svelte'
+  import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig'
 
   export let layer: Layer
 

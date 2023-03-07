@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid'
-import { DEFAULT_LINE_WIDTH } from './constants'
 import type { DatasetFeature, VectorTileMetadata } from './types'
 import {
   LngLatBounds,
@@ -16,11 +15,13 @@ export class VectorTileData {
   private feature: DatasetFeature
   private url: string
   private metadata: VectorTileMetadata
+  private defaultLineWidth: number
 
-  constructor(feature: DatasetFeature, metadata?: VectorTileMetadata) {
+  constructor(feature: DatasetFeature, defaultLineWidth: number, metadata?: VectorTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
+    this.defaultLineWidth = defaultLineWidth
   }
 
   public getMetadata = async () => {
@@ -143,7 +144,7 @@ export class VectorTileData {
           },
           paint: {
             'line-color': color.hex(),
-            'line-width': DEFAULT_LINE_WIDTH,
+            'line-width': this.defaultLineWidth,
           },
         }
         break

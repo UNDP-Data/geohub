@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types'
 import { getStyleById } from '$lib/server/helpers'
-import { AccessLevel } from '$lib/constants'
+import { AccessLevel } from '$lib/config/AppConfig'
 import DatabaseManager from '$lib/server/DatabaseManager'
 
 export const GET: RequestHandler = async ({ params, locals }) => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { vectorFilterOperations } from '$lib/constants'
+  import { VectorFilterOperators } from '$lib/config/AppConfig'
 
   import { createEventDispatcher } from 'svelte'
 
@@ -7,7 +7,7 @@
   export let stringProperty = false
   export let numberProperty = false
 
-  const operationOptions = vectorFilterOperations.filter((el) => {
+  const operationOptions = VectorFilterOperators.filter((el) => {
     if (stringProperty && ['>', '<'].includes(el.value)) return false
     if (numberProperty && ['in', '!in'].includes(el.value)) return false
     return true

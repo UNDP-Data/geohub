@@ -12,7 +12,8 @@ import fs from 'fs'
 import path from 'path'
 import { error } from '@sveltejs/kit'
 import { fetchWithTimeout } from '$lib/helper/fetchWithTimeout'
-import { MAP_ATTRIBUTION } from '$lib/constants'
+import { attribution } from '$lib/config/AppConfig'
+
 const __dirname = path.resolve()
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -125,7 +126,7 @@ const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) =
     url: urls,
     minzoom: 0,
     maxzoom: 22,
-    attribution: MAP_ATTRIBUTION,
+    attribution: attribution,
   }
   const res = await fetch(`${TITILER_MOSAIC_ENDPOINT}/create`, {
     method: 'POST',

@@ -11,7 +11,6 @@
   import TextHaloWidth from '$components/controls/vector-styles/TextHaloWidth.svelte'
   import TextMaxWidth from '$components/controls/vector-styles/TextMaxWidth.svelte'
   import TextSize from '$components/controls/vector-styles/TextSize.svelte'
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper'
@@ -35,7 +34,7 @@
   })
 
   const initialiseTextLabel = () => {
-    if (style.type !== LayerTypes.SYMBOL) {
+    if (style.type !== 'symbol') {
       if (targetLayer?.children?.length > 0) {
         targetLayer = targetLayer.children[0]
         targetLayerId = targetLayer.id
@@ -169,7 +168,7 @@
       {#if isAdvancedSettings}
         <div class="advanced-settings-container pb-4">
           <div class="columns is-mobile">
-            {#if style.type === LayerTypes.FILL || style.type === LayerTypes.LINE}
+            {#if style.type === 'fill' || style.type === 'line'}
               <div class="column">
                 <div class="has-text-centered pb-2">Label position relative to geometry</div>
                 <div class="is-flex is-justify-content-center">

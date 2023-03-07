@@ -1,7 +1,7 @@
 import type { Layer, VectorLayerMetadata, VectorLayerTileStatLayer } from '$lib/types'
 import type { Map } from 'maplibre-gl'
 import { getLayerStyle } from './getLayerStyle'
-import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
+import { UniqueValueThreshold } from '$lib/config/AppConfig'
 
 export const getLayerProperties = (map: Map, layer: Layer, inLegend = true) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -29,7 +29,7 @@ export const getLayerProperties = (map: Map, layer: Layer, inLegend = true) => {
     if (tilestats) {
       const vectorLayerStats = tilestats.layers.find((l) => l.layer === getLayerStyle(map, layerId)['source-layer'])
       vectorLayerStats.attributes.forEach((attr) => {
-        if (attr.type.toLowerCase() === 'string' && attr.values?.length > UNIQUE_VALUE_THRESHOLD) {
+        if (attr.type.toLowerCase() === 'string' && attr.values?.length > UniqueValueThreshold) {
           delete vectorLayerMeta.fields[attr.attribute]
         }
       })

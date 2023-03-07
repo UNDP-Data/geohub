@@ -1,7 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
-  import { tagSearchKeys } from '$lib/constants'
   import type { Tag } from '$lib/types/Tag'
   import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
@@ -11,6 +10,7 @@
   import Notification from '$components/controls/Notification.svelte'
   import { debounce } from 'lodash-es'
   import type { Country } from '$lib/types'
+  import { TagSearchKeys } from '$lib/config/AppConfig'
 
   const dispatch = createEventDispatcher()
 
@@ -19,7 +19,8 @@
   let filteredTags: { [key: string]: Tag[] } = {}
   let isLoading = false
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
-  let operatorType: 'and' | 'or' = ($page.url.searchParams.get('operator') as 'and' | 'or') ?? 'and'
+  let operatorType: 'and' | 'or' =
+    ($page.url.searchParams.get('operator') as 'and' | 'or') ?? $page.data.config.TagSearchOperator
   let operatorTypes: Radio[] = [
     {
       label: 'Match all selected tags',
@@ -74,7 +75,7 @@
       const res = await fetch(apiUrl)
       const json: { [key: string]: Tag[] } = await res.json()
 
-      tagSearchKeys.forEach((t) => {
+      TagSearchKeys.forEach((t) => {
         if (!json[t.key]) return
         tags[t.key] = json[t.key]
       })
@@ -143,7 +144,7 @@
   const clearAllTags = () => {
     selectedTags = []
     const apiUrl = $page.url
-    tagSearchKeys.forEach((key) => {
+    TagSearchKeys.forEach((key) => {
       apiUrl.searchParams.delete(key.key)
     })
     fireChangeEvent(apiUrl)
@@ -152,14 +153,14 @@
   }
 
   const getTagSearchKey = (key: string) => {
-    return tagSearchKeys?.find((t) => t.key === key)
+    return TagSearchKeys?.find((t) => t.key === key)
   }
 
   const handleSelectedTagChanged = (e) => {
     selectedTags = e.detail.tag
 
     const apiUrl = $page.url
-    tagSearchKeys.forEach((key) => {
+    TagSearchKeys.forEach((key) => {
       apiUrl.searchParams.delete(key.key)
     })
     selectedTags?.forEach((t) => {
@@ -238,7 +239,7 @@
       </div>
     {:else if Object.keys(filteredTags).length > 0}
       {#key selectedTags}
-        {#if tagSearchKeys}
+        {#if TagSearchKeys}
           {#each Object.keys(filteredTags) as key}
             <TreeBranch
               rootContent={getTagSearchKey(key).label}

@@ -2,8 +2,7 @@
   import { Header, Footer, FluidCarousel, type CarouselContent, type HeaderLink } from '@undp-data/svelte-undp-design'
   import { browser } from '$app/environment'
   import UserAccount from '$components/UserAccount.svelte'
-  import { footerItems } from '$lib/constants'
-  import { createHeaderLinks } from '$lib/helper'
+  import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
 
   let headerHeight: number
 
@@ -19,7 +18,7 @@
     },
   ]
 
-  let links: HeaderLink[] = createHeaderLinks(['home', 'maps', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'userguide'])
 
   let title = 'GeoHub | Dashboards'
 </script>
@@ -59,7 +58,7 @@
 
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
+  footerItems={FooterItems} />
 
 <style lang="scss">
   @import '../../styles/geohubstyle.scss';

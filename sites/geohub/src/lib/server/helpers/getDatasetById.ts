@@ -1,7 +1,7 @@
+import { Permission } from '$lib/config/AppConfig'
 import { generateAzureBlobSasToken } from '$lib/server/helpers'
 import type { DatasetFeature, Tag } from '$lib/types'
 import type { PoolClient } from 'pg'
-import { Permission } from '$lib/constants'
 
 export const getDatasetById = async (client: PoolClient, id: string, is_superuser: boolean, user_email?: string) => {
   const sql = {

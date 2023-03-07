@@ -2,7 +2,7 @@ import type { HeaderLink } from '@undp-data/svelte-undp-design'
 
 type LineName = 'home' | 'maps' | 'dashboard' | 'userguide' | 'data'
 
-export const createHeaderLinks = (linkNames: LineName[]) => {
+export const HeaderItems = (linkNames: LineName[]) => {
   const links: { [key: string]: HeaderLink } = {
     home: {
       id: 'header-link-home',

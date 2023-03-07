@@ -1,4 +1,4 @@
-import type { ClassificationMethodTypes } from '$lib/constants'
+import type { ClassificationMethodTypes } from '$lib/config/AppConfig'
 import type { RasterTileMetadata } from './RasterTileMetadata'
 import type { DatasetFeature } from './DatasetFeature'
 import type { VectorTileMetadata } from './VectorTileMetadata'

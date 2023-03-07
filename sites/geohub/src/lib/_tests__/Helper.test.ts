@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import * as helper from '../helper'
-import { ClassificationMethodTypes } from '../constants'
+import { ClassificationMethodTypes } from '../config/AppConfig'
 
 describe('downloadFile', () => {
   let linkElement: HTMLAnchorElement

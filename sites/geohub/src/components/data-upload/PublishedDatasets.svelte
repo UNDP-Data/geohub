@@ -4,7 +4,6 @@
   import { goto, invalidateAll } from '$app/navigation'
   import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types'
   import { Pagination, Loader, Radios } from '@undp-data/svelte-undp-design'
-  import { LimitOptions, Permission, SortingColumns } from '$lib/constants'
   import { debounce } from 'lodash-es'
   import Notification from '$components/controls/Notification.svelte'
   import DataCardInfo from '$components/data-view/DataCardInfo.svelte'
@@ -14,6 +13,7 @@
   import PanelButton from '$components/controls/PanelButton.svelte'
   import { createEventDispatcher } from 'svelte'
   import MiniMap from '$components/data-view/MiniMap.svelte'
+  import { DatasetSortingColumns, LimitOptions, Permission } from '$lib/config/AppConfig'
   const dispatch = createEventDispatcher()
 
   export let datasets: DatasetFeatureCollection
@@ -39,6 +39,7 @@
   let offset = $page.url.searchParams.get('offset')
   let sortby = $page.url.searchParams.get('sortby')
   let query = $page.url.searchParams.get('query') ?? ''
+  let queryType: 'and' | 'or' = $page.url.searchParams.get('queryoperator') as 'and' | 'or'
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
   let deletedDatasetName = ''
@@ -105,7 +106,7 @@
       if (link) {
         const href = new URL(link.href)
         href.searchParams.set('query', query.trim())
-        href.searchParams.set('queryoperator', 'and')
+        href.searchParams.set('queryoperator', queryType)
         href.searchParams.set('offset', offset)
         await reload(href)
       }
@@ -274,7 +275,7 @@
         <p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
         <Radios
-          radios={SortingColumns}
+          radios={DatasetSortingColumns}
           on:change={handleSortbyChanged}
           bind:value={sortby}
           groupName="sortby"

@@ -4,14 +4,15 @@
   import RasterTransform from '$components/controls/RasterTransform.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { COLOR_CLASS_COUNT, TabNames } from '$lib/constants'
+  import { TabNames } from '$lib/config/AppConfig'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
+  import { page } from '$app/stores'
 
   export let layer: Layer
 
-  let numberOfClasses = COLOR_CLASS_COUNT
+  let numberOfClasses = $page.data.config.NumberOfClasses
   let legendType
 
   //local vars

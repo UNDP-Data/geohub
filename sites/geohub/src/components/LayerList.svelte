@@ -5,7 +5,7 @@
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
-  import { LayerTypes, TabNames } from '$lib/constants'
+  import { TabNames } from '$lib/config/AppConfig'
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'
@@ -77,7 +77,7 @@
 
   {#each $layerList as layer (layer.id)}
     <div class="box p-0 mx-1 my-3">
-      {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
+      {#if getLayerStyle($map, layer.id).type === 'raster'}
         <RasterLayer {layer} />
       {:else}
         <VectorLayer {layer} />
