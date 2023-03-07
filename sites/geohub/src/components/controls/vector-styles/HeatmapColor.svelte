@@ -4,7 +4,6 @@
   import chroma from 'chroma-js'
 
   import HeatmapColorRow from '$components/controls/vector-styles/HeatmapColorRow.svelte'
-  import { LayerTypes } from '$lib/constants'
   import type { Color, Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -76,7 +75,7 @@
   }
 
   const handleChangeColorMap = () => {
-    if (style.type !== LayerTypes.HEATMAP) return
+    if (style.type !== 'heatmap') return
     colorValues.forEach((row) => {
       let colorValue = `rgb(${row.color.r},${row.color.g},${row.color.b})`
       if (row.index === 0 || row.color.a < 255) {
@@ -95,7 +94,6 @@
 {#each colorValues as colorValueRow}
   <HeatmapColorRow
     bind:colorRow={colorValueRow}
-    {colorPickerVisibleIndex}
     on:clickColorPicker={handleColorPickerClick}
     on:changeColorMap={handleChangeColorMap} />
 {/each}

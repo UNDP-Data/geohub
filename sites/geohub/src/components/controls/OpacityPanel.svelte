@@ -1,7 +1,6 @@
 <script lang="ts">
   import RangeSlider from 'svelte-range-slider-pips'
 
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { getLayerStyle } from '$lib/helper'
@@ -13,19 +12,19 @@
     const style = getLayerStyle($map, target.id)
     let opacity: number
     switch (style.type) {
-      case LayerTypes.RASTER:
+      case 'raster':
         opacity = $map.getPaintProperty(id, 'raster-opacity') as number
         break
-      case LayerTypes.SYMBOL:
+      case 'symbol':
         opacity = $map.getPaintProperty(id, 'icon-opacity') as number
         break
-      case LayerTypes.LINE:
+      case 'line':
         opacity = $map.getPaintProperty(id, 'line-opacity') as number
         break
-      case LayerTypes.FILL:
+      case 'fill':
         opacity = $map.getPaintProperty(id, 'fill-opacity') as number
         break
-      case LayerTypes.HEATMAP:
+      case 'heatmap':
         opacity = $map.getPaintProperty(id, 'heatmap-opacity') as number
         break
       default:
@@ -55,20 +54,20 @@
     const style = getLayerStyle($map, target.id)
     if (!style) return
     switch (style.type) {
-      case LayerTypes.RASTER:
+      case 'raster':
         $map.setPaintProperty(id, 'raster-opacity', layerOpacity)
         break
-      case LayerTypes.SYMBOL:
+      case 'symbol':
         $map.setPaintProperty(id, 'icon-opacity', layerOpacity)
         $map.setPaintProperty(id, 'text-opacity', layerOpacity)
         break
-      case LayerTypes.LINE:
+      case 'line':
         $map.setPaintProperty(id, 'line-opacity', layerOpacity)
         break
-      case LayerTypes.FILL:
+      case 'fill':
         $map.setPaintProperty(id, 'fill-opacity', layerOpacity)
         break
-      case LayerTypes.HEATMAP:
+      case 'heatmap':
         $map.setPaintProperty(id, 'heatmap-opacity', layerOpacity)
         break
       default:

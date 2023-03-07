@@ -60,15 +60,6 @@ export enum DynamicLayerResolutionTypes {
   AVERAGE = 'average',
 }
 
-export enum LayerTypes {
-  RASTER = 'raster',
-  VECTOR = 'vector',
-  SYMBOL = 'symbol',
-  LINE = 'line',
-  FILL = 'fill',
-  HEATMAP = 'heatmap',
-}
-
 export const DEFAULT_LIMIT = 10
 
 export const vectorFilterOperations = [

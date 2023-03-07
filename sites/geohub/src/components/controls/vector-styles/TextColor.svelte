@@ -2,7 +2,6 @@
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
 
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import MaplibreColorPicker from './MaplibreColorPicker.svelte'
@@ -18,7 +17,7 @@
   let rgba = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor
 
   const handleSetColor = (e: CustomEvent) => {
-    if (style.type !== LayerTypes.SYMBOL) return
+    if (style.type !== 'symbol') return
     rgba = e.detail.color
     $map.setPaintProperty(layerId, propertyName, rgba)
     dispatch('change')

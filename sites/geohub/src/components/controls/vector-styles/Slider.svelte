@@ -4,13 +4,12 @@
   import RangeSlider from 'svelte-range-slider-pips'
 
   import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte'
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
   export let defaultValue: number
   export let layer: Layer
-  export let layerType: LayerTypes
+  export let layerType: string
   export let maxValue: number
   export let minValue: number
   export let propertyName: string

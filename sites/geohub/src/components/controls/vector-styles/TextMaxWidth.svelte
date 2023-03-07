@@ -3,7 +3,6 @@
   import type { LayerSpecification } from 'maplibre-gl'
 
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -15,7 +14,7 @@
 
   let propertyName = 'text-max-width'
   let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
-  let layerType = LayerTypes.SYMBOL
+  let layerType = 'symbol'
   let maxValue = 20
   let minValue = 0
   let stepValue = 1

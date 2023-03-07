@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import type { LayerSpecification } from 'maplibre-gl'
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
 
@@ -21,7 +20,7 @@
     | 'heatmap'
     | 'fill-extrusion'
     | 'hillshade'
-    | 'background' = LayerTypes.SYMBOL
+    | 'background' = 'symbol'
 
   const parentId = layer.parentId
   if (parentId) {
@@ -34,10 +33,10 @@
 
   let defaultValue = 'point'
   switch (parentType) {
-    case LayerTypes.LINE:
+    case 'line':
       defaultValue = 'line-center'
       break
-    case LayerTypes.FILL:
+    case 'fill':
       defaultValue = 'point'
       break
   }
@@ -48,7 +47,7 @@
   $: selected, setSymbolPlacement()
 
   const setSymbolPlacement = () => {
-    if (style.type !== LayerTypes.SYMBOL) return
+    if (style.type !== 'symbol') return
     const newStyle = JSON.parse(JSON.stringify(style))
     if (!newStyle.layout) {
       newStyle.layout = {}

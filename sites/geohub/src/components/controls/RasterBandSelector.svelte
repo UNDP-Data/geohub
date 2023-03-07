@@ -5,7 +5,6 @@
 
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { LayerTypes } from '$lib/constants'
 
   export let layer: Layer
 
@@ -41,7 +40,7 @@
     deleteOldLayer(layer.id)
   }
 
-  if (layerStyle.type === LayerTypes.RASTER) {
+  if (layerStyle.type === 'raster') {
     ;({ info } = layer)
     selected = info.active_band_no
     if (info.band_metadata.length > 0) {
@@ -82,7 +81,7 @@
   }
 </script>
 
-{#if layerStyle && layerStyle.type === LayerTypes.RASTER && !info.isMosaicJson}
+{#if layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
   {#if bands.length === 1}
     <span class="tag is-success">B{selected}</span>
   {:else if bands.length > 1}
