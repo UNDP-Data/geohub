@@ -4,7 +4,6 @@ export const COLOR_CLASS_COUNT_MINIMUM = 2
 export const DEFAULT_LINE_WIDTH = 0.5
 export const DEFAULT_TIMEOUT_MS = 60000
 export const NO_RANDOM_SAMPLING_POINTS = 1000
-export const SEARCH_PAGINATION_LIMIT = 25
 export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year
 export const STAC_MINIMUM_ZOOM = 5
 export const UNIQUE_VALUE_THRESHOLD = 25
@@ -59,8 +58,6 @@ export enum DynamicLayerResolutionTypes {
   LOWEST = 'lowest',
   AVERAGE = 'average',
 }
-
-export const DEFAULT_LIMIT = 10
 
 export const vectorFilterOperations = [
   { value: '==', label: 'Equals', text: 'is equal to', disabled: false, symbol: '=' },

@@ -1,13 +1,14 @@
 import type { PageServerLoad } from './$types'
 import { getMapStats } from '$lib/server/helpers'
-import { DEFAULT_LIMIT } from '$lib/constants'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import { AccessLevel, MapSortingColumns } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url } = event
+  const { locals, url, parent } = event
   const session = await locals.getSession()
+
+  const { config } = await parent()
 
   const apiUrl = new URL(url)
 
@@ -18,7 +19,7 @@ export const load: PageServerLoad = async (event) => {
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {
-    apiUrl.searchParams.set('limit', `${DEFAULT_LIMIT}`)
+    apiUrl.searchParams.set('limit', `${config.SearchLimit}`)
   }
   const offset = url.searchParams.get('offset')
   if (!offset) {

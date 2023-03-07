@@ -1,13 +1,14 @@
 import type { PageServerLoad } from './$types'
 import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
-import { DEFAULT_LIMIT } from '$lib/constants'
 import { redirect } from '@sveltejs/kit'
 import { DatasetSortingColumns } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url } = event
+  const { locals, url, parent } = event
   const session = await locals.getSession()
   if (!session) return {}
+
+  const { config } = await parent()
 
   const apiUrl = new URL(url)
 
@@ -26,7 +27,7 @@ export const load: PageServerLoad = async (event) => {
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {
-    apiUrl.searchParams.set('limit', `${DEFAULT_LIMIT}`)
+    apiUrl.searchParams.set('limit', `${config.SearchLimit}`)
   }
 
   const offset = url.searchParams.get('offset')

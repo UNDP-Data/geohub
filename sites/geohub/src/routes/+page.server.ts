@@ -1,14 +1,15 @@
 import { DataCategories, DatasetSortingColumns, TagSearchKeys } from '$lib/config/AppConfig'
-import { SEARCH_PAGINATION_LIMIT } from '$lib/constants'
 import type { DatasetFeatureCollection, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url } = event
+  const { locals, url, parent } = event
   const session = await locals.getSession()
   const user = session?.user
+
+  const { config } = await parent()
 
   const data: { style?: JSON; readOnly?: boolean; features?: DatasetFeatureCollection } = {}
   const styleId = url.searchParams.get('style')
@@ -51,7 +52,7 @@ export const load: PageServerLoad = async (event) => {
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {
-    params.limit = `${SEARCH_PAGINATION_LIMIT}`
+    params.limit = `${config.DatasetSearchLimit}`
   }
   const apiUrl = new URL(url.toString())
   if (Object.keys(params).length > 0) {
