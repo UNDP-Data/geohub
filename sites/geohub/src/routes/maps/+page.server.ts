@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types'
 import { getMapStats } from '$lib/server/helpers'
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
-import { AccessLevel, MapSortingColumns } from '$lib/config/AppConfig'
+import { AccessLevel } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url, parent } = event
@@ -15,7 +15,7 @@ export const load: PageServerLoad = async (event) => {
   // reset default query params if it is not in queryparams
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    apiUrl.searchParams.set('sortby', MapSortingColumns[0].value)
+    apiUrl.searchParams.set('sortby', config.MapPageSortingColumn)
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {

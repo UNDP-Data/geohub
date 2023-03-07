@@ -19,7 +19,8 @@
   let filteredTags: { [key: string]: Tag[] } = {}
   let isLoading = false
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
-  let operatorType: 'and' | 'or' = ($page.url.searchParams.get('operator') as 'and' | 'or') ?? 'and'
+  let operatorType: 'and' | 'or' =
+    ($page.url.searchParams.get('operator') as 'and' | 'or') ?? $page.data.config.TagSearchOperator
   let operatorTypes: Radio[] = [
     {
       label: 'Match all selected tags',

@@ -1,4 +1,4 @@
-import { DataCategories, DatasetSortingColumns, TagSearchKeys } from '$lib/config/AppConfig'
+import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
 import type { DatasetFeatureCollection, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
@@ -40,15 +40,15 @@ export const load: PageServerLoad = async (event) => {
   const params: { [key: string]: string } = {}
   const queryoperator = url.searchParams.get('queryoperator')
   if (!queryoperator) {
-    params.queryoperator = 'and'
+    params.queryoperator = config.DatasetSearchQueryOperator
   }
   const operator = url.searchParams.get('operator')
   if (!operator) {
-    params.operator = 'and'
+    params.operator = config.TagSearchOperator
   }
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    params.sortby = DatasetSortingColumns[0].value
+    params.sortby = config.DatasetSortingColumn
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {

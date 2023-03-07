@@ -39,6 +39,7 @@
   let offset = $page.url.searchParams.get('offset')
   let sortby = $page.url.searchParams.get('sortby')
   let query = $page.url.searchParams.get('query') ?? ''
+  let queryType: 'and' | 'or' = $page.url.searchParams.get('queryoperator') as 'and' | 'or'
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
   let deletedDatasetName = ''
@@ -105,7 +106,7 @@
       if (link) {
         const href = new URL(link.href)
         href.searchParams.set('query', query.trim())
-        href.searchParams.set('queryoperator', 'and')
+        href.searchParams.set('queryoperator', queryType)
         href.searchParams.set('offset', offset)
         await reload(href)
       }

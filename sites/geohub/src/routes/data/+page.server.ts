@@ -1,7 +1,6 @@
 import type { PageServerLoad } from './$types'
 import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
-import { DatasetSortingColumns } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url, parent } = event
@@ -15,15 +14,15 @@ export const load: PageServerLoad = async (event) => {
   // reset default query params if it is not in queryparams
   const queryoperator = url.searchParams.get('queryoperator')
   if (!queryoperator) {
-    apiUrl.searchParams.set('queryoperator', 'and')
+    apiUrl.searchParams.set('queryoperator', config.DatasetSearchQueryOperator)
   }
   const operator = url.searchParams.get('operator')
   if (!operator) {
-    apiUrl.searchParams.set('operator', 'and')
+    apiUrl.searchParams.set('operator', config.TagSearchOperator)
   }
   const sortby = url.searchParams.get('sortby')
   if (!sortby) {
-    apiUrl.searchParams.set('sortby', DatasetSortingColumns.find((col) => col.value === 'updatedat,desc').value)
+    apiUrl.searchParams.set('sortby', config.DataPageSortingColumn)
   }
   const limit = url.searchParams.get('limit')
   if (!limit) {
