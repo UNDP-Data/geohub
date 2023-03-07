@@ -7,6 +7,8 @@ on:
     workflow_dispatch:
 
 env:
+  PATH_MOUNT: /workspaces/myapp
+  PATH_CACHE: /tmp/docker-img-arch
   REGISTRY: ghcr.io
   IMAGE_NAME: undp-data/geohub
   AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
@@ -29,8 +31,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Create image tag
+        id: imagetag
+        run: |
+          HASH_IMAGE=${{ hashFiles('./Dockerfile') }}
+          VARIANT=$(TZ=UTC-9 date '+%Y%m')${HASH_IMAGE:0:7}
+          NAME_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          TAG="${NAME_IMAGE}:${VARIANT}"
+          NAME_TAR="${NAME_IMAGE}.${VARIANT}.tar"
+          PATH_TAR=${{ env.PATH_CACHE }}"/${NAME_TAR}"
+          echo "::set-output name=TAG::${TAG}"
+          echo "::set-output name=PATH_TAR::${PATH_TAR}"
+
+      - name: Enable cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.PATH_CACHE }}
+          key: ${{ steps.imagetag.outputs.TAG }}
+
+      - name: Load Docker image if exists
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: docker load --input ${{ steps.imagetag.outputs.PATH_TAR }}
 
       - name: Build the Docker image
         run: |
-          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) \
-          ./docker-build.sh
+          IMAGE_NAME=${{ steps.imagetag.outputs.TAG }} ./docker-build.sh
+          docker save --output ${{ steps.imagetag.outputs.PATH_TAR }} ${{ steps.imagetag.outputs.TAG }}
