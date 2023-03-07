@@ -17,11 +17,13 @@
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
   import DataVectorCard from '$components/data-view/DataVectorCard.svelte'
   import { loadMap } from '$lib/helper'
+  import { page } from '$app/stores'
 
   export let feature: DatasetFeature
   export let isExpanded: boolean
   export let isStarOnly = false
 
+  let defaultLineWidth = $page.data.config.LineWidth
   let nodeRef
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
@@ -45,7 +47,7 @@
   let isGettingMetadata: Promise<void>
   const getMetadata = async () => {
     if (is_raster) return
-    const vectorTile = new VectorTileData(feature)
+    const vectorTile = new VectorTileData(feature, defaultLineWidth)
     const res = await vectorTile.getMetadata()
     metadata = res.metadata
     tilestatsLayers = res.metadata.json.tilestats.layers

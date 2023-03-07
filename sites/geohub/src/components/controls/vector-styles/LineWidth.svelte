@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { DEFAULT_LINE_WIDTH } from '$lib/constants'
+  import { page } from '$app/stores'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { getLineWidth } from '$lib/helper'
@@ -10,13 +10,14 @@
 
   const layerId = layer.id
 
+  let defaultLineWidth = $page.data.config.LineWidth
   let maxValue = 10
   let minValue = 0
   let propertyName = 'line-width'
   let stepValue = 0.1
 
   const getValue = () => {
-    let value = getLineWidth($map, layer.id, DEFAULT_LINE_WIDTH)
+    let value = getLineWidth($map, layer.id, defaultLineWidth)
     return value
   }
 

@@ -1,7 +1,6 @@
 export const COLOR_CLASS_COUNT = 5
 export const COLOR_CLASS_COUNT_MAXIMUM = 25
 export const COLOR_CLASS_COUNT_MINIMUM = 2
-export const DEFAULT_LINE_WIDTH = 0.5
 export const DEFAULT_TIMEOUT_MS = 60000
 export const NO_RANDOM_SAMPLING_POINTS = 1000
 export const TOKEN_EXPIRY_PERIOD_MSEC = 86400000 * 365 // for 1 year

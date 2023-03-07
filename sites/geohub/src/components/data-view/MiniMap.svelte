@@ -13,6 +13,7 @@
   import { VectorTileData } from '$lib/VectorTileData'
   import { Loader } from '@undp-data/svelte-undp-design'
   import { MapStyles } from '$lib/config/AppConfig'
+  import { page } from '$app/stores'
 
   export let feature: DatasetFeature
   export let width = '100%'
@@ -22,6 +23,7 @@
   export let defaultColormap: string = undefined
   export let layer: VectorLayerTileStatLayer = undefined
 
+  let defaultLineWidth = $page.data.config.LineWidth
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
 
@@ -66,7 +68,7 @@
       metadata = await rasterTile.getMetadata()
     } else {
       const vectorInfo = metadata as VectorTileMetadata
-      vectorTile = new VectorTileData(feature, vectorInfo)
+      vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo)
       metadata = await (await vectorTile.getMetadata()).metadata
     }
     return previewUrl
