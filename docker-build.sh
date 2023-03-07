@@ -1,9 +1,17 @@
 #!/bin/bash
 
-IMAGE_NAME=undp-data/geohub:v1
+if [ -z $IMAGE_NAME ]; then
+    IMAGE_NAME=undp-data/geohub:v1
+fi
 
 # load environmental variables
-source ./sites/geohub/.env
+if [ -n $ENV_FILE ]; then
+    echo "load environmental variables from ${ENV_FILE}"
+    source $ENV_FILE
+fi
+
+echo $IMAGE_NAME
+echo $PORT
 
 # build Docker image
 docker build . \
