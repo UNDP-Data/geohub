@@ -6,7 +6,7 @@
   import { hexToCSSFilter } from 'hex-to-css-filter'
   import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import { ClassificationMethodNames, ClassificationMethodTypes, VectorApplyToTypes } from '$lib/constants'
+  import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/config/AppConfig'
   import {
     getIntervalList,
     getLayerProperties,
@@ -41,6 +41,7 @@
     NumberOfClassesMinimum,
     NumberOfRandomSamplingPoints,
     UniqueValueThreshold,
+    VectorApplyToTypes,
   } from '$lib/config/AppConfig'
 
   export let applyToOption: VectorApplyToTypes

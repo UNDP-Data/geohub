@@ -1,5 +1,5 @@
 import chroma from 'chroma-js'
-import { ColorMapTypes } from '$lib/constants'
+import { ColorMapTypes } from '$lib/config/AppConfig'
 
 export const SequentialColormaps = [
   'pubu',

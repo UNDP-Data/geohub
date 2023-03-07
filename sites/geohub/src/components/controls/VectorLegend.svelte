@@ -6,13 +6,13 @@
   import VectorSymbol from './VectorSymbol.svelte'
   import VectorHeatmap from './VectorHeatmap.svelte'
   import VectorLegendAdvanced from './VectorClassifyLegend.svelte'
-  import { LegendTypes, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import chroma from 'chroma-js'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
   import { Loader } from '@undp-data/svelte-undp-design'
   import { loadMap } from '$lib/helper'
+  import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig'
 
   export let layer: Layer
   export let applyToOption: VectorApplyToTypes

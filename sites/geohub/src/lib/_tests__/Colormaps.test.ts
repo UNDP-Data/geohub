@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import * as colormaps from '$lib/colormaps'
-import { ColorMapTypes } from '$lib/constants'
+import { ColorMapTypes } from '$lib/config/AppConfig'
 
 describe('colorMapStyle', () => {
   it('should return a string when color map type is sequential and card style', () => {

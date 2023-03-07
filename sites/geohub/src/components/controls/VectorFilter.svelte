@@ -7,7 +7,7 @@
   import ValueInput from '$components/controls/vector-styles/ValueInput.svelte'
   import Wizard from '$components/control-groups/Wizard.svelte'
   import Step from '$components/control-groups/Step.svelte'
-  import { vectorFilterOperations } from '$lib/constants'
+  import { VectorFilterOperators } from '$lib/config/AppConfig'
   import { clean, getLayerStyle } from '$lib/helper'
   import { toast } from '@zerodevx/svelte-toast'
 
@@ -333,7 +333,7 @@
               <!-- <hr class="dropdown-divider"> -->
 
               {#each expressionsArray as expr, i}
-                {@const op = vectorFilterOperations.filter((i) => i.value == expr.operator)}
+                {@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
 
                 {#if op && op.length > 0}
                   <div class="menu-item ">

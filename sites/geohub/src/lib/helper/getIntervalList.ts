@@ -1,5 +1,5 @@
-import { ClassificationMethodTypes } from '../constants'
-import { Jenks } from '../jenks'
+import { ClassificationMethodTypes } from '$lib/config/AppConfig'
+import { Jenks } from '$lib/jenks'
 import chroma from 'chroma-js'
 import { remapInputValue } from './remapInputValue'
 

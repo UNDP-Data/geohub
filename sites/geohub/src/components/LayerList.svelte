@@ -5,7 +5,7 @@
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
   import { map, layerList, indicatorProgress } from '$stores'
-  import { TabNames } from '$lib/constants'
+  import { TabNames } from '$lib/config/AppConfig'
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'

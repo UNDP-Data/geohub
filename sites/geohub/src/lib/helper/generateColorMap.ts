@@ -1,5 +1,5 @@
-import type { ColorMapRow } from '../types'
-import { ClassificationMethodTypes } from '../constants'
+import type { ColorMapRow } from '$lib/types'
+import { ClassificationMethodTypes } from '$lib/config/AppConfig'
 import chroma from 'chroma-js'
 import { getSampleFromInterval } from './getSampleFromInterval'
 import { getIntervalList } from './getIntervalList'

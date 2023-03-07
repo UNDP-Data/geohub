@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/constants'
+  import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/config/AppConfig'
   import { cloneDeep } from 'lodash-es'
   import {
     generateColorMap,
