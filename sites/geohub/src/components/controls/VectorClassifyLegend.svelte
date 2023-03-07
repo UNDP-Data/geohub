@@ -10,7 +10,6 @@
     ClassificationMethodNames,
     ClassificationMethodTypes,
     NO_RANDOM_SAMPLING_POINTS,
-    UNIQUE_VALUE_THRESHOLD,
     VectorApplyToTypes,
   } from '$lib/constants'
   import {
@@ -42,7 +41,7 @@
   import IconSize from '$components/controls/vector-styles/IconSize.svelte'
   import VectorLine from './VectorLine.svelte'
   import { page } from '$app/stores'
-  import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig'
+  import { NumberOfClassesMaximum, NumberOfClassesMinimum, UniqueValueThreshold } from '$lib/config/AppConfig'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -206,7 +205,7 @@
       (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
     )
     const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
-    stat.values && stat.values.length <= UNIQUE_VALUE_THRESHOLD ? (hasUniqueValues = true) : (hasUniqueValues = false)
+    stat.values && stat.values.length <= UniqueValueThreshold ? (hasUniqueValues = true) : (hasUniqueValues = false)
     if (!layerMax) {
       if (stat?.max) {
         layerMax = stat.max
@@ -292,7 +291,7 @@
 
             const propertySelectValues = []
             const values = stat.values
-            if (values && values.length <= UNIQUE_VALUE_THRESHOLD) {
+            if (values && values.length <= UniqueValueThreshold) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 

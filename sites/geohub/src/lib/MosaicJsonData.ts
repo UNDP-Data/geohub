@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from 'uuid'
-import { STAC_MINIMUM_ZOOM, UNIQUE_VALUE_THRESHOLD } from './constants'
+import { STAC_MINIMUM_ZOOM } from './constants'
 import { createAttributionFromTags, getBase64EncodedUrl, getRandomColormap } from './helper'
 import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
 import { PUBLIC_TITILER_ENDPOINT } from '$env/static/public'
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
 import chroma from 'chroma-js'
+import { UniqueValueThreshold } from './config/AppConfig'
 
 export class MosaicJsonData {
   private feature: DatasetFeature
@@ -122,7 +123,7 @@ export class MosaicJsonData {
     }
     const mosaicjson = await res.json()
     const numberOfClasses = mosaicjson.classmap ? Object.keys(mosaicjson.classmap).length : 0
-    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= UNIQUE_VALUE_THRESHOLD
+    const isUniqueValueLayer = numberOfClasses > 0 && numberOfClasses <= UniqueValueThreshold
     res = await fetch(mosaicjson.tilejson)
     if (!res.ok) {
       const error = await res.json()

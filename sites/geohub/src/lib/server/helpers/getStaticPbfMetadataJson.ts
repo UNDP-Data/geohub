@@ -3,8 +3,7 @@ import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
 import * as pmtiles from 'pmtiles'
 import arraystat from 'arraystat'
 import { mean, std, median } from 'mathjs'
-import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
-import { attribution } from '$lib/config/AppConfig'
+import { attribution, UniqueValueThreshold } from '$lib/config/AppConfig'
 
 /**
  * get metadata json of static pbf
@@ -44,7 +43,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
         attribute.mean = mean(values)
         attribute.median = median(values)
         attribute.std = std(values)
-        if (values.length > UNIQUE_VALUE_THRESHOLD) {
+        if (values.length > UniqueValueThreshold) {
           const histogram = { count: [], bins: [] }
           arraystat(values).histogram.map((item) => {
             histogram.bins.push(item.max), histogram.count.push(item.nb)
