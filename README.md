@@ -2,7 +2,9 @@
 
 GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit](https://kit.svelte.dev/).
 
-## Repositories managed
+## GeoHub Ecosystem
+
+### Repositories managed in this monorepo
 
 | App                              | Language   | Library   | NPM                                                                            | Source code                                                   |
 | -------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
@@ -15,9 +17,17 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 | @undp-data/geohub-cli            | TypeScript | -         | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/geohub-cli)            | [packages/geohub-cli](./packages/geohub-cli/)                 |
 | Documentation                    | Python     | mkdocs    |                                                                                | [documentation](./documentation/)                             |
 
-## GeoHub Ecosystem
+### Repositories developed for GeoHub
 
-- Sequence diagram
+| Repository                                                                    | Description                                                                                  |
+| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [style](https://github.com/UNDP-Data/style)                                   | It manages and hosts maplibre style.json for Geohub                                          |
+| [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions) | It manages to deploy Azure Funcitons for Geohub                                              |
+| [kubexp](https://github.com/UNDP-Data/kubexp)                                 | It manages configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes |
+| [pgsql](https://github.com/UNDP-Data/pgsql)                                   | It manages PostgreSQL funciton for pg_tileserv                                               |
+| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)     | It manages data upload pipelines for GeoHub                                                  |
+
+### System diagrams
 
 ```mermaid
 sequenceDiagram
@@ -91,11 +101,6 @@ sequenceDiagram
 ```
 
 the diagram was created by [mermaid online editor](https://mermaid.live/edit). Please read syntax of mermaid from the [documentation](https://mermaid.js.org/syntax/sequenceDiagram.htm)
-
-- related repositories
-  - [style](https://github.com/UNDP-Data/style): manage maplibre style.json for Geohub
-  - [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions): manage to deploy Azure Funcitons for Geohub
-  - [kubexp](https://github.com/UNDP-Data/kubexp): manage configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes
 
 ## Contributing
 
