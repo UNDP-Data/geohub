@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 0.1.2
+
+### Patch Changes
+
+- ba711fb2: fix: deleted PUBLIC_AZURE_URL from .env
+
 ## 0.1.1
 
 ### Patch Changes
