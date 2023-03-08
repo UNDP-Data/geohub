@@ -11,6 +11,7 @@ Please describe what you changed briefly.
 - [ ] Adding a feature
 - [ ] Fixing a bug
 - [ ] Maintaining documents
+- [ ] Adding tests
 - [ ] Others ()
 <!-- ignore-task-list-end -->
 
@@ -21,7 +22,7 @@ Please describe what you changed briefly.
 - [ ] Code is up-to-date with the `develop` branch
 - [ ] No build errors after `pnpm build`
 - [ ] No lint errors after `pnpm lint`
-- [ ] Run the tests with pnpm test and lint the project with pnpm lint and pnpm check
+- [ ] Run the tests with `pnpm test` and lint the project with `pnpm lint` and `pnpm check`
 - [ ] Make sure all the existing features working well
 <!-- ignore-task-list-end -->
 

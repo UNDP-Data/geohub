@@ -137,6 +137,12 @@ Add the same issue number in the PR description. Example:
 
 You have made your contribution to the GeoHub project.
 
+# Guide to make test
+
+The following link for vitest might be useful to make tests.
+
+- [svelte-component-test-recipes](https://github.com/davipon/svelte-component-test-recipes)
+
 # How to create a new issue
 
 - Go to the [issues](https://github.com/UNDP-Data/geohub/issues) tab of the repository.
