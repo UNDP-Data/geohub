@@ -41,9 +41,9 @@
 					</li>
 				{:else}
 					<li>
-						<!-- svelte-ignore a11y-missing-attribute -->
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<a aria-label={breadcrumb.name} on:click={() => handleClicked(index)}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a aria-label={breadcrumb.name} role="button" on:click={() => handleClicked(index)}>
 							<span class="icon-text">
 								<span class="icon">
 									{#if breadcrumb.icon.startsWith('fa')}
