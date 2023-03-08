@@ -1,5 +1,14 @@
 # @undp-data/electricity-dashboard
 
+## 0.1.2
+
+### Patch Changes
+
+- ba711fb2: fix: deleted PUBLIC_AZURE_URL from .env
+- b6c05acb: fix: changed PUBLIC_TITILER_ENDPOINT to private variable of TITILER_ENDPOINT
+- Updated dependencies [ba711fb2]
+  - @undp-data/current-location@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @undp-data/style-viewer
 
+## 0.1.1
+
+### Patch Changes
+
+- ba711fb2: fix: deleted PUBLIC_AZURE_URL from .env
+- Updated dependencies [ba711fb2]
+  - @undp-data/current-location@0.1.2
+
 ## 0.1.0
 
 ### Minor Changes
