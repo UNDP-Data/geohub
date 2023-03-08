@@ -9,7 +9,7 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   children?: Layer[]
   parentId?: string
-  dataset: DatasetFeature
+  dataset?: DatasetFeature
   colorMapName?: string
   classificationMethod?: ClassificationMethodTypes
 }

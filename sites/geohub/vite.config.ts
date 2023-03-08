@@ -21,6 +21,7 @@ export default defineConfig({
   },
   test: {
     include: ['src/**/*.{test,spec}.{js,ts}'],
+    threads: false,
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./setupTest.ts'],
@@ -28,6 +29,5 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
     },
-    // root: resolve(__dirname, '../../'),
   },
 })
