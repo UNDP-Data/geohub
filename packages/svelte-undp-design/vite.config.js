@@ -1,11 +1,18 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 
-/** @type {import('vite').UserConfig} */
-const config = {
+export default defineConfig({
 	plugins: [sveltekit()],
 	optimizeDeps: {
 		include: ['lodash.get', 'lodash.isequal', 'lodash.clonedeep']
+	},
+	test: {
+		include: ['src/**/*.{test,spec}.{js,ts}'],
+		globals: true,
+		environment: 'jsdom',
+		coverage: {
+			provider: 'istanbul',
+			reporter: ['text', 'json', 'html']
+		}
 	}
-};
-
-export default config;
+});
