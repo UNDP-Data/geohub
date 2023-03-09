@@ -1,5 +1,3 @@
-import type { VectorLayerTileStatLayer } from './VectorLayerTileStatLayer'
-
 //https://github.com/mapbox/tilejson-spec/tree/master/3.0.0
 export interface TileJson {
   tilejson: '3.0.0'
