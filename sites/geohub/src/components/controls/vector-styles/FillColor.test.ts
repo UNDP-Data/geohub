@@ -2,57 +2,56 @@ import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/svelte'
 import FillColor from './FillColor.svelte'
 import type { Layer } from '$lib/types'
-import { Map } from 'maplibre-gl'
+import { Map, type StyleSpecification } from 'maplibre-gl'
 import { map } from '$stores'
+
+const style: StyleSpecification = {
+  version: 8,
+  sources: {
+    carto: {
+      type: 'vector',
+      url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json',
+    },
+  },
+  layers: [
+    {
+      id: 'landcover',
+      type: 'fill',
+      source: 'carto',
+      'source-layer': 'landcover',
+      paint: {
+        'fill-color': 'rgba(255,0,0,1)',
+      },
+    },
+  ],
+}
 
 describe('FillColor component', () => {
   let mapContainer: HTMLDivElement
   let _map: Map
 
   beforeEach(() => {
+    // create mock of Map object for this test
     vi.mock('maplibre-gl', () => ({
       Map: vi.fn(() => ({
-        on: vi.fn(),
-        getPaintProperty: vi.fn(() => {
-          return 'rgba(255,0,0,1)'
-        }),
+        getPaintProperty: vi.fn(
+          (id: string, property: string) => style.layers.find((l) => l.id === id).paint[property],
+        ),
       })),
     }))
 
+    // create map instance to set to stores
     mapContainer = document.createElement('div')
 
     _map = new Map({
       container: mapContainer,
-      style: {
-        version: 8,
-        name: 'Voyager',
-        sources: {
-          carto: {
-            type: 'vector',
-            url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json',
-          },
-        },
-        sprite: 'https://undp-data.github.io/style/sprite/sprite',
-        glyphs: 'https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf',
-        layers: [
-          {
-            id: 'landcover',
-            type: 'fill',
-            source: 'carto',
-            'source-layer': 'landcover',
-            paint: {
-              'fill-color': 'rgba(255,0,0,1)',
-              'fill-opacity': 1,
-            },
-          },
-        ],
-      },
+      style: style,
     })
     map.update(() => _map)
   })
 
   afterEach(() => {
-    vi.resetAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Should render it from style.json', () => {
@@ -65,7 +64,6 @@ describe('FillColor component', () => {
     expect(screen.getAllByTestId('color-palette')).toBeTruthy()
 
     const fillColor = _map.getPaintProperty(layer.id, 'fill-color')
-    console.log(fillColor)
     expect(fillColor).toBe('rgba(255,0,0,1)')
   })
 })
