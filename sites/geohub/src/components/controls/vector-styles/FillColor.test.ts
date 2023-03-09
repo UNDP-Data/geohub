@@ -27,19 +27,11 @@ const style: StyleSpecification = {
 }
 
 describe('FillColor component', () => {
+  const mockgetPaintProperty = vi.fn()
   let mapContainer: HTMLDivElement
   let _map: Map
 
   beforeEach(() => {
-    // create mock of Map object for this test
-    vi.mock('maplibre-gl', () => ({
-      Map: vi.fn(() => ({
-        getPaintProperty: vi.fn(
-          (id: string, property: string) => style.layers.find((l) => l.id === id).paint[property],
-        ),
-      })),
-    }))
-
     // create map instance to set to stores
     mapContainer = document.createElement('div')
 
@@ -48,6 +40,10 @@ describe('FillColor component', () => {
       style: style,
     })
     map.update(() => _map)
+
+    // mock getPaintProperty which is used in FillColor component
+    const spy = vi.spyOn(_map, 'getPaintProperty')
+    spy.mockImplementation(mockgetPaintProperty)
   })
 
   afterEach(() => {
@@ -61,9 +57,9 @@ describe('FillColor component', () => {
     }
 
     render(FillColor, { props: { layer: layer, defaultColor: 'rgba(0,0,0,1)' } })
+    // to make sure color-palette button is created
     expect(screen.getAllByTestId('color-palette')).toBeTruthy()
-
-    const fillColor = _map.getPaintProperty(layer.id, 'fill-color')
-    expect(fillColor).toBe('rgba(255,0,0,1)')
+    // to make sure getPaintProperty function is called in initialising
+    expect(mockgetPaintProperty).toHaveBeenCalled()
   })
 })
