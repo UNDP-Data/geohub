@@ -44,6 +44,16 @@ export const generateMetadataJson = async (tilejson: TileJson) => {
     })
   }
 
+  data.json.vector_layers?.forEach((v) => {
+    const statLayer = data.json.tilestats?.layers.find((l) => l.layer === v.id)
+    const attributes = statLayer.attributes.map((a) => a.attribute)
+    for (const field of Object.keys(v.fields)) {
+      if (!attributes.includes(field)) {
+        delete v.fields[field]
+      }
+    }
+  })
+
   if (tilejson.bounds) {
     data.center = `${(tilejson.bounds[0] + tilejson.bounds[2]) / 2},${(tilejson.bounds[1] + tilejson.bounds[3]) / 2},${
       tilejson.minzoom

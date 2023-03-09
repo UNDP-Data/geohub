@@ -43,15 +43,23 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
       const feature = layer.feature(featureIndex)
       geometryType = feature.type
       if (!feature.properties?.[property]) continue
-      layer['_keys'][property] = propsObj[property].push(feature.properties[property])
+      let value = Number(feature.properties[property])
+      if (!value) {
+        value = feature.properties[property]
+      }
+      layer['_keys'][property] = propsObj[property].push(value)
     }
 
-    if (isNaN(propsObj[property][0])) {
+    const firstValue = propsObj[property][0]
+    if (!firstValue) return
+    const dataType = String(typeof firstValue)
+
+    if (isNaN(firstValue)) {
       // The first value is not a number, mathematical operations will result in NaN
       const values = [...new Set(propsObj[property])]
       const attribute = {
         attribute: property,
-        type: String(typeof propsObj[property][0]),
+        type: dataType,
         count: propsObj[property].length,
         values: values.length > UniqueValueThreshold ? values.slice(0, 100) : values,
       }
@@ -60,7 +68,7 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
     } else {
       const attribute = {
         attribute: property,
-        type: String(typeof propsObj[property][0]),
+        type: dataType,
         count: propsObj[property].length,
         min: Math.min(...propsObj[property]),
         max: Math.max(...propsObj[property]),
