@@ -12,7 +12,7 @@ export const TagInputValues = [
     label: 'Resolution',
   },
   {
-    key: 'year_value',
+    key: 'year',
     label: 'Year',
   },
   {

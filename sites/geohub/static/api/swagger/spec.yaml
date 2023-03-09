@@ -138,7 +138,7 @@ paths:
                               value: 1km
                             - key: extent
                               value: Global
-                            - key: year_value
+                            - key: year
                               value: '2000'
                             - key: sdg_target
                               value: population
@@ -275,7 +275,7 @@ paths:
         - schema:
             type: string
           in: query
-          name: year_value
+          name: year
           description: search by year value
         - schema:
             type: boolean
@@ -411,7 +411,7 @@ paths:
                           value: Subnational
                         - key: extent
                           value: Kenya
-                        - key: year_value
+                        - key: year
                           value: '2021'
                         - key: type
                           value: azure
@@ -462,7 +462,7 @@ paths:
                           value: Subnational
                         - key: extent
                           value: Kenya
-                        - key: year_value
+                        - key: year
                           value: '2021'
                         - key: type
                           value: azure
@@ -905,7 +905,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
         - schema:
             type: string
           in: query
@@ -1246,7 +1246,7 @@ paths:
               - stac
               - theme
               - type
-              - year_value
+              - year
           in: query
           name: key
           description: Optional parameter to filter by key
