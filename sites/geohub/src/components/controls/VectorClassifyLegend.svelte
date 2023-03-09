@@ -203,7 +203,7 @@
     colorMapRows = []
 
     const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
-      (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+      (l) => l.layer === layerStyle['source-layer'],
     )
     const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
     stat.values && stat.values.length <= UniqueValueThreshold ? (hasUniqueValues = true) : (hasUniqueValues = false)
@@ -262,7 +262,7 @@
     const tilestats = metadata.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layerStyle['source-layer'],
       )
 
       if (tileStatLayer) {
@@ -272,7 +272,7 @@
 
         if (tileStatLayerAttribute) {
           const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
-            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+            (l) => l.layer === layerStyle['source-layer'],
           )
           const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
           const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std'])
@@ -292,7 +292,7 @@
 
             const propertySelectValues = []
             const values = stat.values
-            if (values && values.length <= UniqueValueThreshold) {
+            if (stat.type !== 'number' && values && values.length > 0 && values.length <= UniqueValueThreshold) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
