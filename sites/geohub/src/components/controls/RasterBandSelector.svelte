@@ -2,7 +2,7 @@
   import type { RasterSourceSpecification } from 'maplibre-gl'
   import { getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
-  import { map } from '$stores'
+  import { layerList, map } from '$stores'
   import { initTippy } from '$lib/helper'
 
   const tippy = initTippy({
@@ -24,7 +24,11 @@
     if (!info) return
     if (info?.isMosaicJson) return
     if (info.active_band_no === selected) return
+
     updateLayerInfo(layer.info, selected)
+    $map.once('sourcedata', () => {
+      $layerList = [...$layerList]
+    })
   }
 
   if (layerStyle.type === 'raster') {
@@ -43,6 +47,7 @@
     metadata.active_band_no = bandName
     const bandIndex = getActiveBandIndex(metadata)
     layerURL.searchParams.set('bidx', `${bandIndex + 1}`)
+    layerSrc.tiles[0] = layerURL.toString()
     updateParamsInURL(layerStyle, layerURL, {})
   }
 
