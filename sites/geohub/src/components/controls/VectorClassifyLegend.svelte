@@ -292,7 +292,7 @@
 
             const propertySelectValues = []
             const values = stat.values
-            if (stat.type !== 'number' && values && values.length > 0 && values.length <= UniqueValueThreshold) {
+            if (values && values.length > 0 && values.length <= UniqueValueThreshold) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
