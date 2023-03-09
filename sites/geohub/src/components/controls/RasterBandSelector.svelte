@@ -56,9 +56,10 @@
 </script>
 
 {#if layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
-  <span
-    class="tag is-success"
-    use:tippy={{ content: tooltipContent }}>B{selected}</span>
+  <button
+    class="selected-band tag is-success"
+    disabled={bands.length < 2}
+    use:tippy={{ content: tooltipContent }}>B{selected}</button>
   <div
     bind:this={tooltipContent}
     class="tooltip p-2">
@@ -82,3 +83,9 @@
     </nav>
   </div>
 {/if}
+
+<style lang="scss">
+  .selected-band {
+    cursor: pointer;
+  }
+</style>
