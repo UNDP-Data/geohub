@@ -24,7 +24,7 @@ export const TagSearchKeys = [
     label: 'Resolution',
   },
   {
-    key: 'year_value',
+    key: 'year',
     label: 'Year',
   },
   {

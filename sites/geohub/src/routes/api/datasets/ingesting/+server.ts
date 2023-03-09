@@ -99,7 +99,8 @@ export const GET: RequestHandler = async ({ locals }) => {
         const properties = await blockBlobClient.getProperties()
         const names = item.name.split('/')
         const file_name = names[names.length - 1]
-        if (file_name === rawName) {
+
+        if (file_name.indexOf('.ingesting') === -1) {
           const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`
           ingesting.id = generateHashKey(_url)
           ingesting.name = file_name
@@ -108,7 +109,7 @@ export const GET: RequestHandler = async ({ locals }) => {
           ingesting.createdat = properties.createdOn.toISOString()
           ingesting.updatedat = properties.lastModified.toISOString()
           ingesting.processing = false
-        } else if (file_name === `${rawName}.ingesting`) {
+        } else {
           ingesting.processing = true
           ingesting.processingFile = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`
         }

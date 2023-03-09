@@ -20,7 +20,7 @@
   $: url = layer?.dataset?.properties?.url
   $: layerUrl = getLayerSourceUrl($map, layerId) as string
   $: layerURL = url ? new URL(url) : undefined
-  $: showSlider = currentSelectedArg ? true : false
+  $: showSlider = !!currentSelectedArg
 
   /* FUNCTIONS*/
   const getArgumentsInURL = () => {
@@ -161,6 +161,10 @@
         last="label"
         values={sliderConfig.values}
         on:stop={setSliderValue}
+        springValues={{
+          stiffness: 1,
+          damping: 1,
+        }}
         pips="true"
         all="label" />
     {/if}
