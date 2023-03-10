@@ -1477,6 +1477,8 @@ paths:
                     type: number
                   sidebar_position:
                     $ref: '#/components/schemas/SidebarPosition'
+      tags:
+        - GeoHub User Settings
     post:
       summary: Update GeoHub User Settings
       responses:
@@ -1536,6 +1538,8 @@ paths:
                       $ref: '#/components/schemas/SidebarPosition'
         description: Update GeoHub User Settings
         required: true
+      tags:
+        - GeoHub User Settings
   /settings/reset:
     post:
       summary: Reset GeoHub User Settings
@@ -1567,7 +1571,10 @@ paths:
                         type: number
                     sidebar_position:
                         $ref: '#/components/schemas/SidebarPosition'
+      tags:
+        - GeoHub User Settings
       description: Reset GeoHub User Settings
+
   /swagger/spec.json:
     get:
       summary: Get open API JSON definition
