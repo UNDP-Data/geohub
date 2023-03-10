@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte'
   import type { Breadcrumb } from '@undp-data/svelte-undp-design'
   import DataCategoryCard from '$components/data-view/DataCategoryCard.svelte'
-  import { indicatorProgress } from '$stores'
+  // import { indicatorProgress } from '$stores'
   import { onMount } from 'svelte'
 
   const dispatch = createEventDispatcher()
@@ -11,6 +11,7 @@
   export let categories: Breadcrumb[]
   export let cardSize: 'medium' | 'small' = 'medium'
   export let breadcrumbs: Breadcrumb[]
+  export let isLoading = false
   let subCategories: Breadcrumb[] = []
   $: isShowSubCategory = subCategories && subCategories.length > 0
 
@@ -46,7 +47,7 @@
 
   const searchCategory = async (category: Breadcrumb) => {
     try {
-      $indicatorProgress = true
+      isLoading = true
 
       const apiUrl = new URL(`${$page.url.origin}${category.url}`)
 
@@ -69,7 +70,7 @@
         }
       })
     } finally {
-      $indicatorProgress = false
+      isLoading = false
     }
   }
 

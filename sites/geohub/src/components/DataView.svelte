@@ -1,8 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import InfiniteScroll from 'svelte-infinite-scroll'
   import type { DatasetFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
-  import { map, indicatorProgress } from '$stores'
+  import { map } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
@@ -25,10 +26,17 @@
 
   let containerDivElement: HTMLDivElement
 
-  let isLoading = false
   let query = $page.url.searchParams.get('query') ?? ''
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
-  let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features
+
+  let DataItemFeatureCollection: DatasetFeatureCollection = undefined
+  let datasetFeaturesPromise: Promise<DatasetFeatureCollection> = $page.data.promises?.features
+  if (datasetFeaturesPromise) {
+    datasetFeaturesPromise.then((fc) => {
+      DataItemFeatureCollection = fc
+    })
+  }
+
   let isFavouriteSearch = false
   let initTagfilter: (url?: URL) => Promise<void>
 
@@ -90,22 +98,21 @@
     }
   }
 
-  const fetchNextDatasets = async () => {
-    if (DataItemFeatureCollection?.features.length === 0) return
-    const link = DataItemFeatureCollection.links.find((link) => link.rel === 'next')
-    if (!link) return
-    if ($indicatorProgress) return
-
+  const fetchNextDatasets = async (url: string) => {
     try {
-      $indicatorProgress = true
-      const res = await fetch(link.href)
+      // change cursor and disable scroll
+      containerDivElement.style.cursor = 'wait'
+      containerDivElement.style.overflowY = 'hidden'
+
+      const res = await fetch(url)
       const json: DatasetFeatureCollection = await res.json()
       if (json.features.length > 0) {
         json.features = [...DataItemFeatureCollection.features, ...json.features]
       }
       DataItemFeatureCollection = json
     } finally {
-      $indicatorProgress = false
+      containerDivElement.style.cursor = ''
+      containerDivElement.style.overflowY = 'auto'
     }
   }
 
@@ -140,7 +147,7 @@
     if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
       if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
         if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
-          DataItemFeatureCollection = undefined
+          clearDatasets()
           breadcrumbs.pop()
           breadcrumbs = [...breadcrumbs]
           await goto(apiUrl)
@@ -150,10 +157,12 @@
     }
 
     if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
+      datasetFeaturesPromise = undefined
       DataItemFeatureCollection = undefined
       await goto(apiUrl)
       return
     } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
+      datasetFeaturesPromise = undefined
       DataItemFeatureCollection = undefined
       breadcrumbs.pop()
       breadcrumbs = [...breadcrumbs]
@@ -169,40 +178,27 @@
   }
 
   const reload = async (url: string) => {
-    try {
-      isLoading = true
+    const datasetUrl = new URL(url)
+    const apiUrl = `${$page.url.origin}${datasetUrl.search}`
 
-      const datasetUrl = new URL(url)
-      const apiUrl = `${$page.url.origin}${datasetUrl.search}`
+    await goto(apiUrl, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: true,
+    })
+    selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
+    if (initTagfilter) {
+      initTagfilter(new URL(apiUrl))
+    }
+    breadcrumbs = initBreadcrumbs()
+    datasetFeaturesPromise = $page.data.promises?.features
+    if (!datasetFeaturesPromise) {
       DataItemFeatureCollection = undefined
-
-      await goto(apiUrl, {
-        replaceState: true,
-        noScroll: true,
-        keepFocus: true,
-        invalidateAll: true,
-      })
-      selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
-      if (initTagfilter) {
-        initTagfilter(new URL(apiUrl))
-      }
-      breadcrumbs = initBreadcrumbs()
-      DataItemFeatureCollection = $page.data.features
-    } finally {
-      isLoading = false
     }
-  }
-
-  const handleScroll = async () => {
-    const containerHeight = containerDivElement.scrollHeight
-    const scrollTop = containerDivElement.scrollTop
-    let currentScroll = scrollTop + containerDivElement.clientHeight
-    let modifier = 100
-    if (currentScroll + modifier > containerHeight) {
-      if (!isLoading && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
-        await fetchNextDatasets()
-      }
-    }
+    datasetFeaturesPromise?.then((fc) => {
+      DataItemFeatureCollection = fc
+    })
   }
 
   const handleBreadcrumpClicked = async (e) => {
@@ -213,7 +209,7 @@
       // home
       clearFiltertext()
       breadcrumbs = [breadcrumbs[0]]
-      DataItemFeatureCollection = undefined
+      clearDatasets()
       isFavouriteSearch = false
 
       const apiUrl = $page.url
@@ -232,7 +228,7 @@
         breadcrumbs.pop()
         last = breadcrumbs[breadcrumbs.length - 1]
       }
-      DataItemFeatureCollection = undefined
+      clearDatasets()
 
       breadcrumbs = [...breadcrumbs]
 
@@ -258,6 +254,11 @@
   let clearFiltertext = () => {
     query = ''
   }
+
+  let clearDatasets = () => {
+    datasetFeaturesPromise = undefined
+    DataItemFeatureCollection = undefined
+  }
 </script>
 
 <div
@@ -282,45 +283,52 @@
   {/key}
 
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
-    <Notification type="info">{DataItemFeatureCollection.pages.totalCount} {dsText} found.</Notification>
+    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were ' : 'dataset was '}
+    <Notification type="info">
+      {DataItemFeatureCollection.features.length} / {DataItemFeatureCollection.pages.totalCount}
+      {dsText}loaded.
+    </Notification>
   {/if}
 </div>
 <div
   class="container data-view-container mx-4"
   style="height: {totalHeight}px;"
-  on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  {#if isLoading}
-    <div
-      hidden={!isLoading}
-      class="loader-container">
+  {#await datasetFeaturesPromise}
+    <div class="loader-container">
       <Loader size="medium" />
     </div>
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-    {#each DataItemFeatureCollection.features as feature}
-      <DataCard
-        {feature}
-        bind:isExpanded={expanded[feature.properties.id]}
-        bind:isStarOnly={isFavouriteSearch} />
-    {/each}
-    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <Notification type="info">All data loaded.</Notification>
-    {/if}
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
-    {#if isFavouriteSearch}
-      <Notification type="info"
-        >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+  {:then}
+    {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
+      {#each DataItemFeatureCollection.features as feature}
+        <DataCard
+          {feature}
+          bind:isExpanded={expanded[feature.properties.id]}
+          bind:isStarOnly={isFavouriteSearch} />
+      {/each}
+      <InfiniteScroll
+        threshold={100}
+        on:loadMore={async () => {
+          const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next')
+          if (link) {
+            await fetchNextDatasets(link.href)
+          }
+        }} />
+    {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
+      {#if isFavouriteSearch}
+        <Notification type="info"
+          >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+      {:else}
+        <Notification type="warning">No data found. Try another keyword.</Notification>
+      {/if}
     {:else}
-      <Notification type="warning">No data found. Try another keyword.</Notification>
+      <DataCategoryCardList
+        categories={dataCategories}
+        cardSize="medium"
+        on:selected={handleCategorySelected}
+        bind:breadcrumbs />
     {/if}
-  {:else}
-    <DataCategoryCardList
-      categories={dataCategories}
-      cardSize="medium"
-      on:selected={handleCategorySelected}
-      bind:breadcrumbs />
-  {/if}
+  {/await}
 </div>
 
 <style lang="scss">
