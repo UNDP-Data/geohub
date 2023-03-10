@@ -180,7 +180,6 @@
   const reload = async (url: string) => {
     const datasetUrl = new URL(url)
     const apiUrl = `${$page.url.origin}${datasetUrl.search}`
-    clearDatasets()
 
     await goto(apiUrl, {
       replaceState: true,
@@ -281,8 +280,11 @@
   {/key}
 
   {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
-    <Notification type="info">{DataItemFeatureCollection.pages.totalCount} {dsText} found.</Notification>
+    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were ' : 'dataset was '}
+    <Notification type="info">
+      {DataItemFeatureCollection.features.length} / {DataItemFeatureCollection.pages.totalCount}
+      {dsText}loaded.
+    </Notification>
   {/if}
 </div>
 <div
@@ -309,9 +311,6 @@
             await fetchNextDatasets(link.href)
           }
         }} />
-      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-        <Notification type="info">All data loaded.</Notification>
-      {/if}
     {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
       {#if isFavouriteSearch}
         <Notification type="info"
