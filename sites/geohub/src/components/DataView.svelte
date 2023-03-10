@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import InfiniteScroll from 'svelte-infinite-scroll'
   import type { DatasetFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
   import { map } from '$stores'
@@ -97,17 +98,22 @@
     }
   }
 
-  const fetchNextDatasets = async () => {
-    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'next')
-    if (!link) return
+  const fetchNextDatasets = async (url: string) => {
+    try {
+      // change cursor and disable scroll
+      containerDivElement.style.cursor = 'wait'
+      containerDivElement.style.overflowY = 'hidden'
 
-    console.log(link.href)
-    const res = await fetch(link.href)
-    const json: DatasetFeatureCollection = await res.json()
-    if (json.features.length > 0) {
-      json.features = [...DataItemFeatureCollection.features, ...json.features]
+      const res = await fetch(url)
+      const json: DatasetFeatureCollection = await res.json()
+      if (json.features.length > 0) {
+        json.features = [...DataItemFeatureCollection.features, ...json.features]
+      }
+      DataItemFeatureCollection = json
+    } finally {
+      containerDivElement.style.cursor = ''
+      containerDivElement.style.overflowY = 'auto'
     }
-    DataItemFeatureCollection = json
   }
 
   const handleCategorySelected = async (e) => {
@@ -190,20 +196,7 @@
     datasetFeaturesPromise = $page.data.promises?.features
     datasetFeaturesPromise?.then((fc) => {
       DataItemFeatureCollection = fc
-      // AdditionalFeatures = []
     })
-  }
-
-  const handleScroll = async () => {
-    const containerHeight = containerDivElement.scrollHeight
-    const scrollTop = containerDivElement.scrollTop
-    let currentScroll = scrollTop + containerDivElement.clientHeight
-    let modifier = 100
-    if (currentScroll + modifier > containerHeight) {
-      if (!DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
-        await fetchNextDatasets()
-      }
-    }
   }
 
   const handleBreadcrumpClicked = async (e) => {
@@ -263,7 +256,6 @@
   let clearDatasets = () => {
     datasetFeaturesPromise = undefined
     DataItemFeatureCollection = undefined
-    // AdditionalFeatures = []
   }
 </script>
 
@@ -296,7 +288,6 @@
 <div
   class="container data-view-container mx-4"
   style="height: {totalHeight}px;"
-  on:scroll={handleScroll}
   bind:this={containerDivElement}>
   {#await datasetFeaturesPromise}
     <div class="loader-container">
@@ -310,14 +301,14 @@
           bind:isExpanded={expanded[feature.properties.id]}
           bind:isStarOnly={isFavouriteSearch} />
       {/each}
-      <!-- {#if AdditionalFeatures}
-        {#each AdditionalFeatures as feature}
-          <DataCard
-            {feature}
-            bind:isExpanded={expanded[feature.properties.id]}
-            bind:isStarOnly={isFavouriteSearch} />
-        {/each}
-      {/if} -->
+      <InfiniteScroll
+        threshold={100}
+        on:loadMore={async () => {
+          const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next')
+          if (link) {
+            await fetchNextDatasets(link.href)
+          }
+        }} />
       {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
         <Notification type="info">All data loaded.</Notification>
       {/if}

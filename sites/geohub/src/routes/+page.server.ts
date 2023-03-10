@@ -73,8 +73,6 @@ export const load: PageServerLoad = async (event) => {
   ) {
     apiUrl.searchParams.delete('style')
     const fc = getDatasets(event.fetch, apiUrl)
-    // const res2 = await event.fetch(`/api/datasets${apiUrl.search}`)
-    // const fc: DatasetFeatureCollection = await res2.json()
     data.promises = {
       features: fc,
     }
