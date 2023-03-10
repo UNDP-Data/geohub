@@ -1,10 +1,14 @@
 <script lang="ts">
-  import { cloneDeep } from 'lodash-es'
-  import { v4 as uuidv4 } from 'uuid'
-  import { getActiveBandIndex, getLayerStyle } from '$lib/helper'
-
+  import type { RasterSourceSpecification } from 'maplibre-gl'
+  import { getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
+  import { initTippy } from '$lib/helper'
+
+  const tippy = initTippy({
+    placement: 'bottom-start',
+  })
+  let tooltipContent: HTMLElement
 
   export let layer: Layer
 
@@ -21,23 +25,10 @@
     if (info?.isMosaicJson) return
     if (info.active_band_no === selected) return
 
-    const newLayer = cloneDeep(layer)
-    const layerId = uuidv4()
-    newLayer.id = layerId
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    updateLayerInfo(newLayer.info, selected)
-
-    const currentLayerIndex = $layerList.indexOf(layer)
-    $layerList.splice(currentLayerIndex, 0, newLayer)
-
-    const style = getLayerStyle($map, layer.id)
-
-    // layerList.set([newLayer, ...$layerList])
-    $map.addLayer(JSON.parse(JSON.stringify(style)), layer.id)
-
-    deleteOldLayer(layer.id)
+    updateLayerInfo(layer.info, selected)
+    $map.once('sourcedata', () => {
+      $layerList = [...$layerList]
+    })
   }
 
   if (layerStyle.type === 'raster') {
@@ -49,56 +40,57 @@
   }
 
   const updateLayerInfo = (metadata: RasterTileMetadata, bandName: string) => {
-    const layerSrc = $map.getSource(layerStyle.source)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    const layerSrc: RasterSourceSpecification = $map.getSource(layerStyle.source) as RasterSourceSpecification
     if (!(layerSrc.tiles && layerSrc.tiles.length > 0)) return
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const layerURL = new URL(layerSrc.tiles[0])
-    if (layerURL.searchParams.has('bidx')) {
-      let params = {}
-      layerURL.searchParams.delete('bidx')
-
-      metadata.active_band_no = bandName
-      const bandIndex = getActiveBandIndex(metadata)
-
-      params = Object.assign(params, { bidx: bandIndex + 1 })
-
-      const layerBandMetadataMin = metadata.band_metadata[bandIndex][1]['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = metadata.band_metadata[bandIndex][1]['STATISTICS_MAXIMUM']
-      params = Object.assign(params, { rescale: `${layerBandMetadataMin},${layerBandMetadataMax}` })
-
-      Object.keys(params).forEach((key) => {
-        layerURL.searchParams.set(key, params[key])
-      })
-    }
+    layerURL.searchParams.delete('bidx')
+    metadata.active_band_no = bandName
+    const bandIndex = getActiveBandIndex(metadata)
+    layerURL.searchParams.set('bidx', `${bandIndex + 1}`)
+    layerSrc.tiles[0] = layerURL.toString()
+    updateParamsInURL(layerStyle, layerURL, {})
   }
 
-  const deleteOldLayer = (oldLayerId) => {
-    $layerList = $layerList.filter((item) => item.id !== oldLayerId)
-    $map.removeLayer(oldLayerId)
+  const handleEnterKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      event.target.click()
+    }
   }
 </script>
 
 {#if layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
-  {#if bands.length === 1}
-    <span class="tag is-success">B{selected}</span>
-  {:else if bands.length > 1}
-    <div
-      class="select is-success is-small has-tooltip-bottom has-tooltip-arrow"
-      data-tooltip="Change raster band">
-      <select bind:value={selected}>
-        {#each bands as band}
-          <option value={band}>B{band}</option>
-        {/each}
-      </select>
-    </div>
-  {/if}
+  <button
+    class="selected-band tag is-success"
+    disabled={bands.length < 2}
+    use:tippy={{ content: tooltipContent }}>B{selected}</button>
+  <div
+    bind:this={tooltipContent}
+    class="tooltip p-2">
+    <nav class="panel">
+      {#each bands as band}
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          class="panel-block {selected === band ? 'is-active' : ''}"
+          on:click={() => {
+            selected = band
+          }}
+          on:keydown={handleEnterKey}>
+          <span class="panel-icon">
+            <i
+              class="fa-solid fa-layer-group"
+              aria-hidden="true" />
+          </span>
+          B{band}
+        </a>
+      {/each}
+    </nav>
+  </div>
 {/if}
 
 <style lang="scss">
-  .select {
-    padding-right: 0.5rem !important;
+  .selected-band {
+    cursor: pointer;
   }
 </style>
