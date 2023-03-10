@@ -6,7 +6,7 @@
   "main": "bulma.scss",
   "files": [
     "bulma.scss",
-    "dist/bulma.css",
+    "dist/style.css",
     "package.json",
     "README.md"
   ],
