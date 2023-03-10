@@ -18,6 +18,8 @@
   const dataCategories: Breadcrumb[] = session
     ? DataCategories
     : DataCategories.filter((category) => !['Favourite', 'My data'].includes(category.name))
+  let sdgSubCategories: Breadcrumb[]
+  let isLoading = false
 
   export let contentHeight: number
   let optionsHeight = 41.5
@@ -118,10 +120,13 @@
 
   const handleCategorySelected = async (e) => {
     const category = e.detail.category
-    if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
-      $map.zoomTo(StacMinimumZoom)
-    }
-    if (category.url.startsWith('/api/datasets')) {
+    if (category.name === 'SDG') {
+      await searchSDGCategory(category)
+    } else if (category.url.startsWith('/api/datasets')) {
+      if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
+        $map.zoomTo(StacMinimumZoom)
+      }
+
       const apiUrl = $page.url
       const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
       for (const key of categoryUrl.searchParams.keys()) {
@@ -131,6 +136,34 @@
         }
       }
       await reload(apiUrl.toString())
+    }
+  }
+
+  const searchSDGCategory = async (category: Breadcrumb) => {
+    try {
+      isLoading = true
+      const apiUrl = new URL(`${$page.url.origin}${category.url}`)
+
+      const res = await fetch(apiUrl.toString())
+      const json = await res.json()
+      const values: [{ value: string; count: number }] = json[Object.keys(json)[0]]
+
+      const last = breadcrumbs[breadcrumbs.length - 1]
+      if (last.name !== category.name) {
+        breadcrumbs = [...breadcrumbs, category]
+      }
+
+      let num_values = values.map((v) => Number(v.value))
+      num_values = num_values.sort((a, b) => a - b)
+      sdgSubCategories = num_values.map((num) => {
+        return {
+          name: `SDG${num}`,
+          icon: `assets/sdgs/${num}.png`,
+          url: `/api/datasets?sdg_goal=${num}`,
+        } as Breadcrumb
+      })
+    } finally {
+      isLoading = false
     }
   }
 
@@ -212,7 +245,7 @@
       clearDatasets()
       isFavouriteSearch = false
 
-      const apiUrl = $page.url
+      let apiUrl = $page.url
       apiUrl.searchParams.delete('query')
       apiUrl.searchParams.delete('sdg_goal')
       apiUrl.searchParams.delete('type')
@@ -220,7 +253,8 @@
       apiUrl.searchParams.delete('stac')
       apiUrl.searchParams.delete('staronly')
       apiUrl.searchParams.delete('mydata')
-      await clearSelectedTags(apiUrl)
+      apiUrl = clearSelectedTags(apiUrl)
+      await goto(apiUrl, { replaceState: true, invalidateAll: false })
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -233,22 +267,24 @@
       breadcrumbs = [...breadcrumbs]
 
       selectedTags = getSelectedTagsFromUrl($page.url)
+      let apiUrl = $page.url
       if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets?') && selectedTags.length > 0) {
-        await clearSelectedTags($page.url)
+        apiUrl = clearSelectedTags(apiUrl)
       }
       if (initTagfilter) {
-        initTagfilter(new URL($page.url))
+        await initTagfilter(apiUrl)
       }
+      await goto(apiUrl, { replaceState: true, invalidateAll: false })
     }
     expanded = {}
   }
 
-  const clearSelectedTags = async (url: URL) => {
+  const clearSelectedTags = (url: URL) => {
     TagSearchKeys.forEach((key) => {
       url.searchParams.delete(key.key)
     })
     selectedTags = []
-    await reload(url.toString())
+    return url
   }
 
   let clearFiltertext = () => {
@@ -256,6 +292,7 @@
   }
 
   let clearDatasets = () => {
+    sdgSubCategories = undefined
     datasetFeaturesPromise = undefined
     DataItemFeatureCollection = undefined
   }
@@ -321,6 +358,16 @@
       {:else}
         <Notification type="warning">No data found. Try another keyword.</Notification>
       {/if}
+    {:else if isLoading}
+      <div class="loader-container">
+        <Loader size="medium" />
+      </div>
+    {:else if sdgSubCategories}
+      <DataCategoryCardList
+        categories={sdgSubCategories}
+        cardSize="small"
+        on:selected={handleCategorySelected}
+        bind:breadcrumbs />
     {:else}
       <DataCategoryCardList
         categories={dataCategories}

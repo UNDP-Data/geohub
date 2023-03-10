@@ -7,6 +7,7 @@
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design'
   import { DatasetSortingColumns } from '$lib/config/AppConfig'
+  import { goto } from '$app/navigation'
 
   const dispatch = createEventDispatcher()
 
@@ -71,6 +72,8 @@
   }
 
   const fireChangeEvent = async (url: URL) => {
+    await goto(url, { replaceState: true, invalidateAll: true })
+
     dispatch('change', {
       url: url.toString(),
     })

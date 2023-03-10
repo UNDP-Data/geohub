@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
   import type { Breadcrumb } from '@undp-data/svelte-undp-design'
   import DataCategoryCard from '$components/data-view/DataCategoryCard.svelte'
-  // import { indicatorProgress } from '$stores'
   import { onMount } from 'svelte'
 
   const dispatch = createEventDispatcher()
@@ -11,9 +9,7 @@
   export let categories: Breadcrumb[]
   export let cardSize: 'medium' | 'small' = 'medium'
   export let breadcrumbs: Breadcrumb[]
-  export let isLoading = false
   let subCategories: Breadcrumb[] = []
-  $: isShowSubCategory = subCategories && subCategories.length > 0
 
   $: breadcrumbs, breadcrumbChanged()
 
@@ -33,45 +29,11 @@
     const breadcrumbCount = breadcrumbs.length
     if (breadcrumbCount === 1) {
       subCategories = []
-      isShowSubCategory = false
     }
   }
 
   const getSelectedCategory = async (category: Breadcrumb) => {
-    if (category.name === 'SDG') {
-      await searchCategory(category)
-    } else {
-      await handleSelectSubcategory(category)
-    }
-  }
-
-  const searchCategory = async (category: Breadcrumb) => {
-    try {
-      isLoading = true
-
-      const apiUrl = new URL(`${$page.url.origin}${category.url}`)
-
-      const res = await fetch(apiUrl.toString())
-      const json = await res.json()
-      const values: [{ value: string; count: number }] = json[Object.keys(json)[0]]
-
-      const last = breadcrumbs[breadcrumbs.length - 1]
-      if (last.name !== category.name) {
-        breadcrumbs = [...breadcrumbs, category]
-      }
-
-      let num_values = values.map((v) => Number(v.value))
-      num_values = num_values.sort((a, b) => a - b)
-      subCategories = num_values.map((num) => {
-        return {
-          name: `SDG${num}`,
-          icon: `assets/sdgs/${num}.png`,
-          url: `/api/datasets?sdg_goal=${num}`,
-        }
-      })
-    } finally {
-      isLoading = false
-    }
+    await handleSelectSubcategory(category)
   }
 
   const handleSelectSubcategory = async (category: Breadcrumb) => {
@@ -81,37 +43,22 @@
         breadcrumbs = [...breadcrumbs, category]
       }
     }
-    if (category.url.startsWith('/api/datasets')) {
-      dispatch('selected', { category })
-    }
-  }
-
-  const handleDatasetCategorySelected = (e) => {
-    const category = e.detail.category
     dispatch('selected', { category })
   }
 </script>
 
-{#if isShowSubCategory}
-  <svelte:self
-    categories={subCategories}
-    cardSize="small"
-    bind:breadcrumbs
-    on:selected={handleDatasetCategorySelected} />
-{:else}
-  <div
-    class="container mt-2 category-container"
-    style="grid-template-columns: repeat(auto-fit, minmax({cardSize === 'medium' ? 80 : 70}px, 1fr))">
-    {#each categories as category}
-      <DataCategoryCard
-        bind:category
-        size={cardSize}
-        on:clicked={() => {
-          getSelectedCategory(category)
-        }} />
-    {/each}
-  </div>
-{/if}
+<div
+  class="container mt-2 category-container"
+  style="grid-template-columns: repeat(auto-fit, minmax({cardSize === 'medium' ? 80 : 70}px, 1fr))">
+  {#each categories as category}
+    <DataCategoryCard
+      bind:category
+      size={cardSize}
+      on:clicked={() => {
+        getSelectedCategory(category)
+      }} />
+  {/each}
+</div>
 
 <style lang="scss">
   .category-container {
