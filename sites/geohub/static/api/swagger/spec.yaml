@@ -1477,8 +1477,11 @@ paths:
                     type: number
                   sidebar_position:
                     $ref: '#/components/schemas/SidebarPosition'
+      security:
+        - Azure AD authentication: []
       tags:
         - GeoHub User Settings
+
     post:
       summary: Update GeoHub User Settings
       responses:
@@ -1509,6 +1512,8 @@ paths:
                           type: number
                       sidebar_position:
                           $ref: '#/components/schemas/SidebarPosition'
+      security:
+        - Azure AD authentication: []
       description: Update GeoHub User Settings
       requestBody:
         content:
@@ -1540,40 +1545,7 @@ paths:
         required: true
       tags:
         - GeoHub User Settings
-  /settings/reset:
-    post:
-      summary: Reset GeoHub User Settings
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                    search_limit:
-                        type: number
-                    dataset_search_limit:
-                        type: number
-                    dataset_search_query_operator:
-                        $ref: '#/components/schemas/QueryOperator'
-                    dataset_sorting_column:
-                        type: string
-                    datapage_sorting_column:
-                        type: string
-                    tag_search_operator:
-                        $ref: '#/components/schemas/TagSearchOperator'
-                    map_page_sorting_column:
-                        type: string
-                    line_width:
-                        type: number
-                    number_of_classes:
-                        type: number
-                    sidebar_position:
-                        $ref: '#/components/schemas/SidebarPosition'
-      tags:
-        - GeoHub User Settings
-      description: Reset GeoHub User Settings
+
 
   /swagger/spec.json:
     get:
