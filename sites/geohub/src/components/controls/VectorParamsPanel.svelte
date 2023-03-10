@@ -181,7 +181,6 @@
 {/await}
 
 <style lang="scss">
-  @import '../../styles/geohubstyle.scss';
   .bbp {
     border-bottom: 3px solid $primary;
   }

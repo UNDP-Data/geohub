@@ -6,16 +6,17 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 
 ### Repositories managed in this monorepo
 
-| App                              | Language   | Library   | NPM                                                                            | Source code                                                   |
-| -------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| GeoHub                           | TypeScript | sveltekit |                                                                                | [sites/geohub](./sites/geohub/)                               |
-| @undp-data/electricity-dashboard | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/electricity-dashboard) | [apps/electricity-dashboard](./apps/electricity-dashboard/)   |
-| @undp-data/current-location      | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/current-location)      | [packages/current-location](./packages/current-location/)     |
-| @undp-data/style-switcher        | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/style-switcher)        | [packages/style-switcher](./packages/style-switcher/)         |
-| @undp-data/style-viewer          | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/style-viewer)          | [packages/style-viewer](./packages/style-viewer/)             |
-| @undp-data/svelte-undp-design    | TypeScript | sveltekit | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/svelte-undp-design)    | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
-| @undp-data/geohub-cli            | TypeScript | -         | ![npm (scoped)](https://img.shields.io/npm/v/@undp-data/geohub-cli)            | [packages/geohub-cli](./packages/geohub-cli/)                 |
-| Documentation                    | Python     | mkdocs    |                                                                                | [documentation](./documentation/)                             |
+| App                              | Language   | Library   | Remarks                                   | Source code                                                   |
+| -------------------------------- | ---------- | --------- | ----------------------------------------- | ------------------------------------------------------------- |
+| GeoHub                           | TypeScript | sveltekit | Main frontend app                         | [sites/geohub](./sites/geohub/)                               |
+| @undp-data/electricity-dashboard | TypeScript | sveltekit | Electricity dashboard app                 | [apps/electricity-dashboard](./apps/electricity-dashboard/)   |
+| @undp-data/current-location      | TypeScript | sveltekit | Maplibre control to show admin infomation | [packages/current-location](./packages/current-location/)     |
+| @undp-data/style-switcher        | TypeScript | sveltekit | Maplibre control to switch base styles    | [packages/style-switcher](./packages/style-switcher/)         |
+| @undp-data/style-viewer          | TypeScript | sveltekit | Maplibre simple viewer for style.json     | [packages/style-viewer](./packages/style-viewer/)             |
+| @undp-data/undp-bulma            | CSS        | vanilla   | Customised Bulma style for UNDP GeoHub    | [packages/undp-bulma](./pacakages/undp-bulma)                 |
+| @undp-data/svelte-undp-design    | TypeScript | sveltekit | Svelte components for UNDP design system  | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
+| @undp-data/geohub-cli            | TypeScript | Nodejs    | CLI tools to maintain GeoHub datasets     | [packages/geohub-cli](./packages/geohub-cli/)                 |
+| Documentation                    | Python     | mkdocs    | GeoHub documentation                      | [documentation](./documentation/)                             |
 
 ### Repositories developed for GeoHub
 

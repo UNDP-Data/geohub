@@ -5,4 +5,5 @@ packages:
   - "packages/style-switcher"
   - "packages/style-viewer"
   - "packages/svelte-undp-design"
+  - "packages/undp-bulma"
   - "apps/electricity-dashboard"
