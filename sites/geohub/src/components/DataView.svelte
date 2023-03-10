@@ -193,6 +193,9 @@
     }
     breadcrumbs = initBreadcrumbs()
     datasetFeaturesPromise = $page.data.promises?.features
+    if (!datasetFeaturesPromise) {
+      DataItemFeatureCollection = undefined
+    }
     datasetFeaturesPromise?.then((fc) => {
       DataItemFeatureCollection = fc
     })
