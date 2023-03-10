@@ -8,7 +8,6 @@
     TerrainControl,
     type TerrainSpecification,
   } from 'maplibre-gl'
-  import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte'
@@ -22,9 +21,6 @@
 
   let container: HTMLDivElement
   export let map: Map
-
-  let protocol = new pmtiles.Protocol()
-  maplibregl.addProtocol('pmtiles', protocol.tile)
 
   const terrainOptions: TerrainSpecification = {
     source: 'terrarium',

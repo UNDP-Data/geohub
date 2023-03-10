@@ -1,17 +1,15 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import MapStyleCard from './MapStyleCard.svelte'
-  import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
+  import type { DashboardMapStyle, MapsData, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
   import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/config/AppConfig'
 
-  let styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = $page.data.styles
-
-  let isLoading = false
+  let promiseStyles: Promise<MapsData> = $page.data.promises.styles
 
   let limit = Number($page.url.searchParams.get('limit'))
   let offset = Number($page.url.searchParams.get('offset'))
@@ -90,38 +88,23 @@
   }
 
   const reload = async (url: URL) => {
-    try {
-      isLoading = true
-      await goto(`?${url.searchParams.toString()}`, {
-        invalidateAll: true,
-        noScroll: true,
-      })
-      styles = $page.data.styles
-    } finally {
-      isLoading = false
-    }
+    promiseStyles = undefined
+    await goto(`?${url.searchParams.toString()}`, {
+      invalidateAll: true,
+      noScroll: true,
+    })
+    promiseStyles = $page.data.promises.styles
   }
 
-  const updateStylePage = async (type: 'next' | 'previous') => {
-    const link = styles.links?.find((l) => l.rel === type)
-    if (link) {
-      const apiUrl = new URL(link.href)
-      await reload(apiUrl)
-    }
+  const handlePaginationClicked = async (link: StacLink) => {
+    const apiUrl = new URL(link.href)
+    await reload(apiUrl)
   }
 
-  const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-    const type = e.detail.type
-    await updateStylePage(type)
-  }
-
-  const handleStyleDeleted = (e) => {
-    const deletedStyle: DashboardMapStyle = e.detail.style
-    const index = styles.styles.map((s) => s.id).indexOf(deletedStyle.id)
-    if (index !== -1) {
-      styles.styles.splice(index, 1)
-      styles.styles = [...styles.styles]
-    }
+  const handleStyleDeleted = async () => {
+    promiseStyles = undefined
+    await invalidateAll()
+    promiseStyles = $page.data.promises.styles
   }
 
   const handleFilterInput = debounce(async (e) => {
@@ -222,30 +205,38 @@
   </div>
 </div>
 
-{#if isLoading}
+{#if !promiseStyles}
   <div class="align-center">
     <Loader size="medium" />
   </div>
-{:else if styles.styles && styles.styles.length > 0}
-  {#key styles.styles}
-    {#each styles.styles as style}
-      <MapStyleCard
-        {style}
-        bind:isExpanded={expanded[style.id]}
-        on:deleted={handleStyleDeleted} />
-    {/each}
-  {/key}
-
-  <div class="align-center pt-2">
-    <Pagination
-      bind:totalPages={styles.pages.totalPages}
-      bind:currentPage={styles.pages.currentPage}
-      on:clicked={handlePaginationClicked} />
-  </div>
 {:else}
-  <div class="p-4">
-    <Notification type="info">No map found</Notification>
-  </div>
+  {#await promiseStyles then styles}
+    {#if styles.styles && styles.styles.length > 0}
+      {#key styles.styles}
+        {#each styles.styles as style}
+          <MapStyleCard
+            {style}
+            bind:isExpanded={expanded[style.id]}
+            on:deleted={handleStyleDeleted} />
+        {/each}
+      {/key}
+
+      <div class="align-center pt-2">
+        <Pagination
+          totalPages={styles.pages.totalPages}
+          currentPage={styles.pages.currentPage}
+          on:clicked={(e) => {
+            const link = styles.links?.find((l) => l.rel === e.detail.type)
+            if (!link) return
+            handlePaginationClicked(link)
+          }} />
+      </div>
+    {:else}
+      <div class="p-4">
+        <Notification type="info">No map found</Notification>
+      </div>
+    {/if}
+  {/await}
 {/if}
 
 <style lang="scss">
