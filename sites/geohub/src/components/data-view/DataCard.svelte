@@ -52,7 +52,7 @@
     const vectorTile = new VectorTileData(feature, defaultLineWidth)
     const res = await vectorTile.getMetadata()
     metadata = res.metadata
-    tilestatsLayers = res.metadata.json.tilestats.layers
+    tilestatsLayers = res.metadata.json?.tilestats?.layers
   }
 
   $: {

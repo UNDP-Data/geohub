@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import type { DatasetFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
-  import { map, indicatorProgress } from '$stores'
+  import { map } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
@@ -25,10 +25,17 @@
 
   let containerDivElement: HTMLDivElement
 
-  let isLoading = false
   let query = $page.url.searchParams.get('query') ?? ''
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
-  let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features
+
+  let DataItemFeatureCollection: DatasetFeatureCollection = undefined
+  let datasetFeaturesPromise: Promise<DatasetFeatureCollection> = $page.data.promises?.features
+  if (datasetFeaturesPromise) {
+    datasetFeaturesPromise.then((fc) => {
+      DataItemFeatureCollection = fc
+    })
+  }
+
   let isFavouriteSearch = false
   let initTagfilter: (url?: URL) => Promise<void>
 
@@ -91,22 +98,16 @@
   }
 
   const fetchNextDatasets = async () => {
-    if (DataItemFeatureCollection?.features.length === 0) return
-    const link = DataItemFeatureCollection.links.find((link) => link.rel === 'next')
+    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'next')
     if (!link) return
-    if ($indicatorProgress) return
 
-    try {
-      $indicatorProgress = true
-      const res = await fetch(link.href)
-      const json: DatasetFeatureCollection = await res.json()
-      if (json.features.length > 0) {
-        json.features = [...DataItemFeatureCollection.features, ...json.features]
-      }
-      DataItemFeatureCollection = json
-    } finally {
-      $indicatorProgress = false
+    console.log(link.href)
+    const res = await fetch(link.href)
+    const json: DatasetFeatureCollection = await res.json()
+    if (json.features.length > 0) {
+      json.features = [...DataItemFeatureCollection.features, ...json.features]
     }
+    DataItemFeatureCollection = json
   }
 
   const handleCategorySelected = async (e) => {
@@ -140,7 +141,7 @@
     if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
       if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
         if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
-          DataItemFeatureCollection = undefined
+          clearDatasets()
           breadcrumbs.pop()
           breadcrumbs = [...breadcrumbs]
           await goto(apiUrl)
@@ -150,10 +151,12 @@
     }
 
     if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
+      datasetFeaturesPromise = undefined
       DataItemFeatureCollection = undefined
       await goto(apiUrl)
       return
     } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
+      datasetFeaturesPromise = undefined
       DataItemFeatureCollection = undefined
       breadcrumbs.pop()
       breadcrumbs = [...breadcrumbs]
@@ -169,28 +172,26 @@
   }
 
   const reload = async (url: string) => {
-    try {
-      isLoading = true
+    const datasetUrl = new URL(url)
+    const apiUrl = `${$page.url.origin}${datasetUrl.search}`
+    clearDatasets()
 
-      const datasetUrl = new URL(url)
-      const apiUrl = `${$page.url.origin}${datasetUrl.search}`
-      DataItemFeatureCollection = undefined
-
-      await goto(apiUrl, {
-        replaceState: true,
-        noScroll: true,
-        keepFocus: true,
-        invalidateAll: true,
-      })
-      selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
-      if (initTagfilter) {
-        initTagfilter(new URL(apiUrl))
-      }
-      breadcrumbs = initBreadcrumbs()
-      DataItemFeatureCollection = $page.data.features
-    } finally {
-      isLoading = false
+    await goto(apiUrl, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: true,
+    })
+    selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
+    if (initTagfilter) {
+      initTagfilter(new URL(apiUrl))
     }
+    breadcrumbs = initBreadcrumbs()
+    datasetFeaturesPromise = $page.data.promises?.features
+    datasetFeaturesPromise?.then((fc) => {
+      DataItemFeatureCollection = fc
+      // AdditionalFeatures = []
+    })
   }
 
   const handleScroll = async () => {
@@ -199,7 +200,7 @@
     let currentScroll = scrollTop + containerDivElement.clientHeight
     let modifier = 100
     if (currentScroll + modifier > containerHeight) {
-      if (!isLoading && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
+      if (!DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
         await fetchNextDatasets()
       }
     }
@@ -213,7 +214,7 @@
       // home
       clearFiltertext()
       breadcrumbs = [breadcrumbs[0]]
-      DataItemFeatureCollection = undefined
+      clearDatasets()
       isFavouriteSearch = false
 
       const apiUrl = $page.url
@@ -232,7 +233,7 @@
         breadcrumbs.pop()
         last = breadcrumbs[breadcrumbs.length - 1]
       }
-      DataItemFeatureCollection = undefined
+      clearDatasets()
 
       breadcrumbs = [...breadcrumbs]
 
@@ -257,6 +258,12 @@
 
   let clearFiltertext = () => {
     query = ''
+  }
+
+  let clearDatasets = () => {
+    datasetFeaturesPromise = undefined
+    DataItemFeatureCollection = undefined
+    // AdditionalFeatures = []
   }
 </script>
 
@@ -291,36 +298,44 @@
   style="height: {totalHeight}px;"
   on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  {#if isLoading}
-    <div
-      hidden={!isLoading}
-      class="loader-container">
+  {#await datasetFeaturesPromise}
+    <div class="loader-container">
       <Loader size="medium" />
     </div>
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-    {#each DataItemFeatureCollection.features as feature}
-      <DataCard
-        {feature}
-        bind:isExpanded={expanded[feature.properties.id]}
-        bind:isStarOnly={isFavouriteSearch} />
-    {/each}
-    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <Notification type="info">All data loaded.</Notification>
-    {/if}
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
-    {#if isFavouriteSearch}
-      <Notification type="info"
-        >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+  {:then}
+    {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
+      {#each DataItemFeatureCollection.features as feature}
+        <DataCard
+          {feature}
+          bind:isExpanded={expanded[feature.properties.id]}
+          bind:isStarOnly={isFavouriteSearch} />
+      {/each}
+      <!-- {#if AdditionalFeatures}
+        {#each AdditionalFeatures as feature}
+          <DataCard
+            {feature}
+            bind:isExpanded={expanded[feature.properties.id]}
+            bind:isStarOnly={isFavouriteSearch} />
+        {/each}
+      {/if} -->
+      {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
+        <Notification type="info">All data loaded.</Notification>
+      {/if}
+    {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
+      {#if isFavouriteSearch}
+        <Notification type="info"
+          >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+      {:else}
+        <Notification type="warning">No data found. Try another keyword.</Notification>
+      {/if}
     {:else}
-      <Notification type="warning">No data found. Try another keyword.</Notification>
+      <DataCategoryCardList
+        categories={dataCategories}
+        cardSize="medium"
+        on:selected={handleCategorySelected}
+        bind:breadcrumbs />
     {/if}
-  {:else}
-    <DataCategoryCardList
-      categories={dataCategories}
-      cardSize="medium"
-      on:selected={handleCategorySelected}
-      bind:breadcrumbs />
-  {/if}
+  {/await}
 </div>
 
 <style lang="scss">

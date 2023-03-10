@@ -13,7 +13,7 @@ export const load: PageServerLoad = async (event) => {
   const parentData = await parent()
   const config: UserConfig = parentData.config
 
-  const data: { style?: JSON; readOnly?: boolean; features?: DatasetFeatureCollection } = {}
+  const data: { style?: JSON; readOnly?: boolean; promises?: { features?: Promise<DatasetFeatureCollection> } } = {}
   const styleId = url.searchParams.get('style')
   let isReadOnly = true
   if (styleId) {
@@ -72,9 +72,18 @@ export const load: PageServerLoad = async (event) => {
     tags.length > 0
   ) {
     apiUrl.searchParams.delete('style')
-    const res2 = await event.fetch(`/api/datasets${apiUrl.search}`)
-    const fc: DatasetFeatureCollection = await res2.json()
-    data.features = fc
+    const fc = getDatasets(event.fetch, apiUrl)
+    // const res2 = await event.fetch(`/api/datasets${apiUrl.search}`)
+    // const fc: DatasetFeatureCollection = await res2.json()
+    data.promises = {
+      features: fc,
+    }
   }
   return data
+}
+
+const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  const res = await fetch(`/api/datasets${url.search}`)
+  const fc: DatasetFeatureCollection = await res.json()
+  return fc
 }
