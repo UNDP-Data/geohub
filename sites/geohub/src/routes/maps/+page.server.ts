@@ -42,10 +42,12 @@ export const load: PageServerLoad = async (event) => {
   const map_stats = await getMapStats()
 
   const res = await event.fetch(`/api/style${apiUrl.search}`)
-  const styles: { styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages } = await res.json()
+  const styles: Promise<{ styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages }> = res.json()
 
   return {
     stats: map_stats,
-    styles,
+    promises: {
+      styles,
+    },
   }
 }
