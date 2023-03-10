@@ -45,9 +45,6 @@
 <style
   global
   lang="scss">
-  @import '../styles/geohubstyle.scss';
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-
   :global(.menu-item) {
     margin: 0.75rem 1.75rem 0.75rem 0 !important;
   }

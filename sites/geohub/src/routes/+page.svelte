@@ -38,12 +38,6 @@
 <style
   global
   lang="scss">
-  @import '../styles/geohubstyle.scss';
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-  @import 'bulma-switch/dist/css/bulma-switch.min.css';
-  @import 'bulma-divider/dist/css/bulma-divider.min.css';
-
   body,
   html {
     font-family: ProximaNova, sans-serif;

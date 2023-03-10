@@ -181,7 +181,7 @@
 {/await}
 
 <style lang="scss">
-  @import '../../styles/geohubstyle.scss';
+  @import '@undp-data/undp-bulma/bulma.scss';
   .bbp {
     border-bottom: 3px solid $primary;
   }
