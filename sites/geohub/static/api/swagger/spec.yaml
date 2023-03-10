@@ -1447,6 +1447,127 @@ paths:
           description: type name. only available for source = pgtileserv
       tags:
         - vector tile
+  /settings:
+    get:
+      summary: GeoHub User Settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  search_limit:
+                    type: number
+                  dataset_search_limit:
+                    type: number
+                  dataset_search_query_operator:
+                    $ref: '#/components/schemas/QueryOperator'
+                  dataset_sorting_column:
+                    type: string
+                  datapage_sorting_column:
+                    type: string
+                  tag_search_operator:
+                    $ref: '#/components/schemas/TagSearchOperator'
+                  map_page_sorting_column:
+                    type: string
+                  line_width:
+                    type: number
+                  number_of_classes:
+                    type: number
+                  sidebar_position:
+                    $ref: '#/components/schemas/SidebarPosition'
+    post:
+      summary: Update GeoHub User Settings
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                      search_limit:
+                          type: number
+                      dataset_search_limit:
+                          type: number
+                      dataset_search_query_operator:
+                          $ref: '#/components/schemas/QueryOperator'
+                      dataset_sorting_column:
+                          type: string
+                      datapage_sorting_column:
+                          type: string
+                      tag_search_operator:
+                          $ref: '#/components/schemas/TagSearchOperator'
+                      map_page_sorting_column:
+                          type: string
+                      line_width:
+                          type: number
+                      number_of_classes:
+                          type: number
+                      sidebar_position:
+                          $ref: '#/components/schemas/SidebarPosition'
+      description: Update GeoHub User Settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  search_limit:
+                      type: number
+                  dataset_search_limit:
+                      type: number
+                  dataset_search_query_operator:
+                      $ref: '#/components/schemas/QueryOperator'
+                  dataset_sorting_column:
+                      type: string
+                  datapage_sorting_column:
+                      type: string
+                  tag_search_operator:
+                      $ref: '#/components/schemas/TagSearchOperator'
+                  map_page_sorting_column:
+                      type: string
+                  line_width:
+                      type: number
+                  number_of_classes:
+                      type: number
+                  sidebar_position:
+                      $ref: '#/components/schemas/SidebarPosition'
+        description: Update GeoHub User Settings
+        required: true
+  /settings/reset:
+    post:
+      summary: Reset GeoHub User Settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    search_limit:
+                        type: number
+                    dataset_search_limit:
+                        type: number
+                    dataset_search_query_operator:
+                        $ref: '#/components/schemas/QueryOperator'
+                    dataset_sorting_column:
+                        type: string
+                    datapage_sorting_column:
+                        type: string
+                    tag_search_operator:
+                        $ref: '#/components/schemas/TagSearchOperator'
+                    map_page_sorting_column:
+                        type: string
+                    line_width:
+                        type: number
+                    number_of_classes:
+                        type: number
+                    sidebar_position:
+                        $ref: '#/components/schemas/SidebarPosition'
+      description: Reset GeoHub User Settings
   /swagger/spec.json:
     get:
       summary: Get open API JSON definition
@@ -1472,6 +1593,24 @@ components:
       required:
         - key
         - value
+    QueryOperator:
+        title: QueryOperator
+        type: string
+        enum:
+            - and
+            - or
+    TagSearchOperator:
+      title: TagSearchOperator
+      type: string
+      enum:
+          - and
+          - or
+    SidebarPosition:
+      title: SidebarPosition
+      type: string
+      enum:
+          - left
+          - right
   securitySchemes:
     Azure AD authentication:
       type: http
