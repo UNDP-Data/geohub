@@ -181,3 +181,27 @@ COMMENT ON TABLE geohub.dataset_permission
 
 COMMENT ON COLUMN geohub.dataset_permission.permission
     IS '1: read, 2: read/write, 3: owner';
+
+
+CREATE TABLE geohub.user_settings
+(
+    user_email character varying(100) NOT NULL,
+    key character varying NOT NULL,
+    value character varying NOT NULL,
+    CONSTRAINT user_settings_pkey PRIMARY KEY (user_email, key)
+);
+
+ALTER TABLE IF EXISTS geohub.user_settings
+    OWNER to undpgeohub;
+
+COMMENT ON TABLE geohub.user_settings
+    IS 'This table stores user settings';
+
+COMMENT ON COLUMN geohub.user_settings.user_email
+    IS 'user email address';
+
+COMMENT ON COLUMN geohub.user_settings.key
+    IS 'single setting key';
+
+COMMENT ON COLUMN geohub.user_settings.value
+    IS 'single setting key';
