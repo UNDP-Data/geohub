@@ -2,15 +2,14 @@
   import { page } from '$app/stores'
   import { goto, invalidateAll } from '$app/navigation'
   import MapStyleCard from './MapStyleCard.svelte'
-  import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
+  import type { DashboardMapStyle, MapsData, Pages, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
   import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/config/AppConfig'
 
-  let promiseStyles: Promise<{ styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages }> =
-    $page.data.promises.styles
+  let promiseStyles: Promise<MapsData> = $page.data.promises.styles
 
   let limit = Number($page.url.searchParams.get('limit'))
   let offset = Number($page.url.searchParams.get('offset'))

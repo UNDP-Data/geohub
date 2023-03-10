@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types'
 import { getMapStats } from '$lib/server/helpers'
-import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
+import type { DashboardMapStyle, MapsData, Pages, StacLink } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import { AccessLevel } from '$lib/config/AppConfig'
 import type { UserConfig } from '$lib/config/DefaultUserConfig'
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async (event) => {
   const map_stats = await getMapStats()
 
   const res = await event.fetch(`/api/style${apiUrl.search}`)
-  const styles: Promise<{ styles: DashboardMapStyle[]; links: StacLink[]; pages: Pages }> = res.json()
+  const styles: Promise<MapsData> = res.json()
 
   return {
     stats: map_stats,
