@@ -20,10 +20,6 @@
       map.on('moveend', updateLayers)
       map.on('styledata', updateLayers)
     }
-
-    if (relativeLayers && Object.keys(relativeLayers).length === 0) {
-      onlyRelative = false
-    }
   }
 
   $: onlyRendered, updateLayers()

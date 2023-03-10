@@ -51,9 +51,7 @@
   }
 
   $: if ($map) {
-    $map.once('load', () => {
-      getLayerListFromStyle()
-    })
+    getLayerListFromStyle()
   }
 </script>
 
