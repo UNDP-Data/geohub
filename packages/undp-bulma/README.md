@@ -17,7 +17,7 @@ For example, for button,
 ## Installation
 
 ```bash
-npm install @undp-data/undp-bulma
+npm install -D bulma @undp-data/undp-bulma
 ```
 
 ## Usage
