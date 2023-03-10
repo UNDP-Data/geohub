@@ -7,7 +7,8 @@
   "files": [
     "bulma.scss",
     "dist/bulma.css",
-    "package.json"
+    "package.json",
+    "README.md"
   ],
   "private": false,
   "scripts": {
