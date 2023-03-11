@@ -292,7 +292,7 @@
 
             const propertySelectValues = []
             const values = stat.values
-            if (values && values.length > 0 && values.length <= UniqueValueThreshold) {
+            if (stat.type !== 'number' && values && values.length > 0 && values.length <= UniqueValueThreshold) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
@@ -349,6 +349,7 @@
     const statLayer = vectorInfo.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
     const attribute = statLayer?.attributes.find((attr) => attr.attribute === propertySelectValue)
     const vectorLegendType = attribute.type !== 'number' ? 'categorical' : 'interval'
+    let defaultColorValue = 'rgba(0,0,0,0)'
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
@@ -371,11 +372,13 @@
         property: propertySelectValue,
         type: vectorLegendType,
         stops: outlineStops,
+        default: defaultColorValue,
       })
       $map.setPaintProperty(layer.id, 'fill-color', {
         type: vectorLegendType,
         property: propertySelectValue,
         stops: stops,
+        default: defaultColorValue,
       })
     } else {
       let stops = colorMapRows.map((row) => {
@@ -400,6 +403,7 @@
               type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
+              default: defaultColorValue,
             })
           } else if (layerType === 'line') {
             $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
@@ -407,6 +411,7 @@
               type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
+              default: defaultColorValue,
             })
           }
         } else if (applyToOption === VectorApplyToTypes.SIZE) {
@@ -434,6 +439,7 @@
               property: propertySelectValue,
               type: 'interval',
               stops: newStops,
+              default: defaultColorValue,
             })
           } else if (layerType === 'line') {
             const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
@@ -444,6 +450,7 @@
               property: propertySelectValue,
               type: 'interval',
               stops: newStops,
+              default: defaultColorValue,
             })
           }
         }
