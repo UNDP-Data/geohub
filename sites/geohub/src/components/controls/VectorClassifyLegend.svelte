@@ -439,7 +439,7 @@
               property: propertySelectValue,
               type: 'interval',
               stops: newStops,
-              default: defaultColorValue,
+              default: 0,
             })
           } else if (layerType === 'line') {
             const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
@@ -450,7 +450,7 @@
               property: propertySelectValue,
               type: 'interval',
               stops: newStops,
-              default: defaultColorValue,
+              default: 0,
             })
           }
         }
