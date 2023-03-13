@@ -40,7 +40,6 @@
   }
 
   let isFavouriteSearch = false
-  let initTagfilter: (url?: URL) => Promise<void>
 
   const initBreadcrumbs = () => {
     let bc: Breadcrumb[] = [
@@ -194,7 +193,7 @@
       DataItemFeatureCollection = undefined
       await goto(apiUrl)
       return
-    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
+    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags?.length === 0 && !query) {
       datasetFeaturesPromise = undefined
       DataItemFeatureCollection = undefined
       breadcrumbs.pop()
@@ -202,7 +201,8 @@
       await goto(apiUrl)
       return
     }
-    await reload(apiUrl.toString())
+    const isReload = e.detail.reload ?? false
+    await reload(apiUrl.toString(), isReload)
   }
 
   const handleFilterChanged = async (e) => {
@@ -210,20 +210,19 @@
     await reload(url)
   }
 
-  const reload = async (url: string) => {
+  const reload = async (url: string, invalidate = true) => {
     const datasetUrl = new URL(url)
     const apiUrl = `${$page.url.origin}${datasetUrl.search}`
 
-    await goto(apiUrl, {
-      replaceState: true,
-      noScroll: true,
-      keepFocus: true,
-      invalidateAll: true,
-    })
-    selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
-    if (initTagfilter) {
-      initTagfilter(new URL(apiUrl))
+    if (invalidate) {
+      await goto(apiUrl, {
+        replaceState: true,
+        noScroll: true,
+        keepFocus: true,
+        invalidateAll: true,
+      })
     }
+    selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
     breadcrumbs = initBreadcrumbs()
     datasetFeaturesPromise = $page.data.promises?.features
     if (!datasetFeaturesPromise) {
@@ -254,7 +253,7 @@
       apiUrl.searchParams.delete('staronly')
       apiUrl.searchParams.delete('mydata')
       apiUrl = clearSelectedTags(apiUrl)
-      await goto(apiUrl, { replaceState: true, invalidateAll: false })
+      await goto(apiUrl, { replaceState: true, invalidateAll: true })
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -270,9 +269,6 @@
       let apiUrl = $page.url
       if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets?') && selectedTags.length > 0) {
         apiUrl = clearSelectedTags(apiUrl)
-      }
-      if (initTagfilter) {
-        await initTagfilter(apiUrl)
       }
       await goto(apiUrl, { replaceState: true, invalidateAll: false })
     }
@@ -305,7 +301,7 @@
     placeholder="Type keywords to search data"
     bind:map={$map}
     bind:query
-    bind:initTagfilter
+    on:tagchange={handleTagChanged}
     on:change={handleFilterChanged} />
 
   <Breadcrumbs

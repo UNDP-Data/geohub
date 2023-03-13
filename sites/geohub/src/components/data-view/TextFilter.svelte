@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
   import PanelButton from '$components/controls/PanelButton.svelte'
@@ -7,7 +8,6 @@
   import TagFilter from '$components/data-view/TagFilter.svelte'
   import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design'
   import { DatasetSortingColumns } from '$lib/config/AppConfig'
-  import { goto } from '$app/navigation'
 
   const dispatch = createEventDispatcher()
 
@@ -27,7 +27,6 @@
   ]
 
   let sortingColumn: string = $page.url.searchParams.get('sortby')
-  export let initTagfilter: (url?: URL) => Promise<void>
 
   const bboxString = $page.url.searchParams.get('bbox')
   const bboxArray = bboxString?.split(',').map((v) => Number(v))
@@ -77,9 +76,6 @@
     dispatch('change', {
       url: url.toString(),
     })
-    if (initTagfilter) {
-      initTagfilter(url)
-    }
   }
 
   $: isFilterByBBox, registerMapMovedEvent()
@@ -117,8 +113,9 @@
   }
 
   const handleTagChanged = (e) => {
-    const url = new URL(e.detail.url)
-    fireChangeEvent(url)
+    dispatch('tagchange', {
+      tags: e.detail.tags,
+    })
   }
 </script>
 
@@ -152,7 +149,6 @@
     <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
     <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
     <TagFilter
-      bind:init={initTagfilter}
       bind:isShow={isTagFilterShow}
       on:change={handleTagChanged} />
   </PanelButton>

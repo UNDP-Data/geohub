@@ -16,7 +16,17 @@
   import { DatasetSortingColumns, LimitOptions, Permission } from '$lib/config/AppConfig'
   const dispatch = createEventDispatcher()
 
-  export let datasets: DatasetFeatureCollection
+  export let datasets: Promise<DatasetFeatureCollection> = $page.data.promises.datasets
+  let featureCollection: DatasetFeatureCollection
+
+  $: datasets, updateFeatureCollection()
+  const updateFeatureCollection = () => {
+    datasets.then((res) => {
+      featureCollection = res
+    })
+  }
+  updateFeatureCollection()
+
   let expanded: { [key: string]: boolean } = {}
   let expandedDatasetId: string
   $: {
@@ -43,7 +53,6 @@
   let confirmDeleteDialogVisible = false
   let deletedDataset: DatasetFeature = undefined
   let deletedDatasetName = ''
-  let initTagfilter: (url?: URL) => Promise<void>
   let isTagFilterShow = false
 
   const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
@@ -88,9 +97,6 @@
         invalidateAll: true,
         noScroll: true,
       })
-      if (initTagfilter) {
-        await initTagfilter(url)
-      }
       dispatch('change')
     } finally {
       isLoading = false
@@ -102,7 +108,7 @@
     if (query.length > 0) {
       offset = '0'
 
-      const link = datasets.links.find((l) => l.rel === 'self')
+      const link = featureCollection.links.find((l) => l.rel === 'self')
       if (link) {
         const href = new URL(link.href)
         href.searchParams.set('query', query.trim())
@@ -117,7 +123,7 @@
     if (isQueryEmpty === true) return
     query = ''
     offset = '0'
-    const link = datasets.links.find((l) => l.rel === 'self')
+    const link = featureCollection.links.find((l) => l.rel === 'self')
     if (link) {
       const href = new URL(link.href)
       href.searchParams.delete('query')
@@ -131,7 +137,7 @@
     if (currentLimit && currentLimit !== limit) {
       offset = '0'
 
-      const link = datasets.links.find((l) => l.rel === 'self')
+      const link = featureCollection.links.find((l) => l.rel === 'self')
       if (link) {
         const href = new URL(link.href)
         href.searchParams.set('limit', limit)
@@ -142,14 +148,15 @@
   }
 
   const handleTagChanged = async (e) => {
-    const url = new URL(e.detail.url)
-    await reload(url)
+    // const url = $page.url
+    // await reload(url)
+    dispatch('change')
   }
 
   const handleSortbyChanged = async () => {
     offset = '0'
 
-    const link = datasets.links?.find((l) => l.rel === 'self')
+    const link = featureCollection.links?.find((l) => l.rel === 'self')
     if (link) {
       const href = new URL(link.href)
       href.searchParams.set('sortby', sortby)
@@ -161,7 +168,7 @@
   const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
     const type = e.detail.type
 
-    const link = datasets.links.find((l) => l.rel === type)
+    const link = featureCollection.links.find((l) => l.rel === type)
     if (link) {
       const href = new URL(link.href)
       await reload(href)
@@ -182,10 +189,10 @@
         method: 'DELETE',
       })
       if (res.ok && res.status === 204) {
-        const index = datasets.features.findIndex((f) => f.properties.id === deletedDataset.properties.id)
+        const index = featureCollection.features.findIndex((f) => f.properties.id === deletedDataset.properties.id)
         if (index > -1) {
-          datasets.features.splice(index, 1)
-          datasets.features = [...datasets.features]
+          featureCollection.features.splice(index, 1)
+          featureCollection.features = [...featureCollection.features]
         }
         await invalidateAll()
         dispatch('change')
@@ -261,7 +268,6 @@
         <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
         <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
         <TagFilter
-          bind:init={initTagfilter}
           bind:isShow={isTagFilterShow}
           on:change={handleTagChanged} />
       </PanelButton>
@@ -297,145 +303,151 @@
   </div>
 </div>
 
-{#if isLoading}
+{#await datasets}
   <div class="align-center my-4">
     <Loader />
   </div>
-{:else if datasets.pages?.totalCount > 0}
-  <div class="table-container">
-    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-      <thead>
-        <tr>
-          {#each headerTitles as title}
-            <th>
-              {#if title.icon}
-                <i class={title.icon} />
-              {:else if title.abbr && title.title}
-                <abbr
-                  class="has-tooltip-arrow has-tooltip-bottom"
-                  data-tooltip={title.title}
-                  title={title.title}>{title.abbr}</abbr>
-              {:else if title.title}
-                {title.title}
-              {/if}
-            </th>
-          {/each}
-        </tr>
-      </thead>
-      <tbody>
-        {#each datasets.features as feature}
+{:then}
+  {#if isLoading}
+    <div class="align-center my-4">
+      <Loader />
+    </div>
+  {:else if featureCollection.pages?.totalCount > 0}
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead>
           <tr>
-            <td>
-              <div
-                on:click={() => {
-                  expanded[feature.properties.id] = !expanded[feature.properties.id]
-                }}
-                on:keydown={handleEnterKey}>
-                <i
-                  class="expand-button has-text-primary fa-solid {expanded[feature.properties.id] === true
-                    ? 'fa-angle-down'
-                    : 'fa-chevron-right'}" />
-              </div>
-            </td>
-            <td>{feature.properties.name}</td>
-            <td class="fit-content">{feature.properties.is_raster ? 'Raster' : 'Vector'}</td>
-            <td>{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}</td>
-            <td class="fit-content">
-              <Time
-                timestamp={feature.properties.createdat}
-                format="hh:mm A, MM/DD/YYYY" />
-              <br />
-              {feature.properties.created_user}
-            </td>
-            <td class="fit-content">
-              <Time
-                timestamp={feature.properties.updatedat}
-                format="hh:mm A, MM/DD/YYYY" />
-              <br />
-              {feature.properties.updated_user}
-            </td>
-            <td class="fit-content">
-              {#if feature.properties.permission > Permission.READ}
-                <button
-                  class="button is-primary my-1 table-button"
-                  on:click={() => {
-                    gotoEditMetadataPage(feature.properties.url)
-                  }}>
-                  <span class="icon">
-                    <i class="fa-solid fa-pen-to-square" />
-                  </span>
-                </button>
-              {:else}
-                <p>-</p>
-              {/if}
-            </td>
-            <td class="fit-content">
-              {#if feature.properties.permission > Permission.WRITE}
-                <button
-                  class="button is-link my-1 table-button"
-                  on:click={() => {
-                    openDeleteDialog(feature)
-                  }}>
-                  <span class="icon">
-                    <i class="fa-solid fa-trash" />
-                  </span>
-                </button>
-              {:else}
-                <p>-</p>
-              {/if}
-            </td>
+            {#each headerTitles as title}
+              <th>
+                {#if title.icon}
+                  <i class={title.icon} />
+                {:else if title.abbr && title.title}
+                  <abbr
+                    class="has-tooltip-arrow has-tooltip-bottom"
+                    data-tooltip={title.title}
+                    title={title.title}>{title.abbr}</abbr>
+                {:else if title.title}
+                  {title.title}
+                {/if}
+              </th>
+            {/each}
           </tr>
-          {#if expanded[feature.properties.id] === true}
+        </thead>
+        <tbody>
+          {#each featureCollection.features as feature}
             <tr>
-              <td colspan="8">
-                <div class="columns is-vcentered">
-                  <div class="column">
-                    <DataCardInfo bind:feature />
-                  </div>
-                  <div class="column">
-                    <MiniMap
-                      bind:feature
-                      isLoadMap={expanded[feature.properties.id] === true}
-                      width="100%"
-                      height="300px" />
-                  </div>
+              <td>
+                <div
+                  on:click={() => {
+                    expanded[feature.properties.id] = !expanded[feature.properties.id]
+                  }}
+                  on:keydown={handleEnterKey}>
+                  <i
+                    class="expand-button has-text-primary fa-solid {expanded[feature.properties.id] === true
+                      ? 'fa-angle-down'
+                      : 'fa-chevron-right'}" />
                 </div>
               </td>
+              <td>{feature.properties.name}</td>
+              <td class="fit-content">{feature.properties.is_raster ? 'Raster' : 'Vector'}</td>
+              <td>{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}</td>
+              <td class="fit-content">
+                <Time
+                  timestamp={feature.properties.createdat}
+                  format="hh:mm A, MM/DD/YYYY" />
+                <br />
+                {feature.properties.created_user}
+              </td>
+              <td class="fit-content">
+                <Time
+                  timestamp={feature.properties.updatedat}
+                  format="hh:mm A, MM/DD/YYYY" />
+                <br />
+                {feature.properties.updated_user}
+              </td>
+              <td class="fit-content">
+                {#if feature.properties.permission > Permission.READ}
+                  <button
+                    class="button is-primary my-1 table-button"
+                    on:click={() => {
+                      gotoEditMetadataPage(feature.properties.url)
+                    }}>
+                    <span class="icon">
+                      <i class="fa-solid fa-pen-to-square" />
+                    </span>
+                  </button>
+                {:else}
+                  <p>-</p>
+                {/if}
+              </td>
+              <td class="fit-content">
+                {#if feature.properties.permission > Permission.WRITE}
+                  <button
+                    class="button is-link my-1 table-button"
+                    on:click={() => {
+                      openDeleteDialog(feature)
+                    }}>
+                    <span class="icon">
+                      <i class="fa-solid fa-trash" />
+                    </span>
+                  </button>
+                {:else}
+                  <p>-</p>
+                {/if}
+              </td>
             </tr>
-          {/if}
-        {/each}
-      </tbody>
-      <tfoot>
-        <tr>
-          {#each headerTitles as title}
-            <th>
-              {#if title.icon}
-                <i class={title.icon} />
-              {:else if title.abbr && title.title}
-                <abbr
-                  class="has-tooltip-arrow has-tooltip-bottom"
-                  data-tooltip={title.title}
-                  title={title.title}>{title.abbr}</abbr>
-              {:else if title.title}
-                {title.title}
-              {/if}
-            </th>
+            {#if expanded[feature.properties.id] === true}
+              <tr>
+                <td colspan="8">
+                  <div class="columns is-vcentered">
+                    <div class="column">
+                      <DataCardInfo bind:feature />
+                    </div>
+                    <div class="column">
+                      <MiniMap
+                        bind:feature
+                        isLoadMap={expanded[feature.properties.id] === true}
+                        width="100%"
+                        height="300px" />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {/if}
           {/each}
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-  <div class="align-center pt-2">
-    <Pagination
-      bind:totalPages={datasets.pages.totalPages}
-      bind:currentPage={datasets.pages.currentPage}
-      on:clicked={handlePaginationClicked} />
-  </div>
-{:else}
-  <Notification
-    type="info"
-    showCloseButton={false}>No datasets found</Notification>
-{/if}
+        </tbody>
+        <tfoot>
+          <tr>
+            {#each headerTitles as title}
+              <th>
+                {#if title.icon}
+                  <i class={title.icon} />
+                {:else if title.abbr && title.title}
+                  <abbr
+                    class="has-tooltip-arrow has-tooltip-bottom"
+                    data-tooltip={title.title}
+                    title={title.title}>{title.abbr}</abbr>
+                {:else if title.title}
+                  {title.title}
+                {/if}
+              </th>
+            {/each}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="align-center pt-2">
+      <Pagination
+        bind:totalPages={featureCollection.pages.totalPages}
+        bind:currentPage={featureCollection.pages.currentPage}
+        on:clicked={handlePaginationClicked} />
+    </div>
+  {:else}
+    <Notification
+      type="info"
+      showCloseButton={false}>No datasets found</Notification>
+  {/if}
+{/await}
 
 {#if confirmDeleteDialogVisible}
   <div

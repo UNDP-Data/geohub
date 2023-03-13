@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types'
-import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
+import type { DatasetFeatureCollection, IngestingDataset, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { UserConfig } from '$lib/config/DefaultUserConfig'
+import { TagSearchKeys } from '$lib/config/AppConfig'
 
 export const load: PageServerLoad = async (event) => {
   const { locals, url, parent } = event
@@ -45,14 +46,44 @@ export const load: PageServerLoad = async (event) => {
   // only allow user owned data is available for data page
   apiUrl.searchParams.set('mydata', 'true')
 
-  const res = await event.fetch(`/api/datasets${apiUrl.search}`)
-  const datasets: DatasetFeatureCollection = await res.json()
+  // const res = await event.fetch(`/api/datasets${apiUrl.search}`)
+  // const datasets: DatasetFeatureCollection = await res.json()
 
-  const resIngesting = await event.fetch(`/api/datasets/ingesting`)
-  const ingestingDatasets: IngestingDataset[] = await resIngesting.json()
+  // const resIngesting = await event.fetch(`/api/datasets/ingesting`)
+  // const ingestingDatasets: IngestingDataset[] = await resIngesting.json()
 
   return {
-    datasets,
-    ingestingDatasets,
+    // ingestingDatasets,
+    promises: {
+      datasets: getDatasets(event.fetch, apiUrl),
+      ingestingDatasets: getIngestingDatasets(event.fetch),
+      tags: getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`)),
+    },
   }
+}
+
+const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  const res = await fetch(`/api/datasets${url.search}`)
+  const fc: DatasetFeatureCollection = await res.json()
+  return fc
+}
+
+const getIngestingDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+  const resIngesting = await fetch(`/api/datasets/ingesting`)
+  const ingestingDatasets: IngestingDataset[] = await resIngesting.json()
+  return ingestingDatasets
+}
+
+const getTags = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  url.searchParams.delete('style')
+  const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`
+  const res = await fetch(apiUrl)
+  const json: { [key: string]: Tag[] } = await res.json()
+
+  const tags: { [key: string]: Tag[] } = {}
+  TagSearchKeys.forEach((t) => {
+    if (!json[t.key]) return
+    tags[t.key] = json[t.key]
+  })
+  return tags
 }
