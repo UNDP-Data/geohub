@@ -14,29 +14,16 @@ export const load: PageServerLoad = async (event) => {
   const config: UserConfig = parentData.config
 
   const data: {
-    style?: SavedMapStyle
     promises: {
-      style?: Promise<SavedMapStyle>
+      style: Promise<SavedMapStyle>
       features?: Promise<DatasetFeatureCollection>
       tags?: Promise<{ [key: string]: Tag[] }>
     }
-  } = { promises: {} }
-
-  data.promises.style = getSavedStyle(event.fetch, url, user?.email)
-  // const styleId = url.searchParams.get('style')
-  // let isReadOnly = true
-  // if (styleId) {
-  //   const res = await event.fetch(`/api/style/${styleId}`)
-  //   if (res.ok) {
-  //     const styleInfo = await res.json()
-
-  //     if (user?.email === styleInfo?.created_user) {
-  //       isReadOnly = false
-  //     }
-  //     styleInfo.readOnly = isReadOnly
-  //     data.style = styleInfo
-  //   }
-  // }
+  } = {
+    promises: {
+      style: getSavedStyle(event.fetch, url, user?.email),
+    },
+  }
 
   const tags: Tag[] = []
   TagSearchKeys.forEach((tag) => {
