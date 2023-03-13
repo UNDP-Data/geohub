@@ -20,10 +20,10 @@
 
   let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style
   savedStylePromise?.then((styleInfo) => {
-    if (!styleInfo) return
     if (!styleInfo) {
       $page.url.searchParams.delete('style')
       goto(`?${$page.url.searchParams.toString()}`)
+      return
     }
 
     const style: StyleSpecification = styleInfo.style

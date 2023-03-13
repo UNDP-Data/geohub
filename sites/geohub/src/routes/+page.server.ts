@@ -6,7 +6,7 @@ import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url, parent } = event
+  const { locals, url, parent, fetch } = event
   const session = await locals.getSession()
   const user = session?.user
 
@@ -21,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
     }
   } = {
     promises: {
-      style: getSavedStyle(event.fetch, url, user?.email),
+      style: getSavedStyle(fetch, url, user?.email),
     },
   }
 
@@ -69,7 +69,7 @@ export const load: PageServerLoad = async (event) => {
     tags.length > 0
   ) {
     apiUrl.searchParams.delete('style')
-    const fc = getDatasets(event.fetch, apiUrl)
+    const fc = getDatasets(fetch, apiUrl)
     data.promises.features = fc
   }
   return data
@@ -85,7 +85,6 @@ const getSavedStyle = async (
     const res = await fetch(`/api/style/${styleId}`)
     if (res.ok) {
       const styleInfo: SavedMapStyle = await res.json()
-
       let isReadOnly = true
       if (user_email === styleInfo?.created_user) {
         isReadOnly = false
