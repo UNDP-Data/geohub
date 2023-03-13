@@ -11,13 +11,15 @@
   import { debounce } from 'lodash-es'
   import type { Country } from '$lib/types'
   import { TagSearchKeys } from '$lib/config/AppConfig'
+  import { goto } from '$app/navigation'
 
   const dispatch = createEventDispatcher()
 
   export let isShow = false
+  let tagsPromise: Promise<{ [key: string]: Tag[] }> = $page.data.promises.tags
   let tags: { [key: string]: Tag[] } = {}
   let filteredTags: { [key: string]: Tag[] } = {}
-  let isLoading = false
+  // let isLoading = false
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   let operatorType: 'and' | 'or' =
     ($page.url.searchParams.get('operator') as 'and' | 'or') ?? $page.data.config.TagSearchOperator
@@ -35,21 +37,24 @@
   let countriesMaster: Country[] = []
   $: isQueryEmpty = !query || query?.length === 0
 
-  onMount(() => {
-    init()
+  onMount(async () => {
+    await getCountries()
+    updateTags
   })
 
   $: if (isShow === true) {
     // reload tags if tag panel is opened
-    init()
+    updateTags()
   }
 
-  export const init = async (url?: URL) => {
-    const _url = url ?? $page.url
-    await getCountries()
-    await getTags(_url)
-    selectedTags = [...getSelectedTagsFromUrl(_url)]
-    handleFilterInput()
+  const updateTags = async () => {
+    tagsPromise = $page.data.promises.tags
+    tagsPromise.then((res) => {
+      tags = res
+      filteredTags = getFilteredTag()
+      selectedTags = [...getSelectedTagsFromUrl($page.url)]
+      handleFilterInput()
+    })
   }
 
   const getCountries = async () => {
@@ -60,33 +65,20 @@
     }
   }
 
-  const getTags = async (newUrl: URL) => {
-    try {
-      isLoading = true
-
-      const currentUrl = newUrl
-      currentUrl.searchParams.delete('style')
-      const apiUrl = `/api/tags${
-        currentUrl.search ? `?url=${encodeURIComponent(`${currentUrl.origin}/api/datasets${currentUrl.search}`)}` : ''
-      }`
-      if (newUrl) {
-        tags = {}
-      }
-      const res = await fetch(apiUrl)
-      const json: { [key: string]: Tag[] } = await res.json()
-
-      TagSearchKeys.forEach((t) => {
-        if (!json[t.key]) return
-        tags[t.key] = json[t.key]
-      })
-    } finally {
-      isLoading = false
-    }
-  }
-
   const fireChangeEvent = async (url: URL) => {
+    await goto(url, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: true,
+    })
+    tagsPromise = $page.data.promises.tags
+    tagsPromise.then((res) => {
+      tags = res
+      filteredTags = getFilteredTag()
+    })
     dispatch('change', {
-      url: url.toString(),
+      tags: selectedTags,
     })
   }
 
@@ -148,7 +140,6 @@
       apiUrl.searchParams.delete(key.key)
     })
     fireChangeEvent(apiUrl)
-    getTags(apiUrl)
     clearInput()
   }
 
@@ -167,21 +158,26 @@
       apiUrl.searchParams.append(t.key, t.value)
     })
     fireChangeEvent(apiUrl)
-    getTags(apiUrl)
   }
 
   const handleFilterInput = debounce(() => {
+    filteredTags = getFilteredTag()
+  }, 500)
+
+  const getFilteredTag = () => {
+    let filtered: { [key: string]: Tag[] } = {}
     if (query === '') {
-      filteredTags = tags
+      filtered = tags
     } else {
-      filteredTags = {}
+      filtered = {}
       Object.keys(tags).forEach((key) => {
         const res = tags[key].filter((t) => t.value.toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
         if (res.length === 0) return
-        filteredTags[key] = res
+        filtered[key] = res
       })
     }
-  }, 500)
+    return filtered
+  }
 
   const clearInput = () => {
     query = ''
@@ -191,11 +187,14 @@
   const getLabel = (tag: Tag) => {
     if (tag.key === 'country') {
       const country = countriesMaster.find((c) => c.iso_3 === tag.value)
-      return `${country.country_name} (${tag.value})`
-    } else {
-      return tag.value
+      if (country) {
+        return `${country.country_name} (${tag.value})`
+      }
     }
+    return tag.value
   }
+
+  updateTags()
 </script>
 
 <div class="control has-icons-left filter-text-box my-2">
@@ -231,40 +230,42 @@
     iconBackgroundColor="#ff0000"
     iconColor="#FFFFFF"
     branchHoverColor="#ff0000">
-    {#if isLoading}
-      <div
-        hidden={!isLoading}
-        class="loader-container">
+    {#await tagsPromise}
+      <div class="loader-container">
         <Loader size="small" />
       </div>
-    {:else if Object.keys(filteredTags).length > 0}
-      {#key selectedTags}
-        {#if TagSearchKeys}
-          {#each Object.keys(filteredTags) as key}
-            <TreeBranch
-              rootContent={getTagSearchKey(key).label}
-              defaultClosed={checkChildrenTicked(key)}>
-              {#if filteredTags[key]}
-                {#each filteredTags[key] as tag}
-                  <TreeLeaf>
-                    <Checkbox
-                      label="{getLabel(tag)} ({tag.count})"
-                      checked={existTag(tag)}
-                      on:clicked={() => {
-                        handleTagChecked(tag)
-                      }} />
-                  </TreeLeaf>
-                {/each}
-              {/if}
-            </TreeBranch>
-          {/each}
-        {/if}
-      {/key}
-    {:else}
-      <Notification
-        type="info"
-        showCloseButton={false}>No tag found</Notification>
-    {/if}
+      <!-- {:else} -->
+    {:then}
+      {#if Object.keys(filteredTags).length > 0}
+        {#key selectedTags}
+          {#if TagSearchKeys}
+            {#each Object.keys(filteredTags) as key}
+              <TreeBranch
+                rootContent={getTagSearchKey(key).label}
+                defaultClosed={checkChildrenTicked(key)}>
+                {#if filteredTags[key]}
+                  {#each filteredTags[key] as tag}
+                    <TreeLeaf>
+                      <Checkbox
+                        label="{getLabel(tag)} ({tag.count})"
+                        checked={existTag(tag)}
+                        on:clicked={() => {
+                          handleTagChecked(tag)
+                        }} />
+                    </TreeLeaf>
+                  {/each}
+                {/if}
+              </TreeBranch>
+            {/each}
+          {/if}
+        {/key}
+      {:else}
+        <Notification
+          type="info"
+          showCloseButton={false}>No tag found</Notification>
+      {/if}
+    {/await}
+    <!-- {/if} -->
   </TreeView>
 </div>
 

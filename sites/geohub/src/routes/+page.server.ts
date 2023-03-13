@@ -13,7 +13,14 @@ export const load: PageServerLoad = async (event) => {
   const parentData = await parent()
   const config: UserConfig = parentData.config
 
-  const data: { style?: JSON; readOnly?: boolean; promises?: { features?: Promise<DatasetFeatureCollection> } } = {}
+  const data: {
+    style?: JSON
+    readOnly?: boolean
+    promises: {
+      features?: Promise<DatasetFeatureCollection>
+      tags?: Promise<{ [key: string]: Tag[] }>
+    }
+  } = { promises: {} }
   const styleId = url.searchParams.get('style')
   let isReadOnly = true
   if (styleId) {
@@ -64,6 +71,8 @@ export const load: PageServerLoad = async (event) => {
     throw redirect(300, `${apiUrl.origin}${apiUrl.search}`)
   }
 
+  data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
+
   const query = apiUrl.searchParams.get('query')
   if (
     query ||
@@ -73,9 +82,7 @@ export const load: PageServerLoad = async (event) => {
   ) {
     apiUrl.searchParams.delete('style')
     const fc = getDatasets(event.fetch, apiUrl)
-    data.promises = {
-      features: fc,
-    }
+    data.promises.features = fc
   }
   return data
 }
@@ -84,4 +91,18 @@ const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit)
   const res = await fetch(`/api/datasets${url.search}`)
   const fc: DatasetFeatureCollection = await res.json()
   return fc
+}
+
+const getTags = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  url.searchParams.delete('style')
+  const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`
+  const res = await fetch(apiUrl)
+  const json: { [key: string]: Tag[] } = await res.json()
+
+  const tags: { [key: string]: Tag[] } = {}
+  TagSearchKeys.forEach((t) => {
+    if (!json[t.key]) return
+    tags[t.key] = json[t.key]
+  })
+  return tags
 }

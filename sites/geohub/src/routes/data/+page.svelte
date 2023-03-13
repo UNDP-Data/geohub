@@ -5,12 +5,12 @@
   import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
   import DataUploadButton from '$components/data-upload/DataUploadButton.svelte'
 
-  let datasets: DatasetFeatureCollection = $page.data.datasets
-  let ingestingDatasets: IngestingDataset[] = $page.data.ingestingDatasets
+  let datasets: Promise<DatasetFeatureCollection>
+  let ingestingDatasets: Promise<IngestingDataset[]>
 
   const updateDatasets = () => {
-    datasets = $page.data.datasets
-    ingestingDatasets = $page.data.ingestingDatasets
+    datasets = $page.data.promises.datasets
+    ingestingDatasets = $page.data.promises.ingestingDatasets
   }
 </script>
 
