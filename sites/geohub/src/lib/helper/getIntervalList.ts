@@ -12,9 +12,13 @@ export const getIntervalList = (
 ) => {
   let intervalList: number[]
   if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
-    intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses).naturalBreak().map((element) => {
-      return Number(element.toFixed(2))
-    })
+    if (layerMin === layerMax) {
+      return [layerMin, layerMax]
+    } else {
+      intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses).naturalBreak().map((element) => {
+        return Number(element.toFixed(2))
+      })
+    }
   } else if ((classificationMethod === ClassificationMethodTypes.LOGARITHMIC && layerMin < 1) || layerMax < 1) {
     const range = layerMax - layerMin
     const positive = [layerMin, ...randomSample, layerMax].map((v) => {
