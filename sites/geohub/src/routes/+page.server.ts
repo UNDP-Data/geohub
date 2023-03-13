@@ -1,12 +1,12 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
 import type { UserConfig } from '$lib/config/DefaultUserConfig'
-import type { DatasetFeatureCollection, Tag } from '$lib/types'
+import type { DatasetFeatureCollection, SavedMapStyle, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url, parent } = event
+  const { locals, url, parent, fetch } = event
   const session = await locals.getSession()
   const user = session?.user
 
@@ -14,27 +14,15 @@ export const load: PageServerLoad = async (event) => {
   const config: UserConfig = parentData.config
 
   const data: {
-    style?: JSON
-    readOnly?: boolean
     promises: {
+      style: Promise<SavedMapStyle>
       features?: Promise<DatasetFeatureCollection>
       tags?: Promise<{ [key: string]: Tag[] }>
     }
-  } = { promises: {} }
-  const styleId = url.searchParams.get('style')
-  let isReadOnly = true
-  if (styleId) {
-    const res = await event.fetch(`/api/style/${styleId}`)
-    if (res.ok) {
-      const styleInfo = await res.json()
-
-      if (user?.email === styleInfo?.created_user) {
-        isReadOnly = false
-      }
-
-      data.style = styleInfo
-      data.readOnly = isReadOnly
-    }
+  } = {
+    promises: {
+      style: getSavedStyle(fetch, url, user?.email),
+    },
   }
 
   const tags: Tag[] = []
@@ -81,10 +69,31 @@ export const load: PageServerLoad = async (event) => {
     tags.length > 0
   ) {
     apiUrl.searchParams.delete('style')
-    const fc = getDatasets(event.fetch, apiUrl)
+    const fc = getDatasets(fetch, apiUrl)
     data.promises.features = fc
   }
   return data
+}
+
+const getSavedStyle = async (
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+  url: URL,
+  user_email: string,
+) => {
+  const styleId = url.searchParams.get('style')
+  if (styleId) {
+    const res = await fetch(`/api/style/${styleId}`)
+    if (res.ok) {
+      const styleInfo: SavedMapStyle = await res.json()
+      let isReadOnly = true
+      if (user_email === styleInfo?.created_user) {
+        isReadOnly = false
+      }
+      styleInfo.readOnly = isReadOnly
+      return styleInfo
+    }
+  }
+  return
 }
 
 const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {

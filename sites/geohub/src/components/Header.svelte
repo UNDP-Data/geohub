@@ -16,8 +16,7 @@
     title: 'Save & share map',
     href: '#',
     icon: 'fa-solid fa-share pr-1',
-    callback: (id) => {
-      console.log(id)
+    callback: () => {
       isStyleShareVisible = true
     },
   }
@@ -76,8 +75,4 @@
   :global(.menu-item) {
     margin: 0.75rem 1.75rem 0.75rem 0 !important;
   }
-
-  // :global(.custom-button-mega) {
-  //   margin: 0 0 0 1.6875rem !important;
-  // }
 </style>
