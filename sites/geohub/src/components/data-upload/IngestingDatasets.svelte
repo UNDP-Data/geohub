@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/stores'
   import { goto, invalidateAll } from '$app/navigation'
   import { fade } from 'svelte/transition'
   import { filesize } from 'filesize'
@@ -13,7 +12,7 @@
   import { Loader } from '@undp-data/svelte-undp-design'
   const dispatch = createEventDispatcher()
 
-  export let datasets: Promise<IngestingDataset[]> = $page.data.promises.ingestingDatasets
+  export let datasets: Promise<IngestingDataset[]>
   let ingestingDatasets: IngestingDataset[]
 
   $: datasets, updateDatasets()

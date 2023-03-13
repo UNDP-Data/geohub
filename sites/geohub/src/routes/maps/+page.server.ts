@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types'
 import { getMapStats } from '$lib/server/helpers'
-import type { DashboardMapStyle, MapsData, Pages, StacLink } from '$lib/types'
+import type { MapsData } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import { AccessLevel } from '$lib/config/AppConfig'
 import type { UserConfig } from '$lib/config/DefaultUserConfig'

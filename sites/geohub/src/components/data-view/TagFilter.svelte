@@ -19,7 +19,6 @@
   let tagsPromise: Promise<{ [key: string]: Tag[] }> = $page.data.promises.tags
   let tags: { [key: string]: Tag[] } = {}
   let filteredTags: { [key: string]: Tag[] } = {}
-  // let isLoading = false
   let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   let operatorType: 'and' | 'or' =
     ($page.url.searchParams.get('operator') as 'and' | 'or') ?? $page.data.config.TagSearchOperator
@@ -234,7 +233,6 @@
       <div class="loader-container">
         <Loader size="small" />
       </div>
-      <!-- {:else} -->
     {:then}
       {#if Object.keys(filteredTags).length > 0}
         {#key selectedTags}
@@ -265,7 +263,6 @@
           showCloseButton={false}>No tag found</Notification>
       {/if}
     {/await}
-    <!-- {/if} -->
   </TreeView>
 </div>
 
