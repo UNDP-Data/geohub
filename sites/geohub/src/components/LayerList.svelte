@@ -4,55 +4,46 @@
   import { page } from '$app/stores'
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
-  import { map, layerList, indicatorProgress } from '$stores'
+  import { map, layerList } from '$stores'
   import { TabNames } from '$lib/config/AppConfig'
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'
+  import type { SavedMapStyle } from '$lib/types'
 
   export let contentHeight: number
   export let activeTab: string
+
   let layerHeaderHeight = 39
 
   $: totalHeight = contentHeight - layerHeaderHeight
 
-  const getLayerListFromStyle = () => {
-    return new Promise<void>((resolve) => {
-      try {
-        $indicatorProgress = true
-        const styleInfo = $page.data.style
-        if (!styleInfo) {
-          $page.url.searchParams.delete('style')
-          goto(`?${$page.url.searchParams.toString()}`)
-          resolve()
-        }
+  let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style
+  savedStylePromise?.then((styleInfo) => {
+    if (!styleInfo) return
+    if (!styleInfo) {
+      $page.url.searchParams.delete('style')
+      goto(`?${$page.url.searchParams.toString()}`)
+    }
 
-        const style: StyleSpecification = styleInfo.style
-        $map.setStyle(style)
+    const style: StyleSpecification = styleInfo.style
+    $map.setStyle(style)
 
-        $map.flyTo({
-          center: [style.center[0], style.center[1]],
-          zoom: style.zoom,
-          bearing: style.bearing,
-          pitch: style.pitch,
-        })
-        activeTab = TabNames.LAYERS
-        if (!$map.isStyleLoaded()) {
-          $map.once('styledata', () => {
-            $layerList = styleInfo.layers
-          })
-        } else {
-          $layerList = styleInfo.layers
-        }
-      } finally {
-        $indicatorProgress = false
-      }
+    $map.flyTo({
+      center: [style.center[0], style.center[1]],
+      zoom: style.zoom,
+      bearing: style.bearing,
+      pitch: style.pitch,
     })
-  }
-
-  $: if ($map) {
-    getLayerListFromStyle()
-  }
+    activeTab = TabNames.LAYERS
+    if (!$map.isStyleLoaded()) {
+      $map.once('styledata', () => {
+        $layerList = styleInfo.layers
+      })
+    } else {
+      $layerList = styleInfo.layers
+    }
+  })
 </script>
 
 {#if $layerList?.length > 0}

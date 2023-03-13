@@ -38,7 +38,6 @@
 
   onMount(async () => {
     await getCountries()
-    updateTags
   })
 
   $: if (isShow === true) {
@@ -192,8 +191,6 @@
     }
     return tag.value
   }
-
-  updateTags()
 </script>
 
 <div class="control has-icons-left filter-text-box my-2">

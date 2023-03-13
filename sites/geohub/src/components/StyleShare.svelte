@@ -7,13 +7,18 @@
   import { copy } from 'svelte-copy'
   import { Button, Loader } from '@undp-data/svelte-undp-design'
 
-  import type { Layer } from '$lib/types'
+  import type { Layer, SavedMapStyle } from '$lib/types'
   import { map, layerList } from '$stores'
   import { AccessLevel } from '$lib/config/AppConfig'
   import AccessLevelSwitcher from './AccessLevelSwitcher.svelte'
   import Notification from './controls/Notification.svelte'
 
-  $: isReadonly = $page.data.readOnly
+  let isReadonly = true
+  let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style
+  savedStylePromise?.then((savedStyle) => {
+    if (!savedStyle) return
+    isReadonly = savedStyle.readOnly
+  })
 
   export let isModalVisible = false
   let styleURL: string
@@ -92,7 +97,12 @@
     $page.url.searchParams.set('style', resjson.id)
     await goto(`?${$page.url.searchParams.toString()}`)
     await invalidateAll()
-    styleName = $page.data.style.name
+    savedStylePromise = $page.data.promises?.style
+    savedStylePromise?.then((savedStyle) => {
+      if (!savedStyle) return
+      styleName = savedStyle.name
+      isReadonly = savedStyle.readOnly
+    })
     shareLoading = false
   }
 
