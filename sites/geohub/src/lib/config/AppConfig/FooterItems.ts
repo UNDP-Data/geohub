@@ -2,29 +2,35 @@ export const FooterItems: { [key: string]: { title: string; url: string }[] } = 
   GeoHub: [
     {
       title: 'GeoHub',
-      url: 'https://geohub.data.undp.org',
+      url: '/',
     },
     {
       title: 'Shared Maps',
-      url: 'https://geohub.data.undp.org/maps',
+      url: '/maps',
     },
     {
-      title: 'Dashboards',
-      url: 'https://geohub.data.undp.org/dashboards',
-    },
-    {
-      title: 'Electricity Dashboard',
-      url: 'https://geohub.data.undp.org/dashboard/electricity',
+      title: 'My datasets',
+      url: '/data',
     },
     {
       title: 'User Guide',
       url: 'https://docs.undpgeohub.org',
     },
   ],
+  Dashboard: [
+    {
+      title: 'Dashboards',
+      url: '/dashboards',
+    },
+    {
+      title: 'Electricity Dashboard',
+      url: '/dashboard/electricity',
+    },
+  ],
   'For Developers': [
     {
-      title: 'GeoHub Dev',
-      url: 'https://dev.undpgeohub.org',
+      title: 'Github Repo',
+      url: 'https://github.com/UNDP-Data/geohub',
     },
     {
       title: 'GeoHub API documentation',

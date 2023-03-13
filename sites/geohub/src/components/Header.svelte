@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { Header, type HeaderLink } from '@undp-data/svelte-undp-design'
   import StyleShare from './StyleShare.svelte'
-  import { indicatorProgress, layerList } from '$stores'
+  import { layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
   import { HeaderItems } from '$lib/config/AppConfig'
 
@@ -10,8 +10,6 @@
   export let height: number = undefined
 
   let isStyleShareVisible = false
-
-  $: showProgressBar = $indicatorProgress
 
   const shareLink = {
     id: 'header-link-styleshare',
@@ -45,7 +43,7 @@
           initLinks()
         },
       },
-      ...HeaderItems(['maps', 'dashboard', 'userguide']),
+      ...HeaderItems(['maps', 'data', 'dashboard', 'userguide']),
     ]
 
     if ($page.data.session && $layerList.length > 0) {

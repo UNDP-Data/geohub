@@ -30,9 +30,9 @@ export const HeaderItems = (linkNames: LineName[]) => {
     },
     data: {
       id: 'header-link-data',
-      title: 'My data',
-      href: '/Data',
-      icon: 'fa-solid fa-database pr-1',
+      title: 'Manage my datasets',
+      href: '/data',
+      icon: 'fa-solid fa-server pr-1',
     },
   }
 
