@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
+  import { invalidateAll } from '$app/navigation'
   import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte'
   import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte'
   import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
@@ -14,11 +15,25 @@
     datasets = data.promises.datasets
     ingestingDatasets = data.promises.ingestingDatasets
   }
+
+  const handleRefresh = async () => {
+    await invalidateAll()
+    updateDatasets()
+  }
 </script>
 
-<p class="title align-center mb-4">Ingesting datasets</p>
-
 <DataUploadButton />
+
+<button
+  class="button is-primary my-2"
+  on:click={handleRefresh}>
+  <span class="icon">
+    <i class="fa-solid fa-rotate" />
+  </span>
+  <span>Refresh</span>
+</button>
+
+<p class="title align-center mb-4">Ingesting datasets</p>
 
 <IngestingDatasets
   bind:datasets={ingestingDatasets}

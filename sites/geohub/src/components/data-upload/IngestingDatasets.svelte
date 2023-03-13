@@ -247,10 +247,12 @@
                   </div>
                 </td>
                 <td class="fit-content">
-                  <DataPreview
-                    bind:id={dataset.raw.id}
-                    bind:url={dataset.raw.url}
-                    disabled={dataset.raw.url.indexOf('.pmtiles') === -1 ? true : false} />
+                  {#if dataset.raw.url.indexOf('.pmtiles') > -1}
+                    <DataPreview
+                      bind:id={dataset.raw.id}
+                      bind:url={dataset.raw.url}
+                      disabled={dataset.raw.url.indexOf('.pmtiles') === -1 ? true : false} />
+                  {/if}
                 </td>
                 <td class="fit-content">
                   <button
