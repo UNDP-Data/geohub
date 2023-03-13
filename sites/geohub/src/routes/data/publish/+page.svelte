@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import type { PageData } from './$types'
   import { enhance } from '$app/forms'
   import { invalidateAll, goto, afterNavigate } from '$app/navigation'
   import { base } from '$app/paths'
@@ -12,6 +12,8 @@
   import { toast } from '@zerodevx/svelte-toast'
   import { TagInputValues } from '$lib/config/AppConfig'
 
+  export let data: PageData
+
   // preserve previous page URL
   let previousPage: string = base
   afterNavigate(({ from }) => {
@@ -21,8 +23,8 @@
   })
   const REDIRECRT_TIME = 2000 // two second
 
-  let feature: DatasetFeature = $page.data.feature
-  const isNew: boolean = $page.data.isNew ?? true
+  let feature: DatasetFeature = data.feature
+  const isNew: boolean = data.isNew ?? true
   let name = feature?.properties.name ?? ''
   let description = feature?.properties.description ?? ''
   let license = feature?.properties.license ?? ''

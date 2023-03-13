@@ -46,14 +46,7 @@ export const load: PageServerLoad = async (event) => {
   // only allow user owned data is available for data page
   apiUrl.searchParams.set('mydata', 'true')
 
-  // const res = await event.fetch(`/api/datasets${apiUrl.search}`)
-  // const datasets: DatasetFeatureCollection = await res.json()
-
-  // const resIngesting = await event.fetch(`/api/datasets/ingesting`)
-  // const ingestingDatasets: IngestingDataset[] = await resIngesting.json()
-
   return {
-    // ingestingDatasets,
     promises: {
       datasets: getDatasets(event.fetch, apiUrl),
       ingestingDatasets: getIngestingDatasets(event.fetch),

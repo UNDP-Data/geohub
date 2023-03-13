@@ -16,7 +16,7 @@
   import { DatasetSortingColumns, LimitOptions, Permission } from '$lib/config/AppConfig'
   const dispatch = createEventDispatcher()
 
-  export let datasets: Promise<DatasetFeatureCollection> = $page.data.promises.datasets
+  export let datasets: Promise<DatasetFeatureCollection>
   let featureCollection: DatasetFeatureCollection
 
   $: datasets, updateFeatureCollection()

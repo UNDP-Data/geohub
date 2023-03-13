@@ -1,16 +1,18 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import type { PageData } from './$types'
   import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte'
   import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte'
   import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
   import DataUploadButton from '$components/data-upload/DataUploadButton.svelte'
 
-  let datasets: Promise<DatasetFeatureCollection>
-  let ingestingDatasets: Promise<IngestingDataset[]>
+  export let data: PageData
+
+  let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets
+  let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets
 
   const updateDatasets = () => {
-    datasets = $page.data.promises.datasets
-    ingestingDatasets = $page.data.promises.ingestingDatasets
+    datasets = data.promises.datasets
+    ingestingDatasets = data.promises.ingestingDatasets
   }
 </script>
 

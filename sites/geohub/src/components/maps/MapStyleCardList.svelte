@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { goto, invalidateAll } from '$app/navigation'
   import MapStyleCard from './MapStyleCard.svelte'
-  import type { DashboardMapStyle, MapsData, Pages, StacLink } from '$lib/types'
+  import type { MapsData, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
