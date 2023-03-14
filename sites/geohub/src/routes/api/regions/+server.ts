@@ -15,11 +15,18 @@ export const GET: RequestHandler = async ({ url }) => {
       values.push(continent_code)
     }
 
+    let isTagFilter = false
+    const filterByTag = url.searchParams.get('filterbytag')
+    if (filterByTag && filterByTag === 'true') {
+      isTagFilter = true
+    }
+
     const sql = {
       text: `
       SELECT region2_code as region_code, region2_name as region_name, region1_code as continent_code, region1_name as continent_name
       FROM geohub.country
-      ${continent_code ? `WHERE region1_code = $1` : ''}
+      ${isTagFilter ? `WHERE EXISTS (select id FROM geohub.tag WHERE key='region' and value=region2_name)` : ''}
+      ${continent_code ? `${isTagFilter ? 'AND' : 'WHERE'} region1_code = $1` : ''}
       GROUP BY region2_code, region2_name, region1_code, region1_name
       ORDER BY region2_name`,
       values: values,

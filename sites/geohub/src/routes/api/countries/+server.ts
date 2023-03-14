@@ -22,6 +22,12 @@ export const GET: RequestHandler = async ({ url }) => {
       wheres.push(` region2_code=$${values.length} `)
     }
 
+    let isTagFilter = false
+    const filterByTag = url.searchParams.get('filterbytag')
+    if (filterByTag && filterByTag === 'true') {
+      isTagFilter = true
+    }
+
     const sql = {
       text: `
       SELECT 
@@ -35,6 +41,13 @@ export const GET: RequestHandler = async ({ url }) => {
         region1_name as continent_name
       FROM geohub.country
       ${continent_code || region_code ? `WHERE ${wheres.join(' AND ')}` : ''}
+      ${
+        isTagFilter
+          ? `${
+              continent_code || region_code ? `AND` : 'WHERE'
+            } EXISTS (select id FROM geohub.tag WHERE key='country' and value=iso_3)`
+          : ''
+      }
       GROUP BY 
         iso_3, 
         iso_code, 
