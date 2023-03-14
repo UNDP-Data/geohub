@@ -12,13 +12,9 @@
   import SelectedTags from './data-view/SelectedTags.svelte'
   import { goto } from '$app/navigation'
   import { getSelectedTagsFromUrl } from '$lib/helper'
-  import { DataCategories, TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig'
+  import { TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig'
 
-  const session = $page.data.session
-  const dataCategories: Breadcrumb[] = session
-    ? DataCategories
-    : DataCategories.filter((category) => !['Favourite', 'My data'].includes(category.name))
-  let sdgSubCategories: Breadcrumb[]
+  let dataCategories: Breadcrumb[] = $page.data.menu
   let isLoading = false
 
   export let contentHeight: number
@@ -41,47 +37,7 @@
 
   let isFavouriteSearch = false
 
-  const initBreadcrumbs = () => {
-    let bc: Breadcrumb[] = [
-      {
-        name: 'Home',
-        icon: 'fas fa-house',
-        url: '',
-      },
-    ]
-
-    const defaultCategory = DataCategories.find(
-      (c) => $page.url.search.indexOf(c.url.replace('/api/datasets?', '')) !== -1,
-    )
-    if (defaultCategory) {
-      bc = [...bc, defaultCategory]
-    } else {
-      const sdg_goal = $page.url.searchParams.get('sdg_goal')
-      if (sdg_goal) {
-        bc = [
-          ...bc,
-          DataCategories.find((c) => c.name === 'SDG'),
-          {
-            name: `SDG${sdg_goal}`,
-            icon: `assets/sdgs/${sdg_goal}.png`,
-            url: `/api/datasets?sdg_goal=${sdg_goal}`,
-          },
-        ]
-      } else if (bc.length === 1 && (query !== '' || selectedTags.length > 0)) {
-        bc = [
-          ...bc,
-          {
-            name: 'Search result',
-            icon: 'fas fa-magnifying-glass',
-            url: `/api/datasets${$page.url.search}`,
-          },
-        ]
-      }
-    }
-    return bc
-  }
-
-  let breadcrumbs: Breadcrumb[] = initBreadcrumbs()
+  let breadcrumbs: Breadcrumb[] = $page.data.breadcrumbs
 
   let expanded: { [key: string]: boolean } = {}
   // to allow only an accordion to be expanded
@@ -119,9 +75,12 @@
 
   const handleCategorySelected = async (e) => {
     const category = e.detail.category
-    if (category.name === 'SDG') {
-      await searchSDGCategory(category)
-    } else if (category.url.startsWith('/api/datasets')) {
+    const apiUrl = $page.url
+    const breadcrumbs = apiUrl.searchParams.get('breadcrumbs').split(',')
+    breadcrumbs.push(category.name)
+    apiUrl.searchParams.set('breadcrumbs', breadcrumbs.join(','))
+
+    if (category.url.startsWith('/api/datasets')) {
       if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
         $map.zoomTo(StacMinimumZoom)
       }
@@ -135,35 +94,10 @@
         }
       }
       await reload(apiUrl.toString())
+    } else {
+      await goto(apiUrl, { replaceState: true, invalidateAll: true })
     }
-  }
-
-  const searchSDGCategory = async (category: Breadcrumb) => {
-    try {
-      isLoading = true
-      const apiUrl = new URL(`${$page.url.origin}${category.url}`)
-
-      const res = await fetch(apiUrl.toString())
-      const json = await res.json()
-      const values: [{ value: string; count: number }] = json[Object.keys(json)[0]]
-
-      const last = breadcrumbs[breadcrumbs.length - 1]
-      if (last.name !== category.name) {
-        breadcrumbs = [...breadcrumbs, category]
-      }
-
-      let num_values = values.map((v) => Number(v.value))
-      num_values = num_values.sort((a, b) => a - b)
-      sdgSubCategories = num_values.map((num) => {
-        return {
-          name: `SDG${num}`,
-          icon: `assets/sdgs/${num}.png`,
-          url: `/api/datasets?sdg_goal=${num}`,
-        } as Breadcrumb
-      })
-    } finally {
-      isLoading = false
-    }
+    dataCategories = $page.data.menu
   }
 
   const handleTagChanged = async (e) => {
@@ -223,7 +157,7 @@
       })
     }
     selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
-    breadcrumbs = initBreadcrumbs()
+    breadcrumbs = $page.data.breadcrumbs
     datasetFeaturesPromise = $page.data.promises?.features
     if (!datasetFeaturesPromise) {
       DataItemFeatureCollection = undefined
@@ -237,23 +171,24 @@
     const index: number = e.detail.index
     const breadcrump: Breadcrumb = e.detail.breadcrumb
 
+    clearFiltertext()
+    clearDatasets()
+    isFavouriteSearch = false
+
+    let apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    apiUrl.searchParams.delete('sdg_goal')
+    apiUrl.searchParams.delete('type')
+    apiUrl.searchParams.delete('provider')
+    apiUrl.searchParams.delete('stac')
+    apiUrl.searchParams.delete('staronly')
+    apiUrl.searchParams.delete('mydata')
+
     if (index === 0) {
       // home
-      clearFiltertext()
-      breadcrumbs = [breadcrumbs[0]]
-      clearDatasets()
-      isFavouriteSearch = false
-
-      let apiUrl = $page.url
-      apiUrl.searchParams.delete('query')
-      apiUrl.searchParams.delete('sdg_goal')
-      apiUrl.searchParams.delete('type')
-      apiUrl.searchParams.delete('provider')
-      apiUrl.searchParams.delete('stac')
-      apiUrl.searchParams.delete('staronly')
-      apiUrl.searchParams.delete('mydata')
+      apiUrl.searchParams.delete('breadcrumbs')
       apiUrl = clearSelectedTags(apiUrl)
-      await goto(apiUrl, { replaceState: true, invalidateAll: true })
+      apiUrl.searchParams.set('breadcrumbs', 'Home')
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -261,18 +196,21 @@
         breadcrumbs.pop()
         last = breadcrumbs[breadcrumbs.length - 1]
       }
-      clearDatasets()
-
       breadcrumbs = [...breadcrumbs]
 
-      selectedTags = getSelectedTagsFromUrl($page.url)
-      let apiUrl = $page.url
-      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets?') && selectedTags.length > 0) {
-        apiUrl = clearSelectedTags(apiUrl)
-      }
-      await goto(apiUrl, { replaceState: true, invalidateAll: false })
+      apiUrl.searchParams.delete('breadcrumbs')
+      apiUrl.searchParams.set('breadcrumbs', breadcrumbs.map((b) => b.name).join(','))
     }
+
     expanded = {}
+    try {
+      isLoading = true
+      await goto(apiUrl, { replaceState: true, invalidateAll: true })
+      dataCategories = $page.data.menu
+      breadcrumbs = $page.data.breadcrumbs
+    } finally {
+      isLoading = false
+    }
   }
 
   const clearSelectedTags = (url: URL) => {
@@ -288,7 +226,6 @@
   }
 
   let clearDatasets = () => {
-    sdgSubCategories = undefined
     datasetFeaturesPromise = undefined
     DataItemFeatureCollection = undefined
   }
@@ -358,13 +295,7 @@
       <div class="loader-container">
         <Loader size="medium" />
       </div>
-    {:else if sdgSubCategories}
-      <DataCategoryCardList
-        categories={sdgSubCategories}
-        cardSize="small"
-        on:selected={handleCategorySelected}
-        bind:breadcrumbs />
-    {:else}
+    {:else if dataCategories}
       <DataCategoryCardList
         categories={dataCategories}
         cardSize="medium"
