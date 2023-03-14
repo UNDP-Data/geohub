@@ -81,6 +81,7 @@
   const continentSelected = () => {
     regions = getRegions(selectedContinent)
     selectedRegion = -1
+    countries = getCountries(selectedContinent, selectedRegion)
     query = ''
   }
 

@@ -14,6 +14,8 @@ export const load: PageServerLoad = async (event) => {
   const config: UserConfig = parentData.config
 
   const data: {
+    menu?: Breadcrumb[]
+    breadcrumbs?: Breadcrumb[]
     promises: {
       style: Promise<SavedMapStyle>
       features?: Promise<DatasetFeatureCollection>
@@ -51,6 +53,12 @@ export const load: PageServerLoad = async (event) => {
   if (!limit) {
     params.limit = `${config.DatasetSearchLimit}`
   }
+
+  const breadcrumbs = url.searchParams.get('breadcrumbs')
+  if (!breadcrumbs) {
+    params.breadcrumbs = `Home`
+  }
+
   const apiUrl = new URL(url.toString())
   if (Object.keys(params).length > 0) {
     Object.keys(params).forEach((k) => {
@@ -59,9 +67,29 @@ export const load: PageServerLoad = async (event) => {
     throw redirect(300, `${apiUrl.origin}${apiUrl.search}`)
   }
 
-  data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
+  const selectedMenus = breadcrumbs.split(',')
+  if (selectedMenus.length < 2) {
+    const menu: Breadcrumb[] = session
+      ? DataCategories
+      : DataCategories.filter((category) => !['Favourite', 'My data'].includes(category.name))
+
+    data.menu = menu
+  } else if (selectedMenus[selectedMenus.length - 1] === 'SDG') {
+    data.menu = await createSDGMenu(fetch, url)
+  }
 
   const query = apiUrl.searchParams.get('query')
+
+  if (selectedMenus.length === 1 && (query?.length > 0 || tags?.length > 0)) {
+    if (!selectedMenus.includes('Search result')) {
+      selectedMenus.push('Search result')
+    }
+  }
+
+  data.breadcrumbs = getBreadcrumbs(apiUrl, selectedMenus)
+
+  data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
+
   if (
     query ||
     DataCategories.find((c: Breadcrumb) => apiUrl.search.indexOf(c.url.replace('/api/datasets?', '')) !== -1) ||
@@ -94,6 +122,67 @@ const getSavedStyle = async (
     }
   }
   return
+}
+
+const getBreadcrumbs = (url: URL, menus: string[]) => {
+  const sdg_goal = url.searchParams.get('sdg_goal')
+
+  const breadcrumbs = menus.map((m) => {
+    let bc: Breadcrumb
+    switch (m) {
+      case 'Home':
+        bc = {
+          name: 'Home',
+          icon: 'fas fa-house',
+          url: '',
+        }
+        break
+      case 'SDG':
+        bc = DataCategories.find((c) => c.name.toLowerCase() === m.toLowerCase())
+        break
+      case 'Search result':
+        bc = {
+          name: 'Search result',
+          icon: 'fas fa-magnifying-glass',
+          url: `/api/datasets${url.search}`,
+        }
+        break
+      default:
+        if (sdg_goal) {
+          bc = {
+            name: `SDG${sdg_goal}`,
+            icon: `assets/sdgs/${sdg_goal}.png`,
+            url: `/api/datasets?sdg_goal=${sdg_goal}`,
+          }
+        } else {
+          bc = DataCategories.find((c) => c.name.toLowerCase() === m.toLowerCase())
+        }
+        break
+    }
+    return bc
+  })
+  return breadcrumbs
+}
+
+const createSDGMenu = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  const sdgBreadcrumb = DataCategories.find((b) => b.name === 'SDG')
+
+  const apiUrl = new URL(`${url.origin}${sdgBreadcrumb.url}`)
+
+  const res = await fetch(apiUrl.toString())
+  const json = await res.json()
+  const values: [{ value: string; count: number }] = json[Object.keys(json)[0]]
+
+  let num_values = values.map((v) => Number(v.value))
+  num_values = num_values.sort((a, b) => a - b)
+  const sdgs = num_values.map((num) => {
+    return {
+      name: `SDG${num}`,
+      icon: `assets/sdgs/${num}.png`,
+      url: `/api/datasets?sdg_goal=${num}`,
+    } as Breadcrumb
+  })
+  return sdgs
 }
 
 const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {

@@ -9,9 +9,6 @@
   export let categories: Breadcrumb[]
   export let cardSize: 'medium' | 'small' = 'medium'
   export let breadcrumbs: Breadcrumb[]
-  let subCategories: Breadcrumb[] = []
-
-  $: breadcrumbs, breadcrumbChanged()
 
   onMount(async () => {
     if (!(breadcrumbs && breadcrumbs.length > 0)) return
@@ -19,24 +16,12 @@
     if (breadcrumbCount > 1) {
       const lastCategory = breadcrumbs[breadcrumbCount - 1]
       if (!lastCategory.url.startsWith('/api/datasets') && categories.find((c) => c.name === lastCategory.name)) {
-        await getSelectedCategory(lastCategory)
+        getSelectedCategory(lastCategory)
       }
     }
   })
 
-  const breadcrumbChanged = async () => {
-    if (!(breadcrumbs && breadcrumbs.length > 0)) return
-    const breadcrumbCount = breadcrumbs.length
-    if (breadcrumbCount === 1) {
-      subCategories = []
-    }
-  }
-
-  const getSelectedCategory = async (category: Breadcrumb) => {
-    await handleSelectSubcategory(category)
-  }
-
-  const handleSelectSubcategory = async (category: Breadcrumb) => {
+  const getSelectedCategory = (category: Breadcrumb) => {
     if (breadcrumbs && breadcrumbs.length > 0) {
       const lastCategory = breadcrumbs[breadcrumbs.length - 1]
       if (lastCategory?.name !== category.name) {

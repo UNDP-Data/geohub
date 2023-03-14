@@ -148,8 +148,6 @@
   }
 
   const handleTagChanged = async (e) => {
-    // const url = $page.url
-    // await reload(url)
     dispatch('change')
   }
 

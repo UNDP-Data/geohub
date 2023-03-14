@@ -905,7 +905,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
         - schema:
             type: string
           in: query
@@ -1555,6 +1555,97 @@ paths:
       description: Get open API JSON definition
       tags:
         - swagger
+  /continents:
+    get:
+      summary: Get continents
+      tags:
+        - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    continent_code:
+                      type: number
+                    continent_name:
+                      type: string
+                  required:
+                    - continent_code
+                    - continent_name
+              examples:
+                Example 1:
+                  value:
+                    - continent_code: 2
+                      continent_name: Africa
+                    - continent_code: 19
+                      continent_name: Americas
+                    - continent_code: 0
+                      continent_name: Antarctica
+                    - continent_code: 142
+                      continent_name: Asia
+                    - continent_code: 150
+                      continent_name: Europe
+                    - continent_code: 9
+                      continent_name: Oceania
+      operationId: get-continents
+      description: Get continents data from database
+      parameters:
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: filterbytag
+          description: 'If true, only returns regions which exist in tag table'
+  /regions:
+    get:
+      summary: Get regions
+      tags:
+        - admin
+      responses: {}
+      operationId: get-regions
+      description: get regions data from database
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: continent
+          description: continent_code
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: filterbytag
+          description: 'If true, only returns regions which exist in tag table'
+  /countries:
+    get:
+      summary: Get countries
+      tags:
+        - admin
+      responses: {}
+      operationId: get-countries
+      description: get countries data from database
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: continent
+          description: continent code to filter
+        - schema:
+            type: string
+          in: query
+          name: region
+          description: region code to filter
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: filterbytag
+          description: 'If true, only returns regions which exist in tag table'
 components:
   schemas:
     Tag:
