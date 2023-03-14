@@ -23,6 +23,7 @@ export interface UserConfig {
 }
 
 export const DefaultUserConfig = {
+  SidebarPosition,
   SearchLimit,
   DatasetSearchLimit,
   DatasetSearchQueryOperator,
@@ -32,5 +33,4 @@ export const DefaultUserConfig = {
   MapPageSortingColumn,
   LineWidth,
   NumberOfClasses,
-  SidebarPosition,
 }

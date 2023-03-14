@@ -186,9 +186,8 @@ COMMENT ON COLUMN geohub.dataset_permission.permission
 CREATE TABLE geohub.user_settings
 (
     user_email character varying(100) NOT NULL,
-    key character varying NOT NULL,
-    value character varying NOT NULL,
-    CONSTRAINT user_settings_pkey PRIMARY KEY (user_email, key)
+    settings json NOT NULL,
+    CONSTRAINT user_settings_pkey PRIMARY KEY (user_email)
 );
 
 ALTER TABLE IF EXISTS geohub.user_settings
@@ -200,8 +199,5 @@ COMMENT ON TABLE geohub.user_settings
 COMMENT ON COLUMN geohub.user_settings.user_email
     IS 'user email address';
 
-COMMENT ON COLUMN geohub.user_settings.key
-    IS 'single setting key';
-
-COMMENT ON COLUMN geohub.user_settings.value
-    IS 'single setting key';
+COMMENT ON COLUMN geohub.user_settings.settings
+    IS 'This column stores user settings in json format';

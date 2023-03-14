@@ -1,6 +1,5 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
-  import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
   import {
     DatasetSortingColumns,
     MapSortingColumns,
@@ -10,8 +9,7 @@
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
-
-  let userSettings = $page.data.settings ? $page.data.settings : DefaultUserConfig
+  let userSettings = $page.data.config
   let isSubmitting = false
   let sideBarPosition = userSettings.SidebarPosition || 'left'
   let isExpanded = true

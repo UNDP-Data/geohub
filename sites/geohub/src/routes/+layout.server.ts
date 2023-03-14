@@ -4,8 +4,22 @@ import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfi
 
 export const load: LayoutServerLoad = async (event) => {
   const session = await event.locals.getSession()
-
-  const config: UserConfig = DefaultUserConfig
+  let config: UserConfig
+  try {
+    const response = await event.fetch('/api/settings', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    if (response.ok) {
+      config = await response.json()
+    } else {
+      config = DefaultUserConfig
+    }
+  } catch (err) {
+    config = DefaultUserConfig
+  }
 
   return {
     session,

@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import DatabaseManager from '$lib/server/DatabaseManager'
+import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig'
 
 export const POST: RequestHandler = async ({ request, url, locals }) => {
   const session = await locals.getSession()
@@ -33,8 +34,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
   const user_email = session.user.email
   if (!session) {
-    return new Response(JSON.stringify({ message: 'Permission error' }), {
-      status: 403,
+    return new Response(JSON.stringify(DefaultUserConfig), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
   }
   const dbm = new DatabaseManager()
@@ -44,7 +47,20 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       text: `SELECT settings FROM geohub.user_settings WHERE user_email = '${user_email}'`,
     }
     const res = await client.query(query)
-    return new Response(JSON.stringify(res.rows), {})
+    if (res.rowCount === 0) {
+      // no settings found for this user in the database
+      return new Response(JSON.stringify(DefaultUserConfig), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    }
+    const data: UserConfig = Object.assign(DefaultUserConfig, res.rows[0].settings as UserConfig)
+    return new Response(JSON.stringify(data), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
   } catch (err) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
