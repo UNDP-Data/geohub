@@ -11,10 +11,10 @@ export const TagSearchKeys = [
     key: 'region',
     label: 'Region',
   },
-  {
-    key: 'country',
-    label: 'Country',
-  },
+  // {
+  //   key: 'country',
+  //   label: 'Country',
+  // },
   {
     key: 'granularity',
     label: 'Admin Level',

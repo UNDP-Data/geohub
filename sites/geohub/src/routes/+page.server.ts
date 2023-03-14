@@ -35,6 +35,11 @@ export const load: PageServerLoad = async (event) => {
     })
   })
 
+  const values = url.searchParams.getAll('country')
+  values.forEach((v) => {
+    tags.push({ key: 'country', value: v })
+  })
+
   // reset default query params if it is not in queryparams
   const params: { [key: string]: string } = {}
   const queryoperator = url.searchParams.get('queryoperator')

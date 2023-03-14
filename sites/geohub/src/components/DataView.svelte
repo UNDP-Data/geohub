@@ -151,6 +151,7 @@
     apiUrl.searchParams.delete('stac')
     apiUrl.searchParams.delete('staronly')
     apiUrl.searchParams.delete('mydata')
+    apiUrl.searchParams.delete('country')
 
     if (index === 0) {
       // home
