@@ -32,6 +32,6 @@ export const GET: RequestHandler = async ({ url }) => {
       status: 400,
     })
   } finally {
-    dbm.end()
+    await dbm.end()
   }
 }

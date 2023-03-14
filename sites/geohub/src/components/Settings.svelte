@@ -1,41 +1,32 @@
 <script lang="ts">
-  import Notification from '$components/controls/Notification.svelte'
+  import { enhance } from '$app/forms'
+  import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
+  import {
+    DatasetSortingColumns,
+    MapSortingColumns,
+    NumberOfClassesMaximum,
+    NumberOfClassesMinimum,
+    LimitOptions,
+  } from '$lib/config/AppConfig'
+  import { toast } from '@zerodevx/svelte-toast'
+  import { page } from '$app/stores'
+
+  let userSettings = $page.data.settings ? $page.data.settings : DefaultUserConfig
+  let isSubmitting = false
+  let sideBarPosition = userSettings.SidebarPosition || 'left'
+  let isExpanded = true
+  let activeSettingTab = 'Map'
 
   export let headerHeight: number
-  let isExpanded = true
-  let activeSettingTab = 'Geohub'
-  let settingsApplied = false
 
-  // Default Settings
-  const settings = {
-    sideBarPosition: 'left',
-  }
-
-  const getCookie = (name: string) => {
-    const value = `; ${document.cookie}`
-    const parts = value.split(`; ${name}=`)
-    if (parts.length === 2) return parts.pop().split(';').shift()
-  }
-
-  let settingsFromCookies = JSON.parse(getCookie('settings') || '{}')
-  if (settingsFromCookies) {
-    settings.sideBarPosition = settingsFromCookies.sideBarPosition || 'left'
-  }
-  let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
-
-  const setSettingsToCookies = () => {
-    sessionStorage.setItem('settings', JSON.stringify(settings))
-    document.cookie = `settings=${JSON.stringify(settings)}; path=/;`
-    settingsApplied = true
-  }
   const collapseMiniMenu = () => {
     isExpanded = !isExpanded
   }
 </script>
 
 <div
-  class="columns is-one-quarter ml-auto mr-auto"
-  style="margin-top: {headerHeight}px; z-index:-1">
+  class="columns is-one-quarter ml-auto mr-auto settings-page"
+  style="margin-top: {headerHeight}px;">
   <div class="column is-2">
     <aside class="menu">
       <ul class="menu-list">
@@ -46,9 +37,21 @@
           <ul style="display: {!isExpanded ? 'none' : ''}">
             <li>
               <a
-                class={activeSettingTab === 'Geohub' ? 'selected' : ''}
-                on:click={() => (activeSettingTab = 'Geohub')}
+                class={activeSettingTab === 'Map' ? 'selected' : ''}
+                on:click={() => (activeSettingTab = 'Map')}
                 href="#">Map Settings</a>
+            </li>
+            <li>
+              <a
+                class={activeSettingTab === 'Search' ? 'selected' : ''}
+                on:click={() => (activeSettingTab = 'Search')}
+                href="#">Search Settings</a>
+            </li>
+            <li>
+              <a
+                class={activeSettingTab === 'Legend' ? 'selected' : ''}
+                on:click={() => (activeSettingTab = 'Legend')}
+                href="#">Legend Settings</a>
             </li>
           </ul>
         </li>
@@ -56,83 +59,199 @@
     </aside>
   </div>
   <div class="column is-two-fifths m-auto">
-    <section
-      class="content {activeSettingTab !== 'Geohub' ? 'is-hidden' : ''}"
-      id="Geohub">
-      <h2>Sidebar Position</h2>
-      <p>Change the sidebar position between left and right</p>
-      <div class="columns">
-        <div
-          on:click={() => (settings.sideBarPosition = 'left')}
-          class="column sidebar-col {settings.sideBarPosition === 'left' ? 'selected-sidebar' : ''}">
-          <div class="card">
-            <div class="card-header">
-              <p class="card-header-title">Left Sidebar</p>
-              <div
-                class="card-header-icon"
-                aria-label="more options">
-                <span class="icon">
-                  <i
-                    style="transform: rotate(-90deg)"
-                    class="fa-regular fa-window-maximize" />
-                </span>
-              </div>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <img
-                  src="/assets/sidebar/left-sidebar.png"
-                  alt="left sidebar" />
-              </div>
+    <form
+      action="/settings"
+      method="post"
+      use:enhance={() => {
+        isSubmitting = true
+        return async ({ result }) => {
+          if (result.status === 200) {
+            toast.push('Settings saved successfully!!')
+          } else {
+            toast.push('Error saving settings!!')
+          }
+          isSubmitting = false
+        }
+      }}>
+      <section
+        class="content {activeSettingTab !== 'Map' ? 'is-hidden' : ''}"
+        id="Geohub">
+        <h1 class="title">Map Settings</h1>
+        <div class="field">
+          <label class="label">Sidebar Position</label>
+          <div class="columns">
+            <label class="column">
+              <input
+                on:select={() => userSettings.SidebarPosition === 'left'}
+                type="radio"
+                name="SidebarPosition"
+                value="left"
+                checked={sideBarPosition === 'left'} />
+              <img
+                class="sidebar-image"
+                src="/assets/sidebar/left-sidebar.png"
+                alt="left sidebar" />
+            </label>
+            <label class="column">
+              <input
+                on:select={() => userSettings.SidebarPosition === 'right'}
+                type="radio"
+                name="SidebarPosition"
+                value="right"
+                checked={sideBarPosition === 'right'} />
+              <img
+                class="sidebar-image"
+                src="/assets/sidebar/right-sidebar.png"
+                alt="right sidebar" />
+            </label>
+          </div>
+        </div>
+      </section>
+      <section
+        class="content {activeSettingTab !== 'Search' ? 'is-hidden' : ''}"
+        id="Search">
+        <h1 class="title">Search Settings</h1>
+        <div class="field">
+          <label class="label">Search Limit</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="SearchLimit"
+                bind:value={userSettings.SearchLimit}>
+                {#each LimitOptions as limit}
+                  <option value={limit.toString()}>{limit}</option>
+                {/each}
+              </select>
             </div>
           </div>
         </div>
-        <div
-          on:click={() => (settings.sideBarPosition = 'right')}
-          class="column sidebar-col {settings.sideBarPosition === 'right' ? 'selected-sidebar' : ''}">
-          <div class="card">
-            <div class="card-header">
-              <p class="card-header-title">Right Sidebar</p>
-              <div
-                class="card-header-icon"
-                aria-label="more options">
-                <span class="icon">
-                  <i
-                    style="transform: rotate(90deg)"
-                    class="fa-regular fa-window-maximize" />
-                </span>
-              </div>
-            </div>
-            <div class="card-content">
-              <div class="content">
-                <img
-                  src="/assets/sidebar/right-sidebar.png"
-                  alt="right sidebar" />
-              </div>
+
+        <div class="field">
+          <label class="label">Dataset Search Limit</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DatasetSearchLimit"
+                bind:value={userSettings.DatasetSearchLimit}>
+                {#each LimitOptions as limit}
+                  <option value={limit.toString()}>{limit}</option>
+                {/each}
+              </select>
             </div>
           </div>
         </div>
+
+        <div class="field">
+          <label class="label">Dataset Query Operator</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DatasetSearchQueryOperator"
+                bind:value={userSettings.DatasetSearchQueryOperator}>
+                {#each ['or', 'and'] as operator}
+                  <option value={operator}>{operator}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Dataset Sorting Column</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DatasetSortingColumn"
+                bind:value={userSettings.DatasetSortingColumn}>
+                {#each DatasetSortingColumns as column}
+                  <option value={column.value}>{column.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Datapage Sorting Column</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DataPageSortingColumn"
+                bind:value={userSettings.DataPageSortingColumn}>
+                {#each DatasetSortingColumns as column}
+                  <option value={column.value}>{column.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Map Page Sorting Columns</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="MapPageSortingColumn"
+                bind:value={userSettings.MapPageSortingColumn}>
+                {#each MapSortingColumns as column}
+                  <option value={column.value}>{column.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Tag Search Operator</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                name="TagSearchOperator"
+                bind:value={userSettings.TagSearchOperator}>
+                {#each ['or', 'and'] as column}
+                  <option value={column}>{column}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
+        <h1 class="title">Legend Settings</h1>
+        <div class="field">
+          <label class="label">Number of Classes</label>
+          <div class="control">
+            <input
+              name="NumberOfClasses"
+              bind:value={userSettings.NumberOfClasses}
+              class="input"
+              type="number"
+              placeholder="Number of Classes"
+              min={NumberOfClassesMinimum}
+              max={NumberOfClassesMaximum} />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Line Width</label>
+          <div class="control">
+            <input
+              name="LineWidth"
+              value={userSettings.LineWidth}
+              class="input"
+              type="number"
+              placeholder="Line Width"
+              min="0"
+              max="10"
+              step="0.5" />
+          </div>
+        </div>
+      </section>
+      <div class="field">
+        <button
+          formaction="settings"
+          type="submit"
+          class="button is-primary {isSubmitting ? 'is-loading' : ''}">Submit</button>
       </div>
-    </section>
+    </form>
   </div>
-</div>
-{#if settingsApplied}
-  <Notification
-    type="info"
-    on:close={() => (settingsApplied = false)}
-    showCloseButton={true}>
-    <p>Settings Applied Successfully!!</p>
-    <a
-      class="m-auto"
-      href="/">Go To GeoHub</a>
-  </Notification>
-{/if}
-<div
-  class="columns m-auto pb-2"
-  style="width: fit-content">
-  <button
-    on:click={setSettingsToCookies}
-    class="button is-primary">Apply</button>
 </div>
 
 <style lang="scss">
@@ -163,5 +282,27 @@
 
   .selected-sidebar {
     border: 2px solid #3273dc;
+  }
+
+  /* HIDE RADIO */
+  [type='radio'] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  /* IMAGE STYLES */
+  [type='radio'] + img {
+    cursor: pointer;
+  }
+
+  /* CHECKED STYLES */
+  [type='radio']:checked + img {
+    outline: 2px solid #f00;
+  }
+
+  .sidebar-image {
+    box-shadow: #0a0a0a 0 0 2px 0;
   }
 </style>
