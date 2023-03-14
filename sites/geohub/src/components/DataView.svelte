@@ -101,47 +101,14 @@
   }
 
   const handleTagChanged = async (e) => {
-    selectedTags = e.detail.tags
     const apiUrl = $page.url
-    TagSearchKeys.forEach((key) => {
-      apiUrl.searchParams.delete(key.key)
-    })
-    selectedTags?.forEach((t) => {
-      apiUrl.searchParams.append(t.key, t.value)
-    })
-
-    if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
-      if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
-        if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
-          clearDatasets()
-          breadcrumbs.pop()
-          breadcrumbs = [...breadcrumbs]
-          await goto(apiUrl)
-          return
-        }
-      }
-    }
-
-    if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
-      datasetFeaturesPromise = undefined
-      DataItemFeatureCollection = undefined
-      await goto(apiUrl)
-      return
-    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags?.length === 0 && !query) {
-      datasetFeaturesPromise = undefined
-      DataItemFeatureCollection = undefined
-      breadcrumbs.pop()
-      breadcrumbs = [...breadcrumbs]
-      await goto(apiUrl)
-      return
-    }
     const isReload = e.detail.reload ?? false
     await reload(apiUrl.toString(), isReload)
   }
 
   const handleFilterChanged = async (e) => {
     const url = e.detail.url
-    await reload(url)
+    await reload(url, false)
   }
 
   const reload = async (url: string, invalidate = true) => {
