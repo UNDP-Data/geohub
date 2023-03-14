@@ -1,6 +1,6 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
 import type { UserConfig } from '$lib/config/DefaultUserConfig'
-import type { DatasetFeatureCollection, SavedMapStyle, Tag } from '$lib/types'
+import type { Continent, Country, DatasetFeatureCollection, SavedMapStyle, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import type { PageServerLoad } from './$types'
@@ -68,6 +68,14 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const selectedMenus = breadcrumbs.split(',')
+  if (selectedMenus.length === 1) {
+    DataCategories.forEach((c) => {
+      const search = c.url.split('?')[1]
+      if (url.search.indexOf(search) > -1) {
+        selectedMenus.push(c.name)
+      }
+    })
+  }
   if (selectedMenus.length < 2) {
     const menu: Breadcrumb[] = session
       ? DataCategories
@@ -76,6 +84,16 @@ export const load: PageServerLoad = async (event) => {
     data.menu = menu
   } else if (selectedMenus[selectedMenus.length - 1] === 'SDG') {
     data.menu = await createSDGMenu(fetch, url)
+  } else if (selectedMenus[selectedMenus.length - 1] === 'Continent') {
+    data.menu = await createRegionMenu(fetch, url)
+  } else {
+    const regions = await createRegionMenu(fetch, url)
+    const name = selectedMenus[selectedMenus.length - 1]
+    const region = regions.find((r) => r.name.toLowerCase() === name.toLowerCase())
+    const country = url.searchParams.get('country')
+    if (!country && region) {
+      data.menu = await createCountryMenu(fetch, url, region)
+    }
   }
 
   const query = apiUrl.searchParams.get('query')
@@ -86,8 +104,7 @@ export const load: PageServerLoad = async (event) => {
     }
   }
 
-  data.breadcrumbs = getBreadcrumbs(apiUrl, selectedMenus)
-
+  data.breadcrumbs = await getBreadcrumbs(fetch, apiUrl, selectedMenus)
   data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
 
   if (
@@ -124,40 +141,55 @@ const getSavedStyle = async (
   return
 }
 
-const getBreadcrumbs = (url: URL, menus: string[]) => {
+const getBreadcrumbs = async (
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+  url: URL,
+  menus: string[],
+) => {
   const sdg_goal = url.searchParams.get('sdg_goal')
+  const regions = await createRegionMenu(fetch, url)
+  let region: Breadcrumb
+  let countries: Breadcrumb[]
+  if (menus.length > 2) {
+    region = regions.find((r) => r.name.toLowerCase() === menus[2].toLowerCase())
+    if (region) {
+      countries = await createCountryMenu(fetch, url, region)
+    }
+  }
 
   const breadcrumbs = menus.map((m) => {
     let bc: Breadcrumb
-    switch (m) {
-      case 'Home':
+    if (m === 'Home') {
+      bc = {
+        name: 'Home',
+        icon: 'fas fa-house',
+        url: '',
+      }
+    } else if (['SDG', 'Continent'].includes(m)) {
+      bc = DataCategories.find((c) => c.name.toLowerCase() === m.toLowerCase())
+    } else if (m === 'Search result') {
+      bc = {
+        name: 'Search result',
+        icon: 'fas fa-magnifying-glass',
+        url: `/api/datasets${url.search}`,
+      }
+    } else {
+      if (sdg_goal) {
         bc = {
-          name: 'Home',
-          icon: 'fas fa-house',
-          url: '',
+          name: `SDG${sdg_goal}`,
+          icon: `assets/sdgs/${sdg_goal}.png`,
+          url: `/api/datasets?sdg_goal=${sdg_goal}`,
         }
-        break
-      case 'SDG':
-        bc = DataCategories.find((c) => c.name.toLowerCase() === m.toLowerCase())
-        break
-      case 'Search result':
-        bc = {
-          name: 'Search result',
-          icon: 'fas fa-magnifying-glass',
-          url: `/api/datasets${url.search}`,
-        }
-        break
-      default:
-        if (sdg_goal) {
-          bc = {
-            name: `SDG${sdg_goal}`,
-            icon: `assets/sdgs/${sdg_goal}.png`,
-            url: `/api/datasets?sdg_goal=${sdg_goal}`,
-          }
+      } else {
+        const country = countries?.find((r) => r.name.toLowerCase() === m.toLowerCase())
+        if (regions.find((r) => r.name.toLowerCase() === m.toLowerCase())) {
+          bc = region
+        } else if (country) {
+          bc = country
         } else {
           bc = DataCategories.find((c) => c.name.toLowerCase() === m.toLowerCase())
         }
-        break
+      }
     }
     return bc
   })
@@ -183,6 +215,47 @@ const createSDGMenu = async (fetch: (input: RequestInfo | URL, init?: RequestIni
     } as Breadcrumb
   })
   return sdgs
+}
+
+const createRegionMenu = async (
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+  url: URL,
+) => {
+  const continentBreadcrumb = DataCategories.find((b) => b.name === 'Continent')
+  const apiUrl = new URL(`${url.origin}${continentBreadcrumb.url}`)
+
+  const res = await fetch(apiUrl.toString())
+  const continents: Continent[] = await res.json()
+
+  return continents.map((c) => {
+    let icon = `fa-solid fa-earth-${c.continent_name.toLowerCase()}`
+    if (c.continent_name === 'Anterctica') {
+      icon = 'fa-solid fa-global'
+    }
+    return {
+      name: `${c.continent_name}`,
+      icon: icon,
+      url: `/api/countries?continent=${c.continent_code}&filterbytag=true`,
+    }
+  })
+}
+
+const createCountryMenu = async (
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+  url: URL,
+  region: Breadcrumb,
+) => {
+  const apiUrl = new URL(`${url.origin}${region.url}`)
+  const res = await fetch(apiUrl.toString())
+  const countries: Country[] = await res.json()
+  return countries.map((c) => {
+    const icon = c.iso_2 ? `fi fi-${c.iso_2.toLowerCase()}` : 'no-flag fa-solid fa-flag fa-2xl'
+    return {
+      name: `${c.country_name}`,
+      icon: icon,
+      url: `/api/datasets?country=${c.iso_3}`,
+    }
+  })
 }
 
 const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {

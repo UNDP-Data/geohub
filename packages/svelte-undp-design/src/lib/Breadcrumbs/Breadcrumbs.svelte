@@ -26,6 +26,8 @@
 							<span class="icon">
 								{#if breadcrumb.icon.startsWith('fa')}
 									<i class={breadcrumb.icon} />
+								{:else if breadcrumb.icon.startsWith('fi')}
+									<span class="fi fi-{breadcrumb.icon}" />
 								{:else}
 									<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 								{/if}
@@ -73,5 +75,11 @@
 	@use '../css/breadcrumbs.min.css';
 	li:after {
 		font-size: 1.1rem !important;
+	}
+
+	.fi {
+		width: 24px !important;
+		height: 24px !important;
+		line-height: 2em !important;
 	}
 </style>

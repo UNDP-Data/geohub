@@ -7,6 +7,11 @@ export const DataCategories: Breadcrumb[] = [
     url: '/api/tags?key=sdg_goal',
   },
   {
+    name: 'Continent',
+    icon: 'fa-solid fa-globe',
+    url: '/api/continents?filterbytag=true',
+  },
+  {
     name: 'UNDP',
     icon: 'assets/undp-images/undp-logo.png',
     url: '/api/datasets?provider=undp',

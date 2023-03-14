@@ -76,9 +76,9 @@
   const handleCategorySelected = async (e) => {
     const category = e.detail.category
     const apiUrl = $page.url
-    const breadcrumbs = apiUrl.searchParams.get('breadcrumbs').split(',')
-    breadcrumbs.push(category.name)
-    apiUrl.searchParams.set('breadcrumbs', breadcrumbs.join(','))
+    const bcs = apiUrl.searchParams.get('breadcrumbs').split(',')
+    bcs.push(category.name)
+    apiUrl.searchParams.set('breadcrumbs', bcs.join(','))
 
     if (category.url.startsWith('/api/datasets')) {
       if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
@@ -96,8 +96,8 @@
       await reload(apiUrl.toString())
     } else {
       await goto(apiUrl, { replaceState: true, invalidateAll: true })
+      dataCategories = $page.data.menu
     }
-    dataCategories = $page.data.menu
   }
 
   const handleTagChanged = async (e) => {
@@ -125,6 +125,7 @@
     }
     selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
     breadcrumbs = $page.data.breadcrumbs
+    dataCategories = $page.data.menu
     datasetFeaturesPromise = $page.data.promises?.features
     if (!datasetFeaturesPromise) {
       DataItemFeatureCollection = undefined

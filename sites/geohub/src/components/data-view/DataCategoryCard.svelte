@@ -20,6 +20,8 @@
     <figure class="category image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
       {#if category.icon.startsWith('fa')}
         <i class="{category.icon} fa-4x" />
+      {:else if category.icon.startsWith('fi')}
+        <span class={category.icon} />
       {:else}
         <img
           src={category.icon}
@@ -38,6 +40,12 @@
   .container {
     .category {
       cursor: pointer;
+
+      .fi {
+        width: 64px !important;
+        height: 64px !important;
+        line-height: 2em !important;
+      }
     }
 
     .center {
