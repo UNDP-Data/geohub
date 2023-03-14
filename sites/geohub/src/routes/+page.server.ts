@@ -1,33 +1,28 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig'
 import type { UserConfig } from '$lib/config/DefaultUserConfig'
-import type { DatasetFeatureCollection, Tag } from '$lib/types'
+import type { DatasetFeatureCollection, SavedMapStyle, Tag } from '$lib/types'
 import { redirect } from '@sveltejs/kit'
 import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, url, parent } = event
+  const { locals, url, parent, fetch } = event
   const session = await locals.getSession()
   const user = session?.user
 
   const parentData = await parent()
   const config: UserConfig = parentData.config
 
-  const data: { style?: JSON; readOnly?: boolean; promises?: { features?: Promise<DatasetFeatureCollection> } } = {}
-  const styleId = url.searchParams.get('style')
-  let isReadOnly = true
-  if (styleId) {
-    const res = await event.fetch(`/api/style/${styleId}`)
-    if (res.ok) {
-      const styleInfo = await res.json()
-
-      if (user?.email === styleInfo?.created_user) {
-        isReadOnly = false
-      }
-
-      data.style = styleInfo
-      data.readOnly = isReadOnly
+  const data: {
+    promises: {
+      style: Promise<SavedMapStyle>
+      features?: Promise<DatasetFeatureCollection>
+      tags?: Promise<{ [key: string]: Tag[] }>
     }
+  } = {
+    promises: {
+      style: getSavedStyle(fetch, url, user?.email),
+    },
   }
 
   const tags: Tag[] = []
@@ -64,6 +59,8 @@ export const load: PageServerLoad = async (event) => {
     throw redirect(300, `${apiUrl.origin}${apiUrl.search}`)
   }
 
+  data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
+
   const query = apiUrl.searchParams.get('query')
   if (
     query ||
@@ -72,16 +69,49 @@ export const load: PageServerLoad = async (event) => {
     tags.length > 0
   ) {
     apiUrl.searchParams.delete('style')
-    const fc = getDatasets(event.fetch, apiUrl)
-    data.promises = {
-      features: fc,
-    }
+    const fc = getDatasets(fetch, apiUrl)
+    data.promises.features = fc
   }
   return data
+}
+
+const getSavedStyle = async (
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+  url: URL,
+  user_email: string,
+) => {
+  const styleId = url.searchParams.get('style')
+  if (styleId) {
+    const res = await fetch(`/api/style/${styleId}`)
+    if (res.ok) {
+      const styleInfo: SavedMapStyle = await res.json()
+      let isReadOnly = true
+      if (user_email === styleInfo?.created_user) {
+        isReadOnly = false
+      }
+      styleInfo.readOnly = isReadOnly
+      return styleInfo
+    }
+  }
+  return
 }
 
 const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
   const res = await fetch(`/api/datasets${url.search}`)
   const fc: DatasetFeatureCollection = await res.json()
   return fc
+}
+
+const getTags = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  url.searchParams.delete('style')
+  const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`
+  const res = await fetch(apiUrl)
+  const json: { [key: string]: Tag[] } = await res.json()
+
+  const tags: { [key: string]: Tag[] } = {}
+  TagSearchKeys.forEach((t) => {
+    if (!json[t.key]) return
+    tags[t.key] = json[t.key]
+  })
+  return tags
 }

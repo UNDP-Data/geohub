@@ -1,5 +1,10 @@
 <script lang="ts">
   import { SvelteToast } from '@zerodevx/svelte-toast'
+  import * as pmtiles from 'pmtiles'
+  import maplibregl from 'maplibre-gl'
+
+  let protocol = new pmtiles.Protocol()
+  maplibregl.addProtocol('pmtiles', protocol.tile)
 </script>
 
 <slot />

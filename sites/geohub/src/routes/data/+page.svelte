@@ -1,22 +1,39 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import type { PageData } from './$types'
+  import { invalidateAll } from '$app/navigation'
   import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte'
   import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte'
   import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types'
   import DataUploadButton from '$components/data-upload/DataUploadButton.svelte'
 
-  let datasets: DatasetFeatureCollection = $page.data.datasets
-  let ingestingDatasets: IngestingDataset[] = $page.data.ingestingDatasets
+  export let data: PageData
+
+  let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets
+  let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets
 
   const updateDatasets = () => {
-    datasets = $page.data.datasets
-    ingestingDatasets = $page.data.ingestingDatasets
+    datasets = data.promises.datasets
+    ingestingDatasets = data.promises.ingestingDatasets
+  }
+
+  const handleRefresh = async () => {
+    await invalidateAll()
+    updateDatasets()
   }
 </script>
 
-<p class="title align-center mb-4">Ingesting datasets</p>
-
 <DataUploadButton />
+
+<button
+  class="button is-primary my-2"
+  on:click={handleRefresh}>
+  <span class="icon">
+    <i class="fa-solid fa-rotate" />
+  </span>
+  <span>Refresh</span>
+</button>
+
+<p class="title align-center mb-4">Ingesting datasets</p>
 
 <IngestingDatasets
   bind:datasets={ingestingDatasets}

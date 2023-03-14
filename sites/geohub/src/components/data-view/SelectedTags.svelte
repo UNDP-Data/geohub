@@ -6,7 +6,7 @@
 
   const dispatch = createEventDispatcher()
 
-  let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
+  export let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   export let isClearButtonShown = false
 
   const handleTagDeleted = (value: Tag) => {
@@ -18,6 +18,7 @@
 
     dispatch('change', {
       tags: selectedTags,
+      reload: true,
     })
   }
 
@@ -25,6 +26,7 @@
     selectedTags = []
     dispatch('change', {
       tags: selectedTags,
+      reload: true,
     })
   }
 

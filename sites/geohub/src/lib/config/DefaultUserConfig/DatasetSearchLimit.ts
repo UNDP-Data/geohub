@@ -1,1 +1,1 @@
-export const DatasetSearchLimit = 25
+export const DatasetSearchLimit = 15

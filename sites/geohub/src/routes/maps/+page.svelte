@@ -1,18 +1,20 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import type { PageData } from './$types'
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
   import { Header, Footer, Stats, type HeaderLink, type StatsCard } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
   import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
+
+  export let data: PageData
 
   let innerWidth: number
   $: isMobile = innerWidth < 768 ? true : false
 
   let headerHeight: number
 
-  let links: HeaderLink[] = HeaderItems(['home', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'data', 'dashboard', 'userguide'])
 
-  let stats: StatsCard[] = $page.data.stats
+  let stats: StatsCard[] = data.stats
 
   let title = 'GeoHub | Maps'
 </script>

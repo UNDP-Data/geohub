@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { Header, type HeaderLink } from '@undp-data/svelte-undp-design'
   import StyleShare from './StyleShare.svelte'
-  import { indicatorProgress, layerList } from '$stores'
+  import { layerList } from '$stores'
   import UserAccount from './UserAccount.svelte'
   import { HeaderItems } from '$lib/config/AppConfig'
 
@@ -11,15 +11,12 @@
 
   let isStyleShareVisible = false
 
-  $: showProgressBar = $indicatorProgress
-
   const shareLink = {
     id: 'header-link-styleshare',
     title: 'Save & share map',
     href: '#',
     icon: 'fa-solid fa-share pr-1',
-    callback: (id) => {
-      console.log(id)
+    callback: () => {
       isStyleShareVisible = true
     },
   }
@@ -45,7 +42,7 @@
           initLinks()
         },
       },
-      ...HeaderItems(['maps', 'dashboard', 'userguide']),
+      ...HeaderItems(['maps', 'data', 'dashboard', 'userguide']),
     ]
 
     if ($page.data.session && $layerList.length > 0) {
@@ -78,8 +75,4 @@
   :global(.menu-item) {
     margin: 0.75rem 1.75rem 0.75rem 0 !important;
   }
-
-  // :global(.custom-button-mega) {
-  //   margin: 0 0 0 1.6875rem !important;
-  // }
 </style>
