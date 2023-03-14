@@ -32,7 +32,6 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
-  const user_email = session.user.email
   if (!session) {
     return new Response(JSON.stringify(DefaultUserConfig), {
       headers: {
@@ -40,6 +39,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       },
     })
   }
+  const user_email = session.user.email
   const dbm = new DatabaseManager()
   const client = await dbm.start()
   try {

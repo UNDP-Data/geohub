@@ -9,6 +9,7 @@
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
+
   let userSettings = $page.data.config
   let isSubmitting = false
   let sideBarPosition = userSettings.SidebarPosition || 'left'
@@ -282,7 +283,6 @@
     border: 2px solid #3273dc;
   }
 
-  /* HIDE RADIO */
   [type='radio'] {
     position: absolute;
     opacity: 0;
@@ -290,12 +290,10 @@
     height: 0;
   }
 
-  /* IMAGE STYLES */
   [type='radio'] + img {
     cursor: pointer;
   }
 
-  /* CHECKED STYLES */
   [type='radio']:checked + img {
     outline: 2px solid #f00;
   }
