@@ -1,22 +1,18 @@
 import { fail } from '@sveltejs/kit'
-
 export const actions = {
-  default: async (event) => {
+  save: async (event) => {
     const { request, locals } = event
     const session = await locals.getSession()
     if (!session) {
       return fail(403, { message: 'No permission' })
     }
     const data = await request.formData()
-    const settings = {}
+    const settings: { [key: string]: string } = {}
     for (const [key, value] of data.entries()) {
       settings[key] = value
     }
     const response = await event.fetch('/api/settings', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(settings),
     })
     if (response.ok) {

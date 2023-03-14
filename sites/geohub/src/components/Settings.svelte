@@ -59,7 +59,7 @@
   </div>
   <div class="column is-two-fifths m-auto">
     <form
-      action="/settings"
+      action="?/save"
       method="post"
       use:enhance={() => {
         isSubmitting = true
@@ -104,6 +104,7 @@
                 alt="right sidebar" />
             </label>
           </div>
+          <p class="help is-info">Select sidebar position</p>
         </div>
       </section>
       <section

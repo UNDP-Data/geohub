@@ -33,11 +33,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
   if (!session) {
-    return new Response(JSON.stringify(DefaultUserConfig), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    return new Response(JSON.stringify(DefaultUserConfig), {})
   }
   const user_email = session.user.email
   const dbm = new DatabaseManager()
@@ -49,20 +45,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     const res = await client.query(query)
     if (res.rowCount === 0) {
       // no settings found for this user in the database
-      return new Response(JSON.stringify(DefaultUserConfig), {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      return new Response(JSON.stringify(DefaultUserConfig), {})
     }
     const data: UserConfig = Object.assign(DefaultUserConfig, res.rows[0].settings as UserConfig)
-    return new Response(JSON.stringify(data), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    return new Response(JSON.stringify(data), {})
   } catch (err) {
-    return new Response(JSON.stringify({ message: err.message }), {
+    return new Response(JSON.stringify(DefaultUserConfig), {
       status: 400,
     })
   } finally {
