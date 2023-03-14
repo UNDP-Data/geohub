@@ -5,11 +5,6 @@
   import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
   let headerHeight: number
   let links: HeaderLink[] = HeaderItems(['home', 'dashboard', 'userguide'])
-
-  //   From load function
-  export let data
-
-  $: console.log(data)
 </script>
 
 <Header
