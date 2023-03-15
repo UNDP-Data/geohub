@@ -13,33 +13,10 @@ Options:
   -h, --help        display help for command
 
 Commands:
-  azblob [options]      scan azure blob containers to register metadata into PostgreSQL database.
-  martin [options]      scan martin layers to register metadata into PostgreSQL database.
-  pgtileserv [options]  scan pg_tileserv layers to register metadata into PostgreSQL database.
-  stac [options]        scan STAC collections to register metadata into PostgreSQL database.
-  delete [options]      Delete items by storage URL
-  help [command]        display help for command
+  martin [options]  scan martin layers to register metadata into PostgreSQL database.
+  stac [options]    scan STAC collections to register metadata into PostgreSQL database.
+  help [command]    display help for command
 ```
-
-- Register Azure Blob Containers
-
-```shell
-$geohub azblob -h
-Usage: geohub azblob [options]
-
-scan azure blob containers to register metadata into PostgreSQL database.
-
-Options:
-  -d, --database <dsn>                           PostgreSQL database connection string
-  -a, --azaccount <azure_storage_account>        Azure Storage Account
-  -k, --azaccountkey <azure_storage_access_key>  Azure Storage Access Key
-  -n, --name [container_name...]                 Targeted Azure Blob Container name to scan. It will scan all containers if it is not specified.
-  -o, --output [output]                          Output directory for temporary working folder (default: "tmp")
-  -t, --titiler-url [titiler-url]                base URL for titiler (default: "https://titiler.undpgeohub.org")
-  -h, --help                                     display help for command
-```
-
-it takes approximately 23 minutes to finish importing all Azure blob containers (20 NO) of geohub.
 
 - Register martin layers
 
@@ -54,21 +31,6 @@ Options:
   -m, --martin-url [martin-url]  URL for martin index.json (default: "https://martin.undpgeohub.org/index.json")
   -o, --output [output]          Output directory for temporary working folder (default: "tmp")
   -h, --help                     display help for command
-```
-
-- Register pg_tilesrev layers
-
-```shell
-$geohub pgtileserv -h
-Usage: geohub pgtileserv [options]
-
-scan pg_tileserv layers to register metadata into PostgreSQL database.
-
-Options:
-  -d, --database <dsn>                   PostgreSQL database connection string
-  -p, --pgtileserv-url [pgtileserv-url]  URL for pg_tileserv index.json (default: "https://pgtileserv.undpgeohub.org/index.json")
-  -o, --output [output]                  Output directory for temporary working folder (default: "tmp")
-  -h, --help                             display help for command
 ```
 
 - Register STAC collections
