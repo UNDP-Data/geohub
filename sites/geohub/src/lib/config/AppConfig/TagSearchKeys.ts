@@ -3,14 +3,14 @@ export const TagSearchKeys = [
     key: 'extent',
     label: 'Extent',
   },
-  {
-    key: 'continent',
-    label: 'Continent',
-  },
-  {
-    key: 'region',
-    label: 'Region',
-  },
+  // {
+  //   key: 'continent',
+  //   label: 'Continent',
+  // },
+  // {
+  //   key: 'region',
+  //   label: 'Region',
+  // },
   // {
   //   key: 'country',
   //   label: 'Country',
