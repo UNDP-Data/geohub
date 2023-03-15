@@ -95,8 +95,13 @@
       }
       await reload(apiUrl.toString())
     } else {
-      await goto(apiUrl, { replaceState: true, invalidateAll: true })
-      dataCategories = $page.data.menu
+      try {
+        isLoading = true
+        await goto(apiUrl, { replaceState: true, invalidateAll: true })
+        dataCategories = $page.data.menu
+      } finally {
+        isLoading = false
+      }
     }
   }
 
