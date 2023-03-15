@@ -10,6 +10,7 @@
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
   import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
+  import { invalidateAll } from '$app/navigation'
 
   let userSettings = $page.data.config
   let isSubmitting = false
@@ -70,6 +71,7 @@
         isSubmitting = true
         return async ({ result }) => {
           if (result.status === 200) {
+            await invalidateAll()
             toast.push('Settings saved successfully!!')
           } else {
             toast.push('Error saving settings!!')
