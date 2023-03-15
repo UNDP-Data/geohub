@@ -9,12 +9,17 @@
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
+  import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
 
   let userSettings = $page.data.config
   let isSubmitting = false
   let sideBarPosition = userSettings.SidebarPosition || 'left'
   let isExpanded = true
   let activeSettingTab = 'Map'
+
+  const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
+    ? LimitOptions
+    : [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b)
 
   export let headerHeight: number
 
@@ -134,7 +139,7 @@
               <select
                 name="DatasetSearchLimit"
                 bind:value={userSettings.DatasetSearchLimit}>
-                {#each LimitOptions as limit}
+                {#each DatasetLimitOptions as limit}
                   <option value={limit}>{limit}</option>
                 {/each}
               </select>

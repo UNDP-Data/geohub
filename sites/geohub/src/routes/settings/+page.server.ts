@@ -1,3 +1,4 @@
+import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
 import { fail } from '@sveltejs/kit'
 export const actions = {
   save: async (event) => {
@@ -7,18 +8,21 @@ export const actions = {
       return fail(403, { message: 'No permission' })
     }
     const data = await request.formData()
-    const settings = {
-      SidebarPosition: data.get('SidebarPosition'),
-      SearchLimit: parseInt(data.get('SearchLimit')),
-      DatasetSearchLimit: parseInt(data.get('DatasetSearchLimit')),
-      DatasetSearchQueryOperator: data.get('DatasetSearchQueryOperator'),
-      DatasetSortingColumn: data.get('DatasetSortingColumn'),
-      DataPageSortingColumn: data.get('DataPageSortingColumn'),
-      MapSortingColumns: data.get('MapSortingColumns'),
-      TagSearchOperator: data.get('TagSearchOperator'),
-      NumberOfClasses: parseInt(data.get('NumberOfClasses')),
-      LineWidth: parseFloat(data.get('LineWidth')),
-    }
+
+    const settings: { [key: string]: number | string } = {}
+    Object.keys(DefaultUserConfig).forEach((key) => {
+      const defaultValue = DefaultUserConfig[key]
+      const value = data.get(key)?.toString()
+      if (!value) return
+      if (parseFloat(defaultValue)) {
+        settings[key] = parseFloat(value)
+      } else if (parseInt(defaultValue)) {
+        settings[key] = parseInt(value)
+      } else {
+        settings[key] = value
+      }
+    })
+
     const response = await event.fetch('/api/settings', {
       method: 'POST',
       body: JSON.stringify(settings),
