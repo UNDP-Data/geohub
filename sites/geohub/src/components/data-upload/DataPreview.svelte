@@ -22,16 +22,20 @@
   export let url: string
   export let size: 'is-small' | 'is-normal' | 'is-medium' | 'is-large' = 'is-small'
   export let disabled = false
+  export let feature: DatasetFeature = undefined
 
   let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false
 
-  let feature: DatasetFeature = {
-    type: 'Feature',
-    properties: {
-      id,
-      url: isPmtiles ? `pmtiles://${url}` : url,
-      is_raster: !isPmtiles,
-    },
+  if (!feature) {
+    // if no feature is given, create feature object with minimum property
+    feature = {
+      type: 'Feature',
+      properties: {
+        id,
+        url: isPmtiles ? `pmtiles://${url}` : url,
+        is_raster: isPmtiles,
+      },
+    }
   }
 
   const handleLinkClicked = () => {

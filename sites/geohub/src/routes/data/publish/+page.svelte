@@ -152,6 +152,7 @@
       <DataPreview
         size="is-normal"
         id={feature.properties.id}
+        bind:feature={data.feature}
         url={feature.properties.url.replace('pmtiles://', '')} />
     </div>
   </div>
