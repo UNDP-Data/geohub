@@ -23,13 +23,18 @@ const meta = {
 	tags: ['docsPage'],
 	argTypes: {
 		breadcrumbs: {
-			description: `Breadcrumbs data to be shown. Each object should contain 'name', 'icon' and 'url'. URL is optional. Icon can use either fontawesome of any icon image's URL.`,
+			description: `Breadcrumbs data to be shown. Each object should contain 'name', 'icon' and 'url'. URL is optional. Icon can use either fontawesome of any icon image's URL. flag-icon package's icon also can be used. You have to import fontawesome or flag-icon CSS if you want to use it.`,
 			defaultValue: []
 		},
 		fontSize: {
 			type: 'string',
 			description: 'Font size either large, medium or small',
 			defaultValue: 'medium'
+		}
+	},
+	parameters: {
+		fontSize: {
+			values: ['medium', 'small']
 		}
 	}
 } satisfies Meta<Breadcrumbs>;

@@ -3,18 +3,18 @@ export const TagSearchKeys = [
     key: 'extent',
     label: 'Extent',
   },
-  {
-    key: 'continent',
-    label: 'Continent',
-  },
-  {
-    key: 'region',
-    label: 'Region',
-  },
-  {
-    key: 'country',
-    label: 'Country',
-  },
+  // {
+  //   key: 'continent',
+  //   label: 'Continent',
+  // },
+  // {
+  //   key: 'region',
+  //   label: 'Region',
+  // },
+  // {
+  //   key: 'country',
+  //   label: 'Country',
+  // },
   {
     key: 'granularity',
     label: 'Admin Level',

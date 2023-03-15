@@ -74,30 +74,35 @@
   }
 
   const handleCategorySelected = async (e) => {
-    const category = e.detail.category
-    const apiUrl = $page.url
-    const breadcrumbs = apiUrl.searchParams.get('breadcrumbs').split(',')
-    breadcrumbs.push(category.name)
-    apiUrl.searchParams.set('breadcrumbs', breadcrumbs.join(','))
-
-    if (category.url.startsWith('/api/datasets')) {
-      if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
-        $map.zoomTo(StacMinimumZoom)
-      }
-
+    try {
+      isLoading = true
+      const category = e.detail.category
       const apiUrl = $page.url
-      const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
-      for (const key of categoryUrl.searchParams.keys()) {
-        const value = categoryUrl.searchParams.get(key)
-        if (apiUrl.searchParams.get(key) !== value) {
-          apiUrl.searchParams.set(key, value)
+      const bcs = apiUrl.searchParams.get('breadcrumbs').split(',')
+      bcs.push(category.name)
+      apiUrl.searchParams.set('breadcrumbs', bcs.join(','))
+
+      if (category.url.startsWith('/api/datasets')) {
+        if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
+          $map.zoomTo(StacMinimumZoom)
         }
+
+        const apiUrl = $page.url
+        const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
+        for (const key of categoryUrl.searchParams.keys()) {
+          const value = categoryUrl.searchParams.get(key)
+          if (apiUrl.searchParams.get(key) !== value) {
+            apiUrl.searchParams.set(key, value)
+          }
+        }
+        await reload(apiUrl.toString())
+      } else {
+        await goto(apiUrl, { replaceState: true, invalidateAll: true })
+        dataCategories = $page.data.menu
       }
-      await reload(apiUrl.toString())
-    } else {
-      await goto(apiUrl, { replaceState: true, invalidateAll: true })
+    } finally {
+      isLoading = false
     }
-    dataCategories = $page.data.menu
   }
 
   const handleTagChanged = async (e) => {
@@ -125,6 +130,7 @@
     }
     selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
     breadcrumbs = $page.data.breadcrumbs
+    dataCategories = $page.data.menu
     datasetFeaturesPromise = $page.data.promises?.features
     if (!datasetFeaturesPromise) {
       DataItemFeatureCollection = undefined
@@ -150,6 +156,7 @@
     apiUrl.searchParams.delete('stac')
     apiUrl.searchParams.delete('staronly')
     apiUrl.searchParams.delete('mydata')
+    apiUrl.searchParams.delete('country')
 
     if (index === 0) {
       // home
@@ -205,11 +212,13 @@
     placeholder="Type keywords to search data"
     bind:map={$map}
     bind:query
+    disabled={isLoading}
     on:tagchange={handleTagChanged}
     on:change={handleFilterChanged} />
 
   <Breadcrumbs
     bind:breadcrumbs
+    disabled={isLoading}
     on:clicked={handleBreadcrumpClicked}
     fontSize="medium" />
 
