@@ -253,11 +253,15 @@
           <p class="help is-info">Width of line layer in legend</p>
         </div>
       </section>
-      <div class="field">
-        <button
-          formaction="settings"
-          type="submit"
-          class="button is-primary {isSubmitting ? 'is-loading' : ''}">Submit</button>
+      <div class="field is-grouped is-grouped-centered">
+        <div class="control">
+          <button
+            formaction="?/save"
+            type="submit"
+            class="button is-primary {isSubmitting ? 'is-loading' : ''}">
+            Submit
+          </button>
+        </div>
       </div>
     </form>
   </div>
