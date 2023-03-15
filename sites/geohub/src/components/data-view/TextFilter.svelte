@@ -11,6 +11,7 @@
 
   const dispatch = createEventDispatcher()
 
+  export let disabled = false
   export let map: Map
   export let placeholder: string
   export let query = $page.url.searchParams.get('query') ?? ''
@@ -125,6 +126,7 @@
       data-testid="filter-bucket-input"
       class="input"
       type="text"
+      {disabled}
       {placeholder}
       on:input={handleFilterInput}
       bind:value={query} />
@@ -144,6 +146,7 @@
   <PanelButton
     icon="fas fa-sliders"
     tooltip="Explore tags and filter data"
+    {disabled}
     bind:isShow={isTagFilterShow}
     width="300px">
     <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
@@ -156,6 +159,7 @@
   <PanelButton
     icon="fas fa-arrow-down-short-wide"
     tooltip="Sort"
+    {disabled}
     width="200px">
     <p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
@@ -170,6 +174,7 @@
     icon="fas fa-gear"
     tooltip="Settings"
     position="left"
+    {disabled}
     width="230px">
     <p class="title is-5 m-0 p-0">Search settings</p>
     <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>

@@ -212,6 +212,7 @@
     placeholder="Type keywords to search data"
     bind:map={$map}
     bind:query
+    disabled={isLoading}
     on:tagchange={handleTagChanged}
     on:change={handleFilterChanged} />
 
