@@ -35,7 +35,6 @@
   let isLoading = false
 
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
-
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
   const url: string = feature.properties.url
 

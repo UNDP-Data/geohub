@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types'
 import { error, fail, redirect } from '@sveltejs/kit'
-import type { DatasetFeature, Tag } from '$lib/types'
+import type { DatasetFeature, PgtileservDetailJson, PgtileservIndexJson, Tag } from '$lib/types'
 import {
   generateAzureBlobSasToken,
   generateHashKey,
@@ -9,7 +9,7 @@ import {
   isRasterExtension,
   upsertDataset,
 } from '$lib/server/helpers'
-import { removeSasTokenFromDatasetUrl } from '$lib/helper'
+import { clean, removeSasTokenFromDatasetUrl } from '$lib/helper'
 import { env } from '$env/dynamic/private'
 import { Permission } from '$lib/config/AppConfig'
 
@@ -40,6 +40,83 @@ export const load: PageServerLoad = async (event) => {
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
 
   if (res.status === 404) {
+    const isPgtileservData = datasetUrl.indexOf(env.PGTILESERV_API_ENDPOINT) === -1 ? false : true
+
+    if (isPgtileservData) {
+      // for new datasets in pgtileserv
+      const layerId = datasetUrl.replace(`${env.PGTILESERV_API_ENDPOINT}/`, '').replace('/{z}/{x}/{y}.pbf', '')
+      const indexJsonUrl = `${env.PGTILESERV_API_ENDPOINT}/index.json`
+      const res = await event.fetch(indexJsonUrl)
+      const indexJson: PgtileservIndexJson = await res.json()
+      const layer = indexJson[layerId]
+      const resDetail = await event.fetch(indexJson[layerId].detailurl)
+      const detailJson: PgtileservDetailJson = await resDetail.json()
+
+      const tags: Tag[] = [
+        {
+          key: 'type',
+          value: 'pgtileserv',
+        },
+        {
+          key: 'layertype',
+          value: layer.type,
+        },
+        {
+          key: 'schema',
+          value: layer.schema,
+        },
+        {
+          key: 'table',
+          value: layer.name,
+        },
+        {
+          key: 'id',
+          value: layer.id,
+        },
+      ]
+
+      if (detailJson.geometrytype) {
+        tags?.push({
+          key: 'geometrytype',
+          value: detailJson.geometrytype,
+        })
+      }
+
+      let bounds = detailJson.bounds
+      if (!bounds) {
+        bounds = [-180, -90, 180, 90]
+      }
+
+      const feature: DatasetFeature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [bounds[0], bounds[1]],
+              [bounds[2], bounds[1]],
+              [bounds[2], bounds[3]],
+              [bounds[0], bounds[3]],
+              [bounds[0], bounds[1]],
+            ],
+          ],
+        },
+        properties: {
+          id: datasetId,
+          url: detailJson.tileurl,
+          name: clean(layer.name),
+          description: layer.description,
+          is_raster: false,
+          tags,
+        },
+      }
+      return {
+        feature,
+        isNew: true,
+      }
+    }
+
+    // for new datasets in Azure Blob container
     const isGeneralStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT) === -1 ? false : true
     const isUploadStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
 
@@ -112,7 +189,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   // only accept dataset on Azure blob container
-  const type = feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'azure')
+  const type = feature.properties.tags?.find((t) => t.key === 'type' && ['azure', 'pgtileserv'].includes(t.value))
   if (!type) {
     throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
   }
