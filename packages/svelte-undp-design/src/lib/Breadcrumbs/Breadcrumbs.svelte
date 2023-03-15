@@ -6,7 +6,9 @@
 
 	export let breadcrumbs: Breadcrumb[];
 	export let fontSize: 'small' | 'medium' | 'large' = 'medium';
+	export let disabled = false;
 	const handleClicked = (index: number) => {
+		if (disabled === true) return;
 		if (!(breadcrumbs && breadcrumbs.length > 0)) return;
 		const breadcrumb = breadcrumbs[index];
 		dispatch('clicked', {
@@ -27,7 +29,8 @@
 								{#if breadcrumb.icon.startsWith('fa')}
 									<i class={breadcrumb.icon} />
 								{:else if breadcrumb.icon.startsWith('fi')}
-									<span class="fi fi-{breadcrumb.icon}" />
+									<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
+									<span class={breadcrumb.icon} />
 								{:else}
 									<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 								{/if}
@@ -45,7 +48,12 @@
 					<li>
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<a aria-label={breadcrumb.name} role="button" on:click={() => handleClicked(index)}>
+						<a
+							class={disabled ? 'isDisabled' : ''}
+							aria-label={breadcrumb.name}
+							role="button"
+							on:click={() => handleClicked(index)}
+						>
 							<span class="icon-text">
 								<span class="icon">
 									{#if breadcrumb.icon.startsWith('fa')}
@@ -73,6 +81,7 @@
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
 	@use '../css/breadcrumbs.min.css';
+
 	li:after {
 		font-size: 1.1rem !important;
 	}
@@ -81,5 +90,12 @@
 		width: 24px !important;
 		height: 24px !important;
 		line-height: 2em !important;
+	}
+
+	.isDisabled {
+		color: currentColor;
+		cursor: not-allowed;
+		opacity: 0.5;
+		text-decoration: none;
 	}
 </style>
