@@ -74,34 +74,34 @@
   }
 
   const handleCategorySelected = async (e) => {
-    const category = e.detail.category
-    const apiUrl = $page.url
-    const bcs = apiUrl.searchParams.get('breadcrumbs').split(',')
-    bcs.push(category.name)
-    apiUrl.searchParams.set('breadcrumbs', bcs.join(','))
-
-    if (category.url.startsWith('/api/datasets')) {
-      if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
-        $map.zoomTo(StacMinimumZoom)
-      }
-
+    try {
+      isLoading = true
+      const category = e.detail.category
       const apiUrl = $page.url
-      const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
-      for (const key of categoryUrl.searchParams.keys()) {
-        const value = categoryUrl.searchParams.get(key)
-        if (apiUrl.searchParams.get(key) !== value) {
-          apiUrl.searchParams.set(key, value)
+      const bcs = apiUrl.searchParams.get('breadcrumbs').split(',')
+      bcs.push(category.name)
+      apiUrl.searchParams.set('breadcrumbs', bcs.join(','))
+
+      if (category.url.startsWith('/api/datasets')) {
+        if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
+          $map.zoomTo(StacMinimumZoom)
         }
-      }
-      await reload(apiUrl.toString())
-    } else {
-      try {
-        isLoading = true
+
+        const apiUrl = $page.url
+        const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
+        for (const key of categoryUrl.searchParams.keys()) {
+          const value = categoryUrl.searchParams.get(key)
+          if (apiUrl.searchParams.get(key) !== value) {
+            apiUrl.searchParams.set(key, value)
+          }
+        }
+        await reload(apiUrl.toString())
+      } else {
         await goto(apiUrl, { replaceState: true, invalidateAll: true })
         dataCategories = $page.data.menu
-      } finally {
-        isLoading = false
       }
+    } finally {
+      isLoading = false
     }
   }
 
