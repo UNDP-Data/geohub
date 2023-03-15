@@ -13,6 +13,7 @@
   import { goto } from '$app/navigation'
   import { getSelectedTagsFromUrl } from '$lib/helper'
   import { TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig'
+  import Help from './Help.svelte'
 
   let dataCategories: Breadcrumb[] = $page.data.menu
   let isLoading = false
@@ -222,6 +223,20 @@
     on:clicked={handleBreadcrumpClicked}
     fontSize="medium" />
 
+  <div class="help">
+    <Help>
+      <p class="has-text-justified">
+        Start exploring datasets to add them and create your own map.
+        <br />
+        Click one of menus to search datasets. For example, you can search datasets from SDGs by clicking <b>SDG</b>
+        menu, or click <b>Continent</b> to search datasets by a country.
+        <br />
+        If you want satellite imagery data to add, <b>Microsoft Planetary</b> menu can be used.
+        <b>Dynamic vector data</b> provides you more advanced simulation features to analyse.
+      </p>
+    </Help>
+  </div>
+
   {#key selectedTags}
     <SelectedTags
       on:change={handleTagChanged}
@@ -282,6 +297,12 @@
 </div>
 
 <style lang="scss">
+  .help {
+    position: absolute;
+    top: 50px;
+    right: 0px;
+  }
+
   .data-view-container {
     overflow-y: auto;
     .loader-container {

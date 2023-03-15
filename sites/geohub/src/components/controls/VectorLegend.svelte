@@ -13,6 +13,7 @@
   import { Loader } from '@undp-data/svelte-undp-design'
   import { loadMap } from '$lib/helper'
   import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig'
+  import Help from '$components/Help.svelte'
 
   export let layer: Layer
   export let applyToOption: VectorApplyToTypes
@@ -91,42 +92,60 @@
   }
 </script>
 
-{#if style.type !== 'heatmap'}
-  <LegendTypeSwitcher bind:legendType />
-{/if}
-{#await vectorLayerLoaded()}
-  <div class="loader-container p-3">
-    <Loader size="small" />
-  </div>
-{:then vectorLayerAvailable}
-  {#if style.type === 'heatmap'}
-    <VectorHeatmap bind:layer />
-  {:else if legendType === LegendTypes.DEFAULT}
-    <div transition:slide>
-      {#if style.type === 'line'}
-        <VectorLine
-          bind:layer
-          bind:defaultColor={defaultLineColor} />
-      {:else if style.type === 'fill'}
-        <VectorPolygon
-          bind:layer
-          bind:defaultFillColor={defaultColor}
-          bind:defaultFillOutlineColor={defaultLineColor} />
-      {:else if style.type === 'symbol'}
-        <VectorSymbol
-          bind:layer
-          bind:defaultColor />
-      {/if}
-    </div>
-  {:else if legendType === LegendTypes.CLASSIFY}
-    <div transition:slide>
-      <VectorLegendAdvanced
-        bind:layer
-        bind:defaultColor
-        bind:applyToOption />
+<div class="legend-container">
+  {#if style.type !== 'heatmap'}
+    <LegendTypeSwitcher bind:legendType />
+    <div class="help">
+      <Help>
+        <p class="has-text-justified">
+          Start visualising the dataset as you want.
+          <br />
+          <b>Default</b> legend provides you simple rendering the data according to the geometry type (Point, Line,
+          Polygon or Heatmap). You can simply change color and size.
+          <br />
+          <b>Classify</b> legend provides you more functionality to visualise the data with selected property of the
+          dataset by either interval legend or unique value legend. You can increase or reduce <b>number of classes</b>,
+          or change classificaiton method to visualise it. The color for each class can also be changed by clicking
+          <b>color</b>
+          button, or it can be hiden by clicking <b>eye</b> button.
+        </p>
+      </Help>
     </div>
   {/if}
-{/await}
+  {#await vectorLayerLoaded()}
+    <div class="loader-container p-3">
+      <Loader size="small" />
+    </div>
+  {:then vectorLayerAvailable}
+    {#if style.type === 'heatmap'}
+      <VectorHeatmap bind:layer />
+    {:else if legendType === LegendTypes.DEFAULT}
+      <div transition:slide>
+        {#if style.type === 'line'}
+          <VectorLine
+            bind:layer
+            bind:defaultColor={defaultLineColor} />
+        {:else if style.type === 'fill'}
+          <VectorPolygon
+            bind:layer
+            bind:defaultFillColor={defaultColor}
+            bind:defaultFillOutlineColor={defaultLineColor} />
+        {:else if style.type === 'symbol'}
+          <VectorSymbol
+            bind:layer
+            bind:defaultColor />
+        {/if}
+      </div>
+    {:else if legendType === LegendTypes.CLASSIFY}
+      <div transition:slide>
+        <VectorLegendAdvanced
+          bind:layer
+          bind:defaultColor
+          bind:applyToOption />
+      </div>
+    {/if}
+  {/await}
+</div>
 
 <style lang="scss">
   .loader-container {
@@ -134,5 +153,15 @@
     align-items: center;
     width: fit-content;
     margin: 0 auto;
+  }
+
+  .legend-container {
+    position: relative;
+
+    .help {
+      position: absolute;
+      top: 0em;
+      left: 0em;
+    }
   }
 </style>

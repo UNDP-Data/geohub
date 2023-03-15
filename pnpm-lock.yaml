@@ -351,6 +351,7 @@ importers:
       '@sveltejs/vite-plugin-svelte': ^2.0.3
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/svelte': ^3.2.2
+      '@testing-library/user-event': ^14.4.3
       '@types/chroma-js': ^2.4.0
       '@types/colormap': ^2.3.1
       '@types/geojson': ^7946.0.10
@@ -409,6 +410,7 @@ importers:
       svelte-check: ^3.0.4
       svelte-copy: ^1.3.0
       svelte-file-dropzone: ^1.0.0
+      svelte-htm: ^1.2.0
       svelte-infinite-scroll: ^2.0.1
       svelte-keydown: ^0.6.0
       svelte-preprocess: ^5.0.1
@@ -451,6 +453,7 @@ importers:
       '@sveltejs/vite-plugin-svelte': 2.0.3_svelte@3.56.0+vite@4.1.4
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/svelte': 3.2.2_svelte@3.56.0
+      '@testing-library/user-event': 14.4.3_yxlyej73nftwmh2fiao7paxmlm
       '@types/chroma-js': 2.4.0
       '@types/colormap': 2.3.1
       '@types/geojson': 7946.0.10
@@ -504,6 +507,7 @@ importers:
       svelte-check: 3.1.2_sass@1.59.2+svelte@3.56.0
       svelte-copy: 1.3.0
       svelte-file-dropzone: 1.0.0
+      svelte-htm: 1.2.0_svelte@3.56.0
       svelte-infinite-scroll: 2.0.1
       svelte-keydown: 0.6.0
       svelte-preprocess: 5.0.1_d4myvinjlyr6ykl6uhg5azfiee
