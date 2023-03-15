@@ -7,6 +7,7 @@ import { MapPageSortingColumn } from './MapPageSortingColumn'
 import { NumberOfClasses } from './NumberOfClasses'
 import { SearchLimit } from './SearchLimit'
 import { TagSearchOperator } from './TagSearchOperator'
+import { SidebarPosition } from './SidebarPosition'
 
 export interface UserConfig {
   SearchLimit: number
@@ -18,9 +19,11 @@ export interface UserConfig {
   MapPageSortingColumn: string
   LineWidth: number
   NumberOfClasses: number
+  SidebarPosition: 'left' | 'right'
 }
 
 export const DefaultUserConfig = {
+  SidebarPosition,
   SearchLimit,
   DatasetSearchLimit,
   DatasetSearchQueryOperator,
