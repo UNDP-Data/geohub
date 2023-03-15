@@ -10,6 +10,7 @@
   import RasterPropertyEditor from './RasterPropertyEditor.svelte'
   import { LegendTypes } from '$lib/config/AppConfig'
   import { page } from '$app/stores'
+  import Help from '$components/Help.svelte'
 
   const titilerUrl = $page.data.titilerUrl
 
@@ -87,6 +88,22 @@
     </div>
   {:then rasterLegendInitialized}
     <LegendTypeSwitcher bind:legendType />
+    <div class="help">
+      <Help>
+        <p class="has-text-justified">
+          Start visualising the dataset as you want. Firstly, try to click <b>Colormap</b> button to change colorramp
+          from default one.
+          <br />
+          <b>Default</b> legend provides you simple continuous rendering by selected colormap and minimum/maximum
+          values.
+          <br />
+          <b>Classify</b> legend provides you more functionality to visualise the data by either interval legend or
+          unique value legend. You can increase or reduce <b>number of classes</b>, or change classificaiton method to
+          visualise it. The color for each class can also be changed by clicking <b>color</b> button, or it can be hiden
+          by clicking <b>eye</b> button.
+        </p>
+      </Help>
+    </div>
     <div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
     {#if legendType === LegendTypes.DEFAULT}
       <div transition:slide>
@@ -113,6 +130,12 @@
 
   .legend-container {
     position: relative;
+
+    .help {
+      position: absolute;
+      top: 0em;
+      left: 0em;
+    }
 
     .editor-button {
       position: absolute;
