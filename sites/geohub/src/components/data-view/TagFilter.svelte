@@ -63,13 +63,16 @@
     }
   }
 
-  const fireChangeEvent = async (url: URL) => {
-    await goto(url, {
-      replaceState: true,
-      noScroll: true,
-      keepFocus: true,
-      invalidateAll: true,
-    })
+  const fireChangeEvent = async (url: URL, reload = true) => {
+    if (reload) {
+      await goto(url, {
+        replaceState: true,
+        noScroll: true,
+        keepFocus: true,
+        invalidateAll: true,
+      })
+    }
+
     tagsPromise = $page.data.promises.tags
     tagsPromise.then((res) => {
       tags = res
@@ -146,16 +149,8 @@
   }
 
   const handleSelectedTagChanged = (e) => {
-    selectedTags = e.detail.tag
-
     const apiUrl = $page.url
-    TagSearchKeys.forEach((key) => {
-      apiUrl.searchParams.delete(key.key)
-    })
-    selectedTags?.forEach((t) => {
-      apiUrl.searchParams.append(t.key, t.value)
-    })
-    fireChangeEvent(apiUrl)
+    fireChangeEvent(apiUrl, false)
   }
 
   const handleFilterInput = debounce(() => {

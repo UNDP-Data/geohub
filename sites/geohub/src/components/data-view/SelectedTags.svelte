@@ -1,24 +1,41 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import { createEventDispatcher } from 'svelte'
   import type { Tag } from '$lib/types/Tag'
   import { getSelectedTagsFromUrl } from '$lib/helper'
+  import { TagSearchKeys } from '$lib/config/AppConfig'
 
   const dispatch = createEventDispatcher()
 
-  export let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
+  let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   export let isClearButtonShown = false
 
-  const handleTagDeleted = (value: Tag) => {
+  const handleTagDeleted = async (value: Tag) => {
     const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value)
     if (tag) {
       selectedTags.splice(selectedTags.indexOf(tag), 1)
       selectedTags = [...selectedTags]
     }
 
+    const apiUrl = $page.url
+    TagSearchKeys.forEach((key) => {
+      apiUrl.searchParams.delete(key.key)
+    })
+    selectedTags?.forEach((t) => {
+      apiUrl.searchParams.append(t.key, t.value)
+    })
+
+    await goto(apiUrl, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: true,
+    })
+
     dispatch('change', {
       tags: selectedTags,
-      reload: true,
+      reload: false,
     })
   }
 
