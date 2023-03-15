@@ -217,6 +217,7 @@
 
   <Breadcrumbs
     bind:breadcrumbs
+    disabled={isLoading}
     on:clicked={handleBreadcrumpClicked}
     fontSize="medium" />
 
