@@ -30,6 +30,11 @@ const meta = {
 			type: 'string',
 			description: 'Font size either large, medium or small',
 			defaultValue: 'medium'
+		},
+		disabled: {
+			type: 'boolean',
+			description: 'Disable breadcrumbs',
+			defaultValue: false
 		}
 	},
 	parameters: {
