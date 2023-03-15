@@ -119,7 +119,7 @@
                 name="SearchLimit"
                 bind:value={userSettings.SearchLimit}>
                 {#each LimitOptions as limit}
-                  <option value={limit.toString()}>{limit}</option>
+                  <option value={limit}>{limit}</option>
                 {/each}
               </select>
             </div>
@@ -135,7 +135,7 @@
                 name="DatasetSearchLimit"
                 bind:value={userSettings.DatasetSearchLimit}>
                 {#each LimitOptions as limit}
-                  <option value={limit.toString()}>{limit}</option>
+                  <option value={limit}>{limit}</option>
                 {/each}
               </select>
             </div>

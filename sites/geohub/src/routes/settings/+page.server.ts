@@ -7,9 +7,17 @@ export const actions = {
       return fail(403, { message: 'No permission' })
     }
     const data = await request.formData()
-    const settings: { [key: string]: string } = {}
-    for (const [key, value] of data.entries()) {
-      settings[key] = value
+    const settings = {
+      SidebarPosition: data.get('SidebarPosition'),
+      SearchLimit: parseInt(data.get('SearchLimit')),
+      DatasetSearchLimit: parseInt(data.get('DatasetSearchLimit')),
+      DatasetSearchQueryOperator: data.get('DatasetSearchQueryOperator'),
+      DatasetSortingColumn: data.get('DatasetSortingColumn'),
+      DataPageSortingColumn: data.get('DataPageSortingColumn'),
+      MapSortingColumns: data.get('MapSortingColumns'),
+      TagSearchOperator: data.get('TagSearchOperator'),
+      NumberOfClasses: parseInt(data.get('NumberOfClasses')),
+      LineWidth: parseFloat(data.get('LineWidth')),
     }
     const response = await event.fetch('/api/settings', {
       method: 'POST',
