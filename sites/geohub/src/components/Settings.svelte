@@ -124,6 +124,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Search limit</p>
         </div>
 
         <div class="field">
@@ -139,6 +140,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Search limit in dataset search</p>
         </div>
 
         <div class="field">
@@ -154,6 +156,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Matching parameters for the dataset search</p>
         </div>
 
         <div class="field">
@@ -169,6 +172,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Sort the data by the selected parameter</p>
         </div>
 
         <div class="field">
@@ -184,6 +188,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Select column to sort by in the datapage</p>
         </div>
         <div class="field">
           <label class="label">Map Page Sorting Columns</label>
@@ -198,6 +203,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Select sorting column in map page</p>
         </div>
         <div class="field">
           <label class="label">Tag Search Operator</label>
@@ -212,6 +218,7 @@
               </select>
             </div>
           </div>
+          <p class="help is-info">Matching parameters for the selected tags</p>
         </div>
       </section>
       <section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
@@ -228,6 +235,7 @@
               min={NumberOfClassesMinimum}
               max={NumberOfClassesMaximum} />
           </div>
+          <p class="help is-info">Number of classes in legend</p>
         </div>
         <div class="field">
           <label class="label">Line Width</label>
@@ -242,6 +250,7 @@
               max="10"
               step="0.5" />
           </div>
+          <p class="help is-info">Width of line layer in legend</p>
         </div>
       </section>
       <div class="field">
