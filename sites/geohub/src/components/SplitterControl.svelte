@@ -2,6 +2,7 @@
   import type { Map as MaplibreMap } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
   import { map as mapStore, indicatorProgress } from '$stores'
+  import { page } from '$app/stores'
 
   export let map: MaplibreMap
   export let isMenuShown = true
@@ -10,7 +11,8 @@
   export let minSideBarWidth = `${initialSideBarWidth}px`
   export let minMapWidth = '50%'
   export let splitHeight: number
-  export let sideBarPosition = 'left'
+
+  let sideBarPosition = $page.data.config.SidebarPosition
   export let innerWidth: number
   export let innerHeight: number
 

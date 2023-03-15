@@ -20,9 +20,6 @@
   let cancel: () => void
   let toURL: URL
   let isContinueButtonClicked = false
-  let settings = {
-    sideBarPosition: 'left',
-  }
 
   const openConfirmationModal = () => {
     dialogOpen = true
@@ -78,13 +75,6 @@
     }
   })
 
-  const getCookie = (name: string) => {
-    const value = `; ${document.cookie}`
-    const parts = value.split(`; ${name}=`)
-    if (parts.length === 2) return parts.pop()?.split(';').shift()
-  }
-
-  let sideBarPosition: 'left' | 'right' = JSON.parse(getCookie('settings') || '{}').sideBarPosition || 'left'
   $: isMobile = innerWidth < 768
   $: splitHeight = innerHeight - headerHeight
 
@@ -103,8 +93,7 @@
   bind:isMobile
   bind:isMenuShown
   bind:map={$mapStore}
-  bind:splitHeight
-  bind:sideBarPosition>
+  bind:splitHeight>
   <div slot="sidebar">
     <Content bind:splitterHeight={splitHeight} />
   </div>
