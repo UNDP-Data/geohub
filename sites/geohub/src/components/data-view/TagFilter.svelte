@@ -2,14 +2,12 @@
   import { page } from '$app/stores'
   import { createEventDispatcher } from 'svelte'
   import type { Tag } from '$lib/types/Tag'
-  import { onMount } from 'svelte'
   import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component'
   import { Button, Checkbox, Radios, Loader, type Radio } from '@undp-data/svelte-undp-design'
   import SelectedTags from './SelectedTags.svelte'
   import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper'
   import Notification from '$components/controls/Notification.svelte'
   import { debounce } from 'lodash-es'
-  import type { Country } from '$lib/types'
   import { TagSearchKeys } from '$lib/config/AppConfig'
   import { goto } from '$app/navigation'
 
@@ -33,12 +31,7 @@
     },
   ]
   export let query = ''
-  let countriesMaster: Country[] = []
   $: isQueryEmpty = !query || query?.length === 0
-
-  onMount(async () => {
-    await getCountries()
-  })
 
   $: if (isShow === true) {
     // reload tags if tag panel is opened
@@ -53,14 +46,6 @@
       selectedTags = [...getSelectedTagsFromUrl($page.url)]
       handleFilterInput()
     })
-  }
-
-  const getCountries = async () => {
-    if (countriesMaster.length === 0) {
-      const res = await fetch(`/api/countries`)
-      const json = await res.json()
-      countriesMaster = json as Country[]
-    }
   }
 
   const fireChangeEvent = async (url: URL, reload = true) => {
@@ -176,16 +161,6 @@
     query = ''
     handleFilterInput()
   }
-
-  const getLabel = (tag: Tag) => {
-    if (tag.key === 'country') {
-      const country = countriesMaster.find((c) => c.iso_3 === tag.value)
-      if (country) {
-        return `${country.country_name} (${tag.value})`
-      }
-    }
-    return tag.value
-  }
 </script>
 
 <div class="control has-icons-left filter-text-box my-2">
@@ -237,7 +212,7 @@
                   {#each filteredTags[key] as tag}
                     <TreeLeaf>
                       <Checkbox
-                        label="{getLabel(tag)} ({tag.count})"
+                        label="{tag.value} ({tag.count})"
                         checked={existTag(tag)}
                         on:clicked={() => {
                           handleTagChecked(tag)
