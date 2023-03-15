@@ -50,9 +50,14 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     const data: UserConfig = Object.assign(DefaultUserConfig, res.rows[0].settings as UserConfig)
     return new Response(JSON.stringify(data), {})
   } catch (err) {
-    return new Response(JSON.stringify(DefaultUserConfig), {
-      status: 400,
-    })
+    return new Response(
+      JSON.stringify({
+        message: err.message,
+      }),
+      {
+        status: 400,
+      },
+    )
   } finally {
     await dbm.end()
   }
