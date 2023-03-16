@@ -11,10 +11,11 @@
   import { page } from '$app/stores'
   import { DefaultUserConfig, UserConfig } from '$lib/config/DefaultUserConfig'
   import { invalidateAll } from '$app/navigation'
+  import type { SidebarPosition } from '$lib/types'
 
   let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
-  let sideBarPosition: 'left' | 'right' = userSettings.SidebarPosition || 'left'
+  let sideBarPosition: SidebarPosition = userSettings.SidebarPosition || 'left'
   let isExpanded = true
   let activeSettingTab = 'Map'
 
