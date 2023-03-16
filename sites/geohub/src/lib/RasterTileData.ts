@@ -63,36 +63,46 @@ export class RasterTileData {
     const bandIndex = getActiveBandIndex(rasterInfo)
 
     const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata
-    bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
-    const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
-    const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
-    const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0
-    // choose default colormap randomly
-    const colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
+    const colorinterp = rasterInfo.colorinterp
+    let colormap: string
+    let titilerApiUrlParams: { [key: string]: number | string | boolean } = {}
+    if (colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')) {
+      titilerApiUrlParams = {
+        TileMatrixSetId: 'WebMercatorQuad',
+        url: b64EncodedUrl,
+      }
+    } else {
+      bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
+      const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
+      const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
+      const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0
+      // choose default colormap randomly
+      colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
 
-    const titilerApiUrlParams = {
-      scale: 1,
-      TileMatrixSetId: 'WebMercatorQuad',
-      url: b64EncodedUrl,
-      bidx: bandIndex + 1,
-      unscale: false,
-      resampling: 'nearest',
-      rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-      return_mask: true,
-      colormap_name: colormap,
-    }
+      titilerApiUrlParams = {
+        scale: 1,
+        TileMatrixSetId: 'WebMercatorQuad',
+        url: b64EncodedUrl,
+        bidx: bandIndex + 1,
+        unscale: false,
+        resampling: 'nearest',
+        rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+        return_mask: true,
+        colormap_name: colormap,
+      }
 
-    const colorMap = {}
-    if (isUniqueValueLayer) {
-      const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
-      const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
-      colorMapKeys.forEach((key, index) => {
-        const color = chroma(colorsList[index]).rgba()
-        colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
-      })
-      delete titilerApiUrlParams['colormap_name']
-      delete titilerApiUrlParams['rescale']
-      titilerApiUrlParams['colormap'] = JSON.stringify(colorMap)
+      const colorMap = {}
+      if (isUniqueValueLayer) {
+        const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
+        const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
+        colorMapKeys.forEach((key, index) => {
+          const color = chroma(colorsList[index]).rgba()
+          colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
+        })
+        delete titilerApiUrlParams['colormap_name']
+        delete titilerApiUrlParams['rescale']
+        titilerApiUrlParams['colormap'] = JSON.stringify(colorMap)
+      }
     }
 
     const tileUrl = `${this.titilerUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`

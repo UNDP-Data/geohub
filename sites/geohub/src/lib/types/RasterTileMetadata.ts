@@ -5,7 +5,7 @@ export interface RasterTileMetadata {
   band_descriptions?: string[]
   band_metadata?: [string[] | BandMetadata[]]
   bounds?: number[] | string
-  colorinterp?: []
+  colorinterp?: string[]
   count?: number
   driver?: string
   dtype?: string

@@ -1,6 +1,6 @@
 <script lang="ts">
   import MiniMap from '$components/data-view/MiniMap.svelte'
-  import { initTippy } from '$lib/helper'
+  import { initTippy, isRasterExtension } from '$lib/helper'
   import type { DatasetFeature } from '$lib/types'
   import { CtaLink } from '@undp-data/svelte-undp-design'
 
@@ -33,7 +33,7 @@
       properties: {
         id,
         url: isPmtiles ? `pmtiles://${url}` : url,
-        is_raster: isPmtiles,
+        is_raster: isRasterExtension(url.split('?')[0]),
       },
     }
   }

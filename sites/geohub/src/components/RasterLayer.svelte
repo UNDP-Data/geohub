@@ -15,13 +15,23 @@
   let numberOfClasses = $page.data.config.NumberOfClasses
   let legendType
 
+  const rasterInfo: RasterTileMetadata = layer.info
+  const colorinterp = rasterInfo.colorinterp
+  const isRgbTile =
+    colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')
+
   //local vars
-  let tabs = [
-    { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-    { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
-    { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
-    { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
-  ]
+  let tabs = isRgbTile
+    ? [
+        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+        { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+      ]
+    : [
+        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+        { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
+        { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
+        { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+      ]
 
   let { info }: Layer = layer
   let activeTab = TabNames.LEGEND
@@ -58,11 +68,13 @@
           bind:numberOfClasses
           bind:legendType />
       {/if}
-      {#if activeTab === TabNames.HISTOGRAM}
-        <RasterHistogram bind:layer />
-      {/if}
-      {#if activeTab === TabNames.TRANSFORM}
-        <RasterTransform bind:layer />
+      {#if !isRgbTile}
+        {#if activeTab === TabNames.HISTOGRAM}
+          <RasterHistogram bind:layer />
+        {/if}
+        {#if activeTab === TabNames.TRANSFORM}
+          <RasterTransform bind:layer />
+        {/if}
       {/if}
       {#if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />
