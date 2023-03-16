@@ -157,7 +157,10 @@
     apiUrl.searchParams.delete('stac')
     apiUrl.searchParams.delete('staronly')
     apiUrl.searchParams.delete('mydata')
+    apiUrl.searchParams.delete('continent')
+    apiUrl.searchParams.delete('region')
     apiUrl.searchParams.delete('country')
+    apiUrl.searchParams.delete('extent')
 
     if (index === 0) {
       // home

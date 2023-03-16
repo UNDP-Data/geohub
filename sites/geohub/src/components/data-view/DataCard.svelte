@@ -165,7 +165,7 @@
 </script>
 
 <div bind:this={nodeRef}>
-  {#if tilestatsLayers.length === 1}
+  {#if tilestatsLayers?.length === 1}
     <DataVectorCard
       bind:layer={tilestatsLayers[0]}
       bind:feature
@@ -180,7 +180,7 @@
       bind:isExpanded>
       <div slot="button">
         {#await isGettingMetadata then}
-          {#if tilestatsLayers.length < 2}
+          {#if tilestatsLayers?.length < 2}
             {#if !stacType && !isExpanded}
               <AddLayerButton
                 bind:isLoading={layerLoading}

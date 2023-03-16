@@ -233,21 +233,30 @@ const createRegionMenu = async (
   const res = await fetch(apiUrl.toString())
   const continents: Continent[] = await res.json()
 
-  return continents.map((c) => {
-    if (c.continent_name.toLowerCase() === 'antarctica') {
-      return {
-        name: `${c.continent_name}`,
-        icon: 'fa-solid fa-globe',
-        url: `/api/datasets?continent=${c.continent_name}`,
+  const all = {
+    name: `Global`,
+    icon: 'fa-solid fa-globe',
+    url: `/api/datasets?extent=global`,
+  }
+
+  return [
+    all,
+    ...continents.map((c) => {
+      if (c.continent_name.toLowerCase() === 'antarctica') {
+        return {
+          name: `${c.continent_name}`,
+          icon: 'fa-solid fa-globe',
+          url: `/api/datasets?continent=${c.continent_name}`,
+        }
+      } else {
+        return {
+          name: `${c.continent_name}`,
+          icon: `fa-solid fa-earth-${c.continent_name.toLowerCase()}`,
+          url: `/api/countries?continent=${c.continent_code}&filterbytag=true`,
+        }
       }
-    } else {
-      return {
-        name: `${c.continent_name}`,
-        icon: `fa-solid fa-earth-${c.continent_name.toLowerCase()}`,
-        url: `/api/countries?continent=${c.continent_code}&filterbytag=true`,
-      }
-    }
-  })
+    }),
+  ]
 }
 
 const createCountryMenu = async (
@@ -261,7 +270,12 @@ const createCountryMenu = async (
   const apiUrl = new URL(`${url.origin}${region.url}`)
   const res = await fetch(apiUrl.toString())
   const countries: Country[] = await res.json()
-  return countries.map((c) => {
+  const all = {
+    name: `All`,
+    icon: region.icon,
+    url: `/api/datasets?continent=${region.name}`,
+  }
+  const countriesData = countries.map((c) => {
     const icon = c.iso_2 ? `fi fi-${c.iso_2.toLowerCase()}` : 'no-flag fa-solid fa-flag fa-2xl'
     return {
       name: `${c.country_name}`,
@@ -269,6 +283,7 @@ const createCountryMenu = async (
       url: `/api/datasets?country=${c.iso_3}`,
     }
   })
+  return [all, ...countriesData]
 }
 
 const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
