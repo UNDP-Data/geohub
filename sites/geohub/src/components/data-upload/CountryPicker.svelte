@@ -157,14 +157,16 @@
   </div>
 
   {#if selectedCountries}
-    {#each selectedCountries as country}
-      <div class="px-1">
-        <CountryCard
-          bind:country
-          isSelectable={false}
-          on:countrySelected={handleCountrySelected} />
-      </div>
-    {/each}
+    <div class="is-flex is-flex-wrap-wrap">
+      {#each selectedCountries as country}
+        <div class="p-1">
+          <CountryCard
+            bind:country
+            isSelectable={false}
+            on:countrySelected={handleCountrySelected} />
+        </div>
+      {/each}
+    </div>
   {/if}
 </div>
 
