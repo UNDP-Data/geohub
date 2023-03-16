@@ -58,7 +58,7 @@
     position: fixed;
     width: 100%;
     background-color: white;
-    z-index: 99;
+    z-index: 999;
   }
 
   .main-section {

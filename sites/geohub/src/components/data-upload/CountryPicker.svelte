@@ -1,51 +1,37 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import Notification from '$components/controls/Notification.svelte'
   import { initTippy } from '$lib/helper'
   import type { Continent, Country, Region, Tag } from '$lib/types'
   import { Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
   import CountryCard from './CountryCard.svelte'
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
+
   const tippy = initTippy()
   let tooltipContent: HTMLElement
 
-  export let tags: Tag[] = []
-
-  let selectedContinent = -1
-  let selectedRegion = -1
+  export let tags: Tag[]
+  export let selectedContinent: Continent
+  export let selectedRegion: Region
   let selectedCountries: Country[]
   let query = ''
 
-  let continentsMaster: Continent[] = []
-  let regionsMaster: Region[] = []
   let countriesMaster: Country[] = []
 
-  const getContinents = async () => {
-    if (continentsMaster.length === 0) {
-      const res = await fetch(`/api/continents`)
-      const json = await res.json()
-      continentsMaster = json as Continent[]
-    }
-    return continentsMaster
-  }
+  $: selectedContinent, handleRegionChanged()
+  $: selectedRegion, handleRegionChanged()
 
-  const getRegions = async (continent_code: number) => {
-    if (regionsMaster.length === 0) {
-      const res = await fetch(`/api/regions`)
-      const json = await res.json()
-      regionsMaster = json as Region[]
-    }
-    if (continent_code !== -1) {
-      return regionsMaster.filter((r) => r.continent_code === continent_code)
-    } else {
-      return regionsMaster
-    }
+  const handleRegionChanged = () => {
+    countries = getCountries(selectedContinent?.continent_code, selectedRegion?.region_code)
   }
 
   const getCountries = async (continent_code: number, region_code: number) => {
     if (countriesMaster.length === 0) {
-      const res = await fetch(`/api/countries`)
-      const json = await res.json()
-      countriesMaster = json as Country[]
+      const promise = $page.data.promises.countries
+      countriesMaster = (await promise) as Country[]
 
       tags?.forEach((t) => {
         if (t.key === 'country') {
@@ -63,37 +49,21 @@
     }
 
     let filtered = countriesMaster
-    if (continent_code !== -1) {
+    if (continent_code) {
       filtered = filtered.filter((c) => c.continent_code === continent_code)
     }
-    if (region_code !== -1) {
+    if (region_code) {
       filtered = filtered.filter((c) => c.region_code === region_code)
     }
     return filtered
   }
 
-  let continents: Promise<Continent[]> = getContinents()
-  let regions: Promise<Region[]> = getRegions(-1)
   let countries: Promise<Country[]> = getCountries(-1, -1)
-
-  $: selectedContinent, continentSelected()
-  $: selectedRegion, regionSelected()
-  const continentSelected = () => {
-    regions = getRegions(selectedContinent)
-    selectedRegion = -1
-    countries = getCountries(selectedContinent, selectedRegion)
-    query = ''
-  }
-
-  const regionSelected = () => {
-    countries = getCountries(selectedContinent, selectedRegion)
-    query = ''
-  }
 
   $: query, handleSearch()
   const handleSearch = debounce(async () => {
     if (countriesMaster.length === 0) return
-    let filtered = await getCountries(selectedContinent, selectedRegion)
+    let filtered = await getCountries(selectedContinent?.continent_code, selectedRegion?.region_code)
     if (query.length > 0) {
       filtered = filtered.filter((t) => t.country_name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
     }
@@ -117,46 +87,9 @@
       }
     }
     selectedCountries = [...selectedCountries]
-    updateTags()
-  }
-
-  const updateTags = () => {
-    tags = []
-
-    let continentTags: Tag[] = []
-    let regionTags: Tag[] = []
-    let countryTags: Tag[] = []
-    selectedCountries?.forEach((country) => {
-      if (!continentTags.find((t) => t.value === country.continent_name)) {
-        continentTags = [
-          ...continentTags,
-          {
-            key: 'continent',
-            value: country.continent_name,
-          },
-        ]
-      }
-
-      if (!regionTags.find((t) => t.value === country.region_name)) {
-        regionTags = [
-          ...regionTags,
-          {
-            key: 'region',
-            value: country.region_name,
-          },
-        ]
-      }
-
-      countryTags = [
-        ...countryTags,
-        {
-          key: 'country',
-          value: country.iso_3,
-        },
-      ]
+    dispatch('change', {
+      countries: selectedCountries,
     })
-
-    tags = continentTags.concat(regionTags, countryTags)
   }
 </script>
 
@@ -176,40 +109,6 @@
     data-testid="tooltip"
     bind:this={tooltipContent}>
     <div class="field">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label">Continent</label>
-      <div class="control">
-        {#await continents}
-          <Loader size="x-small" />
-        {:then rows}
-          <div class="select is-fullwidth">
-            <select bind:value={selectedContinent}>
-              <option value={-1}>All continents</option>
-              {#each rows as continent}
-                <option value={continent.continent_code}>{continent.continent_name}</option>
-              {/each}
-            </select>
-          </div>
-        {/await}
-      </div>
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label class="label">Region</label>
-      <div class="control">
-        {#await regions}
-          <Loader size="x-small" />
-        {:then rows}
-          <div class="select is-fullwidth">
-            <select bind:value={selectedRegion}>
-              <option value={-1}>All regions</option>
-              {#if rows}
-                {#each rows as region}
-                  <option value={region.region_code}>{region.region_name}</option>
-                {/each}
-              {/if}
-            </select>
-          </div>
-        {/await}
-      </div>
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Countries</label>
       <p class="control has-icons-left pb-2">

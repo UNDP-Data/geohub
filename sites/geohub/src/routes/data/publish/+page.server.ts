@@ -1,6 +1,14 @@
 import type { Actions, PageServerLoad } from './$types'
 import { error, fail, redirect } from '@sveltejs/kit'
-import type { DatasetFeature, PgtileservDetailJson, PgtileservIndexJson, Tag } from '$lib/types'
+import type {
+  Continent,
+  Country,
+  DatasetFeature,
+  PgtileservDetailJson,
+  PgtileservIndexJson,
+  Region,
+  Tag,
+} from '$lib/types'
 import {
   generateAzureBlobSasToken,
   generateHashKey,
@@ -195,8 +203,31 @@ export const load: PageServerLoad = async (event) => {
 
   return {
     feature,
+    promises: {
+      continents: getContinents(fetch, url),
+      regions: getRegions(fetch, url),
+      countries: getCountries(fetch, url),
+    },
     isNew: false,
   }
+}
+
+const getContinents = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  const res = await fetch(`${url.origin}/api/continents`)
+  const json = await res.json()
+  return json as Continent[]
+}
+
+const getRegions = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  const res = await fetch(`${url.origin}/api/regions`)
+  const json = await res.json()
+  return json as Region[]
+}
+
+const getCountries = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {
+  const res = await fetch(`${url.origin}/api/countries`)
+  const json = await res.json()
+  return json as Country[]
 }
 
 export const actions = {
