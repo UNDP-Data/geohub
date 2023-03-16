@@ -14,21 +14,21 @@
   let tooltipContent: HTMLElement
 
   export let tags: Tag[]
-  export let selectedContinent: Continent
-  export let selectedRegion: Region
+  export let selectedContinents: Continent[]
+  export let selectedRegions: Region[]
   let selectedCountries: Country[]
   let query = ''
 
   let countriesMaster: Country[] = []
 
-  $: selectedContinent, handleRegionChanged()
-  $: selectedRegion, handleRegionChanged()
+  $: selectedContinents, handleRegionChanged()
+  $: selectedRegions, handleRegionChanged()
 
   const handleRegionChanged = () => {
-    countries = getCountries(selectedContinent?.continent_code, selectedRegion?.region_code)
+    countries = getCountries(selectedContinents, selectedRegions)
   }
 
-  const getCountries = async (continent_code: number, region_code: number) => {
+  const getCountries = async (continents: Continent[], regions: Region[]) => {
     if (countriesMaster.length === 0) {
       const promise = $page.data.promises.countries
       countriesMaster = (await promise) as Country[]
@@ -49,21 +49,20 @@
     }
 
     let filtered = countriesMaster
-    if (region_code !== undefined) {
-      filtered = filtered.filter((c) => c.region_code === region_code)
-    } else if (continent_code !== undefined) {
-      filtered = filtered.filter((c) => c.continent_code === continent_code)
-      console.log(filtered)
+    if (regions.length > 0) {
+      filtered = filtered.filter((c) => regions.filter((r) => r.region_code === c.region_code).length > 0)
+    } else if (continents.length > 0) {
+      filtered = filtered.filter((c) => continents.filter((a) => a.continent_code === c.continent_code).length > 0)
     }
     return filtered
   }
 
-  let countries: Promise<Country[]> = getCountries(-1, -1)
+  let countries: Promise<Country[]> = getCountries(selectedContinents, selectedRegions)
 
   $: query, handleSearch()
   const handleSearch = debounce(async () => {
     if (countriesMaster.length === 0) return
-    let filtered = await getCountries(selectedContinent?.continent_code, selectedRegion?.region_code)
+    let filtered = await getCountries(selectedContinents, selectedRegions)
     if (query.length > 0) {
       filtered = filtered.filter((t) => t.country_name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
     }
