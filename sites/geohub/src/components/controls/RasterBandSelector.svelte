@@ -12,15 +12,18 @@
 
   export let layer: Layer
 
-  let info: RasterTileMetadata
+  let info: RasterTileMetadata = layer.info as RasterTileMetadata
   let bands: string[] = undefined
   let selected: string = undefined
+
+  const colorinterp = info?.colorinterp
+  const isRgbTile =
+    colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')
 
   let layerStyle = getLayerStyle($map, layer.id)
 
   $: selected, setActiveBand()
   const setActiveBand = () => {
-    info = layer.info as RasterTileMetadata
     if (!info) return
     if (info?.isMosaicJson) return
     if (info.active_band_no === selected) return
@@ -60,7 +63,7 @@
   }
 </script>
 
-{#if layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
+{#if !isRgbTile && layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
   <button
     class="selected-band tag is-success"
     disabled={bands.length < 2}
