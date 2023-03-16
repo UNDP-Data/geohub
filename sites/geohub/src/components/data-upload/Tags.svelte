@@ -18,10 +18,12 @@
   const handleTagDeleted = (e) => {
     const deletedTag = e.detail.tag
     const index = tags.findIndex((t) => {
-      t.key === deletedTag.key && t.value === deletedTag.value
+      return t.key === deletedTag.key && t.value === deletedTag.value
     })
-    if (index === -1) return
-    tags.splice(index, 1)
+    if (index > -1) {
+      tags.splice(index, 1)
+      tags = [...tags]
+    }
   }
 
   let addButonDisable = false
