@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 2.0.0
+
+### Major Changes
+
+- e481130f: disabled commands for azblob, pgtileserv and cogunit
+
 ## 1.1.2
 
 ### Patch Changes
