@@ -116,7 +116,8 @@ export const load: PageServerLoad = async (event) => {
     query ||
     DataCategories.find((c: Breadcrumb) => apiUrl.search.indexOf(c.url.replace('/api/datasets?', '')) !== -1) ||
     apiUrl.searchParams.get('sdg_goal') ||
-    tags.length > 0
+    tags.length > 0 ||
+    data.breadcrumbs[data.breadcrumbs.length - 1].url.indexOf('/api/datasets') > -1
   ) {
     apiUrl.searchParams.delete('style')
     const fc = getDatasets(fetch, apiUrl)
@@ -232,17 +233,30 @@ const createRegionMenu = async (
   const res = await fetch(apiUrl.toString())
   const continents: Continent[] = await res.json()
 
-  return continents.map((c) => {
-    let icon = `fa-solid fa-earth-${c.continent_name.toLowerCase()}`
-    if (c.continent_name === 'Anterctica') {
-      icon = 'fa-solid fa-global'
-    }
-    return {
-      name: `${c.continent_name}`,
-      icon: icon,
-      url: `/api/countries?continent=${c.continent_code}&filterbytag=true`,
-    }
-  })
+  const all = {
+    name: `Global`,
+    icon: 'fa-solid fa-globe',
+    url: `/api/datasets?extent=global`,
+  }
+
+  return [
+    all,
+    ...continents.map((c) => {
+      if (c.continent_name.toLowerCase() === 'antarctica') {
+        return {
+          name: `${c.continent_name}`,
+          icon: 'fa-solid fa-globe',
+          url: `/api/datasets?continent=${c.continent_name}`,
+        }
+      } else {
+        return {
+          name: `${c.continent_name}`,
+          icon: `fa-solid fa-earth-${c.continent_name.toLowerCase()}`,
+          url: `/api/countries?continent=${c.continent_code}&filterbytag=true`,
+        }
+      }
+    }),
+  ]
 }
 
 const createCountryMenu = async (
@@ -250,10 +264,18 @@ const createCountryMenu = async (
   url: URL,
   region: Breadcrumb,
 ) => {
+  if (region?.url.indexOf('/api/datasets') > -1) {
+    return
+  }
   const apiUrl = new URL(`${url.origin}${region.url}`)
   const res = await fetch(apiUrl.toString())
   const countries: Country[] = await res.json()
-  return countries.map((c) => {
+  const all = {
+    name: `All`,
+    icon: region.icon,
+    url: `/api/datasets?continent=${region.name}`,
+  }
+  const countriesData = countries.map((c) => {
     const icon = c.iso_2 ? `fi fi-${c.iso_2.toLowerCase()}` : 'no-flag fa-solid fa-flag fa-2xl'
     return {
       name: `${c.country_name}`,
@@ -261,6 +283,7 @@ const createCountryMenu = async (
       url: `/api/datasets?country=${c.iso_3}`,
     }
   })
+  return [all, ...countriesData]
 }
 
 const getDatasets = async (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>, url: URL) => {

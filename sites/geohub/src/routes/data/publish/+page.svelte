@@ -109,7 +109,7 @@
   const initTags = (key: 'provider' | 'sdg_goal' | 'continents' | 'regions' | 'country' | 'other') => {
     const _tags: Tag[] = feature?.properties?.tags
     if (key === 'other') {
-      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...excludedTagForEditing]
+      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', 'extent', ...excludedTagForEditing]
       return _tags?.filter((t) => !keys.includes(t.key)) ?? []
     } else {
       let keys: string[] = [key]
@@ -151,13 +151,17 @@
   $: countries, updateTags()
   $: otherTags, updateTags()
   $: providers, updateTags()
-  let isGlobal = otherTags.find((t) => t.key === 'extent' && t.value.toLowerCase() === 'global') ? true : false
+  let isGlobal: 'global' | 'regional' = feature.properties?.tags?.find(
+    (t) => t.key === 'extent' && t.value.toLowerCase() === 'global',
+  )
+    ? 'global'
+    : 'regional'
 
   const updateTags = () => {
     const excludes = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...TagInputValues.map((t) => t.key)]
     const originalTags = feature?.properties?.tags?.filter((t) => !excludes.includes(t.key))
 
-    const joined = sdgs.concat(
+    let joined = sdgs.concat(
       providers,
       continents,
       regions,
@@ -165,32 +169,35 @@
       otherTags.filter((t) => t.value.length > 0),
       originalTags,
     )
-    tags = JSON.stringify(joined)
-  }
-
-  const handleGlobalRegionalChanged = (type: 'global' | 'regional') => {
-    isGlobal = type === 'global' ? true : false
-    if (isGlobal) {
-      if (!otherTags?.find((t) => t.key === 'extent' && t.value === 'Global')) {
-        otherTags = [
-          ...otherTags,
+    if (isGlobal === 'global') {
+      if (!joined?.find((t) => t.key === 'extent' && t.value === 'Global')) {
+        joined = [
+          ...joined,
           {
             key: 'extent',
             value: 'Global',
           },
         ]
       }
-      selectedContinent = undefined
-      selectedRegion = undefined
-      countries = []
     } else {
-      const index = otherTags.findIndex((t) => {
+      const index = joined.findIndex((t) => {
         return t.key === 'extent' && t.value === 'Global'
       })
       if (index > -1) {
-        otherTags.splice(index, 1)
-        otherTags = [...otherTags]
+        joined.splice(index, 1)
       }
+    }
+    tags = JSON.stringify(joined)
+  }
+
+  const handleGlobalRegionalChanged = (type: 'global' | 'regional') => {
+    isGlobal = type
+    if (isGlobal === 'global') {
+      selectedContinent = undefined
+      selectedRegion = undefined
+      continents = []
+      regions = []
+      countries = []
     }
   }
 
@@ -200,15 +207,17 @@
       countries = []
       return
     }
-    const firstCountry = _countries[0]
-    if (selectedContinent?.continent_code !== firstCountry.continent_code) {
-      selectedContinent = continentsMaster.find((c) => c.continent_code === firstCountry.continent_code)
-    }
-    setTimeout(() => {
-      if (selectedRegion?.region_code !== firstCountry.region_code) {
-        selectedRegion = regionsMaster.find((c) => c.region_code === firstCountry.region_code)
+    if (_countries.length === 1) {
+      const firstCountry = _countries[0]
+      if (selectedContinent?.continent_code !== firstCountry.continent_code) {
+        selectedContinent = continentsMaster.find((c) => c.continent_code === firstCountry.continent_code)
       }
-    }, 100)
+      setTimeout(() => {
+        if (selectedRegion?.region_code !== firstCountry.region_code) {
+          selectedRegion = regionsMaster.find((c) => c.region_code === firstCountry.region_code)
+        }
+      }, 100)
+    }
 
     if (!selectedContinent) {
       _countries.forEach((c) => {
@@ -279,7 +288,8 @@
           license &&
           description &&
           providers.length > 0 &&
-          (isGlobal || (!isGlobal && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
+          (isGlobal === 'global' ||
+            (isGlobal === 'regional' && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
         )}
         type="submit">
         <span class="icon">
@@ -401,7 +411,7 @@
         <p class="control">
           <button
             type="button"
-            class="button {isGlobal ? 'is-primary is-active' : 'is-primary is-light'}"
+            class="button {isGlobal === 'global' ? 'is-primary is-active' : 'is-primary is-light'}"
             on:click={() => handleGlobalRegionalChanged('global')}>
             <span class="icon is-small">
               <i class="fas fa-globe" />
@@ -412,7 +422,7 @@
         <p class="control">
           <button
             type="button"
-            class="button {isGlobal ? 'is-primary is-light' : 'is-primary is-active'}"
+            class="button {isGlobal === 'regional' ? 'is-primary is-active' : 'is-primary is-light'}"
             on:click={() => handleGlobalRegionalChanged('regional')}>
             <span class="icon is-small">
               <i class="fas fa-earth-africa" />
@@ -424,7 +434,7 @@
     </div>
   </div>
 
-  {#if !isGlobal}
+  {#if isGlobal === 'regional'}
     <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Please select a continent for your data.</label>
@@ -433,6 +443,14 @@
           <Loader size="x-small" />
         {:then continents}
           <div class="field has-addons segmentbuttons">
+            <p class="control">
+              <button
+                type="button"
+                class="button {selectedContinent === undefined ? 'is-primary is-active' : 'is-primary is-light'}"
+                on:click={() => continentSelected(undefined)}>
+                <span>All</span>
+              </button>
+            </p>
             {#each continents as continent}
               <p class="control">
                 <button
@@ -454,7 +472,7 @@
       </div>
     </div>
 
-    {#if selectedContinent?.continent_name !== 'Antarctica'}
+    {#if isGlobal === 'regional' && selectedContinent?.continent_name !== 'Antarctica'}
       <div class="field">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label">Please select a region for your data.</label>
@@ -521,7 +539,8 @@
           license &&
           description &&
           providers.length > 0 &&
-          (isGlobal || (!isGlobal && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
+          (isGlobal === 'global' ||
+            (isGlobal === 'regional' && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
         )}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>

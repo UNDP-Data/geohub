@@ -49,11 +49,11 @@
     }
 
     let filtered = countriesMaster
-    if (continent_code) {
-      filtered = filtered.filter((c) => c.continent_code === continent_code)
-    }
-    if (region_code) {
+    if (region_code !== undefined) {
       filtered = filtered.filter((c) => c.region_code === region_code)
+    } else if (continent_code !== undefined) {
+      filtered = filtered.filter((c) => c.continent_code === continent_code)
+      console.log(filtered)
     }
     return filtered
   }
@@ -157,14 +157,16 @@
   </div>
 
   {#if selectedCountries}
-    {#each selectedCountries as country}
-      <div class="px-1">
-        <CountryCard
-          bind:country
-          isSelectable={false}
-          on:countrySelected={handleCountrySelected} />
-      </div>
-    {/each}
+    <div class="is-flex is-flex-wrap-wrap">
+      {#each selectedCountries as country}
+        <div class="p-1">
+          <CountryCard
+            bind:country
+            isSelectable={false}
+            on:countrySelected={handleCountrySelected} />
+        </div>
+      {/each}
+    </div>
   {/if}
 </div>
 

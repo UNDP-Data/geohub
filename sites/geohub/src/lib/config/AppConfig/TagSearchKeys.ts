@@ -1,8 +1,8 @@
 export const TagSearchKeys = [
-  {
-    key: 'extent',
-    label: 'Extent',
-  },
+  // {
+  //   key: 'extent',
+  //   label: 'Extent',
+  // },
   // {
   //   key: 'continent',
   //   label: 'Continent',
