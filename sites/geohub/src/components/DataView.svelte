@@ -225,15 +225,15 @@
 
   <div class="help">
     <Help>
-      <p class="has-text-justified">
-        Start exploring datasets to add them and create your own map.
-        <br />
-        Click one of menus to search datasets. For example, you can search datasets from SDGs by clicking <b>SDG</b>
-        menu, or click <b>Continent</b> to search datasets by a country.
-        <br />
-        If you want satellite imagery data to add, <b>Microsoft Planetary</b> menu can be used.
-        <b>Dynamic vector data</b> provides you more advanced simulation features to analyse.
-      </p>
+      <div>
+        <p>To explore and create your own maps, click on the following menus!</p>
+        <p>The <b>SDG</b> menu allows you to explore data on Sustainable Development Goals.</p>
+        <p>The <b>Continent</b> menu will enable you to search data by country.</p>
+        <p>
+          <b>Microsoft Planetary</b> allows satellite imagery exploration, and the <b>Dynamic vector data</b> allows advanced
+          simulations.
+        </p>
+      </div>
     </Help>
   </div>
 
