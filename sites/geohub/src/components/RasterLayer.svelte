@@ -20,32 +20,20 @@
   const isRgbTile =
     colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')
 
-  //local vars
-  let tabs = isRgbTile
-    ? [
-        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-        { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
-      ]
-    : [
-        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-        { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
-        { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
-        { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
-      ]
+  let tabs = [
+    { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+    { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
+    { label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
+    { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+  ]
 
-  let { info }: Layer = layer
   let activeTab = TabNames.LEGEND
 
-  if ((info as RasterTileMetadata)?.isMosaicJson === true) {
-    // disable other menus since they are not working for mosaicjson layer currently
-    tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
-    if ((info as RasterTileMetadata).band_metadata.length < 2) {
-      tabs = [
-        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-        { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
-        ...tabs,
-      ]
-    }
+  if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
+    tabs = [
+      { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+      { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+    ]
   }
 </script>
 
