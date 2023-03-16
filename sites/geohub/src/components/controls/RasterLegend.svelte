@@ -113,7 +113,7 @@
       </div>
     {/if}
     {#if isRgbTile}
-      <p class="pt-2">Adjust parameters to render from the button.</p>
+      <p style="max-width: 250px;">Adjust parameters to render from the button.</p>
     {/if}
     <div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
     {#if !isRgbTile}
