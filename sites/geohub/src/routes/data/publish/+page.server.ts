@@ -6,10 +6,9 @@ import {
   generateHashKey,
   getRasterMetadata,
   getVectorMetadata,
-  isRasterExtension,
   upsertDataset,
 } from '$lib/server/helpers'
-import { clean, removeSasTokenFromDatasetUrl } from '$lib/helper'
+import { clean, removeSasTokenFromDatasetUrl, isRasterExtension } from '$lib/helper'
 import { env } from '$env/dynamic/private'
 import { Permission } from '$lib/config/AppConfig'
 

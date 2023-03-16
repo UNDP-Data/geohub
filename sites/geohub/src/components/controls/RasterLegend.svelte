@@ -29,9 +29,13 @@
     // @ts-ignore
   ;({ info } = layer)
 
-  const bandIndex = getActiveBandIndex(info)
-  const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata
-  let layerHasUniqueValues = Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
+  const colorinterp = info.colorinterp
+  const isRgbTile =
+    colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')
+
+  const bandIndex = !isRgbTile ? getActiveBandIndex(info) : -1
+  const bandMetaStats = bandIndex > -1 ? (info['band_metadata'][bandIndex][1] as BandMetadata) : undefined
+  let layerHasUniqueValues = bandMetaStats && Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0
   export let legendType: LegendTypes
   let layerStats: RasterLayerStats
 
@@ -75,8 +79,10 @@
 
   const initializeLegend = async () => {
     await loadMap($map)
-    if (!('stats' in layer.info)) await setStatsToInfo()
-    if (!legendType) decideLegendType()
+    if (!isRgbTile) {
+      if (!('stats' in layer.info)) await setStatsToInfo()
+      if (!legendType) decideLegendType()
+    }
     return legendType
   }
 </script>
@@ -87,35 +93,42 @@
       <Loader size="small" />
     </div>
   {:then rasterLegendInitialized}
-    <LegendTypeSwitcher bind:legendType />
-    <div class="help">
-      <Help>
-        <p class="has-text-justified">
-          Start visualising the dataset as you want. Firstly, try to click <b>Colormap</b> button to change colorramp
-          from default one.
-          <br />
-          <b>Default</b> legend provides you simple continuous rendering by selected colormap and minimum/maximum
-          values.
-          <br />
-          <b>Classify</b> legend provides you more functionality to visualise the data by either interval legend or
-          unique value legend. You can increase or reduce <b>number of classes</b>, or change classificaiton method to
-          visualise it. The color for each class can also be changed by clicking <b>color</b> button, or it can be hiden
-          by clicking <b>eye</b> button.
-        </p>
-      </Help>
-    </div>
+    {#if !isRgbTile}
+      <LegendTypeSwitcher bind:legendType />
+      <div class="help">
+        <Help>
+          <p class="has-text-justified">
+            Start visualising the dataset as you want. Firstly, try to click <b>Colormap</b> button to change colorramp
+            from default one.
+            <br />
+            <b>Default</b> legend provides you simple continuous rendering by selected colormap and minimum/maximum
+            values.
+            <br />
+            <b>Classify</b> legend provides you more functionality to visualise the data by either interval legend or
+            unique value legend. You can increase or reduce <b>number of classes</b>, or change classificaiton method to
+            visualise it. The color for each class can also be changed by clicking <b>color</b> button, or it can be
+            hiden by clicking <b>eye</b> button.
+          </p>
+        </Help>
+      </div>
+    {/if}
+    {#if isRgbTile}
+      <p style="max-width: 250px;">Adjust parameters to render from the button.</p>
+    {/if}
     <div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
-    {#if legendType === LegendTypes.DEFAULT}
-      <div transition:slide>
-        <RasterDefaultLegend bind:layerConfig={layer} />
-      </div>
-    {:else if legendType === LegendTypes.CLASSIFY}
-      <div transition:slide>
-        <RasterClassifyLegend
-          bind:layer
-          bind:numberOfClasses
-          bind:layerHasUniqueValues />
-      </div>
+    {#if !isRgbTile}
+      {#if legendType === LegendTypes.DEFAULT}
+        <div transition:slide>
+          <RasterDefaultLegend bind:layerConfig={layer} />
+        </div>
+      {:else if legendType === LegendTypes.CLASSIFY}
+        <div transition:slide>
+          <RasterClassifyLegend
+            bind:layer
+            bind:numberOfClasses
+            bind:layerHasUniqueValues />
+        </div>
+      {/if}
     {/if}
   {/await}
 </div>
@@ -130,6 +143,7 @@
 
   .legend-container {
     position: relative;
+    min-height: 40px;
 
     .help {
       position: absolute;
