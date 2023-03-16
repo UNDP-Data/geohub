@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.1.4
+
+### Patch Changes
+
+- 338f03c7: feat: add disabled option and flag-icon feature in breadcrumb component
+- 8209613d: update Breadcrumbs.stories.ts
+
 ## 0.1.3
 
 ### Patch Changes
