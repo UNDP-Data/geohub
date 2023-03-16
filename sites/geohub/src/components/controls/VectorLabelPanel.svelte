@@ -24,7 +24,7 @@
   let textFieldValue = ''
   let isAdvancedSettings = false
   let inLegend = false
-  let targetLayer = style.type === 'symbol' ? layer : undefined
+  let targetLayer: Layer = style.type === 'symbol' ? layer : undefined
   let targetLayerId = targetLayer ? layer.id : undefined
   let updateLegend = () => undefined
   let isLabelCreated = false

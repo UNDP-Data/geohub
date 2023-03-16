@@ -9,12 +9,12 @@
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
-  import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
+  import { DefaultUserConfig, UserConfig } from '$lib/config/DefaultUserConfig'
   import { invalidateAll } from '$app/navigation'
 
-  let userSettings = $page.data.config
+  let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
-  let sideBarPosition = userSettings.SidebarPosition || 'left'
+  let sideBarPosition: 'left' | 'right' = userSettings.SidebarPosition || 'left'
   let isExpanded = true
   let activeSettingTab = 'Map'
 

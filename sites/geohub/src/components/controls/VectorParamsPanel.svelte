@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
+  import type { Layer, RangeSliderConfig } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
   import { Loader } from '@undp-data/svelte-undp-design'
 
@@ -13,7 +13,8 @@
   let defaultArgs = {}
   let selectedArgs = {}
   let currentSelectedArg
-  let sliderConfig = {}
+  let sliderConfig: RangeSliderConfig
+
   //let showSlider = Object.keys(selectedArgs).length > 0
   /*REACTIVE STATE*/
   $: layer = $layerList.find((l) => l.id == layerId) as Layer

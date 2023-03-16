@@ -2,7 +2,6 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import chroma from 'chroma-js'
   import { debounce } from 'lodash-es'
-
   import ColorPicker from '$components/controls/ColorPicker.svelte'
   import type { Color, HeatmapColorRow } from '$lib/types'
   import { initTippy } from '$lib/helper'
@@ -35,6 +34,7 @@
       r,
       g,
       b,
+      a: rowColor.a,
       hex: chroma([r, g, b]).hex('rgba'),
       h: chroma([r, g, b]).hsv()[0],
       s: chroma([r, g, b]).hsv()[1],

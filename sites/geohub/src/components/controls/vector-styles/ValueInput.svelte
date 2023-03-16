@@ -10,11 +10,11 @@
   import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types'
   import { getLayerStyle } from '$lib/helper'
 
-  export let propertySelectedValue
-  export let expressionValue
+  export let propertySelectedValue: string
+  export let expressionValue: number[]
   export let acceptSingleTag = true
   export let layer: Layer
-  export let operator
+  export let operator: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'in' | '!in' | 'has' | '!has' | 'all' | 'none' | 'any'
 
   const layerStyle = getLayerStyle($map, layer.id)
   const metadata = layer.info as VectorTileMetadata
@@ -50,17 +50,17 @@
   let cursor: string
   let mapClickButtonDisabled = false
   let sv: Array<number> = []
-  let calculatedStep
-  let min
-  let max
+  let calculatedStep: number
+  let min: number
+  let max: number
   let vals: Array<number> = []
   let svals: Array<number> = []
 
-  let sindex
-  let eindex
+  let sindex: number
+  let eindex: number
   let closest: number
   let index: number
-  let sol
+  let sol: []
   const nn = 5
   $: tagsList = $filterInputTags
 
