@@ -99,7 +99,6 @@
       otherTags.filter((t) => t.value.length > 0),
       originalTags,
     )
-
     tags = JSON.stringify(joined)
   }
 </script>

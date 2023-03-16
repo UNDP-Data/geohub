@@ -30,10 +30,10 @@
   let filterTagList: Tag[] = []
 
   const handleDeleted = () => {
-    nodeRef.parentNode.removeChild(nodeRef)
     dispatch('deleted', {
       tag,
     })
+    nodeRef.parentNode.removeChild(nodeRef)
   }
 
   const handleAdded = () => {
