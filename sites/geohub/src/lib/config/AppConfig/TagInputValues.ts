@@ -1,8 +1,8 @@
 export const TagInputValues = [
-  {
-    key: 'extent',
-    label: 'Extent',
-  },
+  // {
+  //   key: 'extent',
+  //   label: 'Extent',
+  // },
   {
     key: 'granularity',
     label: 'Admin Level',
