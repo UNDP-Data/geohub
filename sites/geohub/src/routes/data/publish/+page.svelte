@@ -304,7 +304,8 @@
           description &&
           providers.length > 0 &&
           (isGlobal === 'global' ||
-            (isGlobal === 'regional' && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
+            (isGlobal === 'regional' &&
+              (selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0)))
         )}
         type="submit">
         <span class="icon">
@@ -541,7 +542,8 @@
           description &&
           providers.length > 0 &&
           (isGlobal === 'global' ||
-            (isGlobal === 'regional' && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
+            (isGlobal === 'regional' &&
+              (selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0)))
         )}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
