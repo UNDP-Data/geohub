@@ -1,16 +1,13 @@
 <script lang="ts">
   import { signIn, signOut } from '@auth/sveltekit/client'
   import { page } from '$app/stores'
-  import { fade } from 'svelte/transition'
   import { Button } from '@undp-data/svelte-undp-design'
   import chroma from 'chroma-js'
   import { goto } from '$app/navigation'
-  import Notification from '$components/controls/Notification.svelte'
 
   let panelWidth = '350px'
   let dropdownActive = false
   let innerWidth = 0
-  let confirmOpenNewPage = false
 
   $: isMobile = innerWidth < 768
 
@@ -70,6 +67,7 @@
           <hr class="dropdown-divider" />
           <p>{$page.data.session.user.email}</p>
         </div>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           on:click={gotToSettings}
           class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center">

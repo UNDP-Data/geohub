@@ -26,7 +26,7 @@
   export let isStarOnly = false
 
   let defaultLineWidth = $page.data.config.LineWidth
-  let nodeRef
+  let nodeRef: HTMLElement
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number

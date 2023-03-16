@@ -3,9 +3,9 @@
   import { createEventDispatcher } from 'svelte'
   import { clean, getLayerStyle } from '$lib/helper'
   import { map } from '$stores'
-  import type { VectorTileMetadata } from '$lib/types'
-  export let layer
-  export let propertySelectValue
+  import type { Layer, VectorTileMetadata } from '$lib/types'
+  export let layer: Layer
+  export let propertySelectValue: string
   export let showOnlyNumberFields = false
   export let inLegend = false
   let propertySelectOptions: string[]

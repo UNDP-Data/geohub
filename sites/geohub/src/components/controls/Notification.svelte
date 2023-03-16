@@ -15,7 +15,7 @@
     color = '#cc3300'
   }
 
-  let nodeRef
+  let nodeRef: HTMLElement
 
   const close = () => {
     nodeRef.parentNode.removeChild(nodeRef)

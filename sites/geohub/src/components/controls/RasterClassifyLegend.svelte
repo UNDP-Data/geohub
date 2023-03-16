@@ -39,7 +39,7 @@
   let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
   let rowWidth: number
-  let percentile98: number = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
+  let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
 
   let legendLabels = {}
   if (!layerHasUniqueValues) {

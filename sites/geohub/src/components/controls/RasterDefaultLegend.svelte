@@ -18,7 +18,7 @@
   import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let layerConfig: Layer
-  let colorMapName: string = layerConfig.colorMapName
+  let colorMapName = layerConfig.colorMapName
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)

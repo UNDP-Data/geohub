@@ -3,11 +3,12 @@
   import { onMount } from 'svelte'
   import { createEventDispatcher } from 'svelte'
   import { map } from '$stores'
+  import type { Layer } from '$lib/types'
 
-  export let layer
-  export let propertySelectValue
+  export let layer: Layer
+  export let propertySelectValue: string
   export let showEmptyFields = false
-  export let inLegend
+  export let inLegend: boolean
   export let emptyFieldLabel = 'No Label'
 
   let propertySelectOptions: string[]

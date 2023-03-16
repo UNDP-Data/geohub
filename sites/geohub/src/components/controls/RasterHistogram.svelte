@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { VegaLite } from 'svelte-vega'
+  import { type VisualizationSpec, VegaLite } from 'svelte-vega'
   import { onMount } from 'svelte'
   import { fetchUrl, getLayerStyle } from '$lib/helper'
   import { map } from '$stores'
@@ -59,7 +59,7 @@
   })
 
   let viewVL
-  let specVL = {
+  let specVL: VisualizationSpec = {
     $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
     padding: 0,
     width: 200,
