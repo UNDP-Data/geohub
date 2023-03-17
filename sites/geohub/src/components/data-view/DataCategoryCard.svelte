@@ -24,6 +24,7 @@
         <span class={category.icon} />
       {:else}
         <img
+          class="logo-image"
           src={category.icon}
           alt="{category.name}_image" />
       {/if}
@@ -40,6 +41,10 @@
   .container {
     .category {
       cursor: pointer;
+
+      .logo-image {
+        max-height: 64px !important;
+      }
 
       .fi {
         width: 64px !important;
