@@ -12,6 +12,7 @@
   import { toast } from '@zerodevx/svelte-toast'
   import { TagInputValues } from '$lib/config/AppConfig'
   import { Loader } from '@undp-data/svelte-undp-design'
+  import Time from 'svelte-time'
 
   export let data: PageData
 
@@ -320,6 +321,27 @@
         url={feature.properties.url.replace('pmtiles://', '')} />
     </div>
   </div>
+
+  {#if !data.isNew}
+    <div class="pb-4">
+      <p>
+        This dataset was initially created by <b>{feature.properties.updated_user}</b> at
+        <b>
+          <Time
+            timestamp={feature.properties.createdat}
+            format="h:mm A, MMMM D, YYYY" />
+        </b>
+      </p>
+      <p>
+        This dataset was lastly updated by <b>{feature.properties.updated_user}</b> at
+        <b>
+          <Time
+            timestamp={feature.properties.updatedat}
+            format="h:mm A, MMMM D, YYYY" />
+        </b>
+      </p>
+    </div>
+  {/if}
 
   <div class="columns">
     <div class="column is-6">
