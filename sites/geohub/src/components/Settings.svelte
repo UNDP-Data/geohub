@@ -9,10 +9,11 @@
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
-  import { DefaultUserConfig, UserConfig } from '$lib/config/DefaultUserConfig'
+  import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig'
   import { invalidateAll } from '$app/navigation'
   import type { SidebarPosition } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
+  import FieldControl from './controls/FieldControl.svelte'
 
   let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
@@ -87,44 +88,47 @@
         class="content {activeSettingTab !== 'Map' ? 'is-hidden' : ''}"
         id="Geohub">
         <h1 class="title">Map Settings</h1>
-        <div class="field">
-          <label class="label">Sidebar Position</label>
-          <div class="columns">
-            <label class="column">
-              <input
-                on:select={() => userSettings.SidebarPosition === 'left'}
-                type="radio"
-                name="SidebarPosition"
-                value="left"
-                checked={sideBarPosition === 'left'} />
-              <img
-                class="sidebar-image"
-                src="/assets/sidebar/left-sidebar.png"
-                alt="left sidebar" />
-            </label>
-            <label class="column">
-              <input
-                on:select={() => userSettings.SidebarPosition === 'right'}
-                type="radio"
-                name="SidebarPosition"
-                value="right"
-                checked={sideBarPosition === 'right'} />
-              <img
-                class="sidebar-image"
-                src="/assets/sidebar/right-sidebar.png"
-                alt="right sidebar" />
-            </label>
+
+        <FieldControl title="Sidebar Position">
+          <div slot="help">Select sidebar position of main GeoHub page.</div>
+          <div slot="control">
+            <div class="columns">
+              <label class="column">
+                <input
+                  on:select={() => userSettings.SidebarPosition === 'left'}
+                  type="radio"
+                  name="SidebarPosition"
+                  value="left"
+                  checked={sideBarPosition === 'left'} />
+                <img
+                  class="sidebar-image"
+                  src="/assets/sidebar/left-sidebar.png"
+                  alt="left sidebar" />
+              </label>
+              <label class="column">
+                <input
+                  on:select={() => userSettings.SidebarPosition === 'right'}
+                  type="radio"
+                  name="SidebarPosition"
+                  value="right"
+                  checked={sideBarPosition === 'right'} />
+                <img
+                  class="sidebar-image"
+                  src="/assets/sidebar/right-sidebar.png"
+                  alt="right sidebar" />
+              </label>
+            </div>
           </div>
-          <p class="help is-info">Select sidebar position</p>
-        </div>
+        </FieldControl>
       </section>
       <section
         class="content {activeSettingTab !== 'Search' ? 'is-hidden' : ''}"
         id="Search">
         <h1 class="title">Search Settings</h1>
-        <div class="field">
-          <label class="label">Search Limit</label>
-          <div class="control">
+
+        <FieldControl title="Default search Limit in data and maps page">
+          <div slot="help">The number of items to search at data page and maps page</div>
+          <div slot="control">
             <div class="select is-fullwidth">
               <select
                 name="SearchLimit"
@@ -135,12 +139,11 @@
               </select>
             </div>
           </div>
-          <p class="help is-info">Search limit</p>
-        </div>
+        </FieldControl>
 
-        <div class="field">
-          <label class="label">Dataset Search Limit</label>
-          <div class="control">
+        <FieldControl title="Default search Limit in main GeoHub page">
+          <div slot="help">The number of items to search at data tab in main GeoHub page.</div>
+          <div slot="control">
             <div class="select is-fullwidth">
               <select
                 name="DatasetSearchLimit"
@@ -151,44 +154,77 @@
               </select>
             </div>
           </div>
-          <p class="help is-info">Search limit in dataset search</p>
-        </div>
+        </FieldControl>
 
-        <div class="field">
-          <label class="label">Dataset Query Operator</label>
-          <div class="control">
+        <FieldControl title="Default search query operator in main GeoHub page">
+          <div slot="help">
+            Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets which exactly match
+            all keyword. 'OR' allows you to search wider range of results by matching at least a word.
+          </div>
+          <div slot="control">
             <div class="select is-fullwidth">
               <select
                 name="DatasetSearchQueryOperator"
                 bind:value={userSettings.DatasetSearchQueryOperator}>
-                {#each ['or', 'and'] as operator}
-                  <option value={operator}>{operator}</option>
+                {#each ['and', 'or'] as operator}
+                  <option value={operator}>
+                    {#if operator === 'and'}
+                      Match all words typed (AND)
+                    {:else}
+                      Match at least a word typed (OR)
+                    {/if}
+                  </option>
                 {/each}
               </select>
             </div>
           </div>
-          <p class="help is-info">Matching parameters for the dataset search</p>
-        </div>
+        </FieldControl>
 
-        <div class="field">
-          <label class="label">Dataset Sorting Column</label>
-          <div class="control">
+        <FieldControl title="Default sort setting in main GeoHub page">
+          <div slot="help">Change sort setting for the search result on datasets.</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <div class="select is-fullwidth">
+                <select
+                  name="DatasetSortingColumn"
+                  bind:value={userSettings.DatasetSortingColumn}>
+                  {#each DatasetSortingColumns as column}
+                    <option value={column.value}>{column.label}</option>
+                  {/each}
+                </select>
+              </div>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Defaut tag search operator in main GeoHub page & data page">
+          <div slot="help">
+            Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to search datasets which
+            exactly match all tags you selected. 'OR' allows you to search wider range of results by matching at least a
+            tag selected.
+          </div>
+          <div slot="control">
             <div class="select is-fullwidth">
               <select
-                name="DatasetSortingColumn"
-                bind:value={userSettings.DatasetSortingColumn}>
-                {#each DatasetSortingColumns as column}
-                  <option value={column.value}>{column.label}</option>
+                name="TagSearchOperator"
+                bind:value={userSettings.TagSearchOperator}>
+                {#each ['and', 'or'] as operator}
+                  <option value={operator}>
+                    {#if operator === 'and'}
+                      Match all selected tags (AND)
+                    {:else}
+                      Match at least a tag selected (OR)
+                    {/if}
+                  </option>
                 {/each}
               </select>
             </div>
           </div>
-          <p class="help is-info">Sort the data by the selected parameter</p>
-        </div>
+        </FieldControl>
 
-        <div class="field">
-          <label class="label">Datapage Sorting Column</label>
-          <div class="control">
+        <FieldControl title="Default sort setting in Data page">
+          <div slot="help">Change sort setting for the search result on datasets.</div>
+          <div slot="control">
             <div class="select is-fullwidth">
               <select
                 name="DataPageSortingColumn"
@@ -199,11 +235,11 @@
               </select>
             </div>
           </div>
-          <p class="help is-info">Select column to sort by in the datapage</p>
-        </div>
-        <div class="field">
-          <label class="label">Map Page Sorting Columns</label>
-          <div class="control">
+        </FieldControl>
+
+        <FieldControl title="Default sort setting in Maps page">
+          <div slot="help">Change sort setting for the search result on datasets.</div>
+          <div slot="control">
             <div class="select is-fullwidth">
               <select
                 name="MapPageSortingColumn"
@@ -214,70 +250,63 @@
               </select>
             </div>
           </div>
-          <p class="help is-info">Select sorting column in map page</p>
-        </div>
-        <div class="field">
-          <label class="label">Tag Search Operator</label>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select
-                name="TagSearchOperator"
-                bind:value={userSettings.TagSearchOperator}>
-                {#each ['or', 'and'] as column}
-                  <option value={column}>{column}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-          <p class="help is-info">Matching parameters for the selected tags</p>
-        </div>
+        </FieldControl>
       </section>
+
       <section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
         <h1 class="title">Legend Settings</h1>
-        <div class="field">
-          <label class="label">Number of Classes</label>
-          <div class="control">
-            <RangeSlider
-              bind:values={numberOfClasses}
-              float
-              min={NumberOfClassesMinimum}
-              max={NumberOfClassesMaximum}
-              step={1}
-              pips
-              first="label"
-              last="label"
-              rest={false} />
-            <input
-              type="hidden"
-              name="NumberOfClasses"
-              bind:value={numberOfClasses[0]} />
+
+        <FieldControl title="Default number of classes">
+          <div slot="help">The default number of classes in classify legend for vector layer and raster layer</div>
+          <div slot="control">
+            <div class="control">
+              <RangeSlider
+                bind:values={numberOfClasses}
+                float
+                min={NumberOfClassesMinimum}
+                max={NumberOfClassesMaximum}
+                step={1}
+                pips
+                first="label"
+                last="label"
+                rest={false} />
+            </div>
           </div>
-          <p class="help is-info">Number of classes in legend</p>
-        </div>
-        <div class="field">
-          <label class="label">Line Width</label>
-          <div class="control">
-            <RangeSlider
-              bind:values={lineWidth}
-              float
-              min={0}
-              max={10}
-              step={0.5}
-              pips
-              springValues={{
-                stiffness: 1,
-                damping: 1,
-              }}
-              first="label"
-              last="label"
-              rest={false} />
-            <input
-              type="hidden"
-              name="LineWidth"
-              bind:value={lineWidth[0]} />
+        </FieldControl>
+
+        <input
+          type="hidden"
+          name="NumberOfClasses"
+          bind:value={numberOfClasses[0]} />
+
+        <FieldControl title="Default line width">
+          <div slot="help">
+            The default line width in <b>line</b> vector layer legend tab.
           </div>
-          <p class="help is-info">Width of line layer in legend</p>
-        </div>
+          <div slot="control">
+            <div class="control">
+              <RangeSlider
+                bind:values={lineWidth}
+                float
+                min={0}
+                max={10}
+                step={0.5}
+                pips
+                springValues={{
+                  stiffness: 1,
+                  damping: 1,
+                }}
+                first="label"
+                last="label"
+                rest={false} />
+            </div>
+          </div>
+        </FieldControl>
+
+        <input
+          type="hidden"
+          name="LineWidth"
+          bind:value={lineWidth[0]} />
       </section>
       <div class="field is-grouped is-grouped-centered">
         <div class="control">
