@@ -8,7 +8,7 @@
   const dispatch = createEventDispatcher()
 
   export let dataset_id: string
-  export let isStar
+  export let isStar: boolean
   let no_stars = 0
 
   const updateStar = async (method: 'POST' | 'DELETE') => {

@@ -97,18 +97,17 @@
       <LegendTypeSwitcher bind:legendType />
       <div class="help">
         <Help>
-          <p class="has-text-justified">
-            Start visualising the dataset as you want. Firstly, try to click <b>Colormap</b> button to change colorramp
-            from default one.
-            <br />
-            <b>Default</b> legend provides you simple continuous rendering by selected colormap and minimum/maximum
-            values.
-            <br />
-            <b>Classify</b> legend provides you more functionality to visualise the data by either interval legend or
-            unique value legend. You can increase or reduce <b>number of classes</b>, or change classificaiton method to
-            visualise it. The color for each class can also be changed by clicking <b>color</b> button, or it can be
+          <p class="has-text-justified">Enhance your raster visualization using the following tips.</p>
+          <p>
+            The <b>Default</b> legend provides you simple continuous rendering by selected colormap and minimum/maximum
+          </p>
+          <p>
+            The <b>Classify</b> legend provides you more functionality to visualise the data by either interval legend
+            or unique value legend. You can increase or reduce <b>number of classes</b>, or change classificaiton method
+            to visualise it. The color for each class can also be changed by clicking <b>color</b> button, or it can be
             hiden by clicking <b>eye</b> button.
           </p>
+          <p>Change the visualization colormap by clicking the <b>Colormap</b> button and selecting another colormap</p>
         </Help>
       </div>
     {/if}

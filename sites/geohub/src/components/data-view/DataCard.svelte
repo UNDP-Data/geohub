@@ -26,7 +26,7 @@
   export let isStarOnly = false
 
   let defaultLineWidth = $page.data.config.LineWidth
-  let nodeRef
+  let nodeRef: HTMLElement
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number
@@ -165,7 +165,7 @@
 </script>
 
 <div bind:this={nodeRef}>
-  {#if tilestatsLayers.length === 1}
+  {#if tilestatsLayers?.length === 1}
     <DataVectorCard
       bind:layer={tilestatsLayers[0]}
       bind:feature
@@ -180,7 +180,7 @@
       bind:isExpanded>
       <div slot="button">
         {#await isGettingMetadata then}
-          {#if tilestatsLayers.length < 2}
+          {#if tilestatsLayers?.length < 2}
             {#if !stacType && !isExpanded}
               <AddLayerButton
                 bind:isLoading={layerLoading}

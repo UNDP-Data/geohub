@@ -9,13 +9,14 @@
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
-  import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
+  import { DefaultUserConfig, UserConfig } from '$lib/config/DefaultUserConfig'
   import { invalidateAll } from '$app/navigation'
+  import type { SidebarPosition } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
 
-  let userSettings = $page.data.config
+  let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
-  let sideBarPosition = userSettings.SidebarPosition || 'left'
+  let sideBarPosition: SidebarPosition = userSettings.SidebarPosition || 'left'
   let lineWidth = [userSettings.LineWidth]
   let numberOfClasses = [userSettings.NumberOfClasses]
   let isExpanded = true

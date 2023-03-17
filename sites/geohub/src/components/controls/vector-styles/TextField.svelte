@@ -10,8 +10,8 @@
   export let layer: Layer
   export let decimalPosition = undefined
   export let fieldType: string = undefined
-  export let textFieldValue
-  export let inLegend
+  export let textFieldValue: string = undefined
+  export let inLegend: boolean
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id

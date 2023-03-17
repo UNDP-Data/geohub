@@ -11,7 +11,7 @@
 
   export let colorMapRow: ColorMapRow
   export let colorMapName: string
-  export let rowWidth
+  export let rowWidth: number
   export let hasUniqueValues: boolean
   let signal
   const dispatch = createEventDispatcher()

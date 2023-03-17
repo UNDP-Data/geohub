@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   // https://github.com/sunnypol92/svelte-bulma-tag-input
   import { createEventDispatcher } from 'svelte'
   import { clean } from '$lib/helper'
@@ -12,28 +12,28 @@
     return s.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&')
   }
 
-  export let tags
-  export let addKeys
-  export let maxTags
-  export let onlyUnique
-  export let removeKeys
-  export let placeholder
-  export let allowPaste
-  export let allowDrop
-  export let splitWith
-  export let autoComplete
-  export let autoCompleteFilter
-  export let autoCompleteKey
-  export let autoCompleteMarkupKey
-  export let name
-  export let id
-  export let allowBlur
-  export let disable
-  export let minChars
-  export let onlyAutocomplete
-  export let labelText
-  export let labelShow
-  export let hideOptions
+  export let tags: Array<any>
+  export let addKeys: Array<any>
+  export let maxTags: any
+  export let onlyUnique: boolean
+  export let removeKeys: Array<any>
+  export let placeholder: string
+  export let allowPaste: boolean
+  export let allowDrop: boolean
+  export let splitWith: string
+  export let autoComplete: any
+  export let autoCompleteFilter: boolean
+  export let autoCompleteKey: any
+  export let autoCompleteMarkupKey: any
+  export let name: string
+  export let id: string
+  export let allowBlur: boolean
+  export let disable: boolean
+  export let minChars: number
+  export let onlyAutocomplete: boolean
+  export let labelText: string
+  export let labelShow: boolean
+  export let hideOptions = false
 
   let layoutElement
 

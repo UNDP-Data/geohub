@@ -46,7 +46,9 @@ export const load: PageServerLoad = async (event) => {
   const res = await event.fetch(apiUrl)
   if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText })
 
-  if (res.status === 404) {
+  let feature: DatasetFeature
+  const isNew = res.status === 404
+  if (isNew === true) {
     const isPgtileservData = datasetUrl.indexOf(env.PGTILESERV_API_ENDPOINT) === -1 ? false : true
 
     if (isPgtileservData) {
@@ -94,7 +96,7 @@ export const load: PageServerLoad = async (event) => {
         bounds = [-180, -90, 180, 90]
       }
 
-      const feature: DatasetFeature = {
+      feature = {
         type: 'Feature',
         geometry: {
           type: 'Polygon',
@@ -117,88 +119,80 @@ export const load: PageServerLoad = async (event) => {
           tags,
         },
       }
-      return {
-        feature,
-        isNew: true,
+    } else {
+      // for new datasets in Azure Blob container
+      const isGeneralStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT) === -1 ? false : true
+      const isUploadStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
+
+      if (!isGeneralStorageAccount && !isUploadStorageAccount) {
+        // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
+        throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
+      } else if (isUploadStorageAccount) {
+        const userHash = generateHashKey(user_email)
+        const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true
+        if (!isLoginUserDataset) {
+          throw error(403, { message: `No permission to access this dataset` })
+        }
       }
-    }
 
-    // for new datasets in Azure Blob container
-    const isGeneralStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT) === -1 ? false : true
-    const isUploadStorageAccount = datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true
-
-    if (!isGeneralStorageAccount && !isUploadStorageAccount) {
-      // if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
-      throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
-    } else if (isUploadStorageAccount) {
-      const userHash = generateHashKey(user_email)
-      const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true
-      if (!isLoginUserDataset) {
-        throw error(403, { message: `No permission to access this dataset` })
-      }
-    }
-
-    const is_raster = isRasterExtension(datasetUrl)
-    const metadata = is_raster ? await getRasterMetadata(datasetUrl) : await getVectorMetadata(datasetUrl)
-    const tags: Tag[] = []
-    tags.push({
-      key: 'type',
-      value: 'azure',
-    })
-    if (metadata.source) {
-      const sources = metadata.source.split(',')
-      sources.forEach((src) => {
-        tags.push({
-          key: 'provider',
-          value: src.trim(),
-        })
+      const is_raster = isRasterExtension(datasetUrl)
+      const metadata = is_raster ? await getRasterMetadata(datasetUrl) : await getVectorMetadata(datasetUrl)
+      const tags: Tag[] = []
+      tags.push({
+        key: 'type',
+        value: 'azure',
       })
-    }
+      if (metadata.source) {
+        const sources = metadata.source.split(',')
+        sources.forEach((src) => {
+          tags.push({
+            key: 'provider',
+            value: src.trim(),
+          })
+        })
+      }
 
-    const sasToken = generateAzureBlobSasToken(datasetUrl)
-    datasetUrl = `${datasetUrl}${sasToken}`
+      const sasToken = generateAzureBlobSasToken(datasetUrl)
+      datasetUrl = `${datasetUrl}${sasToken}`
 
-    const feature: DatasetFeature = {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [metadata.bounds[0], metadata.bounds[1]],
-            [metadata.bounds[2], metadata.bounds[1]],
-            [metadata.bounds[2], metadata.bounds[3]],
-            [metadata.bounds[0], metadata.bounds[3]],
-            [metadata.bounds[0], metadata.bounds[1]],
+      feature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [metadata.bounds[0], metadata.bounds[1]],
+              [metadata.bounds[2], metadata.bounds[1]],
+              [metadata.bounds[2], metadata.bounds[3]],
+              [metadata.bounds[0], metadata.bounds[3]],
+              [metadata.bounds[0], metadata.bounds[1]],
+            ],
           ],
-        ],
-      },
-      properties: {
-        id: datasetId,
-        url: `${isPmtiles ? 'pmtiles://' : ''}${datasetUrl}`,
-        name: metadata.name,
-        description: metadata.description,
-        is_raster,
-        tags,
-      },
+        },
+        properties: {
+          id: datasetId,
+          url: `${isPmtiles ? 'pmtiles://' : ''}${datasetUrl}`,
+          name: metadata.name,
+          description: metadata.description,
+          is_raster,
+          tags,
+        },
+      }
+    }
+  } else {
+    // existing datasets
+    feature = await res.json()
+
+    // check write permission of login user for datasets
+    if (!(feature.properties.permission > Permission.READ)) {
+      throw redirect(301, '/data')
     }
 
-    return {
-      feature,
-      isNew: true,
+    // only accept dataset on Azure blob container
+    const type = feature.properties.tags?.find((t) => t.key === 'type' && ['azure', 'pgtileserv'].includes(t.value))
+    if (!type) {
+      throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
     }
-  }
-
-  const feature: DatasetFeature = await res.json()
-
-  // check write permission of login user for datasets
-  if (!(feature.properties.permission > Permission.READ)) {
-    throw redirect(301, '/data')
-  }
-
-  // only accept dataset on Azure blob container
-  const type = feature.properties.tags?.find((t) => t.key === 'type' && ['azure', 'pgtileserv'].includes(t.value))
-  if (!type) {
-    throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` })
   }
 
   return {
@@ -208,7 +202,7 @@ export const load: PageServerLoad = async (event) => {
       regions: getRegions(fetch, url),
       countries: getCountries(fetch, url),
     },
-    isNew: false,
+    isNew,
   }
 }
 

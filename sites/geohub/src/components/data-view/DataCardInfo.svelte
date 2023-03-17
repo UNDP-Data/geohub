@@ -127,6 +127,10 @@
             timestamp={feature.properties.updatedat}
             format="h:mm A, MMMM D, YYYY" />
         </p>
+        <p>
+          <b>Updated by: </b>
+          {feature.properties.updated_user}
+        </p>
         {#if file}
           <Download
             title={file.title}

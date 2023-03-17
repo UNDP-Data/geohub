@@ -5,12 +5,12 @@
 
   const dispatch = createEventDispatcher()
   export let dialogOpen = false
-  export let title
-  export let message
+  export let title: string
+  export let message: string
   export let messageType: 'warning' | 'info' = 'warning'
-  export let target
-  export let continueText
-  export let cancelText
+  export let target: string
+  export let continueText: string
+  export let cancelText: string
   const handleCancel = () => {
     dispatch('cancel')
   }

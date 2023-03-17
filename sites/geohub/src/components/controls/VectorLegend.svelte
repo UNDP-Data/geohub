@@ -97,18 +97,21 @@
     <LegendTypeSwitcher bind:legendType />
     <div class="help">
       <Help>
-        <p class="has-text-justified">
-          Start visualising the dataset as you want.
-          <br />
-          <b>Default</b> legend provides you simple rendering the data according to the geometry type (Point, Line,
-          Polygon or Heatmap). You can simply change color and size.
-          <br />
-          <b>Classify</b> legend provides you more functionality to visualise the data with selected property of the
-          dataset by either interval legend or unique value legend. You can increase or reduce <b>number of classes</b>,
-          or change classificaiton method to visualise it. The color for each class can also be changed by clicking
-          <b>color</b>
-          button, or it can be hiden by clicking <b>eye</b> button.
-        </p>
+        <div>
+          <p>Enhance your visualizations using the following tips!</p>
+          <p>
+            The <b>Default</b> legend will showcase the dataset based on its geometry (Point, Polygon, Line or Heatmap) and
+            you may change colors and size to your liking.
+          </p>
+          <p>
+            The <b>Classify</b> legend allows more functionality with the ability to interchange between classification types
+            (interval or unique value legend), colors, and the number of classes.
+          </p>
+          <p>
+            Color of each class can be changed by clicking the <b>colored box</b> or hidden using the <b>eye</b> button left
+            of the box
+          </p>
+        </div>
       </Help>
     </div>
   {/if}

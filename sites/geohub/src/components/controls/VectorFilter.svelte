@@ -29,7 +29,7 @@
 
   let selectedCombiningOperator = 'all'
   //let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
-  let propertySelectValue
+  let propertySelectValue: string
   let filteringError = false
   let propertyStats
   let initialStep = 1

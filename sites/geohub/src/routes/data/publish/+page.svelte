@@ -12,6 +12,7 @@
   import { toast } from '@zerodevx/svelte-toast'
   import { TagInputValues } from '$lib/config/AppConfig'
   import { Loader } from '@undp-data/svelte-undp-design'
+  import Time from 'svelte-time'
 
   export let data: PageData
 
@@ -32,63 +33,80 @@
   let tags = ''
   let isRegistering = false
 
-  let selectedContinent: Continent
+  let selectedContinents: Continent[] = []
   let continentsMaster: Continent[] = []
-  let selectedRegion: Region
+  let selectedRegions: Region[] = []
   let regionsMaster: Region[] = []
 
   const init = () => {
     data.promises.continents.then((cts) => {
       continentsMaster = cts
-      let t = feature.properties.tags.find((t) => t.key === 'continent')
-      if (t) {
-        selectedContinent = cts.find((c) => c.continent_name === t.value)
-        continentSelected(selectedContinent)
-      }
+      let filters = feature.properties.tags.filter((t) => t.key === 'continent')
+      filters?.forEach((f) => {
+        let continent = cts.find((c) => c.continent_name === f.value)
+        continentSelected(continent, true)
+      })
     })
 
     data.promises.regions.then((rs) => {
       regionsMaster = rs
-      let t = feature.properties.tags.find((t) => t.key === 'region')
-      if (t) {
-        selectedRegion = rs.find((c) => c.region_name === t.value)
-        regionSelected(selectedRegion)
-      }
+      let filters = feature.properties.tags.filter((t) => t.key === 'region')
+      filters?.forEach((f) => {
+        let region = rs.find((c) => c.region_name === f.value)
+        regionSelected(region)
+      })
     })
   }
 
   init()
 
-  // $: selectedContinent, continentSelected()
-  const continentSelected = (c: Continent) => {
-    if (c !== selectedContinent) {
-      selectedContinent = c
-      selectedRegion = undefined
-    }
-    if (!selectedContinent) {
-      continents = []
+  const continentSelected = (c: Continent, isInit = false) => {
+    if (selectedContinents.includes(c)) {
+      const rs = selectedRegions.filter((r) => r.continent_code === c.continent_code)
+      for (const r of rs) {
+        regionSelected(r)
+      }
+      selectedContinents.splice(selectedContinents.indexOf(c), 1)
     } else {
-      continents = [
-        {
+      selectedContinents.push(c)
+      if (!isInit) {
+        regionsMaster
+          .filter((r) => r.continent_code === c.continent_code)
+          ?.forEach((r) => {
+            regionSelected(r)
+          })
+      }
+    }
+    selectedContinents = [...selectedContinents]
+    if (selectedContinents.length === 0) {
+      continents = []
+      selectedRegions = []
+    } else {
+      continents = selectedContinents.map((c) => {
+        return {
           key: 'continent',
-          value: selectedContinent.continent_name,
-        },
-      ]
+          value: c.continent_name,
+        }
+      })
     }
   }
 
-  // $: selectedRegion, regionSelected()
   const regionSelected = (r: Region) => {
-    selectedRegion = r
-    if (!selectedRegion) {
+    if (selectedRegions.includes(r)) {
+      selectedRegions.splice(selectedRegions.indexOf(r), 1)
+    } else {
+      selectedRegions.push(r)
+    }
+    selectedRegions = [...selectedRegions]
+    if (selectedRegions.length === 0) {
       regions = []
     } else {
-      regions = [
-        {
+      regions = selectedRegions.map((r) => {
+        return {
           key: 'region',
-          value: selectedRegion.region_name,
-        },
-      ]
+          value: r.region_name,
+        }
+      })
     }
   }
 
@@ -106,10 +124,10 @@
     'table',
   ]
 
-  const initTags = (key: 'provider' | 'sdg_goal' | 'continents' | 'regions' | 'country' | 'other') => {
+  const initTags = (key: 'provider' | 'sdg_goal' | 'continent' | 'region' | 'country' | 'other') => {
     const _tags: Tag[] = feature?.properties?.tags
     if (key === 'other') {
-      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...excludedTagForEditing]
+      const keys = ['provider', 'sdg_goal', 'country', 'region', 'continent', 'extent', ...excludedTagForEditing]
       return _tags?.filter((t) => !keys.includes(t.key)) ?? []
     } else {
       let keys: string[] = [key]
@@ -119,8 +137,8 @@
 
   let providers: Tag[] = initTags('provider')
   let sdgs: Tag[] = initTags('sdg_goal')
-  let continents: Tag[] = []
-  let regions: Tag[] = []
+  let continents: Tag[] = initTags('continent')
+  let regions: Tag[] = initTags('region')
   let countries: Tag[] = initTags('country')
   let otherTags: Tag[] = initTags('other')
 
@@ -151,13 +169,16 @@
   $: countries, updateTags()
   $: otherTags, updateTags()
   $: providers, updateTags()
-  let isGlobal = otherTags.find((t) => t.key === 'extent' && t.value.toLowerCase() === 'global') ? true : false
+
+  let extentTag = feature.properties?.tags?.find((t) => t.key === 'extent' && t.value.toLowerCase() === 'global')
+
+  let isGlobal: 'global' | 'regional' = !data.isNew ? (extentTag ? 'global' : 'regional') : undefined
 
   const updateTags = () => {
     const excludes = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...TagInputValues.map((t) => t.key)]
     const originalTags = feature?.properties?.tags?.filter((t) => !excludes.includes(t.key))
 
-    const joined = sdgs.concat(
+    let joined = sdgs.concat(
       providers,
       continents,
       regions,
@@ -165,32 +186,35 @@
       otherTags.filter((t) => t.value.length > 0),
       originalTags,
     )
-    tags = JSON.stringify(joined)
-  }
-
-  const handleGlobalRegionalChanged = (type: 'global' | 'regional') => {
-    isGlobal = type === 'global' ? true : false
-    if (isGlobal) {
-      if (!otherTags?.find((t) => t.key === 'extent' && t.value === 'Global')) {
-        otherTags = [
-          ...otherTags,
+    if (isGlobal === 'global') {
+      if (!joined?.find((t) => t.key === 'extent' && t.value === 'Global')) {
+        joined = [
+          ...joined,
           {
             key: 'extent',
             value: 'Global',
           },
         ]
       }
-      selectedContinent = undefined
-      selectedRegion = undefined
-      countries = []
     } else {
-      const index = otherTags.findIndex((t) => {
+      const index = joined.findIndex((t) => {
         return t.key === 'extent' && t.value === 'Global'
       })
       if (index > -1) {
-        otherTags.splice(index, 1)
-        otherTags = [...otherTags]
+        joined.splice(index, 1)
       }
+    }
+    tags = JSON.stringify(joined)
+  }
+
+  const handleGlobalRegionalChanged = (type: 'global' | 'regional') => {
+    isGlobal = type
+    if (isGlobal === 'global') {
+      selectedContinents = []
+      selectedRegions = []
+      continents = []
+      regions = []
+      countries = []
     }
   }
 
@@ -200,31 +224,31 @@
       countries = []
       return
     }
-    const firstCountry = _countries[0]
-    if (selectedContinent?.continent_code !== firstCountry.continent_code) {
-      selectedContinent = continentsMaster.find((c) => c.continent_code === firstCountry.continent_code)
-    }
-    setTimeout(() => {
-      if (selectedRegion?.region_code !== firstCountry.region_code) {
-        selectedRegion = regionsMaster.find((c) => c.region_code === firstCountry.region_code)
+
+    _countries.forEach((c) => {
+      const ct = continentsMaster.find((a) => a.continent_code === c.continent_code)
+      const re = regionsMaster.find((a) => a.region_code === c.region_code)
+      if (!selectedContinents.includes(ct)) {
+        selectedContinents.push(ct)
       }
-    }, 100)
+      if (!selectedRegions.includes(re)) {
+        selectedRegions.push(re)
+      }
+    })
+    selectedContinents = [...selectedContinents]
+    selectedRegions = [...selectedRegions]
 
-    if (!selectedContinent) {
-      _countries.forEach((c) => {
-        if (continents.find((x) => x.value === c.continent_name)) return
-        continents.push({ key: 'continent', value: c.continent_name })
-      })
-      continents = [...continents]
-    }
+    selectedContinents?.forEach((c) => {
+      if (continents.find((x) => x.value === c.continent_name)) return
+      continents.push({ key: 'continent', value: c.continent_name })
+    })
+    continents = [...continents]
 
-    if (!selectedRegion) {
-      _countries.forEach((c) => {
-        if (regions.find((x) => x.value === c.region_name)) return
-        regions.push({ key: 'region', value: c.region_name })
-      })
-      regions = [...regions]
-    }
+    selectedRegions?.forEach((c) => {
+      if (regions.find((x) => x.value === c.region_name)) return
+      regions.push({ key: 'region', value: c.region_name })
+    })
+    regions = [...regions]
 
     const temp: Tag[] = []
     _countries.forEach((c) => {
@@ -279,7 +303,9 @@
           license &&
           description &&
           providers.length > 0 &&
-          (isGlobal || (!isGlobal && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
+          (isGlobal === 'global' ||
+            (isGlobal === 'regional' &&
+              (selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0)))
         )}
         type="submit">
         <span class="icon">
@@ -295,6 +321,27 @@
         url={feature.properties.url.replace('pmtiles://', '')} />
     </div>
   </div>
+
+  {#if !data.isNew}
+    <div class="pb-4">
+      <p>
+        This dataset was initially created by <b>{feature.properties.updated_user}</b> at
+        <b>
+          <Time
+            timestamp={feature.properties.createdat}
+            format="h:mm A, MMMM D, YYYY" />
+        </b>
+      </p>
+      <p>
+        This dataset was lastly updated by <b>{feature.properties.updated_user}</b> at
+        <b>
+          <Time
+            timestamp={feature.properties.updatedat}
+            format="h:mm A, MMMM D, YYYY" />
+        </b>
+      </p>
+    </div>
+  {/if}
 
   <div class="columns">
     <div class="column is-6">
@@ -401,7 +448,7 @@
         <p class="control">
           <button
             type="button"
-            class="button {isGlobal ? 'is-primary is-active' : 'is-primary is-light'}"
+            class="button {isGlobal === 'global' ? 'is-primary is-active' : 'is-primary is-light'}"
             on:click={() => handleGlobalRegionalChanged('global')}>
             <span class="icon is-small">
               <i class="fas fa-globe" />
@@ -412,7 +459,7 @@
         <p class="control">
           <button
             type="button"
-            class="button {isGlobal ? 'is-primary is-light' : 'is-primary is-active'}"
+            class="button {isGlobal === 'regional' ? 'is-primary is-active' : 'is-primary is-light'}"
             on:click={() => handleGlobalRegionalChanged('regional')}>
             <span class="icon is-small">
               <i class="fas fa-earth-africa" />
@@ -424,7 +471,7 @@
     </div>
   </div>
 
-  {#if !isGlobal}
+  {#if isGlobal === 'regional'}
     <div class="field">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Please select a continent for your data.</label>
@@ -432,12 +479,14 @@
         {#await data.promises.continents}
           <Loader size="x-small" />
         {:then continents}
-          <div class="field has-addons segmentbuttons">
+          <div class="field has-addons is-flex is-flex-wrap-wrap">
             {#each continents as continent}
-              <p class="control">
+              <p class="control pt-1">
                 <button
                   type="button"
-                  class="button {selectedContinent === continent ? 'is-primary is-active' : 'is-primary is-light'}"
+                  class="button {selectedContinents.includes(continent)
+                    ? 'is-primary is-active'
+                    : 'is-primary is-light'}"
                   on:click={() => continentSelected(continent)}>
                   <span class="icon is-small">
                     <i
@@ -454,7 +503,7 @@
       </div>
     </div>
 
-    {#if selectedContinent?.continent_name !== 'Antarctica'}
+    {#if isGlobal === 'regional' && selectedContinents.length > 0}
       <div class="field">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label">Please select a region for your data.</label>
@@ -462,21 +511,13 @@
           {#await data.promises.regions}
             <Loader size="x-small" />
           {:then regions}
-            <div class="field has-addons segmentbuttons">
-              <p class="control">
-                <button
-                  type="button"
-                  class="button {selectedRegion?.region_code ? 'is-primary is-light' : 'is-primary is-active'}"
-                  on:click={() => regionSelected(undefined)}>
-                  <span>All</span>
-                </button>
-              </p>
+            <div class="field has-addons is-flex is-flex-wrap-wrap">
               {#each regions as region}
-                {#if selectedContinent?.continent_code === region.continent_code}
-                  <p class="control">
+                {#if selectedContinents.filter((c) => c.continent_code === region.continent_code).length > 0}
+                  <p class="control pt-1">
                     <button
                       type="button"
-                      class="button {selectedRegion === region ? 'is-primary is-active' : 'is-primary is-light'}"
+                      class="button {selectedRegions.includes(region) ? 'is-primary is-active' : 'is-primary is-light'}"
                       on:click={() => regionSelected(region)}>
                       <span>{region.region_name}</span>
                     </button>
@@ -495,8 +536,8 @@
         <CountryPicker
           on:change={handleCountrySelected}
           bind:tags={countries}
-          bind:selectedContinent
-          bind:selectedRegion />
+          bind:selectedContinents
+          bind:selectedRegions />
       </div>
     </div>
   {/if}
@@ -521,7 +562,9 @@
           license &&
           description &&
           providers.length > 0 &&
-          (isGlobal || (!isGlobal && (continents.length > 0 || regions.length > 0 || countries.length > 0)))
+          (isGlobal === 'global' ||
+            (isGlobal === 'regional' &&
+              (selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0)))
         )}
         type="submit">{isNew ? 'Publish' : 'Update'}</button>
     </div>
@@ -544,10 +587,5 @@
   .description {
     resize: none;
     height: 100px;
-  }
-
-  .segmentbuttons {
-    max-width: 100vw;
-    overflow-x: auto;
   }
 </style>
