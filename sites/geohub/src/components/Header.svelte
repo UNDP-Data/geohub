@@ -42,7 +42,7 @@
           initLinks()
         },
       },
-      ...HeaderItems(['maps', 'data', 'dashboard', 'userguide']),
+      ...HeaderItems(['maps', /*'data',**/ 'dashboard', 'userguide']),
     ]
 
     if ($page.data.session && $layerList.length > 0) {

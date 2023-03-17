@@ -12,7 +12,7 @@
 
   let headerHeight: number
 
-  let links: HeaderLink[] = HeaderItems(['home', 'data', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', /*'data',**/ 'dashboard', 'userguide'])
 
   let stats: StatsCard[] = data.stats
 
