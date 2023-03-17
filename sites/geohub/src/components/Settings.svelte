@@ -11,10 +11,13 @@
   import { page } from '$app/stores'
   import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
   import { invalidateAll } from '$app/navigation'
+  import RangeSlider from 'svelte-range-slider-pips'
 
   let userSettings = $page.data.config
   let isSubmitting = false
   let sideBarPosition = userSettings.SidebarPosition || 'left'
+  let lineWidth = [userSettings.LineWidth]
+  let numberOfClasses = [userSettings.NumberOfClasses]
   let isExpanded = true
   let activeSettingTab = 'Map'
 
@@ -233,29 +236,44 @@
         <div class="field">
           <label class="label">Number of Classes</label>
           <div class="control">
-            <input
-              name="NumberOfClasses"
-              bind:value={userSettings.NumberOfClasses}
-              class="input"
-              type="number"
-              placeholder="Number of Classes"
+            <RangeSlider
+              bind:values={numberOfClasses}
+              float
               min={NumberOfClassesMinimum}
-              max={NumberOfClassesMaximum} />
+              max={NumberOfClassesMaximum}
+              step={1}
+              pips
+              first="label"
+              last="label"
+              rest={false} />
+            <input
+              type="hidden"
+              name="NumberOfClasses"
+              bind:value={numberOfClasses[0]} />
           </div>
           <p class="help is-info">Number of classes in legend</p>
         </div>
         <div class="field">
           <label class="label">Line Width</label>
           <div class="control">
+            <RangeSlider
+              bind:values={lineWidth}
+              float
+              min={0}
+              max={10}
+              step={0.5}
+              pips
+              springValues={{
+                stiffness: 1,
+                damping: 1,
+              }}
+              first="label"
+              last="label"
+              rest={false} />
             <input
+              type="hidden"
               name="LineWidth"
-              value={userSettings.LineWidth}
-              class="input"
-              type="number"
-              placeholder="Line Width"
-              min="0"
-              max="10"
-              step="0.5" />
+              bind:value={lineWidth[0]} />
           </div>
           <p class="help is-info">Width of line layer in legend</p>
         </div>
