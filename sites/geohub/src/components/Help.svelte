@@ -25,6 +25,9 @@
 </div>
 
 <style lang="scss">
+  @import 'tippy.js/dist/tippy.css';
+  @import 'tippy.js/themes/light.css';
+
   .help {
     cursor: pointer;
     padding: 0;
