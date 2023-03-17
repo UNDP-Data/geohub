@@ -13,9 +13,29 @@ export const DataCategories: Breadcrumb[] = [
   },
   {
     name: 'UNDP',
-    icon: 'assets/undp-images/undp-logo.png',
+    icon: 'assets/undp-images/undp-logo-blue.svg',
     url: '/api/datasets?provider=undp',
   },
+  {
+    name: 'UNICEF',
+    icon: 'assets/unicef.png',
+    url: '/api/datasets?provider=unicef',
+  },
+  {
+    name: 'UNEP',
+    icon: 'assets/unep.png',
+    url: '/api/datasets?provider=unep',
+  },
+  {
+    name: 'FAO',
+    icon: 'assets/fao.svg',
+    url: '/api/datasets?provider=fao',
+  },
+  // {
+  //   name: 'WFP',
+  //   icon: 'assets/wfp.svg',
+  //   url: '/api/datasets?provider=wfp',
+  // },
   {
     name: 'Microsoft Planetary',
     icon: 'assets/microsoft.png',
