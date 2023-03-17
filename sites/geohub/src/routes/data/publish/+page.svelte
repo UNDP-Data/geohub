@@ -168,11 +168,10 @@
   $: countries, updateTags()
   $: otherTags, updateTags()
   $: providers, updateTags()
-  let isGlobal: 'global' | 'regional' = feature.properties?.tags?.find(
-    (t) => t.key === 'extent' && t.value.toLowerCase() === 'global',
-  )
-    ? 'global'
-    : 'regional'
+
+  let extentTag = feature.properties?.tags?.find((t) => t.key === 'extent' && t.value.toLowerCase() === 'global')
+
+  let isGlobal: 'global' | 'regional' = !data.isNew ? (extentTag ? 'global' : 'regional') : undefined
 
   const updateTags = () => {
     const excludes = ['provider', 'sdg_goal', 'country', 'region', 'continent', ...TagInputValues.map((t) => t.key)]
