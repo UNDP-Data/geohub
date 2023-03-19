@@ -395,7 +395,7 @@ importers:
       maplibre-gl: ^2.4.0
       marked: ^4.2.12
       mathjs: ^11.6.0
-      millify: ^5.0.1
+      millify: ^6.0.0
       mime: ^3.0.0
       papaparse: ^5.3.2
       pbf: ^3.2.1
@@ -495,7 +495,7 @@ importers:
       lodash-es: 4.17.21
       maplibre-gl: 2.4.0
       marked: 4.2.12
-      millify: 5.0.1
+      millify: 6.1.0
       papaparse: 5.4.0
       pmtiles: 2.7.0
       prettier: 2.8.4
@@ -9076,8 +9076,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /millify/5.0.1:
-    resolution: {integrity: sha512-1IacXjRDMbRevt2++mBnrI2iFxljWlQapMUT9Bs+uAF3o/TrYdE46Uf6CqlmoOWMX1JDAlMorXPv4/hM1eE/kw==}
+  /millify/6.1.0:
+    resolution: {integrity: sha512-H/E3J6t+DQs/F2YgfDhxUVZz/dF8JXPPKTLHL/yHCcLZLtCXJDUaqvhJXQwqOVBvbyNn4T0WjLpIHd7PAw7fBA==}
     hasBin: true
     dependencies:
       yargs: 17.7.1
