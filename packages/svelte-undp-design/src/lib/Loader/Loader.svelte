@@ -6,6 +6,7 @@
 	class="loader {size === 'small' ? 'small-loader' : size === 'medium' ? 'medium-loader' : ''}"
 	aria-busy="true"
 	aria-live="polite"
+	data-testid="loader"
 />
 
 <style lang="scss">
