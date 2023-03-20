@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.1
+
+### Patch Changes
+
+- a98475b0: fix: margin of menu-item in undp header
+
 ## 0.2.0
 
 ### Minor Changes
