@@ -182,4 +182,8 @@
 	.is-xsmall {
 		height: 0.2rem;
 	}
+
+	:global(.menu-item) {
+		margin: 0.75rem 1.75rem 0.75rem 0 !important;
+	}
 </style>

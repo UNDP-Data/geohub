@@ -1,23 +1,10 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import UserAccount from '$components/UserAccount.svelte'
-  import { FooterItems } from '$lib/config/AppConfig'
+  import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
   import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'
 
-  let links: HeaderLink[] = [
-    {
-      id: 'header-link-home',
-      title: 'GeoHub home',
-      href: '/',
-      icon: 'fa-solid fa-home pr-1',
-    },
-    {
-      id: 'header-link-documentation',
-      title: 'User guide',
-      href: '/docs/index.html',
-      icon: 'fa-regular fa-circle-question pr-1',
-    },
-  ]
+  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'data', 'dashboard', 'userguide'])
 </script>
 
 <Header
@@ -41,11 +28,3 @@
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
   footerItems={FooterItems} />
-
-<style
-  global
-  lang="scss">
-  :global(.menu-item) {
-    margin: 0.75rem 1.75rem 0.75rem 0 !important;
-  }
-</style>
