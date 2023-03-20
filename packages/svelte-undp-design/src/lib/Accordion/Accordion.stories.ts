@@ -6,7 +6,7 @@ import Accordion from './Accordion.svelte';
 const meta = {
 	title: 'Example/Accordion',
 	component: Accordion,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		headerTitle: {
 			type: 'string',
@@ -21,20 +21,14 @@ const meta = {
 		fontSize: {
 			type: 'string',
 			description: 'Font size of the accordion header title.',
-			defaultValue: 'medium'
+			defaultValue: 'medium',
+			control: { type: 'select' },
+			options: ['small', 'medium']
 		},
 		headerIcon: {
 			type: 'string',
 			description: 'Fontawesome icon class name',
 			defaultValue: ''
-		}
-	},
-	parameters: {
-		isExpanded: {
-			values: [true, false]
-		},
-		fontSize: {
-			values: ['small', 'medium']
 		}
 	}
 } satisfies Meta<Accordion>;
@@ -46,6 +40,24 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		headerTitle: 'title',
-		isExpanded: false
+		isExpanded: false,
+		headerIcon: '',
+		fontSize: 'medium'
+	}
+};
+
+export const Icon: Story = {
+	args: {
+		headerTitle: 'title with icon',
+		isExpanded: false,
+		headerIcon: 'fas fa-circle'
+	}
+};
+
+export const Small: Story = {
+	args: {
+		headerTitle: 'small font size',
+		isExpanded: false,
+		fontSize: 'small'
 	}
 };

@@ -6,7 +6,7 @@ import Download from './Download.svelte';
 const meta = {
 	title: 'Example/Download',
 	component: Download,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		url: {
 			type: 'string',

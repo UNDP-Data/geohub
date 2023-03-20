@@ -43,6 +43,7 @@
 </script>
 
 <div class="tabs-undp inviewport" data-viewport="true" bind:clientHeight={height}>
+	<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 	<ul
 		style="padding-left: 0;  text-align: center;"
 		data-deep-link="true"

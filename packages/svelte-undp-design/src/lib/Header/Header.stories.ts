@@ -7,7 +7,7 @@ import Header from './Header.svelte';
 const meta = {
 	title: 'Example/Header',
 	component: Header,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		region: {
 			type: 'string',
@@ -48,7 +48,9 @@ const meta = {
 		progressBarSize: {
 			type: 'string',
 			description: 'Size of progress bar',
-			defaultValue: 'xsmall'
+			defaultValue: 'xsmall',
+			constrol: { type: 'select' },
+			options: ['xsmall', 'small', 'medium', 'large']
 		}
 	}
 } satisfies Meta<Header>;
@@ -104,7 +106,21 @@ export const Primary: Story = {
 		logoUrl: 'assets/undp-logo-blue.svg',
 		showProgressBar: false,
 		links: links,
-		progressBarSize: 'small'
+		progressBarSize: 'small',
+		isPositionFixed: false
+	}
+};
+
+export const SmallProgressbar: Story = {
+	args: {
+		region: 'REGION',
+		siteTitle: 'Site Title',
+		url: 'https://undpgeohub.org',
+		logoUrl: 'assets/undp-logo-blue.svg',
+		showProgressBar: true,
+		links: links,
+		progressBarSize: 'small',
+		isPositionFixed: false
 	}
 };
 

@@ -7,7 +7,7 @@ import FluidCarousel from './FluidCarousel.svelte';
 const meta = {
 	title: 'Example/FluidCarousel',
 	component: FluidCarousel,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		contents: {
 			// type: 'string',

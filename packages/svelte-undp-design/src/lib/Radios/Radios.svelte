@@ -25,6 +25,7 @@
 					name={groupName}
 					bind:group={value}
 					value={radio.value}
+					data-testid={`radio-${radio.value}`}
 					on:click={() => {
 						handleRadioClicked(radio.value);
 					}}
