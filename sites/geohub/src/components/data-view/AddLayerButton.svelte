@@ -22,7 +22,7 @@
 {#if isIconButton}
   {#if isLoading}
     <div class="loader-container">
-      <Loader size="x-small" />
+      <Loader size="small" />
     </div>
   {:else}
     <span
