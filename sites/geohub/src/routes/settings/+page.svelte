@@ -7,7 +7,7 @@
   let links: HeaderLink[] = HeaderItems(['home', 'maps', /*'data',**/ 'dashboard', 'userguide'])
 </script>
 
-<div class="settings-page-header">
+<div class="header">
   <Header
     region="UNDP's one stop shop for spatial data and analytics"
     siteTitle="GeoHub"
@@ -22,16 +22,14 @@
   </Header>
 </div>
 
-<Settings
-  class="settings-page"
-  bind:headerHeight />
+<Settings bind:headerHeight />
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
   footerItems={FooterItems} />
 
 <style lang="scss">
   // Similar styles to the header as you can't set the z-index of the header at this place
-  .settings-page-header {
+  .header {
     position: fixed;
     top: 0;
     left: 0;

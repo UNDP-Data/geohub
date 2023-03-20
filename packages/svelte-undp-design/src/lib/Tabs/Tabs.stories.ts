@@ -7,7 +7,7 @@ import type { Tab } from '$lib/interfaces';
 const meta = {
 	title: 'Example/Tabs',
 	component: Tabs,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		tabs: {
 			// type: 'string',
@@ -27,16 +27,15 @@ const meta = {
 		fontSize: {
 			type: 'string',
 			description: 'Font size either medium or small',
-			defaultValue: 'medium'
+			defaultValue: 'medium',
+			control: { type: 'select' },
+			options: ['medium', 'small']
 		},
 		isToggleTab: {
 			type: 'boolean',
 			description: 'If enabled, tab can be toggled',
 			defaultValue: false
 		}
-	},
-	parameters: {
-		values: ['medium', 'small']
 	}
 } satisfies Meta<Tabs>;
 
@@ -57,5 +56,25 @@ export const Primary: Story = {
 		height: 40,
 		fontSize: 'medium',
 		isToggleTab: false
+	}
+};
+
+export const Small: Story = {
+	args: {
+		tabs: tabs,
+		activeTab: activeTab,
+		height: 40,
+		fontSize: 'small',
+		isToggleTab: false
+	}
+};
+
+export const Toggled: Story = {
+	args: {
+		tabs: tabs,
+		activeTab: activeTab,
+		height: 40,
+		fontSize: 'medium',
+		isToggleTab: true
 	}
 };

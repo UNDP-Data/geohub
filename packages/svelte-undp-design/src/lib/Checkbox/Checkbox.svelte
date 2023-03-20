@@ -12,7 +12,7 @@
 
 <div class="form-check vertical-align">
 	<label>
-		<input type="checkbox" bind:checked on:click={handleChecked} />
+		<input data-testid="checkbox" type="checkbox" bind:checked on:click={handleChecked} />
 		{label}
 	</label>
 </div>

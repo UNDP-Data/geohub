@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.0
+
+### Minor Changes
+
+- 3d796365: - imporoved storybook documentation
+  - added vitests for most components
+
 ## 0.1.4
 
 ### Patch Changes

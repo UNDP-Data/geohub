@@ -6,7 +6,7 @@ import Stats from './Stats.svelte';
 const meta = {
 	title: 'Example/Stats',
 	component: Stats,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		card: {
 			description: 'StatsCard object. Stats information to show',
@@ -15,12 +15,9 @@ const meta = {
 		size: {
 			type: 'string',
 			description: 'Stats card size.',
-			defaultValue: 'medium'
-		}
-	},
-	parameters: {
-		size: {
-			values: ['small', 'medium', 'large', 'x-large']
+			defaultValue: 'medium',
+			control: { type: 'select' },
+			options: ['small', 'medium', 'large', 'x-large']
 		}
 	}
 } satisfies Meta<Stats>;
@@ -37,5 +34,38 @@ export const Primary: Story = {
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
 		},
 		size: 'medium'
+	}
+};
+
+export const Small: Story = {
+	args: {
+		card: {
+			stat: 35,
+			title: 'Percents, with very long subheader, spanning several lines',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+		},
+		size: 'small'
+	}
+};
+
+export const Large: Story = {
+	args: {
+		card: {
+			stat: 35,
+			title: 'Percents, with very long subheader, spanning several lines',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+		},
+		size: 'large'
+	}
+};
+
+export const Xlarge: Story = {
+	args: {
+		card: {
+			stat: 35,
+			title: 'Percents, with very long subheader, spanning several lines',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+		},
+		size: 'x-large'
 	}
 };

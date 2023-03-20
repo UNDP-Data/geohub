@@ -6,7 +6,7 @@ import CtaLink from './CtaLink.svelte';
 const meta = {
 	title: 'Example/CtaLink',
 	component: CtaLink,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		label: {
 			type: 'string',
@@ -17,11 +17,6 @@ const meta = {
 			type: 'boolean',
 			description: 'If enabled, arrow will be shown in link',
 			defaultValue: false
-		}
-	},
-	parameters: {
-		isArrow: {
-			values: [true, false]
 		}
 	}
 } satisfies Meta<CtaLink>;
@@ -34,5 +29,19 @@ export const Primary: Story = {
 	args: {
 		label: 'Read more',
 		isArrow: true
+	}
+};
+
+export const Arrow: Story = {
+	args: {
+		label: 'Read more',
+		isArrow: true
+	}
+};
+
+export const WithoutArrow: Story = {
+	args: {
+		label: 'Read more',
+		isArrow: false
 	}
 };
