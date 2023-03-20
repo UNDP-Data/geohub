@@ -477,7 +477,7 @@
       <label class="label">Please select a continent for your data.</label>
       <div class="control">
         {#await data.promises.continents}
-          <Loader size="x-small" />
+          <Loader size="small" />
         {:then continents}
           <div class="field has-addons is-flex is-flex-wrap-wrap">
             {#each continents as continent}
@@ -509,7 +509,7 @@
         <label class="label">Please select a region for your data.</label>
         <div class="control">
           {#await data.promises.regions}
-            <Loader size="x-small" />
+            <Loader size="small" />
           {:then regions}
             <div class="field has-addons is-flex is-flex-wrap-wrap">
               {#each regions as region}

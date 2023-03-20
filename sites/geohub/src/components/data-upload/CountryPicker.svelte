@@ -132,7 +132,7 @@
       </p>
       <div class="country-list control">
         {#await countries}
-          <Loader size="x-small" />
+          <Loader size="small" />
         {:then rows}
           {#if rows && rows.length > 0}
             <div class="country-list-grid p-1">
