@@ -1,11 +1,6 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import { getStyleById } from '$lib/server/helpers'
-import { AccessLevel } from '$lib/constants'
-const connectionString = DATABASE_CONNECTION
+import { AccessLevel } from '$lib/config/AppConfig'
 
 /**
  * Get style.json which is stored in PostgreSQL database
@@ -14,8 +9,6 @@ const connectionString = DATABASE_CONNECTION
 export const GET: RequestHandler = async ({ params, locals }) => {
   const session = await locals.getSession()
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
   try {
     const styleId = Number(params.id)
     if (!styleId) {
@@ -57,8 +50,5 @@ export const GET: RequestHandler = async ({ params, locals }) => {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
     })
-  } finally {
-    client.release()
-    pool.end()
   }
 }

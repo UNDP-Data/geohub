@@ -2,7 +2,6 @@
   import type { SymbolLayerSpecification } from 'maplibre-gl'
   import { createEventDispatcher, onMount } from 'svelte'
 
-  import { LayerTypes } from '$lib/constants'
   import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types'
   import { map } from '$stores'
   import PropertySelect from './PropertySelect.svelte'
@@ -11,7 +10,8 @@
   export let layer: Layer
   export let decimalPosition = undefined
   export let fieldType: string = undefined
-  export let textFieldValue
+  export let textFieldValue: string = undefined
+  export let inLegend: boolean
 
   const dispatch = createEventDispatcher()
   const layerId = layer.id
@@ -32,7 +32,7 @@
     if (['line', 'fill'].includes($map.getLayer(layerId).type)) return
     if (textFieldValue) {
       fieldType = getFieldDataType(textFieldValue)
-      let propertyValue: any = ['get', textFieldValue]
+      let propertyValue = ['get', textFieldValue]
       if (fieldType && ['number', 'float'].includes(fieldType)) {
         if (!decimalPosition) {
           decimalPosition = 1
@@ -114,7 +114,7 @@
       const parentStyle = getLayerStyle($map, layer.parentId)
       const childLayer: SymbolLayerSpecification = {
         id: layerId,
-        type: LayerTypes.SYMBOL,
+        type: 'symbol',
         source: parentStyle['source'],
         'source-layer': parentStyle['source-layer'],
         layout: {
@@ -137,7 +137,7 @@
       style = childLayer
     }
 
-    if (style.type !== LayerTypes.SYMBOL) return
+    if (style.type !== 'symbol') return
 
     if (textFieldValue) {
       // variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
@@ -167,6 +167,7 @@
 </script>
 
 <PropertySelect
+  bind:inLegend
   bind:showEmptyFields
   bind:propertySelectValue={textFieldValue}
   {layer}

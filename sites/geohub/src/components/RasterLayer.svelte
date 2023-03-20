@@ -4,17 +4,21 @@
   import RasterTransform from '$components/controls/RasterTransform.svelte'
   import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte'
   import OpacityPanel from '$components/controls/OpacityPanel.svelte'
-  import { COLOR_CLASS_COUNT, TabNames } from '$lib/constants'
+  import { LegendTypes, TabNames } from '$lib/config/AppConfig'
   import type { Layer, RasterTileMetadata } from '$lib/types'
   import RasterHistogram from '$components/controls/RasterHistogram.svelte'
   import { Tabs } from '@undp-data/svelte-undp-design'
+  import { page } from '$app/stores'
 
   export let layer: Layer
 
-  let numberOfClasses = COLOR_CLASS_COUNT
-  let legendType
+  let numberOfClasses = $page.data.config.NumberOfClasses
+  let legendType: LegendTypes
+  const rasterInfo: RasterTileMetadata = layer.info
+  const colorinterp = rasterInfo.colorinterp
+  const isRgbTile =
+    colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')
 
-  //local vars
   let tabs = [
     { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
     { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
@@ -22,19 +26,13 @@
     { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
   ]
 
-  let { info }: Layer = layer
   let activeTab = TabNames.LEGEND
 
-  if ((info as RasterTileMetadata)?.isMosaicJson === true) {
-    // disable other menus since they are not working for mosaicjson layer currently
-    tabs = [{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }]
-    if ((info as RasterTileMetadata).band_metadata.length < 2) {
-      tabs = [
-        { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-        { label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
-        ...tabs,
-      ]
-    }
+  if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
+    tabs = [
+      { label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
+      { label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
+    ]
   }
 </script>
 
@@ -57,11 +55,13 @@
           bind:numberOfClasses
           bind:legendType />
       {/if}
-      {#if activeTab === TabNames.HISTOGRAM}
-        <RasterHistogram bind:layer />
-      {/if}
-      {#if activeTab === TabNames.TRANSFORM}
-        <RasterTransform bind:layer />
+      {#if !isRgbTile}
+        {#if activeTab === TabNames.HISTOGRAM}
+          <RasterHistogram bind:layer />
+        {/if}
+        {#if activeTab === TabNames.TRANSFORM}
+          <RasterTransform bind:layer />
+        {/if}
       {/if}
       {#if activeTab === TabNames.OPACITY}
         <OpacityPanel {layer} />

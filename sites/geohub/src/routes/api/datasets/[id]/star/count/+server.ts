@@ -1,16 +1,12 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import { getStarCount } from '$lib/server/helpers'
-const connectionString = DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 export const GET: RequestHandler = async ({ params }) => {
   const dataset_id = params.id
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const stars = await getStarCount(client, dataset_id)
 
@@ -25,7 +21,6 @@ export const GET: RequestHandler = async ({ params }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }

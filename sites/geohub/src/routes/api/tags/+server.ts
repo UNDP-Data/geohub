@@ -1,11 +1,7 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
 import type { Tag } from '$lib/types/Tag'
-import { createDatasetSearchWhereExpression } from '$lib/server/helpers'
-const connectionString = DATABASE_CONNECTION
+import { createDatasetSearchWhereExpression, isSuperuser } from '$lib/server/helpers'
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Tags API - return available keys and values in tag table
@@ -20,8 +16,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
   const user_email = session?.user.email
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const key = url.searchParams.get('key')
     const currentQueryUrl = url.searchParams.get('url')
@@ -33,7 +29,13 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     let whereSql = ''
     if (currentQueryUrl) {
-      const whereExpressesion = await createDatasetSearchWhereExpression(new URL(currentQueryUrl), 'x', user_email)
+      const is_superuser = await isSuperuser(user_email)
+      const whereExpressesion = await createDatasetSearchWhereExpression(
+        new URL(currentQueryUrl),
+        'x',
+        is_superuser,
+        user_email,
+      )
       whereSql = whereExpressesion.sql
       values = [...values, ...whereExpressesion.values]
     }
@@ -71,9 +73,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     const res = await client.query(sql)
     if (res.rowCount === 0) {
-      return new Response(JSON.stringify({ message: `No tag found` }), {
-        status: 404,
-      })
+      return new Response(JSON.stringify({}))
     }
 
     const result: { [key: string]: Tag[] } = {}
@@ -99,7 +99,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }

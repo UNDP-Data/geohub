@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>whitesource/merge-confidence:beta",
+    "config:base",
+    ":preserveSemverRanges",
+    "group:allNonMajor",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "matchPackageNames": ["@types/node", "vite"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchPackagePatterns": ["lint", "prettier"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    }
+  ],
+  "major": {
+    "stabilityDays": 7
+  },
+  "minor": {
+    "stabilityDays": 3
+  },
+  "patch": {
+    "stabilityDays": 2
+  }
+}

@@ -1,19 +1,50 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
+  import { createEventDispatcher } from 'svelte'
   import type { Tag } from '$lib/types/Tag'
+  import { getSelectedTagsFromUrl } from '$lib/helper'
+  import { TagSearchKeys } from '$lib/config/AppConfig'
 
-  export let selectedTags: Tag[] = []
+  const dispatch = createEventDispatcher()
+
+  let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
   export let isClearButtonShown = false
 
-  const handleTagDeleted = (value: Tag) => {
+  const handleTagDeleted = async (value: Tag) => {
     const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value)
     if (tag) {
       selectedTags.splice(selectedTags.indexOf(tag), 1)
       selectedTags = [...selectedTags]
     }
+
+    const apiUrl = $page.url
+    TagSearchKeys.forEach((key) => {
+      apiUrl.searchParams.delete(key.key)
+    })
+    selectedTags?.forEach((t) => {
+      apiUrl.searchParams.append(t.key, t.value)
+    })
+
+    await goto(apiUrl, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+      invalidateAll: true,
+    })
+
+    dispatch('change', {
+      tags: selectedTags,
+      reload: false,
+    })
   }
 
   const handleClear = () => {
     selectedTags = []
+    dispatch('change', {
+      tags: selectedTags,
+      reload: true,
+    })
   }
 
   const handleKeydown = (e: KeyboardEvent) => {
@@ -24,18 +55,21 @@
 </script>
 
 {#if selectedTags.length > 0}
-  <div class="container tag-container p-1 m-0 mb-2 pr-4">
-    {#each selectedTags as tag}
-      <span class="tag is-small m-1 {tag.color}">
-        {tag.value}
-        {#if isClearButtonShown}
-          <button
-            class="delete is-small"
-            on:click={() => handleTagDeleted(tag)} />
-        {/if}
-      </span>
-    {/each}
-    <span
+  <div class="container tag-container tags p-1 m-0 mb-2 pr-4">
+    {#key selectedTags}
+      {#each selectedTags as tag}
+        <div class="tags has-addons p-0 pt-1 m-0">
+          <div class="tag {tag.color}">{tag.value}</div>
+          {#if isClearButtonShown}
+            <div
+              class="tag is-delete tag-delete"
+              on:click={() => handleTagDeleted(tag)}
+              on:keydown={handleKeydown} />
+          {/if}
+        </div>
+      {/each}
+    {/key}
+    <div
       class="icon close-button has-tooltip-arrow has-tooltip-left"
       data-tooltip="Delete all tags"
       role="button"
@@ -43,7 +77,7 @@
       on:click={handleClear}
       on:keydown={handleKeydown}>
       <i class="fas fa-xmark fa-lg" />
-    </span>
+    </div>
   </div>
 {/if}
 
@@ -51,14 +85,14 @@
   .tag-container {
     position: relative;
     border: 1px solid gray;
-    border-radius: 25px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 
     .close-button {
       position: absolute;
-      top: 8px;
-      right: 10px;
+      top: 5px;
+      right: 5px;
       cursor: pointer;
       color: gray;
     }

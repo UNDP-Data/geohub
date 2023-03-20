@@ -1,12 +1,11 @@
 <script lang="ts">
   import Slider from '$components/controls/vector-styles/Slider.svelte'
-  import { LayerTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
 
   export let layer: Layer
 
   let defaultValue = 30
-  let layerType = LayerTypes.HEATMAP
+  let layerType = 'heatmap'
   let maxValue = 100
   let minValue = 1
   let propertyName = 'heatmap-radius'

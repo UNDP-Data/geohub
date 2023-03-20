@@ -9,7 +9,9 @@ CREATE TABLE geohub.dataset
   license    character varying       ,
   bounds     geometry (Polygon, 4326) NOT NULL,
   createdat  timestamp with time zone NOT NULL,
+  created_user character varying(100) NOT NULL,
   updatedat  timestamp with time zone,
+  updated_user character varying(100)   ,
   PRIMARY KEY (id)
 );
 
@@ -140,3 +142,62 @@ CREATE TABLE IF NOT EXISTS geohub.country
     region3_name character varying  NOT NULL,
     CONSTRAINT country_pkey PRIMARY KEY (iso_3)
 )
+
+-- superuser table
+CREATE TABLE geohub.superuser
+(
+    user_email character varying(100) NOT NULL,
+    createdat timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT superuser_pkey PRIMARY KEY (user_email)
+);
+
+ALTER TABLE IF EXISTS geohub.superuser
+    OWNER to undpgeohub;
+
+COMMENT ON TABLE geohub.superuser
+    IS 'this table manages superusers across geohub app';
+
+-- dataset_permission table
+CREATE TABLE geohub.dataset_permission
+(
+    dataset_id character varying NOT NULL,
+    user_email character varying(100) NOT NULL,
+    permission smallint NOT NULL DEFAULT 1,
+    createdat timestamp with time zone NOT NULL DEFAULT now(),
+    updatedat timestamp with time zone,
+    CONSTRAINT dataset_permission_pkey PRIMARY KEY (dataset_id, user_email),
+    CONSTRAINT "FK_dataset_TO_dataset_permission" FOREIGN KEY (dataset_id)
+        REFERENCES geohub.dataset (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+ALTER TABLE IF EXISTS geohub.dataset_permission
+    OWNER to undpgeohub;
+
+COMMENT ON TABLE geohub.dataset_permission
+    IS 'this table manages users'' permission for operating each dataset';
+
+COMMENT ON COLUMN geohub.dataset_permission.permission
+    IS '1: read, 2: read/write, 3: owner';
+
+
+CREATE TABLE geohub.user_settings
+(
+    user_email character varying(100) NOT NULL,
+    settings json NOT NULL,
+    CONSTRAINT user_settings_pkey PRIMARY KEY (user_email)
+);
+
+ALTER TABLE IF EXISTS geohub.user_settings
+    OWNER to undpgeohub;
+
+COMMENT ON TABLE geohub.user_settings
+    IS 'This table stores user settings';
+
+COMMENT ON COLUMN geohub.user_settings.user_email
+    IS 'user email address';
+
+COMMENT ON COLUMN geohub.user_settings.settings
+    IS 'This column stores user settings in json format';

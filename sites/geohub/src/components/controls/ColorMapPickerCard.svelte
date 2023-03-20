@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ColorMapTypes } from '$lib/constants'
+  import type { ColorMapTypes } from '$lib/config/AppConfig'
   import { colorMapStyle } from '$lib/colormaps'
 
   export let colorMapName: string

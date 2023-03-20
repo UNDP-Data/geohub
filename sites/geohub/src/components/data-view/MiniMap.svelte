@@ -1,20 +1,23 @@
 <script lang="ts">
   import maplibregl, { Map, NavigationControl } from 'maplibre-gl'
   import * as pmtiles from 'pmtiles'
-  import { styles } from '$lib/constants'
   import type {
     RasterTileMetadata,
     StacCollection,
-    StacItemFeature,
-    StacItemFeatureCollection,
+    DatasetFeature,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
+    StacItemFeatureCollection,
   } from '$lib/types'
   import { RasterTileData } from '$lib/RasterTileData'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Loader } from '@undp-data/svelte-undp-design'
+  import { MapStyles } from '$lib/config/AppConfig'
+  import { page } from '$app/stores'
 
-  export let feature: StacItemFeature
+  const titilerUrl = $page.data.titilerUrl
+
+  export let feature: DatasetFeature
   export let width = '100%'
   export let height = '100%'
   export let isLoadMap = false
@@ -22,6 +25,7 @@
   export let defaultColormap: string = undefined
   export let layer: VectorLayerTileStatLayer = undefined
 
+  let defaultLineWidth = $page.data.config.LineWidth
   let protocol = new pmtiles.Protocol()
   maplibregl.addProtocol('pmtiles', protocol.tile)
 
@@ -31,7 +35,6 @@
   let isLoading = false
 
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
-
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
   const url: string = feature.properties.url
 
@@ -62,11 +65,11 @@
       previewUrl = await addStacPreview(url)
     } else if (is_raster === true) {
       const rasterInfo = metadata as RasterTileMetadata
-      rasterTile = new RasterTileData(feature, rasterInfo)
+      rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo)
       metadata = await rasterTile.getMetadata()
     } else {
       const vectorInfo = metadata as VectorTileMetadata
-      vectorTile = new VectorTileData(feature, vectorInfo)
+      vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo)
       metadata = await (await vectorTile.getMetadata()).metadata
     }
     return previewUrl
@@ -82,7 +85,7 @@
     isLoading = true
     map = new Map({
       container: mapContainer,
-      style: styles[0].uri,
+      style: MapStyles[0].uri,
       attributionControl: false,
       // interactive: false,
     })
@@ -102,15 +105,23 @@
           metadata = data.metadata
           defaultColormap = data.colormap
         } else {
-          let layerName = layer ? layer.layer : undefined
-          let layerType: 'point' | 'heatmap' = undefined
-          if (layer?.geometry.toLocaleLowerCase() === 'point') {
-            layerType = 'point'
+          if (layer) {
+            let layerName = layer ? layer.layer : undefined
+            let layerType: 'point' | 'heatmap' = undefined
+            if (layer?.geometry.toLocaleLowerCase() === 'point') {
+              layerType = 'point'
+            }
+            const data = await vectorTile.add(map, layerType, undefined, layerName)
+            metadata = data.metadata
+            defaultColor = data.color
+          } else {
+            const vectorInfo = metadata as VectorTileMetadata
+            for (const l of vectorInfo.json.vector_layers) {
+              await vectorTile.add(map, undefined, undefined, l.id)
+            }
           }
-          const data = await vectorTile.add(map, layerType, undefined, layerName)
-          metadata = data.metadata
-          defaultColor = data.color
         }
+        map.resize()
       } finally {
         isLoading = false
       }
@@ -140,6 +151,8 @@
 </div>
 
 <style lang="scss">
+  @import 'maplibre-gl/dist/maplibre-gl.css';
+
   .map-container {
     position: relative;
     text-align: center;

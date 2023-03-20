@@ -1,21 +1,25 @@
-<script>
+<script lang="ts">
   import { getContext } from 'svelte'
-  import { ErrorMessages, StatusTypes } from '$lib/constants'
-  import { bannerMessages } from '$stores'
+  import { toast } from '@zerodevx/svelte-toast'
+  import type { Writable } from 'svelte/store'
 
-  export let num
+  export let num: number
+
+  // Local interface for context
+  interface WizardContext {
+    step: Writable<any>
+    nextStep: () => void
+    prevStep: () => void
+    resetStep: () => void
+    setStep: (step: number) => void
+  }
 
   const getWizardContext = () => {
     const context = getContext('Wizard')
     if (!context) {
-      const bannerErrorMessage = {
-        type: StatusTypes.DANGER,
-        title: 'Error',
-        message: ErrorMessages.COMPONENT_NOT_RENDERED,
-      }
-      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      toast.push('Step Component cannot be rendered outside the Wizard component')
     }
-    return context
+    return context as WizardContext
   }
 
   const { step, nextStep, prevStep, resetStep, setStep } = getWizardContext()

@@ -27,6 +27,12 @@ Then install the project dependencies by running the following command:
 pnpm install
 ```
 
+Install lefthook by the following command. This is required for the first time when you clone from Github.
+
+```bash
+pnpm lefthook install.
+```
+
 #### Step 2: Create a Branch
 
 Create a new branch. Use its name to identify the issue your addressing.
@@ -130,6 +136,12 @@ Add the same issue number in the PR description. Example:
 #### Step 8: CONGRATULATIONS
 
 You have made your contribution to the GeoHub project.
+
+# Guide to make test
+
+The following link for vitest might be useful to make tests.
+
+- [svelte-component-test-recipes](https://github.com/davipon/svelte-component-test-recipes)
 
 # How to create a new issue
 

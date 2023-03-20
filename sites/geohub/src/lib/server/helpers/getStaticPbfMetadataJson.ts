@@ -3,7 +3,7 @@ import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
 import * as pmtiles from 'pmtiles'
 import arraystat from 'arraystat'
 import { mean, std, median } from 'mathjs'
-import { MAP_ATTRIBUTION, UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
+import { attribution, UniqueValueThreshold } from '$lib/config/AppConfig'
 
 /**
  * get metadata json of static pbf
@@ -26,7 +26,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
       bounds: bounds.join(','),
       minzoom: header.minZoom,
       maxzoom: header.maxZoom,
-      attribution: metadata.attribution ?? MAP_ATTRIBUTION,
+      attribution: metadata.attribution ?? attribution,
       description: metadata.description,
       type: metadata.type,
       version: metadata.version,
@@ -43,7 +43,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
         attribute.mean = mean(values)
         attribute.median = median(values)
         attribute.std = std(values)
-        if (values.length > UNIQUE_VALUE_THRESHOLD) {
+        if (values.length > UniqueValueThreshold) {
           const histogram = { count: [], bins: [] }
           arraystat(values).histogram.map((item) => {
             histogram.bins.push(item.max), histogram.count.push(item.nb)
@@ -79,7 +79,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
     }
 
     if (!data.attribution) {
-      data.attribution = MAP_ATTRIBUTION
+      data.attribution = attribution
     }
 
     const layers = await getStats(origin, pbfpath, data.json.tilestats.layers)

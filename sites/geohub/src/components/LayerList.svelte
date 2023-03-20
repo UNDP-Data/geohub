@@ -4,62 +4,46 @@
   import { page } from '$app/stores'
   import RasterLayer from '$components/RasterLayer.svelte'
   import VectorLayer from '$components/VectorLayer.svelte'
-  import { map, layerList, indicatorProgress } from '$stores'
-  import { LayerTypes, TabNames } from '$lib/constants'
+  import { map, layerList } from '$stores'
+  import { TabNames } from '$lib/config/AppConfig'
   import { getLayerStyle } from '$lib/helper'
   import Notification from './controls/Notification.svelte'
   import LayerOrder from './LayerOrder.svelte'
-  import type { LegendState } from '$lib/types'
+  import type { SavedMapStyle } from '$lib/types'
 
   export let contentHeight: number
   export let activeTab: string
+
   let layerHeaderHeight = 39
 
   $: totalHeight = contentHeight - layerHeaderHeight
 
-  const getLayerListFromStyle = () => {
-    return new Promise<LegendState>((resolve) => {
-      try {
-        $indicatorProgress = true
-        const styleInfo = $page.data.style
-        if (!styleInfo || !styleInfo?.legendState) {
-          $page.url.searchParams.delete('style')
-          if ($page.url.pathname === '/viewer') {
-            goto(`../?${$page.url.searchParams.toString()}`)
-          } else {
-            goto(`?${$page.url.searchParams.toString()}`)
-          }
-          resolve({})
-        }
+  let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style
+  savedStylePromise?.then((styleInfo) => {
+    if (!styleInfo) {
+      $page.url.searchParams.delete('style')
+      goto(`?${$page.url.searchParams.toString()}`)
+      return
+    }
 
-        const style: StyleSpecification = styleInfo.style
-        $map.setStyle(style)
+    const style: StyleSpecification = styleInfo.style
+    $map.setStyle(style)
 
-        $map.flyTo({
-          center: [style.center[0], style.center[1]],
-          zoom: style.zoom,
-          bearing: style.bearing,
-          pitch: style.pitch,
-        })
-        activeTab = TabNames.LAYERS
-        if (!$map.isStyleLoaded()) {
-          $map.once('styledata', () => {
-            $layerList = styleInfo.layers
-          })
-        } else {
-          $layerList = styleInfo.layers
-        }
-      } finally {
-        $indicatorProgress = false
-      }
+    $map.flyTo({
+      center: [style.center[0], style.center[1]],
+      zoom: style.zoom,
+      bearing: style.bearing,
+      pitch: style.pitch,
     })
-  }
-
-  $: if ($map) {
-    $map.once('load', () => {
-      getLayerListFromStyle()
-    })
-  }
+    activeTab = TabNames.LAYERS
+    if (!$map.isStyleLoaded()) {
+      $map.once('styledata', () => {
+        $layerList = styleInfo.layers
+      })
+    } else {
+      $layerList = styleInfo.layers
+    }
+  })
 </script>
 
 {#if $layerList?.length > 0}
@@ -82,7 +66,7 @@
 
   {#each $layerList as layer (layer.id)}
     <div class="box p-0 mx-1 my-3">
-      {#if getLayerStyle($map, layer.id).type === LayerTypes.RASTER}
+      {#if getLayerStyle($map, layer.id).type === 'raster'}
         <RasterLayer {layer} />
       {:else}
         <VectorLayer {layer} />

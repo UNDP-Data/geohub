@@ -2,8 +2,7 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
   import { spriteImageList } from '$stores'
-  import type { Tab } from '@undp-data/svelte-undp-design/package/interfaces'
-  import { Tabs } from '@undp-data/svelte-undp-design'
+  import { Tabs, type Tab } from '@undp-data/svelte-undp-design'
 
   export let iconImageAlt: string
 

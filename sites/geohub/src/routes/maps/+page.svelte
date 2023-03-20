@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import type { PageData } from './$types'
   import MapStyleCardList from '$components/maps/MapStyleCardList.svelte'
-  import { Header, Footer, Stats } from '@undp-data/svelte-undp-design'
-  import type { HeaderLink, StatsCard } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Header, Footer, Stats, type HeaderLink, type StatsCard } from '@undp-data/svelte-undp-design'
   import UserAccount from '$components/UserAccount.svelte'
-  import { footerItems } from '$lib/constants'
-  import { createHeaderLinks } from '$lib/helper'
+  import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
+
+  export let data: PageData
 
   let innerWidth: number
   $: isMobile = innerWidth < 768 ? true : false
 
   let headerHeight: number
 
-  let links: HeaderLink[] = createHeaderLinks(['home', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'data', 'dashboard', 'userguide'])
 
-  let stats: StatsCard[] = $page.data.stats
+  let stats: StatsCard[] = data.stats
 
   let title = 'GeoHub | Maps'
 </script>
@@ -65,14 +65,9 @@
 
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
-  {footerItems} />
+  footerItems={FooterItems} />
 
 <style lang="scss">
-  @import '../../styles/geohubstyle.scss';
-  @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css';
-  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-  @import 'bulma-divider/dist/css/bulma-divider.min.css';
-
   .header {
     position: fixed;
     width: 100%;

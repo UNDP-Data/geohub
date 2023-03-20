@@ -2,7 +2,7 @@ import { VectorTile } from '@mapbox/vector-tile'
 import Pbf from 'pbf'
 import arraystat from 'arraystat'
 import { mean, std, median } from 'mathjs'
-import { UNIQUE_VALUE_THRESHOLD } from '$lib/constants'
+import { UniqueValueThreshold } from '$lib/config/AppConfig'
 
 // fetch vector tiles info from
 export const fetchVectorTileInfo = async (path: string, layerName: string) => {
@@ -43,24 +43,32 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
       const feature = layer.feature(featureIndex)
       geometryType = feature.type
       if (!feature.properties?.[property]) continue
-      layer['_keys'][property] = propsObj[property].push(feature.properties[property])
+      let value = Number(feature.properties[property])
+      if (!value) {
+        value = feature.properties[property]
+      }
+      layer['_keys'][property] = propsObj[property].push(value)
     }
 
-    if (isNaN(propsObj[property][0])) {
+    const firstValue = propsObj[property][0]
+    if (!firstValue) return
+    const dataType = String(typeof firstValue)
+
+    if (isNaN(firstValue)) {
       // The first value is not a number, mathematical operations will result in NaN
       const values = [...new Set(propsObj[property])]
       const attribute = {
         attribute: property,
-        type: String(typeof propsObj[property][0]),
+        type: dataType,
         count: propsObj[property].length,
-        values: values.length > UNIQUE_VALUE_THRESHOLD ? values.slice(0, 100) : values,
+        values: values.length > UniqueValueThreshold ? values.slice(0, 100) : values,
       }
       // Add the attribute to the attributes array
       attributesArray.push(attribute)
     } else {
       const attribute = {
         attribute: property,
-        type: String(typeof propsObj[property][0]),
+        type: dataType,
         count: propsObj[property].length,
         min: Math.min(...propsObj[property]),
         max: Math.max(...propsObj[property]),
@@ -73,7 +81,7 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
       // Look for the unique values, if the number of unique values is less/equal to 25,
       // this is a unique value attribute
       const uniqueValues = [...new Set(propsObj[property])]
-      if (uniqueValues.length <= UNIQUE_VALUE_THRESHOLD) {
+      if (uniqueValues.length <= UniqueValueThreshold) {
         attribute['values'] = [...new Set(propsObj[property])].sort((previous: number, after: number) => {
           return previous - after
         })

@@ -8,24 +8,19 @@
     TerrainControl,
     type TerrainSpecification,
   } from 'maplibre-gl'
-  import * as pmtiles from 'pmtiles'
   import '@watergis/maplibre-gl-export/css/styles.css'
 
   import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte'
   import StyleSwicher from '@undp-data/style-switcher'
   import CurrentLocation from '@undp-data/current-location'
-  import { MAP_ATTRIBUTION, styles } from '$lib/constants'
   import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper'
   import type { Sprite } from '$lib/types'
   import { spriteImageList } from '$stores'
-  import { PUBLIC_AZURE_URL } from '$lib/variables/public'
   import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte'
+  import { attribution, MapStyles } from '$lib/config/AppConfig'
 
   let container: HTMLDivElement
   export let map: Map
-
-  let protocol = new pmtiles.Protocol()
-  maplibregl.addProtocol('pmtiles', protocol.tile)
 
   const terrainOptions: TerrainSpecification = {
     source: 'terrarium',
@@ -36,14 +31,14 @@
     return new Promise<void>((resolve) => {
       map = new Map({
         container,
-        style: styles[0].uri,
+        style: MapStyles[0].uri,
         center: [0, 0],
         zoom: 3,
         hash: true,
         attributionControl: false,
       })
 
-      map.addControl(new AttributionControl({ compact: true, customAttribution: MAP_ATTRIBUTION }), 'bottom-right')
+      map.addControl(new AttributionControl({ compact: true, customAttribution: attribution }), 'bottom-right')
       map.addControl(
         new NavigationControl({
           visualizePitch: true,
@@ -128,13 +123,12 @@
 {#if map}
   <CurrentLocation
     bind:map
-    azureBaseUrl={PUBLIC_AZURE_URL}
     isHover={false}
     position="top-left" />
   <MapQueryInfoControl bind:map />
   <StyleSwicher
     bind:map
-    {styles}
+    styles={MapStyles}
     position="bottom-left" />
   <LayerVisibilitySwitcher
     bind:map

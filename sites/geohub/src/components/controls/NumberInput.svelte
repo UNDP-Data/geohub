@@ -12,11 +12,12 @@
   const handleIncrementDecrementClasses = (operation: string) => {
     if (operation === '+' && value < maxValue) {
       value = new BigNumber(value).plus(step).toNumber()
+      dispatch('change', { value })
     }
     if (operation === '-' && value > minValue) {
       value = new BigNumber(value).minus(step).toNumber()
+      dispatch('change', { value })
     }
-    dispatch('change', { value })
   }
 
   // round number based on length of decimal places

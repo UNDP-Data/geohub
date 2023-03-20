@@ -6,16 +6,7 @@
   import { hexToCSSFilter } from 'hex-to-css-filter'
   import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import NumberInput from '$components/controls/NumberInput.svelte'
-  import {
-    ClassificationMethodNames,
-    ClassificationMethodTypes,
-    COLOR_CLASS_COUNT,
-    COLOR_CLASS_COUNT_MAXIMUM,
-    COLOR_CLASS_COUNT_MINIMUM,
-    NO_RANDOM_SAMPLING_POINTS,
-    UNIQUE_VALUE_THRESHOLD,
-    VectorApplyToTypes,
-  } from '$lib/constants'
+  import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/config/AppConfig'
   import {
     getIntervalList,
     getLayerProperties,
@@ -35,8 +26,7 @@
   } from '$lib/types'
   import { map, spriteImageList } from '$stores'
   import PropertySelect from './vector-styles/PropertySelect.svelte'
-  import { Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Radios, type Radio } from '@undp-data/svelte-undp-design'
   import { getMaxValueOfCharsInIntervals } from '$lib/helper/getMaxValueOfCharsInIntervals'
   import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
   import ColorMapPicker from './ColorMapPicker.svelte'
@@ -45,6 +35,14 @@
   import IconColor from './vector-styles/IconColor.svelte'
   import IconSize from '$components/controls/vector-styles/IconSize.svelte'
   import VectorLine from './VectorLine.svelte'
+  import { page } from '$app/stores'
+  import {
+    NumberOfClassesMaximum,
+    NumberOfClassesMinimum,
+    NumberOfRandomSamplingPoints,
+    UniqueValueThreshold,
+    VectorApplyToTypes,
+  } from '$lib/config/AppConfig'
 
   export let applyToOption: VectorApplyToTypes
   export let layer: Layer
@@ -205,10 +203,10 @@
     colorMapRows = []
 
     const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
-      (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+      (l) => l.layer === layerStyle['source-layer'],
     )
     const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue)
-    stat.values && stat.values.length <= UNIQUE_VALUE_THRESHOLD ? (hasUniqueValues = true) : (hasUniqueValues = false)
+    stat.values && stat.values.length <= UniqueValueThreshold ? (hasUniqueValues = true) : (hasUniqueValues = false)
     if (!layerMax) {
       if (stat?.max) {
         layerMax = stat.max
@@ -224,7 +222,7 @@
         end: hasUniqueValues ? value : index < stops.length - 1 ? stops[index + 1][0] : layerMax,
       })
     })
-    numberOfClasses = colorMapRows.length === 0 ? COLOR_CLASS_COUNT : colorMapRows.length
+    numberOfClasses = colorMapRows.length === 0 ? $page.data.config.NumberOfClasses : colorMapRows.length
   }
 
   const handleColormapNameChanged = () => {
@@ -264,7 +262,7 @@
     const tilestats = metadata.json?.tilestats
     if (tilestats) {
       const tileStatLayer = tilestats?.layers.find(
-        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == getLayerStyle($map, layer.id)['source-layer'],
+        (tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layerStyle['source-layer'],
       )
 
       if (tileStatLayer) {
@@ -274,7 +272,7 @@
 
         if (tileStatLayerAttribute) {
           const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
-            (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
+            (l) => l.layer === layerStyle['source-layer'],
           )
           const stat = stats?.attributes.find((val) => val.attribute === tileStatLayerAttribute.attribute)
           const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std'])
@@ -288,13 +286,16 @@
             layerMin = stat.min
 
             if (!randomSample[stat.attribute]) {
-              randomSample[stat.attribute] = getSampleFromInterval(stat.min, stat.max, NO_RANDOM_SAMPLING_POINTS)
+              randomSample[stat.attribute] = getSampleFromInterval(stat.min, stat.max, NumberOfRandomSamplingPoints)
             }
             const sample = randomSample[stat.attribute]
 
             const propertySelectValues = []
             const values = stat.values
-            if (values && values.length <= UNIQUE_VALUE_THRESHOLD) {
+            if (
+              (values && values.length === 1) ||
+              (stat.type !== 'number' && values && values.length > 0 && values.length <= UniqueValueThreshold)
+            ) {
               hasUniqueValues = true
               applyToOption = VectorApplyToTypes.COLOR
 
@@ -351,6 +352,7 @@
     const statLayer = vectorInfo.json.tilestats.layers.find((l) => l.layer === layerStyle['source-layer'])
     const attribute = statLayer?.attributes.find((attr) => attr.attribute === propertySelectValue)
     const vectorLegendType = attribute.type !== 'number' ? 'categorical' : 'interval'
+    let defaultColorValue = 'rgba(0,0,0,0)'
     if (layerType === 'fill') {
       let stops = colorMapRows.map((row) => {
         const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`
@@ -373,11 +375,13 @@
         property: propertySelectValue,
         type: vectorLegendType,
         stops: outlineStops,
+        default: defaultColorValue,
       })
       $map.setPaintProperty(layer.id, 'fill-color', {
         type: vectorLegendType,
         property: propertySelectValue,
         stops: stops,
+        default: defaultColorValue,
       })
     } else {
       let stops = colorMapRows.map((row) => {
@@ -402,6 +406,7 @@
               type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
+              default: defaultColorValue,
             })
           } else if (layerType === 'line') {
             $map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id))
@@ -409,6 +414,7 @@
               type: vectorLegendType,
               property: propertySelectValue,
               stops: stops,
+              default: defaultColorValue,
             })
           }
         } else if (applyToOption === VectorApplyToTypes.SIZE) {
@@ -436,6 +442,7 @@
               property: propertySelectValue,
               type: 'interval',
               stops: newStops,
+              default: 0,
             })
           } else if (layerType === 'line') {
             const newStops = stops.map((item) => [item[0] as number, (item[1] as number) / $map.getZoom()])
@@ -446,6 +453,7 @@
               property: propertySelectValue,
               type: 'interval',
               stops: newStops,
+              default: 0,
             })
           }
         }
@@ -604,8 +612,8 @@
           <div class="control">
             <NumberInput
               bind:value={numberOfClasses}
-              minValue={COLOR_CLASS_COUNT_MINIMUM}
-              maxValue={COLOR_CLASS_COUNT_MAXIMUM}
+              minValue={NumberOfClassesMinimum}
+              maxValue={NumberOfClassesMaximum}
               on:change={handleIncrementDecrementClasses} />
           </div>
         </div>

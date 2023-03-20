@@ -1,7 +1,7 @@
 <script lang="ts">
   import { marked } from 'marked'
   import Time from 'svelte-time'
-  import type { RasterTileMetadata, StacItemFeature, VectorTileMetadata } from '$lib/types'
+  import type { RasterTileMetadata, DatasetFeature, VectorTileMetadata } from '$lib/types'
   import { CtaLink, Download } from '@undp-data/svelte-undp-design'
   import Star from './Star.svelte'
 
@@ -10,7 +10,7 @@
 
   const dispatch = createEventDispatcher()
 
-  export let feature: StacItemFeature = undefined
+  export let feature: DatasetFeature = undefined
   export let metadata: RasterTileMetadata | VectorTileMetadata = undefined
 
   const is_raster: boolean = feature.properties.is_raster as unknown as boolean
@@ -22,6 +22,8 @@
 
   const isStac = is_raster && stacType ? true : false
   const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf')
+
+  const unit = tags?.find((t) => t.key === 'unit')?.value
 
   let attribution = createAttributionFromTags(tags)
   $: if (metadata) {
@@ -85,13 +87,15 @@
         {#if feature.properties.description}
           <p><b>Description: </b>{@html marked(feature.properties.description)}</p>
         {/if}
+        <p>
+          <b>License: </b>{feature.properties.license?.length > 0
+            ? feature.properties.license
+            : 'License not specified'}
+        </p>
         {#if metadata}
           {#if metadata['band_metadata']}
             {#if metadata['band_metadata'][0][1]?.RepresentationType}
               <p><b>Representation Type: </b> {metadata['band_metadata'][0][1].RepresentationType}</p>
-            {/if}
-            {#if metadata['band_metadata'][0][1]?.Unit}
-              <p><b>Units: </b> {metadata['band_metadata'][0][1].Unit}</p>
             {/if}
             <!-- {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
               <p><b>Minimum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MINIMUM}</p>
@@ -113,12 +117,19 @@
             {/if} -->
           {/if}
         {/if}
+        {#if unit}
+          <p><b>Units: </b> {unit}</p>
+        {/if}
         <p><b>Source: </b> {@html attribution}</p>
         <p>
           <b>Updated at: </b>
           <Time
             timestamp={feature.properties.updatedat}
             format="h:mm A, MMMM D, YYYY" />
+        </p>
+        <p>
+          <b>Updated by: </b>
+          {feature.properties.updated_user}
         </p>
         {#if file}
           <Download

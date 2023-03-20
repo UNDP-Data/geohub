@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import MainApp from '$components/MainApp.svelte'
   import type { StyleSpecification } from 'maplibre-gl'
+  import App from '$components/App.svelte'
 
   $: style = $page.data?.style?.style as StyleSpecification
 
@@ -33,18 +33,11 @@
     }
   </style>
 </svelte:head>
-
-<MainApp />
+<App />
 
 <style
   global
   lang="scss">
-  @import '../styles/geohubstyle.scss';
-  @import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-  @import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-  @import 'bulma-switch/dist/css/bulma-switch.min.css';
-  @import 'bulma-divider/dist/css/bulma-divider.min.css';
-
   body,
   html {
     font-family: ProximaNova, sans-serif;

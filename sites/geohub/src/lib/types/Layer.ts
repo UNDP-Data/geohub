@@ -1,6 +1,6 @@
-import type { ClassificationMethodTypes } from '$lib/constants'
+import type { ClassificationMethodTypes } from '$lib/config/AppConfig'
 import type { RasterTileMetadata } from './RasterTileMetadata'
-import type { StacItemFeature } from './StacItemFeature'
+import type { DatasetFeature } from './DatasetFeature'
 import type { VectorTileMetadata } from './VectorTileMetadata'
 
 export interface Layer {
@@ -9,7 +9,7 @@ export interface Layer {
   info?: RasterTileMetadata | VectorTileMetadata
   children?: Layer[]
   parentId?: string
-  dataset: StacItemFeature
+  dataset?: DatasetFeature
   colorMapName?: string
   classificationMethod?: ClassificationMethodTypes
 }

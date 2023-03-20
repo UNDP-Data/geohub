@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { DEFAULT_LINE_WIDTH } from './constants'
-import type { StacItemFeature, VectorTileMetadata } from './types'
+import type { DatasetFeature, VectorTileMetadata } from './types'
 import {
   LngLatBounds,
   type FillLayerSpecification,
@@ -13,14 +12,16 @@ import {
 import chroma from 'chroma-js'
 
 export class VectorTileData {
-  private feature: StacItemFeature
+  private feature: DatasetFeature
   private url: string
   private metadata: VectorTileMetadata
+  private defaultLineWidth: number
 
-  constructor(feature: StacItemFeature, metadata?: VectorTileMetadata) {
+  constructor(feature: DatasetFeature, defaultLineWidth: number, metadata?: VectorTileMetadata) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
+    this.defaultLineWidth = defaultLineWidth
   }
 
   public getMetadata = async () => {
@@ -41,7 +42,9 @@ export class VectorTileData {
     } else {
       // static
       if (this.url.startsWith('pmtiles://')) {
-        metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(this.url)}`
+        const layerURL = new URL(this.url.replace('pmtiles://', ''))
+        const pmtilesUrl = `${layerURL.origin}${layerURL.pathname}${layerURL.search}`
+        metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=pmtiles://${encodeURIComponent(pmtilesUrl)}`
       } else {
         const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'))
         const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${layerURL.search}`
@@ -141,7 +144,7 @@ export class VectorTileData {
           },
           paint: {
             'line-color': color.hex(),
-            'line-width': DEFAULT_LINE_WIDTH,
+            'line-width': this.defaultLineWidth,
           },
         }
         break

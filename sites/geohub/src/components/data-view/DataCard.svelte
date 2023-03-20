@@ -3,10 +3,10 @@
   import type {
     AssetOptions,
     RasterTileMetadata,
-    StacItemFeature,
-    StacItemFeatureCollection,
+    DatasetFeature,
     VectorLayerTileStatLayer,
     VectorTileMetadata,
+    StacItemFeatureCollection,
   } from '$lib/types'
   import { VectorTileData } from '$lib/VectorTileData'
   import { Accordion } from '@undp-data/svelte-undp-design'
@@ -17,12 +17,16 @@
   import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte'
   import DataVectorCard from '$components/data-view/DataVectorCard.svelte'
   import { loadMap } from '$lib/helper'
+  import { page } from '$app/stores'
 
-  export let feature: StacItemFeature
+  const titilerUrl = $page.data.titilerUrl
+
+  export let feature: DatasetFeature
   export let isExpanded: boolean
   export let isStarOnly = false
 
-  let nodeRef
+  let defaultLineWidth = $page.data.config.LineWidth
+  let nodeRef: HTMLElement
   let defaultColor: string = undefined
   let defaultColormap: string = undefined
   let clientWidth: number
@@ -45,10 +49,10 @@
   let isGettingMetadata: Promise<void>
   const getMetadata = async () => {
     if (is_raster) return
-    const vectorTile = new VectorTileData(feature)
+    const vectorTile = new VectorTileData(feature, defaultLineWidth)
     const res = await vectorTile.getMetadata()
     metadata = res.metadata
-    tilestatsLayers = res.metadata.json.tilestats.layers
+    tilestatsLayers = res.metadata.json?.tilestats?.layers
   }
 
   $: {
@@ -78,7 +82,7 @@
         } else {
           // COG
           const rasterInfo = metadata as RasterTileMetadata
-          const rasterTile = new RasterTileData(feature, rasterInfo)
+          const rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo)
           const data = await rasterTile.add($map, defaultColormap)
           $layerList = [
             {
@@ -161,7 +165,7 @@
 </script>
 
 <div bind:this={nodeRef}>
-  {#if tilestatsLayers.length === 1}
+  {#if tilestatsLayers?.length === 1}
     <DataVectorCard
       bind:layer={tilestatsLayers[0]}
       bind:feature
@@ -176,7 +180,7 @@
       bind:isExpanded>
       <div slot="button">
         {#await isGettingMetadata then}
-          {#if tilestatsLayers.length < 2}
+          {#if tilestatsLayers?.length < 2}
             {#if !stacType && !isExpanded}
               <AddLayerButton
                 bind:isLoading={layerLoading}

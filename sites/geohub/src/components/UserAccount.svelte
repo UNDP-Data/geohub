@@ -3,10 +3,12 @@
   import { page } from '$app/stores'
   import { Button } from '@undp-data/svelte-undp-design'
   import chroma from 'chroma-js'
+  import { goto } from '$app/navigation'
 
   let panelWidth = '350px'
   let dropdownActive = false
   let innerWidth = 0
+
   $: isMobile = innerWidth < 768
 
   const name = $page.data.session?.user.name
@@ -14,6 +16,9 @@
 
   const handleDropdown = () => {
     dropdownActive = !dropdownActive
+  }
+  const gotToSettings = async () => {
+    await goto('/settings')
   }
 </script>
 
@@ -62,6 +67,22 @@
           <hr class="dropdown-divider" />
           <p>{$page.data.session.user.email}</p>
         </div>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div
+          on:click={gotToSettings}
+          class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center">
+          <div class="is-flex-grow-1">
+            <p class="pl-2">Settings</p>
+          </div>
+          <div class="is-flex-shrink-0">
+            <span class="icon is-small">
+              <i
+                class="fas fa-chevron-right"
+                aria-hidden="true" />
+            </span>
+          </div>
+        </div>
+        <hr class="dropdown-divider" />
         <div class="dropdown-item">
           <Button
             title="Sign Out"
@@ -97,6 +118,13 @@
 
     .name {
       font-size: large;
+    }
+  }
+
+  .settings-div {
+    cursor: pointer;
+    &:hover {
+      background-color: #f5f5f5;
     }
   }
 </style>

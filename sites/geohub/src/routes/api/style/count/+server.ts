@@ -1,17 +1,13 @@
 import type { RequestHandler } from './$types'
-import pkg from 'pg'
-const { Pool } = pkg
-
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
-const connectionString = DATABASE_CONNECTION
+import DatabaseManager from '$lib/server/DatabaseManager'
 
 /**
  * Get the total count of styles stored in database
  * GET: ./api/style/count
  */
 export const GET: RequestHandler = async () => {
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const query = {
       text: `SELECT count(*) as count FROM geohub.style`,
@@ -26,7 +22,6 @@ export const GET: RequestHandler = async () => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }

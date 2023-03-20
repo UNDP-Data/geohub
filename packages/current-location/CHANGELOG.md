@@ -1,5 +1,23 @@
 # @undp-data/current-location
 
+## 0.1.2
+
+### Patch Changes
+
+- ba711fb2: fix: deleted PUBLIC_AZURE_URL from .env
+
+## 0.1.1
+
+### Patch Changes
+
+- 1bf2a18: refactor: use $env/dynamic/private directly for server side variables. and use $env/static/public directly in frontend side
+
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
 ## 0.0.4
 
 ### Patch Changes

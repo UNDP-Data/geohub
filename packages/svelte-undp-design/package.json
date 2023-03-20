@@ -1,20 +1,18 @@
 {
 	"name": "@undp-data/svelte-undp-design",
-	"version": "0.0.15",
+	"version": "0.2.1",
 	"description": "This package is to manage svelte components for UNDP design system in GeoHub",
-	"main": "package/index.js",
-	"files": [
-		"package"
-	],
 	"scripts": {
 		"dev": "vite dev",
 		"build": "svelte-kit sync && svelte-package",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test": "vitest --run --passWithNoTests",
+		"coverage": "vitest run --coverage --passWithNoTests",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build -o ../../sites/geohub/static/storybook"
+		"build-storybook": "storybook build"
 	},
 	"private": false,
 	"repository": {
@@ -28,42 +26,58 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@storybook/addon-essentials": "7.0.0-beta.12",
-		"@storybook/addon-interactions": "7.0.0-beta.12",
-		"@storybook/addon-links": "7.0.0-beta.12",
-		"@storybook/blocks": "7.0.0-beta.12",
-		"@storybook/svelte": "7.0.0-beta.12",
-		"@storybook/sveltekit": "7.0.0-beta.12",
-		"@storybook/testing-library": "^0.0.13",
-		"@sveltejs/adapter-auto": "^1.0.0",
-		"@sveltejs/kit": "^1.0.11",
-		"@sveltejs/package": "^1.0.2",
-		"@typescript-eslint/eslint-plugin": "^5.48.1",
-		"@typescript-eslint/parser": "^5.48.1",
-		"bulma": "^0.9.4",
-		"eslint": "^8.31.0",
+		"@mdx-js/react": "^2.3.0",
+		"@storybook/addon-essentials": "7.0.0-rc.5",
+		"@storybook/addon-interactions": "7.0.0-rc.5",
+		"@storybook/addon-links": "7.0.0-rc.5",
+		"@storybook/blocks": "7.0.0-rc.5",
+		"@storybook/mdx2-csf": "^0.0.4",
+		"@storybook/source-loader": "^6.5.16",
+		"@storybook/svelte": "7.0.0-rc.5",
+		"@storybook/sveltekit": "7.0.0-rc.5",
+		"@storybook/testing-library": "0.0.14-next.1",
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/package": "^2.0.2",
+		"@testing-library/svelte": "^3.2.2",
+		"@testing-library/user-event": "^14.4.3",
+		"@typescript-eslint/eslint-plugin": "^5.53.0",
+		"@typescript-eslint/parser": "^5.53.0",
+		"@vitest/coverage-istanbul": "^0.29.2",
+		"eslint": "^8.34.0",
 		"eslint-config-prettier": "^8.6.0",
-		"eslint-plugin-storybook": "^0.6.9",
+		"eslint-plugin-storybook": "^0.6.11",
 		"eslint-plugin-svelte3": "^4.0.0",
-		"prettier": "^2.8.2",
+		"jsdom": "^21.1.0",
+		"prettier": "^2.8.4",
 		"prettier-plugin-svelte": "^2.9.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"sass": "^1.57.1",
-		"storybook": "7.0.0-beta.12",
-		"svelte-check": "^2.10.3",
-		"svelte-preprocess": "^5.0.0",
-		"tslib": "^2.4.1",
-		"typescript": "^4.9.4",
-		"vite": "^4.0.4"
+		"sass": "^1.58.3",
+		"storybook": "7.0.0-rc.5",
+		"svelte-check": "^3.0.3",
+		"svelte-htm": "^1.2.0",
+		"tslib": "^2.5.0",
+		"typescript": "^4.9.5",
+		"vite": "^4.1.4",
+		"vitest": "^0.29.2"
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/kit": "^1.8.3",
 		"filesize": "^10.0.6",
-		"svelte": "^3.55.0",
-		"svelte-carousel": "^1.0.20"
+		"svelte": "^3.55.1",
+		"svelte-carousel": "^1.0.23"
 	},
 	"peerDependencies": {
-		"svelte": "^3.55.0"
-	}
+		"@sveltejs/kit": "^1.8.3",
+		"svelte": "^3.55.1"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		}
+	},
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts"
 }

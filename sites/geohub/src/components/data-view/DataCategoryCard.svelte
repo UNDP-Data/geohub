@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
-  import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { Breadcrumb } from '@undp-data/svelte-undp-design'
 
   export let category: Breadcrumb
   export let size: 'small' | 'medium' = 'medium'
@@ -20,8 +20,11 @@
     <figure class="category image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
       {#if category.icon.startsWith('fa')}
         <i class="{category.icon} fa-4x" />
+      {:else if category.icon.startsWith('fi')}
+        <span class={category.icon} />
       {:else}
         <img
+          class="logo-image"
           src={category.icon}
           alt="{category.name}_image" />
       {/if}
@@ -38,6 +41,16 @@
   .container {
     .category {
       cursor: pointer;
+
+      .logo-image {
+        max-height: 64px !important;
+      }
+
+      .fi {
+        width: 64px !important;
+        height: 64px !important;
+        line-height: 2em !important;
+      }
     }
 
     .center {

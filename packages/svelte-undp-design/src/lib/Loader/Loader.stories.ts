@@ -6,17 +6,14 @@ import Loader from './Loader.svelte';
 const meta = {
 	title: 'Example/Loader',
 	component: Loader,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		size: {
 			type: 'string',
 			description: 'Size of the loader',
-			defaultValue: 'medium'
-		},
-		parameters: {
-			size: {
-				values: ['x-small', 'small', 'medium', 'large']
-			}
+			defaultValue: 'medium',
+			constrol: { type: 'select' },
+			options: ['small', 'medium', 'large']
 		}
 	}
 } satisfies Meta<Loader>;
@@ -26,5 +23,25 @@ type Story = StoryObj<typeof meta>;
 
 // More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args
 export const Primary: Story = {
-	args: {}
+	args: {
+		size: 'medium'
+	}
+};
+
+export const Small: Story = {
+	args: {
+		size: 'small'
+	}
+};
+
+export const Medium: Story = {
+	args: {
+		size: 'medium'
+	}
+};
+
+export const Large: Story = {
+	args: {
+		size: 'large'
+	}
 };

@@ -1,31 +1,27 @@
 <script lang="ts">
-  import type {
-    BannerMessage,
-    RasterTileMetadata,
-    StacItemFeature,
-    VectorLayerTileStatLayer,
-    VectorTileMetadata,
-  } from '$lib/types'
-  import { Accordion, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
+  import type { DatasetFeature, RasterTileMetadata, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types'
+  import { Accordion, Radios, type Radio } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
-  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
-  import { StatusTypes } from '$lib/constants'
+  import { map, layerList, indicatorProgress } from '$stores'
   import { VectorTileData } from '$lib/VectorTileData'
   import MiniMap from './MiniMap.svelte'
   import DataCardInfo from './DataCardInfo.svelte'
   import { loadMap } from '$lib/helper'
   import { createEventDispatcher } from 'svelte'
+  import { toast } from '@zerodevx/svelte-toast'
+  import { page } from '$app/stores'
 
   const dispatch = createEventDispatcher()
 
   export let layer: VectorLayerTileStatLayer
-  export let feature: StacItemFeature
+  export let feature: DatasetFeature
   export let isExpanded = false
   export let defaultColor: string
   export let metadata: RasterTileMetadata | VectorTileMetadata
   export let isShowInfo = false
 
+  let defaultLineWidth = $page.data.config.LineWidth
+  let vectorInfo = metadata as VectorTileMetadata
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
 
@@ -67,7 +63,7 @@
         layerType = polygonVectorType
       }
       const vectorInfo = metadata as VectorTileMetadata
-      const vectorTile = new VectorTileData(feature, vectorInfo)
+      const vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo)
       const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`
@@ -85,13 +81,7 @@
       ]
       await loadMap($map)
     } catch (err) {
-      const bannerErrorMessage: BannerMessage = {
-        type: StatusTypes.WARNING,
-        title: 'Whoops! Something went wrong.',
-        message: err.message,
-        error: err,
-      }
-      bannerMessages.update((data) => [...data, bannerErrorMessage])
+      toast.push(err.message)
       console.error(err)
     } finally {
       $indicatorProgress = false
@@ -105,7 +95,7 @@
 </script>
 
 <Accordion
-  headerTitle={layer.layer}
+  headerTitle={vectorInfo.json.vector_layers.length > 1 ? layer.layer : feature.properties.name}
   bind:isExpanded
   fontSize={isShowInfo ? 'medium' : 'small'}>
   <div slot="button">

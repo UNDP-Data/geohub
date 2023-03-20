@@ -1,8 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite'
+import { defineConfig } from 'vitest/config'
 import { resolve } from 'path'
-import { UserConfig } from 'vite'
 
-const config: UserConfig = {
+export default defineConfig({
   plugins: [sveltekit()],
   ssr: {
     noExternal: [/^@material(?:-extra)?\//, 'vega-embed', 'svelte-carousel', 'simply-reactive'],
@@ -13,15 +13,21 @@ const config: UserConfig = {
       $stores: resolve('./src/stores/index.ts'),
     },
   },
-  // optimizeDeps: {
-  //   include: ['lodash.get', 'lodash.isequal', 'lodash.clonedeep'],
-  // },
   server: {
     fs: {
       // Allow serving files from one level up to the project root
       allow: ['../..'],
     },
   },
-}
-
-export default config
+  test: {
+    include: ['src/**/*.{test,spec}.{js,ts}'],
+    threads: false,
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./setupTest.ts'],
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text', 'json', 'html'],
+    },
+  },
+})

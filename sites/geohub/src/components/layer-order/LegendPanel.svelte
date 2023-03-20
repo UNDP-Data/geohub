@@ -20,10 +20,6 @@
       map.on('moveend', updateLayers)
       map.on('styledata', updateLayers)
     }
-
-    if (relativeLayers && Object.keys(relativeLayers).length === 0) {
-      onlyRelative = false
-    }
   }
 
   $: onlyRendered, updateLayers()
@@ -73,7 +69,7 @@
     handleStyleChanged()
   }
 
-  const drop = (event: any, target: number, layer?: LayerSpecification) => {
+  const drop = (event, target: number, layer?: LayerSpecification) => {
     event.dataTransfer.dropEffect = 'move'
     const start = parseInt(event.dataTransfer.getData('text/plain'))
     const newTracklist = allLayers
@@ -98,14 +94,14 @@
     layerOrderChanged()
   }
 
-  const dragstart = (event: any, i: number) => {
+  const dragstart = (event, i: number) => {
     event.dataTransfer.effectAllowed = 'move'
     event.dataTransfer.dropEffect = 'move'
     const start = i
     event.dataTransfer.setData('text/plain', start)
   }
 
-  const dragover = (event: any) => {
+  const dragover = (event) => {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
   }

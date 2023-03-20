@@ -1,21 +1,22 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import type { StacItemFeatureCollection } from '$lib/types'
+  import InfiniteScroll from 'svelte-infinite-scroll'
+  import type { DatasetFeatureCollection } from '$lib/types'
   import DataCard from '$components/data-view/DataCard.svelte'
-  import { map, indicatorProgress } from '$stores'
+  import { map } from '$stores'
   import TextFilter from '$components/data-view/TextFilter.svelte'
   import Notification from '$components/controls/Notification.svelte'
-  import { SEARCH_PAGINATION_LIMIT, DataCategories, STAC_MINIMUM_ZOOM, SortingColumns } from '$lib/constants'
   import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte'
-  import { Breadcrumbs, Loader } from '@undp-data/svelte-undp-design'
-  import type { Breadcrumb } from '@undp-data/svelte-undp-design/package/interfaces'
+  import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design'
   import type { Tag } from '$lib/types/Tag'
   import SelectedTags from './data-view/SelectedTags.svelte'
+  import { goto } from '$app/navigation'
+  import { getSelectedTagsFromUrl } from '$lib/helper'
+  import { TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig'
+  import Help from './Help.svelte'
 
-  const session = $page.data.session
-  const dataCategories: Breadcrumb[] = session
-    ? DataCategories
-    : DataCategories.filter((category) => category.name !== 'Favourite')
+  let dataCategories: Breadcrumb[] = $page.data.menu
+  let isLoading = false
 
   export let contentHeight: number
   let optionsHeight = 41.5
@@ -23,25 +24,21 @@
   $: totalHeight = contentHeight - optionsHeight
 
   let containerDivElement: HTMLDivElement
-  let breadcrumbs: Breadcrumb[] = [
-    {
-      name: 'Home',
-      icon: 'fas fa-house',
-      url: '',
-    },
-  ]
-  const LIMIT = SEARCH_PAGINATION_LIMIT
-  let query: string
-  let queryForSearch: string
-  let sortingColumn: string = SortingColumns[0].value
-  let bbox: [number, number, number, number]
-  let isFilterByBBox = false
-  let selectedTags: Tag[] = []
-  let tagFilterOperatorType: 'and' | 'or' = 'and'
-  let DataItemFeatureCollection: StacItemFeatureCollection
+
+  let query = $page.url.searchParams.get('query') ?? ''
+  let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url)
+
+  let DataItemFeatureCollection: DatasetFeatureCollection = undefined
+  let datasetFeaturesPromise: Promise<DatasetFeatureCollection> = $page.data.promises?.features
+  if (datasetFeaturesPromise) {
+    datasetFeaturesPromise.then((fc) => {
+      DataItemFeatureCollection = fc
+    })
+  }
+
   let isFavouriteSearch = false
 
-  $: currentSearchUrl = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')?.href ?? ''
+  let breadcrumbs: Breadcrumb[] = $page.data.breadcrumbs
 
   let expanded: { [key: string]: boolean } = {}
   // to allow only an accordion to be expanded
@@ -59,209 +56,117 @@
     }
   }
 
-  const fetchNextDatasets = async () => {
-    if (DataItemFeatureCollection?.features.length === 0) return
-    const link = DataItemFeatureCollection.links.find((link) => link.rel === 'next')
-    if (!link) return
-
+  const fetchNextDatasets = async (url: string) => {
     try {
-      $indicatorProgress = true
-      const res = await fetch(link.href)
-      const json: StacItemFeatureCollection = await res.json()
+      // change cursor and disable scroll
+      containerDivElement.style.cursor = 'wait'
+      containerDivElement.style.overflowY = 'hidden'
+
+      const res = await fetch(url)
+      const json: DatasetFeatureCollection = await res.json()
       if (json.features.length > 0) {
         json.features = [...DataItemFeatureCollection.features, ...json.features]
       }
       DataItemFeatureCollection = json
     } finally {
-      $indicatorProgress = false
-    }
-  }
-
-  const searchDatasets = async (url: string) => {
-    try {
-      $indicatorProgress = true
-
-      // clear existing tag parameters except some keys
-      const originUrl = new URL(url)
-      const sdg_goal = originUrl.searchParams.get('sdg_goal')
-      const type = originUrl.searchParams.get('type')
-      const provider = originUrl.searchParams.get('provider')
-      const stac = originUrl.searchParams.get('stac')
-      const starOnly = originUrl.searchParams.get('staronly')
-      isFavouriteSearch = starOnly && starOnly.toLowerCase() === 'true' ? true : false
-
-      const apiUrl = new URL(`${originUrl.origin}${originUrl.pathname}`)
-      if (sdg_goal) apiUrl.searchParams.set('sdg_goal', sdg_goal)
-      if (type) apiUrl.searchParams.set('type', type)
-      if (provider) apiUrl.searchParams.set('provider', provider)
-      if (stac) apiUrl.searchParams.set('stac', stac)
-
-      if (breadcrumbs.length === 1) {
-        if (!query && selectedTags.length === 0) return
-
-        breadcrumbs = [
-          ...breadcrumbs,
-          {
-            name: 'Search result',
-            icon: 'fas fa-magnifying-glass',
-            url: url.replace(apiUrl.origin, ''),
-          },
-        ]
-      } else if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets')) {
-        if (breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/tags')) {
-          breadcrumbs.pop()
-          breadcrumbs = [
-            ...breadcrumbs,
-            {
-              name: 'Search result',
-              icon: 'fas fa-magnifying-glass',
-              url: url.replace(apiUrl.origin, ''),
-            },
-          ]
-        } else {
-          return
-        }
-      }
-
-      if (queryForSearch) {
-        if (queryForSearch.length > 0) {
-          apiUrl.searchParams.set('query', queryForSearch)
-        }
-      }
-
-      if (bbox && bbox.length === 4) {
-        apiUrl.searchParams.set('bbox', bbox.join(','))
-      }
-
-      apiUrl.searchParams.set('sortby', sortingColumn)
-      apiUrl.searchParams.set('limit', LIMIT.toString())
-
-      if (starOnly) {
-        apiUrl.searchParams.set('staronly', starOnly)
-      }
-
-      if (selectedTags?.length > 0) {
-        apiUrl.searchParams.set('operator', tagFilterOperatorType)
-      }
-      const tagFilterString = selectedTags?.map((tag) => `${tag.key}=${tag.value}`).join('&')
-      const finalUrl = `${apiUrl.toString()}${tagFilterString ? `&${tagFilterString}` : ''}`
-      const res = await fetch(finalUrl)
-      if (!res.ok) return
-      if (DataItemFeatureCollection) {
-        DataItemFeatureCollection.features = []
-      }
-      const json: StacItemFeatureCollection = await res.json()
-      DataItemFeatureCollection = json
-    } finally {
-      $indicatorProgress = false
+      containerDivElement.style.cursor = ''
+      containerDivElement.style.overflowY = 'auto'
     }
   }
 
   const handleCategorySelected = async (e) => {
-    const category = e.detail.category
-    if (category.name === 'Microsoft Planetary' && $map?.getZoom() < STAC_MINIMUM_ZOOM) {
-      $map.zoomTo(STAC_MINIMUM_ZOOM)
-    }
-    if (category.url.startsWith('/api/datasets')) {
-      const url = `${$page.url.origin}${category.url}`
-      await searchDatasets(url)
-    }
-  }
+    try {
+      isLoading = true
+      const category = e.detail.category
+      const apiUrl = $page.url
+      const bcs = apiUrl.searchParams.get('breadcrumbs').split(',')
+      bcs.push(category.name)
+      apiUrl.searchParams.set('breadcrumbs', bcs.join(','))
 
-  $: selectedTags, handleTagChanged()
-  $: tagFilterOperatorType, handleTagChanged()
-  const handleTagChanged = async () => {
-    if (breadcrumbs.length > 0 && !['Search result', 'SDG'].includes(breadcrumbs[breadcrumbs.length - 1].name)) {
-      if (selectedTags.length > 0 && !breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) {
-        if (!(breadcrumbs.length === 1 && selectedTags.length > 0)) {
-          DataItemFeatureCollection = undefined
-          breadcrumbs.pop()
-          breadcrumbs = [...breadcrumbs]
-          currentSearchUrl = ''
-          return
+      if (category.url.startsWith('/api/datasets')) {
+        if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
+          $map.zoomTo(StacMinimumZoom)
         }
-      }
-    }
 
-    if (breadcrumbs.length === 1 && selectedTags.length === 0 && !query) {
-      DataItemFeatureCollection = undefined
-      currentSearchUrl = ''
-      return
-    } else if (breadcrumbs[breadcrumbs.length - 1].name === 'Search result' && selectedTags.length === 0 && !query) {
-      DataItemFeatureCollection = undefined
-      breadcrumbs.pop()
-      breadcrumbs = [...breadcrumbs]
-      currentSearchUrl = ''
-      return
-    }
-
-    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
-    let url = `${$page.url.origin}/api/datasets`
-    if (link) {
-      url = link.href
-    }
-
-    await searchDatasets(url)
-  }
-
-  const handleFilterInput = async () => {
-    if (
-      !(breadcrumbs && breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].url.startsWith('/api/datasets')) &&
-      query === ''
-    )
-      return
-
-    const link = DataItemFeatureCollection?.links.find((link) => link.rel === 'self')
-    let url = `${$page.url.origin}/api/datasets`
-    if (link) {
-      url = link.href
-    }
-    await searchDatasets(url)
-  }
-
-  const clearFilter = async () => {
-    clearFiltertext()
-    if (breadcrumbs && breadcrumbs.length > 0) {
-      const lastCategory = breadcrumbs[breadcrumbs.length - 1]
-      if (lastCategory?.url?.startsWith('/api/datasets')) {
-        if (lastCategory.name === 'Search result' && selectedTags.length === 0) {
-          breadcrumbs.pop()
-          breadcrumbs = [...breadcrumbs]
-          DataItemFeatureCollection = undefined
-        } else {
-          const url = `${$page.url.origin}${lastCategory.url}`
-          await searchDatasets(url)
+        const apiUrl = $page.url
+        const categoryUrl = new URL(`${$page.url.origin}${category.url}`)
+        for (const key of categoryUrl.searchParams.keys()) {
+          const value = categoryUrl.searchParams.get(key)
+          if (apiUrl.searchParams.get(key) !== value) {
+            apiUrl.searchParams.set(key, value)
+          }
         }
-        return
+        await reload(apiUrl.toString())
+      } else {
+        await goto(apiUrl, { replaceState: true, invalidateAll: true })
+        dataCategories = $page.data.menu
       }
-    }
-
-    DataItemFeatureCollection = undefined
-  }
-
-  const handleScroll = async () => {
-    const containerHeight = containerDivElement.scrollHeight
-    const scrollTop = containerDivElement.scrollTop
-    let currentScroll = scrollTop + containerDivElement.clientHeight
-    let modifier = 100
-    if (currentScroll + modifier > containerHeight) {
-      if (!$indicatorProgress && DataItemFeatureCollection?.links.find((link) => link.rel === 'next')) {
-        await fetchNextDatasets()
-      }
+    } finally {
+      isLoading = false
     }
   }
 
-  const handleBreadcrumpClicked = (e) => {
+  const handleTagChanged = async (e) => {
+    const apiUrl = $page.url
+    const isReload = e.detail.reload ?? false
+    await reload(apiUrl.toString(), isReload)
+  }
+
+  const handleFilterChanged = async (e) => {
+    const url = e.detail.url
+    await reload(url, false)
+  }
+
+  const reload = async (url: string, invalidate = true) => {
+    const datasetUrl = new URL(url)
+    const apiUrl = `${$page.url.origin}${datasetUrl.search}`
+
+    if (invalidate) {
+      await goto(apiUrl, {
+        replaceState: true,
+        noScroll: true,
+        keepFocus: true,
+        invalidateAll: true,
+      })
+    }
+    selectedTags = getSelectedTagsFromUrl(new URL(apiUrl))
+    breadcrumbs = $page.data.breadcrumbs
+    dataCategories = $page.data.menu
+    datasetFeaturesPromise = $page.data.promises?.features
+    if (!datasetFeaturesPromise) {
+      DataItemFeatureCollection = undefined
+    }
+    datasetFeaturesPromise?.then((fc) => {
+      DataItemFeatureCollection = fc
+    })
+  }
+
+  const handleBreadcrumpClicked = async (e) => {
     const index: number = e.detail.index
     const breadcrump: Breadcrumb = e.detail.breadcrumb
 
+    clearFiltertext()
+    clearDatasets()
+    isFavouriteSearch = false
+
+    let apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    apiUrl.searchParams.delete('sdg_goal')
+    apiUrl.searchParams.delete('type')
+    apiUrl.searchParams.delete('provider')
+    apiUrl.searchParams.delete('stac')
+    apiUrl.searchParams.delete('staronly')
+    apiUrl.searchParams.delete('mydata')
+    apiUrl.searchParams.delete('continent')
+    apiUrl.searchParams.delete('region')
+    apiUrl.searchParams.delete('country')
+    apiUrl.searchParams.delete('extent')
+
     if (index === 0) {
       // home
-      clearFiltertext()
-      breadcrumbs = [breadcrumbs[0]]
-      DataItemFeatureCollection = undefined
-      selectedTags = []
-      isFavouriteSearch = false
+      apiUrl.searchParams.delete('breadcrumbs')
+      apiUrl = clearSelectedTags(apiUrl)
+      apiUrl.searchParams.set('breadcrumbs', 'Home')
     } else if (index < breadcrumbs.length - 1) {
       // middle ones
       let last = breadcrumbs[breadcrumbs.length - 1]
@@ -269,20 +174,38 @@
         breadcrumbs.pop()
         last = breadcrumbs[breadcrumbs.length - 1]
       }
-      DataItemFeatureCollection = undefined
-
       breadcrumbs = [...breadcrumbs]
 
-      if (!breadcrumbs[breadcrumbs.length - 1]?.url.startsWith('/api/datasets') && selectedTags.length > 0) {
-        selectedTags = []
-      }
+      apiUrl.searchParams.delete('breadcrumbs')
+      apiUrl.searchParams.set('breadcrumbs', breadcrumbs.map((b) => b.name).join(','))
     }
+
     expanded = {}
+    try {
+      isLoading = true
+      await goto(apiUrl, { replaceState: true, invalidateAll: true })
+      dataCategories = $page.data.menu
+      breadcrumbs = $page.data.breadcrumbs
+    } finally {
+      isLoading = false
+    }
+  }
+
+  const clearSelectedTags = (url: URL) => {
+    TagSearchKeys.forEach((key) => {
+      url.searchParams.delete(key.key)
+    })
+    selectedTags = []
+    return url
   }
 
   let clearFiltertext = () => {
     query = ''
-    queryForSearch = ''
+  }
+
+  let clearDatasets = () => {
+    datasetFeaturesPromise = undefined
+    DataItemFeatureCollection = undefined
   }
 </script>
 
@@ -293,77 +216,101 @@
     placeholder="Type keywords to search data"
     bind:map={$map}
     bind:query
-    bind:queryForSearch
-    bind:sortingColumn
-    bind:bbox
-    bind:isFilterByBBox
-    bind:selectedTags
-    bind:tagFilterOperatorType
-    bind:currentSearchUrl
-    on:change={handleFilterInput}
-    on:clear={clearFilter} />
+    disabled={isLoading}
+    on:tagchange={handleTagChanged}
+    on:change={handleFilterChanged} />
 
   <Breadcrumbs
     bind:breadcrumbs
+    disabled={isLoading}
     on:clicked={handleBreadcrumpClicked}
     fontSize="medium" />
-  <SelectedTags
-    bind:selectedTags
-    isClearButtonShown={true} />
-  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were' : 'dataset was'}
-    <Notification type="info">{DataItemFeatureCollection.totalCount} {dsText} found.</Notification>
+
+  <div class="help">
+    <Help>
+      <div>
+        <p>To explore and create your own maps, click on the following menus!</p>
+        <p>The <b>SDG</b> menu allows you to explore data on Sustainable Development Goals.</p>
+        <p>The <b>Continent</b> menu will enable you to search data by country.</p>
+        <p>
+          <b>Microsoft Planetary</b> allows satellite imagery exploration, and the <b>Dynamic vector data</b> allows advanced
+          simulations.
+        </p>
+      </div>
+    </Help>
+  </div>
+
+  {#key selectedTags}
+    <SelectedTags
+      on:change={handleTagChanged}
+      isClearButtonShown={true} />
+  {/key}
+
+  {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
+    {@const dsText = DataItemFeatureCollection.features.length > 1 ? 'datasets were ' : 'dataset was '}
+    <Notification type="info">
+      {DataItemFeatureCollection.features.length} / {DataItemFeatureCollection.pages.totalCount}
+      {dsText}loaded.
+    </Notification>
   {/if}
 </div>
 <div
   class="container data-view-container mx-4"
   style="height: {totalHeight}px;"
-  on:scroll={handleScroll}
   bind:this={containerDivElement}>
-  {#if DataItemFeatureCollection && DataItemFeatureCollection.features.length > 0}
-    {#each DataItemFeatureCollection.features as feature}
-      <DataCard
-        {feature}
-        bind:isExpanded={expanded[feature.properties.id]}
-        bind:isStarOnly={isFavouriteSearch} />
-    {/each}
-    {#if !DataItemFeatureCollection?.links.find((link) => link.rel === 'next')}
-      <Notification type="info">All data loaded.</Notification>
-    {/if}
-  {:else if DataItemFeatureCollection && DataItemFeatureCollection.features.length === 0}
-    {#if isFavouriteSearch}
-      <Notification type="info"
-        >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
-    {:else}
-      <Notification type="warning">No data found. Try another keyword.</Notification>
-    {/if}
-  {:else}
-    <DataCategoryCardList
-      categories={dataCategories}
-      cardSize="medium"
-      on:selected={handleCategorySelected}
-      bind:breadcrumbs />
-  {/if}
-
-  {#if !DataItemFeatureCollection}
-    <div
-      hidden={!$indicatorProgress}
-      class="loader-container">
+  {#await datasetFeaturesPromise}
+    <div class="loader-container">
       <Loader size="medium" />
     </div>
-  {/if}
+  {:then}
+    {#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
+      {#each DataItemFeatureCollection.features as feature}
+        <DataCard
+          {feature}
+          bind:isExpanded={expanded[feature.properties.id]}
+          bind:isStarOnly={isFavouriteSearch} />
+      {/each}
+      <InfiniteScroll
+        threshold={100}
+        on:loadMore={async () => {
+          const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next')
+          if (link) {
+            await fetchNextDatasets(link.href)
+          }
+        }} />
+    {:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
+      {#if isFavouriteSearch}
+        <Notification type="info"
+          >No favourite dataset. Please add dataset to favourite by clicking star button.</Notification>
+      {:else}
+        <Notification type="warning">No data found. Try another keyword.</Notification>
+      {/if}
+    {:else if isLoading}
+      <div class="loader-container">
+        <Loader size="medium" />
+      </div>
+    {:else if dataCategories}
+      <DataCategoryCardList
+        categories={dataCategories}
+        cardSize="medium"
+        on:selected={handleCategorySelected}
+        bind:breadcrumbs />
+    {/if}
+  {/await}
 </div>
 
 <style lang="scss">
+  .help {
+    position: absolute;
+    top: 50px;
+    right: 0px;
+  }
+
   .data-view-container {
     overflow-y: auto;
-
     .loader-container {
-      position: absolute;
-      z-index: 10;
-      top: 25%;
-      left: 42%;
-      background-color: white;
+      width: max-content;
+      margin: auto;
     }
   }
 </style>

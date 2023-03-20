@@ -1,0 +1,54 @@
+// 1. Import the initial variables
+@import "bulma/sass/utilities/initial-variables.sass";
+@import "bulma/sass/utilities/functions.sass";
+
+// 2. Set your own initial variables
+// Update blue
+$blue: #006eb5;
+// Add pink and its invert
+$pink: #ffb3b3;
+$pink-invert: #fff;
+// Add a serif family
+$family-serif: "ProximaNova", sans-serif;
+
+$gray-light: hsl(0, 0%, 71%);
+$box-shadow: 0.2em 0.2em 3px $gray-light;
+
+// 3. Set the derived variables
+// Use the new pink as the primary color
+$primary: #d12800;
+$primary-invert: $pink-invert;
+$link: $blue;
+// Use the existing orange as the danger color
+// $danger: #d12800;
+// Use the new serif family
+$family-primary: $family-serif;
+
+// 4. Setup your Custom Colors
+$linkedin: #0077b5;
+$linkedin-invert: findColorInvert($linkedin);
+$twitter: #55acee;
+$twitter-invert: findColorInvert($twitter);
+$github: #333;
+$github-invert: findColorInvert($github);
+
+// 5. Add new color variables to the color map.
+@import "bulma/sass/utilities/derived-variables.sass";
+$addColors: (
+  "twitter": (
+    $twitter,
+    $twitter-invert,
+  ),
+  "linkedin": (
+    $linkedin,
+    $linkedin-invert,
+  ),
+  "github": (
+    $github,
+    $github-invert,
+  ),
+);
+$colors: map-merge($colors, $addColors);
+
+// 6. Import the rest of Bulma
+@import "bulma/bulma.sass";

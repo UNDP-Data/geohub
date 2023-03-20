@@ -1,5 +1,60 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.1
+
+### Patch Changes
+
+- a98475b0: fix: margin of menu-item in undp header
+
+## 0.2.0
+
+### Minor Changes
+
+- 3d796365: - imporoved storybook documentation
+  - added vitests for most components
+
+## 0.1.4
+
+### Patch Changes
+
+- 338f03c7: feat: add disabled option and flag-icon feature in breadcrumb component
+- 8209613d: update Breadcrumbs.stories.ts
+
+## 0.1.3
+
+### Patch Changes
+
+- e84c0e2f: fix: bug of undp radios
+
+## 0.1.2
+
+### Patch Changes
+
+- 421c883f: feature: added 'change' event in Radio button control
+
+## 0.1.1
+
+### Patch Changes
+
+- 342bcf3: refactor: added interfaces in index.ts to be exported
+
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
+### Patch Changes
+
+- 66b2886: update dependencies
+
+## 0.0.16
+
+### Patch Changes
+
+- c060dd9: update storybook version
+- 4230281: fixed bug of Download componenent. Also, deleted storybook from GeoHub's static folder
+
 ## 0.0.15
 
 ### Patch Changes

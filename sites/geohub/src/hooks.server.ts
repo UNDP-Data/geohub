@@ -1,18 +1,19 @@
 import * as Sentry from '@sentry/node'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import AzureADProvider from '@auth/core/providers/azure-ad'
-import { AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET, AZURE_AD_TENANT_ID, AUTH_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
+import { getMe } from '$lib/server/helpers'
 
 export const handle = SvelteKitAuth({
   trustHost: true,
-  secret: AUTH_SECRET,
+  secret: env.AUTH_SECRET,
   providers: [
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     AzureADProvider({
-      clientId: AZURE_AD_CLIENT_ID,
-      clientSecret: AZURE_AD_CLIENT_SECRET,
-      tenantId: AZURE_AD_TENANT_ID,
+      clientId: env.AZURE_AD_CLIENT_ID,
+      clientSecret: env.AZURE_AD_CLIENT_SECRET,
+      tenantId: env.AZURE_AD_TENANT_ID,
       // issuer: `https://login.microsoftonline.com/${AZURE_AD_TENANT_ID}/v2.0`,
       authorization: { params: { scope: 'openid profile user.Read email' } },
     }),
@@ -23,16 +24,26 @@ export const handle = SvelteKitAuth({
       // Persist the OAuth access_token to the token right after signin
       if (account?.access_token) {
         token.accessToken = account.access_token
+
+        const me = await getMe(account.access_token)
+        token.jobTitle = me.jobTitle
       }
       return token
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      if (token?.accessToken) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        session.accessToken = token.accessToken
-      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const accessToken: string = token.accessToken
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      session.accessToken = accessToken
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      session.user.jobTitle = token.jobTitle
+
+      // console.log(session)
       return session
     },
   },

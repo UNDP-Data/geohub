@@ -15,9 +15,11 @@
   import Step from '$components/control-groups/Step.svelte'
   import { getActiveBandIndex, getLayerStyle, updateParamsInURL, getLayerSourceUrl, fetchUrl } from '$lib/helper'
   import { map } from '$stores'
-  import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
   import { onMount } from 'svelte'
-  import { rasterComparisonOperators } from '$lib/constants'
+  import { RasterComparisonOperators } from '$lib/config/AppConfig'
+  import { page } from '$app/stores'
+
+  const titilerUrl = $page.data.titilerUrl
 
   export let layer: Layer
 
@@ -69,7 +71,7 @@
 
   onMount(async () => {
     if (!('stats' in info)) {
-      const statsURL = `${PUBLIC_TITILER_ENDPOINT}/statistics?url=${url}`
+      const statsURL = `${titilerUrl}/statistics?url=${url}`
       statistics = await fetchUrl(statsURL)
       info = { ...info, stats: statistics }
     }
@@ -222,7 +224,7 @@
     <!-- </div> -->
 
     <div class="grid pt-5">
-      {#each rasterComparisonOperators as operator}
+      {#each RasterComparisonOperators as operator}
         {@const isVisible = !operator.disabled}
         {#if isVisible}
           <div

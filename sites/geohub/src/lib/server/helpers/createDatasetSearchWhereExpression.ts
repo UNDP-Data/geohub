@@ -1,7 +1,16 @@
-import { DatasetSearchQueryParams } from '$lib/constants'
+import { DatasetSearchQueryParams, Permission } from '$lib/config/AppConfig'
 
-export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: string, user_email?: string) => {
+export const createDatasetSearchWhereExpression = async (
+  url: URL,
+  tableAlias: string,
+  is_superuser: boolean,
+  user_email?: string,
+) => {
   let query = url.searchParams.get('query')
+  let queryOperator = url.searchParams.get('queryoperator')
+  if (!(queryOperator && ['and', 'or'].includes(queryOperator.trim().toLowerCase()))) {
+    queryOperator = 'and'
+  }
   const bbox = url.searchParams.get('bbox')
   let bboxCoordinates: number[]
   if (bbox) {
@@ -32,12 +41,13 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
   const values = []
   if (query) {
     // normalise query text for to_tsquery function
-    query = query
-      .toLowerCase()
-      .replace(/\r?\s+and\s+/g, ' & ') // convert 'and' to '&'
-      .replace(/\r?\s+or\s+/g, ' | ') // convert 'or' to '|'
+    queryOperator = queryOperator.trim().toLowerCase()
+    query = query.toLowerCase().replace(/\s/g, ` ${queryOperator === 'and' ? '&' : '|'} `)
     values.push(query)
   }
+
+  const mydata = url.searchParams.get('mydata')
+  const mydataonly = mydata && mydata === 'true' ? true : false
 
   const sql = `
     WHERE 
@@ -60,6 +70,12 @@ export const createDatasetSearchWhereExpression = async (url: URL, tableAlias: s
       SELECT dataset_id FROM geohub.dataset_favourite WHERE dataset_id=${tableAlias}.id AND user_email='${user_email}'
     )
     `
+        : ''
+    }
+    ${
+      !is_superuser && user_email && mydataonly
+        ? `
+    AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' AND permission = ${Permission.OWNER} )`
         : ''
     }
     `

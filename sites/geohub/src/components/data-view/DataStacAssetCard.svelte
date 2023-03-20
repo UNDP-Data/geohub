@@ -1,14 +1,17 @@
 <script lang="ts">
-  import type { AssetOptions, BannerMessage, StacItemFeature } from '$lib/types'
+  import type { AssetOptions, DatasetFeature } from '$lib/types'
   import { Accordion } from '@undp-data/svelte-undp-design'
   import AddLayerButton from '$components/data-view/AddLayerButton.svelte'
-  import { map, layerList, indicatorProgress, bannerMessages } from '$stores'
+  import { map, layerList, indicatorProgress } from '$stores'
   import { MosaicJsonData } from '$lib/MosaicJsonData'
-  import { StatusTypes } from '$lib/constants'
   import { loadMap } from '$lib/helper'
+  import { toast } from '@zerodevx/svelte-toast'
+  import { page } from '$app/stores'
+
+  const titilerUrl = $page.data.titilerUrl
 
   export let asset: AssetOptions
-  export let feature: StacItemFeature
+  export let feature: DatasetFeature
   export let isExpanded = false
 
   let layerLoading = false
@@ -16,7 +19,7 @@
     try {
       $indicatorProgress = true
       layerLoading = true
-      const mosaicjson = new MosaicJsonData(feature, asset.url, asset.assetName)
+      const mosaicjson = new MosaicJsonData(titilerUrl, feature, asset.url, asset.assetName)
       const data = await mosaicjson.add($map)
 
       $layerList = [
@@ -31,14 +34,8 @@
       ]
       await loadMap($map)
     } catch (err) {
-      const bannerErrorMessage: BannerMessage = {
-        type: StatusTypes.WARNING,
-        title: 'Whoops! Something went wrong.',
-        message: err.message,
-        error: err,
-      }
-      bannerMessages.update((data) => [...data, bannerErrorMessage])
       console.error(err)
+      toast.push(err.message)
     } finally {
       $indicatorProgress = false
       layerLoading = false

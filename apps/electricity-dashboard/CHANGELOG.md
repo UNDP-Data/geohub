@@ -1,5 +1,50 @@
 # @undp-data/electricity-dashboard
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [3d796365]
+  - @undp-data/svelte-undp-design@0.2.0
+
+## 0.1.2
+
+### Patch Changes
+
+- ba711fb2: fix: deleted PUBLIC_AZURE_URL from .env
+- b6c05acb: fix: changed PUBLIC_TITILER_ENDPOINT to private variable of TITILER_ENDPOINT
+- Updated dependencies [ba711fb2]
+  - @undp-data/current-location@0.1.2
+
+## 0.1.1
+
+### Patch Changes
+
+- 60703e24: fix: deleted `PUBLIC_AZURE_BLOB_TOKEN` from electricity dashboard and to use /datasets api
+
+## 0.1.0
+
+### Minor Changes
+
+- 8ca24d8: chore: updated svelte-package to v2
+
+### Patch Changes
+
+- 66b2886: update dependencies
+- Updated dependencies [8ca24d8]
+- Updated dependencies [66b2886]
+  - @undp-data/svelte-undp-design@0.1.0
+  - @undp-data/current-location@0.1.0
+  - @undp-data/style-switcher@0.1.0
+
+## 0.0.17
+
+### Patch Changes
+
+- Updated dependencies [c060dd9]
+- Updated dependencies [4230281]
+  - @undp-data/svelte-undp-design@0.0.16
+
 ## 0.0.16
 
 ### Patch Changes

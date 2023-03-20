@@ -1,0 +1,1688 @@
+openapi: 3.0.0
+info:
+  title: GeoHub API specification
+  version: '1.0'
+  description: |-
+    This documentation describes GeoHub's endpoints specification
+
+    Some endpoints (for POST, PUT, DELETE apis) are required to sign in prior to using them. GeoHub uses Azure Active Directory's authentication with Auth.js package. Auth.js package provides the following endpoints to sign in / sign out. Please sign in first before trying swagger.
+
+    - /auth/signin
+    - /auth/signout
+  contact:
+    email: jin.igarashi@undp.org
+    url: 'https://geohub.data.undp.org'
+  license:
+    name: BSD-3-Clause license
+    url: 'https://github.com/UNDP-Data/geohub/blob/develop/LICENSE'
+servers:
+  - url: /api
+    description: GeoHub APIs
+paths:
+  /datasets:
+    get:
+      summary: Datasets search API
+      responses:
+        '200':
+          description: GeoJSON feature collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  features:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      geometry:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          coordinates:
+                            type: array
+                            items:
+                              type: array
+                              items:
+                                type: array
+                                items:
+                                  type: number
+                      properties:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          url:
+                            type: string
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          is_raster:
+                            type: boolean
+                          license:
+                            type: string
+                          createdat:
+                            type: string
+                          created_user:
+                            type: string
+                          updatedat:
+                            type: string
+                          updated_user:
+                            type: string
+                          tags:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Tag'
+                          is_star:
+                            type: boolean
+                          no_stars:
+                            type: integer
+                        required:
+                          - id
+                          - url
+                          - name
+                          - description
+                          - is_raster
+                          - createdat
+                          - updatedat
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                        type:
+                          type: string
+                        href:
+                          type: string
+                  totalCount:
+                    type: string
+              examples:
+                Example for /datasets?limit=1&sdg_goal=1:
+                  value:
+                    type: FeatureCollection
+                    features:
+                      - type: Feature
+                        geometry:
+                          type: Polygon
+                          coordinates:
+                            - - - -179.999985902
+                                - -59.492685518
+                              - - 179.995392624
+                                - -59.492685518
+                              - - 179.995392624
+                                - 83.632916502
+                              - - -179.999985902
+                                - 83.632916502
+                              - - -179.999985902
+                                - -59.492685518
+                        properties:
+                          id: 87538d7d497cfcc67e12505e8a29f893
+                          url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/end-poverty/Population_Density/2000_Population_density_per_squareKm.tif?sv=2021-10-04&ss=b&srt=o&se=2023-12-05T15%3A25%3A26Z&sp=r&sig=t30dcAo8pKix1mAcnCAOq0k3vssfaLlSwrjaXxr9PGE%3D'
+                          name: 2000 Population density per squareKm
+                          description: Estimated population density per grid-cell.
+                          is_raster: true
+                          source: WorldPop
+                          license: ''
+                          createdat: '2022-04-29T16:51:38+00:00'
+                          updatedat: '2022-10-08T17:33:46+00:00'
+                          tags:
+                            - key: granularity
+                              value: Subnational
+                            - key: resolution
+                              value: 1km
+                            - key: extent
+                              value: Global
+                            - key: year
+                              value: '2000'
+                            - key: sdg_target
+                              value: population
+                            - key: theme
+                              value: Population density
+                            - key: sdg_goal
+                              value: '1'
+                    links:
+                      - rel: root
+                        type: application/json
+                        href: 'http://localhost:5173/api/datasets'
+                      - rel: self
+                        type: application/json
+                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1'
+                      - rel: next
+                        type: application/json
+                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1&offset=1'
+                    totalCount: 100
+      operationId: get-datasets
+      description: |-
+        This API returns the result as GeoJSON feature collection format and it contains links property at the bottom.
+
+        The links will have the following patterns.
+
+        - self = URL for the query itself
+        - root = URL origin for this API
+        - next = URL for next page
+        - previous = URL for previous page
+
+        You can use next or previous links to implement paging feature.
+
+        Flexiblely to search by key/value of tags.
+
+        {key}={value} e.g., sdg_goal=1 to filter where tag key is sdg_goal and value is 1. If multiple key/value are set, it will filter by OR operator. if you want to filter by SDG1 and 2, you can query like '&sdg_goal=1&sdg_goal=2'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: 'free text to search in name, description'
+        - schema:
+            type: string
+          in: query
+          name: bbox
+          description: 'you can filter the data by bounding box (minx, miny, maxx, maxy)'
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: The number of datasets retrieved. default is 10
+        - schema:
+            type: string
+          in: query
+          name: offset
+          description: Offset value for paging. default is 0
+        - schema:
+            type: string
+          in: query
+          name: extent
+          description: Search by extent value
+        - schema:
+            type: string
+          in: query
+          name: granularity
+          description: Search by granularity value
+        - schema:
+            type: string
+          in: query
+          name: keyword
+          description: Search by keyword value
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: layertype
+          description: Search by layertype of pg_tileserv
+        - schema:
+            type: string
+          in: query
+          name: resolution
+          description: Search by resolution value
+        - schema:
+            type: string
+            enum:
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              - '7'
+              - '8'
+              - '9'
+              - '10'
+              - '11'
+              - '12'
+              - '13'
+              - '14'
+              - '15'
+              - '16'
+              - '17'
+          in: query
+          name: sdg_goal
+          description: search by sdg_goal value
+        - schema:
+            type: string
+          in: query
+          name: sdg_target
+          description: search by sdg_target value
+        - schema:
+            type: string
+            enum:
+              - earth-search
+              - microsoft-pc
+          in: query
+          name: stac
+          description: search by stac value
+        - schema:
+            type: string
+          in: query
+          name: theme
+          description: search by theme value
+        - schema:
+            type: string
+            enum:
+              - martin
+              - pgtileserv
+              - stac
+          in: query
+          name: type
+          description: search by type value
+        - schema:
+            type: string
+          in: query
+          name: year
+          description: search by year value
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: staronly
+          description: 'if true, only search for favourite datasets'
+        - schema:
+            type: string
+            default: and
+            enum:
+              - and
+              - or
+          in: query
+          name: queryoperator
+          description: operator for query search. convert space to either 'and' or 'or'
+        - schema:
+            type: string
+            default: and
+            enum:
+              - and
+              - or
+          in: query
+          name: operator
+          description: 'operator for tag search. '
+        - schema:
+            type: boolean
+            default: 'false'
+            enum:
+              - 'true'
+              - 'false'
+          in: query
+          name: mydata
+          description: 'if true, only fetch datasets owned by login user'
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+  '/datasets/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
+    get:
+      summary: Get dataset feature by ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  geometry:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      coordinates:
+                        type: array
+                        items:
+                          type: number
+                  properties:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      url:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      is_raster:
+                        type: boolean
+                      license:
+                        type: string
+                      createdat:
+                        type: string
+                      created_user:
+                        type: string
+                      updatedat:
+                        type: string
+                      updated_user:
+                        type: string
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            value:
+                              type: string
+                      no_stars:
+                        type: integer
+                      is_star:
+                        type: boolean
+                x-examples:
+                  Example 1:
+                    type: Feature
+                    geometry:
+                      type: Polygon
+                      coordinates:
+                        - - - 34.7979108
+                            - -1.2417317
+                          - - 36.3692221
+                            - -1.2417317
+                          - - 36.3692221
+                            - -0.8327202
+                          - - 34.7979108
+                            - -0.8327202
+                          - - 34.7979108
+                            - -1.2417317
+                    properties:
+                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
+                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
+                      name: narwassco_vectortiles
+                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
+                      is_raster: false
+                      license: ''
+                      createdat: '2023-01-12T15:32:02+00:00'
+                      created_user: geohub-cli
+                      updatedat: '2023-01-12T15:32:02+00:00'
+                      updated_user: geohub-cli
+                      tags:
+                        - key: granularity
+                          value: Subnational
+                        - key: extent
+                          value: Kenya
+                        - key: year
+                          value: '2021'
+                        - key: type
+                          value: azure
+                        - key: container
+                          value: test
+                        - key: sdg_goal
+                          value: '6'
+                        - key: sdg_target
+                          value: safe water
+                        - key: theme
+                          value: drinking water
+                        - key: provider
+                          value: Ltd.
+                        - key: provider
+                          value: ©Narok Water and Sewerage Services Co.
+                      no_stars: 2
+                      is_star: true
+              examples:
+                Example 1:
+                  value:
+                    type: Feature
+                    geometry:
+                      type: Polygon
+                      coordinates:
+                        - - - 34.7979108
+                            - -1.2417317
+                          - - 36.3692221
+                            - -1.2417317
+                          - - 36.3692221
+                            - -0.8327202
+                          - - 34.7979108
+                            - -0.8327202
+                          - - 34.7979108
+                            - -1.2417317
+                    properties:
+                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
+                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
+                      name: narwassco_vectortiles
+                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
+                      is_raster: false
+                      license: ''
+                      createdat: '2023-01-12T15:32:02+00:00'
+                      created_user: geohub-cli
+                      updatedat: '2023-01-12T15:32:02+00:00'
+                      updated_user: geohub-cli
+                      tags:
+                        - key: granularity
+                          value: Subnational
+                        - key: extent
+                          value: Kenya
+                        - key: year
+                          value: '2021'
+                        - key: type
+                          value: azure
+                        - key: container
+                          value: test
+                        - key: sdg_goal
+                          value: '6'
+                        - key: sdg_target
+                          value: safe water
+                        - key: theme
+                          value: drinking water
+                        - key: provider
+                          value: Ltd.
+                        - key: provider
+                          value: ©Narok Water and Sewerage Services Co.
+                      no_stars: 2
+                      is_star: true
+      operationId: get-datasets-id
+      description: get dataset feature by dataset ID
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+    delete:
+      summary: Delete dataset by ID
+      operationId: delete-datasets-id
+      responses:
+        '200':
+          description: OK
+      description: Delete dataset feature by dataset ID. This endpoint is required to sign in.
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+  '/datasets/{id}/star':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset id
+    post:
+      summary: Register dataset to favourite
+      operationId: post-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  user_email:
+                    type: string
+                  savedat:
+                    type: string
+                  no_stars:
+                    type: integer
+                required:
+                  - dataset_id
+                  - user_email
+                  - savedat
+      description: |-
+        Register dataset to favourite
+        This API only can be used when user sign in.
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+    delete:
+      summary: Delete star from dataset
+      operationId: delete-datasets-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      description: |-
+        Delete star from dataset
+        This API only can be used when user sign in.
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+  '/datasets/{id}/star/count':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: dataset ID
+    get:
+      summary: get star count
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      operationId: get-datasets-id-star-count
+      description: get the number of stars for a dataset
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+  /datasets/ingesting:
+    get:
+      summary: Get status of ingesting datasets
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                x-examples:
+                  Example 1:
+                    - raw:
+                        name: Anthropogenic_Biomes_20230224163255.tif
+                        url: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/raw/Anthropogenic_Biomes_20230224163255.tif?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                        contentLength: 832784
+                        createdat: '2023-02-24T16:32:58.000Z'
+                        updatedat: '2023-02-24T16:32:58.000Z'
+                        error: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/raw/Anthropogenic_Biomes_20230224163255.tif.error?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                    - raw:
+                        name: admin0_20230224161338.pmtiles
+                        url: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/raw/admin0_20230224161338.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                        contentLength: 11813331
+                        createdat: '2023-02-24T16:14:14.000Z'
+                        updatedat: '2023-02-24T16:14:14.000Z'
+                      datasets:
+                        - name: admin0_20230224161338.pmtiles
+                          url: 'https://undpgeohub.blob.core.windows.net/userdata/a85516c81c0b78d3e89d3f00099b8b15/datasets/admin0_20230224161338.pmtiles/admin0_20230224161338.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2023-02-24T19%3A58%3A12Z&sp=r&sig=bCEjmWyg2ggSLrF0%2FwNVVTujRjM7Wi8rb3b9zpVpNpU%3D'
+                          contentLength: 11813331
+                          createdat: '2023-02-24T16:19:35.000Z'
+                          updatedat: '2023-02-24T16:19:35.000Z'
+                          processing: true
+                items:
+                  type: object
+                  properties:
+                    raw:
+                      type: object
+                      required:
+                        - name
+                        - url
+                        - contentLength
+                        - createdat
+                        - updatedat
+                      properties:
+                        name:
+                          type: string
+                        url:
+                          type: string
+                        contentLength:
+                          type: integer
+                        createdat:
+                          type: string
+                        updatedat:
+                          type: string
+                        error:
+                          type: string
+                    datasets:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          url:
+                            type: string
+                          contentLength:
+                            type: integer
+                          createdat:
+                            type: string
+                          updatedat:
+                            type: string
+                          processing:
+                            type: boolean
+                        required:
+                          - name
+                          - url
+                          - contentLength
+                          - createdat
+                          - updatedat
+                          - processing
+                  required:
+                    - raw
+              examples:
+                Example:
+                  value:
+                    - raw:
+                        name: string
+                        url: string
+                        contentLength: 0
+                        createdat: string
+                        updatedat: string
+                        error: string
+                      datasets:
+                        - name: string
+                          url: string
+                          contentLength: 0
+                          createdat: string
+                          updatedat: string
+                          processing: true
+      operationId: get-datasets-ingesting
+      description: |-
+        This endpoint is going to scan data upload folder for login user to check the status of ingesting datasets.Authentication is required prior to using this API.
+
+        URLs will be attached SAS token (1 hour expiry period)
+
+        User's upload folder structure will be like this.
+
+        - userdata
+          - a85516c81c0b78d3e89d3f00099b8b15 (md5 hash key generated from email)
+            - raw
+              - aaa_yyyymmddhhmmss.tif - original data
+              - aaa_yyyymmddhhmmss.tif.error - in case data processing failed. Logs for data processing should be contained in .error file 
+            - datasets
+              - aaa_yyyymmddhhmmss.tif - subfolder
+                - aaa_yyyymmddhhmmss.tif - processed data
+                - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
+      security:
+        - Azure AD authentication: []
+  /stac/mosaicjson:
+    get:
+      summary: STAC mosaicjson processing API
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tilejson:
+                    type: string
+                  mosaicjson:
+                    type: string
+                  classmap:
+                    type: string
+                required:
+                  - tilejson
+                  - mosaicjson
+              examples:
+                Example for ESA world cover:
+                  value:
+                    tilejson: 'https://titiler.undpgeohub.org/mosaicjson/tilejson.json?url=https%3A%2F%2Fundpngddlsgeohubdev01.blob.core.windows.net%2Fmosaicjson%2Fmosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
+                    mosaicjson: 'https://undpngddlsgeohubdev01.blob.core.windows.net/mosaicjson/mosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
+                    classmap:
+                      '10': Tree cover
+                      '20': Shrubland
+                      '30': Grassland
+                      '40': Cropland
+                      '50': Built-up
+                      '60': Bare / sparse vegetation
+                      '70': Snow and ice
+                      '80': Permanent water bodies
+                      '90': Herbaceous wetland
+                      '95': Mangroves
+                      '100': Moss and lichen
+      operationId: get-stac-mosaicjson
+      description: This api is to search items in STAC collection to make mosaicjson URL.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: url
+          description: URL for searching STAC items
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: bbox
+          description: 'minx,miny,maxx,maxy'
+        - schema:
+            type: string
+          in: query
+          name: asset
+          description: Asset name of item
+        - schema:
+            type: string
+            enum:
+              - microsoft-pc
+            default: microsoft-pc
+          in: query
+          name: type
+          description: 'type of STAC. e.g., microsoft-pc'
+      tags:
+        - stac
+  /style/count:
+    get:
+      summary: Get total count of styles
+      tags:
+        - style
+      responses: {}
+      operationId: get-style-count
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+            examples:
+              Example 1:
+                value:
+                  count: 6
+  /style:
+    get:
+      summary: Style list API
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  styles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        createdat:
+                          type: string
+                        name:
+                          type: string
+                        updatedat:
+                          type: string
+                        access_level:
+                          type: integer
+                          default: 1
+                          description: '1: login user, 2: UNDP, 3: public'
+                        created_user:
+                          type: string
+                        updated_user:
+                          type: string
+                      required:
+                        - id
+                        - createdat
+                        - name
+                        - updatedat
+                        - access_level
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                        type:
+                          type: string
+                        href:
+                          type: string
+                      required:
+                        - rel
+                        - type
+                        - href
+                  pages:
+                    type: object
+                    properties:
+                      totalCount:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      currentPage:
+                        type: integer
+                required:
+                  - styles
+                  - links
+              examples:
+                Example 1:
+                  value:
+                    styles:
+                      - id: 25
+                        name: Global South LOCE
+                        createdat: '2022-09-08T17:13:26.890Z'
+                      - id: 48
+                        name: test123
+                        createdat: '2022-10-03T11:20:05.494Z'
+                      - id: 49
+                        name: nigeria airports
+                        createdat: '2022-10-03T16:38:43.895Z'
+                      - id: 50
+                        name: TEST Share
+                        createdat: '2022-10-06T15:06:50.716Z'
+                      - id: 56
+                        name: UNDP GeoHub style
+                        createdat: '2022-12-05T16:55:50.195Z'
+                    links:
+                      - rel: root
+                        type: application/json
+                        href: 'http://localhost:5173/api/style'
+                      - rel: self
+                        type: application/json
+                        href: 'http://localhost:5173/api/style'
+                      - rel: next
+                        type: application/json
+                        href: 'http://localhost:5173/api/style?limit=5&offset=5'
+                    pages:
+                      totalCount: 2
+                      totalPages: 1
+                      currentPage: 1
+      operationId: get-style
+      description: Get the list of saved style from PostGIS database
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: offset
+        - schema:
+            type: string
+          in: query
+          name: sortby
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: text to search styles by name
+        - schema:
+            type: integer
+            default: 1
+            enum:
+              - 1
+              - 2
+              - 3
+          in: query
+          name: accesslevel
+          description: 'access Level published to 1: login user 2: UNDP 3: public'
+      security:
+        - Azure AD authentication: []
+    post:
+      summary: Style register API
+      operationId: post-style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  viewer:
+                    type: string
+                    description: URL for style sharing viewer
+                  style:
+                    type: string
+                    description: style.json URL
+                required:
+                  - viewer
+                  - style
+      description: Save style.json to PostgreSQL database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: name for style
+                style:
+                  type: object
+                  description: style.json object
+                layers:
+                  type: array
+                  description: $layerList object
+                  items:
+                    type: object
+                access_level:
+                  type: integer
+                  enum:
+                    - 1
+                    - 2
+                    - 3
+                  description: '1: login user, 2: UNDP, 3: public'
+              required:
+                - name
+                - style
+                - layers
+                - access_level
+      tags:
+        - style
+      security:
+        - Azure AD authentication: []
+    put:
+      summary: Style update API
+      operationId: put-style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  viewer:
+                    type: string
+                    description: URL for viewer
+                  style:
+                    type: string
+                    description: style.json URL
+                required:
+                  - id
+                  - viewer
+                  - style
+      description: Update style.json to PostgreSQL database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: style id to update
+                name:
+                  type: string
+                  description: name for saved style
+                styles:
+                  type: object
+                  description: style.json object
+                layers:
+                  type: array
+                  description: $layerList object
+                  items:
+                    type: object
+                access_level:
+                  type: integer
+                  description: '1: login user, 2: UNDP, 3: public'
+              required:
+                - id
+                - name
+                - styles
+                - layers
+                - access_level
+      tags:
+        - style
+      security:
+        - Azure AD authentication: []
+  '/style/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: style ID
+    delete:
+      summary: Style delete API
+      operationId: delete-style-id
+      responses:
+        '204':
+          description: No Content
+      description: Delete style by ID
+      tags:
+        - style
+      security:
+        - Azure AD authentication: []
+    get:
+      summary: Style info API
+      operationId: get-style-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  style:
+                    type: object
+                  layers:
+                    type: array
+                    items:
+                      type: object
+                  createdat:
+                    type: string
+                  updatedat:
+                    type: string
+                  access_level:
+                    type: integer
+                    description: '1: login user, 2: UNDP, 3: public'
+                  created_user:
+                    type: string
+                  updated_user:
+                    type: string
+                required:
+                  - id
+                  - name
+                  - style
+                  - layers
+                  - createdat
+                  - updatedat
+                  - access_level
+      description: get style information by style id
+      tags:
+        - style
+      security:
+        - Azure AD authentication: []
+  '/style/{id}.json':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style ID
+    get:
+      summary: Style JSON api
+      tags:
+        - style
+      responses:
+        '200':
+          description: style.json object
+      operationId: get-style-id-.json
+      description: get style.json by ID
+      security:
+        - Azure AD authentication: []
+  /tags:
+    get:
+      summary: Tag search API
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Example for tags?key=extent:
+                  value:
+                    extent:
+                      - key: extent
+                        value: Afghanistan
+                        count: 2
+                      - key: extent
+                        value: Africa
+                        count: 5
+                      - key: extent
+                        value: America
+                        count: 1
+                      - key: extent
+                        value: Asia
+                        count: 5
+                      - key: extent
+                        value: Burundi
+                        count: 3
+                      - key: extent
+                        value: Cambodia
+                        count: 2
+                      - key: extent
+                        value: Conflict areas
+                        count: 1
+                      - key: extent
+                        value: Ethiopia
+                        count: 3
+                      - key: extent
+                        value: EU
+                        count: 3
+                      - key: extent
+                        value: Europe
+                        count: 9
+                      - key: extent
+                        value: Ghana
+                        count: 2
+                      - key: extent
+                        value: Global
+                        count: 3845
+                      - key: extent
+                        value: Greenland and Antarctica
+                        count: 1
+                      - key: extent
+                        value: India
+                        count: 2
+                      - key: extent
+                        value: Kenya
+                        count: 10
+                      - key: extent
+                        value: Madagascar
+                        count: 2
+                      - key: extent
+                        value: Malawi
+                        count: 4
+                      - key: extent
+                        value: Mali
+                        count: 2
+                      - key: extent
+                        value: Mozambique
+                        count: 2
+                      - key: extent
+                        value: Nepal
+                        count: 2
+                      - key: extent
+                        value: Nigeria
+                        count: 12
+                      - key: extent
+                        value: North America
+                        count: 1
+                      - key: extent
+                        value: Oceania
+                        count: 1
+                      - key: extent
+                        value: OECD
+                        count: 7
+                      - key: extent
+                        value: Pakistan
+                        count: 6
+                      - key: extent
+                        value: Rwanda
+                        count: 6
+                      - key: extent
+                        value: South America
+                        count: 1
+                      - key: extent
+                        value: SouthEast Asia
+                        count: 2
+                      - key: extent
+                        value: Tanzania
+                        count: 8
+                      - key: extent
+                        value: Uganda
+                        count: 10
+                      - key: extent
+                        value: West Africa
+                        count: 1
+                      - key: extent
+                        value: Zambia
+                        count: 2
+      operationId: get-tags
+      description: 'This API can return the list of available tags. If you simply query by /tags, it returns all tags. You can also filter a key value to list available tags.'
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - extent
+              - granularity
+              - keyword
+              - layertype
+              - resolution
+              - schema
+              - sdg_goal
+              - sdg_target
+              - stac
+              - theme
+              - type
+              - year
+          in: query
+          name: key
+          description: Optional parameter to filter by key
+      tags:
+        - tags
+  /vector/statistics:
+    get:
+      summary: Vector tile statistics API
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  layer:
+                    type: string
+                  geometry:
+                    type: string
+                  count:
+                    type: number
+                  attributeCount:
+                    type: number
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        attribute:
+                          type: string
+                        type:
+                          type: string
+                        count:
+                          type: number
+                        min:
+                          type: number
+                        max:
+                          type: number
+                        mean:
+                          type: number
+                        median:
+                          type: number
+                        std:
+                          type: number
+                        histogram:
+                          type: object
+                          properties:
+                            count:
+                              type: array
+                              items:
+                                type: number
+                            bins:
+                              type: array
+                              items:
+                                type: number
+              examples:
+                Example for zambia.poverty:
+                  value:
+                    layer: zambia.poverty
+                    geometry: Polygon
+                    count: 145
+                    attributeCount: 7
+                    attributes:
+                      - attribute: poverty
+                        type: number
+                        count: 145
+                        min: 0.1
+                        max: 0.96
+                        mean: 0.6919310344827585
+                        median: 0.78
+                        std: 0.21315518783181625
+                        histogram:
+                          count:
+                            - 9
+                            - 19
+                            - 10
+                            - 36
+                            - 71
+                          bins:
+                            - 0.1
+                            - 0.272
+                            - 0.444
+                            - 0.616
+                            - 0.788
+                            - 0.96
+                Example for zambia.poverty_selector:
+                  value:
+                    layer: zambia.poverty_selector
+                    geometry: Polygon
+                    count: 5
+                    attributeCount: 1
+                    attributes:
+                      - attribute: district
+                        type: string
+                        count: 5
+                        values:
+                          - Chilubi
+                          - Kasama
+                          - Luwingu
+                          - Chinsali
+                          - Mpika
+      operationId: get-vector-statistics
+      description: This api it to calculate statistics for vector tiles from /0/0/0.pbf
+      parameters:
+        - schema:
+            type: string
+            example: 'https://martin.undpgeohub.org/zambia.poverty/0/0/0.pbf'
+          in: query
+          name: path
+          description: URL for vector tile. must be /0/0/0.pbf path
+          required: true
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: layer_name
+          description: layer name for vector tile
+          required: true
+      tags:
+        - vector tile
+  '/vector/{source}/metadata.json':
+    get:
+      summary: Vector tile metadata.json API
+      responses: {}
+      operationId: 'get-vector-[source]-metadata.json'
+      description: |-
+        This api is to generate metadata.json for vector tiles.
+
+        return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
+      parameters:
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: table
+          description: table name. only available for source = martin or pgtileserv
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: type
+          description: type name. only available for source = pgtileserv
+        - schema:
+            type: string
+          in: query
+          name: pbfpath
+          description: pbf path. only available for soruce = azstorage
+      tags:
+        - vector tile
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - azstorage
+            - pgtileserv
+            - martin
+        name: source
+        in: path
+        required: true
+        description: source type
+  '/vector/{source}/tile.json':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - pgtileserv
+            - martin
+        name: source
+        in: path
+        required: true
+        description: source type
+    get:
+      summary: Vector tile tile.json API
+      responses: {}
+      operationId: get-vector-source-tile.json
+      description: |-
+        This api is to generate tile.json for vector tiles.
+
+        return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
+      parameters:
+        - schema:
+            type: string
+            example: zambia.poverty
+          in: query
+          name: table
+          description: table name. only available for source = martin or pgtileserv
+          required: true
+        - schema:
+            type: string
+            enum:
+              - table
+              - function
+          in: query
+          name: type
+          description: type name. only available for source = pgtileserv
+      tags:
+        - vector tile
+  /settings:
+    get:
+      summary: GeoHub User Settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  search_limit:
+                    type: number
+                  dataset_search_limit:
+                    type: number
+                  dataset_search_query_operator:
+                    $ref: '#/components/schemas/QueryOperator'
+                  dataset_sorting_column:
+                    type: string
+                  datapage_sorting_column:
+                    type: string
+                  tag_search_operator:
+                    $ref: '#/components/schemas/TagSearchOperator'
+                  map_page_sorting_column:
+                    type: string
+                  line_width:
+                    type: number
+                  number_of_classes:
+                    type: number
+                  sidebar_position:
+                    $ref: '#/components/schemas/SidebarPosition'
+      security:
+        - Azure AD authentication: []
+      tags:
+        - GeoHub User Settings
+
+    post:
+      summary: Update GeoHub User Settings
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                      search_limit:
+                          type: number
+                      dataset_search_limit:
+                          type: number
+                      dataset_search_query_operator:
+                          $ref: '#/components/schemas/QueryOperator'
+                      dataset_sorting_column:
+                          type: string
+                      datapage_sorting_column:
+                          type: string
+                      tag_search_operator:
+                          $ref: '#/components/schemas/TagSearchOperator'
+                      map_page_sorting_column:
+                          type: string
+                      line_width:
+                          type: number
+                      number_of_classes:
+                          type: number
+                      sidebar_position:
+                          $ref: '#/components/schemas/SidebarPosition'
+      security:
+        - Azure AD authentication: []
+      description: Update GeoHub User Settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  search_limit:
+                      type: number
+                  dataset_search_limit:
+                      type: number
+                  dataset_search_query_operator:
+                      $ref: '#/components/schemas/QueryOperator'
+                  dataset_sorting_column:
+                      type: string
+                  datapage_sorting_column:
+                      type: string
+                  tag_search_operator:
+                      $ref: '#/components/schemas/TagSearchOperator'
+                  map_page_sorting_column:
+                      type: string
+                  line_width:
+                      type: number
+                  number_of_classes:
+                      type: number
+                  sidebar_position:
+                      $ref: '#/components/schemas/SidebarPosition'
+        description: Update GeoHub User Settings
+        required: true
+      tags:
+        - GeoHub User Settings
+
+
+  /swagger/spec.json:
+    get:
+      summary: Get open API JSON definition
+      responses: {}
+      operationId: get-swagger-spec.json
+      description: Get open API JSON definition
+      tags:
+        - swagger
+  /continents:
+    get:
+      summary: Get continents
+      tags:
+        - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    continent_code:
+                      type: number
+                    continent_name:
+                      type: string
+                  required:
+                    - continent_code
+                    - continent_name
+              examples:
+                Example 1:
+                  value:
+                    - continent_code: 2
+                      continent_name: Africa
+                    - continent_code: 19
+                      continent_name: Americas
+                    - continent_code: 0
+                      continent_name: Antarctica
+                    - continent_code: 142
+                      continent_name: Asia
+                    - continent_code: 150
+                      continent_name: Europe
+                    - continent_code: 9
+                      continent_name: Oceania
+      operationId: get-continents
+      description: Get continents data from database
+      parameters:
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: filterbytag
+          description: 'If true, only returns regions which exist in tag table'
+  /regions:
+    get:
+      summary: Get regions
+      tags:
+        - admin
+      responses: {}
+      operationId: get-regions
+      description: get regions data from database
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: continent
+          description: continent_code
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: filterbytag
+          description: 'If true, only returns regions which exist in tag table'
+  /countries:
+    get:
+      summary: Get countries
+      tags:
+        - admin
+      responses: {}
+      operationId: get-countries
+      description: get countries data from database
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: continent
+          description: continent code to filter
+        - schema:
+            type: string
+          in: query
+          name: region
+          description: region code to filter
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: filterbytag
+          description: 'If true, only returns regions which exist in tag table'
+components:
+  schemas:
+    Tag:
+      title: Tag
+      x-stoplight:
+        id: um38sy7bphx89
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        count:
+          type: number
+      required:
+        - key
+        - value
+    QueryOperator:
+        title: QueryOperator
+        type: string
+        enum:
+            - and
+            - or
+    TagSearchOperator:
+      title: TagSearchOperator
+      type: string
+      enum:
+          - and
+          - or
+    SidebarPosition:
+      title: SidebarPosition
+      type: string
+      enum:
+          - left
+          - right
+  securitySchemes:
+    Azure AD authentication:
+      type: http
+      scheme: oauth
+      description: Access to /auth/signin to sign in to Azure AD with your UNDP account.

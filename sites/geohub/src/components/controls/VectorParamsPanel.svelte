@@ -1,17 +1,9 @@
 <script lang="ts">
-  import type { Layer } from '$lib/types'
+  import type { Layer, RangeSliderConfig } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
-  import { Loader } from '@undp-data/svelte-undp-design/src/lib'
+  import { Loader } from '@undp-data/svelte-undp-design'
 
-  import {
-    clean,
-    fetchUrl,
-    getLayerSourceUrl,
-    getLayerStyle,
-    loadMap,
-    updateLayerURL,
-    updateParamsInURL,
-  } from '$lib/helper'
+  import { fetchUrl, getLayerSourceUrl, getLayerStyle, loadMap, updateLayerURL } from '$lib/helper'
   import { map, layerList } from '$stores'
   /*EXPORTS*/
   export let layerId
@@ -21,14 +13,15 @@
   let defaultArgs = {}
   let selectedArgs = {}
   let currentSelectedArg
-  let sliderConfig = {}
+  let sliderConfig: RangeSliderConfig
+
   //let showSlider = Object.keys(selectedArgs).length > 0
   /*REACTIVE STATE*/
   $: layer = $layerList.find((l) => l.id == layerId) as Layer
   $: url = layer?.dataset?.properties?.url
   $: layerUrl = getLayerSourceUrl($map, layerId) as string
   $: layerURL = url ? new URL(url) : undefined
-  $: showSlider = currentSelectedArg ? true : false
+  $: showSlider = !!currentSelectedArg
 
   /* FUNCTIONS*/
   const getArgumentsInURL = () => {
@@ -105,10 +98,10 @@
       <Loader size="small" />
     </div>
   </div>
-{:then initialized}
+{:then}
   <div class="grid-wrapper pb-5">
     {#each Object.entries(args) as [argId, arg]}
-      {@const { icon: icon, value: value, units: units, label: label, id: id } = arg}
+      {@const { icon: icon, value: value, units: units, label: label } = arg}
 
       <!-- svelte-ignore a11y-click-events-have-key-events -->
 
@@ -169,6 +162,10 @@
         last="label"
         values={sliderConfig.values}
         on:stop={setSliderValue}
+        springValues={{
+          stiffness: 1,
+          damping: 1,
+        }}
         pips="true"
         all="label" />
     {/if}
@@ -185,7 +182,7 @@
 {/await}
 
 <style lang="scss">
-  @import '../../styles/geohubstyle.scss';
+  @import '@undp-data/undp-bulma/bulma.scss';
   .bbp {
     border-bottom: 3px solid $primary;
   }

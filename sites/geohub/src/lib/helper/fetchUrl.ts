@@ -1,6 +1,4 @@
-import type { BannerMessage } from '../types'
-import { bannerMessages } from '$stores'
-import { DEFAULT_TIMEOUT_MS, ErrorMessages, StatusTypes } from '../constants'
+import { FetchTimeoutMsec } from '$lib/config/AppConfig'
 import { fetchWithTimeout } from './fetchWithTimeout'
 
 /**
@@ -9,17 +7,14 @@ import { fetchWithTimeout } from './fetchWithTimeout'
  * @returns JSON | null
  */
 export async function fetchUrl(url: string) {
-  try {
-    const response = await fetchWithTimeout(url, { timeout: DEFAULT_TIMEOUT_MS })
-    return await response.json()
-  } catch (error) {
-    const bannerErrorMessage: BannerMessage = {
-      type: StatusTypes.DANGER,
-      title: 'Whoops! Something went wrong.',
-      message: ErrorMessages.FETCH_TIMEOUT,
-      error: error,
-    }
-    bannerMessages.update((data) => [...data, bannerErrorMessage])
-    return null
-  }
+  return new Promise<Response>((resolve, reject) => {
+    fetchWithTimeout(url, { timeout: FetchTimeoutMsec })
+      .then((res) => res.json())
+      .then((json) => {
+        resolve(json)
+      })
+      .catch((err) => {
+        reject(err)
+      })
+  })
 }

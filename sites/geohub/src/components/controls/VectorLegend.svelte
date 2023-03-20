@@ -6,13 +6,14 @@
   import VectorSymbol from './VectorSymbol.svelte'
   import VectorHeatmap from './VectorHeatmap.svelte'
   import VectorLegendAdvanced from './VectorClassifyLegend.svelte'
-  import { LayerTypes, LegendTypes, VectorApplyToTypes } from '$lib/constants'
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import chroma from 'chroma-js'
   import LegendTypeSwitcher from './LegendTypeSwitcher.svelte'
   import { Loader } from '@undp-data/svelte-undp-design'
   import { loadMap } from '$lib/helper'
+  import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig'
+  import Help from '$components/Help.svelte'
 
   export let layer: Layer
   export let applyToOption: VectorApplyToTypes
@@ -91,42 +92,63 @@
   }
 </script>
 
-{#if style.type !== LayerTypes.HEATMAP}
-  <LegendTypeSwitcher bind:legendType />
-{/if}
-{#await vectorLayerLoaded()}
-  <div class="loader-container p-3">
-    <Loader size="small" />
-  </div>
-{:then vectorLayerAvailable}
-  {#if style.type === LayerTypes.HEATMAP}
-    <VectorHeatmap bind:layer />
-  {:else if legendType === LegendTypes.DEFAULT}
-    <div transition:slide>
-      {#if style.type === LayerTypes.LINE}
-        <VectorLine
-          bind:layer
-          bind:defaultColor={defaultLineColor} />
-      {:else if style.type === LayerTypes.FILL}
-        <VectorPolygon
-          bind:layer
-          bind:defaultFillColor={defaultColor}
-          bind:defaultFillOutlineColor={defaultLineColor} />
-      {:else if style.type === LayerTypes.SYMBOL}
-        <VectorSymbol
-          bind:layer
-          bind:defaultColor />
-      {/if}
-    </div>
-  {:else if legendType === LegendTypes.CLASSIFY}
-    <div transition:slide>
-      <VectorLegendAdvanced
-        bind:layer
-        bind:defaultColor
-        bind:applyToOption />
+<div class="legend-container">
+  {#if style.type !== 'heatmap'}
+    <LegendTypeSwitcher bind:legendType />
+    <div class="help">
+      <Help>
+        <div>
+          <p>Enhance your visualizations using the following tips!</p>
+          <p>
+            The <b>Default</b> legend will showcase the dataset based on its geometry (Point, Polygon, Line or Heatmap) and
+            you may change colors and size to your liking.
+          </p>
+          <p>
+            The <b>Classify</b> legend allows more functionality with the ability to interchange between classification types
+            (interval or unique value legend), colors, and the number of classes.
+          </p>
+          <p>
+            Color of each class can be changed by clicking the <b>colored box</b> or hidden using the <b>eye</b> button left
+            of the box
+          </p>
+        </div>
+      </Help>
     </div>
   {/if}
-{/await}
+  {#await vectorLayerLoaded()}
+    <div class="loader-container p-3">
+      <Loader size="small" />
+    </div>
+  {:then vectorLayerAvailable}
+    {#if style.type === 'heatmap'}
+      <VectorHeatmap bind:layer />
+    {:else if legendType === LegendTypes.DEFAULT}
+      <div transition:slide>
+        {#if style.type === 'line'}
+          <VectorLine
+            bind:layer
+            bind:defaultColor={defaultLineColor} />
+        {:else if style.type === 'fill'}
+          <VectorPolygon
+            bind:layer
+            bind:defaultFillColor={defaultColor}
+            bind:defaultFillOutlineColor={defaultLineColor} />
+        {:else if style.type === 'symbol'}
+          <VectorSymbol
+            bind:layer
+            bind:defaultColor />
+        {/if}
+      </div>
+    {:else if legendType === LegendTypes.CLASSIFY}
+      <div transition:slide>
+        <VectorLegendAdvanced
+          bind:layer
+          bind:defaultColor
+          bind:applyToOption />
+      </div>
+    {/if}
+  {/await}
+</div>
 
 <style lang="scss">
   .loader-container {
@@ -134,5 +156,15 @@
     align-items: center;
     width: fit-content;
     margin: 0 auto;
+  }
+
+  .legend-container {
+    position: relative;
+
+    .help {
+      position: absolute;
+      top: 0em;
+      left: 0em;
+    }
   }
 </style>

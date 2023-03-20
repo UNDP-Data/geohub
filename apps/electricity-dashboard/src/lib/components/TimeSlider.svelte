@@ -1,9 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 
 	import { map, year } from '$lib/stores';
-	import { reloadAdmin } from '$lib/utils/adminLayer';
+	import { reloadAdmin, setAzureUrl } from '$lib/utils/adminLayer';
+
+	const azureUrl = $page.data.azureUrl;
+	setAzureUrl(azureUrl);
 
 	export let BEFORE_LAYER_ID: string;
 	export let electricitySelected: {
@@ -12,13 +16,13 @@
 		title: string;
 	};
 
-	import {
-		PUBLIC_TITILER_ENDPOINT,
-		PUBLIC_AZURE_BLOB_TOKEN,
-		PUBLIC_AZURE_URL
-	} from '$env/static/public';
+	import type { ElectricityDatasets } from '$lib/interfaces';
+	import { getBase64EncodedUrl } from '$lib/utils/getBase64EncodedUrl';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
+
+	const titilerUrl = $page.data.titilerUrl;
+	const datasets: ElectricityDatasets = $page.data.datasets;
 
 	let minValue = 2012;
 	let maxValue = 2020;
@@ -51,11 +55,15 @@
 	};
 
 	const getHreaUrl = (y: number) => {
-		return `${PUBLIC_AZURE_URL}/electricity/Hyperlocal_Electricity_Access_Data/Electricity_access_estimate_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`;
+		const dataset = datasets.hrea.find((ds) => ds.year === y);
+		const url: string = dataset?.url ?? '';
+		return getBase64EncodedUrl(url);
 	};
 
 	const getMlUrl = (y: number) => {
-		return `${PUBLIC_AZURE_URL}/hrea/Machine_Learning_Electricity_Estimate/Electricity_access_${y}.tif?${PUBLIC_AZURE_BLOB_TOKEN}`;
+		const dataset = datasets.ml.find((ds) => ds.year === y);
+		const url: string = dataset?.url ?? '';
+		return getBase64EncodedUrl(url);
 	};
 
 	export function loadLayer() {
@@ -77,7 +85,7 @@
 
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
-		const res = await fetch(`${PUBLIC_TITILER_ENDPOINT}/info?url=${url}`);
+		const res = await fetch(`${titilerUrl}/info?url=${url}`);
 		const layerInfo = await res.json();
 		if (!(layerInfo && layerInfo['band_metadata'])) {
 			return;
@@ -103,7 +111,7 @@
 
 		const layerSource: SourceSpecification = {
 			type: 'raster',
-			tiles: [`${PUBLIC_TITILER_ENDPOINT}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
+			tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
 			tileSize: 256,
 			bounds: layerInfo['bounds'],
 			attribution:

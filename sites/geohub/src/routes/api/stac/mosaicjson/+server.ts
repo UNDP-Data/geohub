@@ -1,18 +1,16 @@
 import type { StacCollection, StacItemFeatureCollection } from '$lib/types'
 import type { RequestHandler } from './$types'
-import { PUBLIC_TITILER_ENDPOINT } from '$lib/variables/public'
-
-const TITILER_MOSAIC_ENDPOINT = PUBLIC_TITILER_ENDPOINT.replace('cog', 'mosaicjson')
-
+import { env } from '$env/dynamic/private'
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
-const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
+const sharedKeyCredential = new StorageSharedKeyCredential(env.AZURE_STORAGE_ACCOUNT, env.AZURE_STORAGE_ACCESS_KEY)
+const TITILER_MOSAIC_ENDPOINT = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson')
 
 import fs from 'fs'
 import path from 'path'
 import { error } from '@sveltejs/kit'
 import { fetchWithTimeout } from '$lib/helper/fetchWithTimeout'
-import { MAP_ATTRIBUTION } from '$lib/constants'
+import { attribution } from '$lib/config/AppConfig'
+
 const __dirname = path.resolve()
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -103,10 +101,9 @@ const searchStacItemUrls = async (url: string, bbox: number[], targetAsset: stri
       'content-type': 'application/json',
     },
     body: JSON.stringify(JSON.parse(JSON.stringify(payload))),
+  }).catch((err) => {
+    throw error(500, err)
   })
-  if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
-  }
 
   const fc: StacItemFeatureCollection = await res.json()
   let itemUrls: string[] = fc.features.map((f) => f.assets[targetAsset].href)
@@ -126,7 +123,7 @@ const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) =
     url: urls,
     minzoom: 0,
     maxzoom: 22,
-    attribution: MAP_ATTRIBUTION,
+    attribution: attribution,
   }
   const res = await fetch(`${TITILER_MOSAIC_ENDPOINT}/create`, {
     method: 'POST',
@@ -135,10 +132,10 @@ const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) =
       'content-type': 'application/json',
     },
     body: JSON.stringify(JSON.parse(JSON.stringify(payload))),
+  }).catch((err) => {
+    throw error(500, err)
   })
-  if (!res.ok) {
-    throw error(res.status, { message: res.statusText })
-  }
+
   const json = await res.json()
 
   const blobUrl = await storeMosaicJson2Blob(json, filter)
@@ -156,24 +153,27 @@ const getMsStacToken = async (originUrl: string) => {
   const _url = new URL(originUrl)
   const collectionId = _url.searchParams.get('collections')
   const url = `${_url.origin}/api/sas/v1/token/${collectionId}`
-  try {
-    // some collections are unable to request token and it will be timeout. Set 5 seconds to be timeouted.
-    const res = await fetchWithTimeout(url, { timeout: 5000 })
-
-    if (res.ok) {
-      const json = await res.json()
-      const token = json.token
-      return token
-    }
-  } catch (err) {
+  // try {
+  // some collections are unable to request token and it will be timeout. Set 5 seconds to be timeouted.
+  const res = await fetchWithTimeout(url, { timeout: 5000 }).catch((err) => {
+    console.log(err)
     throw error(500, { message: `${err.message}. collection: ${collectionId} is not available.` })
-  }
+  })
+
+  // if (res.ok) {
+  const json = await res.json()
+  const token = json.token
+  return token
+  // }
+  // } catch (err) {
+  //   throw error(500, { message: `${err.message}. collection: ${collectionId} is not available.` })
+  // }
 }
 
 const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
   // create storage container
   const blobServiceClient = new BlobServiceClient(
-    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
     sharedKeyCredential,
   )
 
@@ -214,7 +214,7 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
   //   )
   //   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
 
-  return `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`
+  return `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`
 }
 
 const getClassmap = async (baseUrl: string, collectionId: string, asset: string) => {

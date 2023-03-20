@@ -1,23 +1,18 @@
 import type { LayoutServerLoad } from './$types'
+import { env } from '$env/dynamic/private'
+import type { UserConfig } from '$lib/config/DefaultUserConfig'
 
 export const load: LayoutServerLoad = async (event) => {
   const session = await event.locals.getSession()
-  if (session?.accessToken) {
-    const token = session.accessToken
-    const me = await getMe(token)
-    session.user.jobTitle = me.jobTitle
+  let config: UserConfig
+  const response = await event.fetch('/api/settings')
+  if (response.ok) {
+    config = await response.json()
   }
   return {
-    session: session,
+    session,
+    config,
+    azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
+    titilerUrl: env.TITILER_ENDPOINT,
   }
-}
-
-const getMe = async (token: string) => {
-  const res = await fetch('https://graph.microsoft.com/v1.0/me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  const json = await res.json()
-  return json
 }

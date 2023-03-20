@@ -1,5 +1,36 @@
 # @undp-data/geohub-cli
 
+## 2.0.0
+
+### Major Changes
+
+- e481130f: disabled commands for azblob, pgtileserv and cogunit
+
+## 1.1.2
+
+### Patch Changes
+
+- a2a3e01d: fix: removed schema name from name property for pgtileserv layer
+- a2a3e01d: fix: added a command to migrate Unit from COG metadata to postgis (this command is only one-time used)
+
+## 1.1.1
+
+### Patch Changes
+
+- 4bd349ee: feat: delete dataset_permission table if the dataset is deleted
+
+## 1.1.0
+
+### Minor Changes
+
+- 171ac40: chore: updated dependencies of geohub-cli
+
+## 1.0.9
+
+### Patch Changes
+
+- 0988a8c: added created_user and updated_user in dataset table
+
 ## 1.0.8
 
 ### Patch Changes

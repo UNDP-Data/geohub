@@ -1,4 +1,4 @@
-import { MAP_ATTRIBUTION } from '$lib/constants'
+import { attribution } from '$lib/config/AppConfig'
 import type { MartinLayerMetadata } from '$lib/types/MartinLayerMetadata'
 import type { TileJson } from '$lib/types/TileJson'
 
@@ -48,7 +48,7 @@ const getTileJson = async (table: string, indexJson: MartinLayerMetadata, martin
     fields[key] = `${key} with ${dataType} data type`
   })
   ;(tilejson.tilejson = '3.0.0'), (tilejson.description = `${table} data from PostGIS via martin server`)
-  tilejson.attribution = MAP_ATTRIBUTION
+  tilejson.attribution = attribution
   tilejson.geometrytype = indexJson.geometry_type
 
   switch (tilejson.geometrytype.toLocaleLowerCase()) {

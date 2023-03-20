@@ -1,34 +1,22 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { browser } from '$app/environment'
   import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
+  import { goto, invalidateAll } from '$app/navigation'
   import MapStyleCard from './MapStyleCard.svelte'
-  import type { DashboardMapStyle, Pages, StacLink } from '$lib/types'
+  import type { MapsData, StacLink } from '$lib/types'
   import Notification from '$components/controls/Notification.svelte'
   import { Pagination, Loader } from '@undp-data/svelte-undp-design'
   import { debounce } from 'lodash-es'
-  import { AccessLevel } from '$lib/constants'
   import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte'
+  import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/config/AppConfig'
 
-  const url: URL = $page.url
+  let promiseStyles: Promise<MapsData> = $page.data.promises.styles
 
-  let styleList: DashboardMapStyle[]
-  let links: StacLink[]
-  let pages: Pages
-  let isLoading = false
-
-  let limits = [5, 10, 25, 50, 100]
-  let limit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : 10
-  let offset = $page.url.searchParams.get('offset') ? Number($page.url.searchParams.get('offset')) : 0
+  let limit = Number($page.url.searchParams.get('limit'))
+  let offset = Number($page.url.searchParams.get('offset'))
 
   let query = $page.url.searchParams.get('query') ?? ''
 
-  let accessLevel: AccessLevel = !$page.data.session
-    ? AccessLevel.PUBLIC
-    : $page.url.searchParams.get('accesslevel')
-    ? Number($page.url.searchParams.get('accesslevel'))
-    : AccessLevel.PRIVATE
+  let accessLevel: AccessLevel = Number($page.url.searchParams.get('accesslevel')) as AccessLevel
 
   let expanded: { [key: string]: boolean } = {}
   let expandedStyleId: string
@@ -53,160 +41,95 @@
     }
   }
 
-  let queryForSearch = normaliseQuery()
   $: isQueryEmpty = !query || query?.length === 0
-
-  let orderbyOptions = [
-    {
-      value: 'updatedat,desc',
-      label: 'Most recent',
-    },
-    {
-      value: 'updatedat,asc',
-      label: 'less recent',
-    },
-    {
-      value: 'name,asc',
-      label: 'A to Z',
-    },
-    {
-      value: 'name,desc',
-      label: 'Z to A',
-    },
-  ]
 
   const getSortByFromUrl = (url: URL) => {
     const sortByValue = url.searchParams.get('sortby')
     if (sortByValue) {
-      const option = orderbyOptions.find((opt) => opt.value === sortByValue)
+      const option = MapSortingColumns.find((opt) => opt.value === sortByValue)
       if (option) {
         return option.value
       }
     }
   }
 
-  let sortby = getSortByFromUrl($page.url) ?? orderbyOptions[0].value
-
-  onMount(async () => {
-    setPageUrl()
-  })
-
-  $: limit, handleLimitChanged()
-  $: sortby, handleSortbyChanged()
-  $: accessLevel, handleAccessLevelChanged()
+  let sortby = getSortByFromUrl($page.url) ?? MapSortingColumns[0].value
 
   const handleLimitChanged = async () => {
-    if (!browser) return
-    const currentLimit = $page.url.searchParams.get('limit') ? Number($page.url.searchParams.get('limit')) : undefined
+    const apiUrl = new URL($page.url.toString())
+    const currentLimit = apiUrl.searchParams.get('limit') ? Number(apiUrl.searchParams.get('limit')) : undefined
     if (currentLimit && currentLimit !== limit) {
       offset = 0
-      links = []
+      apiUrl.searchParams.set('offset', `${offset}`)
     }
-    await updateStylePage('next')
+    apiUrl.searchParams.set('limit', `${limit}`)
+
+    await reload(apiUrl)
   }
 
   const handleSortbyChanged = async () => {
-    if (!browser) return
     offset = 0
-    links = []
-    await updateStylePage('next')
+
+    const apiUrl = new URL($page.url.toString())
+    apiUrl.searchParams.set('offset', `${offset}`)
+    apiUrl.searchParams.set('sortby', sortby)
+
+    await reload(apiUrl)
   }
 
   const handleAccessLevelChanged = async () => {
-    if (!browser) return
     offset = 0
-    links = []
-    await updateStylePage('next')
+
+    const apiUrl = new URL($page.url.toString())
+    apiUrl.searchParams.set('offset', `${offset}`)
+    apiUrl.searchParams.set('accesslevel', `${accessLevel}`)
+
+    await reload(apiUrl)
   }
 
-  const setPageUrl = () => {
-    $page.url.searchParams.set('limit', `${limit}`)
-    $page.url.searchParams.set('offset', `${offset}`)
-    $page.url.searchParams.set('sortby', `${sortby}`)
-    $page.url.searchParams.set('accesslevel', `${accessLevel}`)
-    if (query && query.length > 0) {
-      $page.url.searchParams.set('query', `${query}`)
-    } else {
-      $page.url.searchParams.delete('query')
-    }
-    if (browser) {
-      goto(`?${$page.url.searchParams.toString()}`)
-    }
+  const reload = async (url: URL) => {
+    promiseStyles = undefined
+    await goto(`?${url.searchParams.toString()}`, {
+      invalidateAll: true,
+      noScroll: true,
+    })
+    promiseStyles = $page.data.promises.styles
   }
 
-  const updateStylePage = async (type: 'next' | 'previous') => {
-    try {
-      isLoading = true
-
-      let apiUrl = new URL(`${url.origin}/api/style`)
-      if (queryForSearch && queryForSearch.length > 0) {
-        apiUrl.searchParams.set('query', queryForSearch)
-      }
-      apiUrl.searchParams.set('limit', `${limit}`)
-      apiUrl.searchParams.set('offset', `${offset}`)
-      apiUrl.searchParams.set('sortby', `${sortby}`)
-      apiUrl.searchParams.set('accesslevel', `${accessLevel}`)
-
-      const link = links?.find((l) => l.rel === type)
-      if (link) {
-        const newURL = new URL(link.href)
-        limit = Number(newURL.searchParams.get('limit'))
-        offset = Number(newURL.searchParams.get('offset'))
-        sortby = getSortByFromUrl(newURL)
-        apiUrl = new URL(link.href)
-        setPageUrl()
-      } else {
-        setPageUrl()
-      }
-      const res = await fetch(apiUrl.toString())
-      if (res.ok) {
-        const json = await res.json()
-        styleList = [...json.styles]
-        links = json.links
-        pages = json.pages
-      } else {
-        styleList = []
-        links = []
-        pages = undefined
-      }
-    } finally {
-      isLoading = false
-    }
+  const handlePaginationClicked = async (link: StacLink) => {
+    const apiUrl = new URL(link.href)
+    await reload(apiUrl)
   }
 
-  const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-    const type = e.detail.type
-    await updateStylePage(type)
-  }
-
-  const handleStyleDeleted = (e) => {
-    const deletedStyle: DashboardMapStyle = e.detail.style
-    const index = styleList.map((s) => s.id).indexOf(deletedStyle.id)
-    if (index !== -1) {
-      styleList.splice(index, 1)
-      styleList = [...styleList]
-    }
+  const handleStyleDeleted = async () => {
+    promiseStyles = undefined
+    await invalidateAll()
+    promiseStyles = $page.data.promises.styles
   }
 
   const handleFilterInput = debounce(async (e) => {
     query = (e.target as HTMLInputElement).value
-    queryForSearch = query
+    let queryForSearch = query
     if (query.length > 0) {
-      queryForSearch = normaliseQuery()
-
+      const apiUrl = new URL($page.url.toString())
       offset = 0
-      links = []
-      await updateStylePage('next')
+      apiUrl.searchParams.set('offset', `${offset}`)
+      queryForSearch = normaliseQuery()
+      if (queryForSearch && queryForSearch.length > 0) {
+        apiUrl.searchParams.set('query', queryForSearch)
+      }
+      await reload(apiUrl)
     }
   }, 500)
 
   const clearInput = async () => {
     if (isQueryEmpty === true) return
+    const apiUrl = new URL($page.url.toString())
     query = ''
-    queryForSearch = ''
     offset = 0
-    links = []
-    await updateStylePage('next')
+    apiUrl.searchParams.set('offset', `${offset}`)
+    apiUrl.searchParams.delete('query')
+    await reload(apiUrl)
   }
 </script>
 
@@ -242,7 +165,9 @@
       <div class="field">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label">Search maps shared to:</label>
-        <AccessLevelSwitcher bind:accessLevel />
+        <AccessLevelSwitcher
+          bind:accessLevel
+          on:change={handleAccessLevelChanged} />
       </div>
     </div>
   {/if}
@@ -252,8 +177,10 @@
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Order by:</label>
       <div class="select">
-        <select bind:value={sortby}>
-          {#each orderbyOptions as option}
+        <select
+          bind:value={sortby}
+          on:change={handleSortbyChanged}>
+          {#each MapSortingColumns as option}
             <option value={option.value}>{option.label}</option>
           {/each}
         </select>
@@ -266,8 +193,10 @@
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">Shown in:</label>
       <div class="select">
-        <select bind:value={limit}>
-          {#each limits as limit}
+        <select
+          bind:value={limit}
+          on:change={handleLimitChanged}>
+          {#each LimitOptions as limit}
             <option value={limit}>{limit}</option>
           {/each}
         </select>
@@ -276,30 +205,38 @@
   </div>
 </div>
 
-{#if isLoading}
+{#if !promiseStyles}
   <div class="align-center">
     <Loader size="medium" />
   </div>
-{:else if styleList && styleList.length > 0}
-  {#key styleList}
-    {#each styleList as style}
-      <MapStyleCard
-        {style}
-        bind:isExpanded={expanded[style.id]}
-        on:deleted={handleStyleDeleted} />
-    {/each}
-  {/key}
-
-  <div class="align-center pt-2">
-    <Pagination
-      bind:totalPages={pages.totalPages}
-      bind:currentPage={pages.currentPage}
-      on:clicked={handlePaginationClicked} />
-  </div>
 {:else}
-  <div class="p-4">
-    <Notification type="info">No map found</Notification>
-  </div>
+  {#await promiseStyles then styles}
+    {#if styles.styles && styles.styles.length > 0}
+      {#key styles.styles}
+        {#each styles.styles as style}
+          <MapStyleCard
+            {style}
+            bind:isExpanded={expanded[style.id]}
+            on:deleted={handleStyleDeleted} />
+        {/each}
+      {/key}
+
+      <div class="align-center pt-2">
+        <Pagination
+          totalPages={styles.pages.totalPages}
+          currentPage={styles.pages.currentPage}
+          on:clicked={(e) => {
+            const link = styles.links?.find((l) => l.rel === e.detail.type)
+            if (!link) return
+            handlePaginationClicked(link)
+          }} />
+      </div>
+    {:else}
+      <div class="p-4">
+        <Notification type="info">No map found</Notification>
+      </div>
+    {/if}
+  {/await}
 {/if}
 
 <style lang="scss">

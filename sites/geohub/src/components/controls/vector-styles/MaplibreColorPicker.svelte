@@ -30,6 +30,7 @@
 
 <div
   class="color-palette"
+  data-testid="color-palette"
   use:tippy={{ content: tooltipContent }}
   title={rgba}
   style="background: {rgba};" />

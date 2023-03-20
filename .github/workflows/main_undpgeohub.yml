@@ -11,6 +11,24 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-store
+  AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+  AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+  AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
+  AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
+  DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+  MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
+  PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
+  TITILER_ENDPOINT: ${{ secrets.TITILER_ENDPOINT }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+  AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+  AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+  AZURE_SERVICE_BUS_CONNECTIONSTRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTIONSTRING }}
+  AZURE_SERVICE_BUS_QUEUE_NAME: ${{ secrets.AZURE_SERVICE_BUS_QUEUE_NAME }}
+
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
@@ -22,112 +40,23 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      # checkout code
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - uses: actions/setup-python@v3
-      - name: Install dependecies
-        working-directory: ./documentation
-        run: |
-          pip install pipenv
-          pipenv install --system
-
-      - name: Build documentation
-        working-directory: ./documentation
-        run: mkdocs build
-
-      # pnpm setup
-      # refer to https://github.com/pnpm/action-setup
-      - name: pnpm setup
-        uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 7.25.x
-          run_install: false
-
-      # setup Node
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - name: checkout code repository
+        uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: pnpm
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      # install dependencies
-      # https://github.com/evanw/esbuild/issues/1646
-      - name: Install dependencies
-        run: |
-          pnpm install esbuild -g
-          pnpm install --frozen-lockfile
-
-      # setup environmental variables
-      - name: Create environment file
-        if: ${{ (github.ref != 'refs/heads/main') }}
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./sites/geohub
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
-          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
-          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
-          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
-          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-
-      - name: Create environment file for production
-        if: ${{ (github.ref == 'refs/heads/main') }}
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          directory: ./sites/geohub
-          envkey_AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          envkey_AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-          envkey_DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
-          envkey_PUBLIC_TITILER_ENDPOINT: ${{ secrets.PUBLIC_TITILER_ENDPOINT }}
-          envkey_PUBLIC_AZURE_BLOB_TOKEN: ${{ secrets.PUBLIC_AZURE_BLOB_TOKEN }}
-          envkey_PUBLIC_AZURE_URL: ${{ secrets.PUBLIC_AZURE_URL }}
-          envkey_PUBLIC_MARTIN_API_ENDPOINT: ${{ secrets.PUBLIC_MARTIN_API_ENDPOINT }}
-          envkey_PUBLIC_PGTILESERV_API_ENDPOINT: ${{ secrets.PUBLIC_PGTILESERV_API_ENDPOINT }}
-          envkey_AUTH_SECRET: ${{ secrets.AUTH_SECRET_PROD }}
-          envkey_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          envkey_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID_PROD }}
-          envkey_AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET_PROD }}
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint
-        run: |
-          pnpm lint
+        run: pnpm lint
 
-      - name: Run Prettier
-        run: |
-          pnpm format
-
-      - name: build packages
-        run: |
-          pnpm --filter="./packages/**" build
-          pnpm --filter="./apps/**" build
-
-      - name: Run build storybook
-        working-directory: ./packages/svelte-undp-design
-        run: pnpm build-storybook
-
-      - name: Run build GeoHub
-        run: pnpm --filter="./sites/geohub" build
+      - name: build
+        run: pnpm build
 
       - name: Run unit tests
         run: pnpm test
@@ -145,8 +74,6 @@ jobs:
           npm install --omit=dev
           cp package.json build/.
           mv node_modules build/.
-          mv build/client/docs build/prerendered/docs
-          mv .env build/.
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev

@@ -7,6 +7,8 @@ import { Dataset } from '../interfaces';
 import Tags from './Tags';
 import { cleanText, distinct } from '../helpers';
 
+const APP_NAME = 'geohub-cli';
+
 class Datasets {
 	private datasets: Dataset[];
 	public getDatasets() {
@@ -145,7 +147,9 @@ class Datasets {
 				cleanText(dataset.license),
 				Buffer.from(geometry.toWkb()).toString('hex'),
 				dataset.createdat,
-				dataset.updatedat
+				APP_NAME,
+				dataset.updatedat,
+				APP_NAME
 			];
 			fs.appendFileSync(tsvFile, `${values.join('\t')}\n`);
 		});
@@ -153,7 +157,7 @@ class Datasets {
 		return new Promise<Dataset[]>((resolve, reject) => {
 			const stream = client.query(
 				copyFrom(
-					'COPY geohub.dataset (id, url, name, description, is_raster, license, bounds, createdat, updatedat ) FROM STDIN'
+					'COPY geohub.dataset (id, url, name, description, is_raster, license, bounds, createdat, created_user, updatedat, updated_user ) FROM STDIN'
 				)
 			);
 			const fileStream = fs.createReadStream(tsvFile);
@@ -221,8 +225,8 @@ class Datasets {
 			${dataset.bounds[2]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[3]},${dataset.bounds[0]} ${dataset.bounds[1]}))`;
 		const query = {
 			text: `
-			INSERT INTO geohub.dataset (id, url, name, description, is_raster, license, bounds, createdat, updatedat) 
-			values ($1, $2, $3, $4, $5, $6, ST_GeomFROMTEXT('${wkt}', 4326), $7::timestamptz, $8::timestamptz)`,
+			INSERT INTO geohub.dataset (id, url, name, description, is_raster, license, bounds, createdat, created_user, updatedat, updated_user) 
+			values ($1, $2, $3, $4, $5, $6, ST_GeomFROMTEXT('${wkt}', 4326), $7::timestamptz, $8, $9::timestamptz, $10)`,
 			values: [
 				dataset.id,
 				dataset.url,
@@ -231,7 +235,9 @@ class Datasets {
 				dataset.is_raster,
 				cleanText(dataset.license),
 				dataset.createdat,
-				dataset.updatedat
+				APP_NAME,
+				dataset.updatedat,
+				APP_NAME
 			]
 		};
 		await client.query(query);
@@ -262,7 +268,9 @@ class Datasets {
 			  license, 
 			  bounds, 
 			  createdat, 
-			  updatedat
+			  created_user,
+			  updatedat,
+			  updated_user
 			) 
 			values (
 			  $1, 
@@ -273,7 +281,9 @@ class Datasets {
 			  $6, 
 			  ST_GeomFROMTEXT('${wkt}', 4326), 
 			  $7::timestamptz, 
-			  $8::timestamptz
+			  $8,
+			  $9::timestamptz,
+			  $10
 			) 
 			ON CONFLICT (id)
 			DO
@@ -286,7 +296,8 @@ class Datasets {
 			  license=$6, 
 			  bounds=ST_GeomFROMTEXT('${wkt}', 4326), 
 			  createdat=$7::timestamptz, 
-			  updatedat=$8::timestamptz`,
+			  updatedat=$9::timestamptz,
+			  updated_user=$10`,
 			values: [
 				dataset.id,
 				dataset.url,
@@ -295,7 +306,9 @@ class Datasets {
 				dataset.is_raster,
 				dataset.license,
 				dataset.createdat,
-				dataset.updatedat
+				APP_NAME,
+				dataset.updatedat,
+				APP_NAME
 			]
 		};
 		await client.query(query);
@@ -332,6 +345,12 @@ class Datasets {
 			values: [datasetId]
 		};
 		await client.query(queryStar);
+
+		const queryPermission = {
+			text: `DELETE FROM geohub.dataset_permission WHERE dataset_id = $1`,
+			values: [datasetId]
+		};
+		await client.query(queryPermission);
 
 		const queryDataset = {
 			text: `DELETE FROM geohub.dataset WHERE id = $1`,

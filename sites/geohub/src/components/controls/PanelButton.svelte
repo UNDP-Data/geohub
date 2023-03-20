@@ -7,8 +7,23 @@
   export let tooltip: string
   export let position: 'top' | 'bottom' | 'right' | 'left' = 'top'
   export let disabled = false
+  export let isShow = false
 
-  const tippy = initTippy({ placement: 'bottom-end' })
+  const tippy = initTippy({
+    placement: 'bottom-end',
+    onShow(instance) {
+      isShow = true
+      instance.popper.querySelector('.close')?.addEventListener('click', () => {
+        instance.hide()
+      })
+    },
+    onHide(instance) {
+      isShow = false
+      instance.popper.querySelector('.close')?.removeEventListener('click', () => {
+        instance.hide()
+      })
+    },
+  })
   let tooltipContent: HTMLElement
 </script>
 

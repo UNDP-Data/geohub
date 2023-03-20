@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import CurrentLocation from '$lib';
-	import { PUBLIC_AZURE_URL } from '$env/static/public';
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
@@ -19,7 +18,7 @@
 </script>
 
 <div class="map" bind:this={mapContainer} />
-<CurrentLocation bind:map azureBaseUrl={PUBLIC_AZURE_URL} isHover={true} position="top-left" />
+<CurrentLocation bind:map isHover={true} position="top-left" />
 
 <style>
 	@import 'maplibre-gl/dist/maplibre-gl.css';

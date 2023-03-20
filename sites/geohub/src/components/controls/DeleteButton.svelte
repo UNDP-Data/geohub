@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
-
   import { clean, getLayerStyle } from '$lib/helper'
   import type { Layer } from '$lib/types'
   import { layerList, map } from '$stores'
+  import Modal from '$components/controls/Modal.svelte'
 
   export let layer: Layer
   import Keydown from 'svelte-keydown'
-  import Button from '@undp-data/svelte-undp-design/src/lib/Button/Button.svelte'
+
   let confirmDeleteLayerDialogVisible = false
 
   const handleDelete = () => {
@@ -63,45 +62,15 @@
     <i class="fa-solid fa-trash fa-sm" />
   </div>
 </div>
-
-<div
-  class="modal {confirmDeleteLayerDialogVisible ? 'is-active' : ''}"
-  data-testid="delete-layer-view-container"
-  transition:fade>
-  <div
-    class="modal-background"
-    on:click={handleCancel}
-    on:keydown={handleKeyDown} />
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Delete Layer</p>
-      <button
-        class="delete"
-        aria-label="close"
-        title="Close Delete Layer Button"
-        on:click={handleCancel} />
-    </header>
-    <section class="modal-card-body has-text-weight-normal">
-      <div class="has-text-weight-medium">Are you sure you want to delete this layer?</div>
-      <br />
-      {clean(layer.name)}
-    </section>
-    <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-      <div class="footer-button px-2">
-        <Button
-          title="Cancel"
-          isPrimary={false}
-          on:clicked={handleCancel} />
-      </div>
-      <div class="footer-button px-2">
-        <Button
-          title="Delete"
-          isPrimary={true}
-          on:clicked={handleDelete} />
-      </div>
-    </footer>
-  </div>
-</div>
+<Modal
+  bind:dialogOpen={confirmDeleteLayerDialogVisible}
+  on:cancel={handleCancel}
+  on:continue={handleDelete}
+  title="Delete Layer"
+  message="Are you sure you want to delete this layer?"
+  target={clean(layer.name)}
+  cancelText="Cancel"
+  continueText="Delete" />
 
 <style lang="scss">
   .footer-button {

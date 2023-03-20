@@ -18,7 +18,7 @@
   import ColorMapPicker from './ColorMapPicker.svelte'
 
   export let layerConfig: Layer
-  let colorMapName: string = layerConfig.colorMapName
+  let colorMapName = layerConfig.colorMapName
 
   let info: RasterTileMetadata
   ;({ info } = layerConfig)
@@ -38,7 +38,9 @@
     layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
     layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   }
-  const unit = bandMetaStats.Unit && bandMetaStats.Unit !== '-' ? bandMetaStats.Unit : ''
+
+  const tags = layerConfig.dataset.properties.tags
+  const unit = tags?.find((t) => t.key === 'unit')?.value
 
   const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[]
 
@@ -131,8 +133,11 @@
           first="label"
           last="label"
           rest={false}
-          suffix={unit}
           on:stop={onSliderStop} />
+
+        {#if unit}
+          <p class="align-center"><b>{unit}</b></p>
+        {/if}
       </div>
     </div>
   </div>
@@ -145,11 +150,17 @@
 
   .group {
     .range-slider {
+      position: relative;
       --range-handle-focus: #2196f3;
       --range-handle-inactive: #2196f3;
       --range-handle: #2196f3;
       --range-range-inactive: #2196f3;
       margin: 0;
+    }
+
+    .align-center {
+      width: max-content;
+      margin: auto;
     }
   }
 </style>

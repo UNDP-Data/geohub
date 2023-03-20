@@ -1,21 +1,21 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import { createEventDispatcher } from 'svelte'
   import { debounce } from 'lodash-es'
-  import { SortingColumns } from '$lib/constants'
   import PanelButton from '$components/controls/PanelButton.svelte'
   import type { Map } from 'maplibre-gl'
   import TagFilter from '$components/data-view/TagFilter.svelte'
-  import { Checkbox, Radios } from '@undp-data/svelte-undp-design'
-  import type { Radio } from '@undp-data/svelte-undp-design/package/interfaces'
-  import type { Tag } from '$lib/types/Tag'
+  import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design'
+  import { DatasetSortingColumns } from '$lib/config/AppConfig'
 
   const dispatch = createEventDispatcher()
 
+  export let disabled = false
   export let map: Map
   export let placeholder: string
-  export let query = ''
-  export let queryForSearch = ''
-  let queryType: 'and' | 'or' = 'and'
+  export let query = $page.url.searchParams.get('query') ?? ''
+  let queryType: 'and' | 'or' = $page.url.searchParams.get('queryoperator') as 'and' | 'or'
   let queryTypes: Radio[] = [
     {
       label: 'Match all words typed',
@@ -27,52 +27,71 @@
     },
   ]
 
-  export let sortingColumn: string = SortingColumns[0].value
+  let sortingColumn: string = $page.url.searchParams.get('sortby')
 
-  export let bbox: [number, number, number, number] = undefined
+  const bboxString = $page.url.searchParams.get('bbox')
+  const bboxArray = bboxString?.split(',').map((v) => Number(v))
+  let bbox: [number, number, number, number] = bboxString ? (bboxArray as [number, number, number, number]) : undefined
 
-  export let isFilterByBBox: boolean = undefined
-  export let selectedTags: Tag[] = undefined
-  export let tagFilterOperatorType: 'and' | 'or' = undefined
-  export let currentSearchUrl: string = undefined
+  let isFilterByBBox: boolean = bboxString ? true : false
+  let isTagFilterShow = false
 
   $: isQueryEmpty = !query || query?.length === 0
   $: queryType, handleQueryTypeChanged()
-  $: sortingColumn, fireChangeEvent('change', true)
+  $: sortingColumn, handleSortingColumnChanged()
+
+  const handleSortingColumnChanged = () => {
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('sortby')
+    apiUrl.searchParams.set('sortby', sortingColumn)
+    fireChangeEvent(apiUrl)
+  }
+
   const handleQueryTypeChanged = () => {
-    if (query === '') return
-    fireChangeEvent('change', true)
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('queryoperator')
+    apiUrl.searchParams.set('queryoperator', queryType)
+    fireChangeEvent(apiUrl)
   }
 
   const handleFilterInput = debounce(() => {
-    fireChangeEvent('change', true)
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    if (query.length > 0) {
+      apiUrl.searchParams.set('query', query)
+    }
+    fireChangeEvent(apiUrl)
   }, 500)
 
   const clearInput = () => {
-    if (isQueryEmpty === true) return
     query = ''
-    fireChangeEvent('clear')
+
+    const apiUrl = $page.url
+    apiUrl.searchParams.delete('query')
+    fireChangeEvent(apiUrl)
   }
 
-  const fireChangeEvent = (eventName: 'change' | 'clear', isNormalise = false) => {
-    queryForSearch = query
-    if (isNormalise) {
-      if (query.length > 0) {
-        queryForSearch = queryForSearch.trim().replace(/\s/g, ` ${queryType} `)
-      }
-    }
-    dispatch(eventName)
+  const fireChangeEvent = async (url: URL) => {
+    await goto(url, { replaceState: true, invalidateAll: true })
+
+    dispatch('change', {
+      url: url.toString(),
+    })
   }
 
   $: isFilterByBBox, registerMapMovedEvent()
 
-  const registerMapMovedEvent = () => {
+  const registerMapMovedEvent = async () => {
     if (!map) return
     if (isFilterByBBox) {
       map.off('moveend', handleMapMoved)
       map.on('moveend', handleMapMoved)
     } else {
       map.off('moveend', handleMapMoved)
+      bbox = undefined
+      const apiUrl = $page.url
+      apiUrl.searchParams.delete('bbox')
+      fireChangeEvent(apiUrl)
     }
     handleMapMoved()
   }
@@ -87,11 +106,17 @@
         bounds.getNorthEast().lng,
         bounds.getNorthEast().lat,
       ]
-    } else {
-      bbox = undefined
-      map.off('moveend', handleMapMoved)
+      const apiUrl = $page.url
+      apiUrl.searchParams.delete('bbox')
+      apiUrl.searchParams.set('bbox', bbox.join(','))
+      fireChangeEvent(apiUrl)
     }
-    fireChangeEvent('change', true)
+  }
+
+  const handleTagChanged = (e) => {
+    dispatch('tagchange', {
+      tags: e.detail.tags,
+    })
   }
 </script>
 
@@ -101,6 +126,7 @@
       data-testid="filter-bucket-input"
       class="input"
       type="text"
+      {disabled}
       {placeholder}
       on:input={handleFilterInput}
       bind:value={query} />
@@ -120,23 +146,25 @@
   <PanelButton
     icon="fas fa-sliders"
     tooltip="Explore tags and filter data"
-    width="230px">
+    {disabled}
+    bind:isShow={isTagFilterShow}
+    width="300px">
     <p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
     <p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
     <TagFilter
-      bind:selectedTags
-      bind:operatorType={tagFilterOperatorType}
-      bind:currentSearchUrl />
+      bind:isShow={isTagFilterShow}
+      on:change={handleTagChanged} />
   </PanelButton>
 
   <PanelButton
     icon="fas fa-arrow-down-short-wide"
     tooltip="Sort"
+    {disabled}
     width="200px">
     <p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
     <Radios
-      radios={SortingColumns}
+      radios={DatasetSortingColumns}
       bind:value={sortingColumn}
       groupName="sortby"
       isVertical={true} />
@@ -146,6 +174,7 @@
     icon="fas fa-gear"
     tooltip="Settings"
     position="left"
+    {disabled}
     width="230px">
     <p class="title is-5 m-0 p-0">Search settings</p>
     <p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>

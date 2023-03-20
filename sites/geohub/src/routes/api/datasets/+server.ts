@@ -1,15 +1,10 @@
 import type { RequestHandler } from './$types'
-import pkg, { type PoolClient } from 'pg'
-const { Pool } = pkg
-
-import { DATABASE_CONNECTION } from '$lib/server/variables/private'
-import type { StacLink } from '$lib/types'
-const connectionString = DATABASE_CONNECTION
-
-import { AccountSASPermissions, BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
-import { AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY } from '$lib/server/variables/private'
-import { TOKEN_EXPIRY_PERIOD_MSEC } from '$lib/constants'
+import type { PoolClient } from 'pg'
+import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types'
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression'
+import { generateAzureBlobSasToken, isSuperuser, pageNumber } from '$lib/server/helpers'
+import DatabaseManager from '$lib/server/DatabaseManager'
+import { Permission } from '$lib/config/AppConfig'
 
 /**
  * Datasets search API
@@ -33,8 +28,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession()
   const user_email = session?.user.email
 
-  const pool = new Pool({ connectionString })
-  const client = await pool.connect()
+  const dbm = new DatabaseManager()
+  const client = await dbm.start()
   try {
     const _limit = url.searchParams.get('limit') || 10
     const limit = Number(_limit)
@@ -78,7 +73,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       }
     }
 
-    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x', user_email)
+    const is_superuser = await isSuperuser(user_email)
+
+    const whereExpressesion = await createDatasetSearchWhereExpression(url, 'x', is_superuser, user_email)
     const values = whereExpressesion.values
 
     const sql = {
@@ -104,6 +101,15 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       no_stars as (
         SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
       )
+      ${
+        !is_superuser && user_email
+          ? `
+      ,permission as (
+        SELECT dataset_id, permission FROM geohub.dataset_permission 
+        WHERE user_email='${user_email}'
+      )`
+          : ''
+      }
       SELECT row_to_json(featurecollection) AS geojson 
       FROM (
         SELECT
@@ -123,9 +129,16 @@ export const GET: RequestHandler = async ({ url, locals }) => {
             x.is_raster, 
             x.license, 
             x.createdat, 
+            x.created_user,
             x.updatedat,
+            x.updated_user,
             y.tags,
             CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
+            ${
+              !is_superuser && user_email
+                ? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
+                : `${is_superuser ? Permission.OWNER : Permission.READ}`
+            } as permission,
             ${
               user_email
                 ? `
@@ -146,6 +159,14 @@ export const GET: RequestHandler = async ({ url, locals }) => {
           ON x.id = y.id
           LEFT JOIN no_stars z
           ON x.id = z.dataset_id
+          ${
+            !is_superuser && user_email
+              ? `
+          LEFT JOIN permission p
+          ON x.id = p.dataset_id
+          `
+              : ''
+          }
         ${whereExpressesion.sql}
         ORDER BY
           ${sortByColumn} ${SortOrder} NULLS ${SortOrder === 'asc' ? 'FIRST' : 'LAST'}
@@ -158,7 +179,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     }
     // console.log(sql)
     const res = await client.query(sql)
-    const geojson = res.rows[0].geojson
+    const geojson: DatasetFeatureCollection = res.rows[0].geojson
     if (!geojson.features) {
       geojson.features = []
     }
@@ -201,14 +222,27 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
     geojson.links = links
 
-    geojson.totalCount = await getTotalCount(client, whereExpressesion.sql, values)
+    const totalCount = await getTotalCount(client, whereExpressesion.sql, values)
+
+    let totalPages = Math.ceil(totalCount / Number(limit))
+    if (totalPages === 0) {
+      totalPages = 1
+    }
+    const currentPage = pageNumber(totalCount, Number(limit), Number(offset))
+    const pages: Pages = {
+      totalCount,
+      totalPages,
+      currentPage,
+    }
+
+    geojson.pages = pages
 
     // add SAS token if it is Azure Blob source
-    const sasToken = generateAzureBlobSasToken()
     geojson.features.forEach((feature) => {
-      const tags: [{ key: string; value: string }] = feature.properties.tags
+      const tags: Tag[] = feature.properties.tags
       const type = tags?.find((tag) => tag.key === 'type')
       if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return
+      const sasToken = generateAzureBlobSasToken(feature.properties.url)
       feature.properties.url = `${feature.properties.url}${sasToken}`
     })
 
@@ -218,8 +252,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       status: 400,
     })
   } finally {
-    client.release()
-    pool.end()
+    dbm.end()
   }
 }
 
@@ -236,25 +269,4 @@ const getTotalCount = async (client: PoolClient, whereSql: string, values: strin
   const res = await client.query(sql)
   const count = Number(res.rows[0]['count'])
   return count
-}
-
-const generateAzureBlobSasToken = () => {
-  const sharedKeyCredential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY)
-  // create storage container
-  const blobServiceClient = new BlobServiceClient(
-    `https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
-    sharedKeyCredential,
-  )
-
-  // generate account SAS token for vector tiles. This is needed because the
-  // blob level SAS tokens have the blob name encoded inside the SAS token and the
-  // adding a vector tile to mapbox requires adding a template/pattern not one file and reading many more files as well.
-
-  const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
-    new Date(new Date().valueOf() + TOKEN_EXPIRY_PERIOD_MSEC),
-    AccountSASPermissions.parse('r'),
-    'o',
-  )
-  const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
-  return ACCOUNT_SAS_TOKEN_URL.search
 }
