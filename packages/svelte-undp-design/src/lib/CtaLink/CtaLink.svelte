@@ -19,6 +19,7 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <a
 	class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
+	role="button"
 	on:keydown={handleKeyDown}
 	on:click={handleClicked}
 >

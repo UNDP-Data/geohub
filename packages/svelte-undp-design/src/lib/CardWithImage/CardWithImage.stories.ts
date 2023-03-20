@@ -6,7 +6,7 @@ import CardWithImage from './CardWithImage.svelte';
 const meta = {
 	title: 'Example/CardWithImage',
 	component: CardWithImage,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		linkName: {
 			type: 'string',
@@ -17,14 +17,6 @@ const meta = {
 			type: 'string',
 			description: 'URL to link',
 			defaultValue: '#'
-		}
-	},
-	parameters: {
-		linkName: {
-			values: ['READ MORE']
-		},
-		url: {
-			values: ['#']
 		}
 	}
 } satisfies Meta<CardWithImage>;

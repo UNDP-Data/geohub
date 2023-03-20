@@ -6,7 +6,7 @@ import Checkbox from './Checkbox.svelte';
 const meta = {
 	title: 'Example/Checkbox',
 	component: Checkbox,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		label: {
 			type: 'string',
@@ -17,11 +17,6 @@ const meta = {
 			type: 'boolean',
 			description: 'State of checkbox',
 			defaultValue: false
-		}
-	},
-	parameters: {
-		checked: {
-			values: [true, false]
 		}
 	}
 } satisfies Meta<Checkbox>;
@@ -34,5 +29,12 @@ export const Primary: Story = {
 	args: {
 		label: 'checkbox label',
 		checked: true
+	}
+};
+
+export const Unchecked: Story = {
+	args: {
+		label: 'checkbox label',
+		checked: false
 	}
 };

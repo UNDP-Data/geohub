@@ -7,7 +7,7 @@ import type { Radio } from '$lib/interfaces';
 const meta = {
 	title: 'Example/Radios',
 	component: Radios,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		radios: {
 			// type: 'string',
@@ -68,12 +68,21 @@ const radios2: Radio[] = [
 ];
 const selectedValue2 = radios[0].value;
 
-export const Secondary: Story = {
+export const CustomStyledLabel: Story = {
 	args: {
 		radios: radios2,
 		groupName: 'radio-buttons-2',
 		value: selectedValue2,
 		isVertical: false,
 		allowHtml: true
+	}
+};
+
+export const Vertical: Story = {
+	args: {
+		radios: radios,
+		groupName: 'radio-buttons-3',
+		value: selectedValue,
+		isVertical: true
 	}
 };

@@ -23,7 +23,7 @@ const footerItems: { [key: string]: { title: string; url: string }[] } = {
 const meta = {
 	title: 'Example/Footer',
 	component: Footer,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		logoUrl: {
 			type: 'string',
@@ -34,11 +34,6 @@ const meta = {
 			// type: 'string',
 			description: 'Items to be shown in footer',
 			defaultValue: undefined
-		}
-	},
-	parameters: {
-		isArrow: {
-			values: [true, false]
 		}
 	}
 } satisfies Meta<Footer>;

@@ -20,7 +20,7 @@ const breadcrumbs: Breadcrumb[] = [
 const meta = {
 	title: 'Example/Breadcrumbs',
 	component: Breadcrumbs,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		breadcrumbs: {
 			description: `Breadcrumbs data to be shown. Each object should contain 'name', 'icon' and 'url'. URL is optional. Icon can use either fontawesome of any icon image's URL. flag-icon package's icon also can be used. You have to import fontawesome or flag-icon CSS if you want to use it.`,
@@ -29,17 +29,14 @@ const meta = {
 		fontSize: {
 			type: 'string',
 			description: 'Font size either large, medium or small',
-			defaultValue: 'medium'
+			defaultValue: 'medium',
+			control: { type: 'select' },
+			options: ['small', 'medium', 'large']
 		},
 		disabled: {
 			type: 'boolean',
 			description: 'Disable breadcrumbs',
 			defaultValue: false
-		}
-	},
-	parameters: {
-		fontSize: {
-			values: ['medium', 'small']
 		}
 	}
 } satisfies Meta<Breadcrumbs>;
@@ -51,5 +48,33 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		breadcrumbs: breadcrumbs
+	}
+};
+
+export const Small: Story = {
+	args: {
+		breadcrumbs: breadcrumbs,
+		fontSize: 'small'
+	}
+};
+
+export const Medium: Story = {
+	args: {
+		breadcrumbs: breadcrumbs,
+		fontSize: 'medium'
+	}
+};
+
+export const Large: Story = {
+	args: {
+		breadcrumbs: breadcrumbs,
+		fontSize: 'large'
+	}
+};
+
+export const Disabled: Story = {
+	args: {
+		breadcrumbs: breadcrumbs,
+		disabled: true
 	}
 };
