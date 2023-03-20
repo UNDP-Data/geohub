@@ -35,9 +35,5 @@
     left: 0;
     right: 0;
     z-index: 1000;
-
-    :global(.menu-item) {
-      margin: 0.75rem 0.75rem 0.75rem 0 !important;
-    }
   }
 </style>
