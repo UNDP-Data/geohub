@@ -21,7 +21,21 @@
   let lineWidth = [userSettings.LineWidth]
   let numberOfClasses = [userSettings.NumberOfClasses]
   let isExpanded = true
-  let activeSettingTab = 'Map'
+  let settingTabs = [
+    {
+      title: 'Main',
+      hash: 'main',
+    },
+    {
+      title: 'My datasets',
+      hash: 'data',
+    },
+    {
+      title: 'Saved maps',
+      hash: 'maps',
+    },
+  ]
+  let activeSettingTab = settingTabs[0].title
 
   const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
     ? LimitOptions
@@ -45,24 +59,14 @@
             on:click={collapseMiniMenu}
             href="#">GeoHub Settings</a>
           <ul style="display: {!isExpanded ? 'none' : ''}">
-            <li>
-              <a
-                class={activeSettingTab === 'Map' ? 'selected' : ''}
-                on:click={() => (activeSettingTab = 'Map')}
-                href="#">Map Settings</a>
-            </li>
-            <li>
-              <a
-                class={activeSettingTab === 'Search' ? 'selected' : ''}
-                on:click={() => (activeSettingTab = 'Search')}
-                href="#">Search Settings</a>
-            </li>
-            <li>
-              <a
-                class={activeSettingTab === 'Legend' ? 'selected' : ''}
-                on:click={() => (activeSettingTab = 'Legend')}
-                href="#">Legend Settings</a>
-            </li>
+            {#each settingTabs as tab}
+              <li>
+                <a
+                  class={activeSettingTab === tab.title ? 'selected' : ''}
+                  on:click={() => (activeSettingTab = tab.title)}
+                  href="#{tab.hash}">{tab.title}</a>
+              </li>
+            {/each}
           </ul>
         </li>
       </ul>
@@ -85,7 +89,7 @@
         }
       }}>
       <section
-        class="content {activeSettingTab !== 'Map' ? 'is-hidden' : ''}"
+        class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}"
         id="Geohub">
         <h1 class="title">Map Settings</h1>
 
@@ -120,140 +124,7 @@
             </div>
           </div>
         </FieldControl>
-      </section>
-      <section
-        class="content {activeSettingTab !== 'Search' ? 'is-hidden' : ''}"
-        id="Search">
-        <h1 class="title">Search Settings</h1>
 
-        <FieldControl title="Default search Limit in data and maps page">
-          <div slot="help">The number of items to search at data page and maps page</div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <select
-                name="SearchLimit"
-                bind:value={userSettings.SearchLimit}>
-                {#each LimitOptions as limit}
-                  <option value={limit}>{limit}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </FieldControl>
-
-        <FieldControl title="Default search Limit in main GeoHub page">
-          <div slot="help">The number of items to search at data tab in main GeoHub page.</div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <select
-                name="DatasetSearchLimit"
-                bind:value={userSettings.DatasetSearchLimit}>
-                {#each DatasetLimitOptions as limit}
-                  <option value={limit}>{limit}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </FieldControl>
-
-        <FieldControl title="Default search query operator in main GeoHub page">
-          <div slot="help">
-            Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets which exactly match
-            all keyword. 'OR' allows you to search wider range of results by matching at least a word.
-          </div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <select
-                name="DatasetSearchQueryOperator"
-                bind:value={userSettings.DatasetSearchQueryOperator}>
-                {#each ['and', 'or'] as operator}
-                  <option value={operator}>
-                    {#if operator === 'and'}
-                      Match all words typed (AND)
-                    {:else}
-                      Match at least a word typed (OR)
-                    {/if}
-                  </option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </FieldControl>
-
-        <FieldControl title="Default sort setting in main GeoHub page">
-          <div slot="help">Change sort setting for the search result on datasets.</div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <div class="select is-fullwidth">
-                <select
-                  name="DatasetSortingColumn"
-                  bind:value={userSettings.DatasetSortingColumn}>
-                  {#each DatasetSortingColumns as column}
-                    <option value={column.value}>{column.label}</option>
-                  {/each}
-                </select>
-              </div>
-            </div>
-          </div>
-        </FieldControl>
-
-        <FieldControl title="Defaut tag search operator in main GeoHub page & data page">
-          <div slot="help">
-            Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to search datasets which
-            exactly match all tags you selected. 'OR' allows you to search wider range of results by matching at least a
-            tag selected.
-          </div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <select
-                name="TagSearchOperator"
-                bind:value={userSettings.TagSearchOperator}>
-                {#each ['and', 'or'] as operator}
-                  <option value={operator}>
-                    {#if operator === 'and'}
-                      Match all selected tags (AND)
-                    {:else}
-                      Match at least a tag selected (OR)
-                    {/if}
-                  </option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </FieldControl>
-
-        <FieldControl title="Default sort setting in Data page">
-          <div slot="help">Change sort setting for the search result on datasets.</div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <select
-                name="DataPageSortingColumn"
-                bind:value={userSettings.DataPageSortingColumn}>
-                {#each DatasetSortingColumns as column}
-                  <option value={column.value}>{column.label}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </FieldControl>
-
-        <FieldControl title="Default sort setting in Maps page">
-          <div slot="help">Change sort setting for the search result on datasets.</div>
-          <div slot="control">
-            <div class="select is-fullwidth">
-              <select
-                name="MapPageSortingColumn"
-                bind:value={userSettings.MapPageSortingColumn}>
-                {#each MapSortingColumns as column}
-                  <option value={column.value}>{column.label}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </FieldControl>
-      </section>
-
-      <section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
         <h1 class="title">Legend Settings</h1>
 
         <FieldControl title="Default number of classes">
@@ -307,6 +178,205 @@
           type="hidden"
           name="LineWidth"
           bind:value={lineWidth[0]} />
+
+        <h1 class="title">Search Settings</h1>
+
+        <FieldControl title="Default search Limit">
+          <div slot="help">The number of items to search at data tab in main GeoHub page.</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DatasetSearchLimit"
+                bind:value={userSettings.DatasetSearchLimit}>
+                {#each DatasetLimitOptions as limit}
+                  <option value={limit}>{limit}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Default search query operator">
+          <div slot="help">
+            Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets which exactly match
+            all keyword. 'OR' allows you to search wider range of results by matching at least a word.
+          </div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DatasetSearchQueryOperator"
+                bind:value={userSettings.DatasetSearchQueryOperator}>
+                {#each ['and', 'or'] as operator}
+                  <option value={operator}>
+                    {#if operator === 'and'}
+                      Match all words typed (AND)
+                    {:else}
+                      Match at least a word typed (OR)
+                    {/if}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Default sort setting">
+          <div slot="help">Change sort setting for the search result on datasets.</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <div class="select is-fullwidth">
+                <select
+                  name="DatasetSortingColumn"
+                  bind:value={userSettings.DatasetSortingColumn}>
+                  {#each DatasetSortingColumns as column}
+                    <option value={column.value}>{column.label}</option>
+                  {/each}
+                </select>
+              </div>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Defaut tag search operator">
+          <div slot="help">
+            Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to search datasets which
+            exactly match all tags you selected. 'OR' allows you to search wider range of results by matching at least a
+            tag selected.
+          </div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="TagSearchOperator"
+                bind:value={userSettings.TagSearchOperator}>
+                {#each ['and', 'or'] as operator}
+                  <option value={operator}>
+                    {#if operator === 'and'}
+                      Match all selected tags (AND)
+                    {:else}
+                      Match at least a tag selected (OR)
+                    {/if}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+      </section>
+      <section
+        class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}"
+        id="Search">
+        <h1 class="title">Search Settings</h1>
+
+        <FieldControl title="Default search Limit">
+          <div slot="help">The number of items to search at data page and maps page</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="SearchLimit"
+                bind:value={userSettings.SearchLimit}>
+                {#each LimitOptions as limit}
+                  <option value={limit}>{limit}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Default search query operator">
+          <div slot="help">
+            Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets which exactly match
+            all keyword. 'OR' allows you to search wider range of results by matching at least a word.
+          </div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DatasetSearchQueryOperator"
+                bind:value={userSettings.DatasetSearchQueryOperator}>
+                {#each ['and', 'or'] as operator}
+                  <option value={operator}>
+                    {#if operator === 'and'}
+                      Match all words typed (AND)
+                    {:else}
+                      Match at least a word typed (OR)
+                    {/if}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Defaut tag search operator">
+          <div slot="help">
+            Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to search datasets which
+            exactly match all tags you selected. 'OR' allows you to search wider range of results by matching at least a
+            tag selected.
+          </div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="TagSearchOperator"
+                bind:value={userSettings.TagSearchOperator}>
+                {#each ['and', 'or'] as operator}
+                  <option value={operator}>
+                    {#if operator === 'and'}
+                      Match all selected tags (AND)
+                    {:else}
+                      Match at least a tag selected (OR)
+                    {/if}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Default sort setting">
+          <div slot="help">Change sort setting for the search result on datasets.</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="DataPageSortingColumn"
+                bind:value={userSettings.DataPageSortingColumn}>
+                {#each DatasetSortingColumns as column}
+                  <option value={column.value}>{column.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+      </section>
+
+      <section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
+        <FieldControl title="Default search Limit">
+          <div slot="help">The number of items to search at data page and maps page</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="SearchLimit"
+                bind:value={userSettings.SearchLimit}>
+                {#each LimitOptions as limit}
+                  <option value={limit}>{limit}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Default sort setting">
+          <div slot="help">Change sort setting for the search result on datasets.</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="MapPageSortingColumn"
+                bind:value={userSettings.MapPageSortingColumn}>
+                {#each MapSortingColumns as column}
+                  <option value={column.value}>{column.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
       </section>
       <div class="field is-grouped is-grouped-centered">
         <div class="control">
