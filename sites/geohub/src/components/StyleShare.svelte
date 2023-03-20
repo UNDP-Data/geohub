@@ -5,7 +5,6 @@
   import { clickOutside } from 'svelte-use-click-outside'
   import type { StyleSpecification } from 'maplibre-gl'
   import { copy } from 'svelte-copy'
-  import { Button, Loader } from '@undp-data/svelte-undp-design'
 
   import type { Layer, SavedMapStyle } from '$lib/types'
   import { map, layerList } from '$stores'
@@ -19,6 +18,7 @@
     if (!savedStyle) return
     isReadonly = savedStyle.readOnly
   })
+  let styleId = $page.url.searchParams.get('style')
 
   export let isModalVisible = false
   let styleURL: string
@@ -79,7 +79,7 @@
       access_level: accessLevel,
     }
 
-    const styleId = $page.url.searchParams.get('style')
+    styleId = $page.url.searchParams.get('style')
 
     let method = 'POST'
     if (styleId && !isReadonly) {
@@ -103,6 +103,7 @@
       styleName = savedStyle.name
       isReadonly = savedStyle.readOnly
     })
+    styleId = $page.url.searchParams.get('style')
     shareLoading = false
   }
 
@@ -179,7 +180,7 @@
       </header>
       <section class="modal-card-body">
         {#if !styleURL}
-          {#if isReadonly}
+          {#if styleId && isReadonly}
             <Notification
               type="info"
               showCloseButton={false}>
@@ -252,26 +253,24 @@
         {/if}
       </section>
       <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-        <div class="is-6 px-1">
-          <Button
-            title={styleURL ? 'Close' : 'Cancel'}
-            on:clicked={handleClose}
-            isPrimary={false} />
-        </div>
+        <button
+          class="button is-link is-fullwidth"
+          on:click={handleClose}>
+          <span class="icon">
+            <i class="fa-solid fa-xmark fa-lg" />
+          </span>
+          <span>{styleURL ? 'Close' : 'Cancel'}</span>
+        </button>
 
         {#if !styleURL && exportedStyleJSON && exportedStyleJSON.layers.length > 0}
-          <div class="is-6 px-1">
-            {#if shareLoading}
-              <div class="loader-container">
-                <Loader size="x-small" />
-              </div>
-            {:else}
-              <Button
-                title="Share"
-                on:clicked={handleShare}
-                isPrimary={true} />
-            {/if}
-          </div>
+          <button
+            class="button is-primary is-fullwidth {shareLoading ? 'is-loading' : ''}"
+            on:click={handleShare}>
+            <span class="icon">
+              <i class="fa-solid fa-share fa-lg" />
+            </span>
+            <span>Share</span>
+          </button>
         {/if}
       </footer>
     </div>
