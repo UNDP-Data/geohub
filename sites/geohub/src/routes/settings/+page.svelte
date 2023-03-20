@@ -4,7 +4,7 @@
   import UserAccount from '$components/UserAccount.svelte'
   import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
   let headerHeight: number
-  let links: HeaderLink[] = HeaderItems(['home', 'maps', /*'data',**/ 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'data', 'dashboard', 'userguide'])
 </script>
 
 <div class="header">

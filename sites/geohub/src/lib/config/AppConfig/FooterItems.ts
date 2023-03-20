@@ -8,10 +8,10 @@ export const FooterItems: { [key: string]: { title: string; url: string }[] } = 
       title: 'Shared Maps',
       url: '/maps',
     },
-    // {
-    //   title: 'My datasets',
-    //   url: '/data',
-    // },
+    {
+      title: 'My datasets',
+      url: '/data',
+    },
     {
       title: 'User Guide',
       url: 'https://docs.undpgeohub.org',
