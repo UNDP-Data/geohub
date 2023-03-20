@@ -6,7 +6,7 @@ import Button from './Button.svelte';
 const meta = {
 	title: 'Example/Button',
 	component: Button,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		title: {
 			type: 'string',
@@ -23,14 +23,6 @@ const meta = {
 			description: 'If enabled, primary color will be used',
 			defaultValue: true
 		}
-	},
-	parameters: {
-		isArrow: {
-			values: [true, false]
-		},
-		isPrimary: {
-			values: [true, false]
-		}
 	}
 } satisfies Meta<Button>;
 
@@ -42,6 +34,29 @@ export const Primary: Story = {
 	args: {
 		title: 'title',
 		isArrow: true,
+		isPrimary: true
+	}
+};
+
+export const Secondary: Story = {
+	args: {
+		title: 'title',
+		isPrimary: false
+	}
+};
+
+export const Arrow: Story = {
+	args: {
+		title: 'title',
+		isArrow: true,
+		isPrimary: true
+	}
+};
+
+export const NoArrow: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
 		isPrimary: true
 	}
 };

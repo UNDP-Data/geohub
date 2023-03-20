@@ -6,7 +6,7 @@ import Pagination from './Pagination.svelte';
 const meta = {
 	title: 'Example/Pagination',
 	component: Pagination,
-	tags: ['docsPage'],
+	tags: ['autodocs'],
 	argTypes: {
 		totalPages: {
 			type: 'number',

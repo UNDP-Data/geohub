@@ -1,13 +1,9 @@
 <script lang="ts">
-	export let size: 'x-small' | 'small' | 'medium' | 'large' = 'medium';
+	export let size: 'small' | 'medium' | 'large' = 'medium';
 </script>
 
 <div
-	class="loader {size === 'small'
-		? 'small-loader'
-		: size === 'medium'
-		? 'medium-loader'
-		: 'smallest-loader'}"
+	class="loader {size === 'small' ? 'small-loader' : size === 'medium' ? 'medium-loader' : ''}"
 	aria-busy="true"
 	aria-live="polite"
 />
