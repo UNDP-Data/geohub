@@ -4,7 +4,7 @@
   import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
   import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'
 
-  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'data', 'dashboard', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'maps', /*'data',**/ 'dashboard', 'userguide'])
 </script>
 
 <Header
