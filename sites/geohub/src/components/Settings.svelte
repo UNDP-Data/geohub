@@ -1,5 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
+  import { base } from '$app/paths'
+  import { invalidateAll, afterNavigate, goto } from '$app/navigation'
   import {
     DatasetSortingColumns,
     MapSortingColumns,
@@ -10,10 +12,17 @@
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
   import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig'
-  import { invalidateAll } from '$app/navigation'
   import type { SidebarPosition } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
   import FieldControl from './controls/FieldControl.svelte'
+
+  // preserve previous page URL
+  let previousPage: string = base
+  afterNavigate(({ from }) => {
+    if (from?.url) {
+      previousPage = `${from?.url.pathname}${from?.url.search}`
+    }
+  })
 
   let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
@@ -61,6 +70,12 @@
 
     toast.push('Settings were reset. Please click apply button to save them.')
   }
+
+  const backToPreviousPage = () => {
+    goto(previousPage, {
+      invalidateAll: true,
+    })
+  }
 </script>
 
 <div class="columns is-one-quarter ml-auto mr-auto settings-page">
@@ -100,6 +115,16 @@
           isSubmitting = false
         }
       }}>
+      {#if previousPage}
+        <button
+          type="button"
+          disabled={isSubmitting}
+          class="button is-link"
+          on:click={backToPreviousPage}>
+          Back to previous page
+        </button>
+      {/if}
+
       <section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
         <p class="title is-4">Map Settings</p>
 
