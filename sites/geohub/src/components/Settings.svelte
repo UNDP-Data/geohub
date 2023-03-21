@@ -17,7 +17,7 @@
 
   let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
-  let sideBarPosition: SidebarPosition = userSettings.SidebarPosition || 'left'
+  let sideBarPosition: SidebarPosition = userSettings.SidebarPosition
   let lineWidth = [userSettings.LineWidth]
   let numberOfClasses = [userSettings.NumberOfClasses]
 
@@ -48,6 +48,16 @@
   const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
     ? LimitOptions
     : [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b)
+
+  const resetToDefault = () => {
+    userSettings = JSON.parse(JSON.stringify(DefaultUserConfig))
+
+    sideBarPosition = userSettings.SidebarPosition
+    lineWidth = [userSettings.LineWidth]
+    numberOfClasses = [userSettings.NumberOfClasses]
+
+    toast.push('Settings were reset. Please click apply button to save them.')
+  }
 </script>
 
 <div class="columns is-one-quarter ml-auto mr-auto settings-page">
@@ -91,7 +101,7 @@
             <div class="columns is-mobile">
               <label class="column">
                 <input
-                  on:select={() => userSettings.SidebarPosition === 'left'}
+                  on:select={() => sideBarPosition === 'left'}
                   type="radio"
                   name="SidebarPosition"
                   value="left"
@@ -103,7 +113,7 @@
               </label>
               <label class="column">
                 <input
-                  on:select={() => userSettings.SidebarPosition === 'right'}
+                  on:select={() => sideBarPosition === 'right'}
                   type="radio"
                   name="SidebarPosition"
                   value="right"
@@ -370,6 +380,13 @@
       </section>
       <div class="field is-grouped is-grouped-centered">
         <div class="control">
+          <button
+            type="button"
+            disabled={isSubmitting}
+            class="button is-link"
+            on:click={resetToDefault}>
+            Reset to default
+          </button>
           <button
             formaction="?/save"
             type="submit"
