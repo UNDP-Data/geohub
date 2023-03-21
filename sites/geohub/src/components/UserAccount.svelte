@@ -4,6 +4,7 @@
   import { Button } from '@undp-data/svelte-undp-design'
   import chroma from 'chroma-js'
   import { goto } from '$app/navigation'
+  import { clickOutside } from 'svelte-use-click-outside'
 
   let panelWidth = '350px'
   let dropdownActive = false
@@ -57,7 +58,10 @@
     <div
       class="dropdown-menu"
       style="max-width: {panelWidth}"
-      role="menu">
+      role="menu"
+      use:clickOutside={() => {
+        dropdownActive = false
+      }}>
       <div class="dropdown-content">
         <div class="dropdown-item has-text-centered">
           <p class="title mb-2 is-4">{$page.data.session.user.name}</p>

@@ -13,6 +13,9 @@
   let headerHeight: number
 
   let links: HeaderLink[] = HeaderItems(['home', 'data', 'dashboard', 'userguide'])
+  if (!data.session) {
+    links = [...links.filter((l) => l.href !== '/data')]
+  }
 
   let stats: StatsCard[] = data.stats
 
