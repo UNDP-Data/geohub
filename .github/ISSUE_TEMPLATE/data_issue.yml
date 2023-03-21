@@ -1,0 +1,51 @@
+name: "Data Issue Report"
+description: "Report an issue on datasets"
+title: "[DATA] "
+labels: [data]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this data issue report! Before you report the bug, please make sure that:
+        - You have searched the [issues](https://github.com/UNDP-Data/geohub/issues) for similar bug reports.
+  - type: textarea
+    id: description
+    attributes:
+      label: "Issue Description"
+      description: "A clear and concise description of which datasets are having the issue."
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: "References"
+      description: |
+        Add relevant links to the datasets. For example,
+        - The link of GeoHub URL after searching datasets. 
+        e.g., "https://geohub.data.undp.org/?operator=and&limit=15&breadcrumbs=Home&queryoperator=and&sortby=name%2Casc&query=narok"
+        - The link of website URL for original data sources.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dataset-id
+    attributes:
+      label: "Dataset ID"
+      description: |
+        If applicable, add dataset ID which you are reporting to.
+        You can find dataset ID by using the following GeoHub endpoint.
+        https://geohub.data.undp.org/api/datasets
+
+        Please also check the API specification [here](https://geohub.data.undp.org/api)
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "Screenshots"
+      description: "If applicable, add screenshots to help explain your problem."
+    validations:
+      required: false
