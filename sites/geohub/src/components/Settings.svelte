@@ -25,14 +25,17 @@
     {
       title: 'Home',
       hash: 'main',
+      icon: 'fa-solid fa-home',
     },
     {
       title: 'My data',
       hash: 'data',
+      icon: 'fa-solid fa-server',
     },
     {
       title: 'Maps',
       hash: 'maps',
+      icon: 'fa-solid fa-map',
     },
   ]
   const hash = $page.url.hash
@@ -70,7 +73,12 @@
             <a
               class={activeSettingTab === tab.title ? 'is-active' : ''}
               on:click={() => (activeSettingTab = tab.title)}
-              href="#{tab.hash}">{tab.title}</a>
+              href="#{tab.hash}">
+              <span class="icon">
+                <i class="{tab.icon} {activeSettingTab === tab.title ? 'has-text-white' : 'has-text-link'}" />
+              </span>
+              {tab.title}
+            </a>
           </li>
         {/each}
       </ul>
