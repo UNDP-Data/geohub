@@ -66,7 +66,7 @@
       </ul>
     </aside>
   </div>
-  <div class="column is-two-fifths m-auto">
+  <div class="column is-three-fifths m-auto">
     <form
       action="?/save"
       method="post"
