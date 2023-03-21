@@ -20,7 +20,7 @@
   let sideBarPosition: SidebarPosition = userSettings.SidebarPosition || 'left'
   let lineWidth = [userSettings.LineWidth]
   let numberOfClasses = [userSettings.NumberOfClasses]
-  let isExpanded = true
+
   let settingTabs = [
     {
       title: 'Main',
@@ -48,31 +48,21 @@
   const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
     ? LimitOptions
     : [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b)
-
-  const collapseMiniMenu = () => {
-    isExpanded = !isExpanded
-  }
 </script>
 
 <div class="columns is-one-quarter ml-auto mr-auto settings-page">
   <div class="column is-2">
     <aside class="menu">
+      <p class="menu-label">Settings</p>
       <ul class="menu-list">
-        <li>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a on:click={collapseMiniMenu}>GeoHub Settings</a>
-          <ul style="display: {!isExpanded ? 'none' : ''}">
-            {#each settingTabs as tab}
-              <li>
-                <a
-                  class={activeSettingTab === tab.title ? 'selected' : ''}
-                  on:click={() => (activeSettingTab = tab.title)}
-                  href="#{tab.hash}">{tab.title}</a>
-              </li>
-            {/each}
-          </ul>
-        </li>
+        {#each settingTabs as tab}
+          <li>
+            <a
+              class={activeSettingTab === tab.title ? 'is-active' : ''}
+              on:click={() => (activeSettingTab = tab.title)}
+              href="#{tab.hash}">{tab.title}</a>
+          </li>
+        {/each}
       </ul>
     </aside>
   </div>
@@ -98,7 +88,7 @@
         <FieldControl title="Sidebar Position">
           <div slot="help">Select sidebar position of main GeoHub page.</div>
           <div slot="control">
-            <div class="columns">
+            <div class="columns is-mobile">
               <label class="column">
                 <input
                   on:select={() => userSettings.SidebarPosition === 'left'}
@@ -398,28 +388,6 @@
   }
   .content.is-hidden:not(:first-of-type) {
     display: none;
-  }
-  .menu-list li {
-    margin-bottom: 0.5rem;
-  }
-  .menu-list a.selected {
-    background-color: #3273dc;
-    color: white;
-  }
-  .menu-list a {
-    cursor: pointer;
-  }
-
-  .card {
-    z-index: -1;
-  }
-
-  .sidebar-col:hover {
-    cursor: pointer;
-  }
-
-  .selected-sidebar {
-    border: 2px solid #3273dc;
   }
 
   [type='radio'] {
