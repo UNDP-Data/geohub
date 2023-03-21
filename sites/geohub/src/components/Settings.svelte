@@ -35,29 +35,33 @@
       hash: 'maps',
     },
   ]
-  let activeSettingTab = settingTabs[0].title
+  const hash = $page.url.hash
+  let activeTab = settingTabs[0]
+  if (hash) {
+    let tab = settingTabs.find((t) => `#${t.hash}` === hash)
+    if (tab) {
+      activeTab = tab
+    }
+  }
+  let activeSettingTab = activeTab.title
 
   const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
     ? LimitOptions
     : [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b)
-
-  export let headerHeight: number
 
   const collapseMiniMenu = () => {
     isExpanded = !isExpanded
   }
 </script>
 
-<div
-  class="columns is-one-quarter ml-auto mr-auto settings-page"
-  style="margin-top: {headerHeight}px;">
+<div class="columns is-one-quarter ml-auto mr-auto settings-page">
   <div class="column is-2">
     <aside class="menu">
       <ul class="menu-list">
         <li>
-          <a
-            on:click={collapseMiniMenu}
-            href="#">GeoHub Settings</a>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a on:click={collapseMiniMenu}>GeoHub Settings</a>
           <ul style="display: {!isExpanded ? 'none' : ''}">
             {#each settingTabs as tab}
               <li>
@@ -88,10 +92,8 @@
           isSubmitting = false
         }
       }}>
-      <section
-        class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}"
-        id="Geohub">
-        <h1 class="title">Map Settings</h1>
+      <section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
+        <p class="title is-4">Map Settings</p>
 
         <FieldControl title="Sidebar Position">
           <div slot="help">Select sidebar position of main GeoHub page.</div>
@@ -124,8 +126,6 @@
             </div>
           </div>
         </FieldControl>
-
-        <h1 class="title">Legend Settings</h1>
 
         <FieldControl title="Default number of classes">
           <div slot="help">The default number of classes in classify legend for vector layer and raster layer</div>
@@ -179,7 +179,7 @@
           name="LineWidth"
           bind:value={lineWidth[0]} />
 
-        <h1 class="title">Search Settings</h1>
+        <p class="title is-4">Search Settings</p>
 
         <FieldControl title="Default search Limit">
           <div slot="help">The number of items to search at data tab in main GeoHub page.</div>
@@ -262,10 +262,8 @@
           </div>
         </FieldControl>
       </section>
-      <section
-        class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}"
-        id="Search">
-        <h1 class="title">Search Settings</h1>
+      <section class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}">
+        <p class="title is-4">Search Settings</p>
 
         <FieldControl title="Default search Limit">
           <div slot="help">The number of items to search at data page and maps page</div>
@@ -348,6 +346,8 @@
       </section>
 
       <section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
+        <p class="title is-4">Search Settings</p>
+
         <FieldControl title="Default search Limit">
           <div slot="help">The number of items to search at data page and maps page</div>
           <div slot="control">
