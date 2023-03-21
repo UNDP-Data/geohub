@@ -1,8 +1,11 @@
 <script lang="ts">
+  import type { PageData } from './$types'
   import { Header, Footer, FluidCarousel, type CarouselContent, type HeaderLink } from '@undp-data/svelte-undp-design'
   import { browser } from '$app/environment'
   import UserAccount from '$components/UserAccount.svelte'
   import { HeaderItems, FooterItems } from '$lib/config/AppConfig'
+
+  export let data: PageData
 
   let headerHeight: number
 
@@ -18,7 +21,11 @@
     },
   ]
 
-  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'userguide'])
+  let links: HeaderLink[] = HeaderItems(['home', 'maps', 'data', 'userguide'])
+
+  if (!data.session) {
+    links = [...links.filter((l) => l.href !== '/data')]
+  }
 
   let title = 'GeoHub | Dashboards'
 </script>

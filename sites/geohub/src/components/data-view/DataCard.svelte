@@ -195,7 +195,7 @@
         slot="content"
         class="card-container px-1"
         bind:clientWidth>
-        {#if !is_raster && tilestatsLayers.length > 1}
+        {#if !is_raster && tilestatsLayers?.length > 1}
           <DataCardInfo
             bind:feature
             bind:metadata

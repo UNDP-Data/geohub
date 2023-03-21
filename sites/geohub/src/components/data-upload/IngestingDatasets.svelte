@@ -180,7 +180,10 @@
       <Loader />
     </div>
   {:then}
-    {#if ingestingDatasets && ingestingDatasets.length > 0}
+    {#if ingestingDatasets && ingestingDatasets.filter((ds) => {
+        const status = getStatus(ds)
+        return status !== 'Published'
+      }).length > 0}
       <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
         <thead>
           <tr>

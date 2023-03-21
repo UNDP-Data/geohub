@@ -1,5 +1,12 @@
+import type { PageServerLoad } from './$types'
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig'
-import { fail } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
+
+export const load: PageServerLoad = async ({ locals, url }) => {
+  const session = await locals.getSession()
+  if (!session) throw redirect(300, url.origin)
+}
+
 export const actions = {
   save: async (event) => {
     const { request, locals } = event
