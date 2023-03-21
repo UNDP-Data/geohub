@@ -23,15 +23,15 @@
 
   let settingTabs = [
     {
-      title: 'Main',
+      title: 'Home',
       hash: 'main',
     },
     {
-      title: 'My datasets',
+      title: 'My data',
       hash: 'data',
     },
     {
-      title: 'Saved maps',
+      title: 'Maps',
       hash: 'maps',
     },
   ]
@@ -374,7 +374,7 @@
             formaction="?/save"
             type="submit"
             class="button is-primary {isSubmitting ? 'is-loading' : ''}">
-            Submit
+            Apply
           </button>
         </div>
       </div>
