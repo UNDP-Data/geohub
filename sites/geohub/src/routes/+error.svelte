@@ -1,10 +1,17 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import type { PageData } from './$types'
   import UserAccount from '$components/UserAccount.svelte'
   import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
   import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'
 
+  export let data: PageData
+
   let links: HeaderLink[] = HeaderItems(['home', 'maps', 'data', 'dashboard', 'userguide'])
+
+  if (!data.session) {
+    links = [...links.filter((l) => l.href !== '/data')]
+  }
 </script>
 
 <Header
