@@ -11,6 +11,7 @@
 
 <div
   class="has-tooltip-bottom has-tooltip-arrow"
+  data-testid="tooltip-container"
   data-tooltip="Show layer info">
   <div
     class="icon-selected"

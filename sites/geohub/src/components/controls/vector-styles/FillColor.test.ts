@@ -50,7 +50,7 @@ describe('FillColor component', () => {
     vi.clearAllMocks()
   })
 
-  it('Should render it from style.json', () => {
+  it('Should render it from style.json', async () => {
     const layer: Layer = {
       id: 'landcover',
       name: 'landcover',
@@ -58,8 +58,8 @@ describe('FillColor component', () => {
 
     render(FillColor, { props: { layer: layer, defaultColor: 'rgba(0,0,0,1)' } })
     // to make sure color-palette button is created
-    expect(screen.getAllByTestId('color-palette')).toBeTruthy()
+    await expect(screen.getAllByTestId('color-palette')).toBeTruthy()
     // to make sure getPaintProperty function is called in initialising
-    expect(mockgetPaintProperty).toHaveBeenCalled()
+    await expect(mockgetPaintProperty).toHaveBeenCalled()
   })
 })

@@ -1,17 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { Button } from '@undp-data/svelte-undp-design'
   import { Loader } from '@undp-data/svelte-undp-design'
   const dispatch = createEventDispatcher()
-
   export let isIconButton = false
   export let title = ''
   export let isLoading = false
-
   const handleClicked = () => {
     dispatch('clicked')
   }
-
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       dispatch('clicked')
@@ -50,7 +46,6 @@
   .button-icon {
     width: 30px;
     height: 30px;
-
     .fa-stack-1x {
       width: auto;
       height: auto;
@@ -60,7 +55,6 @@
     }
     color: #d12800;
   }
-
   .loader-container {
     display: flex;
     justify-content: center;

@@ -457,7 +457,7 @@ importers:
       '@sveltejs/vite-plugin-svelte': 2.0.3_svelte@3.57.0+vite@4.2.0
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/svelte': 3.2.2_svelte@3.57.0
-      '@testing-library/user-event': 14.4.3_@testing-library+dom@9.0.1
+      '@testing-library/user-event': 14.4.3
       '@types/chroma-js': 2.4.0
       '@types/colormap': 2.3.1
       '@types/geojson': 7946.0.10
@@ -4187,7 +4187,7 @@ packages:
       svelte: 3.57.0
       tiny-glob: 0.2.9
       undici: 5.21.0
-      vite: 4.2.0
+      vite: 4.2.0_sass@1.59.3
     transitivePeerDependencies:
       - supports-color
 
@@ -4220,7 +4220,7 @@ packages:
       magic-string: 0.29.0
       svelte: 3.57.0
       svelte-hmr: 0.15.1_svelte@3.57.0
-      vite: 4.2.0
+      vite: 4.2.0_sass@1.59.3
       vitefu: 0.2.4_vite@4.2.0
     transitivePeerDependencies:
       - supports-color
@@ -4286,6 +4286,13 @@ packages:
     dependencies:
       '@babel/runtime': 7.21.0
       '@testing-library/dom': 8.20.0
+    dev: true
+
+  /@testing-library/user-event/14.4.3:
+    resolution: {integrity: sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
     dev: true
 
   /@testing-library/user-event/14.4.3_@testing-library+dom@9.0.1:
@@ -12707,6 +12714,7 @@ packages:
       rollup: 3.20.0
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /vite/4.2.0_bbhgkqmop4v24vevyan3j2nitq:
     resolution: {integrity: sha512-AbDTyzzwuKoRtMIRLGNxhLRuv1FpRgdIw+1y6AQG73Q5+vtecmvzKo/yk8X/vrHDpETRTx01ABijqUHIzBXi0g==}
@@ -12775,7 +12783,6 @@ packages:
       sass: 1.59.3
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /vitefu/0.2.4_vite@4.2.0:
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
@@ -12785,7 +12792,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.2.0
+      vite: 4.2.0_sass@1.59.3
 
   /vitest/0.29.3_jsdom@21.1.1+sass@1.59.3:
     resolution: {integrity: sha512-muMsbXnZsrzDGiyqf/09BKQsGeUxxlyLeLK/sFFM4EXdURPQRv8y7dco32DXaRORYP0bvyN19C835dT23mL0ow==}

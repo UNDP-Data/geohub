@@ -1,4 +1,4 @@
-const colorOptions = [
+export const colorOptions = [
   'is-black',
   'is-primary',
   'is-link',

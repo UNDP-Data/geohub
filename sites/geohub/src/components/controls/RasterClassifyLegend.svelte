@@ -16,10 +16,9 @@
   import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte'
   import type { ColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types'
   import { layerList, map } from '$stores'
-  import { updateIntervalValues } from '$lib/helper/updateIntervalValues'
+  import { updateIntervalValues, updateLayerList } from '$lib/helper'
   import ColorMapPicker from './ColorMapPicker.svelte'
   import chroma from 'chroma-js'
-  import { updateLayerList } from '$lib/helper/updateLayerList'
   import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig'
   export let layer: Layer
   export let layerHasUniqueValues: boolean

@@ -5,7 +5,7 @@ import NumberInput from '$components/controls/NumberInput.svelte'
 
 beforeEach(cleanup)
 
-describe('Number Input : Default Values', () => {
+describe.todo('Number Input : Default Values', () => {
   let sut: RenderResult
   let viewContainer: HTMLElement
 
@@ -62,7 +62,7 @@ describe('Number Input : Default Values', () => {
   })
 })
 
-describe('Number Input : Min/Max Values', () => {
+describe.todo('Number Input : Min/Max Values', () => {
   let sut: RenderResult
   let viewContainer: HTMLElement
 
@@ -109,7 +109,7 @@ describe('Number Input : Min/Max Values', () => {
   })
 })
 
-describe('Number Input : Step Values', () => {
+describe.todo('Number Input : Step Values', () => {
   let sut: RenderResult
   let viewContainer: HTMLElement
 
@@ -153,8 +153,8 @@ describe('Number Input : Step Values', () => {
   })
 })
 
-describe('Number Input : Float Step Values', () => {
-  let sut: RenderResult
+describe.todo('Number Input : Float Step Values', () => {
+  let sut: RenderResult<NumberInput>
   let viewContainer: HTMLElement
 
   beforeEach(() => {

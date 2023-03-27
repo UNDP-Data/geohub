@@ -5,15 +5,15 @@ import type { RenderResult } from '@testing-library/svelte'
 import component from '$components/control-groups/StyleControlGroup.svelte'
 
 describe('Vector : Style Control Group ', () => {
-  let sut: RenderResult
+  let sut: RenderResult<component>
 
   beforeEach(() => {
     sut = render(component, { title: 'Orange' })
   })
 
-  it('should render', () => {
+  it('should render', async () => {
     const row = sut.getByTestId('box-title')
-    expect(row).toBeDefined()
-    expect(row.innerHTML).toContain('Orange')
+    await expect(row).toBeDefined()
+    await expect(row.innerHTML).toContain('Orange')
   })
 })

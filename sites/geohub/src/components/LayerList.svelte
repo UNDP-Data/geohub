@@ -27,6 +27,7 @@
     }
 
     const style: StyleSpecification = styleInfo.style
+    console.log(style)
     $map.setStyle(style)
 
     $map.flyTo({

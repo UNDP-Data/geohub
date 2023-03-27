@@ -52,14 +52,18 @@
 
 <div
   class="has-tooltip-bottom has-tooltip-arrow"
+  data-testid="delete-button"
   data-tooltip="Delete layer">
   <div
     class="container icon-selected"
+    data-testid="delete-button-container"
     tabindex="0"
     role="button"
     on:click={() => (confirmDeleteLayerDialogVisible = true)}
     on:keydown={handleKeyDown}>
-    <i class="fa-solid fa-trash fa-sm" />
+    <i
+      data-testid="delete-icon"
+      class="fa-solid fa-trash fa-sm" />
   </div>
 </div>
 <Modal

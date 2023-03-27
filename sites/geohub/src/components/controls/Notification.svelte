@@ -24,6 +24,7 @@
 </script>
 
 <div
+  data-testid="notification-div"
   bind:this={nodeRef}
   class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message">
   {#if showCloseButton}

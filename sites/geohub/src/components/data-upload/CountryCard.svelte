@@ -36,6 +36,7 @@
 </script>
 
 <div
+  data-testid="country-card-container"
   class="country-button card m-0 p-0 {isSelectable ? 'is-selectable' : ''}"
   on:click={handleSDGSelected}
   on:keydown={handleEnterKey}>

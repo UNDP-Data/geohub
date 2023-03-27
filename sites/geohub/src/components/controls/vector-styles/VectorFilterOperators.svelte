@@ -15,7 +15,9 @@
   }
 </script>
 
-<div class=" column">
+<div
+  class=" column"
+  data-testid="vector-filter-operators-container">
   <div class="setmembership">
     <div
       class="buttons"

@@ -115,66 +115,71 @@
 the key statement is necessary as it forces to rerender the legend item in case an invalid valus is provided
 -->
 {#key signal}
-  <div class="columns is-mobile p-0 m-0 py-1">
-    <div class="column is-1 p-0 m-0">
-      <div
-        role="button"
-        class="visible-button icon"
-        on:click={() => (isVisible = !isVisible)}
-        on:keydown={handleEnterKey}>
-        {#if isVisible}
-          <i class="fa-solid fa-eye" />
+  <div data-testid="legend-colormap-row">
+    <div class="columns is-mobile p-0 m-0 py-1">
+      <div class="column is-1 p-0 m-0">
+        <div
+          role="button"
+          data-testid="visibility-button"
+          class="visible-button icon"
+          on:click={() => (isVisible = !isVisible)}
+          on:keydown={handleEnterKey}>
+          {#if isVisible}
+            <i class="fa-solid fa-eye" />
+          {:else}
+            <i class="fa-solid fa-eye-slash" />
+          {/if}
+        </div>
+      </div>
+      <div class="column is-2 p-0 m-0">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div
+          title="Color Map Control"
+          use:tippy={{ content: tooltipContent }}
+          class="discrete"
+          style="{colorPickerStyle}; width:20px; height:20px" />
+        <div
+          class="tooltip"
+          data-testid="tooltip"
+          bind:this={tooltipContent}>
+          <ColorPicker
+            bind:color
+            on:changeColor={handleColorChanged} />
+        </div>
+      </div>
+      {#if !hasUniqueValues}
+        <div class="column p-0 m-0">
+          <input
+            data-testid="start-input"
+            style="width:{rowWidth * 8}px; max-width:100px"
+            class="number-input"
+            id="start"
+            type="number"
+            value={colorMapRow.start}
+            on:change={handleInput}
+            required />
+        </div>
+      {/if}
+      <div class="is-3 column p-0 m-0">
+        <p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
+      </div>
+      <div class="column p-0 m-0">
+        {#if hasUniqueValues}
+          <span>
+            {isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
+          </span>
         {:else}
-          <i class="fa-solid fa-eye-slash" />
+          <input
+            data-testid="end-input"
+            style={`width:${rowWidth * 8}px; max-width:100px`}
+            class="number-input"
+            type="number"
+            id="end"
+            value={colorMapRow.end}
+            on:change={handleInput}
+            required />
         {/if}
       </div>
-    </div>
-    <div class="column is-2 p-0 m-0">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        title="Color Map Control"
-        use:tippy={{ content: tooltipContent }}
-        class="discrete"
-        style="{colorPickerStyle}; width:20px; height:20px" />
-      <div
-        class="tooltip"
-        data-testid="tooltip"
-        bind:this={tooltipContent}>
-        <ColorPicker
-          bind:color
-          on:changeColor={handleColorChanged} />
-      </div>
-    </div>
-    {#if !hasUniqueValues}
-      <div class="column p-0 m-0">
-        <input
-          style="width:{rowWidth * 8}px; max-width:100px"
-          class="number-input"
-          id="start"
-          type="number"
-          value={colorMapRow.start}
-          on:change={handleInput}
-          required />
-      </div>
-    {/if}
-    <div class="is-3 column p-0 m-0">
-      <p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
-    </div>
-    <div class="column p-0 m-0">
-      {#if hasUniqueValues}
-        <span>
-          {isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
-        </span>
-      {:else}
-        <input
-          style={`width:${rowWidth * 8}px; max-width:100px`}
-          class="number-input"
-          type="number"
-          id="end"
-          value={colorMapRow.end}
-          on:change={handleInput}
-          required />
-      {/if}
     </div>
   </div>
 {/key}

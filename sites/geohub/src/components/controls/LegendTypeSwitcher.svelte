@@ -5,10 +5,13 @@
   }
 </script>
 
-<div class="centered pb-2">
+<div
+  class="centered pb-2"
+  data-testid="legend-type-switcher-container">
   <div class="field has-addons">
     <p class="control">
       <button
+        data-testid="legend-type-switcher-default"
         class="button is-normal {`${legendType === 'default' ? 'is-primary is-active' : 'is-primary is-light'}`}"
         on:click={handleLegendTypeChange}>
         <span>
@@ -19,6 +22,7 @@
     </p>
     <p class="control">
       <button
+        data-testid="legend-type-switcher-classify"
         class="button is-normal {`${legendType === 'classify' ? 'is-primary is-active' : 'is-primary is-light'}`}"
         on:click={handleLegendTypeChange}>
         <span>
