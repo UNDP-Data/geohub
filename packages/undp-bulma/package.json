@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
   "devDependencies": {
-    "typescript": "^4.9.3",
+    "typescript": "^5.0.0",
     "vite": "^4.1.0"
   },
   "dependencies": {
