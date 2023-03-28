@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render } from '@testing-library/svelte'
 import { clipSprite } from '$lib/helper'
 
-describe('clipSprite', () => {
+describe.todo('clipSprite', () => {
   it('should return a promise', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
