@@ -21,6 +21,11 @@
   export let isShowInfo = false
 
   let defaultLineWidth = $page.data.config.LineWidth
+  let defaultIconSize = $page.data.config.IconSize
+  let defaultIconImage = $page.data.config.IconImage
+  let iconOverlap = $page.data.config.IconOverlapPriority
+  let layerOpacity = $page.data.config.LayerOpacity / 100
+
   let vectorInfo = metadata as VectorTileMetadata
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
@@ -62,8 +67,17 @@
       } else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
         layerType = polygonVectorType
       }
+
       const vectorInfo = metadata as VectorTileMetadata
-      const vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo)
+      const vectorTile = new VectorTileData(
+        feature,
+        defaultLineWidth,
+        vectorInfo,
+        defaultIconImage,
+        defaultIconSize,
+        iconOverlap,
+        layerOpacity,
+      )
       const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`

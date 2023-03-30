@@ -17,11 +17,11 @@
   let stepValue = 0.25
 
   const getValue = () => {
-    let value = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 1
-    if (value && value.type === 'interval') {
-      value = 1
+    if (style?.layout && style.layout[propertyName]) {
+      return style.layout[propertyName]
+    } else {
+      return 1
     }
-    return value
   }
 
   let value = getValue()

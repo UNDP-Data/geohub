@@ -15,7 +15,7 @@ import { LabelHaloWidth } from '$lib/config/DefaultUserConfig/LabelHaloWidth'
 import { IconOverlapPriority } from '$lib/config/DefaultUserConfig/IconOverlapPriority'
 import { RasterResamplingMethod } from '$lib/config/DefaultUserConfig/RasterResamplingMethod'
 import { IconSize } from '$lib/config/DefaultUserConfig/IconSize'
-import { IconSymbol } from '$lib/config/DefaultUserConfig/IconSymbol'
+import { IconImage } from '$lib/config/DefaultUserConfig/IconImage'
 import { LayerOpacity } from '$lib/config/DefaultUserConfig/LayerOpacity'
 import { LinePattern } from '$lib/config/DefaultUserConfig/LinePattern'
 
@@ -33,7 +33,7 @@ export interface UserConfig {
   ClassificationMethod: ClassificationMethodTypes
   RasterResamplingMethod: 'nearest' | 'linear'
   LayerOpacity: number
-  IconSymbol: string
+  IconImage: string
   IconSize: number
   IconOverlapPriority: 'always' | 'never' | 'cooperative'
   LinePattern: 'solid' | 'dash' | 'dot' | 'dashdot'
@@ -58,7 +58,7 @@ export const DefaultUserConfig = {
   LabelHaloWidth,
   IconOverlapPriority,
   IconSize,
-  IconSymbol,
+  IconImage,
   LayerOpacity,
   LinePattern,
 }

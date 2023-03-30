@@ -1,12 +1,21 @@
 <script lang="ts">
   import { clean } from '$lib/helper'
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
 
   export let iconImageAlt: string
   export let iconImageSrc = null
   export let isSelected = false
+  export let withinForm = false
+
+  const handleIconSelect = () => {
+    dispatch('iconSelected', { iconImageAlt, iconImageSrc })
+  }
 </script>
 
 <div
+  on:click={handleIconSelect}
   class="card"
   data-testid="icon-image-picker-card-container">
   <div class="card-content">
@@ -14,14 +23,24 @@
       <figure
         class={`image is-24x24 ${isSelected ? '' : 'is-clickable'}`}
         data-testid="icon-figure">
-        <input
-          data-testid="icon-image"
-          type="image"
-          src={iconImageSrc}
-          alt={clean(iconImageAlt)}
-          title={clean(iconImageAlt)}
-          style="width:24px; height:24px; color: white;"
-          value={iconImageAlt} />
+        {#if withinForm}
+          <img
+            data-testid="icon-image"
+            type="image"
+            src={iconImageSrc}
+            alt={clean(iconImageAlt)}
+            title={clean(iconImageAlt)}
+            style="width:24px; height:24px; color: white;" />
+        {:else}
+          <input
+            data-testid="icon-image"
+            type="image"
+            src={iconImageSrc}
+            alt={clean(iconImageAlt)}
+            title={clean(iconImageAlt)}
+            style="width:24px; height:24px; color: white;"
+            value={iconImageAlt} />
+        {/if}
       </figure>
     </div>
     <div

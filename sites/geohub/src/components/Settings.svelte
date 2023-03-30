@@ -8,13 +8,21 @@
     NumberOfClassesMaximum,
     NumberOfClassesMinimum,
     LimitOptions,
+    RasterResamplingMethods,
+    IconOverlapPriority,
   } from '$lib/config/AppConfig'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
   import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig'
   import type { SidebarPosition } from '$lib/types'
   import RangeSlider from 'svelte-range-slider-pips'
+  import { Radios } from '@undp-data/svelte-undp-design'
   import FieldControl from './controls/FieldControl.svelte'
+  import { ClassificationMethods } from '$lib/config/AppConfig'
+  import { initTippy } from '$lib/helper'
+  import { clean } from '$lib/helper/index.js'
+  import { spriteImageList } from '$stores'
+  import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
 
   // preserve previous page URL
   let previousPage: string = base
@@ -24,17 +32,63 @@
     }
   })
 
+  const tippy = initTippy()
   let userSettings: UserConfig = $page.data.config
   let isSubmitting = false
   let sideBarPosition: SidebarPosition = userSettings.SidebarPosition
   let lineWidth = [userSettings.LineWidth]
   let numberOfClasses = [userSettings.NumberOfClasses]
+  let labelFontSize = [userSettings.LabelFontSize]
+  let labelHaloWidth = [userSettings.LabelHaloWidth]
+  let iconSize = [userSettings.IconSize]
+  let layerOpacity = [userSettings.LayerOpacity]
+  let selectedIcon = userSettings.IconImage
+
+  $: console.log(selectedIcon)
+  const lineTypes = [
+    { title: 'solid', value: '', pattern: '___________' },
+    { title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
+    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '___&nbsp;_&nbsp;___&nbsp;' },
+    { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_' },
+  ]
+
+  let linePattern = lineTypes.find((t) => t.title === userSettings.LinePattern)?.title
+  const setLinePatterns = () => {
+    const pattern = lineTypes.map((type) => {
+      const label = `
+          ${type.title}
+          <span
+            style="font-family: monospace;position:relative;left: 10px;top:-4px;position:relative;font-weight: bold;">
+            ${type.pattern}
+          </span>`
+
+      return {
+        label: label,
+        value: type.title,
+      }
+    })
+    return pattern
+  }
+
+  let linePatterns = setLinePatterns()
+
+  $: iconImageSrc = $spriteImageList.find((i) => i.alt === selectedIcon)?.src
+  let tooltipContent: HTMLElement
 
   let settingTabs = [
     {
-      title: 'Home',
-      hash: 'main',
+      title: 'GeoHub Home',
+      hash: 'Home',
       icon: 'fa-solid fa-home',
+      subSettings: [
+        { title: 'Main', hash: 'main' },
+        { title: 'Legend', hash: 'legend' },
+        { title: 'Line', hash: 'line' },
+        { title: 'Point', hash: 'point' },
+        { title: 'Polygon', hash: 'polygon' },
+        { title: 'Raster', hash: 'raster' },
+        { title: 'Label', hash: 'label' },
+      ],
     },
     {
       title: 'My data',
@@ -48,7 +102,8 @@
     },
   ]
   const hash = $page.url.hash
-  let activeTab = settingTabs[0]
+  let activeTab = settingTabs[0].subSettings ? settingTabs[0].subSettings[0] : settingTabs[0]
+
   if (hash) {
     let tab = settingTabs.find((t) => `#${t.hash}` === hash)
     if (tab) {
@@ -63,11 +118,16 @@
 
   const resetToDefault = () => {
     userSettings = JSON.parse(JSON.stringify(DefaultUserConfig))
-
     sideBarPosition = userSettings.SidebarPosition
     lineWidth = [userSettings.LineWidth]
     numberOfClasses = [userSettings.NumberOfClasses]
-
+    labelFontSize = [userSettings.LabelFontSize]
+    labelHaloWidth = [userSettings.LabelHaloWidth]
+    iconSize = [userSettings.IconSize]
+    layerOpacity = [userSettings.LayerOpacity]
+    linePattern = lineTypes.find((t) => t.title === userSettings.LinePattern)?.title
+    linePatterns = setLinePatterns()
+    selectedIcon = userSettings.IconImage
     toast.push('Settings were reset. Please click apply button to save them.')
   }
 
@@ -84,17 +144,42 @@
       <p class="menu-label">Settings</p>
       <ul class="menu-list">
         {#each settingTabs as tab}
-          <li>
-            <a
-              class={activeSettingTab === tab.title ? 'is-active' : ''}
-              on:click={() => (activeSettingTab = tab.title)}
-              href="#{tab.hash}">
-              <span class="icon">
-                <i class="{tab.icon} {activeSettingTab === tab.title ? 'has-text-white' : 'has-text-link'}" />
-              </span>
-              {tab.title}
-            </a>
-          </li>
+          {#if tab.subSettings}
+            <li>
+              <a
+                class={activeSettingTab === tab.title ? 'is-active' : ''}
+                href="#{tab.hash}">
+                <span class="icon">
+                  <i class="{tab.icon} {activeSettingTab === tab.title ? 'has-text-white' : 'has-text-link'}" />
+                </span>
+                {tab.title}
+              </a>
+              <ul>
+                {#each tab.subSettings as subSetting}
+                  <li>
+                    <a
+                      class={activeSettingTab === subSetting.title ? 'is-active' : ''}
+                      on:click={() => (activeSettingTab = subSetting.title)}
+                      href="#{subSetting.title}">
+                      {subSetting.title}
+                    </a>
+                  </li>
+                {/each}
+              </ul>
+            </li>
+          {:else}
+            <li>
+              <a
+                class={activeSettingTab === tab.title ? 'is-active' : ''}
+                on:click={() => (activeSettingTab = tab.title)}
+                href="#{tab.hash}">
+                <span class="icon">
+                  <i class="{tab.icon} {activeSettingTab === tab.title ? 'has-text-white' : 'has-text-link'}" />
+                </span>
+                {tab.title}
+              </a>
+            </li>
+          {/if}
         {/each}
       </ul>
     </aside>
@@ -125,9 +210,8 @@
         </button>
       {/if}
 
-      <section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
-        <p class="title is-4">Map Settings</p>
-
+      <section class="content {activeSettingTab !== 'Main' ? 'is-hidden' : ''}">
+        <p class="title is-4">Layout Settings</p>
         <FieldControl title="Sidebar Position">
           <div slot="help">Select sidebar position of main GeoHub page.</div>
           <div slot="control">
@@ -159,61 +243,7 @@
             </div>
           </div>
         </FieldControl>
-
-        <FieldControl title="Default number of classes">
-          <div slot="help">The default number of classes in classify legend for vector layer and raster layer</div>
-          <div slot="control">
-            <div class="control">
-              <RangeSlider
-                bind:values={numberOfClasses}
-                float
-                min={NumberOfClassesMinimum}
-                max={NumberOfClassesMaximum}
-                step={1}
-                pips
-                first="label"
-                last="label"
-                rest={false} />
-            </div>
-          </div>
-        </FieldControl>
-
-        <input
-          type="hidden"
-          name="NumberOfClasses"
-          bind:value={numberOfClasses[0]} />
-
-        <FieldControl title="Default line width">
-          <div slot="help">
-            The default line width in <b>line</b> vector layer legend tab.
-          </div>
-          <div slot="control">
-            <div class="control">
-              <RangeSlider
-                bind:values={lineWidth}
-                float
-                min={0}
-                max={10}
-                step={0.5}
-                pips
-                springValues={{
-                  stiffness: 1,
-                  damping: 1,
-                }}
-                first="label"
-                last="label"
-                rest={false} />
-            </div>
-          </div>
-        </FieldControl>
-
-        <input
-          type="hidden"
-          name="LineWidth"
-          bind:value={lineWidth[0]} />
-
         <p class="title is-4">Search Settings</p>
-
         <FieldControl title="Default search Limit">
           <div slot="help">The number of items to search at data tab in main GeoHub page.</div>
           <div slot="control">
@@ -295,9 +325,306 @@
           </div>
         </FieldControl>
       </section>
+      <section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
+        <p class="title is-4">Legend Settings</p>
+        <FieldControl title="Default Classification Method">
+          <div slot="help">Change the default classification method</div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="ClassificationMethod"
+                bind:value={userSettings.ClassificationMethod}>
+                {#each ClassificationMethods as classificationMethod}
+                  <option value={classificationMethod.value}>{classificationMethod.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+        <FieldControl title="Default number of classes">
+          <div slot="help">
+            Change the default number of classes in classify legend for vector layer and raster layer
+          </div>
+          <div slot="control">
+            <div class="control">
+              <RangeSlider
+                bind:values={numberOfClasses}
+                float
+                min={NumberOfClassesMinimum}
+                max={NumberOfClassesMaximum}
+                step={1}
+                pips
+                springValues={{
+                  stiffness: 1,
+                  damping: 1,
+                }}
+                first="label"
+                last="label"
+                rest={false} />
+              <input
+                type="hidden"
+                name="NumberOfClasses"
+                bind:value={numberOfClasses[0]} />
+            </div>
+          </div>
+        </FieldControl>
+        <FieldControl title="Default Layer Opacity">
+          <div slot="help">Change Default Layer Opacity</div>
+          <div slot="control">
+            <RangeSlider
+              bind:values={layerOpacity}
+              float
+              min={0}
+              max={100}
+              step={1}
+              pips
+              first="label"
+              last="label"
+              springValues={{
+                stiffness: 1,
+                damping: 1,
+              }}
+              suffix="%"
+              rest={false} />
+            <input
+              type="hidden"
+              bind:value={layerOpacity[0]}
+              name="LayerOpacity" />
+          </div>
+        </FieldControl>
+      </section>
+      <section class="content {activeSettingTab !== 'Line' ? 'is-hidden' : ''}">
+        <p class="title is-4">Line Visualization Settings</p>
+        <FieldControl title="Default line width">
+          <div slot="help">
+            The default line width in <b>line</b> vector layer legend tab.
+          </div>
+          <div slot="control">
+            <div class="control">
+              <RangeSlider
+                bind:values={lineWidth}
+                float
+                min={0}
+                max={10}
+                step={0.5}
+                pips
+                springValues={{
+                  stiffness: 1,
+                  damping: 1,
+                }}
+                first="label"
+                last="label"
+                rest={false} />
+              <input
+                type="hidden"
+                name="LineWidth"
+                bind:value={lineWidth[0]} />
+            </div>
+          </div>
+        </FieldControl>
+        <FieldControl title="Default line pattern">
+          <div slot="help">
+            The default pattern in <b>line</b> vector layer legend tab.
+          </div>
+          <div slot="control">
+            <div
+              class="line-pattern-view-container"
+              data-testid="line-pattern-view-container">
+              <Radios
+                groupName="LinePattern"
+                bind:radios={linePatterns}
+                bind:value={linePattern}
+                allowHtml={true}
+                isVertical={true} />
+            </div>
+          </div>
+        </FieldControl>
+      </section>
+      <section class="content {activeSettingTab !== 'Point' ? 'is-hidden' : ''}">
+        <p class="title is-4">Point Visualization Settings</p>
+        <FieldControl
+          title="Icon Symbol"
+          class="icon-selector">
+          <div slot="help">Pick the default icon symbol for symbol layers</div>
+          <div slot="control">
+            <div
+              use:tippy={{ content: tooltipContent }}
+              class="card"
+              data-testid="icon-image-picker-card-container">
+              <div class="card-content">
+                <div class="media is-flex is-justify-content-center">
+                  <figure
+                    class={`image is-24x24`}
+                    data-testid="icon-figure">
+                    <img
+                      data-testid="icon-image"
+                      type="image"
+                      src={iconImageSrc}
+                      alt={clean(selectedIcon)}
+                      title={clean(selectedIcon)}
+                      style="width:24px; height:24px; color: white;" />
+                  </figure>
+                </div>
+                <div
+                  class="content is-size-7 columns is-gapless"
+                  style="padding-top: 5px;">
+                  <div
+                    class="column is-flex is-justify-content-center sprite-image-title"
+                    title={selectedIcon}>
+                    {clean(selectedIcon)}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              style="max-height: 400px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
+              class="tooltip"
+              data-testid="tooltip"
+              bind:this={tooltipContent}>
+              <div class="card p-2 columns is-multiline">
+                {#each $spriteImageList as image}
+                  <IconImagePickerCard
+                    on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
+                    iconImageAlt={image.alt}
+                    iconImageSrc={image.src}
+                    withinForm={true}
+                    isSelected={selectedIcon === image.alt ? true : false} />
+                {/each}
+              </div>
+            </div>
+            <input
+              type="hidden"
+              value={selectedIcon}
+              name="IconImage" />
+          </div>
+        </FieldControl>
+        <FieldControl title="Icon Overlap Priority">
+          <div slot="help">
+            Change Icon Overlap priority. When <b>Never</b> is selected, the icon will be hidden if it collides with any
+            other previously drawn symbol. When <b>Always</b> is selected, the icon will be visible even if it collides
+            with any other previously drawn symbol. When <b>Cooperative</b> is selected, If the icon collides with another
+            previously drawn symbol, the overlap mode for that symbol is checked. If the previous symbol was placed using
+            never overlap mode, the new icon is hidden. If the previous symbol was placed using always or cooperative overlap
+            mode, the new icon is visible.
+          </div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="IconOverlapPriority"
+                bind:value={userSettings.IconOverlapPriority}>
+                {#each IconOverlapPriority as overlapPriority}
+                  <option value={overlapPriority.value}>{overlapPriority.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+        <FieldControl title="Icon Size">
+          <div slot="help">Change icon size for symbol layers</div>
+          <div slot="control">
+            <RangeSlider
+              bind:values={iconSize}
+              float
+              min={0}
+              max={5}
+              step={0.1}
+              pips
+              first="label"
+              last="label"
+              springValues={{
+                stiffness: 1,
+                damping: 1,
+              }}
+              rest={false} />
+            <input
+              type="hidden"
+              bind:value={iconSize[0]}
+              name="IconSize" />
+          </div>
+        </FieldControl>
+      </section>
+      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}">
+        <p class="title is-4">Polygon Visualization Settings</p>
+      </section>
+      <section class="content {activeSettingTab !== 'Raster' ? 'is-hidden' : ''}">
+        <p class="title is-4">Raster Visualization Settings</p>
+        <FieldControl title="Default raster resampling method">
+          <div slot="help">
+            Change raster resampling method
+            <p>
+              <b>Bili-near</b> filtering interpolates pixel values using the weighted average of the four closest original
+              source pixels creating a smooth but blurry look when overscaled
+            </p>
+            <p>
+              <b>Nearest neighbour</b> filtering interpolates pixel values using the weighted average of the four closest
+              original source pixels creating a smooth but blurry look when overscaled
+            </p>
+          </div>
+          <div slot="control">
+            <div class="select is-fullwidth">
+              <select
+                name="RasterResamplingMethod"
+                bind:value={userSettings.RasterResamplingMethod}>
+                {#each RasterResamplingMethods as resamplingMethod}
+                  <option value={resamplingMethod.value}>{resamplingMethod.label}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </FieldControl>
+      </section>
+      <section class="content {activeSettingTab !== 'Label' ? 'is-hidden' : ''}">
+        <p class="title is-4">Label Settings</p>
+        <FieldControl title="Default label font size">
+          <div slot="help">Change default label font size</div>
+          <div slot="control">
+            <RangeSlider
+              bind:values={labelFontSize}
+              float
+              min={0}
+              max={32}
+              step={0.5}
+              pips
+              first="label"
+              last="label"
+              springValues={{
+                stiffness: 1,
+                damping: 1,
+              }}
+              rest={false} />
+            <input
+              type="hidden"
+              bind:value={labelFontSize[0]}
+              name="LabelFontSize" />
+          </div>
+        </FieldControl>
+
+        <FieldControl title="Default label halo width">
+          <div slot="help">Change default halo size for labels.</div>
+          <div slot="control">
+            <RangeSlider
+              bind:values={labelHaloWidth}
+              float
+              min={0}
+              max={10}
+              step={0.1}
+              pips
+              first="label"
+              last="label"
+              springValues={{
+                stiffness: 1,
+                damping: 1,
+              }}
+              rest={false} />
+            <input
+              type="hidden"
+              bind:value={labelHaloWidth[0]}
+              name="LabelHaloWidth" />
+          </div>
+        </FieldControl>
+      </section>
       <section class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}">
         <p class="title is-4">Search Settings</p>
-
         <FieldControl title="Default search Limit">
           <div slot="help">The number of items to search at data page and maps page</div>
           <div slot="control">
@@ -312,7 +639,6 @@
             </div>
           </div>
         </FieldControl>
-
         <FieldControl title="Default search query operator">
           <div slot="help">
             Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets which exactly match
@@ -336,7 +662,6 @@
             </div>
           </div>
         </FieldControl>
-
         <FieldControl title="Defaut tag search operator">
           <div slot="help">
             Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to search datasets which
@@ -361,7 +686,6 @@
             </div>
           </div>
         </FieldControl>
-
         <FieldControl title="Default sort setting">
           <div slot="help">Change sort setting for the search result on datasets.</div>
           <div slot="control">
@@ -377,10 +701,8 @@
           </div>
         </FieldControl>
       </section>
-
       <section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
         <p class="title is-4">Search Settings</p>
-
         <FieldControl title="Default search Limit">
           <div slot="help">The number of items to search at data page and maps page</div>
           <div slot="control">
@@ -457,5 +779,10 @@
 
   .sidebar-image {
     box-shadow: #0a0a0a 0 0 2px 0;
+  }
+
+  .icon-selector {
+    display: flex;
+    flex-direction: column;
   }
 </style>

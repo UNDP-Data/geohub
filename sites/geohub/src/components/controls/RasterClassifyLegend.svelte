@@ -21,6 +21,7 @@
   import chroma from 'chroma-js'
   import { updateLayerList } from '$lib/helper/updateLayerList'
   import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig'
+  import { page } from '$app/stores'
   export let layer: Layer
   export let layerHasUniqueValues: boolean
   export let numberOfClasses: number
@@ -33,25 +34,40 @@
   let colorClassCountMax = NumberOfClassesMaximum
   let colorClassCountMin = NumberOfClassesMinimum
   let colorMapName = layer.colorMapName
-  let classificationMethod: ClassificationMethodTypes = layer.classificationMethod
   let colorMapRows: Array<ColorMapRow> = []
   let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
   let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
   let rowWidth: number
   let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
-
   let legendLabels = {}
-  if (!layerHasUniqueValues) {
-    const layerMeanToMax = layerMean / layerMax
-    if (layerMeanToMax >= -0.5 && layerMeanToMax <= 0.5) classificationMethod = ClassificationMethodTypes.LOGARITHMIC
-    if ((layerMeanToMax > -5 && layerMeanToMax < -0.5) || (layerMeanToMax > 0.5 && layerMeanToMax < 5))
-      classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
-    if (layerMeanToMax <= -5 && layerMeanToMax >= 5) classificationMethod = ClassificationMethodTypes.EQUIDISTANT
-  } else {
+
+  const getClassificationMethod = () => {
+    if (layer.classificationMethod) return layer.classificationMethod
+    return $page.data.config.ClassificationMethod
+  }
+
+  let classificationMethod: ClassificationMethodTypes = getClassificationMethod()
+
+  // NOTE: As we are now using a default classification method, there is no need to determine the classification method,
+  // based on the layer mean and max values. Commenting out the code for now, but will be removed in the future.
+
+  // if (!layerHasUniqueValues) {
+  //   const layerMeanToMax = layerMean / layerMax
+  //   if (layerMeanToMax >= -0.5 && layerMeanToMax <= 0.5) classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+  //   if ((layerMeanToMax > -5 && layerMeanToMax < -0.5) || (layerMeanToMax > 0.5 && layerMeanToMax < 5))
+  //     classificationMethod = ClassificationMethodTypes.NATURAL_BREAK
+  //   if (layerMeanToMax <= -5 && layerMeanToMax >= 5) classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+  // } else {
+  //   legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES']
+  //   numberOfClasses = Object.keys(legendLabels).length
+  // }
+
+  if (layerHasUniqueValues) {
     legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES']
     numberOfClasses = Object.keys(legendLabels).length
   }
+
   let classificationMethods = [
     { name: ClassificationMethodNames.NATURAL_BREAK, code: ClassificationMethodTypes.NATURAL_BREAK },
     { name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },

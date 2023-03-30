@@ -1457,23 +1457,23 @@ paths:
             application/json:
               schema:
                 properties:
-                  default_classification_method:
+                  classification_method:
                     $ref: '#/components/schemas/ClassificationMethodTypes'
                   raster_resampling_method:
                     $ref: '#/components/schemas/ResamplingMethodTypes'
-                  default_layer_opacity:
+                  layer_opacity:
                     type: number
-                  default_icon_symbol:
-                    type: string
-                  default_overlap_priority:
+                  overlap_priority:
                     $ref: '#/components/schemas/OverlapPriority'
-                  default_icon_size:
+                  icon_size:
                     type: number
-                  default_line_pattern:
+                  icon_image:
+                    type: string
+                  line_pattern:
                     $ref: '#/components/schemas/LinePattern'
-                  default_font_size:
+                  font_size:
                     type: number
-                  default_halo_width:
+                  halo_width:
                     type: number
                   search_limit:
                     type: number
@@ -1510,23 +1510,23 @@ paths:
                 schema:
                   type: object
                   properties:
-                      default_classification_method:
+                      classification_method:
                         $ref: '#/components/schemas/ClassificationMethodTypes'
                       raster_resampling_method:
                         $ref: '#/components/schemas/ResamplingMethodTypes'
-                      default_layer_opacity:
+                      layer_opacity:
                         type: number
-                      default_icon_symbol:
-                        type: string
-                      default_overlap_priority:
+                      overlap_priority:
                         $ref: '#/components/schemas/OverlapPriority'
-                      default_icon_size:
+                      icon_size:
                         type: number
-                      default_line_pattern:
+                      icon_image:
+                        type: string
+                      line_pattern:
                         $ref: '#/components/schemas/LinePattern'
-                      default_font_size:
+                      font_size:
                         type: number
-                      default_halo_width:
+                      halo_width:
                         type: number
                       search_limit:
                           type: number
@@ -1557,23 +1557,23 @@ paths:
             schema:
               type: object
               properties:
-                  default_classification_method:
+                  classification_method:
                     $ref: '#/components/schemas/ClassificationMethodTypes'
                   raster_resampling_method:
                     $ref: '#/components/schemas/ResamplingMethodTypes'
-                  default_layer_opacity:
+                  layer_opacity:
                     type: number
-                  default_icon_symbol:
-                    type: string
-                  default_overlap_priority:
+                  overlap_priority:
                     $ref: '#/components/schemas/OverlapPriority'
-                  default_icon_size:
+                  icon_size:
                     type: number
-                  default_line_pattern:
+                  icon_image:
+                    type: string
+                  line_pattern:
                     $ref: '#/components/schemas/LinePattern'
-                  default_font_size:
+                  font_size:
                     type: number
-                  default_halo_width:
+                  halo_width:
                     type: number
                   search_limit:
                       type: number
