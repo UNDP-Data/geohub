@@ -35,7 +35,7 @@
 		"@types/node": "^18.14.0",
 		"@types/pg": "^8.6.6",
 		"@types/pg-copy-streams": "^1.2.2",
-		"@types/sleep": "^0.0.8",
+		"@types/sleep": "^0.0.9",
 		"@typescript-eslint/eslint-plugin": "^5.52.0",
 		"@typescript-eslint/parser": "^5.52.0",
 		"eslint": "^8.34.0",
