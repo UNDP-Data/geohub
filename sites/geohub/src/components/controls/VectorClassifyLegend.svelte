@@ -109,9 +109,13 @@
             ...classificationMethods,
             ...[{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }],
           ]
-          classificationMethod = ClassificationMethodTypes.LOGARITHMIC
+          classificationMethod = classificationMethods.includes(
+            classificationMethods.find((method) => method.code === $page.data.config.ClassificationMethod),
+          )
+            ? $page.data.config.ClassificationMethod
+            : ClassificationMethodTypes.LOGARITHMIC
         } else {
-          classificationMethod = ClassificationMethodTypes.EQUIDISTANT
+          classificationMethod = $page.data.config.ClassificationMethod
         }
       }
       $map?.on('zoom', updateMap)

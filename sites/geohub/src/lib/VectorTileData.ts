@@ -16,6 +16,7 @@ export class VectorTileData {
   private url: string
   private metadata: VectorTileMetadata
   private defaultLineWidth: number
+  private defaultLineDashArray: number[]
   private defaultIconImage: string
   private defaultIconSize: number
   private iconOverlap: 'never' | 'always' | 'cooperative'
@@ -24,6 +25,7 @@ export class VectorTileData {
   constructor(
     feature: DatasetFeature,
     defaultLineWidth: number,
+    defaultLineDashArray: number[],
     metadata?: VectorTileMetadata,
     defaultIconImage?: string,
     defaultIconSize?: number,
@@ -34,6 +36,7 @@ export class VectorTileData {
     this.url = feature.properties.url
     this.metadata = metadata
     this.defaultLineWidth = defaultLineWidth
+    this.defaultLineDashArray = defaultLineDashArray
     this.defaultIconImage = defaultIconImage
     this.defaultIconSize = defaultIconSize
     this.iconOverlap = iconOverlap
@@ -165,6 +168,9 @@ export class VectorTileData {
             'line-width': this.defaultLineWidth,
             'line-opacity': this.layerOpacity ?? 1,
           },
+        }
+        if (this.defaultLineDashArray) {
+          layer.paint['line-dasharray'] = this.defaultLineDashArray
         }
         break
       case 'polygon':

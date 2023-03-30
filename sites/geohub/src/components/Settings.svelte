@@ -23,6 +23,7 @@
   import { clean } from '$lib/helper/index.js'
   import { spriteImageList } from '$stores'
   import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte'
+  import { LineTypes } from '$lib/config/AppConfig/LineTypes'
 
   // preserve previous page URL
   let previousPage: string = base
@@ -44,16 +45,9 @@
   let layerOpacity = [userSettings.LayerOpacity]
   let selectedIcon = userSettings.IconImage
 
-  const lineTypes = [
-    { title: 'solid', value: '', pattern: '___________' },
-    { title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
-    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '___&nbsp;_&nbsp;___&nbsp;' },
-    { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_' },
-  ]
-
-  let linePattern = lineTypes.find((t) => t.title === userSettings.LinePattern)?.title
+  let linePattern = LineTypes.find((t) => t.title === userSettings.LinePattern)?.title
   const setLinePatterns = () => {
-    const pattern = lineTypes.map((type) => {
+    const pattern = LineTypes.map((type) => {
       const label = `
           ${type.title}
           <span
@@ -124,7 +118,7 @@
     labelHaloWidth = [userSettings.LabelHaloWidth]
     iconSize = [userSettings.IconSize]
     layerOpacity = [userSettings.LayerOpacity]
-    linePattern = lineTypes.find((t) => t.title === userSettings.LinePattern)?.title
+    linePattern = LineTypes.find((t) => t.title === userSettings.LinePattern)?.title
     linePatterns = setLinePatterns()
     selectedIcon = userSettings.IconImage
     toast.push('Settings were reset. Please click apply button to save them.')
