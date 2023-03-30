@@ -6,35 +6,29 @@
 
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
-  import { page } from '$app/stores'
+  import { LineTypes } from '$lib/config/AppConfig/LineTypes'
 
   export let layer: Layer
   export let defaultColor: string = undefined
 
   const propertyName = 'line-dasharray'
   const layerId = layer.id
-  const lineTypes = [
-    { title: 'solid', value: '', pattern: '___________' },
-    { title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
-    { title: 'dash-dot', value: [10, 3, 2, 3], pattern: '___&nbsp;_&nbsp;___&nbsp;' },
-    { title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_' },
-  ]
+
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let linePatternColorRgba = defaultColor
-
-  let lineType = getLinePattern()
-
-  const getLinePattern = () => {
-    const value = $map.getPaintProperty(layer.id, propertyName)
-    const type = lineTypes.find((item) => isEqual(item.value, value))
-    return type?.title
-  }
+  let lineType = (
+    style?.paint[propertyName]
+      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        LineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
+      : LineTypes.find((item) => item.title === 'solid')
+  ).title
 
   $: lineType, setLineType()
 
   const setLinePatterns = () => {
-    const pattern: Radio[] = lineTypes.map((type) => {
+    const pattern: Radio[] = LineTypes.map((type) => {
       const label = `
           ${type.title}
           <span
@@ -62,7 +56,7 @@
   const setLineType = () => {
     if (style?.type !== 'line' || lineType === undefined) return
 
-    const value = lineTypes.find((item) => item.title === lineType).value
+    const value = LineTypes.find((item) => item.title === lineType).value
     if (value) {
       $map.setPaintProperty(layer.id, propertyName, value)
     } else {

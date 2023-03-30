@@ -10,6 +10,7 @@
   import { createEventDispatcher } from 'svelte'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
+  import { LineTypes } from '$lib/config/AppConfig/LineTypes'
 
   const dispatch = createEventDispatcher()
 
@@ -20,7 +21,11 @@
   export let metadata: RasterTileMetadata | VectorTileMetadata
   export let isShowInfo = false
 
+  const generateLineDashFromPattern = (pattern: string) => {
+    return LineTypes.find((lineType) => lineType.title === pattern)?.value
+  }
   let defaultLineWidth = $page.data.config.LineWidth
+  let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern)
   let defaultIconSize = $page.data.config.IconSize
   let defaultIconImage = $page.data.config.IconImage
   let iconOverlap = $page.data.config.IconOverlapPriority
@@ -72,6 +77,7 @@
       const vectorTile = new VectorTileData(
         feature,
         defaultLineWidth,
+        defaultLineDashArray,
         vectorInfo,
         defaultIconImage,
         defaultIconSize,
