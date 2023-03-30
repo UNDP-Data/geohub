@@ -14,7 +14,7 @@
         <button
           disabled={(operatorCategory.name === 'arithmetic' && !simpleExpressionAvailable) ||
             (operatorCategory.name === 'comparison' && simpleExpressionAvailable)}
-          class="button is-small fixedw "
+          class="button is-small fixedw"
           on:click={() => {
             dispatch(`${operatorCategory.title}ButtonClick`, { operator })
           }}

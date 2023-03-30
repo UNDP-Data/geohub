@@ -6,6 +6,7 @@
 
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
+  import { page } from '$app/stores'
 
   export let layer: Layer
   export let defaultColor: string = undefined
@@ -21,13 +22,14 @@
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let linePatternColorRgba = defaultColor
-  let lineType = (
-    style?.paint[propertyName]
-      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        lineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
-      : lineTypes.find((item) => item.title === 'solid')
-  ).title
+
+  let lineType = getLinePattern()
+
+  const getLinePattern = () => {
+    const value = $map.getPaintProperty(layer.id, propertyName)
+    const type = lineTypes.find((item) => isEqual(item.value, value))
+    return type?.title
+  }
 
   $: lineType, setLineType()
 

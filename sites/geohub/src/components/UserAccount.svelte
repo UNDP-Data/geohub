@@ -42,7 +42,7 @@
             class="avatar" />
         {:else}
           <span
-            class="initial-avator is-flex is-justify-content-center	is-align-items-center"
+            class="initial-avator is-flex is-justify-content-center is-align-items-center"
             style="background-color: {chroma.random()}">
             {#each names as name}
               <p

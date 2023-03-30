@@ -284,7 +284,7 @@ A component designed to apply where expression to a raster layer through titiler
   <Step
     num={1}
     let:nextStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center  pb-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">
       <button
         on:click={() => {
           nextStep()
@@ -303,7 +303,7 @@ A component designed to apply where expression to a raster layer through titiler
       a <b>condition</b>.
     </div>
     <div
-      class="is-divider separator is-danger p-0 "
+      class="is-divider separator is-danger p-0"
       data-content="The general form is..." />
 
     <figure class="image">
@@ -328,14 +328,14 @@ A component designed to apply where expression to a raster layer through titiler
     let:nextStep
     let:setStep
     let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center  pb-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">
       <button
         on:click={() => {
           prevStep()
           initialRasterFilterStep = 1
         }}
         title="move back to start"
-        class="button  is-small secondary-button has-text-weight-bold">
+        class="button is-small secondary-button has-text-weight-bold">
         <i class="fa fa-angles-left" /> &nbsp;Back
       </button>
       <button
@@ -343,14 +343,14 @@ A component designed to apply where expression to a raster layer through titiler
           setStep(1)
           cancel()
         }}
-        class="button  is-small primary-button has-text-weight-bold">
+        class="button is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
     </div>
 
     <div class="card">
       <div
-        class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase  has-background-white has-text-weight-semibold  has-text-centered ">
+        class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-background-white has-text-weight-semibold has-text-centered">
         <!-- {currentExpressionPart} -->
         {#each whereExpressionParts as { name, label, icon, color }, i}
           <span class="tag p-1 is-size-6 {name === currentExpressionPart ? 'is-danger is-dark' : 'has-text-grey-light'}"
@@ -383,7 +383,7 @@ A component designed to apply where expression to a raster layer through titiler
           {@const isVisible = !operator.disabled}
           {#if isVisible}
             <div
-              class="card is-info is-clickable  has-text-centered "
+              class="card is-info is-clickable has-text-centered"
               on:keydown={handleEnterKey}
               on:click={() => {
                 selectedOperator = operator.value
@@ -409,7 +409,7 @@ A component designed to apply where expression to a raster layer through titiler
                     ? 'has-text-white-ter'
                     : 'has-text-white-ter'}  ">
                   {#if operator.value === selectedOperator}
-                    <span class="icon ">
+                    <span class="icon">
                       <i class="fa-solid fa-check" />
                     </span>
                   {/if}
@@ -417,7 +417,7 @@ A component designed to apply where expression to a raster layer through titiler
                 </span>
               </div>
               <div class="content">
-                <div class="content is-size-2  p-0 m-0 has-text-weight-bold has-text-danger">
+                <div class="content is-size-2 p-0 m-0 has-text-weight-bold has-text-danger">
                   {operator.symbol}
                 </div>
               </div>
@@ -433,14 +433,14 @@ A component designed to apply where expression to a raster layer through titiler
     let:nextStep
     let:setStep
     let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3 ">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">
       <button
         on:click={() => {
           prevStep()
           initialRasterFilterStep = 2
         }}
         title="Operator categories"
-        class="button  is-small secondary-button has-text-weight-bold">
+        class="button is-small secondary-button has-text-weight-bold">
         <i class="fa fa-angles-left" /> &nbsp;Change operator
       </button>
       <button
@@ -448,7 +448,7 @@ A component designed to apply where expression to a raster layer through titiler
           cancel()
           setStep(1)
         }}
-        class="button  is-small primary-button has-text-weight-bold">
+        class="button is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
     </div>
@@ -459,7 +459,7 @@ A component designed to apply where expression to a raster layer through titiler
         {currentExpressionPart}
       </div> -->
       <div
-        class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase  has-background-white has-text-weight-semibold  has-text-centered ">
+        class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-background-white has-text-weight-semibold has-text-centered">
         <!-- {currentExpressionPart} -->
         {#each whereExpressionParts as { name, label, icon, color }, i}
           <span class="tag p-1 is-size-6 {name === currentExpressionPart ? 'is-danger is-dark' : 'has-text-grey-light'}"
@@ -486,7 +486,7 @@ A component designed to apply where expression to a raster layer through titiler
       </footer>
     </div>
 
-    <div class="container ">
+    <div class="container">
       {#if selectedInputCategory == 'layer'}
         <div class="range-slider pt-5 pb-">
           <RangeSlider
@@ -517,7 +517,7 @@ A component designed to apply where expression to a raster layer through titiler
         }}
         disabled={conditionExpressionButtonDisabled}
         class="button is-small primary-button has-text-weight-bold">
-        <i class="fas fa-plus " />&nbsp; Add
+        <i class="fas fa-plus" />&nbsp; Add
       </button>
 
       {#if !rasterComparisonOperatorsValues.includes(whereExpression[currentExpressionPart][expressionIndex]['expressions'])}
@@ -529,7 +529,7 @@ A component designed to apply where expression to a raster layer through titiler
           }}
           disabled={continueExpressionButtonDisabled}
           class="button is-small primary-button has-text-weight-bold">
-          <i class="fas fa-rotate " />&nbsp;Continue with current
+          <i class="fas fa-rotate" />&nbsp;Continue with current
         </button>
       {/if}
 
@@ -541,7 +541,7 @@ A component designed to apply where expression to a raster layer through titiler
         }}
         disabled={conditionExpressionButtonDisabled}
         class="button is-small secondary-button has-text-weight-bold">
-        <i class="fas fa-angles-right " />&nbsp; True
+        <i class="fas fa-angles-right" />&nbsp; True
       </button>
     </div>
   </Step>
