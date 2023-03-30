@@ -121,7 +121,7 @@
           style="height:0.2rem; opacity:{$indicatorProgress == true
             ? 1
             : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
-          class="progress is-large is-info "
+          class="progress is-large is-info"
           max={100} />
         <slot name="map" />
       {/if}
@@ -134,7 +134,7 @@
           style="height:0.2rem; opacity:{$indicatorProgress == true
             ? 1
             : 0}; z-index:1; position:absolute; top:{splitHeight}px;"
-          class="progress is-large is-info "
+          class="progress is-large is-info"
           max={100} />
         <slot name="map" />
       {:else}

@@ -401,7 +401,7 @@
           </div>
           {#if license}
             <span class="icon is-small is-right">
-              <i class="fas fa-check has-text-success	" />
+              <i class="fas fa-check has-text-success" />
             </span>
           {/if}
         </div>

@@ -130,7 +130,7 @@
             currentSelectedArg = argId
           }}>
           <div
-            class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-space-evenly "
+            class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-space-evenly"
             style="height:80px">
             <div class="has-text-primary">
               <i
@@ -141,7 +141,7 @@
           </div>
         </div>
         <footer class="card-footer">
-          <div class="content m-auto has-text-primary  has-text-weight-bold">
+          <div class="content m-auto has-text-primary has-text-weight-bold">
             {argId in selectedArgs ? selectedArgs[argId].value : value}
             {units}
           </div>

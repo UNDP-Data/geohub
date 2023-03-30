@@ -283,7 +283,7 @@
     {#if dataType === 'string'}
       <div class="columns is-centered pb-2">
         <button
-          class="button is-small primary-button  "
+          class="button is-small primary-button"
           on:click={getFromMap}
           disabled={mapClickButtonDisabled}>
           <i
@@ -355,7 +355,7 @@
       {:else}
         <div class="columns is-centered pb-2">
           <button
-            class="button is-small primary-button  "
+            class="button is-small primary-button"
             on:click={getFromMap}
             disabled={mapClickButtonDisabled}>
             <i
@@ -429,7 +429,7 @@
         <div class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded">
           <div>
             <button class="button is-rounded is-small is-info">
-              <i class="fa-solid fa-circle-info " />
+              <i class="fa-solid fa-circle-info" />
             </button>
           </div>
           <div>

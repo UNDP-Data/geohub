@@ -18,7 +18,7 @@
       on:click={() => {
         numbersString = numbersString !== undefined ? numbersString + number : number
       }}
-      class="button is-outlined is-info has-text-weight-bold ">
+      class="button is-outlined is-info has-text-weight-bold">
       {number}
     </button>
   {/each}
