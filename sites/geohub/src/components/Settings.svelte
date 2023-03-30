@@ -44,7 +44,6 @@
   let layerOpacity = [userSettings.LayerOpacity]
   let selectedIcon = userSettings.IconImage
 
-  $: console.log(selectedIcon)
   const lineTypes = [
     { title: 'solid', value: '', pattern: '___________' },
     { title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
@@ -85,7 +84,7 @@
         { title: 'Legend', hash: 'legend' },
         { title: 'Line', hash: 'line' },
         { title: 'Point', hash: 'point' },
-        { title: 'Polygon', hash: 'polygon' },
+        // { title: 'Polygon', hash: 'polygon' },
         { title: 'Raster', hash: 'raster' },
         { title: 'Label', hash: 'label' },
       ],
@@ -448,6 +447,7 @@
           <div slot="help">Pick the default icon symbol for symbol layers</div>
           <div slot="control">
             <div
+              style="cursor: pointer"
               use:tippy={{ content: tooltipContent }}
               class="card"
               data-testid="icon-image-picker-card-container">
@@ -481,7 +481,7 @@
               class="tooltip"
               data-testid="tooltip"
               bind:this={tooltipContent}>
-              <div class="card p-2 columns is-multiline">
+              <div class="columns m-2 is-multiline is-justify-content-space-evenly">
                 {#each $spriteImageList as image}
                   <IconImagePickerCard
                     on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
@@ -543,9 +543,29 @@
           </div>
         </FieldControl>
       </section>
-      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}">
-        <p class="title is-4">Polygon Visualization Settings</p>
-      </section>
+      <!--      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}" style="height:400px">-->
+      <!--        <p class="title is-4">Polygon Visualization Settings</p>-->
+      <!--        <FieldControl title="Default polygon fill color">-->
+      <!--          <div slot="help">Change default polygon fill color</div>-->
+      <!--          <div slot="control">-->
+      <!--            <div class="field has-addons">-->
+      <!--              <div class="control is-expanded">-->
+      <!--                <input-->
+      <!--                  type="color"-->
+      <!--                  class="input"-->
+      <!--                  name="PolygonFillColor"-->
+      <!--                  bind:value={userSettings.PolygonFillColor}-->
+      <!--                  data-testid="polygon-fill-color-input" />-->
+      <!--              </div>-->
+      <!--              <div class="control">-->
+      <!--                <div class="button is-static">-->
+      <!--                  <i class="fas fa-palette" />-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </FieldControl>-->
+      <!--      </section>-->
       <section class="content {activeSettingTab !== 'Raster' ? 'is-hidden' : ''}">
         <p class="title is-4">Raster Visualization Settings</p>
         <FieldControl title="Default raster resampling method">
