@@ -1,6 +1,6 @@
 import { fetchUrl } from '$lib/helper/fetchUrl'
 
-export const loadArgumentsInDynamicLayers = async (url : string) => {
+export const loadArgumentsInDynamicLayers = async (url: string) => {
   // const url = layerURL.toString()
   const metaUrl = url.replace('/{z}/{x}/{y}.pbf', '.json')
   const jsonString = await fetchUrl(metaUrl)

@@ -31,19 +31,18 @@
   const layerType = layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.['value']
 
   const init = async () => {
-    if(!layerType || layerType !== 'function'){
+    if (!layerType || layerType !== 'function') {
       tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
       return
     }
     const isLoaded = await loadMap($map)
     const args = await loadArgumentsInDynamicLayers(getLayerSourceUrl($map, layer.id) as string)
     console.log(args)
-    if (Object.keys(args)?.length < 1){
+    if (Object.keys(args)?.length < 1) {
       tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
     }
     return isLoaded
   }
-
 </script>
 
 <div
@@ -56,7 +55,7 @@
     </p>
     {#await init()}
       <div class="loader-container">
-        <Loader size='small'/>
+        <Loader size="small" />
       </div>
     {:then _}
       <Tabs
@@ -86,6 +85,7 @@
     {/await}
   </nav>
 </div>
+
 <style lang="scss">
   .vector-layer-container {
     .panel-content {
