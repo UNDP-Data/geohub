@@ -3,7 +3,14 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import { Loader } from '@undp-data/svelte-undp-design'
 
-  import { fetchUrl, getLayerSourceUrl, getLayerStyle, loadMap, updateLayerURL } from '$lib/helper'
+  import {
+    fetchUrl,
+    getLayerSourceUrl,
+    getLayerStyle,
+    loadArgumentsInDynamicLayers,
+    loadMap,
+    updateLayerURL,
+  } from '$lib/helper'
   import { map, layerList } from '$stores'
   /*EXPORTS*/
   export let layerId
@@ -31,17 +38,12 @@
 
   const init = async () => {
     const isLoaded = await loadMap($map)
-    const metaUrl = layerUrl.replace('/{z}/{x}/{y}.pbf', '.json')
-    const jsonString = await fetchUrl(metaUrl)
-    args = JSON.parse(jsonString.arguments[0].default)
-
+    args = await loadArgumentsInDynamicLayers(layerUrl)
     for (const [k, v] of Object.entries(args)) {
       defaultArgs[k] = { value: Number(v.value) }
     }
     selectedArgs = getArgumentsInURL() || selectedArgs
     if (selectedArgs) currentSelectedArg = Object.keys(selectedArgs).at(-1)
-    //console.log('hinit', JSON.stringify(selectedArgs, null, 2))
-
     return isLoaded
   }
 
