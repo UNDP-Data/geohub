@@ -23,7 +23,7 @@
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
   "packageManager": "pnpm@7.30.5",
   "engines": {
-    "pnpm": "^7.25.x"
+    "pnpm": "^8.1.x"
   },
   "type": "module",
   "devDependencies": {
