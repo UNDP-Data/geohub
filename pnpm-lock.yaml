@@ -5,11 +5,11 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.26.0
+        specifier: ^2.26.1
         version: 2.26.1
       lefthook:
-        specifier: ^1.3.7
-        version: 1.3.8
+        specifier: ^1.3.9
+        version: 1.3.9
 
   apps/electricity-dashboard:
     dependencies:
@@ -402,7 +402,7 @@ importers:
         version: 3.2.2(svelte@3.58.0)
       '@testing-library/user-event':
         specifier: ^14.4.3
-        version: 14.4.3(@testing-library/dom@8.20.0)
+        version: 14.4.3(@testing-library/dom@9.2.0)
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.53.0
         version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@8.37.0)(typescript@5.0.3)
@@ -542,7 +542,7 @@ importers:
         version: 3.2.2(svelte@3.58.0)
       '@testing-library/user-event':
         specifier: ^14.4.3
-        version: 14.4.3(@testing-library/dom@8.20.0)
+        version: 14.4.3(@testing-library/dom@9.2.0)
       '@types/chroma-js':
         specifier: ^2.4.0
         version: 2.4.0
@@ -3710,7 +3710,7 @@ packages:
       '@storybook/core-events': 7.0.1
       '@storybook/global': 5.0.0
       qs: 6.11.1
-      telejson: 7.0.4
+      telejson: 7.1.0
     dev: true
 
   /@storybook/channel-websocket@7.0.0-rc.10:
@@ -4443,6 +4443,20 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
+  /@testing-library/dom@9.2.0:
+    resolution: {integrity: sha512-xTEnpUKiV/bMyEsE5bT4oYA0x0Z/colMtxzUY8bKyPXBNLn/e0V4ZjBZkEhms0xE4pv9QsPfSRu9AWS4y5wGvA==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@babel/code-frame': 7.21.4
+      '@babel/runtime': 7.21.0
+      '@types/aria-query': 5.0.1
+      aria-query: 5.1.3
+      chalk: 4.1.2
+      dom-accessibility-api: 0.5.16
+      lz-string: 1.5.0
+      pretty-format: 27.5.1
+    dev: true
+
   /@testing-library/jest-dom@5.16.5:
     resolution: {integrity: sha512-N5ixQ2qKpi5OLYfwQmUb/5mSV9LneAcaUfp32pn4yCnpb8r/Yz0pXFPck21dIicKmi+ta5WRAknkZCfA8refMA==}
     engines: {node: '>=8', npm: '>=6', yarn: '>=1'}
@@ -4478,13 +4492,13 @@ packages:
       '@testing-library/dom': 8.20.0
     dev: true
 
-  /@testing-library/user-event@14.4.3(@testing-library/dom@8.20.0):
+  /@testing-library/user-event@14.4.3(@testing-library/dom@9.2.0):
     resolution: {integrity: sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@testing-library/dom': 8.20.0
+      '@testing-library/dom': 9.2.0
     dev: true
 
   /@tootallnate/once@2.0.0:
@@ -5745,7 +5759,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.21.0
       '@types/raf': 3.4.0
-      core-js: 3.29.1
+      core-js: 3.30.0
       raf: 3.4.1
       regenerator-runtime: 0.13.11
       rgbcolor: 1.0.1
@@ -6076,6 +6090,12 @@ packages:
   /core-js@3.29.1:
     resolution: {integrity: sha512-+jwgnhg6cQxKYIIjGtAHq2nwUOolo9eoFZ4sHfUH09BLXBgxnH4gA0zEd+t+BO2cNB8idaBtZFcFTRjQJRJmAw==}
     requiresBuild: true
+    dev: true
+
+  /core-js@3.30.0:
+    resolution: {integrity: sha512-hQotSSARoNh1mYPi9O2YaWeiq/cEB95kOrFb4NCrO4RIFt1qqNpKsaE+vy/L3oiqvND5cThqXzUU3r9F7Efztg==}
+    requiresBuild: true
+    optional: true
 
   /core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -8707,7 +8727,7 @@ packages:
       fflate: 0.4.8
     optionalDependencies:
       canvg: 3.0.10
-      core-js: 3.29.1
+      core-js: 3.30.0
       dompurify: 2.4.5
       html2canvas: 1.4.1
 
@@ -8740,83 +8760,83 @@ packages:
       dotenv-expand: 10.0.0
     dev: true
 
-  /lefthook-darwin-arm64@1.3.8:
-    resolution: {integrity: sha512-SP+CHMBVqmgKqaY9M7cqHzbUkfVSklzbBrHl85VoJO7r8rrwb8E876H72iI2qSbglJI1tRfPM/EHgQZcoR55Ig==}
+  /lefthook-darwin-arm64@1.3.9:
+    resolution: {integrity: sha512-Tq83fIvOF97FU94jMq+Sp9EDDptd/yn4YXZVT3NpAT8TbPFdk6LPe4fqmLgr7a4sFX7uVH7UHEXhnQpHy5p1pA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-darwin-x64@1.3.8:
-    resolution: {integrity: sha512-6dz4+SHBROA2dl7rRJDS8hOuQ6in050iEJ5Pr1C1xWtju6UoL5zQBldRjXK6CitJVy5OBm5gzQqKKvSWWhxQog==}
+  /lefthook-darwin-x64@1.3.9:
+    resolution: {integrity: sha512-xF6yfIHrx1MKoDwiHTYAiiY9tWUuJ+sM3E2JJ0J3mpss+h8KhB8iID9mP9Q8CUXJoWTyWb2KFLXULemF51Myxg==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-freebsd-arm64@1.3.8:
-    resolution: {integrity: sha512-Xd+d2jqF2/f9Qt5jpd8M9QsYJ8h/gr/y6lxk6t/UVCf0QLVCgH64eFHPy14sPnVb7tJHrFAfdZrVd2Uw4APD0A==}
+  /lefthook-freebsd-arm64@1.3.9:
+    resolution: {integrity: sha512-VH/ODGIV8erBNjvN3K2SqR8RM3IrrbclQUIBp+kI+rsNiNNjr3MFjjt2AKOj6aC/T0T+MV+IY2nh4BD+1Owaag==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-freebsd-x64@1.3.8:
-    resolution: {integrity: sha512-o81vsu6ilg+eYUM0DnzHAgQjU9FESbaGR3PqCiA94IDQKJDJb+LxBdRU4iFl9/p7PUaCp0grk/d6o4pEkiRuLQ==}
+  /lefthook-freebsd-x64@1.3.9:
+    resolution: {integrity: sha512-9ZHDBAw/D4J9rxkGKULiZKRL3K+JZbCTOfo6EB88MePjlh2E+xW8lw7knw+eZDUjxLQzSRcfJoCH3bXmqMWHmw==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-linux-arm64@1.3.8:
-    resolution: {integrity: sha512-6yCh7PHlt5Q1060kicl8VZwQqE/gx8dpmE+MqJ8SkLY+MQeHdpmFkFEzfKp5AMBAMESvutyc865Eaz2qhZOwtA==}
+  /lefthook-linux-arm64@1.3.9:
+    resolution: {integrity: sha512-D78aecOO7uAp5gSJ1yIfLoApblLKT6bot6VVeEcx9DeSC5iYsTqGp7g72IZN9bXrKkVNRWFGwfszqobx3fX4cg==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-linux-x64@1.3.8:
-    resolution: {integrity: sha512-5IMuI+/++MTm+Z3SpWJ7VdjJzTpQt11TEPbk7L0oibx8qrsqoKjGP/RJJVO3IYB5w+Ax/UYNa4o4PiON8Au6/g==}
+  /lefthook-linux-x64@1.3.9:
+    resolution: {integrity: sha512-PQrZVhN4T0qYfKnQ18XwbJxmtj5roiL4KeQ/XhNUX5IdM6uWimhrehFx0AO6LnSYfisa7DEfhZf7mJQhIpXQlQ==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-windows-arm64@1.3.8:
-    resolution: {integrity: sha512-YjcgVtoesnc8EIPbHhYrnkMrw1IP3A1EqmupPr5Cz87pVmG4RD9eRlTUWBhujYU9G1N/mdD+9oCM3fC8Za1hHQ==}
+  /lefthook-windows-arm64@1.3.9:
+    resolution: {integrity: sha512-iD4SDJbgtUSBqoE5ud+cmJ5/vFQ/kWxrXse+Wvj0A/hQijam7naRc1gX02XduuGv/z+u3j6ohuidNorcEDPsLA==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-windows-x64@1.3.8:
-    resolution: {integrity: sha512-c71NpBKNE6uKSOgzjyWM+Pr53MUTZxPUib2ls1cfwKV/DuLmsK0zB0xZ4WCgLTdozoPvuGVIiE++xKL3mkn4JA==}
+  /lefthook-windows-x64@1.3.9:
+    resolution: {integrity: sha512-w0p+Fm0GqwrHHWy5K2yeTBBS0cW16q1i1wIco4S6p7GaVV4chYgxpkd5e5GWhq3yAWVpctqJeHWYKikGLHKFuA==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook@1.3.8:
-    resolution: {integrity: sha512-AZxf7YA68zYsP/fYfXN4kk7wYo+UZvS8Ez6e1lnmLdJjLeWeoYsUzINgJYsWS5F6mJ+TPtZAhS3Eg/YH8TNUfw==}
+  /lefthook@1.3.9:
+    resolution: {integrity: sha512-o+mftqw6HFgJgSbBgBY5Tioe6cnBUjz/vawYd+dYIMvIjkklM2VozThUU848dZ6dYBUYREPtpQAvPe5g0E4ZJg==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      lefthook-darwin-arm64: 1.3.8
-      lefthook-darwin-x64: 1.3.8
-      lefthook-freebsd-arm64: 1.3.8
-      lefthook-freebsd-x64: 1.3.8
-      lefthook-linux-arm64: 1.3.8
-      lefthook-linux-x64: 1.3.8
-      lefthook-windows-arm64: 1.3.8
-      lefthook-windows-x64: 1.3.8
+      lefthook-darwin-arm64: 1.3.9
+      lefthook-darwin-x64: 1.3.9
+      lefthook-freebsd-arm64: 1.3.9
+      lefthook-freebsd-x64: 1.3.9
+      lefthook-linux-arm64: 1.3.9
+      lefthook-linux-x64: 1.3.9
+      lefthook-windows-arm64: 1.3.9
+      lefthook-windows-x64: 1.3.9
     dev: true
 
   /lerp@1.0.3:
@@ -11728,6 +11748,12 @@ packages:
 
   /telejson@7.0.4:
     resolution: {integrity: sha512-J4QEuCnYGXAI9KSN7RXK0a0cOW2ONpjc4IQbInGZ6c3stvplLAYyZjTnScrRd8deXVjNCFV1wXcLC7SObDuQYA==}
+    dependencies:
+      memoizerific: 1.11.3
+    dev: true
+
+  /telejson@7.1.0:
+    resolution: {integrity: sha512-jFJO4P5gPebZAERPkJsqMAQ0IMA1Hi0AoSfxpnUaV6j6R2SZqlpkbS20U6dEUtA3RUYt2Ak/mTlkQzHH9Rv/hA==}
     dependencies:
       memoizerific: 1.11.3
     dev: true
