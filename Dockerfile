@@ -18,7 +18,7 @@ ARG AZURE_AD_TENANT_ID
 ARG AZURE_AD_CLIENT_ID
 ARG AZURE_AD_CLIENT_SECRET
 
-RUN npm install pnpm@7.25.x -g
+RUN npm install pnpm@8.1.x -g
 
 # Create app directory
 WORKDIR /app
