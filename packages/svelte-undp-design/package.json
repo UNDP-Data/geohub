@@ -32,7 +32,7 @@
 		"@storybook/addon-links": "7.0.2",
 		"@storybook/blocks": "7.0.2",
 		"@storybook/mdx2-csf": "^0.0.4",
-		"@storybook/source-loader": "^6.5.16",
+		"@storybook/source-loader": "^7.0.0",
 		"@storybook/svelte": "7.0.2",
 		"@storybook/sveltekit": "7.0.2",
 		"@storybook/testing-library": "0.1.0",
