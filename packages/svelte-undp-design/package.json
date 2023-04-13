@@ -42,7 +42,7 @@
 		"@testing-library/user-event": "^14.4.3",
 		"@typescript-eslint/eslint-plugin": "^5.53.0",
 		"@typescript-eslint/parser": "^5.53.0",
-		"@vitest/coverage-istanbul": "^0.29.2",
+		"@vitest/coverage-istanbul": "^0.30.0",
 		"eslint": "^8.34.0",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-storybook": "^0.6.11",
@@ -59,7 +59,7 @@
 		"tslib": "^2.5.0",
 		"typescript": "^5.0.0",
 		"vite": "^4.1.4",
-		"vitest": "^0.29.2"
+		"vitest": "^0.30.0"
 	},
 	"type": "module",
 	"dependencies": {
