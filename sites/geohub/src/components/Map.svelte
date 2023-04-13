@@ -8,7 +8,7 @@
     TerrainControl,
     type TerrainSpecification,
   } from 'maplibre-gl'
-  import '@watergis/maplibre-gl-export/css/styles.css'
+  import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css'
 
   import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte'
   import StyleSwicher from '@undp-data/style-switcher'
