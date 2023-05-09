@@ -81,7 +81,7 @@
     "jsdom": "^21.1.0",
     "lodash-es": "^4.17.21",
     "maplibre-gl": "^2.4.0",
-    "marked": "^4.2.12",
+    "marked": "^5.0.0",
     "millify": "^6.0.0",
     "papaparse": "^5.3.2",
     "pmtiles": "^2.7.0",
