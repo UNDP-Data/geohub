@@ -8,4 +8,6 @@
 
 4. User Guide :To learn how to use the GeoHub, click on the ![Map_Documentation.png](../assets/data/Map_Documentation.png) icon.
 
+5. Manage my datasets: To upload new datasets in to the GeoHub via the ![Map_Datasets.png](../assets/data/Map_Datasets.png) icon which is enabled for authenticated users.
+
 <center> ![type:video](https://undpngddlsgeohubdev01.blob.core.windows.net/docs-assets/Videos/Header_features.webm)</center>
