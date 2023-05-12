@@ -22,4 +22,4 @@ The user has the option to improve the layer view by checking the options availa
 
     ii.Layer up/down: These arrow keys ![Layer_Up_Down.png](../assets/data/Layer_Up_Down.png) will allow the user to move their layer of choice up and down the list of layers.
 
-<center> ![Layer_Tab_Componenets.png](../assets/data/Layer_Tab_Componenets.png)
+<center> ![Layer_Tab_Componenets1.PNG](../assets/data/Layer_Tab_Componenets1.PNG)
