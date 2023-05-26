@@ -559,8 +559,8 @@ importers:
         specifier: ^4.17.6
         version: 4.17.6
       '@types/marked':
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^5.0.0
+        version: 5.0.0
       '@types/mime':
         specifier: ^3.0.1
         version: 3.0.1
@@ -4675,8 +4675,8 @@ packages:
       '@types/mapbox__point-geometry': 0.1.2
       '@types/pbf': 3.0.2
 
-  /@types/marked@4.0.8:
-    resolution: {integrity: sha512-HVNzMT5QlWCOdeuBsgXP8EZzKUf0+AXzN+sLmjvaB3ZlLqO+e4u0uXrdw9ub69wBKFs+c6/pA4r9sy6cCDvImw==}
+  /@types/marked@5.0.0:
+    resolution: {integrity: sha512-YcZe50jhltsCq7rc9MNZC/4QB/OnA2Pd6hrOSTOFajtabN+38slqgDDCeE/0F83SjkKBQcsZUj7VLWR0H5cKRA==}
     dev: true
 
   /@types/mdx@2.0.4:

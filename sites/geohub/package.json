@@ -46,7 +46,7 @@
     "@types/geojson": "^7946.0.10",
     "@types/lodash": "^4.14.191",
     "@types/lodash-es": "^4.17.6",
-    "@types/marked": "^4.0.8",
+    "@types/marked": "^5.0.0",
     "@types/mime": "^3.0.1",
     "@types/papaparse": "^5.3.7",
     "@types/pbf": "^3.0.2",
