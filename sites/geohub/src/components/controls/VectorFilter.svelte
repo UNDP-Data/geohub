@@ -170,9 +170,9 @@
       ? $map.setFilter(`${layerId}-label`, expression)
       : null
     expressionApplied = true
-    $map.on('error', (err: ErrorEvent) => {
+    $map.once('error', (err: ErrorEvent) => {
       filteringError = true
-      toast.push(err.error ?? 'The map filter was not applied. Please check the that all filters are valid.')
+      toast.push(err.error?.message ?? 'The map filter was not applied. Please check the that all filters are valid.')
     })
     if ($filterInputTags.length > 0) {
       $filterInputTags = []
