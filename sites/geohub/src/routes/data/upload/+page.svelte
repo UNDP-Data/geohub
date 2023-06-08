@@ -3,7 +3,7 @@
   import { goto } from '$app/navigation'
   import { BlockBlobClient } from '@azure/storage-blob'
   import { filesize } from 'filesize'
-  import Dropzone from 'svelte-file-dropzone'
+  import Dropzone from 'svelte-file-dropzone/Dropzone.svelte'
   import { toast } from '@zerodevx/svelte-toast'
   import isValidFilename from 'valid-filename'
   import { AccepedExtensions } from '$lib/config/AppConfig'

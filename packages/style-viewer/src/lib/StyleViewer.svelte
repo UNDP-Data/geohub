@@ -105,7 +105,7 @@
 
 <style>
 	@import 'maplibre-gl/dist/maplibre-gl.css';
-	@import '@watergis/maplibre-gl-legend/css/styles.css';
+	@import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
 
 	.map {
 		position: absolute;
