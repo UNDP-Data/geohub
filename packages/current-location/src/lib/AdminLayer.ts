@@ -25,7 +25,7 @@ export class AdminLayer {
 		const lvl = this.getAdminLevel();
 		const layerSource: SourceSpecification = {
 			type: 'vector',
-			maxzoom: 10,
+			maxzoom: 4,
 			promoteId: `adm${lvl}_id`,
 			tiles: [`${this.azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
 		};
@@ -105,6 +105,11 @@ export class AdminLayer {
 	}
 
 	onAdminMouseMove(e) {
+		const source = this.map?.getSource(this.ADM_ID);
+		const maxzoom = source?.maxzoom ?? 4;
+		const currentZoom = this.map.getZoom();
+		if (currentZoom > maxzoom) return;
+
 		if (e.features.length > 0) {
 			if (this.hoveredStateId) {
 				this.map.setFeatureState(
