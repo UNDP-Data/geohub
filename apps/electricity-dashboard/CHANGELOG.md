@@ -1,5 +1,16 @@
 # @undp-data/electricity-dashboard
 
+## 0.1.4
+
+### Patch Changes
+
+- c8f5b2f1: chore: updated all npm packages except maplibre-gl
+- Updated dependencies [c8f5b2f1]
+- Updated dependencies [c8f5b2f1]
+  - @undp-data/svelte-undp-design@0.2.2
+  - @undp-data/current-location@0.1.3
+  - @undp-data/style-switcher@0.1.1
+
 ## 0.1.3
 
 ### Patch Changes
