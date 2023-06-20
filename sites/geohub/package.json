@@ -107,7 +107,7 @@
     "svelte-tree-view-component": "^1.0.3",
     "svelte-use-click-outside": "^1.0.0",
     "svelte-vega": "^2.0.0",
-    "swagger-ui-dist": "^4.19.0",
+    "swagger-ui-dist": "^5.0.0",
     "tippy.js": "^6.3.7",
     "tslib": "^2.5.3",
     "typescript": "^5.1.3",
