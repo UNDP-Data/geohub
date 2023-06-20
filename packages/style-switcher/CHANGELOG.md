@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.1
+
+### Patch Changes
+
+- c8f5b2f1: chore: updated all npm packages except maplibre-gl
+
 ## 0.1.0
 
 ### Minor Changes
