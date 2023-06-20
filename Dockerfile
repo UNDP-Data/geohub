@@ -1,4 +1,4 @@
-FROM node:19 as build
+FROM node:20 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=dialog
