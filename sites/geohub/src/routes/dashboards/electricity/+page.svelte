@@ -1,6 +1,6 @@
 <script lang="ts">
   import { MapStyles } from '$lib/config/AppConfig'
-  import { ElectricityDashboard } from '@undp-data/electricity-dashboard'
+  import ElectricityDashboard from './ElectricityDashboard.svelte'
 
   let title = 'GeoHub | Electricity Dashboard'
 </script>
