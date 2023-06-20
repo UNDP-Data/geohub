@@ -655,8 +655,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(svelte@3.59.1)(vega-lite@5.9.3)(vega@5.25.0)
       swagger-ui-dist:
-        specifier: ^4.19.0
-        version: 4.19.0
+        specifier: ^5.0.0
+        version: 5.0.0
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -12086,8 +12086,8 @@ packages:
     engines: {node: '>=12.0.0'}
     optional: true
 
-  /swagger-ui-dist@4.19.0:
-    resolution: {integrity: sha512-9C9fJGI18gK5AhaU5YRyPY1lXJH4lmWh8h9zFMrJBkYzdRjCbAzYl1ayWPYgwFvag/Luqi3Co599OK/39IS2QQ==}
+  /swagger-ui-dist@5.0.0:
+    resolution: {integrity: sha512-bwl6og9I9CAHKGSnYLKydjhBuH7d3oU6RX6uKN8oDCkLusTHXOW3sZMyBWjRtjGFnCMmN085oZoaR/4Wm9nIaQ==}
     dev: true
 
   /symbol-tree@3.2.4:
