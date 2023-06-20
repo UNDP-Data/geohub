@@ -6,7 +6,7 @@
   import { map, admin } from '../stores'
 
   import type { ElectricityDatasets } from '../interfaces'
-  import { getBase64EncodedUrl } from '../utils/getBase64EncodedUrl'
+  import { getBase64EncodedUrl } from '$lib/helper'
 
   const titilerUrl = $page.data.titilerUrl
   const datasets: ElectricityDatasets = $page.data.datasets

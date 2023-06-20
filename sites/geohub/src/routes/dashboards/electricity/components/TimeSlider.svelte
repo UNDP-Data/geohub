@@ -17,7 +17,7 @@
   }
 
   import type { ElectricityDatasets } from '../interfaces'
-  import { getBase64EncodedUrl } from '../utils/getBase64EncodedUrl'
+  import { getBase64EncodedUrl } from '$lib/helper'
   const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer'
   const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source'
 

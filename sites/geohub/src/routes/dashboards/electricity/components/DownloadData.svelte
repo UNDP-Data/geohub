@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { downloadFile } from '../utils/downloadFile'
+  import { downloadFile } from '$lib/helper'
   import { Button } from '@undp-data/svelte-undp-design'
 
   let layers = ['ADM0', 'ADM1', 'ADM2', 'ADM3', 'ADM4']
