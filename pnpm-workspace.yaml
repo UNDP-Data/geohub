@@ -6,4 +6,3 @@ packages:
   - "packages/style-viewer"
   - "packages/svelte-undp-design"
   - "packages/undp-bulma"
-  - "apps/electricity-dashboard"

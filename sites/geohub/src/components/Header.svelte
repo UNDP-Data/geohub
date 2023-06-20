@@ -46,10 +46,12 @@
     ]
 
     if ($page.data.session && $layerList.length > 0) {
-      finalLink = [links[0], shareLink, ...links.slice(1)]
-    } else {
-      finalLink = [...links]
+      links = [links[0], shareLink, ...links.slice(1)]
     }
+    if (!$page.data.session) {
+      links = links.filter((l) => l.href !== '/data')
+    }
+    finalLink = [...links]
   }
   $: $layerList, initLinks()
   $: drawerOpen, initLinks()

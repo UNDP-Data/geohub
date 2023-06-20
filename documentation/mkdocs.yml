@@ -100,9 +100,12 @@ nav:
       - Legend: visualization/legend.md
       - Histograms: visualization/histograms.md
       - Opacity: visualization/opacity.md
+      - Vector Data Simulation: visualization/vector_data_simulation.md
   - Dashboards:
       - Introduction: dashboards/introduction.md
       - Available Dashboards: dashboards/dashboard.md
       - Functions: dashboards/functions.md
   - Explore Maps:
       - Saving maps: explore_maps/save_maps.md
+  - Data Upload:
+      - Upload Data: data_upload/upload.md

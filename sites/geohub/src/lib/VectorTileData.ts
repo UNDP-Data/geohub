@@ -16,12 +16,31 @@ export class VectorTileData {
   private url: string
   private metadata: VectorTileMetadata
   private defaultLineWidth: number
+  private defaultLineDashArray: number[]
+  private defaultIconImage: string
+  private defaultIconSize: number
+  private iconOverlap: 'never' | 'always' | 'cooperative'
+  private layerOpacity: number
 
-  constructor(feature: DatasetFeature, defaultLineWidth: number, metadata?: VectorTileMetadata) {
+  constructor(
+    feature: DatasetFeature,
+    defaultLineWidth: number,
+    defaultLineDashArray: number[],
+    metadata?: VectorTileMetadata,
+    defaultIconImage?: string,
+    defaultIconSize?: number,
+    iconOverlap?: 'never' | 'always' | 'cooperative',
+    layerOpacity?: number,
+  ) {
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
     this.defaultLineWidth = defaultLineWidth
+    this.defaultLineDashArray = defaultLineDashArray
+    this.defaultIconImage = defaultIconImage
+    this.defaultIconSize = defaultIconSize
+    this.iconOverlap = iconOverlap
+    this.layerOpacity = layerOpacity
   }
 
   public getMetadata = async () => {
@@ -122,11 +141,13 @@ export class VectorTileData {
           'source-layer': selectedLayerId,
           layout: {
             visibility: 'visible',
-            'icon-image': 'circle',
-            'icon-size': 1,
+            'icon-image': this.defaultIconImage ?? 'circle',
+            'icon-size': this.defaultIconSize ?? 1,
+            'icon-overlap': this.iconOverlap ?? 'never',
           },
           paint: {
             'icon-color': color.hex(),
+            'icon-opacity': this.layerOpacity ?? 1,
           },
         }
         break
@@ -145,7 +166,11 @@ export class VectorTileData {
           paint: {
             'line-color': color.hex(),
             'line-width': this.defaultLineWidth,
+            'line-opacity': this.layerOpacity ?? 1,
           },
+        }
+        if (this.defaultLineDashArray) {
+          layer.paint['line-dasharray'] = this.defaultLineDashArray
         }
         break
       case 'polygon':
@@ -161,7 +186,7 @@ export class VectorTileData {
           paint: {
             'fill-color': color.hex(),
             'fill-outline-color': color.darken(2.6).hex(),
-            'fill-opacity': 0.6,
+            'fill-opacity': this.layerOpacity ?? 1,
           },
         }
         break
@@ -193,7 +218,7 @@ export class VectorTileData {
               'rgb(255,0,0)',
             ],
             'heatmap-intensity': 1,
-            'heatmap-opacity': 1,
+            'heatmap-opacity': this.layerOpacity ?? 1,
             'heatmap-radius': 30,
             'heatmap-weight': 1,
           },

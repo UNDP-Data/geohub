@@ -15,12 +15,14 @@ export class RasterTileData {
   private url: string
   private metadata: RasterTileMetadata
   private titilerUrl: string
+  private layerOpacity: number
 
-  constructor(titilerUrl: string, feature: DatasetFeature, metadata?: RasterTileMetadata) {
+  constructor(titilerUrl: string, feature: DatasetFeature, metadata?: RasterTileMetadata, layerOpacity?: number) {
     this.titilerUrl = titilerUrl
     this.feature = feature
     this.url = feature.properties.url
     this.metadata = metadata
+    this.layerOpacity = layerOpacity
   }
 
   public getMetadata = async () => {
@@ -145,6 +147,7 @@ export class RasterTileData {
       },
       paint: {
         'raster-resampling': 'nearest',
+        'raster-opacity': this.layerOpacity,
       },
     }
 

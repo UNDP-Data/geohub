@@ -10,7 +10,7 @@ beforeEach(cleanup)
 const colormap = getRandomColormap()
 
 describe('Color Map Picker Card : Card Style', () => {
-  let sut: RenderResult
+  let sut: RenderResult<ColorMapPickerCard>
   let cardContainer: HTMLElement
 
   beforeEach(() => {
@@ -33,6 +33,8 @@ describe('Color Map Picker Card : Card Style', () => {
 
   it('should render the color map style', () => {
     const colorMapFigure = within(cardContainer).getByTestId('color-map-figure')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     expect(colorMapFigure).toHaveStyle({
       height: 'calc(1px * 30)',
       width: 'calc(2px * 30)',
@@ -46,7 +48,7 @@ describe('Color Map Picker Card : Card Style', () => {
 })
 
 describe('Color Map Picker Card : Card Style : Selected', () => {
-  let sut: RenderResult
+  let sut: RenderResult<ColorMapPickerCard>
   let cardContainer: HTMLElement
 
   beforeEach(() => {
@@ -66,7 +68,7 @@ describe('Color Map Picker Card : Card Style : Selected', () => {
 })
 
 describe('Color Map Picker Card : List Style', () => {
-  let sut: RenderResult
+  let sut: RenderResult<ColorMapPickerCard>
   let cardContainer: HTMLElement
 
   beforeEach(() => {
@@ -81,6 +83,8 @@ describe('Color Map Picker Card : List Style', () => {
 
   it('should render the color map style', () => {
     const colorMapFigure = within(cardContainer).getByTestId('color-map-figure')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     expect(colorMapFigure).toHaveStyle({
       height: '15px',
       width: '250px',

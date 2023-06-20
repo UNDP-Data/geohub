@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.2
+
+### Patch Changes
+
+- c8f5b2f1: chore: updated all npm packages except maplibre-gl
+
 ## 0.2.1
 
 ### Patch Changes

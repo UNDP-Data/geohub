@@ -9,7 +9,8 @@
 	onMount(async () => {
 		map = new Map({
 			container: mapContainer,
-			style: 'https://undp-data.github.io/style/style.json'
+			style: 'https://undp-data.github.io/style/style.json',
+			hash: true
 		});
 
 		map.addControl(new NavigationControl({}), 'top-right');

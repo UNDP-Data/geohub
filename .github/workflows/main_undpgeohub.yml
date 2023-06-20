@@ -43,6 +43,8 @@ jobs:
       - name: checkout code repository
         uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8.6.1
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -51,6 +53,9 @@ jobs:
 
       - name: install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Run Prettier
+        run: pnpm format
 
       - name: Run lint
         run: pnpm lint

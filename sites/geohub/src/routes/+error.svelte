@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import type { PageData } from './$types'
   import UserAccount from '$components/UserAccount.svelte'
   import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
   import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'

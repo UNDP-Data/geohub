@@ -1457,6 +1457,24 @@ paths:
             application/json:
               schema:
                 properties:
+                  classification_method:
+                    $ref: '#/components/schemas/ClassificationMethodTypes'
+                  raster_resampling_method:
+                    $ref: '#/components/schemas/ResamplingMethodTypes'
+                  layer_opacity:
+                    type: number
+                  overlap_priority:
+                    $ref: '#/components/schemas/OverlapPriority'
+                  icon_size:
+                    type: number
+                  icon_image:
+                    type: string
+                  line_pattern:
+                    $ref: '#/components/schemas/LinePattern'
+                  font_size:
+                    type: number
+                  halo_width:
+                    type: number
                   search_limit:
                     type: number
                   dataset_search_limit:
@@ -1492,6 +1510,24 @@ paths:
                 schema:
                   type: object
                   properties:
+                      classification_method:
+                        $ref: '#/components/schemas/ClassificationMethodTypes'
+                      raster_resampling_method:
+                        $ref: '#/components/schemas/ResamplingMethodTypes'
+                      layer_opacity:
+                        type: number
+                      overlap_priority:
+                        $ref: '#/components/schemas/OverlapPriority'
+                      icon_size:
+                        type: number
+                      icon_image:
+                        type: string
+                      line_pattern:
+                        $ref: '#/components/schemas/LinePattern'
+                      font_size:
+                        type: number
+                      halo_width:
+                        type: number
                       search_limit:
                           type: number
                       dataset_search_limit:
@@ -1521,6 +1557,24 @@ paths:
             schema:
               type: object
               properties:
+                  classification_method:
+                    $ref: '#/components/schemas/ClassificationMethodTypes'
+                  raster_resampling_method:
+                    $ref: '#/components/schemas/ResamplingMethodTypes'
+                  layer_opacity:
+                    type: number
+                  overlap_priority:
+                    $ref: '#/components/schemas/OverlapPriority'
+                  icon_size:
+                    type: number
+                  icon_image:
+                    type: string
+                  line_pattern:
+                    $ref: '#/components/schemas/LinePattern'
+                  font_size:
+                    type: number
+                  halo_width:
+                    type: number
                   search_limit:
                       type: number
                   dataset_search_limit:
@@ -1681,6 +1735,35 @@ components:
       enum:
           - left
           - right
+    ClassificationMethodTypes:
+        title: ClassificationMethodTypes
+        type: string
+        enum:
+            - e
+            - q
+            - n
+            - l
+    ResamplingMethodTypes:
+        title: ResamplingMethodTypes
+        type: string
+        enum:
+            - nearest
+            - linear
+    OverlapPriority:
+        title: OverlapPriority
+        type: string
+        enum:
+            - always
+            - never
+            - cooperative
+    LinePattern:
+        title: LinePattern
+        type: string
+        enum:
+            - solid
+            - dash
+            - dash-dot
+            - dot
   securitySchemes:
     Azure AD authentication:
       type: http

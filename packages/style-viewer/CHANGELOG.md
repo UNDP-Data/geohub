@@ -1,5 +1,14 @@
 # @undp-data/style-viewer
 
+## 0.1.2
+
+### Patch Changes
+
+- c8f5b2f1: chore: updated all npm packages except maplibre-gl
+- Updated dependencies [c8f5b2f1]
+- Updated dependencies [c8f5b2f1]
+  - @undp-data/current-location@0.1.3
+
 ## 0.1.1
 
 ### Patch Changes

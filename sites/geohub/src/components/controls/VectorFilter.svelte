@@ -170,9 +170,9 @@
       ? $map.setFilter(`${layerId}-label`, expression)
       : null
     expressionApplied = true
-    $map.on('error', (err: ErrorEvent) => {
+    $map.once('error', (err: ErrorEvent) => {
       filteringError = true
-      toast.push(err.error ?? 'The map filter was not applied. Please check the that all filters are valid.')
+      toast.push(err.error?.message ?? 'The map filter was not applied. Please check the that all filters are valid.')
     })
     if ($filterInputTags.length > 0) {
       $filterInputTags = []
@@ -329,15 +329,15 @@
             class="dropdown-menu"
             id="dropdown-menu-filter"
             role="menu">
-            <div class="dropdown-content ">
+            <div class="dropdown-content">
               <!-- <hr class="dropdown-divider"> -->
 
               {#each expressionsArray as expr, i}
                 {@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
 
                 {#if op && op.length > 0}
-                  <div class="menu-item ">
-                    <div class="tags has-addons is-centered ">
+                  <div class="menu-item">
+                    <div class="tags has-addons is-centered">
                       <div class="tag is-info is-dark is-small">{clean(expr.property)}</div>
                       <div class="tag is-danger is-dark is-small">{op[0].text}</div>
                       <div class="tag is-success is-dark is-small">{expr.value}</div>
@@ -345,7 +345,7 @@
                   </div>
                   {#if i < expressionsArray.length - 1}
                     <div
-                      class="is-divider is-danger m-4 "
+                      class="is-divider is-danger m-4"
                       data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'} />
                   {/if}
                 {/if}
@@ -357,7 +357,7 @@
         <button
           on:click={handleClearExpression}
           class="button wizard-button is-small primary-button">
-          <i class="fas fa-trash " />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
+          <i class="fas fa-trash" />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
         </button>
       {/if}
     </div>

@@ -1,4 +1,4 @@
-FROM node:19 as build
+FROM node:20 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=dialog
@@ -26,7 +26,6 @@ WORKDIR /app
 COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
-COPY apps/electricity-dashboard/package.json apps/electricity-dashboard/package.json
 COPY packages/current-location/package.json packages/current-location/package.json
 COPY packages/geohub-cli/package.json packages/geohub-cli/package.json
 COPY packages/style-switcher/package.json packages/style-switcher/package.json

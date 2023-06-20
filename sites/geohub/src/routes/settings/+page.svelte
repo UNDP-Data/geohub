@@ -22,7 +22,12 @@
   </Header>
 </div>
 
-<Settings bind:headerHeight />
+<div
+  class="main-section p-4"
+  style="margin-top: {headerHeight}px">
+  <Settings />
+</div>
+
 <Footer
   logoUrl="assets/undp-images/undp-logo-white.svg"
   footerItems={FooterItems} />
@@ -31,9 +36,6 @@
   // Similar styles to the header as you can't set the z-index of the header at this place
   .header {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
     z-index: 1000;
   }
 </style>
