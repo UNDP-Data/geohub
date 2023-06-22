@@ -24,7 +24,7 @@ export const FooterItems: { [key: string]: { title: string; url: string }[] } = 
     },
     {
       title: 'Electricity Dashboard',
-      url: '/dashboard/electricity',
+      url: '/dashboards/electricity',
     },
   ],
   'For Developers': [
