@@ -65,12 +65,12 @@
 	"dependencies": {
 		"@sveltejs/kit": "^1.20.2",
 		"filesize": "^10.0.7",
-		"svelte": "^3.59.1",
+		"svelte": "^4.0.0",
 		"svelte-carousel": "^1.0.25"
 	},
 	"peerDependencies": {
 		"@sveltejs/kit": "^1.8.3",
-		"svelte": "^3.55.1"
+		"svelte": "^4.0.0"
 	},
 	"exports": {
 		".": {
