@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.4
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
 ## 0.2.3
 
 ### Patch Changes

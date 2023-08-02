@@ -1,5 +1,13 @@
 # @undp-data/style-viewer
 
+## 0.1.4
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+- Updated dependencies [68bc4a96]
+  - @undp-data/current-location@0.1.5
+
 ## 0.1.3
 
 ### Patch Changes
