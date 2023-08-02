@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.3
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
 ## 0.1.2
 
 ### Patch Changes

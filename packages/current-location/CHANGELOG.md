@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 0.1.5
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
 ## 0.1.4
 
 ### Patch Changes
