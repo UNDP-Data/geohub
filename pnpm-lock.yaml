@@ -207,8 +207,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@watergis/svelte-maplibre-attribute-popup':
-        specifier: ^1.0.0
-        version: 1.0.0(svelte@4.1.2)
+        specifier: ^2.0.0
+        version: 2.0.0(svelte@4.1.2)
       '@watergis/svelte-maplibre-export':
         specifier: ^1.0.0
         version: 1.0.0(svelte@4.1.2)
@@ -6060,10 +6060,10 @@ packages:
       - debug
     dev: false
 
-  /@watergis/svelte-maplibre-attribute-popup@1.0.0(svelte@4.1.2):
-    resolution: {integrity: sha512-e8AAXtHLmJDWOaBQWrW/ll/9xgWMBa0vcUEG5lNn7hWm9Qq0CEgvJMIdqvCvsOe4DZToD8PUX7J811wMmR89rA==}
+  /@watergis/svelte-maplibre-attribute-popup@2.0.0(svelte@4.1.2):
+    resolution: {integrity: sha512-wCDdmpx7SQUaJknBvzH6qTN8cqUjj1FT8A9barDr4RlsgOt4pYbf8EpbBjDkgfp8k7SLVVAEk+a5sgpUti8MeA==}
     peerDependencies:
-      svelte: ^3.54.0
+      svelte: ^4.0.0
     dependencies:
       maplibre-gl: 3.2.0
       svelte: 4.1.2
