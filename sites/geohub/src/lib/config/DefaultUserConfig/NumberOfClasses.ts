@@ -1,1 +1,1 @@
-export const NumberOfClasses = 5
+export const NumberOfClasses = 5;

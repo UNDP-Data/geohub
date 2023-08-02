@@ -1,46 +1,43 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import type { LayerSpecification } from 'maplibre-gl'
+	import { onMount } from 'svelte';
+	import type { LayerSpecification } from 'maplibre-gl';
 
-  import NumberInput from '$components/controls/NumberInput.svelte'
-  import type { Layer } from '$lib/types'
-  import { map } from '$stores'
+	import NumberInput from '$components/controls/NumberInput.svelte';
+	import type { Layer } from '$lib/types';
+	import { map } from '$stores';
 
-  export let layer: Layer
+	export let layer: Layer;
 
-  const layerId = layer.id
-  const propertyName = 'icon-size'
-  console.log($map)
-  const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
+	const layerId = layer.id;
+	const propertyName = 'icon-size';
+	console.log($map);
+	const style = $map
+		.getStyle()
+		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
-  let maxValue = 5
-  let minValue = 0
-  let stepValue = 0.25
+	let maxValue = 5;
+	let minValue = 0;
+	let stepValue = 0.25;
 
-  const getValue = () => {
-    if (style?.layout && style.layout[propertyName]) {
-      return style.layout[propertyName]
-    } else {
-      return 1
-    }
-  }
+	const getValue = () => {
+		if (style?.layout && style.layout[propertyName]) {
+			return style.layout[propertyName];
+		} else {
+			return 1;
+		}
+	};
 
-  let value = getValue()
+	let value = getValue();
 
-  onMount(() => {
-    setValue()
-  })
+	onMount(() => {
+		setValue();
+	});
 
-  const setValue = () => {
-    $map.setLayoutProperty(layer.id, propertyName, value)
-  }
+	const setValue = () => {
+		$map.setLayoutProperty(layer.id, propertyName, value);
+	};
 </script>
 
 <div data-testid="icon-size-input">
-  <NumberInput
-    bind:value
-    bind:minValue
-    bind:maxValue
-    bind:step={stepValue}
-    on:change={setValue} />
+	<NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />
 </div>

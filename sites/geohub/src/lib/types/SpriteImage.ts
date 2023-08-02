@@ -1,4 +1,4 @@
 export interface SpriteImage {
-  src: string
-  alt: string
+	src: string;
+	alt: string;
 }

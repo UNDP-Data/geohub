@@ -1,42 +1,44 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+	import { onMount } from 'svelte';
 
-  import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
-  import type { Layer } from '$lib/types'
-  import { map } from '$stores'
+	import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte';
+	import type { Layer } from '$lib/types';
+	import { map } from '$stores';
 
-  export let layer: Layer
+	export let layer: Layer;
 
-  const layerId = layer.id
-  const propertyName = 'line-color'
-  export let defaultColor: string = undefined
+	const layerId = layer.id;
+	const propertyName = 'line-color';
+	export let defaultColor: string = undefined;
 
-  const getLineColor = (): string => {
-    let lineColor = $map.getPaintProperty(layerId, 'line-color')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (!lineColor || (lineColor && lineColor.type === 'interval') || (lineColor && lineColor.type === 'categorical')) {
-      lineColor = defaultColor
-    }
-    return lineColor as string
-  }
+	const getLineColor = (): string => {
+		let lineColor = $map.getPaintProperty(layerId, 'line-color');
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		if (
+			!lineColor ||
+			(lineColor && lineColor.type === 'interval') ||
+			(lineColor && lineColor.type === 'categorical')
+		) {
+			lineColor = defaultColor;
+		}
+		return lineColor as string;
+	};
 
-  let rgba = getLineColor()
+	let rgba = getLineColor();
 
-  onMount(() => {
-    rgba = getLineColor()
-    $map.setPaintProperty(layerId, propertyName, rgba)
-  })
+	onMount(() => {
+		rgba = getLineColor();
+		$map.setPaintProperty(layerId, propertyName, rgba);
+	});
 
-  const handleSetColor = (e: CustomEvent) => {
-    if (e?.detail?.color) {
-      $map.setPaintProperty(layerId, propertyName, e.detail.color)
-      $map.fire('line-color:changed', { value: e.detail.color })
-      defaultColor = e.detail.color
-    }
-  }
+	const handleSetColor = (e: CustomEvent) => {
+		if (e?.detail?.color) {
+			$map.setPaintProperty(layerId, propertyName, e.detail.color);
+			$map.fire('line-color:changed', { value: e.detail.color });
+			defaultColor = e.detail.color;
+		}
+	};
 </script>
 
-<MaplibreColorPicker
-  {rgba}
-  on:change={handleSetColor} />
+<MaplibreColorPicker {rgba} on:change={handleSetColor} />

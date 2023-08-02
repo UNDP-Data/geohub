@@ -1,69 +1,69 @@
-import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/svelte'
-import IconOverlap from './IconOverlap.svelte'
-import type { Layer } from '$lib/types'
-import { Map, type StyleSpecification } from 'maplibre-gl'
-import { map } from '$stores'
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/svelte';
+import IconOverlap from './IconOverlap.svelte';
+import type { Layer } from '$lib/types';
+import { Map, type StyleSpecification } from 'maplibre-gl';
+import { map } from '$stores';
 
 const style: StyleSpecification = {
-  version: 8,
-  sources: {
-    carto: {
-      type: 'vector',
-      url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json',
-    },
-  },
-  layers: [
-    {
-      id: 'landcover',
-      type: 'symbol',
-      source: 'carto',
-      'source-layer': 'landcover',
-      paint: {
-        'icon-color': 'rgba(255,0,0,1)',
-      },
-      layout: {
-        'icon-overlap': 'never',
-      },
-    },
-  ],
-}
+	version: 8,
+	sources: {
+		carto: {
+			type: 'vector',
+			url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json'
+		}
+	},
+	layers: [
+		{
+			id: 'landcover',
+			type: 'symbol',
+			source: 'carto',
+			'source-layer': 'landcover',
+			paint: {
+				'icon-color': 'rgba(255,0,0,1)'
+			},
+			layout: {
+				'icon-overlap': 'never'
+			}
+		}
+	]
+};
 
 describe('IconColor component', () => {
-  const mockGetLayoutProperty = vi.fn()
-  let mapContainer: HTMLDivElement
-  let _map: Map
+	const mockGetLayoutProperty = vi.fn();
+	let mapContainer: HTMLDivElement;
+	let _map: Map;
 
-  beforeEach(() => {
-    // create map instance to set to stores
-    mapContainer = document.createElement('div')
+	beforeEach(() => {
+		// create map instance to set to stores
+		mapContainer = document.createElement('div');
 
-    _map = new Map({
-      container: mapContainer,
-      style: style,
-    })
-    map.update(() => _map)
+		_map = new Map({
+			container: mapContainer,
+			style: style
+		});
+		map.update(() => _map);
 
-    const spy = vi.spyOn(_map, 'getLayoutProperty')
-    spy.mockImplementation(mockGetLayoutProperty)
-  })
+		const spy = vi.spyOn(_map, 'getLayoutProperty');
+		spy.mockImplementation(mockGetLayoutProperty);
+	});
 
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
 
-  it('Should render it from style.json', () => {
-    const layer: Layer = {
-      id: 'landcover',
-      name: 'landcover',
-    }
+	it('Should render it from style.json', () => {
+		const layer: Layer = {
+			id: 'landcover',
+			name: 'landcover'
+		};
 
-    render(IconOverlap, { props: { layer: layer } })
-    expect(mockGetLayoutProperty).toHaveBeenCalled()
-  })
+		render(IconOverlap, { props: { layer: layer } });
+		expect(mockGetLayoutProperty).toHaveBeenCalled();
+	});
 
-  it('should render the icon overlap slider', () => {
-    const sut = render(IconOverlap, { props: { layer: { id: 'landcover', name: 'landcover' } } })
-    expect(sut.getByTestId('icon-overlap-slider')).toBeTruthy()
-  })
-})
+	it('should render the icon overlap slider', () => {
+		const sut = render(IconOverlap, { props: { layer: { id: 'landcover', name: 'landcover' } } });
+		expect(sut.getByTestId('icon-overlap-slider')).toBeTruthy();
+	});
+});

@@ -1,1 +1,1 @@
-export const IconImage = 'circle'
+export const IconImage = 'circle';

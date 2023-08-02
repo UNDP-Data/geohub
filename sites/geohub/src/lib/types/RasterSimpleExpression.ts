@@ -1,7 +1,7 @@
-import type { ArithmeticOperator } from './ArithmeticOperator'
+import type { ArithmeticOperator } from './ArithmeticOperator';
 
 export interface RasterSimpleExpression {
-  band: string
-  operator: ArithmeticOperator | ''
-  value?: number | string
+	band: string;
+	operator: ArithmeticOperator | '';
+	value?: number | string;
 }

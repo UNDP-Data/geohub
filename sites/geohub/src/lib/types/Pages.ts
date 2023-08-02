@@ -1,5 +1,5 @@
 export interface Pages {
-  totalCount: number
-  totalPages: number
-  currentPage: number
+	totalCount: number;
+	totalPages: number;
+	currentPage: number;
 }

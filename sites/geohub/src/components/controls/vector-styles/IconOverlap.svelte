@@ -1,40 +1,40 @@
 <script lang="ts">
-  import RangeSlider from 'svelte-range-slider-pips'
+	import RangeSlider from 'svelte-range-slider-pips';
 
-  import type { Layer } from '$lib/types'
-  import { map } from '$stores'
+	import type { Layer } from '$lib/types';
+	import { map } from '$stores';
 
-  export let layer: Layer
+	export let layer: Layer;
 
-  const choices = ['never', 'always', 'cooperative']
-  const layerId = layer.id
-  const propertyName = 'icon-overlap'
-  let selected = [choices.findIndex((choice) => choice === $map.getLayoutProperty(layerId, propertyName))]
+	const choices = ['never', 'always', 'cooperative'];
+	const layerId = layer.id;
+	const propertyName = 'icon-overlap';
+	let selected = [
+		choices.findIndex((choice) => choice === $map.getLayoutProperty(layerId, propertyName))
+	];
 
-  $: selected, setIconOverlap()
+	$: selected, setIconOverlap();
 
-  const setIconOverlap = () => {
-    $map.setLayoutProperty(layerId, propertyName, choices[selected[0]])
-  }
+	const setIconOverlap = () => {
+		$map.setLayoutProperty(layerId, propertyName, choices[selected[0]]);
+	};
 </script>
 
-<div
-  data-testid="icon-overlap-slider"
-  class="range-slider"
-  style="width: 130px;">
-  <RangeSlider
-    bind:values={selected}
-    min={0}
-    formatter={(v) => choices[v].toLowerCase().replace(/\b(\w)/g, (s) => s.toUpperCase())}
-    max={choices.length - 1}
-    all="label"
-    pips />
+<div data-testid="icon-overlap-slider" class="range-slider" style="width: 130px;">
+	<RangeSlider
+		bind:values={selected}
+		min={0}
+		formatter={(v) => choices[v].toLowerCase().replace(/\b(\w)/g, (s) => s.toUpperCase())}
+		max={choices.length - 1}
+		all="label"
+		pips
+	/>
 </div>
 
 <style lang="scss">
-  @import '../../../styles/vector-style-slider.scss';
+	@import '../../../styles/vector-style-slider.scss';
 
-  .range-slider {
-    font-size: 11px;
-  }
+	.range-slider {
+		font-size: 11px;
+	}
 </style>

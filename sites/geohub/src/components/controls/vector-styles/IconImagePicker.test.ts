@@ -1,10 +1,10 @@
-import { describe, test } from 'vitest'
+import { describe, test } from 'vitest';
 
 describe('IconImagePicker', () => {
-  test.todo(
-    'Please pass for now. There is an error of ERR_UNSUPPORTED_DIR_IMPORT when import svelte-undp-design package.',
-  )
-})
+	test.todo(
+		'Please pass for now. There is an error of ERR_UNSUPPORTED_DIR_IMPORT when import svelte-undp-design package.'
+	);
+});
 
 // import { describe, beforeEach, expect, it, vi } from 'vitest'
 // import { cleanup, render, within, fireEvent, type RenderResult } from '@testing-library/svelte'

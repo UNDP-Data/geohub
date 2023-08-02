@@ -1,31 +1,26 @@
 <script lang="ts">
-  import Slider from './Slider.svelte'
-  import type { Map } from 'maplibre-gl'
+	import Slider from './Slider.svelte';
+	import type { Map } from 'maplibre-gl';
 
-  export let map: Map
-  export let layerId: string
+	export let map: Map;
+	export let layerId: string;
 
-  const getValue = () => {
-    let value = map.getPaintProperty(layerId, 'raster-hue-rotate')
+	const getValue = () => {
+		let value = map.getPaintProperty(layerId, 'raster-hue-rotate');
 
-    if (!value) {
-      value = 0
-    }
-    return value as number
-  }
+		if (!value) {
+			value = 0;
+		}
+		return value as number;
+	};
 
-  let value = getValue()
+	let value = getValue();
 
-  $: value, setValue()
+	$: value, setValue();
 
-  const setValue = () => {
-    map?.setPaintProperty(layerId, 'raster-hue-rotate', value)
-  }
+	const setValue = () => {
+		map?.setPaintProperty(layerId, 'raster-hue-rotate', value);
+	};
 </script>
 
-<Slider
-  bind:value
-  min={0}
-  max={359}
-  step={1}
-  unit="°" />
+<Slider bind:value min={0} max={359} step={1} unit="°" />

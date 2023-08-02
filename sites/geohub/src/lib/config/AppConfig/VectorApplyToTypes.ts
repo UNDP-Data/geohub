@@ -1,4 +1,4 @@
 export enum VectorApplyToTypes {
-  COLOR = 'color',
-  SIZE = 'size',
+	COLOR = 'color',
+	SIZE = 'size'
 }

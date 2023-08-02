@@ -1,5 +1,5 @@
-import type { BandStatistics } from './BandStatistics'
+import type { BandStatistics } from './BandStatistics';
 
 export interface RasterLayerStats {
-  [band_no: string]: BandStatistics
+	[band_no: string]: BandStatistics;
 }
