@@ -42,10 +42,10 @@
 		"@sveltejs/kit": "^1.20.4",
 		"@undp-data/current-location": "workspace:^",
 		"@watergis/maplibre-gl-legend": "^2.0.0",
-		"@watergis/svelte-maplibre-attribute-popup": "^1.0.0",
-		"@watergis/svelte-maplibre-export": "^1.0.0",
-		"maplibre-gl": "^2.4.0",
-		"pmtiles": "^2.7.2"
+		"@watergis/svelte-maplibre-attribute-popup": "^2.0.1",
+		"@watergis/svelte-maplibre-export": "^2.0.1",
+		"maplibre-gl": "^3.2.1",
+		"pmtiles": "^2.10.0"
 	},
 	"peerDependencies": {
 		"@sveltejs/kit": "^1.7.2",
