@@ -1,5 +1,13 @@
 # @undp-data/style-viewer
 
+## 0.1.3
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+- Updated dependencies [9328b703]
+  - @undp-data/current-location@0.1.4
+
 ## 0.1.2
 
 ### Patch Changes
