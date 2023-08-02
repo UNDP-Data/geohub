@@ -139,7 +139,14 @@
     }
 
     .layer-name {
-      font-family: system-ui, -apple-system, system-ui, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family:
+        system-ui,
+        -apple-system,
+        system-ui,
+        'Helvetica Neue',
+        Helvetica,
+        Arial,
+        sans-serif;
       font-size: 16px;
       font-weight: 400;
       width: 100%;
