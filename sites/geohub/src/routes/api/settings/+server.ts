@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 import DatabaseManager from '$lib/server/DatabaseManager'
 import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig'
 
-export const POST: RequestHandler = async ({ request, url, locals }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
   const session = await locals.getSession()
   if (!session) {
     return new Response(JSON.stringify({ message: 'Permission error' }), {
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
   }
 }
 
-export const GET: RequestHandler = async ({ url, locals }) => {
+export const GET: RequestHandler = async ({ locals }) => {
   const session = await locals.getSession()
   if (!session) {
     return new Response(JSON.stringify(DefaultUserConfig), {})

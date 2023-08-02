@@ -126,10 +126,12 @@
                 aria-hidden="true" />
             </span>
             {#if query.length > 0}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <span
                 class="clear-button"
-                on:click={() => (query = '')}>
+                role="button"
+                tabindex="0"
+                on:click={() => (query = '')}
+                on:keydown={handleEnterKey}>
                 <i class="fas fa-xmark sm" />
               </span>
             {/if}
@@ -139,6 +141,7 @@
           {#if filterTagList?.length > 0}
             {#each filterTagList as t}
               <!-- svelte-ignore a11y-missing-attribute -->
+              <!-- svelte-ignore a11y-no-static-element-interactions -->
               <a
                 class="panel-block"
                 on:click={() => {

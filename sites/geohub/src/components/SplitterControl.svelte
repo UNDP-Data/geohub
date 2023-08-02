@@ -1,11 +1,9 @@
 <script lang="ts">
-  import type { Map as MaplibreMap } from 'maplibre-gl'
   import { Split } from '@geoffcox/svelte-splitter/src'
   import { map as mapStore, indicatorProgress } from '$stores'
   import { page } from '$app/stores'
   import type { SidebarPosition } from '$lib/types'
 
-  export let map: MaplibreMap
   export let isMenuShown = true
   export let isMobile: boolean
   export let initialSideBarWidth = 360
@@ -15,11 +13,8 @@
 
   let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition
   export let innerWidth: number
-  export let innerHeight: number
 
-  let headerHeight: number
   let defaultsplitterSize = '10px'
-  let widthPecent = 0
   let splitControl: Split
   let splitterSize = defaultsplitterSize
   let minPrimaryWidth = sideBarPosition === 'left' ? minSideBarWidth : minMapWidth
@@ -89,6 +84,14 @@
   const splitterChanged = () => {
     resizeMap()
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div
@@ -108,9 +111,12 @@
         {#if isMobile}
           <span
             class="close-icon span"
+            role="button"
+            tabindex="0"
             on:click={() => {
               isMenuShown = false
-            }}>
+            }}
+            on:keydown={handleEnterKey}>
             <i
               class="fa-solid fa-circle-xmark fa-2x"
               style="color:#1c1c1c;" /></span>
@@ -141,9 +147,12 @@
         {#if isMobile}
           <span
             class="span close-icon"
+            role="button"
+            tabindex="0"
             on:click={() => {
               isMenuShown = false
-            }}>
+            }}
+            on:keydown={handleEnterKey}>
             <i
               class="fa-solid fa-circle-xmark fa-2x"
               style="color:#1c1c1c;" /></span>

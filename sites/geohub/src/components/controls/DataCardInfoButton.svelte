@@ -26,7 +26,6 @@
   class="tooltip"
   data-testid="tooltip"
   bind:this={tooltipContent}>
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="close"
     title="Close">

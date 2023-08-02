@@ -90,6 +90,14 @@
       countries: selectedCountries,
     })
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div class="country-selected is-flex is-align-content-center">
@@ -122,10 +130,12 @@
             aria-hidden="true" />
         </span>
         {#if query.length > 0}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <span
             class="clear-button"
-            on:click={() => (query = '')}>
+            role="button"
+            tabindex="0"
+            on:click={() => (query = '')}
+            on:keydown={handleEnterKey}>
             <i class="fas fa-xmark sm" />
           </span>
         {/if}

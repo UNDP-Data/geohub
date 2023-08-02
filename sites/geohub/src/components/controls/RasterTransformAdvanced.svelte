@@ -277,6 +277,7 @@ A component designed to apply where expression to a raster layer through titiler
     {/if}
   </div>
 {/if} -->
+<!-- eslint-disable svelte/no-object-in-text-mustaches -->
 {[currentExpressionPart, expressionIndex]}
 {`${JSON.stringify(whereExpression[currentExpressionPart], null, '\t')} `}
 
@@ -352,7 +353,7 @@ A component designed to apply where expression to a raster layer through titiler
       <div
         class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-background-white has-text-weight-semibold has-text-centered">
         <!-- {currentExpressionPart} -->
-        {#each whereExpressionParts as { name, label, icon, color }, i}
+        {#each whereExpressionParts as { name, label, icon, color }}
           <span class="tag p-1 is-size-6 {name === currentExpressionPart ? 'is-danger is-dark' : 'has-text-grey-light'}"
             >{label}</span>
           <span class="icon {color}"><i class={icon} /> </span>
@@ -360,6 +361,7 @@ A component designed to apply where expression to a raster layer through titiler
       </div>
       <footer class="card-footer">
         {#each operatorCategories as { name, op }}
+          <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
           <span
             role="navigation"
             class="card-footer-item is-subtitle is-capitalized has-text-weight-bold is-clickable {name ==
@@ -384,6 +386,8 @@ A component designed to apply where expression to a raster layer through titiler
           {#if isVisible}
             <div
               class="card is-info is-clickable has-text-centered"
+              role="button"
+              tabindex="0"
               on:keydown={handleEnterKey}
               on:click={() => {
                 selectedOperator = operator.value
@@ -461,7 +465,7 @@ A component designed to apply where expression to a raster layer through titiler
       <div
         class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-background-white has-text-weight-semibold has-text-centered">
         <!-- {currentExpressionPart} -->
-        {#each whereExpressionParts as { name, label, icon, color }, i}
+        {#each whereExpressionParts as { name, label, icon, color }}
           <span class="tag p-1 is-size-6 {name === currentExpressionPart ? 'is-danger is-dark' : 'has-text-grey-light'}"
             >{label}</span>
           <span class="icon {color}"><i class={icon} /> </span>
@@ -469,6 +473,7 @@ A component designed to apply where expression to a raster layer through titiler
       </div>
       <footer class="card-footer">
         {#each inputCategories as inputCategory}
+          <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
           <span
             role="navigation"
             class="card-footer-item is-subtitle is-capitalized has-text-weight-bold is-clickable {inputCategory ==

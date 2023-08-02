@@ -28,9 +28,11 @@
 <div
   class="modal {dialogOpen ? 'is-active' : ''}"
   data-testid="exit-confirmation-layer-view-container"
-  transition:fade>
+  transition:fade|global>
   <div
     class="modal-background"
+    role="button"
+    tabindex="-1"
     on:click={handleCancel}
     on:keydown={handleKeyDown} />
   <div class="modal-card">

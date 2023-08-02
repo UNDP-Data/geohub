@@ -12,10 +12,21 @@
   const handleIconSelect = () => {
     dispatch('iconSelected', { iconImageAlt, iconImageSrc })
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div
+  role="button"
+  tabindex="0"
   on:click={handleIconSelect}
+  on:keydown={handleEnterKey}
   class="card"
   data-testid="icon-image-picker-card-container">
   <div class="card-content">

@@ -539,13 +539,6 @@
     color: white !important;
   }
 
-  .wizard-icon {
-    margin: 10%;
-  }
-
-  .filter-content {
-    display: block;
-  }
   .button {
     font-weight: bolder;
   }
@@ -566,41 +559,8 @@
     margin: 0px 5px;
     text-align: center;
   }
-  .static-content-filter {
-    margin: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-  }
 
-  .dynamic-content-filter {
-    display: flex;
-    margin-top: 5%;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 2px;
-  }
   :global(.style-editing-box) {
     margin: auto !important;
-  }
-
-  .block-buttons-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-
-    width: min-content;
-    margin: auto;
-  }
-  .buttons {
-    width: max-content;
-    margin: auto;
-    margin-top: 5%;
   }
 </style>

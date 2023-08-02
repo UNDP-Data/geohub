@@ -85,8 +85,8 @@
         bind:tabs
         bind:activeTab={activeColorMapType} />
     </div>
-    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
+      role="button"
       tabindex="0"
       class="column is-1 close"
       title="Close Colormap Picker"
@@ -100,6 +100,7 @@
         {#each colorMapTypes as colorMapType}
           {#if activeColorMapType === colorMapType.name}
             {#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+              <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
               <li
                 on:click={() => handleColorMapClick(cmName)}
                 on:keydown={handleEnterKey}>

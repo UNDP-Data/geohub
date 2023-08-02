@@ -219,6 +219,8 @@
                     {#if status === 'Ingested'}
                       <div
                         class="pr-2"
+                        role="button"
+                        tabindex="0"
                         on:click={() => {
                           expanded[dataset.raw.name] = !expanded[dataset.raw.name]
                         }}
@@ -240,6 +242,8 @@
                     {#if status === 'Error'}
                       <div
                         class="pl-2 icon error-dialog-button"
+                        role="button"
+                        tabindex="0"
                         on:click={() => {
                           showErrorDialog(dataset.raw.error)
                         }}
@@ -381,8 +385,9 @@
 {#if confirmDeleteDialogVisible}
   <div
     class="modal is-active"
-    transition:fade>
+    transition:fade|global>
     <div
+      role="none"
       class="modal-background"
       on:click={closeCancelDialog}
       on:keydown={handleEnterKey} />
@@ -428,8 +433,9 @@
 {#if ErrorDialogVisible}
   <div
     class="modal is-active"
-    transition:fade>
+    transition:fade|global>
     <div
+      role="none"
       class="modal-background"
       on:click={closeErrorlDialog}
       on:keydown={handleEnterKey} />

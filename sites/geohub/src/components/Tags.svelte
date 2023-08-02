@@ -395,12 +395,14 @@
       id="{id}_matchs"
       class="svelte-tags-input-matchs">
       {#each arrelementsmatch as element, index}
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <li
           aria-label={element.label}
           title={element.label}
           tabindex="-1"
           on:keydown={(e) => navigateAutoComplete(e, index, arrelementsmatch.length, element.label)}
           on:click={() => addTag(element.label)}>
+          <!-- eslint-disable svelte/no-at-html-tags -->
           {@html clean(element.search)}
         </li>
       {/each}

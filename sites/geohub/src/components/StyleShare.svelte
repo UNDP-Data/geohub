@@ -162,10 +162,10 @@
 {#if isModalVisible}
   <div
     class="modal is-active"
-    transition:fade
+    transition:fade|global
     use:clickOutside={handleClose}>
     <div
-      role="button"
+      role="none"
       class="modal-background"
       on:keydown={handleKeyDown}
       on:click={handleClose} />
@@ -294,11 +294,5 @@
     .modal-card {
       width: 300px;
     }
-  }
-  .loader-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
   }
 </style>

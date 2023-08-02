@@ -647,7 +647,7 @@
               </thead>
               <tbody>
                 {#if layerType === 'symbol'}
-                  {#each colorMapRows as row, index}
+                  {#each colorMapRows as row}
                     {@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
                     <tr data-testid="icon-size-row-container">
                       <td class="has-text-centered">
@@ -698,16 +698,8 @@
   }
 
   .advanced-container {
-    input[type='radio'] {
-      cursor: pointer;
-    }
-
     .size {
       padding-left: 15px;
-    }
-
-    .applyto-title {
-      cursor: grab;
     }
 
     .legend-controls {

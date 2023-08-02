@@ -14,7 +14,11 @@
   setAzureUrl(azureUrl)
 
   let showIntro = true
-  let electricitySelected: any
+  let electricitySelected: {
+    name: string
+    icon: string
+    title: string
+  }
   let drawerWidth = 355
   let isResizingDrawer = false
 
@@ -113,32 +117,5 @@
     flex-direction: column;
     flex-basis: 100%;
     flex: 1;
-  }
-
-  .drawer-divider {
-    width: 9px;
-    @media only screen and (max-width: 760px) {
-      width: 15px;
-    }
-
-    background-color: #f4f7f9;
-    cursor: ew-resize;
-  }
-
-  .custom-handle {
-    position: relative;
-    width: 8px;
-    height: 100%;
-    left: 25%;
-    display: flex;
-    align-items: center;
-    pointer-events: none;
-    color: black;
-  }
-
-  .heading-text {
-    font-size: large;
-    font-weight: bold;
-    color: rgb(1, 1, 1, 0.6);
   }
 </style>

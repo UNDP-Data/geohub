@@ -49,9 +49,3 @@
   bind:tag={inputTag}
   isAdd={true}
   on:added={handleTagAdded} />
-
-<style lang="scss">
-  .add-button {
-    margin-left: auto;
-  }
-</style>

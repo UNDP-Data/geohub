@@ -10,6 +10,7 @@
 </script>
 
 {#if electricitySelected.name == 'ML'}
+  <!-- eslint-disable svelte/no-object-in-text-mustaches -->
   <div
     class="legend"
     style="background: linear-gradient(to right, {[...mlScale]});" />

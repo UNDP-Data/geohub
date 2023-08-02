@@ -119,11 +119,11 @@
     <div class="loader-container p-3">
       <Loader size="small" />
     </div>
-  {:then vectorLayerAvailable}
+  {:then}
     {#if style.type === 'heatmap'}
       <VectorHeatmap bind:layer />
     {:else if legendType === LegendTypes.DEFAULT}
-      <div transition:slide>
+      <div transition:slide|global>
         {#if style.type === 'line'}
           <VectorLine
             bind:layer
@@ -140,7 +140,7 @@
         {/if}
       </div>
     {:else if legendType === LegendTypes.CLASSIFY}
-      <div transition:slide>
+      <div transition:slide|global>
         <VectorLegendAdvanced
           bind:layer
           bind:defaultColor

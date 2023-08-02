@@ -229,6 +229,8 @@
         {#if isVisible}
           <div
             class="card is-info is-clickable has-text-centered"
+            role="button"
+            tabindex="0"
             on:keydown={handleEnterKey}
             on:click={() => {
               selectedOperator = operator.value
@@ -267,7 +269,6 @@
   </Step>
   <Step
     num={3}
-    let:nextStep
     let:setStep
     let:prevStep>
     <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">

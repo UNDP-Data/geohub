@@ -25,6 +25,8 @@
       min-height: 100vh;
       /* mobile viewport bug fix */
       min-height: -webkit-fill-available;
+      font-family: ProximaNova, sans-serif;
+      font-size: 13px;
     }
 
     html {
@@ -34,13 +36,3 @@
   </style>
 </svelte:head>
 <App />
-
-<style
-  global
-  lang="scss">
-  body,
-  html {
-    font-family: ProximaNova, sans-serif;
-    font-size: 13px;
-  }
-</style>

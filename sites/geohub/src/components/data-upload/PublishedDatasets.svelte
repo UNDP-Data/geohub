@@ -147,7 +147,7 @@
     }
   }
 
-  const handleTagChanged = async (e) => {
+  const handleTagChanged = async () => {
     dispatch('change')
   }
 
@@ -250,6 +250,8 @@
       {#if !isQueryEmpty}
         <div
           class="clear-button"
+          role="button"
+          tabindex="0"
           on:click={clearInput}
           on:keydown={handleEnterKey}>
           <i class="fas fa-xmark sm" />
@@ -336,6 +338,8 @@
             <tr>
               <td>
                 <div
+                  role="button"
+                  tabindex="0"
                   on:click={() => {
                     expanded[feature.properties.id] = !expanded[feature.properties.id]
                   }}
@@ -450,9 +454,10 @@
 {#if confirmDeleteDialogVisible}
   <div
     class="modal is-active"
-    transition:fade>
+    transition:fade|global>
     <div
       class="modal-background"
+      role="none"
       on:click={closeDeleteDialog}
       on:keydown={handleEnterKey} />
     <div class="modal-card">

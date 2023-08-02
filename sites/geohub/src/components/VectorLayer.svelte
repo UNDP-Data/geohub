@@ -47,7 +47,7 @@
 
 <div
   class="vector-layer-container"
-  transition:fade
+  transition:fade|global
   data-testid="vector-layer-view-container">
   <nav class="panel">
     <p class="panel-heading has-background-grey-lighter p-2">
@@ -57,7 +57,7 @@
       <div class="loader-container">
         <Loader size="small" />
       </div>
-    {:then _}
+    {:then}
       <Tabs
         bind:tabs
         bind:activeTab

@@ -53,6 +53,7 @@
   style="max-height: 200px; overflow-y: auto"
   class="grid-wrapper"
   role="menu"
+  tabindex="0"
   on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
@@ -62,6 +63,8 @@
 
       <div
         class="grid-item card m-10 is-info is-clickable has-text-centered"
+        role="button"
+        tabindex="0"
         on:click={() => {
           propertySelectValue = propertySelectOption
           handleClick

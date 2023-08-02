@@ -90,6 +90,8 @@
     <div
       class="column is-1 close"
       title="Close Icon Picker"
+      role="button"
+      tabindex="0"
       on:keydown={handleEnterKey}
       on:click={handleClosePopup}>
       <i class="fa-solid fa-xmark" />
@@ -101,6 +103,7 @@
         {#each iconGroupsByLetter as iconGroup}
           {#if activeIconGroupId === iconGroup.id}
             {#each iconGroup.values as spriteImage}
+              <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
               <li
                 on:keydown={handleEnterKey}
                 on:click={() => {

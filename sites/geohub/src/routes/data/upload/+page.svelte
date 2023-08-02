@@ -210,9 +210,3 @@
     </ul>
   </div>
 </div>
-
-<style lang="scss">
-  .description {
-    height: 210px;
-  }
-</style>

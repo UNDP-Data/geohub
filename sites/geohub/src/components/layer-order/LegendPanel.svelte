@@ -170,6 +170,7 @@
     {#each allLayers as layer, index (layer.id)}
       {#if showOnList(layer.id)}
         <div
+          role="list"
           class="list-item"
           draggable={true}
           on:dragstart={(event) => dragstart(event, index)}
@@ -190,6 +191,7 @@
       {/if}
     {/each}
     <div
+      role="list"
       class="list-item"
       style="height: 40px;"
       draggable={false}
