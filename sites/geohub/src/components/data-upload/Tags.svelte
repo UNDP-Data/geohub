@@ -26,18 +26,19 @@
     }
   }
 
-  let addButonDisable = false
-  $: tags, setAddButtonDisable()
-  const setAddButtonDisable = () => {
-    if (tags.length > 0) {
-      const last = tags[tags.length - 1]
-      if (last.key.length === 0 && last.value.length === 0) {
-        addButonDisable = true
-        return
-      }
-    }
-    addButonDisable = false
-  }
+  // `addButonDisable` looks not being used. I comment the following code block.
+  // let addButonDisable = false
+  // $: tags, setAddButtonDisable()
+  // const setAddButtonDisable = () => {
+  //   if (tags.length > 0) {
+  //     const last = tags[tags.length - 1]
+  //     if (last.key.length === 0 && last.value.length === 0) {
+  //       addButonDisable = true
+  //       return
+  //     }
+  //   }
+  //   addButonDisable = false
+  // }
 </script>
 
 {#each tags as tag}

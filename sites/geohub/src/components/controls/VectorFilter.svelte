@@ -30,8 +30,6 @@
   let selectedCombiningOperator = 'all'
   //let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
   let propertySelectValue: string
-  let filteringError = false
-  let propertyStats
   let initialStep = 1
   let stringProperty = false
   let numberProperty = false
@@ -86,17 +84,6 @@
         numberProperty = dataType === 'number' || dataType.includes('int') || dataType.includes('float') // last two not really necessary (ioan)
       }
       expressionsArray[currentExpressionIndex]['property'] = propertySelectValue
-      if (layer.children && layer.children.length > 0) {
-        const childInfo = layer.children['0'].info as VectorTileMetadata
-        const stats = childInfo.json.tilestats?.layers.find(
-          (l) => l.layer === getLayerStyle($map, layer.id)['source-layer'],
-        )
-        stats?.attributes.forEach((stat) => {
-          if (stat.attribute === propertySelectValue) {
-            propertyStats = stat
-          }
-        })
-      }
     }
   }
 
@@ -158,10 +145,8 @@
     const expression = generateFilterExpression(expressionsArray)
     // console.log(JSON.stringify(expression, null, '\t'))
     if (expression === undefined) {
-      filteringError = true
       return
     }
-    filteringError = false
 
     $map.setFilter(layerId, expression)
 
@@ -171,7 +156,6 @@
       : null
     expressionApplied = true
     $map.once('error', (err: ErrorEvent) => {
-      filteringError = true
       toast.push(err.error?.message ?? 'The map filter was not applied. Please check the that all filters are valid.')
     })
     if ($filterInputTags.length > 0) {
@@ -364,7 +348,6 @@
   </Step>
   <Step
     num={2}
-    let:prevStep
     let:nextStep
     let:setStep>
     <div class="wizard-button-container">
@@ -445,7 +428,6 @@
   <Step
     num={4}
     let:prevStep
-    let:nextStep
     let:setStep>
     <!--      Pick one operation from the selected-->
     <div class="wizard-button-container">

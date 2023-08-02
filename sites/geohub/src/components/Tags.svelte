@@ -12,18 +12,25 @@
     return s.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let tags: Array<any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let addKeys: Array<any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let maxTags: any
   export let onlyUnique: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let removeKeys: Array<any>
   export let placeholder: string
   export let allowPaste: boolean
   export let allowDrop: boolean
   export let splitWith: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let autoComplete: any
   export let autoCompleteFilter: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let autoCompleteKey: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let autoCompleteMarkupKey: any
   export let name: string
   export let id: string

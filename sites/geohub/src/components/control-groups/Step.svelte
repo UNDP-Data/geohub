@@ -7,6 +7,7 @@
 
   // Local interface for context
   interface WizardContext {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     step: Writable<any>
     nextStep: () => void
     prevStep: () => void
