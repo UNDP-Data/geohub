@@ -47,7 +47,6 @@
     "@types/lodash": "^4.14.195",
     "@types/lodash-es": "^4.17.7",
     "@types/marked": "^5.0.0",
-    "@types/mime": "^3.0.1",
     "@types/papaparse": "^5.3.7",
     "@types/pbf": "^3.0.2",
     "@types/pg": "^8.10.2",
@@ -84,7 +83,6 @@
     "maplibre-gl": "^3.2.1",
     "marked": "^5.0.5",
     "millify": "^6.1.0",
-    "mime": "^3.0.0",
     "papaparse": "^5.4.1",
     "pmtiles": "^2.10.0",
     "prettier": "^3.0.0",
@@ -128,7 +126,6 @@
     "@sentry/node": "^7.54.0",
     "arraystat": "^1.7.64",
     "mathjs": "^11.8.0",
-    "mime": "^3.0.0",
     "pbf": "^3.2.1",
     "pg": "^8.11.0"
   },
