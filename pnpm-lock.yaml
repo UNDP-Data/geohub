@@ -198,8 +198,8 @@ importers:
   packages/style-viewer:
     dependencies:
       '@sveltejs/kit':
-        specifier: ^1.20.2
-        version: 1.20.2(svelte@3.59.1)(vite@4.3.9)
+        specifier: ^1.20.4
+        version: 1.22.4(svelte@4.1.2)(vite@4.3.9)
       '@undp-data/current-location':
         specifier: workspace:^
         version: link:../current-location
@@ -208,10 +208,10 @@ importers:
         version: 2.0.0
       '@watergis/svelte-maplibre-attribute-popup':
         specifier: ^1.0.0
-        version: 1.0.0(svelte@3.59.1)
+        version: 1.0.0(svelte@4.1.2)
       '@watergis/svelte-maplibre-export':
         specifier: ^1.0.0
-        version: 1.0.0(svelte@3.59.1)
+        version: 1.0.0(svelte@4.1.2)
       maplibre-gl:
         specifier: ^2.4.0
         version: 2.4.0
@@ -221,37 +221,37 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
-        version: 2.1.0(@sveltejs/kit@1.20.2)
+        version: 2.1.0(@sveltejs/kit@1.22.4)
       '@sveltejs/package':
         specifier: ^2.0.2
-        version: 2.0.2(svelte@3.59.1)(typescript@5.1.3)
+        version: 2.0.2(svelte@4.1.2)(typescript@5.1.3)
       '@typescript-eslint/eslint-plugin':
-        specifier: ^5.59.9
-        version: 5.59.9(@typescript-eslint/parser@5.59.9)(eslint@8.42.0)(typescript@5.1.3)
+        specifier: 6.2.1
+        version: 6.2.1(@typescript-eslint/parser@6.2.1)(eslint@8.46.0)(typescript@5.1.3)
       '@typescript-eslint/parser':
-        specifier: ^5.59.9
-        version: 5.59.9(eslint@8.42.0)(typescript@5.1.3)
+        specifier: ^6.2.1
+        version: 6.2.1(eslint@8.46.0)(typescript@5.1.3)
       eslint:
-        specifier: ^8.42.0
-        version: 8.42.0
+        specifier: ^8.46.0
+        version: 8.46.0
       eslint-config-prettier:
-        specifier: ^8.8.0
-        version: 8.8.0(eslint@8.42.0)
-      eslint-plugin-svelte3:
-        specifier: ^4.0.0
-        version: 4.0.0(eslint@8.42.0)(svelte@3.59.1)
+        specifier: ^8.9.0
+        version: 8.9.0(eslint@8.46.0)
+      eslint-plugin-svelte:
+        specifier: ^2.32.4
+        version: 2.32.4(eslint@8.46.0)(svelte@4.1.2)
       prettier:
-        specifier: ^2.8.8
-        version: 2.8.8
+        specifier: ^3.0.0
+        version: 3.0.0
       prettier-plugin-svelte:
-        specifier: ^2.10.1
-        version: 2.10.1(prettier@2.8.8)(svelte@3.59.1)
+        specifier: ^3.0.3
+        version: 3.0.3(prettier@3.0.0)(svelte@4.1.2)
       svelte:
-        specifier: ^3.59.1
-        version: 3.59.1
+        specifier: ^4.0.0
+        version: 4.1.2
       svelte-check:
         specifier: ^3.4.3
-        version: 3.4.3(@babel/core@7.22.9)(sass@1.63.2)(svelte@3.59.1)
+        version: 3.4.3(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
       tslib:
         specifier: ^2.5.3
         version: 2.5.3
@@ -3628,7 +3628,7 @@ packages:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
     dependencies:
       eslint: 8.42.0
-      eslint-visitor-keys: 3.4.1
+      eslint-visitor-keys: 3.4.2
     dev: true
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.46.0):
@@ -3638,7 +3638,7 @@ packages:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
     dependencies:
       eslint: 8.46.0
-      eslint-visitor-keys: 3.4.1
+      eslint-visitor-keys: 3.4.2
     dev: true
 
   /@eslint-community/regexpp@4.6.0:
@@ -6160,16 +6160,16 @@ packages:
       - debug
     dev: false
 
-  /@watergis/svelte-maplibre-attribute-popup@1.0.0(svelte@3.59.1):
+  /@watergis/svelte-maplibre-attribute-popup@1.0.0(svelte@4.1.2):
     resolution: {integrity: sha512-e8AAXtHLmJDWOaBQWrW/ll/9xgWMBa0vcUEG5lNn7hWm9Qq0CEgvJMIdqvCvsOe4DZToD8PUX7J811wMmR89rA==}
     peerDependencies:
       svelte: ^3.54.0
     dependencies:
       maplibre-gl: 3.2.0
-      svelte: 3.59.1
+      svelte: 4.1.2
     dev: false
 
-  /@watergis/svelte-maplibre-export@1.0.0(svelte@3.59.1):
+  /@watergis/svelte-maplibre-export@1.0.0(svelte@4.1.2):
     resolution: {integrity: sha512-MRFRXFEjkWI0C+w62H5Rh1EQoFhqdVwMxUbhbDLuZvdaOFEQDp5wBZYv2ntklGP9biogp6OCaA4mu9i8OXlSeg==}
     peerDependencies:
       svelte: ^3.54.0
@@ -6178,7 +6178,7 @@ packages:
       '@neodrag/svelte': 2.0.3
       jspdf: 2.5.1
       maplibre-gl: 3.2.0
-      svelte: 3.59.1
+      svelte: 4.1.2
       svelte-fa: 3.0.4
     dev: false
 
