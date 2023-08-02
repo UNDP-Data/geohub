@@ -8,7 +8,11 @@ export const downloadFile = (filename: string, content?: string) => {
 
   if (content) {
     const type = filename.split('.').pop()
-    element.href = `data:${type};charset=utf-8,` + encodeURIComponent(content)
+    let mimeType = type
+    if (type === 'txt') {
+      mimeType = 'text/plain'
+    }
+    element.href = `data:${mimeType};charset=utf-8,` + encodeURIComponent(content)
   } else {
     element.href = filename
   }
