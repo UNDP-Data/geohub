@@ -60,7 +60,7 @@
     "@undp-data/undp-bulma": "workspace:*",
     "@watergis/legend-symbol": "^0.2.3",
     "@watergis/maplibre-gl-export": "^3.0.0",
-    "@watergis/svelte-maplibre-menu": "^1.0.2",
+    "@watergis/svelte-maplibre-menu": "^2.0.0",
     "@zerodevx/svelte-toast": "^0.9.3",
     "bignumber.js": "^9.1.1",
     "bulma": "^0.9.4",

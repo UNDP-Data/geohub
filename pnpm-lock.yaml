@@ -517,8 +517,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@watergis/svelte-maplibre-menu':
-        specifier: ^1.0.2
-        version: 1.0.2(svelte@4.1.2)
+        specifier: ^2.0.0
+        version: 2.0.0(svelte@4.1.2)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.3
         version: 0.9.3(svelte@4.1.2)
@@ -6082,10 +6082,10 @@ packages:
       svelte-fa: 3.0.4
     dev: false
 
-  /@watergis/svelte-maplibre-menu@1.0.2(svelte@4.1.2):
-    resolution: {integrity: sha512-Rt+iMvWpOZBB3i11Y/wtmueRz3r95pkhayd9VcDpNtLkKqBj1fDqtg6s4HzN3Hp7XMK+v9/Zz2EkNxZc2/kYmg==}
+  /@watergis/svelte-maplibre-menu@2.0.0(svelte@4.1.2):
+    resolution: {integrity: sha512-pByrJalUYJA35vqUTGvavLA5DozWEwOSqv2JgUJ8z548MesU4QZAmcF3NiBarsivo1UixNzxOH6B4/yGmXIAFQ==}
     peerDependencies:
-      svelte: ^3.54.0
+      svelte: ^4.0.0
     dependencies:
       '@fortawesome/free-solid-svg-icons': 6.4.0
       '@geoffcox/svelte-splitter': 1.0.1
