@@ -43,7 +43,7 @@
 		"@undp-data/current-location": "workspace:^",
 		"@watergis/maplibre-gl-legend": "^2.0.0",
 		"@watergis/svelte-maplibre-attribute-popup": "^1.0.0",
-		"@watergis/svelte-maplibre-export": "^1.0.0",
+		"@watergis/svelte-maplibre-export": "^2.0.0",
 		"maplibre-gl": "^2.4.0",
 		"pmtiles": "^2.7.2"
 	},

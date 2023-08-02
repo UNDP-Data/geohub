@@ -210,8 +210,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(svelte@4.1.2)
       '@watergis/svelte-maplibre-export':
-        specifier: ^1.0.0
-        version: 1.0.0(svelte@4.1.2)
+        specifier: ^2.0.0
+        version: 2.0.0(svelte@4.1.2)
       maplibre-gl:
         specifier: ^2.4.0
         version: 2.4.0
@@ -6069,10 +6069,10 @@ packages:
       svelte: 4.1.2
     dev: false
 
-  /@watergis/svelte-maplibre-export@1.0.0(svelte@4.1.2):
-    resolution: {integrity: sha512-MRFRXFEjkWI0C+w62H5Rh1EQoFhqdVwMxUbhbDLuZvdaOFEQDp5wBZYv2ntklGP9biogp6OCaA4mu9i8OXlSeg==}
+  /@watergis/svelte-maplibre-export@2.0.0(svelte@4.1.2):
+    resolution: {integrity: sha512-cX4s/tmaIzBGyJfzCucE9fDugnsX6wdFkTkYro37su4hKhhxXdYn0hq7k4jy+KtZBPFXsGxnOWIETXQ+7xeHLg==}
     peerDependencies:
-      svelte: ^3.54.0
+      svelte: ^4.0.0
     dependencies:
       '@fortawesome/free-solid-svg-icons': 6.4.0
       '@neodrag/svelte': 2.0.3
