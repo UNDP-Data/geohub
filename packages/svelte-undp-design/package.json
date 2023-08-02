@@ -9,8 +9,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest --run --passWithNoTests",
 		"coverage": "vitest run --coverage --passWithNoTests",
-		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write .",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
 	},
@@ -40,16 +40,16 @@
 		"@sveltejs/package": "^2.0.2",
 		"@testing-library/svelte": "^3.2.2",
 		"@testing-library/user-event": "^14.4.3",
-		"@typescript-eslint/eslint-plugin": "^5.59.9",
-		"@typescript-eslint/parser": "^5.59.9",
+		"@typescript-eslint/eslint-plugin": "6.2.1",
+		"@typescript-eslint/parser": "^6.2.1",
 		"@vitest/coverage-istanbul": "^0.32.0",
-		"eslint": "^8.42.0",
-		"eslint-config-prettier": "^8.8.0",
+		"eslint": "^8.46.0",
+		"eslint-config-prettier": "^8.9.0",
 		"eslint-plugin-storybook": "^0.6.12",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"jsdom": "^22.1.0",
-		"prettier": "^2.8.8",
-		"prettier-plugin-svelte": "^2.10.1",
+		"prettier": "^3.0.0",
+		"prettier-plugin-svelte": "^3.0.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"sass": "^1.63.2",
@@ -63,14 +63,14 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/kit": "^1.20.2",
+		"@sveltejs/kit": "^1.20.4",
 		"filesize": "^10.0.7",
-		"svelte": "^3.59.1",
+		"svelte": "^4.0.0",
 		"svelte-carousel": "^1.0.25"
 	},
 	"peerDependencies": {
 		"@sveltejs/kit": "^1.8.3",
-		"svelte": "^3.55.1"
+		"svelte": "^4.0.0"
 	},
 	"exports": {
 		".": {

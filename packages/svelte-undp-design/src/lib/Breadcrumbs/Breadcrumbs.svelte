@@ -52,6 +52,7 @@
 							class={disabled ? 'isDisabled' : ''}
 							aria-label={breadcrumb.name}
 							role="button"
+							tabindex="0"
 							on:click={() => handleClicked(index)}
 						>
 							<span class="icon-text">
