@@ -129,6 +129,8 @@
 <div class="main-switch-container" bind:this={styleSwitcherDiv}>
 	<div
 		class="map-button"
+		role="button"
+		tabindex="0"
 		data-tooltip={buttonStyle.title}
 		id={mainContainerId}
 		on:click={() => {
