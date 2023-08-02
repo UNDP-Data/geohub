@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 0.1.4
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
 ## 0.1.3
 
 ### Patch Changes
