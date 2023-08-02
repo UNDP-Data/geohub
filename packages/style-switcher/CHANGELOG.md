@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.2
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
 ## 0.1.1
 
 ### Patch Changes
