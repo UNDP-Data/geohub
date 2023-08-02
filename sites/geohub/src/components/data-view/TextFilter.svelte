@@ -118,6 +118,14 @@
       tags: e.detail.tags,
     })
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div class="filter-text pt-3">
@@ -134,10 +142,12 @@
       <i class="fas fa-search" />
     </span>
     {#if !isQueryEmpty}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <span
         class="clear-button"
-        on:click={clearInput}>
+        role="button"
+        tabindex="0"
+        on:click={clearInput}
+        on:keydown={handleEnterKey}>
         <i class="fas fa-xmark sm" />
       </span>
     {/if}

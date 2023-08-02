@@ -8,25 +8,19 @@
 
   let options: ToggleOption[] = [
     {
-      title: 'linear',
+      title: 'Bi-linear',
       value: 'linear',
     },
     {
-      title: 'nearest',
+      title: 'Nearest Neighbor',
       value: 'nearest',
     },
   ]
 
-  const getValue = () => {
-    let value = map.getPaintProperty(layerId, 'raster-resampling')
-
-    if (!value) {
-      value = options[0].value
-    }
-    return value as string
+  const getResamplingMethod = () => {
+    return map?.getPaintProperty(layerId, 'raster-resampling') || 'linear'
   }
-
-  let value: string = getValue()
+  let value = getResamplingMethod()
 
   $: value, setValue()
 

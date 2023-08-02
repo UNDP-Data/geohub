@@ -6,9 +6,11 @@
   import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte'
   import type { Layer } from '$lib/types'
   import VectorFilter from './controls/VectorFilter.svelte'
-  import { Tabs } from '@undp-data/svelte-undp-design'
+  import { Tabs, Loader } from '@undp-data/svelte-undp-design'
   import VectorParamsPanel from './controls/VectorParamsPanel.svelte'
   import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig'
+  import { getLayerSourceUrl, loadArgumentsInDynamicLayers, loadMap } from '$lib/helper'
+  import { map } from '$stores'
 
   export let layer: Layer
 
@@ -28,42 +30,59 @@
 
   const layerType = layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.['value']
 
-  if (!layerType || layerType != 'function') tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
+  const init = async () => {
+    if (!layerType || layerType !== 'function') {
+      tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
+      return
+    }
+    const isLoaded = await loadMap($map)
+    const args = await loadArgumentsInDynamicLayers(getLayerSourceUrl($map, layer.id) as string)
+    console.log(args)
+    if (Object.keys(args)?.length < 1) {
+      tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION)
+    }
+    return isLoaded
+  }
 </script>
 
 <div
   class="vector-layer-container"
-  transition:fade
+  transition:fade|global
   data-testid="vector-layer-view-container">
   <nav class="panel">
     <p class="panel-heading has-background-grey-lighter p-2">
       <LayerNameGroup {layer} />
     </p>
+    {#await init()}
+      <div class="loader-container">
+        <Loader size="small" />
+      </div>
+    {:then}
+      <Tabs
+        bind:tabs
+        bind:activeTab
+        fontSize={tabs.find((t) => t.label === TabNames.SIMULATION) ? 'small' : 'medium'}
+        isToggleTab={true} />
 
-    <Tabs
-      bind:tabs
-      bind:activeTab
-      fontSize={tabs.find((t) => t.label === TabNames.SIMULATION) ? 'small' : 'medium'}
-      isToggleTab={true} />
-
-    <p class="panel-content">
-      {#if activeTab === TabNames.LEGEND}
-        <VectorLegend
-          {layer}
-          bind:applyToOption
-          bind:legendType
-          bind:defaultColor
-          bind:defaultLineColor />
-      {:else if activeTab === TabNames.FILTER}
-        <VectorFilter {layer} />
-      {:else if activeTab === TabNames.LABEL}
-        <VectorLabelPanel {layer} />
-      {:else if activeTab === TabNames.OPACITY}
-        <OpacityPanel {layer} />
-      {:else if activeTab === TabNames.SIMULATION}
-        <VectorParamsPanel layerId={layer.id} />
-      {/if}
-    </p>
+      <p class="panel-content">
+        {#if activeTab === TabNames.LEGEND}
+          <VectorLegend
+            {layer}
+            bind:applyToOption
+            bind:legendType
+            bind:defaultColor
+            bind:defaultLineColor />
+        {:else if activeTab === TabNames.FILTER}
+          <VectorFilter {layer} />
+        {:else if activeTab === TabNames.LABEL}
+          <VectorLabelPanel {layer} />
+        {:else if activeTab === TabNames.OPACITY}
+          <OpacityPanel {layer} />
+        {:else if activeTab === TabNames.SIMULATION}
+          <VectorParamsPanel layerId={layer.id} />
+        {/if}
+      </p>
+    {/await}
   </nav>
 </div>
 
@@ -73,5 +92,12 @@
       padding: 10px;
       padding-top: 15px;
     }
+  }
+
+  .loader-container {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
   }
 </style>

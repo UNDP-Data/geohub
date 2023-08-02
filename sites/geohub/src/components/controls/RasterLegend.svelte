@@ -92,7 +92,7 @@
     <div class="loader-container p-3">
       <Loader size="small" />
     </div>
-  {:then rasterLegendInitialized}
+  {:then}
     {#if !isRgbTile}
       <LegendTypeSwitcher bind:legendType />
       <div class="help">
@@ -117,11 +117,11 @@
     <div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
     {#if !isRgbTile}
       {#if legendType === LegendTypes.DEFAULT}
-        <div transition:slide>
+        <div transition:slide|global>
           <RasterDefaultLegend bind:layerConfig={layer} />
         </div>
       {:else if legendType === LegendTypes.CLASSIFY}
-        <div transition:slide>
+        <div transition:slide|global>
           <RasterClassifyLegend
             bind:layer
             bind:numberOfClasses

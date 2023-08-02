@@ -1,5 +1,23 @@
 # @undp-data/style-switcher
 
+## 0.1.3
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
+## 0.1.2
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
+## 0.1.1
+
+### Patch Changes
+
+- c8f5b2f1: chore: updated all npm packages except maplibre-gl
+
 ## 0.1.0
 
 ### Minor Changes

@@ -10,6 +10,7 @@
   import { createEventDispatcher } from 'svelte'
   import { toast } from '@zerodevx/svelte-toast'
   import { page } from '$app/stores'
+  import { LineTypes } from '$lib/config/AppConfig/LineTypes'
 
   const dispatch = createEventDispatcher()
 
@@ -20,7 +21,16 @@
   export let metadata: RasterTileMetadata | VectorTileMetadata
   export let isShowInfo = false
 
+  const generateLineDashFromPattern = (pattern: string) => {
+    return LineTypes.find((lineType) => lineType.title === pattern)?.value
+  }
   let defaultLineWidth = $page.data.config.LineWidth
+  let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern)
+  let defaultIconSize = $page.data.config.IconSize
+  let defaultIconImage = $page.data.config.IconImage
+  let iconOverlap = $page.data.config.IconOverlapPriority
+  let layerOpacity = $page.data.config.LayerOpacity / 100
+
   let vectorInfo = metadata as VectorTileMetadata
   let clientWidth: number
   $: width = `${clientWidth * 0.95}px`
@@ -62,8 +72,18 @@
       } else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
         layerType = polygonVectorType
       }
+
       const vectorInfo = metadata as VectorTileMetadata
-      const vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo)
+      const vectorTile = new VectorTileData(
+        feature,
+        defaultLineWidth,
+        defaultLineDashArray,
+        vectorInfo,
+        defaultIconImage,
+        defaultIconSize,
+        iconOverlap,
+        layerOpacity,
+      )
       const data = await vectorTile.add($map, layerType, defaultColor, layer.layer)
 
       let name = `${feature.properties.name}`

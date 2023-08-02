@@ -1,4 +1,4 @@
-FROM node:19 as build
+FROM node:20 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=dialog
@@ -26,7 +26,6 @@ WORKDIR /app
 COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
-COPY apps/electricity-dashboard/package.json apps/electricity-dashboard/package.json
 COPY packages/current-location/package.json packages/current-location/package.json
 COPY packages/geohub-cli/package.json packages/geohub-cli/package.json
 COPY packages/style-switcher/package.json packages/style-switcher/package.json
@@ -48,7 +47,7 @@ RUN rm -rf node_modules
 RUN sed -e 's/workspace://g' ./package.json > ./package2.json
 RUN rm package.json
 RUN mv package2.json package.json
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 RUN cp package.json build/.
 RUN mv node_modules build/.
 

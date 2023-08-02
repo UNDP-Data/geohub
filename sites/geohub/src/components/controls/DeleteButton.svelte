@@ -75,9 +75,3 @@
   target={clean(layer.name)}
   cancelText="Cancel"
   continueText="Delete" />
-
-<style lang="scss">
-  .footer-button {
-    width: 150px;
-  }
-</style>

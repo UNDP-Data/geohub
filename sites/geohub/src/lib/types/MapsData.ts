@@ -1,6 +1,6 @@
-import { DashboardMapStyle } from './DashboardMapStyle'
-import { StacLink } from './StacLink'
-import { Pages } from './Pages'
+import type { DashboardMapStyle } from './DashboardMapStyle'
+import type { StacLink } from './StacLink'
+import type { Pages } from './Pages'
 
 export interface MapsData {
   styles: DashboardMapStyle[]

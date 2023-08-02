@@ -6,7 +6,7 @@ import IconImagePickerCard from '$components/controls/vector-styles/IconImagePic
 beforeEach(cleanup)
 
 describe('Icon Image Picker : Card Style', () => {
-  let sut: RenderResult
+  let sut: RenderResult<IconImagePickerCard>
   let cardContainer: HTMLElement
 
   beforeEach(() => {
@@ -26,8 +26,14 @@ describe('Icon Image Picker : Card Style', () => {
 
   it('should render the icon', () => {
     const colorMapFigure = sut.getByTestId('icon-image')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     expect(colorMapFigure).toHaveAttribute('alt', 'Circle')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     expect(colorMapFigure).toHaveAttribute('title', 'Circle')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     expect(colorMapFigure).toHaveStyle({
       height: '24px',
       width: '24px',
@@ -46,7 +52,7 @@ describe('Icon Image Picker : Card Style', () => {
 })
 
 describe('Icon Picker Card : Card Style : Selected', () => {
-  let sut: RenderResult
+  let sut: RenderResult<IconImagePickerCard>
 
   beforeEach(() => {
     sut = render(IconImagePickerCard, {

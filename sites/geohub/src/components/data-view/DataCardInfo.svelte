@@ -73,6 +73,7 @@
     <div class="description has-text-justified">
       {#if !isFullDescription}
         {#if feature.properties.description.length < 100}
+          <!-- eslint-disable svelte/no-at-html-tags -->
           {@html marked(feature.properties.description)}
         {:else}
           {feature.properties.description.substring(0, descriptionLength)}...
@@ -85,6 +86,7 @@
           }} />
       {:else}
         {#if feature.properties.description}
+          <!-- eslint-disable svelte/no-at-html-tags -->
           <p><b>Description: </b>{@html marked(feature.properties.description)}</p>
         {/if}
         <p>
@@ -120,6 +122,7 @@
         {#if unit}
           <p><b>Units: </b> {unit}</p>
         {/if}
+        <!-- eslint-disable svelte/no-at-html-tags -->
         <p><b>Source: </b> {@html attribution}</p>
         <p>
           <b>Updated at: </b>

@@ -51,9 +51,10 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   style="max-height: 200px; overflow-y: auto"
-  class="grid-wrapper "
+  class="grid-wrapper"
   role="menu"
   data-testid="property-select-buttons"
+  tabindex="0"
   on:click={handleClick}>
   {#if propertySelectOptions}
     {#each propertySelectOptions as propertySelectOption}
@@ -62,7 +63,9 @@
       })}
 
       <div
-        class="grid-item card  m-10 is-info is-clickable  has-text-centered "
+        class="grid-item card m-10 is-info is-clickable has-text-centered"
+        role="button"
+        tabindex="0"
         on:click={() => {
           propertySelectValue = propertySelectOption
           handleClick
@@ -71,7 +74,7 @@
           ? `${clean(propertySelectOption)}, text property`
           : ` ${clean(propertySelectOption)}, numeric property`}>
         <div
-          class="card-header is-size-6  pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
+          class="card-header is-size-6 pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
             ? 'has-background-success'
             : 'has-background-info-dark'} ">
           <span
@@ -79,14 +82,14 @@
               ? 'has-text-white-ter'
               : 'has-text-white-ter'}  ">
             {#if propertySelectOption === propertySelectValue}
-              <span class="icon ">
+              <span class="icon">
                 <i class="fa-solid fa-check" />
               </span>
             {/if}
             {clean(propertySelectOption)}
           </span>
         </div>
-        <div class="content ">
+        <div class="content">
           {#if propertyProps.type === 'string'}
             <span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
               <i class="fa-solid fa-a" />...<i class="fa-solid fa-z" />

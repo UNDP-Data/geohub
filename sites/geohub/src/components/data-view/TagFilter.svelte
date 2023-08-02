@@ -133,7 +133,7 @@
     return TagSearchKeys?.find((t) => t.key === key)
   }
 
-  const handleSelectedTagChanged = (e) => {
+  const handleSelectedTagChanged = () => {
     const apiUrl = $page.url
     fireChangeEvent(apiUrl, false)
   }
@@ -161,6 +161,14 @@
     query = ''
     handleFilterInput()
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <div class="control has-icons-left filter-text-box my-2">
@@ -175,10 +183,12 @@
     <i class="fas fa-search" />
   </span>
   {#if !isQueryEmpty}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <span
       class="clear-button"
-      on:click={clearInput}>
+      role="button"
+      tabindex="0"
+      on:click={clearInput}
+      on:keydown={handleEnterKey}>
       <i class="fas fa-xmark sm" />
     </span>
   {/if}
@@ -263,11 +273,6 @@
     }
   }
 
-  .subtitle {
-    border-bottom: 1px solid gray;
-    font-weight: bold;
-  }
-
   .box {
     position: relative;
     height: 200px;
@@ -278,9 +283,5 @@
       width: max-content;
       margin: auto;
     }
-  }
-
-  .clear-tag-button {
-    width: 100%;
   }
 </style>

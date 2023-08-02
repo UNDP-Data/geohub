@@ -163,7 +163,7 @@
   <Step
     num={1}
     let:nextStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center  pb-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">
       <button
         on:click={() => {
           nextStep()
@@ -179,7 +179,7 @@
         <button
           on:click={removeExpression}
           class="button wizard-button is-small primary-button has-text-weight-bold">
-          <i class="fas fa-trash " />&nbsp;Clear filter
+          <i class="fas fa-trash" />&nbsp;Clear filter
         </button>
       {/if}
     </div>
@@ -194,14 +194,14 @@
     let:nextStep
     let:setStep
     let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center  pb-3">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">
       <button
         on:click={() => {
           prevStep()
           initialRasterFilterStep[layerId] = 1
         }}
         title="move back to start"
-        class="button  is-small secondary-button has-text-weight-bold">
+        class="button is-small secondary-button has-text-weight-bold">
         <i class="fa fa-angles-left" /> &nbsp;Back
       </button>
 
@@ -210,14 +210,14 @@
           setStep(1)
           cancel()
         }}
-        class="button  is-small primary-button has-text-weight-bold">
+        class="button is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
     </div>
 
     <!-- <div class="card"> -->
     <div
-      class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold  has-text-centered ">
+      class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold has-text-centered">
       show only pixels whose value is {selectedOperatorLabel ?? ''}
     </div>
 
@@ -228,7 +228,9 @@
         {@const isVisible = !operator.disabled}
         {#if isVisible}
           <div
-            class="card is-info is-clickable  has-text-centered "
+            class="card is-info is-clickable has-text-centered"
+            role="button"
+            tabindex="0"
             on:keydown={handleEnterKey}
             on:click={() => {
               selectedOperator = operator.value
@@ -248,7 +250,7 @@
                   ? 'has-text-white-ter'
                   : 'has-text-white-ter'}  ">
                 {#if operator.value === selectedOperator}
-                  <span class="icon ">
+                  <span class="icon">
                     <i class="fa-solid fa-check" />
                   </span>
                 {/if}
@@ -256,7 +258,7 @@
               </span>
             </div>
             <div class="content">
-              <div class="content is-size-2  p-0 m-0 has-text-weight-bold has-text-danger">
+              <div class="content is-size-2 p-0 m-0 has-text-weight-bold has-text-danger">
                 {operator.symbol}
               </div>
             </div>
@@ -267,30 +269,29 @@
   </Step>
   <Step
     num={3}
-    let:nextStep
     let:setStep
     let:prevStep>
-    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3 ">
+    <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3">
       <button
         on:click={() => {
           prevStep()
           initialRasterFilterStep[layerId] = 2
         }}
         title="Operator categories"
-        class="button  is-small secondary-button has-text-weight-bold">
+        class="button is-small secondary-button has-text-weight-bold">
         <i class="fa fa-angles-left" /> &nbsp;Change operator
       </button>
     </div>
 
     <!-- <div class="card"> -->
     <div
-      class="content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold  has-text-centered ">
+      class="content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold has-text-centered">
       show only pixels whose value is {selectedOperatorLabel ?? ''}
       {sliderBindValue[0] ?? ''}
     </div>
     <!-- </div> -->
 
-    <div class="container pt-3 ">
+    <div class="container pt-3">
       <div class="range-slider pt-5 pb-">
         <RangeSlider
           bind:values={sliderBindValue}
@@ -313,7 +314,7 @@
           cancel()
           setStep(1)
         }}
-        class="button  is-small primary-button has-text-weight-bold">
+        class="button is-small primary-button has-text-weight-bold">
         <i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
       </button>
       <button
@@ -325,7 +326,7 @@
         }}
         disabled={conditionExpressionButtonDisabled}
         class="button is-small primary-button has-text-weight-bold">
-        <i class="fas fa-hammer " />&nbsp; Apply
+        <i class="fas fa-hammer" />&nbsp; Apply
       </button>
     </div>
   </Step>

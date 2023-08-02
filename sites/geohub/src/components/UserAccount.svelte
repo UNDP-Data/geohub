@@ -21,6 +21,14 @@
   const gotToSettings = async () => {
     await goto('/settings')
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <svelte:window bind:innerWidth />
@@ -42,7 +50,7 @@
             class="avatar" />
         {:else}
           <span
-            class="initial-avator is-flex is-justify-content-center	is-align-items-center"
+            class="initial-avator is-flex is-justify-content-center is-align-items-center"
             style="background-color: {chroma.random()}">
             {#each names as name}
               <p
@@ -71,9 +79,11 @@
           <hr class="dropdown-divider" />
           <p>{$page.data.session.user.email}</p>
         </div>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
+          role="button"
+          tabindex="0"
           on:click={gotToSettings}
+          on:keydown={handleEnterKey}
           class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center">
           <div class="is-flex-grow-1">
             <p class="pl-2">Settings</p>

@@ -1,4 +1,4 @@
-import { describe, it, vitest, expect } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { distinct } from '$lib/helper'
 
 describe('distinct', () => {

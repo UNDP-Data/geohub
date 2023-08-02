@@ -20,7 +20,14 @@
   const propertyName = 'icon-image'
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
-  let iconImage = style?.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle'
+  const getIconImage = (style: LayerSpecification) => {
+    if (style.layout && style.layout['icon-image']) {
+      return style.layout['icon-image']
+    }
+    return undefined
+  }
+
+  let defaultIconImage = getIconImage(style)
   let isIconListPanelVisible = false
 
   let iconColor: string
@@ -31,14 +38,13 @@
     if (!$map) return
     updateLegend()
     $map.on('icon-color:changed', (e) => {
-      console.log(e)
       iconColor = e.color
       updateLegend()
     })
   })
 
   const updateLegend = () => {
-    $map.setLayoutProperty(layerId, propertyName, iconImage)
+    $map.setLayoutProperty(layerId, propertyName, defaultIconImage)
     $map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)')
     $map.setPaintProperty(layerId, 'icon-halo-width', 1)
     const layerStyle = getLayerStyle($map, layerId)
@@ -60,7 +66,7 @@
 
   const handleIconClick = (event: CustomEvent) => {
     if (event?.detail?.spriteImageAlt) {
-      iconImage = event.detail.spriteImageAlt
+      defaultIconImage = event.detail.spriteImageAlt
       updateLegend()
     }
   }
@@ -77,8 +83,8 @@
           data-testid="icon-figure">
           <img
             src={iconImageSrc}
-            alt={clean(iconImage)}
-            title={clean(iconImage)}
+            alt={clean(defaultIconImage)}
+            title={clean(defaultIconImage)}
             style={iconImageStyle} />
         </figure>
       </div>
@@ -87,8 +93,8 @@
         style="padding-top: 5px;">
         <div
           class="column is-flex is-justify-content-center sprite-image-title"
-          title={iconImage}>
-          {clean(iconImage)}
+          title={defaultIconImage}>
+          {clean(defaultIconImage)}
         </div>
       </div>
     </div>
@@ -102,7 +108,7 @@
   <IconImagePicker
     on:handleIconClick={handleIconClick}
     on:handleClosePopup={handleClosePopup}
-    iconImageAlt={iconImage} />
+    iconImageAlt={defaultIconImage} />
 </div>
 
 <style lang="scss">

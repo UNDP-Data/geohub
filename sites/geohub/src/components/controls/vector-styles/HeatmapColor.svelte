@@ -8,7 +8,6 @@
   import { map } from '$stores'
 
   export let layer: Layer
-  let colorPickerVisibleIndex: number
 
   const layerId = layer.id
   const propertyName = 'heatmap-color'
@@ -85,15 +84,10 @@
     })
     $map.setPaintProperty(layerId, propertyName, heatMapValues)
   }
-
-  const handleColorPickerClick = (event: CustomEvent) => {
-    colorPickerVisibleIndex = event.detail.index
-  }
 </script>
 
 {#each colorValues as colorValueRow}
   <HeatmapColorRow
     bind:colorRow={colorValueRow}
-    on:clickColorPicker={handleColorPickerClick}
     on:changeColorMap={handleChangeColorMap} />
 {/each}

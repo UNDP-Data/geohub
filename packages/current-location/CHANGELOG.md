@@ -1,5 +1,24 @@
 # @undp-data/current-location
 
+## 0.1.5
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
+## 0.1.4
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
+## 0.1.3
+
+### Patch Changes
+
+- c8f5b2f1: chore: updated all npm packages except maplibre-gl
+- c8f5b2f1: fix: bug of setting feature state when the zoom level is 5 or above in current-location plugin
+
 ## 0.1.2
 
 ### Patch Changes

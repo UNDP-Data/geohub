@@ -57,11 +57,11 @@
   class="container is-flex is-justify-content-center"
   data-testid="number-input-view-container">
   <div class="row">
-    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
       class={`minus ${value === minValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('-')}
       on:keydown={handleEnterKey}
+      role="button"
       tabindex="0"
       title="Decrease number">
       <i class="fa-solid fa-circle-minus" />
@@ -71,11 +71,11 @@
       title="Number Label">
       {round(value, countDecimals(step)).toFixed(countDecimals(step))}
     </div>
-    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
       class={`plus ${value === maxValue ? 'disabled' : ''}`}
       on:click={() => handleIncrementDecrementClasses('+')}
       on:keydown={handleEnterKey}
+      role="button"
       tabindex="0"
       title="Increase number">
       <i class="fa-solid fa-circle-plus" />

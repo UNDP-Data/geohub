@@ -69,7 +69,6 @@
   class="columns is-vcentered is-gapless color-editor is-mobile"
   data-testid="heatmap-color-map-row-container">
   <div class="column is-1 color-picker">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       title="Color Map Control"
       use:tippy={{ content: tooltipContent }}

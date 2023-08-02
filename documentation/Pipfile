@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mkdocs = "==1.4.2"
-mkdocs-material = "==9.1.4"
+mkdocs = "==1.5.1"
+mkdocs-material = "==9.1.21"
 importlib-metadata = "*"
 mkdocs-video = "==1.5.0"
 

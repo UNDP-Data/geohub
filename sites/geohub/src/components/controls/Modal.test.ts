@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { fireEvent, render, type RenderResult } from '@testing-library/svelte'
+import { render, type RenderResult } from '@testing-library/svelte'
 
 import Modal from '$components/controls/Modal.svelte'
 

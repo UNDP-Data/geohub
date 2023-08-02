@@ -19,7 +19,7 @@
 	};
 </script>
 
-<nav class="pagination" aria-label="Pagination" role="navigation">
+<nav class="pagination" aria-label="Pagination">
 	<ul>
 		<!-- svelte-ignore a11y-role-supports-aria-props -->
 		<li
@@ -30,6 +30,7 @@
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<a
 				role="button"
+				tabindex="0"
 				aria-current="true"
 				aria-label="Previous"
 				data-testid="previous"
@@ -40,8 +41,10 @@
 		</li>
 		<li>
 			Page
+			<!-- svelte-ignore a11y-missing-attribute -->
 			<span><a aria-label={currentPage.toString()}>{currentPage}</a></span>
 			of
+			<!-- svelte-ignore a11y-missing-attribute -->
 			<span><a aria-label={totalPages.toString()}>{totalPages}</a></span>
 		</li>
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -51,7 +54,7 @@
 			aria-disabled={currentPage === totalPages ? 'true' : 'false'}
 		>
 			<!-- svelte-ignore a11y-missing-attribute -->
-			<a aria-label="Next" data-testid="next" on:click={() => handleClicked('next')}>Next</a>
+			<a role="button" tabindex="0" aria-label="Next" data-testid="next" on:click={() => handleClicked('next')}>Next</a>
 		</li>
 	</ul>
 </nav>

@@ -2041,7 +2041,8 @@ template {
 	font-family: ProximaNova;
 	font-style: normal;
 	font-weight: 400;
-	src: url(../fonts/proximanova-regular-webfont.woff2) format('woff2'),
+	src:
+		url(../fonts/proximanova-regular-webfont.woff2) format('woff2'),
 		url(../fonts/proximanova-regular-webfont.woff) format('woff');
 }
 @font-face {
@@ -2049,7 +2050,8 @@ template {
 	font-family: ProximaNova;
 	font-style: italic;
 	font-weight: 400;
-	src: url(../fonts/proximanova-regularit-webfont.woff2) format('woff2'),
+	src:
+		url(../fonts/proximanova-regularit-webfont.woff2) format('woff2'),
 		url(../fonts/proximanova-regularit-webfont.woff) format('woff');
 }
 @font-face {
@@ -2057,7 +2059,8 @@ template {
 	font-family: ProximaNova;
 	font-style: normal;
 	font-weight: 600;
-	src: url(../fonts/proximanova-semibold-webfont.woff2) format('woff2'),
+	src:
+		url(../fonts/proximanova-semibold-webfont.woff2) format('woff2'),
 		url(../fonts/proximanova-semibold-webfont.woff) format('woff');
 }
 @font-face {
@@ -2065,7 +2068,8 @@ template {
 	font-family: ProximaNova;
 	font-style: italic;
 	font-weight: 600;
-	src: url(../fonts/proximanova-semiboldit-webfont.woff2) format('woff2'),
+	src:
+		url(../fonts/proximanova-semiboldit-webfont.woff2) format('woff2'),
 		url(../fonts/proximanova-semiboldit-webfont.woff) format('woff');
 }
 @font-face {
@@ -2073,7 +2077,8 @@ template {
 	font-family: ProximaNova;
 	font-style: normal;
 	font-weight: 700;
-	src: url(../fonts/proximanova-bold-webfont.woff2) format('woff2'),
+	src:
+		url(../fonts/proximanova-bold-webfont.woff2) format('woff2'),
 		url(../fonts/proximanova-bold-webfont.woff) format('woff');
 }
 @font-face {
@@ -2081,7 +2086,8 @@ template {
 	font-family: ProximaNova;
 	font-style: italic;
 	font-weight: 700;
-	src: url(../fonts/proximanova-boldit-webfont.woff2) format('woff2'),
+	src:
+		url(../fonts/proximanova-boldit-webfont.woff2) format('woff2'),
 		url(../fonts/proximanova-boldit-webfont.woff) format('woff');
 }
 @font-face {
@@ -2089,7 +2095,8 @@ template {
 	font-family: SohneBreit;
 	font-style: normal;
 	font-weight: 700;
-	src: url(../fonts/soehne-breit-web-dreiviertelfett.woff2) format('woff2'),
+	src:
+		url(../fonts/soehne-breit-web-dreiviertelfett.woff2) format('woff2'),
 		url(../fonts/soehne-breit-web-dreiviertelfett.woff) format('woff');
 	unicode-range: u+0000-024f, u+1e??, u+2000-206f, u+2070-209f;
 }
@@ -2098,7 +2105,8 @@ template {
 	font-family: SohneBreit;
 	font-style: italic;
 	font-weight: 700;
-	src: url(../fonts/soehne-breit-web-dreiviertelfett-kursiv.woff2) format('woff2'),
+	src:
+		url(../fonts/soehne-breit-web-dreiviertelfett-kursiv.woff2) format('woff2'),
 		url(../fonts/soehne-breit-web-dreiviertelfett-kursiv.woff) format('woff');
 	unicode-range: u+0000-024f, u+1e??, u+2000-206f, u+2070-209f;
 }
@@ -2107,7 +2115,8 @@ template {
 	font-family: SohneBreit;
 	font-style: normal;
 	font-weight: 800;
-	src: url(../fonts/soehne-breit-web-fett.woff2) format('woff2'),
+	src:
+		url(../fonts/soehne-breit-web-fett.woff2) format('woff2'),
 		url(../fonts/soehne-breit-web-fett.woff) format('woff');
 	unicode-range: u+0000-024f, u+1e??, u+2000-206f, u+2070-209f;
 }
@@ -2116,7 +2125,8 @@ template {
 	font-family: SohneBreit;
 	font-style: italic;
 	font-weight: 800;
-	src: url(../fonts/soehne-breit-web-fett-kursiv.woff2) format('woff2'),
+	src:
+		url(../fonts/soehne-breit-web-fett-kursiv.woff2) format('woff2'),
 		url(../fonts/soehne-breit-web-fett-kursiv.woff) format('woff');
 	unicode-range: u+0000-024f, u+1e??, u+2000-20cf;
 }
@@ -2124,35 +2134,40 @@ template {
 	font-display: swap;
 	font-family: NotoSans;
 	font-weight: 300;
-	src: url(../fonts/NotoSansMyanmar-Light.woff2) format('woff2'),
+	src:
+		url(../fonts/NotoSansMyanmar-Light.woff2) format('woff2'),
 		url(../fonts/NotoSansMyanmar-Light.woff) format('woff');
 }
 @font-face {
 	font-display: swap;
 	font-family: NotoSans;
 	font-weight: 400;
-	src: url(../fonts/NotoSansMyanmar-Regular.woff2) format('woff2'),
+	src:
+		url(../fonts/NotoSansMyanmar-Regular.woff2) format('woff2'),
 		url(../fonts/NotoSansMyanmar-Regular.woff) format('woff');
 }
 @font-face {
 	font-display: swap;
 	font-family: NotoSans;
 	font-weight: 500;
-	src: url(../fonts/NotoSansMyanmar-Medium.woff2) format('woff2'),
+	src:
+		url(../fonts/NotoSansMyanmar-Medium.woff2) format('woff2'),
 		url(../fonts/NotoSansMyanmar-Medium.woff) format('woff');
 }
 @font-face {
 	font-display: swap;
 	font-family: NotoSans;
 	font-weight: 600;
-	src: url(../fonts/NotoSansMyanmar-SemiBold.woff2) format('woff2'),
+	src:
+		url(../fonts/NotoSansMyanmar-SemiBold.woff2) format('woff2'),
 		url(../fonts/NotoSansMyanmar-SemiBold.woff) format('woff');
 }
 @font-face {
 	font-display: swap;
 	font-family: NotoSans;
 	font-weight: 600;
-	src: url(../fonts/NotoSansMyanmar-Bold.woff2) format('woff2'),
+	src:
+		url(../fonts/NotoSansMyanmar-Bold.woff2) format('woff2'),
 		url(../fonts/NotoSansMyanmar-Bold.woff) format('woff');
 }
 abbr[title] {
@@ -2536,7 +2551,10 @@ div.publication-thumbnail__image:hover.blue:after {
 	width: 100%;
 }
 .external-link-animated {
-	box-shadow: -2px 2px 0 0 #d12800, -4px 0 0 -2px #d12800, -3px 3px 0 -1px #d12800;
+	box-shadow:
+		-2px 2px 0 0 #d12800,
+		-4px 0 0 -2px #d12800,
+		-3px 3px 0 -1px #d12800;
 	box-sizing: border-box;
 	cursor: pointer;
 	display: inline-block;
@@ -3643,12 +3661,20 @@ hr {
 }
 @keyframes lineLoop-animation {
 	0% {
-		background-position: 100% 100%, -30px 100%;
-		background-size: 100% 2px, 0 2px;
+		background-position:
+			100% 100%,
+			-30px 100%;
+		background-size:
+			100% 2px,
+			0 2px;
 	}
 	to {
-		background-position: calc(100% + 30px) 100%, 0 100%;
-		background-size: 0 2px, 100% 2px;
+		background-position:
+			calc(100% + 30px) 100%,
+			0 100%;
+		background-size:
+			0 2px,
+			100% 2px;
 	}
 }
 a {
@@ -4050,15 +4076,20 @@ table.striped tr {
 	-ms-transform: translateX(-100px);
 	-o-transform: translateX(-100px);
 	transition: translateX(-100px);
-	-webkit-transition: transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
+	-webkit-transition:
+		transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
 		opacity 1.2s cubic-bezier(0.34, 0.41, 0.03, 1);
-	-moz-transition: transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
+	-moz-transition:
+		transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
 		opacity 1.2s cubic-bezier(0.34, 0.41, 0.03, 1);
-	-ms-transition: transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
+	-ms-transition:
+		transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
 		opacity 1.2s cubic-bezier(0.34, 0.41, 0.03, 1);
-	-o-transition: transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
+	-o-transition:
+		transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
 		opacity 1.2s cubic-bezier(0.34, 0.41, 0.03, 1);
-	transition: transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
+	transition:
+		transform 1.2s cubic-bezier(0.34, 0.41, 0.03, 1),
 		opacity 1.2s cubic-bezier(0.34, 0.41, 0.03, 1);
 	visibility: hidden;
 }
@@ -4206,9 +4237,13 @@ details :lang(my) summary {
 }
 a {
 	background-image: linear-gradient(#d12800, #d12800), linear-gradient(#d12800, #d12800);
-	background-position: 100% 100%, -30px 100%;
+	background-position:
+		100% 100%,
+		-30px 100%;
 	background-repeat: no-repeat;
-	background-size: 100% 2px, 0 1px;
+	background-size:
+		100% 2px,
+		0 1px;
 }
 a:hover {
 	-webkit-animation: lineLoop-animation 2s linear infinite;

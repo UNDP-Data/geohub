@@ -14,6 +14,7 @@
   import type { Layer } from '$lib/types'
   import { map } from '$stores'
   import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper'
+  import { page } from '$app/stores'
 
   export let layer: Layer
 
@@ -65,11 +66,11 @@
       const textHaloColor: string = $map.getPaintProperty(targetLayerId, 'text-halo-color') as string
       const textHaloWidth: number = $map.getPaintProperty(targetLayerId, 'text-halo-width') as number
 
-      $map.setLayoutProperty(targetLayerId, 'text-size', textSize ?? 16)
+      $map.setLayoutProperty(targetLayerId, 'text-size', textSize ?? $page.data.config.LabelFontSize)
       $map.setLayoutProperty(targetLayerId, 'text-max-width', textMaxWidth ?? 10)
       $map.setPaintProperty(targetLayerId, 'text-color', textColor ?? 'rgba(0,0,0,1)')
       $map.setPaintProperty(targetLayerId, 'text-halo-color', textHaloColor ?? 'rgba(255,255,255,1)')
-      $map.setPaintProperty(targetLayerId, 'text-halo-width', textHaloWidth ?? 1)
+      $map.setPaintProperty(targetLayerId, 'text-halo-width', textHaloWidth ?? $page.data.config.LabelHaloWidth)
 
       const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId)
       textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout')
@@ -111,7 +112,7 @@
       {#if fieldType && ['number', 'float'].includes(fieldType)}
         <div
           class="columns is-mobile is-12 m-auto is-vcentered"
-          transition:fade>
+          transition:fade|global>
           <div class="column is-8 pl-0">Number of decimal places</div>
           <div class="column is-3 is-flex is-justify-content-center">
             <NumberFormat

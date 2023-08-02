@@ -38,7 +38,7 @@
 
 <div
   class="raster-layer-container has-background-white-bis"
-  transition:fade>
+  transition:fade|global>
   <nav class="panel">
     <p class="panel-heading has-background-grey-lighter p-2">
       <LayerNameGroup {layer} />
@@ -76,11 +76,5 @@
       padding: 10px;
       padding-top: 15px;
     }
-  }
-  .loader-container {
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    margin: 0 auto;
   }
 </style>

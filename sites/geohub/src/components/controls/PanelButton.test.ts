@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render } from '@testing-library/svelte'
 import PanelButton from '$components/controls/PanelButton.svelte'
 

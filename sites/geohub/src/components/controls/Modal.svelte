@@ -31,6 +31,8 @@
   transition:fade>
   <div
     class="modal-background"
+    role="button"
+    tabindex="-1"
     on:click={handleCancel}
     on:keydown={handleKeyDown} />
   <div class="modal-card">

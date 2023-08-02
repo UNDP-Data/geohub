@@ -3,7 +3,7 @@ import { paramsToQueryString } from '$lib/helper'
 
 describe('paramsToQueryString', () => {
   it('should convert the params Record to a query string', () => {
-    const params: Record<string, any> = {
+    const params: Record<string, unknown> = {
       operator: 'and',
       limit: 25,
       breadcrumbs: 'Home',

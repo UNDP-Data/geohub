@@ -10,13 +10,23 @@
   const handleClick = () => {
     dispatch('clicked')
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 {#if category}
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="container p-2 is-flex is-flex-direction-column is-justify-content-center"
-    on:click={handleClick}>
+    role="button"
+    tabindex="0"
+    on:click={handleClick}
+    on:keydown={handleEnterKey}>
     <figure class="category image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
       {#if category.icon.startsWith('fa')}
         <i class="{category.icon} fa-4x" />

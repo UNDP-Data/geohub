@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect, vi } from 'vitest'
+import { describe, beforeEach, it, expect } from 'vitest'
 import { render, type RenderResult } from '@testing-library/svelte'
 import CountryCard from '$components/data-upload/CountryCard.svelte'
 import type { Country } from '$lib/types'

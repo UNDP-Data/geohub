@@ -39,7 +39,7 @@
   MapQueryInfoControl.prototype.onAdd = function () {
     this.container = document.createElement('div')
     this.container.title = 'Query Layer Information'
-    this.container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-group')
+    this.container.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group')
 
     queryButton.addEventListener('click', () => {
       this.changeButtonCondition()
@@ -516,11 +516,6 @@
     width: 29px;
     height: 29px;
     cursor: pointer;
-  }
-
-  .align-center {
-    width: max-content;
-    margin: auto;
   }
 
   :global(.maplibregl-popup-close-button) {

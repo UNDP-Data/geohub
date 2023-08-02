@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { render } from '@testing-library/svelte'
 import Wizard from '$components/control-groups/Wizard.svelte'
 

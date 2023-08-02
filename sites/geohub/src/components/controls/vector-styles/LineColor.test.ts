@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { render, type RenderResult } from '@testing-library/svelte'
+import { render } from '@testing-library/svelte'
 import { map } from '$stores'
 import { Map, type StyleSpecification } from 'maplibre-gl'
 import LineColor from '$components/controls/vector-styles/LineColor.svelte'

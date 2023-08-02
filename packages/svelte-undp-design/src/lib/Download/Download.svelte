@@ -34,9 +34,8 @@
 	let fileFormat = extension;
 
 	const getFileSize = () => {
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<void>((resolve) => {
 			const fileUrl = url.replace('pmtiles://', '');
-			const filePath = fileUrl.split('/');
 			let bytes = 'N/A';
 			fetch(fileUrl.toString()).then((res) => {
 				if (res.ok) {
@@ -58,7 +57,7 @@
 
 <div class="download-card">
 	<!-- svelte-ignore a11y-missing-attribute -->
-	<a role="button" on:click={downloadFile} on:keydown={handleKeyDown}>
+	<a role="button" tabindex="0" on:click={downloadFile} on:keydown={handleKeyDown}>
 		<div class="description">
 			{#if title}
 				<p class="title">{title}</p>

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Map as MaplibreMap } from 'maplibre-gl'
-  import type { Split } from '@geoffcox/svelte-splitter/src'
   import Header from '$components/Header.svelte'
   import Map from '$components/Map.svelte'
   import Content from './Content.svelte'
@@ -11,13 +9,11 @@
   import Modal from '$components/controls/Modal.svelte'
   import { isEqual } from 'lodash-es'
 
-  let map: MaplibreMap
   let headerHeight: number
   let isMenuShown = true
   let innerWidth: number
   let innerHeight: number
   let dialogOpen = false
-  let cancel: () => void
   let toURL: URL
   let isContinueButtonClicked = false
 
@@ -27,11 +23,6 @@
 
   const handleCancel = () => {
     dialogOpen = false
-  }
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      handleCancel()
-    }
   }
 
   const handleContinue = () => {
@@ -77,8 +68,6 @@
 
   $: isMobile = innerWidth < 768
   $: splitHeight = innerHeight - headerHeight
-
-  let splitControl: Split
 </script>
 
 <svelte:window
@@ -88,11 +77,9 @@
   bind:drawerOpen={isMenuShown}
   bind:height={headerHeight} />
 <SplitterControl
-  bind:innerHeight
   bind:innerWidth
   bind:isMobile
   bind:isMenuShown
-  bind:map={$mapStore}
   bind:splitHeight>
   <div slot="sidebar">
     <Content bind:splitterHeight={splitHeight} />
