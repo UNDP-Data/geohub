@@ -1,6 +1,6 @@
-import type { Dataset } from './Dataset'
+import type { Dataset } from './Dataset';
 
 export interface ElectricityDatasets {
-  hrea: Dataset[]
-  ml: Dataset[]
+	hrea: Dataset[];
+	ml: Dataset[];
 }

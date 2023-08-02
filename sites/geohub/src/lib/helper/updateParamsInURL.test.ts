@@ -1,4 +1,4 @@
-import { describe, test } from 'vitest'
+import { describe, test } from 'vitest';
 // import { updateParamsInURL } from '$lib/helper'
 // // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // // @ts-ignore
@@ -51,5 +51,5 @@ import { describe, test } from 'vitest'
 // })
 
 describe('updateParamsInURL', () => {
-  test.todo('Skipped test: should update params in URL')
-})
+	test.todo('Skipped test: should update params in URL');
+});

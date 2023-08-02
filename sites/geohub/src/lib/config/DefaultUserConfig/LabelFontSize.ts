@@ -1,1 +1,1 @@
-export const LabelFontSize = 16
+export const LabelFontSize = 16;

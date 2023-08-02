@@ -1,1 +1,1 @@
-export const UniqueValueThreshold = 25
+export const UniqueValueThreshold = 25;

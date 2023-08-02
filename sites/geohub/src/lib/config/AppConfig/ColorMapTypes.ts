@@ -1,5 +1,5 @@
 export enum ColorMapTypes {
-  SEQUENTIAL = 'sequential',
-  DIVERGING = 'diverging',
-  QUALITATIVE = 'qualitative',
+	SEQUENTIAL = 'sequential',
+	DIVERGING = 'diverging',
+	QUALITATIVE = 'qualitative'
 }

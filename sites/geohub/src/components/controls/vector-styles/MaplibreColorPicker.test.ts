@@ -1,18 +1,18 @@
-import { describe, it, beforeEach, expect } from 'vitest'
-import { render, type RenderResult } from '@testing-library/svelte'
-import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte'
+import { describe, it, beforeEach, expect } from 'vitest';
+import { render, type RenderResult } from '@testing-library/svelte';
+import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte';
 
 describe('MaplibreColorPicker component', () => {
-  let component: RenderResult<MaplibreColorPicker>
-  beforeEach(() => {
-    component = render(MaplibreColorPicker, {
-      props: {
-        rgba: `rgba(0,0,0,1)`,
-      },
-    })
-  })
+	let component: RenderResult<MaplibreColorPicker>;
+	beforeEach(() => {
+		component = render(MaplibreColorPicker, {
+			props: {
+				rgba: `rgba(0,0,0,1)`
+			}
+		});
+	});
 
-  it('should render', () => {
-    expect(component.getByTestId('color-palette')).toBeDefined()
-  })
-})
+	it('should render', () => {
+		expect(component.getByTestId('color-palette')).toBeDefined();
+	});
+});

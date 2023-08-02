@@ -1,1 +1,1 @@
-export const LayerOpacity = 100
+export const LayerOpacity = 100;

@@ -1,1 +1,1 @@
-export const NumberOfRandomSamplingPoints = 1000
+export const NumberOfRandomSamplingPoints = 1000;

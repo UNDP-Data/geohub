@@ -1,1 +1,1 @@
-export const SidebarPositions = ['left', 'right']
+export const SidebarPositions = ['left', 'right'];

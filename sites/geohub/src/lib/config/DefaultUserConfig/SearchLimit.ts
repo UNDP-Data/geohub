@@ -1,1 +1,1 @@
-export const SearchLimit = 10
+export const SearchLimit = 10;

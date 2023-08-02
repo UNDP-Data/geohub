@@ -7,6 +7,6 @@
  * @param newMax
  */
 export const remapInputValue = (input = 0, oldMin = 0, oldMax = 0, newMin = 0, newMax = 255) => {
-  const percent = (input - oldMin) / (oldMax - oldMin)
-  return percent * (newMax - newMin) + newMin
-}
+	const percent = (input - oldMin) / (oldMax - oldMin);
+	return percent * (newMax - newMin) + newMin;
+};

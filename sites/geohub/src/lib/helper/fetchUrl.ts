@@ -1,5 +1,5 @@
-import { FetchTimeoutMsec } from '$lib/config/AppConfig'
-import { fetchWithTimeout } from './fetchWithTimeout'
+import { FetchTimeoutMsec } from '$lib/config/AppConfig';
+import { fetchWithTimeout } from './fetchWithTimeout';
 
 /**
  * Returns a json response object from the a fetch of a url
@@ -7,14 +7,14 @@ import { fetchWithTimeout } from './fetchWithTimeout'
  * @returns JSON | null
  */
 export async function fetchUrl(url: string) {
-  return new Promise<Response>((resolve, reject) => {
-    fetchWithTimeout(url, { timeout: FetchTimeoutMsec })
-      .then((res) => res.json())
-      .then((json) => {
-        resolve(json)
-      })
-      .catch((err) => {
-        reject(err)
-      })
-  })
+	return new Promise<Response>((resolve, reject) => {
+		fetchWithTimeout(url, { timeout: FetchTimeoutMsec })
+			.then((res) => res.json())
+			.then((json) => {
+				resolve(json);
+			})
+			.catch((err) => {
+				reject(err);
+			});
+	});
 }

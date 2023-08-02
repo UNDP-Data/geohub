@@ -1,1 +1,1 @@
-export const FetchTimeoutMsec = 60000
+export const FetchTimeoutMsec = 60000;

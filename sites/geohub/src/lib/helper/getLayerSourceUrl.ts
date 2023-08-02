@@ -1,4 +1,4 @@
-import type { Map, RasterTileSource, VectorTileSource } from 'maplibre-gl'
+import type { Map, RasterTileSource, VectorTileSource } from 'maplibre-gl';
 
 // export const getLayerUrl = (map: Map, layerId: string) => {
 //   const source: RasterTileSource | VectorTileSource = map.getSource(map.getLayer(layerId).source) as
@@ -29,14 +29,14 @@ import type { Map, RasterTileSource, VectorTileSource } from 'maplibre-gl'
 */
 
 export const getLayerSourceUrl = (map: Map, layerId: string) => {
-  const source: RasterTileSource | VectorTileSource = map.getSource(map.getLayer(layerId).source) as
-    | RasterTileSource
-    | VectorTileSource
-  if (source?.tiles) {
-    // pbf
-    return source.tiles[0]
-  } else {
-    // tilejson
-    return source?.url
-  }
-}
+	const source: RasterTileSource | VectorTileSource = map.getSource(
+		map.getLayer(layerId).source
+	) as RasterTileSource | VectorTileSource;
+	if (source?.tiles) {
+		// pbf
+		return source.tiles[0];
+	} else {
+		// tilejson
+		return source?.url;
+	}
+};
