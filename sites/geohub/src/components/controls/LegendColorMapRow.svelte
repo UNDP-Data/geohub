@@ -119,6 +119,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
     <div class="column is-1 p-0 m-0">
       <div
         role="button"
+        tabindex="0"
         class="visible-button icon"
         on:click={() => (isVisible = !isVisible)}
         on:keydown={handleEnterKey}>
@@ -130,7 +131,6 @@ the key statement is necessary as it forces to rerender the legend item in case 
       </div>
     </div>
     <div class="column is-2 p-0 m-0">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         title="Color Map Control"
         use:tippy={{ content: tooltipContent }}

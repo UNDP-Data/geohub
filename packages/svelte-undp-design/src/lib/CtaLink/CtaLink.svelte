@@ -20,6 +20,7 @@
 <a
 	class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
 	role="button"
+	tabindex="0"
 	on:keydown={handleKeyDown}
 	on:click={handleClicked}
 >

@@ -42,6 +42,8 @@
   {#each operationOptions as operation}
     <div
       class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
+      role="button"
+      tabindex="0"
       on:keydown={handleEnterKey}
       on:click={() => {
         operation.disabled ? null : (currentSelectedOperation = operation.value)

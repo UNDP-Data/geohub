@@ -38,6 +38,8 @@
   class="tooltip p-2">
   <span
     class="close icon"
+    role="button"
+    tabindex="0"
     on:keydown={handleEnterKey}>
     <i
       class="fa-solid fa-circle-xmark fa-2x"

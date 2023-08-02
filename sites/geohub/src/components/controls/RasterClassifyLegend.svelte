@@ -37,7 +37,7 @@
   let colorMapRows: Array<ColorMapRow> = []
   let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM'])
   let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM'])
-  let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
+  // let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
   let rowWidth: number
   let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98']
   let legendLabels = {}
@@ -229,7 +229,6 @@
   class="intervals-view-container"
   data-testid="intervals-view-container"
   bind:clientWidth={containerWidth}>
-  <!-- svelte-ignore a11y-click-teevents-have-key-events -->
   <div class="legend-controls mb-4">
     <div
       class="classification field pr-2"
@@ -294,11 +293,6 @@
 </div>
 
 <style lang="scss">
-  .intervals-view-container {
-    .controls {
-      margin-bottom: 10px !important;
-    }
-  }
   :global(.select:not(.is-multiple):not(.is-loading)::after) {
     border-color: #ff0000;
   }

@@ -262,9 +262,5 @@
     .map {
       padding-bottom: 0.5rem;
     }
-
-    .vector-symbol-radios {
-      padding-bottom: 0.5rem;
-    }
   }
 </style>

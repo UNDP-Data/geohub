@@ -37,6 +37,8 @@
 
 <div
   class="country-button card m-0 p-0 {isSelectable ? 'is-selectable' : ''}"
+  role="button"
+  tabindex="0"
   on:click={handleSDGSelected}
   on:keydown={handleEnterKey}>
   <div class="card-content">

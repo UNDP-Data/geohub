@@ -32,13 +32,3 @@
     </div>
   </div>
 </div>
-
-<style lang="scss">
-  #close:hover {
-    background: maroon;
-    border: 2px solid grey;
-  }
-  #close-x:hover {
-    color: green;
-  }
-</style>

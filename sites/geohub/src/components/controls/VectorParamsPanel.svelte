@@ -3,14 +3,7 @@
   import RangeSlider from 'svelte-range-slider-pips'
   import { Loader } from '@undp-data/svelte-undp-design'
 
-  import {
-    fetchUrl,
-    getLayerSourceUrl,
-    getLayerStyle,
-    loadArgumentsInDynamicLayers,
-    loadMap,
-    updateLayerURL,
-  } from '$lib/helper'
+  import { getLayerSourceUrl, getLayerStyle, loadArgumentsInDynamicLayers, loadMap, updateLayerURL } from '$lib/helper'
   import { map, layerList } from '$stores'
   /*EXPORTS*/
   export let layerId
@@ -128,6 +121,8 @@
         </header>
         <div
           class="card-content is-clickable p-0"
+          role="button"
+          tabindex="0"
           on:click={() => {
             currentSelectedArg = argId
           }}>

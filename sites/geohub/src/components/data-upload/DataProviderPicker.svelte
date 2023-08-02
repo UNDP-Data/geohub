@@ -85,6 +85,8 @@
         <div class="tag {getBulmaTagColor()}">{tag.value}</div>
         <div
           class="tag is-delete tag-delete"
+          role="button"
+          tabindex="0"
           on:click={() => handleTagDeleted(tag)}
           on:keydown={handleEnterKey} />
       </div>
@@ -126,6 +128,8 @@
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <span
             class="clear-button"
+            role="button"
+            tabindex="0"
             on:click={() => (query = '')}>
             <i class="fas fa-xmark sm" />
           </span>
@@ -139,6 +143,8 @@
             <!-- svelte-ignore a11y-missing-attribute -->
             <a
               class="panel-block"
+              role="menu"
+              tabindex="0"
               on:click={() => {
                 handleTagClicked(t)
               }}

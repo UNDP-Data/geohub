@@ -2,7 +2,6 @@
   import ToggleOptions from './ToggleOptions.svelte'
   import type { Map } from 'maplibre-gl'
   import type { ToggleOption } from '$lib/types'
-  import { page } from '$app/stores'
 
   export let map: Map
   export let layerId: string

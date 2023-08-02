@@ -106,6 +106,7 @@
 												{@const callback = link.callback}
 												<div
 													role="button"
+													tabindex="0"
 													class="cta__link cta--space"
 													on:click={() => {
 														showMobileMenu = false;

@@ -9,7 +9,6 @@
   import { map, spriteImageList } from '$stores'
   import { clean, getLayerStyle } from '$lib/helper'
   import { initTippy } from '$lib/helper'
-  import { page } from '$app/stores'
 
   const tippy = initTippy()
   let tooltipContent: HTMLElement

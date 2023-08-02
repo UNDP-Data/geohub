@@ -112,7 +112,7 @@
       {#if fieldType && ['number', 'float'].includes(fieldType)}
         <div
           class="columns is-mobile is-12 m-auto is-vcentered"
-          transition:fade>
+          transition:fade|global>
           <div class="column is-8 pl-0">Number of decimal places</div>
           <div class="column is-3 is-flex is-justify-content-center">
             <NumberFormat

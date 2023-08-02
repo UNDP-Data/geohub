@@ -106,6 +106,14 @@
       headerIcon = 'fa-solid fa-lock-open has-text-primary'
     }
   }
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      e.target.click()
+    }
+  }
 </script>
 
 <Accordion
@@ -130,11 +138,13 @@
     class="card-container px-4">
     <div class="columns">
       <div class="column is-half">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="image pointor has-tooltip-right has-tooltip-arrow mb-4"
           data-tooltip="Open map"
+          role="button"
+          tabindex="0"
           on:click={() => window.open(style.editor, '_blank')}
+          on:keydown={handleEnterKey}
           bind:this={mapContainer}>
           {#if isLoading}
             <Loader size="medium" />
@@ -195,7 +205,7 @@
 {#if confirmDeleteDialogVisible}
   <div
     class="modal is-active"
-    transition:fade
+    transition:fade|global
     use:clickOutside={() => (confirmDeleteDialogVisible = false)}>
     <div class="modal-background" />
     <div class="modal-card">

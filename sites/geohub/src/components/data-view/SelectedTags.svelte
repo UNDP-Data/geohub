@@ -63,6 +63,8 @@
           {#if isClearButtonShown}
             <div
               class="tag is-delete tag-delete"
+              role="button"
+              tabindex="0"
               on:click={() => handleTagDeleted(tag)}
               on:keydown={handleKeydown} />
           {/if}

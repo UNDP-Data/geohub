@@ -518,11 +518,6 @@
     cursor: pointer;
   }
 
-  .align-center {
-    width: max-content;
-    margin: auto;
-  }
-
   :global(.maplibregl-popup-close-button) {
     top: 15px !important;
     right: 10px !important;

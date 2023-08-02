@@ -76,6 +76,8 @@
         <!-- svelte-ignore a11y-missing-attribute -->
         <a
           class="panel-block {selected === band ? 'is-active' : ''}"
+          role="button"
+          tabindex="0"
           on:click={() => {
             selected = band
           }}

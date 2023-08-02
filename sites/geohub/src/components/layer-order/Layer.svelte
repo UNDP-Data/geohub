@@ -175,11 +175,6 @@
     }
   }
 
-  .fas:before {
-    display: inline-block;
-    text-decoration: none;
-  }
-
   [data-tooltip]:hover:before,
   [data-tooltip]:hover:after,
   [data-tooltip]:focus:before,

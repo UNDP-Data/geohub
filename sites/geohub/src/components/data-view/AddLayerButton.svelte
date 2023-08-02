@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { Button } from '@undp-data/svelte-undp-design'
   import { Loader } from '@undp-data/svelte-undp-design'
   const dispatch = createEventDispatcher()
 
