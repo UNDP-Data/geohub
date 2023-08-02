@@ -42,7 +42,7 @@
     <span class="pl-1"><RasterBandSelector {layer} /></span>
   {/if}
   <div class="layer-name ml-1">
-    <div>
+    <div data-testid="layer-name">
       {clean(layer.name)}
     </div>
   </div>

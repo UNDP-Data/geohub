@@ -19,6 +19,7 @@
 </script>
 
 <div
+  data-testid="icon-overlap-slider"
   class="range-slider"
   style="width: 130px;">
   <RangeSlider

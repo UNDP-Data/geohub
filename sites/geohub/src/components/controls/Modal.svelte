@@ -27,8 +27,8 @@
 
 <div
   class="modal {dialogOpen ? 'is-active' : ''}"
-  data-testid="exit-confirmation-layer-view-container"
-  transition:fade|global>
+  data-testid="modal-dialog"
+  transition:fade>
   <div
     class="modal-background"
     role="button"
@@ -58,6 +58,7 @@
     <footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
       <div class="footer-button px-2">
         <button
+          data-testid="cancel-button"
           class="button is-link"
           on:click={handleCancel}>
           {cancelText}

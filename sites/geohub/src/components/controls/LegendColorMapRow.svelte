@@ -126,7 +126,15 @@ the key statement is necessary as it forces to rerender the legend item in case 
         {#if isVisible}
           <i class="fa-solid fa-eye" />
         {:else}
-          <i class="fa-solid fa-eye-slash" />
+          <input
+            data-testid="end-input"
+            style={`width:${rowWidth * 8}px; max-width:100px`}
+            class="number-input"
+            type="number"
+            id="end"
+            value={colorMapRow.end}
+            on:change={handleInput}
+            required />
         {/if}
       </div>
     </div>

@@ -10,6 +10,7 @@
 
   const layerId = layer.id
   const propertyName = 'icon-size'
+  console.log($map)
   const style = $map.getStyle().layers.filter((layer: LayerSpecification) => layer.id === layerId)[0]
 
   let maxValue = 5
@@ -35,9 +36,11 @@
   }
 </script>
 
-<NumberInput
-  bind:value
-  bind:minValue
-  bind:maxValue
-  bind:step={stepValue}
-  on:change={setValue} />
+<div data-testid="icon-size-input">
+  <NumberInput
+    bind:value
+    bind:minValue
+    bind:maxValue
+    bind:step={stepValue}
+    on:change={setValue} />
+</div>

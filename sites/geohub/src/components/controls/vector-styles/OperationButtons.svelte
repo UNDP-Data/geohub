@@ -41,6 +41,7 @@
   role="menu">
   {#each operationOptions as operation}
     <div
+      data-testid="operation-button"
       class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
       role="button"
       tabindex="0"

@@ -3,9 +3,9 @@
   import { writable } from 'svelte/store'
   export let initialStep = 1
 
-  let step = writable(initialStep)
+  export let step = writable(initialStep)
 
-  const nextStep = () => {
+  export let nextStep = () => {
     $step += 1
   }
 
@@ -32,8 +32,10 @@
   })
 </script>
 
-<slot
-  {nextStep}
-  {prevStep}
-  {resetStep}
-  {setStep} />
+<div data-testid="slotted-content">
+  <slot
+    {nextStep}
+    {prevStep}
+    {resetStep}
+    {setStep} />
+</div>

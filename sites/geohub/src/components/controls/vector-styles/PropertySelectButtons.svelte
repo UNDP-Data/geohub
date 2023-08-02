@@ -53,6 +53,7 @@
   style="max-height: 200px; overflow-y: auto"
   class="grid-wrapper"
   role="menu"
+  data-testid="property-select-buttons"
   tabindex="0"
   on:click={handleClick}>
   {#if propertySelectOptions}

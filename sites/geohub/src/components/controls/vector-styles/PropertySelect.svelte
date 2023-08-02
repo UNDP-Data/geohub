@@ -34,7 +34,9 @@
   }
 </script>
 
-<div class="control has-icons-left">
+<div
+  class="control has-icons-left"
+  data-testid="property-select">
   <div
     style="margin-right: 2%"
     class="select is-flex is-justify-content-left select is-normal">
@@ -42,12 +44,14 @@
       style="width: 100%"
       class="is-normal"
       bind:value={propertySelectValue}
+      data-testid="property-select-input"
       on:change={propertyChanged}
       title="Property Options">
       {#if propertySelectOptions}
         {#each propertySelectOptions as propertySelectOption}
           <option
             title="Property Option"
+            data-testid="property-select-option"
             value={propertySelectOption}
             >{!propertySelectOption ? emptyFieldLabel : clean(propertySelectOption)}</option>
         {/each}

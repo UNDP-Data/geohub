@@ -28,6 +28,7 @@
 </script>
 
 <div
+  data-testid="panel-button"
   class="panel-control has-tooltip-arrow {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
   data-tooltip={tooltip}>
   <button

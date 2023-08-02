@@ -10,6 +10,8 @@ beforeEach(cleanup)
 const colormap = getRandomColormap()
 
 describe('Color Map Picker Card : Card Style', () => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   let sut: RenderResult<ColorMapPickerCard>
   let cardContainer: HTMLElement
 
