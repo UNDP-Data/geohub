@@ -47,7 +47,7 @@ RUN rm -rf node_modules
 RUN sed -e 's/workspace://g' ./package.json > ./package2.json
 RUN rm package.json
 RUN mv package2.json package.json
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 RUN cp package.json build/.
 RUN mv node_modules build/.
 
