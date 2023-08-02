@@ -59,7 +59,7 @@ importers:
         version: 1.63.2
       svelte-check:
         specifier: ^3.4.3
-        version: 3.4.3(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
+        version: 3.4.3(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
       tslib:
         specifier: ^2.5.3
         version: 2.5.3
@@ -184,7 +184,7 @@ importers:
         version: 4.1.2
       svelte-check:
         specifier: ^3.4.3
-        version: 3.4.3(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
+        version: 3.4.3(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
       tslib:
         specifier: ^2.5.3
         version: 2.5.3
@@ -251,7 +251,7 @@ importers:
         version: 4.1.2
       svelte-check:
         specifier: ^3.4.3
-        version: 3.4.3(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
+        version: 3.4.3(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
       tslib:
         specifier: ^2.5.3
         version: 2.5.3
@@ -314,8 +314,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2(svelte@4.1.2)(typescript@5.1.3)
       '@testing-library/svelte':
-        specifier: ^3.2.2
-        version: 3.2.2(svelte@4.1.2)
+        specifier: ^4.0.3
+        version: 4.0.3(svelte@4.1.2)
       '@testing-library/user-event':
         specifier: ^14.4.3
         version: 14.4.3(@testing-library/dom@9.3.1)
@@ -337,9 +337,9 @@ importers:
       eslint-plugin-storybook:
         specifier: ^0.6.12
         version: 0.6.12(eslint@8.46.0)(typescript@5.1.3)
-      eslint-plugin-svelte3:
-        specifier: ^4.0.0
-        version: 4.0.0(eslint@8.46.0)(svelte@4.1.2)
+      eslint-plugin-svelte:
+        specifier: ^2.32.4
+        version: 2.32.4(eslint@8.46.0)(svelte@4.1.2)
       jsdom:
         specifier: ^22.1.0
         version: 22.1.0
@@ -363,7 +363,7 @@ importers:
         version: 7.0.26
       svelte-check:
         specifier: ^3.4.3
-        version: 3.4.3(@babel/core@7.22.9)(sass@1.63.2)(svelte@4.1.2)
+        version: 3.4.3(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
       svelte-htm:
         specifier: ^1.2.0
         version: 1.2.0(svelte@4.1.2)
@@ -454,8 +454,8 @@ importers:
         specifier: ^5.16.5
         version: 5.16.5
       '@testing-library/svelte':
-        specifier: ^3.2.2
-        version: 3.2.2(svelte@4.1.2)
+        specifier: ^4.0.3
+        version: 4.0.3(svelte@4.1.2)
       '@testing-library/user-event':
         specifier: ^14.4.3
         version: 14.4.3(@testing-library/dom@9.3.1)
@@ -614,7 +614,7 @@ importers:
         version: 1.3.6
       svelte-check:
         specifier: ^3.4.3
-        version: 3.4.3(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
+        version: 3.4.3(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)
       svelte-copy:
         specifier: ^1.3.2
         version: 1.3.2
@@ -632,7 +632,7 @@ importers:
         version: 0.6.0
       svelte-preprocess:
         specifier: ^5.0.4
-        version: 5.0.4(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3)
+        version: 5.0.4(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3)
       svelte-range-slider-pips:
         specifier: ^2.1.1
         version: 2.1.1
@@ -5200,20 +5200,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@testing-library/dom@8.20.1:
-    resolution: {integrity: sha512-/DiOQ5xBxgdYRC8LNk7U+RWat0S3qRLeIw3ZIkMQ9kkVlRmwD/Eg8k8CqIpD6GW7u20JIUOfMKbxtiLutpjQ4g==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@babel/code-frame': 7.22.5
-      '@babel/runtime': 7.22.6
-      '@types/aria-query': 5.0.1
-      aria-query: 5.1.3
-      chalk: 4.1.2
-      dom-accessibility-api: 0.5.16
-      lz-string: 1.5.0
-      pretty-format: 27.5.1
-    dev: true
-
   /@testing-library/dom@9.3.1:
     resolution: {integrity: sha512-0DGPd9AR3+iDTjGoMpxIkAsUihHZ3Ai6CneU6bRRrffXMgzCdlNk43jTrD2/5LT6CBb3MWTP8v510JzYtahD2w==}
     engines: {node: '>=14'}
@@ -5243,13 +5229,13 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/svelte@3.2.2(svelte@4.1.2):
-    resolution: {integrity: sha512-IKwZgqbekC3LpoRhSwhd0JswRGxKdAGkf39UiDXTywK61YyLXbCYoR831e/UUC6EeNW4hiHPY+2WuovxOgI5sw==}
+  /@testing-library/svelte@4.0.3(svelte@4.1.2):
+    resolution: {integrity: sha512-GldAnyGEOn5gMwME+hLVQrnfuKZFB+it5YOMnRBHX+nqeHMsSa18HeqkdvGqtqLpvn81xV7R7EYFb500ngUfXA==}
     engines: {node: '>= 10'}
     peerDependencies:
-      svelte: 3.x
+      svelte: ^3 || ^4
     dependencies:
-      '@testing-library/dom': 8.20.1
+      '@testing-library/dom': 9.3.1
       svelte: 4.1.2
     dev: true
 
@@ -7889,16 +7875,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: true
-
-  /eslint-plugin-svelte3@4.0.0(eslint@8.46.0)(svelte@4.1.2):
-    resolution: {integrity: sha512-OIx9lgaNzD02+MDFNLw0GEUbuovNcglg+wnd/UY0fbZmlQSz7GlQiQ1f+yX0XvC07XPcDOnFcichqI3xCwp71g==}
-    peerDependencies:
-      eslint: '>=8.0.0'
-      svelte: ^3.2.0
-    dependencies:
-      eslint: 8.46.0
-      svelte: 4.1.2
     dev: true
 
   /eslint-plugin-svelte@2.32.4(eslint@8.46.0)(svelte@4.1.2):
@@ -12259,7 +12235,7 @@ packages:
       easy-reactive: 1.0.4
     dev: false
 
-  /svelte-check@3.4.3(@babel/core@7.22.9)(sass@1.63.2)(svelte@4.1.2):
+  /svelte-check@3.4.3(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2):
     resolution: {integrity: sha512-O07soQFY3X0VDt+bcGc6D5naz0cLtjwnmNP9JsEBPVyMemFEqUhL2OdLqvkl5H/u8Jwm50EiAU4BPRn5iin/kg==}
     hasBin: true
     peerDependencies:
@@ -12272,34 +12248,7 @@ packages:
       picocolors: 1.0.0
       sade: 1.8.1
       svelte: 4.1.2
-      svelte-preprocess: 5.0.4(@babel/core@7.22.9)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3)
-      typescript: 5.1.3
-    transitivePeerDependencies:
-      - '@babel/core'
-      - coffeescript
-      - less
-      - postcss
-      - postcss-load-config
-      - pug
-      - sass
-      - stylus
-      - sugarss
-    dev: true
-
-  /svelte-check@3.4.3(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2):
-    resolution: {integrity: sha512-O07soQFY3X0VDt+bcGc6D5naz0cLtjwnmNP9JsEBPVyMemFEqUhL2OdLqvkl5H/u8Jwm50EiAU4BPRn5iin/kg==}
-    hasBin: true
-    peerDependencies:
-      svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.18
-      chokidar: 3.5.3
-      fast-glob: 3.3.1
-      import-fresh: 3.3.0
-      picocolors: 1.0.0
-      sade: 1.8.1
-      svelte: 4.1.2
-      svelte-preprocess: 5.0.4(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3)
+      svelte-preprocess: 5.0.4(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3)
       typescript: 5.1.3
     transitivePeerDependencies:
       - '@babel/core'
@@ -12396,7 +12345,7 @@ packages:
     resolution: {integrity: sha512-X5YBpz2SZY7ReMfbjqfsq4wFBuNM0Epi2/VS9LbxYYDHfJBSP/F5sx8D1hZz3amVLlc0JP8OLzIGsQAv6LJpIA==}
     dev: true
 
-  /svelte-preprocess@5.0.4(@babel/core@7.22.9)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3):
+  /svelte-preprocess@5.0.4(@babel/core@7.22.9)(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3):
     resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}
     engines: {node: '>= 14.10.0'}
     requiresBuild: true
@@ -12435,54 +12384,6 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.22.9
-      '@types/pug': 2.0.6
-      detect-indent: 6.1.0
-      magic-string: 0.27.0
-      sass: 1.63.2
-      sorcery: 0.11.0
-      strip-indent: 3.0.0
-      svelte: 4.1.2
-      typescript: 5.1.3
-    dev: true
-
-  /svelte-preprocess@5.0.4(postcss@8.4.27)(sass@1.63.2)(svelte@4.1.2)(typescript@5.1.3):
-    resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}
-    engines: {node: '>= 14.10.0'}
-    requiresBuild: true
-    peerDependencies:
-      '@babel/core': ^7.10.2
-      coffeescript: ^2.5.1
-      less: ^3.11.3 || ^4.0.0
-      postcss: ^7 || ^8
-      postcss-load-config: ^2.1.0 || ^3.0.0 || ^4.0.0
-      pug: ^3.0.0
-      sass: ^1.26.8
-      stylus: ^0.55.0
-      sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
-      svelte: ^3.23.0 || ^4.0.0-next.0 || ^4.0.0
-      typescript: '>=3.9.5 || ^4.0.0 || ^5.0.0'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      coffeescript:
-        optional: true
-      less:
-        optional: true
-      postcss:
-        optional: true
-      postcss-load-config:
-        optional: true
-      pug:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
       '@types/pug': 2.0.6
       detect-indent: 6.1.0
       magic-string: 0.27.0
