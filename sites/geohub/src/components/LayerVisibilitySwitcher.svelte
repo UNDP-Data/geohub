@@ -68,7 +68,7 @@
     this.map = map
 
     this.controlContainer = document.createElement('div')
-    this.controlContainer.className = 'mapboxgl-ctrl mapboxgl-ctrl-group'
+    this.controlContainer.className = 'maplibregl-ctrl maplibregl-ctrl-group'
     visiblilityButton.addEventListener('click', handleClick)
     this.controlContainer.appendChild(visiblilityButton)
     return this.controlContainer

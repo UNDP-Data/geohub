@@ -21,8 +21,8 @@ importers:
         specifier: ^1.20.4
         version: 1.22.4(svelte@4.1.2)(vite@4.3.9)
       maplibre-gl:
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^3.2.1
+        version: 3.2.1
       svelte:
         specifier: ^4.0.0
         version: 4.1.2
@@ -146,8 +146,8 @@ importers:
         specifier: ^1.20.4
         version: 1.22.4(svelte@4.1.2)(vite@4.3.9)
       maplibre-gl:
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^3.2.1
+        version: 3.2.1
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -207,17 +207,17 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@watergis/svelte-maplibre-attribute-popup':
-        specifier: ^1.0.0
-        version: 1.0.0(svelte@4.1.2)
+        specifier: ^2.0.1
+        version: 2.0.1(svelte@4.1.2)
       '@watergis/svelte-maplibre-export':
-        specifier: ^1.0.0
-        version: 1.0.0(svelte@4.1.2)
+        specifier: ^2.0.1
+        version: 2.0.1(svelte@4.1.2)
       maplibre-gl:
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^3.2.1
+        version: 3.2.1
       pmtiles:
-        specifier: ^2.7.2
-        version: 2.7.2
+        specifier: ^2.10.0
+        version: 2.10.0
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -514,11 +514,11 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
       '@watergis/maplibre-gl-export':
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.1
+        version: 3.0.1
       '@watergis/svelte-maplibre-menu':
-        specifier: ^1.0.2
-        version: 1.0.2(svelte@4.1.2)
+        specifier: ^2.0.1
+        version: 2.0.1(svelte@4.1.2)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.3
         version: 0.9.3(svelte@4.1.2)
@@ -580,8 +580,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       maplibre-gl:
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^3.2.1
+        version: 3.2.1
       marked:
         specifier: ^5.0.5
         version: 5.0.5
@@ -592,14 +592,14 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1
       pmtiles:
-        specifier: ^2.7.2
-        version: 2.7.2
+        specifier: ^2.10.0
+        version: 2.10.0
       prettier:
-        specifier: ^2.8.8
-        version: 2.8.8
+        specifier: ^3.0.0
+        version: 3.0.0
       prettier-plugin-svelte:
-        specifier: ^2.10.1
-        version: 2.10.1(prettier@2.8.8)(svelte@4.1.2)
+        specifier: ^3.0.3
+        version: 3.0.3(prettier@3.0.0)(svelte@4.1.2)
       sass:
         specifier: ^1.63.2
         version: 1.63.2
@@ -3939,9 +3939,6 @@ packages:
       rw: 1.3.3
       sort-object: 0.3.2
 
-  /@mapbox/mapbox-gl-supported@2.0.1:
-    resolution: {integrity: sha512-HP6XvfNIzfoMVfyGjBckjiAOQK9WfX0ywdLubuPMPv+Vqf5fj0uCbgBQYpiqcWZT6cbyyRnTSXDheT1ugvF6UQ==}
-
   /@mapbox/point-geometry@0.1.0:
     resolution: {integrity: sha512-6j56HdLTwWGO0fJPlrZtdU/B13q8Uwmo18Ck2GnGgN9PCFyKTZ3UbXeEdRFh18i9XQ92eH2VdtpJHpBD3aripQ==}
 
@@ -5622,6 +5619,11 @@ packages:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
     dev: true
 
+  /@types/supercluster@7.1.0:
+    resolution: {integrity: sha512-6JapQ2GmEkH66r23BK49I+u6zczVDGTtiJEVvKDYZVSm/vepWaJuTq6BXzJ6I4agG5s8vA1KM7m/gXWDg03O4Q==}
+    dependencies:
+      '@types/geojson': 7946.0.10
+
   /@types/testing-library__jest-dom@5.14.8:
     resolution: {integrity: sha512-NRfJE9Cgpmu4fx716q9SYmU4jxxhYRU1BQo239Txt/9N3EC745XZX1Yl7h/SBIDlo1ANVOCRB4YDXjaQdoKCHQ==}
     dependencies:
@@ -6042,12 +6044,12 @@ packages:
     dependencies:
       '@mapbox/mapbox-gl-style-spec': 13.28.0
 
-  /@watergis/maplibre-gl-export@3.0.0:
-    resolution: {integrity: sha512-n1rs8DfPVNqNC/vmOT22mJgA81pYajbncLeNiPPE91DUxEWcAjhl6XgIATGflf1MaCvPPRE8KSW5WsdmDglYSw==}
+  /@watergis/maplibre-gl-export@3.0.1:
+    resolution: {integrity: sha512-v11SU0OvlHRaDgmpXYK01K0NVEqtvsrqpmVaGayBGHm1aZDiGiOeo10W+zp0g+M556Qy/Et4FlU5eXfB/DhCkQ==}
     dependencies:
       js-loading-overlay: 1.2.0
       jspdf: 2.5.1
-      maplibre-gl: 3.2.0
+      maplibre-gl: 3.2.1
     dev: true
 
   /@watergis/maplibre-gl-legend@2.0.0:
@@ -6055,41 +6057,41 @@ packages:
     dependencies:
       '@watergis/legend-symbol': 0.2.3
       axios: 0.27.2
-      maplibre-gl: 3.2.0
+      maplibre-gl: 3.2.1
     transitivePeerDependencies:
       - debug
     dev: false
 
-  /@watergis/svelte-maplibre-attribute-popup@1.0.0(svelte@4.1.2):
-    resolution: {integrity: sha512-e8AAXtHLmJDWOaBQWrW/ll/9xgWMBa0vcUEG5lNn7hWm9Qq0CEgvJMIdqvCvsOe4DZToD8PUX7J811wMmR89rA==}
+  /@watergis/svelte-maplibre-attribute-popup@2.0.1(svelte@4.1.2):
+    resolution: {integrity: sha512-3K195C6JN0u3dcFQwr6mdYh4CsFnaVuAdQnbn0AHV3UYsmKteLwBlN48vZ4OySdEg+EC2EN47jLu2RGvWSm3cQ==}
     peerDependencies:
-      svelte: ^3.54.0
+      svelte: ^4.0.0
     dependencies:
-      maplibre-gl: 3.2.0
+      maplibre-gl: 3.2.1
       svelte: 4.1.2
     dev: false
 
-  /@watergis/svelte-maplibre-export@1.0.0(svelte@4.1.2):
-    resolution: {integrity: sha512-MRFRXFEjkWI0C+w62H5Rh1EQoFhqdVwMxUbhbDLuZvdaOFEQDp5wBZYv2ntklGP9biogp6OCaA4mu9i8OXlSeg==}
+  /@watergis/svelte-maplibre-export@2.0.1(svelte@4.1.2):
+    resolution: {integrity: sha512-acOSZz+BBypC2KCBcBCCQn6Lp1BxMmQ8eUEEe88HnaDBNKZJrHGhdJB9tGEhnUHbWso1g2glEyn3D8nLBoh4mQ==}
     peerDependencies:
-      svelte: ^3.54.0
+      svelte: ^4.0.0
     dependencies:
       '@fortawesome/free-solid-svg-icons': 6.4.0
       '@neodrag/svelte': 2.0.3
       jspdf: 2.5.1
-      maplibre-gl: 3.2.0
+      maplibre-gl: 3.2.1
       svelte: 4.1.2
       svelte-fa: 3.0.4
     dev: false
 
-  /@watergis/svelte-maplibre-menu@1.0.2(svelte@4.1.2):
-    resolution: {integrity: sha512-Rt+iMvWpOZBB3i11Y/wtmueRz3r95pkhayd9VcDpNtLkKqBj1fDqtg6s4HzN3Hp7XMK+v9/Zz2EkNxZc2/kYmg==}
+  /@watergis/svelte-maplibre-menu@2.0.1(svelte@4.1.2):
+    resolution: {integrity: sha512-gFDzTbLoVF7n11YQ3F7c6pvkXfM9NWZkw082JNwZnO2n1hl/7B9vbX7UQDS9Prk+g752a6FpLVR3yqNmx/emOA==}
     peerDependencies:
-      svelte: ^3.54.0
+      svelte: ^4.0.0
     dependencies:
       '@fortawesome/free-solid-svg-icons': 6.4.0
       '@geoffcox/svelte-splitter': 1.0.1
-      maplibre-gl: 3.2.0
+      maplibre-gl: 3.2.1
       svelte: 4.1.2
       svelte-fa: 3.0.4
     dev: true
@@ -8343,6 +8345,10 @@ packages:
 
   /fflate@0.7.4:
     resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
+    dev: false
+
+  /fflate@0.8.0:
+    resolution: {integrity: sha512-FAdS4qMuFjsJj6XHbBaZeXOgaypXp8iw/Tpyuq/w3XA41jjLHT8NPA+n7czH/DDhdncq0nAyDZmPeWXh2qmdIg==}
 
   /file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
@@ -9746,9 +9752,6 @@ packages:
     resolution: {integrity: sha512-w9OtT4ALL+fbbwG3gw7erAO0jvS5nfvrukGPMWIAoea359B26ALXGpzy4YJSp9yGnpUvuvOw1nSjSoHDfWSr1w==}
     dev: false
 
-  /kdbush@3.0.0:
-    resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
-
   /kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
 
@@ -10072,37 +10075,8 @@ packages:
     resolution: {integrity: sha512-0aF7ZmVon1igznGI4VS30yugpduQW3y3GkcgGJOp7d8x8QrizhigUxjI/m2UojsXXto+jLAH3KSz+xOJTiORjg==}
     dev: true
 
-  /maplibre-gl@2.4.0:
-    resolution: {integrity: sha512-csNFylzntPmHWidczfgCZpvbTSmhaWvLRj9e1ezUDBEPizGgshgm3ea1T5TCNEEBq0roauu7BPuRZjA3wO4KqA==}
-    requiresBuild: true
-    dependencies:
-      '@mapbox/geojson-rewind': 0.5.2
-      '@mapbox/jsonlint-lines-primitives': 2.0.2
-      '@mapbox/mapbox-gl-supported': 2.0.1
-      '@mapbox/point-geometry': 0.1.0
-      '@mapbox/tiny-sdf': 2.0.6
-      '@mapbox/unitbezier': 0.0.1
-      '@mapbox/vector-tile': 1.3.1
-      '@mapbox/whoots-js': 3.1.0
-      '@types/geojson': 7946.0.10
-      '@types/mapbox__point-geometry': 0.1.2
-      '@types/mapbox__vector-tile': 1.3.0
-      '@types/pbf': 3.0.2
-      csscolorparser: 1.0.3
-      earcut: 2.2.4
-      geojson-vt: 3.2.1
-      gl-matrix: 3.4.3
-      global-prefix: 3.0.0
-      murmurhash-js: 1.0.0
-      pbf: 3.2.1
-      potpack: 1.0.2
-      quickselect: 2.0.0
-      supercluster: 7.1.5
-      tinyqueue: 2.0.3
-      vt-pbf: 3.1.3
-
-  /maplibre-gl@3.2.0:
-    resolution: {integrity: sha512-TOo/cV9r8Xy3ngbJtY6JUC7rpjpObrsdO5pt14l5OIw4gY1v5XnxWP16VDSe0zRoncFfDCEBDmRwhfEFwtlbvw==}
+  /maplibre-gl@3.2.1:
+    resolution: {integrity: sha512-7INNVNJGKKPslU4DmSSMldreOEqsMYY4m62WaHQVmD95D5VlS7BiY4HKlYiNsmKI9onWk7Xd5c/JWmXLa025dA==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
@@ -10117,6 +10091,7 @@ packages:
       '@types/mapbox__point-geometry': 0.1.2
       '@types/mapbox__vector-tile': 1.3.0
       '@types/pbf': 3.0.2
+      '@types/supercluster': 7.1.0
       earcut: 2.2.4
       geojson-vt: 3.2.1
       gl-matrix: 3.4.3
@@ -10929,10 +10904,16 @@ packages:
       pathe: 1.1.1
     dev: true
 
+  /pmtiles@2.10.0:
+    resolution: {integrity: sha512-X+s6JyperpcAkKwv55MKx72ckOUB0ZjcfK4929iM0SS0MkLydEi2FSW1E8YTE1E2XaZ2TVk/MIUrbsZuXV7K2g==}
+    dependencies:
+      fflate: 0.8.0
+
   /pmtiles@2.7.2:
     resolution: {integrity: sha512-YRdfLlvN5z94F5/e3cnEFE0TymKx6egi0vDx6NJF83rYGNLV6Lr2PsdpWkSo3oVl4e6LVj8RvaWLfpT874QH+Q==}
     dependencies:
       fflate: 0.7.4
+    dev: false
 
   /polished@4.2.2:
     resolution: {integrity: sha512-Sz2Lkdxz6F2Pgnpi9U5Ng/WdWAUZxmHrNPoVlm3aAemxoy2Qy7LGjQg4uf8qKelDAUW94F4np3iH2YPf2qefcQ==}
@@ -11040,9 +11021,6 @@ packages:
     resolution: {integrity: sha512-VdlZoocy5lCP0c/t66xAfclglEapXPCIVhqqJRncYpvbCgImF0w67aPKfbqUMr72tO2k5q0TdTZwCLjPTI6C9g==}
     dev: true
 
-  /potpack@1.0.2:
-    resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
-
   /potpack@2.0.0:
     resolution: {integrity: sha512-Q+/tYsFU9r7xoOJ+y/ZTtdVQwTWfzjbiXBDMM/JKUux3+QPP02iUuIoeBQ+Ot6oEDlC+/PGjB/5A3K7KKb7hcw==}
 
@@ -11072,16 +11050,6 @@ packages:
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
-    dev: true
-
-  /prettier-plugin-svelte@2.10.1(prettier@2.8.8)(svelte@4.1.2):
-    resolution: {integrity: sha512-Wlq7Z5v2ueCubWo0TZzKc9XHcm7TDxqcuzRuGd0gcENfzfT4JZ9yDlCbEgxWgiPmLHkBjfOtpAWkcT28MCDpUQ==}
-    peerDependencies:
-      prettier: ^1.16.4 || ^2.0.0
-      svelte: ^3.2.0 || ^4.0.0-next.0
-    dependencies:
-      prettier: 2.8.8
-      svelte: 4.1.2
     dev: true
 
   /prettier-plugin-svelte@3.0.3(prettier@3.0.0)(svelte@4.1.2):
@@ -12179,11 +12147,6 @@ packages:
   /strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
     dev: false
-
-  /supercluster@7.1.5:
-    resolution: {integrity: sha512-EulshI3pGUM66o6ZdH3ReiFcvHpM3vAigyK+vcxdjpJyEbIIrtbmBdY23mGgnI24uXiGFvrGq9Gkum/8U7vJWg==}
-    dependencies:
-      kdbush: 3.0.0
 
   /supercluster@8.0.1:
     resolution: {integrity: sha512-IiOea5kJ9iqzD2t7QJq/cREyLHTtSmUT6gQsweojg9WH2sYJqZK9SswTu6jrscO6D1G5v5vYZ9ru/eq85lXeZQ==}
