@@ -1,3 +1,7 @@
+---
+title: How to Save maps?
+---
+
 # How to Save maps?
 
 One of the great features of the GeoHub is the ability to save maps by applying the analytics that the user desires after they have logged in.

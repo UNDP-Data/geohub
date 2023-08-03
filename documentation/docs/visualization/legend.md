@@ -1,3 +1,7 @@
+---
+title: How to access the legend for each layer?
+---
+
 # How to access the legend for each layer?
 
 GeoHub offers the user the ability to interchange between legends based on the classification which best suit the data.

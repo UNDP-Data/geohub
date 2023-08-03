@@ -1,3 +1,7 @@
+---
+title: How do I adjust the map view?
+---
+
 # How do I adjust the map view?
 
 GeoHub is designed to allow for a user-friendly experience with increased accessibility functionality! You can further improve your map view with the following tips.

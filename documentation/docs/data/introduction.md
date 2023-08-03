@@ -1,3 +1,7 @@
+---
+title: What forms of data is available within the GeoHub?
+---
+
 # What forms of data is available within the GeoHub?
 
 The GeoHub hosts raster and vector data which is preprocessed.

@@ -1,3 +1,7 @@
+---
+title: What different Dashboards are available in the GeoHub?
+---
+
 # What different Dashboards are available in the GeoHub?
 
 ## UNDP Electricity Dashboard

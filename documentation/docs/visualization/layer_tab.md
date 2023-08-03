@@ -1,3 +1,7 @@
+---
+title: What are the features of the Layer Tab?
+---
+
 # What are the features of the Layer Tab?
 
 The user can add or remove a layer of their choice by the following steps.

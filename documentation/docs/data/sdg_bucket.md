@@ -1,3 +1,7 @@
+---
+title: What is inside the SDG bucket?
+---
+
 ## What is inside the SDG bucket?
 
 Within the SDG bucket, the user can search all the updated and relevant data related to the Sustainable Development Goals and their performance.
