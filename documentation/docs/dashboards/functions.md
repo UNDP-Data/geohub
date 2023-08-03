@@ -1,3 +1,7 @@
+---
+title: What are the different functions within the Dashboard?
+---
+
 # What are the different functions within the Dashboard?
 
 The user can select what they would like to visualize by selecting it under the “Raw Data Tab” featured on the upper left of the Dashboard.

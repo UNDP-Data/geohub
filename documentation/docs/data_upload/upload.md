@@ -1,3 +1,7 @@
+---
+title: How can I upload data to the GeoHub?
+---
+
 # How can I upload data to the GeoHub?
 
 Authenticated users are able to upload data in to the Geo Hub via the data upload page.
