@@ -67,9 +67,7 @@
 	bind:links={finalLink}
 >
 	<div slot="custom-button">
-		<div class="menu-button">
-			<UserAccount />
-		</div>
+		<UserAccount />
 	</div>
 </Header>
 <StyleShare bind:isModalVisible={isStyleShareVisible} />

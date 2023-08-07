@@ -100,7 +100,7 @@
 </script>
 
 <button
-	class="maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+	class="maplibregl-ctrl-{target}-visibility maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
 	bind:this={visiblilityButton}
 	data-tooltip={!isVisible ? 'Show hillshade' : 'Hide hillshade'}
 	disabled={isLoading}

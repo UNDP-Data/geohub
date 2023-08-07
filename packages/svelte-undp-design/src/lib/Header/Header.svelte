@@ -11,6 +11,9 @@
 	export let isPositionFixed = true;
 	export let links: HeaderLink[] = [];
 	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
+
+	let innerWidth = 0
+
 	onMount(() => {
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
@@ -25,6 +28,8 @@
 		}
 	};
 </script>
+
+<svelte:window bind:innerWidth />
 
 <header
 	class="country-header"
@@ -76,9 +81,11 @@
 									{/if}
 								</li>
 							{/each}
-							<li data-menu-id="header-link-custom" class="custom-button-mega menu-item">
-								<slot name="custom-button" />
-							</li>
+							{#if innerWidth >= 1440}
+								<li data-menu-id="header-link-custom" class="custom-button-mega menu-item">
+									<slot name="custom-button" />
+								</li>
+							{/if}
 						</ul>
 					</nav>
 				{/if}
@@ -93,7 +100,9 @@
 						<span class="hamburger-line line-bottom" />
 						Nav toggle
 					</button>
-					<div class="custom-button"><slot name="custom-button" /></div>
+					{#if innerWidth < 1440}
+						<div class="custom-button"><slot name="custom-button" /></div>
+					{/if}
 				</div>
 				{#if links.length > 0}
 					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">

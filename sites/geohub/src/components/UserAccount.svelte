@@ -33,7 +33,7 @@
 
 <svelte:window bind:innerWidth />
 {#if $page.data.session}
-	<div class="dropdown is-right {dropdownActive ? 'is-active' : null}">
+	<div class="signin-button dropdown is-right {dropdownActive ? 'is-active' : null}">
 		<div class="dropdown-trigger">
 			<div
 				role="button"
@@ -103,7 +103,7 @@
 	</div>
 {:else}
 	<button
-		class="button is-primary {isMobile ? 'is-small' : 'is-normal'}"
+		class="signin-button button is-primary {isMobile ? 'is-small' : 'is-normal'}"
 		on:click={() => signIn('azure-ad')}><b>SIGN IN</b></button
 	>
 {/if}
