@@ -15,8 +15,7 @@ describe('Header component', () => {
 					{
 						id: 'headerLink1',
 						title: 'Link 1',
-						href: '#',
-						icon: 'fa-solid fa-user'
+						href: '#'
 					}
 				],
 				progressBarSize: 'small',
