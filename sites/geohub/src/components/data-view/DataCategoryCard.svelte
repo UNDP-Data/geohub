@@ -22,10 +22,7 @@
 
 {#if category}
 	<div
-		class="category-{category.name.replace(
-			' ',
-			'-'
-		)} container p-2 is-flex is-flex-direction-column is-justify-content-center"
+		class="container p-2 is-flex is-flex-direction-column is-justify-content-center"
 		role="button"
 		tabindex="0"
 		on:click={handleClick}
