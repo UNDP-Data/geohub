@@ -580,8 +580,8 @@ importers:
         specifier: ^3.2.1
         version: 3.2.1
       marked:
-        specifier: ^5.0.5
-        version: 5.0.5
+        specifier: ^6.0.0
+        version: 6.0.0
       millify:
         specifier: ^6.1.0
         version: 6.1.0
@@ -9182,9 +9182,9 @@ packages:
       react: 18.2.0
     dev: true
 
-  /marked@5.0.5:
-    resolution: {integrity: sha512-auTmKJTBwZM/GLVFOhmkY7pL8v/0DxiDaXRC2kEyajcNJ0XXn9NphLD0106dbWrbPwcyD4Y0Dus16OkCzUMkfg==}
-    engines: {node: '>= 18'}
+  /marked@6.0.0:
+    resolution: {integrity: sha512-7E3m/xIlymrFL5gWswIT4CheIE3fDeh51NV09M4x8iOc7NDYlyERcQMLAIHcSlrvwliwbPQ4OGD+MpPSYiQcqw==}
+    engines: {node: '>= 16'}
     hasBin: true
     dev: true
 
