@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.5
+
+### Patch Changes
+
+- 27d95d3e: fix: custom-button HTML to avoid creating two elements
+
 ## 0.2.4
 
 ### Patch Changes
