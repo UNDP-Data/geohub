@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -17,7 +18,12 @@
 	import type { Sprite } from '$lib/types';
 	import { spriteImageList } from '$stores';
 	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
-	import { attribution, MapStyles } from '$lib/config/AppConfig';
+	import { attribution, MapStyles, TourOptions } from '$lib/config/AppConfig';
+
+	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
+
+	let tourOptions: TourGuideOptions;
+	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
 	export let map: Map;
@@ -114,6 +120,10 @@
 						spriteImageList.update(() => iconList);
 						resolve();
 					});
+
+				setTimeout(() => {
+					tourOptions = TourOptions;
+				}, 300);
 			});
 		});
 	};
@@ -129,6 +139,14 @@
 	<MapQueryInfoControl bind:map />
 	<StyleSwicher bind:map styles={MapStyles} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map position="bottom-right" />
+
+	{#if tourOptions}
+		<TourControl
+			bind:map
+			bind:tourguideOptions={tourOptions}
+			bind:localStorageKey={tourLocalStorageKey}
+		/>
+	{/if}
 {/if}
 
 <style lang="scss">

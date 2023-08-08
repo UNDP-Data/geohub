@@ -372,7 +372,7 @@
 </script>
 
 <button
-	class="maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
 	bind:this={queryButton}
 	data-tooltip={!isActive ? 'Start to query information' : 'Stop to query information'}
 >
