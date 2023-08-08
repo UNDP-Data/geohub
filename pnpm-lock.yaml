@@ -514,8 +514,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2(svelte@4.1.2)
       '@watergis/svelte-maplibre-tour':
-        specifier: ^0.0.4
-        version: 0.0.4(svelte@4.1.2)
+        specifier: ^0.0.6
+        version: 0.0.6(svelte@4.1.2)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.3
         version: 0.9.3(svelte@4.1.2)
@@ -5261,8 +5261,8 @@ packages:
       svelte-fa: 3.0.4
     dev: true
 
-  /@watergis/svelte-maplibre-tour@0.0.4(svelte@4.1.2):
-    resolution: {integrity: sha512-MChkajNVPmXzjS8eDcuDtaH+yUedY8A0cEaNEWjE3x6oSAewbS6y5logKGvAdMFYE2YXyFWsutdHkPDwI1yFZQ==}
+  /@watergis/svelte-maplibre-tour@0.0.6(svelte@4.1.2):
+    resolution: {integrity: sha512-KsgJmu7jNOhDwrP+ftKfgawWtiPIMzQp58yxUC9CZvObPGOk7PIuZkuOjIAoJX/ayq9xEOQAEa9pKeEdJF0Pfg==}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:

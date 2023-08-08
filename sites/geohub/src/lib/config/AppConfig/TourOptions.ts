@@ -2,7 +2,7 @@ import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 
 export const TourOptions: TourGuideOptions = {
 	rememberStep: true,
-	showStepDots: false,
+	showStepDots: true,
 	steps: [
 		{
 			title: 'Welcome to UNDP GeoHub!',
@@ -19,83 +19,53 @@ export const TourOptions: TourGuideOptions = {
 		},
 		{
 			title: 'Explore datasets',
-			content: `This side bar helps you explore GeoHub datasets and visualise them on the map.`,
-			target: '.drawer-content',
+			content: `You can explore datasets from <b>Data</b> tab. Let's start looking how you can search the datasets!`,
+			target: '.tab-Data',
 			order: 3
 		},
 		{
-			title: 'Data tab',
-			content: `You can explore datasets from <b>Data</b> tab. Let's start looking how you can search the datasets!`,
-			target: '#tab-Data',
+			title: 'Explore by shortcuts',
+			content: `
+            You can find datasets from the shortcuts' menu.
+            <br><br>
+            <b>SDG</b>: You can search datasets by Sustainable Development Goal (SDG)
+            <br>
+            <b>Continent</b>: You can search datasets from continent > selected country
+            <br>
+            Note. Currently, most of our datasets are global data, that means you may be able to find less data if you explore by a country.
+            <br>
+            <b>Microsoft Planetary</b>: Satellite imagery powered by Microsoft Planetary Computer is also available from this shortcut menu.
+            <br>
+            <b>Dynamic vector data</b>: The datasets under this category enables you to dynamically change the parameters to simulate the datasets for advanced analysis.
+            <br>
+            <b>Organisations</b>: If you click a logo of institution like UNDP, UNICEF, etc., you can find datasets come from that organisation.
+            `,
+			target: '.data-view-container',
 			order: 4
 		},
 		{
-			title: 'Explore by SDG',
-			content: `If you are looking for datasets of specific SDG, click this shortcut to exlore them.`,
-			target: '.category-SDG',
+			title: 'Search datasets by keywords',
+			content: `You can search datasets by typing keywords in this searching window. The results will be shown at the below of searching window. Open a accordion of a dataset to find more detailed metadata, then add the dataset to the map for further analysis`,
+			target: '.filter-text-box',
 			order: 5
 		},
 		{
-			title: 'Explore by a region or a country',
-			content: `If you are looking for datasets of specific region or country, click this shortcut to exlore them.
-            <br><br>
-            Note. Currently, most of our datasets are global data, that means you may be able to find less data if you explore by a country.
-            `,
-			target: '.category-Continent',
-			order: 6
-		},
-		{
-			title: 'Explore satellite imagery',
-			content: `Satellite imagery powered by Microsoft Planetary Computer is also available from this shortcut menu.`,
-			target: '.category-Microsoft-Planetary',
-			order: 7
-		},
-		{
-			title: 'Explore dynamic vector data',
-			content: `The datasets under this category enables you to dynamically change the parameters to simulate the datasets for advanced analysis.`,
-			target: '.category-Dynamic-vector',
-			order: 8
-		},
-		{
-			title: 'Explore datasets by intitutions',
-			content: `If you click a logo of institution like UNDP, UNICEF, etc., you can find datasets come from that organisation. In this tutorial, you can explore them produced by UNDP.`,
-			target: '.category-UNDP',
-			order: 9
-		},
-		{
-			title: 'Search datasets by keywords',
-			content: `You can search datasets by typing keywords in this searching window. Now, please click outside of this tutorial and type <b>HDI</b> to search datasets. After showing the results, click <b>?</b> button to continue the tutorial.`,
-			target: '.filter-text-box',
-			order: 10
-		},
-		{
-			title: 'Showing the results',
-			content: `Now, the results are shown according to your searching preferences. Close this tutorial, then click an adding button next to <b>Dynamic Subnational HDI</b> to add the dataset into the map. After successfully adding it to the map, click <b>?</b> button to continue the tutorial.`,
-			target: '.data-view-container',
-			order: 11
-		},
-		{
 			title: 'Switch to Layers tab',
-			content: `I believe now you can see the data on the map. Close this tutorial and click to <b>Layers</b> tab to swich to the legend menu. After switching to Layers tab, please come back to this tutorial to continue.`,
-			target: '#tab-Layers',
-			order: 12
-		},
-		{
-			title: 'Layer legend panel',
 			content: `
-            This panel provides you full functionality of visualing and analysing the dataset.
+            Once you add a dataset to the map, you can switch it to <b>Layers</b> tab to see other menu to style and analyse the dataset.
+            <br>
+            This layer panel provides you full functionality of visualing and analysing the dataset.
             <br>
             <ul>
-                <li>Legend tab: You can change layer style. Switch to <b>Classify</b> tab to change colormap or property to visualise.</li>
-                <li>Filter tab: You can filter the dataset by attribute data</li>
-                <li>Label tab: You can also add the data label to the map from this tab</li>
-                <li>Opacity tab: The layer opacity can be changed from here</li>
-                <li>Simulation tab: You can dynamically change parameters to simulate this dataset on this tab</li>
+                <li><b>Legend tab</b>: You can change layer style. Switch to <b>Classify</b> tab to change colormap or property to visualise.</li>
+                <li><b>Filter tab</b>: You can filter the dataset by attribute data</li>
+                <li><b>Label tab</b>: You can also add the data label to the map from this tab</li>
+                <li><b>Opacity tab</b>: The layer opacity can be changed from here</li>
+                <li><b>Simulation tab</b>: You can dynamically change parameters to simulate this dataset on this tab</li>
             </ul>
-            Close this tutorial, try to explore the functionality. Then come back to this tutorial to continue.
             `,
-			target: '.vector-layer-container',
-			order: 13
+			target: '.tab-Layers',
+			order: 6
 		},
 		{
 			title: 'Map operations',
@@ -103,7 +73,7 @@ export const TourOptions: TourGuideOptions = {
             From this step, we are going to show you main operations on the map.
             `,
 			target: '.map',
-			order: 14
+			order: 7
 		},
 		{
 			title: 'Switching basemap',
@@ -111,7 +81,7 @@ export const TourOptions: TourGuideOptions = {
             You can toggle this button to switch basemap either OpenStreetMap or Bing Aerial
             `,
 			target: '.main-switch-container',
-			order: 15
+			order: 8
 		},
 		{
 			title: 'Querying the information',
@@ -119,7 +89,7 @@ export const TourOptions: TourGuideOptions = {
             If this tool is enabled, you can query the information by clicking any position on the map. A popup will be shown for further detailed information.
             `,
 			target: '.maplibregl-ctrl-query',
-			order: 16
+			order: 9
 		},
 		{
 			title: 'Exporting map image',
@@ -127,7 +97,7 @@ export const TourOptions: TourGuideOptions = {
             You can export the current map image with your preferences such as paper size, orientation, file format, etc.
             `,
 			target: '.maplibregl-export-control',
-			order: 17
+			order: 10
 		},
 		{
 			title: 'Disable hillshade layer',
@@ -135,7 +105,7 @@ export const TourOptions: TourGuideOptions = {
             As default, a hillshade layer is shown on the basemap. You can also disable hillshade layer if you want.
             `,
 			target: '.maplibregl-ctrl-hillshade-visibility',
-			order: 18
+			order: 11
 		}
 	]
 };

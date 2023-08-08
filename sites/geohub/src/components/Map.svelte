@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -22,7 +23,7 @@
 	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 
 	let tourOptions: TourGuideOptions;
-	let tourLocalStorageKey = `geohub-map`;
+	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
 	export let map: Map;
