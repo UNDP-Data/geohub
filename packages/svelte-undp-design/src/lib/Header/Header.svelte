@@ -68,9 +68,14 @@
 											{link.title}
 										</div>
 									{:else}
-										<a href={link.href} tabindex="0">
+										<div
+											role="button"
+											on:click={() => document.location=link.href}
+											tabindex="0"
+											on:keydown={onKeyPressed}
+										>
 											{link.title}
-										</a>
+										</div>
 									{/if}
 								</li>
 							{/each}
@@ -117,12 +122,19 @@
 													{/if}
 												</div>
 											{:else}
-												<a class="cta__link cta--space" href={link.href} id={link.id}>
+												<div
+													class="cta__link cta--space"
+													role="button"
+													id={link.id}
+													on:click={() => document.location=link.href}
+													tabindex="0"
+													on:keydown={onKeyPressed}
+												>
 													{link.title}
 													{#if link.tooltip}
-													- {link.tooltip}
+														- {link.tooltip}
 													{/if}
-												</a>
+												</div>
 											{/if}
 										</li>
 									{/each}
