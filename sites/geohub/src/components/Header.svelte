@@ -6,7 +6,6 @@
 	import UserAccount from './UserAccount.svelte';
 	import { HeaderItems } from '$lib/config/AppConfig';
 
-	export let drawerOpen = true;
 	export let height: number = undefined;
 
 	let isStyleShareVisible = false;
@@ -24,26 +23,7 @@
 	let finalLink: HeaderLink[] = [];
 
 	const initLinks = () => {
-		let links: HeaderLink[] = [
-			{
-				id: 'header-link-sidebar',
-				title: 'Sidebar',
-				tooltip: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
-				href: '#',
-				callback: (id) => {
-					const link = links.find((l) => l.id === id);
-					if (drawerOpen) {
-						drawerOpen = false;
-						link.title = 'Open sidebar';
-					} else {
-						drawerOpen = true;
-						link.title = 'Close sidebar';
-					}
-					initLinks();
-				}
-			},
-			...HeaderItems(['maps', 'data', 'dashboard', 'userguide'])
-		];
+		let links: HeaderLink[] = [...HeaderItems(['maps', 'data', 'dashboard', 'userguide'])];
 
 		if ($page.data.session && $layerList.length > 0) {
 			links = [links[0], shareLink, ...links.slice(1)];
@@ -54,7 +34,6 @@
 		finalLink = [...links];
 	};
 	$: $layerList, initLinks();
-	$: drawerOpen, initLinks();
 </script>
 
 <Header

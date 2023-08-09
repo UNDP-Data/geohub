@@ -121,9 +121,7 @@
 						resolve();
 					});
 
-				setTimeout(() => {
-					tourOptions = TourOptions;
-				}, 300);
+				tourOptions = TourOptions;
 			});
 		});
 	};

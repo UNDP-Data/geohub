@@ -84,12 +84,20 @@ export const TourOptions: TourGuideOptions = {
 			order: 8
 		},
 		{
+			title: 'Show/hide sidebar',
+			content: `
+            You can show or hide sidebar container by toggling this button.
+            `,
+			target: '.maplibregl-ctrl-menu',
+			order: 9
+		},
+		{
 			title: 'Querying the information',
 			content: `
             If this tool is enabled, you can query the information by clicking any position on the map. A popup will be shown for further detailed information.
             `,
 			target: '.maplibregl-ctrl-query',
-			order: 9
+			order: 10
 		},
 		{
 			title: 'Exporting map image',
@@ -97,7 +105,7 @@ export const TourOptions: TourGuideOptions = {
             You can export the current map image with your preferences such as paper size, orientation, file format, etc.
             `,
 			target: '.maplibregl-export-control',
-			order: 10
+			order: 11
 		},
 		{
 			title: 'Disable hillshade layer',
@@ -105,7 +113,15 @@ export const TourOptions: TourGuideOptions = {
             As default, a hillshade layer is shown on the basemap. You can also disable hillshade layer if you want.
             `,
 			target: '.maplibregl-ctrl-hillshade-visibility',
-			order: 11
+			order: 12
+		},
+		{
+			title: 'Positioning your current location',
+			content: `
+            Your current location will be visible on the map if you enable this GNSS control.
+            `,
+			target: '.maplibregl-ctrl-geolocate',
+			order: 13
 		}
 	]
 };

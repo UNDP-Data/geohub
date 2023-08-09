@@ -50,6 +50,7 @@
 	};
 
 	map.on('styledata', function () {
+		if (!(map && map.loaded())) return;
 		const newStyle = map.getStyle().sources['bing'] ? true : false;
 		if (newStyle !== isAerialStyle) {
 			if (!isVisible) {
@@ -85,11 +86,20 @@
 	/*eslint no-undef: "error"*/
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
-	let visibilityControl: VisibilityControl = null;
+	let visibilityControl: VisibilityControl;
 
-	onMount(() => {
+	$: {
+		if (map) {
+			if (visibilityControl && map.hasControl(visibilityControl) === false) {
+				map.addControl(visibilityControl, position);
+			}
+		}
+	}
+
+	onMount(async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		visibilityControl = new VisibilityControl();
-		map.addControl(visibilityControl, position);
 	});
 
 	onDestroy(() => {

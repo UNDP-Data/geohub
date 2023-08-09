@@ -3,11 +3,12 @@
 	import Map from '$components/Map.svelte';
 	import Content from './Content.svelte';
 	import { map as mapStore, layerList } from '$stores';
-	import SplitterControl from '$components/SplitterControl.svelte';
 	import { beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Modal from '$components/controls/Modal.svelte';
 	import { isEqual } from 'lodash-es';
+	import { MenuControl } from '@watergis/svelte-maplibre-menu';
+	import type { SidebarPosition } from '$lib/types';
 
 	let headerHeight: number;
 	let isMenuShown = true;
@@ -16,6 +17,9 @@
 	let dialogOpen = false;
 	let toURL: URL;
 	let isContinueButtonClicked = false;
+
+	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
+	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
 	const openConfirmationModal = () => {
 		dialogOpen = true;
@@ -70,20 +74,28 @@
 		}
 	});
 
-	$: isMobile = innerWidth < 768;
 	$: splitHeight = innerHeight - headerHeight;
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
-<Header bind:drawerOpen={isMenuShown} bind:height={headerHeight} />
-<SplitterControl bind:innerWidth bind:isMobile bind:isMenuShown bind:splitHeight>
+<Header bind:height={headerHeight} />
+
+<MenuControl
+	bind:map={$mapStore}
+	position={'top-right'}
+	bind:isMenuShown
+	bind:sidebarOnLeft
+	isHorizontal={false}
+	bind:height={splitHeight}
+>
 	<div slot="sidebar">
 		<Content bind:splitterHeight={splitHeight} />
 	</div>
-	<div style="height: {splitHeight}px" slot="map">
+	<div slot="map">
 		<Map bind:map={$mapStore} />
 	</div>
-</SplitterControl>
+</MenuControl>
+
 <Modal
 	bind:dialogOpen
 	on:cancel={handleCancel}
