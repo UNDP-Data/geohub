@@ -37,7 +37,7 @@
 		"@storybook/sveltekit": "7.2.2",
 		"@storybook/testing-library": "0.2.0",
 		"@sveltejs/adapter-auto": "^2.1.0",
-		"@sveltejs/package": "^2.1.0",
+		"@sveltejs/package": "^2.2.0",
 		"@testing-library/svelte": "^4.0.3",
 		"@testing-library/user-event": "^14.4.3",
 		"@typescript-eslint/eslint-plugin": "6.3.0",
