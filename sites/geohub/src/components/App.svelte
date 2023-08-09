@@ -14,6 +14,9 @@
 	let isMenuShown = true;
 	let innerWidth: number;
 	let innerHeight: number;
+	let initialSidebarWidth = 360;
+	let minSidebarWidth = `${initialSidebarWidth}px`;
+	let minMapWidth = '50%';
 	let dialogOpen = false;
 	let toURL: URL;
 	let isContinueButtonClicked = false;
@@ -86,6 +89,9 @@
 	bind:isMenuShown
 	bind:sidebarOnLeft
 	isHorizontal={false}
+	bind:initialSidebarWidth
+	bind:minSidebarWidth
+	bind:minMapWidth
 	bind:height={splitHeight}
 >
 	<div slot="sidebar">
