@@ -6,33 +6,33 @@ export const HeaderItems = (linkNames: LineName[]) => {
 	const links: { [key: string]: HeaderLink } = {
 		home: {
 			id: 'header-link-home',
-			title: 'GeoHub home',
-			href: '/',
-			icon: 'fa-solid fa-home pr-1'
+			title: 'Home',
+			tooltip: 'GeoHub home',
+			href: '/'
 		},
 		maps: {
 			id: 'header-link-maps',
-			title: 'Explore shared maps',
-			href: '/maps',
-			icon: 'fa-solid fa-map pr-1'
+			title: 'Maps',
+			tooltip: 'Explore shared maps',
+			href: '/maps'
 		},
 		dashboard: {
 			id: 'header-link-dashboard',
-			title: 'Go to dashboards',
-			href: '/dashboards',
-			icon: 'fa-solid fa-chalkboard-user pr-1'
+			title: 'Dashboards',
+			tooltip: 'Go to dashboards',
+			href: '/dashboards'
 		},
 		userguide: {
 			id: 'header-link-documentation',
 			title: 'User guide',
-			href: 'https://docs.undpgeohub.org',
-			icon: 'fa-regular fa-circle-question pr-1'
+			tooltip: 'Read user guide documentation',
+			href: 'https://docs.undpgeohub.org'
 		},
 		data: {
 			id: 'header-link-data',
-			title: 'Manage my datasets',
-			href: '/data',
-			icon: 'fa-solid fa-server pr-1'
+			title: 'Data',
+			tooltip: 'Manage my datasets',
+			href: '/data'
 		}
 	};
 

@@ -3,6 +3,5 @@ export interface HeaderLink {
 	id: string;
 	title: string;
 	tooltip?: string;
-	icon?: string;
 	callback?: (id: string) => void;
 }

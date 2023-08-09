@@ -12,8 +12,6 @@
 	export let links: HeaderLink[] = [];
 	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
 
-	let innerWidth = 0
-
 	onMount(() => {
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
@@ -29,8 +27,6 @@
 	};
 </script>
 
-<svelte:window bind:innerWidth />
-
 <header
 	class="country-header"
 	style="position: {isPositionFixed ? 'fixed' : 'relative'}!important;"
@@ -42,7 +38,7 @@
 	>
 		<div class="grid-container fluid">
 			<div class="grid-x grid-margin-x align-content-middle">
-				<div class="cell large-9 small-9 align-self-middle top-left">
+				<div class="cell small-8 large-2 shrink align-self-middle top-left">
 					<a href={url} target="_blank" rel="noreferrer" class="logo" tabindex="0">
 						<img src={logoUrl} alt="logoUrl" />
 					</a>
@@ -52,11 +48,12 @@
 					</div>
 				</div>
 				{#if links.length > 0}
+				<div class="cell small-1 large-auto align-content-middle top-center">
 					<nav class="menu">
-						<ul class="grid-x grid-margin-x align-content-middle">
+						<ul class="">
 							{#each links as link}
 								<li
-									class="menu-item has-tooltip-bottom has-tooltip-arrow"
+									class="has-tooltip-bottom has-tooltip-arrow"
 									data-menu-id={link.id}
 									data-tooltip={link.tooltip ?? link.title}
 								>
@@ -68,28 +65,20 @@
 											tabindex="0"
 											on:keydown={onKeyPressed}
 										>
-											{#if link.icon}
-												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
-											{/if}
+											{link.title}
 										</div>
 									{:else}
 										<a href={link.href} tabindex="0">
-											{#if link.icon}
-												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
-											{/if}
+											{link.title}
 										</a>
 									{/if}
 								</li>
 							{/each}
-							{#if innerWidth >= 1440}
-								<li data-menu-id="header-link-custom" class="custom-button-mega menu-item">
-									<slot name="custom-button" />
-								</li>
-							{/if}
 						</ul>
 					</nav>
+				</div>
 				{/if}
-				<div class="cell large-3 small-3 top-right menu-buttons">
+				<div class="cell small-3 large-auto top-right menu-buttons">
 					<button
 						class="menu-hamburger {showMobileMenu ? 'is-active' : ''}"
 						aria-label="menu-icon"
@@ -100,9 +89,7 @@
 						<span class="hamburger-line line-bottom" />
 						Nav toggle
 					</button>
-					{#if innerWidth < 1440}
-						<div class="custom-button"><slot name="custom-button" /></div>
-					{/if}
+					<div class="custom-button"><slot name="custom-button" /></div>
 				</div>
 				{#if links.length > 0}
 					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">
@@ -124,17 +111,17 @@
 													on:keydown={onKeyPressed}
 													id={link.id}
 												>
-													{#if link.icon}
-														<i class={link.icon} style="color:#006eb5" />
-													{/if}
 													{link.title}
+													{#if link.tooltip}
+													- {link.tooltip}
+													{/if}
 												</div>
 											{:else}
 												<a class="cta__link cta--space" href={link.href} id={link.id}>
-													{#if link.icon}
-														<i class={link.icon} style="color:#006eb5" />
-													{/if}
 													{link.title}
+													{#if link.tooltip}
+													- {link.tooltip}
+													{/if}
 												</a>
 											{/if}
 										</li>
@@ -170,21 +157,12 @@
 		align-items: center;
 	}
 
-	.custom-button-mega {
+	.custom-button {
 		display: block;
 		cursor: pointer;
 
 		@media (max-width: 89.9375em) {
-			display: none;
-		}
-	}
-
-	.custom-button {
-		display: none;
-		cursor: pointer;
-
-		@media (max-width: 89.9375em) {
-			display: block;
+			// display: block;
 			margin-left: 0.75rem !important;
 		}
 	}

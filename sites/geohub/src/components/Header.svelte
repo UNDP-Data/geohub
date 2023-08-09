@@ -13,9 +13,9 @@
 
 	const shareLink = {
 		id: 'header-link-styleshare',
-		title: 'Save & share map',
+		title: 'Share',
+		tooltip: 'Save & share map',
 		href: '#',
-		icon: 'fa-solid fa-share pr-1',
 		callback: () => {
 			isStyleShareVisible = true;
 		}
@@ -27,9 +27,9 @@
 		let links: HeaderLink[] = [
 			{
 				id: 'header-link-sidebar',
-				title: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
+				title: 'Sidebar',
+				tooltip: `${drawerOpen ? 'Close' : 'Open'} sidebar`,
 				href: '#',
-				icon: 'fa-solid fa-table-columns pr-1',
 				callback: (id) => {
 					const link = links.find((l) => l.id === id);
 					if (drawerOpen) {
