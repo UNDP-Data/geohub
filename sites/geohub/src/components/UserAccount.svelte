@@ -8,7 +8,7 @@
 	let panelWidth = '350px';
 	let dropdownActive = false;
 	let innerWidth = 0;
-	const responsiveMaxWidth = 1440;
+	const responsiveMaxWidth = 1024;
 	$: isMobile = innerWidth < 768;
 
 	const name = $page.data.session?.user.name;
