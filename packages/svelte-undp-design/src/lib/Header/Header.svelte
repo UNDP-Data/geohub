@@ -59,23 +59,25 @@
 								>
 									{#if link.callback}
 										{@const callback = link.callback}
-										<div
+										<!-- svelte-ignore a11y-missing-attribute -->
+										<a
 											role="button"
 											on:click={() => callback(link.id)}
 											tabindex="0"
 											on:keydown={onKeyPressed}
 										>
-											{link.title}
-										</div>
+										{link.title}
+										</a>
 									{:else}
-										<div
+										<!-- svelte-ignore a11y-missing-attribute -->
+										<a
 											role="button"
 											on:click={() => document.location=link.href}
 											tabindex="0"
 											on:keydown={onKeyPressed}
 										>
-											{link.title}
-										</div>
+										{link.title}
+										</a>
 									{/if}
 								</li>
 							{/each}
@@ -83,7 +85,7 @@
 					</nav>
 				</div>
 				{/if}
-				<div class="cell small-3 large-auto top-right menu-buttons">
+				<div class="cell small-3 large-auto top-right">
 					<button
 						class="menu-hamburger {showMobileMenu ? 'is-active' : ''}"
 						aria-label="menu-icon"
@@ -163,27 +165,15 @@
 	@use '../css/mobile-nav.min.css';
 	@use '../css/cta-link.min.css';
 
-	:global(.menu-buttons) {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-	}
-
 	.custom-button {
 		display: block;
 		cursor: pointer;
+		margin-left: 0.75rem !important;
+	}
 
-		@media (max-width: 89.9375em) {
-			// display: block;
-			margin-left: 0.75rem !important;
+	@media (max-width: 48em) {
+		:global(.country-header .header .site-title span:first-of-type:not(:last-of-type)) {
+			max-width: 140px;
 		}
-	}
-
-	.is-xsmall {
-		height: 0.2rem;
-	}
-
-	:global(.menu-item) {
-		margin: 0.75rem 1.75rem 0.75rem 0 !important;
 	}
 </style>
