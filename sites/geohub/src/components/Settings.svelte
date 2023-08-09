@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { base } from '$app/paths';
-	import { invalidateAll, afterNavigate, goto } from '$app/navigation';
+	import { invalidateAll, afterNavigate } from '$app/navigation';
 	import {
 		DatasetSortingColumns,
 		MapSortingColumns,
@@ -125,9 +125,7 @@
 	};
 
 	const backToPreviousPage = () => {
-		goto(previousPage, {
-			invalidateAll: true
-		});
+		window.location.href = previousPage;
 	};
 </script>
 
