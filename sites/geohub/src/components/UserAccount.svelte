@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
-	import { Button } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { goto } from '$app/navigation';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -9,7 +8,7 @@
 	let panelWidth = '350px';
 	let dropdownActive = false;
 	let innerWidth = 0;
-
+	const responsiveMaxWidth = 1440;
 	$: isMobile = innerWidth < 768;
 
 	const name = $page.data.session?.user.name;
@@ -45,19 +44,59 @@
 					}
 				}}
 			>
-				{#if $page.data.session.user?.image}
-					<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
+				{#if innerWidth >= responsiveMaxWidth}
+					<div class="columns is-vcentered is-mobile">
+						<div class="column pl-5">
+							<div>
+								{#if $page.data.session.user?.image}
+									<span
+										style="background-image: url('{$page.data.session.user.image}')"
+										class="avatar"
+									/>
+								{:else}
+									<span
+										class="initial-avator is-flex is-justify-content-center is-align-items-center"
+										style="background-color: {chroma.random()}"
+									>
+										{#each names as name}
+											<p class="name" style="color: white">
+												{name.slice(0, 1)}
+											</p>
+										{/each}
+									</span>
+								{/if}
+							</div>
+						</div>
+						<div
+							class="user-info column flex is-flex-direction-column is-align-content-flex-start pl-0"
+						>
+							<p class="title is-5 m-0 mb-1">{$page.data.session.user.name}</p>
+							{#if $page.data.session.user['jobTitle']}
+								<p class="subtitle is-7 m-0 mb-1">{$page.data.session.user['jobTitle']}</p>
+							{/if}
+							<p class="subtitle is-7 m-0">{$page.data.session.user.email}</p>
+						</div>
+					</div>
 				{:else}
-					<span
-						class="initial-avator is-flex is-justify-content-center is-align-items-center"
-						style="background-color: {chroma.random()}"
-					>
-						{#each names as name}
-							<p class="name" style="color: white">
-								{name.slice(0, 1)}
-							</p>
-						{/each}
-					</span>
+					<div>
+						{#if $page.data.session.user?.image}
+							<span
+								style="background-image: url('{$page.data.session.user.image}')"
+								class="avatar"
+							/>
+						{:else}
+							<span
+								class="initial-avator is-flex is-justify-content-center is-align-items-center"
+								style="background-color: {chroma.random()}"
+							>
+								{#each names as name}
+									<p class="name" style="color: white">
+										{name.slice(0, 1)}
+									</p>
+								{/each}
+							</span>
+						{/if}
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -75,8 +114,8 @@
 					{#if $page.data.session.user['jobTitle']}
 						<p class="has-text-weight-bold">{$page.data.session.user['jobTitle']}</p>
 					{/if}
-					<hr class="dropdown-divider" />
 					<p>{$page.data.session.user.email}</p>
+					<hr class="dropdown-divider" />
 				</div>
 				<div
 					role="button"
@@ -95,8 +134,16 @@
 					</div>
 				</div>
 				<hr class="dropdown-divider" />
-				<div class="dropdown-item">
-					<Button title="Sign Out" isPrimary={false} on:clicked={() => signOut('azure-ad')} />
+				<div
+					role="button"
+					tabindex="0"
+					on:click={() => signOut('azure-ad')}
+					on:keydown={handleEnterKey}
+					class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
+				>
+					<div class="is-flex-grow-1">
+						<p class="pl-2">Sign out</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -128,6 +175,12 @@
 
 		.name {
 			font-size: large;
+		}
+	}
+
+	.user-info {
+		.subtitle {
+			white-space: nowrap;
 		}
 	}
 
