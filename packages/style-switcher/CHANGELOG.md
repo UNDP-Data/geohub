@@ -1,5 +1,12 @@
 # @undp-data/style-switcher
 
+## 0.1.4
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+- bb478d8b: fix: changed control css name from 'mapboxgl-ctrl' to 'maplibregl-ctrl'
+
 ## 0.1.3
 
 ### Patch Changes

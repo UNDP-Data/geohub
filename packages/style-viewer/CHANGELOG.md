@@ -1,5 +1,13 @@
 # @undp-data/style-viewer
 
+## 0.1.5
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+- Updated dependencies [bf26a456]
+  - @undp-data/current-location@0.1.6
+
 ## 0.1.4
 
 ### Patch Changes

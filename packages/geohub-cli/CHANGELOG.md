@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 2.0.2
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+
 ## 2.0.1
 
 ### Patch Changes
