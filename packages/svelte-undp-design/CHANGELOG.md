@@ -1,5 +1,15 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.6
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+- 507fe3e6: fix: updated UNDP header's CSS and HTML
+- f0c5f16e: fix: Use document.location instead of href property of a tag since there is a problem of page initialisation in sveltekit
+- 491066a2: fix: removed icon from UNDP header.
+- bf26a456: chore: updated npm packages in svelte-undp-design except vitest and sveltejs/package
+
 ## 0.2.5
 
 ### Patch Changes
