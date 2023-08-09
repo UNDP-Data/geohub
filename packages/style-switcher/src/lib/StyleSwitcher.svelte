@@ -28,7 +28,7 @@
 		this.map = map;
 
 		this.controlContainer = document.createElement('div');
-		this.controlContainer.className = 'mapboxgl-ctrl';
+		this.controlContainer.className = 'maplibregl-ctrl';
 		this.controlContainer.appendChild(styleSwitcherDiv);
 		return this.controlContainer;
 	};
