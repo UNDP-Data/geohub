@@ -32,3 +32,5 @@ export * from './isRasterExtension';
 export * from './updateIntervalValues';
 export * from './updateLayerList';
 export * from './loadArgumentsInDynamicLayers';
+export * from './localstorage';
+export * from './isStyleChanged';
