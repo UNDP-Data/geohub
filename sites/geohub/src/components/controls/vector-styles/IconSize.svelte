@@ -10,7 +10,6 @@
 
 	const layerId = layer.id;
 	const propertyName = 'icon-size';
-	console.log($map);
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];

@@ -21,7 +21,7 @@
 	};
 
 	const setColor = () => {
-		rgba = `rgba(${Math.floor(color.r)},${Math.floor(color.g)},${Math.floor(color.b)},${color.a})`;
+		rgba = chroma.rgb(color.r, color.g, color.b).alpha(color.a).css();
 		dispatch('change', {
 			color: rgba
 		});

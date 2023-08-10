@@ -11,6 +11,7 @@
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
 	import Notification from './controls/Notification.svelte';
+	import { storageKeys, toLocalStorage } from '$lib/helper';
 
 	let isReadonly = true;
 	let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style;
@@ -29,6 +30,8 @@
 	let untargetedLayers: Layer[] = [];
 	let exportedStyleJSON: StyleSpecification;
 	let shareLoading = false;
+
+	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 
 	$: if (isModalVisible) {
 		open();
@@ -104,6 +107,7 @@
 			isReadonly = savedStyle.readOnly;
 		});
 		styleId = $page.url.searchParams.get('style');
+		toLocalStorage(mapStyleIdStorageKey, styleId);
 		shareLoading = false;
 	};
 
