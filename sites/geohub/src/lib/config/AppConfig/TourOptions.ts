@@ -2,7 +2,7 @@ import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 
 export const TourOptions: TourGuideOptions = {
 	rememberStep: true,
-	showStepDots: true,
+	showStepDots: false,
 	steps: [
 		{
 			title: 'Welcome to UNDP GeoHub!',
@@ -100,12 +100,20 @@ export const TourOptions: TourGuideOptions = {
 			order: 10
 		},
 		{
+			title: 'Save your work to share with your colleagues',
+			content: `
+            Once you sign in to your account, this button will be enabled. You can save your current work to share it with your colleagues.
+            `,
+			target: '.maplibregl-ctrl-styleshare',
+			order: 11
+		},
+		{
 			title: 'Exporting map image',
 			content: `
             You can export the current map image with your preferences such as paper size, orientation, file format, etc.
             `,
 			target: '.maplibregl-export-control',
-			order: 11
+			order: 12
 		},
 		{
 			title: 'Disable hillshade layer',
@@ -113,7 +121,7 @@ export const TourOptions: TourGuideOptions = {
             As default, a hillshade layer is shown on the basemap. You can also disable hillshade layer if you want.
             `,
 			target: '.maplibregl-ctrl-hillshade-visibility',
-			order: 12
+			order: 13
 		},
 		{
 			title: 'Positioning your current location',
@@ -121,7 +129,7 @@ export const TourOptions: TourGuideOptions = {
             Your current location will be visible on the map if you enable this GNSS control.
             `,
 			target: '.maplibregl-ctrl-geolocate',
-			order: 13
+			order: 14
 		}
 	]
 };

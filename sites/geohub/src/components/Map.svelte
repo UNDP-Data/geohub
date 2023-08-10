@@ -12,6 +12,7 @@
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 
 	import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte';
+	import StyleShareControl from '$components/StyleShareControl.svelte';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import CurrentLocation from '@undp-data/current-location';
 	import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper';
@@ -135,6 +136,7 @@
 {#if map}
 	<CurrentLocation bind:map isHover={false} position="top-left" />
 	<MapQueryInfoControl bind:map />
+	<StyleShareControl bind:map />
 	<StyleSwicher bind:map styles={MapStyles} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map position="bottom-right" />
 
