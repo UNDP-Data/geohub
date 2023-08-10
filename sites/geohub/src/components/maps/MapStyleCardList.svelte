@@ -18,23 +18,6 @@
 
 	let accessLevel: AccessLevel = Number($page.url.searchParams.get('accesslevel')) as AccessLevel;
 
-	let expanded: { [key: string]: boolean } = {};
-	let expandedStyleId: string;
-	$: {
-		let expandedDatasets = Object.keys(expanded).filter(
-			(key) => expanded[key] === true && key !== expandedStyleId
-		);
-		if (expandedDatasets.length > 0) {
-			expandedStyleId = expandedDatasets[0];
-			Object.keys(expanded)
-				.filter((key) => key !== expandedStyleId)
-				.forEach((key) => {
-					expanded[key] = false;
-				});
-			expanded[expandedDatasets[0]] = true;
-		}
-	}
-
 	const normaliseQuery = () => {
 		if (query.length > 0) {
 			return query.trim().replace(/\s/g, ` and `);
@@ -224,11 +207,7 @@
 		{#if styles.styles && styles.styles.length > 0}
 			{#key styles.styles}
 				{#each styles.styles as style}
-					<MapStyleCard
-						{style}
-						bind:isExpanded={expanded[style.id]}
-						on:deleted={handleStyleDeleted}
-					/>
+					<MapStyleCard {style} on:deleted={handleStyleDeleted} />
 				{/each}
 			{/key}
 
