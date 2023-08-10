@@ -114,6 +114,10 @@
 			e.target.click();
 		}
 	};
+
+	const openSavedMapEditor = () => {
+		document.location = style.editor;
+	};
 </script>
 
 <Accordion headerTitle={style.name} bind:headerIcon bind:isExpanded>
@@ -124,7 +128,7 @@
 			role="button"
 			tabindex="0"
 			data-tooltip="Open map"
-			on:click={() => window.open(style.editor, '_blank')}
+			on:click={openSavedMapEditor}
 		>
 			<i class="fa-solid fa-arrow-up-right-from-square fa-xl" />
 		</span>
@@ -137,7 +141,7 @@
 					data-tooltip="Open map"
 					role="button"
 					tabindex="0"
-					on:click={() => window.open(style.editor, '_blank')}
+					on:click={openSavedMapEditor}
 					on:keydown={handleEnterKey}
 					bind:this={mapContainer}
 				>
@@ -171,11 +175,7 @@
 					{/if}
 				</div>
 				<div class="tile is-parent py-4">
-					<CtaLink
-						label="Open map"
-						on:clicked={() => window.open(style.editor, '_blank')}
-						isArrow={false}
-					/>
+					<CtaLink label="Open map" on:clicked={openSavedMapEditor} isArrow={false} />
 				</div>
 				{#if $page.data.session && style.created_user === $page.data.session.user.email}
 					<div class="columns is-12 align-center">
