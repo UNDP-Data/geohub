@@ -129,11 +129,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		};
 
 		const res = await client.query(sql);
-		if (res.rowCount === 0) {
-			return new Response(undefined, {
-				status: 404
-			});
-		}
 
 		const nextUrl = new URL(url.toString());
 		nextUrl.searchParams.set('limit', limit);

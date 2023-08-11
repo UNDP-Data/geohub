@@ -204,11 +204,13 @@
 	</div>
 {:else}
 	{#await promiseStyles then styles}
-		{#if styles.styles && styles.styles.length > 0}
+		{#if styles.styles?.length > 0}
 			{#key styles.styles}
-				{#each styles.styles as style}
-					<MapStyleCard {style} on:deleted={handleStyleDeleted} />
-				{/each}
+				<div class="grid">
+					{#each styles.styles as style}
+						<MapStyleCard {style} on:deleted={handleStyleDeleted} />
+					{/each}
+				</div>
 			{/key}
 
 			<div class="align-center pt-2">
@@ -224,13 +226,27 @@
 			</div>
 		{:else}
 			<div class="p-4">
-				<Notification type="info">No map found</Notification>
+				<Notification type="info" showCloseButton={false}>No map found</Notification>
 			</div>
 		{/if}
 	{/await}
 {/if}
 
 <style lang="scss">
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr); /* デスクトップ：3列 */
+		gap: 20px;
+
+		@media (max-width: 63.9375em) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@media (max-width: 48em) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.align-center {
 		width: max-content;
 		margin: auto;

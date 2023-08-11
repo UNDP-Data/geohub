@@ -119,50 +119,46 @@
 	};
 </script>
 
-<div class="columns">
-	<div class="column is-5">
-		<div
-			class="image pointor has-tooltip-right has-tooltip-arrow mb-4"
-			data-tooltip="Open map"
-			role="button"
-			tabindex="0"
-			on:click={openSavedMapEditor}
-			on:keydown={handleEnterKey}
-			bind:this={mapContainer}
-		>
-			{#if isLoading}
-				<Loader size="medium" />
-			{/if}
-		</div>
+<div class="map-card is-flex is-flex-direction-column">
+	<div
+		class="image pointor has-tooltip-bottom has-tooltip-arrow"
+		data-tooltip="Open map"
+		role="button"
+		tabindex="0"
+		on:click={openSavedMapEditor}
+		on:keydown={handleEnterKey}
+		bind:this={mapContainer}
+	>
+		{#if isLoading}
+			<Loader size="medium" />
+		{/if}
 	</div>
-	<div class="column is-7 is-flex is-flex-direction-column">
-		<p class="title is-4 style-name pb-2">
-			{style.name}
-			<i class={headerIcon} />
-		</p>
-		<div class="justify-bottom">
-			<div class="columns">
-				<div class="column is-flex is-flex-direction-column">
+	<p class="title is-4 style-name py-2">
+		<i class={headerIcon} />
+		{style.name}
+	</p>
+	<div class="justify-bottom">
+		<div class="columns">
+			<div class="column is-flex is-flex-direction-column">
+				<p class="p-0 m-0">
+					<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+				</p>
+				{#if style.created_user}
 					<p class="p-0 m-0">
-						<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+						<b>Created by: </b>{style.created_user}
 					</p>
-					{#if style.created_user}
-						<p class="p-0 m-0">
-							<b>Created by: </b>{style.created_user}
-						</p>
-					{/if}
+				{/if}
+				<p class="p-0 m-0">
+					<b>Updated at: </b><Time timestamp={style.updatedat} format="h:mm A · MMMM D, YYYY" />
+				</p>
+				{#if style.updated_user}
 					<p class="p-0 m-0">
-						<b>Updated at: </b><Time timestamp={style.updatedat} format="h:mm A · MMMM D, YYYY" />
+						<b>Updated by: </b>{style.updated_user}
 					</p>
-					{#if style.updated_user}
-						<p class="p-0 m-0">
-							<b>Updated by: </b>{style.updated_user}
-						</p>
-					{/if}
-				</div>
-				<div class="is-flex is-align-items-end">
+				{/if}
+				<div class="is-flex is-align-items-end mt-4">
 					<div
-						class="has-tooltip-top has-tooltip-arrow operation-button p-0 m-1"
+						class="has-tooltip-top has-tooltip-arrow operation-button p-0 m-0 my-1"
 						data-tooltip="Open map"
 					>
 						<Button
@@ -230,49 +226,52 @@
 {/if}
 
 <style lang="scss">
-	.image {
-		width: 100%;
-		height: 300px;
-		border: 1px solid gray;
+	.map-card {
+		box-sizing: border-box;
 
-		@media (max-width: 48em) {
-			width: 100%;
-			height: 150px;
-		}
-
-		:global(.loader) {
-			position: absolute;
-			top: calc(45%);
-			left: calc(45%);
+		.image {
+			max-width: 100%;
+			height: 300px;
+			border: 1px solid gray;
 
 			@media (max-width: 48em) {
-				top: calc(35%);
-				left: calc(40%);
+				height: 200px;
+			}
+
+			:global(.loader) {
+				position: absolute;
+				top: calc(45%);
+				left: calc(45%);
+
+				@media (max-width: 48em) {
+					top: calc(35%);
+					left: calc(40%);
+				}
 			}
 		}
-	}
 
-	p::first-letter {
-		text-transform: capitalize;
-	}
+		p::first-letter {
+			text-transform: capitalize;
+		}
 
-	.pointor {
-		cursor: pointer;
-	}
+		.pointor {
+			cursor: pointer;
+		}
 
-	.style-name {
-		width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		text-transform: capitalize;
-	}
+		.style-name {
+			width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-transform: capitalize;
+		}
 
-	.justify-bottom {
-		margin-top: auto;
-		margin-bottom: 1rem;
-	}
+		.justify-bottom {
+			margin-top: auto;
+			margin-bottom: 1rem;
+		}
 
-	.operation-button {
-		width: 160px;
+		.operation-button {
+			width: 160px;
+		}
 	}
 </style>
