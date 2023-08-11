@@ -5,7 +5,7 @@
 	import { Map, type StyleSpecification } from 'maplibre-gl';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
-	import { Accordion, Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
+	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { sleep } from '$lib/helper';
@@ -15,7 +15,6 @@
 	const url: URL = $page.url;
 
 	export let style: DashboardMapStyle;
-	export let isExpanded = false;
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let isLoading = false;
@@ -31,7 +30,7 @@
 		await inistialise();
 	});
 
-	$: if (mapContainer && isExpanded) {
+	$: if (mapContainer) {
 		inistialiseMap();
 	}
 
@@ -120,78 +119,57 @@
 	};
 </script>
 
-<Accordion headerTitle={style.name} bind:headerIcon bind:isExpanded>
-	<div slot="button" hidden={isExpanded}>
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<span
-			class="icon open-button has-tooltip-left has-tooltip-arrow"
-			role="button"
-			tabindex="0"
-			data-tooltip="Open map"
-			on:click={openSavedMapEditor}
-		>
-			<i class="fa-solid fa-arrow-up-right-from-square fa-xl" />
-		</span>
-	</div>
-	<div slot="content" class="card-container px-4">
-		<div class="columns">
-			<div class="column is-half">
-				<div
-					class="image pointor has-tooltip-right has-tooltip-arrow mb-4"
-					data-tooltip="Open map"
-					role="button"
-					tabindex="0"
-					on:click={openSavedMapEditor}
-					on:keydown={handleEnterKey}
-					bind:this={mapContainer}
-				>
-					{#if isLoading}
-						<Loader size="medium" />
-					{/if}
-				</div>
-			</div>
+<div class="map-card is-flex is-flex-direction-column">
+	<div
+		class="image pointor has-tooltip-bottom has-tooltip-arrow"
+		data-tooltip="Open map"
+		role="button"
+		tabindex="0"
+		on:click={openSavedMapEditor}
+		on:keydown={handleEnterKey}
+		bind:this={mapContainer}
+	>
+		{#if isLoading}
+			<Loader size="medium" />
+		{/if}
 
-			<div class="column is-half">
-				<div class="tile is-vertical align-center">
-					<p class="title is-4 style-name pb-4">
-						<i class={headerIcon} />
-						{style.name}
-					</p>
+		{#if $page.data.session && style.created_user === $page.data.session.user.email}
+			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
+				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
+					<span class="icon is-small">
+						<i class="fas fa-trash"></i>
+					</span>
+				</button>
+			</div>
+		{/if}
+	</div>
+	<p class="py-2 is-flex">
+		<i class="{headerIcon} p-1 pr-2" />
+		<CtaLink bind:label={style.name} isArrow={true} on:clicked={openSavedMapEditor} />
+	</p>
+	<div class="justify-bottom">
+		<div class="columns">
+			<div class="column is-flex is-flex-direction-column">
+				<p class="p-0 m-0">
+					<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+				</p>
+				{#if style.created_user}
 					<p class="p-0 m-0">
-						<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
+						<b>Created by: </b>{style.created_user}
 					</p>
-					{#if style.created_user}
-						<p class="p-0 m-0">
-							<b>Created by: </b>{style.created_user}
-						</p>
-					{/if}
+				{/if}
+				<p class="p-0 m-0">
+					<b>Updated at: </b><Time timestamp={style.updatedat} format="h:mm A · MMMM D, YYYY" />
+				</p>
+				{#if style.updated_user}
 					<p class="p-0 m-0">
-						<b>Updated at: </b><Time timestamp={style.updatedat} format="h:mm A · MMMM D, YYYY" />
+						<b>Updated by: </b>{style.updated_user}
 					</p>
-					{#if style.updated_user}
-						<p class="p-0 m-0">
-							<b>Updated by: </b>{style.updated_user}
-						</p>
-					{/if}
-				</div>
-				<div class="tile is-parent py-4">
-					<CtaLink label="Open map" on:clicked={openSavedMapEditor} isArrow={false} />
-				</div>
-				{#if $page.data.session && style.created_user === $page.data.session.user.email}
-					<div class="columns is-12 align-center">
-						<div class="column is-12 has-tooltip-top has-tooltip-arrow" data-tooltip="Delete map">
-							<Button
-								title="Delete"
-								isPrimary={false}
-								on:clicked={() => (confirmDeleteDialogVisible = true)}
-							/>
-						</div>
-					</div>
 				{/if}
 			</div>
 		</div>
 	</div>
-</Accordion>
+</div>
 
 {#if confirmDeleteDialogVisible}
 	<div
@@ -232,64 +210,53 @@
 {/if}
 
 <style lang="scss">
-	.image {
-		width: 100%;
-		height: 300px;
-		border: 1px solid gray;
+	.map-card {
+		box-sizing: border-box;
 
-		@media (max-width: 48em) {
-			width: 100%;
-			height: 150px;
-		}
-
-		:global(.loader) {
-			position: absolute;
-			top: calc(45%);
-			left: calc(45%);
+		.image {
+			position: relative;
+			max-width: 100%;
+			height: 300px;
+			border: 1px solid gray;
 
 			@media (max-width: 48em) {
-				top: calc(35%);
-				left: calc(40%);
+				height: 200px;
+			}
+
+			:global(.loader) {
+				position: absolute;
+				top: calc(45%);
+				left: calc(45%);
+
+				@media (max-width: 48em) {
+					top: calc(35%);
+					left: calc(40%);
+				}
+			}
+
+			.delete-button {
+				position: absolute;
+				top: 5px;
+				right: 5px;
 			}
 		}
-	}
 
-	:global(.accordion-header) {
-		padding-left: 0.2rem !important;
-	}
+		p::first-letter {
+			text-transform: capitalize;
+		}
 
-	p {
-		text-transform: lowercase;
-	}
+		.pointor {
+			cursor: pointer;
+		}
 
-	p::first-letter {
-		text-transform: capitalize;
-	}
+		:global(.cta__link) {
+			text-overflow: ellipsis;
+			text-transform: capitalize;
+		}
 
-	.pointor {
-		cursor: pointer;
-	}
-
-	.align-center {
-		width: max-content;
-		margin: auto;
-	}
-
-	:global(.cta__link) {
-		width: max-content;
-		margin: auto;
-	}
-
-	.open-button {
-		width: 30px;
-		height: 30px;
-		color: #d12800;
-	}
-
-	.style-name {
-		// white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		text-transform: capitalize;
+		.justify-bottom {
+			margin-top: auto;
+			margin-bottom: 1rem;
+		}
 	}
 </style>
