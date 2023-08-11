@@ -5,7 +5,7 @@
 	import { Map, type StyleSpecification } from 'maplibre-gl';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
-	import { Button, Loader } from '@undp-data/svelte-undp-design';
+	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { sleep } from '$lib/helper';
@@ -132,10 +132,20 @@
 		{#if isLoading}
 			<Loader size="medium" />
 		{/if}
+
+		{#if $page.data.session && style.created_user === $page.data.session.user.email}
+			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
+				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
+					<span class="icon is-small">
+						<i class="fas fa-trash"></i>
+					</span>
+				</button>
+			</div>
+		{/if}
 	</div>
-	<p class="title is-4 style-name py-2">
-		<i class={headerIcon} />
-		{style.name}
+	<p class="py-2 is-flex">
+		<i class="{headerIcon} p-1 pr-2" />
+		<CtaLink bind:label={style.name} isArrow={true} on:clicked={openSavedMapEditor} />
 	</p>
 	<div class="justify-bottom">
 		<div class="columns">
@@ -156,32 +166,6 @@
 						<b>Updated by: </b>{style.updated_user}
 					</p>
 				{/if}
-				<div class="is-flex is-align-items-end mt-4">
-					<div
-						class="has-tooltip-top has-tooltip-arrow operation-button p-0 m-0 my-1"
-						data-tooltip="Open map"
-					>
-						<Button
-							title="Open map"
-							isPrimary={true}
-							isArrow={true}
-							on:clicked={openSavedMapEditor}
-						/>
-					</div>
-
-					{#if $page.data.session && style.created_user === $page.data.session.user.email}
-						<div
-							class="has-tooltip-top has-tooltip-arrow operation-button p-0 m-1"
-							data-tooltip="Delete map"
-						>
-							<Button
-								title="Delete map"
-								isPrimary={false}
-								on:clicked={() => (confirmDeleteDialogVisible = true)}
-							/>
-						</div>
-					{/if}
-				</div>
 			</div>
 		</div>
 	</div>
@@ -230,6 +214,7 @@
 		box-sizing: border-box;
 
 		.image {
+			position: relative;
 			max-width: 100%;
 			height: 300px;
 			border: 1px solid gray;
@@ -248,6 +233,12 @@
 					left: calc(40%);
 				}
 			}
+
+			.delete-button {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+			}
 		}
 
 		p::first-letter {
@@ -258,9 +249,7 @@
 			cursor: pointer;
 		}
 
-		.style-name {
-			width: 100%;
-			overflow: hidden;
+		:global(.cta__link) {
 			text-overflow: ellipsis;
 			text-transform: capitalize;
 		}
@@ -268,10 +257,6 @@
 		.justify-bottom {
 			margin-top: auto;
 			margin-bottom: 1rem;
-		}
-
-		.operation-button {
-			width: 160px;
 		}
 	}
 </style>
