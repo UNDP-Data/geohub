@@ -1,4 +1,4 @@
-import type { PageLoad } from './$types';
+import type { PageLoad } from '../../api/$types';
 
 export const load: PageLoad = async () => {
 	const title = 'API Docs | GeoHub';
