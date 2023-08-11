@@ -8,6 +8,8 @@
 		type CarouselContent
 	} from '@undp-data/svelte-undp-design';
 	import { browser } from '$app/environment';
+	import MapHero from './MapHero.svelte';
+	import { HeaderItems } from '$lib/config/AppConfig';
 
 	export let data: PageData;
 
@@ -29,6 +31,19 @@
 	];
 
 	let title = 'GeoHub';
+
+	const scrollTo = (hash: string) => {
+		const anchor = document.getElementById(hash);
+		window.scrollTo({
+			top: anchor.offsetTop - 120,
+			behavior: 'smooth'
+		});
+	};
+
+	const openSupportPage = () => {
+		const url = HeaderItems(['support'])[0].href;
+		document.location = url;
+	};
 </script>
 
 <svelte:window bind:innerWidth />
@@ -39,7 +54,33 @@
 	<meta property="og:title" content={title} />
 </svelte:head>
 
-<p class="title is-2 mb-4 align-center wordwrap">Explore dashboards</p>
+<div class="map-hero">
+	<MapHero />
+
+	<div class="map-title p-2">
+		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" class="logo" />
+		<div class="is-flex is-flex-direction-column">
+			<p class="title is-1">GeoHub</p>
+			<p class="subtitle is-4">UNDP's one stop shop for spatial data and analytics</p>
+		</div>
+		<div class="mt-4 is-flex is-flex-direction-row is-justify-content-space-evenly">
+			<button
+				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				on:click={() => scrollTo('dashboards')}>Explore maps</button
+			>
+			<button
+				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				on:click={() => scrollTo('map')}>Launch map</button
+			>
+			<button
+				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				on:click={openSupportPage}>Userguide</button
+			>
+		</div>
+	</div>
+</div>
+
+<p id="dashboards" class="title is-2 mt-6 mb-4 align-center wordwrap">Explore dashboards</p>
 {#if browser}
 	<div class="mx-6">
 		<FluidCarousel bind:contents />
@@ -64,7 +105,7 @@
 	</div>
 </div>
 
-<section class="hero is-medium is-link my-4">
+<section id="map" class="hero is-medium is-link my-4">
 	<div class="hero-body">
 		<p class="title is-2 align-center text-align-center">Explore GeoHub datasets</p>
 		<p class="subtitle is-4 align-center text-align-center wordwrap">
@@ -76,13 +117,44 @@
 				class="button is-large is-primary"
 				on:click={() => {
 					document.location = '/map';
-				}}>Explore data</button
+				}}>Launch map</button
 			>
 		</div>
 	</div>
 </section>
 
 <style lang="scss">
+	.map-hero {
+		position: relative;
+
+		.map-title {
+			position: absolute;
+			background-color: rgba(255, 255, 255, 0.5);
+			width: 400px;
+			height: fit-content;
+			right: 10%;
+			bottom: 150px;
+
+			@media (max-width: 48em) {
+				width: 80%;
+			}
+
+			.logo {
+				position: absolute;
+				height: 55px;
+			}
+
+			.title {
+				text-align: right;
+			}
+
+			.subtitle {
+				text-align: right;
+				border-top: 1px solid gray;
+			}
+		}
+	}
+
 	.align-center {
 		width: max-content;
 		margin-left: auto;
