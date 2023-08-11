@@ -36,7 +36,7 @@
 
 	const inistialise = async () => {
 		style.style = `${url.origin}/api/style/${style.id}.json`;
-		style.editor = `${url.origin}?style=${style.id}`;
+		style.editor = `${url.origin}/map?style=${style.id}`;
 	};
 
 	const inistialiseMap = async () => {
@@ -120,19 +120,20 @@
 </script>
 
 <div class="map-card is-flex is-flex-direction-column">
-	<div
-		class="image pointor has-tooltip-bottom has-tooltip-arrow"
-		data-tooltip="Open map"
-		role="button"
-		tabindex="0"
-		on:click={openSavedMapEditor}
-		on:keydown={handleEnterKey}
-		bind:this={mapContainer}
-	>
-		{#if isLoading}
-			<Loader size="medium" />
-		{/if}
-
+	<div class="map-container">
+		<div
+			class="image pointor has-tooltip-bottom has-tooltip-arrow"
+			data-tooltip="Open map"
+			role="button"
+			tabindex="0"
+			on:click={openSavedMapEditor}
+			on:keydown={handleEnterKey}
+			bind:this={mapContainer}
+		>
+			{#if isLoading}
+				<Loader size="medium" />
+			{/if}
+		</div>
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
@@ -213,24 +214,27 @@
 	.map-card {
 		box-sizing: border-box;
 
-		.image {
+		.map-container {
 			position: relative;
-			max-width: 100%;
-			height: 300px;
-			border: 1px solid gray;
 
-			@media (max-width: 48em) {
-				height: 200px;
-			}
-
-			:global(.loader) {
-				position: absolute;
-				top: calc(45%);
-				left: calc(45%);
+			.image {
+				max-width: 100%;
+				height: 300px;
+				border: 1px solid gray;
 
 				@media (max-width: 48em) {
-					top: calc(35%);
-					left: calc(40%);
+					height: 200px;
+				}
+
+				:global(.loader) {
+					position: absolute;
+					top: calc(45%);
+					left: calc(45%);
+
+					@media (max-width: 48em) {
+						top: calc(35%);
+						left: calc(40%);
+					}
 				}
 			}
 

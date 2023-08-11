@@ -5,23 +5,19 @@ export const FooterItems: { [key: string]: { title: string; url: string }[] } = 
 			url: '/'
 		},
 		{
-			title: 'Shared Maps',
-			url: '/maps'
-		},
-		{
-			title: 'My datasets',
+			title: 'Data',
 			url: '/data'
 		},
 		{
-			title: 'User Guide',
+			title: 'Map',
+			url: '/map'
+		},
+		{
+			title: 'Support',
 			url: 'https://docs.undpgeohub.org'
 		}
 	],
 	Dashboard: [
-		{
-			title: 'Dashboards',
-			url: '/dashboards'
-		},
 		{
 			title: 'Electricity Dashboard',
 			url: '/dashboards/electricity'

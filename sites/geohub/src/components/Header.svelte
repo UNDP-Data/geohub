@@ -10,7 +10,7 @@
 	let finalLink: HeaderLink[] = [];
 
 	const initLinks = () => {
-		let links: HeaderLink[] = [...HeaderItems(['maps', 'data', 'dashboard', 'userguide'])];
+		let links: HeaderLink[] = [...HeaderItems(['home', 'data', 'map', 'support'])];
 		if (!$page.data.session) {
 			links = links.filter((l) => l.href !== '/data');
 		}
@@ -23,8 +23,8 @@
 	bind:height
 	region="UNDP's one stop shop for spatial data and analytics"
 	siteTitle="GeoHub"
-	url="https://geohub.data.undp.org"
-	logoUrl="assets/undp-images/undp-logo-blue.svg"
+	url="/"
+	logoUrl="/assets/undp-images/undp-logo-blue.svg"
 	isPositionFixed={false}
 	bind:links={finalLink}
 >

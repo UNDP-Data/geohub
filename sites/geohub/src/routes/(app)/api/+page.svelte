@@ -23,7 +23,7 @@
 	<meta property="og:title" content={title} />
 </svelte:head>
 
-<div bind:this={swaggerDiv} />
+<div class="p-4" bind:this={swaggerDiv} />
 
 <style global lang="scss">
 	:global(.version) {

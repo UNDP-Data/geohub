@@ -128,9 +128,6 @@
 	};
 </script>
 
-<div class="align-center">
-	<p class="title is-3">Shared maps</p>
-</div>
 <div class="styles-header tile is-ancestor">
 	<div class="tile is-parent">
 		<div class="control has-icons-left filter-text-box">

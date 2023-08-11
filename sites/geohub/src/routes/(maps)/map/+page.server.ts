@@ -69,7 +69,7 @@ export const load: PageServerLoad = async (event) => {
 		Object.keys(params).forEach((k) => {
 			apiUrl.searchParams.set(k, params[k]);
 		});
-		throw redirect(300, `${apiUrl.origin}${apiUrl.search}`);
+		throw redirect(300, `${apiUrl.origin}${apiUrl.pathname}${apiUrl.search}`);
 	}
 
 	const selectedMenus = breadcrumbs.split(',');
