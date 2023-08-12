@@ -71,7 +71,7 @@
 		"colormap": "^2.3.2",
 		"d3-format": "^3.1.0",
 		"eslint": "^8.46.0",
-		"eslint-config-prettier": "^8.10.0",
+		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-svelte": "^2.32.4",
 		"filesize": "^10.0.9",
 		"flag-icons": "^6.9.3",
