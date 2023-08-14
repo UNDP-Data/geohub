@@ -7,18 +7,27 @@
 	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
 	import UserAccount from '$components/UserAccount.svelte';
 	import BackToTop from '$components/BackToTop.svelte';
+	import { afterNavigate } from '$app/navigation';
 
 	export let data: PageData;
 
 	export let headerHeight: number;
 
-	let links: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'support']);
-	if (!data.session) {
-		links = [...links.filter((l) => l.href !== '/data')];
-	}
+	let links: HeaderLink[];
+	const updateLinks = () => {
+		links = HeaderItems(['home', 'data', 'map', 'support']);
+		if (!data.session) {
+			links = [...links.filter((l) => l.href !== '/data')];
+		}
+	};
+	updateLinks();
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
+
+	afterNavigate(() => {
+		updateLinks();
+	});
 </script>
 
 <div class="header">
