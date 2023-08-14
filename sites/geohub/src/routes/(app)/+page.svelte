@@ -47,6 +47,12 @@
 	<title>{title}</title>
 	<meta property="og:site_name" content={title} />
 	<meta property="og:title" content={title} />
+	<meta property="og:image" content="/assets/GeoHub.png" />
+	<meta property="og:image:width" content="1288" />
+	<meta property="og:image:height" content="800" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:image" content="/assets/GeoHub.png" />
 </svelte:head>
 
 <div class="map-hero">
