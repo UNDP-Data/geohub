@@ -6,6 +6,7 @@
 	import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design';
 	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
 	import UserAccount from '$components/UserAccount.svelte';
+	import BackToTop from '$components/BackToTop.svelte';
 
 	export let data: PageData;
 
@@ -41,6 +42,8 @@
 </div>
 
 <Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={FooterItems} />
+
+<BackToTop />
 
 <SvelteToast />
 

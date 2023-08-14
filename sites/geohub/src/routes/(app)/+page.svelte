@@ -204,7 +204,7 @@
 	<p class="title is-2 mt-6 mb-4 align-center wordwrap">Fully open source</p>
 	<div class="align-center text-align-center wordwrap py-4">
 		<p class="subtitle is-4">
-			GeoHub is being developed under an open source software license, and the datasets are
+			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data.
 			<br />
 			The source code is available from the below button. Feel free to create an issue or ask questions
