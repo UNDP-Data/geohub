@@ -8,7 +8,7 @@
 		type CarouselContent
 	} from '@undp-data/svelte-undp-design';
 	import { browser } from '$app/environment';
-	import MapHero from './MapHero.svelte';
+	import MapHero from '$components/MapHero.svelte';
 	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
 
 	export let data: PageData;

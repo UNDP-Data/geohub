@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import { MapAnimation } from '$lib/config/AppConfig';
 
 	let container: HTMLDivElement;
 	let innerHeight: number;
@@ -31,47 +32,9 @@
 		map?.resize();
 	};
 
-	const mapAnimation = [
-		{
-			lng: 7.77,
-			lat: 11.86,
-			Zoom: 2.42,
-			Duration: 5000,
-			Pause: 0,
-			Rotation: 0,
-			Pitch: 0
-		},
-		{
-			lng: 29.63,
-			lat: 2.05,
-			Zoom: 4.42,
-			Duration: 5000,
-			Pause: 3000,
-			Rotation: 0,
-			Pitch: 0
-		},
-		{
-			lng: 36.298,
-			lat: -0.97,
-			Zoom: 7.28,
-			Duration: 10000,
-			Pause: 8000,
-			Rotation: 0,
-			Pitch: 0
-		},
-		{
-			lng: 7.77,
-			lat: 11.86,
-			Zoom: 2.42,
-			Duration: 20000,
-			Pause: 18000,
-			Rotation: 0,
-			Pitch: 0
-		}
-	];
-	const lastPoint = mapAnimation[mapAnimation.length - 1];
+	const lastPoint = MapAnimation[MapAnimation.length - 1];
 	const playAnimation = () => {
-		mapAnimation.forEach(function (item) {
+		MapAnimation.forEach(function (item) {
 			setTimeout(function () {
 				map.flyTo({
 					duration: item.Duration,
