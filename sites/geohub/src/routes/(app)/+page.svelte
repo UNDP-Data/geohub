@@ -9,7 +9,7 @@
 	} from '@undp-data/svelte-undp-design';
 	import { browser } from '$app/environment';
 	import MapHero from './MapHero.svelte';
-	import { HeaderItems } from '$lib/config/AppConfig';
+	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
 
 	export let data: PageData;
 
@@ -74,24 +74,80 @@
 			>
 			<button
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={openSupportPage}>Userguide</button
+				on:click={openSupportPage}>User Guide</button
 			>
 		</div>
 	</div>
 </div>
 
-<p id="dashboards" class="title is-2 mt-6 mb-4 align-center wordwrap">Explore dashboards</p>
+<section class="hero is-medium is-link">
+	<div class="hero-body">
+		<p class="title is-3 align-center text-align-center wordwrap">
+			UNDP GeoHub is a centralised ecosystem of geospatial services to support staff and development
+			policy makers in the context of SDGs.
+		</p>
+	</div>
+</section>
+
+<p class="title is-2 mt-6 mb-4 align-center wordwrap">Why GeoHub?</p>
+<div class="align-center text-align-center wordwrap py-4">
+	<p class="subtitle is-3">The reasons and challenges why we developed GeoHub:</p>
+	<div class="is-flex is-flex-direction-column">
+		<div class="is-justify-content-center pb-5">
+			<span class="icon">
+				<i class="fas fa-database fa-2x"></i>
+			</span>
+			<p class="subtitle is-4">No centralised geospatial repository</p>
+		</div>
+		<div class="is-justify-content-center pb-5">
+			<span class="icon">
+				<i class="fas fa-chart-simple fa-2x"></i>
+			</span>
+			<p class="subtitle is-4">Spatialised staff and skills required to work with geospatial</p>
+		</div>
+		<div class="is-justify-content-center pb-5">
+			<span class="icon">
+				<i class="fas fa-dollar-sign fa-2x"></i>
+			</span>
+			<p class="subtitle is-4">Geospatial analytics and work was carried out by consultants</p>
+		</div>
+		<div class="is-justify-content-center pb-5">
+			<span class="icon">
+				<i class="fas fa-server fa-2x"></i>
+			</span>
+			<p class="subtitle is-4">Limited hardware/software capabilities, mainly commercial</p>
+		</div>
+	</div>
+</div>
+
+<section id="dashboards" class="hero is-medium is-link mb-6">
+	<div class="hero-body">
+		<p class="title is-2 align-center text-align-center">Explore dashboards</p>
+		<p class="subtitle is-4 align-center text-align-center wordwrap">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
+			explore our dashboards.
+		</p>
+	</div>
+</section>
+
 {#if browser}
 	<div class="mx-6">
 		<FluidCarousel bind:contents />
 	</div>
 {/if}
 
-<div class="is-divider" />
+<section class="hero is-medium is-link my-6">
+	<div class="hero-body">
+		<p class="title is-2 align-center text-align-center">Community Maps</p>
+		<p class="subtitle is-4 align-center text-align-center wordwrap">
+			Community maps are created and shared by users to visualise GeoHub datasets for their
+			purposes. You can also start creating your own maps by customising a community maps other than
+			making from scratch.
+		</p>
+	</div>
+</section>
 
 <div class="main-section m-6">
-	<p class="title is-2 my-4 align-center wordwrap">Community Maps</p>
-
 	{#if stats}
 		<div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
 			{#each stats as card}
@@ -109,7 +165,8 @@
 	<div class="hero-body">
 		<p class="title is-2 align-center text-align-center">Explore GeoHub datasets</p>
 		<p class="subtitle is-4 align-center text-align-center wordwrap">
-			You can start exploring datasets in GeoHub, then create your own map to share with community.
+			You can start exploring and analysing datasets in GeoHub, then create your own map to share
+			with community.
 		</p>
 
 		<div class="align-center">
@@ -123,17 +180,37 @@
 	</div>
 </section>
 
+<section class="my-4">
+	<p class="title is-2 mt-6 mb-4 align-center wordwrap">Fully open source</p>
+	<div class="align-center text-align-center wordwrap py-4">
+		<p class="subtitle is-4">
+			GeoHub is being developed under an open source software license, and the datasets are
+			published as open data.
+			<br />
+			The source code is available from the below button. Feel free to create an issue or ask questions
+			in the GitHub!
+		</p>
+		<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
+			<span class="icon">
+				<i class="fab fa-github"></i>
+			</span>
+			<span>GitHub</span>
+		</a>
+	</div>
+</section>
+
 <style lang="scss">
 	.map-hero {
 		position: relative;
 
 		.map-title {
 			position: absolute;
-			background-color: rgba(255, 255, 255, 0.5);
+			background-color: rgba(255, 255, 255, 0.7);
 			width: 400px;
 			height: fit-content;
-			right: 10%;
-			bottom: 150px;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 
 			@media (max-width: 48em) {
 				width: 80%;
@@ -145,11 +222,11 @@
 			}
 
 			.title {
-				text-align: right;
+				text-align: center;
 			}
 
 			.subtitle {
-				text-align: right;
+				text-align: center;
 				border-top: 1px solid gray;
 			}
 		}
