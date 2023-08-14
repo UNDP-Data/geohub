@@ -91,7 +91,7 @@
 				}
 
 				const apiUrl = $page.url;
-				const categoryUrl = new URL(`${$page.url.origin}${category.url}`);
+				const categoryUrl = new URL(`${$page.url.origin}${$page.url.pathname}${category.url}`);
 				for (const key of categoryUrl.searchParams.keys()) {
 					const value = categoryUrl.searchParams.get(key);
 					if (apiUrl.searchParams.get(key) !== value) {
@@ -121,7 +121,7 @@
 
 	const reload = async (url: string, invalidate = true) => {
 		const datasetUrl = new URL(url);
-		const apiUrl = `${$page.url.origin}${datasetUrl.search}`;
+		const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
 
 		if (invalidate) {
 			await goto(apiUrl, {

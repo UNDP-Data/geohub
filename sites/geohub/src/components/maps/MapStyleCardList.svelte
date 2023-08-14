@@ -76,9 +76,17 @@
 
 	const reload = async (url: URL) => {
 		promiseStyles = undefined;
+		const anchor = document.getElementById('style-list-top');
+		window.scrollTo({
+			top: anchor.offsetTop - 120,
+			behavior: 'instant'
+		});
+
 		await goto(`?${url.searchParams.toString()}`, {
 			invalidateAll: true,
-			noScroll: true
+			noScroll: true,
+			replaceState: true,
+			keepFocus: true
 		});
 		promiseStyles = $page.data.promises.styles;
 	};
@@ -128,10 +136,7 @@
 	};
 </script>
 
-<div class="align-center">
-	<p class="title is-3">Shared maps</p>
-</div>
-<div class="styles-header tile is-ancestor">
+<div id="style-list-top" class="styles-header tile is-ancestor">
 	<div class="tile is-parent">
 		<div class="control has-icons-left filter-text-box">
 			<input

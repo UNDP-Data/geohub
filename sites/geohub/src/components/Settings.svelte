@@ -70,11 +70,21 @@
 
 	let settingTabs = [
 		{
-			title: 'GeoHub Home',
-			hash: 'Home',
-			icon: 'fa-solid fa-home',
+			title: 'Home',
+			hash: 'home',
+			icon: 'fa-solid fa-home'
+		},
+		{
+			title: 'Data',
+			hash: 'data',
+			icon: 'fa-solid fa-server'
+		},
+		{
+			title: 'Map',
+			hash: 'map',
+			icon: 'fa-solid fa-map',
 			subSettings: [
-				{ title: 'Main', hash: 'main' },
+				{ title: 'Map', hash: 'main' },
 				{ title: 'Legend', hash: 'legend' },
 				{ title: 'Line', hash: 'line' },
 				{ title: 'Point', hash: 'point' },
@@ -82,16 +92,6 @@
 				{ title: 'Raster', hash: 'raster' },
 				{ title: 'Label', hash: 'label' }
 			]
-		},
-		{
-			title: 'My data',
-			hash: 'data',
-			icon: 'fa-solid fa-server'
-		},
-		{
-			title: 'Maps',
-			hash: 'maps',
-			icon: 'fa-solid fa-map'
 		}
 	];
 	const hash = $page.url.hash;
@@ -211,7 +211,7 @@
 				</button>
 			{/if}
 
-			<section class="content {activeSettingTab !== 'Main' ? 'is-hidden' : ''}">
+			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Layout Settings</p>
 				<FieldControl title="Sidebar Position">
 					<div slot="help">Select sidebar position of main GeoHub page.</div>
@@ -701,7 +701,7 @@
 					</div>
 				</FieldControl>
 			</section>
-			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
+			<section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Search Settings</p>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>

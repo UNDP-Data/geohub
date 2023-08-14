@@ -39,7 +39,7 @@
 		<div class="grid-container fluid">
 			<div class="grid-x grid-margin-x align-content-middle">
 				<div class="cell small-8 large-2 shrink align-self-middle top-left">
-					<a href={url} target="_blank" rel="noreferrer" class="logo" tabindex="0">
+					<a href={url} rel="noreferrer" class="logo" tabindex="0">
 						<img src={logoUrl} alt="logoUrl" />
 					</a>
 					<div class="site-title">
@@ -52,34 +52,36 @@
 					<nav class="menu">
 						<ul class="">
 							{#each links as link}
-								<li
-									class="has-tooltip-bottom has-tooltip-arrow"
-									data-menu-id={link.id}
-									data-tooltip={link.tooltip ?? link.title}
-								>
-									{#if link.callback}
-										{@const callback = link.callback}
-										<!-- svelte-ignore a11y-missing-attribute -->
-										<a
-											role="button"
-											on:click={() => callback(link.id)}
-											tabindex="0"
-											on:keydown={onKeyPressed}
-										>
-										{link.title}
-										</a>
-									{:else}
-										<!-- svelte-ignore a11y-missing-attribute -->
-										<a
-											role="button"
-											on:click={() => document.location=link.href}
-											tabindex="0"
-											on:keydown={onKeyPressed}
-										>
-										{link.title}
-										</a>
-									{/if}
-								</li>
+								{#if window.location.pathname !== link.href}
+									<li
+										class="has-tooltip-bottom has-tooltip-arrow"
+										data-menu-id={link.id}
+										data-tooltip={link.tooltip ?? link.title}
+									>
+										{#if link.callback}
+											{@const callback = link.callback}
+											<!-- svelte-ignore a11y-missing-attribute -->
+											<a
+												role="button"
+												on:click={() => callback(link.id)}
+												tabindex="0"
+												on:keydown={onKeyPressed}
+											>
+											{link.title}
+											</a>
+										{:else}
+											<!-- svelte-ignore a11y-missing-attribute -->
+											<a
+												role="button"
+												on:click={() => document.location=link.href}
+												tabindex="0"
+												on:keydown={onKeyPressed}
+											>
+											{link.title}
+											</a>
+										{/if}
+									</li>
+								{/if}
 							{/each}
 						</ul>
 					</nav>
@@ -104,41 +106,43 @@
 							<div class="cell mobile-links">
 								<ul>
 									{#each links as link}
-										<li>
-											{#if link.callback}
-												{@const callback = link.callback}
-												<div
-													role="button"
-													tabindex="0"
-													class="cta__link cta--space"
-													on:click={() => {
-														showMobileMenu = false;
-														callback(link.id);
-													}}
-													on:keydown={onKeyPressed}
-													id={link.id}
-												>
-													{link.title}
-													{#if link.tooltip}
-													- {link.tooltip}
-													{/if}
-												</div>
-											{:else}
-												<div
-													class="cta__link cta--space"
-													role="button"
-													id={link.id}
-													on:click={() => document.location=link.href}
-													tabindex="0"
-													on:keydown={onKeyPressed}
-												>
-													{link.title}
-													{#if link.tooltip}
+										{#if window.location.pathname !== link.href}
+											<li>
+												{#if link.callback}
+													{@const callback = link.callback}
+													<div
+														role="button"
+														tabindex="0"
+														class="cta__link cta--space"
+														on:click={() => {
+															showMobileMenu = false;
+															callback(link.id);
+														}}
+														on:keydown={onKeyPressed}
+														id={link.id}
+													>
+														{link.title}
+														{#if link.tooltip}
 														- {link.tooltip}
-													{/if}
-												</div>
-											{/if}
-										</li>
+														{/if}
+													</div>
+												{:else}
+													<div
+														class="cta__link cta--space"
+														role="button"
+														id={link.id}
+														on:click={() => document.location=link.href}
+														tabindex="0"
+														on:keydown={onKeyPressed}
+													>
+														{link.title}
+														{#if link.tooltip}
+															- {link.tooltip}
+														{/if}
+													</div>
+												{/if}
+											</li>
+										{/if}
 									{/each}
 								</ul>
 							</div>

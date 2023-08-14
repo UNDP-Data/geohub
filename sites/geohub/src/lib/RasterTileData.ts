@@ -162,7 +162,7 @@ export class RasterTileData {
 			},
 			paint: {
 				'raster-resampling': 'nearest',
-				'raster-opacity': this.layerOpacity
+				'raster-opacity': this.layerOpacity ?? 1
 			}
 		};
 
