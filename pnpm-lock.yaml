@@ -577,8 +577,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2
       marked:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^7.0.0
+        version: 7.0.0
       millify:
         specifier: ^6.1.0
         version: 6.1.0
@@ -9270,8 +9270,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /marked@6.0.0:
-    resolution: {integrity: sha512-7E3m/xIlymrFL5gWswIT4CheIE3fDeh51NV09M4x8iOc7NDYlyERcQMLAIHcSlrvwliwbPQ4OGD+MpPSYiQcqw==}
+  /marked@7.0.0:
+    resolution: {integrity: sha512-7Gv1Ry8tqR352ElQOQfxdGpIh8kNZh/yYjNCxAQCN1DDbY4bCTG3qDCSkZWlRElSseeEILDxkY/G9w7cgziBNw==}
     engines: {node: '>= 16'}
     hasBin: true
     dev: true
