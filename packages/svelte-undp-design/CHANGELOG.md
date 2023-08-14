@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.7
+
+### Patch Changes
+
+- 5328020d: fix: make menu hidden if current URL path name is the same.
+
 ## 0.2.6
 
 ### Patch Changes
