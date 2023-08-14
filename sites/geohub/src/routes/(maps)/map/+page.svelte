@@ -11,7 +11,6 @@
 
 <svelte:head>
 	<title>{title}</title>
-	<meta property="og:site_name" content={title} />
 	<meta property="og:title" content={title} />
 	<meta property="og:image" content="/api/og?content={content}" />
 	<meta property="og:image:width" content="1200" />

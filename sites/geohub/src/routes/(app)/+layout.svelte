@@ -30,6 +30,25 @@
 	});
 </script>
 
+<svelte:head>
+	<style type="text/css">
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			min-height: 100vh;
+			/* mobile viewport bug fix */
+			min-height: -webkit-fill-available;
+			font-family: ProximaNova, sans-serif;
+			font-size: 13px;
+		}
+
+		html {
+			height: -webkit-fill-available;
+		}
+	</style>
+</svelte:head>
+
 <div class="header">
 	<Header
 		region="UNDP's one stop shop for spatial data and analytics"
