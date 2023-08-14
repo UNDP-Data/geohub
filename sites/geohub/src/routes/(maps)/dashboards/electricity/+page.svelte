@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { MapStyles } from '$lib/config/AppConfig';
-	import ElectricityDashboard from './ElectricityDashboard.svelte';
+	import Content from './components/Content.svelte';
+	import Map from './components/Map.svelte';
+
+	let loadLayers = () => {
+		return;
+	};
+
+	let styles = MapStyles;
 
 	let title = 'GeoHub | Electricity Dashboard';
 </script>
@@ -11,4 +18,6 @@
 	<meta property="og:title" content={title} />
 </svelte:head>
 
-<ElectricityDashboard styles={MapStyles} />
+<Content bind:loadLayers>
+	<Map on:styleChanged={loadLayers} bind:styles />
+</Content>
