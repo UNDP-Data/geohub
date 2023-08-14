@@ -1499,64 +1499,16 @@ paths:
         - Azure AD authentication: []
       tags:
         - GeoHub User Settings
-
     post:
       summary: Update GeoHub User Settings
       responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                      classification_method:
-                        $ref: '#/components/schemas/ClassificationMethodTypes'
-                      raster_resampling_method:
-                        $ref: '#/components/schemas/ResamplingMethodTypes'
-                      layer_opacity:
-                        type: number
-                      overlap_priority:
-                        $ref: '#/components/schemas/OverlapPriority'
-                      icon_size:
-                        type: number
-                      icon_image:
-                        type: string
-                      line_pattern:
-                        $ref: '#/components/schemas/LinePattern'
-                      font_size:
-                        type: number
-                      halo_width:
-                        type: number
-                      search_limit:
-                          type: number
-                      dataset_search_limit:
-                          type: number
-                      dataset_search_query_operator:
-                          $ref: '#/components/schemas/QueryOperator'
-                      dataset_sorting_column:
-                          type: string
-                      datapage_sorting_column:
-                          type: string
-                      tag_search_operator:
-                          $ref: '#/components/schemas/TagSearchOperator'
-                      map_page_sorting_column:
-                          type: string
-                      line_width:
-                          type: number
-                      number_of_classes:
-                          type: number
-                      sidebar_position:
-                          $ref: '#/components/schemas/SidebarPosition'
-      security:
-        - Azure AD authentication: []
-      description: Update GeoHub User Settings
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   classification_method:
                     $ref: '#/components/schemas/ClassificationMethodTypes'
                   raster_resampling_method:
@@ -1576,31 +1528,76 @@ paths:
                   halo_width:
                     type: number
                   search_limit:
-                      type: number
+                    type: number
                   dataset_search_limit:
-                      type: number
+                    type: number
                   dataset_search_query_operator:
-                      $ref: '#/components/schemas/QueryOperator'
+                    $ref: '#/components/schemas/QueryOperator'
                   dataset_sorting_column:
-                      type: string
+                    type: string
                   datapage_sorting_column:
-                      type: string
+                    type: string
                   tag_search_operator:
-                      $ref: '#/components/schemas/TagSearchOperator'
+                    $ref: '#/components/schemas/TagSearchOperator'
                   map_page_sorting_column:
-                      type: string
+                    type: string
                   line_width:
-                      type: number
+                    type: number
                   number_of_classes:
-                      type: number
+                    type: number
                   sidebar_position:
-                      $ref: '#/components/schemas/SidebarPosition'
+                    $ref: '#/components/schemas/SidebarPosition'
+      security:
+        - Azure AD authentication: []
+      description: Update GeoHub User Settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                classification_method:
+                  $ref: '#/components/schemas/ClassificationMethodTypes'
+                raster_resampling_method:
+                  $ref: '#/components/schemas/ResamplingMethodTypes'
+                layer_opacity:
+                  type: number
+                overlap_priority:
+                  $ref: '#/components/schemas/OverlapPriority'
+                icon_size:
+                  type: number
+                icon_image:
+                  type: string
+                line_pattern:
+                  $ref: '#/components/schemas/LinePattern'
+                font_size:
+                  type: number
+                halo_width:
+                  type: number
+                search_limit:
+                  type: number
+                dataset_search_limit:
+                  type: number
+                dataset_search_query_operator:
+                  $ref: '#/components/schemas/QueryOperator'
+                dataset_sorting_column:
+                  type: string
+                datapage_sorting_column:
+                  type: string
+                tag_search_operator:
+                  $ref: '#/components/schemas/TagSearchOperator'
+                map_page_sorting_column:
+                  type: string
+                line_width:
+                  type: number
+                number_of_classes:
+                  type: number
+                sidebar_position:
+                  $ref: '#/components/schemas/SidebarPosition'
         description: Update GeoHub User Settings
         required: true
       tags:
         - GeoHub User Settings
-
-
   /swagger/spec.json:
     get:
       summary: Get open API JSON definition
@@ -1700,6 +1697,24 @@ paths:
           in: query
           name: filterbytag
           description: 'If true, only returns regions which exist in tag table'
+  /og:
+    get:
+      summary: Generate dynamic open graph image
+      tags:
+        - Open graph image
+      responses:
+        '200':
+          description: OK
+          headers: {}
+      operationId: get-og
+      description: 'generate a social card dynamically for og:image'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: content
+          description: string to show in content of social card
+          required: true
 components:
   schemas:
     Tag:
@@ -1718,52 +1733,52 @@ components:
         - key
         - value
     QueryOperator:
-        title: QueryOperator
-        type: string
-        enum:
-            - and
-            - or
+      title: QueryOperator
+      type: string
+      enum:
+        - and
+        - or
     TagSearchOperator:
       title: TagSearchOperator
       type: string
       enum:
-          - and
-          - or
+        - and
+        - or
     SidebarPosition:
       title: SidebarPosition
       type: string
       enum:
-          - left
-          - right
+        - left
+        - right
     ClassificationMethodTypes:
-        title: ClassificationMethodTypes
-        type: string
-        enum:
-            - e
-            - q
-            - n
-            - l
+      title: ClassificationMethodTypes
+      type: string
+      enum:
+        - e
+        - q
+        - 'n'
+        - l
     ResamplingMethodTypes:
-        title: ResamplingMethodTypes
-        type: string
-        enum:
-            - nearest
-            - linear
+      title: ResamplingMethodTypes
+      type: string
+      enum:
+        - nearest
+        - linear
     OverlapPriority:
-        title: OverlapPriority
-        type: string
-        enum:
-            - always
-            - never
-            - cooperative
+      title: OverlapPriority
+      type: string
+      enum:
+        - always
+        - never
+        - cooperative
     LinePattern:
-        title: LinePattern
-        type: string
-        enum:
-            - solid
-            - dash
-            - dash-dot
-            - dot
+      title: LinePattern
+      type: string
+      enum:
+        - solid
+        - dash
+        - dash-dot
+        - dot
   securitySchemes:
     Azure AD authentication:
       type: http
