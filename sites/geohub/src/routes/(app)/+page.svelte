@@ -39,11 +39,6 @@
 			behavior: 'smooth'
 		});
 	};
-
-	const openSupportPage = () => {
-		const url = HeaderItems(['support'])[0].href;
-		document.location = url;
-	};
 </script>
 
 <svelte:window bind:innerWidth />
@@ -63,19 +58,44 @@
 			<p class="title is-1">GeoHub</p>
 			<p class="subtitle is-4">UNDP's one stop shop for spatial data and analytics</p>
 		</div>
-		<div class="mt-4 is-flex is-flex-direction-row is-justify-content-space-evenly">
+		<div class="mt-4 grid-buttons">
 			<button
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('dashboards')}>Explore maps</button
+				on:click={() => scrollTo('dashboards')}
 			>
+				<span class="icon">
+					<i class="fas fa-map"></i>
+				</span>
+				<span>Explore maps</span>
+			</button>
 			<button
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('map')}>Launch map</button
+				on:click={() => scrollTo('map')}
 			>
+				<span class="icon">
+					<i class="fas fa-rocket"></i>
+				</span>
+				<span>Launch map</span>
+			</button>
+			<a
+				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				href={HeaderItems(['support'])[0].href}
+			>
+				<span class="icon">
+					<i class="fas fa-circle-question"></i>
+				</span>
+				<span>User Guide</span>
+			</a>
+
 			<button
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={openSupportPage}>User Guide</button
+				on:click={() => scrollTo('github')}
 			>
+				<span class="icon">
+					<i class="fab fa-github"></i>
+				</span>
+				<span>Source code</span>
+			</button>
 		</div>
 	</div>
 </div>
@@ -180,7 +200,7 @@
 	</div>
 </section>
 
-<section class="my-4">
+<section id="github" class="my-4">
 	<p class="title is-2 mt-6 mb-4 align-center wordwrap">Fully open source</p>
 	<div class="align-center text-align-center wordwrap py-4">
 		<p class="subtitle is-4">
@@ -228,6 +248,12 @@
 			.subtitle {
 				text-align: center;
 				border-top: 1px solid gray;
+			}
+
+			.grid-buttons {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 10px;
 			}
 		}
 	}
