@@ -1,14 +1,25 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { MapStyles, SiteInfo } from '$lib/config/AppConfig';
+	import type { PageData } from './$types';
 	import Content from './components/Content.svelte';
 	import Map from './components/Map.svelte';
+	import { hrea, ml } from './stores';
+
+	export let data: PageData;
 
 	let loadLayers = () => {
 		return;
 	};
 
 	let styles = MapStyles;
+
+	data.promises.hrea.then((datasets) => {
+		hrea.update(() => datasets);
+	});
+	data.promises.ml.then((datasets) => {
+		ml.update(() => datasets);
+	});
 
 	let title = 'Electricity Dashboard | GeoHub';
 	let content = 'Electricity dashboard';

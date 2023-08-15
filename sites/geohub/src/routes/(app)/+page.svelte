@@ -32,7 +32,7 @@
 	];
 
 	let title = 'GeoHub';
-	let content = 'Welcome to UNDP GeoHub!';
+	let content = 'Welcome to GeoHub!';
 
 	const scrollTo = (hash: string) => {
 		const anchor = document.getElementById(hash);
