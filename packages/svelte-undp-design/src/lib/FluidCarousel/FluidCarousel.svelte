@@ -3,6 +3,18 @@
 	import type { CarouselContent } from '$lib/interfaces';
 
 	export let contents: CarouselContent[] = [];
+
+	const openLink = (content: CarouselContent) => {
+		document.location = content.linkUrl
+	}
+
+	const handleEnterKey = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
 </script>
 
 <section
@@ -24,10 +36,10 @@
 						<h6>{content.tag}</h6>
 						<h4>{content.title}</h4>
 						<p>{content.description}</p>
-						<a class="cta__link cta--space" href={content.linkUrl}>
+						<button class="cta__link cta--space" on:click={()=>{openLink(content)}} on:keydown={handleEnterKey}>
 							{content.linkName}
 							<i />
-						</a>
+						</button>
 					</article>
 				</div>
 			{/each}
