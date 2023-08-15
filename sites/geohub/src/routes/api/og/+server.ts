@@ -9,20 +9,20 @@ const template = (
 	copyright = '&copy; 2023 United Nations Development Programme'
 ) => {
 	return `
- <div tw="bg-gray-50 flex w-full h-full">
+ <div tw="bg-[#0468B1] flex w-full h-full">
     <div tw="flex flex-col h-screen w-full p-4">
         <div tw="flex justify-between">
-            <h1 tw="text-6xl font-bold">${title}</h1>
-            <img src="${url.origin}/assets/undp-images/undp-logo-blue.svg" alt="UNDP Logo" height="256">
+            <h1 tw="text-6xl font-bold text-white">${title}</h1>
+            <img src="${url.origin}/assets/undp-images/undp-logo-white.svg" alt="UNDP Logo" height="256">
         </div>
         
-        <div tw="flex items-center justify-start">
-            <h2 tw="text-8xl font-bold text-center">${content}</h2>
+        <div tw="flex items-center justify-start border-b-4 border-white">
+            <h2 tw="text-8xl font-bold text-center text-white">${content}</h2>
         </div>
         <div tw="flex flex-col items-start flex-grow justify-end">
             <div tw="flex flex-col">
-                <p tw="text-3xl text-left">${description}</p>
-                <p tw="text-xl text-left">${copyright}</p>
+                <p tw="text-3xl text-left text-white">${description}</p>
+                <p tw="text-xl text-left text-white">${copyright}</p>
             </div>
         </div>
     </div>
